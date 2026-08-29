@@ -22,6 +22,13 @@ bar() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 bar "GOAIEZ — session preamble"
 
+bar "0. are the load-bearing source files present?"
+if ! python3 "$ROOT/bin/preflight.py"; then
+  echo
+  echo "  ⛔ STOP. Do not start building — see above."
+  exit 1
+fi
+
 if [ ! -f "$APP/artisan" ]; then
   echo "  no Laravel tree at $APP — the loop will return BOOTSTRAP."
   echo

@@ -9,9 +9,14 @@ it.** Fresh build. 124 modules, 31 waves, 12 journeys.
 
 ```bash
 cd /home/arf/dev/grs-antig
-bash bin/loop.sh                 # session preamble — checks the checker
+bash bin/loop.sh                 # preflight, then checks the checker
 python3 bin/state.py next        # do what it says. Run it again. That is the loop.
 ```
+
+⛔ **`bin/loop.sh` currently REFUSES.** `GOAIEZ-TRACKER-CAPABILITIES.md` was not
+in the drop, and it holds all 966 capability rows — without it no wave can
+close. `python3 bin/preflight.py` says so and why. Drop the file in `source/`
+and it passes.
 
 The agent reads `AGENTS.md` (and `GEMINI.md`, which points at it) on its own.
 

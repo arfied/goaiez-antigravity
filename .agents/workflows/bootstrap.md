@@ -42,14 +42,37 @@ has build …"* on a first install, you are installing into the wrong directory.
 
 ## 4. The package files
 
-The runtime reads five classes' worth of source documents from the Laravel root:
+The runtime reads these from the Laravel root:
 
 ```bash
 cp ../source/GOAIEZ-MASTER-PLAN.md ../source/GOAIEZ-INDEX.json .
+cp ../source/GOAIEZ-TRACKER-CAPABILITIES.md .          # see below
+python3 ../bin/preflight.py                            # refuses if one is missing
 ```
 
-⛔ **Without them the scaffold reports "0 modules" instead of failing.** A
-generator that finds nothing and says so quietly is the shape to watch for.
+⛔ **Without the master plan the scaffold reports "0 modules" instead of
+failing.** A generator that finds nothing and says so quietly is the shape to
+watch for.
+
+### ⛔⛔⛔ `GOAIEZ-TRACKER-CAPABILITIES.md` IS LOAD-BEARING AND WAS NOT IN THE DROP
+
+**It holds all 966 capability rows.** The chain, traced through the runtime:
+
+1. `capabilities:scaffold` reads it and writes `app/Modules/<id>/capabilities.php`.
+   Without it the command **fails loudly** — `Tracker not found` — and writes
+   nothing. *(Good: it does not emit an empty file, deliberately.)*
+2. `CapabilityStage::specIds()` then reads those `capabilities.php` files. With
+   none present it returns `[]` for every module.
+3. **The floor fires**: *"ZERO specced capabilities"* on **all 124 modules**.
+4. `capability` fails the **MERGE**, so **no wave ever closes.**
+
+⛔ **It is not reconstructible from the master plan.** Only 299 of the ids live
+there, and the stage's own history records that reading the plan alone made
+things *worse* — 269 required refusals became 671, because section summaries
+merely *mention* a G-id without defining one.
+
+⛔ **If it is absent: STOP at wave 0 and ask for it.** Do not start building —
+you would run the entire roster and close nothing.
 
 ## 5. The database
 
