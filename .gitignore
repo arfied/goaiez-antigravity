@@ -1,0 +1,16 @@
+# the Laravel tree's dependencies — never committed
+app/vendor/
+app/node_modules/
+app/.env
+app/storage/framework/cache/
+app/storage/framework/sessions/
+app/storage/framework/views/
+app/storage/logs/
+app/public/build/
+
+# evidence is written by the runtime and read by the journey stage.
+# it is NOT committed: a proof in git is a proof somebody could have edited.
+app/storage/app/evidence/
+
+__pycache__/
+*.pyc

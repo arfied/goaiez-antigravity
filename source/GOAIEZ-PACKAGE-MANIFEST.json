@@ -1,0 +1,148 @@
+{
+ "_what": "THE PACKAGE. Everything NOT listed here is HISTORY \u2014 superseded working documents kept for the record.",
+ "_danger": "83 other GOAIEZ-*.md files sit alongside these. They contain SUPERSEDED counts: roster 119 appears 47 times, 122 appears 49 times, and the CURRENT 124 only 8. An agent given all 94 files will believe the majority and be wrong. READ ONLY WHAT IS LISTED HERE.",
+ "_order": "Read in the order listed. The handover tells you which document wins where they disagree.",
+ "package": [
+  {
+   "file": "GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md",
+   "bytes": 14817,
+   "sha256": "3c528d1dbe85c117",
+   "why": "READ FIRST. Precedence, the five that exist, R237-R244, the defect register, open decisions."
+  },
+  {
+   "file": "GOAIEZ-INDEX.json",
+   "bytes": 153109,
+   "sha256": "d1aca08d9977a47d",
+   "why": "THE MACHINE-READABLE STATE. 124 modules, 466 laws, 64 unresolvable rulings. Read this, not the prose."
+  },
+  {
+   "file": "GOAIEZ-MASTER-PLAN.md",
+   "bytes": 3264989,
+   "sha256": "8bae92b4b07d6a4e",
+   "why": "THE LAW. 3.26 MB. Authoritative on every point of fact. Query with `php artisan why <id>`."
+  },
+  {
+   "file": "GOAIEZ-TRACKER-CAPABILITIES.md",
+   "bytes": 166659,
+   "sha256": "8b3d68653afc96cf",
+   "why": "The 966 capability rows. capabilities:scaffold reads this."
+  },
+  {
+   "file": "GOAIEZ-TRACKER-MODULES.md",
+   "bytes": 21181,
+   "sha256": "41de436f35b262ec",
+   "why": "The module roster tracker."
+  },
+  {
+   "file": "GOAIEZ-AGENT-CONTRACT.md",
+   "bytes": 3104,
+   "sha256": "0f1a50582dcaaf2e",
+   "why": "The rules any agent touching this codebase must accept."
+  },
+  {
+   "file": "GOAIEZ-AUTONOMOUS-LOOP.md",
+   "bytes": 5570,
+   "sha256": "4b66abd0b507a98a",
+   "why": "How an agent works the doctor loop unsupervised and reports once."
+  },
+  {
+   "file": "GOAIEZ-COLD-START.md",
+   "bytes": 4307,
+   "sha256": "2f26f392b606da24",
+   "why": "For an agent with no history. It needs none."
+  },
+  {
+   "file": "GOAIEZ-AI-CORE.md",
+   "bytes": 9759,
+   "sha256": "42335d41f4b8caf8",
+   "why": "R238 in full: the one call path."
+  },
+  {
+   "file": "GOAIEZ-GODTIER-SYSTEMS.md",
+   "bytes": 6351,
+   "sha256": "4f371133df8a1f74",
+   "why": "The seven systems and every module in each, with state."
+  },
+  {
+   "file": "GOAIEZ-THE-DOCTOR-LOOP.md",
+   "bytes": 7146,
+   "sha256": "f06bececb1df0c45",
+   "why": "The runbook: severity order, the stop rule, the three ways to cheat."
+  },
+  {
+   "file": "GOAIEZ-AUDIT-LEDGER.md",
+   "bytes": 392397,
+   "sha256": "e36667cee0e1e77e",
+   "why": "222 findings. The defect history of this programme."
+  }
+ ],
+ "runtime": [
+  {
+   "file": "runtime/goaiez-runtime.sh",
+   "bytes": 151993,
+   "sha256": "c8a02cb21de5cf97",
+   "why": "THE RUNTIME. build 20260829-0647, seal digest f1e73d9fc181eb1c. 8 doctor stages, 14 commands, 15 sealed files."
+  },
+  {
+   "file": "runtime/goaiez-plan-part1.sh",
+   "bytes": 365666,
+   "sha256": "ca81798ed41af1b7",
+   "why": "The master plan, part 1 of 3 (it is 3.26 MB)."
+  },
+  {
+   "file": "runtime/goaiez-plan-part2.sh",
+   "bytes": 365666,
+   "sha256": "b2a16a7f7626602d",
+   "why": "part 2 of 3"
+  },
+  {
+   "file": "runtime/goaiez-plan-part3.sh",
+   "bytes": 365665,
+   "sha256": "371d0ca4f9e8635b",
+   "why": "part 3 of 3"
+  },
+  {
+   "file": "runtime/goaiez-grants.sql",
+   "bytes": 2597,
+   "sha256": "89f6afcda5f234a2",
+   "why": "The GRANTs. db:bootstrap forced RLS and never granted table access."
+  },
+  {
+   "file": "runtime/goaiez-triage.json",
+   "bytes": 751,
+   "sha256": "12a780e2ed765c20",
+   "why": "R243: the legacy triage as DATA. Counted, listed, non-blocking, never hidden."
+  },
+  {
+   "file": "runtime/goaiez-status.sh",
+   "bytes": 3194,
+   "sha256": "bd6900a25b545138",
+   "why": "One screen: what is running, which build, the seven numbers."
+  },
+  {
+   "file": "runtime/goaiez-extract.sh",
+   "bytes": 7663,
+   "sha256": "2a30f0c0527624a4",
+   "why": "22-section environment extract when something is unexplained."
+  }
+ ],
+ "_two_packages": {
+  "package_1": "For a FRESH autopilot build. Read GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md first, then the files under `package` and `runtime`.",
+  "package_2": "To UPDATE the existing GOAIEZ-MASTER-BUILD-PLAN v3.2 \u2192 v4.0. Read GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md with GOAIEZ-PACKAGE-2-DELTA.json.",
+  "_they_share": "GOAIEZ-MASTER-PLAN.md, GOAIEZ-INDEX.json and the runtime. Only the entry document differs."
+ },
+ "package_2": [
+  {
+   "file": "GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md",
+   "bytes": 11430,
+   "sha256": "9a3247568c856b76",
+   "why": "8 patches keyed to v3.2 section numbers, with verbatim replacement text."
+  },
+  {
+   "file": "GOAIEZ-PACKAGE-2-DELTA.json",
+   "bytes": 3633,
+   "sha256": "0d1cb47d73dbb2be",
+   "why": "The same 8 patches as data, plus the 7 stale values and the target sha."
+  }
+ ]
+}

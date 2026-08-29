@@ -1,0 +1,3886 @@
+{
+ "generated": "2026-08-29",
+ "source": "GOAIEZ-MASTER-PLAN.md",
+ "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
+ "roster": 124,
+ "next_free_module": "X-221",
+ "next_free_ruling": "R245",
+ "deliberate_gap": "X-216",
+ "runtime_build": "20260829-0647",
+ "seal_digest": "f1e73d9fc181eb1c",
+ "rulings_spent_this_session": [
+  "R227",
+  "R228",
+  "R229",
+  "R230",
+  "R231",
+  "R232",
+  "R233",
+  "R234",
+  "R235",
+  "R236",
+  "R237",
+  "R238",
+  "R239",
+  "R240",
+  "R241",
+  "R242",
+  "R244"
+ ],
+ "systems": {
+  "notification": "X-207",
+  "staff_desk": "X-209",
+  "merchant": "X-198",
+  "viral": [
+   "X-205",
+   "X-190"
+  ],
+  "vision_qa": "X-213"
+ },
+ "built": {
+  "X-126": "gates 1,2,3 green",
+  "X-119": "both anchor clauses proven",
+  "X-121": "X-121a additive only"
+ },
+ "blocking_decisions": [
+  "jobs: canonical noun is a WORK ORDER; existing table is Laravel queue",
+  "businesses vs companies vs customers; facts vs business_facts",
+  "322 refusals still to be written (R240)",
+  "legacy triage declared REPLACE but not executed",
+  "R237 COMPLEX slot has no cost ceiling"
+ ],
+ "modules": {
+  "X-121": {
+   "intent": "RECOVER",
+   "what": "Business \u00b7 Person \u00b7 Conversation \u00b7 Message \u00b7 Job \u00b7 Review \u00b7 Campaign \u00b7 Asset \u00b7 LedgerEntry \u00b7 Fact \u00b7 Site \u00b7 Num",
+   "provides": [
+    "entity.read",
+    "entity.write",
+    "entity.history",
+    "entity.restore"
+   ],
+   "emits": [
+    "job.created",
+    "job.started",
+    "number.needed",
+    "site.crawled",
+    "person.updated"
+   ],
+   "consumes": [
+    "none"
+   ],
+   "owns_table": [
+    "businesses",
+    "people",
+    "conversations",
+    "messages",
+    "jobs",
+    "reviews",
+    "campaigns",
+    "assets",
+    "ledger_entries",
+    "facts",
+    "sites",
+    "numbers",
+    "entity_history"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "X-121a additive only"
+  },
+  "X-122": {
+   "intent": "INFORM",
+   "what": "each module publishes actions (id \u00b7 label \u00b7 typed params \u00b7 returns \u00b7 permission \u00b7 reversal class: reversible \u00b7",
+   "provides": [
+    "action.invoke",
+    "action.preview",
+    "action.reverse",
+    "manifest.register",
+    "audit.export"
+   ],
+   "emits": [
+    "action.invoked",
+    "action.refused",
+    "action.reversed"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "action_manifests",
+    "action_invocations",
+    "action_reversals"
+   ],
+   "agent_reachable": [
+    "action.preview"
+   ],
+   "state": "not started"
+  },
+  "X-123": {
+   "intent": "INFORM",
+   "what": "typed events, any module subscribes; dead-letter queue at 10 consecutive failures + the tenant emailed; expone",
+   "provides": [
+    "event.publish",
+    "event.replay",
+    "webhook.test"
+   ],
+   "emits": [
+    "event.published",
+    "event.failed",
+    "event.dead_lettered"
+   ],
+   "consumes": [],
+   "owns_table": [
+    "event_log",
+    "event_subscriptions",
+    "dead_letters"
+   ],
+   "agent_reachable": [
+    "webhook.test"
+   ],
+   "state": "not started"
+  },
+  "X-126": {
+   "intent": "RECOVER",
+   "what": "evaluates on every action: no Fact \u2192 no skill (the agent never invents a price, a time or a link because this ",
+   "provides": [
+    "capability.check"
+   ],
+   "emits": [
+    "capability.decided",
+    "capability.refused"
+   ],
+   "consumes": [
+    "fact.invalidated",
+    "consent.decided"
+   ],
+   "owns_table": [
+    "capability_policies",
+    "capability_decisions"
+   ],
+   "agent_reachable": [
+    "capability.check"
+   ],
+   "state": "gates 1,2,3 green"
+  },
+  "X-128": {
+   "intent": "OBSERVE",
+   "what": "reads every module's @renders matrix_view (derived from SCREENS, 2026-08-27 \u2014 names only; the JSON schema each",
+   "provides": [
+    "matrix.generate",
+    "deploy.check"
+   ],
+   "emits": [
+    "seam.violated",
+    "orphan.detected"
+   ],
+   "consumes": [],
+   "owns_table": [
+    "integration_matrix"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-142": {
+   "intent": "OBSERVE",
+   "what": "full read/write across every registered action (the category leaders ship read-only MCP; ours is complete beca",
+   "provides": [
+    "mcp.list",
+    "mcp.invoke",
+    "webhook.subscribe",
+    "token.issue",
+    "token.revoke"
+   ],
+   "emits": [
+    "mcp.invoked",
+    "token.issued",
+    "token.revoked"
+   ],
+   "consumes": [
+    "action.invoked",
+    "capability.decided"
+   ],
+   "owns_table": [
+    "mcp_tokens",
+    "webhook_subscriptions"
+   ],
+   "agent_reachable": [
+    "mcp.list"
+   ],
+   "state": "not started"
+  },
+  "X-143": {
+   "intent": "SERVE",
+   "what": "actions marked surfaces: [webmcp] are emitted as navigator.modelContext tool contracts on sites published thro",
+   "provides": [
+    "webmcp.emit"
+   ],
+   "emits": [
+    "webmcp.invoked"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "none"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-145": {
+   "intent": "INFORM",
+   "what": "candidate set = the action registry, filtered by the gate \u00b7 reward = each action's outcome_event (the measure ",
+   "provides": [
+    "decision.propose",
+    "decision.explain"
+   ],
+   "emits": [
+    "decision.proposed",
+    "approval.requested"
+   ],
+   "consumes": [
+    "action.invoked",
+    "outcome.",
+    "capability.decided"
+   ],
+   "owns_table": [
+    "decisions",
+    "decision_outcomes"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-124": {
+   "intent": "SERVE",
+   "what": "persistent chat on every page. OPERATE (\"text everyone who called last week\") \u00b7 CONFIGURE (\"ask for a review",
+   "provides": [
+    "assistant.ask",
+    "assistant.preview",
+    "assistant.execute",
+    "assistant.undo",
+    "assistant.explain",
+    "assistant.recommend",
+    "search.global"
+   ],
+   "emits": [
+    "assistant.request"
+   ],
+   "consumes": [
+    "capability.decided",
+    "decision.proposed"
+   ],
+   "owns_table": [
+    "assistant_sessions",
+    "assistant_recommendations",
+    "assistant_unsupported"
+   ],
+   "agent_reachable": [
+    "assistant.preview"
+   ],
+   "state": "not started"
+  },
+  "X-125": {
+   "intent": "RECOVER",
+   "what": "branching \u00b7 conditional and sequential logic \u00b7 the rules engine \u00b7 multi-touch orchestration \u00b7 triggers (event,",
+   "provides": [
+    "flow.create",
+    "flow.run",
+    "flow.pause",
+    "flow.rollback",
+    "flow.explain",
+    "flow.simulate"
+   ],
+   "emits": [
+    "flow.changed",
+    "rule.changed"
+   ],
+   "consumes": [],
+   "owns_table": [
+    "flows",
+    "flow_versions",
+    "flow_runs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-194": {
+   "intent": "INFORM",
+   "what": "chart generation \u00b7 custom fields and schemas \u00b7 cross-platform dashboards \u00b7 consolidated and scheduled PDF repo",
+   "provides": [
+    "view.render",
+    "view.save",
+    "view.schedule",
+    "report.pdf"
+   ],
+   "emits": [
+    "view.rendered",
+    "view.saved",
+    "report.sent"
+   ],
+   "consumes": [
+    "action.invoked"
+   ],
+   "owns_table": [
+    "saved_views",
+    "view_schedules"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "C-Telephony": {
+   "intent": "RECOVER",
+   "what": "makes eight carriers indistinguishable to everything above it. Selection order: \u2460 capability (rcs \u00b7 mms \u00b7 sip ",
+   "provides": [
+    "carrier.send",
+    "carrier.call",
+    "carrier.provision",
+    "carrier.health"
+   ],
+   "emits": [
+    "carrier.selected",
+    "carrier.failed_over",
+    "carrier.degraded",
+    "carrier.receipt"
+   ],
+   "consumes": [
+    "send.requested",
+    "call.requested",
+    "number.needed"
+   ],
+   "owns_table": [
+    "carrier_roster",
+    "carrier_bindings",
+    "carrier_health",
+    "carrier_receipts"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "C-Sms": {
+   "intent": "RECOVER",
+   "what": "missed-call text-back \u00b7 deliverability fallback \u00b7 reminders \u00b7 dunning texts \u00b7 spintax at scale (per-brand thro",
+   "provides": [
+    "sms.send",
+    "sms.compose",
+    "sms.halt"
+   ],
+   "emits": [
+    "send.requested"
+   ],
+   "consumes": [
+    "call.missed",
+    "job.completed",
+    "review.requested",
+    "carrier.selected",
+    "notification.classified",
+    "consent.decided"
+   ],
+   "owns_table": [
+    "sms_compositions",
+    "sms_moderation_results"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "C-Mail": {
+   "intent": "OBSERVE",
+   "what": "the deliverability engine \u00b7 inbox rotation \u00b7 warmup ramping \u2014 a CALENDAR, not a setting \u00b7 SPF flattening \u00b7 DMA",
+   "provides": [
+    "email.send",
+    "email.dns_check",
+    "email.warmup",
+    "email.unsubscribe"
+   ],
+   "emits": [
+    "email.sent",
+    "email.bounced",
+    "email.complained",
+    "email.replied",
+    "domain.warmed"
+   ],
+   "consumes": [
+    "send.requested",
+    "campaign.scheduled",
+    "notification.classified"
+   ],
+   "owns_table": [
+    "mail_domains",
+    "warmup_calendars",
+    "mail_events"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "C-Whatsapp": {
+   "intent": "INFORM",
+   "what": "opt-in engine \u00b7 payment links \u00b7 Zernio WhatsApp + GBP chat sync \u00b7 omni-channel merging into the one Conversati",
+   "provides": [
+    "whatsapp.send",
+    "whatsapp.connect",
+    "template.submit"
+   ],
+   "emits": [
+    "whatsapp.sent",
+    "whatsapp.session_opened",
+    "template.approved"
+   ],
+   "consumes": [
+    "message.received",
+    "send.requested",
+    "notification.classified"
+   ],
+   "owns_table": [
+    "whatsapp_templates",
+    "whatsapp_sessions"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-147": {
+   "intent": "INFORM",
+   "what": "rich media \u00b7 verified sender branding \u00b7 suggested replies and actions \u00b7 read receipts. Carrier: Sinch for RCS ",
+   "provides": [
+    "rcs.send"
+   ],
+   "emits": [
+    "rcs.sent",
+    "rcs.degraded_to_sms",
+    "rcs.read"
+   ],
+   "consumes": [
+    "send.requested",
+    "carrier.selected",
+    "notification.classified"
+   ],
+   "owns_table": [
+    "rcs_capabilities"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-102": {
+   "intent": "INFORM",
+   "what": "one line of JS \u00b7 live chat injection \u00b7 pre-chat lead capture \u00b7 exit-intent RAG \u00b7 rage-click detection (four cl",
+   "provides": [
+    "chat.start",
+    "chat.capture",
+    "chat.escalate"
+   ],
+   "emits": [
+    "chat.started",
+    "chat.lead_captured",
+    "chat.escalated"
+   ],
+   "consumes": [
+    "visit.started",
+    "fact.invalidated",
+    "capability.decided"
+   ],
+   "owns_table": [
+    "chat_sessions",
+    "chat_leads"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-188": {
+   "intent": "RECOVER",
+   "what": "assigns a GO AI EZ number at signup \u00b7 submits 10DLC brand registration automatically \u2014 marketing SMS only (\u00a715",
+   "provides": [
+    "number.assign",
+    "number.migrate",
+    "number.park",
+    "brand.submit"
+   ],
+   "emits": [
+    "tenant.cancelled"
+   ],
+   "consumes": [
+    "tenant.created",
+    "carrier.selected",
+    "tenant.cancelled"
+   ],
+   "owns_table": [
+    "number_pool",
+    "number_assignments",
+    "brand_registrations",
+    "number_parks"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-193": {
+   "intent": "GROW",
+   "what": "classifies every send.requested as marketing \u00b7 transactional \u00b7 conversational \u00b7 account \u2014 from the CALL",
+   "provides": [
+    "notification.classify"
+   ],
+   "emits": [
+    "notification.classified"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "notification_classes"
+   ],
+   "agent_reachable": [
+    "notification.classify"
+   ],
+   "state": "not started"
+  },
+  "X-200": {
+   "intent": "GROW",
+   "what": "New \u2014 nothing in the plan had a human-seat dialer; \u00a718C.3's rung \u2462 is \"not a dialler with a script.\" This IS t",
+   "provides": [
+    "campaign.start",
+    "campaign.pause",
+    "dial.next",
+    "call.dispose",
+    "callback.schedule",
+    "seat.login",
+    "seat.logout",
+    "qa.score"
+   ],
+   "emits": [
+    "call.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "dial_campaigns",
+    "dial_lists",
+    "dial_attempts",
+    "dispositions",
+    "callbacks",
+    "seats",
+    "qa_scorecards"
+   ],
+   "agent_reachable": [
+    "qa.score"
+   ],
+   "state": "not started"
+  },
+  "X-66": {
+   "intent": "SERVE",
+   "what": "the front-desk agent on a live call: voice RAG with in-stream hesitation and objection detection \u00b7 AMD \u00b7 multi",
+   "provides": [
+    "voice.answer",
+    "voice.transfer",
+    "voice.voicemail_transcribe",
+    "voice.coach"
+   ],
+   "emits": [
+    "call.ringing",
+    "call.missed",
+    "call.answered",
+    "call.completed",
+    "voicemail.transcribed",
+    "sentiment.negative"
+   ],
+   "consumes": [
+    "carrier.selected",
+    "fact.invalidated",
+    "pricebook.updated",
+    "capability.decided"
+   ],
+   "owns_table": [
+    "call_sessions",
+    "call_turns",
+    "voicemails",
+    "call_autopsies"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-197": {
+   "intent": "INFORM",
+   "what": "self-hosted STT/TTS/LLM on LiveKit \u00b7 Groq-node integration \u00b7 cost routing between managed and self-hosted \u00b7 mo",
+   "provides": [
+    "voice.route"
+   ],
+   "emits": [
+    "voice.route_selected",
+    "voice.selfhosted_degraded"
+   ],
+   "consumes": [
+    "call.requested",
+    "carrier.selected"
+   ],
+   "owns_table": [
+    "voice_routes",
+    "voice_pool_state",
+    "voice_cost_samples"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-137": {
+   "intent": "INFORM",
+   "what": "dynamic number insertion \u00b7 click- and keyword-level attribution \u00b7 callback tracking \u00b7 the shortlink attributio",
+   "provides": [
+    "call.attribute",
+    "link.short",
+    "link.qr"
+   ],
+   "emits": [
+    "call.attributed",
+    "link.clicked",
+    "visit.joined_to_call"
+   ],
+   "consumes": [
+    "visit.started",
+    "call.ringing",
+    "message.sent"
+   ],
+   "owns_table": [
+    "call_tokens",
+    "short_links",
+    "link_clicks"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-153": {
+   "intent": "INFORM",
+   "what": "five-character alphanumeric reply codes (R75/R125 \u2014 28.6M combinations; a code is never reused into another vi",
+   "provides": [
+    "alert.send",
+    "alert.claim",
+    "alert.override"
+   ],
+   "emits": [
+    "alert.sent",
+    "alert.claimed",
+    "alert.claim_expired",
+    "alert.overridden"
+   ],
+   "consumes": [
+    "call.missed",
+    "sentiment.negative",
+    "review.received",
+    "anomaly.detected",
+    "message.received"
+   ],
+   "owns_table": [
+    "alerts",
+    "alert_claims",
+    "reply_codes"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "C-Agent": {
+   "intent": "SERVE",
+   "what": "the base prompt engine and pre-trained industry prompts \u00b7 custom RAG knowledge \u00b7 intent matching \u00b7 reply class",
+   "provides": [
+    "agent.answer",
+    "agent.draft",
+    "agent.classify",
+    "agent.extract_tasks",
+    "agent.teach"
+   ],
+   "emits": [
+    "agent.turn.answer",
+    "send.requested"
+   ],
+   "consumes": [
+    "message.received",
+    "call.answered",
+    "chat.started",
+    "fact.invalidated",
+    "capability.decided"
+   ],
+   "owns_table": [
+    "agent_turns",
+    "agent_refusals",
+    "agent_instructions"
+   ],
+   "agent_reachable": [
+    "agent.draft",
+    "agent.classify"
+   ],
+   "state": "not started"
+  },
+  "C-Ai": {
+   "intent": "RECOVER",
+   "what": "cost routing \u00b7 token arbitrage \u00b7 provider waterfall \u00b7 latency guardrails \u00b7 prompt caching \u00b7 usage billing: eve",
+   "provides": [
+    "ai.complete",
+    "ai.embed",
+    "ai.transcribe",
+    "ai.speak"
+   ],
+   "emits": [
+    "ai.called",
+    "ai.failed_over",
+    "ai.budget_exceeded"
+   ],
+   "consumes": [
+    "agent.turn.started"
+   ],
+   "owns_table": [
+    "ai_calls",
+    "ai_tasks",
+    "ai_provider_accounts"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-119": {
+   "intent": "INFORM",
+   "what": "the structured resolver: prices, hours and services BYPASS vector search and do an exact lookup against Fact \u00b7",
+   "provides": [
+    "fact.lookup",
+    "fact.confirm",
+    "fact.teach",
+    "knowledge.ingest_sync"
+   ],
+   "emits": [
+    "fact.created",
+    "fact.invalidated",
+    "grounding.missing"
+   ],
+   "consumes": [
+    "document.ingested",
+    "pricebook.updated",
+    "entity.updated",
+    "site.published"
+   ],
+   "owns_table": [],
+   "agent_reachable": [
+    "fact.lookup"
+   ],
+   "state": "both anchor clauses proven"
+  },
+  "X-148": {
+   "intent": "INFORM",
+   "what": "hybrid search (dense + BM25) \u00b7 reciprocal rank fusion \u00b7 cross-encoder rerank \u00b7 chunk provenance \u00b7 prompt cachi",
+   "provides": [
+    "retrieval.search",
+    "retrieval.index"
+   ],
+   "emits": [
+    "retrieval.completed",
+    "retrieval.empty"
+   ],
+   "consumes": [
+    "agent.turn.started",
+    "fact.invalidated",
+    "document.ingested"
+   ],
+   "owns_table": [
+    "knowledge_chunks",
+    "retrieval_cache"
+   ],
+   "agent_reachable": [
+    "retrieval.search"
+   ],
+   "state": "not started"
+  },
+  "X-149": {
+   "intent": "RECOVER",
+   "what": "golden sets per industry \u00b7 A/B testing \u00b7 automated QA scoring \u00b7 eval-gated deploys \u00b7 refusal-rate monitoring \u00b7",
+   "provides": [
+    "eval.run",
+    "eval.gate"
+   ],
+   "emits": [
+    "model.changed",
+    "prompt.changed"
+   ],
+   "consumes": [
+    "agent.turn.answer",
+    "prompt.changed",
+    "model.changed"
+   ],
+   "owns_table": [
+    "eval_sets",
+    "eval_runs",
+    "quality_series"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-154": {
+   "intent": "GROW",
+   "what": "the tenant's own vocabulary (what they call their services, their tone, banned words, the jargon-lint exemptio",
+   "provides": [
+    "lexicon.apply",
+    "lexicon.readback"
+   ],
+   "emits": [
+    "lexicon.updated"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "tenant_lexicons"
+   ],
+   "agent_reachable": [
+    "lexicon.readback"
+   ],
+   "state": "not started"
+  },
+  "X-160": {
+   "intent": "INFORM",
+   "what": "upload \u2192 detect type (PDF \u00b7 DOCX \u00b7 XLSX \u00b7 CSV \u00b7 image \u00b7 scan) \u2192 OCR if needed (a photo of the price board on t",
+   "provides": [
+    "document.ingest",
+    "document.review",
+    "document.confirm"
+   ],
+   "emits": [
+    "document.ingested",
+    "document.reviewed"
+   ],
+   "consumes": [
+    "upload.received",
+    "sync.conflict"
+   ],
+   "owns_table": [
+    "documents",
+    "document_versions",
+    "extraction_runs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-161": {
+   "intent": "GROW",
+   "what": "when we build a prospect's demo site we build them a working assistant on it, grounded in their own crawl \u2014 th",
+   "provides": [
+    "demo.provision",
+    "demo.reset"
+   ],
+   "emits": [
+    "demo.provisioned",
+    "demo.converted",
+    "demo.stop_received"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "demo_tenants",
+    "demo_sessions",
+    "demo_ledger"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-151": {
+   "intent": "SERVE",
+   "what": "deep scraping and bulk extraction \u00b7 intelligent DOM parsing \u00b7 the 60-second sitemap scraper \u00b7 proxy rotation \u00b7",
+   "provides": [
+    "fetch.run",
+    "fetch.refresh",
+    "sitemap.scan"
+   ],
+   "emits": [
+    "fetch.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "fetches",
+    "fetch_targets",
+    "proxy_pool",
+    "robots_signals"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-16": {
+   "intent": "INFORM",
+   "what": "Places / local-SEO maps \u00b7 \"find near me\" \u00b7 bulk local-business extraction (name \u00b7 phone \u00b7 address \u00b7 lat/lng \u00b7 ",
+   "provides": [
+    "maps.harvest",
+    "maps.geogrid",
+    "maps.polygon"
+   ],
+   "emits": [
+    "service.out_of_scope"
+   ],
+   "consumes": [
+    "territory.changed",
+    "refresh.due"
+   ],
+   "owns_table": [
+    "places_records",
+    "geo_grids",
+    "service_polygons"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-150": {
+   "intent": "INFORM",
+   "what": "ten fetch methods in cost order \u2014 open data \u2192 free API \u2192 our own crawl \u2192 cheap paid \u2192 expensive paid \u2014 stoppin",
+   "provides": [
+    "provider.fetch"
+   ],
+   "emits": [
+    "provider.tried",
+    "provider.succeeded",
+    "provider.exhausted"
+   ],
+   "consumes": [
+    "fetch.requested",
+    "enrichment.requested"
+   ],
+   "owns_table": [
+    "provider_roster",
+    "provider_attempts",
+    "record_shapes"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-196": {
+   "intent": "GROW",
+   "what": "the operator's browser as a trigger: node-scraper integration (the Gro Node cluster) \u00b7 event-badge QR scanning",
+   "provides": [
+    "extension.inject",
+    "extension.scan"
+   ],
+   "emits": [
+    "extension.triggered",
+    "prospect.injected",
+    "extension.aborted"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "extension_sessions",
+    "extension_injections"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-134": {
+   "intent": "GROW",
+   "what": "waterfall enrichment (free \u2192 cheap \u2192 expensive, stopping at first valid shape) \u00b7 social appending \u00b7 tech-stack",
+   "provides": [
+    "enrich.run",
+    "identity.resolve",
+    "enrich.export"
+   ],
+   "emits": [
+    "enrichment.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "enrichment_fields",
+    "enrichment_runs"
+   ],
+   "agent_reachable": [
+    "identity.resolve"
+   ],
+   "state": "not started"
+  },
+  "X-135": {
+   "intent": "GROW",
+   "what": "the deep research agent \u00b7 the icebreaker generator \u00b7 pain-point matching \u00b7 competitor mentions and hiring spik",
+   "provides": [
+    "research.run",
+    "icebreaker.generate"
+   ],
+   "emits": [
+    "research.completed",
+    "icebreaker.generated",
+    "signal.found"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "research_runs",
+    "icebreakers",
+    "prospect_signals"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-136": {
+   "intent": "OBSERVE",
+   "what": "high-intent alerts \u00b7 revenue triggers \u00b7 budget detection \u00b7 decay modelling and prediction \u00b7 stale-posting and ",
+   "provides": [
+    "signal.score",
+    "signal.list"
+   ],
+   "emits": [
+    "signal.detected",
+    "intent.high",
+    "prospect.decayed"
+   ],
+   "consumes": [
+    "research.completed",
+    "visit.started",
+    "fetch.completed",
+    "job.completed"
+   ],
+   "owns_table": [
+    "signals",
+    "signal_scores",
+    "decay_models"
+   ],
+   "agent_reachable": [
+    "signal.score",
+    "signal.list"
+   ],
+   "state": "not started"
+  },
+  "X-156": {
+   "intent": "OBSERVE",
+   "what": "omni-channel inbox sync \u00b7 email inbox parsing \u00b7 Gmail read-only watch \u00b7 direct file uploads \u00b7 historical inges",
+   "provides": [
+    "ingest.connect",
+    "ingest.upload",
+    "ingest.webhook"
+   ],
+   "emits": [
+    "ingested.normalised",
+    "ingest.rejected"
+   ],
+   "consumes": [],
+   "owns_table": [
+    "ingest_sources",
+    "ingest_runs",
+    "ingest_rejections"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-130": {
+   "intent": "GROW",
+   "what": "aggregate demand by trade and geography \u00b7 seasonality \u00b7 weather overlays and re-routing \u00b7 competitor density \u00b7",
+   "provides": [
+    "demand.query",
+    "demand.publish"
+   ],
+   "emits": [
+    "demand.shifted",
+    "season.turned"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "demand_series",
+    "demand_regions",
+    "weather_overlays"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-109": {
+   "intent": "GROW",
+   "what": "asynchronous auto-submit of a researched proposal into the prospect's own contact form \u00b7 the ONLY module where",
+   "provides": [
+    "form.submit"
+   ],
+   "emits": [
+    "form.submitted",
+    "form.failed",
+    "captcha.encountered",
+    "quota.exhausted"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "captcha_quota"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-105": {
+   "intent": "GROW",
+   "what": "multi-touch orchestration of the outreach ladder \u00b7 sequential retargeting \u00b7 autonomous follow-ups \u00b7 reply clas",
+   "provides": [
+    "outreach.start",
+    "outreach.halt",
+    "demo.request"
+   ],
+   "emits": [
+    "outreach.sent",
+    "reply.received",
+    "prospect.engaged",
+    "demo.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "outreach_ladders",
+    "ladder_steps"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-190": {
+   "intent": "GROW",
+   "what": "the growth and referral engine \u00b7 the \"powered by\" viral loop \u00b7 the referral slot model \u2014 EMPTY \u2192 SEARCHING \u2192 P",
+   "provides": [
+    "referral.make",
+    "slot.propose",
+    "slot.decline",
+    "partner.package"
+   ],
+   "emits": [
+    "approval.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "referral_slots",
+    "partner_pool",
+    "referrals"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-191": {
+   "intent": "GROW",
+   "what": "broken-link building \u00b7 competitor backlink poaching \u00b7 guest-post pitching \u00b7 link-intersect analysis \u00b7 domain-a",
+   "provides": [
+    "link.prospect",
+    "link.pitch",
+    "link.monitor"
+   ],
+   "emits": [
+    "competitor.analysed"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "link_targets",
+    "link_pitches",
+    "link_placements"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-192": {
+   "intent": "GROW",
+   "what": "citation builder \u00b7 chamber and directory discovery \u00b7 ranking and pricing \u00b7 profile BUILDING, not just joining ",
+   "provides": [
+    "membership.rank",
+    "membership.build",
+    "citation.verify"
+   ],
+   "emits": [
+    "membership.recommended",
+    "profile.built",
+    "citation.verified"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "directory_memberships",
+    "citations"
+   ],
+   "agent_reachable": [
+    "citation.verify"
+   ],
+   "state": "not started"
+  },
+  "X-159": {
+   "intent": "GROW",
+   "what": "the 54 checks across 5 layers \u00b7 analytics and pixel detection \u00b7 page speed \u00b7 experiential tests \u2014 submit their",
+   "provides": [
+    "audit.run",
+    "audit.experiential"
+   ],
+   "emits": [
+    "audit.completed",
+    "audit.finding",
+    "experiential.tested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "audits",
+    "audit_findings",
+    "experiential_tests"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-158": {
+   "intent": "GROW",
+   "what": "synthetic video rendering \u00b7 burned-in captions \u2014 most watch muted \u00b7 short-form script extraction \u00b7 hook testin",
+   "provides": [
+    "video.render",
+    "video.host"
+   ],
+   "emits": [
+    "video.rendered",
+    "video.watched",
+    "video.shared"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "videos",
+    "video_views"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-114": {
+   "intent": "GROW",
+   "what": "AI stock sourcing \u00b7 visual canvas (stock + logo overlay) \u00b7 automatic resizing (one master \u2192 WebP at 100/500/10",
+   "provides": [
+    "media.source",
+    "media.resize",
+    "media.brand"
+   ],
+   "emits": [
+    "media.generated",
+    "media.resized"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "media_assets",
+    "brand_kits"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-110": {
+   "intent": "OBSERVE",
+   "what": "the 14 KB smart pixel \u00b7 firing, detection, diagnostics \u00b7 cross-domain and sub-page tracking \u00b7 UTM harvesting \u00b7",
+   "provides": [
+    "pixel.install",
+    "pixel.verify",
+    "pixel.events"
+   ],
+   "emits": [
+    "visit.started",
+    "visit.identified",
+    "rage_click.detected",
+    "exit_intent.detected",
+    "form.abandoned",
+    "cwv.measured"
+   ],
+   "consumes": [
+    "page.loaded"
+   ],
+   "owns_table": [
+    "pixel_events",
+    "visits",
+    "sessions",
+    "cwv_samples",
+    "identity_links"
+   ],
+   "agent_reachable": [
+    "pixel.verify"
+   ],
+   "state": "not started"
+  },
+  "X-132": {
+   "intent": "GROW",
+   "what": "identity resolution \u00b7 cross-device graphing \u00b7 pixel deanonymisation \u00b7 de-duplication \u00b7 social appending \u00b7 zero",
+   "provides": [
+    "person.resolve",
+    "person.merge"
+   ],
+   "emits": [
+    "person.resolved",
+    "person.merged"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "person_links",
+    "resolution_evidence"
+   ],
+   "agent_reachable": [
+    "person.resolve"
+   ],
+   "state": "not started"
+  },
+  "X-131": {
+   "intent": "GROW",
+   "what": "interest and topic clustering \u00b7 RFM \u00b7 preference signals from pages, threads and replies \u00b7 the preference-cent",
+   "provides": [
+    "interest.infer",
+    "interest.set"
+   ],
+   "emits": [
+    "interest.detected",
+    "interest.overridden"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "person_interests",
+    "interest_clusters"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-138": {
+   "intent": "INFORM",
+   "what": "click- and keyword-level attribution \u00b7 lifetime attribution \u00b7 multi-touch \u00b7 CRM attribution \u00b7 ROI calculation,",
+   "provides": [
+    "attribution.query",
+    "roi.compute"
+   ],
+   "emits": [
+    "job.attributed",
+    "attribution.ambiguous"
+   ],
+   "consumes": [
+    "job.completed",
+    "call.attributed",
+    "link.clicked",
+    "visit.joined_to_call",
+    "invoice.paid"
+   ],
+   "owns_table": [
+    "attribution_queries",
+    "roi_snapshots"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-139": {
+   "intent": "INFORM",
+   "what": "offline event uploads to Google and Meta \u00b7 offline tracking \u00b7 offline payment logging \u00b7 post-purchase exclusio",
+   "provides": [
+    "conversion.upload"
+   ],
+   "emits": [
+    "conversion.uploaded",
+    "conversion.rejected"
+   ],
+   "consumes": [
+    "job.attributed",
+    "job.completed",
+    "invoice.paid"
+   ],
+   "owns_table": [
+    "ad_connections",
+    "conversion_uploads"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-141": {
+   "intent": "OBSERVE",
+   "what": "replay simulation \u00b7 time-travel queries \u00b7 session replay \u00b7 historical retargeting \u00b7 revival testing \u00b7 proof A/",
+   "provides": [
+    "replay.run",
+    "replay.query"
+   ],
+   "emits": [
+    "replay.completed",
+    "counterfactual.computed"
+   ],
+   "consumes": [
+    "rule.changed",
+    "campaign.exhausted",
+    "flow.changed"
+   ],
+   "owns_table": [
+    "replay_runs",
+    "counterfactuals"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-116": {
+   "intent": "GROW",
+   "what": "200 procedural templates from the 192 industry rules; 80 main industries at premium depth, promoted by demand ",
+   "provides": [
+    "template.generate",
+    "template.score",
+    "funnel.instantiate"
+   ],
+   "emits": [
+    "template.generated",
+    "template.scored"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "templates",
+    "template_blocks",
+    "funnel_shapes"
+   ],
+   "agent_reachable": [
+    "template.score"
+   ],
+   "state": "not started"
+  },
+  "X-179": {
+   "intent": "GROW",
+   "what": "crawl their site, score all 200 \u00b7 DOM parsing \u00b7 boilerplate exclusion \u00b7 their words, verbatim \u2014 we never rewri",
+   "provides": [
+    "template.match",
+    "content.extract"
+   ],
+   "emits": [
+    "template.matched",
+    "content.extracted"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "template_matches",
+    "extracted_content"
+   ],
+   "agent_reachable": [
+    "template.match"
+   ],
+   "state": "not started"
+  },
+  "X-178": {
+   "intent": "INFORM",
+   "what": "design by conversation \u00b7 auto-build \u00b7 form generator \u00b7 one-click revisions \u00b7 visual canvas \u00b7 captions \u00b7 featur",
+   "provides": [
+    "design.change",
+    "design.undo",
+    "form.generate"
+   ],
+   "emits": [
+    "design.changed",
+    "block.added",
+    "design.undone"
+   ],
+   "consumes": [
+    "assistant.request",
+    "template.matched"
+   ],
+   "owns_table": [
+    "design_changes"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-103": {
+   "intent": "GROW",
+   "what": "the funnel and website builder \u00b7 funnel visualisation and persistence \u00b7 drop-off targeting \u00b7 integrated CRM fo",
+   "provides": [
+    "site.build",
+    "site.publish",
+    "page.create",
+    "funnel.build"
+   ],
+   "emits": [
+    "approval.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "pages",
+    "page_versions",
+    "funnels",
+    "site_forks"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-155": {
+   "intent": "OBSERVE",
+   "what": "the form runtime shared by every site and the widget: capture, validate, write Person + Conversation + Job/Mes",
+   "provides": [
+    "form.capture",
+    "form.validate"
+   ],
+   "emits": [
+    "form.captured",
+    "form.spam_rejected"
+   ],
+   "consumes": [
+    "page.published"
+   ],
+   "owns_table": [
+    "form_definitions",
+    "form_submissions"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-104": {
+   "intent": "INFORM",
+   "what": "one-click install \u00b7 widget auto-injection \u00b7 analytics injection \u00b7 SEO meta sync \u00b7 the WP takeover path \u00b7 autom",
+   "provides": [
+    "plugin.activate",
+    "plugin.sync"
+   ],
+   "emits": [
+    "plugin.installed",
+    "plugin.synced"
+   ],
+   "consumes": [
+    "tenant.created"
+   ],
+   "owns_table": [
+    "plugin_installs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-129": {
+   "intent": "INFORM",
+   "what": "R130, in the owner's words: \"a tenant is never left on a new empty domain \u2014 if they have a site, it MOVES and ",
+   "provides": [
+    "site.migrate",
+    "redirects.build"
+   ],
+   "emits": [
+    "site.migrated",
+    "domain.verified"
+   ],
+   "consumes": [
+    "tenant.created",
+    "fetch.completed"
+   ],
+   "owns_table": [
+    "migrations",
+    "redirect_maps"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-157": {
+   "intent": "RECOVER",
+   "what": "Cloudflare zero-touch provisioning \u00b7 S3 storage with versioning \u00b7 page-speed optimisation \u00b7 instant deployment",
+   "provides": [
+    "edge.provision",
+    "edge.deploy",
+    "edge.rollback"
+   ],
+   "emits": [
+    "deploy.completed",
+    "deploy.rolled_back"
+   ],
+   "consumes": [
+    "page.published",
+    "domain.verified"
+   ],
+   "owns_table": [
+    "deployments",
+    "edge_zones"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-01": {
+   "intent": "SERVE",
+   "what": "one Conversation per Person, every channel \u2014 SMS, email, voice transcripts, web chat, WhatsApp in ONE timeline",
+   "provides": [
+    "contact.create",
+    "contact.merge",
+    "conversation.read",
+    "conversation.takeover",
+    "search.global"
+   ],
+   "emits": [
+    "contact.created",
+    "conversation.updated",
+    "lead.scored",
+    "takeover.started"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "contact_tags",
+    "custom_fields",
+    "lead_scores",
+    "takeover_latches"
+   ],
+   "agent_reachable": [
+    "conversation.read"
+   ],
+   "state": "not started"
+  },
+  "X-10": {
+   "intent": "SERVE",
+   "what": "skill-based \u00b7 round-robin \u00b7 conversion-based \u00b7 fraud-score \u00b7 natural-language rules \u00b7 multi-stage \u00b7 permission",
+   "provides": [
+    "lead.assign",
+    "lead.reassign",
+    "territory.define"
+   ],
+   "emits": [
+    "lead.assigned",
+    "lead.reassigned",
+    "territory.changed"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "routing_rules",
+    "territories",
+    "assignments"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-108": {
+   "intent": "SERVE",
+   "what": "two modes \u2014 APPOINTMENT and JOB \u2014 the profile picks (\u00a729.3) \u00b7 calendar auto-block \u00b7 blackouts and holiday over",
+   "provides": [
+    "availability.request",
+    "appointment.book",
+    "appointment.cancel",
+    "waitlist.join"
+   ],
+   "emits": [
+    "appointment.booked",
+    "appointment.reminded",
+    "no_show.detected",
+    "slot.locked"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "appointments",
+    "availability_rules",
+    "resources",
+    "slot_locks",
+    "waitlists"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-162": {
+   "intent": "SERVE",
+   "what": "the kanban and predictability board \u00b7 real-time rep dashboard \u00b7 manager roll-up \u00b7 THE THIRD STATE: free \u00b7 busy",
+   "provides": [
+    "job.dispatch",
+    "route.optimise",
+    "eta.query"
+   ],
+   "emits": [
+    "job.dispatched",
+    "tech.en_route",
+    "route.changed",
+    "eta.updated"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "dispatch_assignments",
+    "routes",
+    "eta_predictions"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-07": {
+   "intent": "INFORM",
+   "what": "MRR prediction \u00b7 run-rate math \u00b7 seasonality \u00b7 manager roll-up \u00b7 pipeline gap analysis \u00b7 decay prediction \u00b7 au",
+   "provides": [
+    "forecast.compute",
+    "churn.score"
+   ],
+   "emits": [
+    "forecast.updated"
+   ],
+   "consumes": [
+    "job.completed",
+    "conversation.updated",
+    "signal.detected",
+    "invoice.paid"
+   ],
+   "owns_table": [
+    "forecasts"
+   ],
+   "agent_reachable": [
+    "churn.score"
+   ],
+   "state": "not started"
+  },
+  "X-198": {
+   "intent": "RECOVER",
+   "what": "Stripe Connect AND Authorize.Net partner \u2014 both, owner T622 \u00b7 payment integration \u00b7 payment links \u00b7 multi-acco",
+   "provides": [
+    "merchant.connect",
+    "payment.capture",
+    "payment.link",
+    "payout.reconcile"
+   ],
+   "emits": [
+    "payment.captured",
+    "payment.failed",
+    "chargeback.received",
+    "payout.reconciled",
+    "reconciliation.discrepancy"
+   ],
+   "consumes": [
+    "invoice.due",
+    "cart.checkout",
+    "subscription.renewed",
+    "deposit.requested"
+   ],
+   "owns_table": [
+    "merchant_connections",
+    "payments",
+    "payouts",
+    "reconciliation_runs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-199": {
+   "intent": "INFORM",
+   "what": "generates EVERY invoice \u2014 ours and the tenant's; C-Billing is the subscription and metering LEDGER and hands d",
+   "provides": [
+    "invoice.draft",
+    "invoice.issue",
+    "invoice.record_offline",
+    "terms.set"
+   ],
+   "emits": [
+    "invoice.issued",
+    "invoice.paid",
+    "invoice.due"
+   ],
+   "consumes": [
+    "job.completed",
+    "payment.captured",
+    "subscription.renewed",
+    "ledger.period_closed"
+   ],
+   "owns_table": [
+    "invoices",
+    "invoice_lines",
+    "credit_terms",
+    "overflow_charges"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-117": {
+   "intent": "SERVE",
+   "what": "checkout overlay \u00b7 dynamic service menu \u00b7 up-sell injection \u00b7 deposit capture on booking \u00b7 membership checkout",
+   "provides": [
+    "cart.build",
+    "cart.checkout",
+    "order.cancel"
+   ],
+   "emits": [
+    "inventory.updated"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "sellables",
+    "orders",
+    "order_lines",
+    "carts"
+   ],
+   "agent_reachable": [
+    "cart.checkout"
+   ],
+   "state": "not started"
+  },
+  "X-163": {
+   "intent": "NONE",
+   "what": "services with prices \u00b7 good / better / best tiers \u00b7 price ranges (\"boiler replacement \u00a31,800\u2013\u00a33,200\") \u00b7",
+   "provides": [
+    "price.lookup",
+    "price.confirm",
+    "price.range",
+    "callout.lookup",
+    "book.version"
+   ],
+   "emits": [
+    "pricebook.updated",
+    "price.confirmed",
+    "version.bumped",
+    "price.refusal_flagged"
+   ],
+   "consumes": [
+    "document.ingested",
+    "job.completed",
+    "agent.refused"
+   ],
+   "owns_table": [
+    "price_book_items",
+    "price_book_versions",
+    "location_books",
+    "callout_fees"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-164": {
+   "intent": "SERVE",
+   "what": "good/better/best presentation \u00b7 auto-line items from the job notes \u00b7 expiry enforcement \u2014 \"valid 7 days\"; day ",
+   "provides": [
+    "estimate.draft",
+    "estimate.send",
+    "estimate.refresh"
+   ],
+   "emits": [
+    "estimate.sent",
+    "estimate.accepted",
+    "estimate.expired",
+    "deposit.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "estimates",
+    "estimate_lines",
+    "estimate_versions"
+   ],
+   "agent_reachable": [
+    "estimate.draft"
+   ],
+   "state": "not started"
+  },
+  "X-165": {
+   "intent": "SERVE",
+   "what": "recurring service plans \u00b7 membership checkout \u00b7 overrides \u00b7 priority scheduling \u2014 and it must be REAL \u00b7 member",
+   "provides": [
+    "plan.propose",
+    "membership.start",
+    "membership.renew"
+   ],
+   "emits": [
+    "membership.started",
+    "membership.renewed",
+    "member.called",
+    "visit.rolled"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "membership_plans",
+    "memberships",
+    "member_visits"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-166": {
+   "intent": "INFORM",
+   "what": "actual vs expected per job \u00b7 margin \u00b7 cash-collected validation \u00b7 profitability by tech, by service, by source",
+   "provides": [
+    "job.cost",
+    "margin.report"
+   ],
+   "emits": [
+    "job.costed",
+    "margin.below_threshold"
+   ],
+   "consumes": [
+    "pricebook.updated",
+    "timesheet.submitted",
+    "inventory.consumed",
+    "payment.captured"
+   ],
+   "owns_table": [
+    "job_costs",
+    "margin_snapshots"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-167": {
+   "intent": "INFORM",
+   "what": "van and storage-unit stock \u00b7 fractional inventory (2.5 metres of pipe) \u00b7 syncing \u00b7 reorder alerts \u00b7 a reorder ",
+   "provides": [
+    "stock.adjust",
+    "reorder.propose",
+    "po.generate"
+   ],
+   "emits": [
+    "inventory.consumed",
+    "reorder.triggered",
+    "stock.low",
+    "po.sent"
+   ],
+   "consumes": [
+    "job.completed",
+    "barcode.scanned",
+    "order.paid",
+    "order.cancelled"
+   ],
+   "owns_table": [
+    "stock_items",
+    "stock_locations",
+    "purchase_orders",
+    "suppliers"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-168": {
+   "intent": "INFORM",
+   "what": "time tracking \u00b7 out-of-hours and overtime math are STRUCK \u2014 P-204 fenced them; \u00a7240 recorded this fix and the ",
+   "provides": [
+    "timesheet.compute",
+    "timesheet.approve"
+   ],
+   "emits": [
+    "timesheet.submitted",
+    "overtime.accrued",
+    "period.ready"
+   ],
+   "consumes": [
+    "tech.en_route",
+    "tech.on_site",
+    "job.completed"
+   ],
+   "owns_table": [
+    "timesheets",
+    "timesheet_entries",
+    "pay_rules"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-170": {
+   "intent": "RECOVER",
+   "what": "commission injection \u00b7 split and tiered \u00b7 margin-based (needs X-166) \u00b7 clawback on refund or chargeback \u00b7 spif",
+   "provides": [
+    "commission.compute",
+    "commission.release",
+    "scorecard.read"
+   ],
+   "emits": [
+    "commission.calculated",
+    "commission.released",
+    "commission.clawed_back"
+   ],
+   "consumes": [
+    "job.costed",
+    "payment.captured",
+    "refund.issued",
+    "chargeback.received",
+    "review.received"
+   ],
+   "owns_table": [
+    "commission_rules",
+    "commissions",
+    "scorecards"
+   ],
+   "agent_reachable": [
+    "scorecard.read"
+   ],
+   "state": "not started"
+  },
+  "X-171": {
+   "intent": "SERVE",
+   "what": "local-first with SQLite on the device \u2014 a basement has no signal \u00b7 Wasm barcode at 60 fps \u00b7 GPS clock-in bound",
+   "provides": [
+    "job.state",
+    "job.photo",
+    "job.sign",
+    "barcode.scan",
+    "note.voice"
+   ],
+   "emits": [
+    "tech.on_site",
+    "job.completed",
+    "photo.captured",
+    "signature.captured",
+    "barcode.scanned",
+    "sync.conflict"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "device_sync_queue",
+    "device_sync_conflicts"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-172": {
+   "intent": "INFORM",
+   "what": "self-service \u00b7 magic-link SSO \u2014 no password, ever \u00b7 live ETA from the third state \u2014 the feature they tell peop",
+   "provides": [
+    "portal.link",
+    "portal.view"
+   ],
+   "emits": [
+    "portal.viewed",
+    "portal.action"
+   ],
+   "consumes": [
+    "estimate.sent",
+    "invoice.issued",
+    "tech.en_route",
+    "job.completed"
+   ],
+   "owns_table": [
+    "portal_links",
+    "portal_views"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-173": {
+   "intent": "OBSERVE",
+   "what": "two-way sync to Xero / QuickBooks / Sage \u00b7 GL auto-categorisation with confidence (G1-03's home) \u00b7 reconciliat",
+   "provides": [
+    "accounting.connect",
+    "accounting.sync",
+    "accounting.map"
+   ],
+   "emits": [
+    "accounting.synced",
+    "category.inferred"
+   ],
+   "consumes": [
+    "invoice.paid",
+    "job.costed",
+    "payment.captured"
+   ],
+   "owns_table": [
+    "accounting_connections",
+    "account_mappings",
+    "sync_runs",
+    "accounting_sync_conflicts"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-175": {
+   "intent": "INFORM",
+   "what": "the same C-Agent, third deployment, pointed at the tech: objection RAG \u00b7 price lookup on site from X-163, neve",
+   "provides": [
+    "field.ask",
+    "field.suggest"
+   ],
+   "emits": [
+    "assistant.suggested",
+    "upsell.prompted"
+   ],
+   "consumes": [
+    "job.started",
+    "pricebook.updated",
+    "document.ingested",
+    "note.voice"
+   ],
+   "owns_table": [
+    "field_suggestions"
+   ],
+   "agent_reachable": [
+    "field.suggest"
+   ],
+   "state": "not started"
+  },
+  "X-176": {
+   "intent": "GROW",
+   "what": "explicit allow for AI crawlers (GPTBot \u00b7 ClaudeBot \u00b7 PerplexityBot \u00b7 Google-Extended) \u00b7 structural SEO \u00b7 hyper",
+   "provides": [
+    "schema.render",
+    "index.request",
+    "sitemap.ping"
+   ],
+   "emits": [
+    "schema.published",
+    "crawler.visited",
+    "index.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "schema_snapshots",
+    "crawler_visits"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-177": {
+   "intent": "INFORM",
+   "what": "GBP auto-sync \u00b7 Q&A seeding \u00b7 post generation and local-post automation \u00b7 claimed-status \u00b7 suspension monitori",
+   "provides": [
+    "gbp.post",
+    "gbp.answer",
+    "gbp.sync_hours",
+    "gbp.state"
+   ],
+   "emits": [
+    "gbp.posted",
+    "gbp.question_answered",
+    "gbp.suspension_risk",
+    "gbp.suspended",
+    "gbp.reinstated"
+   ],
+   "consumes": [
+    "job.completed",
+    "review.received",
+    "content.created",
+    "zernio.webhook"
+   ],
+   "owns_table": [
+    "gbp_connections",
+    "gbp_posts",
+    "gbp_state_log"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-144": {
+   "intent": "GROW",
+   "what": "tracks whether AI assistants recommend them (ChatGPT \u00b7 Claude \u00b7 Perplexity \u00b7 Gemini \u00b7 AI Overviews) \u2014 asks the",
+   "provides": [
+    "visibility.query",
+    "visibility.report"
+   ],
+   "emits": [
+    "visibility.changed",
+    "mentioned_by_ai",
+    "competitor.outranking"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "visibility_queries",
+    "visibility_answers"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-140": {
+   "intent": "GROW",
+   "what": "real customer questions become published answers \u00b7 AI blog publishing \u00b7 topic clustering \u00b7 refreshing \u00b7 season",
+   "provides": [
+    "topic.identify",
+    "content.draft_from_conversation"
+   ],
+   "emits": [
+    "topic.identified",
+    "content.created"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "content_topics",
+    "topic_sources"
+   ],
+   "agent_reachable": [
+    "content.draft_from_conversation"
+   ],
+   "state": "not started"
+  },
+  "C-Reviews": {
+   "intent": "GROW",
+   "what": "\u00a737.1: every review request is TRIAGED \u2014 low ratings go to internal QA as a SupportTicket with sla_due_at; hi",
+   "provides": [
+    "review.request",
+    "review.reply",
+    "review.sync",
+    "qa.ticket"
+   ],
+   "emits": [
+    "review.requested",
+    "review.received",
+    "reply.published",
+    "first_win"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "review_requests",
+    "review_replies",
+    "qa_settings"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-183": {
+   "intent": "GROW",
+   "what": "writing and illustration \u00b7 blog publishing \u00b7 copy and narrative \u00b7 topic clustering \u00b7 refreshing \u00b7 evergreen re",
+   "provides": [
+    "content.write",
+    "content.illustrate",
+    "content.gate"
+   ],
+   "emits": [
+    "content.gated",
+    "content.rejected"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "content_drafts",
+    "gate_results",
+    "trust_ladder"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-184": {
+   "intent": "GROW",
+   "what": "the content calendar: a whole plan proposed from their industry and their transcripts \u00b7 monthly and multi-tier",
+   "provides": [
+    "plan.propose",
+    "plan.approve_cadence",
+    "plan.schedule"
+   ],
+   "emits": [
+    "plan.created",
+    "item.scheduled"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "content_plans",
+    "plan_items"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-182": {
+   "intent": "GROW",
+   "what": "posting autopilot \u00b7 best time to post \u00b7 comment auto-reply \u00b7 escalates anything negative to the inbox \u2014 never ",
+   "provides": [
+    "post.publish",
+    "comment.reply",
+    "image.overlay"
+   ],
+   "emits": [
+    "post.published",
+    "comment.received",
+    "comment.escalated"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "social_accounts",
+    "social_posts",
+    "comments"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-185": {
+   "intent": "GROW",
+   "what": "ALWAYS ON: A/B and split testing \u00b7 hook testing \u00b7 course correction \u00b7 campaign ML optimisation \u00b7 conversion-ba",
+   "provides": [
+    "campaign.create",
+    "campaign.run",
+    "sequence.stop",
+    "pack.seed"
+   ],
+   "emits": [
+    "campaign.sent",
+    "campaign.replied",
+    "sequence.stopped",
+    "cart.nudged"
+   ],
+   "consumes": [
+    "entity.state_changed",
+    "signal.detected",
+    "form.abandoned",
+    "message.received",
+    "tenant.created"
+   ],
+   "owns_table": [
+    "sequences",
+    "sequence_steps",
+    "content_packs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "C-Billing": {
+   "intent": "INFORM",
+   "what": "CreditLedger (988 lines exist \u2014 verified, extended) \u00b7 the five meters: SMS segments \u00b7 voice minutes \u00b7 AI \u00b7 ema",
+   "provides": [
+    "ledger.debit",
+    "ledger.grant",
+    "topup.charge",
+    "dunning.advance",
+    "ledger.explain"
+   ],
+   "emits": [
+    "ledger.period_closed",
+    "refund.issued"
+   ],
+   "consumes": [
+    "payment.captured",
+    "payment.failed",
+    "subscription.renewed"
+   ],
+   "owns_table": [
+    "credit_ledger_entries",
+    "meters",
+    "trial_limits",
+    "dunning_states"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-82": {
+   "intent": "INFORM",
+   "what": "the rate registry \u2014 a row cannot be invented; no document carries a number \u00b7 per-country rates only where OUR ",
+   "provides": [
+    "rate.lookup",
+    "rate.set",
+    "allowance.lookup"
+   ],
+   "emits": [
+    "rate.changed",
+    "allowance.granted"
+   ],
+   "consumes": [
+    "subscription.renewed",
+    "country.detected"
+   ],
+   "owns_table": [
+    "rates",
+    "rate_versions",
+    "allowances"
+   ],
+   "agent_reachable": [
+    "rate.lookup",
+    "allowance.lookup"
+   ],
+   "state": "not started"
+  },
+  "X-120": {
+   "intent": "OBSERVE",
+   "what": "[AMENDED T677 \u00b7 P-196 + \u00a7202A] THE ONLY COMPONENT IN THE ROSTER THAT MAY HOLD A PAN \u2014 and it MAY STORE IT, enc",
+   "provides": [
+    "card.store",
+    "card.expiring_scan",
+    "card.rotate"
+   ],
+   "emits": [
+    "card.stored",
+    "card.expiring",
+    "card.declined"
+   ],
+   "consumes": [
+    "subscription.renewed",
+    "limit.exceeded",
+    "payment.failed"
+   ],
+   "owns_table": [
+    "card_tokens"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-201": {
+   "intent": "RECOVER",
+   "what": "receives chargeback.received from X-198 for any gateway \u00b7 compiles the evidence bundle automatically (call log",
+   "provides": [
+    "dispute.compile",
+    "dispute.submit",
+    "dispute.record"
+   ],
+   "emits": [
+    "dispute.opened",
+    "evidence.compiled",
+    "dispute.resolved",
+    "dispute.lost"
+   ],
+   "consumes": [
+    "chargeback.received",
+    "invoice.paid",
+    "call.completed",
+    "signature.captured"
+   ],
+   "owns_table": [
+    "disputes",
+    "dispute_evidence",
+    "dispute_outcomes"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-118": {
+   "intent": "GROW",
+   "what": "IT IS THE WIZARD, and it asks for two things: a business name and a phone number. The AI FINDS GBP \u00b7 reviews \u00b7",
+   "provides": [
+    "onboarding.start",
+    "onboarding.confirm",
+    "onboarding.test_call"
+   ],
+   "emits": [
+    "tenant.created",
+    "tenant.provisioned",
+    "agent.live",
+    "ttfm.measured",
+    "first_win"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "onboarding_runs",
+    "onboarding_steps"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-111": {
+   "intent": "INFORM",
+   "what": "health dashboard \u00b7 the supervisor watchdog \u00b7 health checks \u00b7 global search and bulk exports (from X-121's stri",
+   "provides": [
+    "ops.alert",
+    "ops.ticket",
+    "ops.ban",
+    "ops.export",
+    "ops.impersonate"
+   ],
+   "emits": [
+    "alert.operator",
+    "anomaly.detected",
+    "health.degraded",
+    "ticket.opened"
+   ],
+   "consumes": [
+    "quota.exhausted",
+    "help.human_requested",
+    "price.refusal_flagged"
+   ],
+   "owns_table": [
+    "operator_alerts",
+    "ip_bans",
+    "tenant_tickets",
+    "manual_queue"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-112": {
+   "intent": "INFORM",
+   "what": "white-labelling \u00b7 one-click impersonation, ALWAYS logged \u00b7 the aggregated dashboard and roll-ups \u00b7 margin mark",
+   "provides": [
+    "agency.onboard_client",
+    "agency.impersonate",
+    "agency.markup",
+    "staff.invite",
+    "staff.deactivate",
+    "role.assign"
+   ],
+   "emits": [
+    "impersonation.started",
+    "client.provisioned",
+    "margin.computed"
+   ],
+   "consumes": [
+    "tenant.created",
+    "credit.debited"
+   ],
+   "owns_table": [
+    "agencies",
+    "agency_clients",
+    "markups",
+    "impersonation_log",
+    "staff_roles"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-195": {
+   "intent": "INFORM",
+   "what": "template and snapshot sharing \u00b7 the integration marketplace \u00b7 feature toggling and gating \u00b7 custom blacklists ",
+   "provides": [
+    "market.publish",
+    "market.install",
+    "flag.set"
+   ],
+   "emits": [
+    "manifest.published",
+    "manifest.installed",
+    "flag.changed"
+   ],
+   "consumes": [
+    "page.published",
+    "rule.fired"
+   ],
+   "owns_table": [
+    "market_items",
+    "installs",
+    "feature_flags"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-204": {
+   "intent": "GROW",
+   "what": "The single decider of whether a message may be sent to a person on a channel. Every sender asks; no sender dec",
+   "provides": [
+    "consent.decide",
+    "consent.suppress",
+    "consent.lift",
+    "attestation.record",
+    "register.check"
+   ],
+   "emits": [
+    "consent.decided",
+    "permit.granted",
+    "suppression.added",
+    "attestation.recorded"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "send_permits",
+    "suppressions",
+    "import_attestations",
+    "compliance_registers"
+   ],
+   "agent_reachable": [
+    "register.check"
+   ],
+   "state": "not started"
+  },
+  "X-207": {
+   "intent": "GROW",
+   "what": "The platform's one OWNED channel \u2014 the only one with no carrier between us and the device. Delivers to Web Pus",
+   "provides": [
+    "push.send",
+    "push.register_device",
+    "push.retire_device",
+    "push.broadcast"
+   ],
+   "emits": [
+    "send.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "device_tokens",
+    "push_deliveries",
+    "push_prompts"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-209": {
+   "intent": "INFORM",
+   "what": "The employee's own AI \u2014 the only agent in this platform that works for a PERSON rather than for the tenant. Ev",
+   "provides": [
+    "fixer.command",
+    "fixer.approve",
+    "fixer.delegate"
+   ],
+   "emits": [
+    "fixer.command_received",
+    "fixer.action_taken",
+    "fixer.escalated",
+    "fixer.promoted"
+   ],
+   "consumes": [
+    "job.dispatched",
+    "job.completed"
+   ],
+   "owns_table": [
+    "fixer_commands",
+    "fixer_ladder",
+    "staff_calendar_links"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-202": {
+   "intent": "RECOVER",
+   "what": "The one queue every L1 decision in the platform lands in \u2014 from all 114 modules. A refund proposal, a domino",
+   "provides": [
+    "approval.enqueue",
+    "approval.decide",
+    "approval.escalate"
+   ],
+   "emits": [
+    "approval.raised",
+    "approval.decided",
+    "approval.expired",
+    "approval.escalated"
+   ],
+   "consumes": [
+    "approval.requested"
+   ],
+   "owns_table": [
+    "approval_items",
+    "approval_chains"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-203": {
+   "intent": "RECOVER",
+   "what": "Backups, restores, point-in-time recovery, multi-region, cold-storage hashing and runbook automation \u2014 as an O",
+   "provides": [
+    "dr.restore_test",
+    "dr.pitr",
+    "dr.runbook_run"
+   ],
+   "emits": [
+    "dr.test_passed",
+    "dr.test_failed",
+    "dr.restore_executed"
+   ],
+   "consumes": [
+    "none"
+   ],
+   "owns_table": [
+    "restore_tests",
+    "runbooks",
+    "runbook_runs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-205": {
+   "intent": "GROW",
+   "what": "The referral and affiliate layer: every tenant gets an affiliate id; tiers, lifetime attribution, id merging, ",
+   "provides": [
+    "affiliate.attribute",
+    "affiliate.propose_clawback",
+    "affiliate.payout_request"
+   ],
+   "emits": [
+    "approval.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "affiliates",
+    "affiliate_attributions",
+    "affiliate_payouts"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-206": {
+   "intent": "RECOVER",
+   "what": "Every platform and tenant credential \u2014 API keys, OAuth tokens, gateway credentials, calendar connections \u2014 sco",
+   "provides": [
+    "credential.store",
+    "credential.fetch",
+    "credential.reveal",
+    "credential.rotate"
+   ],
+   "emits": [
+    "credential.stored",
+    "credential.revealed",
+    "credential.expiring",
+    "credential.failed"
+   ],
+   "consumes": [
+    "none"
+   ],
+   "owns_table": [
+    "credentials",
+    "credential_reveals"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-208": {
+   "intent": "INFORM",
+   "what": "Physical mail as a channel. BYOK \u2014 the TENANT supplies the Lob key. Zero platform liability, zero platform ac",
+   "provides": [
+    "mail.compose",
+    "mail.propose",
+    "mail.send"
+   ],
+   "emits": [
+    "approval.requested"
+   ],
+   "consumes": [
+    "ticket.resolved"
+   ],
+   "owns_table": [
+    "mail_pieces"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-210": {
+   "intent": "GROW",
+   "what": "The tenant's own offer layer: create a promotion, target it, distribute it across every channel the platform a",
+   "provides": [
+    "promotion.create",
+    "promotion.validate",
+    "promotion.apply",
+    "promotion.propose_targets"
+   ],
+   "emits": [
+    "promotion.created",
+    "promotion.redeemed",
+    "promotion.expired",
+    "promotion.cap_reached",
+    "promotion.velocity_alert"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "promotions",
+    "promotion_redemptions",
+    "promotion_scopes"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-211": {
+   "intent": "RECOVER",
+   "what": "Getting a service business paid for work already done. Late fees, payment plans on large invoices, forcing ACH",
+   "provides": [
+    "ar.apply_late_fee",
+    "ar.offer_plan",
+    "ar.force_ach",
+    "ar.log_offline_payment",
+    "ar.package_for_collections"
+   ],
+   "emits": [
+    "ar.overdue",
+    "ar.fee_applied",
+    "ar.plan_accepted",
+    "ar.escalated_to_human",
+    "ar.packaged"
+   ],
+   "consumes": [
+    "invoice.overdue"
+   ],
+   "owns_table": [
+    "receivable_states",
+    "payment_plans",
+    "offline_payments"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-212": {
+   "intent": "INFORM",
+   "what": "Bringing a tenant's whole business across from ServiceTitan, Jobber, Housecall Pro \u2014 or from a spreadsheet. Cu",
+   "provides": [
+    "migration.dry_run",
+    "migration.commit",
+    "migration.rollback",
+    "migration.map_field"
+   ],
+   "emits": [
+    "migration.started",
+    "migration.dry_run_ready",
+    "migration.committed",
+    "migration.field_unmapped",
+    "migration.record_rejected"
+   ],
+   "consumes": [
+    "tenant.provisioned"
+   ],
+   "owns_table": [
+    "migration_runs",
+    "migration_field_maps",
+    "migration_rejects"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-08": {
+   "intent": "OBSERVE",
+   "what": "churn risk scoring from ROI-push open rate, conversation tone and job recency. It observes. It has no send pat",
+   "provides": [
+    "churn.score"
+   ],
+   "emits": [
+    "churn.risk_detected"
+   ],
+   "consumes": [
+    "conversation.updated",
+    "signal.detected"
+   ],
+   "owns_table": [
+    "churn_scores"
+   ],
+   "agent_reachable": [
+    "churn.score"
+   ],
+   "state": "not started"
+  },
+  "X-181": {
+   "intent": "RECOVER",
+   "what": "the internal half of the review split: a low rating becomes a SupportTicket with an SLA, routed to a human, tr",
+   "provides": [
+    "qa.ticket"
+   ],
+   "emits": [
+    "ticket.created",
+    "ticket.resolved"
+   ],
+   "consumes": [
+    "review.received"
+   ],
+   "owns_table": [
+    "qa_tickets"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-189": {
+   "intent": "SERVE",
+   "what": "client photo \u2192 generated variant \u2192 branded card. It never fails: a missing photo yields the branded fallback. ",
+   "provides": [
+    "image.overlay"
+   ],
+   "emits": [
+    "media.branded"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "branded_media"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-186": {
+   "intent": "GROW",
+   "what": "multi-channel sequencing \u00b7 omnichannel \u00b7 drip adjustment \u00b7 send-time optimisation \u00b7 resend-to-unopens \u00b7 REPLY ",
+   "provides": [
+    "campaign.create",
+    "campaign.run",
+    "sequence.stop"
+   ],
+   "emits": [
+    "campaign.sent",
+    "campaign.replied",
+    "sequence.stopped",
+    "campaign.exhausted",
+    "send.requested"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "campaign_steps",
+    "campaign_runs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-180": {
+   "intent": "INFORM",
+   "what": "the seeded starter pack \u2014 N assets per industry, declared in a manifest. WIZARD inferred: the industry from si",
+   "provides": [
+    "pack.seed"
+   ],
+   "emits": [
+    "pack.seeded"
+   ],
+   "consumes": [
+    "tenant.created"
+   ],
+   "owns_table": [
+    "content_packs"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-113": {
+   "intent": "SERVE",
+   "what": "staff, roles, granular permissions, and the document vault. No scoring, no ranking, no attendance. WIZARD inf",
+   "provides": [
+    "staff.invite",
+    "staff.deactivate",
+    "role.assign"
+   ],
+   "emits": [
+    "staff.deactivated",
+    "role.assigned"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "staff_users",
+    "roles",
+    "role_permissions"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-213": {
+   "intent": "OBSERVE",
+   "what": "a cheap vision-capable model checks tenant-generated output \u2014 pages, funnels, the 200 assets \u2014 against a check",
+   "provides": [
+    "vision.check.run"
+   ],
+   "emits": [
+    "vision.check.passed",
+    "vision.check.flagged"
+   ],
+   "consumes": [
+    "content.created"
+   ],
+   "owns_table": [
+    "vision_checks"
+   ],
+   "agent_reachable": [
+    "vision.check.run"
+   ],
+   "state": "not started"
+  },
+  "X-214": {
+   "intent": "SERVE",
+   "what": "a tenant-configured surcharge on card payments. NOT a platform revenue rail \u2014 this is the tenant's own cost re",
+   "provides": [
+    "surcharge.quote"
+   ],
+   "emits": [
+    "surcharge.disclosed",
+    "surcharge.applied"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "surcharge_policies"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-215": {
+   "intent": "SERVE",
+   "what": "documents sent, viewed, commented on, signed and stored. The provider is a DRIVER and a CONFIG ROW \u2014 DocuSign ",
+   "provides": [
+    "doc.send_for_signature",
+    "doc.remind",
+    "doc.void"
+   ],
+   "emits": [
+    "doc.sent",
+    "doc.viewed",
+    "doc.commented",
+    "doc.signed",
+    "doc.voided"
+   ],
+   "consumes": [
+    "capability.decided"
+   ],
+   "owns_table": [
+    "signable_documents",
+    "signature_requests",
+    "document_comments"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-219": {
+   "intent": "OBSERVE",
+   "what": "The roster and the assignment. Every model from every vendor \u2014 including self-hosted \u2014 is a ROW, and every mod",
+   "provides": [
+    "model.resolve",
+    "model.assign",
+    "provider.health",
+    "roster.list"
+   ],
+   "emits": [
+    "model.resolved",
+    "model.fallback",
+    "provider.degraded",
+    "roster.changed"
+   ],
+   "consumes": [
+    "capability.decided",
+    "job.dispatched"
+   ],
+   "owns_table": [
+    "ai_providers",
+    "ai_models",
+    "ai_module_assignments"
+   ],
+   "agent_reachable": [
+    "roster.list"
+   ],
+   "state": "not started"
+  },
+  "X-220": {
+   "intent": "OBSERVE",
+   "what": "A prompt is a ROW with a version, and its golden set is versioned with it. A prompt edited in code is an exper",
+   "provides": [
+    "prompt.resolve",
+    "prompt.freeze",
+    "eval.run",
+    "eval.compare"
+   ],
+   "emits": [
+    "prompt.frozen",
+    "eval.completed",
+    "eval.regressed"
+   ],
+   "consumes": [
+    "capability.decided",
+    "model.resolved"
+   ],
+   "owns_table": [
+    "ai_prompts",
+    "golden_sets"
+   ],
+   "agent_reachable": [
+    "prompt.resolve"
+   ],
+   "state": "not started"
+  },
+  "X-127": {
+   "intent": "RECOVER",
+   "what": "GO AI EZ as tenant #0 on its own platform (\u00a75). The same code, the same database, the same modules \u2014 at platfo",
+   "provides": [
+    "tenantzero.config",
+    "tenantzero.metric",
+    "tenantzero.proof"
+   ],
+   "emits": [
+    "send.requested",
+    "tenantzero.metric_published",
+    "tenantzero.claim_verified"
+   ],
+   "consumes": [
+    "subscription.renewed",
+    "job.completed",
+    "review.received"
+   ],
+   "owns_table": [
+    "tenant_zero_config",
+    "published_metrics"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-217": {
+   "intent": "GROW",
+   "what": "DISTINCT FROM X-205. X-205 is the affiliate PROGRAM \u2014 \"every tenant gets an affiliate id,\" tiers, payouts,",
+   "provides": [
+    "affiliate.recruit",
+    "affiliate.pipeline",
+    "affiliate.terms_offer"
+   ],
+   "emits": [
+    "send.requested",
+    "affiliate.recruited",
+    "affiliate.declined"
+   ],
+   "consumes": [
+    "prospect.scored",
+    "person.updated",
+    "capability.decided"
+   ],
+   "owns_table": [
+    "affiliate_prospects",
+    "recruitment_offers"
+   ],
+   "agent_reachable": [
+    "none"
+   ],
+   "state": "not started"
+  },
+  "X-218": {
+   "intent": "GROW",
+   "what": "Zero modules covered this under any name \u2014 influencer, creator, UGC, sponsorship all returned nothing. D",
+   "provides": [
+    "influencer.discover",
+    "influencer.outreach",
+    "influencer.deal",
+    "influencer.deliverable"
+   ],
+   "emits": [
+    "send.requested",
+    "influencer.engaged",
+    "influencer.delivered"
+   ],
+   "consumes": [
+    "prospect.scored",
+    "content.created",
+    "capability.decided"
+   ],
+   "owns_table": [
+    "influencer_profiles",
+    "influencer_deals",
+    "deliverables"
+   ],
+   "agent_reachable": [
+    "influencer.discover"
+   ],
+   "state": "not started"
+  }
+ },
+ "law_surface": {
+  "total_distinct_ids": 1608,
+  "P_laws": 146,
+  "rulings": 105,
+  "notations": 282,
+  "LAW_numbers": 20,
+  "sections": 283,
+  "findings": 7,
+  "capabilities": 765
+ },
+ "laws": {
+  "LAW 1": "MANIFEST BEFORE CODE",
+  "LAW 10": "ALREADY LAW, AND STRONGER \u00b7 THE PRICING-PAGE FINDING (T677 \u00b7 not a turn)",
+  "LAW 125": "AGENCY TIER (new this arc, not legacy)",
+  "LAW 127": "109, THE PLAN FINISHED (owner: \"finish the plan\")",
+  "LAW 128": "THE 20K LAW EXTENDED TO DOCUMENTS (item \u2468, applied from this turn)",
+  "LAW 2": "ONE OWNER PER FILE, ALWAYS",
+  "LAW 3": "NOTHING SHIPS WITHOUT A CALLER",
+  "LAW 4": "THE RUNTIME PROOF",
+  "LAW 5": "COMPLETION IS PROVEN, NEVER CLAIMED",
+  "LAW 8": "FIFTH APPEARANCE, AND A PROCESS FIX RATHER THAN ANOTHER FLAG",
+  "LAW 82": "NO CONTENT IS AUTHORED IN THIS CHAT",
+  "N-110-01": "every pixel event and identity edge is TENANT-SCOPED \u2014 RLS FORCE; a tenant resolves only visitors to their own properties",
+  "N-110-02": "GO AI EZ's own properties are a tenant scope like any other (tenant-zero, \u00a75) \u2014 the internal marketing system reads its graph through the SAME module, never a bypass",
+  "N-110-03": "NO CROSS-TENANT RESOLUTION. A visitor seen on tenant A's site and tenant B's site is TWO identities. The platform-wide graph is not a product and is not sold \u2014 the standing no-harvest ruling holds, an",
+  "N-110-04": "the pixel feeds SEO/AEO, attribution, scoring and the demo site from ONE event stream \u2014 @emits page.loaded is @ingress (a browser), and every downstream consumer reads X-110, never its own tracker",
+  "N-231-01": "doctor asserts any module calling a channel emits send.requested first. A send that skips it skips the consent gate, the cadence ceiling and quiet hours in one step",
+  "N-231-02": "The same shape governs approval.requested (\u00a7264J) \u2014 X-202 is the one queue every L1 decision lands in, and it cannot learn five .proposed names one at a time",
+  "N-232-01": "issuer_scope is enforced by RLS FORCE at the database, NEVER by a screen, a filter or a query the caller composes. A missing where must return NOTHING, not everything",
+  "N-232-02": "asserted, not assumed: a TENANT-scoped read of any marketing table returns ZERO GOAIEZ-scoped rows \u2014 and the reverse",
+  "N-232-03": "no module may accept issuer_scope as a REQUEST parameter. It is derived from the authenticated principal. A scope the caller can name is a scope the caller can change",
+  "N-232-04": "GOAIEZ scope is not a superuser. It sees its OWN data, not every tenant's. Cross-tenant reads remain forbidden \u2014 R230's no-harvest rule and the platform-graph fence are NOT relaxed by tenant-zero",
+  "N-233-01": "Agency access is a GRANT ROW, never a role string. agency_client_grants: agency \u00b7 client \u00b7 granted_at \u00b7 revoked_at. No grant row, no access \u2014 asserted, not assumed",
+  "N-233-02": "There is NO grant row whose grantee is GOAIEZ. doctor asserts the table cannot contain one; the schema forbids the row that would make Go AI EZ a superuser",
+  "N-233-03": "A revoked grant takes effect on the NEXT READ, not the next login. An agency removed at 14:03 cannot read a client row at 14:04 from a warm session",
+  "N-233-04": "GOAIEZ scope is asserted EQUAL to a tenant scope in every test that checks isolation. If a test would fail for a plumber reading another plumber's data, the identical test must fail for Go AI EZ",
+  "N-234-01": "No module may ship in a state that requires a tenant to enable it before it does its job. If it needs configuration to function, the wizard's two fields must be enough to start, and it starts.",
+  "N-234-02": "Every OFF switch is a TENANT choice, never a default. doctor fails a module whose autopilot defaults to disabled without a law naming the reason",
+  "N-234-03": "\"Review first\" is a per-lane TOGGLE the tenant sets (P-096) \u2014 not the shipped state",
+  "N-234-04": "A human is never REQUIRED for a reversible action. P-096 already governs the exceptions: preview always \u00b7 one-tap undo on reversible \u00b7 explicit confirmation on terminal \u00b7 the assistant ASKS on anythin",
+  "N-234-05": "The measure of a feature is WORK REMOVED from the tenant. A feature that adds a screen the tenant must visit daily has failed, however well it works",
+  "N-235-01": "ships: MUST EQUAL ceiling: on every module. doctor FAILS the build on any module where they differ",
+  "N-235-02": "Every lane carries an OFF switch the client owns. doctor fails a lane with no off-switch \u2014 the client's control is the safety valve, and it must exist",
+  "N-235-03": "No module may ship requiring the client to turn it ON. There is no \"enable\" step in any wizard",
+  "N-235-04": "Every autopilot is SUPERVISED by X-126's gate. An action reaching a customer without passing capability.decided is a build failure \u2014 that is what \"AI watching AI\" means mechanically",
+  "N-235-05": "The AI SHOWS THE CLIENT HOW TO SET IT UP. Setup is a conversation the assistant runs, never a form the client fills. P-207's two fields are the ONLY thing ever asked",
+  "N-236-01": "NOT_CONFIGURED is a state the AI is actively WORKING TO LEAVE. It is not a resting place and not a queue",
+  "N-236-02": "The assistant ASKS FOR THE ONE MISSING THING, in conversation, at the moment it needs it \u2014 \"I can start posting to your Google profile \u2014 connect it here?\" Never a settings page with fourteen empty fie",
+  "N-236-03": "A lane in NOT_CONFIGURED for more than one cycle RAISES. R219: a broken capability is REPORTED, loudly, to a human \u2014 a lane silently dark for a month is the failure this platform exists to prevent",
+  "N-236-04": "NOT_CONFIGURED may NEVER be the shipped state of something that CAN run. If the two P-207 fields are enough to start, it starts",
+  "N-236-05": "The tenant is never BLOCKED by it. Every other lane keeps running while one waits for a credential \u2014 the same rule as R21's latch: one thread, never the platform",
+  "N-237-01": "No model string in code, ever. BoundaryStage fails the build on gpt-, claude-, gemini-, grok-, deepseek-, gemma-, llama-, mistral-, qwen- in any file outside a seeder",
+  "N-237-02": "A module resolves its model through C-Ai, never by name. $ai->for($moduleId, $jobClass, $slot) \u2014 the module does not know what it is talking to",
+  "N-237-03": "BACKUP must be a DIFFERENT PROVIDER than PRIMARY. doctor fails an assignment where both point at the same vendor \u2014 that is not a fallback, it is the same outage twice",
+  "N-237-04": "Every call records model_requested AND model_served. \u00a7177: without both columns every model comparison you ever run is invalid, because a silent fallback attributes the backup's output to the primary",
+  "N-237-05": "Adding a vendor is a ROW. No enum edit, no deploy. \u00a7176 measured the old way: 7 code edits and a deploy to add one model, with Gemini, Grok, Gemma and Luna absent from the code entirely",
+  "N-237-06": "A self-hosted model is a first-class row \u2014 base url, no vendor key, self_hosted = true. Nothing in the routing may assume a commercial API",
+  "N-238-17": "cost attributed to MODULE and TENANT on every call \u2014 without it gap E3 is unanswerable and you cannot price the product",
+  "N-238-19": "A model may not be promoted into a PRIMARY slot without passing the golden set for that job class. Otherwise \"any model, any vendor\" means \"any quality, discovered in production.\"",
+  "N-239-01": "A module NEVER queries ai_models or ai_module_assignments directly. It calls C-Ai, which asks X-219",
+  "N-239-02": "Redaction may not move out of C-Ai. Splitting step \u2463 from \u2464\u2013\u2468 creates the second entrance R238 forbids",
+  "N-240-01": "CapabilityStage applies the four tests before demanding a refusal",
+  "N-240-02": "the four tests are matched on the capability's own text. A capability whose wording does not reveal what it does will pass this check wrongly \u2014 and that is a WRITING problem, not a checker problem",
+  "N-241-01": "No module is built until a worker is running. deploy/supervisor.conf shipped in the runtime bundle and was never installed",
+  "N-242-01": "The namespace inside is the id WITHOUT the hyphen: App\\Modules\\X126\\Gate in app/Modules/X-126/Gate/. The classmap does not require them to match, and the id stays legible in both",
+  "N-242-02": "app/Modules/<id-without-hyphen>/ must not exist. A module in two directories is a module half the checks cannot see",
+  "N-242-03": "composer dump-autoload after adding a class. A classmap is built, not resolved at runtime \u2014 a new class is invisible until the map is rebuilt",
+  "N-242-04": "doctor REPORTS a split module by name. The failure that hid here was silence, not error",
+  "N-244-01": "A column added by X-121a must be NULLABLE with no default backfill. A NOT NULL column on a populated table is a lock and a rewrite \u2014 that IS \u00a7259 territory",
+  "N-244-02": "X-121a writes the migration. X-119 never does. Ownership does not soften because the owner is unbuilt",
+  "N-244-03": "X-121a is NOT X-121 done. module:done X-121 stays failing until X-121b lands. A partial module must not be able to report itself complete",
+  "N-257-01": "every transport sits behind ONE interface which refuses when shadow=true \u2014 proven by a shadow run producing ZERO provider calls",
+  "N-257-02": "a shadow run writes nothing to a tenant-owned table \u2014 a shadow that writes is production with extra steps",
+  "N-257-03": "the DIFF is the artifact \u2014 a shadow run with zero recorded comparisons FAILS",
+  "N-257-04": "zero diffs across a window RAISES \u2014 \"the new code is perfect\" and \"the shadow never ran\" are otherwise identical",
+  "N-257-05": "is_shadow rows never reach reporting or a meter (\u00a7153 G1's rule, one state over)",
+  "N-258-01": "the canary tenant gets THE SAME PRODUCT \u2014 a difference a customer could notice is a staged reveal, which P-182 forbids. Asserted by diffing the rendered surface",
+  "N-258-02": "Tenant Zero is the canary for anything the spine touches (Q-091 \u2014 the spine cannot be flag-dark)",
+  "N-258-03": "the canary must be ABLE to fail \u2014 a signal is declared before promotion; a canary silent for a window RAISES",
+  "N-258-04": "promotion is EARNED on measured signals, never on a timer (the autonomy ladder's shape)",
+  "N-258-05": "the unit of blast radius is a TENANT, not a percentage of requests \u2014 5% of requests breaks a little for everybody; one tenant breaks completely for one, and only the second is diagnosable",
+  "N-259-01": "no deploy contains both a SWITCH and a CONTRACT \u2014 doctor asserts it; the moment they ship together, rollback stops existing",
+  "N-259-02": "a rollback restores behaviour without touching a row \u2014 proven by rolling back after a backfill and finding ZERO data operations",
+  "N-259-03": "auto-rollback never fights a human \u2014 an operator action inside the window SUSPENDS it and says so on screen",
+  "N-259-04": "every rollback records what triggered it and what it restored",
+  "N-259-05": "the trigger is a NAMED signal: error rate \u00b7 a failing TEST ANCHOR in production \u00b7 queue depth climbing without drain \u00b7 a doctor assertion going false at runtime",
+  "N-260-01": "no migration takes an exclusive lock on a table in the hot path \u2014 inbound webhook \u2192 consent \u2192 send. If a call cannot be answered during a deploy, the deploy IS the outage",
+  "N-260-02": "X-129's DRAIN AND HOLD: in-flight work drains, new work holds briefly \u2014 held, never rejected",
+  "N-260-03": "a spine change is ADDITIVE under a versioned contract (Q-091) \u2014 a consumer on the old contract keeps working, asserted with both versions live",
+  "N-260-04": "a tenant is never told about an upgrade they did not ask for \u2014 silence is the deliverable",
+  "N-260-05": "a failed upgrade leaves the tenant on the working version",
+  "N-261-01": "every action declares its reversibility class and the surface shows it BEFORE the act. An \"undo\" affordance on an irreversible act is the worst thing this product could ship \u2014 a sent message, a charge",
+  "N-261-02": "a reversible act reverses completely or not at all \u2014 asserted by reversing a 500-row import and finding the count restored exactly",
+  "N-261-03": "an IRREVERSIBLE act requires a typed confirmation naming what is lost \u2014 not a checkbox. \"This sends 1,400 messages and cannot be recalled\"",
+  "N-261-04": "reversal is L1 forever and never promotes",
+  "N-261-05": "a partly-sent campaign reverses the UNSENT remainder and says exactly what already went \u2014 \"312 sent, 1,088 stopped\"; it never claims to have recalled a sent message",
+  "N-262-01": "every assertion in the plan has a rule, or the plan says why not \u2014 the coverage number is GENERATED (Q-006)",
+  "N-262-02": "there is no --skip-checks \u2014 not discouraged, ABSENT",
+  "N-262-03": "a check PROPOSES the fix, never only refuses \u2014 a check that only says no gets disabled",
+  "N-262-04": "a new check is a HYPOTHESIS until run against real data with its false positives counted (\u00a7241); the fenced-term grep gets THREE outcomes \u2014 affirmative FAILS \u00b7 negation PASSES and is good \u00b7 vocabulary",
+  "N-262-05": "NO CHECK IS ANCHORED ON MARKUP \u2014 \\ , #, bold, never. Anchor on CONTENT. At least NINE over-match incidents across windows; \u00a7168 recorded the fifth and this session added four more",
+  "N-262-06": "doctor runs against a KNOWN ANSWER before it reports",
+  "N-263-01": "context NEVER returns another module's brief \u2014 proven by asking for X-180 and diffing against X-186 (the collision that actually happened)",
+  "N-263-02": "impact is exhaustive or it REFUSES \u2014 a partial impact answer reads as \"nothing else is affected\"",
+  "N-263-03": "map is generated on every run \u2014 a stale map is the roster problem again",
+  "N-263-04": "find searches DECLARATIONS and code, never prose \u2014 the plan describes things never built and things later killed",
+  "N-264-01": "P-210 \u2014 a brief carries every \u2464 assertion and the agent IMPLEMENTS them; an agent cannot delete an inconvenient one because the id goes missing and the build fails",
+  "N-264-02": "R217 \u2014 the critic's rubric IS the brief's \u2464 assertions and nothing else. A critic grading against a rubric the swarm generated is P-210's failure with a second agent in it",
+  "N-264-03": "every brief records its own hash in the evidence dump",
+  "N-264-04": "brief REFUSES a module whose header contradicts a law \u2014 X-168 shipped \"overtime math\" for a whole session after P-204 fenced it",
+  "N-264-05": "make:module REFUSES a header with fewer than eight fields; these two are the only writers of scaffolding and briefs",
+  "N-265-01": "THE HEARTBEAT RINGS AT ZERO \u2014 \"the queue is empty\" and \"nothing is reading the queue\" must not produce the same silence. The worker writes its heartbeat on an EMPTY pass",
+  "N-265-02": "ONE scheduler. The tick is CLAIMED atomically; a second claimant is visible in deploy:check rather than in a customer receiving every reminder twice",
+  "N-265-03": "app:deploy-check RETURNS 1 on an unconfigured box \u2014 not a warning",
+  "N-265-04": "no path returns SUCCESS while delivering nothing \u2014 MAIL_MAILER=log \u00b7 an unseeded mail.daily_send_ceiling.smtp (which refuses sign-in links) \u00b7 a queued job with no worker",
+  "N-265-05": "workers carry no --tries \u2014 retry is a per-job decision here and a global flag overrides every one",
+  "N-265-06": "a restart loses nothing \u2014 drains via X-129, proven by killing a worker mid-job",
+  "N-265-07": "the pixel bundle ships with the deploy \u2014 public/build is gitignored and pixel:publish sits outside composer deploy, so /p.js serves nothing",
+  "N-265-08": "a tenant has a from-address before provisioning",
+  "N-266-01": "No tenant-facing type renders below 16px asserted in CI against the built CSS, not the source \u2014 a 13px caption is unreadable in a van and every design system produces one",
+  "N-266-02": "Every number that can be wrong renders with its SOURCE and its FRESHNESS a figure with no \"as of\" is a claim. Tabular numerals so columns line up; a number that shifts as it updates cannot be scanned",
+  "N-266-03": "Every block declares which modules render it \u2014 the @renders line a block with no owning module cannot enter the library",
+  "N-266-04": "An empty state is an INVITATION TO ACT, never a fake dashboard with sample data asserted screen by screen: a new tenant sees zero and what to do about it, never invented numbers. A demo dashboard on a",
+  "N-266-05": "Contrast and target size pass WCAG AA on every tenant surface asserted, not reviewed \u2014 a11y is in this turn's own title and gets a check, not a promise",
+  "N-266-06": "One design system per industry profile, mapped \u2014 never authored per tenant 192 rules, one mapping",
+  "N-267-01": "A tenant can receive a call and get a text back within N minutes of signup \u2014 asserted end to end as a runtime proof, and it is the single number this product lives or dies on",
+  "N-267-02": "signup is two fields \u2014 doctor fails the build on a third",
+  "N-267-03": "Every Fact on the first screen carries its state \u2014 CONFIRMED \u00b7 SAMPLE \u00b7 fill-me and a SAMPLE price is never spoken by the agent. X-126 refuses it",
+  "N-267-04": "Nothing on day one requires a decision the owner has not already made about their own business hours, services, prices \u2014 we ask what they know, never what we would like to know",
+  "N-268-01": "Every row on TODAY is an ACTION, not a metric \u2014 \"3 missed calls to return\" not \"call volume: 14\" a row with no action is REFUSED",
+  "N-268-02": "A quiet day says so, honestly, and offers one useful thing never a padded list to look busy",
+  "N-268-03": "Anything the AI did overnight appears with what it did and how to undo it \u2014 reversibility class shown BEFORE the undo affordance \u00a7261",
+  "N-268-04": "No per-person negative output appears anywhere (\u00a7150.4) \u2014 no rep is ranked last on a screen their colleagues can see",
+  "N-268-05": "One Conversation per Person, across SMS, voice, email, WhatsApp, RCS and web chat five channels in five inboxes is five products",
+  "N-268-06": "Every AI message is labelled as AI P-202 \u2014 the disclosure is in the thread, not in a settings page",
+  "N-268-07": "A human can take over mid-conversation in one tap, and the AI stops immediately asserted: a takeover mid-flow halts the next queued step",
+  "N-268-08": "A voice call appears in the thread with its recording, transcript and duration a call that is only a log line is a call nobody can act on",
+  "N-269-01": "Every customer surface works with no account and no app a link, a page, done. A login wall on a booking link loses the booking",
+  "N-269-02": "A price shown to a customer is a looked-up Fact or the surface REFUSES to show one P-092 \u2014 the customer is where an invented price does real damage",
+  "N-269-03": "Every surface renders on a five-year-old phone on a bad connection asserted with a throttled fixture, not assumed",
+  "N-269-04": "A booking confirmation is a Fact, not a hope \u2014 it names the date, the window and who is coming \"we'll be in touch\" is not a confirmation",
+  "N-269-05": "The widget never blocks the host page \u2014 async, sandboxed, and a failure degrades to a phone number",
+  "N-269-06": "The demo is honestly labelled a demo on every screen of it is_demo never reaches a report (\u00a7153 G1)",
+  "N-269-07": "Cancel is always ONE TAP with no interstitial (R34) \u2014 asserted by absence: no path exists that shows an offer between the tap and the cancellation",
+  "N-270-01": "The agency sees cost, markup and margin. Their client sees the agency's price ONLY. asserted cross-tenant with two live accounts \u2014 this is the single most damaging leak in the product",
+  "N-270-02": "Impersonation is always logged and always visible to the impersonated tenant a silent impersonation is surveillance",
+  "N-270-03": "The operator console never shows a tenant's customer PII without a recorded reason the reason is the audit row",
+  "N-270-04": "Every console figure is reproducible from a recorded query no modelled numbers on a screen somebody makes decisions from",
+  "N-270-05": "The approval queue is one queue for all modules (X-202) \u2014 an L1-forever item can never be batch-approved, and an expiring item ESCALATES rather than lapsing",
+  "N-271-01": "Every block in the library is owned by exactly one module's @renders a block with no owner cannot enter the library \u2014 doctor fails the build. An orphan block is a screen nobody maintains",
+  "N-271-02": "@renders carries a JSON SCHEMA, not a component name price_table tells you nothing about what fills it. The schema is what lets the builder compose without a human deciding",
+  "N-271-03": "A rendered value is READ from its module at render time, never copied into the page a price copied into a block is a price that goes stale silently \u2014 asserted by changing the pricebook and re-renderin",
+  "N-271-04": "A module with no public surface declares @renders none explicit absence, so doctor can tell \"renders nothing\" from \"nobody wrote it\" \u2014 the same distinction the heartbeat makes",
+  "N-271-05": "A block whose module is not entitled on this plan does not render \u2014 and does not leave a hole the layout closes; a customer never sees an empty slot where a feature would be",
+  "N-272-01": "A published site carries all seven or it does not publish \u2014 asserted at publish, not at build. A site missing its pixel is a site that cannot attribute a single job",
+  "N-272-02": "DNI swaps the number without changing the page \u2014 a number that renders server-side is a number that caches wrong, and a cached wrong number is a lost call",
+  "N-272-03": "A form submission creates a Person and a Conversation \u2014 never a row in a forms table nobody reads X-121's nouns, asserted end to end",
+  "N-272-04": "Booking writes to the same calendar the dispatch board reads two calendars is double-booking, and double-booking is a van at the wrong house",
+  "N-272-05": "Checkout uses a looked-up Sellable \u2014 P-092, the customer surface refuses to show a price it cannot source",
+  "N-272-06": "The widget fails to a phone number async, sandboxed; if it cannot load, the visitor still sees how to call",
+  "N-272-07": "The portal shows the customer only their own record \u2014 asserted cross-customer, not just cross-tenant",
+  "N-273-01": "An action reaches a surface ONLY through its own manifest doctor asserts no hand-registered route, Zapier action or tool contract exists. Six hand-maintained lists is six things that fall out of date,",
+  "N-273-02": "A surface an action does not declare cannot invoke it asserted by calling an undeclared surface and being refused \u2014 not by checking that the declared ones work",
+  "N-273-03": "Every surface passes through the SAME consent and autonomy gates an action reachable by Zapier that skips X-204 is a consent bypass with an integration's name on it. Asserted per surface, not once",
+  "N-273-04": "surfaces: [webmcp] emits contracts in the VISITOR's session, no API keys X-143, and anything sensitive forces agent.requestUserInteraction()",
+  "N-273-05": "A browser without the API degrades to the ordinary form a W3C draft is not a dependency",
+  "N-273-06": "The help surface is generated from the same manifest documentation that cannot drift from the action it documents",
+  "N-274-01": "No price is ever a variant \u2014 doctor asserts the optimiser's candidate set excludes every price-bearing field",
+  "N-274-02": "It optimises for BOOKED JOBS, not clicks a click costs us nothing and costs them attention; the outcome event is the job, and it is on every action already",
+  "N-274-03": "Promotion requires FLEET evidence \u2014 four conversions at one tenant is noise, and promoting on it makes every other tenant's site worse",
+  "N-274-04": "An optimiser never breaks a promise to improve a number \u2014 a confirmed booking window is not a variant",
+  "N-274-05": "Every live experiment is visible to the tenant with its current state a test running on somebody's business that they cannot see is a test on somebody else's money",
+  "N-274-06": "After the sweep, no module header contradicts a law doctor's fenced-term grep with \u00a7241's three outcomes \u2014 X-168 said \"overtime math\" for a whole session after P-204 fenced it, and only a header check",
+  "N-275-01": "A page or post with a null source_row is REFUSED at publish \u2014 doctor asserts the publisher has no path around it",
+  "N-275-02": "THE SLOP TEST: generate two neighbouring cities with no local data \u2192 ZERO pages. Asserted as an absence, which is the only way to test a generator",
+  "N-275-03": "A page above a traffic floor is NEVER auto-refreshed a refresh that rewrites a page that ranks is the most expensive automated action in SEO",
+  "N-275-04": "A quiet week publishes NOTHING and says so padding is how a feed trains an algorithm to bury the page",
+  "N-275-05": "Every claim in generated copy resolves to a verified Fact the claim lint \u2014 \"fastest in the county\" is a legal exposure with a marketing font",
+  "N-275-06": "Every declared schema field is present in the RENDERED DOM a field only in the JSON is a field Google did not see",
+  "N-276-01": "THE ANTI-GENERIC RULE, asserted: two industries are compared and must differ in palette, layout AND copy structure \u2014 not one of the three. Variance comes from INDUSTRY and CONVERSION DATA, never a see",
+  "N-276-02": "A template's variance is REPRODUCIBLE \u2014 the same industry twice produces the same template; if it does not, the variance is random and the rule is broken",
+  "N-276-03": "Depth is EARNED by demand, not assigned the 80 premium are promoted from measured signups, and the promotion is a row",
+  "N-276-04": "The matcher explains its choice from the tenant's own facts \"matched because you are a plumber in a city with 40k population and three competitors\" \u2014 a match with no explanation is a guess with a UI",
+  "N-276-05": "A tenant can override the match and the override sticks never re-matched over their choice by a later run",
+  "N-276-06": "Every template composes from @renders blocks P-125 \u2014 no template contains a block no module owns",
+  "N-277-01": "EMERGENCY shows the phone number above everything, always somebody with a burst pipe is not filling in a form. Asserted at the top of the rendered DOM, not in the design file",
+  "N-277-02": "A funnel step never asks for something the platform already knows P-207's spirit \u2014 a returning visitor re-typing their number is a lost conversion",
+  "N-277-03": "Every funnel carries the seven (pixel \u00b7 chat \u00b7 form \u00b7 DNI \u00b7 SEO \u00b7 schema \u00b7 SSL) \u00a7272 \u2014 a funnel with no pixel cannot attribute the job it produces, which is the only reason it exists",
+  "N-277-04": "A lead magnet delivers before it asks for anything beyond an address and the follow-up drip is a SEND: X-204 decides it, at send time",
+  "N-277-05": "A micro site is a real site, not a stripped one same gates, same schema, same honesty rules \u2014 the size is the only difference",
+  "N-277-06": "A/B on a funnel STOPS at significance P-124 \u2014 never a price variant, and an indefinite test is not a test",
+  "N-278-01": "doctor asserts NO outbound call to any ad platform from this module \u2014 the pack is produced and downloaded; nothing uploads",
+  "N-278-02": "Every claim in ad copy resolves to a verified Fact or the copy is REFUSED ad copy is the highest-liability text this product generates \u2014 it is a paid public claim",
+  "N-278-03": "A stock image carries its license_source P-131 \u2014 and stock NEVER renders on a job surface",
+  "N-278-04": "Localised variants differ by real local fact, not by find-and-replace on a city name the slop test, one surface over",
+  "N-278-05": "A tenant is NEVER left on a new empty domain. Rankings, links and history move \u2014 not just files. Every old URL resolves: 1:1 redirect map, zero unmapped URLs with traffic or backlinks",
+  "N-278-06": "A migration that maps 80% and silently drops 20% is worse than no migration \u2014 every unmapped item is REPORTED BEFORE cutover, so the tenant finds the hole now rather than in three months",
+  "N-278-07": "The redirect map is complete BEFORE DNS moves asserted by ordering",
+  "N-278-08": "Cutover is reversible \u2014 DNS rolls back and the old site serves rehearsed, not assumed",
+  "N-278-09": "An import writes rows and emits NOTHING (P-203) \u2014 500 imported jobs produce ZERO outbound messages",
+  "N-279-01": "is_demo branches ONLY at the driver and the ledger doctor asserts no other branch on it \u2014 not in a controller, not in a view, not in a service. One branch anywhere else and the demo is a second produc",
+  "N-279-02": "A demo transport SENDS NOTHING and records what it would have sent the same shape as \u00a7257's shadow: interception at the transport, or it is nothing",
+  "N-279-03": "Every demo surface is labelled a demo, on every screen of it not a badge on the first page only. A prospect who forgets they are in a demo makes a decision on a fiction",
+  "N-279-04": "is_demo and is_mock NEVER reach a report, a meter or a metric \u00a7153 G1 \u2014 doctor fails on one in production",
+  "N-279-05": "Seeded sendable identifiers come from RESERVED ranges only \u2014 555-01xx, example.com a demo that texts a real stranger's number is the worst outcome in this block, and reserved ranges are the only struc",
+  "N-279-06": "The audit video shows a REAL audit of a REAL site P-206's spirit \u2014 a demo of a fabricated business proves nothing",
+  "N-280-01": "The sandbox intercepts EVERY outbound \u2014 SMS, email, voice, push, direct mail, webhooks asserted per channel, not once. One un-intercepted channel is the only one that matters",
+  "N-280-02": "Every seeded row carries is_mock, end to end doctor fails the build on a single is_mock row in a production database",
+  "N-280-03": "A sandbox is deleted after N days untouched \u00a7217.4's auto-destruction \u2014 an abandoned sandbox is stale data pretending to be a workspace",
+  "N-280-04": "The clock can be moved forward in a sandbox, and ONLY in a sandbox doctor asserts no time-travel path exists outside it \u2014 a movable clock in production is a billing engine that can be made to bill twi",
+  "N-280-05": "Leaving the sandbox requires an explicit act, and the surface never looks live while it is not \u00a7184's honest empty state, one context over",
+  "N-281-01": "Omni invokes ONLY registered actions \u2014 doctor asserts it has no privileged path of its own. An assistant that can do things the action registry cannot is an assistant outside every gate in the product",
+  "N-281-02": "PREVIEW is mandatory and shows the REAL diff \u2014 \"this changes 3 settings and enrols 412 people\" an action executes only after the preview was rendered; doctor asserts no execute path skips it",
+  "N-281-03": "The gate is the SAME gate \u2014 consent, autonomy ladder, entitlement, approval queue \u00a7273's rule, one surface over: an action reachable through chat that skips X-204 is a consent bypass with a friendly v",
+  "N-281-04": "UNDO is offered only where Q-063 says the act is reversible and where it is not, the confirmation names what is lost \u2014 \"this sends 412 messages and cannot be recalled.\" \u00a7261",
+  "N-281-05": "Omni never states a price, a time or a link that is not a Fact X-126 \u2014 asserted with an empty pricebook: it refuses",
+  "N-281-06": "It never claims to have done something it did not do the code audit found exactly this \u2014 \"I have autonomously triggered\" with the call commented out. The response reports the actual outcome, including",
+  "N-282-01": "A multi-step setup is ONE approval on the whole plan, then a visible run twelve consecutive confirmations is not autonomy, it is a form with extra steps",
+  "N-282-02": "The plan is shown BEFORE it runs, in the tenant's own words not a JSON payload \u2014 \"I'll connect your Google profile, turn on review invites at 24 hours, and leave replies for you to approve\"",
+  "N-282-03": "A step that fails STOPS the run and reports which step, having changed nothing after it a half-configured tenant is worse than an unconfigured one, because nobody knows which half",
+  "N-282-04": "Anything on the never-promote list stays L1 regardless of how the run was approved P-195 \u2014 consent, price and claim never promote, and a bulk approval is not an exception",
+  "N-282-05": "Every run is replayable as a record: what was proposed, what was approved, what happened this is the disaster-recovery log the owner asked for, arriving as a by-product",
+  "N-283-01": "Every recommendation is derived from a real needs() gap a recommendation with no gap behind it is REFUSED. \"Your list has 40 people and no seat is online\" \u2014 that is a gap, not a nudge",
+  "N-283-02": "Ranked by revenue impact, computed \u2014 never by module order asserted by a fixture where the highest-impact gap is the LAST module in the roster and still ranks first",
+  "N-283-03": "A recommendation names what it would change and what it cannot know \u00a7150.4's honesty: \"this usually helps; I cannot tell you what it will do for you\"",
+  "N-283-04": "RECOMMEND never proposes a terminal action X-145's property \u2014 a learned system proposing an irreversible act",
+  "N-283-05": "A dismissed recommendation stays dismissed re-proposing a declined thing is how an assistant becomes noise",
+  "N-283-06": "A module with no needs()/has() is INVISIBLE to the model, and doctor reports it the plan's own FAILS-IF: \"then RECOMMEND has nothing to read\"",
+  "N-284-01": "Both files are GENERATED from the module contract P-209: the contract is a file, not a theme. A hand-written README is a second source of truth that drifts",
+  "N-284-02": "DECISIONS.md records the RULING and its number, never a rationale somebody reconstructed \"we chose X because\" written after the fact is a story; R211 \u00b7 P-204 \u00b7 \u00a745A are the record",
+  "N-284-03": "A module whose header changes regenerates both, and doctor fails on a stale one staleness is the defect this whole session kept finding",
+  "N-285-01": "A restore is REHEARSED on a schedule, verified by ROW COUNT AND CHECKSUM \u2014 not by \"the job succeeded\"",
+  "N-285-02": "A deliberately corrupted backup FAILS the rehearsal, loudly X-203's property \u2014 a verification that cannot fail is not a verification",
+  "N-285-03": "RPO and RTO are MEASURED from the last rehearsal, never claimed a number in a runbook that came from a vendor page is marketing",
+  "N-285-04": "A real restore requires an X-202 approval and is L1 forever never promotes, whatever the ladder says",
+  "N-285-05": "The rehearsal restores into an isolated target and destroys it after a rehearsal that can touch production is an outage waiting for a typo",
+  "N-286-01": "Staging data is SCRUBBED at the copy, never after \u2014 phone numbers to reserved ranges, emails to example.com, PANs never copied at all",
+  "N-286-02": "Staging cannot reach a real transport. Same interception as \u00a7257 and \u00a7280 asserted per channel \u2014 \"staging texted a real customer\" is the incident this row exists to prevent",
+  "N-286-03": "Rotation invalidates the old credential at the NEXT USE, not at expiry X-206 \u2014 expiry is not revocation",
+  "N-286-04": "No credential exists outside the vault in any environment doctor fails on a secret literal or an env() outside config \u2014 staging included",
+  "N-287-01": "NO AGENT TOUCHES PRODUCTION. The production credential is not in any agent's reach \u2014 asserted by absence, not by policy. A rule an agent could break is not a control",
+  "N-287-02": "@contract-of: an agent cannot DROP what it did not ADD expand \u2192 migrate \u2192 contract; never rename or drop a column in one deploy",
+  "N-287-03": "A PLATFORM cost ceiling exists, not only tenant ceilings the gap named in the risk register: \"a runaway loop costs thousands overnight \u2014 tenant guards exist, platform guards don't\"",
+  "N-287-04": "Hitting the platform ceiling DEGRADES and alerts; it never hard-stops the inbound path P-095 \u00b7 R25 \u2014 the phone keeps answering",
+  "N-287-05": "Failover is rehearsed, and a failed failover leaves the working side serving fails toward the thing that already answers",
+  "N-288-01": "The module RECOMMENDS AGAINST a noindexed directory \u2014 a citation built on an uncrawlable page is work billed for nothing",
+  "N-288-02": "Every partner slot has a CAP, and a slot with no cap cannot be saved \u00a7214's shape \u2014 an uncapped referral programme is an uncapped liability",
+  "N-288-03": "An introduction is a SEND. X-204 decides it, at send time the alliance as originally proposed broke P-068 and P-069 \u2014 \u00a7185A caught it",
+  "N-288-04": "A clawback is PROPOSED, never executed L1 forever \u2014 taking money back from a partner autonomously is the fastest way to lose the network",
+  "N-288-05": "No footer blob to GOAIEZ on a tenant's site the network is a feature, not a backlink scheme",
+  "N-289-01": "ONE disposition schema, and the 3% denominator is ASSERTED \u2014 the seat law. A disposition rate computed on a different denominator per mode is a number nobody can compare",
+  "N-289-02": "No per-person negative output exists in any schema \u2014 \u00a7150.4. A wallboard cannot rank a person last",
+  "N-289-03": "Recording requires the jurisdiction's consent posture, checked per call two-party states are not a setting somebody remembers",
+  "N-289-04": "AMD failure falls back to a human or a voicemail drop never to silence \u2014 NO ANSWER \u2260 FAILURE",
+  "N-289-05": "No seat fee P-003 \u2014 every module's cost flows into the AI meter at 8:1",
+  "N-289-06": "A callback promised is a callback scheduled a promise with no calendar row is the most damaging thing a call centre can say",
+  "N-290-01": "Every alert says WHAT TO DO, not what happened \"queue depth 4,000\" is a fact; \"the worker is down \u2014 restart goaiez-worker\" is an alert",
+  "N-290-02": "An alert fires on ABSENCE as well as on error \u00a7265's heartbeat law generalised: the silent failures are the expensive ones, and every one in this program was silent",
+  "N-290-03": "The runbook is tested by somebody who did not write it a runbook only its author can follow is a diary",
+  "N-290-04": "The second-human line is STATED, not implied S4: \"operational maturity needs a second human. Runbooks, observability and a rehearsed restore reach B+, and we say B+.\" EXPLAIN mode is the substitute fo",
+  "N-290-05": "Every incident produces a written record in real time the DR log the owner asked for; \u00a7282's replayable run is the same artifact",
+  "N-291-01": "Every register line is homed, fenced, out of scope or killed \u2014 BY ROW NUMBER, and each names its reason a count is not an account. \"898 classified\" is a claim; the table under it is the record \u2014 Q-006",
+  "N-291-02": "The reconciliation runs THREE WAYS: the index \u00b7 the section headers \u00b7 the actual lines this is what found the 905/898 discrepancy \u2014 one wrong heading in G1, not seven missing capabilities. Twenty of t",
+  "N-291-03": "No row points at another file for its disposition 57 rows said \"see the G1 audit\" and turn 86's generator would have handed an agent nothing",
+  "N-291-04": "KILL is never a disposition without a named ruling \u00a7212's four options; every removal cites the law that made it",
+  "N-292-01": "Every @emits has at least one subscriber, and no event has two emitters P-208. There is no acceptable count above zero",
+  "N-292-02": "No module header contradicts a law it is bound by \u2014 the fenced-term grep, \u00a7241's three outcomes. X-168 said \"overtime math\" for a whole session after P-204 fenced it, through eight gates and a brief e",
+  "N-292-03": "Every screen is owned by exactly one module; every seam is invalidated an unowned screen is a screen nobody maintains",
+  "N-292-04": "Every module carries needs()/has(), @renders, surfaces: and its @intent needs()/has() is done \u2014 101 lines covering 106; @renders is the one this turn actually adds",
+  "N-292-05": "Every @module anchor is unique a duplicate silently hands one module another's description and every downstream check counts it as correct",
+  "N-293-01": "The reviewer is not told what the plan believes about itself a review handed the summary reviews the summary",
+  "N-293-02": "Each criticism is answered ACCEPTED \u00b7 REJECTED WITH REASON \u00b7 or ALREADY FIXED \u2014 never \"noted\" \u00a785 accepted three of four, and that ratio is the benchmark: a review where nothing is accepted was not a ",
+  "N-293-03": "A rejection cites the ruling that settles it \"we thought about that\" is not an answer",
+  "N-293-04": "The review and its answers ship WITH the package a criticism answered privately is a criticism the next reader raises again",
+  "N-294-01": "Every profile is authored against a real business, not a category \"plumber\" is a category; \"a two-van plumber who does emergency callouts and hates quoting\" is a profile",
+  "N-294-02": "The help surface is GENERATED from the action manifest \u00a7273's rule \u2014 documentation that cannot drift from what it documents",
+  "N-294-03": "Every claim in authored content passes the claim lint the same gate as generated content; a human writing it is not a reason to skip the check",
+  "N-294-04": "Video shows the real product, on a real tenant \u00a7279 \u2014 a demo of a fabricated business proves nothing",
+  "N-295-01": "shortLinkFor() lives in the base SendDriver, so NO module can send an untracked link even by accident P-072 \u00b7 R14",
+  "N-295-02": "Proven at RUNTIME: a real send produces a short link that resolves and records a click the chokepoint existing is not the chokepoint firing \u2014 that distinction is the entire finding",
+  "N-295-03": "doctor asserts no payment or agent URL is ever string-built a constructed URL is a 404 with money in somebody's hand",
+  "N-295-04": "A wrapped link that cannot resolve falls back to the raw URL never to a dead page",
+  "N-296-01": "The whole path runs end to end and produces a REAL charge-id DoD condition \u2464 \u2014 nothing in the system can fabricate one",
+  "N-296-02": "One provisioning step serves the site, the pixel AND the migration not three flows a tenant walks separately",
+  "N-296-03": "A failed payment leaves NO half-provisioned tenant \u00a7282's rule: a half-configured tenant is worse than none, because nobody knows which half",
+  "N-296-04": "Provisioning ends with a from-address and a live agent \u00a7265's N-265-08 \u00b7 \u00a7267's day-one promise \u2014 a provisioned tenant that cannot send is not provisioned",
+  "N-296-05": "tenant.provisioned fires once and is idempotent a replayed webhook must not double-provision",
+  "N-297-01": "An import writes rows and emits NOTHING \u2014 P-203. 500 imported jobs produce ZERO outbound messages",
+  "N-297-02": "Every contact write carries an ImportAttestation R88: a record is not a permit. An imported Person is UNPERMITTED until the tenant's own relationship exists",
+  "N-297-03": "The webhook door is HMAC-verified with an idempotency key an unverified contact API is an open write endpoint on the twelve nouns",
+  "N-297-04": "De-dup happens on arrival, never as a later cleanup X-132 \u2014 duplicates that reach the graph are duplicates in every report forever",
+  "N-297-05": "The EXPORT works too P-203 \u2014 if we can import it, we can export it. The promise that makes the import trustworthy",
+  "N-298-01": "Every one of the 1,027 files carries its module annotation, or is deleted P-209's backfill gate: every module declares every applicable marker BEFORE the build proceeds",
+  "N-298-02": "An annotation is DERIVED from what the file does, never asserted to make it pass the same failure as a forged test footer, one layer down",
+  "N-298-03": "A file that fits no module is a FINDING, not a default assignment dumping the remainder into a \"shared\" module is how the boundary law dies quietly",
+  "N-298-04": "After the pass, doctor's boundary stage runs green on the whole tree and its first run is expected to fail \u2014 23 files are already marked as problems",
+  "P-001": "Two packages \u2014 Basic and Everything Else \u2014 and pricing never changes: everything we ship, as we ship it, at the price you joined at T468 \u00b7 \u00a70.2 #3 \u00b7 kills founder pricing, R18's window, \"retail return",
+  "P-002": "The money-number law: zero prices in any document; every number lives in the rate registry (X-82) and renders through rate.lookup \u00a7149.2 \u00b7 \u00a70.1 \u00b7 \u00a7108.2's price table is a historical snapshot, not a s",
+  "P-003": "Law 126 \u2014 the plan and the meters, nothing else: no per-module, setup, seat or add-on fees; every module's cost flows into the AI meter at 8:1 T591 block \u00b7 \u00a7156.2 (X-200: no seat fee)",
+  "P-004": "Grandfathering (R118): no build ever raises a price; a rate change applies at renewal, never mid-term \u00a7149.2",
+  "P-005": "USD is the base; a local-currency charge is a conversion derived at billing time, never stored as a price; locked per period, stored on the LedgerEntry, and the bill always shows the conversion \u00a792",
+  "P-006": "Per-country rates only where OUR cost varies (SMS/MMS/RCS \u00b7 voice); AI, email, lead credits and number rental are the same everywhere; a default rate covers unlisted countries so no send ever fails fo",
+  "P-007": "Allowances: the admin sets a VALUE, the tenant sees a COUNT \u2014 plan price, AI ($50), lead (10k) and email allowances fixed; SMS and voice allowances vary by country \u00a794 \u00b7 \u00a718E",
+  "P-008": "Agency: $497/month flat, unlimited tenants, 40% off SMS/AI/lead usage, 25% off voice; three billing modes chosen per client \u2014 AGENCY_PAYS \u00b7 CLIENT_PAYS \u00b7 SPLIT; an agency sub-account gets ZERO pre-fil",
+  "P-009": "Affiliate: 40% of subscription for lifetime, nothing on usage, \u00a30 while the account is paused \u00a748A.2 \u00b7 \u00a791.1",
+  "P-010": "Unlimited to CREATE and HOLD; metered to SEND, SCAN or THINK \u2014 users, contacts, jobs, pages, campaigns, locations unlimited; sends, minutes, AI, delivered leads, geo-grid scans, AEO queries and review",
+  "P-011": "Trials need no card (R31); card-less tenants ride the warning ladder to a PAUSE at the wall, carded tenants never pause (R32); NO-REFUNDS R31/R32 \u00b7 the standing NO-REFUNDS law",
+  "P-012": "Cancel is one button, \u226460 seconds, in-app (R34); billing continues until cancelled; PAUSE is the owner's switch, SUSPEND is ours for cause with a reason, CANCEL stops billing (R83); cancelled = DORMAN",
+  "P-020": "Five meters \u2014 SMS segments \u00b7 voice minutes \u00b7 AI \u00b7 email \u00b7 lead credits \u2014 and everything debits AI credits; the channel meter is ADDITIONAL, never instead \u00a718E \u00b7 T469\u2013T474",
+  "P-021": "AI at 8:1 over true cost, DERIVED from cent-precision ai_calls, never typed \u00a7108.2 \u00b7 \u00a7127.3 \u00b7 \u00a7149.4",
+  "P-022": "1 SMS credit = ONE SEGMENT, and the CARRIER supplies the count \u2014 one emoji flips GSM-7 to UCS-2; the composer warns at compose time; spintax compiles BEFORE the counter on the longest resolution \u00a7108.",
+  "P-023": "MMS = 1 credit T591 block (supersedes \u00a7108.2's 3 credits; M-228 is moot)",
+  "P-024": "Voice = 7\u00a2/min, FULL MINUTES; 100 minutes included; top-ups $100\u2192$100, $300\u2192$400; only viable self-orchestrated (X-197) \u00a7117 \u00b7 \u00a718F \u00b7 \u00a7127.1 (supersedes the 6\u00a2 book and RC-1c)",
+  "P-025": "Undelivered still costs its credit; counts split SENT / DELIVERED \u00a7108.2",
+  "P-026": "Calendar-month billing; proration NONE \u2014 calendar anniversary (R171) T591 block \u00b7 \u00a7149.4 (supersedes \u00a7108.2's 30-day period)",
+  "P-027": "Auto top-up is universal \u2014 nothing stops because a balance hit zero; the runaway guard alerts, never halts; default top-up $50 as data \u00a718E \u00b7 R30",
+  "P-028": "The absorption ceiling = 1\u00d7 the base fee; then the AI stops spending and the line degrades to PBX/voicemail \u2014 never drop the call, always stop the spend \u00a7150.8 \u00b7 \u00a7150.1",
+  "P-029": "Granted credit expires at the period boundary; PURCHASED credit never expires \u00a7153 \u00b7 \u00a7149.4",
+  "P-030": "Lead credits: 10k/month included, +10k for $100, +100k for $500; 1 credit = 1 delivered record; Google Places runs on the tenant's own free key, one click; a location is free to hold, metered to scan ",
+  "P-031": "Every debit is traceable to the cent and EXPLAIN can answer \"what was that \u00a34.20?\"; the ledger is append-only, never updated \u00a7149.4 \u00b7 \u00a7153",
+  "P-040": "ONE dunning ladder \u2014 \u00a745A's 21 days: soft decline \u2192 retries d1/3/5/7; hard decline \u2192 straight to outreach, zero retries; human at d7; pause at d21 with the phone still answering; calls stop d30; numbe",
+  "P-041": "Pre-dunning: a card expiring next month is warned 15 days before it declines \u2014 the cheapest save in the platform; exactly one alert, never a sequence \u00a7149.3 \u00b7 \u00a7153.3",
+  "P-042": "Day 10 is a BANNER, never a lockout \u00a7153.3 (amends the register's \"in-app lockout\")",
+  "P-043": "The park, tiered by use (R90): paying 14 days \u00b7 trial with usage 3 \u00b7 trial with no usage immediate \u2014 \"no usage\" = no outbound and no inbound R90 \u00b7 \u00a7125.7",
+  "P-044": "A card, not an invoice, for the majority (\u00a746A); the receivables ladder applies to the invoice-terms minority only \u00a746A",
+  "P-045": "The overflow rule: a commercial account over its credit limit NEVER loses service \u2014 the card on file absorbs the overflow and reverses when the invoice pays; ours or the tenant's \u00a7138.4",
+  "P-046": "Not a payment plan \u2014 installments and milestone billing stay killed T591 \u00b7 \u00a7138.4.2",
+  "P-047": "Late fees: never charged BY us to a tenant; a tenant MAY enable them for their own customers \u00a7139.1 \u00b7 \u00a7138.4",
+  "P-060": "R70 \u2014 the sending law: SendRefusalReason's 20 cases are the ENTIRE set; a gate not named there does not exist; platformFloorRefusal() fails closed R70",
+  "P-061": "Transactional is blocked by nothing but STOP; responses run 24/7 (R23); the missed-call text-back fires on the RING (R80) R70 \u00b7 R23 \u00b7 R80",
+  "P-062": "Four notification classes \u2014 marketing \u00b7 transactional \u00b7 conversational \u00b7 account \u2014 decided from the CALLER, never the content (X-193); account bypasses everything; account/billing mail cannot be switc",
+  "P-063": "Quiet hours apply to MARKETING class only \u2014 the window is data (the federal floor per R70; state overlays as data \u2014 the plan builds the switch, not the rule, Law 122); web chat, missed-call, client al",
+  "P-064": "10DLC is required for MARKETING SMS only; everything else runs on a GO AI EZ number from day one; the brand is auto-submitted; traffic migrates to their own brand on approval without breaking a Conver",
+  "P-065": "Each tenant gets their OWN GO AI EZ number, replaced by their own at 10DLC approval (R89); the shared-brand rule makes per-number complaint monitoring mandatory \u00a7102.1 \u00b7 R89 \u00b7 \u00a7125.7",
+  "P-066": "The compliance registers (DNC \u00b7 litigator \u00b7 reassigned) are provider slots, DEFAULT OFF, the tenant's own credentials, and block nothing unless enabled (R64/R65); NOT ENABLED is indistinguishable from",
+  "P-067": "The three lanes: Lane 1 transactional (nothing blocks but STOP) \u00b7 Lane 2 marketing-to-phones (consent/EBR + window + 10DLC) \u00b7 Lane 3 cold B2B email (CAN-SPAM shape, no prior consent); a campaign decla",
+  "P-068": "Law 107 / R88 \u2014 a signal, a pixel identification or the person graph may inform a score, a list or an alert; it may NEVER mint a SendPermit; a person becomes contactable only by their own act \u00a7129.4 \u00b7",
+  "P-069": "An import is not consent \u2014 every contact path routes through ImportAttestation exactly as a CSV does; the tenant's attestation IS the consent record (R67); the staff attestation button records who att",
+  "P-070": "Stickiness is absolute: a thread keeps its carrier and sender number; migration only on hard failure, never for cost \u00a7124.1 \u00b7 \u00a7125.1",
+  "P-071": "It puts a model between the permit and the driver: latency on every message, a failure mode on every message, and a non-deterministic gate on a compliance decision. The current design already does the",
+  "P-072": "P11 \u2014 shortLinkFor() lives in the base SendDriver; no module can send an untracked link, even by accident; every agent link rides the short-linker (R14) \u00a7126.1 \u00b7 \u00a7132.5.1 \u00b7 R14",
+  "P-073": "A paid-for RCS send never silently becomes SMS without a record; failover moves to a carrier WITH the capability or degrades honestly with an operator alert \u2014 never the tenant \u00a7124.4 \u00b7 \u00a7125.5",
+  "P-074": "Halt seeds: 0.10% complaint or 250 bounces pauses the campaign family, never the thread (R17); default 250/day on a new 10DLC brand; one mixed campaign (R15) R17 \u00b7 \u00a7126.1 \u00b7 R15",
+  "P-075": "A reply on ANY channel stops the ladder and the sequence; everything after a reply is SMS (the channel switch); one abandoned-cart nudge; every campaign send is Marketing class \u00a7130.4 \u00b7 \u00a7148.6 \u00b7 \u00a7147.",
+  "P-076": "The demo answers at any hour (R58); a demo STOP is real but scoped to the demo number and never writes platform-wide opt-outs (R59); STOP never blocks onboarding R58 \u00b7 R59",
+  "P-077": "The alert claim: three staff alerted; first reply claims; the others told \"Dave is handling this\"; the claim EXPIRES at 30 minutes; override is explicit; reply codes are five characters and never reus",
+  "P-078": "Cold B2B prospecting is IN \u2014 scraping public data and cold email are built into M6\u2013M8 on the owner's T450 ruling; the phone lane still requires a basis on the Person; hiQ's contract lesson holds: Fetc",
+  "P-090": "R11 \u2014 the FULL front desk: CS \u00b7 sales \u00b7 quotes off the price list \u00b7 booking \u00b7 call-out fee \u00b7 docs \u00b7 message-taking \u00b7 urgent; R20 \u2014 it takes EVERY inbound, including marketing replies R11 \u00b7 R20",
+  "P-091": "R12 links-only: paid = the customer's word recorded UNVERIFIED \u2014 no hook in the money systems from a conversation R12",
+  "P-092": "R13 / X-126 \u2014 no grounding, no skill: the gate fails closed; it never invents a price, a time or a link; a price is looked up or refused, never generated; SAMPLE = \"I'd need to confirm that\"; a [fill-",
+  "P-093": "The grounding rule applies to TIME exactly as to price \u2014 the agent offers only a window the scheduler confirmed \u00a7136.4",
+  "P-094": "The refusal set is closed \u2014 20 reasons; a refusal without a code fails the build; \"I don't know\" is an untracked failure; a FALLING refusal rate is the alarm \u00a7127.2 \u00b7 \u00a7127.6",
+  "P-095": "R25 \u2014 nothing hard-stops at a cap: alert + keep answering; the platform absorbs (scoped to CARDED tenants by R32); the sole hard stops are STOP/suppression, the marketing window, and email unsubscribe",
+  "P-096": "Automatic by default (R30/R54) \u2014 replies, agent, review asks, posts, sends, digests, top-ups, renewals \u2014 with one per-tenant \"Review first\" toggle per lane; the assistant ASKS on anything irreversible",
+  "P-097": "The teaching box: a human correction writes a CONFIRMED Fact that outranks anything inferred \u2014 never a prompt edit; the tenant's lexicon (X-154) governs every compose \u00a7127.7 \u00b7 \u00a7127.4 \u00b7 X-154",
+  "P-098": "Voice: \u2264600 ms total, single-pass retrieval, a breach FAILS OVER rather than waits; barge-in mandatory; SIP direct to LiveKit for realtime \u00a7126.2.1 \u00b7 \u00a7127.1 \u00b7 \u00a7127.5",
+  "P-099": "Never drop a voicemail on a live person; AMD uncertain = human; a returned call joins the same Conversation \u00a718C.4 \u00b7 \u00a7159 X-200",
+  "P-100": "X-200's predictive abandonment ceiling: a HARD MAXIMUM of 3%, lower only, UI and API reject higher; the dialer contains no consent decision of its own \u00a7160.1 \u00b7 \u00a7159",
+  "P-101": "HUMAN \u2192 ticket (R37): reply HUMAN on any channel opens a ticket with the transcript; the tenant-only support skill knows only the help cards and the tenant's own read-only state; the case-study machin",
+  "P-102": "Prompt injection: untrusted text is DATA, never instruction; skills are the blast radius; tenant re-derived from the connection; red evals are build-failing CC-17 \u00a71 \u00b7 \u00a7127.2 \u00b7 \u00a7127.6",
+  "P-103": "\"Human-medical and dental are OUT until PHI isolation (R19); veterinary and law-office intake are IN\"",
+  "P-110": "[RE-AMENDED T677 \u2014 OWNER, \u00a7168A] THE REVIEW GATE IS A TENANT PREFERENCE, AND IT IS A SEQUENCE, NOT A FILTER. public_threshold default 4 (1\u20133 gated \u2014 unchanged), max 5. The loop is the law: gated \u2192 QA ",
+  "P-111": "AI review replies are ON for all reviews, published, with edit/delete as the reversal (\u00a717); anything open-ended or ambiguous is DRAFTED to the inbox, never published \u00a717 \u00b7 \u00a7142.2 \u00b7 \u00a7149.1",
+  "P-112": "The prompt lint: \"how did the repair go\", never \"mention Dave\"; staff review quotas and named-staff asks are banned (Google, April 2026); no incentives on any review class (R26) \u00a737.3 \u00b7 R26",
+  "P-113": "The first review received is the FIRST-WIN event \u2014 the north star and the case-study trigger; NPS at day 60, <7 \u2192 triage; CSAT on ticket resolve R36 \u00b7 \u00a7148.2 \u00b7 E3",
+  "P-120": "Generated landing-page and ad copy for 20 industries will contain claims: \"licensed, bonded and insured,\" \"serving the area since 1998,\" \"trusted by hundreds of local businesses.\" Those are FACTS ABOU",
+  "P-121": "The versioned-site law \u2014 a site section renders only when its flag is live; a flip = sections + changelog + announcement by construction; the site can never claim what the product hasn't shipped E1 \u00b7 ",
+  "P-122": "\u00a7110 \u2014 a tenant's site is FORKED at selection; DESIGN forks, RUNTIME does not; the optimisation loop runs ALWAYS and is never opt-in; anything the tenant touched is frozen and left alone \u00a7110 \u00b7 \u00a7148.5",
+  "P-123": "The pre-publish gate: cannibalisation check \u00b7 no SAMPLE price rendered \u00b7 nothing contradicts the pricebook \u00b7 the tenant's lexicon; the trust ladder \u2014 N approved posts with no edits unlocks unattended ",
+  "P-124": "The optimiser may test an image or a label; it may NEVER test a price; a variant is promoted on fleet evidence, never on four data points at one tenant \u00a7134.6 \u00b7 \u00a7148.5",
+  "P-125": "The full-stack site law \u2014 every site ships with pixel \u00b7 cross-session identity graph (owner spec 2026-08-27 \u2014 the pixel resolves a returning visitor across sessions; fenced by the existing no-cross-te",
+  "P-126": "200 templates 1:1 with 200 industries as the CEILING; 20 seeded properly at launch, growing through admin forever. The count is a setting, never a number in code.",
+  "P-127": "R130 \u2014 we ALWAYS migrate: a tenant is never left on an empty domain; rankings, links and history move with the site \u00a7135.8",
+  "P-128": "\u00a744 \u2014 ads MANAGEMENT is fenced (X-41\u2026X-55, X-174, X-187); X-139's one-way offline-conversion push and ad PACKS as content are NOT \u00a744 \u00b7 \u00a7132.6 \u00b7 \u00a7162 X-116",
+  "P-129": "Content is DATA \u2014 never in the plan; a document is a VIEW re-rendered from registries; the help library and READMEs generate from the module contract; the jargon lint on every tenant-facing string \u00a77B",
+  "P-130": "The invalidation rule \u2014 every fact carries source_page + source_version; publish/update/unpublish invalidate in the SAME operation, never a queue; prices never travel as text \u00a7118.4 \u00b7 CC-85/86 \u00b7 \u00a7127.",
+  "P-131": "The photo loop \u2014 real job photos, branded, posted with copy from the actual job; never stock, never invention; the never-fails image law: client photo \u2192 generated \u2192 branded card \u00a7148.4 \u00b7 \u00a7131.5",
+  "P-132": "Every audit claim is measured and dated; one experiential test each \u2014 submit once, call once, text once, never repeatedly \u00a7131.2.1",
+  "P-140": "GBP is THROUGH ZERNIO \u2014 the primary path; the direct API is a background complement; API access via Zernio submitted and approved; the suspension guard is X-177 on the Zernio connection and hard-stops",
+  "P-141": "The SEO rule: where Google has published guidance, Google wins; where Google is silent we measure and show the date; no folk SEO; every capability carries its source \u00a77A \u00b7 T459",
+  "P-142": "R141 \u2014 robots.txt is READ as a signal when scraping and WRITTEN generously on our own sites; we allow the AI crawlers deliberately \u00a7128.2.2 \u00b7 \u00a7142.4",
+  "P-143": "NO CACHING \u2014 every fetch and every API result persists in our database; staleness is fetched_at, never an eviction \u00a722 \u00b7 \u00a7128.2.3 \u00b7 \u00a70.2 #20",
+  "P-144": "CAPTCHA is solved ONLY in form outreach, on the OPERATOR'S OWN KEY; a scrape that meets one retries 3\u00d7 rotating IPs then skips; never a Turnstile bypass for scraping (AMENDED by R228, owner 2026-08-27",
+  "P-145": "We scrape politely or not at all \u2014 a global per-target concurrency and RPS ceiling across the whole swarm; the operator's own account safety outranks any scrape (hard abort on a warning) \u00a7129.1 \u00b7 \u00a7128",
+  "P-146": "Research fires ONLY on distress \u2014 no website, bad reviews, an inbound form; never on healthy businesses; every icebreaker names something TRUE \u00a7130.1 \u00b7 \u00a7129.3",
+  "P-147": "Confidence is a column: every enriched field carries source and confidence; below threshold it is never used in personalisation; \"Hi Bob\" to Roberta is worse than \"Hi there\" \u00a7129.2.1",
+  "P-148": "The two ingest gates: no SSN, no card numbers, under-18 rejected at ingest \u2014 everything else is collected; person-level matching is permitted as enrichment (R86); opt-out honoured across the whole poo",
+  "P-160": "Tokens only \u2014 NO raw PAN, NO CVV, ever; Elements/Accept.js tokenise; zero PCI scope for raw card data; a build-failing grep \u00a7150.1 \u00b7 \u00a7150.8 \u00b7 \u00a7138.3.2 (supersedes R91's PAN+expiry clause; C2 closed by",
+  "P-161": "Platform liability for tenant\u2194customer default is ZERO; money is deterministic \u2014 no LLM in a payment path \u00a7138.3 \u00b7 T627",
+  "P-162": "One MerchantConnect, three consumers \u2014 GOAIEZ, agency, tenant \u2014 four billing relationships; both gateways, Stripe Connect and Authorize.Net partner \u00a7134.1 \u00b7 \u00a7138.3 \u00b7 T622",
+  "P-163": "The twelve canonical nouns; no module may create a private table for one; minor units, integers, no floats, schema-wide \u00a711 \u00b7 \u00a7118.2 \u00b7 \u00a792.1 \u00b7 B-12",
+  "P-164": "The pricebook is the bedrock: builds alone, first; four consumers; a version bump never rewrites an accepted quote; location books version independently; the callout fee has two fields \u00a7139.2",
+  "P-165": "Commissions on cash COLLECTED, never on invoiced; clawback on refund or chargeback; payroll is EXPORTED, never filed; accounting is SYNCED, never replaced; a money conflict never auto-resolves \u00a7140.5 ",
+  "P-166": "Stock decrements at PAID, not at CART; a cancellation before fulfilment reverses it; one Sellable, six fulfilment types; shipping leaves through ONE webhook; tax is a rate per pricebook; NOT mini-Shop",
+  "P-167": "Legal documents are eight EMPTY admin slots (X-133), versioned on save; nothing authored; Law 122 \u2014 the plan builds the switch, it never advises the rule \u00a77 \u00b7 \u00a7104 \u00b7 \u00a70.2 #9",
+  "P-168": "The tenant sees the JOB's location, never the employee's continuous location; GPS is bound to job state \u00a7141.1 \u00b7 \u00a7140.4",
+  "P-169": "The demand index is aggregate by construction \u2014 no tenant or person identifier ever enters an index table \u00a7129.6 \u00b7 \u00a7161 X-130",
+  "P-180": "Two inputs \u2014 a business name and a phone number \u2014 everything else derived; they confirm the callout fee and one real price; the agent goes live; a field the wizard cannot infer is a DEFECT; doctor cou",
+  "P-181": "The first test call goes straight TO the new number, never through carrier forwarding; TTFM is the magic-moment metric, operator-only F1 \u00b7 E3 \u00b7 \u00a7151",
+  "P-182": "One build, launched once \u2014 no soft launch, no B1/B2/B3, no phases, two site states; flags are blast-radius control, not staged reveal \u00a75A \u00b7 T457 \u00b7 \u00a70.2 #1/#5/#6",
+  "P-183": "Impersonation is ALWAYS logged; the agency sees cost, markup and margin, their client sees the agency's price ONLY; a sub-tenant may narrow, never widen \u00a717.5 \u00b7 \u00a7150.4",
+  "P-184": "Staff access is absolute (R68) and so is its record; deactivation or demotion takes effect on the very next request, in the operator console too R68 \u00b7 CC-15 \u00a70/\u00a70b",
+  "P-185": "Every operator alert states an ACTION, never a fact; tenant support tickets land in X-111; operational maturity reaches B+ and no further without a second human \u00a7101.4 \u00b7 \u00a7150.3 \u00b7 \u00a7346",
+  "P-186": "Marketplace items are manifests + config only \u2014 executable code never; the isolation boundary is the registry \u00a7109.3 \u00b7 \u00a7150.6",
+  "P-187": "Tenant Zero \u2014 GO AI EZ runs on GOAIEZ, same code, same database; nothing is built for marketing alone; our own numbers are the proof; the demo IS the product \u00a767 \u00b7 T452",
+  "P-188": "Channels report delivery failures; channels do NOT write global suppressions. A hard bounce, a 30007, an unroutable number, a closed template window \u2014 each is a delivery outcome the channel reports. W",
+  "P-189": "THE ABANDONMENT CEILING MEASURES HUMAN-REQUIRED CALLS. An AI seat answers on the first ring and is not a scarce resource, so AI-answered-and-resolved calls sit outside both the numerator and the denom",
+  "P-190": "THE DIALER LAW. AI is not metered \u2014 AI-dialed and AI-answered calls are excluded from every abandonment computation, and the AI\u2192human handoff is exempt too. silent_answer_rate is retired before build.",
+  "P-191": "R19 IS STRUCK AND THERE IS NO HIPAA GATING. (\u00a7171C replaces \u00a7171B's mechanism before it was built.) No phi_covered flag \u00b7 no routing constraint \u00b7 no vertical exclusion \u00b7 no gate. Anyone signs up. The ",
+  "P-192": "THE OFF-SWITCH PRINCIPLE. Every optional guardrail ships ON with an off switch; turning it off is an event \u2014 logged with who, when and from where \u2014 and the tenant is shown one plain sentence of what t",
+  "P-193": "THE NO-HARDCODE LAW. Every operational value lives in a settings ROW, never in code \u2014 with scope (platform \u00b7 tenant \u00b7 campaign), type, allowed range, who may change it, and an audit row on change. The",
+  "P-194": "THE OPEN ROSTER LAW. Models and providers are ROWS, never enums. ai_models (provider \u00b7 vendor string \u00b7 job classes \u00b7 rank per class \u00b7 input/output price \u00b7 verified_on \u00b7 enabled) and ai_providers (adap",
+  "P-195": "THE AUTONOMY LADDER. Every AI action sits at one of four levels and MOVES: L0 OBSERVE (a signal; acts on nothing) \u2192 L1 PROPOSE (drafts and asks, through X-202 ApprovalDesk) \u2192 L2 ACT & REPORT (does it,",
+  "P-196": "THE NATIVE CAPTURE & SCRUB LAW. SETTLED T677 \u2014 DO NOT RE-RAISE, DO NOT SOFTEN, DO NOT RE-DERIVE. Native capture is PERMITTED (voice, native app, secure conversational surface \u2014 no hosted redirect requ",
+  "P-197": "THE ISO / PAYFAC READINESS LAW. SETTLED T677 - the ISO contracts EXIST; do not re-derive this as \"software only\". TWO INDEPENDENT AXES: gateway (Stripe, Authorize.Net, NMI, PayArc) and merchant_relati",
+  "P-198": "THE SECURE FIELD. ANY field on ANY entity may be marked secure - sensitive data arrives on four different entities, so a vault module would sit half empty while the real data stayed in notes. Encrypte",
+  "P-199": "THE PORTABILITY PROMISE. Every capture channel is built - chat, phone, invoice, in-app, in-field. GOAIEZ holds the cards and can migrate any tenant between gateways. \"GOAIEZ always has access\" means T",
+  "P-200": "THE THREE SHIELDS. (1) THE SEMANTIC FIREWALL IS THE TOOL-CALL BOUNDARY, not a vocabulary detector - a jailbreak that fully succeeds at changing the persona still cannot produce a price, because there ",
+  "P-201": "THE PROMOTION LAW. TWO PRICING WORLDS AND THEY NEVER TOUCH: P-001/R26 govern GOAIEZ\u2192TENANT (two packages, prices never change, we never discount our own product). P-201 governs TENANT\u2192CUSTOMER \u2014 their",
+  "P-202": "THE VOICE LAW. A VOICE IS A PERSON. Nothing is cloned, fingerprinted or synthesised without the person being TOLD. VOICE CLONING: a tenant may clone THEIR OWN voice, with an explicit recorded consent,",
+  "P-203": "THE MIGRATION LAW. AN IMPORT WRITES ROWS AND EMITS NOTHING. Lifecycle events fire for things that HAPPEN; an import records something that already happened somewhere else. doctor asserts the import pa",
+  "P-204": "THE PLATFORM MEASURES WORK, IT DOES NOT PAY PEOPLE. NO PAYROLL, NO HR. Wages, tax, withholding, filings, W-2, pay runs, garnishments, final pay, timesheets, attendance, benefits, performance managemen",
+  "P-205": "THE INTENT LADDER \u2014 MODULE ARBITRATION. There is no per-module PRIORITY field; doctor asserts no module table has one. Priority is contextual, and every agent argues for a higher one from inside its o",
+  "P-206": "THE BRIEF CARRIES THE SPEC, NEVER THE REGISTER DESCRIPTION. GOAIEZ-GODTIER-CAPABILITY-REGISTER.md was mined from a 349-file corpus that included ecommerce, B2B SaaS sales tooling and recruiting \u2014 and ",
+  "P-207": "THE WIZARD IS TWO TIERS, AND AUTONOMY MOVES ONE WAY. SIGNUP ASKS EXACTLY TWO FIELDS \u2014 a business name and a phone number. doctor FAILS THE BUILD ON A THIRD. The plan contains 90 confirmed once declara",
+  "P-208": "THE EVENT GRAPH IS BUILD-FAILING. doctor builds the matrix from every @emits and @consumes and FAILS THE BUILD on any consumed event with no emitter. There is no acceptable count above zero \u2014 a subscr",
+  "P-209": "THE MODULE CONTRACT IS A FILE, NOT A THEME. Sixteen annotations; doctor reads them; turn 86 assembles a brief from them AND FROM NOTHING ELSE. THE BACKFILL GATE: every module must declare every applic",
+  "P-210": "THE AGENT DOES NOT AUTHOR ITS TESTS. A swarm agent writes both the code and the test from the same brief \u2014 so if it misread the brief, the code is wrong AND the test agrees with it, and every gate dow",
+  "P-211": "THE PIPELINE ORDER IS THE ENFORCEMENT. Six stages, cheapest and most structural FIRST: \u2460 THE BOUNDARY (pure grep, ~2s) \u2461 THE CONTRACT (annotations, the event graph, the fact registry, ~5s) \u2462 THE SCHEM",
+  "P-212": "DEFAULT BY INTENT. OVERRIDE BY THE TEN. @intent and the LADDER FLOOR are two different things and \u00a7227 conflated them. @intent sets the ARBITRATION ORDER and the DEFAULT floor \u2014 but the never-promote ",
+  "P-213": "EVERY EVENT HAS A DECLARED ORIGIN \u2014 AND THREE KINDS OF ORIGIN EXIST. @emits/@consumes can only describe MODULE-TO-MODULE, so an event entering from a browser, a vendor, a human or a CLOCK has nowhere ",
+  "P-214": "LAW 128 GAINS A FLOOR: A BRIEF WITH NO CAPABILITY SPECS FAILS THE BLUEPRINT. Every module carries \u22651 specced capability with an ID, an ASSERTION and a REFUSAL; doctor fails on zero. A ceiling alone wa",
+  "P-215": "EVERY GOD-TIER FEATURE IS IMPROVED, THEN HOMED. THERE IS NO THIRD OPTION. \u2460 improved + assigned to a NEW module (a full eight-field header, an @intent, and a TEST ANCHOR naming its own failure \u2014 not t",
+  "P-216": "A MODULE HEADER MAY NOT CONTRADICT A LAW \u2014 AND doctor GREPS FOR IT. No module header may contain a term from a FENCED capability. THE GREP HAS THREE OUTCOMES, NOT TWO \u2014 a two-outcome version gets swit",
+  "P-217": "AN OWNER OVERRULE IS NOT COMPLETE UNTIL IT HAS A LEDGER ROW AND A MARK AT THE POINT OF CONTRADICTION. At T677 the CONTESTED LEDGER held twelve entries and was missing SIX \u2014 including R26's revocation ",
+  "P-223": "@intent CLASSIFIES AN ACTION BY WHO IT REACHES AND WHY \u2014 NEVER BY WHETHER THE MODULE MOVED FIRST. The old implicit test was \u201cdoes it initiate?\u201d, which put a PRICEBOOK LOOKUP and a PUBLIC-POST RENDERER",
+  "R1": "signup \u2192 payment \u2192 provision \u2192 10DLC \u2192 number \u2192 grounding X-118 is an ID with no spec \u2014 you cannot get paid",
+  "R14": "IS NOT TRUE IN CODE",
+  "R16": "C-Mail SES-primary; a DPA is signed before the first send",
+  "R18": "Needs a new trigger \u2014 D6",
+  "R19": "the hit was P-191's own row saying \"strikes R19\" \u2014 a negation",
+  "R2": "number economics \u00b7 demo caps \u00b7 tenant CRM import can't win a ServiceTitan customer who loses 5 years",
+  "R20": "the agent takes every inbound. The queue exists for when it cannot.",
+  "R21": "a human takes over \u2192 the AI produces nothing ON THAT THREAD until released. SCOPED TO ONE THREAD, AND IT IS THE EXCEPTION \u2014 it NEVER pauses the agent, the campaigns, the SEO, the review asks or the ou",
+  "R210": "P-078's phone clause STRUCK \u2014 automated outbound voice to scraped numbers is permitted. It does NOT reach 10DLC, the DNC/litigator/reassigned registers, STOP or quiet hours \u2014 those are carrier- and la",
+  "R211": "ALWAYS TRY TO RESOLVE BEFORE ANY AUTOMATIC SUSPENSION. Generalises R83 from a permission into a SEQUENCE, and reaches every automatic stop \u2014 dunning, the outbound halt, number parking, plan lapse",
+  "R212": "Regional pricing is the TENANT'S business. They define the regions and the prices; P-092 is the only rule \u2014 looked up or refused, never generated",
+  "R213": "X-215 DocumentSigning minted \u00b7 R214 the campaign and warm-up designs are mine \u00b7 R215 feature gating runs on TEST HEALTH",
+  "R216": "the defaults: fake chat attendees \u00b7 EXIF injection \u00b7 session replay \u00b7 carrier route detection KILLED \u00b7 the evergreen webinar KEPT by deleting the word \"live\" \u00b7 the chargeback desk folded (later revers",
+  "R217": "Antigravity is recorded as build-time tooling. The critic's rubric IS the brief's \u2464 assertions and nothing else \u2014 P-210's failure with a second agent in it, otherwise",
+  "R218": "THE HARNESS IS BUILD-TIME; THE PRODUCT USES ITS OWN APIs. Nothing in app/ may reference the harness",
+  "R219": "WE DO NOT GATE. A broken capability is REPORTED, loudly, to a human \u2014 not switched off. The only exception is where the failure ITSELF is the harm, and every one of those is already a fail-closed law",
+  "R220": "X-146 ComplianceRegisters folds into X-204 \u00b7 R221 X-115 struck from the seat table, affiliate moved to SQ-12 \u00b7 R222 X-163 PriceBook moves into W1 as its last slice \u00b7 R223 START-HERE re-repaired to 119",
+  "R222": "X-215 X-163 PriceBook is W1's last slice",
+  "R225": "A GREEN SUITE MAY NEVER HIDE A DEAD RUNTIME (\u00a7265) \u00b7 R226 a parked number is CANCELLED after 30 days of non-use",
+  "R226": "PARKED NUMBERS ARE CANCELLED AFTER 30 DAYS OF NON-USE",
+  "R227": "THERE IS NO SIXTY-SECOND GUARANTEE, NO RESPONSE-TIME SLA, AND NOTHING TIME-BASED IS PROMISED TO A CUSTOMER OR MEASURED AS A PASS/FAIL.",
+  "R228": "CAPTCHA solving is a capability of BOTH X-109 (the TENANT's form outreach) AND the internal GO-AI-MASTER marketing system. Same mechanism as P-144: solved on the operator's OWN key, on a contact form ",
+  "R229": "My first wording was WRONG and contradicted an existing law. I wrote \"a DNC-registry scrub before any outbound\", which describes a MANDATORY GATE. P-066 already ruled the opposite, and the owner confi",
+  "R230": "X-110 IS THE SPINE. The pixel and the identity graph are ONE module: X-110 owns the observation AND the resolution.",
+  "R231": "send.requested is a REQUIRED EMISSION on every send path \u2014 not one emitter. Every module that calls a channel emits it FIRST.",
+  "R232": "ONE codebase. GO AI EZ's marketing and a tenant's marketing are the SAME 34 modules at a DIFFERENT SCOPE. platform \u00b7 agency \u00b7 tenant \u2014 the scope triple the plan already uses 281 times. Go AI EZ operat",
+  "R233": "AGENCY is a DELEGATED scope. GOAIEZ is a PEER scope. They are different KINDS, not different levels.",
+  "R234": "THE AI IS THE DEFAULT OPERATOR OF THE BUSINESS. It is ON, handling everything, from minute one. A HUMAN is the EXCEPTION PATH \u2014 invoked when the AI CANNOT handle something, never as the normal route. ",
+  "R235": "EVERY MODULE SHIPS AT ITS CEILING. The autopilot is ON at signup, on every lane, for every tenant. A client may switch any lane OFF. Nothing waits to be switched ON, and nothing \"earns\" the right to a",
+  "R237": "Any model from any vendor, including SELF-HOSTED, is a ROW. And every module names its own PRIMARY, BACKUP and COMPLEX model \u2014 per module, per job class, changeable without a deploy.",
+  "R238": "Every AI call from every module goes through ONE path in C-Ai. There is no second way in. gate \u2192 budget \u2192 assemble \u2192 redact \u2192 cache \u2192 route \u2192 call \u2192 validate \u2192 record \u2192 learn",
+  "R239": "X-219 AiRouter owns WHO SERVES WHAT \u00b7 X-220 PromptRegistry owns the PROMPT LIFECYCLE \u00b7 C-Ai keeps THE CALL and everything that happens ON it.",
+  "R240": "A capability MUST declare a refusal if it \u2460 SENDS OUTWARD \u00b7 \u2461 SPENDS OR MOVES MONEY \u00b7 \u2462 ANSWERS WITH A FACT \u00b7 \u2463 TAKES AN IRREVERSIBLE ACTION. Otherwise id + assertion is the floor.",
+  "R241": "X-121 is a MIGRATION under \u00a7259 \u2014 four deploys, never compressed. It is REMOVED from batch 1 and becomes its own project.",
+  "R242": "The module directory is app/Modules/<id>/ \u2014 hyphen included \u2014 and it holds BOTH the manifest and the code. PHP classes inside it are autoloaded by CLASSMAP, not PSR-4.",
+  "R244": "X-121 splits: X-121a is ADDITIVE and ships in ONE deploy. X-121b is the seven-noun RECONCILIATION and keeps \u00a7259's four.",
+  "R26": "GOAIEZ may discount its own subscription. Downgrade Offers and Annual Upgrade Nudges are reclaimed.",
+  "R33": "X-161 the 100 profiles carry prospects with no site of their own",
+  "R34": "Cancel is one button, \u226460 seconds. A save-offer at the cancel button IS friction \u2014 unless it adds NO STEP. THE RULE: the offer and the cancel button appear ON THE SAME SCREEN, and cancel is always one",
+  "R66": "the ruling that superseded or confirmed it",
+  "R91": "CARD STORAGE, SETTLED"
+ },
+ "law_note": "ALL laws in GOAIEZ-MASTER-PLAN.md apply. v3.2 UPDATES, it does not supersede. This dict carries the definition line for each id that has one; the plan is authoritative for full text. Use `php artisan why <id>` to read one in place.",
+ "undefined_ids": {
+  "_what": "Ids CITED in the plan with no definition line an extractor can find. They may be defined in prose, or carried by another law, or genuinely orphaned. This is the M-95 defect at the level of the law itself: an id nobody can look up looks authoritative and cannot be checked. CitationStage catches this in CODE; nothing catches it in the PLAN.",
+  "rulings_cited_without_definition": [
+   "R4",
+   "R9",
+   "R11",
+   "R12",
+   "R13",
+   "R15",
+   "R17",
+   "R23",
+   "R24",
+   "R25",
+   "R27",
+   "R28",
+   "R30",
+   "R31",
+   "R32",
+   "R35",
+   "R36",
+   "R37",
+   "R45",
+   "R51",
+   "R53",
+   "R54",
+   "R58",
+   "R59",
+   "R61",
+   "R64",
+   "R65",
+   "R67",
+   "R68",
+   "R69",
+   "R70",
+   "R72",
+   "R75",
+   "R78",
+   "R79",
+   "R80",
+   "R83",
+   "R84",
+   "R85",
+   "R86",
+   "R87",
+   "R88",
+   "R89",
+   "R90",
+   "R92",
+   "R93",
+   "R106",
+   "R118",
+   "R125",
+   "R130",
+   "R141",
+   "R161",
+   "R171",
+   "R174",
+   "R189",
+   "R193",
+   "R199",
+   "R200",
+   "R209",
+   "R214",
+   "R215",
+   "R221",
+   "R223",
+   "R236"
+  ],
+  "p_laws_cited_without_definition": [
+   "P-218",
+   "P-219",
+   "P-220",
+   "P-221",
+   "P-222",
+   "P-227"
+  ],
+  "counts": {
+   "rulings": "64 of 105",
+   "p_laws": "6 of 146"
+  },
+  "_action_for_claude_code": "Before citing any of these in generated code or tests, resolve it: run `php artisan why <id>`. If it returns nothing, STATE THE FACT instead of the id. Never cite an id you cannot resolve."
+ }
+}

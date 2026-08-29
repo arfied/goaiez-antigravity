@@ -1,0 +1,1168 @@
+{
+ "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
+ "started": "2026-08-30T02:05:15",
+ "updated": "2026-08-30T02:05:15",
+ "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
+ "roster": 124,
+ "runtime_build": "20260829-0647",
+ "seal_digest": "f1e73d9fc181eb1c",
+ "seal_digest_observed": null,
+ "runtime_sound": null,
+ "bootstrap_done": false,
+ "stages": {
+  "integrity": {
+   "violations": null,
+   "fails": "COMMIT"
+  },
+  "boundary": {
+   "violations": null,
+   "fails": "COMMIT"
+  },
+  "contract": {
+   "violations": null,
+   "fails": "COMMIT"
+  },
+  "citation": {
+   "violations": null,
+   "fails": "COMMIT"
+  },
+  "schema": {
+   "violations": null,
+   "fails": "MERGE"
+  },
+  "capability": {
+   "violations": null,
+   "fails": "MERGE"
+  },
+  "anchor": {
+   "violations": null,
+   "fails": "WAVE"
+  },
+  "journey": {
+   "violations": null,
+   "fails": "WAVE"
+  }
+ },
+ "waves": {
+  "1": {
+   "track": "spine",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-121",
+    "X-123",
+    "X-122",
+    "X-126",
+    "X-119"
+   ]
+  },
+  "2": {
+   "track": "spine",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-128"
+   ]
+  },
+  "3": {
+   "track": "ai-core",
+   "status": "NOT_STARTED",
+   "modules": [
+    "C-Ai",
+    "X-219",
+    "X-220"
+   ]
+  },
+  "4": {
+   "track": "consent",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-204",
+    "X-206"
+   ]
+  },
+  "5": {
+   "track": "J1-J2-J4 the sixty seconds",
+   "status": "NOT_STARTED",
+   "modules": [
+    "C-Telephony",
+    "C-Sms",
+    "C-Agent",
+    "X-66",
+    "X-188"
+   ]
+  },
+  "6": {
+   "track": "J1-J2-J4 the sixty seconds",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-153",
+    "X-01",
+    "X-118"
+   ]
+  },
+  "7": {
+   "track": "J3 the pricebook",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-163",
+    "X-164",
+    "X-108"
+   ]
+  },
+  "8": {
+   "track": "J10 reviews",
+   "status": "NOT_STARTED",
+   "modules": [
+    "C-Reviews",
+    "X-181",
+    "X-110"
+   ]
+  },
+  "9": {
+   "track": "J9-J12 money",
+   "status": "NOT_STARTED",
+   "modules": [
+    "C-Billing",
+    "X-199",
+    "X-211",
+    "X-202"
+   ]
+  },
+  "10": {
+   "track": "J9-J12 money",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-117",
+    "X-198"
+   ]
+  },
+  "11": {
+   "track": "J6-J7 portal",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-172",
+    "X-112",
+    "X-166"
+   ]
+  },
+  "12": {
+   "track": "J11 the site",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-157",
+    "X-178",
+    "X-103",
+    "X-102",
+    "X-155"
+   ]
+  },
+  "13": {
+   "track": "J11 the site",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-137",
+    "X-176"
+   ]
+  },
+  "14": {
+   "track": "J5-J8 safety",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-212",
+    "X-203"
+   ]
+  },
+  "15": {
+   "track": "channels",
+   "status": "NOT_STARTED",
+   "modules": [
+    "C-Mail",
+    "C-Whatsapp",
+    "X-147",
+    "X-207",
+    "X-193"
+   ]
+  },
+  "16": {
+   "track": "channels",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-208"
+   ]
+  },
+  "17": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-125",
+    "X-127",
+    "X-149",
+    "X-170",
+    "X-201"
+   ]
+  },
+  "18": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-10",
+    "X-113",
+    "X-124",
+    "X-143",
+    "X-151"
+   ]
+  },
+  "19": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-162",
+    "X-165",
+    "X-171",
+    "X-189",
+    "X-214"
+   ]
+  },
+  "20": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-215",
+    "X-07",
+    "X-104",
+    "X-111",
+    "X-129"
+   ]
+  },
+  "21": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-138",
+    "X-139",
+    "X-145",
+    "X-148",
+    "X-150"
+   ]
+  },
+  "22": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-16",
+    "X-160",
+    "X-167",
+    "X-168",
+    "X-175"
+   ]
+  },
+  "23": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-177",
+    "X-180",
+    "X-194",
+    "X-195",
+    "X-197"
+   ]
+  },
+  "24": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-209",
+    "X-82",
+    "X-08",
+    "X-120",
+    "X-136"
+   ]
+  },
+  "25": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-141",
+    "X-142",
+    "X-156",
+    "X-173",
+    "X-213"
+   ]
+  },
+  "26": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-105",
+    "X-109",
+    "X-114",
+    "X-116",
+    "X-130"
+   ]
+  },
+  "27": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-131",
+    "X-132",
+    "X-134",
+    "X-135",
+    "X-140"
+   ]
+  },
+  "28": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-144",
+    "X-154",
+    "X-158",
+    "X-159",
+    "X-161"
+   ]
+  },
+  "29": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-179",
+    "X-182",
+    "X-183",
+    "X-184",
+    "X-185"
+   ]
+  },
+  "30": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-186",
+    "X-190",
+    "X-191",
+    "X-192",
+    "X-196"
+   ]
+  },
+  "31": {
+   "track": "roster",
+   "status": "NOT_STARTED",
+   "modules": [
+    "X-200",
+    "X-205",
+    "X-210",
+    "X-217",
+    "X-218"
+   ]
+  }
+ },
+ "modules": {
+  "C-Agent": {
+   "status": "NOT_STARTED",
+   "wave": 5,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "C-Ai": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "C-Billing": {
+   "status": "NOT_STARTED",
+   "wave": 9,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "C-Mail": {
+   "status": "NOT_STARTED",
+   "wave": 15,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "C-Reviews": {
+   "status": "NOT_STARTED",
+   "wave": 8,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "C-Sms": {
+   "status": "NOT_STARTED",
+   "wave": 5,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "C-Telephony": {
+   "status": "NOT_STARTED",
+   "wave": 5,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "C-Whatsapp": {
+   "status": "NOT_STARTED",
+   "wave": 15,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-01": {
+   "status": "NOT_STARTED",
+   "wave": 6,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-07": {
+   "status": "NOT_STARTED",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-08": {
+   "status": "NOT_STARTED",
+   "wave": 24,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-10": {
+   "status": "NOT_STARTED",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-102": {
+   "status": "NOT_STARTED",
+   "wave": 12,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-103": {
+   "status": "NOT_STARTED",
+   "wave": 12,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-104": {
+   "status": "NOT_STARTED",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-105": {
+   "status": "NOT_STARTED",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-108": {
+   "status": "NOT_STARTED",
+   "wave": 7,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-109": {
+   "status": "NOT_STARTED",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-110": {
+   "status": "NOT_STARTED",
+   "wave": 8,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-111": {
+   "status": "NOT_STARTED",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-112": {
+   "status": "NOT_STARTED",
+   "wave": 11,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-113": {
+   "status": "NOT_STARTED",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-114": {
+   "status": "NOT_STARTED",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-116": {
+   "status": "NOT_STARTED",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-117": {
+   "status": "NOT_STARTED",
+   "wave": 10,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-118": {
+   "status": "NOT_STARTED",
+   "wave": 6,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-119": {
+   "status": "NOT_STARTED",
+   "wave": 1,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-120": {
+   "status": "NOT_STARTED",
+   "wave": 24,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-121": {
+   "status": "NOT_STARTED",
+   "wave": 1,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-122": {
+   "status": "NOT_STARTED",
+   "wave": 1,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-123": {
+   "status": "NOT_STARTED",
+   "wave": 1,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-124": {
+   "status": "NOT_STARTED",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-125": {
+   "status": "NOT_STARTED",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-126": {
+   "status": "NOT_STARTED",
+   "wave": 1,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-127": {
+   "status": "NOT_STARTED",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-128": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-129": {
+   "status": "NOT_STARTED",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-130": {
+   "status": "NOT_STARTED",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-131": {
+   "status": "NOT_STARTED",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-132": {
+   "status": "NOT_STARTED",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-134": {
+   "status": "NOT_STARTED",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-135": {
+   "status": "NOT_STARTED",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-136": {
+   "status": "NOT_STARTED",
+   "wave": 24,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-137": {
+   "status": "NOT_STARTED",
+   "wave": 13,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-138": {
+   "status": "NOT_STARTED",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-139": {
+   "status": "NOT_STARTED",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-140": {
+   "status": "NOT_STARTED",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-141": {
+   "status": "NOT_STARTED",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-142": {
+   "status": "NOT_STARTED",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-143": {
+   "status": "NOT_STARTED",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-144": {
+   "status": "NOT_STARTED",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-145": {
+   "status": "NOT_STARTED",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-147": {
+   "status": "NOT_STARTED",
+   "wave": 15,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-148": {
+   "status": "NOT_STARTED",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-149": {
+   "status": "NOT_STARTED",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-150": {
+   "status": "NOT_STARTED",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-151": {
+   "status": "NOT_STARTED",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-153": {
+   "status": "NOT_STARTED",
+   "wave": 6,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-154": {
+   "status": "NOT_STARTED",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-155": {
+   "status": "NOT_STARTED",
+   "wave": 12,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-156": {
+   "status": "NOT_STARTED",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-157": {
+   "status": "NOT_STARTED",
+   "wave": 12,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-158": {
+   "status": "NOT_STARTED",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-159": {
+   "status": "NOT_STARTED",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-16": {
+   "status": "NOT_STARTED",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-160": {
+   "status": "NOT_STARTED",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-161": {
+   "status": "NOT_STARTED",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-162": {
+   "status": "NOT_STARTED",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-163": {
+   "status": "NOT_STARTED",
+   "wave": 7,
+   "intent": "NONE",
+   "unresolved": []
+  },
+  "X-164": {
+   "status": "NOT_STARTED",
+   "wave": 7,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-165": {
+   "status": "NOT_STARTED",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-166": {
+   "status": "NOT_STARTED",
+   "wave": 11,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-167": {
+   "status": "NOT_STARTED",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-168": {
+   "status": "NOT_STARTED",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-170": {
+   "status": "NOT_STARTED",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-171": {
+   "status": "NOT_STARTED",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-172": {
+   "status": "NOT_STARTED",
+   "wave": 11,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-173": {
+   "status": "NOT_STARTED",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-175": {
+   "status": "NOT_STARTED",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-176": {
+   "status": "NOT_STARTED",
+   "wave": 13,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-177": {
+   "status": "NOT_STARTED",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-178": {
+   "status": "NOT_STARTED",
+   "wave": 12,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-179": {
+   "status": "NOT_STARTED",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-180": {
+   "status": "NOT_STARTED",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-181": {
+   "status": "NOT_STARTED",
+   "wave": 8,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-182": {
+   "status": "NOT_STARTED",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-183": {
+   "status": "NOT_STARTED",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-184": {
+   "status": "NOT_STARTED",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-185": {
+   "status": "NOT_STARTED",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-186": {
+   "status": "NOT_STARTED",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-188": {
+   "status": "NOT_STARTED",
+   "wave": 5,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-189": {
+   "status": "NOT_STARTED",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-190": {
+   "status": "NOT_STARTED",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-191": {
+   "status": "NOT_STARTED",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-192": {
+   "status": "NOT_STARTED",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-193": {
+   "status": "NOT_STARTED",
+   "wave": 15,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-194": {
+   "status": "NOT_STARTED",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-195": {
+   "status": "NOT_STARTED",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-196": {
+   "status": "NOT_STARTED",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-197": {
+   "status": "NOT_STARTED",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-198": {
+   "status": "NOT_STARTED",
+   "wave": 10,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-199": {
+   "status": "NOT_STARTED",
+   "wave": 9,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-200": {
+   "status": "NOT_STARTED",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-201": {
+   "status": "NOT_STARTED",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-202": {
+   "status": "NOT_STARTED",
+   "wave": 9,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-203": {
+   "status": "NOT_STARTED",
+   "wave": 14,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-204": {
+   "status": "NOT_STARTED",
+   "wave": 4,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-205": {
+   "status": "NOT_STARTED",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-206": {
+   "status": "NOT_STARTED",
+   "wave": 4,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-207": {
+   "status": "NOT_STARTED",
+   "wave": 15,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-208": {
+   "status": "NOT_STARTED",
+   "wave": 16,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-209": {
+   "status": "NOT_STARTED",
+   "wave": 24,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-210": {
+   "status": "NOT_STARTED",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-211": {
+   "status": "NOT_STARTED",
+   "wave": 9,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-212": {
+   "status": "NOT_STARTED",
+   "wave": 14,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-213": {
+   "status": "NOT_STARTED",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-214": {
+   "status": "NOT_STARTED",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-215": {
+   "status": "NOT_STARTED",
+   "wave": 20,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-217": {
+   "status": "NOT_STARTED",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-218": {
+   "status": "NOT_STARTED",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-219": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-220": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-66": {
+   "status": "NOT_STARTED",
+   "wave": 5,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-82": {
+   "status": "NOT_STARTED",
+   "wave": 24,
+   "intent": "INFORM",
+   "unresolved": []
+  }
+ },
+ "journeys": {
+  "J1": {
+   "status": "RED",
+   "title": "a missed call becomes a consented text back",
+   "green_after_wave": 5
+  },
+  "J2": {
+   "status": "RED",
+   "title": "two fields at signup put a live agent on a real number",
+   "green_after_wave": 6
+  },
+  "J3": {
+   "status": "RED",
+   "title": "a quote comes from the pricebook or does not come at all",
+   "green_after_wave": 7
+  },
+  "J4": {
+   "status": "RED",
+   "title": "STOP halts every pending step for that person",
+   "green_after_wave": 5
+  },
+  "J5": {
+   "status": "RED",
+   "title": "a migration of five hundred jobs sends nothing",
+   "green_after_wave": 14
+  },
+  "J6": {
+   "status": "RED",
+   "title": "cancel is one tap with nothing in between",
+   "green_after_wave": 11
+  },
+  "J7": {
+   "status": "RED",
+   "title": "an agency client never sees cost or margin",
+   "green_after_wave": 11
+  },
+  "J8": {
+   "status": "RED",
+   "title": "a deliberately corrupted backup fails the restore",
+   "green_after_wave": 14
+  },
+  "J9": {
+   "status": "RED",
+   "title": "an invoice reaches a real charge id",
+   "green_after_wave": 10
+  },
+  "J10": {
+   "status": "RED",
+   "title": "a completed job asks for a review once inside the cadence",
+   "green_after_wave": 8
+  },
+  "J11": {
+   "status": "RED",
+   "title": "a published site carries all seven",
+   "green_after_wave": 13
+  },
+  "J12": {
+   "status": "RED",
+   "title": "an overdue invoice is chased by reason, resolution first",
+   "green_after_wave": 9
+  }
+ },
+ "unresolved": [],
+ "notes": []
+}

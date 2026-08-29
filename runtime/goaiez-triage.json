@@ -1,0 +1,11 @@
+{
+  "_why": "R243 — the legacy triage is DATA, not a code edit. An agent implemented it by editing BoundaryStage and CitationStage to skip app/Services, app/Livewire and app/Jobs. That HID 111 violations instead of ruling on them, required re-sealing the checker, and means a surviving file can never be seen again. A ruling belongs in a file the owner writes and doctor reads.",
+  "_owner_ruling": "everything under these paths is REPLACE unless a module @provides names it",
+  "replace": [
+    "app/Services",
+    "app/Livewire",
+    "app/Jobs"
+  ],
+  "keep": [],
+  "_effect": "violations in REPLACE paths are still COUNTED and still LISTED, under a separate heading, and they do not block the COMMIT. They are not hidden — they are triaged."
+}
