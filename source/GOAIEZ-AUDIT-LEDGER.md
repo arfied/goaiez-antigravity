@@ -5160,3 +5160,190 @@ $row = DB::table($table)
 
 ## ⚠️ AND ONE THING I WOULD NOT DECIDE ALONE
 **v3.2 lists a `fact` stage. It does not exist.** ⛔ *I cannot tell whether that was **aspirational** — planned, never built — or simply wrong.* ⭐⭐⭐ **If it was a genuine intention, deleting it from the table loses a REQUIREMENT rather than correcting an error**, so the patch says: **ask the owner before removing it.**
+
+---
+
+# 225. ⛔⛔⛔⛔ **`R243` WAS CITED IN TWO HANDOVER PACKAGES AND DID NOT EXIST**
+
+**The audit asked one question — *"are the next-free numbers actually free?"* — and `R243` came back FREE while both packages cited it as SPENT.**
+
+| ⛔ | *`goaiez-triage.json` shipped* |
+| :--- | :--- |
+| ⛔ | *`DoctorCommand` reads it* |
+| ⛔ | *`R243` appears in `GOAIEZ-INDEX.json`, `GOAIEZ-PACKAGE-2-DELTA.json`, the handover AND the patch* |
+| ⛔⛔⛔ | ***`R243` appeared ZERO times in the master plan*** |
+
+> ⭐⭐⭐ **I built the mechanism, shipped the file, wired the command, cited the number in four documents — and never wrote the ruling.** *This is the "claimed but not applied" defect committed against a law of my own making, and it would have been Claude Code's first unresolvable citation.*
+
+✅ **`§264W` written.** *`R243` · `N-243-01` (a triage ruling may NEVER be implemented by editing a stage) · `N-243-02` (a REPLACE path still reports) · `N-243-03` (**`keep: []` is a real answer — a path in neither list is UNTRIAGED, and untriaged is not replace**).*
+
+# 226. ⛔⛔ AND `X-216` WAS **SKIPPED**, NOT RETIRED
+
+**The record says *"X-216 was skipped"* and never says why.**
+
+⭐⭐⭐ ***"Skipped" and "retired" are not the same thing.*** *A skipped number is FREE and merely LOOKS taken — so the next agent needing one either wastes it or takes it and collides.* ⛔ **This programme has already lost four rulings to a number spent twice.**
+
+✅ **`X-216` is now PERMANENTLY RETIRED — never assigned, to any module, ever.** ⭐ *A retired number is a fact; a skipped one is an ambiguity.*
+
+# 227. ⭐⭐⭐⭐ **AUDIT CLEAN — AND IT ONLY GOT THERE BY LOOKING FOR PROBLEMS**
+| ✅ | *roster 124 · `R237`–`R244` all defined as table rows · `X-216` retired · `X-221` free · `R245` free* |
+| :--- | :--- |
+| ✅ | *index sha matches the plan · manifest hashes current, no drift · all three JSON files valid* |
+| ✅ | *every patch target exists in v3.2 · **every quoted line verified present** · `§2.5`/`§9.1`/`§13` free of collisions* |
+| ✅ | *package 1 and package 2 agree on all 8 shared numbers · neither asserts a stale value as current* |
+
+> ⭐⭐ **And one method note worth keeping: my own fix script had an `assert` that fired while the `cp` ran anyway — so the "fix" reported success and changed nothing.** *Caught by re-verifying instead of trusting the tick. **The same defect I have documented eleven times, committed while auditing for it.***
+
+---
+
+# 228. ⭐⭐⭐ *"THE CLAUDE CODE PACKAGE IS NOT FOR AUTOPILOT — IT IS GUIDED"*
+
+**The owner corrected a framing error that would have caused real damage.**
+
+| ⭐ **ANTIGRAVITY** | **AUTOPILOT** — *executes the build plan unattended* |
+| :--- | :--- |
+| ⭐⭐ **CLAUDE CODE** | ⛔ ***GUIDED*** — *the owner is at the keyboard. It writes and maintains the plan, proposes, shows the diff, and **waits*** |
+
+> ⛔⛔ **I wrote package 2 as if Claude Code would apply eight patches and report back.**
+
+## ⛔ WHAT THAT FRAMING GOT WRONG, MEASURED
+| ⛔⛔⛔ | *the **`fact` stage** question sat at **99%** of the document* — ⭐ **in a guided session the owner's decisions are the FIRST thing, not a footnote** |
+| :--- | :--- |
+| ⛔⛔ | *`§13①` said **"claim the ruling number with its title before drafting"*** — ⭐⭐⭐ **a ruling is the OWNER's to spend, not Claude Code's to claim** |
+| ⛔ | *`§13②` said "regenerate the index after every session" with no approval* — ⭐ *that one is genuinely mechanical and now says so, **because it only ever restates what the plan already says*** |
+
+## ✅ WHAT CHANGED
+| ⭐⭐⭐ | **package 2 now OPENS with four questions**, two of which BLOCK patches — *`fact` blocks patch 3, `jobs` blocks patch 5 and all of `X-121b`* |
+| :--- | :--- |
+| ⭐⭐ | **"One patch at a time. Show the before and after. Wait."** |
+| ⭐ | *patches 2, 4, 6, 7 are pure additions and marked **safe to start*** |
+| ⭐ | *the delta carries `_mode: GUIDED`, the four blocking questions, and the patch order as **data*** |
+| ⭐⭐ | **package 1 now states both roles explicitly: *"You are not the autopilot. You are the one who writes what the autopilot follows."*** |
+
+> ⭐⭐⭐ **And the manifest carries the warning that matters:** *"Applying package 2 autonomously would **delete a possible requirement** (the `fact` stage) and **guess a table name that collides with Laravel**."*
+
+⚠️ *The distinction is not procedural politeness. **A loop can undo a bad commit; it cannot undo a deleted requirement nobody remembers was there.***
+
+---
+
+# 229. ⭐⭐⭐⭐ THE 64, RESOLVED — **AND ALL 64 HAD SURVIVING CONTEXT**
+
+> **Owner: *"Give me the 64 things I need to answer so we don't run 50 turns. I want nothing pending."***
+
+## ⭐⭐⭐ NONE OF THEM WAS TRULY ORPHANED
+**Every one of the 64 was written down somewhere — just never as a definition line an extractor could find.** ⭐ *That is a more hopeful finding than "64 lost rulings": the decisions were made, recorded and cited. **Only their FORM was wrong.***
+
+| ⭐⭐ **28** | **need NO answer** — *cited in the same sentence as a law that IS defined, so `php artisan why` resolves them through the carrier* |
+| :--- | :--- |
+| ⛔ **36** | **need ratifying** — *the meaning is reconstructed from where each is cited; the owner writes `OK`, a correction, or `RETIRE`* |
+
+⭐ *Examples of the carried: `R15`→`P-074` · `R31`→`P-011` · `R54`→`R235` · `R70`→`P-195` · `R84`/`R85`→`P-012`+`R34`.*
+
+# 230. ⭐⭐⭐ AND THE HARD SEARCH — **TEN OTHER DECISIONS, FOUR BLOCKING**
+
+**Searched every package file for owner decisions, TBDs, open items and unresolved questions. Beyond the 36 there are exactly ten:**
+| ⛔⛔ **BLOCKING TODAY** | *the `fact` stage · **`jobs`** · the duplicated nouns · whether the three built modules survive "start over"* |
+| :--- | :--- |
+| ⭐ **not blocking** | *who writes the 322 refusals · when REPLACE executes · capping the COMPLEX slot · who decides "complex" · the redaction boundary · `X-218` build or retire* |
+
+## ⭐⭐ AND THE LIST OF WHAT IS **NOT** PENDING — SO THE COUNT IS TRUSTABLE
+**The roster · the ruling numbers · the AI core · `X-121`'s split · the triage mechanism · the module layout · the refusal RULE · tamper detection · the turn budget · Gemini-vs-ChatGPT.**
+
+> ⭐⭐⭐ **36 + 10 = 46 answers, and nothing else in the package waits on the owner.** *`GOAIEZ-THE-64-DECISIONS.md` carries all of them in three tables, and `GOAIEZ-INDEX.json` carries the same as data so Claude Code can consume the answers directly.*
+
+⚠️ *The reconstructions are IMPLICATIONS, not quotations.* ⛔ **A ratified wrong reconstruction becomes law, and this programme has already built the wrong thing twice from a plausible reading.** ⭐ *Which is why every row offers `RETIRE` — **an id nobody can justify should stop being cited, not be given a meaning to keep it alive.***
+
+---
+
+# 231. ⭐⭐⭐⭐ **`R245` — THE STANDING DELEGATION**
+
+> **Owner: *"Anything not covered, let Claude Code decide. Never get stuck on a module. From now on the AI does the work and makes the system god-tier perfect, not gated, the best they can be. A billion-dollar system."***
+
+⭐⭐⭐ **That is a ruling, and it needed a number.** *18 of the 36 answers were "not sure, you find a fix" — **the delegation was already happening; `R245` makes it law.***
+
+| `N-245-01` | ⭐ ***"I do not know" is not a stopping condition.*** *`UNRESOLVED` is for a **MISSING DEPENDENCY**, never an unmade decision* |
+| :--- | :--- |
+| `N-245-02` | ⛔ *write the choice WHERE YOU MAKE IT, marked `(R245)` — **an undocumented choice is indistinguishable from an accident*** |
+| `N-245-03` | ⭐⭐ **build the best version, not the safe version** |
+| `N-245-04` | ⚠️ ⛔ ***the delegation is over DESIGN, never over the LAW*** — no spending ruling numbers, no minting modules, no editing `app/Doctor` |
+
+# 232. ⛔⛔⛔ **`R246` — AND THIS ONE MATTERS MORE THAN THE DELEGATION**
+
+**"Not gated" is one sentence away from breaking the product, and it misreads in exactly one direction.**
+
+| ⛔⛔⛔ **STAYS — these are NOT gates** | *`X-126`'s **`NO_FACT`** · **consent, quiet hours, DNC** (TCPA, legal) · **RLS tenant isolation** · the **money confirmation** (`P-096`/`D5`) · **`X-220`'s golden set*** |
+| :--- | :--- |
+| ⭐ **GOES — these ARE gates** | *waiting for approval to ACT · `PROPOSE_ONLY` · a feature shipped OFF "until reviewed" · **an autopilot that asks permission to do its job*** |
+
+> ⭐⭐⭐ **A refusal is the system being CORRECT. A gate is the system being TIMID.** *`R235` said nothing earns the right to act. **`R246` says nothing loses the right to refuse.***
+
+⛔ **A system that cannot refuse cannot be trusted with a tenant's customers — and stripping `NO_FACT` to look bold would end the product, not free it.**
+
+# 233. ⭐⭐ THE SEVEN FACTS, AND THE TEN DECIDED
+| ⭐⭐ **`R9`** | ***every SMS over 159 chars is ONE CREDIT · 1 MMS = 1 SMS credit*** — **the unit is the SEGMENT** |
+| :--- | :--- |
+| ⭐⭐ **`R28`/`R61`** | ***staff stay logged in BY DEFAULT***, timeout opt-in per user — **the 12h/30m console default is STRUCK** |
+| ⭐ **`R88`** | *send-graph → verifier → campaign · **FULL AUTOPILOT*** |
+| ⭐ **`R141`** | ***`robots.txt` IS observed*** on normal scraping |
+
+**And the ten, decided under `R245`:** ⭐ *`fact` stage KEPT as a gap · **`jobs` → `work_orders`, Laravel keeps `jobs`** · `businesses`/`facts` canonical · **`X-126`/`X-119`/`X-121a` SURVIVE** · refusals written per module · REPLACE executes per module in the same commit · COMPLEX capped under `C-Ai` · the **JOB CLASS** decides complexity, not a heuristic · self-host the sensitive classes · **`X-218` BUILD IT**.*
+
+⚠️ **LEAST CONFIDENT: the `work_orders` rename.** ⭐ *Moving Laravel's queue is a framework fight with no upside* — ⛔ **but if "jobs" is the word the business uses with customers, the rename costs vocabulary that cannot be recovered.**
+
+**AUDIT: roster 124 · `R245`/`R246` defined · `R247` free · index sha matches · manifest 24 files, 0 drift · all JSON valid · every `R246` protection present. 0 issues.**
+
+---
+
+# 234. ⭐⭐⭐⭐ PACKAGE 1 PATCHED — **AN AUTOPILOT PACKAGE WITH A QUESTION IN IT IS A STALLED AUTOPILOT**
+
+**`PART 6` was titled *"THE OPEN DECISIONS CLAUDE CODE INHERITS."*** ⛔ *For an unattended package that title is the defect.* ✅ **Rewritten as `NOTHING IS OPEN` — the ten decided, the seven facts, the twenty-four delegated, all as settled law.**
+
+⭐ *And the closing `LEAST CONFIDENT` still asked whether the three built modules survive.* **Answered in `6.3④`: they survive.**
+
+# 235. ⚠️⚠️ **`Q-045` AND `R245` LOOK LIKE A CONTRADICTION — AND AN AUTOPILOT WOULD STALL ON IT**
+
+**Found by scanning every package-1 file for anything that stops an unattended agent.**
+
+| `R245` says | **you are NEVER blocked** |
+| :--- | :--- |
+| `Q-045` says | ***"STOP AND ASK on a new threshold, retention or pricing, legal text, or anything that would REVERSE a ruling"*** |
+
+⭐⭐⭐ **They are the SAME LINE DRAWN TWICE.** *`N-245-04` carves out the LAW; `Q-045` names the five things inside that carve-out.* ⛔ **But nothing said so, and an agent reading both would have stopped to reconcile them — which is the stall the whole delegation exists to prevent.**
+
+✅ **`§6.15` states the test:** *does the choice change what the platform **CHARGES**, **KEEPS**, **PROMISES IN LAW**, or has already **RULED**?* ⛔ *Then stop.* ⭐ **Otherwise decide, mark `(R245)`, build.**
+
+## ⭐⭐ AND THE SENTENCE THAT MAKES "STOP" SURVIVABLE
+> ***"A blocked VALUE is not a blocked MODULE."***
+
+⛔ *Build everything around it, leave the one number as `TODO(Q-045)` with your recommendation, keep going.* ⭐⭐⭐ **Without that line, "stop and ask on a threshold" halts an entire module over one integer — and this programme has already lost turns to exactly that shape.**
+
+**AUDIT: pkg1 zero open decisions · pkg2 opens with its four questions (correct for GUIDED) · `R243`–`R246` all table rows · roster 124 · index sha matches · manifest 0 drift.**
+
+---
+
+# 236. ⭐⭐⭐ *"SO THESE ALL NEED TO BE ANSWERED?"* — **NO, AND THE DISTINCTION MATTERS**
+
+**The owner asked whether `Q-045`'s five categories are another list to work through. They are not.**
+
+| ⭐⭐ **THE 46 were a BACKLOG** | *questions that ALREADY existed and were blocking work.* ✅ **Answered. Closed.** |
+| :--- | :--- |
+| ⭐⭐⭐ **`Q-045`'s FIVE are a FILTER** | *a rule for **CLASSIFYING a decision the moment it arises**, during the build, one at a time, in context* |
+
+⛔ **They are not pending. There is nothing to answer today.**
+
+## ⭐ AND I TESTED THAT RATHER THAN ASSERTING IT
+**Hard-searched the plan for already-open instances of all five:**
+| ✅ **retention undecided** | **0** |
+| :--- | ---: |
+| ✅ **pricing undecided** | **0** |
+| ✅ **legal text undecided** | **0** |
+| ⚠️ *threshold matches* | *5 — **all already DECIDED*** |
+
+⭐⭐⭐ **The threshold hits are `Q-045` being OBEYED, not violated:** *"zero product thresholds changed by Claude — **the 3% is the owner's**"* is a completed checklist item. *And the 200-industry content pack says explicitly: **"its own arc, later. The engine does not wait on it."***
+
+> ⭐⭐ **So the search found the law working, not a gap in it.**
+
+## ⭐ WHAT ACTUALLY HAPPENS AT BUILD TIME
+*The agent needs a bounce threshold for `X-207` → checks: does this change what we **CHARGE, KEEP, PROMISE IN LAW, or have RULED**? → a threshold, so yes → writes **`TODO(Q-045)`: recommend 250 bounces per `R17`** → ⭐⭐⭐ **and keeps building the module.***
+
+⛔ **The owner answers it whenever he next looks — and the module is already finished around it.**

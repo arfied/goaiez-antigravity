@@ -160,6 +160,15 @@
 
 **Produce a build plan Antigravity can execute on autopilot, and maintain it as the laws grow.**
 
+## ⭐⭐⭐ 5.0 THE TWO ROLES, AND THEY ARE NOT THE SAME
+| ⭐ **ANTIGRAVITY** | **AUTOPILOT.** *It executes the build plan **unattended** — micro-waves, the doctor loop, `UNRESOLVED` when stuck* |
+| :--- | :--- |
+| ⭐⭐ **CLAUDE CODE** | ⛔ ***GUIDED.*** *The owner is at the keyboard. Claude Code **writes and maintains the plan**, proposes, shows the diff, and **waits*** |
+
+> ⛔⛔ **You are not the autopilot. You are the one who writes what the autopilot follows.**
+>
+> ⭐ *That distinction decides real things: **a ruling number is the owner's to spend, not yours to claim**; a stage that may be a requirement is not yours to delete; and `PACKAGE 2` opens with four questions precisely because guessing any of them does damage a loop cannot undo.*
+
 ## 5.1 THE PLAN MUST BE MACHINE-CONSUMABLE
 ⛔⛔ **This is my main failure and the reason the handover exists.** *My documents are dense — stars, glyphs, long prose. **They are written for a person reading once, not an agent executing repeatedly.*** ⭐ *`brief` exists because a machine-readable contract beats a document; the build plan should follow `brief`, not follow me.*
 
@@ -183,17 +192,77 @@ php artisan doctor:module-done <id>   # 7 gates, per module
 
 ---
 
-# ⭐⭐ PART 6 — THE OPEN DECISIONS CLAUDE CODE INHERITS
+# ⭐⭐⭐⭐ PART 6 — **NOTHING IS OPEN. `R245` AND `R246` GOVERN EVERYTHING ELSE.**
 
-| ⛔⛔⛔ ① **`jobs`** | *the canonical noun means a WORK ORDER. The existing table is **Laravel's QUEUE**.* **Rename the noun to `work_orders`, or move the queue. Nothing proceeds in `X-121b` until this is decided** |
+**All 46 questions were answered on 2026-08-29. This package contains ZERO open decisions — an autopilot package with a question in it is a stalled autopilot.**
+
+## 6.1 ⭐⭐⭐ `R245` — THE STANDING DELEGATION
+| **R245** | **Where the plan does not decide, YOU decide — and BUILD. A module is never blocked waiting for a ruling that does not exist.** |
 | :--- | :--- |
-| ⛔⛔ ② **the duplicated nouns** | *`businesses` **and** `companies` **and** `customers`. `facts` **and** `business_facts`. **Which is canonical, and what happens to the other?*** |
-| ⛔ ③ **the 322 refusals** | *`R240` scoped them from 1,294 down. **They still have to be WRITTEN*** |
-| ⛔ ④ **the legacy tree** | *`goaiez-triage.json` declares `Services`/`Livewire`/`Jobs` as REPLACE. **2,786 files, and "REPLACE" is a plan, not an action*** |
-| ⚠️ ⑤ **who decides "complex"** | *`R237`'s COMPLEX slot has no cap. `C-Ai` owns cost routing — **the slot must sit UNDER that ceiling, not beside it*** |
+
+| `N-245-01` | ⭐⭐ ***"I do not know" is not a stopping condition.*** *`UNRESOLVED` is ONLY for a **MISSING DEPENDENCY** — a table another module owns, a credential that does not exist, a transport nobody built.* ⛔ **Never for an unmade decision** |
+| :--- | :--- |
+| `N-245-02` | ⛔ **Write the choice WHERE YOU MAKE IT**, marked `(R245)` — *in the module header or its capability row* |
+| `N-245-03` | ⭐⭐ **Build the best version, not the safe version.** *The standard is what a billion-dollar platform ships* |
+| `N-245-04` | ⛔⛔ **You may NOT spend a ruling number, mint a module, or edit `app/Doctor`.** *The delegation is over DESIGN, never over the LAW* |
+
+## 6.15 ⚠️⚠️ **`R245` AND `Q-045` LOOK LIKE THEY CONTRADICT. THEY DO NOT.**
+
+**`Q-045` is live law and it says:**
+> ***"Fix automatically what a ruling settles… STOP AND ASK on a new threshold, retention or pricing, legal text, or anything that would REVERSE a ruling."***
+
+**`R245` says you are never blocked. `Q-045` says stop and ask. An unattended agent reading both stalls trying to reconcile them.**
+
+⭐⭐⭐ **THEY ARE THE SAME LINE, DRAWN TWICE.** *`N-245-04` already carves out the LAW; `Q-045` names the four things inside that carve-out:*
+
+| ⛔ **STOP — these are the owner's, always** | ***a new threshold*** *(a number that changes behaviour)* · ***a retention period*** · ***pricing*** · ***legal text*** · ***anything that REVERSES a ruling*** |
+| :--- | :--- |
+| ⭐ **DECIDE AND BUILD — everything else** | *schema shape · service boundaries · naming · error handling · which pattern · what to test · **the twenty-four delegated rulings*** |
+
+> ⭐⭐ **The test: does the choice change what the platform CHARGES, KEEPS, PROMISES IN LAW, or has already RULED?** ⛔ *Then stop.* ⭐ **Otherwise decide it, write `(R245)`, and build.**
+
+⚠️ **And "stop" here does NOT mean stop the module.** *Build everything around it, leave the one value as a named `TODO(Q-045)` with your recommendation, and keep going.* ⛔ **A blocked value is not a blocked module.**
+
+## 6.2 ⛔⛔⛔ `R246` — "NOT GATED" HAS A LINE, AND IT IS ABSOLUTE
+**"Not gated" means no human-approval step in front of you doing your work. It NEVER means removing a refusal.**
+
+| ⛔⛔⛔ **THESE STAY. THEY ARE NOT GATES.** | *`X-126`'s **`NO_FACT`** · **consent · quiet hours · DNC** (TCPA — legal) · **RLS tenant isolation** · the **irreversible-step confirmation on money** (`P-096`/`D5`) · **`X-220`'s golden set** before a model enters PRIMARY* |
+| :--- | :--- |
+| ⭐ **THESE GO. THEY ARE GATES.** | *waiting for approval to ACT · `PROPOSE_ONLY` / `AWAITING_APPROVAL` · a feature shipped OFF "until reviewed" · **an autopilot that asks permission to do its job*** |
+
+> ⭐⭐⭐ **A refusal is the system being CORRECT. A gate is the system being TIMID.**
+> ⛔ **A system that cannot refuse cannot be trusted with a tenant's customers.**
+
+## 6.3 ⭐⭐ THE TEN, DECIDED — BUILD TO THESE
+| ① `fact` stage | **KEPT as a gap.** *Not a doctor stage; the collision check belongs to `X-119`* |
+| :--- | :--- |
+| ② ⭐⭐⭐ **`jobs`** | ***the canonical noun is `work_orders`.*** **Laravel keeps `jobs`** *(its queue)* |
+| ③ **canonical nouns** | **`businesses`** and **`facts`** are canonical. *`companies` · `customers` · `business_facts` are **LEGACY → REPLACE*** |
+| ④ ⭐⭐ **the built modules** | ***`X-126`, `X-119` and `X-121a` SURVIVE.*** *"Start over" means the LEGACY TREE — **do not rebuild them*** |
+| ⑤ **the 322 refusals** | *written **per module, during that module's build*** |
+| ⑥ **REPLACE** | *executes **per module**, in the same commit as the module that replaces the file.* ⛔ *Never a bulk deletion* |
+| ⑦ **the COMPLEX slot** | **capped under `C-Ai`'s tenant and platform ceilings** |
+| ⑧ **"complex"** | *decided by the **JOB CLASS**, declared as a row.* ⛔ *Never a per-call heuristic* |
+| ⑨ **redaction** | ***self-host the highest-sensitivity job classes*** *(`R237` + `N-238-06`)* |
+| ⑩ **`X-218`** | ⭐ **BUILD IT.** *A gap, not a duplicate* |
+
+## 6.4 ⭐ THE SEVEN FACTS
+| **`R9`** | ⭐⭐ ***every SMS over 159 characters is ONE CREDIT · 1 MMS = 1 SMS credit.*** **The unit is the SEGMENT** |
+| :--- | :--- |
+| **`R27`** | *messaging/voice seams are upgradeable — **LiveKit may be added*** |
+| **`R28` · `R61`** | ⭐⭐ ***staff stay logged in BY DEFAULT***; timeout is **opt-in per user**. ⛔ *12h/30m is STRUCK* |
+| **`R58`** | *demo only — not a production surface* |
+| **`R88`** | *send-graph → **verifier** → may go to a campaign. **FULL AUTOPILOT*** |
+| **`R118`** | ⛔ *no price raise included — `P-195` stands* |
+| **`R141`** | ⭐ ***`robots.txt` IS observed*** on normal scraping |
+
+## 6.5 ⭐ THE TWENTY-FOUR DELEGATED TO YOU
+**`R11` `R12` `R24` `R25` `R30` `R32` `R35` `R37` `R51` `R67` `R68` `R72` `R75` `R80` `R86` `R90` `R92` `R106` `R125` `R130` `R171` `R174` `R189` `R209`**
+
+⛔⛔ **Decide each one where you use it. Write a single line marked `(R245)`. Do not defer, do not report them as `UNRESOLVED`.**
 
 ---
 
 **CHECKED:** v3.2 read in full — its precedence rule, X1–X12 conflict register, and module arsenal · the vision `.docx` extracted and read — 73 paragraphs, 2 images, the content/vision/turn-budget sections · all five "already exist" ids verified present in the 124-module roster · the roster conflict *(119 vs 124)* resolved **by v3.2's own precedence rule** · every ruling `R237`–`R244` confirmed in the plan.
 **FAILS IF:** ⚠️⚠️ **Claude Code treats v3.2 as current state.** *It says roster 119 and next free `R228` — **both are stale by seventeen rulings**.* ⛔ **Part 0 exists to prevent exactly that, and it is the first thing that will be skimmed.**
-**LEAST CONFIDENT:** whether "start the coding over" means **discard `X-126`, `X-119`, `X-121a`**. ⚠️ *They are built against the sealed gates, with real evidence rows in Postgres — **the only three modules in this programme that exist.*** ⭐⭐ **My reading is that "no more patching" refers to the LEGACY tree, not to them. If it means them too, say so before Claude Code starts, because rebuilding proven work is the one cost nothing recovers.**
+**LEAST CONFIDENT:** `N-245-03`, *"build the best version, not the safe version."* ⚠️ **It is the right instruction and it has no brake.** *An agent that always builds the maximal version will overbuild a module nobody uses.* ⭐⭐ **The only defence is that `doctor` measures what was BUILT against what was DECLARED — so gold-plating surfaces as a module whose reach exceeds its manifest, and `contract` catches it.**

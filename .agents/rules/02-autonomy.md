@@ -18,22 +18,25 @@ stops you.**
 | a failing gate | `UNRESOLVED`, next module |
 | a module you cannot finish | `UNRESOLVED`, next module. **The wave still closes** |
 | a missing publisher | subscribe anyway — `not_yet_built_publishers` says it is expected |
-| a decision you need from the owner | `OWNER-QUESTIONS.md`, then `UNRESOLVED … — needs: <the decision>` |
-| something that does not exist yet | `UNRESOLVED — <what is missing>` |
+| ⛔ **a decision nobody has made** | **R245: DECIDE IT AND BUILD**, marked `(R245)`. ⛔ **Not `UNRESOLVED`** — rule 09 |
+| a threshold, retention, price or legal text | `TODO(Q-045)` with your recommendation, and build around it |
+| something that does not exist yet | `UNRESOLVED — <what is missing>`. **The only thing `UNRESOLVED` is for** |
 | a fix budget | **there is none.** The previous loop had one, at 20; it was a guess, and a budget that stops useful work is worse than no budget |
 
-## ⭐ WHY `UNRESOLVED` IS THE WHOLE DESIGN
+## ⛔⛔⛔ AND `UNRESOLVED` IS NARROWER THAN THIS FILE ONCE SAID
 
-Unsupervised work fails in one of two ways: the agent **stops** at the first
-thing it cannot do, or it **guesses** and builds something wrong.
+**Corrected 2026-08-29 by `R245`. Read rule 09.**
 
-`UNRESOLVED` is the third option, and it is why you never have to choose. It
-records the fact, parks that one module, and moves you on. The build keeps
-moving; the blocker keeps its evidence; the owner gets a true list at the end.
+An earlier version of this rule told you to record `UNRESOLVED` when something
+*"needs an owner decision."* **That is wrong and it would stall the build.**
 
-⛔ **So do not stop to ask a question.** Write it in `OWNER-QUESTIONS.md` — in
-plain forwardable prose with no id numbers, because the person answering does not
-read this repository — and keep building.
+| `UNRESOLVED` is **ONLY** for a **MISSING DEPENDENCY** | a table another module owns · a credential that does not exist · a transport nobody built |
+| :--- | :--- |
+| ⛔ **never** for | an unmade decision. ***"I do not know" is not a stopping condition*** |
+
+⭐ **Where the plan does not decide, YOU decide and BUILD** — mark it `(R245)`
+where you make it, and the owner may overrule it later. The five things that are
+still the owner's are in rule 09, and even those do not stop the module.
 
 ## THE STOP-THAT-STAGE RULE
 

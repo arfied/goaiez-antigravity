@@ -27,7 +27,7 @@ Every model from every vendor — self-hosted included — is a **row**, assigne
 | PRIMARY | |
 | :--- | :--- |
 | BACKUP | ⛔ **a different vendor** — a backup on the same vendor is not a backup |
-| COMPLEX | ⚠️ **has no cost ceiling.** It must sit UNDER `C-Ai`'s ceiling, not beside it. See `OWNER-QUESTIONS.md` |
+| COMPLEX | ✅ **capped UNDER `C-Ai`'s tenant and platform ceilings** — decided 2026-08-29. *A slot that can escape the budget is not a slot, it is a leak.* ⭐ **The JOB CLASS decides what is "complex", declared as a ROW** — never a per-call heuristic |
 
 ⭐ Gemini-in-Antigravity is **one row**. It does not change the plan; it changes
 an assignment.
@@ -56,6 +56,9 @@ come at all.* It is a refusal, and the refusal is the feature.
 **322 of 966 capability rows need a refusal written** — a refusal is required
 only where refusal is *possible*, which is what scoped it down from 1,294.
 
-⛔ **They are an owner decision, not an agent task.** Do not write 322 refusals on
-your own judgement, and do not delete a capability id to clear the violation —
-**the id going missing IS the failure.**
+✅ **They are YOURS to write — decided 2026-08-29.** Written **per module, during
+that module's build**: a refusal is easiest to write while you are holding the
+thing that refuses. It is not a separate project and not an owner task.
+
+⛔ **Do not delete a capability id to clear the violation — the id going missing
+IS the failure.**

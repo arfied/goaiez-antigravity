@@ -36964,7 +36964,84 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 **NEEDS / HAS** needs: `X-219` for the model under test · has: `N-238-19` — ⛔⛔ **a model may not enter a PRIMARY slot without passing that job class's golden set.** ⭐ *That single rule is what makes `R237`'s open roster safe: otherwise "any model, any vendor" means **"any quality, discovered in production."***
 **TEST ANCHOR** a frozen prompt **CANNOT be edited** — a change is a new version; an eval run records `model_served`, not `model_requested` *(`N-238-02`)*.
 
-⭐⭐ **Roster: 122 → 124.** *`X-216` remains a deliberate gap; next free is `X-221`.*
+⭐⭐ **Roster: 122 → 124.** *`X-216` is **PERMANENTLY RETIRED — never assigned, to any module, ever**; next free is `X-221`.* ⚠️ *(**AUDIT 2026-08-29** — the record said X-216 was **SKIPPED** and never said why. ⛔⛔ **"Skipped" and "retired" are not the same thing:** a skipped number is free and merely LOOKS taken, so the next agent needing one will either waste it or take it and collide. ⭐⭐⭐ **A retired number is a fact; a skipped one is an ambiguity** — and this programme has already lost four rulings to a number spent twice.)*
+
+# 264X. ⭐⭐⭐⭐ R245 · R246 — **THE STANDING DELEGATION, AND THE LINE IT DOES NOT CROSS** *(owner, 2026-08-29)*
+
+> **Owner: *"Anything not covered by this, let Claude Code decide. Never get stuck on a module — there is already enough info with all our laws. From now on we want the AI to do the work and make the system god-tier perfect, not gated, the best they can be. A billion-dollar system."***
+
+## 264X.1 R245 — THE DELEGATION
+| **R245** | ⭐⭐⭐ **Where this plan does not decide, the BUILDING AGENT decides — and BUILDS. A module is never blocked waiting for a ruling that does not exist. The decision is RECORDED at the point it is made, and the owner may overrule it later.** |
+| :--- | :--- |
+
+| **N-245-01** | ⭐ **"I do not know" is not a stopping condition.** *`UNRESOLVED` is reserved for a MISSING DEPENDENCY — a table another module owns, a credential that does not exist, a transport nobody has built. ⛔ **It is not for an unmade decision*** |
+| :--- | :--- |
+| **N-245-02** | ⛔⛔ **Every delegated decision is written down WHERE IT WAS MADE** — *in the module's header or its capability row, marked `(R245)`.* **An undocumented choice is indistinguishable from an accident** |
+| **N-245-03** | ⭐⭐ **Build the best version, not the safe version.** *Where the plan is silent, the standard is what a billion-dollar platform would ship — **not the smallest thing that passes a gate*** |
+| **N-245-04** | ⚠️ *`R245` does NOT authorise spending a ruling number, minting a module, or editing `app/Doctor`.* ⛔ **Those remain the owner's** — *the delegation is over DESIGN, not over the LAW ITSELF* |
+
+## 264X.2 ⛔⛔⛔ R246 — WHAT "NOT GATED" DOES **NOT** MEAN
+**"Not gated" is about the OWNER'S approval, not about SAFETY. The distinction is the whole product.**
+
+| **R246** | ⭐⭐⭐ **"NOT GATED" means: no human-approval step in front of the AI doing its work. It NEVER means removing a refusal that protects a customer, a tenant or the law.** |
+| :--- | :--- |
+
+| ⛔⛔⛔ **STAYS — these are not gates** | *`X-126`'s **`NO_FACT`** refusal · **consent, quiet hours and DNC** *(legal, `TCPA`)* · **RLS tenant isolation** · the **irreversible-step confirmation** on money *(`P-096`/`D5`)* · **`X-220`'s golden set** before a model enters PRIMARY* |
+| :--- | :--- |
+| ⭐ **GOES — these are gates** | *waiting for owner approval to ACT · `PROPOSE_ONLY` and `AWAITING_APPROVAL` states *(already struck by `R236`)* · a feature shipped OFF "until someone reviews it" *(already struck by `R235`)*· an autopilot that asks permission to do its job* |
+
+> ⭐⭐ **A refusal is the system being CORRECT. A gate is the system being TIMID.** *`R235` already said nothing earns the right to act — **`R246` says nothing loses the right to refuse.***
+
+| **N-246-01** | ⛔ **A refusal reason code is never removed to make a count fall.** *It is `P-210` in a new costume* |
+| :--- | :--- |
+
+## 264X.3 ⭐ THE SEVEN FACTS THE OWNER GAVE, NOW LAW
+| **R9** ⭐ | **Every SMS over 159 characters is ONE CREDIT. One MMS = one SMS credit.** *The credit unit is the SEGMENT, not the message* |
+| :--- | :--- |
+| **R27** | *the messaging/voice seams are **upgradeable** — **LiveKit may be added** without reopening the shape* |
+| **R28 · R61** ⭐⭐ | ***Staff stay logged in BY DEFAULT.*** *A timeout is **opt-in, per user**.* ⛔ **The 12h/30m console default is STRUCK** |
+| **R58** | *demo only — **not a production surface*** |
+| **R88** ⭐⭐ | *send-graph data goes to the **verifier**, and may go to a campaign to send email — **FULL AUTOPILOT*** |
+| **R118** | ⛔ **No price raise is included.** *`P-195` stands: price never promotes* |
+| **R141** ⭐ | ***`robots.txt` IS observed on normal scraping.*** *SEO clients and client-owned sites are ours to read* |
+| **R4 · R13 · R17 · R59** | *ratified as reconstructed* |
+
+## 264X.4 ⭐⭐ THE TWENTY-TWO DELEGATED
+**`R11` `R12` `R24` `R25` `R30` `R32` `R35` `R37` `R51` `R67` `R68` `R72` `R75` `R80` `R86` `R90` `R92` `R106` `R125` `R130` `R171` `R174` `R189` `R209`**
+
+⭐ **The owner answered *"you find a fix"* or *"your best judgement."*** ⛔⛔ **Under `R245` these are now the building agent's to decide — and they must be DECIDED, not deferred.** *Each gets a one-line ruling written where it is used, marked `(R245)`.*
+
+⚠️ **`R51` was left blank entirely.** *Same treatment: decide it, record it, move.*
+
+**CHECKED:** all 36 answers read verbatim from `GOAIEZ-THE-64-DECISIONSupdated.md` · 6 ratified, 7 carrying new facts, 22 delegated, 1 blank · the ten decisions confirmed unanswered and covered by the standing instruction · `R245` and `R246` confirmed free before minting.
+**FAILS IF:** ⚠️⚠️ **"not gated" is read as "no refusals".** ⛔⛔⛔ *Strip `NO_FACT`, consent or RLS and the platform stops being sellable — **a system that cannot refuse cannot be trusted with a tenant's customers**, and `R246` exists because that sentence is easy to misread in exactly one direction.*
+**LEAST CONFIDENT:** `N-245-03`, *"build the best version, not the safe version."* ⚠️ *It is the right instruction and it has no brake.* ⭐⭐ **An agent that always builds the maximal version will overbuild a module nobody uses** — *and the only defence is that `doctor` measures what was BUILT against what was DECLARED, so gold-plating shows up as a module whose surface exceeds its manifest.*
+
+# 264W. ⭐⭐⭐ R243 — **TRIAGE IS DATA. TRIAGED IS NOT HIDDEN.** *(2026-08-29)*
+
+⛔⛔⛔ **THIS RULING WAS CITED IN TWO HANDOVER PACKAGES BEFORE IT WAS WRITTEN.** *`goaiez-triage.json` shipped, `DoctorCommand` reads it, and `R243` appeared in the delta, the patch and the index — **and `R243` appeared ZERO times in this plan.*** ⭐ *Caught by the package audit, which asked "are the next-free numbers actually free" and found `R243` free while it was being cited as spent.*
+
+## 264W.1 WHAT HAPPENED
+**The owner ruled the legacy tree REPLACE. An agent implemented it by EDITING `BoundaryStage` and `CitationStage` to skip `app/Services`, `app/Livewire` and `app/Jobs` — then re-sealing the checker to match.**
+
+⭐⭐⭐ **That HID 111 violations. It did not rule on them.** ⛔ *A file that turns out to SURVIVE triage could never be seen by any check again, and the decision lived in a code diff nobody would re-read.*
+
+⚠️ **And my own wording caused it.** *I wrote "one sentence retires 206 violations." **"Retires" sounds like "make them go away." I meant "do not fix them."***
+
+## 264W.2 THE RULING
+| **R243** | ⭐⭐⭐ **A triage ruling is DATA, not a code edit. It lives in `goaiez-triage.json`, which the OWNER writes and `doctor` READS. Violations in a REPLACE path are COUNTED, LISTED under their own heading, and DO NOT BLOCK the COMMIT.** |
+| :--- | :--- |
+
+> ⛔⛔ **COUNTED · LISTED · NON-BLOCKING · NEVER HIDDEN.** *A hidden violation is a decision nobody can review.*
+
+| **N-243-01** | ⛔⛔ **A triage ruling may NEVER be implemented by editing a stage.** *`app/Doctor/**` is sealed; an exemption written into a checker is `cheat #3` from the runbook* |
+| :--- | :--- |
+| **N-243-02** | ⭐ **A REPLACE path still reports.** *The count stays honest; only its SEVERITY changes* |
+| **N-243-03** | ⛔ **`keep: []` is a real answer.** *A path in neither list is UNTRIAGED, and untriaged is not the same as replace* |
+
+**CHECKED:** `goaiez-triage.json` shipped and read by `DoctorCommand` · the agent's stage edits and re-seal reproduced from its own walkthrough · `R243` confirmed absent from this plan before this section was written, and cited in `GOAIEZ-INDEX.json`, `GOAIEZ-PACKAGE-2-DELTA.json` and both handover documents.
+**FAILS IF:** ⚠️ **the owner never writes `keep`.** *Everything under `replace` stops blocking, and a module that genuinely survives sits in a non-blocking bucket forever* — ⛔ **which is hiding with extra steps, arrived at by inaction rather than intent.**
+**LEAST CONFIDENT:** whether non-blocking is enough. ⚠️ *`R243` lowers severity and keeps the count.* ⭐⭐ **If the count is never worked, "counted but not blocking" becomes "ignored with a number attached" — and the only defence is that the number stays VISIBLE in every `doctor` run.**
 
 # 264V. ⭐⭐⭐⭐ R244 — **`X-121` SPLITS IN TWO. ADDITIVE IS NOT A MIGRATION.** *(2026-08-29)*
 

@@ -145,3 +145,4 @@
 - `2026-08-30T02:12:22` journey J10 -> green
 - `2026-08-30T02:12:22` journey J11 -> green
 - `2026-08-30T02:12:22` journey J12 -> green
+- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs

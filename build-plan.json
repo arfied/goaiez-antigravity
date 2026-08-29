@@ -1,12 +1,12 @@
 {
  "_generated_by": "bin/generate-plan.py - do not hand-edit, re-run it",
  "generated": "2026-08-30",
- "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
  "next_free_module": "X-221",
- "next_free_ruling": "R245",
+ "next_free_ruling": "R247",
  "edge_model": {
   "_measured": "199 consume edges: 197 resolve against an `emits` token, 2 against a `provides` token. The vocabularies are disjoint.",
   "subscription_edges": 214,

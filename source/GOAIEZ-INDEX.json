@@ -1,10 +1,10 @@
 {
  "generated": "2026-08-29",
  "source": "GOAIEZ-MASTER-PLAN.md",
- "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "next_free_module": "X-221",
- "next_free_ruling": "R245",
+ "next_free_ruling": "R247",
  "deliberate_gap": "X-216",
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
@@ -3882,5 +3882,86 @@
    "p_laws": "6 of 146"
   },
   "_action_for_claude_code": "Before citing any of these in generated code or tests, resolve it: run `php artisan why <id>`. If it returns nothing, STATE THE FACT instead of the id. Never cite an id you cannot resolve."
+ },
+ "x216": "PERMANENTLY RETIRED \u2014 never assign",
+ "decisions_pending": {
+  "_status": "NONE. All 46 answered as of 2026-08-29. R245 covers anything new."
+ },
+ "answers": {
+  "_ruling": "R245 \u2014 where the plan does not decide, the building agent decides and BUILDS. Never blocked.",
+  "_not_gated": "R246 \u2014 no human-approval step in front of the AI. NEVER removes NO_FACT, consent, RLS, money confirmation or the golden set.",
+  "ratified": [
+   "R4",
+   "R13",
+   "R17",
+   "R58",
+   "R59",
+   "R141"
+  ],
+  "new_facts": {
+   "R9": "every SMS over 159 chars = 1 credit; 1 MMS = 1 SMS credit; the unit is the SEGMENT",
+   "R27": "messaging/voice seams are upgradeable \u2014 LiveKit may be added",
+   "R28": "staff stay logged in BY DEFAULT",
+   "R61": "timeout is opt-in, per user; 12h/30m default STRUCK",
+   "R58": "demo only, not a production surface",
+   "R88": "send-graph data \u2192 verifier \u2192 may go to campaign; FULL AUTOPILOT",
+   "R118": "no price raise included; P-195 stands",
+   "R141": "robots.txt IS observed on normal scraping; SEO/client-owned sites are ours to read"
+  },
+  "delegated_under_R245": [
+   "R11",
+   "R12",
+   "R24",
+   "R25",
+   "R30",
+   "R32",
+   "R35",
+   "R37",
+   "R51",
+   "R67",
+   "R68",
+   "R72",
+   "R75",
+   "R80",
+   "R86",
+   "R90",
+   "R92",
+   "R106",
+   "R125",
+   "R130",
+   "R171",
+   "R174",
+   "R189",
+   "R209"
+  ],
+  "the_ten_decided": {
+   "fact_stage": "KEEP as a gap, do not delete",
+   "jobs": "canonical noun becomes work_orders; Laravel keeps jobs",
+   "duplicated_nouns": "businesses and facts are canonical; companies, customers, business_facts are LEGACY/REPLACE",
+   "three_built_modules": "X-126, X-119, X-121a SURVIVE \u2014 \"start over\" means the legacy tree",
+   "322_refusals": "written per module during that module build",
+   "legacy_replace": "executes per module, in the same commit as the module that replaces it; never bulk",
+   "complex_slot": "capped under C-Ai tenant and platform ceilings",
+   "who_decides_complex": "the JOB CLASS, declared as a row \u2014 not a per-call heuristic",
+   "redaction": "self-host the highest-sensitivity job classes (R237 + N-238-06)",
+   "X-218": "BUILD IT \u2014 a gap, not a duplicate"
+  }
+ },
+ "autopilot_rules": {
+  "R245": "where the plan does not decide, YOU decide and BUILD. Never blocked.",
+  "R246": "\"not gated\" = no human-approval step. NEVER removes NO_FACT, consent/quiet-hours/DNC, RLS, money confirmation, or the golden set.",
+  "Q045_carveout": {
+   "_note": "Q-045 and R245 are the SAME line drawn twice. These five are the owner's; everything else you decide.",
+   "stop_and_ask": [
+    "a new threshold",
+    "a retention period",
+    "pricing",
+    "legal text",
+    "anything that REVERSES a ruling"
+   ],
+   "and_keep_going": "a blocked VALUE is not a blocked MODULE. Build around it, leave TODO(Q-045) with your recommendation.",
+   "_is_not_a_backlog": "These five are a FILTER for classifying decisions AS THEY ARISE during the build \u2014 not a list of pending questions. Searched 2026-08-29: 0 open instances of retention, pricing or legal text; the 5 threshold matches are all already DECIDED. Nothing to answer."
+  },
+  "unresolved_is_only_for": "a MISSING DEPENDENCY \u2014 a table another module owns, a credential that does not exist, a transport nobody built. NEVER an unmade decision."
  }
 }

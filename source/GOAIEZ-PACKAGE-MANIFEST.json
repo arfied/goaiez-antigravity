@@ -5,20 +5,20 @@
  "package": [
   {
    "file": "GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md",
-   "bytes": 14817,
-   "sha256": "3c528d1dbe85c117",
+   "bytes": 20212,
+   "sha256": "a1a577e85c8570b5",
    "why": "READ FIRST. Precedence, the five that exist, R237-R244, the defect register, open decisions."
   },
   {
    "file": "GOAIEZ-INDEX.json",
-   "bytes": 153109,
-   "sha256": "d1aca08d9977a47d",
+   "bytes": 156469,
+   "sha256": "3939d08b4c58cd94",
    "why": "THE MACHINE-READABLE STATE. 124 modules, 466 laws, 64 unresolvable rulings. Read this, not the prose."
   },
   {
    "file": "GOAIEZ-MASTER-PLAN.md",
-   "bytes": 3264989,
-   "sha256": "8bae92b4b07d6a4e",
+   "bytes": 3273730,
+   "sha256": "02649b287d9b1552",
    "why": "THE LAW. 3.26 MB. Authoritative on every point of fact. Query with `php artisan why <id>`."
   },
   {
@@ -71,9 +71,21 @@
   },
   {
    "file": "GOAIEZ-AUDIT-LEDGER.md",
-   "bytes": 392397,
-   "sha256": "e36667cee0e1e77e",
+   "bytes": 406325,
+   "sha256": "50f3572777d7eb9e",
    "why": "222 findings. The defect history of this programme."
+  },
+  {
+   "file": "GOAIEZ-THE-64-DECISIONS.md",
+   "bytes": 9452,
+   "sha256": "cc1257ad376c98e8",
+   "why": "The 46 answers the owner owes. 28 rulings need none; 36 need ratifying; 10 decisions, 4 of them blocking."
+  },
+  {
+   "file": "GOAIEZ-PATCH-THE-46-ANSWERS.md",
+   "bytes": 8372,
+   "sha256": "4bb5f1737227c41e",
+   "why": "R245 + R246 + the 7 facts + the 22 delegations + the 10 decided. Apply this and nothing is pending."
   }
  ],
  "runtime": [
@@ -127,21 +139,32 @@
   }
  ],
  "_two_packages": {
-  "package_1": "For a FRESH autopilot build. Read GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md first, then the files under `package` and `runtime`.",
-  "package_2": "To UPDATE the existing GOAIEZ-MASTER-BUILD-PLAN v3.2 \u2192 v4.0. Read GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md with GOAIEZ-PACKAGE-2-DELTA.json.",
-  "_they_share": "GOAIEZ-MASTER-PLAN.md, GOAIEZ-INDEX.json and the runtime. Only the entry document differs."
+  "package_1": {
+   "mode": "AUTOPILOT",
+   "for": "Antigravity, running unattended",
+   "entry": "GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md",
+   "note": "Claude Code WRITES this build plan; Antigravity EXECUTES it unattended. It contains ZERO open decisions \u2014 all 46 answered 2026-08-29. R245 governs anything new; Q-045 names the only five things that still stop for the owner, and even then the MODULE keeps going."
+  },
+  "package_2": {
+   "mode": "GUIDED",
+   "for": "Claude Code, with the owner at the keyboard",
+   "entry": "GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md",
+   "note": "Propose, show the diff, wait. ONE patch at a time. Four questions must be answered first \u2014 two of them block patches."
+  },
+  "_they_share": "GOAIEZ-MASTER-PLAN.md, GOAIEZ-INDEX.json and the runtime. Only the entry document and the MODE differ.",
+  "_do_not_confuse": "Applying package 2 autonomously would delete a possible requirement (the `fact` stage) and guess a table name that collides with Laravel."
  },
  "package_2": [
   {
    "file": "GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md",
-   "bytes": 11430,
-   "sha256": "9a3247568c856b76",
+   "bytes": 13961,
+   "sha256": "b78223aca3336ee2",
    "why": "8 patches keyed to v3.2 section numbers, with verbatim replacement text."
   },
   {
    "file": "GOAIEZ-PACKAGE-2-DELTA.json",
-   "bytes": 3633,
-   "sha256": "0d1cb47d73dbb2be",
+   "bytes": 5220,
+   "sha256": "134821e29a694c0a",
    "why": "The same 8 patches as data, plus the 7 stale values and the target sha."
   }
  ]

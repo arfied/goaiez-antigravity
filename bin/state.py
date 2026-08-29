@@ -6,7 +6,8 @@ The build state machine.  This is what makes the loop autonomous.
     python3 bin/state.py next            # what to do now  (JSON, one object)
     python3 bin/state.py start   <id>
     python3 bin/state.py done    <id>
-    python3 bin/state.py unresolved <id> <stage> <why...>
+    python3 bin/state.py unresolved <id> <stage> <why...>   # MISSING DEPENDENCY only
+    python3 bin/state.py decided <id> <what you chose...>   # an R245 design decision
     python3 bin/state.py journey <J1..J12> green|red
     python3 bin/state.py note    <text...>
     python3 bin/state.py report          # the one-message report
@@ -16,6 +17,13 @@ THE RULE THAT MAKES IT AUTONOMOUS
 ---------------------------------
 UNRESOLVED DOES NOT STOP THE LOOP.  It records a fact and the loop moves to the
 next module.  A blocker parks one module; it does not park the build.
+
+AND UNDER R245 IT IS NARROWER THAN IT WAS
+-----------------------------------------
+UNRESOLVED is ONLY for a MISSING DEPENDENCY - a table another module owns, a
+credential that does not exist, a transport nobody built.  NEVER for an unmade
+decision: where the plan does not decide, the agent decides and BUILDS, and
+records it with `decided`.  "I do not know" is not a stopping condition.
 
 The loop stops for exactly four reasons and no others:
 
@@ -70,7 +78,7 @@ def cmd_init(force=False):
       "journeys": {j["id"]: {"status": "RED", "title": j["title"],
                              "green_after_wave": j["green_after_wave"]}
                    for j in p["journeys"]},
-      "unresolved": [], "notes": [],
+      "unresolved": [], "decisions": [], "notes": [],
     }
     save(s); journal("state initialised")
     print(f"initialised: {len(s['modules'])} modules, {len(s['waves'])} waves")
@@ -155,6 +163,16 @@ def main(argv):
         rec = {"module": mid, "stage": stage, "why": why, "at": now()}
         s["modules"][mid]["unresolved"].append(rec); s["unresolved"].append(rec)
         journal(f"UNRESOLVED {stage} {mid} - {why}")
+    elif c == "decided":
+        mid, what = a[0], " ".join(a[1:])
+        if mid not in s["modules"]:
+            print(f"{mid} is not on the roster"); sys.exit(1)
+        s.setdefault("decisions", []).append(
+            {"module": mid, "chose": what, "at": now(), "ruling": "R245"})
+        s["updated"] = now()
+        journal(f"(R245) {mid} — {what}")
+        print(f"recorded (R245) {mid}. Also write it in the module header "
+              f"or its capability row, marked (R245).")
     elif c == "journey":
         s["journeys"][a[0]]["status"] = "GREEN" if a[1] == "green" else "RED"
         journal(f"journey {a[0]} -> {a[1]}")
@@ -181,8 +199,10 @@ def main(argv):
         print(f"JOURNEYS : {g}/{len(s['journeys'])} green")
         wd = sum(1 for d in s["waves"].values() if d["status"] == "DONE")
         print(f"WAVES    : {wd}/{len(s['waves'])} closed")
+        if s.get("decisions"):
+            print(f"R245     : {len(s['decisions'])} decision(s) made and built")
         if s["unresolved"]:
-            print("UNRESOLVED:")
+            print("UNRESOLVED (missing dependencies only):")
             for u in s["unresolved"]:
                 print(f"  {u['stage']:<11} {u['module']:<12} — {u['why']}")
         return 0

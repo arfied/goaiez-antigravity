@@ -28,8 +28,8 @@ The agent reads `AGENTS.md` (and `GEMINI.md`, which points at it) on its own.
 | :--- | :--- |
 | `build-plan.json` | the same thing for a machine: waves, wiring, journeys, orphan events |
 | `AGENTS.md` · `GEMINI.md` | the entry contract every agent reads first |
-| `OWNER-QUESTIONS.md` | ⭐ the four decisions only the owner can make, in forwardable prose |
-| `.agents/rules/` | nine rules — precedence, the one rule, autonomy, the module contract, evidence, forbidden, the measured defect shapes, **the pinned tech stack**, and **modular/DDD/CQRS** |
+| `OWNER-QUESTIONS.md` | ⭐ **nothing is open** — all 46 answered 2026-08-29; keeps the answers and the five-item filter for what is still the owner's |
+| `.agents/rules/` | ten rules — precedence, the one rule, autonomy, the module contract, evidence, forbidden, the measured defect shapes, **the pinned tech stack**, **modular/DDD/CQRS**, and **R245/R246: decide and build** |
 | `.agents/skills/` | six skills — module · doctor · journey · schema · unresolved · ai |
 | `.agents/workflows/` | bootstrap (once) · loop (the whole control flow) · wave (3–5 modules) |
 | `.agents/state/` | `BUILD-STATE.json`, owned by `bin/state.py`. `JOURNAL.md` appends |

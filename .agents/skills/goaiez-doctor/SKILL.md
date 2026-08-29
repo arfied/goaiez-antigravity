@@ -36,8 +36,12 @@ Commit, record, continue.
 
 1. **Can you fix the SYSTEM?** Do it. Re-run that stage. **The count must FALL.**
 2. **Would you be changing a CHECK?** → `UNRESOLVED`. Never edit `app/Doctor`.
-3. **Needs an owner decision?** → `UNRESOLVED`, and name the decision.
+3. ⛔ **Needs a decision nobody has made?** → **R245: decide it and build**, marked
+   `(R245)`. **Not `UNRESOLVED`.** *(A threshold, retention period, price or legal
+   text is the owner's — leave `TODO(Q-045)` with your recommendation and build
+   the rest.)*
 4. **Needs something that does not exist yet?** → `UNRESOLVED — <what is missing>`.
+   **A missing dependency is the only thing `UNRESOLVED` is for.**
 
 ## ⛔ THE STOP-THAT-STAGE RULE
 

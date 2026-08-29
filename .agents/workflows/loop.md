@@ -58,12 +58,13 @@ Stop. Report the `say` field verbatim and nothing else.
 | a failing gate | record `UNRESOLVED`, move to the next module |
 | a module you cannot finish | `UNRESOLVED`, next module. **The wave still closes** |
 | a missing publisher | subscribe anyway. `not_yet_built_publishers` says it is expected |
-| a question for the owner | append to `OWNER-QUESTIONS.md` and keep building |
-| an owner decision you need | `UNRESOLVED <stage> <module> — needs: <the decision>` |
+| ⛔ **a decision nobody has made** | **R245 — decide it and BUILD.** `state.py decided <id> "<choice>"`, and mark it `(R245)` in the module header |
+| a threshold, retention period, price or legal text | `TODO(Q-045)` **with your recommendation** — and build the rest of the module |
 | 20 fixes | there is no fix budget. The old loop had one; it was a guess and it stopped useful work |
 
-⭐ **`UNRESOLVED` is the pressure valve that makes unsupervised work safe.** It
-is why you never have to choose between stopping and guessing.
+⛔ **`UNRESOLVED` is ONLY for a missing DEPENDENCY** — a table another module
+owns, a credential that does not exist, a transport nobody built. **Never for an
+unmade decision:** ***"I do not know" is not a stopping condition.*** Rule 09.
 
 ---
 
@@ -101,7 +102,7 @@ JOURNEYS : <n>/12 green
 FIXED    : <one line each — what changed and which count fell>
 UNRESOLVED:
   <stage>  <where>  — <why>
-OWNER    : <the decisions in OWNER-QUESTIONS.md that are now blocking>
+R245     : <the design decisions you made and built, one line each>
 ```
 
 ⛔ **Paste raw `doctor` output for anything you did not fix.** Every wrong turn

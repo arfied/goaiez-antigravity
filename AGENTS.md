@@ -41,19 +41,35 @@ survives into production.**
 
 ---
 
-## ⛔ WHEN YOU CANNOT FIX SOMETHING — RECORD IT AND CARRY ON
+## ⭐⭐⭐ R245 — WHERE THE PLAN DOES NOT DECIDE, **YOU** DECIDE AND BUILD
+
+> ***"I do not know" is not a stopping condition.***
 
 ```bash
-python3 bin/state.py unresolved <X-nnn> <stage> "<why you did not fix it>"
+python3 bin/state.py decided <X-nnn> "<what you chose and why>"     # a DECISION
+python3 bin/state.py unresolved <X-nnn> <stage> "<what is missing>" # a DEPENDENCY
 ```
 
-**This does not stop the build.** It parks one module and moves you to the next.
-Three unresolved violations honestly reported are worth more than three hundred
-cleared by deletion.
+⛔ **`UNRESOLVED` is ONLY for a missing dependency** — a table another module
+owns, a credential that does not exist, a transport nobody built. **Never for an
+unmade decision.** Decide it, mark it `(R245)` in the module header or its
+capability row, and build.
 
-⛔ **Do not stop to ask.** The four things that stop you are listed in
-`.agents/workflows/loop.md` and nothing else is one of them. A question for the
-owner goes in `OWNER-QUESTIONS.md` and you keep building.
+**Five things stay the owner's**: a new threshold · a retention period ·
+pricing · legal text · anything that REVERSES a ruling. ⛔ **And even those do
+not stop the module** — leave `TODO(Q-045)` with your recommendation and build
+everything around it. **A blocked value is not a blocked module.**
+
+⭐ **Build the best version, not the safe version.**
+
+## ⛔⛔⛔ AND "NOT GATED" NEVER MEANS "NO REFUSALS" — R246
+
+**A refusal is the system being CORRECT. A gate is the system being TIMID.**
+
+⛔ **These STAY, always**: `X-126`'s `NO_FACT` · consent, quiet hours, DNC ·
+RLS tenant isolation · the money confirmation · `X-220`'s golden set.
+
+**Read `.agents/rules/09-r245-r246-delegation.md` before wave 1.**
 
 ---
 
@@ -104,6 +120,7 @@ an enum. Do not "fix" it and do not report it.
 | `06-defect-shapes.md` | the twenty defects this programme already produced |
 | `07-tech-stack.md` | ⛔ **the pinned stack** — Laravel 13, Livewire 4, Postgres 16, Tailwind 4. Not a default to be re-chosen |
 | `08-modular-ddd-cqrs.md` | ⛔ **fully modular, DDD, CQRS** — and how far to take CQRS, which is not all the way |
+| `09-r245-r246-delegation.md` | ⭐⭐⭐ **decide and build; what "not gated" never means; the ten decided; the seven new facts.** Supersedes rule 02 on owner decisions |
 
 ## THE SKILLS
 
