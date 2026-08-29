@@ -36,7 +36,7 @@ Therefore:
     orphan register.  It does not order anything.
   * The two genuine call edges ARE a hard constraint and are enforced.
 """
-import json, pathlib, collections, datetime, sys
+import json, pathlib, collections, datetime, sys, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 IDX  = json.loads((ROOT / "source/GOAIEZ-INDEX.json").read_text())
@@ -173,6 +173,52 @@ for w in waves:
     w["not_yet_built_publishers"] = sorted(
         p for p in w["subscribes_to"] if wave_of.get(p, 0) > w["wave"])
 
+# ---------------------------------------------- which modules get a Domain/ layer
+# The modules are ALREADY aggregate-sized - measured: 122 of 124 own tables,
+# median 3, only X-121 is large at 13 - and the runtime already enforces the
+# bounded context with a build-failing lint.  So a rich domain model inside a
+# 2-table module is a layer enforcing something enforced one level up.
+#
+# It is worth it where invariants are real.  The rule is MECHANICAL so that
+# wave 3 and wave 27 answer it identically; an autonomous agent applying a
+# pattern that needs judgement applies it inconsistently, and 124 inconsistent
+# modules are worth less than 124 uniform simple ones.
+INVARIANT_WORDS = (
+ "money", "invoice", "payment", "charge", "credit", "ledger", "billing",
+ "refund", "chargeback", "commission", "payout", "price", "quote", "tax",
+ "consent", "suppression", "dnc", "opt-out", "opt out", "quiet hours",
+ "compliance", "tcpa", "capability", "entitlement", "grant",
+ "dunning", "segment",          # R9 meters SMS by the SEGMENT, not the message
+)
+
+# ⚠️ This list is a STARTING classification, not a ceiling.  511's lesson applies:
+#    a matcher tuned until it stops crying wolf is one tuned until it catches
+#    nothing.  A module NOT flagged still gets Domain/ if its brief names an
+#    invariant spanning two of its own tables, or a state machine with legal
+#    transitions - that judgement belongs at the brief, with the brief in hand.
+
+def domain_verdict(mid):
+    d = M[mid]
+    tables = lst(d, "owns_table")
+    hay = ((d.get("what") or "") + " " + " ".join(tables)).lower()
+    # ⛔ WORD BOUNDARIES, NOT `in`.  A plain substring test matched "tax" inside
+    #    "spintax" and reported C-Sms as money-bearing for the wrong reason.
+    #    The verdict happened to be right and the REASON was false, which is the
+    #    worse failure: a wrong reason survives review because the answer looks
+    #    correct.
+    hits = sorted({w for w in INVARIANT_WORDS
+                   if re.search(r"(?<![a-z])" + re.escape(w) + r"s?(?![a-z])", hay)})
+    if len(tables) >= 4:
+        return True, f"owns {len(tables)} tables"
+    if hits:
+        return True, "money, consent or entitlement: " + ", ".join(hits[:4])
+    return False, ("Eloquent model + Action class IS the aggregate here - "
+                   f"{len(tables)} table(s), no invariant keyword. Add Domain/ "
+                   "only if the brief names an invariant spanning two of its "
+                   "own tables, or a state machine with legal transitions")
+
+DOMAIN = {i: domain_verdict(i) for i in M}
+
 JOURNEYS = [
  ("J1",  "a missed call becomes a consented text back",               ["C-Telephony","C-Sms","X-188","X-204"]),
  ("J2",  "two fields at signup put a live agent on a real number",    ["X-118","C-Agent","X-188","X-66"]),
@@ -234,7 +280,34 @@ plan = {
  "orphan_events": {k: sorted(v) for k, v in sorted(orphan.items(), key=lambda x: -len(x[1]))},
  "call_edges": {k: sorted(v) for k, v in sorted(calls.items())},
  "subscription_edges": {k: sorted(v) for k, v in sorted(subscribes.items())},
+ "architecture": {
+  "_decided": "CQRS-lite in every module; a Domain/ layer only where invariants "
+              "are real; no event sourcing; no repositories over Eloquent.",
+  "every_module": ["Actions/ (commands; never return a read model)",
+                   "Queries/ (reads; never write)",
+                   "Events/", "Listeners/", "Ui/", "Database/", "Tests/",
+                   "ModuleServiceProvider.php"],
+  "domain_layer_when": "owns >=4 tables, OR touches money/consent/entitlement, "
+                       "OR the brief names an invariant spanning two of its own "
+                       "tables, OR a state machine with legal transitions",
+  "domain_layer_count": sum(1 for v, _ in DOMAIN.values() if v),
+  "refused": {
+    "event_sourcing":
+      "contradicts P-163 one-table-one-owner - it wants one shared append-only "
+      "store - and makes erasure of PHI and consent records materially harder. "
+      "entity_history is VERSIONING, not event sourcing.",
+    "repositories_over_eloquent":
+      "doubles the code, fights the framework, buys portability nobody wants.",
+    "separate_read_write_stores":
+      "RLS plus one-table-one-owner already gives the isolation.",
+  },
+  "cross_module_data":
+    "a read model in YOUR OWN tables, fed by a Listeners/ projection from events "
+    "you already consume. Never a cross-module use; never a join into a table "
+    "you do not own.",
+ },
  "modules": {i: {"intent": M[i].get("intent"), "wave": wave_of[i],
+                 "domain_layer": DOMAIN[i][0], "domain_because": DOMAIN[i][1],
                  "state": M[i].get("state"), "owns_table": lst(M[i], "owns_table"),
                  "what": (M[i].get("what") or "")}
              for i in sorted(M)},
@@ -259,6 +332,7 @@ out = (seed.replace("{{WAVE_TABLE}}", "\n".join(rows))
            .replace("{{SEAL}}", IDX["seal_digest"])
            .replace("{{GENERATED}}", datetime.date.today().isoformat()))
 (ROOT / "BUILD-PLAN.md").write_text(out)
+print(f"Domain/ layer: {sum(1 for v, _ in DOMAIN.values() if v)} of {len(M)} modules")
 print(f"waves={len(waves)} modules={len(M)} journeys={len(journeys)} "
       f"orphans={len(orphan)} subs={sum(len(v) for v in subscribes.values())} "
       f"calls={sum(len(v) for v in calls.values())}")

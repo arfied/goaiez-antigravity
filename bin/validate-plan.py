@@ -67,6 +67,19 @@ check("the measured edge split is recorded",
       em["call_edges"] == 2 and em["subscription_edges"] > 100,
       f"calls={em['call_edges']} subs={em['subscription_edges']}")
 
+# the architecture decision is data, and the rule cites its count
+arch = P.get("architecture", {})
+check("build-plan.json carries the architecture decision", bool(arch))
+dl = [m for m, v in P["modules"].items() if v.get("domain_layer")]
+check("every module has a domain_layer verdict",
+      all("domain_layer" in v for v in P["modules"].values()),
+      f"{len(dl)} get Domain/")
+check("the domain_layer count matches the emitted total",
+      arch.get("domain_layer_count") == len(dl), f"{arch.get('domain_layer_count')} vs {len(dl)}")
+check("event sourcing is refused in writing", "event_sourcing" in arch.get("refused", {}))
+rule = (ROOT / ".agents/rules/08-modular-ddd-cqrs.md").read_text()
+check("rule 08 states the generated Domain/ count", f"{len(dl)} of 124" in rule)
+
 print()
 if fail:
     print(f"{len(fail)} FAILING CLAIM(S): " + ", ".join(fail)); sys.exit(1)

@@ -123,6 +123,8 @@ def cmd_next():
           "not_yet_built_publishers": w["not_yet_built_publishers"],
           "workflow": ".agents/workflows/wave.md",
           "brief": [f"php artisan brief {m}" for m in todo],
+          "domain_layer": {m: p["modules"][m].get("domain_layer") for m in todo},
+          "domain_because": {m: p["modules"][m].get("domain_because") for m in todo},
         })
 
     red = [j for j, d in s["journeys"].items() if d["status"] == "RED"]

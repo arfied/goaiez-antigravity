@@ -31,6 +31,21 @@ If scaffold refuses on *prose inside a declaration*: move the note after the
 closing backtick in the master plan, re-run. **It refuses to invent** — that is
 correct behaviour, not an obstacle.
 
+## 2b. Does this module get a `Domain/` layer?
+
+`bin/state.py next` answers it per module — `domain_layer` and `domain_because`.
+
+| **true** | owns ≥4 tables, or touches money/consent/entitlement. Build `Domain/` with the invariants |
+| :--- | :--- |
+| **false** | ⭐ **the Eloquent model plus an Action class IS the aggregate.** No `Domain/` folder |
+
+⚠️ **The verdict is a starting classification, not a ceiling.** If the brief names
+an invariant spanning two of the module's own tables, or a state machine with
+legal transitions, **add `Domain/` whatever the JSON says.**
+
+⛔ **No repositories over Eloquent. No event sourcing.** Rule 08 §4.2 carries why —
+event sourcing contradicts `P-163`, which the `schema` stage enforces.
+
 ## 3. Build against the seven gates
 
 | 1 BUILT | the code exists where the manifest says |

@@ -71,26 +71,65 @@ app/Modules/X-nnn/
 is the reason commands are objects here rather than service methods. Design the
 undo when you design the do — retrofitting reversal means revisiting every action.
 
-## 4. ⛔⛔⛔ HOW FAR TO TAKE CQRS — READ THIS BEFORE YOU BUILD THE FIRST ONE
+## 4. ⛔⛔⛔ HOW FAR TO TAKE IT — DECIDED, AND THE MEASUREMENT BEHIND IT
 
-**CQRS is three separable things and only the first two are wanted by default.**
+**The measurement first, because it is what settled this:** ⭐ **122 of 124
+modules own tables, the median is 3, and only `X-121` is large at 13.** The
+modules are **already aggregate-sized**, and the runtime already enforces the
+boundary between them with a build-failing lint.
 
-| ✅ **command/query separation** | **every module.** A `Queries/` class never writes; an `Actions/` class never returns a read model. Free, and it is what makes a module testable |
+⭐⭐⭐ **So the module boundary is doing the job DDD's aggregate boundary normally
+does** — and a rich domain model inside a 2-table module is a layer enforcing
+something already enforced one level up.
+
+| ✅ **command/query separation** | **EVERY module.** `Queries/` never writes; `Actions/` never returns a read model. Near-zero cost, and it makes *"where does this code go"* mechanical rather than a judgement — which matters enormously when nobody is reviewing 124 modules |
 | :--- | :--- |
-| ✅ **domain events as the seam** | **every module.** Already mandatory — the boundary lint permits nothing else |
-| ⛔ **separate read/write stores, projections, event sourcing** | **NOT by default. Do not build it into 124 modules.** |
+| ✅ **domain events as the only seam** | **EVERY module.** Already mandatory — the boundary lint permits nothing else |
+| ⚠️ **a `Domain/` layer** | **36 of 124 modules, by the mechanical rule in §4.1** |
+| ⛔ **repository interfaces over Eloquent** | **NO.** Doubles the code, fights the framework, buys portability nobody wants. It is the classic way DDD-in-Laravel goes bad |
+| ⛔ **separate read/write stores** | **NO.** RLS plus one-table-one-owner already gives the isolation |
+| ⛔ **event sourcing** | **NO — and it is not a taste call. See §4.2** |
 
-⛔ **Do not event-source this platform.** It is a large, permanent cost, it makes
-every RLS and erasure question harder, and **nothing in the plan asks for it.**
+### 4.1 ⭐ WHEN A MODULE GETS A `Domain/` LAYER — MECHANICAL, SO IT IS ANSWERED THE SAME WAY IN WAVE 3 AND WAVE 27
 
-⭐ **Where a genuine read/write asymmetry shows up** — a dashboard aggregating
-across many aggregates, a report that would otherwise cross a module boundary to
-read — build a **read model in that module's own tables**, fed by a `Listeners/`
-projection from events it already consumes.
+**`build-plan.json` carries the verdict per module** — `domain_layer` and
+`domain_because`. It is computed from:
 
-⛔ **That is the correct answer to "I need another module's data": a projection
-you own, built from events you already receive** — never a cross-module `use`,
-and never a join into a table you do not own.
+| ✅ | the module **owns ≥4 tables** |
+| :--- | :--- |
+| ✅ | its subject touches **money, consent or entitlement** |
+| ✅ | its **brief names an invariant spanning two of its own tables** |
+| ✅ | it has a **state machine** with legal transitions |
+
+⚠️ **The first two are computed; the last two are yours to spot with the brief in
+hand.** The generated verdict is a **starting classification, not a ceiling** —
+if the brief names an invariant, add `Domain/` whatever the JSON says.
+
+⛔ **Everywhere else: the Eloquent model plus an Action class IS the aggregate.**
+Adding a `Domain/` folder to a 2-table integration module is ceremony, and 124
+inconsistently-applied patterns are worth less than 124 uniform simple ones.
+
+### 4.2 ⛔⛔⛔ WHY EVENT SOURCING IS REFUSED, AND IT IS NOT BECAUSE IT IS HEAVY
+
+**The case FOR it is real and was weighed**: `X-123` is already a typed event bus
+with `event.replay`, audit is a requirement, actions carry reversal classes, and
+`X-121` provides `entity.history` / `entity.restore` over an `entity_history`
+table. That last one looks like temporal storage and nearly settles it the other
+way.
+
+**It is still refused, for three reasons in descending order:**
+
+| ⛔⛔⛔ **it contradicts `P-163`** | Event sourcing wants **one shared append-only store**; *one table, one owner* is enforced by the `schema` stage. **Direct structural conflict with a rule that fails the build** |
+| :--- | :--- |
+| ⛔⛔ **erasure** | This platform holds **PHI and consent records**. You cannot delete from an immutable log without breaking it, and a right-to-erasure request is exactly the case it fails |
+| ⭐ **`entity_history` is VERSIONING, not event sourcing** | A history table beside current state gives ~90% of the benefit at ~10% of the cost, **and it is what the plan actually describes** |
+
+### 4.3 ⭐ "I NEED ANOTHER MODULE'S DATA"
+
+**A read model in YOUR OWN tables, fed by a `Listeners/` projection from events
+you already consume.**
+
+⛔ Never a cross-module `use`. ⛔ Never a join into a table you do not own.
 
 ## 5. ⛔ THE THREE THINGS THAT WILL NOT WORK WITHOUT A MODULE PROVIDER
 
