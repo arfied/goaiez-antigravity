@@ -35,7 +35,8 @@ The agent reads `AGENTS.md` (and `GEMINI.md`, which points at it) on its own.
 | `.agents/state/` | `BUILD-STATE.json`, owned by `bin/state.py`. `JOURNAL.md` appends |
 | `bin/` | the generator, the validator, the state machine, the session preamble |
 | `runtime/` | `goaiez-runtime.sh` — the whole runtime as one self-extracting file |
-| `source/` | the package: the 3.26 MB plan, the index, the 222-finding ledger |
+| `source/` | ⭐ **the complete package — all 24 manifest files at their listed size**, verified on every preflight |
+| `../grs-antig-history/` | ⛔ **133 superseded working documents, deliberately OUTSIDE this tree.** Not a source of requirements — see its README |
 | `docs/COMPARISON.md` | this plan against the one in `goaiez-review-system` |
 
 ---

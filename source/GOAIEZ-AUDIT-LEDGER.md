@@ -5347,3 +5347,36 @@ $row = DB::table($table)
 *The agent needs a bounce threshold for `X-207` → checks: does this change what we **CHARGE, KEEP, PROMISE IN LAW, or have RULED**? → a threshold, so yes → writes **`TODO(Q-045)`: recommend 250 bounces per `R17`** → ⭐⭐⭐ **and keeps building the module.***
 
 ⛔ **The owner answers it whenever he next looks — and the module is already finished around it.**
+
+---
+
+# 237. ⛔⛔⛔ THE PLAN PARTS WERE **STALE** — AND WOULD HAVE SILENTLY REVERTED `R245`
+
+**The owner asked a narrow question — *"is it just the 46-answers patch, or are there more?"* — and checking it properly found a trap.**
+
+| the plan is now | **`02649b28…`** |
+| :--- | :--- |
+| ⛔⛔ the shipped plan parts expect | **`8bae92b4…`** |
+
+⭐⭐⭐ **`goaiez-plan-part1/2/3.sh` were built BEFORE `R243`, `R245` and `R246` were written.** ⛔ **Running them would have OVERWRITTEN the patched plan with the older one — and the checksum would have PASSED, because they check against their own stale hash.**
+
+> ⛔⛔ **A delivery mechanism that verifies itself against its own stale expectation is worse than one with no check at all** — *it reports success while reverting the work.*
+
+✅ **Rebuilt. `sha 02649b28…`, tested: assembles byte-identical, carries `R245` and `R246`.**
+
+## ⭐⭐ AND THE RULE THAT FALLS OUT OF IT
+> ⛔⛔⛔ **If you resend the MASTER PLAN you MUST resend the three plan-part scripts, or run neither.**
+
+*The plan is 3.2 MB and travels only in those parts. **They are not a convenience — they ARE the plan in transit**, and they go stale the instant the plan changes.*
+
+# 238. ⭐ THE ANSWER TO THE QUESTION — **8 FILES, NOT 1**
+| ⭐⭐⭐ **the patch** | `GOAIEZ-PATCH-THE-46-ANSWERS.md` |
+| :--- | :--- |
+| ⭐⭐ **the law** | `GOAIEZ-MASTER-PLAN.md` **+ the three plan parts** *(they travel together or not at all)* |
+| ⭐ **the entry doc** | `GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md` — *`PART 6` rewritten from open decisions to settled law* |
+| ⭐ **the data** | `GOAIEZ-INDEX.json` — *answers wired, `next_free_ruling` now `R247`, `autopilot_rules` added* |
+| ⭐ **the shipping list** | `GOAIEZ-PACKAGE-MANIFEST.json` |
+
+⛔ **Everything else is unchanged** — *the runtime bundle, the trackers, the agent contract, the autonomous loop, the doctor runbook, the AI core, the god-tier systems.*
+
+⭐⭐ **The manifest now carries `_patch_handover` with this list and the warning, so the next reader does not have to ask.**

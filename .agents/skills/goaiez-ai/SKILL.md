@@ -7,17 +7,54 @@ description: Anything that calls a model. Use before writing a single AI call, a
 
 ## ⛔ R238: ONE CALL PATH, NO SECOND ENTRANCE
 
+**Every AI call in this platform, from every module, goes through ONE path.**
+
 ```
-gate → budget → assemble → redact → cache → route → call → validate → record → learn
+module
+  └─ $ai->run($moduleId, $jobClass, $input)
+       ① GATE      X-126 — no grounding Fact → NO_FACT, BEFORE any spend
+       ② BUDGET    C-Ai — tenant credit + token ceiling; REFUSE, never truncate
+       ③ ASSEMBLE  prompt VERSION + context + tool contracts
+       ④ REDACT    PII out before the payload leaves the building
+       ⑤ CACHE     exact hit → return; semantic hit → return WITH the distance
+       ⑥ ROUTE     R237 — PRIMARY, else BACKUP (different vendor), else COMPLEX
+       ⑦ CALL      timeout · retry · circuit breaker
+       ⑧ VALIDATE  schema · refusal codes · X-213 vision check on tenant-facing
+       ⑨ RECORD    requested AND served · tokens · cost · latency · cache verdict
+       ⑩ LEARN     corrections land in agent_instructions, never in a prompt edit
 ```
 
-**Every AI call in this platform goes through it.** A second entrance is
-unbuildable once two callers exist, which is why `C-Ai`, `X-219` and `X-220` are
-built in wave 3 — before anything that calls a model.
+⭐ **Gate before budget before spend.** A second entrance is unbuildable once two
+callers exist, which is why `C-Ai`, `X-219` and `X-220` are wave 3 — before
+anything that calls a model.
+
+## ⛔⛔⛔ `model_requested` AND `model_served` — THE MOST IMPORTANT COLUMN PAIR
+
+**Without both, a silent fallback attributes the BACKUP's output to the
+PRIMARY** — so every eval, every cost report and every *"which model is better"*
+decision is measuring the wrong thing.
+
+| `N-238-02` | `ai_calls` carries **`model_requested` · `model_served` · `fallback_reason`.** ⭐ **`doctor` fails a write that has one and not the other** |
+| :--- | :--- |
+
+## ⛔ A PROMPT IS A ROW, AND ITS VERSION IS RECORDED ON EVERY CALL
+
+| `ai_prompts` | key · version · body · job_class · created_by · frozen_at |
+| :--- | :--- |
+| `N-238-03` | ⛔ **every `ai_calls` row records the prompt VERSION it used.** *"The output changed" is unanswerable without it* |
+| `N-238-04` | ⭐ **a frozen prompt is immutable** — a change is a **new version**, never an edit |
 
 ## ⛔ NEVER NAME A VENDOR IN A MODULE
 
 A hardcoded model string is a `boundary` violation and fails the COMMIT.
+⛔ **`N-238-01` extends that to vendor CLIENT CLASSES** — a module that reaches a
+vendor SDK directly is a build failure, not a shortcut.
+
+⚠️ **Six of the twelve AI concerns were prose-only with no module owning them** —
+prompt versioning, PII redaction, injection defence, tool calling, model
+deprecation, and requested-vs-served. **The gap was never features; it was that
+the brain was scattered across seven modules with no single contract.**
+`source/GOAIEZ-AI-CORE.md` is the full account — read it before wave 3.
 
 ## R237: A MODEL IS A ROW, NOT A CHOICE IN CODE
 

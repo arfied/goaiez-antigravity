@@ -1,105 +1,96 @@
 #!/usr/bin/env python3
 """
-Refuse to start the build if a load-bearing source file is missing.
+Refuse to start the build if the source package is not what the manifest says.
 
     python3 bin/preflight.py            # run from the package root
 
 WHY THIS EXISTS
 ---------------
-`files-61.zip` delivered 8 of the 20 files its own manifest lists.  Most of the
-absences are harmless prose.  ONE is not:
+files-61.zip delivered 8 of the 20 files its own manifest listed.  Most absences
+were harmless prose.  ONE was not: GOAIEZ-TRACKER-CAPABILITIES.md holds all 966
+capability rows, and without it capabilities:scaffold fails, no capabilities.php
+is written, CapabilityStage's floor reddens every module, and NO WAVE CAN CLOSE.
 
-  GOAIEZ-TRACKER-CAPABILITIES.md holds all 966 capability rows.  Without it
-  `capabilities:scaffold` fails, no capabilities.php is written, and
-  CapabilityStage's floor fires "ZERO specced capabilities" on every module -
-  so `capability` fails the MERGE and NO WAVE EVER CLOSES.
+Discovering that at wave 14 costs the whole run.  This makes it a wave-0 refusal.
 
-Discovering that at wave 14 costs the whole run.  This turns it into a refusal
-at wave 0, which is the only cheap moment to find it.
+It now checks the WHOLE manifest rather than a hand-kept list, because a
+hand-kept list of another document's contents is the exact artefact this
+programme keeps getting wrong.
 """
-import pathlib, sys
+import json, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SRC  = ROOT / "source"
+SRC, RT = ROOT / "source", ROOT / "runtime"
+MAN = json.loads((SRC / "GOAIEZ-PACKAGE-MANIFEST.json").read_text())
 
-REQUIRED = [
- ("GOAIEZ-MASTER-PLAN.md",
-  "module:scaffold, brief, why, context and find all read it. Without it the "
-  "scaffold reports 0 modules instead of failing."),
- ("GOAIEZ-INDEX.json",
-  "the machine-readable roster. bin/generate-plan.py reads it."),
- ("GOAIEZ-TRACKER-CAPABILITIES.md",
-  "all 966 capability rows. capabilities:scaffold reads it; without it "
-  "CapabilityStage's floor reddens every module and no wave can close. "
-  "NOT reconstructible from the plan - only 299 of the ids live there."),
-]
+# Load-bearing: named because runtime CODE reads them, verified by grepping the
+# runtime for every GOAIEZ-* filename it opens.
+LOAD_BEARING = {
+ "GOAIEZ-MASTER-PLAN.md":
+   "module:scaffold, brief, why, context and find all read it. Without it the "
+   "scaffold reports 0 modules instead of failing.",
+ "GOAIEZ-TRACKER-CAPABILITIES.md":
+   "all 966 capability rows. capabilities:scaffold reads it; without it "
+   "CapabilityStage's floor reddens every module and no wave can close. "
+   "NOT reconstructible from the plan.",
+ "GOAIEZ-INDEX.json":
+   "the machine-readable roster. bin/generate-plan.py reads it.",
+}
 
-# Files the manifest lists that we do not hold, or hold at a different size.
-# None is load-bearing - all are prose or already-extracted - but a silent gap
-# between the shipping list and the tree is how a stale file survives.
-MANIFEST_GAPS = [
- ("GOAIEZ-AUDIT-LEDGER.md",
-  "we hold 406,325 bytes; the manifest lists 408,413. A newer ledger exists and "
-  "was not shipped in files-62 or files-63. It is DEFECT HISTORY - no runtime "
-  "code reads it (CitationStage names it only to EXCLUDE it from the corpus it "
-  "checks against), so the gap costs nothing but is recorded rather than ignored."),
- ("GOAIEZ-THE-64-DECISIONS.md",
-  "9,452 bytes, never shipped in any drop. The 64 unresolvable ruling citations. "
-  "`php artisan why <id>` is the authority at build time; rule 00 already says to "
-  "state the fact instead of citing an id that will not resolve."),
- ("goaiez-extract.sh",
-  "7,663 bytes, never shipped. A 22-section environment extract for when "
-  "something is unexplained. Diagnostic only."),
-]
+# Every group the manifest defines - not a hand-picked two. `package_2` is the
+# guided v3.2-patch path and is not built here, but it IS a manifest file and
+# must not trip the stray guard below.
+listed = {e["file"].split("/")[-1]: e["bytes"]
+          for v in MAN.values() if isinstance(v, list)
+          for e in v if isinstance(e, dict) and "file" in e and "bytes" in e}
 
-OPTIONAL = [
- ("GOAIEZ-TRACKER-MODULES.md",  "roster tracker - no runtime code reads it; "
-                                "GOAIEZ-INDEX.json already carries the roster"),
- ("GOAIEZ-AI-CORE.md",          "R238 in full - prose; the goaiez-ai skill "
-                                "summarises it"),
- ("GOAIEZ-THE-DOCTOR-LOOP.md",  "prose runbook - the workflows cover it"),
- ("GOAIEZ-GODTIER-SYSTEMS.md",  "prose"),
- ("GOAIEZ-COLD-START.md",       "prose"),
-]
+def find(name):
+    for d in (SRC, RT):
+        if (d / name).is_file():
+            return d / name
+    return None
 
-missing = [(f, why) for f, why in REQUIRED if not (SRC / f).is_file()]
-absent  = [(f, why) for f, why in OPTIONAL if not (SRC / f).is_file()]
+absent, wrong, ok = [], [], []
+for name, want in sorted(listed.items()):
+    p = find(name)
+    if p is None:
+        absent.append((name, want))
+    elif p.stat().st_size != want:
+        wrong.append((name, want, p.stat().st_size))
+    else:
+        ok.append(name)
 
-print("REQUIRED")
-for f, why in REQUIRED:
-    print(f"  {'OK  ' if (SRC / f).is_file() else 'MISS'}  {f}")
-if absent:
-    print("\nabsent, and it does not matter")
-    for f, why in absent:
-        print(f"  --    {f:<34} {why}")
+print(f"MANIFEST — {len(listed)} files listed")
+print(f"  {len(ok)} present at the listed size")
+for name, want, have in wrong:
+    print(f"  SIZE  {name}  have {have:,}  listed {want:,}")
+for name, want in absent:
+    tag = "⛔ LOAD-BEARING" if name in LOAD_BEARING else "  not load-bearing"
+    print(f"  MISS  {name}  ({want:,} bytes) {tag}")
 
-# Report each gap as what it actually is: absent, or held at a different size.
-if MANIFEST_GAPS:
-    print("\nthe manifest and this tree differ here — none load-bearing")
-    for f, why in MANIFEST_GAPS:
-        here = SRC / f
-        if not here.is_file():
-            here = ROOT / "runtime" / f
-        if here.is_file():
-            state = f"STALE  held {here.stat().st_size:,} bytes"
-        else:
-            state = "ABSENT"
-        print(f"  {state:<28} {f}")
-        print(f"  {'':<28} {why.split('.')[0]}.")
-
-if missing:
-    print("\n⛔ REFUSED — do not start the build.\n")
-    for f, why in missing:
-        print(f"  MISSING: {f}\n           {why}\n")
-    print("  Ask the owner for the file(s) above, drop them in source/, re-run.")
+# ⛔ Superseded working documents must never enter source/.  Measured in the
+#    history archive: roster 119 appears 27 times, 122 seventeen, 124 twice.
+strays = sorted(p.name for p in SRC.rglob("GOAIEZ-*.md") if p.name not in listed)
+if strays:
+    print("\n⛔ SUPERSEDED WORKING DOCUMENTS HAVE ENTERED source/")
+    print("   The manifest lists what to read; the other 83 carry stale counts,")
+    print("   and an agent reading the majority is wrong.")
+    print("   Move these to ../grs-antig-history/ :")
+    for f in strays[:20]:
+        print(f"     {f}")
     sys.exit(1)
 
-print("\nevery load-bearing source file is present.")
+blocking = [n for n, _ in absent if n in LOAD_BEARING]
+if blocking:
+    print("\n⛔ REFUSED — do not start the build.\n")
+    for n in blocking:
+        print(f"  MISSING: {n}\n           {LOAD_BEARING[n]}\n")
+    sys.exit(1)
+
+print("\nevery load-bearing source file is present." if not (absent or wrong)
+      else "\nno load-bearing file is missing; the differences above are not blocking.")
 
 # ---------------------------------------------------------------- the corpus
-# Report the capability counts, because the artefacts disagree about them and
-# a number nobody re-derives is how the roster came to say 119 in 47 places.
-import re
 ID = re.compile(r'^(G\d+-\d+|N-\d+(?:-\d+)?)$')
 
 def first_cell_ids(path):
@@ -116,22 +107,21 @@ def first_cell_ids(path):
 
 trk = first_cell_ids(SRC / "GOAIEZ-TRACKER-CAPABILITIES.md")
 pln = first_cell_ids(SRC / "GOAIEZ-MASTER-PLAN.md")
-import json as _json
-idx = _json.loads((SRC / "GOAIEZ-INDEX.json").read_text())
+idx = json.loads((SRC / "GOAIEZ-INDEX.json").read_text())
 
-print("""
-CAPABILITY CORPUS — the artefacts disagree, and this is not blocking
--------------------------------------------------------------------""")
-print(f"  tracker, first cell is the id      : {len(trk)}")
-print(f"  master plan, same rule             : {len(pln)}")
-print(f"  union, which is what the stage sees: {len(trk | pln)}")
-print(f"  GOAIEZ-INDEX.json law_surface      : {idx['law_surface']['capabilities']}")
-print(f"  handover and manifest both say     : 966  (of which 322 need a refusal)")
 print(f"""
-  Four numbers for one corpus. The counts above come from a REIMPLEMENTATION
-  of the parser in Python — `php artisan capabilities:scaffold` is the
-  authority and settles it the first time it runs. Record what it says.
+CAPABILITY CORPUS — the artefacts disagree, and this is not blocking
+-------------------------------------------------------------------
+  tracker, first cell is the id       : {len(trk)}
+  master plan, same rule              : {len(pln)}
+  union, which is what the stage sees : {len(trk | pln)}
+  GOAIEZ-INDEX.json law_surface       : {idx['law_surface']['capabilities']}
+  handover and manifest both say      : 966  (of which 322 need a refusal)
+
+  Five numbers for one corpus. The first three come from a REIMPLEMENTATION of
+  the parser in Python — `php artisan capabilities:scaffold` is the authority
+  and settles it the first time it runs. Record what it says.
 
   ⛔ Do NOT reconcile these by editing a number. The 322-refusal figure is
-     derived from 966; if scaffold reports a different total, the refusal
-     scope moves with it and that is an owner decision, not an agent one.""")
+     derived from 966; if scaffold reports a different total, the refusal scope
+     moves with it, and that is an owner decision rather than an agent one.""")
