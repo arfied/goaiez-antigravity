@@ -71,8 +71,8 @@
   },
   {
    "file": "GOAIEZ-AUDIT-LEDGER.md",
-   "bytes": 406325,
-   "sha256": "50f3572777d7eb9e",
+   "bytes": 408413,
+   "sha256": "4afe0c78df91c58f",
    "why": "222 findings. The defect history of this programme."
   },
   {
@@ -97,20 +97,20 @@
   },
   {
    "file": "runtime/goaiez-plan-part1.sh",
-   "bytes": 365666,
-   "sha256": "ca81798ed41af1b7",
+   "bytes": 366862,
+   "sha256": "7687f67b8afa6068",
    "why": "The master plan, part 1 of 3 (it is 3.26 MB)."
   },
   {
    "file": "runtime/goaiez-plan-part2.sh",
-   "bytes": 365666,
-   "sha256": "b2a16a7f7626602d",
+   "bytes": 366862,
+   "sha256": "9e04601f1d06f5bd",
    "why": "part 2 of 3"
   },
   {
    "file": "runtime/goaiez-plan-part3.sh",
-   "bytes": 365665,
-   "sha256": "371d0ca4f9e8635b",
+   "bytes": 366859,
+   "sha256": "42f13bf3634577a9",
    "why": "part 3 of 3"
   },
   {
@@ -167,5 +167,44 @@
    "sha256": "134821e29a694c0a",
    "why": "The same 8 patches as data, plus the 7 stale values and the target sha."
   }
- ]
+ ],
+ "_patch_handover": {
+  "_situation": "Claude Code already has the pre-patch package. These are the ONLY files that changed.",
+  "resend_these": [
+   {
+    "file": "GOAIEZ-PATCH-THE-46-ANSWERS.md",
+    "why": "R245 + R246 + the 7 facts + the 24 delegations + the 10 decided. THE PATCH."
+   },
+   {
+    "file": "GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md",
+    "why": "PART 6 rewritten: open decisions -> settled law. Adds the Q-045 reconciliation."
+   },
+   {
+    "file": "GOAIEZ-INDEX.json",
+    "why": "answers wired as data; next_free_ruling now R247; autopilot_rules added."
+   },
+   {
+    "file": "GOAIEZ-MASTER-PLAN.md",
+    "why": "the law itself \u2014 now carries R243, R245, R246, S264W, S264X."
+   },
+   {
+    "file": "runtime/goaiez-plan-part1.sh",
+    "why": "the plan is 3.2 MB; these three carry it. The OLD parts (sha 8bae92b4) would OVERWRITE the patch."
+   },
+   {
+    "file": "runtime/goaiez-plan-part2.sh",
+    "why": "part 2 of 3"
+   },
+   {
+    "file": "runtime/goaiez-plan-part3.sh",
+    "why": "part 3 of 3"
+   },
+   {
+    "file": "GOAIEZ-PACKAGE-MANIFEST.json",
+    "why": "this file \u2014 the shipping list."
+   }
+  ],
+  "do_not_resend": "Everything else is unchanged: the runtime bundle, the trackers, the agent contract, the loop, the doctor runbook, the AI core, the godtier systems.",
+  "_critical": "If you resend the MASTER PLAN you MUST resend the three plan-part scripts, or run neither. The old parts carry sha 8bae92b4 and would silently revert R243/R245/R246."
+ }
 }

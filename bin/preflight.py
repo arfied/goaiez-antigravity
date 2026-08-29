@@ -34,6 +34,24 @@ REQUIRED = [
   "NOT reconstructible from the plan - only 299 of the ids live there."),
 ]
 
+# Files the manifest lists that we do not hold, or hold at a different size.
+# None is load-bearing - all are prose or already-extracted - but a silent gap
+# between the shipping list and the tree is how a stale file survives.
+MANIFEST_GAPS = [
+ ("GOAIEZ-AUDIT-LEDGER.md",
+  "we hold 406,325 bytes; the manifest lists 408,413. A newer ledger exists and "
+  "was not shipped in files-62 or files-63. It is DEFECT HISTORY - no runtime "
+  "code reads it (CitationStage names it only to EXCLUDE it from the corpus it "
+  "checks against), so the gap costs nothing but is recorded rather than ignored."),
+ ("GOAIEZ-THE-64-DECISIONS.md",
+  "9,452 bytes, never shipped in any drop. The 64 unresolvable ruling citations. "
+  "`php artisan why <id>` is the authority at build time; rule 00 already says to "
+  "state the fact instead of citing an id that will not resolve."),
+ ("goaiez-extract.sh",
+  "7,663 bytes, never shipped. A 22-section environment extract for when "
+  "something is unexplained. Diagnostic only."),
+]
+
 OPTIONAL = [
  ("GOAIEZ-TRACKER-MODULES.md",  "roster tracker - no runtime code reads it; "
                                 "GOAIEZ-INDEX.json already carries the roster"),
@@ -54,6 +72,20 @@ if absent:
     print("\nabsent, and it does not matter")
     for f, why in absent:
         print(f"  --    {f:<34} {why}")
+
+# Report each gap as what it actually is: absent, or held at a different size.
+if MANIFEST_GAPS:
+    print("\nthe manifest and this tree differ here — none load-bearing")
+    for f, why in MANIFEST_GAPS:
+        here = SRC / f
+        if not here.is_file():
+            here = ROOT / "runtime" / f
+        if here.is_file():
+            state = f"STALE  held {here.stat().st_size:,} bytes"
+        else:
+            state = "ABSENT"
+        print(f"  {state:<28} {f}")
+        print(f"  {'':<28} {why.split('.')[0]}.")
 
 if missing:
     print("\n⛔ REFUSED — do not start the build.\n")
