@@ -102,6 +102,8 @@ an enum. Do not "fix" it and do not report it.
 | `04-evidence.md` | what counts as proof, and what does not |
 | `05-forbidden.md` | sealed, generated, and off-limits |
 | `06-defect-shapes.md` | the twenty defects this programme already produced |
+| `07-tech-stack.md` | ⛔ **the pinned stack** — Laravel 13, Livewire 4, Postgres 16, Tailwind 4. Not a default to be re-chosen |
+| `08-modular-ddd-cqrs.md` | ⛔ **fully modular, DDD, CQRS** — and how far to take CQRS, which is not all the way |
 
 ## THE SKILLS
 

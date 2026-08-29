@@ -4,15 +4,48 @@
 
 ---
 
-## 1. A Laravel tree
+## 1. A Laravel tree — on the pinned stack
+
+⛔ **Read `.agents/rules/07-tech-stack.md` first.** The stack is the owner's and
+is not a default to be taken from whatever `create-project` installs today.
 
 ```bash
 cd /home/arf/dev/grs-antig
 composer create-project laravel/laravel app
+cd app
 ```
 
-Everything below runs from `app/`. **`artisan` must exist there** or the runtime
-installer refuses, correctly.
+**Then bring it to the pinned stack** — PHP 8.4, Laravel 13, and:
+
+```bash
+composer require livewire/livewire:^4.0 masmerise/livewire-toaster:^2.10 \
+                 laravel/fortify laravel/sanctum laravel/socialite \
+                 laravel/cashier laravel/horizon laravel/reverb
+composer require --dev pestphp/pest:^4.0 laravel/pint larastan/larastan
+npm install tailwindcss@^4 @tailwindcss/vite
+```
+
+⛔ **Do NOT install** `laravel/telescope` or `laravel/pulse` — see the stack rule.
+⛔ **Do NOT create a `tailwind.config.js`.** Tailwind 4 is CSS-first; tokens go in
+the `@theme` block of `resources/css/app.css`.
+⛔ **Do NOT install Filament, Inertia, React, shadcn/ui or Flux.**
+
+**`artisan` must exist in `app/`** or the runtime installer refuses, correctly.
+
+### Autoloading — R242, and it is not the default
+
+One module, one directory, **hyphen included**, so modules load by **classmap**:
+
+```json
+"autoload": {
+    "psr-4": { "App\\": "app/" },
+    "classmap": ["app/Modules/"]
+}
+```
+
+⛔ **`composer dump-autoload` after adding any module directory.** A classmap is
+built, not scanned. See rule 08 §5 for the three things that silently do not work
+until a module's own `ModuleServiceProvider` registers them.
 
 ## 2. Postgres, as a NON-OWNER role
 
@@ -86,6 +119,15 @@ psql -f ../runtime/goaiez-grants.sql
 it the database is secure and unusable, and the error you get is
 `permission denied` — **a GRANT error, not an RLS error**, which is where an hour
 goes if you read it the other way.
+
+## 5b. The module skeleton
+
+⛔ **Read `.agents/rules/08-modular-ddd-cqrs.md` before the first module.**
+
+The boundary lint already enforces the bounded context — **no module may `use`
+another module's class**, only an event or a registered action. What that rule
+adds is the layout inside a module, the command/query split, and ⛔ **the
+explicit instruction not to event-source the platform.**
 
 ## 6. The runtime layer
 
