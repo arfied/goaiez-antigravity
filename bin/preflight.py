@@ -63,3 +63,43 @@ if missing:
     sys.exit(1)
 
 print("\nevery load-bearing source file is present.")
+
+# ---------------------------------------------------------------- the corpus
+# Report the capability counts, because the artefacts disagree about them and
+# a number nobody re-derives is how the roster came to say 119 in 47 places.
+import re
+ID = re.compile(r'^(G\d+-\d+|N-\d+(?:-\d+)?)$')
+
+def first_cell_ids(path):
+    out = set()
+    for line in path.read_text(encoding="utf-8").split("\n"):
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.split("|")]
+        if len(cells) > 1:
+            m = ID.match(cells[1].strip("*` "))
+            if m:
+                out.add(m.group(1))
+    return out
+
+trk = first_cell_ids(SRC / "GOAIEZ-TRACKER-CAPABILITIES.md")
+pln = first_cell_ids(SRC / "GOAIEZ-MASTER-PLAN.md")
+import json as _json
+idx = _json.loads((SRC / "GOAIEZ-INDEX.json").read_text())
+
+print("""
+CAPABILITY CORPUS — the artefacts disagree, and this is not blocking
+-------------------------------------------------------------------""")
+print(f"  tracker, first cell is the id      : {len(trk)}")
+print(f"  master plan, same rule             : {len(pln)}")
+print(f"  union, which is what the stage sees: {len(trk | pln)}")
+print(f"  GOAIEZ-INDEX.json law_surface      : {idx['law_surface']['capabilities']}")
+print(f"  handover and manifest both say     : 966  (of which 322 need a refusal)")
+print(f"""
+  Four numbers for one corpus. The counts above come from a REIMPLEMENTATION
+  of the parser in Python — `php artisan capabilities:scaffold` is the
+  authority and settles it the first time it runs. Record what it says.
+
+  ⛔ Do NOT reconcile these by editing a number. The 322-refusal figure is
+     derived from 966; if scaffold reports a different total, the refusal
+     scope moves with it and that is an owner decision, not an agent one.""")

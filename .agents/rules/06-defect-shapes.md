@@ -87,3 +87,28 @@ encodes **subscriptions**, which constrain nothing about build order.
 
 ⭐ **A graph will always return an ordering. That it returned one is not evidence
 that it encodes one.**
+
+## I. AND IT IS ALREADY TRUE OF THE CAPABILITY CORPUS
+
+⛔ **Five sources, five numbers, for the one corpus that gates every module.**
+Counted at wave 0, before a line was built:
+
+| the tracker, first cell is the id | **887** |
+| :--- | :--- |
+| the master plan, same rule | **901** |
+| the union, which is what `CapabilityStage` sees | **1047** |
+| `GOAIEZ-INDEX.json` → `law_surface.capabilities` | **765** |
+| the handover and the manifest | **966**, of which **322** need a refusal |
+
+⚠️ **The first three are a REIMPLEMENTATION of the parser** — `php artisan
+capabilities:scaffold` is the authority and settles it the first time it runs.
+**Record what it says.**
+
+⛔ **Do not reconcile these by editing a number**, and do not assume 966 because
+it is the one written in prose twice. **The 322 figure is derived from 966**, so
+if scaffold reports a different total the refusal scope moves with it — and that
+is an owner decision, not an agent one.
+
+⭐ **This is shape G happening live, inside the corpus rather than in a document
+about it.** `bin/preflight.py` prints all five on every run so the disagreement
+is visible before it is inherited.
