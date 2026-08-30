@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
+Route::get('/architecture', function () {
     $dbStatus = 'Operational';
     $migrationsCount = 0;
     $tablesCount = 0;
@@ -114,7 +118,7 @@ Route::get('/', function () {
         ]
     ];
 
-    return view('welcome', compact(
+    return view('pages.architecture', compact(
         'dbStatus',
         'migrationsCount',
         'tablesCount',
@@ -124,7 +128,7 @@ Route::get('/', function () {
         'capabilitiesCount',
         'categories'
     ));
-});
+})->name('architecture');
 
 Route::get('/onboarding', function () {
     return view('pages.onboarding');
@@ -137,4 +141,5 @@ Route::get('/reviews', function () {
 Route::get('/portal', function () {
     return view('pages.portal');
 })->name('portal');
+
 

@@ -39,19 +39,19 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="font-bold text-white tracking-tight text-lg">GO AI EZ</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/30">Antigravity</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/30">Autonomous</span>
                         </div>
-                        <p class="text-[11px] text-slate-400 hidden sm:block">Autonomous 124-Module DDD & CQRS</p>
+                        <p class="text-[11px] text-slate-400 hidden sm:block">AI Receptionist & Operations for Contractors</p>
                     </div>
                 </a>
 
                 <!-- Navigation Tabs -->
                 <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
-                    <a href="/" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('/')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Architecture Overview
+                    <a href="/" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('/') && !request()->is('architecture*')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
+                        Home
                     </a>
                     <a href="/onboarding" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('onboarding*')) ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Fast Onboarding (X-118)
+                        Voice Answering (X-118)
                     </a>
                     <a href="/reviews" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('reviews*')) ? 'bg-purple-600/30 text-purple-300 border border-purple-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
                         Review Hub (C-Reviews)
@@ -59,17 +59,20 @@
                     <a href="/portal" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('portal*')) ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
                         Customer Portal (X-172)
                     </a>
+                    <a href="/architecture" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('architecture*')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
+                        Architecture (124 Modules)
+                    </a>
                 </nav>
             </div>
 
             <div class="flex items-center gap-3">
+                <a href="/onboarding" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition">
+                    Start in 60s &rarr;
+                </a>
                 <a href="/up" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    System Live (/up)
+                    Live (/up)
                 </a>
-                <span class="text-xs font-mono text-slate-400 px-2.5 py-1 rounded bg-slate-900 border border-slate-800 hidden sm:inline-block">
-                    anti.goaiez.com
-                </span>
             </div>
         </div>
     </header>
@@ -84,11 +87,15 @@
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>&copy; {{ date('Y') }} GO AI EZ Inc. Antigravity Platform Engine.</div>
             <div class="flex items-center gap-4">
-                <a href="/onboarding" class="hover:text-slate-300 transition">Fast Onboarding</a>
+                <a href="/" class="hover:text-slate-300 transition">Home</a>
+                <span>·</span>
+                <a href="/onboarding" class="hover:text-slate-300 transition">Voice Answering</a>
                 <span>·</span>
                 <a href="/reviews" class="hover:text-slate-300 transition">Review Hub</a>
                 <span>·</span>
                 <a href="/portal" class="hover:text-slate-300 transition">Portal</a>
+                <span>·</span>
+                <a href="/architecture" class="hover:text-slate-300 transition">Architecture</a>
                 <span>·</span>
                 <a href="/up" class="hover:text-slate-300 transition">Health Status</a>
             </div>
