@@ -51,16 +51,19 @@
                         Home
                     </a>
                     <a href="/onboarding" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('onboarding*')) ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Voice Answering (X-118)
+                        Voice (X-118)
+                    </a>
+                    <a href="/pricebook" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('pricebook*')) ? 'bg-amber-600/30 text-amber-300 border border-amber-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
+                        Pricebook (X-163)
                     </a>
                     <a href="/reviews" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('reviews*')) ? 'bg-purple-600/30 text-purple-300 border border-purple-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Review Hub (C-Reviews)
+                        Reviews (C-Reviews)
                     </a>
                     <a href="/portal" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('portal*')) ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Customer Portal (X-172)
+                        Portal (X-172)
                     </a>
                     <a href="/architecture" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('architecture*')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Architecture (124 Modules)
+                        Architecture
                     </a>
                 </nav>
             </div>
@@ -91,9 +94,11 @@
                 <span>·</span>
                 <a href="/onboarding" class="hover:text-slate-300 transition">Voice Answering</a>
                 <span>·</span>
+                <a href="/pricebook" class="hover:text-slate-300 transition">Pricebook</a>
+                <span>·</span>
                 <a href="/reviews" class="hover:text-slate-300 transition">Review Hub</a>
                 <span>·</span>
-                <a href="/portal" class="hover:text-slate-300 transition">Portal</a>
+                <a href="/portal" class="hover:text-slate-300 transition">Customer Portal</a>
                 <span>·</span>
                 <a href="/architecture" class="hover:text-slate-300 transition">Architecture</a>
                 <span>·</span>

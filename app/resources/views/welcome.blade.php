@@ -58,16 +58,19 @@
                 <!-- Navigation Tabs -->
                 <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
                     <a href="/onboarding" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition">
-                        Voice Answering (X-118)
+                        Voice (X-118)
+                    </a>
+                    <a href="/pricebook" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition">
+                        Pricebook (X-163)
                     </a>
                     <a href="/reviews" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition">
-                        Reputation Hub (C-Reviews)
+                        Reviews (C-Reviews)
                     </a>
                     <a href="/portal" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-900 transition">
-                        Customer Portal (X-172)
+                        Portal (X-172)
                     </a>
                     <a href="/architecture" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition">
-                        System Architecture
+                        Architecture
                     </a>
                 </nav>
             </div>
@@ -296,35 +299,44 @@
                     Live Operational Suites
                 </span>
                 <h2 class="text-2xl font-bold text-white mt-2">Test Drive Interactive Subsystems Live</h2>
-                <p class="text-xs text-slate-400">Directly experience the three core modules running live on https://anti.goaiez.com.</p>
+                <p class="text-xs text-slate-400">Directly experience the four core modules running live on https://anti.goaiez.com.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <a href="/onboarding" class="p-6 rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-950/40 to-slate-950 hover:border-indigo-500/60 transition group space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <a href="/onboarding" class="p-5 rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-950/40 to-slate-950 hover:border-indigo-500/60 transition group space-y-2.5">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-indigo-400 uppercase">Module X-118</span>
                         <span class="text-xs text-slate-400 group-hover:text-white transition">Launch &rarr;</span>
                     </div>
-                    <h3 class="text-base font-bold text-white group-hover:text-indigo-300 transition">Fast Tenant Onboarding</h3>
-                    <p class="text-xs text-slate-300">2-field signup, dedicated voice number pool assignment, and simulated First-Win test call transcript.</p>
+                    <h3 class="text-sm font-bold text-white group-hover:text-indigo-300 transition">Fast Onboarding</h3>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">2-field signup, dedicated voice number pool assignment, and First-Win call simulator.</p>
                 </a>
 
-                <a href="/reviews" class="p-6 rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-950/40 to-slate-950 hover:border-purple-500/60 transition group space-y-3">
+                <a href="/pricebook" class="p-5 rounded-2xl border border-amber-500/30 bg-gradient-to-b from-amber-950/40 to-slate-950 hover:border-amber-500/60 transition group space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-amber-400 uppercase">Module X-163</span>
+                        <span class="text-xs text-slate-400 group-hover:text-white transition">Launch &rarr;</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white group-hover:text-amber-300 transition">Dynamic Pricebook</h3>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">Callout fee deductions, location versioning, and AI voice quoting test simulator.</p>
+                </a>
+
+                <a href="/reviews" class="p-5 rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-950/40 to-slate-950 hover:border-purple-500/60 transition group space-y-2.5">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-purple-400 uppercase">Module C-Reviews</span>
                         <span class="text-xs text-slate-400 group-hover:text-white transition">Launch &rarr;</span>
                     </div>
-                    <h3 class="text-base font-bold text-white group-hover:text-purple-300 transition">Reputation Engine & Review Hub</h3>
-                    <p class="text-xs text-slate-300">P-110 compliant prompt linter, multi-channel review feed, 5★ auto-replies, and 1-3★ QA ticket escalations.</p>
+                    <h3 class="text-sm font-bold text-white group-hover:text-purple-300 transition">Reputation Hub</h3>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">P-110 prompt linter, multi-channel review feed, 5★ auto-replies, and 1-3★ QA tickets.</p>
                 </a>
 
-                <a href="/portal" class="p-6 rounded-2xl border border-emerald-500/30 bg-gradient-to-b from-emerald-950/40 to-slate-950 hover:border-emerald-500/60 transition group space-y-3">
+                <a href="/portal" class="p-5 rounded-2xl border border-emerald-500/30 bg-gradient-to-b from-emerald-950/40 to-slate-950 hover:border-emerald-500/60 transition group space-y-2.5">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-emerald-400 uppercase">Module X-172</span>
                         <span class="text-xs text-slate-400 group-hover:text-white transition">Launch &rarr;</span>
                     </div>
-                    <h3 class="text-base font-bold text-white group-hover:text-emerald-300 transition">Customer Service Portal</h3>
-                    <p class="text-xs text-slate-300">Zero-credential document review, electronic signature execution, online card payment terminal, and CSAT rating.</p>
+                    <h3 class="text-sm font-bold text-white group-hover:text-emerald-300 transition">Customer Portal</h3>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">Zero-credential document review, E-Sign execution, Stripe payment, and dispatch tracker.</p>
                 </a>
             </div>
         </div>

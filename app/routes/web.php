@@ -142,4 +142,9 @@ Route::get('/portal', function () {
     return view('pages.portal');
 })->name('portal');
 
+Route::get('/pricebook', function () {
+    return view('pages.pricebook');
+})->name('pricebook');
+
+
 
