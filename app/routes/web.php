@@ -125,3 +125,16 @@ Route::get('/', function () {
         'categories'
     ));
 });
+
+Route::get('/onboarding', function () {
+    return view('pages.onboarding');
+})->name('onboarding');
+
+Route::get('/reviews', function () {
+    return view('pages.reviews');
+})->name('reviews');
+
+Route::get('/portal', function () {
+    return view('pages.portal');
+})->name('portal');
+

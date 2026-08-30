@@ -39,19 +39,36 @@
     <!-- Top Navigation Bar -->
     <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
-                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold text-white tracking-tight text-lg">GO AI EZ</span>
-                        <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/30">Antigravity</span>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/20">
+                        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
                     </div>
-                    <p class="text-[11px] text-slate-400 hidden sm:block">Autonomous 124-Module Engine · DDD & CQRS Architecture</p>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-white tracking-tight text-lg">GO AI EZ</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/30">Antigravity</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 hidden sm:block">Autonomous 124-Module Engine · DDD & CQRS Architecture</p>
+                    </div>
                 </div>
+
+                <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
+                    <a href="/" class="px-3 py-1.5 rounded-lg bg-slate-800 text-white transition">
+                        Architecture Overview
+                    </a>
+                    <a href="/onboarding" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition">
+                        Fast Onboarding (X-118)
+                    </a>
+                    <a href="/reviews" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition">
+                        Review Hub (C-Reviews)
+                    </a>
+                    <a href="/portal" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition">
+                        Customer Portal (X-172)
+                    </a>
+                </nav>
             </div>
 
             <div class="flex items-center gap-3">
@@ -59,9 +76,9 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     System Live (/up)
                 </a>
-                <a href="https://github.com" target="_blank" class="text-xs font-medium px-3 py-1.5 rounded-md bg-slate-800/80 hover:bg-slate-800 text-slate-300 border border-slate-700/60 transition hidden sm:inline-flex">
+                <span class="text-xs font-medium px-3 py-1.5 rounded-md bg-slate-800/80 text-slate-300 border border-slate-700/60 transition hidden sm:inline-flex">
                     anti.goaiez.com
-                </a>
+                </span>
             </div>
         </div>
     </header>
@@ -94,6 +111,75 @@
                     <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700/50">Livewire 4</span>
                     <span class="px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700/50">Tailwind CSS 4</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- Interactive Livewire UI Workspaces -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-white">Interactive Operational Workspaces</h2>
+                    <p class="text-xs text-slate-400">Real-time live Livewire 4 components connected to autonomous backend actions.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <a href="/onboarding" class="group p-6 rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-950/40 to-slate-900/80 hover:border-indigo-500/60 transition shadow-lg flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                Module X-118
+                            </span>
+                            <span class="text-xs text-indigo-400 font-medium group-hover:translate-x-1 transition">Open &rarr;</span>
+                        </div>
+                        <h3 class="text-base font-bold text-white group-hover:text-indigo-300 transition">Fast Tenant Onboarding</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            2-field instant signup with zero hard stops. Ingests business info, provisions dedicated direct-dial phone number, and simulates direct AI voice first-win.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-indigo-900/40 text-[11px] text-indigo-400 font-semibold flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                        Voice Agent Live Answer
+                    </div>
+                </a>
+
+                <a href="/reviews" class="group p-6 rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-950/40 to-slate-900/80 hover:border-purple-500/60 transition shadow-lg flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                Module C-Reviews
+                            </span>
+                            <span class="text-xs text-purple-400 font-medium group-hover:translate-x-1 transition">Open &rarr;</span>
+                        </div>
+                        <h3 class="text-base font-bold text-white group-hover:text-purple-300 transition">Reputation & Review Hub</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            P-110 compliant review dispatch with prompt lints (zero staff mentions/incentives), 4-5★ auto-replies, and 1-3★ internal QA SLA escalations.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-purple-900/40 text-[11px] text-purple-400 font-semibold flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                        Sentiment & QA Escalations
+                    </div>
+                </a>
+
+                <a href="/portal" class="group p-6 rounded-2xl border border-emerald-500/30 bg-gradient-to-b from-emerald-950/40 to-slate-900/80 hover:border-emerald-500/60 transition shadow-lg flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                Module X-172
+                            </span>
+                            <span class="text-xs text-emerald-400 font-medium group-hover:translate-x-1 transition">Open &rarr;</span>
+                        </div>
+                        <h3 class="text-base font-bold text-white group-hover:text-emerald-300 transition">Customer Service Portal</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Zero-credential magic portal. Itemized estimate review, legally compliant electronic signature pad, instant card payment, and appointment booking.
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-emerald-900/40 text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        E-Signature & Payment
+                    </div>
+                </a>
             </div>
         </div>
 
