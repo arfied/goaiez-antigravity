@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (! Schema::hasTable('redirect_maps')) {
+            Schema::create('redirect_maps', function (Blueprint $table): void {
+                $table->id();
+                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
+                $table->string('source_url');
+                $table->string('destination_url');
+                $table->unsignedInteger('status_code')->default(301);
+                $table->boolean('is_verified')->default(true);
+                $table->timestamps();
+            });
+        }
+
+        $tables = ['redirect_maps'];
+
+        foreach ($tables as $table) {
+            DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
+            DB::statement("ALTER TABLE {$table} FORCE ROW LEVEL SECURITY");
+            DB::statement("DROP POLICY IF EXISTS tenant_isolation ON {$table}");
+
+            DB::statement(<<<SQL
+                CREATE POLICY tenant_isolation ON {$table}
+                    USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
+                    WITH CHECK (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
+            SQL);
+        }
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('redirect_maps');
+    }
+};

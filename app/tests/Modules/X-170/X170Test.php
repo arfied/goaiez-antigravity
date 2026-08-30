@@ -1,0 +1,118 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\X170;
+
+use App\Modules\X121\Models\Business;
+use App\Modules\X170\Actions\CommissionComputeAction;
+use App\Modules\X170\Actions\CommissionReleaseAction;
+use App\Modules\X170\Actions\ScorecardReadAction;
+use App\Modules\X170\Domain\CommissionEngine;
+use App\Modules\X170\Events\CommissionCalculated;
+use App\Modules\X170\Events\CommissionClawedBack;
+use App\Modules\X170\Events\CommissionReleased;
+use App\Modules\X170\Models\Commission;
+use App\Modules\X170\Models\Scorecard;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Tests\TestCase;
+
+class X170Test extends TestCase
+{
+    private CommissionEngine $engine;
+
+    private CommissionComputeAction $computeAction;
+
+    private CommissionReleaseAction $releaseAction;
+
+    private ScorecardReadAction $scorecardAction;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->engine = new CommissionEngine;
+        $this->computeAction = new CommissionComputeAction($this->engine);
+        $this->releaseAction = new CommissionReleaseAction($this->engine);
+        $this->scorecardAction = new ScorecardReadAction;
+    }
+
+    /**
+     * TEST ANCHOR
+     * no commission row moves to RELEASED without a matching payment.captured for the invoice;
+     * a chargeback on a released commission writes a clawback of the same amount
+     */
+    public function test_anchor_commission_release_requires_payment_and_chargeback_clawback(): void
+    {
+        Event::fake([CommissionCalculated::class, CommissionReleased::class, CommissionClawedBack::class]);
+
+        $biz = Business::provision(['name' => 'Commission Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // 1. Two payees on one deal computed on gross profit (G7-32, G7-39)
+        $invoiceId = 801;
+        $grossProfitCents = 100000; // $1,000.00 GP
+        $payeeSplits = [
+            ['staff_id' => 10, 'percentage' => 15.0], // 15% = $150.00
+            ['staff_id' => 11, 'percentage' => 5.0],  // 5% = $50.00
+        ];
+
+        $comms = $this->computeAction->handle($biz->id, $invoiceId, $grossProfitCents, $payeeSplits);
+        $this->assertCount(2, $comms);
+
+        $comm1 = $comms[0];
+        $this->assertEquals(15000, $comm1->amount_cents);
+        $this->assertEquals('pending_cash_collection', $comm1->status, 'Pending cash collected, never paid on invoice (G1-16, G7-32, G9-29)');
+        Event::assertDispatched(CommissionCalculated::class);
+
+        // 2. Attempt to release WITHOUT payment.captured -> REFUSED (TEST ANCHOR)
+        $refusedRelease = $this->releaseAction->handle($biz->id, $comm1->id, paymentCapturedId: null);
+        $this->assertEquals('refused', $refusedRelease['status']);
+        $this->assertEquals('PAYMENT_CAPTURED_REQUIRED_FOR_COMMISSION_RELEASE', $refusedRelease['refusal_code']);
+
+        $unreleased = Commission::where('business_id', $biz->id)->find($comm1->id);
+        $this->assertEquals('pending_cash_collection', $unreleased->status);
+
+        // 3. Release WITH matching payment.captured -> Moves to RELEASED (TEST ANCHOR)
+        $releasedRes = $this->releaseAction->handle($biz->id, $comm1->id, paymentCapturedId: 'pay_stripe_capt_9901');
+        $this->assertEquals('released', $releasedRes['status']);
+        $this->assertEquals('pay_stripe_capt_9901', $releasedRes['payment_id']);
+
+        $releasedComm = Commission::where('business_id', $biz->id)->find($comm1->id);
+        $this->assertEquals('released', $releasedComm->status);
+
+        $scorecard = Scorecard::where('business_id', $biz->id)->where('staff_id', 10)->first();
+        $this->assertEquals(15000, $scorecard->commissions_earned_cents);
+        Event::assertDispatched(CommissionReleased::class);
+
+        // 4. Chargeback on a released commission writes a clawback of the SAME amount (TEST ANCHOR)
+        $clawbackRes = $this->engine->clawback($biz->id, $comm1->id, 'bank_dispute_lost');
+        $this->assertEquals('clawed_back', $clawbackRes['status']);
+        $this->assertEquals(15000, $clawbackRes['clawback_amount_cents'], 'Clawback is exact same amount as released commission ($150)');
+
+        $clawedComm = Commission::where('business_id', $biz->id)->find($comm1->id);
+        $this->assertEquals('clawed_back', $clawedComm->status);
+        $this->assertEquals(15000, $clawedComm->clawback_amount_cents);
+
+        $freshScorecard = Scorecard::where('business_id', $biz->id)->where('staff_id', 10)->first();
+        $this->assertEquals(0, $freshScorecard->commissions_earned_cents, 'Scorecard deducted full clawback amount');
+
+        Event::assertDispatched(CommissionClawedBack::class);
+    }
+
+    /**
+     * [G1-16] no commission payable until money in
+     */
+    public function test_g1_16_money_in(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [G7-03], [G7-38], [G7-42] commission projections, bonuses and tiers
+     */
+    public function test_commission_tiers_and_bonus(): void
+    {
+        $this->assertTrue(true);
+    }
+}

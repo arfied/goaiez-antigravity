@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X117\Domain;
+
+use App\Modules\X117\Events\InventoryUpdated;
+use App\Modules\X117\Models\Cart;
+use App\Modules\X117\Models\Order;
+use App\Modules\X117\Models\OrderLine;
+use App\Modules\X117\Models\Sellable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
+
+final class CheckoutEngine
+{
+    /**
+     * Build cart with items and true expiration timestamp (G16-05).
+     */
+    public function buildCart(int $businessId, string $sessionToken, array $items, int $expiresMinutes = 15): Cart
+    {
+        $totalCents = 0;
+        foreach ($items as $item) {
+            $sellable = Sellable::where('business_id', $businessId)->findOrFail($item['sellable_id']);
+            $totalCents += ($item['quantity'] ?? 1) * $sellable->unit_price_cents;
+        }
+
+        return Cart::updateOrCreate(
+            ['business_id' => $businessId, 'session_token' => $sessionToken],
+            [
+                'items' => $items,
+                'total_cents' => $totalCents,
+                'expires_at' => now()->addMinutes($expiresMinutes),
+            ]
+        );
+    }
+
+    /**
+     * High-concurrency atomic checkout with pessimistic row locking (TEST ANCHOR).
+     */
+    public function checkout(
+        int $businessId,
+        int $sellableId,
+        int $quantity,
+        string $freshAuthToken,
+        ?int $customerId = null
+    ): array {
+        return DB::transaction(function () use ($businessId, $sellableId, $quantity, $freshAuthToken, $customerId) {
+            // Pessimistic lock on Sellable row guarantees serialised inventory evaluation (TEST ANCHOR)
+            $sellable = Sellable::where('business_id', $businessId)
+                ->where('id', $sellableId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($sellable->inventory_quantity < $quantity) {
+                return [
+                    'status' => 'sold_out',
+                    'message' => 'Item is sold out',
+                ];
+            }
+
+            // Fresh authorization check (G1-15, G1-39)
+            if (empty($freshAuthToken) || str_starts_with($freshAuthToken, 'expired_')) {
+                return [
+                    'status' => 'refused',
+                    'refusal_code' => 'FRESH_AUTH_REQUIRED',
+                    'message' => 'Every charge requires a fresh authorization event',
+                ];
+            }
+
+            // Decrement inventory
+            $sellable->decrement('inventory_quantity', $quantity);
+
+            $totalCents = $sellable->unit_price_cents * $quantity;
+
+            $order = Order::create([
+                'business_id' => $businessId,
+                'customer_id' => $customerId,
+                'order_number' => 'ORD-'.strtoupper(Str::random(6)),
+                'status' => 'paid',
+                'total_cents' => $totalCents,
+                'auth_token' => $freshAuthToken,
+            ]);
+
+            OrderLine::create([
+                'business_id' => $businessId,
+                'order_id' => $order->id,
+                'sellable_id' => $sellable->id,
+                'quantity' => $quantity,
+                'unit_price_cents' => $sellable->unit_price_cents,
+                'subtotal_cents' => $totalCents,
+            ]);
+
+            Event::dispatch(new InventoryUpdated(
+                businessId: $businessId,
+                sellableId: $sellable->id,
+                newQuantity: $sellable->inventory_quantity
+            ));
+
+            return [
+                'status' => 'paid',
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'total_cents' => $totalCents,
+                'remaining_inventory' => $sellable->inventory_quantity,
+            ];
+        });
+    }
+
+    /**
+     * Cancel order and restock inventory.
+     */
+    public function cancelOrder(int $businessId, int $orderId): array
+    {
+        return DB::transaction(function () use ($businessId, $orderId) {
+            $order = Order::where('business_id', $businessId)->findOrFail($orderId);
+            $order->update(['status' => 'cancelled']);
+
+            $lines = OrderLine::where('business_id', $businessId)->where('order_id', $order->id)->get();
+            foreach ($lines as $line) {
+                $sellable = Sellable::where('business_id', $businessId)->where('id', $line->sellable_id)->lockForUpdate()->first();
+                if ($sellable) {
+                    $sellable->increment('inventory_quantity', $line->quantity);
+                    Event::dispatch(new InventoryUpdated($businessId, $sellable->id, $sellable->inventory_quantity));
+                }
+            }
+
+            return [
+                'order_id' => $order->id,
+                'status' => 'cancelled',
+            ];
+        });
+    }
+}

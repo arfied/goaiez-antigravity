@@ -1,0 +1,117 @@
+name: GOAIEZ CI
+on: [push, pull_request]
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: goaiez_test }
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports: ['5432:5432']
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3' }
+      - run: composer install --no-interaction --prefer-dist
+      # ⛔ Five classes read the package .md files from base_path(). Without
+      #    them the scaffold reports "0 modules" rather than failing — a system
+      #    that looks empty instead of one that is misconfigured.
+      - name: package files present
+        run: |
+          ls GOAIEZ-MASTER-PLAN.md >/dev/null 2>&1 || { echo "::error::GOAIEZ package files missing from repo root"; exit 1; }
+          echo "  $(ls GOAIEZ-*.md | wc -l) package files"
+      - run: cp .env.ci .env && php artisan key:generate
+
+      # ⛔ THE TWO-ROLE RLS SPLIT. Without it every tenancy assertion passes vacuously,
+      #    because the migration role bypasses row-level security.
+      # ⛔⛔⛔ REGISTER THE PROVIDER BEFORE ANY artisan CALL.
+      #
+      # 13 commands and 7 doctor stages live in this bundle and Laravel knows
+      # about NONE of them until the provider is registered. Without this step
+      # every CI run reaches `artisan doctor` and fails with "command not
+      # found" — after composer, after migrate, after everything looked fine.
+      #
+      # The installer learned this the same way. CI had the identical defect.
+      - name: register the runtime provider
+        run: |
+          if [ -f bootstrap/providers.php ]; then
+            grep -q GoaiezRuntimeServiceProvider bootstrap/providers.php || \
+              php -r '$f="bootstrap/providers.php";$s=file_get_contents($f);$s=preg_replace("/\];\s*$/","    App\\\\Providers\\\\GoaiezRuntimeServiceProvider::class,\n];\n",$s,1);file_put_contents($f,$s);'
+          fi
+          composer dump-autoload -o
+          # ⭐ Ask ARTISAN, not the file we just edited — trusting the write is
+          #   how "claimed but never applied" happens.
+          php artisan list | grep -qE '^\s+doctor' || { echo "::error::runtime commands not registered"; exit 1; }
+      - name: db-bootstrap (two-role RLS)
+        run: psql "$DATABASE_URL" -f database/db-bootstrap.sql
+        env: { DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/goaiez_test' }
+      - run: php artisan migrate --force
+
+      # ── §262 stage ① BOUNDARY — pure grep, ~2s, FAILS THE COMMIT ──
+      - name: doctor · boundary
+        run: php artisan doctor --stage=boundary
+
+      # ── stage ② CONTRACT — ~5s, FAILS THE COMMIT ──
+      - name: doctor · contract
+        run: php artisan doctor --stage=contract
+
+      # ── stage ③ SCHEMA — ~20s, FAILS THE MERGE ──
+      - name: doctor · schema
+        run: php artisan doctor --stage=schema
+
+      - run: ./vendor/bin/pint --test
+      - run: ./vendor/bin/phpstan analyse --no-progress
+
+      # ── the ordinary suite: fast, fakes its transports ──
+      - name: test suite
+        run: php artisan test --exclude-group=runtime --log-junit=junit-unit.xml
+
+      # ⭐⭐⭐ R225 — THE RUNTIME GROUP. Runs on the REAL queue driver with a REAL worker.
+      #    Excluded above precisely because it must NOT inherit the sync default that
+      #    made M-95 invisible for months while the suite stayed green.
+      - name: runtime proof (real driver, real worker)
+        env:
+          QUEUE_CONNECTION: database
+          CACHE_STORE: redis
+        run: php artisan test --group=runtime --log-junit=junit-runtime.xml
+
+      # ⭐⭐⭐ THE TWELVE JOURNEYS — the only checks that cross a seam.
+      #    ⛔ Journey ① is not a test, it is THE PRODUCT: a missed call becomes a
+      #    text back in under 60 seconds. Measured, never claimed — if it cannot
+      #    be met, the PROMISE changes, not the measurement.
+      - name: twelve journeys (fails the WAVE)
+        env:
+          QUEUE_CONNECTION: database
+        run: php artisan test --group=journeys --log-junit=junit-journeys.xml
+
+      # ⭐⭐ THE FOUR PATCHES — these FAIL until the fixes land, and that is the point.
+      #    They are authored by someone NOT building the fix (P-210), so the fixer
+      #    cannot quietly redefine "done". Non-blocking until Patch 1 ships, because
+      #    Patch 1 gates shadow mode and E0 and everything queues behind it.
+      - name: four patches (expected red until 0c lands)
+        continue-on-error: true
+        run: php artisan test --group=patches --log-junit=junit-patches.xml
+
+      # ⛔ Console capture AND JUnit XML from the SAME execution — the escalation
+      #    mandate of 2026-08-22, after a footer was stitched from a historic run.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: test-evidence, path: 'junit-*.xml' }
+
+  deploy-gate:
+    needs: gates
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3' }
+      - run: composer install --no-interaction --prefer-dist
+      # ⛔⛔ RETURNS 1 ON AN UNCONFIGURED BOX. Not a warning.
+      - run: php artisan app:deploy-check

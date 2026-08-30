@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X127\Ui;
+
+use App\Modules\X127\Models\PublishedMetric;
+use Livewire\Component;
+
+class MetricProofPanel extends Component
+{
+    public int $businessId = 0;
+
+    public function render()
+    {
+        $metrics = ($this->businessId > 0)
+            ? PublishedMetric::where('business_id', $this->businessId)->get()
+            : collect();
+
+        return view('x-127::metric-proof-panel', [
+            'metrics' => $metrics,
+        ]);
+    }
+}

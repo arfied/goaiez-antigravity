@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\CSms\Ui;
+
+use App\Modules\CSms\Models\SmsComposition;
+use Livewire\Component;
+
+class Thread extends Component
+{
+    public int $businessId = 0;
+
+    public function render()
+    {
+        $messages = ($this->businessId > 0)
+            ? SmsComposition::where('business_id', $this->businessId)->orderBy('id', 'desc')->get()
+            : collect();
+
+        return view('c-sms::thread', [
+            'messages' => $messages,
+        ]);
+    }
+}

@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X195\Ui;
+
+use App\Modules\X195\Models\MarketItem;
+use Livewire\Component;
+
+class MarketplaceView extends Component
+{
+    public int $businessId = 0;
+
+    public function render()
+    {
+        $items = ($this->businessId > 0)
+            ? MarketItem::where('business_id', $this->businessId)->get()
+            : collect();
+
+        return view('x-195::marketplace', [
+            'items' => $items,
+        ]);
+    }
+}

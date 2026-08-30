@@ -1,0 +1,70 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X193\Actions;
+
+use App\Modules\X193\Events\NotificationClassified;
+use App\Modules\X193\Models\NotificationClass;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Event;
+
+final class NotificationClassifyAction
+{
+    /**
+     * Classifies notification based on CALLER type (never reading the message body: TEST ANCHOR, P-062).
+     */
+    public function handle(
+        int $businessId,
+        string $callerType,
+        ?Carbon $sendTime = null
+    ): array {
+        $time = $sendTime ?? Carbon::now();
+        $hour = (int) $time->format('H'); // 00 - 23
+
+        // Quiet hours window: 21:00 to 08:00
+        $isQuietHours = ($hour >= 21 || $hour < 8);
+
+        // Fetch or infer classification based STRICTLY on callerType (G10-38, P-062)
+        $notifClass = NotificationClass::firstOrCreate(
+            ['business_id' => $businessId, 'caller_type' => $callerType],
+            [
+                'classification' => match (true) {
+                    str_contains($callerType, 'dunning') || str_contains($callerType, 'account') || str_contains($callerType, 'billing') => 'account',
+                    str_contains($callerType, 'missed_call') || str_contains($callerType, 'chat') || str_contains($callerType, 'alert') => 'operational',
+                    default => 'marketing',
+                },
+                'respects_quiet_hours' => match (true) {
+                    str_contains($callerType, 'dunning') || str_contains($callerType, 'account') || str_contains($callerType, 'missed_call') || str_contains($callerType, 'chat') || str_contains($callerType, 'alert') => false,
+                    default => true,
+                },
+            ]
+        );
+
+        $classification = $notifClass->classification;
+        $deliveryDecision = 'send_immediately';
+        $heldUntil = null;
+
+        // Marketing-class text during quiet hours holds until the window (TEST ANCHOR, G10-31)
+        if ($notifClass->respects_quiet_hours && $isQuietHours) {
+            $deliveryDecision = 'hold_until_window';
+            $heldUntil = $time->copy()->hour(8)->minute(0)->second(0)->toIso8601String();
+        }
+
+        Event::dispatch(new NotificationClassified(
+            businessId: $businessId,
+            callerType: $callerType,
+            classification: $classification,
+            deliveryDecision: $deliveryDecision
+        ));
+
+        return [
+            'status' => 'classified',
+            'caller_type' => $callerType,
+            'classification' => $classification,
+            'delivery_decision' => $deliveryDecision,
+            'held_until' => $heldUntil,
+            'respects_quiet_hours' => $notifClass->respects_quiet_hours,
+        ];
+    }
+}

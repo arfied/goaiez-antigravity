@@ -1,0 +1,5 @@
+<div>
+    <div class="whatsapp-queue-view p-4">
+        <h3 class="text-lg font-bold">Template Meta Approval Queue</h3>
+    </div>
+</div>

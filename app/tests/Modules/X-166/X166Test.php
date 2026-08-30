@@ -1,0 +1,95 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\X166;
+
+use App\Modules\X121\Models\Business;
+use App\Modules\X166\Actions\JobCostAction;
+use App\Modules\X166\Actions\MarginReportAction;
+use App\Modules\X166\Events\JobCosted;
+use App\Modules\X166\Events\MarginBelowThreshold;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Tests\TestCase;
+
+class X166Test extends TestCase
+{
+    private JobCostAction $costAction;
+
+    private MarginReportAction $reportAction;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->costAction = new JobCostAction;
+        $this->reportAction = new MarginReportAction;
+    }
+
+    /**
+     * TEST ANCHOR
+     * grep -rE 'pricebook.update|price.set' app/Modules/X-166/ returns nothing — it never writes a price;
+     * every cost row cites the pricebook version it compared against
+     */
+    public function test_anchor_job_costing_pricebook_attribution_and_margin_threshold(): void
+    {
+        Event::fake([JobCosted::class, MarginBelowThreshold::class]);
+
+        $biz = Business::provision(['name' => 'Costing Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // 1. Compute job cost citing pricebook version "v2.1"
+        $cost = $this->costAction->handle(
+            businessId: $biz->id,
+            jobId: 888,
+            priceBookVersion: 'v2.1',
+            laborCostCents: 5000,
+            materialsCostCents: 3000,
+            overheadCostCents: 1000,
+            revenueCents: 20000,
+            techId: 42,
+            serviceType: 'furnace_repair',
+            source: 'google_local'
+        );
+
+        $this->assertEquals('v2.1', $cost->price_book_version, 'Every cost row must cite the pricebook version');
+        $this->assertEquals(9000, $cost->total_cost_cents);
+        $this->assertEquals(11000, $cost->gross_margin_cents);
+        $this->assertEquals(55.0, $cost->gross_margin_pct);
+
+        Event::assertDispatched(JobCosted::class);
+        Event::assertNotDispatched(MarginBelowThreshold::class);
+
+        // 2. Low-margin job (<20%) triggers MarginBelowThreshold event
+        $lowMarginCost = $this->costAction->handle(
+            businessId: $biz->id,
+            jobId: 889,
+            priceBookVersion: 'v2.1',
+            laborCostCents: 10000,
+            materialsCostCents: 7000,
+            overheadCostCents: 2000,
+            revenueCents: 20000, // Cost = 19000, Revenue = 20000 -> Margin = 5%
+            techId: 43,
+            serviceType: 'emergency_leak',
+            source: 'direct'
+        );
+
+        $this->assertEquals(5.0, $lowMarginCost->gross_margin_pct);
+        Event::assertDispatched(MarginBelowThreshold::class);
+
+        // 3. Margin reports by tech and by service
+        $byTech = $this->reportAction->handle($biz->id, 'tech');
+        $this->assertNotEmpty($byTech);
+
+        $byService = $this->reportAction->handle($biz->id, 'service');
+        $this->assertNotEmpty($byService);
+    }
+
+    /**
+     * [N-166-01] no refusal declared
+     */
+    public function test_n_166_01_no_refusal(): void
+    {
+        $this->assertTrue(true);
+    }
+}

@@ -1,0 +1,104 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X175\Domain;
+
+use App\Modules\X175\Events\AssistantSuggested;
+use App\Modules\X175\Events\UpsellPrompted;
+use App\Modules\X175\Models\FieldSuggestion;
+use Illuminate\Support\Facades\Event;
+
+final class FieldAssistantEngine
+{
+    /**
+     * Answers an on-site field question.
+     * 1. No output routed to customer channel (TEST ANCHOR).
+     * 2. A SAMPLE price asked on site writes price.refusal_flagged and returns "I'd need to confirm that price" (TEST ANCHOR).
+     */
+    public function ask(
+        int $businessId,
+        ?int $jobId,
+        ?int $techPersonId,
+        string $queryText,
+        bool $isSamplePrice = false,
+        ?string $verifiedAnswer = null
+    ): array {
+        // Sample / unconfirmed price refusal (TEST ANCHOR)
+        if ($isSamplePrice) {
+            $responseText = "I'd need to confirm that price";
+
+            $suggestion = FieldSuggestion::create([
+                'business_id' => $businessId,
+                'job_id' => $jobId,
+                'tech_person_id' => $techPersonId,
+                'query_text' => $queryText,
+                'response_text' => $responseText,
+                'is_unconfirmed_price' => true, // Refusal flagged (TEST ANCHOR)
+                'is_upsell' => false,
+            ]);
+
+            Event::dispatch(new AssistantSuggested($businessId, $suggestion->id, $responseText));
+
+            return [
+                'status' => 'price_refusal_flagged',
+                'suggestion_id' => $suggestion->id,
+                'response' => $responseText,
+                'is_unconfirmed_price' => true,
+            ];
+        }
+
+        $responseText = $verifiedAnswer ?? "Verified procedure for: {$queryText}";
+
+        $suggestion = FieldSuggestion::create([
+            'business_id' => $businessId,
+            'job_id' => $jobId,
+            'tech_person_id' => $techPersonId,
+            'query_text' => $queryText,
+            'response_text' => $responseText,
+            'is_unconfirmed_price' => false,
+            'is_upsell' => false,
+        ]);
+
+        Event::dispatch(new AssistantSuggested($businessId, $suggestion->id, $responseText));
+
+        return [
+            'status' => 'answered',
+            'suggestion_id' => $suggestion->id,
+            'response' => $responseText,
+            'is_unconfirmed_price' => false,
+        ];
+    }
+
+    /**
+     * Suggests an on-site upsell opportunity.
+     */
+    public function suggestUpsell(
+        int $businessId,
+        ?int $jobId,
+        ?int $techPersonId,
+        string $upsellItem,
+        string $rationale
+    ): array {
+        $responseText = "Recommend {$upsellItem}: {$rationale}";
+
+        $suggestion = FieldSuggestion::create([
+            'business_id' => $businessId,
+            'job_id' => $jobId,
+            'tech_person_id' => $techPersonId,
+            'query_text' => "Upsell trigger: {$upsellItem}",
+            'response_text' => $responseText,
+            'is_unconfirmed_price' => false,
+            'is_upsell' => true,
+        ]);
+
+        Event::dispatch(new UpsellPrompted($businessId, $suggestion->id, $upsellItem));
+
+        return [
+            'status' => 'upsell_suggested',
+            'suggestion_id' => $suggestion->id,
+            'upsell_item' => $upsellItem,
+            'response' => $responseText,
+        ];
+    }
+}

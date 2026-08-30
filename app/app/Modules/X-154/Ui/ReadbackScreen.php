@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X154\Ui;
+
+use App\Modules\X154\Models\TenantLexicon;
+use Livewire\Component;
+
+class ReadbackScreen extends Component
+{
+    public int $businessId = 0;
+
+    public function render()
+    {
+        $lexicons = ($this->businessId > 0)
+            ? TenantLexicon::where('business_id', $this->businessId)->get()
+            : collect();
+
+        return view('x-154::readback-screen', [
+            'lexicons' => $lexicons,
+        ]);
+    }
+}

@@ -1,0 +1,210 @@
+{
+ "_what": "THE PACKAGE. Everything NOT listed here is HISTORY \u2014 superseded working documents kept for the record.",
+ "_danger": "83 other GOAIEZ-*.md files sit alongside these. They contain SUPERSEDED counts: roster 119 appears 47 times, 122 appears 49 times, and the CURRENT 124 only 8. An agent given all 94 files will believe the majority and be wrong. READ ONLY WHAT IS LISTED HERE.",
+ "_order": "Read in the order listed. The handover tells you which document wins where they disagree.",
+ "package": [
+  {
+   "file": "GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md",
+   "bytes": 20212,
+   "sha256": "a1a577e85c8570b5",
+   "why": "READ FIRST. Precedence, the five that exist, R237-R244, the defect register, open decisions."
+  },
+  {
+   "file": "GOAIEZ-INDEX.json",
+   "bytes": 156469,
+   "sha256": "3939d08b4c58cd94",
+   "why": "THE MACHINE-READABLE STATE. 124 modules, 466 laws, 64 unresolvable rulings. Read this, not the prose."
+  },
+  {
+   "file": "GOAIEZ-MASTER-PLAN.md",
+   "bytes": 3273730,
+   "sha256": "02649b287d9b1552",
+   "why": "THE LAW. 3.26 MB. Authoritative on every point of fact. Query with `php artisan why <id>`."
+  },
+  {
+   "file": "GOAIEZ-TRACKER-CAPABILITIES.md",
+   "bytes": 166659,
+   "sha256": "8b3d68653afc96cf",
+   "why": "The 966 capability rows. capabilities:scaffold reads this."
+  },
+  {
+   "file": "GOAIEZ-TRACKER-MODULES.md",
+   "bytes": 21181,
+   "sha256": "41de436f35b262ec",
+   "why": "The module roster tracker."
+  },
+  {
+   "file": "GOAIEZ-AGENT-CONTRACT.md",
+   "bytes": 3104,
+   "sha256": "0f1a50582dcaaf2e",
+   "why": "The rules any agent touching this codebase must accept."
+  },
+  {
+   "file": "GOAIEZ-AUTONOMOUS-LOOP.md",
+   "bytes": 5570,
+   "sha256": "4b66abd0b507a98a",
+   "why": "How an agent works the doctor loop unsupervised and reports once."
+  },
+  {
+   "file": "GOAIEZ-COLD-START.md",
+   "bytes": 4307,
+   "sha256": "2f26f392b606da24",
+   "why": "For an agent with no history. It needs none."
+  },
+  {
+   "file": "GOAIEZ-AI-CORE.md",
+   "bytes": 9759,
+   "sha256": "42335d41f4b8caf8",
+   "why": "R238 in full: the one call path."
+  },
+  {
+   "file": "GOAIEZ-GODTIER-SYSTEMS.md",
+   "bytes": 6351,
+   "sha256": "4f371133df8a1f74",
+   "why": "The seven systems and every module in each, with state."
+  },
+  {
+   "file": "GOAIEZ-THE-DOCTOR-LOOP.md",
+   "bytes": 7146,
+   "sha256": "f06bececb1df0c45",
+   "why": "The runbook: severity order, the stop rule, the three ways to cheat."
+  },
+  {
+   "file": "GOAIEZ-AUDIT-LEDGER.md",
+   "bytes": 408413,
+   "sha256": "4afe0c78df91c58f",
+   "why": "222 findings. The defect history of this programme."
+  },
+  {
+   "file": "GOAIEZ-THE-64-DECISIONS.md",
+   "bytes": 9452,
+   "sha256": "cc1257ad376c98e8",
+   "why": "The 46 answers the owner owes. 28 rulings need none; 36 need ratifying; 10 decisions, 4 of them blocking."
+  },
+  {
+   "file": "GOAIEZ-PATCH-THE-46-ANSWERS.md",
+   "bytes": 8372,
+   "sha256": "4bb5f1737227c41e",
+   "why": "R245 + R246 + the 7 facts + the 22 delegations + the 10 decided. Apply this and nothing is pending."
+  }
+ ],
+ "runtime": [
+  {
+   "file": "runtime/goaiez-runtime.sh",
+   "bytes": 151993,
+   "sha256": "c8a02cb21de5cf97",
+   "why": "THE RUNTIME. build 20260829-0647, seal digest f1e73d9fc181eb1c. 8 doctor stages, 14 commands, 15 sealed files."
+  },
+  {
+   "file": "runtime/goaiez-plan-part1.sh",
+   "bytes": 366862,
+   "sha256": "7687f67b8afa6068",
+   "why": "The master plan, part 1 of 3 (it is 3.26 MB)."
+  },
+  {
+   "file": "runtime/goaiez-plan-part2.sh",
+   "bytes": 366862,
+   "sha256": "9e04601f1d06f5bd",
+   "why": "part 2 of 3"
+  },
+  {
+   "file": "runtime/goaiez-plan-part3.sh",
+   "bytes": 366859,
+   "sha256": "42f13bf3634577a9",
+   "why": "part 3 of 3"
+  },
+  {
+   "file": "runtime/goaiez-grants.sql",
+   "bytes": 2597,
+   "sha256": "89f6afcda5f234a2",
+   "why": "The GRANTs. db:bootstrap forced RLS and never granted table access."
+  },
+  {
+   "file": "runtime/goaiez-triage.json",
+   "bytes": 751,
+   "sha256": "12a780e2ed765c20",
+   "why": "R243: the legacy triage as DATA. Counted, listed, non-blocking, never hidden."
+  },
+  {
+   "file": "runtime/goaiez-status.sh",
+   "bytes": 3194,
+   "sha256": "bd6900a25b545138",
+   "why": "One screen: what is running, which build, the seven numbers."
+  },
+  {
+   "file": "runtime/goaiez-extract.sh",
+   "bytes": 7663,
+   "sha256": "2a30f0c0527624a4",
+   "why": "22-section environment extract when something is unexplained."
+  }
+ ],
+ "_two_packages": {
+  "package_1": {
+   "mode": "AUTOPILOT",
+   "for": "Antigravity, running unattended",
+   "entry": "GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md",
+   "note": "Claude Code WRITES this build plan; Antigravity EXECUTES it unattended. It contains ZERO open decisions \u2014 all 46 answered 2026-08-29. R245 governs anything new; Q-045 names the only five things that still stop for the owner, and even then the MODULE keeps going."
+  },
+  "package_2": {
+   "mode": "GUIDED",
+   "for": "Claude Code, with the owner at the keyboard",
+   "entry": "GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md",
+   "note": "Propose, show the diff, wait. ONE patch at a time. Four questions must be answered first \u2014 two of them block patches."
+  },
+  "_they_share": "GOAIEZ-MASTER-PLAN.md, GOAIEZ-INDEX.json and the runtime. Only the entry document and the MODE differ.",
+  "_do_not_confuse": "Applying package 2 autonomously would delete a possible requirement (the `fact` stage) and guess a table name that collides with Laravel."
+ },
+ "package_2": [
+  {
+   "file": "GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md",
+   "bytes": 13961,
+   "sha256": "b78223aca3336ee2",
+   "why": "8 patches keyed to v3.2 section numbers, with verbatim replacement text."
+  },
+  {
+   "file": "GOAIEZ-PACKAGE-2-DELTA.json",
+   "bytes": 5220,
+   "sha256": "134821e29a694c0a",
+   "why": "The same 8 patches as data, plus the 7 stale values and the target sha."
+  }
+ ],
+ "_patch_handover": {
+  "_situation": "Claude Code already has the pre-patch package. These are the ONLY files that changed.",
+  "resend_these": [
+   {
+    "file": "GOAIEZ-PATCH-THE-46-ANSWERS.md",
+    "why": "R245 + R246 + the 7 facts + the 24 delegations + the 10 decided. THE PATCH."
+   },
+   {
+    "file": "GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md",
+    "why": "PART 6 rewritten: open decisions -> settled law. Adds the Q-045 reconciliation."
+   },
+   {
+    "file": "GOAIEZ-INDEX.json",
+    "why": "answers wired as data; next_free_ruling now R247; autopilot_rules added."
+   },
+   {
+    "file": "GOAIEZ-MASTER-PLAN.md",
+    "why": "the law itself \u2014 now carries R243, R245, R246, S264W, S264X."
+   },
+   {
+    "file": "runtime/goaiez-plan-part1.sh",
+    "why": "the plan is 3.2 MB; these three carry it. The OLD parts (sha 8bae92b4) would OVERWRITE the patch."
+   },
+   {
+    "file": "runtime/goaiez-plan-part2.sh",
+    "why": "part 2 of 3"
+   },
+   {
+    "file": "runtime/goaiez-plan-part3.sh",
+    "why": "part 3 of 3"
+   },
+   {
+    "file": "GOAIEZ-PACKAGE-MANIFEST.json",
+    "why": "this file \u2014 the shipping list."
+   }
+  ],
+  "do_not_resend": "Everything else is unchanged: the runtime bundle, the trackers, the agent contract, the loop, the doctor runbook, the AI core, the godtier systems.",
+  "_critical": "If you resend the MASTER PLAN you MUST resend the three plan-part scripts, or run neither. The old parts carry sha 8bae92b4 and would silently revert R243/R245/R246."
+ }
+}

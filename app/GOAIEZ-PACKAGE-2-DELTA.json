@@ -1,0 +1,152 @@
+{
+ "_what": "Machine-readable delta from GOAIEZ-MASTER-BUILD-PLAN v3.2 to v4.0. Apply with GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md, which carries the verbatim replacement text.",
+ "_target": {
+  "file": "GOAIEZ-MASTER-BUILD-PLAN-v3_2_.md",
+  "sha256": "c4f5248271c7455beb508687509f941cde51028ef2537137833cba1af04c498e",
+  "lines": 987,
+  "_note": "If this sha does not match your copy, the document has been edited since. STOP."
+ },
+ "_rule": "Every patch quotes the text it replaces. If the quoted text is absent, STOP \u2014 do not guess which paragraph was meant.",
+ "stale_values": {
+  "R228 is next free": "WRONG. R228-R244 are SPENT. Next free is R245.",
+  "X-216 is next free": "WRONG. X-216 is a DELIBERATE GAP. Next free is X-221.",
+  "roster 119": "WRONG. Roster is 124.",
+  "section \u00a7299 is next": "WRONG. \u00a7264V is spent; next is \u00a7264W.",
+  "boundary is retired": "WRONG. boundary is live and now also detects split modules (R242).",
+  "fact is a doctor stage": "THERE IS NO fact STAGE. Ask the owner whether it was intended.",
+  "seal covers app/Doctor only": "WRONG. 15 files including ModuleDoneCommand, DoctorCommand, DoctorSelfTestCommand."
+ },
+ "patches": [
+  {
+   "n": 1,
+   "section": "1.3",
+   "kind": "REPLACE TABLE",
+   "why": "every number in it is spent",
+   "severity": "CRITICAL \u2014 spending a number twice is unrecoverable"
+  },
+  {
+   "n": 2,
+   "section": "2.5",
+   "kind": "INSERT NEW",
+   "why": "R237-R244 did not exist when v3.2 was written",
+   "severity": "CRITICAL"
+  },
+  {
+   "n": 3,
+   "section": "7.1",
+   "kind": "REPLACE TABLE",
+   "why": "lists a stage that does not exist, retires one that does",
+   "severity": "HIGH"
+  },
+  {
+   "n": 4,
+   "section": "7.2",
+   "kind": "APPEND",
+   "why": "seal widened to the gatekeeper; digest moved off-machine",
+   "severity": "HIGH"
+  },
+  {
+   "n": 5,
+   "section": "11.2",
+   "kind": "REPLACE",
+   "why": "five open decisions, two block work today",
+   "severity": "HIGH"
+  },
+  {
+   "n": 6,
+   "section": "12",
+   "kind": "APPEND",
+   "why": "twelve new defects, all found by running not reading",
+   "severity": "MEDIUM"
+  },
+  {
+   "n": 7,
+   "section": "9.1",
+   "kind": "INSERT NEW",
+   "why": "the Antigravity content pipeline and the micro-wave unit",
+   "severity": "MEDIUM"
+  },
+  {
+   "n": 8,
+   "section": "13",
+   "kind": "INSERT NEW",
+   "why": "the maintenance protocol \u2014 how this document stays current",
+   "severity": "HIGH"
+  }
+ ],
+ "new_rulings": {
+  "R237": "every model any vendor incl self-hosted is a ROW; PRIMARY/BACKUP/COMPLEX per module; BACKUP must be a different VENDOR",
+  "R238": "the AI core is ONE call path, no second entrance; model_requested AND model_served on every row",
+  "R239": "X-219 AiRouter + X-220 PromptRegistry minted; C-Ai keeps the call",
+  "R240": "a refusal is required only where refusal is POSSIBLE \u2014 322 of 966, not 1294",
+  "R241": "X-121 is a MIGRATION not a build",
+  "R242": "one module one directory hyphen included; CLASSMAP not PSR-4",
+  "R243": "triage is DATA; counted, listed, non-blocking, never hidden",
+  "R244": "X-121 splits: X-121a additive one deploy, X-121b reconciliation four deploys"
+ },
+ "runtime": {
+  "build": "20260829-0647",
+  "seal_digest": "f1e73d9fc181eb1c",
+  "sealed_files": 15,
+  "doctor_stages": 8,
+  "commands": 14,
+  "stages": [
+   "integrity",
+   "boundary",
+   "contract",
+   "citation",
+   "schema",
+   "capability",
+   "anchor",
+   "journey"
+  ]
+ },
+ "modules_built": {
+  "X-126": "gates 1,2,3 green",
+  "X-119": "both anchor clauses proven",
+  "X-121a": "additive columns only; X-121b outstanding",
+  "X-188": "NOT STARTED"
+ },
+ "_mode": "GUIDED",
+ "_mode_note": "Package 1 is the AUTOPILOT package \u2014 Antigravity runs it unattended. THIS package is GUIDED: the owner is at the keyboard. Claude Code proposes, shows the diff, and waits. Apply ONE patch at a time. Do not apply all eight and report back.",
+ "_blocking_questions": [
+  {
+   "id": 1,
+   "q": "v3.2 lists a `fact` doctor stage that does not exist. KEEP as a gap, or DELETE as an error?",
+   "blocks": "patch 3",
+   "why": "if it was intended, deleting it loses a REQUIREMENT rather than fixing an error"
+  },
+  {
+   "id": 2,
+   "q": "`jobs`: the canonical noun is a WORK ORDER; the existing table is Laravel's QUEUE. Rename the noun, or move the queue?",
+   "blocks": "patch 5 and all of X-121b",
+   "why": "nothing in the spine reconciliation can start until this is answered"
+  },
+  {
+   "id": 3,
+   "q": "businesses vs companies vs customers; facts vs business_facts. Which is canonical?",
+   "blocks": "X-121b",
+   "why": "two tables for one noun is how the legacy tree got here"
+  },
+  {
+   "id": 4,
+   "q": "Does \"starting the coding over\" include X-126, X-119 and X-121a?",
+   "blocks": "the build order",
+   "why": "they are the only three modules that exist, with real evidence rows"
+  }
+ ],
+ "_patch_order": {
+  "first": "patch 1 \u2014 \u00a71.3, because every other patch cites its numbers",
+  "safe_without_answers": [
+   "patch 2",
+   "patch 4",
+   "patch 6",
+   "patch 7"
+  ],
+  "blocked_on_questions": {
+   "patch 3": "question 1",
+   "patch 5": "question 2"
+  },
+  "last": "patch 8 \u2014 \u00a713, the maintenance protocol"
+ }
+}

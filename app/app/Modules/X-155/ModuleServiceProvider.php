@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X155;
+
+use App\Modules\X155\Ui\Forms;
+use App\Modules\X155\Ui\SpamRate;
+use App\Modules\X155\Ui\SubmissionsThread;
+use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
+
+final class ModuleServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
+        $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-155');
+
+        if (class_exists(Livewire::class)) {
+            Livewire::component('x-155.forms', Forms::class);
+            Livewire::component('x-155.submissions-thread', SubmissionsThread::class);
+            Livewire::component('x-155.spam-rate', SpamRate::class);
+        }
+    }
+}

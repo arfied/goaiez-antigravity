@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\CTelephony\Ui;
+
+use App\Modules\CTelephony\Models\CarrierHealth;
+use Livewire\Component;
+
+class CarrierRosterHealth extends Component
+{
+    public int $businessId = 0;
+
+    public function render()
+    {
+        $health = ($this->businessId > 0)
+            ? CarrierHealth::where('business_id', $this->businessId)->get()
+            : collect();
+
+        return view('c-telephony::carrier-roster-health', [
+            'health' => $health,
+        ]);
+    }
+}

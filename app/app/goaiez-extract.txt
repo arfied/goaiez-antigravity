@@ -1,0 +1,696 @@
+GOAIEZ EXTRACT · 2026-08-30T04:08:42Z · app
+
+═══ 1. ENVIRONMENT ═══
+PHP 8.4.23 (cli) (built: Jul  4 2026 00:00:00) (NTS)
+Laravel Framework 13.29.0
+composer: Composer version 2.9.7 2026-04-14 13:31:52
+
+═══ 2. IS THE PLAN PRESENT ═══
+3104 GOAIEZ-AGENT-CONTRACT.md
+9759 GOAIEZ-AI-CORE.md
+408413 GOAIEZ-AUDIT-LEDGER.md
+5570 GOAIEZ-AUTONOMOUS-LOOP.md
+4307 GOAIEZ-COLD-START.md
+6351 GOAIEZ-GODTIER-SYSTEMS.md
+20212 GOAIEZ-HANDOVER-TO-CLAUDE-CODE.md
+3273740 GOAIEZ-MASTER-PLAN.md
+13961 GOAIEZ-PACKAGE-2-PATCH-BUILD-PLAN.md
+8372 GOAIEZ-PATCH-THE-46-ANSWERS.md
+9452 GOAIEZ-THE-64-DECISIONS.md
+7146 GOAIEZ-THE-DOCTOR-LOOP.md
+166659 GOAIEZ-TRACKER-CAPABILITIES.md
+21181 GOAIEZ-TRACKER-MODULES.md
+--- master plan sha (first 16) ---
+4e9eb09d423c36c7
+
+═══ 3. DATABASE TABLES — decides whether X-121 is a BUILD or a MIGRATION ═══
+count: 334
+account_mappings
+accounting_connections
+accounting_sync_conflicts
+action_invocations
+action_manifests
+action_reversals
+ad_connections
+affiliate_attributions
+affiliate_payouts
+affiliate_prospects
+affiliates
+agencies
+agency_clients
+agent_instructions
+agent_refusals
+agent_turns
+ai_calls
+ai_models
+ai_module_assignments
+ai_prompts
+ai_provider_accounts
+ai_providers
+ai_tasks
+alert_claims
+alerts
+allowances
+appointments
+approval_chains
+approval_items
+assets
+assignments
+assistant_recommendations
+assistant_sessions
+assistant_unsupported
+attribution_queries
+audit_findings
+audits
+availability_rules
+brand_kits
+brand_registrations
+branded_media
+businesses
+cache
+cache_locks
+call_autopsies
+call_campaigns
+call_dispositions
+call_schedules
+call_sessions
+call_tokens
+call_turns
+callout_fees
+campaign_runs
+campaign_steps
+campaigns
+capability_decisions
+capability_policies
+captcha_quota
+card_tokens
+carrier_bindings
+carrier_health
+carrier_receipts
+carrier_roster
+carts
+chat_leads
+chat_sessions
+churn_scores
+citations
+comments
+commission_rules
+commissions
+compliance_registers
+contact_tags
+content_drafts
+content_packs
+content_plans
+content_topics
+conversations
+conversion_uploads
+counterfactuals
+crawler_visits
+credential_reveals
+credentials
+credit_ledger_entries
+credit_terms
+custom_fields
+cwv_samples
+dead_letters
+decay_models
+decision_outcomes
+decisions
+deliverables
+demand_regions
+demand_series
+demo_ledger
+demo_sessions
+demo_tenants
+deployments
+design_changes
+device_sync_conflicts
+device_sync_queue
+device_tokens
+dialer_seats
+directory_memberships
+dispatch_assignments
+dispute_evidence
+dispute_outcomes
+disputes
+document_comments
+document_versions
+documents
+dunning_states
+edge_zones
+enrichment_fields
+enrichment_runs
+entity_history
+estimate_lines
+estimate_versions
+estimates
+eta_predictions
+eval_runs
+eval_sets
+event_log
+event_subscriptions
+experiential_tests
+extension_injections
+extension_sessions
+extracted_content
+extraction_runs
+facts
+failed_jobs
+feature_flags
+fetch_targets
+fetches
+field_suggestions
+fixer_commands
+fixer_ladder
+flow_runs
+flow_versions
+flows
+forecasts
+form_definitions
+form_submissions
+funnel_shapes
+funnels
+gate_results
+gbp_connections
+gbp_posts
+gbp_state_log
+geo_grids
+golden_sets
+icebreakers
+identity_links
+impersonation_log
+import_attestations
+influencer_deals
+influencer_profiles
+ingest_rejections
+ingest_runs
+ingest_sources
+installs
+integration_matrix
+interest_clusters
+invoice_lines
+invoices
+ip_bans
+job_batches
+job_costs
+jobs
+knowledge_chunks
+ladder_steps
+lead_scores
+ledger_entries
+link_clicks
+link_pitches
+link_placements
+link_targets
+location_books
+mail_domains
+mail_events
+mail_pieces
+manual_queue
+margin_snapshots
+market_items
+markups
+mcp_tokens
+media_assets
+member_visits
+membership_plans
+memberships
+merchant_connections
+messages
+meters
+migration_field_maps
+migration_rejects
+migration_runs
+migrations
+notification_classes
+number_assignments
+number_parks
+number_pool
+numbers
+offline_payments
+onboarding_runs
+onboarding_steps
+operator_alerts
+order_lines
+orders
+outreach_ladders
+overflow_charges
+page_versions
+pages
+partner_pool
+password_reset_tokens
+pay_rules
+payment_plans
+payments
+payouts
+people
+person_interests
+person_links
+pixel_events
+places_records
+plan_items
+plugin_installs
+portal_links
+portal_views
+price_book_items
+price_book_versions
+promotion_redemptions
+promotion_scopes
+promotions
+prospect_signals
+provider_attempts
+provider_roster
+proxy_pool
+published_metrics
+purchase_orders
+push_deliveries
+push_prompts
+qa_scorecards
+qa_settings
+qa_tickets
+quality_series
+rate_versions
+rates
+rcs_capabilities
+receivable_states
+reconciliation_runs
+record_shapes
+recruitment_offers
+redirect_maps
+referral_slots
+referrals
+replay_runs
+reply_codes
+research_runs
+resolution_evidence
+resources
+restore_tests
+retrieval_cache
+review_replies
+review_requests
+reviews
+robots_signals
+roi_snapshots
+role_permissions
+roles
+routes
+routing_rules
+runbook_runs
+runbooks
+saved_views
+schema_snapshots
+scorecards
+sellables
+send_permits
+sequence_steps
+sequences
+service_polygons
+sessions
+short_links
+signable_documents
+signal_scores
+signals
+signature_requests
+site_forks
+sites
+slot_locks
+sms_compositions
+sms_moderation_results
+social_accounts
+social_posts
+staff_calendar_links
+staff_roles
+staff_users
+stock_items
+stock_locations
+suppliers
+suppressions
+surcharge_policies
+sync_runs
+takeover_latches
+template_blocks
+template_matches
+templates
+tenant_lexicons
+tenant_tickets
+tenant_zero_config
+territories
+timesheet_entries
+timesheets
+topic_sources
+trial_limits
+trust_ladder
+users
+video_views
+videos
+view_schedules
+visibility_answers
+visibility_queries
+vision_checks
+visitor_sessions
+visits
+voice_cost_samples
+voice_pool_state
+voice_routes
+voicemails
+waitlists
+warmup_calendars
+weather_overlays
+webhook_subscriptions
+whatsapp_sessions
+whatsapp_templates
+
+═══ 4. THE TWELVE CANONICAL NOUNS — which already exist ═══
+businesses        EXISTS
+people            EXISTS
+conversations     EXISTS
+messages          EXISTS
+jobs              EXISTS
+reviews           EXISTS
+campaigns         EXISTS
+assets            EXISTS
+ledger_entries    EXISTS
+facts             EXISTS
+sites             EXISTS
+numbers           EXISTS
+
+═══ 5. CODE TREE — what is actually in app/ ═══
+app/Models               1
+app/Services             0
+app/Jobs                 0
+app/Http/Controllers     1
+app/Livewire             0
+app/Enums                0
+app/Console/Commands     14
+app/Modules              2200
+app/Doctor               13
+app/Providers            2
+app/Mail                 0
+app/Notifications        0
+app/Support              0
+
+═══ 6. app/Modules — the 131 vs 122 question ═══
+directories: 124
+manifests:   124
+--- any NOT matching X-nnn / C-Name ---
+(none — all well-formed)
+
+═══ 7. WHAT WAS RECENTLY DONE ═══
+48d5042 feat(antig): the architecture decision, made and turned into data
+2f638e6 feat(antig): the package is complete — 24 of 24 manifest files, and 133 history documents put outside the tree
+a4d611d chore(antig): files-63 carries no new content — the three plan-part scripts and the shipping list
+a42d6dd fix(antig): apply files-62 — R245/R246, and the UNRESOLVED rule this package had wrong
+31944f3 feat(antig): pin the tech stack, and name the architecture the runtime already enforces
+a6339a1 feat(antig): the capability trackers, and five counts for one corpus
+13ab144 fix(antig): refuse at wave 0 for the one missing source file that would sink the run
+5ccdf13 feat(antig): the GO AI EZ autopilot package — a build plan Antigravity runs unsupervised
+--- files changed in the last 20 commits ---
+AGENTS.md
+.agents/rules/00-precedence.md
+.agents/rules/01-the-one-rule.md
+.agents/rules/02-autonomy.md
+.agents/rules/03-module-contract.md
+.agents/rules/04-evidence.md
+.agents/rules/05-forbidden.md
+.agents/rules/06-defect-shapes.md
+.agents/rules/07-tech-stack.md
+.agents/rules/08-modular-ddd-cqrs.md
+.agents/rules/09-r245-r246-delegation.md
+.agents/skills/goaiez-ai/SKILL.md
+.agents/skills/goaiez-doctor/SKILL.md
+.agents/skills/goaiez-journey/SKILL.md
+.agents/skills/goaiez-module/SKILL.md
+.agents/skills/goaiez-schema/SKILL.md
+.agents/skills/goaiez-unresolved/SKILL.md
+.agents/state/BUILD-STATE.json
+.agents/state/JOURNAL.md
+.agents/workflows/bootstrap.md
+.agents/workflows/loop.md
+.agents/workflows/wave.md
+bin/generate-plan.py
+bin/loop.sh
+bin/preflight.py
+bin/state.py
+bin/validate-plan.py
+build-plan.json
+BUILD-PLAN.md
+docs/BUILD-PLAN.seed.md
+docs/COMPARISON.md
+GEMINI.md
+.gitignore
+OWNER-QUESTIONS.md
+README.md
+runtime/goaiez-extract.sh
+runtime/goaiez-grants.sql
+runtime/goaiez-plan-part1.sh
+runtime/goaiez-plan-part2.sh
+runtime/goaiez-plan-part3.sh
+
+═══ 8. MIGRATIONS ═══
+count: 3
+0001_01_01_000000_create_users_table.php
+0001_01_01_000001_create_cache_table.php
+0001_01_01_000002_create_jobs_table.php
+
+═══ 9. DOCTOR — all seven stages ═══
+       · Doctor/Stages/TestAnchorStage.php: manufactures a value with mt_rand( beside an external artifact id
+         fix: REFUSE before the request when the credential is absent; return the vendor's id or nothing
+       · Doctor/Stages/TestAnchorStage.php: manufactures a value with rand( beside an external artifact id
+         fix: REFUSE before the request when the credential is absent; return the vendor's id or nothing
+       · Doctor/Stages/TestAnchorStage.php: manufactures a value with random_bytes( beside an external artifact id
+         fix: REFUSE before the request when the credential is absent; return the vendor's id or nothing
+       · Doctor/Stages/TestAnchorStage.php: manufactures a value with fake()-> beside an external artifact id
+         fix: REFUSE before the request when the credential is absent; return the vendor's id or nothing
+  ok   journey         0ms  clean
+
+302 violation(s).
+
+
+  TRIAGED as REPLACE (counted, not blocking): app/Services · app/Livewire · app/Jobs
+  These are legacy paths the owner has ruled are being replaced.
+  This total spans TWO systems:
+    boundary · citation      → the LEGACY tree (being replaced)
+    contract · capability · anchor → the NEW 122-module design
+    journey                  → the new design's seams, unbuilt
+  Triage a legacy file as KEEP or REPLACE before fixing it.
+
+═══ 10. CONTRACT — the first 30, verbatim ═══
+  goaiez doctor · build 20260829-0647
+  FAIL contract       27ms  104 violation(s) — fails the COMMIT
+       · X-145 @consumes: 'outcome.' is prose, not an event token
+         fix: declare the real token (noun.verb); prose is invisible to doctor, impact and map
+       · X-156 @consumes: '*' is prose, not an event token
+         fix: declare the real token (noun.verb); prose is invisible to doctor, impact and map
+       · X-144 @emits: 'mentioned_by_ai' is prose, not an event token
+         fix: declare the real token (noun.verb); prose is invisible to doctor, impact and map
+       · C-Reviews @emits: 'first_win' is prose, not an event token
+         fix: declare the real token (noun.verb); prose is invisible to doctor, impact and map
+       · X-118 @emits: 'first_win' is prose, not an event token
+         fix: declare the real token (noun.verb); prose is invisible to doctor, impact and map
+       · X-122 @provides action.invoke: does not declare whether the agent may reach it
+         fix: add action.invoke to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-122 @provides action.reverse: does not declare whether the agent may reach it
+         fix: add action.reverse to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-122 @provides manifest.register: does not declare whether the agent may reach it
+         fix: add manifest.register to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-122 @provides audit.export: does not declare whether the agent may reach it
+         fix: add audit.export to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-123 @provides event.publish: does not declare whether the agent may reach it
+         fix: add event.publish to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-123 @provides event.replay: does not declare whether the agent may reach it
+         fix: add event.replay to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-142 @provides mcp.invoke: does not declare whether the agent may reach it
+         fix: add mcp.invoke to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-142 @provides webhook.subscribe: does not declare whether the agent may reach it
+         fix: add webhook.subscribe to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-142 @provides token.issue: does not declare whether the agent may reach it
+         fix: add token.issue to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+       · X-142 @provides token.revoke: does not declare whether the agent may reach it
+         fix: add token.revoke to @agent_reachable, or declare '@agent_reachable none'. Silence fails OPEN, which is how an action added in six months becomes agent-reachable by default.
+
+═══ 11. CITATION — the first 15 ═══
+  goaiez doctor · build 20260829-0647
+  FAIL citation     1196ms  3 violation(s) — fails the COMMIT
+       · Modules/C-Reviews/capabilities.php:55: cites R45, which is MENTIONED 5× but has neither a definition position NOR a carrier law
+         fix: state the FACT instead of the id, or give R45 a definition line. An id nobody can look up looks authoritative and cannot be checked.
+       · Console/Commands/BriefCommand.php:48: cites R197, which is MENTIONED 9× but has neither a definition position NOR a carrier law
+         fix: state the FACT instead of the id, or give R197 a definition line. An id nobody can look up looks authoritative and cannot be checked.
+       · Console/Commands/BriefCommand.php:58: cites R184, which is MENTIONED 18× but has neither a definition position NOR a carrier law
+         fix: state the FACT instead of the id, or give R184 a definition line. An id nobody can look up looks authoritative and cannot be checked.
+
+3 violation(s).
+
+
+  TRIAGED as REPLACE (counted, not blocking): app/Services · app/Livewire · app/Jobs
+  These are legacy paths the owner has ruled are being replaced.
+  This total spans TWO systems:
+    boundary · citation      → the LEGACY tree (being replaced)
+    contract · capability · anchor → the NEW 122-module design
+
+═══ 12. SCHEMA — all 10 ═══
+  goaiez doctor · build 20260829-0647
+  FAIL schema        295ms  21 violation(s) — fails the MERGE
+       · template_matches.match_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · directory_memberships.rank_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · qa_scorecards.score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · demand_series.demand_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · cwv_samples.cls_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · signal_scores.score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · person_interests.confidence_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · scorecards.average_review_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · deployments.speed_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · enrichment_fields.confidence_score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+       · lead_scores.score: a per-person ranking column
+         fix: §150.4: no per-person negative output exists in any schema — drop it
+
+═══ 13. A REAL MANIFEST — X-121, verbatim ═══
+<?php
+
+declare(strict_types=1);
+
+/**
+ * ⛔ GENERATED by `module:scaffold` from the documented header. DO NOT EDIT.
+ *
+ * A hand-edited manifest is a manifest that drifts, and every stale-record
+ * defect in this programme was a hand-maintained file. Change the header,
+ * re-run the scaffold.
+ *
+ * @module X-121
+ *
+ * @intent RECOVER
+ */
+return [
+    'module' => 'X-121',
+    'intent' => 'RECOVER',
+
+    // ⛔⛔⛔ R235 — `ships` EQUALS `ceiling`. THE AUTOPILOT IS ON.
+    //
+    // This comment used to teach §227.2's intent default: "GROW ships
+    // L1, PROPOSES ONLY, ALWAYS". The owner struck it — "ALL AI ON, by
+    // my law. The client can turn it off if they want."
+    //
+    // ⭐ There is nothing to earn. @intent still DESCRIBES the action;
+    //   it no longer gates when the action may run.
+    'ships' => 'n/a',
+    'ceiling' => 'n/a',
+
+    'provides' => [
+        'entity.read',
+        'entity.write',
+        'entity.history',
+        'entity.restore',
+    ],
+    'emits' => [
+        'job.created',
+        'job.started',
+        'number.needed',
+
+═══ 14. DOES brief WORK YET ═══
+# BRIEF — X-121
+
+contract hash: 1c85197600f7   ⛔ if this does not match `doctor`'s, you are building from a stale copy
+
+## WHAT YOU MAY DO
+Only what is listed. Cross-module change is an EVENT or a REGISTERED ACTION — never an import.
+
+  provides   entity.read · entity.write · entity.history · entity.restore
+  emits      job.created · job.started · number.needed · site.crawled · person.updated
+  consumes   none
+
+## HOW THIS IS PROVEN
+  TEST ANCHOR  a tenant-A session issuing SELECT FROM jobs returns ZERO tenant-B rows, not an exception (RLS is the wall, not the app); a price change to a Fact invalidates dependents in the same transaction — fact.invalidated and the update share one commit id
+  owns_table businesses · people · conversations · messages · jobs · reviews · campaigns · assets · ledger_entries · facts · sites · numbers · entity_history
+  renders    entity_history_viewer · when_x111_renders
+
+## AUTONOMY
+  ships at n/a — ON from minute one (R235; @intent RECOVER describes the action, it does not gate it)
+  ceiling  n/a — R235: this EQUALS ships. There is nothing to earn.
+
+## THE ASSERTIONS YOU MUST SATISFY
+
+⛔ You do NOT author these. P-210: an agent that writes both the code and the test
+   from the same brief, in the same reading, produces code that is wrong and a test
+   that agrees — and the suite goes green. These were written against failure modes
+
+═══ 15. EXISTING AI LAYER — R237/R238 need to know ═══
+app/Services/Ai                      absent
+app/Models/AiProviderConfig.php      absent
+config/ai.php                        absent
+app/Enums/AiModel.php                absent
+app/Enums/AiProvider.php             absent
+--- app/Services/Ai contents ---
+(absent)
+
+═══ 16. ⛔ THE QUEUE — M-95's DEFECT, AND NOTHING ELSE REVEALS IT ═══
+QUEUE_CONNECTION = QUEUE_CONNECTION=database
+CACHE_STORE      = CACHE_STORE=database
+--- is a worker actually running? ---
+queue:work processes: 12
+--- jobs table + pending ---
+jobs pending: 0
+failed_jobs: 0
+--- scheduler ---
+schedule:run cron entries: 1
+
+═══ 17. ⛔⛔⛔ COLUMNS OF THE CANONICAL NOUNS — build vs MIGRATION ═══
+businesses (9 cols): id, owner_user_id, name, legal_name, currency, timezone, data_classification, created_at, updated_at
+people (9 cols): id, business_id, first_name, last_name, email, phone, metadata, created_at, updated_at
+conversations (7 cols): id, business_id, person_id, channel, status, created_at, updated_at
+messages (10 cols): id, business_id, conversation_id, sender_type, sender_id, body, direction, status, created_at, updated_at
+jobs (16 cols): id, queue, payload, attempts, reserved_at, available_at, created_at, business_id, title, description, status, price_cents, scheduled_at, completed_at …
+reviews (9 cols): id, business_id, person_id, rating, body, status, source, created_at, updated_at
+
+═══ 18. FILE NAMES — not counts. These are what gets triaged. ═══
+--- app/Services ---
+--- app/Jobs ---
+--- app/Livewire ---
+--- app/Enums ---
+
+═══ 19. THE EXISTING AI LAYER — verbatim, because R237 may EXTEND it ═══
+--- config/ai.php ---
+(absent)
+--- app/Services/Ai/*.php: class + public methods ---
+
+═══ 20. RENDER SURFACE — decides whether phase 5 is new work or wiring ═══
+routes:      2
+console.php
+web.php
+blade views: 1
+livewire:    0
+
+═══ 21. DEPENDENCIES — R237 forbids a vendor SDK inside a module ═══
+--- require ---
+  php ^8.3
+  laravel/cashier ^16.7
+  laravel/fortify ^1.39
+  laravel/framework ^13.17
+  laravel/horizon ^5.48
+  laravel/reverb ^1.11
+  laravel/sanctum ^4.3
+  laravel/socialite ^5.30
+  laravel/tinker ^3.0
+  livewire/livewire ^4.0
+  masmerise/livewire-toaster ^2.10
+--- require-dev ---
+  fakerphp/faker ^1.23
+  larastan/larastan ^3.10
+  laravel/pail ^1.2.5
+  laravel/pao ^1.0.6
+  laravel/pint ^1.30
+  mockery/mockery ^1.6
+  nunomaduro/collision ^8.6
+  pestphp/pest ^4.0
+  phpunit/phpunit ^12.5.12
+
+═══ END ═══
+Paste this whole file back. Nothing else is needed.

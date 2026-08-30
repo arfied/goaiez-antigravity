@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\X163\Actions;
+
+use App\Modules\X163\Events\PriceConfirmed;
+use App\Modules\X163\Models\PriceBookItem;
+use Illuminate\Support\Facades\Event;
+
+final class PriceConfirmAction
+{
+    public function handle(int $businessId, int $itemId): array
+    {
+        $item = PriceBookItem::where('business_id', $businessId)->findOrFail($itemId);
+        $item->update(['is_confirmed' => true, 'is_sample' => false]);
+
+        Event::dispatch(new PriceConfirmed($businessId, $item->id));
+
+        return [
+            'item_id' => $item->id,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ];
+    }
+}
