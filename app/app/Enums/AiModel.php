@@ -89,6 +89,17 @@ enum AiModel: string
         };
     }
 
+    public function apiModelId(): string
+    {
+        return match ($this) {
+            self::ClaudeOpus5 => 'claude-opus-5',
+            self::ClaudeSonnet5 => 'claude-sonnet-5',
+            self::ClaudeHaiku45 => 'claude-haiku-4-5',
+            self::Gpt4oMini => 'gpt-4o-mini',
+            self::TextEmbedding3Small => 'text-embedding-3-small',
+        };
+    }
+
     /**
      * Whether this model returns a vector instead of text.
      *

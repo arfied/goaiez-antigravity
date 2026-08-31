@@ -95,7 +95,7 @@ final class OpenAiClient implements AiClient
         $messages[] = ['role' => 'user', 'content' => $request->prompt];
 
         $body = [
-            'model' => $this->model->value,
+            'model' => $this->model->apiModelId(),
             'messages' => $messages,
             // Not `max_tokens` — deprecated for current models. See the class
             // docblock; this is the field a from-memory implementation gets wrong.
