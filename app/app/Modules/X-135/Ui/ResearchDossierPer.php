@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X135\Ui;
 
 use App\Modules\X135\Models\ResearchRun;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ResearchDossierPer extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public int $prospectId = 0;

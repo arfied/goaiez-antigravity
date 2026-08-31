@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-214-01' => '',
+    'N-214-01' => '⛔⛔ debit is NEVER surcharged — BIN-asserted, and an UNKNOWN card type is treated as DEBIT',
 
     // status: SPECCED
-    'N-214-02' => '',
+    'N-214-02' => 'no surcharge applies without a preceding surcharge.disclosed',
 ];

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\CReviews\Ui;
 
 use App\Modules\CReviews\Models\ReviewRequest;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Tickets extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

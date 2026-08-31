@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X218\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InfluencerDeal extends Model
 {
@@ -17,7 +18,10 @@ class InfluencerDeal extends Model
         'is_paid' => 'boolean',
     ];
 
-    public function deliverables()
+    /**
+     * @return HasMany<Deliverable, $this>
+     */
+    public function deliverables(): HasMany
     {
         return $this->hasMany(Deliverable::class, 'deal_id');
     }

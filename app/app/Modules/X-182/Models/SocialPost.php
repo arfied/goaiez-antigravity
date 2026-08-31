@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X182\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SocialPost extends Model
 {
@@ -17,7 +18,10 @@ class SocialPost extends Model
         'is_published' => 'boolean',
     ];
 
-    public function comments()
+    /**
+     * @return HasMany<Comment, $this>
+     */
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class, 'post_id');
     }

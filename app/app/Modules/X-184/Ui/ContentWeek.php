@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X184\Ui;
 
 use App\Modules\X184\Models\ContentPlan;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ContentWeek extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

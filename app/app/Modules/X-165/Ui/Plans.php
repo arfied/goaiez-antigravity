@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X165\Ui;
 
 use App\Modules\X165\Models\MembershipPlan;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Plans extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

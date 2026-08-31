@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X125\Ui;
 
 use App\Modules\X125\Models\Flow;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Canvas extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

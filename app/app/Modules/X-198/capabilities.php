@@ -30,6 +30,6 @@ return [
     // status: SPECCED
     'G17-04' => 'the refId hash is named in X-122 — a duplicated ref charges once',
 
-    // status:
-    'N-010' => '',
+    // status: 
+    'N-010' => 'refuses: the refund verb does not exist here; a dispute is defended or conceded; a refund is X-198\'s and it is L1',
 ];

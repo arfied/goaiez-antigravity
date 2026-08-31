@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X217\Ui;
 
 use App\Modules\X217\Models\AffiliateProspect;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class RecruitPipeline extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

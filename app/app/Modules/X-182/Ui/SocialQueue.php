@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X182\Ui;
 
 use App\Modules\X182\Models\SocialPost;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class SocialQueue extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\CTelephony\Ui;
 
 use App\Modules\CTelephony\Models\CarrierHealth;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CarrierRosterHealth extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

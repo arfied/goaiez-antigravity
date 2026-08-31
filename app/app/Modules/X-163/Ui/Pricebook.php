@@ -4,51 +4,63 @@ declare(strict_types=1);
 
 namespace App\Modules\X163\Ui;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X163\Actions\BookVersionAction;
-use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Actions\PriceLookupAction;
 use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\LocationBook;
 use App\Modules\X163\Models\PriceBookItem;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Pricebook extends Component
 {
+    #[Locked]
     public int $businessId = 0;
+
     public string $activeCategory = 'all';
 
     // Callout Fee Configuration
     public float $calloutFeeDollars = 85.00;
+
     public bool $deductedIfProceeding = true;
+
     public string $calloutExplanation = 'Our diagnostic callout fee is $85.00, which is fully credited toward your repair if you approve the job.';
 
     // New Item Form
     public string $newServiceName = '';
+
     public string $newCategory = 'repairs';
+
     public float $newPriceDollars = 150.00;
+
     public float $newTaxRatePct = 8.25;
+
     public bool $newIsSample = false;
 
     // AI Quoting Simulator
     public string $testQuery = 'Emergency Leak Repair';
+
     public string $testChannel = 'customer'; // customer vs admin
+
     public ?array $testQuoteResult = null;
 
     // Flash Notice
     public ?string $actionNotice = null;
+
     public string $noticeType = 'success';
 
     public function mount(): void
     {
-        $biz = Business::first();
-        if (! $biz) {
-            $biz = Business::provision(['name' => 'Premier Trades Co.', 'currency' => 'USD']);
+        $tenantId = Tenancy::id() ?: (auth()->user()?->business_id ?? 0);
+        if ($tenantId <= 0) {
+            abort(403, 'Tenant context is required to access pricebook');
         }
-        $this->businessId = (int) $biz->id;
+
+        $this->businessId = (int) $tenantId;
         DB::statement("SET app.business_id = '{$this->businessId}'");
 
         // Seed initial items if empty
@@ -136,7 +148,9 @@ class Pricebook extends Component
 
     public function addItem(): void
     {
-        if (empty($this->newServiceName)) return;
+        if (empty($this->newServiceName)) {
+            return;
+        }
 
         DB::statement("SET app.business_id = '{$this->businessId}'");
         PriceBookItem::create([
@@ -204,4 +218,3 @@ class Pricebook extends Component
         ]);
     }
 }
-

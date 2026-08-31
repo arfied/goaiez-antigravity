@@ -62,41 +62,15 @@ return new class extends Migration
             });
         }
 
-        if (Schema::hasTable('jobs')) {
-            Schema::table('jobs', function (Blueprint $table): void {
-                if (! Schema::hasColumn('jobs', 'business_id')) {
-                    $table->foreignId('business_id')->nullable()->constrained('businesses')->cascadeOnDelete();
-                }
-                if (! Schema::hasColumn('jobs', 'title')) {
-                    $table->string('title')->nullable();
-                }
-                if (! Schema::hasColumn('jobs', 'description')) {
-                    $table->text('description')->nullable();
-                }
-                if (! Schema::hasColumn('jobs', 'status')) {
-                    $table->string('status')->nullable();
-                }
-                if (! Schema::hasColumn('jobs', 'price_cents')) {
-                    $table->bigInteger('price_cents')->nullable();
-                }
-                if (! Schema::hasColumn('jobs', 'scheduled_at')) {
-                    $table->timestamp('scheduled_at')->nullable();
-                }
-                if (! Schema::hasColumn('jobs', 'completed_at')) {
-                    $table->timestamp('completed_at')->nullable();
-                }
-                if (! Schema::hasColumn('jobs', 'updated_at')) {
-                    $table->timestamp('updated_at')->nullable();
-                }
-            });
-        } else {
-            Schema::create('jobs', function (Blueprint $table): void {
+        if (! Schema::hasTable('work_orders')) {
+            Schema::create('work_orders', function (Blueprint $table): void {
                 $table->id();
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
                 $table->string('title');
                 $table->text('description')->nullable();
                 $table->string('status')->default('pending');
                 $table->bigInteger('price_cents')->default(0);
+                $table->string('actor_type')->nullable();
                 $table->timestamp('scheduled_at')->nullable();
                 $table->timestamp('completed_at')->nullable();
                 $table->timestamps();
@@ -209,7 +183,7 @@ return new class extends Migration
         }
 
         $tables = [
-            'businesses', 'people', 'conversations', 'messages', 'jobs', 'reviews',
+            'businesses', 'people', 'conversations', 'messages', 'work_orders', 'reviews',
             'campaigns', 'assets', 'ledger_entries', 'facts', 'sites', 'numbers', 'entity_history',
         ];
 

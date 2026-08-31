@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-120-01' => '',
+    'N-120-01' => '⛔ a grep for card-number, PAN, CVV or CVC across database/migrations returns NOTHING, enforced by CI — the only component in PCI scope proves scope by ABSENCE',
 
     // status: SPECCED
-    'N-120-02' => '',
+    'N-120-02' => 'a card expiring within 20 days raises BEFORE it fails a charge',
 ];

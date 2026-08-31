@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X183\Ui;
 
 use App\Modules\X183\Models\GateResult;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class GateRejectionReasons extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

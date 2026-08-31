@@ -1,11 +1,15 @@
 <?php
 
+use App\Modules\X121\ModuleServiceProvider;
 use App\Providers\AppServiceProvider;
+use App\Providers\FortifyServiceProvider;
+use App\Providers\GoaiezRuntimeServiceProvider;
 
 return [
     AppServiceProvider::class,
-    App\Providers\GoaiezRuntimeServiceProvider::class,
-    App\Modules\X121\ModuleServiceProvider::class,
+    FortifyServiceProvider::class,
+    GoaiezRuntimeServiceProvider::class,
+    ModuleServiceProvider::class,
     App\Modules\X123\ModuleServiceProvider::class,
     App\Modules\X122\ModuleServiceProvider::class,
     App\Modules\X126\ModuleServiceProvider::class,

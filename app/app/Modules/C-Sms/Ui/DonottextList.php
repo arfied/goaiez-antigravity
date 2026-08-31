@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\CSms\Ui;
 
 use App\Modules\X204\Models\Suppression;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class DonottextList extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

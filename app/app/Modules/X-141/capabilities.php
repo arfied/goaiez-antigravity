@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-141-01' => '',
+    'N-141-01' => 'a replay NEVER emits a real outbound — asserted at the DRIVER, not the caller',
 ];

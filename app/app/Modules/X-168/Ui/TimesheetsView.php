@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X168\Ui;
 
 use App\Modules\X168\Models\Timesheet;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class TimesheetsView extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

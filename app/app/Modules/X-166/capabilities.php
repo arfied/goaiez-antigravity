@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-166-01' => '',
+    'N-166-01' => '⚠️ actual-vs-expected from ledger rows only; a job with NO cost rows reports NO margin rather than 100% (INFERRED from WHAT, not the anchor)',
 ];

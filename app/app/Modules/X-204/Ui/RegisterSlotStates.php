@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X204\Ui;
 
 use App\Modules\X204\Models\ComplianceRegister;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class RegisterSlotStates extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X132\Ui;
 
 use App\Modules\X132\Models\ResolutionEvidence;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class PersonTimelineView extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public int $personId = 0;

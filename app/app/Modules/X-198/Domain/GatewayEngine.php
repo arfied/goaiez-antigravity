@@ -13,7 +13,6 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
 
 final class GatewayEngine
 {
@@ -51,15 +50,19 @@ final class GatewayEngine
 
             $connection = MerchantConnection::where('business_id', $businessId)->first();
 
+            if ($connection === null || ! $connection->is_connected) {
+                throw new \InvalidArgumentException('Gateway connection is absent; payment capture refused before external request');
+            }
+
             $payment = Payment::create([
                 'business_id' => $businessId,
-                'merchant_connection_id' => $connection?->id,
-                'gateway_charge_id' => 'ch_'.Str::random(16),
+                'merchant_connection_id' => $connection->id,
+                'gateway_charge_id' => null,
                 'amount_cents' => $amountCents,
                 'currency' => $currency,
                 'payment_token' => $paymentToken,
                 'idempotency_key' => $idempotencyKey,
-                'status' => 'captured',
+                'status' => 'pending',
             ]);
 
             Event::dispatch(new PaymentCaptured(

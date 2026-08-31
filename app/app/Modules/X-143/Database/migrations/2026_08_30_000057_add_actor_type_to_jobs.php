@@ -10,9 +10,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('jobs')) {
-            Schema::table('jobs', function (Blueprint $table): void {
-                if (! Schema::hasColumn('jobs', 'actor_type')) {
+        if (Schema::hasTable('work_orders')) {
+            Schema::table('work_orders', function (Blueprint $table): void {
+                if (! Schema::hasColumn('work_orders', 'actor_type')) {
                     $table->string('actor_type')->default('ui'); // ui, webmcp (TEST ANCHOR)
                 }
             });
@@ -21,9 +21,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (Schema::hasTable('jobs')) {
-            Schema::table('jobs', function (Blueprint $table): void {
-                if (Schema::hasColumn('jobs', 'actor_type')) {
+        if (Schema::hasTable('work_orders')) {
+            Schema::table('work_orders', function (Blueprint $table): void {
+                if (Schema::hasColumn('work_orders', 'actor_type')) {
                     $table->dropColumn('actor_type');
                 }
             });

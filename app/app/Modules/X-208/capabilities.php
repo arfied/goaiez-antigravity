@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-208-01' => '',
+    'N-208-01' => 'the cost is shown BEFORE approval — ⛔ mail never sends without it',
 ];

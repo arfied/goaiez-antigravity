@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X177\Ui;
 
 use App\Modules\X177\Models\GbpPost;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class SuspensionriskEventsFleetwide extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

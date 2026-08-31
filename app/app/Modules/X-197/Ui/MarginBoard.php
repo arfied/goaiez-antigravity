@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X197\Ui;
 
 use App\Modules\X197\Models\VoiceCostSample;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class MarginBoard extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

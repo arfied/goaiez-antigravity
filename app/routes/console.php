@@ -2,12 +2,13 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-\Illuminate\Support\Facades\Schedule::call(function () {
+Schedule::call(function () {
     cache()->put('goaiez:scheduler:heartbeat', now(), 300);
     $minute = now()->format('YmdHi');
     $claimed = cache()->add("goaiez:scheduler:tick:{$minute}", true, 120);
@@ -16,7 +17,7 @@ Artisan::command('inspire', function () {
     }
 })->everyMinute()->name('scheduler-heartbeat');
 
-\Illuminate\Support\Facades\Schedule::command('numbers:return-parked')
+Schedule::command('numbers:return-parked')
     ->daily()
     ->withoutOverlapping(180)
     ->runInBackground();

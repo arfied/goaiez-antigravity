@@ -1,112 +1,121 @@
+{{--
+    The staff shell — Livewire's own default layout.
+
+    ⚠️ **THIS FILE WAS MISSING, AND EVERY ADMIN SCREEN 500'd BECAUSE OF IT.**
+    `component_layout` is `layouts::app` and the `layouts` namespace maps to
+    `resources/views/layouts`, a directory that did not exist. ⚠️ **THIS
+    PARAGRAPH SAID "`config/livewire.php` SETS" AND THERE IS NO SUCH FILE —
+    CORRECTED 2026-08-24 (9288).** Both values are Livewire's own packaged
+    defaults, unpublished, so the shell every staff screen renders in is
+    selected by a file in `vendor/` — which is why *this* file's existence, and
+    now its contents, are what the tests have to pin. The Setup components each
+    declare `#[Layout('components.setup.layout')]`
+    and render fine; **no component under `App\Livewire\Admin` declares one at
+    all**, so all five fell through to a view that was not there and died with
+    *"No hint path defined for [layouts]"*.
+
+    ⚠️ Why nobody noticed: the admin tests exercise their components through
+    `Livewire::test()`, which renders the component and never the layout, and
+    the two tests that do issue a real GET assert `assertForbidden()` and
+    `assertRedirect()` — both of which short-circuit in middleware, before
+    anything renders. So the suite covered the gate thoroughly and the page not
+    at all. It is decision 411's shape at the level of a whole screen: the
+    assertions were real, and none of them was the one that would have failed.
+
+    ⛔ **`28` §9.2's ROLE-FILTERED CONSOLE NAVIGATION IS HERE NOW, AND THIS
+    PARAGRAPH SAID IT "BELONGS HERE EVENTUALLY" UNTIL 2026-08-24** (9288). It
+    was pasted at the top of seventeen screen templates instead, one line each,
+    and **three screens did not have the line** — `automation-runs`,
+    `account-audit` and `staff-activity`. `LoginResponse` sends every member of
+    staff to the first item the nav grants them, which is `automation-runs`, so
+    on a fresh sign-in, before any Back history exists, a `super_admin`'s only
+    route to any other console screen was typing a URL. **Measured over HTTP
+    before the move: the landing page carried zero links to any other admin or
+    support screen**, and so did the two audit explorers.
+
+    ⚠️ **WHAT MAKES THAT UNREPRESENTABLE IS THE POSITION OF THE LINE, NOT A
+    LINT.** `OwnerNavTest`'s *the navigation is rendered by the layout and
+    pasted into no screen* pins the owner shell for exactly this reason and its
+    comment named this file as the counterexample. A screen cannot now be built
+    without a nav, because no screen renders one.
+
+    ⚠️ **THE ARGUMENT THAT USED TO SIT ABOVE THE PASTED LINE IN
+    `support/accounts.blade.php` IS THE ONE WORTH KEEPING**, and it moves here
+    with the line it annotated: *without it this screen was reachable only by
+    typing the URL — a door with no handle, which is decision 272's shape at the
+    scale of a screen.* That comment was correct and it was in the one file that
+    already had the nav; the three that did not had no comment to be correct in.
+
+    ⚠️ The skip link comes with it (WCAG 2.2 AA). Seventeen console links now
+    precede the content of every staff screen; the owner shell has had one since
+    it was built and this shell never did, because until today the nav was
+    inside the screen rather than ahead of it.
+--}}
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'GO AI EZ — Antigravity Platform' }}</title>
-
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Instrument Sans"', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    {{-- Staff surfaces are never indexed. --}}
+    <meta name="robots" content="noindex, nofollow">
+    <title>{{ $title ?? 'GO AI EZ' }}</title>
+    @fonts
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-full flex flex-col bg-slate-950 font-sans text-slate-200">
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-6">
-                <a href="/" class="flex items-center gap-3 group">
-                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/20 group-hover:scale-105 transition">
-                        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-white tracking-tight text-lg">GO AI EZ</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-semibold border border-indigo-500/30">Autonomous</span>
-                        </div>
-                        <p class="text-[11px] text-slate-400 hidden sm:block">AI Receptionist & Operations for Contractors</p>
-                    </div>
-                </a>
+<body class="min-h-screen bg-paper text-ink">
+    {{-- Keyboard users reach the content without tabbing the whole nav (WCAG 2.2 AA). --}}
+    <a
+        href="#main"
+        class="sr-only rounded-[--radius-control] bg-card px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:ring-2 focus:ring-ink"
+    >Skip to content</a>
 
-                <!-- Navigation Tabs -->
-                <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
-                    <a href="/" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('/') && !request()->is('architecture*')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Home
-                    </a>
-                    <a href="/onboarding" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('onboarding*')) ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Voice (X-118)
-                    </a>
-                    <a href="/pricebook" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('pricebook*')) ? 'bg-amber-600/30 text-amber-300 border border-amber-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Pricebook (X-163)
-                    </a>
-                    <a href="/reviews" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('reviews*')) ? 'bg-purple-600/30 text-purple-300 border border-purple-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Reviews (C-Reviews)
-                    </a>
-                    <a href="/portal" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('portal*')) ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Portal (X-172)
-                    </a>
-                    <a href="/architecture" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('architecture*')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Architecture
-                    </a>
-                </nav>
-            </div>
+    {{--
+        The grid every console screen used to declare for itself, in the one
+        place it cannot be forgotten. The classes are the seventeen screens'
+        own, merged with the `<main>` wrapper they sat inside — same two
+        columns, same gap, same maximum width.
+    --}}
+    <div class="mx-auto grid w-full max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[16rem_1fr]">
+        <x-admin.nav :groups="\App\Support\Admin\AdminNav::for(auth()->user())" />
 
-            <div class="flex items-center gap-3">
-                <a href="/onboarding" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition">
-                    Start in 60s &rarr;
-                </a>
-                <a href="/up" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Live (/up)
-                </a>
-            </div>
-        </div>
-    </header>
+        <main id="main" class="min-w-0">
+            {{ $slot }}
+        </main>
+    </div>
+    {{--
+        ⛔ EVERY TOAST ON EVERY STAFF SCREEN RENDERED INTO NOTHING WITHOUT THIS,
+        AND THE SYMPTOM WAS A BUTTON THAT LOOKED BROKEN — decision 5460.
 
-    <!-- Main Content Slot -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {{ $slot }}
-    </main>
+        `masmerise/livewire-toaster` needs its hub in the layout. The account
+        shell has had one since it was built; this one never did, so
+        `Toaster::success()` and `Toaster::error()` were called correctly all
+        over `app/Livewire/Admin` and delivered nowhere. What that costs is not
+        cosmetic: `LegalDocuments::act()` catches the service's refusals *on
+        purpose* and shows the message, because "published text is frozen"
+        explains a rule that is otherwise impossible to guess — and the owner
+        met exactly that, as a Publish button that did nothing, with no error
+        and no log line, while the service was refusing with a paragraph saying
+        precisely what to fix.
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <div>&copy; {{ date('Y') }} GO AI EZ Inc. Antigravity Platform Engine.</div>
-            <div class="flex items-center gap-4">
-                <a href="/" class="hover:text-slate-300 transition">Home</a>
-                <span>·</span>
-                <a href="/onboarding" class="hover:text-slate-300 transition">Voice Answering</a>
-                <span>·</span>
-                <a href="/pricebook" class="hover:text-slate-300 transition">Pricebook</a>
-                <span>·</span>
-                <a href="/reviews" class="hover:text-slate-300 transition">Review Hub</a>
-                <span>·</span>
-                <a href="/portal" class="hover:text-slate-300 transition">Customer Portal</a>
-                <span>·</span>
-                <a href="/architecture" class="hover:text-slate-300 transition">Architecture</a>
-                <span>·</span>
-                <a href="/up" class="hover:text-slate-300 transition">Health Status</a>
-            </div>
-        </div>
-    </footer>
+        ⚠️ NO TEST COULD HAVE CAUGHT IT AND THAT IS THE INTERESTING PART. Every
+        admin test drives components through `Livewire::actingAs()->test()`,
+        which runs no middleware and renders no layout (809), so the assertion
+        `assertDispatched`/`Toaster` half passes while the delivery half does
+        not exist. The regression test for this renders the real page over HTTP.
 
+        ⛔ THAT SENTENCE STOPPED BEING TRUE ON 2026-08-26 AND IS KEPT AND DATED
+        (10108). A test could have caught it, and now one does:
+        `tests/Browser/AccountScreenTest.php` asks the RUNNING Alpine instance on
+        this shell whether the hub initialised, and then puts words on the screen
+        and reads them back. ⚠️ WHAT THE HTTP TEST CANNOT DO IS THE PART TO
+        CARRY: `StaffToastsTest` asserts the string `toaster` is in this page's
+        HTML, which is equally true of a page whose bundle never loaded — so it
+        pins the markup and can never pin the delivery. A real `GET` is a
+        statement about what was emitted, never about what ran.
+    --}}
+    <x-toaster-hub />
     @livewireScripts
 </body>
 </html>

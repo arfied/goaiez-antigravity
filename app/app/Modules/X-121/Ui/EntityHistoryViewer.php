@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X121\Ui;
 
 use App\Modules\X121\Models\EntityHistoryRecord;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class EntityHistoryViewer extends Component
@@ -13,6 +14,7 @@ class EntityHistoryViewer extends Component
 
     public int $entityId = 0;
 
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

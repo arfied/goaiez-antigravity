@@ -16,8 +16,8 @@ final class RegisterCheckAction
 
         return [
             'register_name' => $registerName,
-            'is_compliant' => $reg ? $reg->status === 'compliant' : true,
-            'status' => $reg ? $reg->status : 'compliant',
+            'is_compliant' => $reg !== null && $reg->status === 'compliant',
+            'status' => $reg ? $reg->status : 'unregistered',
             'slot_states' => $reg ? $reg->slot_states : [],
         ];
     }

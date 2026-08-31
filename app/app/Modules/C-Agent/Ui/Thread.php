@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\CAgent\Ui;
 
 use App\Modules\CAgent\Models\AgentTurn;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Thread extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

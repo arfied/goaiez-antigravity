@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X212\Ui;
 
 use App\Modules\X212\Models\MigrationRun;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class DryrunPreview extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

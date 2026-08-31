@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X219\Ui;
 
 use App\Modules\X219\Models\AiModuleAssignment;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class AssignmentMatrix extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X219\Ui;
 
 use App\Modules\X219\Models\AiModel;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class RosterAdmin extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

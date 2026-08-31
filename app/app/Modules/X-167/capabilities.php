@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-58' => 'it PROPOSES a purchase with the ranked options; doctor asserts no purchase API call exists in this module',
+    'G1-58' => 'refuses: it places an order; it PROPOSES a purchase with the ranked options; doctor asserts no purchase API call exists in this module',
 
     // status: SPECCED
     'G2-24' => 'SKU scan — the FSM bucket C4 must add (G1\'s structural finding)',
@@ -49,35 +49,35 @@ return [
     'G19-02' => 'parcel rates;  a van and a storage unit, not a warehouse bounds it',
 
     // status: SPECCED
-    'G1-64' => '',
+    'G1-64' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a blanket PO draws down; doctor asserts no autonomous release',
 
     // status: SPECCED
-    'G1-76' => '',
+    'G1-76' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a partial receipt leaves the PO OPEN with the remainder named; a silently closed PO is REFUSED',
 
     // status: SPECCED
-    'G1-79' => '',
+    'G1-79' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ every received line reconciles to the PO; an unmatched receipt raises rather than posting',
 
     // status: SPECCED
-    'G6-39' => '',
+    'G6-39' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ every level reconciles at job completion and is never trusted raw (§198)',
 
     // status: SPECCED
-    'G6-40' => '',
+    'G6-40' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ dead stock is REPORTED, never auto-disposed — asserted',
 
     // status: SPECCED
-    'G6-43' => '',
+    'G6-43' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ selling a kit decrements every component atomically or the sale is REFUSED',
 
     // status: SPECCED
-    'G6-46' => '',
+    'G6-46' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ doctor asserts NO autonomous ordering path — it PROPOSES; L1, MONEY',
 
     // status: SPECCED
-    'G6-47' => '',
+    'G6-47' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a refund restocks exactly once; a replayed refund does not double-restock',
 
     // status: SPECCED
-    'G6-48' => '',
+    'G6-48' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ alerts, never orders — asserted',
 
     // status: SPECCED
-    'G6-49' => '',
+    'G6-49' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a serialised item with no serial cannot be closed — asserted',
 
     // status: SPECCED
-    'G6-51' => '',
+    'G6-51' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a transfer is atomic — killing it mid-move leaves the total unchanged · R201/R203: TRUCK-to-truck only, doctor asserts no location-to-location path',
 ];

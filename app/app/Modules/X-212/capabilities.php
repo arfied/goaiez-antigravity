@@ -21,15 +21,15 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
-    'N-004' => '',
+    // status: 
+    'N-004' => 'refuses: an imported Person is UNPERMITTED; (P-203) — asserted on X-212\'s commit',
 
-    // status:
-    'N-038' => '',
+    // status: 
+    'N-038' => '500 imported jobs → ZERO outbound messages · a dry run writes NOTHING to live · one weak identifier is rejected, never merged · notes scanned to secure fields · and the EXPORT works too (P-203)',
 
-    // status:
+    // status: 
     'N-040' => '',
 
     // status: SPECCED
-    'G4-54' => '',
+    'G4-54' => '§217.1 — NOT an app store: one-click migration-in from ServiceTitan/Jobber/Housecall · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ P-203: the import writes rows and emits NOTHING — 500 jobs, ZERO outbound',
 ];

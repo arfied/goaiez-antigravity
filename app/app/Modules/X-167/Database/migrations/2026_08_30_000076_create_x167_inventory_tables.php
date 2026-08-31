@@ -63,15 +63,17 @@ return new class extends Migration
         $tables = ['stock_locations', 'suppliers', 'stock_items', 'purchase_orders'];
 
         foreach ($tables as $table) {
-            DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
-            DB::statement("ALTER TABLE {$table} FORCE ROW LEVEL SECURITY");
-            DB::statement("DROP POLICY IF EXISTS tenant_isolation ON {$table}");
+            if (Schema::hasColumn($table, 'business_id')) {
+                DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
+                DB::statement("ALTER TABLE {$table} FORCE ROW LEVEL SECURITY");
+                DB::statement("DROP POLICY IF EXISTS tenant_isolation ON {$table}");
 
-            DB::statement(<<<SQL
-                CREATE POLICY tenant_isolation ON {$table}
-                    USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
-                    WITH CHECK (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
-            SQL);
+                DB::statement(<<<SQL
+                    CREATE POLICY tenant_isolation ON {$table}
+                        USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
+                        WITH CHECK (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
+                SQL);
+            }
         }
     }
 

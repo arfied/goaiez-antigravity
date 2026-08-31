@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X183\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ContentDraft extends Model
 {
@@ -19,7 +20,10 @@ class ContentDraft extends Model
         'is_published' => 'boolean',
     ];
 
-    public function gateResults()
+    /**
+     * @return HasMany<GateResult, $this>
+     */
+    public function gateResults(): HasMany
     {
         return $this->hasMany(GateResult::class, 'draft_id');
     }

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\CAi\Ui;
 
 use App\Modules\CAi\Models\AiCall;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ModelBoard extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

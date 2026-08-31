@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X190\Ui;
 
 use App\Modules\X190\Models\PartnerPool;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class NetworkMap extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

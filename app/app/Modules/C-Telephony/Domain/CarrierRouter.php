@@ -12,7 +12,6 @@ use App\Modules\CTelephony\Models\CarrierHealth;
 use App\Modules\CTelephony\Models\CarrierReceipt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
 
 final class CarrierRouter
 {
@@ -77,14 +76,26 @@ final class CarrierRouter
                 }
             }
 
-            $messageId = 'msg-'.(string) Str::uuid();
-            $carrierMsgId = 'cmsg-'.(string) Str::uuid();
+            // 3. Credential check & carrier dispatch (TEST ANCHOR: refuse before request when credential absent)
+            $carrierCredential = DB::table('carrier_credentials')
+                ->where('business_id', $businessId)
+                ->where('carrier_name', $carrierName)
+                ->first();
+
+            if ($carrierCredential === null) {
+                return [
+                    'status' => 'refused',
+                    'carrier' => $carrierName,
+                    'reason' => 'CREDENTIAL_ABSENT',
+                    'message' => "Carrier credential for {$carrierName} is absent; refused before dispatch",
+                ];
+            }
 
             $receipt = CarrierReceipt::create([
                 'business_id' => $businessId,
-                'message_id' => $messageId,
+                'message_id' => null,
                 'carrier_name' => $carrierName,
-                'carrier_message_id' => $carrierMsgId,
+                'carrier_message_id' => null,
                 'status' => 'sent',
                 'cost_cents' => 1,
             ]);
@@ -98,14 +109,14 @@ final class CarrierRouter
             Event::dispatch(new CarrierReceiptEvent(
                 businessId: $businessId,
                 carrierName: $carrierName,
-                messageId: $messageId,
+                messageId: (string) $receipt->id,
                 status: 'sent'
             ));
 
             return [
                 'status' => 'sent',
                 'carrier' => $carrierName,
-                'message_id' => $messageId,
+                'message_id' => (string) $receipt->id,
                 'receipt_id' => $receipt->id,
             ];
         });

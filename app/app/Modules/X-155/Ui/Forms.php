@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X155\Ui;
 
 use App\Modules\X155\Models\FormDefinition;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Forms extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

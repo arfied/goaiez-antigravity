@@ -6,10 +6,12 @@ namespace App\Modules\X111\Ui;
 
 use App\Modules\X111\Models\OperatorAlert;
 use App\Modules\X111\Models\TenantTicket;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Console extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

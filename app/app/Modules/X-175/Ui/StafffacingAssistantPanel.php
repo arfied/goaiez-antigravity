@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X175\Ui;
 
 use App\Modules\X175\Models\FieldSuggestion;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class StafffacingAssistantPanel extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

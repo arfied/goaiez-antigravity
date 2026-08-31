@@ -22,11 +22,11 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-127-01' => '',
+    'N-127-01' => '⛔⛔ a published claim is RE-COMPUTED from the live query and must MATCH TO THE DIGIT — a drifted claim is PULLED AUTOMATICALLY, not flagged (§5 Law 3: no invented statistics, ever)',
 
     // status: SPECCED
-    'N-127-02' => '',
+    'N-127-02' => '§5 Law 2 — a module that fails for tenant #0 does not ship',
 
     // status: SPECCED
-    'N-127-03' => '',
+    'N-127-03' => '⛔ a GOAIEZ-scoped read returns ZERO rows belonging to any other tenant (R232 N-232-04) — tenant-zero does not relax the no-harvest fence',
 ];

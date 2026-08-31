@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X142\Ui;
 
 use App\Modules\X142\Models\McpToken;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class McpTokenRegistry extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

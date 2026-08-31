@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X217\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RecruitmentOffer extends Model
 {
@@ -19,7 +20,10 @@ class RecruitmentOffer extends Model
         'accepted_at' => 'datetime',
     ];
 
-    public function prospect()
+    /**
+     * @return BelongsTo<AffiliateProspect, $this>
+     */
+    public function prospect(): BelongsTo
     {
         return $this->belongsTo(AffiliateProspect::class, 'prospect_id');
     }

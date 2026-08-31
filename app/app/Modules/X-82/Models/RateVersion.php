@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X82\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RateVersion extends Model
 {
@@ -18,7 +19,10 @@ class RateVersion extends Model
         'effective_from' => 'datetime',
     ];
 
-    public function rate()
+    /**
+     * @return BelongsTo<Rate, $this>
+     */
+    public function rate(): BelongsTo
     {
         return $this->belongsTo(Rate::class, 'rate_id');
     }

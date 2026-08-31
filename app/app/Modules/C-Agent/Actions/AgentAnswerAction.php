@@ -91,10 +91,41 @@ final class AgentAnswerAction
                 ->where('key', 'service.oil_change.price')
                 ->first();
 
-            $priceText = $fact ? $fact->value : '$49.99';
-
             if (str_contains($lower, 'price') || str_contains($lower, 'quote') || str_contains($lower, 'oil change')) {
-                $reply = "Our standard oil change service is {$priceText}.";
+                if (! $fact) {
+                    $refusal = AgentRefusal::create([
+                        'business_id' => $businessId,
+                        'refusal_code' => 'NO_FACT',
+                        'reason' => 'No verified price fact in tenant pricebook; refusing ungrounded quote',
+                        'user_input' => $userMessage,
+                    ]);
+
+                    Event::dispatch(new AgentRefused(
+                        businessId: $businessId,
+                        refusalCode: 'NO_FACT',
+                        reason: $refusal->reason,
+                        userInput: $userMessage
+                    ));
+
+                    $turn = AgentTurn::create([
+                        'business_id' => $businessId,
+                        'conversation_id' => $conversationId,
+                        'turn_number' => $turnNumber,
+                        'user_message' => $userMessage,
+                        'agent_reply' => 'I do not have verified pricing on file for this service. Let me connect you with our team for an accurate quote.',
+                        'status' => 'handoff',
+                        'refusal_code' => 'NO_FACT',
+                    ]);
+
+                    return [
+                        'turn_id' => $turn->id,
+                        'status' => 'handoff',
+                        'refusal_code' => 'NO_FACT',
+                        'reply' => $turn->agent_reply,
+                    ];
+                }
+
+                $reply = "Our standard oil change service is {$fact->value}.";
             } else {
                 $reply = 'Hello! How can I help you today?';
             }

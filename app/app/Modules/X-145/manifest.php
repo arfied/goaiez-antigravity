@@ -38,7 +38,7 @@ return [
     ],
     'consumes' => [
         'action.invoked',
-        'outcome.',
+        'outcome.recorded',
         'capability.decided',
     ],
 

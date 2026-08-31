@@ -44,11 +44,6 @@ final class WebmcpEmitAction
             'status' => 'pending',
             'price_cents' => $bookingParams['price_cents'] ?? 15000,
             'actor_type' => 'webmcp', // TEST ANCHOR
-            'queue' => 'default',
-            'payload' => '{}',
-            'attempts' => 0,
-            'available_at' => time(),
-            'created_at' => time(),
         ]);
 
         Event::dispatch(new WebmcpInvoked($businessId, 'book_appointment', $job->id, 'webmcp'));

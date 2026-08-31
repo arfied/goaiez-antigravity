@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X196\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ExtensionSession extends Model
 {
@@ -28,7 +29,10 @@ class ExtensionSession extends Model
         'actions_count' => 'integer',
     ];
 
-    public function injections()
+    /**
+     * @return HasMany<ExtensionInjection, $this>
+     */
+    public function injections(): HasMany
     {
         return $this->hasMany(ExtensionInjection::class, 'session_id');
     }

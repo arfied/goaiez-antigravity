@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X140\Ui;
 
 use App\Modules\X140\Models\ContentTopic;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ProposedPagesView extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

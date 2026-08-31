@@ -4,26 +4,32 @@ declare(strict_types=1);
 
 namespace App\Modules\X172\Ui;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X172\Actions\PortalActionHandler;
-use App\Modules\X172\Actions\PortalLinkAction;
 use App\Modules\X172\Models\PortalLink;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CustomerfacingPortal extends Component
 {
     public string $token = '';
+
+    #[Locked]
     public int $businessId = 0;
-    
+
     public string $activeTab = 'estimate'; // estimate, sign, pay, schedule, feedback
-    
+
     public string $customerName = 'Sarah Jenkins';
+
     public string $serviceAddress = '742 Evergreen Terrace, Austin TX';
+
     public string $jobTitle = 'Main Water Line Replacement & Valve Pressure Testing';
+
     public string $estimateNumber = 'EST-2026-1042';
+
     public int $estimateTotalCents = 38500; // $385.00
-    
+
     public array $lineItems = [
         ['name' => 'Emergency Dispatch Diagnostic & Pressure Test', 'qty' => 1, 'price' => 8500],
         ['name' => 'Heavy-Duty Ball Valve & Copper Coupling (3/4")', 'qty' => 2, 'price' => 12000],
@@ -31,49 +37,56 @@ class CustomerfacingPortal extends Component
     ];
 
     public string $signatureTyped = '';
+
     public bool $isSigned = false;
+
     public ?string $signedAt = null;
-    
+
     public bool $isPaid = false;
+
     public ?string $paidAt = null;
+
     public string $paymentMethod = 'card';
+
     public string $cardLast4 = '4242';
-    
+
     public string $selectedSlot = 'Today, 2:00 PM - 4:00 PM';
+
     public bool $isSlotConfirmed = true;
-    
+
     public int $feedbackRating = 5;
+
     public string $feedbackComment = '';
+
     public bool $isFeedbackSubmitted = false;
 
     public ?string $statusMessage = null;
 
     public function mount(?string $token = null): void
     {
-        $biz = Business::first();
-        if (! $biz) {
-            $biz = Business::provision(['name' => 'Demo Customer Portal Business', 'currency' => 'USD']);
-        }
-        $this->businessId = (int) $biz->id;
-        DB::statement("SET app.business_id = '{$this->businessId}'");
-
         if (! empty($token)) {
-            $this->token = $token;
-        } else {
-            // Provision or retrieve active demo token
-            $link = PortalLink::where('business_id', $this->businessId)->where('is_active', true)->first();
+            $link = PortalLink::where('token', $token)->where('is_active', true)->first();
             if (! $link) {
-                $linkAction = app(PortalLinkAction::class);
-                $link = $linkAction->handle($this->businessId, 'estimate', 1042, null, 72);
+                abort(404, 'Invalid or expired customer portal token');
             }
-            $this->token = $link->token;
+            $this->token = $token;
+            $this->businessId = (int) $link->business_id;
+        } else {
+            $tenantId = Tenancy::id() ?: (auth()->user()?->business_id ?? 0);
+            if ($tenantId <= 0) {
+                abort(403, 'Portal link token or authenticated tenant context is required');
+            }
+            $this->businessId = (int) $tenantId;
         }
+
+        DB::statement("SET app.business_id = '{$this->businessId}'");
     }
 
     public function approveAndSign(): void
     {
         if (empty($this->signatureTyped)) {
             $this->statusMessage = 'Please type your full legal name to execute electronic signature.';
+
             return;
         }
 
@@ -105,7 +118,7 @@ class CustomerfacingPortal extends Component
         $this->isPaid = true;
         $this->paidAt = now()->format('M d, Y · h:i A');
         $this->activeTab = 'feedback';
-        $this->statusMessage = '🎉 Payment of $' . number_format($this->estimateTotalCents / 100, 2) . ' confirmed via Stripe!';
+        $this->statusMessage = '🎉 Payment of $'.number_format($this->estimateTotalCents / 100, 2).' confirmed via Stripe!';
     }
 
     public function submitRating(): void

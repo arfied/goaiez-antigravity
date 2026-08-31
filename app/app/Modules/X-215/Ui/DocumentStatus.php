@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X215\Ui;
 
 use App\Modules\X215\Models\SignableDocument;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class DocumentStatus extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

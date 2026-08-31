@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X144\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VisibilityQuery extends Model
 {
@@ -12,7 +13,10 @@ class VisibilityQuery extends Model
 
     protected $guarded = [];
 
-    public function answers()
+    /**
+     * @return HasMany<VisibilityAnswer, $this>
+     */
+    public function answers(): HasMany
     {
         return $this->hasMany(VisibilityAnswer::class, 'query_id');
     }

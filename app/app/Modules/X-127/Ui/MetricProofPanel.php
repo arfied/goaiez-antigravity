@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X127\Ui;
 
 use App\Modules\X127\Models\PublishedMetric;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class MetricProofPanel extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X184\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ContentPlan extends Model
 {
@@ -17,7 +18,10 @@ class ContentPlan extends Model
         'is_cadence_approved' => 'boolean',
     ];
 
-    public function items()
+    /**
+     * @return HasMany<PlanItem, $this>
+     */
+    public function items(): HasMany
     {
         return $this->hasMany(PlanItem::class, 'plan_id');
     }

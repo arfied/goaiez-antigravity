@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Job extends Model
 {
-    protected $table = 'jobs';
+    protected $table = 'work_orders';
 
     protected $guarded = [];
 

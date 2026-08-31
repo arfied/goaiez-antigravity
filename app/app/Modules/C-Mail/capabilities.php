@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-43' => '⑥ the categories are the tenant\'s, confirmed once · ⑦ honoured on the next send, always',
+    'G1-43' => 'refuses: unsubscribing from marketing and then completing a job still delivers the invoice, asserted in one test · every preference write lands in X-204, not in a local table; ⑥ the categories are the tenant\'s, confirmed once · ⑦ honoured on the next send, always',
 
     // status: SPECCED
     'G3-18' => 'the warm-up engine — spec with the email pass (turn 31)',
@@ -85,5 +85,5 @@ return [
     'G11-38' => 'named in the header',
 
     // status: SPECCED
-    'G15-31' => '',
+    'G15-31' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ no warm-up event reaches a tenant-facing metric · every quantity is a RANGE plus jitter — a constant is the signature',
 ];

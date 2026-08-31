@@ -22,14 +22,14 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G11-36' => 'carrier-side screening before we pay for the minute',
+    'G11-36' => 'refuses: C-Telephony; carrier-side screening before we pay for the minute',
 
     // status: SPECCED
-    'G11-39' => 'SHAKEN/STIR grading on inbound',
+    'G11-39' => 'refuses: C-Telephony; SHAKEN/STIR grading on inbound',
 
     // status: SPECCED
-    'G18-18' => 'the router and the eight adapters are the header',
+    'G18-18' => 'refuses: C-Telephony; the router and the eight adapters are the header',
 
     // status: SPECCED
-    'G18-20' => 'LTV read from C-Billing; the bypass is a routing rule',
+    'G18-20' => 'refuses: C-Telephony; LTV read from C-Billing; the bypass is a routing rule',
 ];

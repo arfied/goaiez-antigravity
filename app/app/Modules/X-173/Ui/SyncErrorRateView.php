@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X173\Ui;
 
 use App\Modules\X173\Models\SyncRun;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class SyncErrorRateView extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

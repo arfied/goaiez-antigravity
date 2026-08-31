@@ -1,0 +1,14 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+    excludePaths:
+        - app/Doctor/*
+        - app/Console/Commands/ModuleDoneCommand.php
+        - app/Console/Commands/DoctorCommand.php
+        - app/Console/Commands/DoctorSelfTestCommand.php
+    tmpDir: storage/framework/cache/phpstan
+    level: 1
+    reportUnmatchedIgnoredErrors: false

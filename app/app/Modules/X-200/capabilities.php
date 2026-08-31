@@ -94,5 +94,5 @@ return [
     'G21-13' => 'a closed deal on the wallboard and in the channel',
 
     // status: SPECCED
-    'G15-29' => '',
+    'G15-29' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ §150.4 — praise only; no per-person negative output exists in the schema',
 ];

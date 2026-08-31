@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X162\Ui;
 
 use App\Modules\X162\Models\DispatchAssignment;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class DispatchBoard extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

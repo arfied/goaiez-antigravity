@@ -38,7 +38,7 @@ return [
         'review.requested',
         'review.received',
         'reply.published',
-        'first_win',
+        'win.recorded',
     ],
     'consumes' => [
         'capability.decided',

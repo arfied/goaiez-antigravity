@@ -22,11 +22,11 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-217-01' => '',
+    'N-217-01' => '⭐⭐ an accepted recruit lands in X-205 with the EXACT terms offered — offer row and program row asserted EQUAL, so a negotiated rate can never drift from what was promised',
 
     // status: SPECCED
-    'N-217-02' => '',
+    'N-217-02' => '⛔ no recruitment offer exceeds the confirmed commission ceiling',
 
     // status: SPECCED
-    'N-217-03' => '',
+    'N-217-03' => 'X-217 owns affiliate_prospects/recruitment_offers ONLY — it never writes X-205\'s affiliates/payouts tables (P-163 boundary)',
 ];

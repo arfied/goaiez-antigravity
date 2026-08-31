@@ -2,8 +2,315 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../vendor/livewire/livewire/src/**/*.blade.php';
+
+/*
+| ⛔ WITHOUT THIS THE TOASTS RENDER AND CANNOT BE READ — decision 5470.
+| Tailwind 4 scans only what it is pointed at, and the toast markup lives in
+| the package's own views, so every class it uses was purged from the bundle:
+| the element sat in the DOM with no background, no padding and no contrast.
+| The owner's words were "I also can't read the banners", which is exactly
+| what a purged component looks like.
+*/
+@source '../../vendor/masmerise/livewire-toaster/resources/views/*.blade.php';
+
+/*
+| Design tokens — docs/29 §5.1, verbatim.
+|
+| Thesis: every screen answers "Is everything okay?" before the person reads a
+| word. Instrumentation, not dashboard. Colour is information, never decoration —
+| the only saturated colours carry meaning, and none is ever the sole indicator
+| (always paired with an icon or label, per WCAG 2.2 AA and the colour-blind
+| share of this audience).
+|
+| Tailwind 4 is CSS-first: there is no tailwind.config.js. Tokens live here.
+*/
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Type — Archivo display, Public Sans body, IBM Plex Mono data.
+       Deliberately not Inter. Body text never below 16px. */
+    --font-display: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+    /* Surface — cool paper, deliberately not the AI-default warm cream */
+    --color-paper: #fafaf9;
+    --color-card: #ffffff;
+    --color-rule: #e4e4e1;
+    --color-rule-strong: #c9c9c4;
+
+    /* Ink */
+    --color-ink: #16191c;
+    --color-ink-2: #4a4f55;
+    --color-ink-3: #767c83;
+
+    /* Signal — the ONLY saturated colours, always meaningful.
+       Never the sole indicator; always paired with an icon or label. */
+    --color-ok: #12704a;
+    --color-ok-bg: #e8f2ed;
+    --color-attention: #b26a00;
+    --color-attention-bg: #fbf0df;
+    --color-alert: #a3342a;
+    --color-alert-bg: #f8e9e7;
+
+    /* Sample — "this is not your data".
+
+       A fourth signal, and it earns the budget on `22`'s own terms: it carries
+       information rather than decoration, and the information is the one thing a
+       demo page must never let a reader mistake. It is deliberately not one of
+       the three above, because "sample" is neither running, attention nor
+       action — reusing attention amber for it would teach a reader that amber
+       sometimes means nothing is wrong.
+
+       ⚠️ NEVER THE SOLE INDICATOR, exactly like the other three. Every element
+       wearing it also carries the word "Sample", which is what makes it legible
+       in monochrome, to a screen reader, and to somebody who cannot tell violet
+       from grey — the impersonation banner's rule (`22`), one surface over. */
+    --color-sample: #5b3fbe;
+    --color-sample-bg: #efeafb;
+
+    /* Instrument — the Status gauge */
+    --color-gauge-track: #e9e9e6;
+    --color-gauge-fill: var(--color-ok);
+
+    /* Radius — 8px cards, 6px controls, full for pills */
+    --radius-card: 0.5rem;
+    --radius-control: 0.375rem;
+
+    /* Shadow — one level only. Hairlines do the separating. */
+    --shadow-card: 0 1px 2px rgb(22 25 28 / 6%);
+}
+
+/* Dark mode inverts surface and ink. Signal hues do not change — a colour that
+   means "attention" must mean it in both themes. */
+@media (prefers-color-scheme: dark) {
+    @theme {
+        --color-paper: #16191c;
+        --color-card: #1d2125;
+        --color-rule: #2b3035;
+        --color-rule-strong: #3d444b;
+        --color-ink: #f2f2f0;
+        --color-ink-2: #b9bec4;
+        --color-ink-3: #878d94;
+        --color-gauge-track: #2b3035;
+    }
+}
+
+/* The gauge's single 400ms sweep (docs/29 §5.3).
+ *
+ * Animates stroke-dashoffset, not stroke-dasharray: the arc has to grow from
+ * its start point the way a needle sweeps, and animating the dash length grows
+ * it from both ends at once.
+ *
+ * There is deliberately no `to`. An implicit final keyframe takes the element's
+ * own computed value, which is 100 minus the score — so the sweep always lands
+ * on the real reading and the score lives in one place (the component) rather
+ * than being duplicated into a stylesheet that cannot know it. */
+@keyframes goaiez-gauge-sweep {
+    from {
+        stroke-dashoffset: 100;
+    }
+}
+
+/* Skeleton loaders. The only other thing that animates, and it stops the moment
+   real content arrives — a skeleton still pulsing beside a filled card is how a
+   page looks broken while working correctly. */
+@keyframes goaiez-pulse {
+    50% {
+        opacity: 0.45;
+    }
+}
+
+.goaiez-pulse {
+    animation: goaiez-pulse 1.6s ease-in-out infinite;
+}
+
+/* Motion: 150ms ease-out standard; the gauge's single 400ms sweep on load;
+   nothing else animates except state transitions. prefers-reduced-motion is on
+   the build-failing list (docs/29 §12.1) — honour it globally rather than
+   trusting each package's own transitions to do it. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Rendered legal documents — `/legal/{doc}`, and the only place in this
+   application that prints stored Markdown as HTML (5710, 5712).
+
+   Tailwind's preflight strips heading sizes, list markers and margins, and this
+   application does not ship @tailwindcss/typography — so converted Markdown
+   arrives structurally correct and visually flat, with an <h2> rendering
+   identically to a <p>. That is the same failure the escaping bug produced,
+   one layer along: the reader cannot see the structure.
+
+   Scoped to `.legal-prose` rather than added to preflight, because every other
+   surface in this application composes its own type from utilities and a global
+   heading style would silently restyle all of them. Tokens only — the palette
+   already answers dark mode at `@theme`, so this inherits it rather than
+   restating any colour. */
+.legal-prose {
+    line-height: 1.7;
+}
+
+.legal-prose > * + * {
+    margin-top: 1rem;
+}
+
+.legal-prose h1,
+.legal-prose h2,
+.legal-prose h3,
+.legal-prose h4 {
+    color: var(--color-ink);
+    font-family: var(--font-display, inherit);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    text-wrap: balance;
+}
+
+.legal-prose > h1 + *,
+.legal-prose > h2 + *,
+.legal-prose > h3 + *,
+.legal-prose > h4 + * {
+    margin-top: 0.5rem;
+}
+
+.legal-prose > * + h1,
+.legal-prose > * + h2,
+.legal-prose > * + h3,
+.legal-prose > * + h4 {
+    margin-top: 2rem;
+}
+
+.legal-prose h1 { font-size: 1.5rem; }
+.legal-prose h2 { font-size: 1.25rem; }
+.legal-prose h3 { font-size: 1.0625rem; }
+.legal-prose h4 { font-size: 1rem; }
+
+.legal-prose ul,
+.legal-prose ol {
+    padding-left: 1.5rem;
+}
+
+.legal-prose ul { list-style: disc; }
+.legal-prose ol { list-style: decimal; }
+.legal-prose li + li { margin-top: 0.35rem; }
+.legal-prose li::marker { color: var(--color-ink-3); }
+
+.legal-prose strong { color: var(--color-ink); font-weight: 600; }
+
+/* A link inside a legal document is usually another legal document, so it is
+   underlined rather than coloured: colour alone is never the sole indicator
+   (docs/22), and these pages carry no accent of their own. */
+.legal-prose a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.legal-prose a:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+}
+
+.legal-prose blockquote {
+    border-left: 2px solid var(--color-ink-3);
+    padding-left: 1rem;
+}
+
+.legal-prose hr {
+    border: 0;
+    border-top: 1px solid var(--color-ink-3);
+    opacity: 0.4;
+    margin-block: 2rem;
+}
+
+/* Wide content must scroll inside its own box rather than the page: a pasted
+   table of state notice periods is the realistic case. */
+.legal-prose table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.legal-prose th,
+.legal-prose td {
+    border-bottom: 1px solid var(--color-ink-3);
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    text-align: left;
+    vertical-align: top;
+}
+
+.legal-prose th { color: var(--color-ink); font-weight: 600; }
+
+/* ---------------------------------------------------------------------------
+   The printable review sign — `Account\ReviewSignPanel`
+   ---------------------------------------------------------------------------
+
+   ⛔ A PRINT STYLESHEET, NOT A PDF. Rendering a real PDF means a headless
+   browser, and this application does not take a dependency for a card an owner
+   prints on the shop printer. The whole mechanism is below.
+
+   ⚠️ `visibility`, NOT `display`. Hiding the page with `display: none` collapses
+   every ancestor of the card as well, so the card would have to be lifted out of
+   the document to survive. `visibility: hidden` leaves the boxes in place and
+   is re-declarable on a descendant, so one rule hides everything and a second
+   brings the card back — ancestors included, without touching the markup around
+   it.
+
+   ⛔ SCOPED BY `body:has(.review-sign)`, AND THAT GUARD IS LOAD-BEARING. Without
+   it, pressing Ctrl+P anywhere in the account prints a blank sheet: every
+   element hidden and no card to reveal. With it these rules exist only on a page
+   where a card is actually on screen.
+
+   ⚠️ NO `@page` RULE, DELIBERATELY. An unnamed `@page` applies to every printed
+   document this stylesheet loads — the legal pages included — so a margin set
+   here for a counter card would silently restyle printing across the account. A
+   browser's own default margin is already generous, and the code's quiet zone is
+   inside the SVG rather than dependent on the page box.
+
+   ⚠️ THE CODE IS SIZED IN MILLIMETRES BECAUSE A QR HAS A PHYSICAL MINIMUM. A
+   phone camera needs roughly 0.4mm per module at arm's length; 60mm across a
+   33-module symbol with its quiet zone gives about 1.5mm, which reads from
+   across a counter and survives a photocopy. Pixels would make that depend on
+   the printer's DPI.
+   --------------------------------------------------------------------------- */
+
+@media print {
+    body:has(.review-sign) * {
+        visibility: hidden;
+    }
+
+    body:has(.review-sign) .review-sign,
+    body:has(.review-sign) .review-sign * {
+        visibility: visible;
+    }
+
+    body:has(.review-sign) .review-sign {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        /* Black on white, always. The screen card sits on `bg-card` and inside a
+           rule; on paper both are ink somebody is paying for, and neither helps
+           a camera. */
+        border: 0;
+        background: #ffffff;
+        color: #000000;
+        padding: 0;
+        text-align: center;
+    }
+
+    .review-sign__qr {
+        width: 60mm;
+        height: 60mm;
+        margin-inline: auto;
+    }
 }

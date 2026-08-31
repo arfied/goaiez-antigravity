@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X136\Ui;
 
 use App\Modules\X136\Models\SignalScore;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CoolingView extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

@@ -7,7 +7,6 @@ namespace App\Modules\X118\Actions;
 use App\Modules\X118\Events\FirstWin;
 use App\Modules\X118\Models\OnboardingRun;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
 
 final class OnboardingTestCallAction
 {
@@ -17,7 +16,7 @@ final class OnboardingTestCallAction
     public function handle(int $businessId, int $runId): array
     {
         $run = OnboardingRun::where('business_id', $businessId)->findOrFail($runId);
-        $testCallSid = 'CA_TEST_WIN_'.(string) Str::uuid();
+        $testCallSid = 'CA_TEST_WIN_'.$run->id;
 
         Event::dispatch(new FirstWin($businessId, $testCallSid));
 

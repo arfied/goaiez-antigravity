@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X192\Ui;
 
 use App\Modules\X192\Models\DirectoryMembership;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class MembershipsList extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

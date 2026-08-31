@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X185\Ui;
 
 use App\Modules\X185\Models\ContentPack;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ExperimentBoard extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

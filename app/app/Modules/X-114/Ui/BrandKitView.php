@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X114\Ui;
 
 use App\Modules\X114\Models\BrandKit;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class BrandKitView extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

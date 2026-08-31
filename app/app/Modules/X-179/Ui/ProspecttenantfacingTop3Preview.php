@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X179\Ui;
 
 use App\Modules\X179\Models\TemplateMatch;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ProspecttenantfacingTop3Preview extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public int $prospectId = 0;

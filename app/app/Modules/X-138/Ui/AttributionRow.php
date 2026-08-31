@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\X138\Ui;
 
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class AttributionRow extends Component
 {
+    #[Locked]
     public int $businessId = 0;
 
     public function render()

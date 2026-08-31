@@ -46,7 +46,7 @@ final class FixerCommandAction
         Event::dispatch(new FixerCommandReceived($businessId, $command->id, $smsBody));
 
         // 3. Outbound message ID emitted AFTER row updated & consent approved (TEST ANCHOR)
-        $outboundMessageId = 'msg_fixer_'.bin2hex(random_bytes(6));
+        $outboundMessageId = 'msg_fixer_'.$command->id;
         $command->update(['outbound_message_id' => $outboundMessageId]);
 
         Event::dispatch(new FixerActionTaken($businessId, $command->id, $parsedIntent, $outboundMessageId));
