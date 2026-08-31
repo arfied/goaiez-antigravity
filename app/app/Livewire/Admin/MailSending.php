@@ -14,7 +14,7 @@ use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 /**
- * The email sending meter — T137 R3's *"encoded as a visible limit"*, and the
+ * The email sending meter — sending quotas encoded as a visible limit, and the
  * screen decision 4442 recorded as owed (built at 4600).
  *
  * ## Why this exists at all, given 2095
@@ -26,7 +26,7 @@ use Livewire\Component;
  * the half that was not.
  *
  * ⛔ **`MailQuota::reading()` HAD NO READER FOR FIVE DAYS AND ITS DOCBLOCK SAID
- * IT WAS FOR "THE ADMIN SCREEN R3 ASKS FOR"** (4442). Its only consumers were
+ * IT WAS FOR "THE ADMIN SCREEN"** (4442). Its only consumers were
  * two exception messages asking for `['used']`. That is `CLAUDE.md`'s most
  * repeated defect in its quietest form — not a table nobody writes, but **a
  * method that describes a screen into existence**, which is 2505's shape at

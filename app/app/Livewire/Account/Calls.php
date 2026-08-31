@@ -21,7 +21,7 @@ use Livewire\Component;
 use Masmerise\Toaster\Toaster;
 
 /**
- * Your phone — T137 R7's forwarding setup and R8's number, shown to the person
+ * Your phone — call forwarding setup and tenant number allocation, shown to the person
  * who has to dial it.
  *
  * ⛔ **NOT A WIZARD STEP, AND THAT IS DECISION 2308's FINDING RATHER THAN A
