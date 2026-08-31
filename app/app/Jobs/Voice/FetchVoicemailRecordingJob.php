@@ -437,7 +437,7 @@ final class FetchVoicemailRecordingJob extends AutopilotJob
      * Tell the rest of the application a voicemail exists.
      *
      * ⚠️ **FIRED ON BOTH PATHS — STORED AND UNAVAILABLE.** The event's subject is
-     * *"a caller left a message"*, which is true either way, and R7's owner
+     * *"a caller left a message"*, which is true either way, and the owner
      * notification hangs off it.
      *
      * ⚠️ **THE `InboundCall` IS REBUILT FROM THE STORED ROW RATHER THAN CARRIED

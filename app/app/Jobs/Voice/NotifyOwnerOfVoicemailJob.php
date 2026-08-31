@@ -15,11 +15,11 @@ use App\Services\Mail\PlatformMailer;
 use App\Support\Tenancy;
 
 /**
- * Tell the owner somebody left them a message — R7's owner notify.
+ * Tell the owner somebody left them a message — voicemail owner notify.
  *
  * ## ⛔ EMAIL ONLY, AND THE MISSING HALF IS NAMED RATHER THAN QUIETLY DROPPED
  *
- * R7 says *"delivered to the owner by email and/or SMS (per tenant setting)"*.
+ * Voicemail policy specifies delivery to the owner by email.
  * **This job sends email and nothing else, and there is no setting.** Three
  * separate things are missing and each is a decision rather than an oversight:
  *

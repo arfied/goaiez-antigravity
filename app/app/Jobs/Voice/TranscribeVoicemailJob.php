@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * ⛔ **NOTHING WAITS FOR THIS AND NOTHING MAY.** `CLAUDE.md`: *never block on
  * transcription — STT failure still delivers the audio.* By the time this runs,
- * everything R7 promises has already happened: the caller was texted back when
+ * everything the voice workflow promises has already happened: the caller was texted back when
  * `CallMissed` fired, and the owner was notified when `VoicemailRecorded` fired.
  * {@see VoicemailTranscribed}'s own docblock states it as a rule — *"an
  * implementation that waits for this before notifying an owner has made a
