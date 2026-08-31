@@ -725,7 +725,7 @@ final class PlatformMailer
      *
      * ⛔ **THE SENDING DOMAIN IS NOW `goaieasy.net`, A SEPARATELY REGISTERED
      * DOMAIN, SUPERSEDING 2114's `mail.goaiez.com` — BOTH POSITIONS KEPT AND
-     * DATED.** T137 R3 named `mail.goaiez.com` and the owner ruled for it on
+     * DATED.** Email domain architecture named `mail.goaiez.com` and the owner ruled for it on
      * 2026-08-11 (2114); on 2026-08-19 the ruling was that a **subdomain of
      * `goaiez.com` is not separation at all**, because reputation is tracked at
      * the organizational domain as well as the exact host, DMARC alignment is

@@ -9,8 +9,8 @@ use App\Enums\MailFeedbackSignal;
 /**
  * Which transport is carrying our mail, and what it can tell us afterwards.
  *
- * ⚠️ **THIS IS THE SEAM T137 R3 PROMISES, AND THE PROMISE IS FALSIFIABLE.**
- * R3's words are *"the multi-driver seam keeps SES slot-in ready with zero code
+ * ⚠️ **THIS IS THE SEAM EMAIL ARCHITECTURE PROMISES, AND THE PROMISE IS FALSIFIABLE.**
+ * The architecture notes state *"the multi-driver seam keeps SES slot-in ready with zero code
  * change when volume grows"*, and 2093 records that reversibility as *"the part
  * of the design that makes this survivable"*. A seam asserted in a docblock is
  * 314-316's shape; what makes this one real is that the SES driver needs **no

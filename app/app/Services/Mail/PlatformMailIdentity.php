@@ -7,7 +7,7 @@ namespace App\Services\Mail;
 /**
  * Who a customer-facing message says it is from, and where a reply goes.
  *
- * T137 R3: *"On-behalf-of = '{Business} via GOAIEZ' from-identity."*
+ * Email identity architecture: *"On-behalf-of = '{Business} via GOAIEZ' from-identity."*
  *
  * ⚠️ **THE DISPLAY NAME CHANGES AND THE ADDRESS DOES NOT.** The message is
  * `From: "Acme Dental via GO AI EZ" <invites@goaieasy.net>` — the tenant's

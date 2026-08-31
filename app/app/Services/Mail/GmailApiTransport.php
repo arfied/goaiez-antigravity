@@ -14,7 +14,7 @@ use Symfony\Component\Mime\Message;
  * ⚠️ **A TRANSPORT RATHER THAN A SERVICE CALL, SO THAT NOTHING ABOVE IT
  * CHANGES.** `PlatformMailer`, `DeliverPlatformMail`, every notification and
  * every test that fakes mail all keep working exactly as they did — which is
- * what makes the seam T137 R3 promises real rather than asserted. Swapping to
+ * what makes the seam email architecture promises real rather than asserted. Swapping to
  * SES is then `MAIL_MAILER=smtp` and nothing else, because SES is SMTP.
  *
  * ⚠️ **THE MESSAGE IS SERIALISED WITH `toString()`, WHICH IS THE WHOLE RFC 2822

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
  * How close the sending account is to the ceiling, and what happens before it
  * gets there.
  *
- * ⚠️ **DECISION 2095 IS THAT A METER IS NOT THE MECHANISM.** T137 R3 asks for
+ * ⚠️ **DECISION 2095 IS THAT A METER IS NOT THE MECHANISM.** Email quota architecture asks for
  * the 2,000-a-day Workspace limit to be *"encoded as a visible limit"* with a
  * meter in admin, and that is right as far as it goes — but *"a meter is a thing
  * somebody looks at"*, and this failure is silent and total at once: sends stop,
@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Log;
  *   2. **An alert that fires by itself**, once per window, when the window
  *      crosses the alert ratio — a log line at `critical`, which is what an
  *      operator's monitoring actually watches.
- *   3. **A reading**, for the admin screen R3 asks for.
+ *   3. **A reading**, for the admin sending screen.
  *
  * ⚠️ **THE WINDOW IS ROLLING 24 HOURS, NOT A CALENDAR DAY**, and this is the
  * vendor fact most likely to be got wrong from memory. Google's own page —

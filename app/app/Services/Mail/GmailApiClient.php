@@ -12,7 +12,7 @@ use RuntimeException;
 /**
  * The platform's own Google Workspace mailbox, reached through the Gmail API.
  *
- * T137 R3 and decision 2093: an **internal** OAuth app on the goaiez Workspace
+ * Email delivery architecture and decision 2093: an **internal** OAuth app on the goaiez Workspace
  * domain, which needs no Google verification review and is therefore approved
  * the moment it is created. That is the entire reason it beat SES for the soft
  * launch, and 2093 records both sides — the owner's own architect had ruled two
