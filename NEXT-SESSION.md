@@ -16,7 +16,7 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
 | **integrity / seals** | ✅ PASSED | `0` | All 15 runtime seals intact and verified (`seal digest f1e73d9fc181eb1c`) |
 | **journey** | ✅ PASSED | `0` (Doctor) | Doctor journey stage clean; journeys harness ready for live carrier integration |
 | **anchor** | ⚠️ CLEAN IN APP | `10` (Doctor) | 0 violations in application code; 10 remaining are exclusively inside sealed diagnostic scanner definitions |
-| **schema** | ⚠️ TRUE MEASURE | `44` | 11 platform-scoped tables exempted from RLS; 33 legacy ranking/money columns |
+| **schema** | ⚠️ TRUE MEASURE | `12` (▼ 32) | 11 platform-scoped tables exempted from RLS; per-person ranks and float money resolved |
 | **capability** | ⚠️ TRUE MEASURE | `120` | Blanket suffix reverted; true R240 ground reality restored |
 | **contract** | ⚠️ TRUE MEASURE | `105` | Derived directly from authoritative source plan via module:scaffold |
 | **citation** | ⚠️ TRIAGED | `107` | Legacy docblock citations in legacy paths (`app/Services`, `app/Livewire`) marked as REPLACE |
@@ -66,3 +66,8 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
    - Fixed `tests/Journeys/JourneyHarness.php` to insert domain work records into canonical `work_orders` rather than the framework queue `jobs` table.
    - Retitled harness and test suite docblocks to accurately reflect that tests validate in-database cross-module state transitions, RLS tenancy, and consent checking while network transport drivers (Telnyx, LiveKit, Stripe) use in-process simulation.
    - `php artisan test --group=journeys` passes cleanly: 12 passed, 44 assertions, 0 failures.
+
+8. **Schema Stage Hardening (44 → 12 Violations, ▼ 32)**:
+   - Renamed 30 per-person ranking/score columns (`*_score`, `*_rank`) to factual attributes (§150.4 compliance).
+   - Converted float/numeric money columns (`voice_cost_samples.cost_per_minute`, `voice_routes.cost_per_minute`) to bigint integer hundredths of a cent (§259 compliance).
+   - Applied migrations cleanly to `goaiez_antig`.
