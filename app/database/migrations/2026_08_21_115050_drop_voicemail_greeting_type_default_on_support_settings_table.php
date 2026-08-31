@@ -61,9 +61,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('support_settings', function (Blueprint $table): void {
-            $table->string('voicemail_greeting_type')->nullable()->default(null)->change();
-        });
+        DB::statement('ALTER TABLE support_settings ALTER COLUMN voicemail_greeting_type DROP DEFAULT');
+        DB::statement('ALTER TABLE support_settings ALTER COLUMN voicemail_greeting_type DROP NOT NULL');
 
         // ⚠️ **EVERY EXISTING VALUE IS THE DEFAULT, BECAUSE THE COLUMN HAS NEVER
         // HAD A WRITER.** So this destroys no choice anybody made. It is scoped to
@@ -82,8 +81,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('support_settings', function (Blueprint $table): void {
-            $table->string('voicemail_greeting_type')->nullable()->change();
-        });
+        DB::statement('ALTER TABLE support_settings ALTER COLUMN voicemail_greeting_type DROP NOT NULL');
     }
 };

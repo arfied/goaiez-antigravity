@@ -49,7 +49,7 @@ return new class extends Migration
 
             // The `OperatorAlertKind` enum's value — a string cast to a PHP
             // backed enum, never a database enum (`CLAUDE.md`).
-            $table->string('kind', 40);
+            $table->string('kind', 40)->nullable()->default('general');
 
             // What within the kind: `anthropic` for a vendor error rate,
             // `scheduler` for a heartbeat. Empty where the kind has exactly one
@@ -62,7 +62,7 @@ return new class extends Migration
             $table->string('subject', 60)->default('');
 
             // One sentence, already rendered, safe to put in a text message.
-            $table->string('summary', 300);
+            $table->string('summary', 300)->nullable();
 
             // The figures behind it — counts, rates, thresholds, window length.
             // jsonb so an incident review can read what the numbers actually
@@ -70,7 +70,7 @@ return new class extends Migration
             // looks, the window has rolled and the sample is gone.
             $table->jsonb('context')->default('{}');
 
-            $table->timestamp('fired_at');
+            $table->timestamp('fired_at')->nullable();
 
             // Which bells actually rang. ⚠️ **NULL IS NOT "NOT SENT", IT IS "WE
             // DO NOT KNOW"** — delivery is queued and neither channel confirms

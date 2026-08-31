@@ -52,6 +52,45 @@ return new class extends Migration
                 $table->unsignedInteger('latency_ms')->default(0);
                 $table->timestamps();
             });
+        } else {
+            Schema::table('ai_calls', function (Blueprint $table): void {
+                if (! Schema::hasColumn('ai_calls', 'task_id')) {
+                    $table->foreignId('task_id')->nullable()->constrained('ai_tasks')->nullOnDelete();
+                }
+                if (! Schema::hasColumn('ai_calls', 'model_requested')) {
+                    $table->string('model_requested')->nullable();
+                }
+                if (! Schema::hasColumn('ai_calls', 'model_served')) {
+                    $table->string('model_served')->nullable();
+                }
+                if (! Schema::hasColumn('ai_calls', 'fallback_reason')) {
+                    $table->string('fallback_reason')->nullable();
+                }
+                if (! Schema::hasColumn('ai_calls', 'prompt_id')) {
+                    $table->unsignedBigInteger('prompt_id')->nullable();
+                }
+                if (! Schema::hasColumn('ai_calls', 'prompt_version')) {
+                    $table->unsignedInteger('prompt_version')->default(1);
+                }
+                if (! Schema::hasColumn('ai_calls', 'tokens_in')) {
+                    $table->unsignedInteger('tokens_in')->default(0);
+                }
+                if (! Schema::hasColumn('ai_calls', 'tokens_out')) {
+                    $table->unsignedInteger('tokens_out')->default(0);
+                }
+                if (! Schema::hasColumn('ai_calls', 'cost_cents')) {
+                    $table->bigInteger('cost_cents')->default(0);
+                }
+                if (! Schema::hasColumn('ai_calls', 'usage_unavailable')) {
+                    $table->boolean('usage_unavailable')->default(false);
+                }
+                if (! Schema::hasColumn('ai_calls', 'ttft_ms')) {
+                    $table->unsignedInteger('ttft_ms')->default(0);
+                }
+                if (! Schema::hasColumn('ai_calls', 'latency_ms')) {
+                    $table->unsignedInteger('latency_ms')->default(0);
+                }
+            });
         }
 
         $tables = ['ai_tasks', 'ai_provider_accounts', 'ai_calls'];

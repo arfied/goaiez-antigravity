@@ -37,6 +37,21 @@ return new class extends Migration
                 $table->string('campaign')->nullable();
                 $table->timestamps();
             });
+        } else {
+            Schema::table('short_links', function (Blueprint $table): void {
+                if (! Schema::hasColumn('short_links', 'short_code')) {
+                    $table->string('short_code')->nullable()->unique();
+                }
+                if (! Schema::hasColumn('short_links', 'destination_url')) {
+                    $table->text('destination_url')->nullable();
+                }
+                if (! Schema::hasColumn('short_links', 'qr_svg')) {
+                    $table->text('qr_svg')->nullable();
+                }
+                if (! Schema::hasColumn('short_links', 'campaign')) {
+                    $table->string('campaign')->nullable();
+                }
+            });
         }
 
         if (! Schema::hasTable('link_clicks')) {

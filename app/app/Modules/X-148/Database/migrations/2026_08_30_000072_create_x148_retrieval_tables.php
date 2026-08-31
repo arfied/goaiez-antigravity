@@ -21,6 +21,10 @@ return new class extends Migration
                 $table->jsonb('embedding_vector')->nullable();
                 $table->timestamps();
             });
+        } elseif (! Schema::hasColumn('knowledge_chunks', 'document_id')) {
+            Schema::table('knowledge_chunks', function (Blueprint $table): void {
+                $table->unsignedBigInteger('document_id')->nullable()->index();
+            });
         }
 
         if (! Schema::hasTable('retrieval_cache')) {

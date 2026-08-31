@@ -37,18 +37,21 @@ return new class extends Migration
         Schema::create('knowledge_chunks', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('business_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('source_id')->constrained('knowledge_sources')->cascadeOnDelete();
-
-            $table->text('content');
+            $table->foreignId('source_id')->nullable()->constrained('knowledge_sources')->cascadeOnDelete();
+            $table->unsignedBigInteger('document_id')->nullable()->index();
+            $table->string('title')->nullable();
+            $table->text('chunk_text')->nullable();
+            $table->text('content')->nullable();
             $table->integer('token_count')->nullable();
 
             // 1536 dimensions per DATA-MODEL. Changing this later means
             // re-embedding every chunk, so it is fixed at the schema.
             $table->vector('embedding', 1536)->nullable();
+            $table->jsonb('embedding_vector')->nullable();
 
             $table->jsonb('metadata')->default('{}');
 
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
 
             // business_id first: the leftmost prefix serves "all chunks for this
             // business", which is the filter every similarity query must carry.

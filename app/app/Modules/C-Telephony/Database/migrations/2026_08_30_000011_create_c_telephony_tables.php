@@ -62,7 +62,18 @@ return new class extends Migration
             });
         }
 
-        $tables = ['carrier_roster', 'carrier_bindings', 'carrier_health', 'carrier_receipts'];
+        if (! Schema::hasTable('carrier_credentials')) {
+            Schema::create('carrier_credentials', function (Blueprint $table): void {
+                $table->id();
+                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
+                $table->string('carrier_name');
+                $table->text('api_key')->nullable();
+                $table->text('api_secret')->nullable();
+                $table->timestamps();
+            });
+        }
+
+        $tables = ['carrier_roster', 'carrier_bindings', 'carrier_health', 'carrier_receipts', 'carrier_credentials'];
 
         foreach ($tables as $table) {
             if (Schema::hasColumn($table, 'business_id')) {

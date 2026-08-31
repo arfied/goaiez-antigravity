@@ -20,6 +20,21 @@ return new class extends Migration
                 $table->string('status')->default('open');
                 $table->timestamps();
             });
+        } else {
+            Schema::table('operator_alerts', function (Blueprint $table): void {
+                if (! Schema::hasColumn('operator_alerts', 'business_id')) {
+                    $table->foreignId('business_id')->nullable()->constrained('businesses')->cascadeOnDelete();
+                }
+                if (! Schema::hasColumn('operator_alerts', 'severity')) {
+                    $table->string('severity')->default('warning');
+                }
+                if (! Schema::hasColumn('operator_alerts', 'action_verb_message')) {
+                    $table->text('action_verb_message')->nullable();
+                }
+                if (! Schema::hasColumn('operator_alerts', 'status')) {
+                    $table->string('status')->default('open');
+                }
+            });
         }
 
         if (! Schema::hasTable('ip_bans')) {

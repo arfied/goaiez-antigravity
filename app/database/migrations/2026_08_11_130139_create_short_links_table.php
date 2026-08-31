@@ -74,21 +74,21 @@ return new class extends Migration
             // unique only within a tenant would resolve to two rows the moment
             // two tenants minted the same one, and the resolve has no predicate
             // to disambiguate with.
-            $table->string('token', 32)->unique();
+            $table->string('token', 32)->nullable()->unique();
 
             // Where the click goes. ⚠️ Stored whole rather than assembled from
             // parts at redirect time: a link that was minted against one
             // destination must keep pointing there even if the thing that
             // generated it changes its mind, or a message already in somebody's
             // inbox silently starts meaning something else.
-            $table->text('target_url');
+            $table->text('target_url')->nullable();
 
             // Nullable on purpose — see the class docblock.
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
 
             // What this link was for, cast to a PHP backed enum. Never a
             // database enum (CLAUDE.md, enforced by a convention test).
-            $table->string('purpose');
+            $table->string('purpose')->nullable();
 
             // ⚠️ **A LINK IN A TEXT MESSAGE OUTLIVES THE REASON IT WAS SENT.**
             // An expiry is what stops a review invite from 2027 still resolving

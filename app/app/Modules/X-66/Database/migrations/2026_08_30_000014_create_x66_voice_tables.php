@@ -48,6 +48,21 @@ return new class extends Migration
                 $table->unsignedInteger('duration_seconds')->default(0);
                 $table->timestamps();
             });
+        } else {
+            Schema::table('voicemails', function (Blueprint $table): void {
+                if (! Schema::hasColumn('voicemails', 'call_session_id')) {
+                    $table->foreignId('call_session_id')->nullable()->constrained('call_sessions')->cascadeOnDelete();
+                }
+                if (! Schema::hasColumn('voicemails', 'audio_url')) {
+                    $table->string('audio_url')->nullable();
+                }
+                if (! Schema::hasColumn('voicemails', 'transcription')) {
+                    $table->text('transcription')->nullable();
+                }
+                if (! Schema::hasColumn('voicemails', 'duration_seconds')) {
+                    $table->unsignedInteger('duration_seconds')->default(0);
+                }
+            });
         }
 
         if (! Schema::hasTable('call_autopsies')) {

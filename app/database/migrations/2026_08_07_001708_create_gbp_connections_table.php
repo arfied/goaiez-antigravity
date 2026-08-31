@@ -60,11 +60,8 @@ return new class extends Migration
             // this by location alone, and a tenant-owned table without the
             // column has no second layer.
             $table->foreignId('business_id')->constrained()->cascadeOnDelete();
-
-            // Unique: one location reads its reviews through exactly one place.
-            // Two rows for one location is not a richer model, it is a question
-            // with two answers — and the reader would have to pick, silently.
-            $table->foreignId('location_id')->unique()->constrained()->cascadeOnDelete();
+            $table->string('account_id')->nullable();
+            $table->string('location_id')->nullable()->index();
 
             // Which implementation of `GbpClient` serves this location. Decision
             // 547: the owner settled 530 *neither* way — both providers stay

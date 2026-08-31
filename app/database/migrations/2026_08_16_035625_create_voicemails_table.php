@@ -45,7 +45,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('business_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('call_id')->unique()->constrained()->cascadeOnDelete();
+            $table->foreignId('call_id')->nullable()->constrained()->cascadeOnDelete();
 
             // Infobip's `files[].id` — verified 2026-08-16 against
             // https://www.infobip.com/docs/api/channels/voice/calls/files-and-recordings/get-call-recordings

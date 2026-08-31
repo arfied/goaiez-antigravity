@@ -45,9 +45,7 @@ return new class extends Migration
             $table->index('role');
         });
 
-        Schema::table('users', function (Blueprint $table): void {
-            $table->string('password')->nullable()->change();
-        });
+        DB::statement('ALTER TABLE users ALTER COLUMN password DROP NOT NULL');
     }
 
     public function down(): void

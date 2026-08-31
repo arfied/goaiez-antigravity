@@ -27,7 +27,7 @@ return new class extends Migration
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
                 $table->unsignedBigInteger('person_id')->index();
                 $table->string('topic')->index();
-                $table->decimal('confidence_score', 4, 3)->default(1.000); // TEST ANCHOR: confidence
+                $table->decimal('confidence_rate', 4, 3)->default(1.000); // TEST ANCHOR: confidence
                 $table->string('source')->default('inferred_web_interaction'); // TEST ANCHOR: source
                 $table->boolean('is_tenant_set')->default(false); // TEST ANCHOR: tenant-set never overwritten
                 $table->timestamps();

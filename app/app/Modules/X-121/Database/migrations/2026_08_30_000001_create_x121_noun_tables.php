@@ -46,6 +46,10 @@ return new class extends Migration
                 $table->string('status')->default('open');
                 $table->timestamps();
             });
+        } elseif (! Schema::hasColumn('conversations', 'person_id')) {
+            Schema::table('conversations', function (Blueprint $table): void {
+                $table->foreignId('person_id')->nullable()->constrained('people')->nullOnDelete();
+            });
         }
 
         if (! Schema::hasTable('messages')) {

@@ -27,7 +27,7 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
                 $table->foreignId('merchant_connection_id')->nullable()->constrained('merchant_connections')->nullOnDelete();
-                $table->string('gateway_charge_id')->index();
+                $table->string('gateway_charge_id')->nullable()->index();
                 $table->bigInteger('amount_cents');
                 $table->string('currency')->default('USD');
                 $table->string('payment_token');

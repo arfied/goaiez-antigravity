@@ -45,6 +45,21 @@ return new class extends Migration
                 $table->string('brand_type')->default('shared'); // shared, dedicated
                 $table->timestamps();
             });
+        } else {
+            Schema::table('brand_registrations', function (Blueprint $table): void {
+                if (! Schema::hasColumn('brand_registrations', 'brand_name')) {
+                    $table->string('brand_name')->nullable();
+                }
+                if (! Schema::hasColumn('brand_registrations', 'tcr_brand_id')) {
+                    $table->string('tcr_brand_id')->nullable();
+                }
+                if (! Schema::hasColumn('brand_registrations', 'registration_status')) {
+                    $table->string('registration_status')->default('pending');
+                }
+                if (! Schema::hasColumn('brand_registrations', 'brand_type')) {
+                    $table->string('brand_type')->default('shared');
+                }
+            });
         }
 
         if (! Schema::hasTable('number_parks')) {

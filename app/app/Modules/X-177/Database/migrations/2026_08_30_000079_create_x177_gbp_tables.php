@@ -20,6 +20,18 @@ return new class extends Migration
                 $table->string('profile_status')->default('active'); // active, suspended, verification_required
                 $table->timestamps();
             });
+        } else {
+            Schema::table('gbp_connections', function (Blueprint $table): void {
+                if (! Schema::hasColumn('gbp_connections', 'account_id')) {
+                    $table->string('account_id')->nullable();
+                }
+                if (! Schema::hasColumn('gbp_connections', 'location_id')) {
+                    $table->string('location_id')->nullable()->index();
+                }
+                if (! Schema::hasColumn('gbp_connections', 'profile_status')) {
+                    $table->string('profile_status')->default('active');
+                }
+            });
         }
 
         if (! Schema::hasTable('gbp_posts')) {

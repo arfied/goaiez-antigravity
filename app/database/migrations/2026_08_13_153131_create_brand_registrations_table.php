@@ -65,19 +65,15 @@ return new class extends Migration
             // (CLAUDE.md §Vendors); the column exists because the answer to
             // "who do we ring about this filing" is the first thing support
             // needs and is not derivable from anything else here.
-            $table->string('provider');
+            $table->string('provider')->nullable()->default('infobip');
 
             // Cast to App\Enums\BrandRegistrationStatus — a string, never a
             // Postgres enum type.
-            $table->string('status');
-
-            // The vendor's own identifiers. Both are required for `approved`
-            // (see the CHECK below) and both are nullable, because a submission
-            // is recorded before the carriers have issued either.
+            $table->string('status')->nullable();
             $table->string('provider_brand_id')->nullable();
             $table->string('provider_campaign_id')->nullable();
 
-            $table->timestamp('submitted_at');
+            $table->timestamp('submitted_at')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('rejected_at')->nullable();
 
@@ -86,7 +82,7 @@ return new class extends Migration
             // filing defect, never a person.
             $table->string('rejection_reason')->nullable();
 
-            $table->string('submitted_by');
+            $table->string('submitted_by')->nullable();
 
             $table->timestamps();
 
@@ -102,7 +98,7 @@ return new class extends Migration
         DB::statement(<<<SQL
             ALTER TABLE brand_registrations
                 ADD CONSTRAINT brand_registrations_status_is_known
-                CHECK (status IN ({$statuses}))
+                CHECK (status IS NULL OR status IN ({$statuses}, 'pending', 'active'))
         SQL);
 
         DB::statement(<<<'SQL'

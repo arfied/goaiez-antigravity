@@ -40,9 +40,9 @@ return new class extends Migration
             // Strings cast to backed enums in the model, never a database enum
             // (CLAUDE.md §Critical rules). Both churn: the model list moves when
             // a vendor retires a model, the task list grows with every feature.
-            $table->string('task');
-            $table->string('provider');
-            $table->string('model');
+            $table->string('task')->nullable();
+            $table->string('provider')->nullable();
+            $table->string('model')->nullable();
 
             $table->unsignedInteger('input_tokens')->default(0);
             $table->unsignedInteger('output_tokens')->default(0);
