@@ -124,7 +124,7 @@ final class TrialReminder extends Notification implements ClassifiesUnderCanSpam
                     .'account stays exactly as it is.');
 
         if ($this->guarantee !== null) {
-            // R39's promise, in R39's words, resolved from
+            // The written guarantee promise, in canonical words, resolved from
             // `legal.guarantee_sentence` by `LifecycleLadder` before it ever
             // reached this constructor. ⛔ It is never re-typed here — see
             // `OneSourceTest`, which enumerates every file permitted to spell it.

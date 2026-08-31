@@ -11,7 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 /**
  * A caller left a voicemail and the audio is stored.
  *
- * R7's owner-notification trigger: the recording is delivered to the business
+ * Voicemail owner-notification trigger: the recording is delivered to the business
  * owner by email and/or SMS, per the tenant's own setting.
  *
  * ⛔ **THIS FIRES ON THE AUDIO, NEVER ON THE TRANSCRIPT.** `CLAUDE.md`: *never

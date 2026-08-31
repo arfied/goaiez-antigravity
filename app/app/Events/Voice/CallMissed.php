@@ -13,9 +13,9 @@ use Illuminate\Foundation\Events\Dispatchable;
  * A caller reached a tenant's number and the business did not speak to them.
  *
  * **This is the event the product turns on**, and it is the one L5 binds to.
- * R7's chain: conditional forwarding → the tenant's Infobip number answers →
+ * The missed-call chain: conditional forwarding → the tenant's Infobip number answers →
  * this fires → the SM-001 text-back goes to the caller **from the number they
- * just dialled** (R8 puts voice, SMS and MMS on one number per tenant so it
+ * just dialled** (tenant dedicated number allocation puts voice, SMS and MMS on one number per tenant so it
  * can) → the conversation lane takes the resulting SMS thread, 24/7, per the
  * T69 law.
  *

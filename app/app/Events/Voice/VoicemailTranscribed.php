@@ -14,7 +14,7 @@ use Illuminate\Foundation\Events\Dispatchable;
  *
  * ⛔ **THIS EVENT IS AN ENRICHMENT AND MAY NEVER FIRE.** That is a supported
  * outcome, not a degraded one — `CLAUDE.md`: *never block on transcription; STT
- * failure still delivers the audio.* Everything R7 promises has already happened
+ * failure still delivers the audio.* Everything the voice workflow promises has already happened
  * by the time this arrives: the owner was notified when
  * {@see VoicemailRecorded} fired, and the caller was texted back when
  * {@see CallMissed} fired. **Nothing downstream may treat this as a

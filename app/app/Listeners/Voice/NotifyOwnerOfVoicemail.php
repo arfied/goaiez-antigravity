@@ -10,7 +10,7 @@ use App\Models\Call;
 use App\Support\Tenancy;
 
 /**
- * R7's owner notification — *"delivered to the owner by email and/or SMS"*.
+ * Voicemail owner notification — *"delivered to the owner by email and/or SMS"*.
  *
  * ⚠️ **IT DISPATCHES AND DOES NOTHING ELSE**, which is
  * {@see TextBackMissedCaller}'s design and its reason: the event fires from a

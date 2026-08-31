@@ -16,7 +16,7 @@ use RuntimeException;
  * `null` and never throws (2904); an unset retention period deletes nothing
  * (4942). Neither of those makes a false statement to a member of the public.
  * These two do: a review invite without L-3's footer is a marketing text with no
- * stated way to stop it, and a rung without R39's guarantee is a promise
+ * stated way to stop it, and a rung without the written guarantee is a promise
  * silently withdrawn from somebody who was told it applied.
  *
  * ⚠️ **THE MESSAGE NAMES THE KEY AND NEVER GUESSES THE WORDS.** It is read by

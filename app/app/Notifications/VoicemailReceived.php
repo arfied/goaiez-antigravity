@@ -13,7 +13,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * R7's owner notify — somebody rang and left a message.
+ * Voicemail owner notify — somebody rang and left a message.
  *
  * ## ⛔ NO NUMBER, NO TRANSCRIPT, NO RECORDING LINK
  *

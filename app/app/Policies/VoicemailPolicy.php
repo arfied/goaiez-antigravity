@@ -17,7 +17,7 @@ use App\Models\Voicemail;
  * quietly become the place people trust instead of the global scope and the RLS
  * policy beneath it.
  *
- * ⚠️ **STAFF MAY LISTEN, AND THAT IS THE FEATURE.** R7's whole promise is that
+ * ⚠️ **STAFF MAY LISTEN, AND THAT IS THE FEATURE.** The voicemail workflow's whole promise is that
  * somebody at the business hears what the caller wanted; a capability gate here
  * would mean the person who answers the phone is the one who cannot play the
  * message they missed.
