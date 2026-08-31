@@ -160,7 +160,7 @@ final class OwnerNav
             // wearing a route.
             OwnerNavItem::make('What we answer from', 'account.knowledge', OwnerNavItem::GROUP_MORE),
 
-            // T137 `R7`/`SL-9`. Under More on the same distinction as the two
+            // T137 voice forwarding / `SL-9`. Under More on the same distinction as the two
             // above: forwarding is set up once and then revisited only when the
             // phone system changes. Outcome language (`22`) — an owner is not
             // configuring "call routing", they are deciding what happens to

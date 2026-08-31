@@ -46,8 +46,8 @@ final class MessageSlots
     /**
      * Refuse any placeholder outside the permitted set.
      *
-     * ⚠️ **THE SOURCES ARE WHY THIS EXISTS AND NOT A HYPOTHETICAL.** R32 writes
-     * `{Business}` and `{Name}`, its R39 rider writes `[DATA]` and `[LINK]`, and
+     * ⚠️ **THE SOURCES ARE WHY THIS EXISTS AND NOT A HYPOTHETICAL.** Lifecycle templates write
+     * `{Business}` and `{Name}`, the guarantee rider writes `[DATA]` and `[LINK]`, and
      * LP-0 writes `{Link}`. Every one of those is delivered to a real person
      * exactly as typed, because nothing substitutes it — so the translation
      * happens in the catalogue and this is what proves it happened.
@@ -60,7 +60,7 @@ final class MessageSlots
     {
         // ⚠️ SQUARE BRACKETS ARE MATCHED TOO, BECAUSE THE SOURCES USE BOTH. A
         // check that only looked for braces would pass `[LINK]` straight through
-        // — the exact spelling the R39 rider ships, on the one rung that carries
+        // — the exact spelling the guarantee rider ships, on the one rung that carries
         // a written promise.
         if (preg_match_all('/\{[^}]*\}|\[[^\]]*\]/u', $body, $matches) === 0) {
             return;

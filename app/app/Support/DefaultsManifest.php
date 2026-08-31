@@ -580,8 +580,8 @@ final class DefaultsManifest
             ],
 
             /*
-             * Whether voice events are acted on at all — T176 P2, the voice half
-             * of R7.
+             * Whether voice events are acted on at all — T176 P2, the voice
+             * forwarding path.
              *
              * ⛔ **SEEDED `false`, AND WHAT IT WAITS FOR IS ENTIRELY EXTERNAL.**
              * T176 §7 item 3: *"Infobip — account steps: activate Voice/Calls API
@@ -831,7 +831,7 @@ final class DefaultsManifest
             /*
              * ⚠️ **THE CONTAINMENT FOR 2101, AND IT IS THE ONLY THING STANDING
              * BETWEEN ONE TENANT'S LIST AND EVERY OTHER TENANT'S DELIVERY.**
-             * T137 R8 sends attested lists over the GOAIEZ 10DLC brand from our
+             * Tenant number isolation sends attested lists over the GOAIEZ 10DLC brand from our
              * own number pool, so the complaint rate accrues to the *platform*
              * across every tenant at once — Lane A infrastructure carrying Lane
              * B consent. 2102: the trip is automatic, *"because a kill switch
@@ -1860,7 +1860,7 @@ final class DefaultsManifest
              * ⛔ **THE SENDING DOMAIN IS `goaieasy.net`, A SEPARATELY REGISTERED
              * DOMAIN, SUPERSEDING 2114's `mail.goaiez.com` — BOTH POSITIONS KEPT
              * AND DATED.** Decision 30's `reports.goaiez.com` moved to
-             * `mail.goaiez.com` on 2026-08-11 (2114, T137 R3), and on 2026-08-19
+             * `mail.goaiez.com` on 2026-08-11 (2114, email domain architecture), and on 2026-08-19
              * the ruling was that **a subdomain of `goaiez.com` is not separation
              * at all**: mailbox providers track reputation at the organizational
              * domain as well as the exact host, DMARC alignment is organizational
@@ -2399,15 +2399,15 @@ final class DefaultsManifest
              */
 
             /*
-             * R39's conditional performance guarantee, in the owner's own
+             * The conditional performance guarantee, in the owner's own
              * words.
              *
              * ⛔ **THE BYTES ARE THE PACK'S, VERIFIED AGAINST THE RAW ARTEFACTS
              * RATHER THAN AGAINST A SUMMARY** (`CLAUDE.md`'s standing rule).
              * Eight documents in the 2026-08-18 drop carry this sentence and all
              * eight agree, straight apostrophe included: `D1-OFFER-T186` §5
-             * layer 2 (*"R39 supersedes R31 here"*), `PIII-4-HOME-V2-T224`'s
-             * guarantee stack (*"R39 verbatim"*), `PIII-13-COMPARE-V2-T234`,
+             * layer 2 (*"guarantee supersedes trial here"*), `PIII-4-HOME-V2-T224`'s
+             * guarantee stack (*"guarantee verbatim"*), `PIII-13-COMPARE-V2-T234`,
              * `PIII-7`, `PIII-11`, `P1-PRELAUNCH-PACK-T208`, `D3-COPY-1-T188`
              * and `D3-COPY-2-T189`.
              *

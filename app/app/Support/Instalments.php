@@ -18,7 +18,7 @@ use InvalidArgumentException;
  * per-payment figures written as literals.
  *
  * ⚠️ **THE SPLIT COUNT IS PER OFFER AND NOT A CONSTANT (2092).** 2055 wrote
- * three payments; T137 R10's founder annual is two. The two founder rows prove
+ * three payments; the founder annual plan offer is two. The two founder rows prove
  * the rule between them — the add-on divides evenly and the base does not — so a
  * seeded pair would be right for one row and a cent wrong for the other.
  *

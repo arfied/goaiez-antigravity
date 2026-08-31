@@ -29,7 +29,7 @@ use InvalidArgumentException;
  * ## ⛔ WHY A KEY AND NOT A STRING
  *
  * Both of these are legal wording that changes without any code changing: L-3's
- * review-invite footer and R39's written guarantee. Baked into a template, a
+ * review-invite footer and the written guarantee. Baked into a template, a
  * counsel edit would have to find every copy — and the copies are seeded rows,
  * so "every copy" means a data migration nobody would run. **Composed from the
  * key at the moment of sending, a counsel swap updates every future send and

@@ -7,7 +7,7 @@ namespace App\Support;
 use App\Enums\BillingTerm;
 
 /**
- * The offers this application ships with — T176 R10's founder rates, and the one
+ * The offers this application ships with — founder pricing rates, and the one
  * file in which a founder figure may be written (decisions 2090, 2091, 2092).
  *
  * ## ⛔ WHY THIS IS NOT `DefaultsManifest`

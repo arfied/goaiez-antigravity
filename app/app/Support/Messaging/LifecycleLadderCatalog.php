@@ -95,7 +95,7 @@ use RuntimeException;
  *
  * ## ⚠️ THE GUARANTEE IS A SLOT, ON TWO RUNGS, AND ITS WORDS ARE NOT HERE
  *
- * R39's rider writes one wording and PIII-29 D7 writes another. Pasting either
+ * The guarantee rider writes one wording and PIII-29 D7 writes another. Pasting either
  * would make this file the third source of a promise that has to have one, so
  * both rungs carry `{guarantee}` and {@see LegalCanon} resolves it. Until
  * `legal.guarantee_sentence` is set, those two rungs refuse to compose —

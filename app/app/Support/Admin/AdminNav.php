@@ -82,7 +82,7 @@ final class AdminNav
             // operator cannot use to undo what it did.
             NavItem::make('Stop and start sending', 'admin.sending-controls', AdminAccess::GATE),
 
-            // T137 R3's sending meter (4442, built at 4600). Listed rather than
+            // Email sending allowance meter (4442, built at 4600). Listed rather than
             // reached from the screen above, because it answers a different
             // question about a different channel — that one holds the SMS kill
             // switches and this is the email account's allowance — and listed

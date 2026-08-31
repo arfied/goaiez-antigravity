@@ -39,7 +39,7 @@ use App\Services\Support\SupportMacros;
  * ## ⛔ S-3 HAS NO AUTHORED BODY AND IS BOUND, NOT PASTED
  *
  * T308 does not write S-3 out. It says *"the FM macro of record, verbatim
- * placement — the promise kept in one paste"*, which is a pointer to R39's
+ * placement — the promise kept in one paste"*, which is a pointer to the written
  * guarantee rather than a body. So S-3 carries
  * {@see SupportMacroSlot::GuaranteeSentence}, resolved from
  * `legal.guarantee_sentence` at the moment it is inserted — CC-5 §2's rule
