@@ -26,7 +26,7 @@ use Throwable;
  * ## Three refusals, and the first one is not small
  *
  * ⛔ **NO TENANT, NO THREAD — AND ON THE SHARED LANE A POOL NUMBER THERE IS NO
- * TENANT.** {@see TenantNumbers::tenantFor()} is R8's reverse lookup and answers
+ * TENANT.** {@see TenantNumbers::tenantFor()} is dedicated number reverse lookup and answers
  * `null` for a number nobody owns. `InboundMessages`' own docblock is the
  * authority for why that may never be papered over: *"a tenant inferred from
  * who last messaged this person is wrong the first time somebody is a customer
@@ -37,7 +37,7 @@ use Throwable;
  * nowhere.
  *
  * ⚠️ **THE CONSEQUENCE IS STATED RATHER THAN LEFT TO BE DISCOVERED FROM A FLAT
- * SCREEN**: until a tenant holds their own number under R8, their Inbox is
+ * SCREEN**: until a tenant holds their own number under dedicated number allocation, their Inbox is
  * empty. That is a provisioning gap, not a defect in this class, and it is the
  * same gap that under-reports the complaint rate two paragraphs further down
  * that file.

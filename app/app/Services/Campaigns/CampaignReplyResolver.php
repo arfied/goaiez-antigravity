@@ -34,7 +34,7 @@ use Illuminate\Support\Carbon;
  * never touched until a tenant is in hand, so there is no point at which this
  * class holds a member of the public's number outside a tenant boundary.
  *
- * ⛔ **A SHARED POOL NUMBER RESOLVES TO `null` AND MUST NEVER GUESS.** R8 makes
+ * ⛔ **A SHARED POOL NUMBER RESOLVES TO `null` AND MUST NEVER GUESS.** Dedicated number allocation makes
  * the map one-to-one for a tenant that holds its own number; a number nobody
  * owns answers `null`, and picking the tenant who most recently messaged this
  * person would hand one business's customer conversation to another. That is

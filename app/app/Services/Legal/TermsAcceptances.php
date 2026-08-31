@@ -29,7 +29,7 @@ use InvalidArgumentException;
  * counsel both expect this, and it is the one question a signup dispute opens
  * with: *what did you show them, and which version was it?*
  *
- * ⛔ **TENANT SIGNUP ONLY (R24).** The account holder accepts; an end customer
+ * ⛔ **TENANT SIGNUP ONLY (terms are not customer consent).** The account holder accepts; an end customer
  * never sees a terms flow anywhere. Nothing here takes a customer, the table has
  * no column that could name one, and `CaptureSurface::Signup` is refused by
  * `ConsentCapture` outright so this can never be mistaken for a basis to

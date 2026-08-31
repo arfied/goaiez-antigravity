@@ -12,7 +12,7 @@ use App\Models\LegalDocument;
  * The documents a business accepts to open an account, and the versions of them
  * that are live right now (T176 P22).
  *
- * ⛔ **TENANT SIGNUP ONLY — R24.** The owner ruled that terms are for tenants and
+ * ⛔ **TENANT SIGNUP ONLY — TERMS NOT CONSUMER CONSENT.** The owner ruled that terms are for tenants and
  * never for end customers: a reactivation recipient's sending basis is the
  * tenant's import attestation, a missed caller's is their own inbound contact,
  * and no consent screen, checkbox or terms link is ever injected into a

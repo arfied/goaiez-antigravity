@@ -93,7 +93,7 @@ final readonly class ConsentCapture
 
     /**
      * ⛔ THE CARD FORM, THE SIGNUP FORM AND THE OWNER-NOTIFY SCREEN ARE NOT
-     * CONSENT SURFACES (2980–2999; T176 P22, R24, 10540).
+     * CONSENT SURFACES (2980–2999; T176 P22, terms-not-consent policy, 10540).
      *
      * `CaptureSurface::Checkout` exists so the auto-renewal acknowledgment can
      * reach `ConsentProof`'s guards without a second copy of them,
@@ -107,7 +107,7 @@ final readonly class ConsentCapture
      * to be contacted on.
      *
      * ⚠️ **AND THE PERSON ON ALL THREE IS THE ACCOUNT HOLDER, NOT A
-     * CUSTOMER.** R24 is an owner ruling of record — terms are for tenants,
+     * CUSTOMER.** Terms are for tenants, not recipient marketing consent —
      * never for end customers — and 10540 extends the identical reasoning to
      * the owner's own consent to be texted about their own account: a
      * `consent_records` row carrying any of the three would name the tenant's

@@ -25,7 +25,7 @@ use App\Support\Tenancy;
  * ## Why this is a containment rather than a form validation
  *
  * ⛔ **2101 IS THE REASON, AND 3310 IS THE ANSWER TO IT.** 2101 records the
- * structural cost of R8 with nobody able to fix it: attested lists go out over
+ * structural cost of shared numbers with nobody able to fix it: attested lists go out over
  * the **GOAIEZ** 10DLC brand from **our own** number pool, so *"the tenant
  * carries the legal basis while the platform carries the carrier reputation"* —
  * across every tenant at once. A broadcast on the tenant's own brand and their
@@ -63,7 +63,7 @@ use App\Support\Tenancy;
  * with `OutreachPurpose::Marketing`, the registers and the recipient-local quiet
  * hours apply unchanged, and STOP, HELP and suppression are unconditional under
  * both bases (2099). 10DLC registration is carrier route approval and is **not**
- * recipient consent — T137's own R6 says so, and 2100 records it. What this adds
+ * recipient consent — carrier registration is distinct from recipient consent, and 2100 records it. What this adds
  * is *whose* infrastructure carries the traffic.
  */
 final class BroadcastPreconditions

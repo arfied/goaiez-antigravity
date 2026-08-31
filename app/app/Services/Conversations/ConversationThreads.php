@@ -30,13 +30,13 @@ use InvalidArgumentException;
  *
  * ✅ **A CUSTOMER'S OWN TEXT OPENS ONE** — {@see InboundThreading}, called from
  * the carrier webhook. That is the only automatic opener, and it is the honest
- * one: the tenant is a lookup on *our* number (R8), the contact is a lookup on
+ * one: the tenant is a lookup on *our* number (dedicated number allocation), the contact is a lookup on
  * *their* customer list, and the words are the customer's own.
  *
  * ⛔ **AN OUTBOUND SEND DOES NOT OPEN ONE, AND THAT IS A REFUSAL RATHER THAN AN
  * OVERSIGHT.** Threading every review invite and every missed-call text-back
  * would fill the Inbox with rows nobody can reply into — the reply needs an
- * inbound half that only an R8 number can produce — and would quietly
+ * inbound half that only dedicated number allocation can produce — and would quietly
  * reclassify a one-way compliance send as a conversation.
  * `MissedCallTextBack` is where that would go and it is left alone; recorded as
  * owed at decision 4118.
