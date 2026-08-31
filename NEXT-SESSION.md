@@ -76,3 +76,7 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
 7. **Twelve Journeys Suite Scope & Execution (12/12 Passed)**:
    - Fixed `tests/Journeys/JourneyHarness.php` to insert domain work records into canonical `work_orders` rather than the framework queue `jobs` table.
    - Retitled harness and test suite docblocks to accurately reflect that tests validate in-database cross-module state transitions, RLS tenancy, and consent checking while network transport drivers (Telnyx, LiveKit, Stripe) use in-process simulation.
+
+8. **Migration Ledger Reconciliation & Column Origin (`2026_08_31_000007`)**:
+   - The live production database (`goaiez_antig`) received its updated columns (`conversations.person_id`, `knowledge_chunks.document_id`, `ai_calls.task_id`, `gbp_connections.account_id`, `short_links.short_code`, `brand_registrations.brand_name`, `operator_alerts.business_id`, `voicemails.call_session_id`, `carrier_credentials`) directly prior to the ledger entry.
+   - Migration `2026_08_31_000007_reconcile_legacy_module_columns.php` was added with idempotent `Schema::hasColumn` / `Schema::hasTable` guards to re-apply all required column definitions through the standard migration pipeline in fresh and test environments, bringing migration ledger and physical schema into 100% parity. Live columns predate the ledger row.
