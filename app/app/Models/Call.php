@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
- * One inbound call to a tenant's number (T176 P2, R7).
+ * One inbound call to a tenant's number (T176 P2, voice call forwarding).
  *
  * ⛔ **INBOUND ONLY, AND THE ABSENCE OF A DIRECTION IS THE ENFORCEMENT.**
  * `29` §2.3 rule 13 was **overridden by an owner ruling on 2026-08-25** (9363),

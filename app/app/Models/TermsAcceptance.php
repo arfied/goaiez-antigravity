@@ -15,7 +15,7 @@ use LogicException;
 /**
  * The business's acceptance of one legal document, at signup (T176 P22).
  *
- * ⛔ **A TENANT'S RECORD, NEVER A CUSTOMER'S** (R24). The account holder accepted
+ * ⛔ **A TENANT'S RECORD, NEVER A CUSTOMER'S** (terms of service acceptance is not customer consent). The account holder accepted
  * GO AI EZ's Terms, SMS & Communications Terms and Privacy Policy in order to
  * open an account. An end customer never sees a terms flow anywhere, and this
  * table carries no column that could name one.

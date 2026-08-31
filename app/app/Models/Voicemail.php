@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
- * The message a caller left (T176 P2, R7).
+ * The message a caller left (T176 P2, voicemail recording).
  *
  * ⛔ **`audio_state` AND `transcript_state` ARE INDEPENDENT, AND READING ONE OFF
  * THE OTHER IS THE DEFECT THIS MODEL EXISTS TO PREVENT.** `CLAUDE.md`: *never
