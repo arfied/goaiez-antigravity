@@ -57,7 +57,7 @@ final class SmsComposer
             $consentState = match ($messageClass) {
                 'transactional' => 'transactional',
                 'opted_in', 'attested', 'customer_initiated' => $messageClass,
-                default => 'opted_in',
+                'marketing' => 'opted_in',
             };
 
             if ($this->consentService !== null) {
