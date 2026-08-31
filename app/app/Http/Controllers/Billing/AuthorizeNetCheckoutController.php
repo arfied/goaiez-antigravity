@@ -130,7 +130,7 @@ final class AuthorizeNetCheckoutController extends Controller
             // The price, formatted by the one formatter (512). ⚠️ Read rather
             // than written here, and **read through `PlanCharges`, which consults
             // the live offer first** — so this page quotes the founder rate while
-            // R10's window is open and the retail schedule after R18 closes it.
+            // the founder window is open and the retail schedule after the window closes it.
             //
             // ⛔ THIS COMMENT SAID THE OPPOSITE UNTIL 4522, AND IT SAID IT ON THE
             // PAGE CARRYING CALIFORNIA'S ARL DISCLOSURE. It read "decision 2090

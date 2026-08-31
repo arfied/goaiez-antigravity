@@ -32,7 +32,7 @@ use Illuminate\Contracts\View\View;
  * ⚠️ `{Business}` STANDS WHERE A BUSINESS NAME GOES, AND IS NOT A PLACEHOLDER
  * NOBODY FILLED IN. The disclosure names the business the consumer is giving
  * their number to; this page is not about one business, so the token stays
- * visible. It is T137 R3's own notation for the on-behalf-of identity
+ * visible. It is standard notation for the on-behalf-of identity
  * (`{Business} via GOAIEZ`), which is what the message header will read.
  *
  * ⛔ THERE IS NO POST HERE YET, AND THAT IS RECORDED RATHER THAN OVERLOOKED —

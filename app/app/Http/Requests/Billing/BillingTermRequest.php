@@ -45,7 +45,7 @@ final class BillingTermRequest extends FormRequest
      *
      * ⚠️ **A TENANT WHO GENUINELY HAS MORE THAN THIS IS A CONVERSATION, NOT A
      * FORM.** Nothing in this application provisions locations in bulk, the
-     * numbers pool assigns one number per tenant (T137 R8), and an enterprise
+     * numbers pool assigns one number per tenant (dedicated number allocation), and an enterprise
      * quote is not a checkout page. Refusing here sends that person to support
      * rather than to a card form quoting a figure nobody reviewed.
      */
