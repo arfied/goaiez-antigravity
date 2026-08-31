@@ -549,7 +549,7 @@ final class TenantNumbers
     /**
      * Give this tenant their number.
      *
-     * ⚠️ **R8 SAYS ONE NUMBER PER TENANT AND THIS ENFORCES IT RATHER THAN
+     * ⚠️ **DEDICATED NUMBER ALLOCATION SAYS ONE NUMBER PER TENANT AND THIS ENFORCES IT RATHER THAN
      * ASSUMING IT.** A second assignment is refused, because the whole reverse
      * lookup depends on the mapping being a function: two numbers for one tenant
      * is survivable, but the code that follows would have to pick one, and the
@@ -612,7 +612,7 @@ final class TenantNumbers
 
         if ($existing !== null) {
             throw new InvalidArgumentException(
-                "Business {$businessId} already has a number ({$existing->e164}). R8 is one number per "
+                "Business {$businessId} already has a number ({$existing->e164}). Dedicated number allocation is one number per "
                 .'tenant, and a second would make the number-to-tenant lookup ambiguous in the '
                 .'direction that matters — an inbound STOP would have two candidate customer lists. '
                 .'It would also be free: the extra-number SKU is seeded and nothing reads it (4820). '
@@ -653,7 +653,7 @@ final class TenantNumbers
             // number belongs to a tenant operationally while the *brand* stays
             // ours, so the complaint rate accrues to the platform. A `Tenant`
             // lane here would assert the tenant has their own TCR brand, which
-            // is the one thing R8 says they do not.
+            // is the one thing tenant number isolation says they do not.
             'lane' => MessagingLane::Platform,
             'purchased_at' => $number->purchased_at ?? now(),
         ]);
@@ -683,11 +683,11 @@ final class TenantNumbers
     /**
      * This tenant's number, in the form a person reads it off a screen.
      *
-     * ⚠️ **THE READ THAT MADE R8 VISIBLE TO THE PERSON IT BELONGS TO** (2911).
+     * ⚠️ **THE READ THAT MADE THE ASSIGNED NUMBER VISIBLE TO THE PERSON IT BELONGS TO** (2911).
      * `claimForTenant()` has had a caller since `TenantProvisioner` gained one,
      * so every tenant has held a number — and **no component or controller
      * anywhere referenced `PhoneNumber` or this class**, so the owner could not
-     * be told what it was. R7 asks them to forward their line *to that number*,
+     * be told what it was. Call forwarding setup asks them to forward their line *to that number*,
      * which is impossible to do and impossible to support if nobody can say what
      * it is.
      *
@@ -838,7 +838,7 @@ final class TenantNumbers
             // tell an operator why a signup failed. `Log` rather than
             // `AuditService`: `audit_log` is tenant-owned and the tenant is about
             // to stop existing.
-            Log::critical('A tenant could not be provisioned: the R8 number pool is exhausted.', [
+            Log::critical('A tenant could not be provisioned: the number pool is exhausted.', [
                 'business_id' => $businessId,
                 'assigned_numbers' => $assigned,
                 'actor' => self::ACTOR,
@@ -847,10 +847,10 @@ final class TenantNumbers
             throw NumberPoolExhausted::noFreeNumber($assigned);
         }
 
-        // The bootstrap case: nobody has ever loaded a pool, so R8 is not
+        // The bootstrap case: nobody has ever loaded a pool, so dedicated number allocation is not
         // running here. Said out loud rather than passed over — a tenant with no
         // number is a real degradation (their HELP is answered by the platform
-        // rather than by their own name, and R7's text-back has no number to come
+        // rather than by their own name, and the missed-call text-back has no number to come
         // from), and the thing that makes it survivable is that it is uniform
         // across every tenant rather than a surprise for one of them.
         Log::warning('A tenant was provisioned with no number: the platform has no assignable pool.', [
@@ -924,7 +924,7 @@ final class TenantNumbers
      */
     private function walkTo(PhoneNumber $number, NumberState $target, string $actor, ?string $reason = null): PhoneNumber
     {
-        $reason ??= 'Claimed from the platform pool at signup (T137 R8). The number is registered under '
+        $reason ??= 'Claimed from the platform pool at signup (dedicated number allocation). The number is registered under '
             .'the GOAIEZ 10DLC brand before it is assigned, so the registration wait happened at the '
             .'brand rather than at this number.';
 
