@@ -56,3 +56,7 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
    - All tests pass (14/14 assertions green).
    - `./vendor/bin/pint --test` passes 100%.
    - `php artisan doctor:selftest` verifies all 15 seals intact.
+
+7. **Twelve Journeys Suite Fully Green (12/12 Passed)**:
+   - Fixed `tests/Journeys/JourneyHarness.php` to insert domain work records into canonical `work_orders` rather than the framework queue `jobs` table.
+   - `php artisan test --group=journeys` passes cleanly: 12 passed, 44 assertions, 0 failures.
