@@ -268,11 +268,11 @@ final class LifecycleLadderCatalog
                 'email_insert' => null,
             ],
 
-            // ⛔ R39's RIDER, WITH THE PROMISE BOUND RATHER THAN PASTED. The
+            // ⛔ GUARANTEE RIDER, WITH THE PROMISE BOUND RATHER THAN PASTED. The
             // rider writes *"Your GOAIEZ trial ends [DATA]. Our promise in
             // writing: miss a 60-sec text-back and we fix it free + extend your
-            // trial. Keep it on: [LINK]"* — the middle sentence is R39's
-            // guarantee in R39's own words, and it is exactly the sentence
+            // trial. Keep it on: [LINK]"* — the middle sentence is the
+            // guarantee in counsel's own words, and it is exactly the sentence
             // `legal.guarantee_sentence` exists to hold once. R32's own
             // non-guarantee landing line — *"Your GOAIEZ trial ended and service
             // is paused. Everything you set up is saved. Restart in one

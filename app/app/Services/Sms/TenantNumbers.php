@@ -214,7 +214,7 @@ final class TenantNumbers
         // warm-up caps — phase 4, unbuilt — are the thing that would then read a
         // state saying they do not apply.
         //
-        // The `Registering` hop is passed through rather than waited on, and R8
+        // The `Registering` hop is passed through rather than waited on, and shared brand registration
         // is why: the pool number is bought *"under the GOAIEZ 10DLC
         // brand/campaign"*, so the registration this state models happened at the
         // brand before the number was ours to give away.
@@ -574,13 +574,13 @@ final class TenantNumbers
      * arrives first, or the two arrive together. `Subscriptions::recordAdditionalLocations()`
      * is the shape the charge takes — an operator records what was arranged, the
      * agreed rate is stored on the row and never re-read (3443) — and it is a
-     * slice, not a paragraph, because relaxing R8 also has to answer which number
-     * `forBusiness()`, `displayNumberFor()`, {@see NumberSelector} and R7's
-     * text-back pick. **That is a reversal of a T137 rule and it is the owner's,
+     * slice, not a paragraph, because relaxing the one-number rule also has to answer which number
+     * `forBusiness()`, `displayNumberFor()`, {@see NumberSelector} and the
+     * text-back pick. **That is a reversal of a foundational rule and it is the owner's,
      * not a lane's** (4823).
      *
      * ⚠️ **VOICE, SMS AND MMS RIDE THE SAME NUMBER AND THERE IS NO COLUMN FOR
-     * THAT.** R7 requires it: the missed-call text-back goes back to the caller
+     * THAT.** Voice architecture requires it: the missed-call text-back goes back to the caller
      * **from the number they just dialled**, which is only possible if the voice
      * number and the SMS number are one number. There is deliberately no
      * `supports_voice` flag — a flag implies the alternative is configurable,

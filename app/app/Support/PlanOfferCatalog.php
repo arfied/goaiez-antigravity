@@ -177,7 +177,7 @@ final class PlanOfferCatalog
                 'key' => self::FOUNDER,
                 'term' => BillingTerm::Annual,
 
-                // R10: "$499.99 annual in 2 payments". ⚠️ 2091's rider fires on
+                // Founder tier: "$499.99 annual in 2 payments". ⚠️ 2091's rider fires on
                 // this line: `$499.99` and `49999` were classified **superseded**
                 // in `RegistryTest` — forbidden even in tests, with the message
                 // "decision 146 corrected this to $497" — and they move to the
@@ -186,7 +186,7 @@ final class PlanOfferCatalog
                 // citing a correction that no longer describes anything.
                 'price_cents' => 49999,
 
-                // R10: "Extra location … $499.00 annual". The retail annual add-on
+                // Founder tier: "Extra location … $499.00 annual". The retail annual add-on
                 // to the cent (49900), and stated for the row above's reason.
                 'additional_location_cents' => 49900,
                 'price_currency' => 'USD',
