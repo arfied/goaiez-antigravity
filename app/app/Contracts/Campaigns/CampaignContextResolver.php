@@ -41,14 +41,14 @@ use App\Support\Identifier;
  * without touching the sender at all; everything after it happens inside one
  * tenant, under RLS, where `customers.phone` is already unique per business.
  *
- * ⛔ **THAT STEP IS ONLY SOUND UNDER R8 — ONE INFOBIP NUMBER PER TENANT.**
+ * ⛔ **THAT STEP IS ONLY SOUND UNDER TENANT NUMBER ISOLATION — ONE NUMBER PER TENANT.**
  * `phone_numbers.business_id` is nullable, and at the time of writing the
  * platform sends Lane A over a shared number with no tenant on the row, which is
  * what {@see InboundMessage}'s docblock means by *"no map from a number to a
  * business."* On a shared number this method **must return `null`** rather than
  * pick a tenant: a wrongly-attributed reply hands one business's customer
  * conversation to another business, which is the breach this codebase treats as
- * a Blocker rather than a bug. R8 makes the map one-to-one, and P20 is
+ * a Blocker rather than a bug. Tenant number allocation makes the map one-to-one, and P20 is
  * therefore ordered after the number model it depends on.
  */
 interface CampaignContextResolver

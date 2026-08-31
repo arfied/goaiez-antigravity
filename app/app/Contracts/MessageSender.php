@@ -62,7 +62,7 @@ use App\Services\Messaging\Outbound\SendOutcome;
  * in hand and 2087's "not started" was the stale record. So a real carrier is
  * reachable, and the only things standing between this method and a handset are
  * a driver binding and a kill switch. **What registration does not do is make a
- * send consented** (2100, R6's own clarification): 10DLC is carrier route
+ * send consented** (2100, brand registration does not equal recipient consent): 10DLC is carrier route
  * approval, complaint-rate physics apply to a registered campaign exactly as
  * they do to an unregistered one, and every guarantee numbered above stands
  * unaltered. ⛔ **It makes guarantee 4 more load-bearing rather than less**:
