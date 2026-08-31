@@ -248,7 +248,7 @@ final class LifecycleLadderCatalog
             LifecycleRung::TrialDaySeven->value => [
                 'subject' => "Halfway. Everything's still unlocked.",
                 'text' => null,
-                // PIII-29 D7 closes with the promise in writing; R39 makes that
+                // PIII-29 D7 closes with the promise in writing; the guarantee canon makes that
                 // sentence one sentence, in one place. The slot is what carries
                 // it here.
                 'email_insert' => '{guarantee}',

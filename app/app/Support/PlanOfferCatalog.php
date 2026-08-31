@@ -150,12 +150,12 @@ final class PlanOfferCatalog
                 'key' => self::FOUNDER,
                 'term' => BillingTerm::Monthly,
 
-                // R10: "plan $99.99/mo". ⚠️ The same figure as the *retail*
+                // Founder tier: "plan $99.99/mo". ⚠️ The same figure as the *retail*
                 // add-on rate, which is a coincidence of the owner's two lists
                 // rather than a derivation — do not read one from the other.
                 'price_cents' => 9999,
 
-                // R10: "Extra location $99.99/mo" — identical to retail's add-on
+                // Founder tier: "Extra location $99.99/mo" — identical to retail's add-on
                 // monthly. It is stated here anyway rather than left to fall
                 // through to the registry, because an offer that priced only its
                 // base plan would quote a founder base beside a retail add-on and

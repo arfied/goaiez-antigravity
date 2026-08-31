@@ -162,7 +162,7 @@ final class TenantNumbers
      * account whose inbound events resolve to nobody, silently, forever.
      *
      * **No free number, on a platform that has never assigned one** — nobody has
-     * loaded a pool, so R8 is not switched on here. Returns null, loudly in the
+     * loaded a pool, so dedicated number allocation is not switched on here. Returns null, loudly in the
      * log, and provisioning continues: refusing every signup because an
      * unconfigured feature is unconfigured is an outage, not a safeguard. This is
      * exactly {@see NumberSelector}'s two-nulls distinction, one layer up, and it
@@ -242,12 +242,12 @@ final class TenantNumbers
      * converted — whether it belongs to nobody (the pool), to somebody else, or
      * to this tenant as the number we gave them.
      *
-     * ## The swap, and why R8 survives it
+     * ## The swap, and why the one-number rule survives it
      *
-     * ⚠️ **THE TENANT'S POOL NUMBER IS RELEASED, NOT KEPT ALONGSIDE.** R8 is one
+     * ⚠️ **THE TENANT'S POOL NUMBER IS RELEASED, NOT KEPT ALONGSIDE.** Dedicated number allocation is one
      * number per tenant and {@see self::assign()} enforces it, because the whole
      * reverse lookup depends on the mapping being a function — two numbers for
-     * one tenant means `forBusiness()`, `displayNumberFor()` and the R7
+     * one tenant means `forBusiness()`, `displayNumberFor()` and the
      * text-back each pick one arbitrarily. Adopting an own number therefore goes
      * through {@see self::releaseFromTenant()}, which parks the old one for
      * `numbers.release_park_days` with STOP and HELP still answered at platform

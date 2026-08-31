@@ -3395,7 +3395,7 @@ final class DefaultsManifest
 
         /*
          * ⛔ **THE TWO SENTENCES COUNSEL OWNS — L-3's REVIEW-INVITE FOOTER AND
-         * R39's WRITTEN GUARANTEE** (decision 5251, CC-5 §3 and §2).
+         * THE WRITTEN GUARANTEE** (decision 5251, CC-5 §3 and §2).
          *
          * `mail.postal_address`'s shape (4019) and its reason, doubled: an
          * unstated legal sentence has no conservative value, only an invented

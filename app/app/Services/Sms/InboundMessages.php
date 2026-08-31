@@ -387,7 +387,7 @@ final class InboundMessages
      * ⚠️ **THE TENANT HAS TO BE RE-ENTERED, BECAUSE THIS PATH HAS NONE.** The
      * class docblock's first rule: an inbound STOP has no tenant, and everything
      * here follows from it. `InboundThreading` resolved one from *our* number
-     * (R8) and returned a thread carrying it; acting as that business is reading
+     * (dedicated number lookup) and returned a thread carrying it; acting as that business is reading
      * the thread's own answer rather than inferring a second one.
      *
      * ⚠️ **AND IT SWALLOWS ITS OWN FAILURE**, for `linkToCampaign()`'s reason
