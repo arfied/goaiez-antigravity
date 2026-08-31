@@ -82,8 +82,6 @@ final class SmsComposer
                     ];
                 }
             }
-                ];
-            }
 
             // 2. Segment calculation
             $calc = $this->calculateSegments($body);

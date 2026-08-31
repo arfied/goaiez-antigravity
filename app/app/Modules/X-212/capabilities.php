@@ -21,13 +21,13 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status: 
+    // status:
     'N-004' => 'refuses: an imported Person is UNPERMITTED; (P-203) — asserted on X-212\'s commit',
 
-    // status: 
+    // status:
     'N-038' => '500 imported jobs → ZERO outbound messages · a dry run writes NOTHING to live · one weak identifier is rejected, never merged · notes scanned to secure fields · and the EXPORT works too (P-203)',
 
-    // status: 
+    // status:
     'N-040' => '',
 
     // status: SPECCED

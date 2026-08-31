@@ -10,6 +10,7 @@ use App\Modules\CSms\Actions\SmsSendAction;
 use App\Modules\CSms\Domain\SmsComposer;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Business;
+use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -149,7 +150,7 @@ class CSmsTest extends TestCase
         $biz = Business::provision(['name' => 'SMS Consent Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $consentService = new \App\Modules\X204\Domain\ConsentService;
+        $consentService = new ConsentService;
         $composer = new SmsComposer($consentService);
 
         $res = $composer->send(
