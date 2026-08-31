@@ -272,12 +272,12 @@ return [
     | sandbox/production switch is in `config/services.php` because it selects
     | between two literals rather than supplying one.
     */
-    'authorize_net_api_login_id' => env('AUTHORIZE_NET_API_LOGIN_ID'),
+    'authorize_net_api_login_id' => env('AUTHORIZE_NET_API_LOGIN_ID', env('AUTHORIZENET_API_LOGIN_ID')),
 
-    'authorize_net_transaction_key' => env('AUTHORIZE_NET_TRANSACTION_KEY'),
+    'authorize_net_transaction_key' => env('AUTHORIZE_NET_TRANSACTION_KEY', env('AUTHORIZENET_TRANSACTION_KEY')),
 
-    'authorize_net_signature_key' => env('AUTHORIZE_NET_SIGNATURE_KEY'),
+    'authorize_net_signature_key' => env('AUTHORIZE_NET_SIGNATURE_KEY', env('AUTHORIZENET_SIGNATURE_KEY')),
 
-    'authorize_net_public_client_key' => env('AUTHORIZE_NET_PUBLIC_CLIENT_KEY'),
+    'authorize_net_public_client_key' => env('AUTHORIZE_NET_PUBLIC_CLIENT_KEY', env('AUTHORIZENET_PUBLIC_CLIENT_KEY')),
 
 ];

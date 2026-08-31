@@ -402,7 +402,7 @@ return [
     | satisfied by.
     */
     'authorizenet' => [
-        'environment' => env('AUTHORIZE_NET_ENVIRONMENT', 'sandbox'),
+        'environment' => env('AUTHORIZE_NET_ENVIRONMENT', env('AUTHORIZENET_SANDBOX', false) ? 'sandbox' : 'production'),
 
         // Fifteen seconds, matching Stripe's and for the same reason: a person
         // is waiting on this call with a signup half finished, and a slow
