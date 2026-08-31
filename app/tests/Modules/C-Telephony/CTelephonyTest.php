@@ -149,4 +149,22 @@ class CTelephonyTest extends TestCase
         $res = $this->sender->handle($biz->id, 'ltv-thread-1', '+15125550155', 'Priority message', false, 'twilio');
         $this->assertEquals('sent', $res['status']);
     }
+
+    public function test_carrier_credential_absent_refuses_before_request(): void
+    {
+        $biz = Business::provision(['name' => 'No Credential Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->sender->handle(
+            businessId: $biz->id,
+            threadKey: 'no-cred-thread',
+            toPhone: '+15125550177',
+            body: 'Test dispatch',
+            isRcs: false,
+            preferredCarrier: 'plivo'
+        );
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('CREDENTIAL_ABSENT', $res['reason']);
+    }
 }
