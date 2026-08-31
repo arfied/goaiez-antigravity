@@ -296,7 +296,7 @@ final class TenantNumbers
         }
 
         // The pool number they are holding goes back, parked. Done before the
-        // insert so that R8's one-number-per-tenant is never briefly false.
+        // insert so that the one-number-per-tenant rule is never briefly false.
         $this->releaseFromTenant(
             $businessId,
             $actor,
@@ -584,7 +584,7 @@ final class TenantNumbers
      * **from the number they just dialled**, which is only possible if the voice
      * number and the SMS number are one number. There is deliberately no
      * `supports_voice` flag — a flag implies the alternative is configurable,
-     * and a tenant whose voice number differs from their SMS number breaks R7
+     * and a tenant whose voice number differs from their SMS number breaks the missed call workflow
      * silently rather than loudly.
      *
      * @param  string  $e164  The number, from the platform pool.
