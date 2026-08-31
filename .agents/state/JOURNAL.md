@@ -419,3 +419,4 @@
 - `2026-08-29T16:43:19` journey J10 -> green
 - `2026-08-29T16:43:19` journey J11 -> green
 - `2026-08-29T16:43:19` journey J12 -> green
+- `2026-08-31T04:18:42` UNRESOLVED schema X-121 - 12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per §150.4 and §259
