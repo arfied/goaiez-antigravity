@@ -28296,7 +28296,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G20-08 | Omni-Review Hub UI | ENH | C-Reviews | named in the header — Google via Zernio · Yelp · Facebook · BBB |
 | G20-09 | Reputation Engine | ENH | C-Reviews | the owner's original ask, now the header |
 | G20-10 | Reputation Targeting | ENH | X-105 | named in the header — under 3.5★ is a distress signal (P-146) |
-| G20-11 | Review Gating | ENH | C-Reviews | ⭐⭐ **P-110 supersedes the T89/R45 gate as the MECHANISM: every request is triaged, low ratings become a ticket with an SLA, high ratings are asked publicly.** The register's wording is the old gate's name. ⚠️ **`keep-gate` is still an open reverse word — the owner's, not the audit's** |
+| G20-11 | Review Gating | ENH | C-Reviews | ⭐⭐ **P-110 supersedes the legacy review gate as the MECHANISM: every request is triaged, low ratings become a ticket with an SLA, high ratings are asked publicly.** The register's wording is the old gate's name. ⚠️ **`keep-gate` is still an open reverse word — the owner's, not the audit's** |
 | G20-12 | Review Gating/Triage | ENH | C-Reviews | = Review Gating; one spec, under P-110 |
 | G20-13 | Review Reactivation | ENH | C-Reviews | named in the header; the send is Marketing class and waits for the window |
 | G20-14 | Review Response AI | ENH | C-Reviews | ⛔ anything ambiguous is DRAFTED to the inbox, never published — sarcasm read as praise is a brand disaster (§149.1) |

@@ -67,5 +67,5 @@ return [
     'G20-10' => 'named in the header — under 3.5★ is a distress signal (P-146)',
 
     // status: SPECCED
-    'G15-15' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ webinar watch time, NOT staff attendance — R184 fences the SUBJECT; doctor asserts no staff-directed use',
+    'G15-15' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ webinar watch time, NOT staff attendance — attendance policy fences the SUBJECT; doctor asserts no staff-directed use',
 ];
