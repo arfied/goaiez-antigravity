@@ -512,13 +512,11 @@ final class AuthorizeNetApi
      */
     private function assertIntervalIsExpressible(int $length, string $unit): void
     {
-        $withinRange = match ($unit) {
-            self::INTERVAL_DAYS => $length >= 7 && $length <= 365,
-            self::INTERVAL_MONTHS => $length >= 1 && $length <= 12,
-            default => null,
-        };
-
-        if ($withinRange === null) {
+        if ($unit === self::INTERVAL_DAYS) {
+            $withinRange = $length >= 7 && $length <= 365;
+        } elseif ($unit === self::INTERVAL_MONTHS) {
+            $withinRange = $length >= 1 && $length <= 12;
+        } else {
             throw new RuntimeException(
                 "Authorize.Net expresses a recurring interval in days or months, not [{$unit}]."
             );

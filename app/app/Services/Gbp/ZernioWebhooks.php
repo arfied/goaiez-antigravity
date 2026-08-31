@@ -85,12 +85,17 @@ final class ZernioWebhooks
             return 'duplicate';
         }
 
-        return match ($event) {
-            'review.new', 'review.updated' => $this->handleReview($payload),
-            'account.disconnected' => $this->handleAccountDisconnected($payload),
-            'account.connected' => $this->handleAccountConnected($payload),
-            default => 'ignored',
-        };
+        if ($event === 'review.new' || $event === 'review.updated') {
+            return $this->handleReview($payload);
+        }
+        if ($event === 'account.disconnected') {
+            return $this->handleAccountDisconnected($payload);
+        }
+        if ($event === 'account.connected') {
+            return $this->handleAccountConnected($payload);
+        }
+
+        return 'ignored';
     }
 
     /**

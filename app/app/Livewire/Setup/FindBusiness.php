@@ -257,12 +257,13 @@ final class FindBusiness extends Component
      */
     private function explainUnresolved(string $reason): string
     {
-        return match ($reason) {
+        $messages = [
             'nothing_found' => 'We could not find a business at that link. Double-check it is the right one.',
             'no_pattern_matched' => 'We could not tell which business that link points to.',
             'budget_exhausted' => "We've used today's lookups. Try again tomorrow.",
             'search_failed' => 'We could not reach Google just now. Try again in a minute.',
-            default => 'We could not use that link.',
-        };
+        ];
+
+        return $messages[$reason] ?? 'We could not use that link.';
     }
 }

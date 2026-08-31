@@ -258,11 +258,13 @@ final class SnsMessageVerifier implements VerifiesWebhookSenders
         // ⚠️ Before the certificate is fetched, so a junk version costs no
         // outbound request. Forging SHA-1 against a 2048-bit RSA key remains
         // impractical — this is closed as a weakness rather than an exploit.
-        $algorithm = match ($message['SignatureVersion'] ?? null) {
-            '1' => OPENSSL_ALGO_SHA1,
-            '2' => OPENSSL_ALGO_SHA256,
-            default => null,
-        };
+        $sigVersion = $message['SignatureVersion'] ?? null;
+        $algorithm = null;
+        if ($sigVersion === '1') {
+            $algorithm = OPENSSL_ALGO_SHA1;
+        } elseif ($sigVersion === '2') {
+            $algorithm = OPENSSL_ALGO_SHA256;
+        }
 
         if ($algorithm === null) {
             return WebhookVerification::Refused;
@@ -472,16 +474,12 @@ final class SnsMessageVerifier implements VerifiesWebhookSenders
     {
         $type = $message['Type'] ?? null;
 
-        $fields = match ($type) {
-            'Notification' => ['Message', 'MessageId', 'Subject', 'Timestamp', 'TopicArn', 'Type'],
-            'SubscriptionConfirmation', 'UnsubscribeConfirmation' => [
-                'Message', 'MessageId', 'SubscribeURL', 'Timestamp', 'Token', 'TopicArn', 'Type',
-            ],
-            // ⚠️ AN UNKNOWN TYPE IS NOT SIGNED-OVER-A-GUESS. Inventing a field
-            // list for a message type AWS has not documented here would produce
-            // a signature that never matches, reported as a forgery.
-            default => null,
-        };
+        $fields = null;
+        if ($type === 'Notification') {
+            $fields = ['Message', 'MessageId', 'Subject', 'Timestamp', 'TopicArn', 'Type'];
+        } elseif ($type === 'SubscriptionConfirmation' || $type === 'UnsubscribeConfirmation') {
+            $fields = ['Message', 'MessageId', 'SubscribeURL', 'Timestamp', 'Token', 'TopicArn', 'Type'];
+        }
 
         if ($fields === null) {
             return null;

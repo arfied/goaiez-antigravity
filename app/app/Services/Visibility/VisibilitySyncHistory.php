@@ -164,7 +164,8 @@ final class VisibilitySyncHistory
             // reason nobody has written yet, and it fails to "we have not read
             // it", never to "Google had nothing".
             AutomationRunStatus::HandedOff => VisibilityAbsenceReason::NeverRead,
-            default => $this->recordedSearchReason($run),
+            AutomationRunStatus::Running,
+            AutomationRunStatus::Succeeded => $this->recordedSearchReason($run),
         };
     }
 
@@ -242,7 +243,8 @@ final class VisibilitySyncHistory
             // `no_place_id`; the second is answered by `compare()`'s first step
             // and the first cannot be true here. Never "nobody is nearby".
             AutomationRunStatus::HandedOff => CompetitorAbsenceReason::NeverChecked,
-            default => $this->recordedCompetitorReason($run),
+            AutomationRunStatus::Running,
+            AutomationRunStatus::Succeeded => $this->recordedCompetitorReason($run),
         };
     }
 
@@ -290,7 +292,8 @@ final class VisibilitySyncHistory
             // reached the vendor at all.
             AutomationRunStatus::HandedOff => $this->recordedReviewReason($run)
                 ?? ReviewSyncAbsenceReason::LastReadFailed,
-            default => $this->recordedReviewReason($run),
+            AutomationRunStatus::Running,
+            AutomationRunStatus::Succeeded => $this->recordedReviewReason($run),
         };
     }
 

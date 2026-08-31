@@ -541,13 +541,20 @@ final class FirstWeekPath
      */
     private function runStep(FirstWeekRun $run, Business $business, int $step): array
     {
-        return match ($step) {
-            0 => $this->runDay0($run, $business),
-            1 => $this->runDay1($run, $business),
-            2 => $this->runDay5($run, $business),
-            3 => $this->runDay7($run, $business),
-            default => ['sent' => false, 'reason' => 'unknown_step'],
-        };
+        if ($step === 0) {
+            return $this->runDay0($run, $business);
+        }
+        if ($step === 1) {
+            return $this->runDay1($run, $business);
+        }
+        if ($step === 2) {
+            return $this->runDay5($run, $business);
+        }
+        if ($step === 3) {
+            return $this->runDay7($run, $business);
+        }
+
+        return ['sent' => false, 'reason' => 'unknown_step'];
     }
 
     /**

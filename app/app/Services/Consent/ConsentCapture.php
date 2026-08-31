@@ -140,7 +140,7 @@ final readonly class ConsentCapture
                 match ($this->captureSurface) {
                     CaptureSurface::Checkout => 'card form',
                     CaptureSurface::Signup => 'signup form',
-                    default => 'owner-notify screen',
+                    CaptureSurface::OwnerNotify => 'owner-notify screen',
                 },
                 $this->captureSurface->name,
             ),

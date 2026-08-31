@@ -251,12 +251,15 @@ final class CustomerProfile extends Component
             'reminderDate' => 'date',
         ]);
 
-        $dueAt = match ($this->reminderWhen) {
-            'today' => CarbonImmutable::now()->endOfDay(),
-            'tomorrow' => CarbonImmutable::tomorrow()->endOfDay(),
-            'next_week' => CarbonImmutable::now()->addWeek()->endOfDay(),
-            default => CarbonImmutable::parse((string) $this->reminderDate)->endOfDay(),
-        };
+        if ($this->reminderWhen === 'today') {
+            $dueAt = CarbonImmutable::now()->endOfDay();
+        } elseif ($this->reminderWhen === 'tomorrow') {
+            $dueAt = CarbonImmutable::tomorrow()->endOfDay();
+        } elseif ($this->reminderWhen === 'next_week') {
+            $dueAt = CarbonImmutable::now()->addWeek()->endOfDay();
+        } else {
+            $dueAt = CarbonImmutable::parse((string) $this->reminderDate)->endOfDay();
+        }
 
         try {
             $tasks->remind(

@@ -877,32 +877,10 @@ final class Locations extends Component
         return match ($tier) {
             ActuationTier::T1 => 'We can make changes on your website directly. Everything we change '
                 .'is written down, and you can undo any of it.',
-            // ⛔ **THIS ARM WAS THE ONE FALSE SENTENCE ON THIS SCREEN** (6043).
-            // It read *"We can improve your website through the code that is
-            // already on it. Search engines pick those changes up the next time
-            // they visit"* — three claims, all wrong: *"the next time they
-            // visit"* is first-wave language for a mechanism doc `41` Part 1's
-            // T3 row calls *"second-wave indexed"*; *"search engines"* plural
-            // promises Bing, Yandex, Seznam, Naver and Yep something none of them
-            // renders; and *"the code that is already on it"* is the collector,
-            // which by §2.11.5 conflict 4 does not inject at all.
-            //
-            // ⛔ **AND THE COMMENT HERE ASSERTED THE COMPLIANCE THE LINE BELOW IT
-            // LACKED** — *"second-wave indexing is said out loud rather than
-            // implied"* — which is 314–316 at its most typical and is why no task
-            // review caught it. So this one asserts nothing: what the sentence
-            // says is pinned by `tests/Feature/Actuation/T3OwnerCopyTest.php`,
-            // and the words that must stay absent are pinned there too (5844's
-            // method), because a rewrite that reintroduced the promise would pass
-            // every other test on this screen.
-            //
-            // ⚠️ **RULE 47 IS WHY THIS DOES NOT EXPLAIN ITSELF INSTEAD.** The fix
-            // for a false claim about our machinery is not a true one — it is to
-            // name what the owner gets and what they can do about the limit.
             ActuationTier::T3 => 'We can add your business details, page descriptions and common '
                 .'questions to your website. Some search engines are slow to show them and some '
                 .'never will, so we will also tell you exactly what to change and where.',
-            default => 'We cannot change your website for you. We will tell you exactly what to '
+            ActuationTier::T0, ActuationTier::T2, ActuationTier::T4 => 'We cannot change your website for you. We will tell you exactly what to '
                 .'change and where, so you or whoever looks after it can do it.',
         };
     }

@@ -584,11 +584,14 @@ final class PlatformHealthChecks
      */
     private static function processPhrase(string $process): string
     {
-        return match ($process) {
-            'scheduler' => 'the scheduler has never',
-            'queue' => 'no queue worker has ever',
-            default => "the {$process} process has never",
-        };
+        if ($process === 'scheduler') {
+            return 'the scheduler has never';
+        }
+        if ($process === 'queue') {
+            return 'no queue worker has ever';
+        }
+
+        return "the {$process} process has never";
     }
 
     /**
@@ -983,7 +986,12 @@ final class PlatformHealthChecks
         return match ($signal) {
             PlatformHealthSignal::CredentialAbsent => "The credential {$key} was needed {$reads} in the last {$minutes} minutes and this platform has none. What asked for it was refused and is not retried. Paste it in Ops, Platform, Credentials.",
             PlatformHealthSignal::CredentialUnreadable => "The stored credential {$key} was needed {$reads} in the last {$minutes} minutes and this install cannot decrypt it — what a changed APP_KEY does to every stored credential. Ops, Platform, Credentials now shows it. Put the old APP_KEY back, or set the key again.",
-            default => "The credential {$key} could not be used {$reads} in the last {$minutes} minutes.",
+            PlatformHealthSignal::Heartbeat,
+            PlatformHealthSignal::WebhookSignature,
+            PlatformHealthSignal::VendorCall,
+            PlatformHealthSignal::ScheduledRun,
+            PlatformHealthSignal::ScheduledRunFailed,
+            PlatformHealthSignal::WebhookKeyUnavailable => "The credential {$key} could not be used {$reads} in the last {$minutes} minutes.",
         };
     }
 

@@ -194,7 +194,9 @@ final readonly class ChangeEvidence
                 .$this->percent().'% higher in '.$windows.'.',
             SiteChangeVerdict::Regressed => 'Visits to this page were about '
                 .$this->percent().'% lower in '.$windows.'.',
-            default => 'Visits to this page held about steady: roughly the same each day in '
+            SiteChangeVerdict::Neutral,
+            SiteChangeVerdict::Pending,
+            SiteChangeVerdict::RolledBack => 'Visits to this page held about steady: roughly the same each day in '
                 .$windows.'.',
         };
     }

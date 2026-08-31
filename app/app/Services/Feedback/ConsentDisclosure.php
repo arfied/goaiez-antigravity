@@ -194,11 +194,14 @@ final class ConsentDisclosure
      */
     public static function textForVersion(string $version, string $businessName): ?string
     {
-        return match ($version) {
-            self::SMS_VERSION => self::smsText($businessName),
-            self::EMAIL_VERSION => self::emailText($businessName),
-            default => null,
-        };
+        if ($version === self::SMS_VERSION) {
+            return self::smsText($businessName);
+        }
+        if ($version === self::EMAIL_VERSION) {
+            return self::emailText($businessName);
+        }
+
+        return null;
     }
 
     /**

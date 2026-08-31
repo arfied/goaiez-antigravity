@@ -114,9 +114,10 @@ final class SyncCompetitorSignalsJob extends AutopilotJob
      */
     private static function lookupFailure(PlacesRequestFailed $failure): CompetitorAbsenceReason
     {
-        return match ($failure->reason) {
-            'unreachable', 'server_error' => CompetitorAbsenceReason::LookupUnanswered,
-            default => CompetitorAbsenceReason::LookupRefused,
-        };
+        if ($failure->reason === 'unreachable' || $failure->reason === 'server_error') {
+            return CompetitorAbsenceReason::LookupUnanswered;
+        }
+
+        return CompetitorAbsenceReason::LookupRefused;
     }
 }

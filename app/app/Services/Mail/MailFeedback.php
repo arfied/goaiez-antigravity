@@ -152,16 +152,21 @@ final class MailFeedback
         // that appears to work and suppresses nobody.
         $type = $event['eventType'] ?? $event['notificationType'] ?? null;
 
-        return match ($type) {
-            'Bounce' => $this->applyBounce($event),
-            'Complaint' => $this->applyComplaint($event),
-            // ⛔ **SUPPRESSES NOBODY AND IS NOT OPTIONAL** — it is the
-            // denominator of the rate the automatic trip reads. See the class
-            // docblock: wiring the complaint arm without this one produces a
-            // complaint rate that is permanently zero, which is 2496 rebuilt.
-            'Delivery' => $this->applyDelivery($event),
-            default => 0,
-        };
+        if ($type === 'Bounce') {
+            return $this->applyBounce($event);
+        }
+        if ($type === 'Complaint') {
+            return $this->applyComplaint($event);
+        }
+        // ⛔ **SUPPRESSES NOBODY AND IS NOT OPTIONAL** — it is the
+        // denominator of the rate the automatic trip reads. See the class
+        // docblock: wiring the complaint arm without this one produces a
+        // complaint rate that is permanently zero, which is 2496 rebuilt.
+        if ($type === 'Delivery') {
+            return $this->applyDelivery($event);
+        }
+
+        return 0;
     }
 
     /**

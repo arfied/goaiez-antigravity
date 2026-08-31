@@ -662,13 +662,14 @@ final class AuthorizeNetWebhooks implements GatewayWebhookReceiver, VerifiesWebh
      */
     private function statusFromEventType(string $type): ?AuthorizeNetSubscriptionStatus
     {
-        return match ($type) {
+        $statuses = [
             'net.authorize.customer.subscription.suspended' => AuthorizeNetSubscriptionStatus::Suspended,
             'net.authorize.customer.subscription.cancelled' => AuthorizeNetSubscriptionStatus::Canceled,
             'net.authorize.customer.subscription.terminated' => AuthorizeNetSubscriptionStatus::Terminated,
             'net.authorize.customer.subscription.expired' => AuthorizeNetSubscriptionStatus::Expired,
-            default => null,
-        };
+        ];
+
+        return $statuses[$type] ?? null;
     }
 
     /**

@@ -104,10 +104,11 @@ final class WordPressCredentials
             // this host's cooldown"* arrives here and must not be reported as
             // *"we could not find WordPress at that address"* — 231's confident
             // mismatch, said to the person who can least check it.
-            return $this->refuse($location, $this->brakeRefusal($e) ?? match ($e->reason) {
-                'unreadable:no_core_endpoints' => WordPressConnectionRefusal::NoCoreEndpoints,
-                default => WordPressConnectionRefusal::NoRestApi,
-            }, $actor);
+            $refusal = ($e->reason === 'unreadable:no_core_endpoints')
+                ? WordPressConnectionRefusal::NoCoreEndpoints
+                : WordPressConnectionRefusal::NoRestApi;
+
+            return $this->refuse($location, $this->brakeRefusal($e) ?? $refusal, $actor);
         }
 
         if (! str_starts_with($restRoot, 'https://')) {
@@ -406,11 +407,14 @@ final class WordPressCredentials
             // and `Busy` says *"your website asked us to slow down"*. **The
             // corrected neighbour is what made the uncorrected mapping read as
             // considered**, which is why the sentence is kept above the fix.
-            return $this->brakeRefusal($e) ?? match ($e->reason) {
-                'unauthenticated', 'forbidden' => WordPressConnectionRefusal::NotAuthenticated,
-                'unreachable', 'unavailable' => WordPressConnectionRefusal::NoRestApi,
-                default => WordPressConnectionRefusal::Unreadable,
-            };
+            $refusalMap = [
+                'unauthenticated' => WordPressConnectionRefusal::NotAuthenticated,
+                'forbidden' => WordPressConnectionRefusal::NotAuthenticated,
+                'unreachable' => WordPressConnectionRefusal::NoRestApi,
+                'unavailable' => WordPressConnectionRefusal::NoRestApi,
+            ];
+
+            return $this->brakeRefusal($e) ?? ($refusalMap[$e->reason] ?? WordPressConnectionRefusal::Unreadable);
         }
 
         return [

@@ -77,11 +77,13 @@ final class SupportSessionSummary extends Notification implements ClassifiesUnde
         // ⚠️ Singular and plural spelled out rather than "change(s)". `22`'s
         // copy rules are not decorative here — this email exists to be believed,
         // and the register it is written in is part of that.
-        $message->line(match ($this->changes) {
-            0 => 'Nothing was changed.',
-            1 => 'One thing was changed.',
-            default => "{$this->changes} things were changed.",
-        });
+        $changeText = 'Nothing was changed.';
+        if ($this->changes === 1) {
+            $changeText = 'One thing was changed.';
+        } elseif ($this->changes > 1) {
+            $changeText = "{$this->changes} things were changed.";
+        }
+        $message->line($changeText);
 
         if ($this->ticketRef !== null) {
             $message->line("This was about: {$this->ticketRef}");

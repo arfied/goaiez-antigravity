@@ -186,18 +186,16 @@ final class SyncSearchConsoleJob extends AutopilotJob
 
     protected function handoff(): array
     {
+        $actions = [
+            'not_connected' => 'connect_search_console',
+            'connection_revoked' => 'reconnect_search_console',
+            'no_property_chosen' => 'choose_search_console_property',
+        ];
+
         return [
             'outcome' => 'handoff',
             'reason' => $this->handoffReason,
-            // Outcome language, and the only thing here a person can act on.
-            // Three of the four reasons are the owner's to fix and the fourth
-            // (`location_missing`) is ours.
-            'owner_action' => match ($this->handoffReason) {
-                'not_connected' => 'connect_search_console',
-                'connection_revoked' => 'reconnect_search_console',
-                'no_property_chosen' => 'choose_search_console_property',
-                default => 'none',
-            },
+            'owner_action' => $actions[$this->handoffReason] ?? 'none',
         ];
     }
 

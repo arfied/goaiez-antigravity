@@ -140,15 +140,16 @@ final readonly class OwnerSiteChange
     {
         $sentences = [];
 
+        $messages = [
+            'meta_description' => 'We could not set the short summary that shows under this page in Google. '
+                .'Your website does not give us a way to change it — you can set it yourself where you edit the page.',
+            'title' => 'We could not set this page\'s title. You can set it yourself where you edit the page.',
+            'content' => 'We could not set the words on this page. You can write them yourself where you edit the page.',
+        ];
+
         foreach (array_keys($withheld) as $field) {
-            $sentences[] = match ($field) {
-                'meta_description' => 'We could not set the short summary that shows under this page in Google. '
-                    .'Your website does not give us a way to change it — you can set it yourself where you edit the page.',
-                'title' => 'We could not set this page\'s title. You can set it yourself where you edit the page.',
-                'content' => 'We could not set the words on this page. You can write them yourself where you edit the page.',
-                default => 'We could not set everything we wanted to on this page. '
-                    .'Ask us and we will tell you exactly what is missing.',
-            };
+            $sentences[] = $messages[$field] ?? 'We could not set everything we wanted to on this page. '
+                .'Ask us and we will tell you exactly what is missing.';
         }
 
         return $sentences;

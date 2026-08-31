@@ -52,11 +52,13 @@ final class FollowUps extends Component
     {
         abort_if(Tenancy::id() === null, 403);
 
-        $until = match ($period) {
-            'day' => CarbonImmutable::now()->addDay(),
-            'week' => CarbonImmutable::now()->addWeek(),
-            default => abort(422),
-        };
+        if ($period === 'day') {
+            $until = CarbonImmutable::now()->addDay();
+        } elseif ($period === 'week') {
+            $until = CarbonImmutable::now()->addWeek();
+        } else {
+            abort(422);
+        }
 
         $tasks->snooze($taskId, $until);
 

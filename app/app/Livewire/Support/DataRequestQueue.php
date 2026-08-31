@@ -78,18 +78,22 @@ final class DataRequestQueue extends Component
         }
 
         try {
-            match ($this->filing) {
-                'erasure' => $queue->fileErasure($businessId, $actor, $this->detail),
-                'hard_offboard' => $queue->fileHardOffboard($businessId, $actor, $this->detail),
-                'consent_audit' => $queue->fileAndFulfillConsentAudit(
+            if ($this->filing === 'erasure') {
+                $queue->fileErasure($businessId, $actor, $this->detail);
+            } elseif ($this->filing === 'hard_offboard') {
+                $queue->fileHardOffboard($businessId, $actor, $this->detail);
+            } elseif ($this->filing === 'consent_audit') {
+                $queue->fileAndFulfillConsentAudit(
                     $businessId,
                     (int) trim($this->customerRef),
                     $actor,
                     $this->detail,
-                ),
-                'tenant_export' => $queue->fileTenantExport($businessId, $actor, $this->detail),
-                default => throw new InvalidArgumentException('Pick what kind of request to file.'),
-            };
+                );
+            } elseif ($this->filing === 'tenant_export') {
+                $queue->fileTenantExport($businessId, $actor, $this->detail);
+            } else {
+                throw new InvalidArgumentException('Pick what kind of request to file.');
+            }
         } catch (InvalidArgumentException $e) {
             $field = str_contains($e->getMessage(), 'contact') ? 'customerRef' : 'businessRef';
             $this->addError($field, $e->getMessage());
@@ -103,11 +107,13 @@ final class DataRequestQueue extends Component
         // a toast telling the agent it was refused is outcome language for an
         // outcome that did not happen, and the agent who believes it never
         // comes back to approve.
-        Toaster::success(match ($this->filing) {
-            'consent_audit' => 'Consent audit produced',
-            'tenant_export' => 'Export ask recorded — a second person must approve it',
-            default => 'Erasure filed — a second person must approve it',
-        });
+        $toast = 'Erasure filed — a second person must approve it';
+        if ($this->filing === 'consent_audit') {
+            $toast = 'Consent audit produced';
+        } elseif ($this->filing === 'tenant_export') {
+            $toast = 'Export ask recorded — a second person must approve it';
+        }
+        Toaster::success($toast);
 
         $this->cancelFiling();
     }
@@ -136,11 +142,17 @@ final class DataRequestQueue extends Component
         $this->authorize(LifecycleAccess::SUSPEND);
 
         $kind = $queue->kindOf($id);
+        if ($kind === null) {
+            $this->addError('queue', 'Request not found.');
+
+            return;
+        }
 
         try {
             match ($kind) {
                 DataRequestKind::TenantExport => $queue->approveTenantExportById($id, $this->user()),
-                default => $queue->approveErasureById($id, $this->user()),
+                DataRequestKind::Erasure => $queue->approveErasureById($id, $this->user()),
+                DataRequestKind::ConsentAudit => throw new InvalidArgumentException('Consent audits are fulfilled automatically on filing.'),
             };
         } catch (InvalidArgumentException $e) {
             $this->addError('queue', $e->getMessage());

@@ -336,7 +336,10 @@ final class MessageLog
         return match ($message->status) {
             OutreachStatus::Failed => 'This address or number couldn’t receive it.',
             OutreachStatus::OptedOut => 'They asked us to stop messaging them, so we didn’t send it.',
-            default => null,
+            OutreachStatus::Queued,
+            OutreachStatus::Sent,
+            OutreachStatus::Delivered,
+            OutreachStatus::Replied => null,
         };
     }
 }

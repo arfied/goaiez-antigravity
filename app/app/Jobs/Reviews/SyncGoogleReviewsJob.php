@@ -153,14 +153,16 @@ final class SyncGoogleReviewsJob extends AutopilotJob
 
     protected function handoff(): array
     {
+        $actions = [
+            'not_connected' => 'connect_google',
+            'connection_revoked' => 'connect_google',
+            'integration_disabled' => 'none',
+        ];
+
         return [
             'outcome' => 'handoff',
             'reason' => $this->handoffReason,
-            'owner_action' => match ($this->handoffReason) {
-                'not_connected', 'connection_revoked' => 'connect_google',
-                'integration_disabled' => 'none',
-                default => 'none',
-            },
+            'owner_action' => $actions[$this->handoffReason] ?? 'none',
         ];
     }
 }

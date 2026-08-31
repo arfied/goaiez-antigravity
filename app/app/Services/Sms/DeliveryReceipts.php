@@ -217,7 +217,10 @@ final class DeliveryReceipts
                 // not an outcome — `PENDING`/`ACCEPTED` mean the carrier still
                 // has the message. Counting it as delivered is the mistake the
                 // GROUPS docblock above spends a paragraph on.
-                default => null,
+                OutreachStatus::Queued,
+                OutreachStatus::Sent,
+                OutreachStatus::OptedOut,
+                OutreachStatus::Replied => null,
             };
 
             // ⛔ **THE INTERNAL COST BOOK, AND IT IS NOT THE COUNTER ABOVE**

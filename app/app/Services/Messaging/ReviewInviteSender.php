@@ -596,7 +596,7 @@ final class ReviewInviteSender
         $switch = match ($channel) {
             OutreachChannel::Email => 'review_invite.email_enabled',
             OutreachChannel::Sms => 'review_invite.sms_enabled',
-            default => null,
+            OutreachChannel::Whatsapp, OutreachChannel::Voice => null,
         };
 
         if ($switch === null || $this->defaults->value($switch) !== true) {
@@ -1225,13 +1225,7 @@ final class ReviewInviteSender
             $costKind = match ($message->channel) {
                 OutreachChannel::Email => MessageCostKind::OutboundEmail,
                 OutreachChannel::Sms => MessageCostKind::OutboundSms,
-                // Neither WhatsApp nor Voice (wave 39 lane B) is a case this
-                // product writes. This class writes only email and SMS rows —
-                // unaffected by Voice's arrival, see `attemptReminder()`'s own
-                // docblock above — so a value outside those two means the row
-                // came from somewhere else, and `remind()` refuses it for the
-                // same reason and in the same words.
-                default => null,
+                OutreachChannel::Whatsapp, OutreachChannel::Voice => null,
             };
 
             if ($costKind === null) {

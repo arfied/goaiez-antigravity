@@ -68,9 +68,6 @@ final class FirstWeekAuditSummary extends Notification implements ClassifiesUnde
 
     private function findingsPhrase(): string
     {
-        return match ($this->findings) {
-            1 => 'one thing',
-            default => "{$this->findings} things",
-        };
+        return $this->findings === 1 ? 'one thing' : "{$this->findings} things";
     }
 }

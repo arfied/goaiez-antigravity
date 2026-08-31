@@ -132,7 +132,9 @@ final class SiteBasicsCheck implements AuditCheck
                 ),
             ]),
 
-            default => CheckResult::ran($this->key(), [
+            FetchOutcome::Ok,
+            FetchOutcome::Error,
+            FetchOutcome::Refused => CheckResult::ran($this->key(), [
                 Finding::critical(
                     $this->key(),
                     'site.unreachable',

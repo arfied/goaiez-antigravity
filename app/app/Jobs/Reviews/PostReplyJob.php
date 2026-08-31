@@ -756,11 +756,19 @@ final class PostReplyJob extends AutopilotJob
         // `ReplyPublicationState::NotEntitled`'s, derived live
         // on the card, and the two are deliberately not the same string: this
         // one is for whoever debugs the row.
-        $replies->markPostingUnavailable($reply, match ($this->handoffReason) {
+        $messages = [
             'not_connected' => 'Google is not connected for this location, so this reply could not be published.',
             'not_entitled' => 'This account has no running plan, so this reply was not published.',
-            default => 'Google reply posting is not available yet — reconnect Google or ask us to switch it on.',
-        });
+        ];
+        $replies->markPostingUnavailable(
+            $reply,
+            $messages[$this->handoffReason] ?? 'Google reply posting is not available yet — reconnect Google or ask us to switch it on.'
+        );
+
+        $actions = [
+            'not_connected' => 'connect_google',
+            'not_entitled' => 'start_plan',
+        ];
 
         return $this->unpublished(
             'handoff',
@@ -770,11 +778,7 @@ final class PostReplyJob extends AutopilotJob
             // READER EITHER — it is the run row's account of what the owner can
             // do, and leaving this arm at `none` would say there is nothing,
             // which contradicts the card's own next step.
-            'owner_action' => match ($this->handoffReason) {
-                'not_connected' => 'connect_google',
-                'not_entitled' => 'start_plan',
-                default => 'none',
-            },
+            'owner_action' => $actions[$this->handoffReason] ?? 'none',
         ];
     }
 }
