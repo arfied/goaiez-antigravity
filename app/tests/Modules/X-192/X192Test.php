@@ -52,7 +52,7 @@ class X192Test extends TestCase
             isNoindex: false,
             baseScore: 85
         );
-        $this->assertGreaterThan(50, $indexed->rank_score);
+        $this->assertGreaterThan(50, $indexed->directory_index);
         Event::assertDispatched(MembershipRecommended::class);
 
         $noindexed = $this->rankAction->rankDirectory(
@@ -64,7 +64,7 @@ class X192Test extends TestCase
         );
 
         // TEST ANCHOR: noindex never appears above indexed in ranking & carries note
-        $this->assertLessThan($indexed->rank_score, $noindexed->rank_score, 'Noindexed directory ranks below indexed one (TEST ANCHOR)');
+        $this->assertLessThan($indexed->directory_index, $noindexed->directory_index, 'Noindexed directory ranks below indexed one (TEST ANCHOR)');
         $this->assertStringContainsString("Google can't see this", $noindexed->recommendation_note, 'Noindexed directory carries note (TEST ANCHOR & G8-08)');
 
         // 2. Build profile without purchase (free claim): succeeds

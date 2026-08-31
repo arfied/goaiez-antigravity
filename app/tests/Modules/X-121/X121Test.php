@@ -288,4 +288,14 @@ class X121Test extends TestCase
         $this->assertNotEmpty($history);
         $this->assertArrayHasKey('field_deltas', $history[0]);
     }
+
+    public function test_write_non_existent_entity_throws_refusal(): void
+    {
+        $biz = Business::provision(['name' => 'Refusal Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->expectException(\InvalidArgumentException::class);
+        $writeAction = new EntityWriteAction($this->service);
+        $writeAction->handle('facts', 999999, $biz->id, ['value' => 'Non existent']);
+    }
 }

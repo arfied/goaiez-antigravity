@@ -63,7 +63,11 @@ final class EntityService
                 ->lockForUpdate()
                 ->first();
 
-            $previousState = $existing ? (array) $existing : [];
+            if ($existing === null) {
+                throw new InvalidArgumentException("Entity {$table}:{$id} not found in business {$businessId}");
+            }
+
+            $previousState = (array) $existing;
             $deltas = [];
 
             foreach ($attributes as $k => $v) {

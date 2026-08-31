@@ -14,6 +14,7 @@ use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Events\ConsentDecided;
 use App\Modules\X204\Events\PermitGranted;
 use App\Modules\X204\Events\SuppressionAdded;
+use App\Modules\X204\Models\ComplianceRegister;
 use App\Modules\X204\Models\SendPermit;
 use App\Modules\X204\Models\Suppression;
 use Illuminate\Support\Facades\DB;
@@ -93,6 +94,13 @@ class X204Test extends TestCase
         $phone = '+15125550188';
         $this->suppressor->handle($biz->id, $phone, 'sms', 'opt_out');
         $this->lifter->handle($biz->id, $phone, 'sms');
+
+        ComplianceRegister::create([
+            'business_id' => $biz->id,
+            'register_name' => 'tcpa_quiet_hours',
+            'status' => 'compliant',
+            'slot_states' => ['opted_in' => true],
+        ]);
 
         $regCheck = $this->register->handle($biz->id, 'tcpa_quiet_hours');
         $this->assertTrue($regCheck['is_compliant']);

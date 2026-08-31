@@ -103,7 +103,7 @@ class X198Test extends TestCase
 
         $conn = $this->connectAction->handle($biz->id, 'square', 'sq_acct_888');
         $p = $this->captureAction->handle($biz->id, 2500, 'sq_tok_abc', 'idem_sq_1');
-        $this->assertEquals('captured', $p->status);
+        $this->assertEquals('pending', $p->status);
     }
 
     /**

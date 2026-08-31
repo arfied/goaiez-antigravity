@@ -52,6 +52,12 @@ class CTelephonyTest extends TestCase
         $biz = Business::provision(['name' => 'Carrier Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        DB::table('carrier_credentials')->insert([
+            ['business_id' => $biz->id, 'carrier_name' => 'telnyx', 'api_key' => 'key_telnyx', 'created_at' => now(), 'updated_at' => now()],
+            ['business_id' => $biz->id, 'carrier_name' => 'infobip', 'api_key' => 'key_infobip', 'created_at' => now(), 'updated_at' => now()],
+            ['business_id' => $biz->id, 'carrier_name' => 'sinch', 'api_key' => 'key_sinch', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
         $threadKey = 'conv-thread-telnyx-sticky-01';
 
         // 1. Thread on Telnyx stays on Telnyx across ten sends even when Infobip is cheaper
@@ -145,6 +151,10 @@ class CTelephonyTest extends TestCase
     {
         $biz = Business::provision(['name' => 'LTV Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('carrier_credentials')->insert([
+            ['business_id' => $biz->id, 'carrier_name' => 'twilio', 'api_key' => 'key_twilio', 'created_at' => now(), 'updated_at' => now()],
+        ]);
 
         $res = $this->sender->handle($biz->id, 'ltv-thread-1', '+15125550155', 'Priority message', false, 'twilio');
         $this->assertEquals('sent', $res['status']);

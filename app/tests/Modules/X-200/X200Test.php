@@ -99,8 +99,8 @@ class X200Test extends TestCase
         $humanQa = $this->qaAction->scoreCall($biz->id, $humanSeat->id, 1001, 92, 'Great empathy shown');
         $aiQa = $this->qaAction->scoreCall($biz->id, $aiSeat->id, 1002, 98, 'Zero latency response');
 
-        $this->assertEquals(92, $humanQa->score);
-        $this->assertEquals(98, $aiQa->score);
+        $this->assertEquals(92, $humanQa->qa_rating);
+        $this->assertEquals(98, $aiQa->qa_rating);
         $this->assertTrue($humanQa->is_positive_only);
         $this->assertTrue($aiQa->is_positive_only);
 

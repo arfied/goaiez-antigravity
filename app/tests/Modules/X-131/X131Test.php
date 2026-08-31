@@ -45,7 +45,7 @@ class X131Test extends TestCase
         $manualInterest = $this->setAction->set($biz->id, $personId, $topic);
         $this->assertTrue($manualInterest->is_tenant_set);
         $this->assertEquals('tenant_manual', $manualInterest->source);
-        $this->assertEquals(1.00, $manualInterest->confidence_score);
+        $this->assertEquals(1.00, $manualInterest->confidence_rate);
         Event::assertDispatched(InterestOverridden::class);
 
         // 2. Automated AI engine attempts to infer and overwrite the tenant-set interest with a lower score
@@ -60,7 +60,7 @@ class X131Test extends TestCase
         // Assert tenant-set tag was NEVER overwritten (TEST ANCHOR)
         $this->assertTrue($inferredResult->is_tenant_set, 'Tenant-set interest is NEVER overwritten by inference (TEST ANCHOR)');
         $this->assertEquals('tenant_manual', $inferredResult->source);
-        $this->assertEquals(1.00, $inferredResult->confidence_score);
+        $this->assertEquals(1.00, $inferredResult->confidence_rate);
 
         // 3. Infer a brand new topic (carries confidence and source: TEST ANCHOR & G13-34)
         $newTopic = 'Emergency Duct Repair';
@@ -73,7 +73,7 @@ class X131Test extends TestCase
         );
 
         $this->assertFalse($freshInferred->is_tenant_set);
-        $this->assertEquals(0.895, $freshInferred->confidence_score, 'Inferred row carries confidence score (TEST ANCHOR)');
+        $this->assertEquals(0.895, $freshInferred->confidence_rate, 'Inferred row carries confidence score (TEST ANCHOR)');
         $this->assertEquals('search_intent_lead_form', $freshInferred->source, 'Inferred row carries source (TEST ANCHOR)');
 
         Event::assertDispatched(InterestDetected::class);
