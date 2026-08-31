@@ -485,7 +485,7 @@ final class ComplianceReplies
      * (3283). That decision said one `support.contact_email` in Ops would
      * satisfy *"both declared messages"*. **It is wrong about this one**: this
      * body has never read that key — {@see self::contactFor()} reads
-     * `locations.primary_phone` — so for every tenant with their own R8 number
+     * `locations.primary_phone` — so for every tenant with their own dedicated number
      * the HELP reply carries the business's phone and can never carry
      * `support@goaiez.com`, however the registry is set. The test that pinned
      * 3271 pinned {@see self::platformHelpBody()} only.

@@ -73,7 +73,7 @@ final class SupportMacros
      * Every macro an agent may actually insert right now, already rendered.
      *
      * ⛔ **A MACRO WHOSE CANON IS UNSET IS ABSENT RATHER THAN BROKEN.** S-3 is
-     * the whole of R39's promise; with `legal.guarantee_sentence` empty there is
+     * the whole of the written guarantee promise; with `legal.guarantee_sentence` empty there is
      * nothing to insert, and offering a button that raises when pressed would
      * teach an agent that the console is unreliable. `library()` still returns
      * it, so an Ops screen can say *why* it is missing rather than pretending

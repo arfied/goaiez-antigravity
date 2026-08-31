@@ -78,7 +78,7 @@ final class ConversationThreads
      * ⚠️ **A CAP RATHER THAN A PAGINATOR, AND IT IS THE HONEST SHAPE TODAY.**
      * `Support` does the same for the same reason: a second page is a control
      * with nothing behind it until a tenant has more threads than this, and the
-     * inbound writer can only produce threads for a tenant holding their own R8
+     * inbound writer can only produce threads for a tenant holding their own dedicated
      * number. The day that changes this becomes a paginator.
      */
     public const int LIST_LIMIT = 100;

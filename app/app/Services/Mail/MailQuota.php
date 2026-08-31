@@ -229,12 +229,11 @@ final class MailQuota
     }
 
     /**
-     * What the admin screen shows (T137 R3's meter) — `Admin\MailSending`.
+     * What the admin screen shows (email sending quota meter) — `Admin\MailSending`.
      *
      * ⚠️ **THIS HAD NO READER FOR FIVE DAYS AND THE SCREEN IS NOW BUILT** (4442,
      * built at 4600). Until then its only consumers were two exception messages
-     * asking for `['used']`, while its own docblock cited *"the admin screen R3
-     * asks for"* — a method describing a screen that did not exist, which is
+     * asking for `['used']`, while its own docblock cited *"the admin sending screen"* — a method describing a screen that did not exist, which is
      * 2505's shape at method scope.
      *
      * ⛔ **EVERY FIGURE THE SCREEN RENDERS COMES OUT OF THIS ONE CALL, AND THAT

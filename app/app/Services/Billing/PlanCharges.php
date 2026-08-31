@@ -340,7 +340,7 @@ final class PlanCharges
      * silently reprice them at the moment somebody was doing them a favour" — so
      * an operator screen quoting `additionalLocationPriceFor()` was showing a
      * figure the very next line of code refuses to use. It was invisible while the
-     * registry was the only source **and while R10 prices the founder add-on
+     * registry was the only source **and while founder pricing prices the founder add-on
      * identically to retail**; the first offer whose add-on genuinely differs
      * makes the screen and the row disagree by that difference.
      *

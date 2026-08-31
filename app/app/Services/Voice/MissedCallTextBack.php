@@ -112,7 +112,7 @@ use LogicException;
  * {@see SendRefusalReason::NoIdentifier} instead, which is the true statement:
  * there is nobody here this platform can address.
  *
- * ⛔ **IT DOES NOT REPLY FROM THE NUMBER THE CALLER DIALLED, AND R7 SAYS IT
+ * ⛔ **IT DOES NOT REPLY FROM THE NUMBER THE CALLER DIALLED, AND VOICE SPEC SAYS IT
  * SHOULD** (3183). `$call->numberId` and `$call->to` are carried on the event
  * and discarded here, because `NumberSelector::forSending()` takes no argument
  * and widening it changes which number `ReviewInviteSender` and `RunCampaignJob`

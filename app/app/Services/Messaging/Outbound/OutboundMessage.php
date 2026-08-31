@@ -141,7 +141,7 @@ final readonly class OutboundMessage
         if ($mediaUrls !== [] && $permit->channel !== OutreachChannel::Sms) {
             throw new InvalidArgumentException(
                 "Media cannot be carried on {$permit->channel->value} by this contract. MMS rides the "
-                .'SMS channel on the same number (T137 R8); an email attachment is a different '
+                .'SMS channel on the same number (dedicated number allocation); an email attachment is a different '
                 .'mechanism and is not this one.'
             );
         }

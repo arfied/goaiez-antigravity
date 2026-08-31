@@ -135,12 +135,12 @@ final class TenantNumbers
             role: NumberRole::SharedPool,
             state: NumberState::Provisioning,
             actor: $actor,
-            reason: $reason ?? 'Loaded into the assignable pool, awaiting a tenant (T137 R8).',
+            reason: $reason ?? 'Loaded into the assignable pool, awaiting a tenant.',
         );
     }
 
     /**
-     * Give this tenant a number out of the pool — R8, at the moment a tenant
+     * Give this tenant a number out of the pool, at the moment a tenant
      * comes into existence.
      *
      * ⚠️ **THIS IS THE CALLER `assign()` DID NOT HAVE.** `assign()` shipped with
@@ -203,7 +203,7 @@ final class TenantNumbers
         // LEAVE THE FEATURE INERT.** `assign()` deliberately leaves a *new* row
         // `Provisioning`, and `NumberState::maySend()` refuses that state — so a
         // tenant whose number never left it cannot answer HELP, cannot send the
-        // R7 missed-call text-back from the number the caller dialled, and would
+        // missed-call text-back from the number the caller dialled, and would
         // have every message fall through to the shared Lane A sender. That is
         // the state this method exists to end.
         //

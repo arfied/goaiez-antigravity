@@ -297,7 +297,7 @@ final class InboundMessages
             // test. Somebody asking what this is has not asked us to stop, and
             // conflating the two would suppress every curious recipient.
             //
-            // ✅ **IT NOW REPLIES, AND R8'S PER-TENANT NUMBER IS WHAT UNBLOCKED
+            // ✅ **IT NOW REPLIES, AND DEDICATED NUMBER ALLOCATION IS WHAT UNBLOCKED
             // IT** (2125). This comment used to say the reply *"would have to
             // name the tenant — which is the thing this path cannot resolve"*,
             // and that was true: an inbound message arrives with no tenant, and
