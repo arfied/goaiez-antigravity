@@ -3164,7 +3164,7 @@ final class DefaultsManifest
              * instrument, and it was correct while the words did not exist.
              *
              * ✅ **THE WORDS EXIST AND NOTHING DRAFTED THEM.** CC-4 transcribed
-             * R39's sentence and verified it against **eight** artefacts in the
+             * the written guarantee sentence and verified it against **eight** artefacts in the
              * 2026-08-18 drop rather than against a summary, so the premise the
              * withholding rested on is satisfied rather than overruled. The row
              * is seeded in `settings()` above, and it is the **same key**: every

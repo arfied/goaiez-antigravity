@@ -59,7 +59,7 @@ use App\Enums\BillingTerm;
 final class PlanOfferCatalog
 {
     /**
-     * T176 R10's founder offer.
+     * Founder offer.
      *
      * A constant rather than a literal at each row, because the key is what
      * `plan_offers.key` is unique on and what `offers:sync` matches an existing

@@ -216,7 +216,7 @@ final class LegalCanon
     }
 
     /**
-     * R39's guarantee, or a refusal naming the key.
+     * The written guarantee, or a refusal naming the key.
      *
      * @throws LegalCanonUnavailable
      */

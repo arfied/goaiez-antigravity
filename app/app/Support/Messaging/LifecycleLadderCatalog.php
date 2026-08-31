@@ -214,7 +214,7 @@ final class LifecycleLadderCatalog
             //
             // ⚠️ **THE COPY IS NOT CHANGED HERE AND MUST NOT BE**, on 9399's own
             // precedent for `trial_ended`'s tense mismatch: *"the copy is
-            // R39's … whoever wires the SMS half has to reconcile them with the
+            // the owner's … whoever wires the SMS half has to reconcile them with the
             // owner."* Same rule, same reason. ⛔ **And the email half is blocked
             // too**, which is the part a reader skims past: 10726 already makes
             // account-holder mail free and consent-free, so the channel is not
