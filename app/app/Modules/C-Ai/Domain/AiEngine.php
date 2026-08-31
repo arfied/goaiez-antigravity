@@ -22,8 +22,8 @@ final class AiEngine
     public function complete(
         int $businessId,
         string $prompt,
-        string $modelRequested = 'primary_model',
-        string $backupModel = 'backup_model',
+        string $modelRequested = 'default_primary',
+        string $backupModel = 'default_backup',
         ?int $taskId = null,
         int $simulatedTtftMs = 200,
         bool $providerReturnedUsage = true,

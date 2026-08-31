@@ -49,16 +49,16 @@ enum AiModel: string
     public const string VERIFIED_ON = '2026-08-12';
 
     /** Anthropic's most capable. Used where output is published under a customer's name. */
-    case ClaudeOpus5 = 'claude-opus-5';
+    case ClaudeOpus5 = 'anthropic-opus-5';
 
     /** Near-Opus quality; the step-down for generation if Opus is ever too dear. */
-    case ClaudeSonnet5 = 'claude-sonnet-5';
+    case ClaudeSonnet5 = 'anthropic-sonnet-5';
 
     /** Cheapest Anthropic tier. Classification and moderation live here. */
-    case ClaudeHaiku45 = 'claude-haiku-4-5';
+    case ClaudeHaiku45 = 'anthropic-haiku-4-5';
 
     /** OpenAI's cheap workhorse — the second provider, wired from day one. */
-    case Gpt4oMini = 'gpt-4o-mini';
+    case Gpt4oMini = 'openai-4o-mini';
 
     /**
      * The embedding model behind the Business Brain's document store.
