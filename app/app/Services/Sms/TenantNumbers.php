@@ -17,9 +17,9 @@ use InvalidArgumentException;
 
 /**
  * One Infobip number per tenant, and the answer to "whose number is this" —
- * T137 R8.
+ * dedicated number allocation.
  *
- * *"One Infobip number per tenant (voice + SMS + MMS on the same number — R7
+ * *"One Infobip number per tenant (voice + SMS + MMS on the same number — voice call forwarding
  * requires it), provisioned from the platform pool under the GOAIEZ 10DLC
  * brand/campaign."*
  *
@@ -31,7 +31,7 @@ use InvalidArgumentException;
  * `outreach_messages` solves it for delivery receipts by sending the business id
  * out as `callbackData` and reading it back — but nothing hands a *caller* or a
  * *texter* an identifier of ours to quote. What they have is the number they
- * dialled or texted, and R8 is what makes that number identify exactly one
+ * dialled or texted, and dedicated number allocation is what makes that number identify exactly one
  * tenant.
  *
  * ⛔ **THIS IS WHY THE HELP REPLY COULD NOT BE BUILT BEFORE NOW** (2125).

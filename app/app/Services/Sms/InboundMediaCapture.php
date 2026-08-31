@@ -153,7 +153,7 @@ final class InboundMediaCapture
         }
 
         // ⚠️ **OUR OWN NUMBER ESTABLISHES THE TENANT AND NOTHING ELSE MAY.**
-        // R8's reverse lookup, and 2125's precedent: a tenant inferred from
+        // Dedicated number reverse lookup, and 2125's precedent: a tenant inferred from
         // *"who last messaged this person"* is wrong the first time somebody is
         // a customer of two businesses — and here being wrong would write one
         // business's customer's photograph into another business's account.

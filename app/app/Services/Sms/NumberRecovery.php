@@ -52,7 +52,7 @@ use LogicException;
  * consequence is real and is not hidden**: a tenant whose whole pool sickened
  * from one bad list gets their numbers back on the cooldown, into the same
  * fire, exactly as they would have before §7 existed. Two things make that
- * survivable today and neither is §7 — R8 gives a tenant exactly one number, so
+ * survivable today and neither is §7 — dedicated number allocation gives a tenant exactly one number, so
  * "a tenant's pool" is one row and *"the numbers are not the problem"* has no
  * second number to prove itself with; and the platform-wide complaint trip
  * (2102, 2119) still halts sending regardless of what state a number is in.

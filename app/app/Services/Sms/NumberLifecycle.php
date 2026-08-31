@@ -80,7 +80,7 @@ final class NumberLifecycle
      * prior state for it would be inventing a fact.
      *
      * ⛔ **AND IT REFUSES A SECOND LIVE NUMBER FOR A TENANT, WHICH IT DID NOT
-     * UNTIL DECISION 4821.** R8 is one number per tenant and
+     * UNTIL DECISION 4821.** Dedicated number allocation is one number per tenant and
      * {@see TenantNumbers::assign()} has enforced it since the day it was
      * written — but `assign()` is not the only door into this table, and this
      * one is the *other* door: public, taking a `businessId`, and asking only
@@ -89,7 +89,7 @@ final class NumberLifecycle
      * would go on being correct about a schema that had stopped being true. The
      * only caller that passes a business today, {@see TenantNumbers::adoptOwnNumber()},
      * is safe because it calls `releaseFromTenant()` first — its own comment says
-     * *"Done before the insert so that R8's one-number-per-tenant is never
+     * *"Done before the insert so that the one-number-per-tenant rule is never
      * briefly false"* — and that is an **ordering inside one method** rather than
      * an invariant. This is what makes it an invariant.
      *
@@ -137,9 +137,9 @@ final class NumberLifecycle
 
         if ($businessId !== null && $this->liveNumberFor($businessId) !== null) {
             throw new LogicException(
-                "Business {$businessId} already holds a live number, and R8 is one number per tenant. "
+                "Business {$businessId} already holds a live number, and dedicated number allocation is one number per tenant. "
                 .'A second one is ambiguous for every read that has to pick one — forBusiness(), '
-                .'displayNumberFor() and the R7 missed-call text-back — and it is also free: '
+                .'displayNumberFor() and the missed-call text-back — and it is also free: '
                 .'the extra-number SKU is seeded in the registry and nothing in app/ reads it (4820). '
                 .'Release the one they hold first, or build the charge before the number.'
             );

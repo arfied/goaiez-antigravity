@@ -154,7 +154,7 @@ use Throwable;
  * tenant's counter.**
  *
  * ⚠️ **THE TENANT IS A LOOKUP ON OUR OWN NUMBER, NEVER AN INFERENCE FROM THE
- * SENDER'S HISTORY.** {@see TenantNumbers::tenantFor()} is R8's reverse lookup
+ * SENDER'S HISTORY.** {@see TenantNumbers::tenantFor()} is dedicated number reverse lookup
  * and 2125's precedent: a tenant inferred from *"who last messaged this
  * person"* is wrong the first time somebody is a customer of two tenants, and
  * here being wrong means charging one tenant with another's complaint and
@@ -163,7 +163,7 @@ use Throwable;
  * ⛔ **SO A STOP ON THE SHARED POOL NUMBER IS COUNTED NOWHERE, AND THAT IS A
  * REAL GAP RATHER THAN A TIDY DEFAULT.** `tenantFor()` answers null for a number
  * nobody owns; the refusal is still honoured platform-wide, but no counter
- * moves. Until every sending tenant holds their own number under R8, the
+ * moves. Until every sending tenant holds their own number under dedicated number allocation, the
  * complaint rate under-reports — and an under-reporting complaint rate is a
  * containment that does not fire. It is written here rather than left for
  * somebody to discover from a flat graph.
@@ -584,7 +584,7 @@ final class InboundMessages
      * driven by somebody else's behaviour."* Nothing here bounds anything; it
      * records what we were billed.
      *
-     * ⛔ **AND THAT IS PRECISELY WHY IT IS WORTH BOOKING.** R7's AI two-way
+     * ⛔ **AND THAT IS PRECISELY WHY IT IS WORTH BOOKING.** The AI two-way
      * conversation makes inbound volume unbounded above — *"a conversation has
      * as many as the customer wants to send, and every one is a cost with no
      * retail credit behind it"* — so this is the one direction of traffic whose
@@ -594,7 +594,7 @@ final class InboundMessages
      *
      * ⚠️ **THE SAME LOOKUP {@see self::countAgainstSender()} MAKES, FOR THE SAME
      * REASON, AND WITH THE SAME HOLE.** The tenant is {@see TenantNumbers::tenantFor()}
-     * on **our** receiving number — R8's reverse lookup — never an inference from
+     * on **our** receiving number — dedicated number reverse lookup — never an inference from
      * the sender's history, which 2125 refuses because it is wrong the first time
      * somebody is a customer of two tenants. ⛔ **So an inbound message on the
      * shared Lane A pool number is booked nowhere**: `tenantFor()` answers null,

@@ -402,7 +402,7 @@ final class InfobipClient implements ReachesRecipients, SendLogReader, Texter
             // log driver.
             //
             // ⚠️ **THE SAME NUMBER ON BOTH PRODUCTS, WHICH IS 2193.** MMS is not
-            // a different sender and must never be given one: R7 requires the
+            // a different sender and must never be given one: the missed call workflow requires the
             // text-back to come from the number the caller dialled, and a tenant
             // whose picture arrives from a second number reads as somebody else.
             'sender' => $from ?? $this->sender(),

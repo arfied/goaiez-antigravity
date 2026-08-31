@@ -393,7 +393,7 @@ final class ComplianceReplies
      * number, to somebody who never messaged us.
      *
      * ⛔ **AND THE STOP CONFIRMATION NEEDS THIS BRANCH MORE THAN HELP DOES.**
-     * Every tenant without their own R8 number sends over the shared pool
+     * Every tenant without their own dedicated number sends over the shared pool
      * number, so that is the number most STOPs arrive on — and it is the number
      * whose STOP `InboundMessages` can attribute to nobody (the counter gap that
      * class records). Leaving the pool number unconfirmed would have meant the
