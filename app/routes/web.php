@@ -1366,6 +1366,7 @@ Route::middleware(['auth', EnsureAdvancedDashboard::class])
         Route::get('/changes', Changes::class)->name('changes');
         Route::get('/broadcasts', Broadcasts::class)->name('broadcasts');
         Route::get('/broadcasts/compose', BroadcastComposer::class)->name('broadcasts.compose');
+        Route::get('/broadcasts/new', BroadcastComposer::class)->name('broadcasts.new');
         Route::get('/segments', Segments::class)->name('segments');
         Route::get('/reports', Reports::class)->name('reports');
         Route::get('/credits', Credits::class)->name('credits');
