@@ -69,8 +69,8 @@ enum MessageCostKind: string
     /**
      * An inbound message the carrier bills us for.
      *
-     * ⚠️ **THE AI TWO-WAY CONVERSATION IS WHAT MAKES THIS MATERIAL** (T137 R7's
-     * `missed_call.sms_agent`). A one-shot notification has one inbound reply at
+     * ⚠️ **THE AI TWO-WAY CONVERSATION IS WHAT MAKES THIS MATERIAL** (the
+     * missed-call SMS agent). A one-shot notification has one inbound reply at
      * most; a conversation has as many as the customer wants to send, and every
      * one is a cost with no retail credit behind it. **It debits no credit** —
      * charging a tenant a credit because their customer replied is the wrong

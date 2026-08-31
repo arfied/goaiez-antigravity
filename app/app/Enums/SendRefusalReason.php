@@ -96,7 +96,7 @@ enum SendRefusalReason: string
      * The contact this send resolved to is **not the person who contacted us**.
      *
      * ⛔ **THE ONLY CASE HERE THAT IS ABOUT A THIRD PARTY RATHER THAN ABOUT THE
-     * RECIPIENT** (3179). A reply to an inbound event — R7's missed-call
+     * RECIPIENT** (3179). A reply to an inbound event — the missed-call
      * text-back, and anything `SL-5` later builds on the same shape — resolves a
      * `Customer` from an id the webhook supplied and then texts the identifier
      * the permit names. Those are two different lookups, and when they disagree

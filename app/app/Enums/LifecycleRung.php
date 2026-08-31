@@ -61,16 +61,16 @@ enum LifecycleRung: string
     case TrialEnded = 'trial_ended';
 
     /**
-     * Whether this rung carries R39's written guarantee.
+     * Whether this rung carries the written guarantee.
      *
      * CC-5 §2: *"day-7 and expiry rungs carry the guarantee reminder line (bind
-     * the sentence via CC-4's one-source key, never paste it)"*. R39's own rider
-     * says the same and adds *"No other rung changes"*, which is why this is a
+     * the sentence via CC-4's one-source key, never paste it)"*. The guarantee
+     * reminder policy says the same and adds *"No other rung changes"*, which is why this is a
      * predicate on two cases rather than a flag somebody sets per message.
      *
      * ⛔ **THE SENTENCE ITSELF IS NEVER IN THIS FILE OR THE CATALOGUE.** It is
      * `legal.guarantee_sentence`, read at compose time — see {@see LegalCanon}.
-     * R39 writes one wording and PIII-29 D7 writes another; pasting either would
+     * The guarantee policy establishes the canonical wording; pasting either would
      * make this repository the third source of a promise that has to have one.
      */
     public function carriesTheGuarantee(): bool

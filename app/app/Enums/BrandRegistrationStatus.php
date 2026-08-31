@@ -153,7 +153,7 @@ enum BrandRegistrationStatus: string
      * operator on every `submit`; this is the tenant's half of it.
      *
      * ⛔ **NO ARM SAYS OR IMPLIES THAT BEING ACCEPTED LETS A TENANT TEXT
-     * ANYBODY** — T137 R6, *"10DLC registration ≠ recipient consent"*, and 2100.
+     * ANYBODY** — 10DLC brand registration is carrier registration for tenant sending and does not constitute recipient consent (carrier approval is distinct from recipient consent), and 2100.
      * The `Approved` arm is scoped to *whose number the message leaves on*,
      * which is the whole of what the phone networks decided.
      */

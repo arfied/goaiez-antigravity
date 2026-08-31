@@ -73,12 +73,12 @@ enum SupportMacroSlot: string
     case Time = 'time';
 
     /**
-     * S-3: R39's guarantee, bound from the registry and never pasted.
+     * S-3: the written guarantee, bound from the registry and never pasted.
      *
      * ⛔ **THE ONLY CANON-BOUND SLOT, AND THE ONLY ONE AN AGENT MAY NOT TYPE.**
      * T308 §A3 does not author S-3's body at all — it says *"the FM macro of
      * record, verbatim placement — the promise kept in one paste"* — because the
-     * promise is R39's wording and lives in one place. {@see LegalCanon}
+     * promise is the canonical guarantee wording and lives in one place. {@see LegalCanon}
      * resolves it; {@see SupportMacros::rendered()} substitutes it.
      */
     case GuaranteeSentence = 'guarantee_sentence';

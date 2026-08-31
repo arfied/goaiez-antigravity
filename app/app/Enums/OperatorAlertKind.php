@@ -427,14 +427,14 @@ enum OperatorAlertKind: string
      * identically to a platform that has sent nothing — and the sweep printed
      * `0 bp over 0 delivered`, which is what a spotless platform looks like.
      *
-     * ⛔ **WHAT IT COSTS WHEN NOBODY HEARS IT IS THE WHOLE OF 2102.** R8 puts
-     * every tenant's traffic on the shared GOAIEZ 10DLC brand and our own number
-     * pool, so what a carrier scores is the total — and 2101/2102/2113 make the
-     * automatic halt a **precondition of sending at all**, which is the ground
-     * the attestation override was accepted on. In this state that halt cannot
-     * fire for any tenant, messages keep going to members of the public, and the
-     * complaints keep accruing at the carrier where we cannot see them. On a
-     * campaign in carrier review, that is the account.
+     * ⛔ **WHAT IT COSTS WHEN NOBODY HEARS IT IS THE WHOLE OF 2102.** Tenant
+     * number allocation puts every tenant's traffic on the shared GOAIEZ 10DLC
+     * brand and our own number pool, so what a carrier scores is the total — and
+     * 2101/2102/2113 make the automatic halt a **precondition of sending at all**,
+     * which is the ground the attestation override was accepted on. In this state
+     * that halt cannot fire for any tenant, messages keep going to members of the
+     * public, and the complaints keep accruing at the carrier where we cannot see
+     * them. On a campaign in carrier review, that is the account.
      *
      * ⛔ **A BELL AND NEVER A BRAKE, AND HERE THAT IS COUNTER-INTUITIVE ENOUGH
      * TO STATE** (R25, 7489). The instinct is to stop sending until reporting

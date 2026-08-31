@@ -10,7 +10,7 @@ namespace App\Enums;
  * **Every case is inbound**, and what holds it is `SendContractTest`'s literal
  * assertion of these five values together with the `match` that has no default
  * (2175) — `29` §2.3 rule 13 itself was **overridden by an owner ruling on
- * 2026-08-25** (9363) and is no longer what refuses one. 2103 confirms R7's
+ * 2026-08-25** (9363) and is no longer what refuses one. 2103 confirms the
  * missed-call design does not touch that —
  * conditional forwarding brings a call *to* the tenant's number, and the only
  * thing that leaves this system afterwards is an SMS. ⚠️ **There is deliberately

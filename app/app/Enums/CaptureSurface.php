@@ -52,7 +52,7 @@ enum CaptureSurface: string
      * mandatory, no raw address at any depth, no pre-checked box — without a
      * second copy of them.
      *
-     * ⛔ **NO `consent_records` ROW MAY EVER CARRY IT** (R24). A business
+     * ⛔ **NO `consent_records` ROW MAY EVER CARRY IT** (terms of service acceptance is not recipient marketing consent). A business
      * accepting our Terms is not a person agreeing to be contacted, and a
      * record claiming otherwise would manufacture a platform-captured Lane A
      * basis out of a signup form — for the *account holder*, who is not one of
