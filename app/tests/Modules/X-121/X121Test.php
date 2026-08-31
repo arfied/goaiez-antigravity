@@ -120,7 +120,7 @@ class X121Test extends TestCase
     public function test_g4_16_rls_forced_on_every_noun_table(): void
     {
         $tables = [
-            'businesses', 'people', 'conversations', 'messages', 'jobs', 'reviews',
+            'businesses', 'people', 'conversations', 'messages', 'work_orders', 'reviews',
             'campaigns', 'assets', 'ledger_entries', 'facts', 'sites', 'numbers', 'entity_history',
         ];
 

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-08-31T04:18:42",
+ "updated": "2026-08-31T06:17:18",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -525,17 +525,10 @@
    "unresolved": []
   },
   "X-121": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-121",
-     "stage": "schema",
-     "why": "12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per \u00a7150.4 and \u00a7259",
-     "at": "2026-08-31T04:18:42"
-    }
-   ]
+   "unresolved": []
   },
   "X-122": {
    "status": "DONE",
@@ -1170,14 +1163,7 @@
    "green_after_wave": 9
   }
  },
- "unresolved": [
-  {
-   "module": "X-121",
-   "stage": "schema",
-   "why": "12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per \u00a7150.4 and \u00a7259",
-   "at": "2026-08-31T04:18:42"
-  }
- ],
+ "unresolved": [],
  "notes": [
   {
    "at": "2026-08-29T14:37:58",
