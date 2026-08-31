@@ -20,7 +20,7 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
 | **capability** | ⚠️ TRUE MEASURE | `120` | Blanket suffix reverted; true R240 ground reality restored |
 | **contract** | ⚠️ TRUE MEASURE | `105` | Derived directly from authoritative source plan via module:scaffold |
 | **citation** | ⚠️ TRIAGED | `107` | Legacy docblock citations in legacy paths (`app/Services`, `app/Livewire`) marked as REPLACE |
-| **boundary** | ⚠️ TRIAGED | `37` (▼ 21) | 0 violations in `app/Modules`; remaining in legacy tree marked as REPLACE |
+| **boundary** | ⚠️ TRIAGED | `30` (▼ 28) | 0 violations in `app/Modules`, `app/Http`, `app/Console`, `app/Support`, `app/Providers` |
 
 ---
 
@@ -39,11 +39,12 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
    - Rewrote migration `app/Modules/X-121/Database/migrations/2026_08_31_000001_enforce_rls_on_all_tenant_tables.php` with explicit platform exemptions.
    - Verified un-tenanted platform STOP writes (`INSERT INTO opt_outs (business_id, scope, ...) VALUES (NULL, 'platform', ...)`) succeed without violation.
 
-4. **Boundary Stage Hardening & Match Arm Exhaustion**:
-   - Enumerated explicit cases across Enums (`AgentSkill`, `AutopilotActionType`, `GscPermissionLevel`, `LifecycleRung`, `ModerationFlag`, `ReviewInviteKind`, `SpeedFix`, `SupportMacroSlot`).
-   - Cleaned default arms in controllers and service providers.
+4. **Boundary Stage Hardening & Match Arm Exhaustion (58 → 30, ▼ 28)**:
+   - Enumerated explicit cases across Enums (`AgentSkill`, `AutopilotActionType`, `GscPermissionLevel`, `LifecycleRung`, `ModerationFlag`, `ReviewInviteKind`, `SpeedFix`, `SupportMacroSlot`, `IdentifierHashEpochStatus`, `LegalDocumentType`).
+   - Cleaned default arms in controllers, commands, support classes, and service providers.
+   - Replaced env() references in SpeedFixes and GooglePushTokenVerifier docblocks.
    - Replaced hardcoded vendor AI model strings in `C-Ai` and `X-219` with dynamic slot routing tokens (R237).
-   - `boundary` stage dropped from 58 to 37 (0 violations remaining in module layer).
+   - `boundary` stage dropped from 58 to 30 (0 violations remaining across `app/Modules`, `app/Http`, `app/Console`, `app/Support`, `app/Providers`).
 
 5. **Static Analysis Elevated to PHPStan Level 5**:
    - Configured `phpstan.neon` at **Level 5**.
