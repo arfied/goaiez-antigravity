@@ -204,12 +204,14 @@ final class SesFeedbackController extends Controller
         // one thing a bell would need to be written against: a fact this
         // application did not previously record at all. `mail:feedback-status`
         // is the on-demand reader.
-        $health->beat('ses.notification.'.match ($event['eventType'] ?? $event['notificationType'] ?? null) {
+        $rawNotificationType = $event['eventType'] ?? $event['notificationType'] ?? null;
+        $eventSlugMap = [
             'Bounce' => 'bounce',
             'Complaint' => 'complaint',
             'Delivery' => 'delivery',
-            default => 'other',
-        });
+        ];
+        $eventSlug = $eventSlugMap[$rawNotificationType] ?? 'other';
+        $health->beat('ses.notification.'.$eventSlug);
 
         return response()->json(['suppressed' => $feedback->apply($event)]);
     }

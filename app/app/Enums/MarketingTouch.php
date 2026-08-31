@@ -98,11 +98,16 @@ enum MarketingTouch: string
      */
     public static function forOutreachPurpose(string $purpose): ?self
     {
-        return match ($purpose) {
-            'owner_alert' => null,
-            'review_request', 'reminder' => self::ReviewInvite,
+        if ($purpose === 'owner_alert') {
+            return null;
+        }
+
+        $map = [
+            'review_request' => self::ReviewInvite,
+            'reminder' => self::ReviewInvite,
             'triage' => self::Recovery,
-            default => self::Campaign,
-        };
+        ];
+
+        return $map[$purpose] ?? self::Campaign;
     }
 }

@@ -24,7 +24,7 @@ final class TemplateGenerateAction
         array $blocksDefinition = []
     ): Template {
         // Compute distinct design tokens based on industry family (TEST ANCHOR & G6-29)
-        $designTokens = match ($industryCode) {
+        $tokensByIndustry = [
             'plumbing' => [
                 'palette' => ['primary' => '#0055AA', 'accent' => '#FF6600', 'bg' => '#F4F7FB'],
                 'type_scale' => '1.250-major-third',
@@ -35,12 +35,13 @@ final class TemplateGenerateAction
                 'type_scale' => '1.333-perfect-fourth',
                 'rhythm' => 'generous-editorial',
             ],
-            default => [
-                'palette' => ['primary' => '#2D3748', 'accent' => '#3182CE', 'bg' => '#FFFFFF'],
-                'type_scale' => '1.200-minor-third',
-                'rhythm' => 'standard-balanced',
-            ],
-        };
+        ];
+
+        $designTokens = $tokensByIndustry[$industryCode] ?? [
+            'palette' => ['primary' => '#2D3748', 'accent' => '#3182CE', 'bg' => '#FFFFFF'],
+            'type_scale' => '1.200-minor-third',
+            'rhythm' => 'standard-balanced',
+        ];
 
         $template = Template::create([
             'business_id' => $businessId,

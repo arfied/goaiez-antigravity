@@ -102,7 +102,18 @@ enum SupportMacroSlot: string
     {
         return match ($this) {
             self::GuaranteeSentence => LegalCanon::GUARANTEE_SENTENCE_KEY,
-            default => null,
+            self::Status,
+            self::Step,
+            self::OldPrice,
+            self::NewPrice,
+            self::CancelLink,
+            self::MakeGoodOptions,
+            self::PrivacyLink,
+            self::Repro,
+            self::WhatHappened,
+            self::Steps,
+            self::NearestPath,
+            self::Time => null,
         };
     }
 }

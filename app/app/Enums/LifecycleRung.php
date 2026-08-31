@@ -77,7 +77,7 @@ enum LifecycleRung: string
     {
         return match ($this) {
             self::TrialDaySeven, self::TrialEnded => true,
-            default => false,
+            self::UsageSeventyFive, self::UsageNinety, self::UsageExhausted, self::TrialDayTen, self::TrialDayThirteen => false,
         };
     }
 

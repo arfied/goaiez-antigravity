@@ -197,10 +197,16 @@ enum ReviewSyncAbsenceReason: string
      */
     public static function fromRecordedCode(mixed $code): ?self
     {
-        return match ($code) {
-            'not_connected', 'connection_revoked' => self::NotConnectedAtLastLook,
+        if (! is_string($code)) {
+            return null;
+        }
+
+        $map = [
+            'not_connected' => self::NotConnectedAtLastLook,
+            'connection_revoked' => self::NotConnectedAtLastLook,
             'integration_disabled' => self::ReadingStopped,
-            default => null,
-        };
+        ];
+
+        return $map[$code] ?? null;
     }
 }

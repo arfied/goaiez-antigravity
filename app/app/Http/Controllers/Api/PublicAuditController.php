@@ -148,16 +148,20 @@ final class PublicAuditController extends Controller
      */
     private function unavailable(string $reason): JsonResponse
     {
-        return match ($reason) {
-            'budget_exhausted' => response()->json([
+        if ($reason === 'budget_exhausted') {
+            return response()->json([
                 'message' => 'We have run today\'s free audits. Try again tomorrow.',
-            ], Response::HTTP_SERVICE_UNAVAILABLE),
-            'search_failed' => response()->json([
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        if ($reason === 'search_failed') {
+            return response()->json([
                 'message' => 'We could not reach Google just now. Try again in a minute.',
-            ], Response::HTTP_SERVICE_UNAVAILABLE),
-            default => response()->json([
-                'message' => 'We could not find that business on Google. Check the name and try again.',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY),
-        };
+            ], Response::HTTP_SERVICE_UNAVAILABLE);
+        }
+
+        return response()->json([
+            'message' => 'We could not find that business on Google. Check the name and try again.',
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }

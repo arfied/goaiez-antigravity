@@ -43,11 +43,11 @@ final class InvoiceEngine
                 ]);
             }
 
-            $dueDays = match ($termsType) {
+            $termsDaysMap = [
                 'net_30' => 30,
                 'net_15' => 15,
-                default => 0,
-            };
+            ];
+            $dueDays = $termsDaysMap[$termsType] ?? 0;
 
             $invoice = Invoice::create([
                 'business_id' => $businessId,

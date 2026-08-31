@@ -77,7 +77,7 @@ enum ReviewInviteKind: string
         $suffix = match ($channel) {
             OutreachChannel::Email => 'email',
             OutreachChannel::Sms => 'sms',
-            default => throw new InvalidArgumentException(
+            OutreachChannel::Whatsapp, OutreachChannel::Voice => throw new InvalidArgumentException(
                 'A review invite is only ever sent on email or SMS. A cost key for any other '
                 .'channel would namespace a charge this class never made.'
             ),

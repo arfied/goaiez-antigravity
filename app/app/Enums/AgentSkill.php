@@ -208,7 +208,19 @@ enum AgentSkill: string
             self::Quotes => AssistantToggle::Quotes,
             self::ReviewAsk => AssistantToggle::ReviewAsk,
             self::SilentCustomerNudge => AssistantToggle::Nudge,
-            default => null,
+            self::CustomerQuestions,
+            self::HoursAndDirections,
+            self::SalesCapture,
+            self::BookAppointment,
+            self::CallOutFee,
+            self::SendDocuments,
+            self::MessageTaking,
+            self::UrgentEscalation,
+            self::RescheduleOrCancel,
+            self::ExistingCustomerContext,
+            self::PhotoIntake,
+            self::WrongNumberOrSpam,
+            self::CampaignReply => null,
         };
     }
 

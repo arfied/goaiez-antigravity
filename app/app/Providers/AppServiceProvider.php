@@ -345,14 +345,18 @@ class AppServiceProvider extends ServiceProvider
     {
         $driver = config('services.sms.driver');
 
-        return match ($driver) {
-            'log' => new LogTexter,
-            'infobip' => new InfobipClient,
-            default => throw new InvalidArgumentException(
-                'Unknown SMS driver ['.(is_scalar($driver) ? (string) $driver : gettype($driver))
-                .']. Set SMS_DRIVER to log or infobip; there is deliberately no fallback.'
-            ),
-        };
+        if ($driver === 'log') {
+            return new LogTexter;
+        }
+
+        if ($driver === 'infobip') {
+            return new InfobipClient;
+        }
+
+        throw new InvalidArgumentException(
+            'Unknown SMS driver ['.(is_scalar($driver) ? (string) $driver : gettype($driver))
+            .']. Set SMS_DRIVER to log or infobip; there is deliberately no fallback.'
+        );
     }
 
     /**
@@ -380,14 +384,18 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(VoiceProvider::class, function (): VoiceProvider {
             $driver = config('services.voice.driver');
 
-            return match ($driver) {
-                'null' => new NullVoiceProvider,
-                'infobip' => new InfobipVoiceProvider,
-                default => throw new InvalidArgumentException(
-                    'Unknown voice driver ['.(is_scalar($driver) ? (string) $driver : gettype($driver))
-                    .']. Set VOICE_DRIVER to null or infobip; there is deliberately no fallback.'
-                ),
-            };
+            if ($driver === 'null') {
+                return new NullVoiceProvider;
+            }
+
+            if ($driver === 'infobip') {
+                return new InfobipVoiceProvider;
+            }
+
+            throw new InvalidArgumentException(
+                'Unknown voice driver ['.(is_scalar($driver) ? (string) $driver : gettype($driver))
+                .']. Set VOICE_DRIVER to null or infobip; there is deliberately no fallback.'
+            );
         });
 
         $this->app->bind(Transcriber::class, NullTranscriber::class);
@@ -421,14 +429,18 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CmsAdapter::class, function (): CmsAdapter {
             $driver = config('services.cms.driver');
 
-            return match ($driver) {
-                'log' => new LogCmsAdapter,
-                'wordpress' => $this->app->make(WordPressAdapter::class),
-                default => throw new InvalidArgumentException(
-                    'Unknown CMS adapter driver ['.(is_scalar($driver) ? (string) $driver : gettype($driver))
-                    .']. Set CMS_DRIVER to log or wordpress; there is deliberately no fallback.'
-                ),
-            };
+            if ($driver === 'log') {
+                return new LogCmsAdapter;
+            }
+
+            if ($driver === 'wordpress') {
+                return $this->app->make(WordPressAdapter::class);
+            }
+
+            throw new InvalidArgumentException(
+                'Unknown CMS adapter driver ['.(is_scalar($driver) ? (string) $driver : gettype($driver))
+                .']. Set CMS_DRIVER to log or wordpress; there is deliberately no fallback.'
+            );
         });
     }
 

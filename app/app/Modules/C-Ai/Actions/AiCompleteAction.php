@@ -13,8 +13,8 @@ final class AiCompleteAction
     public function handle(
         int $businessId,
         string $prompt,
-        string $modelRequested = 'gemini-1.5-pro',
-        string $backupModel = 'claude-3-5-sonnet',
+        string $modelRequested = 'primary_model',
+        string $backupModel = 'backup_model',
         ?int $taskId = null,
         int $simulatedTtftMs = 200,
         bool $providerReturnedUsage = true,

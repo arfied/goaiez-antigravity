@@ -22,8 +22,8 @@ final class ModelResolveAction
         if ($assignment === null) {
             // Default spine fallback
             return [
-                'model' => 'gemini-1.5-pro',
-                'provider' => 'google',
+                'model' => 'default_primary',
+                'provider' => 'default_provider',
                 'is_fallback' => false,
             ];
         }
@@ -44,13 +44,13 @@ final class ModelResolveAction
                 businessId: $businessId,
                 targetModule: $targetModule,
                 primaryModel: $primary ? $primary->model_name : 'unknown',
-                fallbackModel: $backup ? $backup->model_name : 'gemini-1.5-pro',
+                fallbackModel: $backup ? $backup->model_name : 'default_backup',
                 reason: "Primary provider status: {$primaryProvider?->status}"
             ));
 
             return [
-                'model' => $backup ? $backup->model_name : 'gemini-1.5-pro',
-                'provider' => $backupProvider ? $backupProvider->provider_name : 'google',
+                'model' => $backup ? $backup->model_name : 'default_backup',
+                'provider' => $backupProvider ? $backupProvider->provider_name : 'default_provider',
                 'is_fallback' => true,
                 'fallback_reason' => "Primary provider status: {$primaryProvider?->status}",
             ];

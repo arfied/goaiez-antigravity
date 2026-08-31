@@ -61,13 +61,15 @@ enum GscPermissionLevel: string
             return self::Unknown;
         }
 
-        return match (strtoupper(str_replace('_', '', $value))) {
+        $normalized = strtoupper(str_replace('_', '', $value));
+        $map = [
             'SITEOWNER' => self::Owner,
             'SITEFULLUSER' => self::FullUser,
             'SITERESTRICTEDUSER' => self::RestrictedUser,
             'SITEUNVERIFIEDUSER' => self::UnverifiedUser,
-            default => self::Unknown,
-        };
+        ];
+
+        return $map[$normalized] ?? self::Unknown;
     }
 
     /**
@@ -106,7 +108,7 @@ enum GscPermissionLevel: string
         return match ($this) {
             self::UnverifiedUser => 'property_not_verified',
             self::Unknown => 'permission_level_unreadable',
-            default => null,
+            self::Owner, self::FullUser, self::RestrictedUser => null,
         };
     }
 }

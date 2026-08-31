@@ -142,7 +142,12 @@ enum SpeedFix: string
             // §4.1's pixel column: ❌ for every row but preconnect and
             // measurement, and measurement is not a fix.
             self::PreconnectHints => [ActuationTier::T1, ActuationTier::T3],
-            default => [ActuationTier::T1],
+            self::ImageDimensions,
+            self::LazyLoadImages,
+            self::FontDisplaySwap,
+            self::ScriptDeferral,
+            self::EmbedSpaceReservation,
+            self::ImageOptimization => [ActuationTier::T1],
         };
     }
 

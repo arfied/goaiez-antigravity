@@ -109,7 +109,7 @@ enum ModerationFlag: string
     {
         return match ($this) {
             self::Refused, self::Unrecognised => true,
-            default => false,
+            self::Harassment, self::HateSpeech, self::Sexual, self::Violence, self::Spam, self::PersonalData => false,
         };
     }
 
