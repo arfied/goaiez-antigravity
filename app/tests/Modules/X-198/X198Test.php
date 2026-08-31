@@ -64,6 +64,8 @@ class X198Test extends TestCase
 
         $this->assertEquals($pay1->id, $pay2->id, 'Duplicated ref charges once and returns identical payment record');
         $this->assertEquals(5000, $pay1->amount_cents);
+        $this->assertNull($pay1->gateway_charge_id, 'Charge id is issued only by external gateway');
+        $this->assertEquals('pending', $pay1->status);
         Event::assertDispatched(PaymentCaptured::class);
 
         // 2. Tenant payout isolation: tenant payment links only to tenant merchant connection
