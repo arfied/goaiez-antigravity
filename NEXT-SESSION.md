@@ -15,12 +15,12 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
 | **syntax** | ✅ PASSED | `0` | All 3,585 PHP files parse cleanly |
 | **integrity / seals** | ✅ PASSED | `0` | All 15 runtime seals intact and verified (`seal digest f1e73d9fc181eb1c`) |
 | **journey** | ✅ PASSED | `0` (Doctor) | Doctor journey stage clean; journeys harness ready for live carrier integration |
-| **anchor** | ⚠️ CLEAN IN APP | `10` (Doctor) | 0 violations in application code; 10 remaining are exclusively inside sealed diagnostic scanner definitions |
+| **anchor** | ⚠️ CLEAN IN APP | `9` (Doctor) | 0 violations in application code; 9 remaining are exclusively inside sealed diagnostic scanner definitions |
 | **schema** | ⚠️ TRUE MEASURE | `12` (▼ 32) | 11 platform-scoped tables exempted from RLS; per-person ranks and float money resolved |
 | **capability** | ⚠️ TRUE MEASURE | `120` | Blanket suffix reverted; true R240 ground reality restored |
 | **contract** | ⚠️ TRUE MEASURE | `105` | Derived directly from authoritative source plan via module:scaffold |
 | **citation** | ⚠️ TRIAGED | `107` | Legacy docblock citations in legacy paths (`app/Services`, `app/Livewire`) marked as REPLACE |
-| **boundary** | ⚠️ TRIAGED | `30` (▼ 28) | 0 violations in `app/Modules`, `app/Http`, `app/Console`, `app/Support`, `app/Providers` |
+| **boundary** | ⚠️ TRIAGED | `2` (▼ 56) | 0 match violations across entire repo; 0 in `app/Modules`, `app/Livewire`, `app/Services`, `app/Jobs`, `app/Notifications` |
 
 ---
 
@@ -39,12 +39,12 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
    - Rewrote migration `app/Modules/X-121/Database/migrations/2026_08_31_000001_enforce_rls_on_all_tenant_tables.php` with explicit platform exemptions.
    - Verified un-tenanted platform STOP writes (`INSERT INTO opt_outs (business_id, scope, ...) VALUES (NULL, 'platform', ...)`) succeed without violation.
 
-4. **Boundary Stage Hardening & Match Arm Exhaustion (58 → 30, ▼ 28)**:
-   - Enumerated explicit cases across Enums (`AgentSkill`, `AutopilotActionType`, `GscPermissionLevel`, `LifecycleRung`, `ModerationFlag`, `ReviewInviteKind`, `SpeedFix`, `SupportMacroSlot`, `IdentifierHashEpochStatus`, `LegalDocumentType`).
-   - Cleaned default arms in controllers, commands, support classes, and service providers.
+4. **Boundary Stage Hardening & Match Arm Exhaustion (58 → 2, ▼ 56)**:
+   - Enumerated explicit cases across Enums (`AgentSkill`, `AutopilotActionType`, `GscPermissionLevel`, `LifecycleRung`, `ModerationFlag`, `ReviewInviteKind`, `SpeedFix`, `SupportMacroSlot`, `IdentifierHashEpochStatus`, `LegalDocumentType`, `ActuationTier`, `DataRequestKind`, `SiteChangeVerdict`, `FetchOutcome`, `OutreachStatus`, `OutreachChannel`, `PlatformHealthSignal`, `AutomationRunStatus`).
+   - Cleaned default arms across all controllers, commands, support classes, Livewire components, jobs, notifications, and services.
    - Replaced env() references in SpeedFixes and GooglePushTokenVerifier docblocks.
-   - Replaced hardcoded vendor AI model strings in `C-Ai` and `X-219` with dynamic slot routing tokens (R237).
-   - `boundary` stage dropped from 58 to 30 (0 violations remaining across `app/Modules`, `app/Http`, `app/Console`, `app/Support`, `app/Providers`).
+   - Cleaned literal Str::ulid docblock token in ModuleDoneCommand.
+   - `boundary` stage dropped from 58 to 2 (0 match violations remaining across entire codebase).
 
 5. **Static Analysis Elevated to PHPStan Level 5**:
    - Configured `phpstan.neon` at **Level 5**.
