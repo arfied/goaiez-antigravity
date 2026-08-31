@@ -38,9 +38,7 @@ return [
         'ingest.rejected',
     ],
     'consumes' => [
-        'source.connected',
-        'source.uploaded',
-        'webhook.received',
+        '*',
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.

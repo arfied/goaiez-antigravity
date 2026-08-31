@@ -34,7 +34,7 @@ return [
     ],
     'emits' => [
         'visibility.changed',
-        'mention.detected',
+        'mentioned_by_ai',
         'competitor.outranking',
     ],
     'consumes' => [

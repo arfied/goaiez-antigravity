@@ -52,7 +52,7 @@ return [
     'G20-09' => 'refuses: C-Reviews; the owner\'s original ask, now the header',
 
     // status: SPECCED
-    'G20-11' => 'refuses: C-Reviews; P-110 supersedes the T89 review gate as the MECHANISM: every request is triaged, low ratings become a ticket with an SLA, high ratings are asked publicly. The register\'s wording is the old gate\'s name.  keep-gate is still an open reverse word — the owner\'s, not the audit\'s',
+    'G20-11' => 'refuses: C-Reviews; P-110 supersedes the T89/R45 gate as the MECHANISM: every request is triaged, low ratings become a ticket with an SLA, high ratings are asked publicly. The register\'s wording is the old gate\'s name.  keep-gate is still an open reverse word — the owner\'s, not the audit\'s',
 
     // status: SPECCED
     'G20-12' => 'refuses: C-Reviews; = Review Gating; one spec, under P-110',

@@ -34,6 +34,7 @@ return [
     ],
     'emits' => [
         'timesheet.submitted',
+        'overtime.accrued',
         'period.ready',
     ],
     'consumes' => [

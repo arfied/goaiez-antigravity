@@ -38,7 +38,7 @@ return [
         'tenant.provisioned',
         'agent.live',
         'ttfm.measured',
-        'win.recorded',
+        'first_win',
     ],
     'consumes' => [
         'capability.decided',
