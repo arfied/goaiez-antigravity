@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 0,
+   "violations": 1,
    "fails": "COMMIT"
   },
   "contract": {
@@ -23,7 +23,7 @@
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 108,
+   "violations": 0,
    "fails": "COMMIT"
   },
   "schema": {
