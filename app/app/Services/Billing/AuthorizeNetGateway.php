@@ -65,7 +65,7 @@ use RuntimeException;
  * while there was no plan picker, and 2149 recorded that `App\Support\Instalments`
  * derived payments nothing charged. The owner's answer was to build the
  * machinery before the price: the retail schedule in `DefaultsManifest` is what
- * is billed here, and **T137 R10's founder rates are still an offer with no home
+ * is billed here, and **founder rates are still an offer with no home
  * until `plan_offers` exists** (2090, untouched).
  *
  * The three shapes this gateway now creates, and the vendor field that carries

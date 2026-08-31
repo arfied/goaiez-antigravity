@@ -83,7 +83,7 @@ use InvalidArgumentException;
  * customer email through a tenant's credentials.
  *
  * ⛔ **AND THE `gmail` MAILER IS NOT THE THING 3300 EXEMPTS.** It is the
- * *platform's* Google Workspace internal-app transport (2093, T137 R3) — the
+ * *platform's* Google Workspace internal-app transport (2093, email sending transport) — the
  * primary path at soft launch — and adding it to the array would exempt the
  * transport that carries almost every send, leaving a meter that meters nothing.
  * The exemption belongs to a mailbox **the tenant connected**, which by

@@ -131,7 +131,7 @@ final class PlanCharges
      * it was sold with, for its whole life.
      *
      * ⛔ **THE COUNT IS PER OFFER AND THIS IS NOW ONLY THE RETAIL ONE** (2092,
-     * 2754). T176 R10's founder annual is **two** payments, and since P1 that
+     * 2754). The founder annual is **two** payments, and since P1 that
      * figure lives on the offer row — `plan_offers.instalment_payments` — exactly
      * as 2754 instructed. This constant is what applies when no offer is live.
      * ⚠️ **Three and two are not a contradiction to be tidied**: they price

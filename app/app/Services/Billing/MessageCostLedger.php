@@ -321,7 +321,7 @@ final class MessageCostLedger
      *
      * ⛔ **THE HOLE IT MEASURES IS REAL AND IS TODAY THE COMMON CASE.**
      * `InboundMessages::recordCost()` resolves the tenant from *our* receiving
-     * number (R8's reverse lookup) and returns without writing when that answers
+     * number (dedicated number reverse lookup) and returns without writing when that answers
      * null — which is every message arriving on the shared Lane A pool number,
      * because that number belongs to nobody by design. The cost is real, the
      * carrier billed it, and it is booked nowhere. **A flat line on the inbound

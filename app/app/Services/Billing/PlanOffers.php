@@ -26,9 +26,9 @@ use RuntimeException;
  *
  * ## ⛔ NOTHING ASKS FOR AN OFFER BY NAME, AND THAT IS THE POINT
  *
- * There is no picker, no form field and no query parameter. R10's founder rate is
+ * There is no picker, no form field and no query parameter. The founder rate is
  * not a coupon somebody types — it is what this product costs during the founder
- * window, and R18 ends that window at an announced event. So the offer is
+ * window, and the closing schedule ends that window at an announced event. So the offer is
  * resolved from **the clock** and from nothing a request carries. `CLAUDE.md`'s
  * "never add a tenant-facing toggle" is the general rule; the specific one is
  * that an offer key accepted from a form is a price accepted from a form.

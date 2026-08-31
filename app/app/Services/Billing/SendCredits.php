@@ -410,7 +410,7 @@ final class SendCredits
      * THE POINT.** They cost real money and debit **no** credit: charging a
      * tenant because their customer replied is the wrong product, and it would
      * be a charge driven entirely by somebody else's behaviour — which on the
-     * AI two-way conversation path (T137 R7) is unbounded. The internal cost
+     * AI two-way conversation path is unbounded. The internal cost
      * ledger records them; this one does not.
      *
      * `UndeliveredFee` is absent for a related reason: a credit is charged for

@@ -22,7 +22,7 @@ use InvalidArgumentException;
  *     turns one press into "come back later", which is the shape `Account\
  *     Knowledge` already has and is the one thing that screen's docblock
  *     apologises for.
- *  2. **Every turn costs money** (R22/R25) and a price sheet is the one document
+ *  2. **Every turn costs money** (cost discipline) and a price sheet is the one document
  *     whose structure is regular enough not to need a model at all.
  *  3. **A deterministic parser can be driven red.** "Did the model read column
  *     three?" is not a test.
