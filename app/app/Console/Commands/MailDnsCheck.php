@@ -8,10 +8,10 @@ use App\Services\Config\DefaultsRegistry;
 use Illuminate\Console\Command;
 
 /**
- * Is the sending domain actually authenticated? — T137 R3's DNS half.
+ * Is the sending domain actually authenticated? — Email DNS domain authentication.
  *
  * ⚠️ **THIS IS THE ONE PART OF SL-4 NO CODE CAN DO, AND IT IS ON THE CRITICAL
- * PATH FOR EVERY TRANSPORT.** R3: *"SPF/DKIM/DMARC still go on the goaiez
+ * PATH FOR EVERY TRANSPORT.** Email domain architecture: *"SPF/DKIM/DMARC still go on the goaiez
  * sending domain (DNS, ~1 hour — required for inbox placement on ANY
  * transport)."* Without them the mail sends perfectly, the queue drains, every
  * screen reports success, and the messages land in spam for every tenant at

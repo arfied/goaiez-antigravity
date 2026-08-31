@@ -11,10 +11,10 @@ use Illuminate\Console\Command;
 use InvalidArgumentException;
 
 /**
- * Puts purchased numbers into the pool tenants are given one from — T137 R8.
+ * Puts purchased numbers into the pool tenants are given one from (dedicated number allocation).
  *
  * ⚠️ **THIS IS THE PURCHASE FLOW'S STAND-IN AND SAYS SO.** Doc 51 §2.3's buy-a-
- * number-from-Infobip path is phase 4 and is not built, and R8's *"provisioned
+ * number-from-Infobip path is phase 4 and is not built, and dedicated number allocation's *"provisioned
  * from the platform pool"* is, today, an operator buying numbers in Infobip's own
  * portal and telling this application about them. Recording a number here does
  * not purchase one, register one, or make one reachable — it says that one this
@@ -38,7 +38,7 @@ use InvalidArgumentException;
  */
 #[Signature('sms:load-number-pool
     {numbers* : One or more E.164 numbers this platform holds, to be given to tenants}')]
-#[Description('Record purchased numbers as assignable, one per tenant at signup (T137 R8)')]
+#[Description('Record purchased numbers as assignable, one per tenant at signup (dedicated number allocation)')]
 final class LoadNumberPool extends Command
 {
     /** Who the record names for something no person in this company did in the app. */
@@ -88,7 +88,7 @@ final class LoadNumberPool extends Command
 
         // ⚠️ SAID EVERY TIME, ON `sms:register-sender`'s PRECEDENT, BECAUSE THE
         // ROWS DO LESS THAN THEY LOOK LIKE THEY DO. They make a tenant
-        // resolvable from an inbound message and give R7 a number to text back
+        // resolvable from an inbound message and give the voice text-back a number to text back
         // from. They do not enable sending: `SMS_DRIVER`, `sms.enabled` and the
         // 10DLC campaign each still decide that on their own.
         $this->components->warn(

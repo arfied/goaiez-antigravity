@@ -28,7 +28,7 @@ use InvalidArgumentException;
  *
  * ## The swap this performs is not reversible by re-running it
  *
- * ⚠️ **THE TENANT'S POOL NUMBER IS PARKED.** R8 is one number per tenant, so
+ * ⚠️ **THE TENANT'S POOL NUMBER IS PARKED.** Dedicated number allocation is one number per tenant, so
  * adopting their own releases ours — see `TenantNumbers::adoptOwnNumber()` for
  * why keeping both would break the reverse lookup every inbound STOP, HELP and
  * delivery receipt depends on. The parked number answers STOP and HELP at
