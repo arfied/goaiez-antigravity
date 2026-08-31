@@ -55,7 +55,7 @@ use App\Support\Tenancy;
  *   3. ✅ **STILL TRUE, AND NARROWER THAN IT LOOKS.** The setting column does
  *      not exist. `owner_notify_numbers` is a number and a `stopped_at` — a
  *      channel-level consent for the account holder, one row per business —
- *      and it is not R7's *"per tenant setting"* for whether **this**
+ *      and it is not a *"per tenant setting"* for whether **this**
  *      notification takes the SMS half. Adding one is still 272's shape plus a
  *      tenant-facing toggle, which `CLAUDE.md` forbids by default and has
  *      overruled exactly once.

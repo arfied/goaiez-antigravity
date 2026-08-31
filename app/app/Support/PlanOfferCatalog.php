@@ -34,7 +34,7 @@ use App\Enums\BillingTerm;
  *
  * This is the difference T176's own estimate-confirm predicted somebody would
  * "correct". `CLAUDE.md`'s retail annual is $997 in **three** instalments
- * (33233 / 33233 / 33234); R10's founder annual is $499.99 in **two**
+ * (33233 / 33233 / 33234); the founder annual is $499.99 in **two**
  * (25000 + 24999 as the owner writes them). They are different products. 2754
  * said the count belongs on the offer rather than beside `PlanCharges::PAYMENTS`,
  * and `plan_offers.instalment_payments` is where it went. **Neither figure is a

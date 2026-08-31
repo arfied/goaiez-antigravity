@@ -75,7 +75,7 @@ final class VoicemailReceived extends Notification implements ClassifiesUnderCan
     public function via(object $notifiable): array
     {
         // ⚠️ **MAIL ONLY.** `NotifyOwnerOfVoicemailJob`'s docblock records the
-        // three separate reasons R7's "and/or SMS" half is not built.
+        // three separate reasons the "and/or SMS" half is not built.
         return ['mail'];
     }
 

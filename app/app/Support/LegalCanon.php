@@ -110,7 +110,7 @@ final class LegalCanon
     public const string ASK_FOOTER_KEY = 'legal.sms_ask_footer';
 
     /**
-     * R39's conditional performance guarantee — read by the lifecycle rungs, by
+     * The conditional performance guarantee — read by the lifecycle rungs, by
      * support macro S-3 and by the marketing pricing and guarantee pages,
      * always bound and never pasted.
      *

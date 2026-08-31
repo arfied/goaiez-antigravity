@@ -77,7 +77,7 @@ enum VoiceEventType: string
     /**
      * The call was forwarded onward and someone picked it up.
      *
-     * R7's optional mode — re-forward or ring-back instead of voicemail.
+     * Voice forwarding optional mode — re-forward or ring-back instead of voicemail.
      * ⚠️ **This is still not outbound calling**: the leg is a continuation of an
      * inbound call the caller placed, and nothing in this system may originate
      * one.

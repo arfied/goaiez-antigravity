@@ -513,7 +513,7 @@ enum OperatorAlertKind: string
      * and five integers survived the loop.
      *
      * ⛔ **THE HARM IS THE SAME HARM AND IT IS NOT SMALLER FOR BEING NARROWER.**
-     * R8 puts every tenant's traffic on the shared GOAIEZ 10DLC brand and our own
+     * Dedicated number allocation puts every tenant's traffic on the shared GOAIEZ 10DLC brand and our own
      * number pool, so a blind tenant's complaints accrue against **the
      * registration everybody else is sending on** — with 2102's per-tenant
      * containment unable to fire for exactly the account generating them, and

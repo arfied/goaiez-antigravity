@@ -118,7 +118,7 @@ final class LifecycleLadderCatalog
     /**
      * One rung's authored copy.
      *
-     * ⚠️ **THREE FIELDS, BECAUSE R39's RIDER NAMES THREE.** It gives the expiry
+     * ⚠️ **THREE FIELDS, BECAUSE THE GUARANTEE RIDER NAMES THREE.** It gives the expiry
      * rung an *"Email insert"* and an *"SMS variant"* separately, so a rung is a
      * subject, a text line where the channel law allows one, and the insert that
      * carries the promise where the rung carries one.

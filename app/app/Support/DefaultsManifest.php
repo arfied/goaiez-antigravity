@@ -626,7 +626,7 @@ final class DefaultsManifest
              * rate.
              *
              * WHAT 240 MINUTES IS, so the seed is a derivation rather than a
-             * feeling. R7's use of voice is the missed call: the caller rings,
+             * feeling. The missed-call voice path: the caller rings,
              * the tenant's own handset does not answer, the carrier's
              * conditional forward hands the leg to us, and the caller leaves a
              * message. A busy local business missing twenty calls a day, each
@@ -1912,7 +1912,7 @@ final class DefaultsManifest
              * `MailDrivers::MAILERS` so a selectable transport cannot exist
              * without a declared ceiling.
              *
-             * The account's 24-hour ceiling (2095, T137 R3).
+             * The account's 24-hour ceiling (2095, email sending quota architecture).
              *
              * ⚠️ **2,000 IS GOOGLE'S FIGURE FOR A STANDARD WORKSPACE USER, OVER
              * A ROLLING 24-HOUR WINDOW** — `knowledge.workspace.google.com`,
@@ -2432,7 +2432,7 @@ final class DefaultsManifest
             'legal.guarantee_sentence' => [
                 'seed' => 'If your AI doesn\'t text a missed caller back in under 60 seconds, we fix it free and extend your trial.',
                 'group' => 'Legal',
-                'description' => 'R39\'s conditional performance guarantee, verbatim, as the one source every surface that quotes it must read. ⛔ THIS ROW IS LIVE ON PUBLIC PAGES AND IN A DAILY EMAIL. THE SENTENCE HERE SAID THE OPPOSITE — \'nothing in app/ reads this key yet\' — FROM THE DAY IT SHIPPED UNTIL 2026-08-28 (decision 5169, corrected at 10945): every surface that quotes the guarantee reads it from here at render time, which today means two public marketing pages, a support macro an agent can insert into a reply, and two rungs of the trial-reminder email that goes out every morning. That sentence also warned that what this row must never become is \'a row somebody believes is on a page\' — it was on two, and an operator editing it was being told the opposite of that at the moment of the edit. ⚠️ THE REMEDY IS SERVICE AND NEVER MONEY: "Satisfaction Guarantee(d)" and "Money-Back Guarantee" are forbidden phrases (D1-OFFER-T186\'s copy guard) because they legally promise a refund this business does not offer. ⛔ R53\'s Terms of Service draft §9 words the same promise as "extend your service" rather than "extend your trial"; the two have not been reconciled and that is counsel\'s to settle (decision 5170). ⛔ AND NOTHING IN THIS APPLICATION CAN DO WHAT THE SEEDED SENTENCE PROMISES: the no-card trial is registration date plus the platform-wide trial length, with no per-business override anywhere in the schema, so the promised extension is unkeepable by construction rather than merely unbuilt (decision 9401, re-derived 10946). A mechanism or a wording is owed and both are the owner\'s — do not settle it by editing this row. Editing this row changes every future render and nothing already published.',
+                'description' => 'The conditional performance guarantee, verbatim, as the one source every surface that quotes it must read. ⛔ THIS ROW IS LIVE ON PUBLIC PAGES AND IN A DAILY EMAIL. THE SENTENCE HERE SAID THE OPPOSITE — \'nothing in app/ reads this key yet\' — FROM THE DAY IT SHIPPED UNTIL 2026-08-28 (decision 5169, corrected at 10945): every surface that quotes the guarantee reads it from here at render time, which today means two public marketing pages, a support macro an agent can insert into a reply, and two rungs of the trial-reminder email that goes out every morning. That sentence also warned that what this row must never become is \'a row somebody believes is on a page\' — it was on two, and an operator editing it was being told the opposite of that at the moment of the edit. ⚠️ THE REMEDY IS SERVICE AND NEVER MONEY: "Satisfaction Guarantee(d)" and "Money-Back Guarantee" are forbidden phrases (D1-OFFER-T186\'s copy guard) because they legally promise a refund this business does not offer. ⛔ R53\'s Terms of Service draft §9 words the same promise as "extend your service" rather than "extend your trial"; the two have not been reconciled and that is counsel\'s to settle (decision 5170). ⛔ AND NOTHING IN THIS APPLICATION CAN DO WHAT THE SEEDED SENTENCE PROMISES: the no-card trial is registration date plus the platform-wide trial length, with no per-business override anywhere in the schema, so the promised extension is unkeepable by construction rather than merely unbuilt (decision 9401, re-derived 10946). A mechanism or a wording is owed and both are the owner\'s — do not settle it by editing this row. Editing this row changes every future render and nothing already published.',
             ],
 
             /*

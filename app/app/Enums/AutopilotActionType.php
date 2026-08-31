@@ -368,7 +368,7 @@ enum AutopilotActionType: string
     case AssistantFinishedAConversation = 'assistant_finished_a_conversation';
 
     /**
-     * How the business's calls are handled changed — T137 R7.
+     * How the business's calls are handled changed — call forwarding and routing setting.
      *
      * ⚠️ NOT AN AUTOMATED ACTION, AND IT BELONGS IN THE FEED ANYWAY.
      * `TenantPaused` set that precedent and the reason carries: support can
