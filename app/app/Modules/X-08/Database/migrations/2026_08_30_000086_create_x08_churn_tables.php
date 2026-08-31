@@ -18,8 +18,7 @@ return new class extends Migration
                 $table->string('tenant_identifier')->index();
                 $table->unsignedInteger('login_decay_days')->default(0);
                 $table->boolean('roi_open_rate_rising')->default(false);
-                $table->decimal('risk_score', 5, 2)->default(0.00);
-                $table->string('risk_level')->default('low'); // low, medium, high
+                $table->string('risk_score')->default('low');
                 $table->text('recommendation_note');
                 $table->timestamps();
             });

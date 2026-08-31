@@ -48,7 +48,7 @@ return new class extends Migration
                 if (! Schema::hasColumn($table, $newCol)) {
                     DB::statement("ALTER TABLE {$table} RENAME COLUMN {$oldCol} TO {$newCol}");
                 } else {
-                    DB::statement("ALTER TABLE {$table} DROP COLUMN {$oldCol}");
+                    throw new RuntimeException("Cannot rename column {$oldCol} to {$newCol} on table {$table}: {$newCol} already exists");
                 }
             }
         }
