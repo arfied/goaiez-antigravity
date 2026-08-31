@@ -45,7 +45,11 @@ return new class extends Migration
     {
         foreach (self::RENAMES as [$table, $oldCol, $newCol]) {
             if (Schema::hasTable($table) && Schema::hasColumn($table, $oldCol)) {
-                DB::statement("ALTER TABLE {$table} RENAME COLUMN {$oldCol} TO {$newCol}");
+                if (! Schema::hasColumn($table, $newCol)) {
+                    DB::statement("ALTER TABLE {$table} RENAME COLUMN {$oldCol} TO {$newCol}");
+                } else {
+                    DB::statement("ALTER TABLE {$table} DROP COLUMN {$oldCol}");
+                }
             }
         }
     }
@@ -53,7 +57,7 @@ return new class extends Migration
     public function down(): void
     {
         foreach (self::RENAMES as [$table, $oldCol, $newCol]) {
-            if (Schema::hasTable($table) && Schema::hasColumn($table, $newCol)) {
+            if (Schema::hasTable($table) && Schema::hasColumn($table, $newCol) && ! Schema::hasColumn($table, $oldCol)) {
                 DB::statement("ALTER TABLE {$table} RENAME COLUMN {$newCol} TO {$oldCol}");
             }
         }
