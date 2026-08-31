@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $tables = DB::select(<<<SQL
+        $tables = DB::select(<<<'SQL'
             SELECT c.relname AS tablename
             FROM pg_class c
             JOIN pg_namespace n ON n.oid = c.relnamespace
@@ -33,7 +33,5 @@ return new class extends Migration
         }
     }
 
-    public function down(): void
-    {
-    }
+    public function down(): void {}
 };

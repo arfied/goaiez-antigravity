@@ -12,10 +12,12 @@ final class PixelInstallAction
 
     public function handle(int $businessId, string $tenantDomain): array
     {
-        return [
+        $verification = $this->engine->verifyInstallation($businessId, $tenantDomain);
+
+        return array_merge($verification, [
             'tenant_domain' => $tenantDomain,
             'script_tag' => "<script async src=\"https://analytics.{$tenantDomain}/tag.js\"></script>",
             'status' => 'ready',
-        ];
+        ]);
     }
 }

@@ -10,5 +10,12 @@ parameters:
         - app/Console/Commands/DoctorCommand.php
         - app/Console/Commands/DoctorSelfTestCommand.php
     tmpDir: storage/framework/cache/phpstan
-    level: 1
+    level: 5
+    treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Access to an undefined property#'
+        - '#Parameter \#1 \$callback of static method Illuminate\\Database\\Connection::transaction\(\) contains unresolvable type#'
+        - '#Template type TValue on class Illuminate\\Support\\Collection is not covariant#'
+        - '#Anonymous function should return array\{location:#'
+        - '#should return Illuminate\\Support\\Collection.*but returns Illuminate\\Support\\Collection#'

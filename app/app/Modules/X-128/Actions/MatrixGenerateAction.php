@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X128\Actions;
 
-use App\Doctor\ManifestReader;
 use App\Modules\X128\Events\OrphanDetected;
 use App\Modules\X128\Models\IntegrationMatrix;
 use Illuminate\Support\Facades\Event;
 
 final class MatrixGenerateAction
 {
-    public function __construct(private readonly ?ManifestReader $reader = null) {}
+    public function __construct() {}
 
     public function handle(int $businessId, ?array $manifestOverride = null): array
     {

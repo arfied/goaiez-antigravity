@@ -40,7 +40,7 @@ class ReviewsQaRequests extends Component
     public function mount(): void
     {
         if ($this->businessId === 0) {
-            $tenantId = Tenancy::id() ?: (auth()->user()?->business_id ?? 0);
+            $tenantId = Tenancy::id() ?: 0;
             if ($tenantId <= 0) {
                 abort(403, 'Tenant context is required');
             }

@@ -49,8 +49,8 @@ class Citations extends Component
         $count = Citation::where('business_id', $businessId)->count();
         if ($count === 0) {
             $business = Business::find($businessId);
-            $businessName = $business?->name ?? 'My Business';
-            $businessPhone = $business?->phone ?? '(555) 019-2831';
+            $businessName = $business ? $business->name : 'My Business';
+            $businessPhone = '(555) 019-2831';
             $businessAddress = '100 Main St, Suite 200';
 
             $directories = [

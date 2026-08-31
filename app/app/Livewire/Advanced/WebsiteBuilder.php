@@ -129,7 +129,7 @@ class WebsiteBuilder extends Component
     public function render(): View
     {
         $business = Tenancy::id() ? Business::find(Tenancy::id()) : null;
-        $businessName = $business?->name ?? 'Apex Pro Services';
+        $businessName = $business ? $business->name : 'Apex Pro Services';
 
         return view('livewire.advanced.website-builder', [
             'businessName' => $businessName,

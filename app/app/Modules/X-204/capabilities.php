@@ -21,6 +21,6 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status: 
+    // status:
     'N-013' => 'refuses: a push is still a SEND; it passes X-204 and the cadence ceiling — asserted',
 ];

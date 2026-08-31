@@ -95,7 +95,6 @@ final class ThreadCloseSummaries
         private readonly AiRouter $router,
         private readonly ReplyGuardrails $guardrails,
         private readonly ConversationThreads $threads,
-        private readonly AgentTurns $turns,
     ) {}
 
     /**

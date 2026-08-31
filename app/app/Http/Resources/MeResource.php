@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Enums\WizardStep;
 use App\Models\Business;
 use App\Models\Subscription;
 use App\Models\User;
@@ -45,7 +46,7 @@ class MeResource extends JsonResource
                 'status' => $this->subscription->status,
             ] : null,
             'wizard' => $this->wizard ? [
-                'step' => $this->wizard->step,
+                'step' => $this->wizard->current_step instanceof WizardStep ? $this->wizard->current_step->value : $this->wizard->current_step,
                 'completed' => $this->wizard->completed,
             ] : null,
             'balances' => $this->balances,

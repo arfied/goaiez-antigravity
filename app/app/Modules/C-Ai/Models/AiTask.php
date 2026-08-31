@@ -6,6 +6,13 @@ namespace App\Modules\CAi\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $category
+ * @property int $max_ttft_ms
+ * @property int $cost_limit_cents
+ */
 class AiTask extends Model
 {
     protected $table = 'ai_tasks';

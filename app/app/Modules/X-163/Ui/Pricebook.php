@@ -55,7 +55,7 @@ class Pricebook extends Component
 
     public function mount(): void
     {
-        $tenantId = Tenancy::id() ?: (auth()->user()?->business_id ?? 0);
+        $tenantId = Tenancy::id() ?: 0;
         if ($tenantId <= 0) {
             abort(403, 'Tenant context is required to access pricebook');
         }

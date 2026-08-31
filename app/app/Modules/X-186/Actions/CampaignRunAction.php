@@ -23,7 +23,7 @@ final class CampaignRunAction
         string $campaignId,
         int $personId,
         bool $hasOpenRecover = false
-    ): ?CampaignRun {
+    ): CampaignRun {
         $run = CampaignRun::firstOrCreate(
             ['business_id' => $businessId, 'campaign_id' => $campaignId, 'person_id' => $personId],
             ['current_step' => 1, 'is_active' => true, 'is_suppressed' => false]

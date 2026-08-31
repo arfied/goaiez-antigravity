@@ -175,9 +175,9 @@ final class CapabilitiesScaffoldCommand extends Command
             }
 
             $matchedIds = [];
-            if (preg_match_all('/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/', $cells[1] ?? '', $m) > 0) {
+            if (preg_match_all('/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/', $cells[1], $m) > 0) {
                 $matchedIds = $m[1];
-            } elseif (preg_match('/N-(\d+)\s*[–…-]\s*N?-(\d+)/u', $cells[1] ?? '', $rm)) {
+            } elseif (preg_match('/N-(\d+)\s*[–…-]\s*N?-(\d+)/u', $cells[1], $rm)) {
                 $start = (int) $rm[1];
                 $end = (int) $rm[2];
                 for ($i = $start; $i <= $end; $i++) {
@@ -234,7 +234,7 @@ final class CapabilitiesScaffoldCommand extends Command
         }
         preg_match_all('/@module\s+\*{0,2}((?:X|C)-[A-Za-z0-9]+)/', (string) file_get_contents($plan), $m);
 
-        return array_values(array_diff(array_unique($m[1] ?? []), ['X-nnn']));
+        return array_values(array_diff(array_unique($m[1]), ['X-nnn']));
     }
 
     /** @param array<string, array{assertion:string, status:string}> $caps */

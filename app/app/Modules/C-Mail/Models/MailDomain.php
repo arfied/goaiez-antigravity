@@ -6,6 +6,13 @@ namespace App\Modules\CMail\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $business_id
+ * @property string $domain
+ * @property bool $is_marketing_paused
+ * @property float $complaint_rate
+ */
 class MailDomain extends Model
 {
     protected $table = 'mail_domains';

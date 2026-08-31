@@ -14,8 +14,8 @@ final class PriceRangeAction
 
         return [
             'service_name' => $serviceName,
-            'min_cents' => $item?->price_min_cents ?? 5000,
-            'max_cents' => $item?->price_max_cents ?? 15000,
+            'min_cents' => $item ? $item->price_min_cents : 5000,
+            'max_cents' => $item ? $item->price_max_cents : 15000,
         ];
     }
 }

@@ -72,7 +72,7 @@ class CustomerfacingPortal extends Component
             $this->token = $token;
             $this->businessId = (int) $link->business_id;
         } else {
-            $tenantId = Tenancy::id() ?: (auth()->user()?->business_id ?? 0);
+            $tenantId = Tenancy::id() ?: 0;
             if ($tenantId <= 0) {
                 abort(403, 'Portal link token or authenticated tenant context is required');
             }

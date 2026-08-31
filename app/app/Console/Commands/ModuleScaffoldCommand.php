@@ -269,18 +269,6 @@ final class ModuleScaffoldCommand extends Command
             : '';
     }
 
-    private function between(string $body, string $start, string $stop): string
-    {
-        $i = strpos($body, $start);
-        if ($i === false) {
-            return '';
-        }
-        $rest = substr($body, $i + strlen($start), 40);
-        $j = strpos($rest, $stop);
-
-        return trim($j === false ? $rest : substr($rest, 0, $j), " \t`*");
-    }
-
     /** @param array<string, string> $h */
     private function write(array $h): void
     {

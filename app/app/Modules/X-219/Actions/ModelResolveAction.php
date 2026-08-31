@@ -43,14 +43,14 @@ final class ModelResolveAction
             Event::dispatch(new ModelFallback(
                 businessId: $businessId,
                 targetModule: $targetModule,
-                primaryModel: $primary?->model_name ?? 'unknown',
-                fallbackModel: $backup?->model_name ?? 'gemini-1.5-pro',
+                primaryModel: $primary ? $primary->model_name : 'unknown',
+                fallbackModel: $backup ? $backup->model_name : 'gemini-1.5-pro',
                 reason: "Primary provider status: {$primaryProvider?->status}"
             ));
 
             return [
-                'model' => $backup?->model_name ?? 'gemini-1.5-pro',
-                'provider' => $backupProvider?->provider_name ?? 'google',
+                'model' => $backup ? $backup->model_name : 'gemini-1.5-pro',
+                'provider' => $backupProvider ? $backupProvider->provider_name : 'google',
                 'is_fallback' => true,
                 'fallback_reason' => "Primary provider status: {$primaryProvider?->status}",
             ];

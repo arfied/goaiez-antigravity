@@ -6,6 +6,13 @@ namespace App\Modules\CTelephony\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $carrier_name
+ * @property string $status
+ * @property int $latency_ms
+ * @property int $error_rate_pct
+ */
 class CarrierHealth extends Model
 {
     protected $table = 'carrier_health';

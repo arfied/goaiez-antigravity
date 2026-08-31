@@ -57,6 +57,12 @@ jobs:
         working-directory: app
         run: php artisan doctor:selftest
 
+      - name: Doctor Stage Verification
+        working-directory: app
+        run: |
+          php artisan doctor --stage=integrity
+          php artisan doctor --stage=journey
+
       - name: Run Test Suite
         working-directory: app
         env:
@@ -66,4 +72,5 @@ jobs:
           DB_DATABASE: goaiez_test
           DB_USERNAME: postgres
           DB_PASSWORD: password
+          QUEUE_CONNECTION: database
         run: ./vendor/bin/pest

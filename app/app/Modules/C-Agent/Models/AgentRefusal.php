@@ -6,6 +6,14 @@ namespace App\Modules\CAgent\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $business_id
+ * @property int $session_id
+ * @property string $refusal_code
+ * @property string $reason
+ * @property ?array<string, mixed> $context
+ */
 class AgentRefusal extends Model
 {
     public const VALID_REFUSAL_CODES = [

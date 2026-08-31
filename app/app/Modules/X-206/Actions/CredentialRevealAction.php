@@ -30,7 +30,7 @@ final class CredentialRevealAction
                 'business_id' => $businessId,
                 'credential_id' => $credentialId,
                 'user_id' => $userId,
-                'service_name' => $cred?->service_name ?? 'unknown',
+                'service_name' => $cred ? $cred->service_name : 'unknown',
                 'ip_address' => $ipAddress ?? '127.0.0.1',
                 'status' => 'refused',
                 'refusal_reason' => 'UNAUTHORIZED_CROSS_TENANT',
@@ -39,7 +39,7 @@ final class CredentialRevealAction
 
             Event::dispatch(new CredentialFailed(
                 businessId: $businessId,
-                serviceName: $cred?->service_name ?? 'unknown',
+                serviceName: $cred ? $cred->service_name : 'unknown',
                 reason: 'UNAUTHORIZED_CROSS_TENANT'
             ));
 
