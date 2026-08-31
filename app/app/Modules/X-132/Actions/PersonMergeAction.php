@@ -21,7 +21,7 @@ final class PersonMergeAction
                 'linked_person_id' => $duplicatePersonId,
             ],
             [
-                'confidence_score' => 1.000,
+                'confidence_rate' => 1.000,
                 'match_tier' => 'manual_admin_merge',
             ]
         );

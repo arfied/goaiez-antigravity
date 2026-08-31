@@ -35,7 +35,7 @@ final class InterestInferAction
         $interest = PersonInterest::updateOrCreate(
             ['business_id' => $businessId, 'person_id' => $personId, 'topic' => $topic],
             [
-                'confidence_score' => $confidenceScore,
+                'confidence_rate' => $confidenceScore,
                 'source' => $source,
                 'is_tenant_set' => false,
             ]

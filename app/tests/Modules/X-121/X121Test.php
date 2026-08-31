@@ -44,11 +44,6 @@ class X121Test extends TestCase
         DB::statement("SET app.business_id = '{$bizB->id}'");
         $jobB = Job::create([
             'business_id' => $bizB->id,
-            'queue' => 'default',
-            'payload' => '{}',
-            'attempts' => 0,
-            'available_at' => time(),
-            'created_at' => time(),
             'title' => 'Secret Job B',
             'status' => 'pending',
             'price_cents' => 50000,
@@ -57,8 +52,8 @@ class X121Test extends TestCase
         // Switch session to Tenant A
         DB::statement("SET app.business_id = '{$bizA->id}'");
 
-        // Tenant A querying jobs must return 0 tenant B rows without throwing
-        $jobsSeenByA = DB::table('jobs')->where('id', $jobB->id)->get();
+        // Tenant A querying work_orders must return 0 tenant B rows without throwing
+        $jobsSeenByA = DB::table('work_orders')->where('id', $jobB->id)->get();
         $this->assertCount(0, $jobsSeenByA, 'RLS must hide tenant B rows from tenant A session completely');
 
         // 2. Fact update invalidation in same transaction sharing commit_id

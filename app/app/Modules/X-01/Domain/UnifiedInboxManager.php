@@ -150,7 +150,7 @@ final class UnifiedInboxManager
         $ls = LeadScore::updateOrCreate(
             ['business_id' => $businessId, 'person_id' => $personId],
             [
-                'score' => $score,
+                'lead_rating' => $score,
                 'grade' => $grade,
                 'confidence' => 0.98,
                 'signals' => ['recent_inquiry' => true, 'intent_score' => $score],

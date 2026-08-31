@@ -13,6 +13,6 @@ class ResolutionEvidence extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'confidence_score' => 'float',
+        'confidence_rate' => 'float',
     ];
 }

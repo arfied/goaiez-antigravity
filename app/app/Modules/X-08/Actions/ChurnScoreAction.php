@@ -28,7 +28,6 @@ final class ChurnScoreAction
                 'tenant_identifier' => $tenantIdentifier,
                 'login_decay_days' => $loginDecayDays,
                 'roi_open_rate_rising' => true,
-                'risk_score' => 0.00,
                 'risk_level' => 'low',
                 'recommendation_note' => 'Autonomous value active: customer consistently opening push summaries',
             ]);
@@ -44,7 +43,6 @@ final class ChurnScoreAction
             'tenant_identifier' => $tenantIdentifier,
             'login_decay_days' => $loginDecayDays,
             'roi_open_rate_rising' => false,
-            'risk_score' => $riskScore,
             'risk_level' => $riskLevel,
             'recommendation_note' => $note,
         ]);

@@ -165,7 +165,7 @@ class X01Test extends TestCase
         $p = $this->createContact->handle($biz->id, 'Scored Lead', '+15125550166');
         $score = $this->manager->scoreLead($biz->id, $p->id, 85, 'A');
 
-        $this->assertEquals(85, $score->score);
+        $this->assertEquals(85, $score->lead_rating);
         $this->assertEquals('A', $score->grade);
     }
 

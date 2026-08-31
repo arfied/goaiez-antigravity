@@ -46,7 +46,7 @@ final class EnrichRunAction
                 'field_key' => $key,
                 'field_value' => (string) $val,
                 'source' => $source,
-                'confidence_score' => $confidence,
+                'confidence_rate' => $confidence,
                 'is_usable' => $isUsable,
             ]);
         }

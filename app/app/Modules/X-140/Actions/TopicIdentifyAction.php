@@ -18,7 +18,7 @@ final class TopicIdentifyAction
             'topic_title' => $topicTitle,
             'slug' => Str::slug($topicTitle),
             'cluster_key' => $clusterKey,
-            'similarity_score' => 0.000,
+            'similarity_rate' => 0.000,
             'is_published' => false,
         ]);
 

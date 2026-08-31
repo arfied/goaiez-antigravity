@@ -16,7 +16,7 @@ class MembershipsList extends Component
     public function render()
     {
         $memberships = ($this->businessId > 0)
-            ? DirectoryMembership::where('business_id', $this->businessId)->orderByDesc('rank_score')->get()
+            ? DirectoryMembership::where('business_id', $this->businessId)->orderByDesc('directory_index')->get()
             : collect();
 
         return view('x-192::memberships-list', [

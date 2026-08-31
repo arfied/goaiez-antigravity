@@ -13,7 +13,7 @@ class VoiceCostSample extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'cost_per_minute' => 'float',
+        'cost_per_minute' => 'integer',
         'sample_timestamp' => 'datetime',
     ];
 }

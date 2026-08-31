@@ -13,7 +13,7 @@ class EnrichmentField extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'confidence_score' => 'float',
+        'confidence_rate' => 'float',
         'is_usable' => 'boolean',
     ];
 }

@@ -18,7 +18,7 @@ final class InterestSetAction
         $interest = PersonInterest::updateOrCreate(
             ['business_id' => $businessId, 'person_id' => $personId, 'topic' => $topic],
             [
-                'confidence_score' => 1.000,
+                'confidence_rate' => 1.000,
                 'source' => 'tenant_manual',
                 'is_tenant_set' => true, // Protected against inference overwrite (TEST ANCHOR)
             ]

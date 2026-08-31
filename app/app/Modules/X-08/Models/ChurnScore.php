@@ -15,6 +15,5 @@ class ChurnScore extends Model
     protected $casts = [
         'login_decay_days' => 'integer',
         'roi_open_rate_rising' => 'boolean',
-        'risk_score' => 'float',
     ];
 }

@@ -33,7 +33,7 @@ final class AuditRunAction
             'business_id' => $businessId,
             'prospect_id' => $prospectId,
             'domain' => $domain,
-            'overall_score' => 78.5,
+            'overall_rating' => 78.5,
             'is_scored' => true,
         ]);
 

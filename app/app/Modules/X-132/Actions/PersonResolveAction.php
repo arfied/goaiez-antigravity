@@ -37,7 +37,7 @@ final class PersonResolveAction
                 'field_name' => $fieldName,
                 'field_value' => $fieldVal,
                 'source_provider' => $provider,
-                'confidence_score' => $confidence,
+                'confidence_rate' => $confidence,
             ]);
 
             if ($confidence > $highestConfidence) {
@@ -53,7 +53,7 @@ final class PersonResolveAction
                     'linked_person_id' => $matchingPersonId,
                 ],
                 [
-                    'confidence_score' => $highestConfidence,
+                    'confidence_rate' => $highestConfidence,
                     'match_tier' => 'tier_1_exact_email',
                 ]
             );

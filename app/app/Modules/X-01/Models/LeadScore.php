@@ -13,7 +13,7 @@ class LeadScore extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'score' => 'integer',
+        'lead_rating' => 'integer',
         'confidence' => 'float',
         'signals' => 'array',
     ];

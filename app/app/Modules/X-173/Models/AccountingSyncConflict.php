@@ -13,7 +13,7 @@ class AccountingSyncConflict extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'confidence_score' => 'float',
+        'confidence_rate' => 'float',
         'flagged_for_review' => 'boolean',
     ];
 }

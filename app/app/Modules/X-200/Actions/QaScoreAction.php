@@ -27,7 +27,7 @@ final class QaScoreAction
             'business_id' => $businessId,
             'seat_id' => $seat->id,
             'call_id' => $callId,
-            'score' => max(0, min(100, $score)),
+            'qa_rating' => max(0, min(100, $score)),
             'coaching_note' => $coachingNote ?? 'positive execution on objection handling',
             'is_positive_only' => true,
         ]);

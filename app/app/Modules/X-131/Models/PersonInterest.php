@@ -13,7 +13,7 @@ class PersonInterest extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'confidence_score' => 'float',
+        'confidence_rate' => 'float',
         'is_tenant_set' => 'boolean',
     ];
 }

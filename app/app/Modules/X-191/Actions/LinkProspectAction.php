@@ -22,7 +22,7 @@ final class LinkProspectAction
             'domain' => $domain,
             'target_url' => $targetUrl,
             'is_pbn' => $isPbn,
-            'da_score' => $daScore,
+            'domain_authority' => $daScore,
         ]);
 
         Event::dispatch(new CompetitorAnalysed($businessId, $domain, 1));

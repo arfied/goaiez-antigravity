@@ -36,7 +36,7 @@ final class TemplateMatchAction
             'business_id' => $businessId,
             'prospect_id' => $prospectId,
             'template_id' => $templateId,
-            'match_score' => 0.920,
+            'match_rate' => 0.920,
             'path_type' => $pathType,
             'rendered_preview' => $renderedPreview,
         ]);

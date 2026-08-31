@@ -46,7 +46,7 @@ final class ContentDraftFromConversationAction
         $canPublish = (! $hasSamplePrice && ! $isCannibalizing);
 
         $topic->update([
-            'similarity_score' => $similarityScore,
+            'similarity_rate' => $similarityScore,
             'is_published' => $canPublish,
         ]);
 

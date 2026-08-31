@@ -14,7 +14,7 @@ class DirectoryMembership extends Model
 
     protected $casts = [
         'is_noindex' => 'boolean',
-        'rank_score' => 'integer',
+        'directory_index' => 'integer',
         'is_purchased' => 'boolean',
     ];
 

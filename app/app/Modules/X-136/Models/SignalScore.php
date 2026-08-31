@@ -13,7 +13,7 @@ class SignalScore extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'score' => 'float',
+        'signal_value' => 'float',
         'is_high_intent' => 'boolean',
     ];
 }

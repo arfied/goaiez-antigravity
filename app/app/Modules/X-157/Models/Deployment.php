@@ -13,7 +13,7 @@ class Deployment extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'speed_score' => 'integer',
+        'speed_index' => 'integer',
         'speed_budget_ms' => 'integer',
         'measured_ttfb_ms' => 'integer',
         'deployed_at' => 'datetime',

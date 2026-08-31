@@ -53,11 +53,11 @@ class X197Test extends TestCase
 
         $this->assertEquals('managed', $coldRoute->route_type);
         $this->assertLessThanOrEqual(600, $coldRoute->latency_ms, 'Latency does not exceed 600 ms (TEST ANCHOR)');
-        $this->assertEquals(0.2200, (float) $coldRoute->cost_per_minute);
+        $this->assertEquals(2200, $coldRoute->cost_per_minute);
 
         $managedSample = VoiceCostSample::where('business_id', $biz->id)->where('route_type', 'managed')->latest('id')->first();
         $this->assertNotNull($managedSample);
-        $this->assertEquals(0.2200, (float) $managedSample->cost_per_minute);
+        $this->assertEquals(2200, $managedSample->cost_per_minute);
 
         // 2. Pool Warm: self-hosted share climbs and measured $/min is below managed sample (TEST ANCHOR & G3-26)
         $coldPool->update([
@@ -72,13 +72,13 @@ class X197Test extends TestCase
         );
 
         $this->assertEquals('self_hosted', $warmRoute->route_type);
-        $this->assertEquals(0.0700, (float) $warmRoute->cost_per_minute, '7¢ minute self-hosted stack (G3-26)');
+        $this->assertEquals(700, $warmRoute->cost_per_minute, '7¢ minute self-hosted stack (G3-26)');
 
         $selfHostedSample = VoiceCostSample::where('business_id', $biz->id)->where('route_type', 'self_hosted')->latest('id')->first();
         $this->assertNotNull($selfHostedSample);
         $this->assertLessThan(
-            (float) $managedSample->cost_per_minute,
-            (float) $selfHostedSample->cost_per_minute,
+            $managedSample->cost_per_minute,
+            $selfHostedSample->cost_per_minute,
             'Measured $/min in voice_cost_samples is below the managed sample'
         );
 

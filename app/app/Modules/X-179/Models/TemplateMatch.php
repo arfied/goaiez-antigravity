@@ -13,6 +13,6 @@ class TemplateMatch extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'match_score' => 'float',
+        'match_rate' => 'float',
     ];
 }

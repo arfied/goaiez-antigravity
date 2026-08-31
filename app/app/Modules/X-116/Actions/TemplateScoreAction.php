@@ -13,7 +13,7 @@ final class TemplateScoreAction
     public function score(int $businessId, int $templateId, float $conversionRate): Template
     {
         $template = Template::where('business_id', $businessId)->findOrFail($templateId);
-        $template->update(['conversion_score' => $conversionRate]);
+        $template->update(['conversion_rate' => $conversionRate]);
 
         Event::dispatch(new TemplateScored($businessId, $template->id, $conversionRate));
 

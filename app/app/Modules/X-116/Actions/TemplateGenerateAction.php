@@ -48,7 +48,7 @@ final class TemplateGenerateAction
             'industry_code' => $industryCode,
             'funnel_type' => $funnelType,
             'design_tokens' => $designTokens,
-            'conversion_score' => 0.00,
+            'conversion_rate' => 0.00,
         ]);
 
         // Default blocks if none passed

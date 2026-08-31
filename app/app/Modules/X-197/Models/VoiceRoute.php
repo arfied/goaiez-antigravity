@@ -13,7 +13,7 @@ class VoiceRoute extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'cost_per_minute' => 'float',
+        'cost_per_minute' => 'integer',
         'latency_ms' => 'integer',
         'fallback_used' => 'boolean',
     ];

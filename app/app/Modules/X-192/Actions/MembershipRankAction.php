@@ -36,7 +36,7 @@ final class MembershipRankAction
             'directory_name' => $directoryName,
             'directory_url' => $directoryUrl,
             'is_noindex' => $isNoindex,
-            'rank_score' => $finalScore,
+            'directory_index' => $finalScore,
             'recommendation_note' => $note,
             'is_purchased' => false,
             'approved_by_action_id' => null,

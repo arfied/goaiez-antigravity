@@ -14,7 +14,7 @@ class Template extends Model
 
     protected $casts = [
         'design_tokens' => 'array',
-        'conversion_score' => 'float',
+        'conversion_rate' => 'float',
     ];
 
     public function blocks()

@@ -40,7 +40,7 @@ final class SignalScoreAction
             'business_id' => $businessId,
             'signal_id' => $signal->id,
             'prospect_identifier' => $prospectIdentifier,
-            'score' => $baseScore,
+            'signal_value' => $baseScore,
             'is_high_intent' => $isHighIntent,
             'cooling_status' => $coolingStatus,
         ]);

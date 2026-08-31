@@ -39,7 +39,7 @@ final class EdgeDeployAction
                 'edge_zone_id' => $zone->id,
                 'deploy_hash' => $deployHash,
                 'status' => 'deploying',
-                'speed_score' => ($measuredTtfbMs <= $speedBudgetMs) ? 100 : 40,
+                'speed_index' => ($measuredTtfbMs <= $speedBudgetMs) ? 100 : 40,
                 'speed_budget_ms' => $speedBudgetMs,
                 'measured_ttfb_ms' => $measuredTtfbMs,
             ]);

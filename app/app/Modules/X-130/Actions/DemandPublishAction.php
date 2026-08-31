@@ -30,7 +30,7 @@ final class DemandPublishAction
         $series = DemandSeries::updateOrCreate(
             ['region_id' => $regionId, 'period_date' => $periodDate],
             [
-                'demand_score' => $demandScore,
+                'demand_index' => $demandScore,
                 'source_count' => $sourceCount,
                 'is_published' => $canPublish,
             ]

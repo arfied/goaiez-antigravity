@@ -58,7 +58,7 @@ final class AccountingSyncAction
                     'business_id' => $businessId,
                     'sync_run_id' => $run->id,
                     'transaction_ref' => $ref,
-                    'confidence_score' => $inference['confidence_score'],
+                    'confidence_rate' => $inference['confidence_score'],
                     'assigned_category' => 'uncategorised', // TEST ANCHOR
                     'flagged_for_review' => true,
                     'status' => 'open', // Never auto-closed (TEST ANCHOR)

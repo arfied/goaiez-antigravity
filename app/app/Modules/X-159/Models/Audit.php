@@ -14,7 +14,7 @@ class Audit extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'overall_score' => 'float',
+        'overall_rating' => 'float',
         'is_scored' => 'boolean',
     ];
 

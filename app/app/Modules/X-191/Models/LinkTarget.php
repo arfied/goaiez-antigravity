@@ -14,6 +14,6 @@ class LinkTarget extends Model
 
     protected $casts = [
         'is_pbn' => 'boolean',
-        'da_score' => 'integer',
+        'domain_authority' => 'integer',
     ];
 }

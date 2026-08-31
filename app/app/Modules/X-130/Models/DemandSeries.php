@@ -13,7 +13,7 @@ class DemandSeries extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'demand_score' => 'float',
+        'demand_index' => 'float',
         'source_count' => 'integer',
         'is_published' => 'boolean',
     ];

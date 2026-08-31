@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Event;
 
 final class VoiceRouteAction
 {
-    private const MANAGED_RATE = 0.2200; // $0.22 per minute
+    private const MANAGED_RATE = 2200; // $0.22 per minute in hundredths of a cent (§259)
 
-    private const SELF_HOSTED_RATE = 0.0700; // $0.07 per minute (G3-26: the 7¢ stack)
+    private const SELF_HOSTED_RATE = 700; // $0.07 per minute (G3-26: the 7¢ stack in hundredths of a cent)
 
     /**
      * Routes a voice call based on pool temperature and capacity.

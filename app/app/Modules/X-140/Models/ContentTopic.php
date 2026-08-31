@@ -14,7 +14,7 @@ class ContentTopic extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'similarity_score' => 'float',
+        'similarity_rate' => 'float',
         'is_published' => 'boolean',
     ];
 

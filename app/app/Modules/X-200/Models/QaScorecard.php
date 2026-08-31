@@ -13,7 +13,7 @@ class QaScorecard extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'score' => 'integer',
+        'qa_rating' => 'integer',
         'is_positive_only' => 'boolean',
     ];
 }
