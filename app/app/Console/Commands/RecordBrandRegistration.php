@@ -74,12 +74,17 @@ final class RecordBrandRegistration extends Command
         // direction this has to fail when the subject is who may send marketing.
         return Tenancy::actingAs($businessId, function () use ($registrations, $action, $businessId): int {
             try {
-                return match ($action) {
-                    'submit' => $this->submit($registrations, $businessId),
-                    'approve' => $this->approve($registrations, $businessId),
-                    'reject' => $this->reject($registrations, $businessId),
-                    default => $this->unknownAction($action),
-                };
+                if ($action === 'submit') {
+                    return $this->submit($registrations, $businessId);
+                }
+                if ($action === 'approve') {
+                    return $this->approve($registrations, $businessId);
+                }
+                if ($action === 'reject') {
+                    return $this->reject($registrations, $businessId);
+                }
+
+                return $this->unknownAction($action);
             } catch (BrandRegistrationRefused $e) {
                 // The service's messages are written for an operator and name
                 // the thing they can change, so they are printed as given

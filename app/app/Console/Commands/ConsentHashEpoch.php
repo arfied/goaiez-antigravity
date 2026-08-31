@@ -197,11 +197,9 @@ final class ConsentHashEpoch extends Command
     {
         $this->components->error(match ($status) {
             IdentifierHashEpochStatus::Rotated => 'Stored suppression hashes are NOT readable by this install.',
-            // ⚠️ **THE HONEST WORD IS "UNKNOWN" AND NOT "UNREADABLE"**, and the
-            // two have different fixes: one of them is a command that loses
-            // nothing. Saying the stronger thing would send an operator to
-            // `--accept-loss` for a problem `--adopt` solves.
-            default => 'It is not known whether stored suppression hashes are readable by this install.',
+            IdentifierHashEpochStatus::Unattributed => 'It is not known whether stored suppression hashes are readable by this install.',
+            IdentifierHashEpochStatus::Unrecorded => 'No suppression hash epoch has been recorded for this install.',
+            IdentifierHashEpochStatus::Current => 'Stored suppression hashes are readable by this install.',
         });
         $this->newLine();
         $this->line($epochs->operatorSentence());

@@ -106,7 +106,7 @@ final class GooglePushTokenVerifier implements VerifiesWebhookSenders
      * OUT DELIBERATELY.** `platform_mail.gmail.push.issuer_host` is also
      * load-bearing — {@see self::acceptedIssuers()} returns an empty list
      * without it and every token is refused — but it is a **literal in
-     * `config/platform_mail.php` with no `env()` behind it**, so no deployment
+     * `config/platform_mail.php` with no environment variable behind it**, so no deployment
      * can be missing it and a census row for it would read *set* on every
      * install for ever. **A row that cannot take its negative value is
      * decoration**, which is the shape `CLAUDE.md` names over

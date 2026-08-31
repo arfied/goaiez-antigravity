@@ -65,7 +65,7 @@ use Illuminate\Database\Eloquent\Collection;
  * ⛔ **THE CLAUSE THAT FOLLOWED — *"what is unreachable is production, which is
  * true of the whole actuation chain while `CMS_DRIVER` selects the log driver
  * and `actuation.enabled` seeds false"* — IS REMOVED RATHER THAN UPDATED
- * (6121, 6184).** A **seed** is what an unset row answers and `env(X, 'log')` is
+ * (6121, 6184).** A **seed** is what an unset row answers and `config(X, 'log')` is
  * what an absent `.env` line answers; neither is a statement about a running
  * install, and both were false in production for part of 2026-08-20 (5913).
  * **No docblock here can say what a deployment has on**, so this one no longer

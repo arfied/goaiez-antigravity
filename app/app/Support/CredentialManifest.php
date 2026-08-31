@@ -514,10 +514,7 @@ final class CredentialManifest
         $username = config("mail.mailers.{$mailer}.username");
         $transport = config("mail.mailers.{$mailer}.transport");
 
-        $key = match ($transport) {
-            'gmail' => 'gmail_refresh_token',
-            default => null,
-        };
+        $key = ($transport === 'gmail') ? 'gmail_refresh_token' : null;
 
         return [
             'authenticates' => is_string($username) && trim($username) !== '',

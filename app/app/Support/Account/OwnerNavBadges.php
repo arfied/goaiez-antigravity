@@ -68,12 +68,14 @@ final class OwnerNavBadges
             }
 
             try {
-                $count = match ($item->badge) {
-                    self::FOLLOW_UPS_DUE => app(CrmTasks::class)->dueTodayCount(),
-                    self::REPLY_DRAFTS => app(ReviewReplies::class)->pendingCount(),
-                    self::TRIAGE_OPEN => app(ReviewRouter::class)->openTriageCount(),
-                    default => 0,
-                };
+                $count = 0;
+                if ($item->badge === self::FOLLOW_UPS_DUE) {
+                    $count = app(CrmTasks::class)->dueTodayCount();
+                } elseif ($item->badge === self::REPLY_DRAFTS) {
+                    $count = app(ReviewReplies::class)->pendingCount();
+                } elseif ($item->badge === self::TRIAGE_OPEN) {
+                    $count = app(ReviewRouter::class)->openTriageCount();
+                }
             } catch (\Throwable) {
                 $count = 0;
             }
@@ -105,12 +107,11 @@ final class OwnerNavBadges
      */
     public static function screenReaderSuffix(string $badge): string
     {
-        return match ($badge) {
-            // `44` §2's own words, and the only badge they were ever true of.
-            self::FOLLOW_UPS_DUE => 'due today',
-            self::REPLY_DRAFTS, self::TRIAGE_OPEN => 'waiting for you',
-            default => 'waiting for you',
-        };
+        if ($badge === self::FOLLOW_UPS_DUE) {
+            return 'due today';
+        }
+
+        return 'waiting for you';
     }
 
     /**

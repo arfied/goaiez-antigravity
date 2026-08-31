@@ -227,7 +227,7 @@ final class LegalDraftManifest
                 'heading' => 'L-9',
             ],
 
-            default => throw new RuntimeException(
+            LegalDocumentType::ImportAttestation => throw new RuntimeException(
                 "{$type->value} is seeded but no drafting document is declared for it. "
                 .'Add an arm to LegalDraftManifest::draftSource() naming the pack its words '
                 .'were written in, or the lint that pins every draft to its source cannot run.'
