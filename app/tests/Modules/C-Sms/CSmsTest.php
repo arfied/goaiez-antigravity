@@ -141,4 +141,25 @@ class CSmsTest extends TestCase
         $calc = $this->compose->handle($body);
         $this->assertEquals(1, $calc['segments']);
     }
+
+    public function test_marketing_send_to_opted_in_recipient_is_not_refused(): void
+    {
+        Event::fake([SendRequested::class]);
+
+        $biz = Business::provision(['name' => 'SMS Consent Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $consentService = new \App\Modules\X204\Domain\ConsentService;
+        $composer = new SmsComposer($consentService);
+
+        $res = $composer->send(
+            businessId: $biz->id,
+            recipientPhone: '+15125550199',
+            body: 'Special marketing promotion message',
+            messageClass: 'marketing',
+            recipientLocalTime: '12:00'
+        );
+
+        $this->assertEquals('sent', $res['status']);
+    }
 }

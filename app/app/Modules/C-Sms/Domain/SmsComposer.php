@@ -7,12 +7,17 @@ namespace App\Modules\CSms\Domain;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\CSms\Models\SmsComposition;
 use App\Modules\CSms\Models\SmsModerationResult;
+use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class SmsComposer
 {
+    public function __construct(
+        private readonly ?ConsentService $consentService = null
+    ) {}
+
     /**
      * Calculate segments and encoding according to carrier rules (TEST ANCHOR).
      */
@@ -48,16 +53,35 @@ final class SmsComposer
         string $recipientLocalTime = '12:00'
     ): array {
         return DB::transaction(function () use ($businessId, $recipientPhone, $body, $messageClass, $recipientLocalTime) {
-            // 1. STOP / Suppression check
-            $suppressed = Suppression::where('business_id', $businessId)
-                ->where('recipient_phone', $recipientPhone)
-                ->exists();
+            // 1. Consent / STOP / Suppression check
+            $consentState = match ($messageClass) {
+                'transactional' => 'transactional',
+                'opted_in', 'attested', 'customer_initiated' => $messageClass,
+                default => 'opted_in',
+            };
 
-            if ($suppressed) {
-                return [
-                    'status' => 'halted',
-                    'reason' => 'STOP_SUPPRESSED',
-                    'message' => 'Send suppressed due to STOP/DNC status',
+            if ($this->consentService !== null) {
+                $decision = $this->consentService->decide($businessId, $recipientPhone, 'sms', $consentState);
+                if (! $decision['granted']) {
+                    return [
+                        'status' => 'halted',
+                        'reason' => $decision['reason'],
+                        'message' => 'Send suppressed due to consent check: '.$decision['reason'],
+                    ];
+                }
+            } else {
+                $suppressed = Suppression::where('business_id', $businessId)
+                    ->where('recipient_phone', $recipientPhone)
+                    ->exists();
+
+                if ($suppressed) {
+                    return [
+                        'status' => 'halted',
+                        'reason' => 'STOP_SUPPRESSED',
+                        'message' => 'Send suppressed due to STOP/DNC status',
+                    ];
+                }
+            }
                 ];
             }
 
