@@ -409,7 +409,7 @@ final class OptInConfirmations
      * one class over.
      *
      * ⚠️ **EVERY CLAUSE IS A CARRIER REQUIREMENT AND NONE IS COPY.** Who is
-     * texting and on whose behalf — T137 R3's on-behalf-of identity, the same
+     * texting and on whose behalf — standard on-behalf-of identity, the same
      * `"{Business} via GO AI EZ"` the invite carries. What the programme is.
      * **Message frequency** and **message and data rates**, the two disclosures
      * a reviewer looks for by name. `HELP` and `STOP`, which this application

@@ -29,7 +29,7 @@ use Throwable;
  *
  * ## The aggregate, not the worst tenant
  *
- * 2101's damage is cumulative: R8 puts every tenant's traffic on the **GOAIEZ**
+ * 2101's damage is cumulative: tenant number allocation puts every tenant's traffic on the **GOAIEZ**
  * 10DLC brand and our own number pool, so what a carrier scores is the total. A
  * platform halt driven by whichever single tenant happened to be worst would
  * fire constantly on small accounts — one STOP out of four deliveries is

@@ -66,7 +66,7 @@ use InvalidArgumentException;
  *
  * ## Media, and why the list is URLs rather than bytes
  *
- * MMS on Infobip is submitted with externally fetchable media, and R8 confirms
+ * MMS on Infobip is submitted with externally fetchable media, and dedicated number registration confirms
  * MMS on the campaign. The list holds URLs this application serves; it never
  * holds binary, because a value object that can carry a megabyte ends up in a
  * queue payload, a log line and a failed-job row.

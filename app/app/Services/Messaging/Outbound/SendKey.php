@@ -118,7 +118,7 @@ final readonly class SendKey
      * no customer and therefore no permit.
      *
      * ⚠️ **THERE IS EXACTLY ONE SUCH CATEGORY AND IT IS NOT A CUSTOMER SEND.**
-     * R7's owner notification — the voicemail and its transcript delivered to
+     * The voicemail owner notification — the voicemail and its transcript delivered to
      * the business owner — goes to the account holder on the account
      * relationship, which is `PlatformMailer`'s existing authorisation model and
      * is why that class has a `send()` and `PlatformTexter` deliberately does

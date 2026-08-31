@@ -1005,7 +1005,7 @@ final class ReviewInviteSender
                 );
 
                 // ⚠️ **THE BUSINESS NAME AND THE MESSAGE ARE PASSED FOR THE
-                // ON-BEHALF-OF IDENTITY AND THE REPLY CODE** (T137 R3, 2097). The
+                // ON-BEHALF-OF IDENTITY AND THE REPLY CODE** (email identity architecture, 2097). The
                 // name becomes `"{Business} via GO AI EZ"` in the `From:` display
                 // name — never in the address, which stays on the sending domain
                 // so SPF and DKIM align — and the message is what the
@@ -1769,7 +1769,7 @@ final class ReviewInviteSender
      * contact's review invite really did leave our brand with no disclosure.
      * 2192 states the general rule: *"the number belongs to the tenant while the
      * brand stays ours … a `Tenant` lane would assert the tenant holds their own
-     * TCR brand, which is the one thing R8 says they do not."*
+     * TCR brand, which is the one thing tenant number isolation says they do not."*
      *
      * ⚠️ **TWO AXES WERE CONFLATED.** `MessagingLane` on a permit derives from
      * `CapturedBy` — *who captured the consent* — while this sentence is about

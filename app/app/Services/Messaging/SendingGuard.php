@@ -22,10 +22,10 @@ use LogicException;
  *
  * ## Why this is a precondition of every send rather than a dashboard
  *
- * 2101 records the structural consequence of R8 with the cost named: attested
+ * 2101 records the structural consequence of shared number pools with the cost named: attested
  * lists go out over the **GOAIEZ** 10DLC brand from **our own** number pool, so
  * *"the tenant carries the legal basis while the platform carries the carrier
- * reputation"* — across every tenant at once. R6 answers that with per-tenant
+ * reputation"* — across every tenant at once. Complaint monitoring answers that with per-tenant
  * isolation and monitoring, which **contains damage rather than preventing it**,
  * and 2102 draws the conclusion: the kill switches trip *"on a complaint-rate
  * threshold without a human, because the failure mode is a campaign running

@@ -24,7 +24,7 @@ namespace App\Services\Messaging\Composer;
  * strings this reads arrive from a customer typing into a public feedback form
  * and from spreadsheets a tenant uploaded, and they are about to be interpolated
  * into a marketing SMS sent over the **GOAIEZ** 10DLC brand from our own number
- * pool (T137 R8, decision 2101). A `name` cell holding `http://cheap-pills.example`
+ * pool (dedicated number pool, decision 2101). A `name` cell holding `http://cheap-pills.example`
  * would put a second link in a message the ≤159 law allows exactly one of — and
  * a multi-link SMS is the shape carriers filter, which fails silently and
  * accrues to the platform's reputation across every tenant at once. Rejecting

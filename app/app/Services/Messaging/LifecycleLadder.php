@@ -85,7 +85,7 @@ use App\Support\Messaging\LifecycleLadderCatalog;
  *
  * ## ⛔ IT REFUSES WHERE THE GUARANTEE IS UNSET AND MEASURES WHERE IT IS LONG
  *
- * Two rungs carry R39's written promise and neither carries its words: they
+ * Two rungs carry the written promise and neither carries its words: they
  * carry `{guarantee}`, resolved from `legal.guarantee_sentence`. With that key
  * empty **those two rungs do not compose at all**, which is the fail-closed
  * direction — a rung that quietly dropped the sentence would withdraw a

@@ -84,7 +84,7 @@ final class ReactComposer
      * Lane B rides *the tenant's own* TCR brand and *the tenant's own* number,
      * where naming us would be a false statement about who registered it.
      *
-     * **T137 R8 makes that premise false for this lane.** Reactivation sends go
+     * **Tenant dedicated number allocation makes that premise false for this lane.** Reactivation sends go
      * out over the **GOAIEZ** brand from **our** pool whatever the consent basis
      * is — that is decision 2101 in one sentence: Lane A infrastructure carrying
      * Lane B consent, with the complaint rate accruing to the platform across
