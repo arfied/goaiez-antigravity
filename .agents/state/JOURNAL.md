@@ -420,3 +420,12 @@
 - `2026-08-29T16:43:19` journey J11 -> green
 - `2026-08-29T16:43:19` journey J12 -> green
 - `2026-08-31T04:18:42` UNRESOLVED schema X-121 - 12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per §150.4 and §259
+- `2026-08-31T04:24:07` stage integrity = 0
+- `2026-08-31T04:24:07` stage boundary = 0
+- `2026-08-31T04:24:07` stage contract = 104
+- `2026-08-31T04:24:07` stage citation = 108
+- `2026-08-31T04:24:07` stage schema = 0
+- `2026-08-31T04:24:07` stage capability = 120
+- `2026-08-31T04:24:07` stage anchor = 10
+- `2026-08-31T04:24:07` stage journey = 0
+- `2026-08-31T04:38:59` selftest: sound

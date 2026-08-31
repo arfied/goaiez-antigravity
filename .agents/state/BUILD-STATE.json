@@ -23,7 +23,7 @@
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 2,
+   "violations": 108,
    "fails": "COMMIT"
   },
   "schema": {
@@ -31,15 +31,15 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 957,
+   "violations": 120,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 134,
+   "violations": 10,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 12,
+   "violations": 0,
    "fails": "WAVE"
   }
  },
