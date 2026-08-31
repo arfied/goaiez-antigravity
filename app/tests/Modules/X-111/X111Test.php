@@ -57,6 +57,9 @@ class X111Test extends TestCase
 
         // 1. Every alert row's message begins with an imperative verb (TEST ANCHOR, G21-05)
         $alert1 = $this->alertAction->handle($biz->id, 'critical', 'Investigate high error rate on Stripe webhook');
+        $this->assertEquals($biz->id, $alert1->business_id);
+        $this->assertEquals('critical', $alert1->severity);
+        $this->assertEquals('open', $alert1->status);
         $this->assertMatchesRegularExpression('/^[A-Z][a-z]+ /', $alert1->action_verb_message);
         $firstWord1 = strtok($alert1->action_verb_message, ' ');
         $this->assertContains($firstWord1, ['Investigate', 'Review', 'Verify', 'Inspect', 'Escalate', 'Restart', 'Authorize', 'Audit', 'Halt', 'Resolve', 'Check']);
