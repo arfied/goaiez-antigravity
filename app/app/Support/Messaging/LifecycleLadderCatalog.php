@@ -156,12 +156,12 @@ final class LifecycleLadderCatalog
         // ⛔ **THE PREDICATE AND THE COPY MUST AGREE, IN BOTH DIRECTIONS.** A
         // rung that says it carries the guarantee and has no insert drops a
         // written promise silently; one that has an insert and says it does not
-        // sends a promise on a rung R39 says does not change. Neither is
+        // sends a promise on a rung the guarantee policy says does not change. Neither is
         // visible on a screen, so both are refused here.
         if ($rung->carriesTheGuarantee() !== ($copy['email_insert'] !== null)) {
             throw new RuntimeException(
-                "The lifecycle rung `{$rung->value}` and its authored copy disagree about R39's "
-                .'guarantee. `LifecycleRung::carriesTheGuarantee()` is the ruling — R39: "the '
+                "The lifecycle rung `{$rung->value}` and its authored copy disagree about the written "
+                .'guarantee. `LifecycleRung::carriesTheGuarantee()` is the ruling — the guarantee policy states: "the '
                 .'trial-expiry rung gains the guarantee line immediately before the CTA. No other '
                 .'rung changes" — and the copy has to match it.'
             );

@@ -1076,7 +1076,7 @@ final class DefaultsManifest
             'messaging.carrier_cost_inbound_sms_millicents' => [
                 'seed' => 0,
                 'group' => 'Messaging',
-                'description' => 'What one billable inbound SMS costs us, in thousandths of a cent. ⚠️ This one has a cost and debits NO credit, deliberately — charging a tenant because their customer replied is the wrong product, and on the AI two-way conversation path (R7) it would be a charge driven entirely by somebody else\'s behaviour and bounded by nothing. It is here so the margin book sees it. Seeded 0 = unset. ✅ `InboundMessages` writes the row (decision 4804, closing the seam 2549 named) — this description said nothing did until 2026-08-18.',
+                'description' => 'What one billable inbound SMS costs us, in thousandths of a cent. ⚠️ This one has a cost and debits NO credit, deliberately — charging a tenant because their customer replied is the wrong product, and on the AI two-way conversation path it would be a charge driven entirely by somebody else\'s behaviour and bounded by nothing. It is here so the margin book sees it. Seeded 0 = unset. ✅ `InboundMessages` writes the row (decision 4804, closing the seam 2549 named) — this description said nothing did until 2026-08-18.',
             ],
 
             'messaging.carrier_bills_inbound_sms_per_segment' => [
@@ -1969,7 +1969,7 @@ final class DefaultsManifest
             /*
              * When the ceiling alert fires — decision 2095's actual mechanism.
              *
-             * ⚠️ **A METER IS A THING SOMEBODY LOOKS AT.** T137 R3 asks for a
+             * ⚠️ **A METER IS A THING SOMEBODY LOOKS AT.** Email limit architecture asks for a
              * visible limit with a meter in admin, and 2095 records why that is
              * not sufficient on its own: this failure is silent and total at
              * once — sends stop, the queue drains normally, and every tenant's
@@ -3153,7 +3153,7 @@ final class DefaultsManifest
             'demo.number' => 'The phone number printed on the six /demo/{family} doors, in the form a person reads it (decision 5195, CC-2 §2.7). ⛔ No seed: a number cannot be guessed, and a placeholder on a public page is a false statement that looks answered. ⚠️ While it is empty the doors render without their "text this word to this number" block — deliberately, and not as a degraded state. ⛔ SETTING IT IS A PROMISE THAT SOMETHING ANSWERS: nothing in the application routes `demo.keyword.*` to a demo tenant yet, so the responder must be live before this row is. The keywords themselves are seeded under `demo.keyword.*`.',
 
             /*
-             * The R39 guarantee sentence lived here, withheld, until the W33
+             * The written guarantee sentence lived here, withheld, until the W33
              * composition — CC-2 §2.5, CC-4 §2, decisions 5196 and 5283.
              *
              * ⛔ **BOTH READINGS ARE KEPT AND DATED, BECAUSE EACH WAS RIGHT ABOUT

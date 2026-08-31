@@ -49,7 +49,7 @@ use App\Enums\BillingTerm;
  * would be right for one row and a cent wrong for the other. `Instalments::split()`
  * is the only thing that produces them.
  *
- * ⚠️ **AND THE OWNER'S ORDERING IS NOT WHAT IS CHARGED.** R10 writes
+ * ⚠️ **AND THE OWNER'S ORDERING IS NOT WHAT IS CHARGED.** The founder pricing notes write
  * "$250.00 + $249.99"; `Instalments` puts the remainder **last** on `CLAUDE.md`'s
  * rule, so the founder annual is billed $249.99 then $250.00. 2741 records that
  * remainder-last is *the only ordering Authorize.Net can express* — a fact about
