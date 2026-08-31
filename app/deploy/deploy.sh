@@ -23,6 +23,7 @@ rsync -av "${SRC_DIR}/database/" "${TARGET_DIR}/database/"
 rsync -av "${SRC_DIR}/routes/" "${TARGET_DIR}/routes/"
 rsync -av "${SRC_DIR}/resources/" "${TARGET_DIR}/resources/"
 rsync -av "${SRC_DIR}/config/" "${TARGET_DIR}/config/"
+rsync -av "${SRC_DIR}/lang/" "${TARGET_DIR}/lang/"
 
 # 2. Clear old config cache and run migrations on live database
 cd "${TARGET_DIR}"
