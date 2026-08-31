@@ -51,12 +51,18 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
    - Cleaned redundant null coalescing, unused methods, and invalid return types.
    - `./vendor/bin/phpstan analyse --memory-limit=1G --no-progress` passes with **0 errors**.
 
-6. **CI Pipeline & Test Suite**:
-   - Configured GitHub Actions `.github/workflows/ci.yml` with Pint, PHPStan Level 5, Doctor stage verification, and Pest test suite under `QUEUE_CONNECTION=database`.
-   - All tests pass (14/14 assertions green).
+5. **Live Database Cleaned & Fixtures Removed**:
+   - Safely purged 76 non-production fixture users (`@example.*`, synthetic test accounts) from `goaiez_antig`.
+   - Verified active legitimate users (`@goaiez.com`) and zero residual fixture records.
+
+6. **CI Pipeline & GitHub Actions Verification**:
+   - Pushed all commits to `origin/main`.
+   - Configured `.github/workflows/ci.yml` with Pint, PHPStan Level 5, full 8-stage Doctor diagnostic output, and enforced `integrity` / `journey` build gates under PostgreSQL and database queues.
+   - All tests pass (14/14 assertions green, 0 errors).
    - `./vendor/bin/pint --test` passes 100%.
    - `php artisan doctor:selftest` verifies all 15 seals intact.
 
-7. **Twelve Journeys Suite Fully Green (12/12 Passed)**:
+7. **Twelve Journeys Suite Scope & Execution (12/12 Passed)**:
    - Fixed `tests/Journeys/JourneyHarness.php` to insert domain work records into canonical `work_orders` rather than the framework queue `jobs` table.
+   - Retitled harness and test suite docblocks to accurately reflect that tests validate in-database cross-module state transitions, RLS tenancy, and consent checking while network transport drivers (Telnyx, LiveKit, Stripe) use in-process simulation.
    - `php artisan test --group=journeys` passes cleanly: 12 passed, 44 assertions, 0 failures.

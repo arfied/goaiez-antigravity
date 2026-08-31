@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
- * The journey harness — real implementations across module seams against real transports.
+ * The journey harness — cross-module persistence, tenancy isolation, and state transition test harness.
  */
 trait JourneyHarness
 {

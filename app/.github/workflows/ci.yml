@@ -57,9 +57,12 @@ jobs:
         working-directory: app
         run: php artisan doctor:selftest
 
-      - name: Doctor Stage Verification
+      - name: Doctor Audit (Full Diagnostic & Gated Stages)
         working-directory: app
         run: |
+          echo "=== 8-Stage Platform Diagnostic Report ==="
+          php artisan doctor || true
+          echo "=== Enforcing Integrity & Journey Stage Gates ==="
           php artisan doctor --stage=integrity
           php artisan doctor --stage=journey
 
