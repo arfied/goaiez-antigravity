@@ -14,12 +14,12 @@ use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 
 /**
- * How a tenant's calls reach us — T137 R7's conditional forwarding, and the
+ * How a tenant's calls reach us — conditional call forwarding, and the
  * first writer `support_settings` has ever had.
  *
  * ⛔ **`support_settings` SHIPPED ON 2026-07-30 AND NOTHING IN `app/` HAD
  * TOUCHED IT SINCE.** {@see SupportSetting} had a model, a factory and a full
- * set of R7 columns — `call_routing_mode`, `ring_timeout_seconds`,
+ * set of call routing columns — `call_routing_mode`, `ring_timeout_seconds`,
  * `voicemail_greeting_type`, `on_call_numbers`, `forwarding_verified_at`,
  * `forwarding_broken_at` — and **no tenant had a row at all**. That is
  * `CLAUDE.md`'s first recurring failure shape (272), and the tell it names was

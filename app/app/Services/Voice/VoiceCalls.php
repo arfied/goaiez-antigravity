@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 /**
- * The only writer of `calls` and `voicemails` — T176 P2, the voice half of R7.
+ * The only writer of `calls` and `voicemails` — T176 P2, the voice forwarding workflow.
  *
  * ## ⛔ THIS IS THE MISSING WRITER, AND ITS ABSENCE WAS THE WHOLE OF P2
  *

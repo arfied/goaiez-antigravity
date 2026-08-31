@@ -45,7 +45,7 @@ use InvalidArgumentException;
  * ## ⚠️ THE CANON SLOT IS BOUND, NOT PASTED
  *
  * S-3 carries `{guarantee_sentence}` and nothing else authored, because T308
- * points at R39 rather than writing the promise out. {@see self::rendered()}
+ * points at the written guarantee rather than writing the promise out. {@see self::rendered()}
  * resolves it from `legal.guarantee_sentence` the moment the macro is inserted,
  * so counsel's next edit reaches every future paste and none of the ones already
  * sent. While that key is unset the macro is **not offered** — see

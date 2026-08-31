@@ -37,7 +37,7 @@ use LogicException;
  * answering* because "the customer initiated an inbound call" — it is about
  * **calls**, not texts, and about answering rather than originating. 2098–2102
  * add exactly one basis beside platform-captured consent and it is
- * `ImportAttestation`, a tenant attesting about a list. 2103 describes R7's
+ * `ImportAttestation`, a tenant attesting about a list. 2103 describes the missed-call
  * chain and stops at *"the SM-001 text-back to the caller"* without saying what
  * authorises it. **None of those reaches a stranger who dialled a number.**
  *
@@ -378,7 +378,7 @@ final class MissedCallTextBack
      * tenant's number is lane `Platform`, not lane `Tenant`, even though it is
      * operationally theirs — the number belongs to the tenant while the brand
      * stays ours … a `Tenant` lane would assert the tenant holds their own TCR
-     * brand, which is the one thing R8 says they do not."*
+     * brand, which is the one thing dedicated number allocation says they do not."*
      *
      * ⚠️ **THE TWO AXES WERE CONFLATED, AND THAT IS THE WHOLE DEFECT.**
      * `MessagingLane` on a permit is derived from `CapturedBy` — **who captured

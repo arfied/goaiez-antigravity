@@ -24,7 +24,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
  * first recurring failure shape left to rot. One of the three doors is now open;
  * what each consumer owes is below, and two of the three are still owed:
  *
- * - ✅ **Email (Workspace mailbox, T137 `SL-7`/R3) — BUILT, T176 P24.**
+ * - ✅ **Email (Workspace mailbox, T137 `SL-7` / email transport) — BUILT, T176 P24.**
  *   {@see SupportMailbox} polls the goaiez support account and
  *   `PollSupportMailboxJob` resolves the tenant *before* calling here, through
  *   `AccountDirectory::accountOfSender()`. `externalRef` is Gmail's own message

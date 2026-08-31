@@ -15,7 +15,7 @@ use InvalidArgumentException;
  * IS THAT IT CANNOT BE LEFT OUT
  *
  * `CLAUDE.md`: *"Announce recording on every recorded call, in every state."*
- * R7 restates it — *"the recording announcement is unconditional, in every
+ * Voice architecture restates it — *"the recording announcement is unconditional, in every
  * state, on the greeting (decision 2104)"*. Every previous statement of that
  * rule in this codebase has been prose:
  * {@see VoiceEventType::Answered} explains it, `InboundCall` explains

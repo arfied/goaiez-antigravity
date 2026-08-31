@@ -228,8 +228,8 @@ final class TenantProvisioner
         $this->locations->provisionLocation($name, nameIsPersonal: ! $nameIsVerified);
 
         // The tenant's own Infobip number, claimed out of the platform pool —
-        // T137 R8, one number per tenant, voice and SMS and MMS on the same row
-        // because R7's missed-call text-back has to come from the number the
+        // dedicated number allocation, one number per tenant, voice and SMS and MMS on the same row
+        // because the missed-call text-back has to come from the number the
         // caller just dialled.
         //
         // ⚠️ **`TenantNumbers::assign()` HAD NO CALLER IN `app/` UNTIL THIS

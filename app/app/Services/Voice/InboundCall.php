@@ -21,7 +21,7 @@ use InvalidArgumentException;
  * 4404 refuses the field here and `VoiceTest`'s project-wide call-direction
  * census fails the build on it — `29` §2.3 rule 13 itself was **overridden by
  * an owner ruling on 2026-08-25** (9363), so the refusal that holds is the one
- * with a mechanism under it. 2103 confirms R7's design does not touch it.
+ * with a mechanism under it. 2103 confirms the missed-call voice design does not touch it.
  * ⚠️ **A `direction` property would be the
  * first line of outbound calling**, written by somebody who thought they were
  * being general.
@@ -68,7 +68,7 @@ final readonly class InboundCall
      *                        edge, once**, so that the number the text-back goes
      *                        to is the number consent and suppression are asked
      *                        about.
-     * @param  string  $to  The tenant's own number, E.164. R8: one Infobip
+     * @param  string  $to  The tenant's own number, E.164. Dedicated number allocation: one
      *                      number per tenant, carrying voice, SMS and MMS —
      *                      which is why the text-back can come from the number
      *                      the caller just dialled.
