@@ -320,15 +320,12 @@ trait JourneyHarness
     {
         DB::statement("SET app.business_id = '{$tenant['id']}'");
 
-        $jobId = DB::table('jobs')->insertGetId([
+        $jobId = DB::table('work_orders')->insertGetId([
             'business_id' => $tenant['id'],
             'title' => 'Drain Unblock Service',
             'status' => 'booked',
-            'queue' => 'default',
-            'payload' => '{}',
-            'attempts' => 0,
-            'available_at' => time(),
-            'created_at' => time(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return [
@@ -390,15 +387,13 @@ trait JourneyHarness
         DB::statement("SET app.business_id = '{$tenant['id']}'");
 
         for ($i = 0; $i < $count; $i++) {
-            DB::table('jobs')->insert([
+            DB::table('work_orders')->insert([
                 'business_id' => $tenant['id'],
                 'title' => "Historical Job {$i}",
                 'status' => 'completed',
-                'queue' => 'default',
-                'payload' => '{}',
-                'attempts' => 0,
-                'available_at' => time(),
-                'created_at' => time(),
+                'completed_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
     }
@@ -552,15 +547,13 @@ trait JourneyHarness
         DB::statement("SET app.business_id = '{$tenant['id']}'");
 
         // Complete job
-        DB::table('jobs')->insert([
+        DB::table('work_orders')->insert([
             'business_id' => $tenant['id'],
             'title' => 'Completed HVAC Repair',
             'status' => 'completed',
-            'queue' => 'default',
-            'payload' => '{}',
-            'attempts' => 0,
-            'available_at' => time(),
-            'created_at' => time(),
+            'completed_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         // Check if review invite already sent within cadence window
