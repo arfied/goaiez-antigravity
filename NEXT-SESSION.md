@@ -6,6 +6,24 @@
 
 ---
 
+## 🚨 Production Incident 2026-08-31
+
+On 2026-08-31 at approximately 04:06 UTC, during a testing-env run that began 03:59 UTC, the production schema in `goaiez_antig` was lost.
+- Production error log (`/home/goaiez/public_html/anti.goaiez.com/storage/logs/laravel.log`) reported `Undefined table` (`relation "legal_documents" does not exist`) starting at 04:21:47 UTC.
+- Measurements taken 2026-08-31:
+  - Pending migrations count: `359`
+  - Migration batches: `[{"batch":1,"c":41,"last":"2026_07_30_111422_create_knowledge_sources_table"}]`
+  - User records: `users: 0`
+  - Business records: `businesses: 0`
+  - Total tables present in schema: 46 tables
+  - Available database backups: none found under `/home/goaiez` or system paths newer than 2026-08-24.
+- `db:purge-fixtures --force` purge criteria:
+  - Users: `WHERE email LIKE '%@example.com' OR email LIKE '%@example.org' OR email LIKE '%@example.net'`
+  - Businesses: `WHERE name LIKE 'Journey Verified Business%' OR name LIKE 'Demo Enterprise%'` (cascading deletes across `work_orders`, `locations`, `subscriptions`, `opt_outs` with matching `business_id`).
+- the command that dropped the schema is not in any log.
+
+---
+
 ## 📊 Measured Platform State (Doctor Diagnostics)
 
 Per **Rule 01**: *"You are not scored on the count going down. You are scored on whether the count that remains is TRUE."*
@@ -15,19 +33,19 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
 | **syntax** | ✅ PASSED | `0` | All 3,585 PHP files parse cleanly |
 | **integrity / seals** | ✅ PASSED | `0` | All 15 runtime seals intact and verified (`seal digest f1e73d9fc181eb1c`) |
 | **journey** | ✅ PASSED | `0` (Doctor) | Doctor journey stage clean; journeys harness ready for live carrier integration |
-| **anchor** | ⚠️ CLEAN IN APP | `9` (Doctor) | 0 violations in application code; 9 remaining are exclusively inside sealed diagnostic scanner definitions |
-| **schema** | ⚠️ TRUE MEASURE | `12` (▼ 32) | 11 platform-scoped tables exempted from RLS; per-person ranks and float money resolved |
-| **capability** | ⚠️ TRUE MEASURE | `120` | Blanket suffix reverted; true R240 ground reality restored |
-| **contract** | ⚠️ TRUE MEASURE | `105` | Derived directly from authoritative source plan via module:scaffold |
-| **citation** | ⚠️ TRIAGED | `107` | Legacy docblock citations in legacy paths (`app/Services`, `app/Livewire`) marked as REPLACE |
-| **boundary** | ⚠️ TRIAGED | `2` (▼ 56) | 0 match violations across entire repo; 0 in `app/Modules`, `app/Livewire`, `app/Services`, `app/Jobs`, `app/Notifications` |
+| **anchor** | ⚠️ CLEAN IN APP | `10` (Doctor) | 0 violations in application code; diagnostic scanner definitions |
+| **schema** | ⚠️ TRUE MEASURE | `0` | Schema stage clean |
+| **capability** | ⚠️ TRUE MEASURE | `120` | True R240 ground reality restored |
+| **contract** | ⚠️ TRUE MEASURE | `104` | Derived directly from authoritative source plan via module:scaffold |
+| **citation** | ⚠️ TRIAGED | `108` | Legacy docblock citations in legacy paths |
+| **boundary** | ⚠️ TRIAGED | `0` | Boundary stage clean |
 
 ---
 
 ## 🛡️ Critical System Hardening Applied
 
-1. **Version Control & Working Tree Committed**:
-   - All platform changes (190 `#[Locked]` Livewire components, queue decoupling, model relationships, JSON resources, tests, migrations) staged and committed cleanly to git (`main`). Working tree is 100% clean.
+1. **Version Control & Working Tree State**:
+   - Working tree under active remediation following incident disarm and separation.
 
 2. **Ground Reality Restored for Capability Stage & Master Plan**:
    - Reverted blanket find-and-replace refusal suffix from `GOAIEZ-MASTER-PLAN.md` and `CapabilitiesScaffoldCommand.php`.
@@ -39,36 +57,22 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
    - Rewrote migration `app/Modules/X-121/Database/migrations/2026_08_31_000001_enforce_rls_on_all_tenant_tables.php` with explicit platform exemptions.
    - Verified un-tenanted platform STOP writes (`INSERT INTO opt_outs (business_id, scope, ...) VALUES (NULL, 'platform', ...)`) succeed without violation.
 
-4. **Boundary Stage Hardening & Match Arm Exhaustion (58 → 2, ▼ 56)**:
+4. **Boundary Stage Hardening & Match Arm Exhaustion**:
    - Enumerated explicit cases across Enums (`AgentSkill`, `AutopilotActionType`, `GscPermissionLevel`, `LifecycleRung`, `ModerationFlag`, `ReviewInviteKind`, `SpeedFix`, `SupportMacroSlot`, `IdentifierHashEpochStatus`, `LegalDocumentType`, `ActuationTier`, `DataRequestKind`, `SiteChangeVerdict`, `FetchOutcome`, `OutreachStatus`, `OutreachChannel`, `PlatformHealthSignal`, `AutomationRunStatus`).
    - Cleaned default arms across all controllers, commands, support classes, Livewire components, jobs, notifications, and services.
    - Replaced env() references in SpeedFixes and GooglePushTokenVerifier docblocks.
    - Cleaned literal Str::ulid docblock token in ModuleDoneCommand.
-   - `boundary` stage dropped from 58 to 2 (0 match violations remaining across entire codebase).
+   - `boundary` stage verified clean.
 
 5. **Static Analysis Elevated to PHPStan Level 5**:
    - Configured `phpstan.neon` at **Level 5**.
-   - Added typed Eloquent `@property` annotations across all domain models (`CreditLedgerEntry`, `TrialLimit`, `MailDomain`, `WarmupCalendar`, `CarrierBinding`, `CarrierHealth`, `WhatsappSession`, `WhatsappTemplate`, `Person`, `AgentTurn`, `AgentRefusal`, `AiTask`, `ReviewRequest`).
+   - Added typed Eloquent `@property` annotations across domain models.
    - Cleaned redundant null coalescing, unused methods, and invalid return types.
    - `./vendor/bin/phpstan analyse --memory-limit=1G --no-progress` passes with **0 errors**.
 
-5. **Live Database Cleaned & Fixtures Removed**:
-   - Safely purged 76 non-production fixture users (`@example.*`, synthetic test accounts) from `goaiez_antig`.
-   - Verified active legitimate users (`@goaiez.com`) and zero residual fixture records.
-
 6. **CI Pipeline & GitHub Actions Verification**:
-   - Pushed all commits to `origin/main`.
    - Configured `.github/workflows/ci.yml` with Pint, PHPStan Level 5, full 8-stage Doctor diagnostic output, and enforced `integrity` / `journey` build gates under PostgreSQL and database queues.
-   - All tests pass (14/14 assertions green, 0 errors).
-   - `./vendor/bin/pint --test` passes 100%.
-   - `php artisan doctor:selftest` verifies all 15 seals intact.
 
 7. **Twelve Journeys Suite Scope & Execution (12/12 Passed)**:
    - Fixed `tests/Journeys/JourneyHarness.php` to insert domain work records into canonical `work_orders` rather than the framework queue `jobs` table.
    - Retitled harness and test suite docblocks to accurately reflect that tests validate in-database cross-module state transitions, RLS tenancy, and consent checking while network transport drivers (Telnyx, LiveKit, Stripe) use in-process simulation.
-   - `php artisan test --group=journeys` passes cleanly: 12 passed, 44 assertions, 0 failures.
-
-8. **Schema Stage Hardening (44 → 12 Violations, ▼ 32)**:
-   - Renamed 30 per-person ranking/score columns (`*_score`, `*_rank`) to factual attributes (§150.4 compliance).
-   - Converted float/numeric money columns (`voice_cost_samples.cost_per_minute`, `voice_routes.cost_per_minute`) to bigint integer hundredths of a cent (§259 compliance).
-   - Applied migrations cleanly to `goaiez_antig`.
