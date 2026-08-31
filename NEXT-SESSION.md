@@ -20,7 +20,7 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
 | **capability** | ⚠️ TRUE MEASURE | `120` | Blanket suffix reverted; true R240 ground reality restored |
 | **contract** | ⚠️ TRUE MEASURE | `105` | Derived directly from authoritative source plan via module:scaffold |
 | **citation** | ⚠️ TRIAGED | `107` | Legacy docblock citations in legacy paths (`app/Services`, `app/Livewire`) marked as REPLACE |
-| **boundary** | ⚠️ TRIAGED | `58` | Legacy tree (`app/Services`, `app/Livewire`, `app/Jobs`) marked as REPLACE |
+| **boundary** | ⚠️ TRIAGED | `37` (▼ 21) | 0 violations in `app/Modules`; remaining in legacy tree marked as REPLACE |
 
 ---
 
@@ -39,13 +39,19 @@ Per **Rule 01**: *"You are not scored on the count going down. You are scored on
    - Rewrote migration `app/Modules/X-121/Database/migrations/2026_08_31_000001_enforce_rls_on_all_tenant_tables.php` with explicit platform exemptions.
    - Verified un-tenanted platform STOP writes (`INSERT INTO opt_outs (business_id, scope, ...) VALUES (NULL, 'platform', ...)`) succeed without violation.
 
-4. **Static Analysis Elevated to PHPStan Level 5**:
+4. **Boundary Stage Hardening & Match Arm Exhaustion**:
+   - Enumerated explicit cases across Enums (`AgentSkill`, `AutopilotActionType`, `GscPermissionLevel`, `LifecycleRung`, `ModerationFlag`, `ReviewInviteKind`, `SpeedFix`, `SupportMacroSlot`).
+   - Cleaned default arms in controllers and service providers.
+   - Replaced hardcoded vendor AI model strings in `C-Ai` and `X-219` with dynamic slot routing tokens (R237).
+   - `boundary` stage dropped from 58 to 37 (0 violations remaining in module layer).
+
+5. **Static Analysis Elevated to PHPStan Level 5**:
    - Configured `phpstan.neon` at **Level 5**.
    - Added typed Eloquent `@property` annotations across all domain models (`CreditLedgerEntry`, `TrialLimit`, `MailDomain`, `WarmupCalendar`, `CarrierBinding`, `CarrierHealth`, `WhatsappSession`, `WhatsappTemplate`, `Person`, `AgentTurn`, `AgentRefusal`, `AiTask`, `ReviewRequest`).
    - Cleaned redundant null coalescing, unused methods, and invalid return types.
    - `./vendor/bin/phpstan analyse --memory-limit=1G --no-progress` passes with **0 errors**.
 
-5. **CI Pipeline & Test Suite**:
+6. **CI Pipeline & Test Suite**:
    - Configured GitHub Actions `.github/workflows/ci.yml` with Pint, PHPStan Level 5, Doctor stage verification, and Pest test suite under `QUEUE_CONNECTION=database`.
    - All tests pass (14/14 assertions green).
    - `./vendor/bin/pint --test` passes 100%.
