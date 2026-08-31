@@ -361,7 +361,7 @@ class AppServiceProvider extends ServiceProvider
 
     /**
      * Which vendor answers a call, and who turns a voicemail into words
-     * (T176 P2, R7, R27(a)).
+     * (T176 P2, voice call forwarding, voice driver architecture).
      *
      * ⛔ **BOTH DEFAULTS REACH NOBODY, AND BOTH ARE THE SHIPPED BEHAVIOUR RATHER
      * THAN A PLACEHOLDER.** `VOICE_DRIVER` seeds `null` because Infobip
@@ -596,7 +596,7 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * The Gmail API transport (T137 R3, decision 2093).
+     * The Gmail API transport (email delivery architecture, decision 2093).
      *
      * ⚠️ **`Mail::extend` RATHER THAN A SERVICE CALL AT THE SEND SITE, WHICH IS
      * WHAT MAKES THE SEAM REAL.** Registering a transport means `PlatformMailer`,
