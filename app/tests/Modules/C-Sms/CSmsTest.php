@@ -29,7 +29,7 @@ class CSmsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->composer = new SmsComposer;
+        $this->composer = new SmsComposer(new ConsentService);
         $this->compose = new SmsComposeAction($this->composer);
         $this->send = new SmsSendAction($this->composer);
         $this->halt = new SmsHaltAction($this->composer);
@@ -162,5 +162,21 @@ class CSmsTest extends TestCase
         );
 
         $this->assertEquals('sent', $res['status']);
+    }
+
+    public function test_unknown_message_class_returns_refusal(): void
+    {
+        $biz = Business::provision(['name' => 'Unknown Class Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->composer->send(
+            businessId: $biz->id,
+            recipientPhone: '+15125550199',
+            body: 'Test message with unknown class',
+            messageClass: 'unknown_illegal_class'
+        );
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('UNKNOWN_MESSAGE_CLASS', $res['reason']);
     }
 }

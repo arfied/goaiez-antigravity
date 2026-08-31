@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Event;
 final class SmsComposer
 {
     public function __construct(
-        private readonly ?ConsentService $consentService = null
+        private readonly ConsentService $consentService
     ) {}
 
     /**
@@ -53,6 +53,15 @@ final class SmsComposer
         string $recipientLocalTime = '12:00'
     ): array {
         return DB::transaction(function () use ($businessId, $recipientPhone, $body, $messageClass, $recipientLocalTime) {
+            $knownClasses = ['transactional', 'opted_in', 'attested', 'customer_initiated', 'marketing'];
+            if (! in_array($messageClass, $knownClasses, true)) {
+                return [
+                    'status' => 'refused',
+                    'reason' => 'UNKNOWN_MESSAGE_CLASS',
+                    'message' => "Message class '{$messageClass}' is unknown; refused before send",
+                ];
+            }
+
             // 1. Consent / STOP / Suppression check
             $consentState = match ($messageClass) {
                 'transactional' => 'transactional',
@@ -60,27 +69,15 @@ final class SmsComposer
                 'marketing' => 'opted_in',
             };
 
-            if ($this->consentService !== null) {
-                $decision = $this->consentService->decide($businessId, $recipientPhone, 'sms', $consentState);
-                if (! $decision['granted']) {
-                    return [
-                        'status' => 'halted',
-                        'reason' => $decision['reason'],
-                        'message' => 'Send suppressed due to consent check: '.$decision['reason'],
-                    ];
-                }
-            } else {
-                $suppressed = Suppression::where('business_id', $businessId)
-                    ->where('recipient_phone', $recipientPhone)
-                    ->exists();
+            $decision = $this->consentService->decide($businessId, $recipientPhone, 'sms', $consentState);
+            if (! $decision['granted']) {
+                $reason = ($decision['reason'] === 'SUPPRESSED') ? 'STOP_SUPPRESSED' : $decision['reason'];
 
-                if ($suppressed) {
-                    return [
-                        'status' => 'halted',
-                        'reason' => 'STOP_SUPPRESSED',
-                        'message' => 'Send suppressed due to STOP/DNC status',
-                    ];
-                }
+                return [
+                    'status' => 'halted',
+                    'reason' => $reason,
+                    'message' => 'Send suppressed due to consent check: '.$decision['reason'],
+                ];
             }
 
             // 2. Segment calculation

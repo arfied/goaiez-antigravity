@@ -9,7 +9,7 @@ final class PaymentCaptured
     public function __construct(
         public readonly int $businessId,
         public readonly int $paymentId,
-        public readonly string $gatewayChargeId,
-        public readonly int $amountCents
+        public readonly ?string $gatewayChargeId = null,
+        public readonly int $amountCents = 0
     ) {}
 }
