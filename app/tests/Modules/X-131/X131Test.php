@@ -34,7 +34,7 @@ class X131Test extends TestCase
     {
         Event::fake([InterestDetected::class, InterestOverridden::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Interest Intelligence Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Interest Intelligence Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $personId = 8801;

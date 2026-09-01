@@ -47,7 +47,7 @@ class X209Test extends TestCase
             FixerPromoted::class,
         ]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'The Fixer Autopilot Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'The Fixer Autopilot Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $staffPersonId = 505;

@@ -42,7 +42,7 @@ class CMailTest extends TestCase
     {
         Event::fake([EmailSent::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Mail Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Mail Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $domain = $this->dnsAction->handle($biz->id, 'mail.hvacleads.com');
@@ -125,7 +125,7 @@ class CMailTest extends TestCase
      */
     public function test_dns_dmarc_records(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'DNS Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'DNS Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $domain = $this->dnsAction->handle($biz->id, 'apex-air.com');

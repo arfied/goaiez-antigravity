@@ -39,7 +39,7 @@ class X104Test extends TestCase
     {
         Event::fake([PluginInstalled::class, PluginSynced::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'WordPress Client Site', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'WordPress Client Site', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $siteUrl = 'https://plumbingking.com';

@@ -44,7 +44,7 @@ class X219Test extends TestCase
     {
         Event::fake([ModelResolved::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Roster Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Roster Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $google = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'google', 'status' => 'healthy']);
@@ -69,7 +69,7 @@ class X219Test extends TestCase
     {
         Event::fake([ModelFallback::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fallback Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Fallback Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $google = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'google', 'status' => 'degraded']);
@@ -94,7 +94,7 @@ class X219Test extends TestCase
     {
         Event::fake([ProviderDegraded::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Health Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Health Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $provider = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'openai', 'status' => 'healthy']);
@@ -111,7 +111,7 @@ class X219Test extends TestCase
      */
     public function test_n_219_04_r237_backup_must_be_different_vendor(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Vendor Rule Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Vendor Rule Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $google = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'google', 'status' => 'healthy']);

@@ -44,7 +44,7 @@ class X125Test extends TestCase
     {
         Event::fake([FlowChanged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Plumber Flow Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Plumber Flow Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Plumber profile default active flow (TEST ANCHOR: >= 1 flow running before first login)
@@ -103,7 +103,7 @@ class X125Test extends TestCase
      */
     public function test_g2_22_canvas_and_simulation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Canvas Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Canvas Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $flow = $this->createAction->handle(

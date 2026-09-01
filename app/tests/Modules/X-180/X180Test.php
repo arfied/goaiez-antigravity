@@ -30,7 +30,7 @@ class X180Test extends TestCase
     {
         Event::fake([PackSeeded::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Content Packs Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Content Packs Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A packaged asset with NO license_source CANNOT be seeded (TEST ANCHOR)

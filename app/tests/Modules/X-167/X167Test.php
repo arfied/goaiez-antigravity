@@ -48,7 +48,7 @@ class X167Test extends TestCase
     {
         Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class, PoSent::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $van = StockLocation::create([

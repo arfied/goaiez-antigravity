@@ -37,7 +37,7 @@ class X155Test extends TestCase
     {
         Event::fake([FormCaptured::class, FormSpamRejected::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Forms Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Forms Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $form = FormDefinition::create([

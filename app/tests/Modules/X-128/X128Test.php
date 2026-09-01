@@ -33,7 +33,7 @@ class X128Test extends TestCase
     {
         Event::fake([OrphanDetected::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Matrix Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Matrix Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Balanced manifest graph with wildcard or subscribed consumers
@@ -89,7 +89,7 @@ class X128Test extends TestCase
      */
     public function test_n_049_deploy_check(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Deploy Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Deploy Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->deployCheck->handle($biz->id);

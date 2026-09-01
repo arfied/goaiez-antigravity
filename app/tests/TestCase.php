@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use App\Models\Business;
+use App\Models\User;
+use App\Services\TenantProvisioner;
+use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Carbon;
@@ -128,22 +132,26 @@ abstract class TestCase extends BaseTestCase
     {
         return str_contains(str_replace('\\', '/', $testClass), 'Tests/Browser');
     }
-    public static function provisionTenant(array $attributes = []): \App\Models\Business
+
+    public static function provisionTenant(array $attributes = []): Business
     {
-        $owner = \App\Models\User::first() ?? \App\Models\User::factory()->create();
+        $owner = User::first() ?? User::factory()->create();
         $name = $attributes['name'] ?? 'Test Business';
-        $biz = app(\App\Services\TenantProvisioner::class)->provision($owner);
-        
+        $biz = app(TenantProvisioner::class)->provision($owner);
+
         $updates = ['name' => $name];
-        if (isset($attributes['currency'])) $updates['currency'] = $attributes['currency'];
+        if (isset($attributes['currency'])) {
+            $updates['currency'] = $attributes['currency'];
+        }
         if (isset($attributes['owner_user_id'])) {
             $updates['owner_user_id'] = $attributes['owner_user_id'];
         }
-        if (!empty($updates)) {
+        if (! empty($updates)) {
             $biz->update($updates);
         }
-        
-        \App\Support\Tenancy::set($biz->id);
+
+        Tenancy::set($biz->id);
+
         return $biz;
     }
 }

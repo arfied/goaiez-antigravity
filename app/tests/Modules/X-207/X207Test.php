@@ -44,7 +44,7 @@ class X207Test extends TestCase
     {
         Event::fake([SendRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Push Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Push Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $device = $this->registerAction->handle($biz->id, 'apns_token_xyz123', 'ios', 101);

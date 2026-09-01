@@ -51,7 +51,7 @@ class X211Test extends TestCase
     {
         Event::fake([ArFeeApplied::class, ArPlanAccepted::class, ArPackaged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);

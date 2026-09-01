@@ -51,7 +51,7 @@ class X161Test extends TestCase
     {
         Event::fake([DemoProvisioned::class, DemoConverted::class, DemoStopReceived::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Demo Sandbox Platform Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Demo Sandbox Platform Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $prospectDomain = 'dallasplumbingrepair.com';
@@ -83,7 +83,7 @@ class X161Test extends TestCase
         $this->assertStringContainsString($prospectDomain, $pricingAnswer['cited_fact']['source_page'], "Fact source_page contains prospect's own URL (TEST ANCHOR)");
 
         // 4. Conversion creates live tenant with facts preserved and zero re-entry (TEST ANCHOR)
-        $liveBiz = \Tests\TestCase::provisionTenant(['name' => 'Converted Dallas Plumbing', 'currency' => 'USD']);
+        $liveBiz = TestCase::provisionTenant(['name' => 'Converted Dallas Plumbing', 'currency' => 'USD']);
         // Restore session context to biz
         DB::statement("SET app.business_id = '{$biz->id}'");
         $convertedDemo = $this->convertAction->convertToLive($biz->id, $demo->id, $liveBiz->id);

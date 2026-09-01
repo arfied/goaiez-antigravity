@@ -35,7 +35,7 @@ class X16Test extends TestCase
      */
     public function test_anchor_price_table_facts_and_same_commit_invalidation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Maps & Fact Ingest Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Maps & Fact Ingest Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $priceTable = [

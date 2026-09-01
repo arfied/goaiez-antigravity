@@ -36,7 +36,7 @@ class X139Test extends TestCase
     {
         Event::fake([ConversionUploaded::class, ConversionRejected::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Offline Conversion Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Offline Conversion Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $jobIdStale = 8812;

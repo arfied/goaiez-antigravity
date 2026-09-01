@@ -41,7 +41,7 @@ class X153Test extends TestCase
     {
         Event::fake([AlertSent::class, AlertClaimed::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Alert Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Alert Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Account-class alert at 03:00 sends
@@ -84,7 +84,7 @@ class X153Test extends TestCase
      */
     public function test_g8_26_risk_word_and_30min_expiry(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Risk Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Risk Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $alert = $this->sender->handle($biz->id, 'Risk Word Detected', 'Customer mentioned lawyer');
@@ -100,7 +100,7 @@ class X153Test extends TestCase
      */
     public function test_g18_12_three_staff_first_reply_claims(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'MultiStaff Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'MultiStaff Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $alert = $this->sender->handle($biz->id, 'Urgent Lead', 'New roofing lead incoming');

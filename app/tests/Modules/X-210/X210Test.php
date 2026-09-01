@@ -40,7 +40,7 @@ class X210Test extends TestCase
     {
         Event::fake([PromotionCreated::class, PromotionRedeemed::class, PromotionCapReached::class, PromotionVelocityAlert::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Promotion Campaign Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Campaign Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Create promotion (15% discount, max 2 redemptions, velocity threshold 2)

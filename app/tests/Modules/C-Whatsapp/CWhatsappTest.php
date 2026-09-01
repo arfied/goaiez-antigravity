@@ -45,7 +45,7 @@ class CWhatsappTest extends TestCase
     {
         Event::fake([WhatsappSent::class, WhatsappSessionOpened::class, TemplateApproved::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'WhatsApp Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'WhatsApp Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customerPhone = '+15558889999';

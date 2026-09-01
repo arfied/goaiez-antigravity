@@ -44,7 +44,7 @@ class CSmsTest extends TestCase
     {
         Event::fake([SendRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'SMS Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'SMS Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A 161-character draft with one emoji is billed at 3-segment count in UCS-2
@@ -101,7 +101,7 @@ class CSmsTest extends TestCase
      */
     public function test_g3_54_a2p_compliance(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => '10DLC Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => '10DLC Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->send->handle($biz->id, '+15125550122', '10DLC compliant template');
@@ -113,7 +113,7 @@ class CSmsTest extends TestCase
      */
     public function test_g11_32_url_degradation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Degrade Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Degrade Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $calc = $this->compose->handle('Visit https://goaiez.com for info');
@@ -125,7 +125,7 @@ class CSmsTest extends TestCase
      */
     public function test_g19_11_ring_transactional_fire(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Missed Call Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Missed Call Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->send->handle($biz->id, '+15125550133', 'Sorry we missed your call!', 'transactional');
@@ -146,7 +146,7 @@ class CSmsTest extends TestCase
     {
         Event::fake([SendRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'SMS Consent Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'SMS Consent Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $consentService = new ConsentService;
@@ -165,7 +165,7 @@ class CSmsTest extends TestCase
 
     public function test_unknown_message_class_returns_refusal(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Unknown Class Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Unknown Class Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->composer->send(

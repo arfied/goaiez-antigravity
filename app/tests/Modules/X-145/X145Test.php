@@ -41,7 +41,7 @@ class X145Test extends TestCase
     {
         Event::fake([DecisionProposed::class, ApprovalRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Decision Proposal Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Decision Proposal Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $namedEntityFields = [

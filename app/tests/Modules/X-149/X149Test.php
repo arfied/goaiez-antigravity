@@ -38,7 +38,7 @@ class X149Test extends TestCase
     {
         Event::fake([PromptChanged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Eval Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Eval Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $evalSet = EvalSet::create([

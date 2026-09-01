@@ -54,7 +54,7 @@ class X204Test extends TestCase
     {
         Event::fake([ConsentDecided::class, PermitGranted::class, SuppressionAdded::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Consent Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Consent Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $phone = '+15125550199';
@@ -87,7 +87,7 @@ class X204Test extends TestCase
      */
     public function test_n_013_compliance_registers_and_lift(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Compliance Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Compliance Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $phone = '+15125550188';

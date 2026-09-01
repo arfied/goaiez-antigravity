@@ -39,7 +39,7 @@ class X157Test extends TestCase
     {
         Event::fake([DeployCompleted::class, DeployRolledBack::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Zone without valid SSL -> deploy write is REFUSED
@@ -85,7 +85,7 @@ class X157Test extends TestCase
      */
     public function test_g6_33_cloudflare_edge(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'CF Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'CF Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $zone = $this->provisionAction->handle($biz->id, 'cf-test.com', true);

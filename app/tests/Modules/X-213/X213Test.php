@@ -30,7 +30,7 @@ class X213Test extends TestCase
     {
         Event::fake([VisionCheckPassed::class, VisionCheckFlagged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Vision Quality Gate Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Vision Quality Gate Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $checklistVer = 'v2.4-mobile-responsive';

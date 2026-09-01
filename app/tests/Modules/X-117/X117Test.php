@@ -44,7 +44,7 @@ class X117Test extends TestCase
     {
         Event::fake([InventoryUpdated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Checkout Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Checkout Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Buyer', 'last_name' => 'One']);
@@ -91,7 +91,7 @@ class X117Test extends TestCase
      */
     public function test_g1_15_fresh_authorization_event_required(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Auth Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Auth Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sellable = Sellable::create([
@@ -127,7 +127,7 @@ class X117Test extends TestCase
      */
     public function test_g6_07_six_fulfilment_types(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fulfilment Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Fulfilment Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $types = ['physical', 'digital', 'service', 'rental', 'subscription', 'event'];
@@ -156,7 +156,7 @@ class X117Test extends TestCase
      */
     public function test_g8_29_minor_units_integers(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Integer Price Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Integer Price Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $s = Sellable::create([
@@ -175,7 +175,7 @@ class X117Test extends TestCase
      */
     public function test_g16_05_true_countdown_cart(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Timer Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Timer Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $s = Sellable::create([

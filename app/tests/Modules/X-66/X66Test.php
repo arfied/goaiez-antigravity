@@ -47,7 +47,7 @@ class X66Test extends TestCase
     {
         Event::fake([CallRinging::class, CallAnswered::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Voice Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Voice Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. The ring event alone produces the session and dispatches CallRinging before call is answered
@@ -73,7 +73,7 @@ class X66Test extends TestCase
      */
     public function test_g2_21_grounded_fact_read(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fact Voice Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Fact Voice Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $session = $this->engine->handleRing($biz->id, 'CA_SID_FACT', '+15125550111', '+15125550100');
@@ -93,7 +93,7 @@ class X66Test extends TestCase
      */
     public function test_g18_21_objection_detection(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Objection Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Objection Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $session = $this->engine->handleRing($biz->id, 'CA_SID_OBJ', '+15125550122', '+15125550100');
@@ -107,7 +107,7 @@ class X66Test extends TestCase
      */
     public function test_g18_23_transcription_record(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Transcript Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Transcript Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $session = $this->engine->handleRing($biz->id, 'CA_SID_TR', '+15125550133', '+15125550100');

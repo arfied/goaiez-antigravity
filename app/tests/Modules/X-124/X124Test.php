@@ -40,7 +40,7 @@ class X124Test extends TestCase
     {
         Event::fake([AssistantRequest::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Copilot Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Copilot Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sessionToken = 'sess_tok_991823';

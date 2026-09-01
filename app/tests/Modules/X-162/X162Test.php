@@ -50,7 +50,7 @@ class X162Test extends TestCase
     {
         Event::fake([JobDispatched::class, TechEnRoute::class, RouteChanged::class, EtaUpdated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Field Dispatch Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Field Dispatch Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $jobId = 1001;
@@ -96,7 +96,7 @@ class X162Test extends TestCase
      */
     public function test_route_optimization_and_capabilities(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Route Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Route Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $route = $this->routeAction->handle($biz->id, 42, [101, 102, 103], 12.8);

@@ -54,7 +54,7 @@ class X01Test extends TestCase
     {
         Event::fake([ContactCreated::class, TakeoverStarted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Inbox Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Inbox Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Text and email from the same person render in one thread with one Person ID
@@ -106,7 +106,7 @@ class X01Test extends TestCase
      */
     public function test_g1_45_read_through_action(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Render Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Render Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
@@ -130,7 +130,7 @@ class X01Test extends TestCase
      */
     public function test_g2_18_one_person_aggregate(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Aggregate Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Aggregate Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Single Aggregate Person', '+15125550177');
@@ -158,7 +158,7 @@ class X01Test extends TestCase
      */
     public function test_g2_32_lead_scoring(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Score Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Score Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Scored Lead', '+15125550166');
@@ -181,7 +181,7 @@ class X01Test extends TestCase
      */
     public function test_g2_38_grade_and_confidence(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Confidence Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Confidence Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Graded Lead', '+15125550155');
@@ -235,7 +235,7 @@ class X01Test extends TestCase
      */
     public function test_g11_22_polymorphic_conversation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Poly Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Poly Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Poly User', '+15125550144');

@@ -30,7 +30,7 @@ class X193Test extends TestCase
     {
         Event::fake([NotificationClassified::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Quiet Hours Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Quiet Hours Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 03:00 AM (inside quiet hours: 21:00 - 08:00)

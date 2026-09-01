@@ -34,7 +34,7 @@ class X179Test extends TestCase
     {
         Event::fake([ContentExtracted::class, TemplateMatched::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Template Matcher Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Template Matcher Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $prospectWithSite = 9901;

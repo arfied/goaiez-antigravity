@@ -34,7 +34,7 @@ class X154Test extends TestCase
     {
         Event::fake([LexiconUpdated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Tenant Lexicon Service Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Tenant Lexicon Service Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Tenant confirms preferred terminology: generic "drain cleaning" -> preferred "drain clear" (G3-29, G5-36, G11-19)

@@ -45,7 +45,7 @@ class X183Test extends TestCase
     {
         Event::fake([ContentGated::class, ContentRejected::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Content Grounding Gate Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Content Grounding Gate Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Rejected draft (contains SAMPLE PRICE string) (G12-29)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X118;
 
+use App\Models\User;
 use App\Modules\X118\Actions\OnboardingConfirmAction;
 use App\Modules\X118\Actions\OnboardingStartAction;
 use App\Modules\X118\Actions\OnboardingTestCallAction;
@@ -17,7 +18,6 @@ use App\Modules\X188\Actions\NumberAssignAction;
 use App\Modules\X188\Domain\NumberPoolManager;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
-use App\Models\User;
 
 class X118Test extends TestCase
 {

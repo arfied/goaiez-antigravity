@@ -41,7 +41,7 @@ class X215Test extends TestCase
     {
         Event::fake([DocSent::class, DocSigned::class, DocCommented::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";

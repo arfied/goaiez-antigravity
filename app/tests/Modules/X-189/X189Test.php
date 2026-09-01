@@ -30,7 +30,7 @@ class X189Test extends TestCase
     {
         Event::fake([MediaBranded::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Branded Media Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Branded Media Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $rawAssetUrl = 'https://s3.amazonaws.com/uploads/unlicensed_photo.jpg';

@@ -40,7 +40,7 @@ class X142Test extends TestCase
     {
         Event::fake([TokenIssued::class, TokenRevoked::class, McpInvoked::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'MCP Gateway Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'MCP Gateway Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Issue tenant-scoped staff MCP token (G4-02 & G4-18)

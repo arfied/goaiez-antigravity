@@ -54,7 +54,7 @@ class X177Test extends TestCase
             GbpReinstated::class,
         ]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'GBP Profile Management Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'GBP Profile Management Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $conn = GbpConnection::create([

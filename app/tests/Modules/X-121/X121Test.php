@@ -36,8 +36,8 @@ class X121Test extends TestCase
     public function test_anchor_rls_tenant_isolation_and_fact_invalidation(): void
     {
         // 1. Setup tenant A and tenant B
-        $bizA = \Tests\TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
-        $bizB = \Tests\TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
 
         // Insert job directly for Tenant B
         DB::statement("SET app.business_id = '{$bizB->id}'");
@@ -86,7 +86,7 @@ class X121Test extends TestCase
      */
     public function test_g4_12_redis_high_read_nouns_invalidated_inline_on_write(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'High Read Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'High Read Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $fact = Fact::create([
@@ -142,7 +142,7 @@ class X121Test extends TestCase
      */
     public function test_g4_21_read_replica_routing(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Replica Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Replica Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $data = $this->service->read('businesses', $biz->id, $biz->id, forcePrimary: false);
@@ -155,7 +155,7 @@ class X121Test extends TestCase
      */
     public function test_g4_37_asset_versioning_and_ransomware_protection(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Asset Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Asset Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $writeAction = new EntityWriteAction($this->service);
@@ -191,7 +191,7 @@ class X121Test extends TestCase
      */
     public function test_g4_42_version_restore_with_compensable_reversal(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Restore Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Restore Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $fact = Fact::create([
@@ -216,7 +216,7 @@ class X121Test extends TestCase
      */
     public function test_g4_46_asset_history_and_side_by_side_compare(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Compare Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Compare Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $fact = Fact::create([
@@ -241,7 +241,7 @@ class X121Test extends TestCase
      */
     public function test_g4_51_expand_contract_noun_tables(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Expand Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Expand Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Expand: write with metadata
@@ -256,7 +256,7 @@ class X121Test extends TestCase
      */
     public function test_g11_14_named_in_header_version_restore(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Header Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Header Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $restoreAction = new EntityRestoreAction($this->service);
@@ -268,7 +268,7 @@ class X121Test extends TestCase
      */
     public function test_g17_28_field_level_history_with_version_restore(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Field History Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Field History Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $fact = Fact::create([
@@ -290,7 +290,7 @@ class X121Test extends TestCase
 
     public function test_write_non_existent_entity_throws_refusal(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Refusal Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Refusal Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->expectException(\InvalidArgumentException::class);

@@ -44,7 +44,7 @@ class X110Test extends TestCase
     {
         Event::fake([VisitStarted::class, FormAbandoned::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Pixel Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Tag served from .tenant-domain with third-party cookies disabled
@@ -95,7 +95,7 @@ class X110Test extends TestCase
      */
     public function test_g6_09_utm_persistence(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'UTM Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'UTM Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->engine->recordVisit($biz->id, 'vis_utm_123', 'facebook', 'ad', 'spring_sale');
@@ -115,7 +115,7 @@ class X110Test extends TestCase
      */
     public function test_g13_01_first_party_subdomain(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Subdomain Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Subdomain Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $install = $this->installer->handle($biz->id, 'plumbpros.com');
@@ -151,7 +151,7 @@ class X110Test extends TestCase
      */
     public function test_g13_30_rage_click_recording(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Rage Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Rage Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $v = $this->engine->recordVisit($biz->id, 'vis_rage_1');

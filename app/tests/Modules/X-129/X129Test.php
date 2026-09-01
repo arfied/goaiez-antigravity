@@ -35,7 +35,7 @@ class X129Test extends TestCase
     {
         Event::fake([SiteMigrated::class, DomainVerified::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sourceCrawl = [

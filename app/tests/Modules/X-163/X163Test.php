@@ -54,7 +54,7 @@ class X163Test extends TestCase
     {
         Event::fake([VersionBumped::class, PriceRefusalFlagged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Pricebook Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Pricebook Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A SAMPLE price is never returned to any customer channel
@@ -117,7 +117,7 @@ class X163Test extends TestCase
      */
     public function test_g17_18_rate_per_pricebook(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Tax Rate Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Tax Rate Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $item = PriceBookItem::create([

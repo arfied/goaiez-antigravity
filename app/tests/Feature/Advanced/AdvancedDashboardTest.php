@@ -48,25 +48,25 @@ class AdvancedDashboardTest extends TestCase
     public function test_accessible_when_advanced_dashboard_is_enabled(): void
     {
         [$user, $business] = $this->createTenant(advanced: true);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Google Business Profile',
             'nap_status' => 'consistent',
             'url' => 'https://google.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Yelp',
             'nap_status' => 'consistent',
             'url' => 'https://yelp.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Bing',
             'nap_status' => 'consistent',
             'url' => 'https://bing.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'YellowPages',
             'nap_status' => 'mismatch',
@@ -84,25 +84,25 @@ class AdvancedDashboardTest extends TestCase
     public function test_citations_livewire_component_manages_directories(): void
     {
         [$user, $business] = $this->createTenant(advanced: true);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Google Business Profile',
             'nap_status' => 'consistent',
             'url' => 'https://google.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Yelp',
             'nap_status' => 'consistent',
             'url' => 'https://yelp.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Bing',
             'nap_status' => 'consistent',
             'url' => 'https://bing.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'YellowPages',
             'nap_status' => 'mismatch',
@@ -154,25 +154,25 @@ class AdvancedDashboardTest extends TestCase
     public function test_all_twelve_advanced_screens_render_successfully(): void
     {
         [$user, $business] = $this->createTenant(advanced: true);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Google Business Profile',
             'nap_status' => 'consistent',
             'url' => 'https://google.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Yelp',
             'nap_status' => 'consistent',
             'url' => 'https://yelp.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'Bing',
             'nap_status' => 'consistent',
             'url' => 'https://bing.com',
         ]);
-        \App\Models\Citation::create([
+        Citation::create([
             'business_id' => $business->id,
             'directory' => 'YellowPages',
             'nap_status' => 'mismatch',

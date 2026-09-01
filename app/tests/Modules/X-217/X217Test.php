@@ -43,7 +43,7 @@ class X217Test extends TestCase
     {
         Event::fake([SendRequested::class, AffiliateRecruited::class, AffiliateDeclined::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Affiliate Recruitment Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Affiliate Recruitment Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Recruit prospect (sends outreach)

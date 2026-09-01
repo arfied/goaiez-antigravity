@@ -36,7 +36,7 @@ class X140Test extends TestCase
     {
         Event::fake([TopicIdentified::class, ContentCreated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $topic = $this->topicAction->identify($biz->id, 'Commercial HVAC Emergency Repairs', 'emergency_repair');

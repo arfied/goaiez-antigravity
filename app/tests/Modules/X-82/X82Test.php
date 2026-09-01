@@ -41,8 +41,8 @@ class X82Test extends TestCase
     {
         Event::fake([RateChanged::class, AllowanceGranted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Rate Registry Platform Tenant', 'currency' => 'USD']);
-        $midTermTenant = \Tests\TestCase::provisionTenant(['name' => 'Mid-Term Plumbing Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Rate Registry Platform Tenant', 'currency' => 'USD']);
+        $midTermTenant = TestCase::provisionTenant(['name' => 'Mid-Term Plumbing Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Initial global rate set: Pro Plan = $149.00 (14900 cents)

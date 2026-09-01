@@ -45,8 +45,8 @@ class X206Test extends TestCase
     {
         Event::fake([CredentialStored::class, CredentialRevealed::class, CredentialFailed::class]);
 
-        $bizA = \Tests\TestCase::provisionTenant(['name' => 'Tenant Alpha', 'currency' => 'USD']);
-        $bizB = \Tests\TestCase::provisionTenant(['name' => 'Tenant Beta', 'currency' => 'USD']);
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant Alpha', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant Beta', 'currency' => 'USD']);
 
         // 1. Tenant A stores credential
         DB::statement("SET app.business_id = '{$bizA->id}'");
@@ -79,7 +79,7 @@ class X206Test extends TestCase
      */
     public function test_n_206_01_store_and_fetch(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Vault Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Vault Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->storer->handle($biz->id, 'sendgrid', 'SG_API_KEY_SECRET');
@@ -93,7 +93,7 @@ class X206Test extends TestCase
      */
     public function test_n_206_02_rotation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Rotate Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Rotate Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->storer->handle($biz->id, 'postmark', 'OLD_KEY');

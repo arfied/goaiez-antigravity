@@ -44,7 +44,7 @@ class X160Test extends TestCase
     {
         Event::fake([DocumentIngested::class, DocumentReviewed::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Price Book Ingestion Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Price Book Ingestion Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $rawPdfContent = '%PDF-1.4 Mock Supplier Catalog Content';

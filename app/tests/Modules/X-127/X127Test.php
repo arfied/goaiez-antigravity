@@ -40,7 +40,7 @@ class X127Test extends TestCase
     {
         Event::fake([TenantzeroMetricPublished::class, TenantzeroClaimVerified::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Tenant Zero', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Tenant Zero', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Tenant #0 config

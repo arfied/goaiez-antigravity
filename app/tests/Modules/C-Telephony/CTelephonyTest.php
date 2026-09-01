@@ -48,7 +48,7 @@ class CTelephonyTest extends TestCase
     {
         Event::fake([CarrierSelected::class, CarrierDegraded::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Carrier Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Carrier Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         DB::table('carrier_credentials')->insert([
@@ -104,7 +104,7 @@ class CTelephonyTest extends TestCase
      */
     public function test_g11_36_carrier_side_screening(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Screen Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Screen Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $callA = $this->caller->handle($biz->id, '+15125550122', '+15125550100', 'A');
@@ -121,7 +121,7 @@ class CTelephonyTest extends TestCase
      */
     public function test_g11_39_shaken_stir_grading(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Shaken Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Shaken Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->caller->handle($biz->id, '+15125550144', '+15125550100', 'B');
@@ -148,7 +148,7 @@ class CTelephonyTest extends TestCase
      */
     public function test_g18_20_routing_rule_bypass(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'LTV Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'LTV Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         DB::table('carrier_credentials')->insert([
@@ -161,7 +161,7 @@ class CTelephonyTest extends TestCase
 
     public function test_carrier_credential_absent_refuses_before_request(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'No Credential Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'No Credential Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->sender->handle(

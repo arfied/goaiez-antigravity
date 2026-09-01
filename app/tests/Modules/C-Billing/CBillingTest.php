@@ -48,7 +48,7 @@ class CBillingTest extends TestCase
      */
     public function test_anchor_ledger_no_update_trigger_atomic_debits_and_day_21_dunning(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Billing Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Billing Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Initial balance $100.00 = 1,000,000 hundredths of a cent
@@ -80,7 +80,7 @@ class CBillingTest extends TestCase
      */
     public function test_anchor_day_21_dunning_ai_off_voicemail_answering(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Dunning Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Dunning Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Advance to Day 21
@@ -114,7 +114,7 @@ class CBillingTest extends TestCase
      */
     public function test_g1_13_daily_topup_ceiling(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Topup Ceiling Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Topup Ceiling Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         TrialLimit::create([
@@ -137,7 +137,7 @@ class CBillingTest extends TestCase
      */
     public function test_g1_18_integer_hundredths_cents_precision(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Hundredths Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Hundredths Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $grant = $this->grantAction->handle($biz->id, 54321, 'grant_1', 'Grant 543.21 cents');
@@ -149,7 +149,7 @@ class CBillingTest extends TestCase
      */
     public function test_g1_19_phone_keeps_answering_on_lockout(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Console Lockout Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Console Lockout Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $state = $this->dunningAction->handle($biz->id, 25);
@@ -203,7 +203,7 @@ class CBillingTest extends TestCase
      */
     public function test_g11_13_day_10_is_banner_not_lockout(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Day 10 Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Day 10 Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $state = $this->dunningAction->handle($biz->id, 10);
@@ -216,7 +216,7 @@ class CBillingTest extends TestCase
      */
     public function test_g18_22_metering_model(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Meter Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Meter Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $limit = TrialLimit::create([

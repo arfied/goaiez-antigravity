@@ -40,7 +40,7 @@ class X220Test extends TestCase
      */
     public function test_n_220_01_prompt_resolution(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Prompt Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Prompt Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p1 = AiPrompt::create([
@@ -62,7 +62,7 @@ class X220Test extends TestCase
     {
         Event::fake([PromptFrozen::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Freeze Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Freeze Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = AiPrompt::create([
@@ -85,7 +85,7 @@ class X220Test extends TestCase
     {
         Event::fake([EvalCompleted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Eval Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Eval Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = AiPrompt::create([
@@ -115,7 +115,7 @@ class X220Test extends TestCase
      */
     public function test_n_220_04_eval_comparison(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Compare Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Compare Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p1 = AiPrompt::create(['business_id' => $biz->id, 'prompt_key' => 'chat.v', 'version' => 1, 'body' => 'v1']);

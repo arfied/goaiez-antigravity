@@ -36,7 +36,7 @@ class X136Test extends TestCase
     {
         Event::fake([SignalDetected::class, IntentHigh::class, ProspectDecayed::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Signal Scoring Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Signal Scoring Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Evaluate high-intent signals

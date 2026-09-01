@@ -34,7 +34,7 @@ class X07Test extends TestCase
     {
         Event::fake([ForecastUpdated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. [G1-36], [G1-46], [G1-47] Booked and collected are asserted distinct, never summed

@@ -39,7 +39,7 @@ class X134Test extends TestCase
     {
         Event::fake([EnrichmentRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Firmographic Enrichment Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Firmographic Enrichment Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $domain = 'apexservices.com';

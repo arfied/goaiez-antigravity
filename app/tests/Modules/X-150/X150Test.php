@@ -32,7 +32,7 @@ class X150Test extends TestCase
     {
         Event::fake([ProviderTried::class, ProviderSucceeded::class, ProviderExhausted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Cascading Enrichment Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Cascading Enrichment Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $requestId = 'req_enrich_9901';

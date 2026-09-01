@@ -51,7 +51,7 @@ class X198Test extends TestCase
     {
         Event::fake([PaymentCaptured::class, ReconciliationDiscrepancy::class, PayoutReconciled::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Gateway Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Gateway Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $conn = $this->connectAction->handle($biz->id, 'stripe', 'acct_tenant_stripe_123');
@@ -97,7 +97,7 @@ class X198Test extends TestCase
      */
     public function test_g1_23_idempotency_adapters(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Square Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Square Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $conn = $this->connectAction->handle($biz->id, 'square', 'sq_acct_888');

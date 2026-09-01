@@ -39,7 +39,7 @@ class X191Test extends TestCase
     {
         Event::fake([CompetitorAnalysed::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Backlink Outreach Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Backlink Outreach Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Prospect legitimate target and PBN target (G3-13, G8-05)

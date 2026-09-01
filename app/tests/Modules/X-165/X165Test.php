@@ -47,7 +47,7 @@ class X165Test extends TestCase
     {
         Event::fake([MembershipStarted::class, MembershipRenewed::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'VIP Members Club', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'VIP Members Club', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $plan = $this->planAction->handle(

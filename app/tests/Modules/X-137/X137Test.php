@@ -39,7 +39,7 @@ class X137Test extends TestCase
     {
         Event::fake([CallAttributed::class, VisitJoinedToCall::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'DNI Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'DNI Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Visitor allocated DNI token with 30 min TTL
@@ -85,7 +85,7 @@ class X137Test extends TestCase
      */
     public function test_short_link_and_qr(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'QR Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'QR Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $link = $this->shortAction->handle($biz->id, 'https://example.com/promo', 'billboard_q3');

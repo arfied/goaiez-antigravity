@@ -48,7 +48,7 @@ class X103Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A site forked at selection has no FK to template library
@@ -87,7 +87,7 @@ class X103Test extends TestCase
      */
     public function test_short_linker_device_routing_and_caps(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $funnel = $this->funnelAction->handle(

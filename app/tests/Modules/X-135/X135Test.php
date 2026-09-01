@@ -38,7 +38,7 @@ class X135Test extends TestCase
     {
         Event::fake([ResearchCompleted::class, IcebreakerGenerated::class, SignalFound::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Deep Research Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Deep Research Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $prospectId = 9401;

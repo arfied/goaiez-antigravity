@@ -48,8 +48,8 @@ class X188Test extends TestCase
     {
         Event::fake([TenantCancelled::class]);
 
-        $biz1 = \Tests\TestCase::provisionTenant(['name' => 'Trial Biz', 'currency' => 'USD']);
-        $biz2 = \Tests\TestCase::provisionTenant(['name' => 'Paying Biz', 'currency' => 'USD']);
+        $biz1 = TestCase::provisionTenant(['name' => 'Trial Biz', 'currency' => 'USD']);
+        $biz2 = TestCase::provisionTenant(['name' => 'Paying Biz', 'currency' => 'USD']);
 
         // 1. Instant live number assignment before first screen renders
         DB::statement("SET app.business_id = '{$biz1->id}'");
@@ -95,7 +95,7 @@ class X188Test extends TestCase
      */
     public function test_g10_02_auto_brand_submission(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Brand Auto Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Brand Auto Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $reg = $this->brand->handle($biz->id, 'Auto Submitted Brand');
@@ -108,7 +108,7 @@ class X188Test extends TestCase
      */
     public function test_g18_10_numbers_by_area_code(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Area Code Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Area Code Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $assigned = $this->assigner->handle($biz->id, '210');
@@ -120,7 +120,7 @@ class X188Test extends TestCase
      */
     public function test_g18_11_local_caller_id_rotation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Local Caller ID Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Local Caller ID Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $pool = NumberPool::create([
@@ -140,7 +140,7 @@ class X188Test extends TestCase
      */
     public function test_g19_14_mandatory_complaint_monitoring(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Complaint Monitoring Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Complaint Monitoring Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $pool = NumberPool::create([

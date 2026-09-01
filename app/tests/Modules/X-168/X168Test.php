@@ -37,7 +37,7 @@ class X168Test extends TestCase
     {
         Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'JobTime Tracking Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'JobTime Tracking Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $techPersonId = 401;

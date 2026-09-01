@@ -50,7 +50,7 @@ class X199Test extends TestCase
     {
         Event::fake([InvoiceIssued::class, InvoicePaid::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Invoice Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Invoice Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create([
@@ -126,7 +126,7 @@ class X199Test extends TestCase
      */
     public function test_g15_06_itemised_pdf(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'PDF Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'PDF Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'PDF', 'last_name' => 'User']);

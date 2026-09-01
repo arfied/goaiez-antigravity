@@ -39,7 +39,7 @@ class X175Test extends TestCase
     {
         Event::fake([AssistantSuggested::class, UpsellPrompted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Field Tech Assistant Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Field Tech Assistant Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $techPersonId = 882;

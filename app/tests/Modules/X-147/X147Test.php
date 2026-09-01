@@ -30,7 +30,7 @@ class X147Test extends TestCase
     {
         Event::fake([RcsSent::class, RcsDegradedToSms::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'RCS Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'RCS Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $nonRcsPhone = '+15554443333';

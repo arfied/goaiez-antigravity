@@ -38,7 +38,7 @@ class X159Test extends TestCase
     {
         Event::fake([AuditCompleted::class, FindingEvent::class, ExperientialTested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Experiential Audit Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Experiential Audit Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $prospectId = 9801;

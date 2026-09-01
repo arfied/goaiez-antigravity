@@ -46,7 +46,7 @@ class X202Test extends TestCase
     {
         Event::fake([ApprovalRaised::class, ApprovalDecided::class, ApprovalExpired::class, ApprovalEscalated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Approval Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Approval Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Enqueue a bare error -> the write is REFUSED
@@ -132,7 +132,7 @@ class X202Test extends TestCase
      */
     public function test_g9_08_approval_audit_export(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Audit Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Audit Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $item = $this->enqueueAction->handle($biz->id, 'contract', 'Vendor NDA', ['pages' => 3]);
@@ -146,7 +146,7 @@ class X202Test extends TestCase
      */
     public function test_g10_16_72h_escalation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Escalate Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Escalate Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $item = $this->enqueueAction->handle($biz->id, 'refund', 'Refund $50', ['amt' => 5000]);
@@ -200,7 +200,7 @@ class X202Test extends TestCase
      */
     public function test_g17_21_rejection_creates_work_item(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Reject Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Reject Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $item = $this->enqueueAction->handle($biz->id, 'banner', 'New Ad Banner', ['src' => 'banner.png']);
@@ -214,7 +214,7 @@ class X202Test extends TestCase
      */
     public function test_g19_13_deep_link(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Link Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Link Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $item = $this->enqueueAction->handle($biz->id, 'sms_blast', 'Flash Sale SMS', ['count' => 100]);

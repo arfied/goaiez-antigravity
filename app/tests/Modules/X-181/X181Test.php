@@ -40,7 +40,7 @@ class X181Test extends TestCase
     {
         Event::fake([TicketCreated::class, TicketResolved::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'QA Ticket Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'QA Ticket Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $person = Person::create([
@@ -89,7 +89,7 @@ class X181Test extends TestCase
      */
     public function test_g20_16_triage_routing(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Triage Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Triage Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $req = ReviewRequest::create([

@@ -44,7 +44,7 @@ class X190Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'B2B Partner Network Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'B2B Partner Network Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A new tenant has the network ON with zero taps (TEST ANCHOR)

@@ -46,7 +46,7 @@ class X108Test extends TestCase
     {
         Event::fake([AppointmentBooked::class, SlotLocked::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Schedule Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Schedule Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $targetDate = now()->addDays(2)->format('Y-m-d');
@@ -93,7 +93,7 @@ class X108Test extends TestCase
      */
     public function test_g2_04_calendar_sync(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Calendar Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Calendar Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $apt = $this->book->handle($biz->id, 'AC Inspection', now()->addDay()->toIso8601String(), now()->addDay()->addHour()->toIso8601String());
@@ -105,7 +105,7 @@ class X108Test extends TestCase
      */
     public function test_g2_06_availability_request_lookup(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Avail Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Avail Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->avail->handle($biz->id, now()->addDays(3)->format('Y-m-d'));
@@ -141,7 +141,7 @@ class X108Test extends TestCase
      */
     public function test_g2_45_offers_confirmed_window_only(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Confirm Win Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Confirm Win Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $avail = $this->avail->handle($biz->id, now()->addDays(1)->format('Y-m-d'));
@@ -193,7 +193,7 @@ class X108Test extends TestCase
      */
     public function test_g18_27_conference_link_generation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Conf Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Conf Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $apt = $this->book->handle($biz->id, 'Video Consultation', now()->addDay()->toIso8601String(), now()->addDay()->addHour()->toIso8601String());
@@ -205,7 +205,7 @@ class X108Test extends TestCase
      */
     public function test_g19_01_cancellation_fills_itself_from_waitlist(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Cancel Backfill Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Cancel Backfill Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->waitlist->handle(

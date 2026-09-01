@@ -41,7 +41,7 @@ class X195Test extends TestCase
     {
         Event::fake([ManifestPublished::class, ManifestInstalled::class, FlagChanged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Marketplace & Extension Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Marketplace & Extension Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Publish marketplace item

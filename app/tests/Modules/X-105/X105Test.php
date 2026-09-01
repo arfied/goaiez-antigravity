@@ -51,7 +51,7 @@ class X105Test extends TestCase
             DemoRequested::class,
         ]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Autonomous Outreach Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Autonomous Outreach Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Healthy business (rating 4.8, no distress) -> NEVER triggers research (TEST ANCHOR & G1-26)

@@ -43,7 +43,7 @@ class X212Test extends TestCase
     {
         Event::fake([MigrationStarted::class, MigrationDryRunReady::class, MigrationCommitted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Migration Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Migration Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $records = [

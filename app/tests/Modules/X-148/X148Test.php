@@ -34,8 +34,8 @@ class X148Test extends TestCase
     {
         Event::fake([RetrievalCompleted::class, RetrievalEmpty::class]);
 
-        $bizA = \Tests\TestCase::provisionTenant(['name' => 'Tenant Alpha HVAC', 'currency' => 'USD']);
-        $bizB = \Tests\TestCase::provisionTenant(['name' => 'Tenant Beta Roofing', 'currency' => 'USD']);
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant Alpha HVAC', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant Beta Roofing', 'currency' => 'USD']);
 
         // Index chunks for Tenant A and Tenant B
         DB::statement("SET app.business_id = '{$bizA->id}'");

@@ -44,7 +44,7 @@ class X151Test extends TestCase
     {
         Event::fake([FetchRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Web Scraper Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Web Scraper Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $domain = 'example-plumbing-supplies.com';
@@ -116,7 +116,7 @@ class X151Test extends TestCase
      */
     public function test_proxy_pool_and_sitemap_scanning(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Sitemap Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Sitemap Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sitemapRes = $this->sitemapAction->handle($biz->id, 'contractor.io', 'https://contractor.io/sitemap.xml');

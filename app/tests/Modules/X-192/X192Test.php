@@ -40,7 +40,7 @@ class X192Test extends TestCase
     {
         Event::fake([MembershipRecommended::class, ProfileBuilt::class, CitationVerified::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Local Directory & Citations Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Local Directory & Citations Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Rank indexed directory and noindexed directory (G8-08, G8-28)

@@ -37,7 +37,7 @@ class X182Test extends TestCase
     {
         Event::fake([PostPublished::class, CommentReceived::class, CommentEscalated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Social Media Publisher Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Social Media Publisher Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $account = SocialAccount::create([

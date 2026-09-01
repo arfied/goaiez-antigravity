@@ -39,7 +39,7 @@ class X173Test extends TestCase
     {
         Event::fake([AccountingSynced::class, CategoryInferred::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Accounting Sync Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Accounting Sync Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $connection = $this->connectAction->connect($biz->id, 'quickbooks', 'realm_qb_4412');

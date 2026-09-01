@@ -42,7 +42,7 @@ class X102Test extends TestCase
     {
         Event::fake([ChatStarted::class, ChatLeadCaptured::class, ChatEscalated::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. With AI-credit cap reached, widget starts in offline_form mode & submission creates Person

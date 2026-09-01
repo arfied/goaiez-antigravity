@@ -40,7 +40,7 @@ class X184Test extends TestCase
     {
         Event::fake([PlanCreated::class, ItemScheduled::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Content Calendar Planning Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Content Calendar Planning Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $weekLabel = '2026-W36';

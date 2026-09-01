@@ -45,7 +45,7 @@ class X218Test extends TestCase
     {
         Event::fake([SendRequested::class, InfluencerEngaged::class, InfluencerDelivered::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Influencer Creator Campaign Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Influencer Creator Campaign Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Discover influencer & outreach

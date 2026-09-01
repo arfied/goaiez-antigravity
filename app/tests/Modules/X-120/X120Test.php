@@ -39,7 +39,7 @@ class X120Test extends TestCase
     {
         Event::fake([CardStored::class, CardExpiring::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Card Token Vault Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Card Token Vault Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Current simulated date: Jan 11, 2026

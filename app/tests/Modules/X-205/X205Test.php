@@ -42,7 +42,7 @@ class X205Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Affiliate Program Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Affiliate Program Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Create affiliate partner with 10% commission (G13-20: 90-day cookie window & lifetime balance)

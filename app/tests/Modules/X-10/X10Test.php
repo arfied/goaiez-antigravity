@@ -43,7 +43,7 @@ class X10Test extends TestCase
      */
     public function test_anchor_widget_credit_cap_fallback_no_fact_refusal_and_rage_clicks(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Routing Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Routing Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Credit cap reached -> renders fallback form (TEST ANCHOR)
@@ -102,7 +102,7 @@ class X10Test extends TestCase
     {
         Event::fake([LeadAssigned::class, LeadReassigned::class, TerritoryChanged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Dispatch Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Dispatch Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Territory polygon definition (G17-23)

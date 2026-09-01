@@ -35,7 +35,7 @@ class X138Test extends TestCase
     {
         Event::fake([JobAttributed::class, AttributionAmbiguous::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Attribution Analytics Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Attribution Analytics Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $jobId = 4091;

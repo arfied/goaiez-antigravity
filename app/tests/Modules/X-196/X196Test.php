@@ -38,7 +38,7 @@ class X196Test extends TestCase
     {
         Event::fake([ExtensionTriggered::class, ProspectInjected::class, ExtensionAborted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Browser Extension Ingest Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Browser Extension Ingest Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Constant in bundle asserted by test (TEST ANCHOR)

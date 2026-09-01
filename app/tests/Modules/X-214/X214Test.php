@@ -40,7 +40,7 @@ class X214Test extends TestCase
     {
         Event::fake([SurchargeDisclosed::class, SurchargeApplied::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Surcharge Compliance Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Surcharge Compliance Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $policy = SurchargePolicy::create([

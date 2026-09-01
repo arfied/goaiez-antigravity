@@ -37,7 +37,7 @@ class X158Test extends TestCase
     {
         Event::fake([VideoRendered::class, VideoWatched::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'AI Video Proposal Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'AI Video Proposal Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $demoNumber = 1042;

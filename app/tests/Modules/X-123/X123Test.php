@@ -37,7 +37,7 @@ class X123Test extends TestCase
         Mail::fake();
         Event::fake([EventPublished::class, EventDeadLettered::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Event Bus Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Event Bus Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sub = EventSubscription::create([
@@ -94,7 +94,7 @@ class X123Test extends TestCase
      */
     public function test_g1_11_event_bus_seam(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Seam Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Seam Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $log = $this->publisher->handle($biz->id, 'entity.updated', ['entity' => 'person']);
@@ -106,7 +106,7 @@ class X123Test extends TestCase
      */
     public function test_g1_22_tenant_facing_delivery(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Tenant Facing Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Tenant Facing Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $log = $this->publisher->handle($biz->id, 'custom.event', ['data' => 123]);
@@ -118,7 +118,7 @@ class X123Test extends TestCase
      */
     public function test_g1_41_event_pipeline(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Pipeline Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Pipeline Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $log = $this->publisher->handle($biz->id, 'review.received', ['rating' => 5]);
@@ -130,7 +130,7 @@ class X123Test extends TestCase
      */
     public function test_g2_52_outbound_payload_map(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Payload Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Payload Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $payload = ['id' => 999, 'meta' => ['source' => 'api']];
@@ -144,7 +144,7 @@ class X123Test extends TestCase
     public function test_g4_10_ten_failures_tenant_emailed(): void
     {
         Mail::fake();
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Alert Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Alert Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sub = EventSubscription::create([
@@ -164,7 +164,7 @@ class X123Test extends TestCase
      */
     public function test_g4_17_horizon_queue_scaling(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Scale Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Scale Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $log = $this->publisher->handle($biz->id, 'bulk.import', ['count' => 500]);
@@ -176,7 +176,7 @@ class X123Test extends TestCase
      */
     public function test_g4_32_queue_spike_zero_drops(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Spike Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Spike Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         for ($i = 0; $i < 20; $i++) {
@@ -202,7 +202,7 @@ class X123Test extends TestCase
     public function test_g4_43_global_retries_outbound(): void
     {
         $tester = new WebhookTestAction;
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Retry Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Retry Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sub = EventSubscription::create([
@@ -246,7 +246,7 @@ class X123Test extends TestCase
     public function test_g21_06_outbound_webhook_destination(): void
     {
         $tester = new WebhookTestAction;
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fenced Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Fenced Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sub = EventSubscription::create([
@@ -264,7 +264,7 @@ class X123Test extends TestCase
      */
     public function test_g21_09_webhook_channel_creation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Project Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Project Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $log = $this->publisher->handle($biz->id, 'project.created', ['project_id' => 456]);
@@ -276,7 +276,7 @@ class X123Test extends TestCase
      */
     public function test_g21_12_comment_event_ping(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Comment Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Comment Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $log = $this->publisher->handle($biz->id, 'comment.posted', ['mention_user_id' => 789]);

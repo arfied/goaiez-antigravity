@@ -36,7 +36,7 @@ class X132Test extends TestCase
     {
         Event::fake([PersonResolved::class, PersonMerged::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Identity Graph Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Identity Graph Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $canonicalPersonId = 9100;

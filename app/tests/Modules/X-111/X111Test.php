@@ -51,7 +51,7 @@ class X111Test extends TestCase
     {
         Event::fake([AlertOperator::class, TicketOpened::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Ops Control Center Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Ops Control Center Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Every alert row's message begins with an imperative verb (TEST ANCHOR, G21-05)

@@ -39,7 +39,7 @@ class X114Test extends TestCase
     {
         Event::fake([MediaGenerated::class, MediaResized::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Media Engine Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Media Engine Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Set up brand kit (G16-29)

@@ -45,7 +45,7 @@ class X164Test extends TestCase
     {
         Event::fake([EstimateSent::class, EstimateAccepted::class, DepositRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Estimate Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Estimate Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Draft and send estimate under price_book_version = 1
@@ -99,7 +99,7 @@ class X164Test extends TestCase
      */
     public function test_g10_01_signature_freezes_version(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Signature Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Signature Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $est = $this->draft->handle($biz->id, null, [['service_name' => 'Roof Repair', 'quantity' => 1, 'unit_price_cents' => 50000]], 1);
@@ -114,7 +114,7 @@ class X164Test extends TestCase
      */
     public function test_g10_05_countersign_step(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Countersign Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Countersign Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $est = $this->draft->handle($biz->id, null, [['service_name' => 'HVAC Tuneup', 'quantity' => 1, 'unit_price_cents' => 15000]], 1);
@@ -128,7 +128,7 @@ class X164Test extends TestCase
      */
     public function test_g10_20_executed_document_link(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Doc Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Doc Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $est = $this->draft->handle($biz->id, null, [['service_name' => 'Plumbing Inspection', 'quantity' => 1, 'unit_price_cents' => 9900]], 1);
@@ -150,7 +150,7 @@ class X164Test extends TestCase
      */
     public function test_g17_11_quote_expires_at_version(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Expire Version Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Expire Version Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $est = $this->draft->handle($biz->id, null, [['service_name' => 'Service X', 'quantity' => 1, 'unit_price_cents' => 20000]], 1);

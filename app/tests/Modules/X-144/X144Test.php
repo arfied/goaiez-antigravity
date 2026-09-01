@@ -36,7 +36,7 @@ class X144Test extends TestCase
     {
         Event::fake([VisibilityChanged::class, MentionedByAi::class, CompetitorOutranking::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Answer Engine Visibility Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Answer Engine Visibility Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $question = 'Who is the top rated commercial HVAC repair company in Dallas?';

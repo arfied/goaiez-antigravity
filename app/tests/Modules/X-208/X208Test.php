@@ -38,7 +38,7 @@ class X208Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Direct Mail Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Direct Mail Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $dnmAddress = '742 Evergreen Terrace, Springfield';

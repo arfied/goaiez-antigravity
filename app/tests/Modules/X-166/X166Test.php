@@ -34,7 +34,7 @@ class X166Test extends TestCase
     {
         Event::fake([JobCosted::class, MarginBelowThreshold::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Costing Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Costing Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Compute job cost citing pricebook version "v2.1"

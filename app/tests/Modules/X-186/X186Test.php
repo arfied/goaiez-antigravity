@@ -43,7 +43,7 @@ class X186Test extends TestCase
     {
         Event::fake([CampaignSent::class, CampaignReplied::class, SequenceStopped::class, CampaignExhausted::class, SendRequested::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Drip Campaign Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Drip Campaign Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $campaignId = 'camp_furnace_renewal_2026';

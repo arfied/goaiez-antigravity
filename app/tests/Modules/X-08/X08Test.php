@@ -30,7 +30,7 @@ class X08Test extends TestCase
     {
         Event::fake([ChurnRiskDetected::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Churn Predictor Platform Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Churn Predictor Platform Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Fixture with zero logins (30 decay days) AND a RISING ROI-push open rate -> NO risk flag (§210 & TEST ANCHOR)

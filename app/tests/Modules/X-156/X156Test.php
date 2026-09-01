@@ -39,7 +39,7 @@ class X156Test extends TestCase
     {
         Event::fake([IngestedNormalised::class, IngestRejected::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Universal Ingest Gateway Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Universal Ingest Gateway Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $secretKey = 'meta_app_secret_test_key_999';

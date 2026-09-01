@@ -33,7 +33,7 @@ class X109Test extends TestCase
     {
         Event::fake([FormSubmitted::class, ChallengeEncountered::class, QuotaExhausted::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Form Outreach Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Form Outreach Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $campaignId = 'camp_roofers_dallas_2026';

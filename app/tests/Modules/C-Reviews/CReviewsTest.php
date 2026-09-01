@@ -46,7 +46,7 @@ class CReviewsTest extends TestCase
     {
         Event::fake([ReviewRequested::class, ReviewReceived::class, ReplyPublished::class, FirstWin::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Reviews Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Reviews Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Staff mention lint test: Prompt containing staff names is blocked
@@ -140,7 +140,7 @@ class CReviewsTest extends TestCase
      */
     public function test_g19_10_compose_time_incentive_block(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Incentive Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Incentive Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->requestAction->handle($biz->id, null, 'Leave a review for 10% off your next visit!');
@@ -153,7 +153,7 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_01_low_rating_no_public_path(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Low Rating Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Low Rating Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $r = $this->syncAction->handle($biz->id, 'yelp', 2, 'Poor service');
@@ -166,7 +166,7 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_03_prompt_lint(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Lint Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Lint Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->requestAction->handle($biz->id, null, 'How did the repair go?');
@@ -186,7 +186,7 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_05_reopen_ticket_on_one_star(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'One Star Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'One Star Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $r = $this->syncAction->handle($biz->id, 'google', 1, 'Terrible experience');
@@ -215,7 +215,7 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_08_supported_platforms(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Platforms Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Platforms Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p1 = $this->syncAction->handle($biz->id, 'google', 5, 'Great');
@@ -266,7 +266,7 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_14_ambiguous_drafted_to_inbox(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Sarcasm Biz', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Sarcasm Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $r = $this->syncAction->handle($biz->id, 'google', 5, 'Oh wow, only took 3 weeks, great job guys...');

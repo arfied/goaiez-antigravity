@@ -46,7 +46,7 @@ class X194Test extends TestCase
     {
         Event::fake([ViewSaved::class, ViewRendered::class, ReportSent::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Custom Reporting Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Custom Reporting Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A saved view is a row in saved_views, NEVER a file on disk (TEST ANCHOR)

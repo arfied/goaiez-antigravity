@@ -37,7 +37,7 @@ class X171Test extends TestCase
     {
         Event::fake([TechOnSite::class, JobCompleted::class, SyncConflict::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Mobile Field Tech Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Mobile Field Tech Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $jobId = 505;

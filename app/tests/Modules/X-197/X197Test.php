@@ -33,7 +33,7 @@ class X197Test extends TestCase
     {
         Event::fake([VoiceRouteSelected::class, VoiceSelfhostedDegraded::class]);
 
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Voice Router Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'Voice Router Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Pool Cold: 100% of calls route managed and none exceed 600 ms (TEST ANCHOR)
