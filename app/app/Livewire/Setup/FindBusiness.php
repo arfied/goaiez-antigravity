@@ -151,6 +151,11 @@ final class FindBusiness extends Component
      * Pick one of several candidates. Promotes it to the confirmable slot; it
      * still needs the owner to press "Yes, that's us".
      */
+    public function discardCandidate(): void
+    {
+        $this->candidate = null;
+    }
+
     public function choose(string $placeId): void
     {
         foreach ($this->candidates as $candidate) {

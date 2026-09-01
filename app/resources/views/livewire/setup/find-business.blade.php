@@ -31,7 +31,7 @@
 
             <div class="mt-4 flex flex-wrap gap-3">
                 <x-ui.button id="confirm-candidate" wire:click="confirm">Yes, that's us</x-ui.button>
-                <x-ui.button variant="secondary" wire:click="$set('candidate', null)">
+                <x-ui.button variant="secondary" wire:click="discardCandidate">
                     Try a different link
                 </x-ui.button>
             </div>
