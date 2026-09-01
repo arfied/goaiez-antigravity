@@ -79,7 +79,7 @@ class CustomerfacingPortal extends Component
             $this->businessId = (int) $tenantId;
         }
 
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
     }
 
     public function approveAndSign(): void
@@ -90,7 +90,7 @@ class CustomerfacingPortal extends Component
             return;
         }
 
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $handler = app(PortalActionHandler::class);
         $handler->handle($this->token, 'signature_signed', [
             'signer_name' => $this->signatureTyped,
@@ -106,7 +106,7 @@ class CustomerfacingPortal extends Component
 
     public function submitPayment(): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $handler = app(PortalActionHandler::class);
         $handler->handle($this->token, 'invoice_paid', [
             'amount_cents' => $this->estimateTotalCents,
@@ -123,7 +123,7 @@ class CustomerfacingPortal extends Component
 
     public function submitRating(): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $handler = app(PortalActionHandler::class);
         $handler->handle($this->token, 'csat_feedback_submitted', [
             'rating' => $this->feedbackRating,

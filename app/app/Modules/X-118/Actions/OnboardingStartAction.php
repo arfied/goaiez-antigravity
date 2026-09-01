@@ -10,9 +10,11 @@ use App\Modules\X118\Events\TenantProvisioned;
 use App\Modules\X118\Events\TtfmMeasured;
 use App\Modules\X118\Models\OnboardingRun;
 use App\Modules\X118\Models\OnboardingStep;
-use App\Modules\X121\Models\Business;
 use App\Modules\X188\Actions\NumberAssignAction;
 use App\Modules\X188\Domain\NumberPoolManager;
+use App\Services\Tenancy\TenantProvisioner;
+use App\Support\Tenancy;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -32,12 +34,17 @@ final class OnboardingStartAction
     {
         return DB::transaction(function () use ($businessName, $contactPhone) {
             // 1. Provision Business
-            $biz = Business::provision([
-                'name' => $businessName,
-                'currency' => 'USD',
-            ]);
+            $user = User::first();
+            if (! $user) {
+                $user = User::create([
+                    'name' => 'Owner',
+                    'email' => "owner-{$contactPhone}@example.com",
+                    'password' => \Illuminate\Support\Facades\Hash::make('secret'),
+                ]);
+            }
+            $biz = app(\App\Services\TenantProvisioner::class)->provision($user, $businessName);
 
-            DB::statement("SET app.business_id = '{$biz->id}'");
+            Tenancy::set($biz->id);
 
             // 2. Assign Live Number from Pool
             $numberRes = $this->assigner->handle($biz->id, '512');

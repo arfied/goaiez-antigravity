@@ -61,7 +61,7 @@ class Pricebook extends Component
         }
 
         $this->businessId = (int) $tenantId;
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
 
         // Seed initial items if empty
         if (PriceBookItem::where('business_id', $this->businessId)->count() === 0) {
@@ -123,7 +123,7 @@ class Pricebook extends Component
 
     public function saveCalloutFee(): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $fee = CalloutFee::where('business_id', $this->businessId)->first();
         $cents = (int) round($this->calloutFeeDollars * 100);
 
@@ -152,7 +152,7 @@ class Pricebook extends Component
             return;
         }
 
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         PriceBookItem::create([
             'business_id' => $this->businessId,
             'service_name' => $this->newServiceName,
@@ -170,7 +170,7 @@ class Pricebook extends Component
 
     public function confirmItem(int $id): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $confirmer = app(PriceConfirmAction::class);
         $confirmer->handle($this->businessId, $id);
 
@@ -180,7 +180,7 @@ class Pricebook extends Component
 
     public function deleteItem(int $id): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         PriceBookItem::where('business_id', $this->businessId)->where('id', $id)->delete();
 
         $this->noticeType = 'warning';
@@ -189,7 +189,7 @@ class Pricebook extends Component
 
     public function bumpVersion(string $locationName): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $action = new BookVersionAction(new PricebookEngine);
         $res = $action->handle($this->businessId, $locationName);
 
@@ -199,7 +199,7 @@ class Pricebook extends Component
 
     public function runTestQuote(): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $lookup = new PriceLookupAction(new PricebookEngine);
         $res = $lookup->handle($this->businessId, $this->testQuery, $this->testChannel);
 
@@ -208,7 +208,7 @@ class Pricebook extends Component
 
     public function render()
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $items = PriceBookItem::where('business_id', $this->businessId)->orderBy('id', 'desc')->get();
         $locations = LocationBook::where('business_id', $this->businessId)->get();
 

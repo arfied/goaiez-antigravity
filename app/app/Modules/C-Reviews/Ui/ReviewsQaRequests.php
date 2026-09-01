@@ -46,7 +46,7 @@ class ReviewsQaRequests extends Component
             }
             $this->businessId = (int) $tenantId;
         }
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
 
         // Seed initial sample reviews if empty
         if (ReviewRequest::where('business_id', $this->businessId)->count() === 0) {
@@ -60,7 +60,7 @@ class ReviewsQaRequests extends Component
 
     public function sendRequest(): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $action = app(ReviewRequestAction::class);
         $res = $action->handle($this->businessId, null, $this->promptTemplate, $this->platform);
 
@@ -75,7 +75,7 @@ class ReviewsQaRequests extends Component
 
     public function selectReview(int $id): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $this->selectedReviewId = $id;
         $req = ReviewRequest::find($id);
 
@@ -96,7 +96,7 @@ class ReviewsQaRequests extends Component
             return;
         }
 
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $action = app(ReviewReplyAction::class);
         $res = $action->handle(
             $this->businessId,
@@ -125,7 +125,7 @@ class ReviewsQaRequests extends Component
 
     public function escalateToQa(int $id): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $action = app(QaTicketAction::class);
         $res = $action->handle($this->businessId, $id);
 
@@ -135,7 +135,7 @@ class ReviewsQaRequests extends Component
 
     public function addSampleReview(string $platform, int $rating, string $text): void
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
         $sync = app(ReviewSyncAction::class);
         $sync->handle($this->businessId, $platform, $rating, $text);
 
@@ -145,7 +145,7 @@ class ReviewsQaRequests extends Component
 
     public function render()
     {
-        DB::statement("SET app.business_id = '{$this->businessId}'");
+        \\App\\Support\\Tenancy::set($this->businessId);
 
         $query = ReviewRequest::where('business_id', $this->businessId)->orderBy('id', 'desc');
 

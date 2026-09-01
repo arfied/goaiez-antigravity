@@ -13,35 +13,5 @@ class Business extends Model
 
     protected $guarded = [];
 
-    public static function allocateId(): int
-    {
-        $row = DB::selectOne("SELECT nextval(pg_get_serial_sequence('businesses', 'id')) AS id");
 
-        return (int) $row->id;
-    }
-
-    public static function provision(array $attributes): self
-    {
-        $id = self::allocateId();
-        DB::statement("SET app.business_id = '{$id}'");
-
-        if (! isset($attributes['owner_user_id'])) {
-            $ownerId = DB::table('users')->value('id');
-            if ($ownerId === null) {
-                $ownerId = (int) DB::table('users')->insertGetId([
-                    'name' => 'Owner',
-                    'email' => "owner-{$id}@example.com",
-                    'password' => 'secret',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-            $attributes['owner_user_id'] = $ownerId;
-        }
-
-        $business = new self;
-        $business->forceFill([...$attributes, 'id' => $id])->save();
-
-        return $business;
-    }
 }

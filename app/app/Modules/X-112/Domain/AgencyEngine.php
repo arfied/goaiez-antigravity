@@ -12,7 +12,9 @@ use App\Modules\X112\Models\AgencyClient;
 use App\Modules\X112\Models\ImpersonationLog;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X112\Models\StaffRole;
-use App\Modules\X121\Models\Business;
+use App\Models\Business;
+use App\Models\User;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -24,10 +26,12 @@ final class AgencyEngine
     public function onboardClient(int $businessId, int $agencyId, string $clientName): AgencyClient
     {
         return DB::transaction(function () use ($businessId, $agencyId, $clientName) {
-            $clientBiz = Business::provision(['name' => $clientName, 'currency' => 'USD']);
+            $agencyBiz = Business::find($businessId);
+            $owner = User::find($agencyBiz->owner_user_id);
+            $clientBiz = app(\App\Services\TenantProvisioner::class)->provision($owner, $clientName);
 
             // Restore current agency business context
-            DB::statement("SET app.business_id = '{$businessId}'");
+            Tenancy::set($businessId);
 
             $client = AgencyClient::create([
                 'business_id' => $businessId,
