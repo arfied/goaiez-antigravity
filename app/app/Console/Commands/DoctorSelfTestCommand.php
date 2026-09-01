@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Doctor\Stages\BoundaryStage;
+use App\Doctor\Stages\CapabilityStage;
+use App\Doctor\Stages\CitationStage;
+use App\Doctor\Stages\ContractStage;
+use App\Doctor\Stages\IntegrityStage;
+use App\Doctor\Stages\TestAnchorStage;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -206,12 +212,12 @@ final class DoctorSelfTestCommand extends Command
     private function stageClasses(): array
     {
         return [
-            'integrity' => \App\Doctor\Stages\IntegrityStage::class,
-            'boundary' => \App\Doctor\Stages\BoundaryStage::class,
-            'contract' => \App\Doctor\Stages\ContractStage::class,
-            'citation' => \App\Doctor\Stages\CitationStage::class,
-            'capability' => \App\Doctor\Stages\CapabilityStage::class,
-            'anchor' => \App\Doctor\Stages\TestAnchorStage::class,
+            'integrity' => IntegrityStage::class,
+            'boundary' => BoundaryStage::class,
+            'contract' => ContractStage::class,
+            'citation' => CitationStage::class,
+            'capability' => CapabilityStage::class,
+            'anchor' => TestAnchorStage::class,
         ];
     }
 }

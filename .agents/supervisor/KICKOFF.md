@@ -1,13 +1,12 @@
-You are the coder in a supervised arrangement. Read AGENTS.md, then .agents/rules/10-supervisor.md, then .agents/supervisor/BRIEF.md and .agents/supervisor/REVIEWS.md.
+You are the coder in a supervised arrangement. Read AGENTS.md, then .agents/rules/10-supervisor.md, then .agents/supervisor/BRIEF.md and the NEWEST block of .agents/supervisor/REVIEWS.md.
 
-The supervisor's baseline review of main is a BLOCK. Work BRIEF.md "Current task" items strictly in order: 1, 1b, 2, 3, 4, then 5 (the twelve audit findings, one commit each), then 6 (wave 12 via python3 bin/state.py next). One git commit per item/finding, messages as the brief gives them.
+State of play: brief items 1–5 are committed locally (20 commits ahead of origin/main). The supervisor reviewed item 5 at 12:15 in REVIEWS.md — verdict BLOCK. Your current task is brief item 5b: work the eight numbered BLOCK items in that 12:15 block, in order, one commit each. Then run `bash bin/supervise.sh --tests`; it must print pint passed, phpstan 0 errors, Feature failures 0, and only the twelve journey errors. Then write .agents/supervisor/REPORT.md in the exact shape rule 10 gives (COMMITS raw log, TESTS with grep -c before/after per test file, STAGES, DOCTOR stamp, REFUSED, and the supervise.sh verdict block pasted) and stop for review. Do not start wave 12 (item 6) until REVIEWS.md says PASS for item 5.
 
 Hard rules for this session:
-- Do NOT git push. Commits stay local until REVIEWS.md says PASS.
-- Do NOT commit app/app/Support/Auth/SecondFactor.php's current working-tree change; discard it (brief item 1).
-- Never point DB_DATABASE at goaiez_antig; never edit the DB_DATABASE lines in app/.env or app/phpunit.xml.
-- Never write under /home/goaiez/public_html. Read from it only for brief item 1b.
-- Never edit BRIEF.md or REVIEWS.md. Never edit app/app/Doctor/** or tests/Journeys/JourneyHarness.php except by whitespace.
-- If a brief item would change a CHECK rather than the SYSTEM, do not do it; list it under REFUSED in REPORT.md.
-
-Write .agents/supervisor/REPORT.md in the shape rule 10 gives, raw output not paraphrase, after item 4 and again after item 5, and if you stop for any reason. Run `bash bin/supervise.sh --tests` before each report and paste its verdict block. Do not stop to ask questions; decide and record (R245) where the plan does not decide.
+- git push origin main is allowed ONLY for the commits through 09e2660 (already cleared). Do not push anything after that until REVIEWS.md says PASS.
+- Never point DB_DATABASE at goaiez_antig; never edit the DB_DATABASE lines in app/.env or app/phpunit.xml. Restore phpunit.xml memory_limit to 2048M (REVIEWS item 1b).
+- Never write under /home/goaiez/public_html.
+- Never edit BRIEF.md, REVIEWS.md, app/app/Doctor/**, or tests/Journeys/JourneyHarness.php except by whitespace.
+- One concern per commit; the message says what it is. Never bury a fix in a style commit.
+- Delete the stray scratch files (replace_script.sh, x121_tests.txt, error_log, app/error_log); never commit scratch.
+- If a review item would change a CHECK rather than the SYSTEM, do not do it; list it under REFUSED in REPORT.md.

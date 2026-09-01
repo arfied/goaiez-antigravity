@@ -259,8 +259,6 @@ final class BoundaryStage implements Stage
             ];
         }
 
-
-
         return $out;
     }
 

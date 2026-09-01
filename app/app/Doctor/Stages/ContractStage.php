@@ -61,8 +61,7 @@ final class ContractStage implements Stage
     public function run(): array
     {
         $out = [];
-                $modules = $this->manifests->all();
-
+        $modules = $this->manifests->all();
 
         // ⛔⛔⛔ A MISSING MANIFEST IS A VIOLATION, NOT AN EXCEPTION.
         //

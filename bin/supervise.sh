@@ -49,6 +49,14 @@ else
   echo "  none"
 fi
 
+bar "2b. php -l on every PHP file in that set"
+bad=0
+for f in $(printf '%s\n' "$touched" | grep -E '\.php$'); do
+  [ -f "$ROOT/$f" ] || continue
+  if ! php -l "$ROOT/$f" >/dev/null 2>&1; then echo "  ⛔ parse error: $f"; bad=1; fi
+done
+[ $bad -eq 0 ] && echo "  all parse" || fail=1
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'

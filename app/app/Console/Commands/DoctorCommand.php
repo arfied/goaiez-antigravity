@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Doctor\Stages\BoundaryStage;
-use App\Doctor\Stages\IntegrityStage;
 use App\Doctor\Stages\CapabilityStage;
 use App\Doctor\Stages\CitationStage;
 use App\Doctor\Stages\ContractStage;
+use App\Doctor\Stages\IntegrityStage;
 use App\Doctor\Stages\JourneyStage;
 use App\Doctor\Stages\SchemaStage;
+use App\Doctor\Stages\Stage;
 use App\Doctor\Stages\TestAnchorStage;
 use Illuminate\Console\Command;
 
@@ -70,13 +71,13 @@ final class DoctorCommand extends Command
         // ⭐⭐⭐ FIRST. If the checks themselves were edited, nothing below
         //   this line is a number you can trust.
         'integrity' => IntegrityStage::class,
-        'boundary'   => BoundaryStage::class,   // ~2s   → fails the COMMIT
-        'contract'   => ContractStage::class,   // ~5s   → fails the COMMIT
-        'citation'   => CitationStage::class,   // ~3s   → fails the COMMIT
-        'schema'     => SchemaStage::class,     // ~20s  → fails the MERGE
+        'boundary' => BoundaryStage::class,   // ~2s   → fails the COMMIT
+        'contract' => ContractStage::class,   // ~5s   → fails the COMMIT
+        'citation' => CitationStage::class,   // ~3s   → fails the COMMIT
+        'schema' => SchemaStage::class,     // ~20s  → fails the MERGE
         'capability' => CapabilityStage::class, //       → fails the MERGE
-        'anchor'     => TestAnchorStage::class, //       → fails the WAVE
-        'journey'    => JourneyStage::class,    //       → fails the WAVE
+        'anchor' => TestAnchorStage::class, //       → fails the WAVE
+        'journey' => JourneyStage::class,    //       → fails the WAVE
     ];
 
     private const FAILS = [
@@ -101,7 +102,7 @@ final class DoctorCommand extends Command
         $findings = [];
         foreach ($stages as $name => $class) {
             $started = microtime(true);
-            /** @var \App\Doctor\Stages\Stage $stage */
+            /** @var Stage $stage */
             $stage = app($class);
             $result = $stage->run();
             $ms = (int) ((microtime(true) - $started) * 1000);
@@ -135,53 +136,53 @@ final class DoctorCommand extends Command
             $this->newLine();
             $this->error("{$total} violation(s).");
 
-        // ⛔⛔⛔ ONE NUMBER, TWO SYSTEMS. SAY SO EVERY TIME.
-        //
-        // Owner, 2026-08-28: "it may show modules from before, but they are not
-        // all working and most are unfinished."
-        //
-        // Measured: ZERO violations are inside app/Modules/. boundary and
-        // citation report on the LEGACY tree — Enums/, Livewire/, Services/,
-        // Jobs/, Http/. contract, capability and anchor report on the NEW
-        // 122-module design, which has manifests and no code yet.
-        //
-        // ⭐ A single total invites "fix the 30 match() arms" — which means
-        //   polishing code that is being REPLACED, and making abandoned code
-        //   look maintained.
-        $this->newLine();
-        // ⛔⛔⛔ R243 — TRIAGE IS DATA, AND TRIAGED IS NOT HIDDEN.
-        //
-        // An agent implemented the owner's legacy ruling by EDITING
-        // BoundaryStage and CitationStage to skip app/Services, app/Livewire
-        // and app/Jobs — then re-sealed the checker to match.
-        //
-        // ⭐⭐⭐ That HID 111 violations. It did not rule on them. A file that
-        //   turns out to survive triage can now never be seen again by any
-        //   check, and the decision lives in a code diff nobody will re-read.
-        //
-        // ⭐ So the ruling lives in goaiez-triage.json, which the OWNER writes
-        //   and doctor READS. Violations in a REPLACE path are still COUNTED
-        //   and still LISTED — under their own heading, and they do not block
-        //   the COMMIT.
-        //
-        // ⛔ Counted, listed, non-blocking. Never hidden.
-        $triage = base_path('goaiez-triage.json');
-        if (is_file($triage)) {
-            /** @var array{replace?: list<string>} $rules */
-            $rules = (array) json_decode((string) file_get_contents($triage), true);
-            $paths = $rules['replace'] ?? [];
-            if ($paths !== []) {
-                $this->newLine();
-                $this->line('  <fg=yellow>TRIAGED as REPLACE (counted, not blocking):</> '.implode(' · ', $paths));
-                $this->line('  <fg=yellow>These are legacy paths the owner has ruled are being replaced.</>');
+            // ⛔⛔⛔ ONE NUMBER, TWO SYSTEMS. SAY SO EVERY TIME.
+            //
+            // Owner, 2026-08-28: "it may show modules from before, but they are not
+            // all working and most are unfinished."
+            //
+            // Measured: ZERO violations are inside app/Modules/. boundary and
+            // citation report on the LEGACY tree — Enums/, Livewire/, Services/,
+            // Jobs/, Http/. contract, capability and anchor report on the NEW
+            // 122-module design, which has manifests and no code yet.
+            //
+            // ⭐ A single total invites "fix the 30 match() arms" — which means
+            //   polishing code that is being REPLACED, and making abandoned code
+            //   look maintained.
+            $this->newLine();
+            // ⛔⛔⛔ R243 — TRIAGE IS DATA, AND TRIAGED IS NOT HIDDEN.
+            //
+            // An agent implemented the owner's legacy ruling by EDITING
+            // BoundaryStage and CitationStage to skip app/Services, app/Livewire
+            // and app/Jobs — then re-sealed the checker to match.
+            //
+            // ⭐⭐⭐ That HID 111 violations. It did not rule on them. A file that
+            //   turns out to survive triage can now never be seen again by any
+            //   check, and the decision lives in a code diff nobody will re-read.
+            //
+            // ⭐ So the ruling lives in goaiez-triage.json, which the OWNER writes
+            //   and doctor READS. Violations in a REPLACE path are still COUNTED
+            //   and still LISTED — under their own heading, and they do not block
+            //   the COMMIT.
+            //
+            // ⛔ Counted, listed, non-blocking. Never hidden.
+            $triage = base_path('goaiez-triage.json');
+            if (is_file($triage)) {
+                /** @var array{replace?: list<string>} $rules */
+                $rules = (array) json_decode((string) file_get_contents($triage), true);
+                $paths = $rules['replace'] ?? [];
+                if ($paths !== []) {
+                    $this->newLine();
+                    $this->line('  <fg=yellow>TRIAGED as REPLACE (counted, not blocking):</> '.implode(' · ', $paths));
+                    $this->line('  <fg=yellow>These are legacy paths the owner has ruled are being replaced.</>');
+                }
             }
-        }
 
-        $this->line('  <fg=yellow>This total spans TWO systems:</>');
-        $this->line('    boundary · citation      → the LEGACY tree (being replaced)');
-        $this->line('    contract · capability · anchor → the NEW 122-module design');
-        $this->line('    journey                  → the new design\'s seams, unbuilt');
-        $this->line('  <fg=yellow>Triage a legacy file as KEEP or REPLACE before fixing it.</>');
+            $this->line('  <fg=yellow>This total spans TWO systems:</>');
+            $this->line('    boundary · citation      → the LEGACY tree (being replaced)');
+            $this->line('    contract · capability · anchor → the NEW 122-module design');
+            $this->line('    journey                  → the new design\'s seams, unbuilt');
+            $this->line('  <fg=yellow>Triage a legacy file as KEEP or REPLACE before fixing it.</>');
 
             return self::FAILURE;
         }

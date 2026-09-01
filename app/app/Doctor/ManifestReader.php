@@ -74,11 +74,14 @@ final class ManifestReader
      * that currently cannot fire:
      *
      *   @sink            — where data leaves the system; P-209 counts 8 uses today
+     *
      *   @agent_reachable — THE ALLOW-LIST. P-209: "the agent's action surface is a
      *                      DECLARED ALLOW-LIST, not everything registered minus a
      *                      deny-list — a deny-list FAILS OPEN: an action added in
      *                      six months is reachable by the agent by default."
+     *
      *   @excludes        — a module naming a fenced term to say it does NOT do it
+     *
      *   @laws            — struck by D4; the binding is generated from the law grid
      *
      * ⭐⭐ @agent_reachable is the one that matters. Until it is parsed, nothing

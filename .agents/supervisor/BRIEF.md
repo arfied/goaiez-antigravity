@@ -1,7 +1,8 @@
 # BRIEF — from the supervisor
 
 updated: 2026-09-01
-push: gated        (gated = push only after PASS in REVIEWS.md · free = push as you go)
+push: cleared through 09e2660 — `git push origin main` is allowed for those six
+      commits now; item-5 commits stay local until the next PASS (see REVIEWS.md)
 report: per wave, and on any stop
 
 ## Standing orders
@@ -15,9 +16,8 @@ report: per wave, and on any stop
 
 ## Current task — in this order
 
-**Baseline review of `main` is a BLOCK** (`REVIEWS.md`, 2026-09-01). Items 1–3
-come before any wave-12 module. Each is its own commit. Nothing pushes until
-the next review says PASS.
+**Items 1–4: PASS-WITH-NOTES (11:25). Item 5: BLOCK (12:15).** Current task is
+**5b** below. Nothing from item 5 pushes until the next PASS.
 
 ### 1. Clean tree — but do NOT commit the 2FA regression
 
@@ -99,38 +99,19 @@ Verify: `bash bin/supervise.sh --tests` — Feature suite has 0 failures (the 4
   `git diff -w HEAD -- app/tests/Journeys/JourneyHarness.php` must print
   nothing. Any other change there is a stub and a BLOCK.
 
-### 5. Audit H-tier — one wave, one commit per finding, before any module
+### 5. Audit H-tier — DONE except the BLOCK items below
 
-From the 2026-09-01 production audit (57 findings). These are live-customer
-harm in code nobody has written in either tree. Order is harm per hour. Each
-gets its own commit `fix(audit-H-n): …` and at least one test that fails
-without the change — say which test in `REPORT.md`. Do not run
-`pixel:publish`, `composer update`, or anything against a database other than
-`goaiez_antig_dev` / `goaiez_antig_test`.
+Twelve findings committed (`cd8104b..605713a`); reviewed 12:15 in
+`REVIEWS.md` — **BLOCK**. Per-commit acceptance notes were here and now live in
+`REVIEWS.md`. The table of findings is in git history of this file if needed.
 
-| # | Finding | Where | Fix | Verify |
-| :--- | :--- | :--- | :--- | :--- |
-| H-3 | Every `customer.subscription.*` Stripe webhook violates `subscriptions_gateway_matches_its_ids` | `app/Services/Billing/Subscriptions.php:363-401` `applyStripeSubscription()` | write `gateway => 'stripe'` with `stripe_subscription_id` | a test applying a Stripe subscription event inserts a row (fails today on the CHECK) |
-| H-2 | Tenants with no Authorize.Net card are routed to Stripe top-up, and the vault key is `sk_test_` | `app/Livewire/Account/Credit.php:1071-1073` | gate the Stripe path behind a live-mode check (`StripeApi::isLive()` or equivalent: key prefix `sk_live_`), otherwise refuse with a message — the owner swaps the key, not you | test: test-mode key ⇒ no redirect to Stripe checkout |
-| H-5 | `Storage::disk('s3')` throws on first use — exports, MMS, voicemail, L0 archive | `composer.json` / `composer.lock` | `composer require league/flysystem-aws-s3-v3` (adds the package only; no `composer update`) | `php -r 'var_dump(class_exists(\Aws\S3\S3Client::class));'` → `true`; `composer check-platform-reqs` still 0 |
-| H-4 | Worker heartbeat never written; health can never alert | `README-RUNTIME.md` (the listener text) · `app/Providers/AppServiceProvider.php` · `app/Services/Ops/PlatformHealthChecks.php:334-338` | `queue.looping` listener writes `goaiez:worker:heartbeat` | test: firing `Looping` writes the key |
-| H-14 | `app:deploy-check` crashes on `__PHP_Incomplete_Class` Carbon from the DB cache; mail check reads an undefined config key | `app/Console/Commands/DeployCheckCommand.php:84,100,149` · `config/cache.php:134` | store a Unix timestamp, not Carbon; read the ceiling via `MailQuota::ceiling()`; leave `serializable_classes` alone | `php artisan app:deploy-check` runs to completion against `goaiez_antig_dev` |
-| H-6 | `/p.js` serves a 0-byte 200 with `max-age=300` when no bundle is published | `app/Http/Controllers/Pixel/PixelBundleController.php:44` `pointer()` | when no `PixelBundleVersion` exists: `Cache-Control: no-store`, and a non-empty body or a 404 — pick one, record it `(R245)` | test: unpublished ⇒ `no-store` header; published ⇒ unchanged |
-| H-12 | Setup step 2 "Try a different link" throws on a `#[Locked]` property | `app/Livewire/Setup/FindBusiness.php:79` · `resources/views/livewire/setup/find-business.blade.php:34` | add `discardCandidate()` action; `wire:click="discardCandidate"` | Livewire test clicks it and asserts `candidate` is null |
-| H-13 | Advanced "Citations" persists invented NAP rows; 12 placeholder screens toast actions that never ran; any owner can enable the dashboard | `app/Livewire/Advanced/Citations.php:53-77,97-105` · `Posts.php:24` · `Voice.php:26` · `WebsiteBuilder.php:121,126` · `Integrations.php:26-32` · `app/Livewire/Account/Settings.php:255-263` | never persist demo rows; label placeholder screens "Preview — not live" and remove the false toasts; gate `toggleAdvanced()` | test: Citations mount creates zero rows; `toggleAdvanced` refused for non-owner |
-| H-7 | OAuth identity merges onto any existing row with the same email; verification is off; signup is open | `app/Http/Controllers/Auth/OauthLoginController.php:264-278` | merge only when `email_verified_at` is set; otherwise send a verification link and stop | test: unverified same-email user ⇒ no link, no login |
-| H-8 | Module `Business::provision()` assigns every business to user #1, can insert a plaintext-password user, and runs raw `SET app.business_id` | `app/Modules/X-121/Models/Business.php:23-46` · `X-118/Actions/OnboardingStartAction.php:35-40` · `X-112/Domain/AgencyEngine.php:27` | delete the module provisioner (core `TenantProvisioner` is the one path); add an architecture test forbidding `SET app.business_id` outside `app/Support/Tenancy.php` | the new arch test lists 0 offenders |
-| H-15 | Credential rotation killed the worker; no `queue:restart` in any deploy step | `deploy/deploy.sh` | add `php artisan queue:restart` after the code copy | `grep -n queue:restart deploy/deploy.sh` |
-| M-19 | CI runs as the Postgres superuser, so RLS is never exercised; suite dies silently at 128 MB | `.github/workflows/ci.yml` · `phpunit.xml` | CI creates `goaiez_app`-shaped role without BYPASSRLS and runs tests as it; `memory_limit=512M` in `phpunit.xml`'s `<php>` — **this is the one legal `phpunit.xml` edit; the `DB_DATABASE` line stays `goaiez_antig_test`** | `supervise.sh` §0 unchanged; CI job runs once GitHub billing is fixed |
+### 5b. Clear the item-5 BLOCK — current task, before anything else
 
-⛔ Owner decides, not you — leave `TODO(Q-045)` with a recommendation and move
-on: H-9 (112 unwired modules booting per request — architectural), H-11
-(`intl` in EasyApache), C-4 (backups), the Stripe live key, credential rotation.
-
-**Regression guard for the whole wave:** `bash bin/supervise.sh --tests` must
-show Feature failures 0 and the module/journey numbers **unchanged or better**
-than the report after item 1b. A test that went from red to green by an edit to
-the test is a CHECK change — `REFUSED`.
+Work the eight numbered items in the 12:15 block of `REVIEWS.md`, in order,
+one commit each. Then `bash bin/supervise.sh --tests` must print
+`pint … passed`, `phpstan … passed, errors 0`, `Feature failures 0`, and only
+the twelve journey errors. Then write `REPORT.md` **in the rule-10 shape** and
+stop for review. Nothing from item 5 pushes before that review says PASS.
 
 ### 6. Then wave 12 — J11 the site
 
@@ -140,5 +121,4 @@ the test is a CHECK change — `REFUSED`.
 
 ## Report when
 
-After item 4 lands (so the BLOCK can be lifted and a push allowed), again when
-item 5 closes, again when wave 12 closes, and on any stop condition.
+After 5b (rule-10 shape), again when wave 12 closes, and on any stop condition.

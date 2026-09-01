@@ -181,7 +181,6 @@ final class TestAnchorStage implements Stage
             }
         }
 
-
         return $out;
     }
 

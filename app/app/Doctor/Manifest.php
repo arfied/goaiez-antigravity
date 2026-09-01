@@ -28,14 +28,14 @@ namespace App\Doctor;
 final readonly class Manifest
 {
     /**
-     * @param list<string> $provides
-     * @param list<string> $emits
-     * @param list<string> $consumes
-     * @param list<string> $ownsTable
-     * @param list<string> $readsTable
-     * @param list<string> $renders
-     * @param list<string> $ownsFacts
-     * @param list<string> $readsFacts
+     * @param  list<string>  $provides
+     * @param  list<string>  $emits
+     * @param  list<string>  $consumes
+     * @param  list<string>  $ownsTable
+     * @param  list<string>  $readsTable
+     * @param  list<string>  $renders
+     * @param  list<string>  $ownsFacts
+     * @param  list<string>  $readsFacts
      */
     public function __construct(
         public string $id,
