@@ -34,6 +34,7 @@ php artisan migrate --database=pgsql_migrate --force
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+php artisan queue:restart
 
 echo "==> Deployment complete. Live site status:"
 curl -s -o /dev/null -w "%{http_code}\n" https://anti.goaiez.com/
