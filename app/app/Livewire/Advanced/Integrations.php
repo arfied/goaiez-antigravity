@@ -24,7 +24,7 @@ class Integrations extends Component
 
     public function triggerTestPayment(): void
     {
-        $this->testNotification = '✅ Test event received: Simulated $145.00 payment from "Sarah Jenkins". Review request SMS scheduled for immediate dispatch!';
+        $this->testNotification = null;
     }
 
     public function render(): View

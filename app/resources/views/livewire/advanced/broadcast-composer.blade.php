@@ -9,7 +9,7 @@
                 <li class="text-gray-500 dark:text-gray-400">Composer</li>
             </ol>
         </nav>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Compose Customer Broadcast</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Compose Customer Broadcast <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Draft targeted SMS or email messages with dynamic merge tags, compliance opt-out, and live credit forecasting.</p>
     </div>
 

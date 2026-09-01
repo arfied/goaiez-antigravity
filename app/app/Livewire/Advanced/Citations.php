@@ -35,50 +35,9 @@ class Citations extends Component
 
     public function mount(): void
     {
-        $this->seedDefaultDirectoriesIfEmpty();
         $this->calculateHealth();
     }
 
-    public function seedDefaultDirectoriesIfEmpty(): void
-    {
-        $businessId = Tenancy::id();
-        if (! $businessId) {
-            return;
-        }
-
-        $count = Citation::where('business_id', $businessId)->count();
-        if ($count === 0) {
-            $business = Business::find($businessId);
-            $businessName = $business ? $business->name : 'My Business';
-            $businessPhone = '(555) 019-2831';
-            $businessAddress = '100 Main St, Suite 200';
-
-            $directories = [
-                ['directory' => 'Google Business Profile', 'url' => 'https://google.com/maps', 'status' => 'consistent'],
-                ['directory' => 'Apple Maps', 'url' => 'https://maps.apple.com', 'status' => 'consistent'],
-                ['directory' => 'Bing Places', 'url' => 'https://bing.com/places', 'status' => 'consistent'],
-                ['directory' => 'Yelp', 'url' => 'https://yelp.com/biz', 'status' => 'mismatch', 'mismatch' => ['phone' => 'Old phone on record']],
-                ['directory' => 'Facebook Local', 'url' => 'https://facebook.com', 'status' => 'consistent'],
-                ['directory' => 'YellowPages', 'url' => 'https://yellowpages.com', 'status' => 'consistent'],
-                ['directory' => 'Better Business Bureau (BBB)', 'url' => 'https://bbb.org', 'status' => 'missing'],
-                ['directory' => 'MapQuest', 'url' => 'https://mapquest.com', 'status' => 'consistent'],
-            ];
-
-            foreach ($directories as $d) {
-                Citation::create([
-                    'business_id' => $businessId,
-                    'directory' => $d['directory'],
-                    'directory_url' => $d['url'],
-                    'nap_status' => $d['status'],
-                    'listing_name' => $businessName,
-                    'listing_address' => $businessAddress,
-                    'listing_phone' => $businessPhone,
-                    'mismatch_details' => $d['mismatch'] ?? null,
-                    'last_checked_at' => Carbon::now()->subHours(rand(1, 48)),
-                ]);
-            }
-        }
-    }
 
     public function calculateHealth(): void
     {
@@ -103,7 +62,7 @@ class Citations extends Component
         ]);
 
         $this->calculateHealth();
-        $this->scanMessage = 'Citation scan complete. Verified 8 major local business directories.';
+        $this->scanMessage = '';
         $this->isScanning = false;
     }
 
@@ -118,7 +77,7 @@ class Citations extends Component
                 'last_checked_at' => Carbon::now(),
             ]);
             $this->calculateHealth();
-            $this->scanMessage = 'Listing updated to Consistent.';
+            $this->scanMessage = '';
         }
     }
 

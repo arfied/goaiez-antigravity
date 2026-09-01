@@ -30,7 +30,7 @@ class RankTracker extends Component
 
     public function runScan(): void
     {
-        $this->scanNotification = 'Geo-grid scan complete for "'.$this->selectedKeyword.'" across '.$this->radiusMiles.' miles radius. All 9 node points updated.';
+        $this->scanNotification = null;
     }
 
     public function render(): View

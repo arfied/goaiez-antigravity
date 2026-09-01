@@ -8,7 +8,7 @@
                     <li class="text-gray-500 dark:text-gray-400">Competitors</li>
                 </ol>
             </nav>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Local Competitor Intelligence Radar</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Local Competitor Intelligence Radar <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Track competitor review velocity, rating momentum, and search rankings in your catchment area.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">

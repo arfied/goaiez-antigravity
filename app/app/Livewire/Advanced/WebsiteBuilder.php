@@ -113,17 +113,17 @@ class WebsiteBuilder extends Component
             ];
         }
 
-        $this->aiNotification = '✨ AI generated custom headlines, services, and FAQ tailored to your business prompt!';
+        $this->aiNotification = null;
     }
 
     public function simulateLeadSubmission(): void
     {
-        $this->leadDispatchNotification = '📲 LEAD DISPATCHED! (1) Instant SMS sent to business owner: "New lead from '.$this->leadName.' ('.$this->leadPhone.') for '.$this->leadService.'". (2) Confirmation text sent to customer.';
+        $this->leadDispatchNotification = null;
     }
 
     public function publishSite(): void
     {
-        $this->publishNotification = '🎉 Website published live! Local SEO Schema (JSON-LD LocalBusiness & AggregateRating) auto-injected.';
+        $this->publishNotification = null;
     }
 
     public function render(): View

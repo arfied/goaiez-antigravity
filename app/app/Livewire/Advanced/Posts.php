@@ -21,7 +21,7 @@ class Posts extends Component
 
     public function publishPost(): void
     {
-        $this->publishNotification = '🚀 Post published directly to Google Business Profile with localized catchment metadata & Call-to-Action button!';
+        $this->publishNotification = null;
     }
 
     public function render(): View

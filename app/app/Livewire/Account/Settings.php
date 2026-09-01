@@ -255,6 +255,9 @@ final class Settings extends Component
     public function toggleAdvanced(): void
     {
         $business = Business::find(Tenancy::id());
+        if ($business && $business->owner_user_id !== \Illuminate\Support\Facades\Auth::id()) {
+            abort(403);
+        }
         if (! $business) {
             return;
         }

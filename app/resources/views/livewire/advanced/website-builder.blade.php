@@ -8,7 +8,7 @@
                     <li class="text-gray-500 dark:text-gray-400">AI Website & Funnel Builder</li>
                 </ol>
             </nav>
-            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Autonomous Local Website & Funnel Builder</h1>
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Autonomous Local Website & Funnel Builder <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
             <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">AI-generated landing pages with instant SMS lead dispatch, interactive before/after proof, and live reviews.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4 gap-2">

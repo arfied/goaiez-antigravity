@@ -7,7 +7,7 @@
                 <li class="text-gray-500 dark:text-gray-400">Search Visibility & GSC</li>
             </ol>
         </nav>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Search Engine Visibility & AEO Rankings</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Search Engine Visibility & AEO Rankings <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Deep telemetry from Google Search Console, AI engine citations (ChatGPT, Perplexity, Claude), and local map pack rankings.</p>
     </div>
 

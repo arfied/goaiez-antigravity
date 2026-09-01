@@ -23,7 +23,7 @@ class Voice extends Component
 
     public function saveSettings(): void
     {
-        $this->saveNotification = '✨ AI Voice Receptionist updated! Live call greetings, triage routing, and appointment bridges are active.';
+        $this->saveNotification = null;
     }
 
     public function render(): View
