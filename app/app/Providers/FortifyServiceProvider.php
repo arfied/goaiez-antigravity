@@ -9,6 +9,7 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Enums\UserRole;
+use App\Http\Requests\Auth\TwoFactorLoginRequest;
 use App\Http\Responses\LoginResponse;
 use App\Http\Responses\PasswordResetFailedResponse;
 use App\Http\Responses\PasswordResetLinkRequestedResponse;
@@ -32,6 +33,7 @@ use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use Laravel\Fortify\Contracts\SuccessfulPasswordResetLinkRequestResponse as SuccessfulPasswordResetLinkRequestResponseContract;
 use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Http\Requests\TwoFactorLoginRequest as FortifyTwoFactorLoginRequest;
 use Laravel\Horizon\Horizon;
 use Laravel\Socialite\Socialite;
 
@@ -110,6 +112,17 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->bind(
             FailedPasswordResetResponseContract::class,
             PasswordResetFailedResponse::class,
+        );
+
+        // POST /two-factor-challenge. Fortify's request decrypts the pending
+        // user's secret and hands it to Google2FA with no guard on either step,
+        // and both steps threw on 2026-08-31 (a secret that is not base32; then
+        // no secret at all). Ours fails closed on both — see its docblock. The
+        // controller type-hints Fortify's class, so binding the subclass to it
+        // is what puts ours in that parameter.
+        $this->app->bind(
+            FortifyTwoFactorLoginRequest::class,
+            TwoFactorLoginRequest::class,
         );
     }
 

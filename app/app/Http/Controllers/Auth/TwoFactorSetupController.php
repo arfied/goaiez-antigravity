@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\Auth\SecondFactor;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -63,18 +64,42 @@ final class TwoFactorSetupController extends Controller
         $held = SecondFactor::held($user);
         $enrolling = SecondFactor::enrolling($user);
 
+        // A secret that exists but cannot produce codes — undecryptable, or
+        // not base32, which is what the 2026-08-31 `dummysecret` account had —
+        // would render as a QR code nobody can scan, a key nobody can type and
+        // a confirm form that can never succeed. Show the "not started" screen
+        // instead, with `force` set so Fortify mints a fresh secret over the
+        // dead one rather than keeping it.
+        $restart = $enrolling && ! SecondFactor::usable($user);
+
         return view('auth.two-factor-setup', [
-            'started' => $held || $enrolling,
+            'started' => ($held || $enrolling) && ! $restart,
             'confirmed' => $held,
+            'restart' => $restart,
             // twoFactorQrCodeSvg() builds its URL from a secret, so it is asked
-            // only while one exists and enrolment is unfinished.
-            'qrCodeSvg' => $enrolling ? $user->twoFactorQrCodeSvg() : null,
-            'secretKey' => SecondFactor::enrolmentKey($user),
+            // only while a usable one exists and enrolment is unfinished.
+            'qrCodeSvg' => $enrolling && ! $restart ? $user->twoFactorQrCodeSvg() : null,
+            'secretKey' => $restart ? null : SecondFactor::enrolmentKey($user),
             // Shown once enrolment is complete, and never before: a recovery
             // code handed out beside an unconfirmed secret is a credential for a
             // factor that may never be finished. recoveryCodes() also decrypts a
             // column that is null until the first enable.
-            'recoveryCodes' => $held ? $user->recoveryCodes() : [],
+            'recoveryCodes' => $held ? $this->recoveryCodes($user) : [],
         ]);
+    }
+
+    /**
+     * Recovery codes are stored encrypted too; a column that cannot be read
+     * must not take the whole screen down with it.
+     *
+     * @return list<string>
+     */
+    private function recoveryCodes(User $user): array
+    {
+        try {
+            return $user->recoveryCodes();
+        } catch (DecryptException) {
+            return [];
+        }
     }
 }

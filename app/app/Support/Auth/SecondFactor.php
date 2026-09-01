@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Support\Auth;
 
 use App\Models\User;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
 use Laravel\Fortify\Events\TwoFactorAuthenticationChallenged;
 use Laravel\Fortify\Fortify;
+use PragmaRX\Google2FA\Exceptions\Google2FAException;
 
 /**
  * The one place this application decides anything about a second factor
@@ -110,7 +113,60 @@ final class SecondFactor
      */
     public static function required(User $user): bool
     {
-        return $user->role->isPlatformStaff();
+        // ⛔ This read `return false;` from 2026-09-01 07:47 until later the same
+        // day — stubbed out after two 500s on POST /two-factor-challenge (a
+        // secret that decrypted to something Google2FA refuses, then a
+        // challenge session whose user no longer had a secret at all). Those
+        // paths now fail closed in App\Http\Requests\Auth\TwoFactorLoginRequest
+        // and the setup screen, so the rule is back: every internal account.
+        return $user->role?->isPlatformStaff() ?? false;
+    }
+
+    /**
+     * Whether the stored secret can actually produce codes.
+     *
+     * A secret can be present and still be no use: undecryptable (written under
+     * a different key), or decryptable to something that is not base32 (the
+     * 2026-08-31 05:42 500 was a secret reading `dummysecret`). `held()` mirrors
+     * Fortify and answers "is there one"; this answers "would it work", and the
+     * setup screen uses the difference to offer a fresh start instead of a QR
+     * code nobody can scan.
+     */
+    public static function usable(User $user): bool
+    {
+        $plain = self::decrypted($user);
+
+        if ($plain === null) {
+            return false;
+        }
+
+        try {
+            app(TwoFactorAuthenticationProvider::class)->verify($plain, '000000');
+        } catch (Google2FAException) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * The decrypted secret, or null when there is none or it cannot be read.
+     */
+    public static function decrypted(User $user): ?string
+    {
+        $secret = $user->two_factor_secret;
+
+        if (! is_string($secret) || $secret === '') {
+            return null;
+        }
+
+        try {
+            $plain = Fortify::currentEncrypter()->decrypt($secret);
+        } catch (DecryptException) {
+            return null;
+        }
+
+        return is_string($plain) && $plain !== '' ? $plain : null;
     }
 
     /**
@@ -150,11 +206,7 @@ final class SecondFactor
             return null;
         }
 
-        $secret = $user->two_factor_secret;
-
-        return is_string($secret)
-            ? Fortify::currentEncrypter()->decrypt($secret)
-            : null;
+        return self::decrypted($user);
     }
 
     /**

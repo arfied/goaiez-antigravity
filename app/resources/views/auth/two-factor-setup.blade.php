@@ -143,6 +143,15 @@
         </form>
     @else
         {{-- ── Not started ───────────────────────────────────────────────── --}}
+        @if ($restart)
+            <p class="mt-4 text-ink-2">
+                The two-step key stored on this account cannot be used, so
+                set-up has to start again. Turning it on issues a fresh key;
+                anything already added to your authenticator app for this
+                account can be removed.
+            </p>
+        @endif
+
         <p class="mt-4 text-ink-2">
             You will be asked for a code from your phone each time you sign in.
             It takes about a minute to set up.
@@ -150,6 +159,11 @@
 
         <form method="POST" action="{{ route('two-factor.enable') }}" class="mt-6">
             @csrf
+            @if ($restart)
+                {{-- Fortify keeps an existing secret unless told otherwise;
+                     this one is dead, so ask for a new one. --}}
+                <input type="hidden" name="force" value="1">
+            @endif
 
             <button
                 type="submit"
