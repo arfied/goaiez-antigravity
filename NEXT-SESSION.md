@@ -4,6 +4,8 @@
 **Live Host**: [https://anti.goaiez.com](https://anti.goaiez.com) (`APP_DEBUG=false`, Production Apache/PHP 8.4)  
 **Database**: PostgreSQL 16 `goaiez_antig` (RLS enforced on tenant tables, framework tables unlocked)
 
+> **Disconnected from production on 2026-09-01.** This checkout now uses its own database `goaiez_antig_dev` (a template copy of `goaiez_antig_test`, 401 migrations, empty), its own `APP_KEY`, `APP_URL=http://localhost:8000`, `MAIL_MAILER=log`, `SMS_DRIVER=log`, and no live vendor secrets. **Do not point `DB_DATABASE` back at `goaiez_antig`** — a test run from here altered the production schema on 2026-08-31 (see below).
+
 ---
 
 ## 🚨 Production Incident 2026-08-31

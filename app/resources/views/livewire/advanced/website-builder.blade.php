@@ -29,6 +29,7 @@
             <input
                 type="text"
                 wire:model="aiPrompt"
+                wire:keydown.enter="generateWithAI"
                 class="w-full text-xs sm:text-sm p-3 rounded-lg bg-indigo-950/80 border border-indigo-600 text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 placeholder="Describe your business, specialty & location (e.g. 24/7 Emergency plumbing in Austin)..."
             />

@@ -101,7 +101,7 @@
                 <div class="text-xs font-semibold text-ink group-hover:underline">Customer List</div>
                 <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">Outreach Channels</div>
             </a>
-            <a href="{{ route('account.widget') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
+            <a href="{{ route('account.website') }}" class="p-3 sm:p-3.5 rounded-[--radius-control] border border-rule bg-paper hover:border-rule-strong text-center transition group">
                 <div class="text-lg sm:text-xl mb-1">⭐</div>
                 <div class="text-xs font-semibold text-ink group-hover:underline">Website Badges</div>
                 <div class="text-[10px] text-ink-3 mt-0.5 hidden xs:block">Live Review Feed</div>
