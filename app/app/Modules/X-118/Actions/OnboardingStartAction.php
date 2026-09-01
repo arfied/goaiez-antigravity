@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X118\Actions;
 
+use App\Models\User;
 use App\Modules\X118\Events\AgentLive;
 use App\Modules\X118\Events\TenantCreated;
 use App\Modules\X118\Events\TenantProvisioned;
@@ -12,11 +13,11 @@ use App\Modules\X118\Models\OnboardingRun;
 use App\Modules\X118\Models\OnboardingStep;
 use App\Modules\X188\Actions\NumberAssignAction;
 use App\Modules\X188\Domain\NumberPoolManager;
-use App\Services\Tenancy\TenantProvisioner;
+use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use LogicException;
 
 final class OnboardingStartAction
 {
@@ -30,19 +31,17 @@ final class OnboardingStartAction
     /**
      * Start two-field signup and reach agent.live with zero extra human input (TEST ANCHOR).
      */
-    public function handle(string $businessName, string $contactPhone): array
+    public function handle(User $user, string $businessName, string $contactPhone): array
     {
-        return DB::transaction(function () use ($businessName, $contactPhone) {
+        if (! $user->exists) {
+            throw new LogicException('A module action must require an owner User (parameter or resolved from the authenticated context) and refuse (throw) when there is none.');
+        }
+
+        return DB::transaction(function () use ($user, $businessName, $contactPhone) {
             // 1. Provision Business
-            $user = User::first();
-            if (! $user) {
-                $user = User::create([
-                    'name' => 'Owner',
-                    'email' => "owner-{$contactPhone}@example.com",
-                    'password' => \Illuminate\Support\Facades\Hash::make('secret'),
-                ]);
-            }
-            $biz = app(\App\Services\TenantProvisioner::class)->provision($user, $businessName);
+            // Notice: The TenantProvisioner's signature is `provision(User $user, string $name, bool $nameIsVerified = false, ?string $auditToken = null)`
+            // We pass the name properly. We do not pass it as an audit token.
+            $biz = app(TenantProvisioner::class)->provision($user, $businessName);
 
             Tenancy::set($biz->id);
 

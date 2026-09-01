@@ -12,7 +12,6 @@ use App\Modules\X111\Actions\OpsTicketAction;
 use App\Modules\X111\Domain\OpsEngine;
 use App\Modules\X111\Events\AlertOperator;
 use App\Modules\X111\Events\TicketOpened;
-use App\Modules\X121\Models\Business;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -52,7 +51,7 @@ class X111Test extends TestCase
     {
         Event::fake([AlertOperator::class, TicketOpened::class]);
 
-        $biz = Business::provision(['name' => 'Ops Control Center Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Ops Control Center Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Every alert row's message begins with an imperative verb (TEST ANCHOR, G21-05)

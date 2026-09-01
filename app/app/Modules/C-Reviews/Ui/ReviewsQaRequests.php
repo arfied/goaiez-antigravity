@@ -10,7 +10,6 @@ use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -46,7 +45,7 @@ class ReviewsQaRequests extends Component
             }
             $this->businessId = (int) $tenantId;
         }
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
 
         // Seed initial sample reviews if empty
         if (ReviewRequest::where('business_id', $this->businessId)->count() === 0) {
@@ -60,7 +59,7 @@ class ReviewsQaRequests extends Component
 
     public function sendRequest(): void
     {
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $action = app(ReviewRequestAction::class);
         $res = $action->handle($this->businessId, null, $this->promptTemplate, $this->platform);
 
@@ -75,7 +74,7 @@ class ReviewsQaRequests extends Component
 
     public function selectReview(int $id): void
     {
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $this->selectedReviewId = $id;
         $req = ReviewRequest::find($id);
 
@@ -96,7 +95,7 @@ class ReviewsQaRequests extends Component
             return;
         }
 
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $action = app(ReviewReplyAction::class);
         $res = $action->handle(
             $this->businessId,
@@ -125,7 +124,7 @@ class ReviewsQaRequests extends Component
 
     public function escalateToQa(int $id): void
     {
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $action = app(QaTicketAction::class);
         $res = $action->handle($this->businessId, $id);
 
@@ -135,7 +134,7 @@ class ReviewsQaRequests extends Component
 
     public function addSampleReview(string $platform, int $rating, string $text): void
     {
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $sync = app(ReviewSyncAction::class);
         $sync->handle($this->businessId, $platform, $rating, $text);
 
@@ -145,7 +144,7 @@ class ReviewsQaRequests extends Component
 
     public function render()
     {
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
 
         $query = ReviewRequest::where('business_id', $this->businessId)->orderBy('id', 'desc');
 

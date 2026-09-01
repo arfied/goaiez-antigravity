@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X209;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X209\Actions\FixerApproveAction;
 use App\Modules\X209\Actions\FixerCommandAction;
 use App\Modules\X209\Actions\FixerDelegateAction;
@@ -48,7 +47,7 @@ class X209Test extends TestCase
             FixerPromoted::class,
         ]);
 
-        $biz = Business::provision(['name' => 'The Fixer Autopilot Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'The Fixer Autopilot Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $staffPersonId = 505;

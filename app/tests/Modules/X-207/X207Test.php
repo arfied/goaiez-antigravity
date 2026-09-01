@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X207;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X207\Actions\PushBroadcastAction;
 use App\Modules\X207\Actions\PushRegisterDeviceAction;
 use App\Modules\X207\Actions\PushRetireDeviceAction;
@@ -45,7 +44,7 @@ class X207Test extends TestCase
     {
         Event::fake([SendRequested::class]);
 
-        $biz = Business::provision(['name' => 'Push Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Push Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $device = $this->registerAction->handle($biz->id, 'apns_token_xyz123', 'ios', 101);

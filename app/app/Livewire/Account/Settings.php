@@ -15,6 +15,7 @@ use App\Services\Tenant\TenantPause;
 use App\Support\HashedIp;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 use Livewire\Attributes\Layout;
@@ -255,7 +256,7 @@ final class Settings extends Component
     public function toggleAdvanced(): void
     {
         $business = Business::find(Tenancy::id());
-        if ($business && $business->owner_user_id !== \Illuminate\Support\Facades\Auth::id()) {
+        if ($business && $business->owner_user_id !== Auth::id()) {
             abort(403);
         }
         if (! $business) {

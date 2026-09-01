@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X162;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X162\Actions\EtaQueryAction;
 use App\Modules\X162\Actions\EtaUpdateAction;
 use App\Modules\X162\Actions\JobDispatchAction;
@@ -51,7 +50,7 @@ class X162Test extends TestCase
     {
         Event::fake([JobDispatched::class, TechEnRoute::class, RouteChanged::class, EtaUpdated::class]);
 
-        $biz = Business::provision(['name' => 'Field Dispatch Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Field Dispatch Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $jobId = 1001;
@@ -97,7 +96,7 @@ class X162Test extends TestCase
      */
     public function test_route_optimization_and_capabilities(): void
     {
-        $biz = Business::provision(['name' => 'Route Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Route Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $route = $this->routeAction->handle($biz->id, 42, [101, 102, 103], 12.8);

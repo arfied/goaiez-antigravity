@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X16;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Fact;
 use App\Modules\X16\Actions\MapsGeogridAction;
 use App\Modules\X16\Actions\MapsHarvestAction;
@@ -36,7 +35,7 @@ class X16Test extends TestCase
      */
     public function test_anchor_price_table_facts_and_same_commit_invalidation(): void
     {
-        $biz = Business::provision(['name' => 'Maps & Fact Ingest Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Maps & Fact Ingest Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $priceTable = [

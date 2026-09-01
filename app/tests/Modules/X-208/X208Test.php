@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X208;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X208\Actions\MailComposeAction;
 use App\Modules\X208\Actions\MailProposeAction;
 use App\Modules\X208\Actions\MailSendAction;
@@ -39,7 +38,7 @@ class X208Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = Business::provision(['name' => 'Direct Mail Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Direct Mail Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $dnmAddress = '742 Evergreen Terrace, Springfield';

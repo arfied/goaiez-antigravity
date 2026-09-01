@@ -9,7 +9,6 @@ use App\Modules\X120\Actions\CardRotateAction;
 use App\Modules\X120\Actions\CardStoreAction;
 use App\Modules\X120\Events\CardExpiring;
 use App\Modules\X120\Events\CardStored;
-use App\Modules\X121\Models\Business;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -40,7 +39,7 @@ class X120Test extends TestCase
     {
         Event::fake([CardStored::class, CardExpiring::class]);
 
-        $biz = Business::provision(['name' => 'Card Token Vault Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Card Token Vault Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Current simulated date: Jan 11, 2026

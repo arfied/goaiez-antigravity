@@ -6,6 +6,7 @@ namespace App\Modules\X118\Ui;
 
 use App\Modules\X118\Actions\OnboardingStartAction;
 use App\Modules\X118\Actions\OnboardingTestCallAction;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -47,9 +48,16 @@ class DayOneSignup extends Component
         $this->validate();
         $this->errorMessage = null;
 
+        $user = Auth::user();
+        if (! $user) {
+            $this->errorMessage = 'You must be signed in to create an account.';
+
+            return;
+        }
+
         try {
             $starter = app(OnboardingStartAction::class);
-            $res = $starter->handle($this->businessName, $this->contactPhone);
+            $res = $starter->handle($user, $this->businessName, $this->contactPhone);
 
             $this->businessId = (int) $res['business_id'];
             $this->runId = (int) $res['run_id'];

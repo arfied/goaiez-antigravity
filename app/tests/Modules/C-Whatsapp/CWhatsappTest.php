@@ -12,7 +12,6 @@ use App\Modules\CWhatsapp\Events\TemplateApproved;
 use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
-use App\Modules\X121\Models\Business;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -46,7 +45,7 @@ class CWhatsappTest extends TestCase
     {
         Event::fake([WhatsappSent::class, WhatsappSessionOpened::class, TemplateApproved::class]);
 
-        $biz = Business::provision(['name' => 'WhatsApp Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'WhatsApp Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customerPhone = '+15558889999';

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X178;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X178\Actions\DesignChangeAction;
 use App\Modules\X178\Actions\DesignUndoAction;
 use App\Modules\X178\Actions\FormGenerateAction;
@@ -40,7 +39,7 @@ class X178Test extends TestCase
     {
         Event::fake([DesignChanged::class, BlockAdded::class, DesignUndone::class]);
 
-        $biz = Business::provision(['name' => 'Design Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Design Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Contrast failure: change with 3.2:1 contrast ratio (< 4.5:1 WCAG AA) is REFUSED
@@ -104,7 +103,7 @@ class X178Test extends TestCase
      */
     public function test_g6_21_unmapped_niche_fill_me_only(): void
     {
-        $biz = Business::provision(['name' => 'Niche Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Niche Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->formAction->handle($biz->id, 1, 'solar_panel_cleaning');

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Modules\X181;
 
 use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use App\Modules\X181\Actions\QaMarketingSuppressionCheckAction;
 use App\Modules\X181\Actions\QaTicketCreateAction;
@@ -41,7 +40,7 @@ class X181Test extends TestCase
     {
         Event::fake([TicketCreated::class, TicketResolved::class]);
 
-        $biz = Business::provision(['name' => 'QA Ticket Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'QA Ticket Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $person = Person::create([
@@ -90,7 +89,7 @@ class X181Test extends TestCase
      */
     public function test_g20_16_triage_routing(): void
     {
-        $biz = Business::provision(['name' => 'Triage Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Triage Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $req = ReviewRequest::create([

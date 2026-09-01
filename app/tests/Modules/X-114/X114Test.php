@@ -10,7 +10,6 @@ use App\Modules\X114\Actions\MediaSourceAction;
 use App\Modules\X114\Events\MediaGenerated;
 use App\Modules\X114\Events\MediaResized;
 use App\Modules\X114\Models\MediaAsset;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -40,7 +39,7 @@ class X114Test extends TestCase
     {
         Event::fake([MediaGenerated::class, MediaResized::class]);
 
-        $biz = Business::provision(['name' => 'Media Engine Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Media Engine Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Set up brand kit (G16-29)

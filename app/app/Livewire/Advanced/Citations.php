@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\Advanced;
 
-use App\Models\Business;
 use App\Models\Citation;
 use App\Support\Tenancy;
 use Illuminate\Contracts\View\View;
@@ -37,7 +36,6 @@ class Citations extends Component
     {
         $this->calculateHealth();
     }
-
 
     public function calculateHealth(): void
     {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X168;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X168\Actions\TimesheetApproveAction;
 use App\Modules\X168\Actions\TimesheetComputeAction;
 use App\Modules\X168\Events\PeriodReady;
@@ -38,7 +37,7 @@ class X168Test extends TestCase
     {
         Event::fake([TimesheetSubmitted::class, PeriodReady::class]);
 
-        $biz = Business::provision(['name' => 'JobTime Tracking Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'JobTime Tracking Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $techPersonId = 401;

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X200;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X200\Actions\CallbackScheduleAction;
 use App\Modules\X200\Actions\CallDisposeAction;
 use App\Modules\X200\Actions\CampaignPauseAction;
@@ -57,7 +56,7 @@ class X200Test extends TestCase
     {
         Event::fake([CallRequested::class]);
 
-        $biz = Business::provision(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Campaign start within 3.0% regulatory ceiling (G3-04, G10-03, §160.1)

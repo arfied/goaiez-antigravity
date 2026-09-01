@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X204;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X204\Actions\AttestationRecordAction;
 use App\Modules\X204\Actions\ConsentDecideAction;
 use App\Modules\X204\Actions\ConsentLiftAction;
@@ -55,7 +54,7 @@ class X204Test extends TestCase
     {
         Event::fake([ConsentDecided::class, PermitGranted::class, SuppressionAdded::class]);
 
-        $biz = Business::provision(['name' => 'Consent Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Consent Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $phone = '+15125550199';
@@ -88,7 +87,7 @@ class X204Test extends TestCase
      */
     public function test_n_013_compliance_registers_and_lift(): void
     {
-        $biz = Business::provision(['name' => 'Compliance Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Compliance Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $phone = '+15125550188';

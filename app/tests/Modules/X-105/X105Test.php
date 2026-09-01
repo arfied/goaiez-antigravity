@@ -13,7 +13,6 @@ use App\Modules\X105\Events\OutreachSent;
 use App\Modules\X105\Events\ProspectEngaged;
 use App\Modules\X105\Events\ReplyReceived;
 use App\Modules\X105\Models\LadderStep;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -52,7 +51,7 @@ class X105Test extends TestCase
             DemoRequested::class,
         ]);
 
-        $biz = Business::provision(['name' => 'Autonomous Outreach Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Autonomous Outreach Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Healthy business (rating 4.8, no distress) -> NEVER triggers research (TEST ANCHOR & G1-26)

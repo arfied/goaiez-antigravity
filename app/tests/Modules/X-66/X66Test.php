@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X66;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X66\Actions\VoiceAnswerAction;
 use App\Modules\X66\Actions\VoiceCoachAction;
 use App\Modules\X66\Actions\VoiceTransferAction;
@@ -48,7 +47,7 @@ class X66Test extends TestCase
     {
         Event::fake([CallRinging::class, CallAnswered::class]);
 
-        $biz = Business::provision(['name' => 'Voice Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Voice Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. The ring event alone produces the session and dispatches CallRinging before call is answered
@@ -74,7 +73,7 @@ class X66Test extends TestCase
      */
     public function test_g2_21_grounded_fact_read(): void
     {
-        $biz = Business::provision(['name' => 'Fact Voice Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fact Voice Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $session = $this->engine->handleRing($biz->id, 'CA_SID_FACT', '+15125550111', '+15125550100');
@@ -94,7 +93,7 @@ class X66Test extends TestCase
      */
     public function test_g18_21_objection_detection(): void
     {
-        $biz = Business::provision(['name' => 'Objection Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Objection Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $session = $this->engine->handleRing($biz->id, 'CA_SID_OBJ', '+15125550122', '+15125550100');
@@ -108,7 +107,7 @@ class X66Test extends TestCase
      */
     public function test_g18_23_transcription_record(): void
     {
-        $biz = Business::provision(['name' => 'Transcript Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Transcript Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $session = $this->engine->handleRing($biz->id, 'CA_SID_TR', '+15125550133', '+15125550100');

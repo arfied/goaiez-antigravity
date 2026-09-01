@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X161;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X161\Actions\DemoConvertAction;
 use App\Modules\X161\Actions\DemoHandleStopAction;
 use App\Modules\X161\Actions\DemoProvisionAction;
@@ -52,7 +51,7 @@ class X161Test extends TestCase
     {
         Event::fake([DemoProvisioned::class, DemoConverted::class, DemoStopReceived::class]);
 
-        $biz = Business::provision(['name' => 'Demo Sandbox Platform Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Demo Sandbox Platform Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $prospectDomain = 'dallasplumbingrepair.com';
@@ -84,7 +83,7 @@ class X161Test extends TestCase
         $this->assertStringContainsString($prospectDomain, $pricingAnswer['cited_fact']['source_page'], "Fact source_page contains prospect's own URL (TEST ANCHOR)");
 
         // 4. Conversion creates live tenant with facts preserved and zero re-entry (TEST ANCHOR)
-        $liveBiz = Business::provision(['name' => 'Converted Dallas Plumbing', 'currency' => 'USD']);
+        $liveBiz = \Tests\TestCase::provisionTenant(['name' => 'Converted Dallas Plumbing', 'currency' => 'USD']);
         // Restore session context to biz
         DB::statement("SET app.business_id = '{$biz->id}'");
         $convertedDemo = $this->convertAction->convertToLive($biz->id, $demo->id, $liveBiz->id);

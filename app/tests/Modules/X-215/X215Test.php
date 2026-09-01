@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X215;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X215\Actions\DocCommentAction;
 use App\Modules\X215\Actions\DocSendForSignatureAction;
 use App\Modules\X215\Actions\DocSignAction;
@@ -42,7 +41,7 @@ class X215Test extends TestCase
     {
         Event::fake([DocSent::class, DocSigned::class, DocCommented::class]);
 
-        $biz = Business::provision(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";

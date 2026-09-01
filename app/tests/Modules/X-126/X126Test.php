@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X126;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X126\Actions\CapabilityCheckAction;
 use App\Modules\X126\Domain\CapabilityArbiter;
 use App\Modules\X126\Events\CapabilityDecided;
@@ -37,7 +36,7 @@ class X126Test extends TestCase
     {
         Event::fake([CapabilityDecided::class, CapabilityRefused::class]);
 
-        $biz = Business::provision(['name' => 'Gate Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Gate Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Agent skill invoked with no grounding Fact -> refused with reason NO_FACT
@@ -91,7 +90,7 @@ class X126Test extends TestCase
      */
     public function test_n_126_01_decision_evaluation(): void
     {
-        $biz = Business::provision(['name' => 'Policy Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Policy Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->checker->handle(
@@ -111,7 +110,7 @@ class X126Test extends TestCase
      */
     public function test_n_126_02_persistence_audit(): void
     {
-        $biz = Business::provision(['name' => 'Audit Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Audit Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->checker->handle(

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X156;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X156\Actions\IngestConnectAction;
 use App\Modules\X156\Actions\IngestUploadAction;
 use App\Modules\X156\Actions\IngestWebhookAction;
@@ -40,7 +39,7 @@ class X156Test extends TestCase
     {
         Event::fake([IngestedNormalised::class, IngestRejected::class]);
 
-        $biz = Business::provision(['name' => 'Universal Ingest Gateway Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Universal Ingest Gateway Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $secretKey = 'meta_app_secret_test_key_999';

@@ -10,7 +10,6 @@ use App\Modules\X104\Actions\PluginSyncAction;
 use App\Modules\X104\Events\PluginInstalled;
 use App\Modules\X104\Events\PluginSynced;
 use App\Modules\X104\Models\PluginInstall;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -40,7 +39,7 @@ class X104Test extends TestCase
     {
         Event::fake([PluginInstalled::class, PluginSynced::class]);
 
-        $biz = Business::provision(['name' => 'WordPress Client Site', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'WordPress Client Site', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $siteUrl = 'https://plumbingking.com';

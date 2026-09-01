@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X129;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X129\Actions\RedirectsBuildAction;
 use App\Modules\X129\Actions\SiteMigrateAction;
 use App\Modules\X129\Events\DomainVerified;
@@ -36,7 +35,7 @@ class X129Test extends TestCase
     {
         Event::fake([SiteMigrated::class, DomainVerified::class]);
 
-        $biz = Business::provision(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sourceCrawl = [

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X112\Domain;
 
+use App\Models\Business;
+use App\Models\User;
 use App\Modules\X112\Events\ClientProvisioned;
 use App\Modules\X112\Events\ImpersonationStarted;
 use App\Modules\X112\Events\MarginComputed;
@@ -12,8 +14,7 @@ use App\Modules\X112\Models\AgencyClient;
 use App\Modules\X112\Models\ImpersonationLog;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X112\Models\StaffRole;
-use App\Models\Business;
-use App\Models\User;
+use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -28,7 +29,7 @@ final class AgencyEngine
         return DB::transaction(function () use ($businessId, $agencyId, $clientName) {
             $agencyBiz = Business::find($businessId);
             $owner = User::find($agencyBiz->owner_user_id);
-            $clientBiz = app(\App\Services\TenantProvisioner::class)->provision($owner, $clientName);
+            $clientBiz = app(TenantProvisioner::class)->provision($owner, $clientName);
 
             // Restore current agency business context
             Tenancy::set($businessId);

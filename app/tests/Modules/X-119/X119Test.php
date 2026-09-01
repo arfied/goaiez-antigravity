@@ -12,7 +12,6 @@ use App\Modules\X119\Domain\FactResolver;
 use App\Modules\X119\Events\FactCreated;
 use App\Modules\X119\Events\FactInvalidated;
 use App\Modules\X119\Events\GroundingMissing;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -49,7 +48,7 @@ class X119Test extends TestCase
     {
         Event::fake([FactCreated::class, FactInvalidated::class, GroundingMissing::class]);
 
-        $biz = Business::provision(['name' => 'Fact Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fact Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Structured price resolution
@@ -93,7 +92,7 @@ class X119Test extends TestCase
      */
     public function test_g3_02_grounding_store_database(): void
     {
-        $biz = Business::provision(['name' => 'G3 Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'G3 Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $taught = $this->teach->handle($biz->id, 'about.founded_year', '2015', 'crawler');
@@ -105,7 +104,7 @@ class X119Test extends TestCase
      */
     public function test_g5_25_grounding_law_retrieval(): void
     {
-        $biz = Business::provision(['name' => 'Grounding Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Grounding Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->lookup->handle($biz->id, 'non_existent_key', 'customer');
@@ -117,7 +116,7 @@ class X119Test extends TestCase
      */
     public function test_g13_38_volunteered_detail_provenance(): void
     {
-        $biz = Business::provision(['name' => 'Volunteer Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Volunteer Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->teach->handle(

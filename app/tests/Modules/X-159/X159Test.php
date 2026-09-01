@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X159;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X159\Actions\AuditExperientialAction;
 use App\Modules\X159\Actions\AuditRunAction;
 use App\Modules\X159\Events\AuditCompleted;
@@ -39,7 +38,7 @@ class X159Test extends TestCase
     {
         Event::fake([AuditCompleted::class, FindingEvent::class, ExperientialTested::class]);
 
-        $biz = Business::provision(['name' => 'Experiential Audit Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Experiential Audit Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $prospectId = 9801;

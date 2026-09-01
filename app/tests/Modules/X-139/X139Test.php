@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X139;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X139\Actions\ConversionUploadAction;
 use App\Modules\X139\Domain\ConversionUploadEngine;
 use App\Modules\X139\Events\ConversionRejected;
@@ -37,7 +36,7 @@ class X139Test extends TestCase
     {
         Event::fake([ConversionUploaded::class, ConversionRejected::class]);
 
-        $biz = Business::provision(['name' => 'Offline Conversion Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Offline Conversion Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $jobIdStale = 8812;

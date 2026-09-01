@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X124;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X124\Actions\AssistantAskAction;
 use App\Modules\X124\Actions\AssistantExecuteAction;
 use App\Modules\X124\Actions\AssistantPreviewAction;
@@ -41,7 +40,7 @@ class X124Test extends TestCase
     {
         Event::fake([AssistantRequest::class]);
 
-        $biz = Business::provision(['name' => 'Copilot Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Copilot Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sessionToken = 'sess_tok_991823';

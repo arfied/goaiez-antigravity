@@ -17,6 +17,7 @@ use App\Modules\X188\Actions\NumberAssignAction;
 use App\Modules\X188\Domain\NumberPoolManager;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+use App\Models\User;
 
 class X118Test extends TestCase
 {
@@ -43,9 +44,11 @@ class X118Test extends TestCase
     public function test_anchor_two_fields_instant_live_and_direct_test_call(): void
     {
         Event::fake([TenantCreated::class, TenantProvisioned::class, AgentLive::class, FirstWin::class]);
+        $user = User::factory()->create();
 
         // 1. Wizard asked-field count = 2
         $signupRes = $this->starter->handle(
+            user: $user,
             businessName: 'Austin Quick Plumbing',
             contactPhone: '+15125550199'
         );
@@ -76,7 +79,8 @@ class X118Test extends TestCase
      */
     public function test_g1_24_ai_answers_before_gateway_kyc(): void
     {
-        $res = $this->starter->handle('Pre KYC Roofing', '+15125550188');
+        $user = User::factory()->create();
+        $res = $this->starter->handle($user, 'Pre KYC Roofing', '+15125550188');
         $this->assertEquals('live', $res['status']);
     }
 
@@ -85,7 +89,8 @@ class X118Test extends TestCase
      */
     public function test_g1_38_wizard_infers_and_confirms_once(): void
     {
-        $res = $this->starter->handle('Auto Confirm Electric', '+15125550177');
+        $user = User::factory()->create();
+        $res = $this->starter->handle($user, 'Auto Confirm Electric', '+15125550177');
         $confirm = $this->confirmer->handle($res['business_id'], $res['run_id']);
         $this->assertEquals('confirmed', $confirm['status']);
     }
@@ -95,7 +100,8 @@ class X118Test extends TestCase
      */
     public function test_g3_01_needs_name_and_number_only(): void
     {
-        $res = $this->starter->handle('Weak Input Locksmith', '+15125550166');
+        $user = User::factory()->create();
+        $res = $this->starter->handle($user, 'Weak Input Locksmith', '+15125550166');
         $this->assertEquals(2, $res['asked_fields_count']);
     }
 
@@ -104,7 +110,8 @@ class X118Test extends TestCase
      */
     public function test_g4_01_ttfm_metric(): void
     {
-        $res = $this->starter->handle('Fast TTFM HVAC', '+15125550155');
+        $user = User::factory()->create();
+        $res = $this->starter->handle($user, 'Fast TTFM HVAC', '+15125550155');
         $run = OnboardingRun::where('business_id', $res['business_id'])->find($res['run_id']);
         $this->assertLessThanOrEqual(60000, $run->ttfm_ms);
     }

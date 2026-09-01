@@ -13,7 +13,6 @@ use App\Modules\CAi\Events\AiCalled;
 use App\Modules\CAi\Events\AiFailedOver;
 use App\Modules\CAi\Models\AiCall;
 use App\Modules\CAi\Models\AiTask;
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\LedgerEntry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -51,7 +50,7 @@ class CAiTest extends TestCase
     {
         Event::fake([AiCalled::class, AiFailedOver::class]);
 
-        $biz = Business::provision(['name' => 'AI Core Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'AI Core Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $task = AiTask::create([
@@ -109,7 +108,7 @@ class CAiTest extends TestCase
      */
     public function test_g2_19_cost_routing_input(): void
     {
-        $biz = Business::provision(['name' => 'Routing Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Routing Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->complete->handle($biz->id, 'routing test', 'gemini-pro');
@@ -129,7 +128,7 @@ class CAiTest extends TestCase
      */
     public function test_g5_22_api_key_vault_and_no_discounts(): void
     {
-        $biz = Business::provision(['name' => 'Key Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Key Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $account = DB::table('ai_provider_accounts')->insertGetId([
@@ -150,7 +149,7 @@ class CAiTest extends TestCase
      */
     public function test_g5_44_cent_precision_cost(): void
     {
-        $biz = Business::provision(['name' => 'Cent Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Cent Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->complete->handle($biz->id, 'cost check', rawCostCents: 15);
@@ -162,7 +161,7 @@ class CAiTest extends TestCase
      */
     public function test_g5_45_model_failover_in_c_ai(): void
     {
-        $biz = Business::provision(['name' => 'Failover Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Failover Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->complete->handle(
@@ -181,7 +180,7 @@ class CAiTest extends TestCase
      */
     public function test_g10_22_ttft_demotion(): void
     {
-        $biz = Business::provision(['name' => 'TTFT Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'TTFT Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->complete->handle($biz->id, 'ttft test', simulatedTtftMs: 900);

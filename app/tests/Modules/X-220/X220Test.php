@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X220;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X220\Actions\EvalCompareAction;
 use App\Modules\X220\Actions\EvalRunAction;
 use App\Modules\X220\Actions\PromptFreezeAction;
@@ -41,7 +40,7 @@ class X220Test extends TestCase
      */
     public function test_n_220_01_prompt_resolution(): void
     {
-        $biz = Business::provision(['name' => 'Prompt Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Prompt Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p1 = AiPrompt::create([
@@ -63,7 +62,7 @@ class X220Test extends TestCase
     {
         Event::fake([PromptFrozen::class]);
 
-        $biz = Business::provision(['name' => 'Freeze Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Freeze Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = AiPrompt::create([
@@ -86,7 +85,7 @@ class X220Test extends TestCase
     {
         Event::fake([EvalCompleted::class]);
 
-        $biz = Business::provision(['name' => 'Eval Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Eval Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = AiPrompt::create([
@@ -116,7 +115,7 @@ class X220Test extends TestCase
      */
     public function test_n_220_04_eval_comparison(): void
     {
-        $biz = Business::provision(['name' => 'Compare Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Compare Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p1 = AiPrompt::create(['business_id' => $biz->id, 'prompt_key' => 'chat.v', 'version' => 1, 'body' => 'v1']);

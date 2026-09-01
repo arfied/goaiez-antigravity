@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X132;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X132\Actions\PersonMergeAction;
 use App\Modules\X132\Actions\PersonResolveAction;
 use App\Modules\X132\Events\PersonMerged;
@@ -37,7 +36,7 @@ class X132Test extends TestCase
     {
         Event::fake([PersonResolved::class, PersonMerged::class]);
 
-        $biz = Business::provision(['name' => 'Identity Graph Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Identity Graph Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $canonicalPersonId = 9100;

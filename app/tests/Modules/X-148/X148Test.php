@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X148;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X148\Actions\RetrievalIndexAction;
 use App\Modules\X148\Actions\RetrievalSearchAction;
 use App\Modules\X148\Events\RetrievalCompleted;
@@ -35,8 +34,8 @@ class X148Test extends TestCase
     {
         Event::fake([RetrievalCompleted::class, RetrievalEmpty::class]);
 
-        $bizA = Business::provision(['name' => 'Tenant Alpha HVAC', 'currency' => 'USD']);
-        $bizB = Business::provision(['name' => 'Tenant Beta Roofing', 'currency' => 'USD']);
+        $bizA = \Tests\TestCase::provisionTenant(['name' => 'Tenant Alpha HVAC', 'currency' => 'USD']);
+        $bizB = \Tests\TestCase::provisionTenant(['name' => 'Tenant Beta Roofing', 'currency' => 'USD']);
 
         // Index chunks for Tenant A and Tenant B
         DB::statement("SET app.business_id = '{$bizA->id}'");

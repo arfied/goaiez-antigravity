@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X185;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X185\Actions\CampaignCreateAction;
 use App\Modules\X185\Actions\CampaignRunAction;
 use App\Modules\X185\Actions\PackSeedAction;
@@ -48,7 +47,7 @@ class X185Test extends TestCase
     {
         Event::fake([CampaignSent::class, CampaignReplied::class, SequenceStopped::class, CartNudged::class]);
 
-        $biz = Business::provision(['name' => 'Multi-Touch Sequence Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Multi-Touch Sequence Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Create sequence with frozen_elements (TEST ANCHOR & G16-12)

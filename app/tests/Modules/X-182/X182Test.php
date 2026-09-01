@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X182;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X182\Actions\CommentReplyAction;
 use App\Modules\X182\Actions\PostPublishAction;
 use App\Modules\X182\Events\CommentEscalated;
@@ -38,7 +37,7 @@ class X182Test extends TestCase
     {
         Event::fake([PostPublished::class, CommentReceived::class, CommentEscalated::class]);
 
-        $biz = Business::provision(['name' => 'Social Media Publisher Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Social Media Publisher Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $account = SocialAccount::create([

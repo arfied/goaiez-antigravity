@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X138;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X138\Actions\AttributionQueryAction;
 use App\Modules\X138\Actions\RoiComputeAction;
 use App\Modules\X138\Events\AttributionAmbiguous;
@@ -36,7 +35,7 @@ class X138Test extends TestCase
     {
         Event::fake([JobAttributed::class, AttributionAmbiguous::class]);
 
-        $biz = Business::provision(['name' => 'Attribution Analytics Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Attribution Analytics Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $jobId = 4091;

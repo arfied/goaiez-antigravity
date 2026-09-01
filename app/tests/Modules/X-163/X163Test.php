@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
@@ -55,7 +54,7 @@ class X163Test extends TestCase
     {
         Event::fake([VersionBumped::class, PriceRefusalFlagged::class]);
 
-        $biz = Business::provision(['name' => 'Pricebook Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Pricebook Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A SAMPLE price is never returned to any customer channel
@@ -118,7 +117,7 @@ class X163Test extends TestCase
      */
     public function test_g17_18_rate_per_pricebook(): void
     {
-        $biz = Business::provision(['name' => 'Tax Rate Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Tax Rate Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $item = PriceBookItem::create([

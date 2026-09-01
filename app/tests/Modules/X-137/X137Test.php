@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X137;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X137\Actions\LinkQrAction;
 use App\Modules\X137\Actions\LinkShortAction;
@@ -40,7 +39,7 @@ class X137Test extends TestCase
     {
         Event::fake([CallAttributed::class, VisitJoinedToCall::class]);
 
-        $biz = Business::provision(['name' => 'DNI Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'DNI Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Visitor allocated DNI token with 30 min TTL
@@ -86,7 +85,7 @@ class X137Test extends TestCase
      */
     public function test_short_link_and_qr(): void
     {
-        $biz = Business::provision(['name' => 'QR Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'QR Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $link = $this->shortAction->handle($biz->id, 'https://example.com/promo', 'billboard_q3');

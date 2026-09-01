@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X175;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X175\Actions\FieldAskAction;
 use App\Modules\X175\Actions\FieldSuggestAction;
 use App\Modules\X175\Domain\FieldAssistantEngine;
@@ -40,7 +39,7 @@ class X175Test extends TestCase
     {
         Event::fake([AssistantSuggested::class, UpsellPrompted::class]);
 
-        $biz = Business::provision(['name' => 'Field Tech Assistant Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Field Tech Assistant Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $techPersonId = 882;

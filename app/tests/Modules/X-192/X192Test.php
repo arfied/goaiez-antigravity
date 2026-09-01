@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X192;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X192\Actions\CitationVerifyAction;
 use App\Modules\X192\Actions\MembershipBuildAction;
 use App\Modules\X192\Actions\MembershipRankAction;
@@ -41,7 +40,7 @@ class X192Test extends TestCase
     {
         Event::fake([MembershipRecommended::class, ProfileBuilt::class, CitationVerified::class]);
 
-        $biz = Business::provision(['name' => 'Local Directory & Citations Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Local Directory & Citations Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Rank indexed directory and noindexed directory (G8-08, G8-28)

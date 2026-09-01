@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X134;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X134\Actions\EnrichExportAction;
 use App\Modules\X134\Actions\EnrichRunAction;
 use App\Modules\X134\Actions\IdentityResolveAction;
@@ -40,7 +39,7 @@ class X134Test extends TestCase
     {
         Event::fake([EnrichmentRequested::class]);
 
-        $biz = Business::provision(['name' => 'Firmographic Enrichment Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Firmographic Enrichment Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $domain = 'apexservices.com';

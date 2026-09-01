@@ -13,7 +13,6 @@ use App\Modules\X113\Events\RoleAssigned;
 use App\Modules\X113\Events\StaffDeactivated;
 use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\RolePermission;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -51,7 +50,7 @@ class X113Test extends TestCase
     {
         Event::fake([StaffDeactivated::class, RoleAssigned::class]);
 
-        $biz = Business::provision(['name' => 'Staff Security Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Staff Security Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Staff creation & role assignment (G11-04)

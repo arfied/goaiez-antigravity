@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X128;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X128\Actions\DeployCheckAction;
 use App\Modules\X128\Actions\MatrixGenerateAction;
 use App\Modules\X128\Events\OrphanDetected;
@@ -34,7 +33,7 @@ class X128Test extends TestCase
     {
         Event::fake([OrphanDetected::class]);
 
-        $biz = Business::provision(['name' => 'Matrix Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Matrix Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Balanced manifest graph with wildcard or subscribed consumers
@@ -90,7 +89,7 @@ class X128Test extends TestCase
      */
     public function test_n_049_deploy_check(): void
     {
-        $biz = Business::provision(['name' => 'Deploy Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Deploy Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->deployCheck->handle($biz->id);

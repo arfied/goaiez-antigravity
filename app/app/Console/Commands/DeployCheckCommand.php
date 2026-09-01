@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Services\Mail\MailQuota;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -82,7 +84,9 @@ final class DeployCheckCommand extends Command
     private function workerIsRunning(): void
     {
         $last = cache()->get('goaiez:worker:heartbeat');
-        if (is_numeric($last)) { $last = \Illuminate\Support\Carbon::createFromTimestamp($last); }
+        if (is_numeric($last)) {
+            $last = Carbon::createFromTimestamp($last);
+        }
         $age = $last === null ? null : now()->diffInSeconds($last);
         $ok = $age !== null && $age < 120;
 
@@ -98,7 +102,9 @@ final class DeployCheckCommand extends Command
     private function schedulerIsRunning(): void
     {
         $last = cache()->get('goaiez:scheduler:heartbeat');
-        if (is_numeric($last)) { $last = \Illuminate\Support\Carbon::createFromTimestamp($last); }
+        if (is_numeric($last)) {
+            $last = Carbon::createFromTimestamp($last);
+        }
         $age = $last === null ? null : now()->diffInSeconds($last);
         $ok = $age !== null && $age < 120;
 
@@ -148,7 +154,7 @@ final class DeployCheckCommand extends Command
      */
     private function sendCeilingIsSeeded(): void
     {
-        $ceiling = app(\App\Services\Mail\MailQuota::class)->ceiling();
+        $ceiling = app(MailQuota::class)->ceiling();
         $ok = is_int($ceiling) && $ceiling > 0;
 
         $this->record(

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X194;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X194\Actions\ReportPdfAction;
 use App\Modules\X194\Actions\ViewRenderAction;
 use App\Modules\X194\Actions\ViewSaveAction;
@@ -47,7 +46,7 @@ class X194Test extends TestCase
     {
         Event::fake([ViewSaved::class, ViewRendered::class, ReportSent::class]);
 
-        $biz = Business::provision(['name' => 'Custom Reporting Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Custom Reporting Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A saved view is a row in saved_views, NEVER a file on disk (TEST ANCHOR)

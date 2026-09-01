@@ -7,7 +7,6 @@ namespace Tests\Modules\X08;
 use App\Modules\X08\Actions\ChurnScoreAction;
 use App\Modules\X08\Events\ChurnRiskDetected;
 use App\Modules\X08\Models\ChurnScore;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -31,7 +30,7 @@ class X08Test extends TestCase
     {
         Event::fake([ChurnRiskDetected::class]);
 
-        $biz = Business::provision(['name' => 'Churn Predictor Platform Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Churn Predictor Platform Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Fixture with zero logins (30 decay days) AND a RISING ROI-push open rate -> NO risk flag (§210 & TEST ANCHOR)

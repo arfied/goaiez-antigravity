@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X147;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X147\Actions\RcsSendAction;
 use App\Modules\X147\Events\RcsDegradedToSms;
 use App\Modules\X147\Events\RcsSent;
@@ -31,7 +30,7 @@ class X147Test extends TestCase
     {
         Event::fake([RcsSent::class, RcsDegradedToSms::class]);
 
-        $biz = Business::provision(['name' => 'RCS Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'RCS Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $nonRcsPhone = '+15554443333';

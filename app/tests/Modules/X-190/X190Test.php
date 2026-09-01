@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X190;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X190\Actions\PartnerPackageAction;
 use App\Modules\X190\Actions\ReferralMakeAction;
 use App\Modules\X190\Actions\SlotDeclineAction;
@@ -45,7 +44,7 @@ class X190Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = Business::provision(['name' => 'B2B Partner Network Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'B2B Partner Network Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A new tenant has the network ON with zero taps (TEST ANCHOR)

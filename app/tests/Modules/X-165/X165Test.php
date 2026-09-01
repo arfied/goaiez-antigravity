@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X165;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X165\Actions\MembershipRenewAction;
 use App\Modules\X165\Actions\MembershipStartAction;
 use App\Modules\X165\Actions\PlanProposeAction;
@@ -48,7 +47,7 @@ class X165Test extends TestCase
     {
         Event::fake([MembershipStarted::class, MembershipRenewed::class]);
 
-        $biz = Business::provision(['name' => 'VIP Members Club', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'VIP Members Club', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $plan = $this->planAction->handle(

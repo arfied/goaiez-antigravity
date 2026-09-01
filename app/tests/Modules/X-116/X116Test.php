@@ -11,7 +11,6 @@ use App\Modules\X116\Events\TemplateGenerated;
 use App\Modules\X116\Events\TemplateScored;
 use App\Modules\X116\Models\Template;
 use App\Modules\X116\Models\TemplateBlock;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -43,7 +42,7 @@ class X116Test extends TestCase
     {
         Event::fake([TemplateGenerated::class, TemplateScored::class]);
 
-        $biz = Business::provision(['name' => 'Template Engine Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Template Engine Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Generate template for Plumbing family (G6-28, G6-29)

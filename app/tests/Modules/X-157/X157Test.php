@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
@@ -40,7 +39,7 @@ class X157Test extends TestCase
     {
         Event::fake([DeployCompleted::class, DeployRolledBack::class]);
 
-        $biz = Business::provision(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Zone without valid SSL -> deploy write is REFUSED
@@ -86,7 +85,7 @@ class X157Test extends TestCase
      */
     public function test_g6_33_cloudflare_edge(): void
     {
-        $biz = Business::provision(['name' => 'CF Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'CF Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $zone = $this->provisionAction->handle($biz->id, 'cf-test.com', true);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X122;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X122\Actions\ActionInvokeAction;
 use App\Modules\X122\Actions\ActionReverseAction;
 use App\Modules\X122\Actions\AuditExportAction;
@@ -44,7 +43,7 @@ class X122Test extends TestCase
     {
         Event::fake([ActionInvoked::class, ActionRefused::class]);
 
-        $biz = Business::provision(['name' => 'Catalog Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Catalog Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Invoking unregistered action returns refusal and code assistant.unsupported
@@ -105,7 +104,7 @@ class X122Test extends TestCase
      */
     public function test_g4_03_invocation_logged_with_metadata(): void
     {
-        $biz = Business::provision(['name' => 'Log Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Log Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->registry->handle($biz->id, 'contact.create', ['required' => ['name']]);
@@ -135,7 +134,7 @@ class X122Test extends TestCase
      */
     public function test_g10_14_immutable_log(): void
     {
-        $biz = Business::provision(['name' => 'Immutable Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Immutable Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->registry->handle($biz->id, 'note.add', ['required' => ['text']]);
@@ -150,7 +149,7 @@ class X122Test extends TestCase
      */
     public function test_g10_21_append_only_log(): void
     {
-        $biz = Business::provision(['name' => 'Append Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Append Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->registry->handle($biz->id, 'task.done', ['required' => ['id']]);
@@ -164,7 +163,7 @@ class X122Test extends TestCase
      */
     public function test_g10_35_hmac_sha256_audit_export(): void
     {
-        $biz = Business::provision(['name' => 'HMAC Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'HMAC Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->registry->handle($biz->id, 'ping', ['required' => []]);
@@ -180,7 +179,7 @@ class X122Test extends TestCase
      */
     public function test_g10_41_per_tenant_hmac_signature(): void
     {
-        $biz = Business::provision(['name' => 'Sign Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Sign Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $exportA = $this->auditor->handle($biz->id, 'secret-a');
@@ -194,7 +193,7 @@ class X122Test extends TestCase
      */
     public function test_g11_26_strict_schema_validation_missing_field_refused(): void
     {
-        $biz = Business::provision(['name' => 'Strict Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Strict Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->registry->handle(
@@ -220,7 +219,7 @@ class X122Test extends TestCase
      */
     public function test_g17_16_maxmind_geo_logging(): void
     {
-        $biz = Business::provision(['name' => 'Geo Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Geo Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->registry->handle($biz->id, 'location.check', ['required' => []]);

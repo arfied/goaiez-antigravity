@@ -10,7 +10,6 @@ use App\Modules\CMail\Actions\EmailUnsubscribeAction;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Models\MailEvent;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -43,7 +42,7 @@ class CMailTest extends TestCase
     {
         Event::fake([EmailSent::class]);
 
-        $biz = Business::provision(['name' => 'Mail Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Mail Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $domain = $this->dnsAction->handle($biz->id, 'mail.hvacleads.com');
@@ -126,7 +125,7 @@ class CMailTest extends TestCase
      */
     public function test_dns_dmarc_records(): void
     {
-        $biz = Business::provision(['name' => 'DNS Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'DNS Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $domain = $this->dnsAction->handle($biz->id, 'apex-air.com');

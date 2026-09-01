@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X183;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X183\Actions\ContentGateAction;
 use App\Modules\X183\Actions\ContentWriteAction;
 use App\Modules\X183\Actions\DraftDeleteAction;
@@ -46,7 +45,7 @@ class X183Test extends TestCase
     {
         Event::fake([ContentGated::class, ContentRejected::class]);
 
-        $biz = Business::provision(['name' => 'Content Grounding Gate Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Content Grounding Gate Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Rejected draft (contains SAMPLE PRICE string) (G12-29)

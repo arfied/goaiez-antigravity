@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X186;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X186\Actions\CampaignCreateAction;
 use App\Modules\X186\Actions\CampaignRunAction;
 use App\Modules\X186\Actions\SequenceStopAction;
@@ -44,7 +43,7 @@ class X186Test extends TestCase
     {
         Event::fake([CampaignSent::class, CampaignReplied::class, SequenceStopped::class, CampaignExhausted::class, SendRequested::class]);
 
-        $biz = Business::provision(['name' => 'Drip Campaign Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Drip Campaign Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $campaignId = 'camp_furnace_renewal_2026';

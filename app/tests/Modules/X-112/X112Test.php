@@ -17,8 +17,8 @@ use App\Modules\X112\Events\ImpersonationStarted;
 use App\Modules\X112\Events\MarginComputed;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
-use App\Modules\X121\Models\Business;
-use Illuminate\Support\Facades\DB;
+use App\Services\TenantProvisioner;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -59,8 +59,10 @@ class X112Test extends TestCase
     {
         Event::fake([ClientProvisioned::class, ImpersonationStarted::class, MarginComputed::class]);
 
-        $biz = Business::provision(['name' => 'Agency Master Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create();
+        $biz = app(TenantProvisioner::class)->provision($owner);
+        $biz->update(['name' => 'Agency Master Tenant']);
+        Tenancy::set($biz->id);
 
         $agency = Agency::create([
             'business_id' => $biz->id,
@@ -147,8 +149,10 @@ class X112Test extends TestCase
      */
     public function test_g7_12_three_agency_modes(): void
     {
-        $biz = Business::provision(['name' => 'Modes Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create();
+        $biz = app(TenantProvisioner::class)->provision($owner);
+        $biz->update(['name' => 'Modes Biz']);
+        Tenancy::set($biz->id);
 
         $modes = ['full_service', 'co_managed', 'self_service'];
         foreach ($modes as $m) {
@@ -178,8 +182,10 @@ class X112Test extends TestCase
      */
     public function test_g7_27_impersonation_audit_log(): void
     {
-        $biz = Business::provision(['name' => 'Imp Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $owner = User::factory()->create();
+        $biz = app(TenantProvisioner::class)->provision($owner);
+        $biz->update(['name' => 'Imp Biz']);
+        Tenancy::set($biz->id);
 
         $agency = Agency::create(['business_id' => $biz->id, 'agency_name' => 'Imp Agency']);
         $client = $this->onboardAction->handle($biz->id, $agency->id, 'Target Client');

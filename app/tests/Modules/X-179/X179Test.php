@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X179;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X179\Actions\ContentExtractAction;
 use App\Modules\X179\Actions\TemplateMatchAction;
 use App\Modules\X179\Events\ContentExtracted;
@@ -35,7 +34,7 @@ class X179Test extends TestCase
     {
         Event::fake([ContentExtracted::class, TemplateMatched::class]);
 
-        $biz = Business::provision(['name' => 'Template Matcher Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Template Matcher Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $prospectWithSite = 9901;

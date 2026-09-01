@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X177;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X177\Actions\GbpAnswerAction;
 use App\Modules\X177\Actions\GbpPostAction;
 use App\Modules\X177\Actions\GbpStateAction;
@@ -55,7 +54,7 @@ class X177Test extends TestCase
             GbpReinstated::class,
         ]);
 
-        $biz = Business::provision(['name' => 'GBP Profile Management Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'GBP Profile Management Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $conn = GbpConnection::create([

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X203;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X203\Actions\DrPitrAction;
 use App\Modules\X203\Actions\DrRestoreTestAction;
 use App\Modules\X203\Actions\DrRunbookRunAction;
@@ -41,7 +40,7 @@ class X203Test extends TestCase
     {
         Event::fake([DrTestPassed::class, DrTestFailed::class, DrRestoreExecuted::class]);
 
-        $biz = Business::provision(['name' => 'DR Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'DR Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $goodChecksum = 'sha256_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';

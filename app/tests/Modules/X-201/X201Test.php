@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X201;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X201\Actions\DisputeCompileAction;
 use App\Modules\X201\Actions\DisputeRecordAction;
 use App\Modules\X201\Actions\DisputeSubmitAction;
@@ -47,7 +46,7 @@ class X201Test extends TestCase
     {
         Event::fake([DisputeOpened::class, EvidenceCompiled::class, DisputeLost::class]);
 
-        $biz = Business::provision(['name' => 'Dispute Defense Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Dispute Defense Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $invoiceId = 902;
@@ -104,7 +103,7 @@ class X201Test extends TestCase
      */
     public function test_g1_08_dispute_resolved(): void
     {
-        $biz = Business::provision(['name' => 'Dispute Win Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Dispute Win Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $dispute = $this->recordAction->handle($biz->id, 999, 50000, 'fraudulent');

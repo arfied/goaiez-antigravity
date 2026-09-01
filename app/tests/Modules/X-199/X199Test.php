@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X199;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use App\Modules\X199\Actions\InvoiceDraftAction;
 use App\Modules\X199\Actions\InvoiceIssueAction;
@@ -51,7 +50,7 @@ class X199Test extends TestCase
     {
         Event::fake([InvoiceIssued::class, InvoicePaid::class]);
 
-        $biz = Business::provision(['name' => 'Invoice Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Invoice Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create([
@@ -127,7 +126,7 @@ class X199Test extends TestCase
      */
     public function test_g15_06_itemised_pdf(): void
     {
-        $biz = Business::provision(['name' => 'PDF Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'PDF Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'PDF', 'last_name' => 'User']);

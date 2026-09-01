@@ -11,7 +11,6 @@ use App\Modules\X102\Events\ChatEscalated;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatSession;
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -43,7 +42,7 @@ class X102Test extends TestCase
     {
         Event::fake([ChatStarted::class, ChatLeadCaptured::class, ChatEscalated::class]);
 
-        $biz = Business::provision(['name' => 'Chat Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. With AI-credit cap reached, widget starts in offline_form mode & submission creates Person

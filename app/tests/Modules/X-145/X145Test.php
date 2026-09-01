@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X145;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X145\Actions\DecisionExplainAction;
 use App\Modules\X145\Actions\DecisionGradeOutcomeAction;
 use App\Modules\X145\Actions\DecisionProposeAction;
@@ -42,7 +41,7 @@ class X145Test extends TestCase
     {
         Event::fake([DecisionProposed::class, ApprovalRequested::class]);
 
-        $biz = Business::provision(['name' => 'Decision Proposal Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Decision Proposal Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $namedEntityFields = [

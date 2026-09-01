@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X205;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X205\Actions\AffiliateAttributeAction;
 use App\Modules\X205\Actions\AffiliatePayoutRequestAction;
 use App\Modules\X205\Actions\AffiliateProposeClawbackAction;
@@ -43,7 +42,7 @@ class X205Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = Business::provision(['name' => 'Affiliate Program Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Affiliate Program Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Create affiliate partner with 10% commission (G13-20: 90-day cookie window & lifetime balance)

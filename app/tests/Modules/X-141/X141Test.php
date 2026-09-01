@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X141;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X141\Actions\ReplayQueryAction;
 use App\Modules\X141\Actions\ReplayRunAction;
 use App\Modules\X141\Events\CounterfactualComputed;
@@ -36,7 +35,7 @@ class X141Test extends TestCase
     {
         Event::fake([ReplayCompleted::class, CounterfactualComputed::class]);
 
-        $biz = Business::provision(['name' => 'Event Replay Sandbox Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Event Replay Sandbox Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $historicalEvents = [

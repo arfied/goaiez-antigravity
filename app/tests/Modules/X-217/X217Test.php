@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X217;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X205\Models\Affiliate;
 use App\Modules\X217\Actions\AffiliatePipelineAction;
 use App\Modules\X217\Actions\AffiliateRecruitAction;
@@ -44,7 +43,7 @@ class X217Test extends TestCase
     {
         Event::fake([SendRequested::class, AffiliateRecruited::class, AffiliateDeclined::class]);
 
-        $biz = Business::provision(['name' => 'Affiliate Recruitment Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Affiliate Recruitment Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Recruit prospect (sends outreach)

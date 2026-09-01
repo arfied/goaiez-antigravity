@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X143;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Job;
 use App\Modules\X143\Actions\WebmcpEmitAction;
 use App\Modules\X143\Events\WebmcpInvoked;
@@ -32,7 +31,7 @@ class X143Test extends TestCase
     {
         Event::fake([WebmcpInvoked::class]);
 
-        $biz = Business::provision(['name' => 'WebMCP Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'WebMCP Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. With flag dark: published page contains ZERO modelContext markup (TEST ANCHOR)

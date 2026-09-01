@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X155;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X155\Actions\FormValidateAction;
@@ -38,7 +37,7 @@ class X155Test extends TestCase
     {
         Event::fake([FormCaptured::class, FormSpamRejected::class]);
 
-        $biz = Business::provision(['name' => 'Forms Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Forms Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $form = FormDefinition::create([

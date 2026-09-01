@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X149;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X149\Actions\EvalGateAction;
 use App\Modules\X149\Actions\EvalRunAction;
 use App\Modules\X149\Actions\TrackQualitySeriesAction;
@@ -39,7 +38,7 @@ class X149Test extends TestCase
     {
         Event::fake([PromptChanged::class]);
 
-        $biz = Business::provision(['name' => 'Eval Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Eval Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $evalSet = EvalSet::create([

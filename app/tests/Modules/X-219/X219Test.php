@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X219;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X219\Actions\ModelAssignAction;
 use App\Modules\X219\Actions\ModelResolveAction;
 use App\Modules\X219\Actions\ProviderHealthAction;
@@ -45,7 +44,7 @@ class X219Test extends TestCase
     {
         Event::fake([ModelResolved::class]);
 
-        $biz = Business::provision(['name' => 'Roster Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Roster Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $google = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'google', 'status' => 'healthy']);
@@ -70,7 +69,7 @@ class X219Test extends TestCase
     {
         Event::fake([ModelFallback::class]);
 
-        $biz = Business::provision(['name' => 'Fallback Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fallback Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $google = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'google', 'status' => 'degraded']);
@@ -95,7 +94,7 @@ class X219Test extends TestCase
     {
         Event::fake([ProviderDegraded::class]);
 
-        $biz = Business::provision(['name' => 'Health Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Health Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $provider = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'openai', 'status' => 'healthy']);
@@ -112,7 +111,7 @@ class X219Test extends TestCase
      */
     public function test_n_219_04_r237_backup_must_be_different_vendor(): void
     {
-        $biz = Business::provision(['name' => 'Vendor Rule Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Vendor Rule Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $google = AiProvider::create(['business_id' => $biz->id, 'provider_name' => 'google', 'status' => 'healthy']);

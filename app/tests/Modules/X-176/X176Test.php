@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X176;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X176\Actions\IndexRequestAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SitemapPingAction;
@@ -40,7 +39,7 @@ class X176Test extends TestCase
     {
         Event::fake([SchemaPublished::class, IndexRequested::class]);
 
-        $biz = Business::provision(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sharedCommitId = 'commit_price_change_9901';

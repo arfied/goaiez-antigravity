@@ -93,7 +93,8 @@ final class StripeApi
             return false;
         }
 
-        $key = \App\Support\PlatformCredentials::get(self::CREDENTIAL);
+        $key = PlatformCredentials::get(self::CREDENTIAL);
+
         return str_starts_with($key, 'sk_live_');
     }
 

@@ -8,7 +8,6 @@ use App\Modules\X07\Actions\ChurnScoreAction;
 use App\Modules\X07\Actions\ForecastComputeAction;
 use App\Modules\X07\Events\ForecastUpdated;
 use App\Modules\X07\Models\Forecast;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -35,7 +34,7 @@ class X07Test extends TestCase
     {
         Event::fake([ForecastUpdated::class]);
 
-        $biz = Business::provision(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Forecasting Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. [G1-36], [G1-46], [G1-47] Booked and collected are asserted distinct, never summed

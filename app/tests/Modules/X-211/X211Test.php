@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X211;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Actions\ArApplyLateFeeAction;
@@ -52,7 +51,7 @@ class X211Test extends TestCase
     {
         Event::fake([ArFeeApplied::class, ArPlanAccepted::class, ArPackaged::class]);
 
-        $biz = Business::provision(['name' => 'AR Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X184;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X184\Actions\PlanApproveCadenceAction;
 use App\Modules\X184\Actions\PlanProposeAction;
 use App\Modules\X184\Actions\PlanScheduleAction;
@@ -41,7 +40,7 @@ class X184Test extends TestCase
     {
         Event::fake([PlanCreated::class, ItemScheduled::class]);
 
-        $biz = Business::provision(['name' => 'Content Calendar Planning Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Content Calendar Planning Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $weekLabel = '2026-W36';

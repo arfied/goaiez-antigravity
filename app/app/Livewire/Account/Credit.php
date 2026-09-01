@@ -422,6 +422,7 @@ final class Credit extends Component
             if (! StripeApi::isLive()) {
                 $this->cancelPurchase();
                 Toaster::error('Credit purchases are currently unavailable. Please contact us to top up.');
+
                 return;
             }
 

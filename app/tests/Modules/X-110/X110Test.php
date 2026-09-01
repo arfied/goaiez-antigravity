@@ -11,7 +11,6 @@ use App\Modules\X110\Domain\PixelEngine;
 use App\Modules\X110\Events\FormAbandoned;
 use App\Modules\X110\Events\VisitStarted;
 use App\Modules\X110\Models\PixelEvent;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -45,7 +44,7 @@ class X110Test extends TestCase
     {
         Event::fake([VisitStarted::class, FormAbandoned::class]);
 
-        $biz = Business::provision(['name' => 'Pixel Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Pixel Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Tag served from .tenant-domain with third-party cookies disabled
@@ -96,7 +95,7 @@ class X110Test extends TestCase
      */
     public function test_g6_09_utm_persistence(): void
     {
-        $biz = Business::provision(['name' => 'UTM Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'UTM Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $res = $this->engine->recordVisit($biz->id, 'vis_utm_123', 'facebook', 'ad', 'spring_sale');
@@ -116,7 +115,7 @@ class X110Test extends TestCase
      */
     public function test_g13_01_first_party_subdomain(): void
     {
-        $biz = Business::provision(['name' => 'Subdomain Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Subdomain Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $install = $this->installer->handle($biz->id, 'plumbpros.com');
@@ -152,7 +151,7 @@ class X110Test extends TestCase
      */
     public function test_g13_30_rage_click_recording(): void
     {
-        $biz = Business::provision(['name' => 'Rage Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Rage Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $v = $this->engine->recordVisit($biz->id, 'vis_rage_1');

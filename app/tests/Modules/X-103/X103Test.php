@@ -11,7 +11,6 @@ use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
 use App\Modules\X103\Models\Page;
-use App\Modules\X121\Models\Business;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -49,7 +48,7 @@ class X103Test extends TestCase
     {
         Event::fake([ApprovalRequested::class]);
 
-        $biz = Business::provision(['name' => 'Site Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. A site forked at selection has no FK to template library
@@ -88,7 +87,7 @@ class X103Test extends TestCase
      */
     public function test_short_linker_device_routing_and_caps(): void
     {
-        $biz = Business::provision(['name' => 'Linker Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $funnel = $this->funnelAction->handle(

@@ -11,7 +11,6 @@ use App\Modules\X117\Domain\CheckoutEngine;
 use App\Modules\X117\Events\InventoryUpdated;
 use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\Sellable;
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -45,7 +44,7 @@ class X117Test extends TestCase
     {
         Event::fake([InventoryUpdated::class]);
 
-        $biz = Business::provision(['name' => 'Checkout Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Checkout Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Buyer', 'last_name' => 'One']);
@@ -92,7 +91,7 @@ class X117Test extends TestCase
      */
     public function test_g1_15_fresh_authorization_event_required(): void
     {
-        $biz = Business::provision(['name' => 'Auth Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Auth Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sellable = Sellable::create([
@@ -128,7 +127,7 @@ class X117Test extends TestCase
      */
     public function test_g6_07_six_fulfilment_types(): void
     {
-        $biz = Business::provision(['name' => 'Fulfilment Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Fulfilment Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $types = ['physical', 'digital', 'service', 'rental', 'subscription', 'event'];
@@ -157,7 +156,7 @@ class X117Test extends TestCase
      */
     public function test_g8_29_minor_units_integers(): void
     {
-        $biz = Business::provision(['name' => 'Integer Price Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Integer Price Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $s = Sellable::create([
@@ -176,7 +175,7 @@ class X117Test extends TestCase
      */
     public function test_g16_05_true_countdown_cart(): void
     {
-        $biz = Business::provision(['name' => 'Timer Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Timer Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $s = Sellable::create([

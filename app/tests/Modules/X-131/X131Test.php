@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X131;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X131\Actions\InterestInferAction;
 use App\Modules\X131\Actions\InterestSetAction;
 use App\Modules\X131\Events\InterestDetected;
@@ -35,7 +34,7 @@ class X131Test extends TestCase
     {
         Event::fake([InterestDetected::class, InterestOverridden::class]);
 
-        $biz = Business::provision(['name' => 'Interest Intelligence Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Interest Intelligence Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $personId = 8801;

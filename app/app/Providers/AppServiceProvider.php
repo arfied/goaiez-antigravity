@@ -88,6 +88,9 @@ use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Mail\MailManager;
+use Illuminate\Queue\Events\Looping;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -736,8 +739,8 @@ class AppServiceProvider extends ServiceProvider
             $this->withScheduledRunMeter(fn (ScheduledRunMeter $meter) => $meter->backgroundFinished($event->task));
         });
 
-        \Illuminate\Support\Facades\Event::listen(function (\Illuminate\Queue\Events\Looping $event): void {
-            \Illuminate\Support\Facades\Cache::put('goaiez:worker:heartbeat', \Illuminate\Support\Carbon::now()->timestamp);
+        Event::listen(function (Looping $event): void {
+            Cache::put('goaiez:worker:heartbeat', Carbon::now()->timestamp);
         });
 
         Event::listen(function (ScheduledTaskFailed $event): void {

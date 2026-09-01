@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X172;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use App\Modules\X172\Actions\PortalActionHandler;
 use App\Modules\X172\Actions\PortalLinkAction;
@@ -40,7 +39,7 @@ class X172Test extends TestCase
     {
         Event::fake([PortalViewed::class, PortalAction::class]);
 
-        $biz = Business::provision(['name' => 'Portal Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Portal Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Alice', 'last_name' => 'Smith']);
@@ -96,7 +95,7 @@ class X172Test extends TestCase
      */
     public function test_g10_32_clause_comment_routing(): void
     {
-        $biz = Business::provision(['name' => 'Comment Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Comment Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $link = $this->linkAction->handle($biz->id, 'contract', 202);

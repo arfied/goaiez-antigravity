@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use App\Notifications\PasswordResetLink;
+use App\Notifications\VerifyEmailLink;
 use App\Services\Mail\PlatformMailer;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -207,7 +208,7 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function sendEmailVerificationNotification(): void
     {
-        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+        $url = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(config('auth.verification.expire', 60)),
             [
@@ -218,7 +219,7 @@ class User extends Authenticatable implements PasskeyUser
 
         app(PlatformMailer::class)->send(
             $this->getEmailForVerification(),
-            new \App\Notifications\VerifyEmailLink($url)
+            new VerifyEmailLink($url)
         );
     }
 }

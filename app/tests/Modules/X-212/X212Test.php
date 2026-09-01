@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X212;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use App\Modules\X212\Actions\MigrationCommitAction;
 use App\Modules\X212\Actions\MigrationDryRunAction;
@@ -44,7 +43,7 @@ class X212Test extends TestCase
     {
         Event::fake([MigrationStarted::class, MigrationDryRunReady::class, MigrationCommitted::class]);
 
-        $biz = Business::provision(['name' => 'Migration Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Migration Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $records = [

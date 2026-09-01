@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X144;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X144\Actions\VisibilityQueryAction;
 use App\Modules\X144\Actions\VisibilityReportAction;
 use App\Modules\X144\Events\CompetitorOutranking;
@@ -37,7 +36,7 @@ class X144Test extends TestCase
     {
         Event::fake([VisibilityChanged::class, MentionedByAi::class, CompetitorOutranking::class]);
 
-        $biz = Business::provision(['name' => 'Answer Engine Visibility Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Answer Engine Visibility Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $question = 'Who is the top rated commercial HVAC repair company in Dallas?';

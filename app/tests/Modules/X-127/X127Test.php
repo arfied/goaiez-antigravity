@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X127;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X127\Actions\TenantzeroConfigAction;
 use App\Modules\X127\Actions\TenantzeroMetricAction;
 use App\Modules\X127\Actions\TenantzeroProofAction;
@@ -41,7 +40,7 @@ class X127Test extends TestCase
     {
         Event::fake([TenantzeroMetricPublished::class, TenantzeroClaimVerified::class]);
 
-        $biz = Business::provision(['name' => 'Tenant Zero', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Tenant Zero', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Tenant #0 config

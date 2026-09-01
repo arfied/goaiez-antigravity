@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X166;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X166\Actions\JobCostAction;
 use App\Modules\X166\Actions\MarginReportAction;
 use App\Modules\X166\Events\JobCosted;
@@ -35,7 +34,7 @@ class X166Test extends TestCase
     {
         Event::fake([JobCosted::class, MarginBelowThreshold::class]);
 
-        $biz = Business::provision(['name' => 'Costing Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Costing Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Compute job cost citing pricebook version "v2.1"

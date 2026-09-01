@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X210;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X210\Actions\PromotionApplyAction;
 use App\Modules\X210\Actions\PromotionCreateAction;
 use App\Modules\X210\Actions\PromotionProposeTargetsAction;
@@ -41,7 +40,7 @@ class X210Test extends TestCase
     {
         Event::fake([PromotionCreated::class, PromotionRedeemed::class, PromotionCapReached::class, PromotionVelocityAlert::class]);
 
-        $biz = Business::provision(['name' => 'Promotion Campaign Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Promotion Campaign Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Create promotion (15% discount, max 2 redemptions, velocity threshold 2)

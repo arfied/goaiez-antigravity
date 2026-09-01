@@ -7,7 +7,6 @@ namespace App\Modules\X172\Ui;
 use App\Modules\X172\Actions\PortalActionHandler;
 use App\Modules\X172\Models\PortalLink;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -79,7 +78,7 @@ class CustomerfacingPortal extends Component
             $this->businessId = (int) $tenantId;
         }
 
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
     }
 
     public function approveAndSign(): void
@@ -90,7 +89,7 @@ class CustomerfacingPortal extends Component
             return;
         }
 
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $handler = app(PortalActionHandler::class);
         $handler->handle($this->token, 'signature_signed', [
             'signer_name' => $this->signatureTyped,
@@ -106,7 +105,7 @@ class CustomerfacingPortal extends Component
 
     public function submitPayment(): void
     {
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $handler = app(PortalActionHandler::class);
         $handler->handle($this->token, 'invoice_paid', [
             'amount_cents' => $this->estimateTotalCents,
@@ -123,7 +122,7 @@ class CustomerfacingPortal extends Component
 
     public function submitRating(): void
     {
-        \\App\\Support\\Tenancy::set($this->businessId);
+        Tenancy::set($this->businessId);
         $handler = app(PortalActionHandler::class);
         $handler->handle($this->token, 'csat_feedback_submitted', [
             'rating' => $this->feedbackRating,

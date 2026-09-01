@@ -12,7 +12,6 @@ use App\Modules\X10\Events\LeadAssigned;
 use App\Modules\X10\Events\LeadReassigned;
 use App\Modules\X10\Events\TerritoryChanged;
 use App\Modules\X10\Models\Territory;
-use App\Modules\X121\Models\Business;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -44,7 +43,7 @@ class X10Test extends TestCase
      */
     public function test_anchor_widget_credit_cap_fallback_no_fact_refusal_and_rage_clicks(): void
     {
-        $biz = Business::provision(['name' => 'Routing Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Routing Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Credit cap reached -> renders fallback form (TEST ANCHOR)
@@ -103,7 +102,7 @@ class X10Test extends TestCase
     {
         Event::fake([LeadAssigned::class, LeadReassigned::class, TerritoryChanged::class]);
 
-        $biz = Business::provision(['name' => 'Dispatch Biz', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Dispatch Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Territory polygon definition (G17-23)

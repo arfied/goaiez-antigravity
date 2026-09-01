@@ -266,7 +266,7 @@ final class OauthLoginController extends Controller
         if ($user instanceof User) {
             if ($user->email_verified_at === null) {
                 $user->sendEmailVerificationNotification();
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'email' => 'That email is registered but not verified. We sent a link to it — please verify your address to sign in with this provider.',
                 ]);
             }

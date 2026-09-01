@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X158;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X158\Actions\VideoHostAction;
 use App\Modules\X158\Actions\VideoRenderAction;
 use App\Modules\X158\Events\VideoRendered;
@@ -38,7 +37,7 @@ class X158Test extends TestCase
     {
         Event::fake([VideoRendered::class, VideoWatched::class]);
 
-        $biz = Business::provision(['name' => 'AI Video Proposal Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'AI Video Proposal Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $demoNumber = 1042;

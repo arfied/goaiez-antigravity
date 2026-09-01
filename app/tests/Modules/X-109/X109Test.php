@@ -9,7 +9,6 @@ use App\Modules\X109\Events\ChallengeEncountered;
 use App\Modules\X109\Events\FormSubmitted;
 use App\Modules\X109\Events\QuotaExhausted;
 use App\Modules\X109\Models\CaptchaQuota;
-use App\Modules\X121\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -34,7 +33,7 @@ class X109Test extends TestCase
     {
         Event::fake([FormSubmitted::class, ChallengeEncountered::class, QuotaExhausted::class]);
 
-        $biz = Business::provision(['name' => 'Form Outreach Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Form Outreach Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $campaignId = 'camp_roofers_dallas_2026';

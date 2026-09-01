@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X218;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X218\Actions\InfluencerDealAction;
 use App\Modules\X218\Actions\InfluencerDeliverableAction;
 use App\Modules\X218\Actions\InfluencerDiscoverAction;
@@ -46,7 +45,7 @@ class X218Test extends TestCase
     {
         Event::fake([SendRequested::class, InfluencerEngaged::class, InfluencerDelivered::class]);
 
-        $biz = Business::provision(['name' => 'Influencer Creator Campaign Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Influencer Creator Campaign Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Discover influencer & outreach

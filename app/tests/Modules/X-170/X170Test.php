@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X170;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X170\Actions\CommissionComputeAction;
 use App\Modules\X170\Actions\CommissionReleaseAction;
 use App\Modules\X170\Actions\ScorecardReadAction;
@@ -46,7 +45,7 @@ class X170Test extends TestCase
     {
         Event::fake([CommissionCalculated::class, CommissionReleased::class, CommissionClawedBack::class]);
 
-        $biz = Business::provision(['name' => 'Commission Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Commission Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // 1. Two payees on one deal computed on gross profit (G7-32, G7-39)

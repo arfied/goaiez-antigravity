@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X214;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X214\Actions\SurchargeApplyAction;
 use App\Modules\X214\Actions\SurchargeQuoteAction;
 use App\Modules\X214\Domain\SurchargeEngine;
@@ -41,7 +40,7 @@ class X214Test extends TestCase
     {
         Event::fake([SurchargeDisclosed::class, SurchargeApplied::class]);
 
-        $biz = Business::provision(['name' => 'Surcharge Compliance Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Surcharge Compliance Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $policy = SurchargePolicy::create([

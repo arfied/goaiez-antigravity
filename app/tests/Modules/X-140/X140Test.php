@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X140;
 
-use App\Modules\X121\Models\Business;
 use App\Modules\X140\Actions\ContentDraftFromConversationAction;
 use App\Modules\X140\Actions\TopicIdentifyAction;
 use App\Modules\X140\Events\ContentCreated;
@@ -37,7 +36,7 @@ class X140Test extends TestCase
     {
         Event::fake([TopicIdentified::class, ContentCreated::class]);
 
-        $biz = Business::provision(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $topic = $this->topicAction->identify($biz->id, 'Commercial HVAC Emergency Repairs', 'emergency_repair');
