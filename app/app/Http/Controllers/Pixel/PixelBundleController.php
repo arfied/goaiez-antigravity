@@ -46,7 +46,8 @@ final class PixelBundleController extends Controller
         try {
             $version = $delivery->choose();
         } catch (RuntimeException) {
-            return $this->script('', self::POINTER_CACHE);
+            // R245: Served with no-store and a non-empty body so caches do not hold an empty bundle.
+            return $this->script('/* unpublished */', 'no-store');
         }
 
         return $this->script($version->contents, self::POINTER_CACHE);
