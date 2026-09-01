@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Livewire\Account\Credit;
 use App\Models\Business;
 use App\Models\User;
-use App\Support\PlatformCredentials;
+use Illuminate\Support\Facades\Config;
 use Livewire\Livewire;
 
 it('refuses stripe checkout if key is not live', function () {
@@ -14,17 +14,35 @@ it('refuses stripe checkout if key is not live', function () {
     $business->owner_user_id = $user->id;
     $business->save();
     
-    \Illuminate\Support\Facades\Config::set('credentials.stripe_secret', 'sk_test_123');
+    Config::set('credentials.stripe_secret', 'sk_test_123');
 
     Livewire::actingAs($user)
         ->test(Credit::class, ['business' => $business])
         ->set('pendingProduct', 'sms')
         ->set('shownPriceCents', 5000)
-        ->set('pendingTier', 'tier_1')
-        ->set('shownGrantSeed', 5000)
+        ->set('pendingTier', 'automatic')
+        ->set('shownGrantSeed', 1000)
         ->set('confirmed', true)
-        ->call('buy');
+        ->call('buy')
+        ->assertNoRedirect();
+});
+
+it('allows stripe checkout if key is live', function () {
+    $user = User::factory()->create();
+    $business = Business::factory()->create();
+    $business->owner_user_id = $user->id;
+    $business->save();
     
-    // Assert there was no redirect
-    $this->assertNull(Livewire::actingAs($user)->test(Credit::class, ['business' => $business])->get('redirect'));
+    Config::set('credentials.stripe_secret', 'sk_live_123');
+    \Illuminate\Support\Facades\Http::fake(['*' => \Illuminate\Support\Facades\Http::response(['url' => 'https://checkout.stripe.com/pay'], 200)]);
+
+    Livewire::actingAs($user)
+        ->test(Credit::class, ['business' => $business])
+        ->set('pendingProduct', 'sms')
+        ->set('shownPriceCents', 5000)
+        ->set('pendingTier', 'automatic')
+        ->set('shownGrantSeed', 1000)
+        ->set('confirmed', true)
+        ->call('buy')
+        ->assertRedirect();
 });
