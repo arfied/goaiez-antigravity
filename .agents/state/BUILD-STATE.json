@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-08-31T06:17:18",
+ "updated": "2026-08-31T13:04:41",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -146,7 +146,7 @@
   },
   "12": {
    "track": "J11 the site",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-157",
     "X-178",
@@ -157,7 +157,7 @@
   },
   "13": {
    "track": "J11 the site",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-137",
     "X-176"
@@ -202,7 +202,7 @@
   },
   "18": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-10",
     "X-113",
@@ -235,7 +235,7 @@
   },
   "21": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-138",
     "X-139",
@@ -279,7 +279,7 @@
   },
   "25": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-141",
     "X-142",
@@ -301,7 +301,7 @@
   },
   "27": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-131",
     "X-132",
@@ -312,7 +312,7 @@
   },
   "28": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-144",
     "X-154",
@@ -323,7 +323,7 @@
   },
   "29": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-179",
     "X-182",
@@ -334,7 +334,7 @@
   },
   "30": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-186",
     "X-190",
@@ -429,13 +429,13 @@
    "unresolved": []
   },
   "X-102": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 12,
    "intent": "INFORM",
    "unresolved": []
   },
   "X-103": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 12,
    "intent": "GROW",
    "unresolved": []
@@ -543,7 +543,7 @@
    "unresolved": []
   },
   "X-124": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 18,
    "intent": "SERVE",
    "unresolved": []
@@ -633,7 +633,7 @@
    "unresolved": []
   },
   "X-140": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 27,
    "intent": "GROW",
    "unresolved": []
@@ -645,7 +645,7 @@
    "unresolved": []
   },
   "X-142": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 25,
    "intent": "OBSERVE",
    "unresolved": []
@@ -657,7 +657,7 @@
    "unresolved": []
   },
   "X-144": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 28,
    "intent": "GROW",
    "unresolved": []
@@ -675,7 +675,7 @@
    "unresolved": []
   },
   "X-148": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 21,
    "intent": "INFORM",
    "unresolved": []
@@ -687,13 +687,13 @@
    "unresolved": []
   },
   "X-150": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 21,
    "intent": "INFORM",
    "unresolved": []
   },
   "X-151": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 18,
    "intent": "SERVE",
    "unresolved": []
@@ -831,7 +831,7 @@
    "unresolved": []
   },
   "X-176": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 13,
    "intent": "GROW",
    "unresolved": []
@@ -843,13 +843,13 @@
    "unresolved": []
   },
   "X-178": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 12,
    "intent": "INFORM",
    "unresolved": []
   },
   "X-179": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 29,
    "intent": "GROW",
    "unresolved": []
@@ -921,7 +921,7 @@
    "unresolved": []
   },
   "X-192": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 30,
    "intent": "GROW",
    "unresolved": []

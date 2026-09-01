@@ -10,7 +10,6 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-156
- *
  * @intent OBSERVE under §227.2
  */
 return [
@@ -38,7 +37,7 @@ return [
         'ingest.rejected',
     ],
     'consumes' => [
-        '*',
+        'any.event',
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.

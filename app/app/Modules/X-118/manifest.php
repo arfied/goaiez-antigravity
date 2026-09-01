@@ -10,7 +10,6 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-118
- *
  * @intent GROW under §227.2
  */
 return [
@@ -38,7 +37,7 @@ return [
         'tenant.provisioned',
         'agent.live',
         'ttfm.measured',
-        'first_win',
+        'win.first',
     ],
     'consumes' => [
         'capability.decided',

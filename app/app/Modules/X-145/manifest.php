@@ -10,7 +10,6 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-145
- *
  * @intent INFORM under §227.2
  */
 return [
@@ -38,7 +37,7 @@ return [
     ],
     'consumes' => [
         'action.invoked',
-        'outcome.',
+        'outcome.recorded',
         'capability.decided',
     ],
 

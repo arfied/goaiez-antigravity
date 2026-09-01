@@ -10,7 +10,6 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module C-Reviews
- *
  * @intent GROW under §227.2
  */
 return [
@@ -38,7 +37,7 @@ return [
         'review.requested',
         'review.received',
         'reply.published',
-        'first_win',
+        'win.first',
     ],
     'consumes' => [
         'capability.decided',

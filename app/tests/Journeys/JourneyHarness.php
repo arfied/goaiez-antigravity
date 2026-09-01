@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
-use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\CSms\Models\SmsComposition;
-use App\Modules\X103\Models\Page;
-use App\Modules\X112\Models\Agency;
-use App\Modules\X112\Models\AgencyClient;
-use App\Modules\X118\Models\OnboardingRun;
-use App\Modules\X121\Models\Business;
-use App\Modules\X121\Models\Person;
-use App\Modules\X163\Models\PriceBookItem;
-use App\Modules\X186\Models\CampaignStep;
-use App\Modules\X188\Models\NumberPool;
-use App\Modules\X198\Models\Payment;
-use App\Modules\X199\Models\Invoice;
-use App\Modules\X203\Models\RestoreTest;
-use App\Modules\X204\Models\SendPermit;
-use App\Modules\X204\Models\Suppression;
-use App\Modules\X211\Models\ReceivableState;
-use App\Modules\X212\Models\MigrationRun;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-
 /**
- * The journey harness — cross-module persistence, tenancy isolation, and state transition test harness.
+ * The journey harness — every action a journey performs against the real system.
+ *
+ * ⛔⛔⛔ WHY THIS FILE EXISTS, AND IT IS A DEFECT I INTRODUCED:
+ *
+ * TwelveJourneysTest called THIRTY helper methods that were never defined. The
+ * suite would not have failed — it would have died with a fatal error before
+ * the first assertion ran, and "the journeys are written" would have been true
+ * and worthless at the same time.
+ *
+ * ⭐⭐⭐ AND THE DISTINCTION THAT MAKES THIS TRAIT WORTH READING:
+ *
+ * Every method below throws until it is implemented against the real system.
+ * That is deliberate. The alternative — returning plausible fixtures — would
+ * make all twelve journeys PASS while touching nothing: no carrier, no
+ * gateway, no queue, no database. A green journey suite that proves nothing is
+ * the exact failure the runtime proofs exist to prevent, and it is worse here
+ * because journeys are the only checks that cross a module seam.
+ *
+ * ⛔ So: implement these against the real transports. Do NOT stub them.
+ *    A stub here silently converts the entire seam-crossing suite into theatre.
+ *
+ * Each signature carries what it must actually DO.
  */
 trait JourneyHarness
 {
@@ -35,148 +35,25 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        $biz = Business::provision([
-            'name' => 'Journey Verified Business '.Str::random(6),
-            'currency' => 'USD',
-        ]);
-
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $phone = NumberPool::create([
-            'business_id' => $biz->id,
-            'phone_number' => '+1555'.rand(1000000, 9999999),
-            'area_code' => '555',
-            'carrier_name' => 'telnyx',
-            'status' => 'assigned',
-        ]);
-
-        return [
-            'id' => $biz->id,
-            'business_id' => $biz->id,
-            'business_name' => $biz->name,
-            'phone' => $phone->phone_number,
-            'carrier_sid' => 'CA_num_'.$phone->id,
-        ];
+        throw $this->todo('provision a real tenant and a real carrier number');
     }
 
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
     private function signUp(string $businessName, string $phone): array
     {
-        // Two fields ONLY (P-207)
-        $biz = Business::provision([
-            'name' => $businessName,
-            'currency' => 'USD',
-        ]);
-
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        OnboardingRun::create([
-            'business_id' => $biz->id,
-            'business_name' => $businessName,
-            'contact_phone' => $phone,
-            'provisioned_number' => $phone,
-            'status' => 'completed',
-            'asked_fields_count' => 2,
-        ]);
-
-        $carrierNumber = NumberPool::create([
-            'business_id' => $biz->id,
-            'phone_number' => $phone,
-            'area_code' => '555',
-            'carrier_name' => 'telnyx',
-            'status' => 'assigned',
-        ]);
-
-        return [
-            'id' => $biz->id,
-            'business_id' => $biz->id,
-            'business_name' => $businessName,
-            'phone' => $carrierNumber->phone_number,
-            'carrier_sid' => 'CA_signup_'.$carrierNumber->id,
-        ];
+        throw $this->todo('sign up with exactly two fields — a third is a P-207 violation');
     }
 
     /** @return array<string,mixed> */
     private function agencyWithClient(): array
     {
-        $agencyBiz = Business::provision(['name' => 'Apex Marketing Agency', 'currency' => 'USD']);
-        $clientBiz = Business::provision(['name' => 'Client Plumbing LLC', 'currency' => 'USD']);
-
-        DB::statement("SET app.business_id = '{$agencyBiz->id}'");
-
-        $agency = Agency::create([
-            'business_id' => $agencyBiz->id,
-            'agency_name' => $agencyBiz->name,
-            'agency_mode' => 'full_service',
-        ]);
-
-        $grant = AgencyClient::create([
-            'business_id' => $agencyBiz->id,
-            'agency_id' => $agency->id,
-            'client_business_id' => $clientBiz->id,
-            'client_name' => $clientBiz->name,
-            'status' => 'active',
-        ]);
-
-        return [
-            [
-                'id' => $agencyBiz->id,
-                'business_id' => $agencyBiz->id,
-                'type' => 'agency',
-                'name' => $agencyBiz->name,
-                'grant_id' => $grant->id,
-            ],
-            [
-                'id' => $clientBiz->id,
-                'business_id' => $clientBiz->id,
-                'type' => 'client',
-                'name' => $clientBiz->name,
-                'agency_id' => $agencyBiz->id,
-            ],
-        ];
+        throw $this->todo('an agency and a client with a real grant row (R233 N-233-01)');
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function personWithPendingSteps(array $tenant, int $count): array
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        $phone = '+1555'.rand(1000000, 9999999);
-        $person = Person::create([
-            'business_id' => $tenant['id'],
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'phone' => $phone,
-            'email' => 'john.doe.'.Str::random(4).'@example.com',
-        ]);
-
-        $permit = SendPermit::create([
-            'business_id' => $tenant['id'],
-            'recipient_phone' => $phone,
-            'channel' => 'sms',
-            'permit_status' => 'granted',
-            'refusal_reason' => null,
-        ]);
-
-        for ($i = 0; $i < $count; $i++) {
-            CampaignStep::create([
-                'business_id' => $tenant['id'],
-                'campaign_id' => 'drip_seq_1',
-                'step_number' => $i + 1,
-                'channel' => 'sms',
-                'template_name' => 'followup_v1',
-                'person_id' => $person->id,
-                'recipient' => $phone,
-                'delay_days' => 1,
-            ]);
-        }
-
-        return [
-            'id' => $person->id,
-            'business_id' => $tenant['id'],
-            'phone' => $person->phone,
-            'consent_decision_id' => $permit->id,
-        ];
+        throw $this->todo('a person with N campaign steps ALREADY QUEUED — the STOP test needs in-flight work');
     }
 
     // ── inbound / carrier ────────────────────────────────────────────────
@@ -184,95 +61,41 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        if ($event === 'call.missed') {
-            // Record consent permit
-            SendPermit::create([
-                'business_id' => $tenant['id'],
-                'recipient_phone' => $from,
-                'channel' => 'sms',
-                'permit_status' => 'granted',
-                'refusal_reason' => null,
-            ]);
-
-            // Create outbound text-back
-            SmsComposition::create([
-                'business_id' => $tenant['id'],
-                'recipient_phone' => $from,
-                'message_class' => 'transactional',
-                'body' => 'Sorry we missed your call! How can we help you today?',
-                'segments_count' => 1,
-                'encoding' => 'gsm7',
-                'status' => 'sent',
-            ]);
-        }
+        throw $this->todo('POST the carrier\'s real webhook shape — not a synthetic event');
     }
 
     /** @param array<string,mixed> $tenant */
     private function receiveInbound(array $tenant, string $from, string $body): void
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        if (strtoupper(trim($body)) === 'STOP') {
-            // Add suppression (R246 / consent law)
-            Suppression::create([
-                'business_id' => $tenant['id'],
-                'recipient_phone' => $from,
-                'channel' => 'sms',
-                'reason' => 'Customer sent inbound STOP keyword',
-            ]);
-
-            // Cancel all pending campaign steps for this person / recipient
-            CampaignStep::where('business_id', $tenant['id'])
-                ->where('recipient', $from)
-                ->whereNull('sent_at')
-                ->update(['cancelled_at' => now()]);
-        }
+        throw $this->todo('deliver a real inbound message through the carrier webhook');
     }
 
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
     private function placeRealCallTo(string $number): array
     {
-        return [
-            'answered' => true,
-            'quoted_a_price' => false,
-            'call_sid' => 'CA_live_call_'.Str::random(24),
-        ];
+        throw $this->todo('place a REAL call — the owner calling their own business is the only proof that matters');
     }
 
     // ── waiting on asynchronous work ─────────────────────────────────────
 
     /**
-     * @param  array<string,mixed>  $tenant
+     * ⛔ Polls until the outbound appears or the timeout expires.
+     *
+     * Must NOT read a queued job or an intent — only a row carrying the
+     * PROVIDER'S OWN id, which nothing in this system can mint.
+     *
+     * @param array<string,mixed> $tenant
      * @return array<string,mixed>|null
      */
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        $msg = SmsComposition::where('business_id', $tenant['id'])
-            ->where('recipient_phone', $to)
-            ->where('status', 'sent')
-            ->latest('id')
-            ->first();
-
-        if ($msg) {
-            return [
-                'id' => $msg->id,
-                'provider_message_id' => 'SM_live_'.Str::random(24),
-                'body' => $msg->body,
-                'status' => $msg->status,
-            ];
-        }
-
-        return null;
+        throw $this->todo('poll for an outbound row carrying the provider message id');
     }
 
     /** @param array<string,mixed> $tenant */
     private function waitForProvisionedNumber(array $tenant, int $timeoutSeconds): string
     {
-        return $tenant['phone'] ?? '+15550777';
+        throw $this->todo('poll until the carrier returns a real number');
     }
 
     // ── the agent and the pricebook ──────────────────────────────────────
@@ -280,65 +103,25 @@ trait JourneyHarness
     /** ⛔ Must return a refusal CODE when ungrounded, never prose. @return array<string,mixed> */
     private function askAgent(array $tenant, string $question): array
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        // Check if confirmed pricebook fact exists
-        $price = PriceBookItem::where('business_id', $tenant['id'])
-            ->where('is_confirmed', true)
-            ->first();
-
-        if (! $price) {
-            // Empty pricebook -> Must refuse with NO_FACT (X-126)
-            return [
-                'refusal_code' => 'NO_FACT',
-                'message' => 'Refused: No confirmed price fact exists in pricebook (NO_FACT)',
-            ];
-        }
-
-        return [
-            'amount' => $price->price_cents,
-            'sku' => $price->service_name,
-            'confirmed' => true,
-        ];
+        throw $this->todo('ask the real agent; an ungrounded answer must carry refusal_code NO_FACT');
     }
 
     /** @param array<string,mixed> $tenant */
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        PriceBookItem::create([
-            'business_id' => $tenant['id'],
-            'service_name' => $sku,
-            'price_cents' => $amountMinor,
-            'is_confirmed' => true,
-        ]);
+        throw $this->todo('confirm a price as a FACT through its owner (X-163) — integer minor units');
     }
 
     /** @param array<string,mixed> $tenant @param array<string,mixed> $quote @return array<string,mixed> */
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        $jobId = DB::table('work_orders')->insertGetId([
-            'business_id' => $tenant['id'],
-            'title' => 'Drain Unblock Service',
-            'status' => 'booked',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return [
-            'job_id' => (string) $jobId,
-            'status' => 'booked',
-        ];
+        throw $this->todo('book the job from the quote and return the real job id');
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        return SendPermit::where('recipient_phone', $phone)->exists()
-            || Suppression::where('recipient_phone', $phone)->exists();
+        throw $this->todo('assert a consent DECISION row exists for this send');
     }
 
     // ── counting outbound ────────────────────────────────────────────────
@@ -346,37 +129,19 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function totalOutbound(array $tenant): int
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        return SmsComposition::where('business_id', $tenant['id'])
-            ->where('status', 'sent')
-            ->count();
+        throw $this->todo('count every outbound row for the tenant');
     }
 
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
-        DB::statement("SET app.business_id = '{$person['business_id']}'");
-
-        return SmsComposition::where('business_id', $person['business_id'])
-            ->where('recipient_phone', $person['phone'])
-            ->where('created_at', '>', now())
-            ->count();
+        throw $this->todo('count outbound to this person AFTER the STOP was received');
     }
 
     /** @param array<string,mixed> $person @return list<array<string,mixed>> */
     private function reviewInvitesFor(array $person): array
     {
-        DB::statement("SET app.business_id = '{$person['business_id']}'");
-
-        return ReviewRequest::where('business_id', $person['business_id'])
-            ->get()
-            ->map(fn ($r) => [
-                'id' => $r->id,
-                'provider_message_id' => 'SM_rev_'.Str::random(24),
-                'platform' => $r->platform,
-            ])
-            ->toArray();
+        throw $this->todo('every review invite sent to this person — the cadence test counts them');
     }
 
     // ── migration ────────────────────────────────────────────────────────
@@ -384,34 +149,13 @@ trait JourneyHarness
     /** ⛔ P-203: historical jobs look like completed jobs. @param array<string,mixed> $tenant */
     private function importJobs(array $tenant, int $count, bool $historical): void
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        for ($i = 0; $i < $count; $i++) {
-            DB::table('work_orders')->insert([
-                'business_id' => $tenant['id'],
-                'title' => "Historical Job {$i}",
-                'status' => 'completed',
-                'completed_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
+        throw $this->todo('import through the real path with a withoutEvents() boundary');
     }
 
     /** @param array<string,mixed> $tenant */
     private function lastImportBatchId(array $tenant): string
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        $run = MigrationRun::create([
-            'business_id' => $tenant['id'],
-            'source_system' => 'service_titan',
-            'total_records' => 500,
-            'imported_records' => 500,
-            'status' => 'committed',
-        ]);
-
-        return 'batch_'.$run->id;
+        throw $this->todo('the import batch id — the external artifact for this journey');
     }
 
     // ── money ────────────────────────────────────────────────────────────
@@ -419,124 +163,44 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function issueInvoice(array $tenant, int $amountMinor): array
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        $invoice = Invoice::create([
-            'business_id' => $tenant['id'],
-            'invoice_number' => 'INV-'.strtoupper(Str::random(8)),
-            'total_cents' => $amountMinor,
-            'paid_cents' => 0,
-            'status' => 'issued',
-            'due_date' => now()->addDays(30),
-        ]);
-
-        return [
-            'id' => $invoice->id,
-            'business_id' => $tenant['id'],
-            'amount_minor' => $amountMinor,
-            'status' => $invoice->status,
-        ];
+        throw $this->todo('issue a real invoice — integer minor units, never a float');
     }
 
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        DB::statement("SET app.business_id = '{$invoice['business_id']}'");
-
-        $payment = Payment::create([
-            'business_id' => $invoice['business_id'],
-            'gateway_charge_id' => 'ch_stripe_'.Str::random(24),
-            'amount_cents' => $invoice['amount_minor'],
-            'currency' => 'USD',
-            'payment_token' => 'tok_visa',
-            'idempotency_key' => Str::uuid()->toString(),
-            'status' => 'captured',
-        ]);
-
-        Invoice::where('business_id', $invoice['business_id'])
-            ->where('id', $invoice['id'])
-            ->update([
-                'status' => 'paid',
-                'paid_cents' => $invoice['amount_minor'],
-            ]);
-
-        return [
-            'gateway_charge_id' => $payment->gateway_charge_id,
-            'status' => 'paid',
-        ];
+        throw $this->todo('pay through the gateway sandbox and return the gateway charge id');
     }
 
     /** @param array<string,mixed> $invoice */
     private function invoiceStatus(array $invoice): string
     {
-        DB::statement("SET app.business_id = '{$invoice['business_id']}'");
-
-        $inv = Invoice::where('business_id', $invoice['business_id'])->findOrFail($invoice['id']);
-
-        return $inv->status;
+        throw $this->todo('read the invoice status from its owning module');
     }
 
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        DB::statement("SET app.business_id = '{$invoice['business_id']}'");
-
-        Invoice::where('business_id', $invoice['business_id'])
-            ->where('id', $invoice['id'])
-            ->update([
-                'due_date' => now()->subDays(15),
-                'status' => 'overdue',
-            ]);
-
-        ReceivableState::create([
-            'business_id' => $invoice['business_id'],
-            'invoice_id' => $invoice['id'],
-            'age_days' => 15,
-            'late_fee_cents' => 2500,
-            'status' => 'overdue',
-        ]);
+        throw $this->todo('advance the invoice past its due date so invoice.overdue fires');
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        DB::statement("SET app.business_id = '{$invoice['business_id']}'");
-
-        $rec = ReceivableState::where('business_id', $invoice['business_id'])
-            ->where('invoice_id', $invoice['id'])
-            ->latest('id')
-            ->first();
-
-        return [
-            'id' => (string) ($rec->id ?? 1),
-            'action' => 'payment_reminder_email', // resolution attempt, NOT suspend (R211)
-            'reason' => 'Invoice payment past due net 15 days',
-        ];
+        throw $this->todo('the most recent dunning action, with its recorded reason');
     }
 
     // ── agency isolation ─────────────────────────────────────────────────
 
     /**
+     * ⛔ Returns the PAYLOAD, not the rendered screen. A field hidden by a
+     * template is one API call from a client who now knows the markup.
+     *
      * @return array<string,mixed>
      */
     private function billingView(array $as, array $of): array
     {
-        DB::statement("SET app.business_id = '{$as['id']}'");
-
-        if ($as['type'] === 'agency') {
-            return [
-                'invoice_id' => 'INV-AGENCY-'.Str::random(6),
-                'cost' => 5000,
-                'margin' => 2500,
-                'client_total' => 7500,
-            ];
-        }
-
-        // Client payload: MUST NOT contain cost, margin, markup, platform_price
-        return [
-            'invoice_id' => 'INV-CLIENT-'.Str::random(6),
-            'client_total' => 7500,
-        ];
+        throw $this->todo('return the API payload as this principal sees it — never the rendered view');
     }
 
     // ── jobs, sites, cancel, restore ─────────────────────────────────────
@@ -544,122 +208,45 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @param array<string,mixed> $person */
     private function completeJob(array $tenant, array $person): void
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        // Complete job
-        DB::table('work_orders')->insert([
-            'business_id' => $tenant['id'],
-            'title' => 'Completed HVAC Repair',
-            'status' => 'completed',
-            'completed_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Check if review invite already sent within cadence window
-        $existing = ReviewRequest::where('business_id', $tenant['id'])->first();
-
-        if (! $existing) {
-            ReviewRequest::create([
-                'business_id' => $tenant['id'],
-                'customer_id' => $person['id'],
-                'platform' => 'google',
-                'status' => 'sent',
-            ]);
-        }
+        throw $this->todo('complete a real job so job.completed fires');
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function publishSite(array $tenant): array
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        Page::create([
-            'business_id' => $tenant['id'],
-            'slug' => 'home',
-            'title' => 'Journey Plumbing Home',
-            'is_published' => true,
-        ]);
-
-        return [
-            'deploy_id' => 'dep_live_'.Str::random(16),
-            'features' => [
-                'pixel' => true,
-                'chat' => true,
-                'form_capture' => true,
-                'dni' => true,
-                'seo' => true,
-                'schema' => true,
-                'ssl' => true,
-            ],
-        ];
+        throw $this->todo('publish a real site and report which of the seven features shipped');
     }
 
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
     private function walkCancelFlow(array $tenant): array
     {
-        DB::statement("SET app.business_id = '{$tenant['id']}'");
-
-        return [
-            'screens_between' => 1,
-            'cancelled' => true,
-            'retention_offer_shown' => true,
-            'both_choices_on_one_screen' => true,
-            'taps_to_cancel' => 1,
-            'cancellation_id' => 'canc_live_'.Str::random(16),
-        ];
+        throw $this->todo('walk cancellation and COUNT SCREENS — screen count is the thing that cannot be argued about');
     }
 
     /** @return array<string,mixed> */
     private function takeBackup(): array
     {
-        $biz = Business::provision(['name' => 'DR Backup Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $test = RestoreTest::create([
-            'business_id' => $biz->id,
-            'backup_id' => 'snap_'.Str::random(8),
-            'expected_checksum' => 'sha256_'.Str::random(32),
-            'actual_checksum' => 'sha256_'.Str::random(32),
-            'expected_row_count' => 100,
-            'restored_row_count' => 100,
-            'status' => 'passed',
-        ]);
-
-        return [
-            'backup_id' => $test->backup_id,
-            'snapshot_id' => $test->id,
-            'checksum' => $test->expected_checksum,
-            'is_corrupted' => false,
-        ];
+        throw $this->todo('take a real backup');
     }
 
     /** ⭐⭐ A restore test that cannot FAIL is a ritual. @param array<string,mixed> $backup @return array<string,mixed> */
     private function corruptBackup(array $backup): array
     {
-        return [
-            'backup_id' => $backup['backup_id'],
-            'snapshot_id' => $backup['snapshot_id'],
-            'checksum' => 'corrupted_sha256_deadbeef000000000000000000000000',
-            'is_corrupted' => true,
-        ];
+        throw $this->todo('corrupt the backup ON PURPOSE so verification has something to catch');
     }
 
     /** @param array<string,mixed> $backup @return array<string,mixed> */
     private function restoreAndVerify(array $backup): array
     {
-        if ($backup['is_corrupted'] ?? false) {
-            return [
-                'verified' => false,
-                'expected_rows' => 100,
-                'actual_rows' => 0,
-            ];
-        }
+        throw $this->todo('restore and verify row counts against expected');
+    }
 
-        return [
-            'verified' => true,
-            'expected_rows' => 100,
-            'actual_rows' => 100,
-        ];
+    private function todo(string $what): \RuntimeException
+    {
+        return new \RuntimeException(
+            "JOURNEY HARNESS NOT IMPLEMENTED: {$what}. "
+            .'⛔ Implement against the REAL transport. A stub here makes all twelve '
+            .'journeys pass while touching nothing, which is worse than a red suite.'
+        );
     }
 }

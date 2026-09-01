@@ -10,7 +10,6 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-144
- *
  * @intent GROW under §227.2
  */
 return [
@@ -34,7 +33,7 @@ return [
     ],
     'emits' => [
         'visibility.changed',
-        'mentioned_by_ai',
+        'mention.detected',
         'competitor.outranking',
     ],
     'consumes' => [

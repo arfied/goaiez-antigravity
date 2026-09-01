@@ -45,18 +45,18 @@ final class BriefCommand extends Command
 
     protected $description = 'Assemble the brief an agent receives. From the annotations, and from nothing else.';
 
-    /** ⛔ Terms a module may not ADVERTISE. Fenced by domain scope rules. */
+    /** ⛔ Terms a module may not ADVERTISE. Fenced by P-204, P-128/§44, R197. */
     private const FENCED = [
-        'overtime' => 'the platform measures work, it does not pay people',
-        'payroll' => 'the platform measures work, it does not pay people',
-        'gross pay' => 'the platform measures work, it does not pay people',
-        'withholding' => 'the platform measures work, it does not pay people',
-        'ad account' => 'ad management needs their account',
-        'ad budget' => 'ad management needs their account',
-        'warehouse' => 'a van and a storage unit, not a warehouse',
-        'drop-ship' => 'a van and a storage unit, not a warehouse',
-        'applicant' => 'the ATS fence',
-        'candidate' => 'the ATS fence',
+        'overtime' => 'P-204 — the platform measures work, it does not pay people',
+        'payroll' => 'P-204',
+        'gross pay' => 'P-204',
+        'withholding' => 'P-204',
+        'ad account' => 'P-128/§44 — ad management needs their account',
+        'ad budget' => 'P-128/§44',
+        'warehouse' => 'R197 — a van and a storage unit, not a warehouse',
+        'drop-ship' => 'R197',
+        'applicant' => 'R184 — the ATS fence',
+        'candidate' => 'R184',
     ];
 
     /**

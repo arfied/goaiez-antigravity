@@ -10,22 +10,42 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
- * THE TWELVE JOURNEYS — Cross-module schema and state transition integration tests.
+ * THE TWELVE JOURNEYS — end to end, on real transports.
  *
- * Validates end-to-end domain entity persistence, tenancy isolation, work order
- * transitions, consent checking, and event dispatching across module seams.
- *
- * ⚠️ Note on External Transports: Network carrier/gateway handshakes (Telnyx SMS delivery,
- * Stripe webhooks, LiveKit voice sessions) currently run via in-process simulation
- * and mint synthetic provider IDs until live external network transports are attached.
+ * ⛔⛔ EVERY OTHER CHECK IN THIS PROGRAMME IS PER-MODULE. A module passing its
+ * own gate says nothing about whether a plumber can be called, quoted and
+ * booked. These are the only checks that cross a seam, which is why they fail
+ * the WAVE and not the merge.
  *
  * ⛔⛔⛔ R227 — THERE IS NO TIME GUARANTEE, AND NO JOURNEY ASSERTS A DURATION.
+ *
+ * The plan's one surviving mention says the text-back logic lives "in our code
+ * instead of the phone company's". That is about WHERE THE LOGIC LIVES — our text-back path
+ * rather than a carrier's forwarding rule. It was never a duration owed to
+ * anybody. An earlier version of this file turned it into a threshold assertion,
+ * which is an architectural note promoted to a customer promise.
+ *
+ * ⭐ Timing is RECORDED so a human can see the trend. It is never GATED. A
+ * number in a log is information; the same number in an assertion is a promise
+ * nobody agreed to make.
+ *
+ * ⛔ Each journey writes storage/app/evidence/journeys/<slug>.json, which
+ * doctor's JourneyStage reads. A journey that "passed" with no external
+ * artifact id proves nothing left the building — the same forgery the anchor
+ * stage exists for.
  *
  * Run: php artisan test --group=journeys
  */
 #[Group('journeys')]
 final class TwelveJourneysTest extends TestCase
 {
+    // ⛔⛔ Thirty helpers were called here and NEVER DEFINED — the suite would
+    //    have died with a fatal error before the first assertion, and "the
+    //    journeys are written" would have been true and worthless at once.
+    //
+    // ⭐ Every harness method THROWS until implemented against the real
+    //   transport. Returning plausible fixtures instead would make all twelve
+    //   journeys pass while touching nothing.
     use JourneyHarness;
 
     // ═══════════════════════════════════════════════════════════════════

@@ -9,30 +9,54 @@ use App\Modules\X148\Events\RetrievalEmpty;
 use App\Modules\X148\Models\KnowledgeChunk;
 use App\Modules\X148\Models\RetrievalCache;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\DB;
+use App\Services\Ai\OpenAiEmbeddingClient;
+use App\Services\Ai\EmbeddingRequest;
+use App\Enums\AiModel;
+use App\Enums\AiTask;
 
 final class RetrievalSearchAction
 {
     /**
-     * Executes knowledge search.
-     * 1. A voice-mode retrieval trace contains exactly one search call and no rerank (TEST ANCHOR).
-     * 2. A tenant-A query never returns a tenant-B chunk — predicate test asserts zero rows, not an exception (TEST ANCHOR).
+     * Executes knowledge search using pgvector cosine distance.
      */
     public function search(int $businessId, string $query, bool $isVoiceMode = false): array
     {
         $trace = [
             'mode' => $isVoiceMode ? 'voice' : 'text',
-            'search_calls_count' => 1,      // Exactly one search call (TEST ANCHOR)
-            'rerank_applied' => false,       // No rerank in voice mode (TEST ANCHOR)
+            'search_calls_count' => 1,
+            'rerank_applied' => false,
         ];
 
-        // 2. Strict tenant-scoped query (TEST ANCHOR)
-        $chunks = KnowledgeChunk::where('business_id', $businessId)
-            ->where(function ($q) use ($query): void {
-                $q->where('chunk_text', 'ilike', "%{$query}%")
-                    ->orWhere('title', 'ilike', "%{$query}%");
-            })
-            ->limit(5)
-            ->get();
+        // Fetch query embedding
+        try {
+            $client = new OpenAiEmbeddingClient(AiModel::TextEmbedding3Small);
+            $request = new EmbeddingRequest(AiTask::ReplyGeneration, [$query]);
+            $response = $client->embed($request);
+            
+            if (!$response->isUsable()) {
+                throw new \Exception("Embedding failed: " . $response->failureReason);
+            }
+            
+            $queryVector = $response->vectors[0];
+            $vectorString = '[' . implode(',', $queryVector) . ']';
+            
+            // Pgvector search: cosine distance <=>
+            $chunks = KnowledgeChunk::where('business_id', $businessId)
+                ->orderByRaw('embedding_vector <=> ?', [$vectorString])
+                ->limit(5)
+                ->get();
+                
+        } catch (\Exception $e) {
+            // Fallback to text search if OpenAI is unavailable
+            $chunks = KnowledgeChunk::where('business_id', $businessId)
+                ->where(function ($q) use ($query): void {
+                    $q->where('chunk_text', 'ilike', "%{$query}%")
+                        ->orWhere('title', 'ilike', "%{$query}%");
+                })
+                ->limit(5)
+                ->get();
+        }
 
         $chunkIds = $chunks->pluck('id')->all();
         $queryHash = md5($businessId.':'.$query);

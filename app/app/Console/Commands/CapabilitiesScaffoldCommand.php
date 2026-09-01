@@ -129,12 +129,6 @@ final class CapabilitiesScaffoldCommand extends Command
             // ⛔ NOT the tracker's note column — that carries dispositions, not
             //    test contracts. The ⑤ comes from the plan's capability tables.
             $assertion = $this->assertions()[$id] ?? '';
-            if ($assertion === '') {
-                $trackerNote = trim((string) ($c[count($c) - 2] ?? ''));
-                if ($trackerNote !== '' && mb_strlen($trackerNote) >= 8) {
-                    $assertion = $trackerNote;
-                }
-            }
 
             foreach (preg_split('/[·,]/u', $parentCell) ?: [] as $piece) {
                 if (preg_match('/\b((?:X|C)-[A-Za-z0-9]+)\b/', $piece, $mm) === 1) {
@@ -170,54 +164,21 @@ final class CapabilitiesScaffoldCommand extends Command
                 continue;
             }
             $cells = array_map('trim', explode('|', $line));
-            if (count($cells) < 4) {
+            if (count($cells) < 6) {
                 continue;
             }
-
-            $matchedIds = [];
-            if (preg_match_all('/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/', $cells[1], $m) > 0) {
-                $matchedIds = $m[1];
-            } elseif (preg_match('/N-(\d+)\s*[–…-]\s*N?-(\d+)/u', $cells[1], $rm)) {
-                $start = (int) $rm[1];
-                $end = (int) $rm[2];
-                for ($i = $start; $i <= $end; $i++) {
-                    $matchedIds[] = sprintf('N-%03d', $i);
-                }
-            }
-
-            if ($matchedIds === []) {
+            if (preg_match_all('/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/', $cells[1], $m) === 0) {
                 continue;
             }
-
-            $cleanCells = array_values(array_filter(array_slice($cells, 1)));
-            $contentCells = [];
-            foreach ($cleanCells as $c) {
-                $cleaned = trim((string) preg_replace('/[⭐⛔⚠️✅*`]/u', '', $c));
-                if ($cleaned === '' || $cleaned === '—' || preg_match('/^(?:inherit|⑥⑦\s*inherit|⑥|⑦|L[1-3]|SPECCED|ENH|NEW|READ|WRITE)$/ui', $cleaned)) {
-                    continue;
-                }
-                $contentCells[] = $cleaned;
-            }
-
-            $count = count($contentCells);
-            if ($count < 1) {
+            $tail = array_values(array_filter(array_slice($cells, 2)));
+            if ($tail === []) {
                 continue;
             }
-
-            $a = $contentCells[$count - 1];
-            $failureMode = $count >= 2 ? $contentCells[$count - 2] : '';
-
-            if (mb_strlen($a) < 8) {
+            $a = trim((string) preg_replace('/[⭐⛔⚠️✅*`]/u', '', (string) end($tail)));
+            if (mb_strlen($a) < 12) {
                 continue;
             }
-
-            if ($failureMode !== '' && ! str_starts_with($failureMode, '(') && mb_strlen($failureMode) >= 8) {
-                if (preg_match('/refus|REFUSED|fails|cannot|never/i', $a) !== 1) {
-                    $a = "refuses: {$failureMode}; {$a}";
-                }
-            }
-
-            foreach ($matchedIds as $id) {
+            foreach ($m[1] as $id) {
                 $cache[$id] ??= $a;
             }
         }

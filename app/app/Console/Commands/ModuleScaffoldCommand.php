@@ -269,6 +269,8 @@ final class ModuleScaffoldCommand extends Command
             : '';
     }
 
+
+
     /** @param array<string, string> $h */
     private function write(array $h): void
     {
