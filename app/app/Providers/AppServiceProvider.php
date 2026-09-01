@@ -736,6 +736,10 @@ class AppServiceProvider extends ServiceProvider
             $this->withScheduledRunMeter(fn (ScheduledRunMeter $meter) => $meter->backgroundFinished($event->task));
         });
 
+        \Illuminate\Support\Facades\Event::listen(function (\Illuminate\Queue\Events\Looping $event): void {
+            \Illuminate\Support\Facades\Cache::put('goaiez:worker:heartbeat', \Illuminate\Support\Carbon::now()->timestamp);
+        });
+
         Event::listen(function (ScheduledTaskFailed $event): void {
             $this->withScheduledRunMeter(fn (ScheduledRunMeter $meter) => $meter->failed($event->task));
         });
