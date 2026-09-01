@@ -68,7 +68,7 @@ jobs:
 
       - name: Configure Postgres Role
         run: |
-          PGPASSWORD=password psql -h 127.0.0.1 -U postgres -d goaiez_antig_test -c "CREATE ROLE goaiez_app WITH LOGIN PASSWORD password\ NOBYPASSRLS;"
+          PGPASSWORD=password psql -h 127.0.0.1 -U postgres -d goaiez_antig_test -c "CREATE ROLE goaiez_app WITH LOGIN PASSWORD 'password' NOBYPASSRLS;"
           PGPASSWORD=password psql -h 127.0.0.1 -U postgres -d goaiez_antig_test -c "GRANT ALL PRIVILEGES ON DATABASE goaiez_antig_test TO goaiez_app;"
           PGPASSWORD=password psql -h 127.0.0.1 -U postgres -d goaiez_antig_test -c "ALTER SCHEMA public OWNER TO goaiez_app;"
 
