@@ -87,6 +87,16 @@ final class StripeApi
      * application (9295). One key is one key today; the derivation is what keeps
      * that true if a second ever arrives.
      */
+    public static function isLive(): bool
+    {
+        if (! self::isConfigured()) {
+            return false;
+        }
+
+        $key = \App\Support\PlatformCredentials::get(self::CREDENTIAL);
+        return str_starts_with($key, 'sk_live_');
+    }
+
     public static function isConfigured(): bool
     {
         return PlatformCredentials::has(self::CREDENTIAL);

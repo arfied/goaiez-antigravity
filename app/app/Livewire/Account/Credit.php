@@ -419,6 +419,12 @@ final class Credit extends Component
                 return;
             }
 
+            if (! StripeApi::isLive()) {
+                $this->cancelPurchase();
+                Toaster::error('Credit purchases are currently unavailable. Please contact us to top up.');
+                return;
+            }
+
             $url = $topUps->checkoutUrl(
                 $business,
                 $product,
@@ -1070,7 +1076,7 @@ final class Credit extends Component
             // their own tests.
             'paymentsAreAvailable' => $paysWithCardOnFile
                 ? AuthorizeNetApi::isConfigured()
-                : StripeApi::isConfigured(),
+                : StripeApi::isLive(),
 
             // ⛔ READ ONLY. Rendering must never bring an arrangement into
             // existence (3488) — a row appears when somebody ticks a box and
