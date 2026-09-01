@@ -374,6 +374,7 @@ final class Subscriptions
             $subscription->forceFill([
                 'status' => $state->status,
                 'stripe_customer_id' => $state->customerId,
+                'gateway' => 'stripe',
                 'stripe_subscription_id' => $state->subscriptionId,
                 'trial_ends_at' => $state->trialEndsAt,
                 'current_period_end' => $state->currentPeriodEnd,
