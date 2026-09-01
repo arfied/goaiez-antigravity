@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -206,13 +207,18 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function sendEmailVerificationNotification(): void
     {
-        throw new LogicException(
-            'Email verification mail has no sender on this platform. The framework would send it '
-            .'straight from Illuminate\Auth\MustVerifyEmail, which bypasses PlatformMailer and '
-            .'therefore the sending ceiling, the pacer, the meter and the CAN-SPAM classification. '
-            .'Enabling Features::emailVerification() means writing an App\Notifications class that '
-            .'implements ClassifiesUnderCanSpam and overriding this method the way '
-            .'sendPasswordResetNotification() above is overridden (9603).'
+        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(config('auth.verification.expire', 60)),
+            [
+                'id' => $this->getKey(),
+                'hash' => sha1($this->getEmailForVerification()),
+            ]
+        );
+
+        app(PlatformMailer::class)->send(
+            $this->getEmailForVerification(),
+            new \App\Notifications\VerifyEmailLink($url)
         );
     }
 }

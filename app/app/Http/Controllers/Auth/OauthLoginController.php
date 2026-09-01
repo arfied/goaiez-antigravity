@@ -264,6 +264,13 @@ final class OauthLoginController extends Controller
         $user = User::query()->where('email', $email)->first();
 
         if ($user instanceof User) {
+            if ($user->email_verified_at === null) {
+                $user->sendEmailVerificationNotification();
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'email' => 'That email is registered but not verified. We sent a link to it — please verify your address to sign in with this provider.',
+                ]);
+            }
+
             // Fill in what we did not have, never overwrite what we did — the
             // person may have set a name here that they would not recognise
             // coming back from a directory.
