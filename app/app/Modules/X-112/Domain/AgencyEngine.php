@@ -29,7 +29,8 @@ final class AgencyEngine
         return DB::transaction(function () use ($businessId, $agencyId, $clientName) {
             $agencyBiz = Business::find($businessId);
             $owner = User::find($agencyBiz->owner_user_id);
-            $clientBiz = app(TenantProvisioner::class)->provision($owner, $clientName);
+            $clientBiz = app(TenantProvisioner::class)->provision($owner);
+            $clientBiz->forceFill(['name' => $clientName])->save();
 
             // Restore current agency business context
             Tenancy::set($businessId);

@@ -38,10 +38,8 @@ final class OnboardingStartAction
         }
 
         return DB::transaction(function () use ($user, $businessName, $contactPhone) {
-            // 1. Provision Business
-            // Notice: The TenantProvisioner's signature is `provision(User $user, string $name, bool $nameIsVerified = false, ?string $auditToken = null)`
-            // We pass the name properly. We do not pass it as an audit token.
-            $biz = app(TenantProvisioner::class)->provision($user, $businessName);
+            $biz = app(TenantProvisioner::class)->provision($user);
+            $biz->forceFill(['name' => $businessName])->save();
 
             Tenancy::set($biz->id);
 
