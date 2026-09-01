@@ -128,4 +128,22 @@ abstract class TestCase extends BaseTestCase
     {
         return str_contains(str_replace('\\', '/', $testClass), 'Tests/Browser');
     }
+    public static function provisionTenant(array $attributes = []): \App\Models\Business
+    {
+        $owner = \App\Models\User::first() ?? \App\Models\User::factory()->create();
+        $name = $attributes['name'] ?? 'Test Business';
+        $biz = app(\App\Services\TenantProvisioner::class)->provision($owner);
+        
+        $updates = ['name' => $name];
+        if (isset($attributes['currency'])) $updates['currency'] = $attributes['currency'];
+        if (isset($attributes['owner_user_id'])) {
+            $updates['owner_user_id'] = $attributes['owner_user_id'];
+        }
+        if (!empty($updates)) {
+            $biz->update($updates);
+        }
+        
+        \App\Support\Tenancy::set($biz->id);
+        return $biz;
+    }
 }
