@@ -336,7 +336,7 @@ final class ModuleDoneCommand extends Command
 
         try {
             $cards = (int) DB::table('help_cards')->where('module_id', $m->id)->count();
-        } catch (Throwable) {
+        } catch (\Throwable) {
             // ⛔⛔⛔ THE TABLE DOES NOT EXIST, AND NO MODULE OWNS IT.
             //
             // I wrote this gate requiring a `help_cards` row per action. Then I

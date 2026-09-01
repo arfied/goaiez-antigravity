@@ -19,17 +19,17 @@ final class JourneyStage implements Stage
     /** @var array<string, string> */
     private const JOURNEYS = [
         'missed-call-textback' => 'a call is missed, a consented text arrives with the carrier\'s own id',
-        'day-one' => 'two fields at signup → the agent live on a number → the owner calls their own business',
-        'quote-to-booking' => 'a price LOOKED UP from the pricebook, never invented, becomes a booking',
-        'invoice-to-paid' => 'an invoice reaches a real charge-id',
-        'review-invite' => 'a completed job asks for a review, once, inside the cadence ceiling',
-        'inbound-consent' => 'STOP halts every pending step for that Person within one cycle',
-        'site-publish' => 'a published site carries all seven — pixel, chat, form, DNI, SEO, schema, SSL',
-        'migration-in' => '500 imported jobs produce ZERO outbound messages',
-        'dunning-by-reason' => 'an overdue invoice is chased by REASON, and a resolution attempt precedes any stop',
-        'cancel' => 'cancel is ONE TAP with no interstitial between the tap and the cancellation',
-        'agency-isolation' => 'the agency sees cost and margin; their client sees the agency price only',
-        'restore' => 'a rehearsed restore verified by row count and checksum — and a corrupted backup FAILS it',
+        'day-one'              => 'two fields at signup → the agent live on a number → the owner calls their own business',
+        'quote-to-booking'     => 'a price LOOKED UP from the pricebook, never invented, becomes a booking',
+        'invoice-to-paid'      => 'an invoice reaches a real charge-id',
+        'review-invite'        => 'a completed job asks for a review, once, inside the cadence ceiling',
+        'inbound-consent'      => 'STOP halts every pending step for that Person within one cycle',
+        'site-publish'         => 'a published site carries all seven — pixel, chat, form, DNI, SEO, schema, SSL',
+        'migration-in'         => '500 imported jobs produce ZERO outbound messages',
+        'dunning-by-reason'    => 'an overdue invoice is chased by REASON, and a resolution attempt precedes any stop',
+        'cancel'               => 'cancel is ONE TAP with no interstitial between the tap and the cancellation',
+        'agency-isolation'     => 'the agency sees cost and margin; their client sees the agency price only',
+        'restore'              => 'a rehearsed restore verified by row count and checksum — and a corrupted backup FAILS it',
     ];
 
     public function run(): array

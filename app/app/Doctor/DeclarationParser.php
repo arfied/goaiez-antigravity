@@ -12,7 +12,6 @@ namespace App\Doctor;
  * Headers carry provenance notes INSIDE declaration lines:
  *
  *   @emits `approval.requested` ⭐ *(2026-08-27 — the `send.requested` shape…)*
- *
  *   @owns_table messages ⛔ *(X-121 owns `messages` — C-Sms reads them)*
  *
  * A parser that keeps the note reads the EXPLANATION as a DECLARATION:

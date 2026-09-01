@@ -100,12 +100,8 @@ final class SchemaStage implements Stage
         foreach (Finder::create()->files()->in(base_path('database/migrations'))->name('*.php') as $f) {
             $s = $f->getContents();
             $n = $f->getFilename();
-            if (preg_match('/->change\(\)|renameColumn/', $s)) {
-                $switch[] = $n;
-            }
-            if (preg_match('/dropColumn|dropIfExists/', $s)) {
-                $contract[] = $n;
-            }
+            if (preg_match('/->change\(\)|renameColumn/', $s)) { $switch[] = $n; }
+            if (preg_match('/dropColumn|dropIfExists/', $s)) { $contract[] = $n; }
         }
         if ($switch !== [] && $contract !== []) {
             $out[] = ['where' => 'database/migrations',
@@ -195,6 +191,7 @@ final class SchemaStage implements Stage
                     .'BYPASSRLS is indistinguishable from none.',
             ];
         }
+
 
         return $out;
     }
