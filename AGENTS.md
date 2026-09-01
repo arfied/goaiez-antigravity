@@ -108,7 +108,7 @@ an enum. Do not "fix" it and do not report it.
 
 ## THE RULES
 
-`.agents/rules/` — read all seven before wave 1. They are short.
+`.agents/rules/` — read all of them before wave 1. They are short.
 
 | `00-precedence.md` | which document wins where they disagree |
 | :--- | :--- |
@@ -121,6 +121,15 @@ an enum. Do not "fix" it and do not report it.
 | `07-tech-stack.md` | ⛔ **the pinned stack** — Laravel 13, Livewire 4, Postgres 16, Tailwind 4. Not a default to be re-chosen |
 | `08-modular-ddd-cqrs.md` | ⛔ **fully modular, DDD, CQRS** — and how far to take CQRS, which is not all the way |
 | `09-r245-r246-delegation.md` | ⭐⭐⭐ **decide and build; what "not gated" never means; the ten decided; the seven new facts.** Supersedes rule 02 on owner decisions |
+| `10-supervisor.md` | ⭐ **there is a supervisor.** `.agents/supervisor/BRIEF.md` is read before `state.py next`; `REPORT.md` is written at every wave close; nothing pushes before a `PASS` in `REVIEWS.md` |
+
+## SUPERVISION
+
+**A supervisor reviews what you build.** Read `.agents/supervisor/BRIEF.md`
+**before** `bin/state.py next`; it wins on what to do next, never on a point of
+fact or architecture. Write `.agents/supervisor/REPORT.md` at every wave close.
+**Do not `git push` until `REVIEWS.md` says `PASS`** for that wave. Full terms:
+`.agents/rules/10-supervisor.md`.
 
 ## THE SKILLS
 
