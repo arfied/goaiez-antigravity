@@ -15,7 +15,7 @@ Artisan::command('inspire', function () {
 */
 
 Schedule::call(function () {
-    cache()->put('goaiez:scheduler:heartbeat', now(), 300);
+    cache()->put('goaiez:scheduler:heartbeat', now()->timestamp, 300);
     $minute = now()->format('YmdHi');
     $claimed = cache()->add("goaiez:scheduler:tick:{$minute}", true, 120);
     if (! $claimed) {

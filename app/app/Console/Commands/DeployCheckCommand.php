@@ -82,6 +82,7 @@ final class DeployCheckCommand extends Command
     private function workerIsRunning(): void
     {
         $last = cache()->get('goaiez:worker:heartbeat');
+        if (is_numeric($last)) { $last = \Illuminate\Support\Carbon::createFromTimestamp($last); }
         $age = $last === null ? null : now()->diffInSeconds($last);
         $ok = $age !== null && $age < 120;
 
@@ -97,6 +98,7 @@ final class DeployCheckCommand extends Command
     private function schedulerIsRunning(): void
     {
         $last = cache()->get('goaiez:scheduler:heartbeat');
+        if (is_numeric($last)) { $last = \Illuminate\Support\Carbon::createFromTimestamp($last); }
         $age = $last === null ? null : now()->diffInSeconds($last);
         $ok = $age !== null && $age < 120;
 
@@ -146,7 +148,7 @@ final class DeployCheckCommand extends Command
      */
     private function sendCeilingIsSeeded(): void
     {
-        $ceiling = config('mail.daily_send_ceiling.smtp');
+        $ceiling = app(\App\Services\Mail\MailQuota::class)->ceiling();
         $ok = is_int($ceiling) && $ceiling > 0;
 
         $this->record(
