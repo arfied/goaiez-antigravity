@@ -39,7 +39,7 @@
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 0,
+   "violations": 12,
    "fails": "WAVE"
   }
  },
@@ -1103,62 +1103,62 @@
  },
  "journeys": {
   "J1": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a missed call becomes a consented text back",
    "green_after_wave": 5
   },
   "J2": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "two fields at signup put a live agent on a real number",
    "green_after_wave": 6
   },
   "J3": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a quote comes from the pricebook or does not come at all",
    "green_after_wave": 7
   },
   "J4": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "STOP halts every pending step for that person",
    "green_after_wave": 5
   },
   "J5": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a migration of five hundred jobs sends nothing",
    "green_after_wave": 14
   },
   "J6": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "cancel is one tap with nothing in between",
    "green_after_wave": 11
   },
   "J7": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "an agency client never sees cost or margin",
    "green_after_wave": 11
   },
   "J8": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a deliberately corrupted backup fails the restore",
    "green_after_wave": 14
   },
   "J9": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "an invoice reaches a real charge id",
    "green_after_wave": 10
   },
   "J10": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a completed job asks for a review once inside the cadence",
    "green_after_wave": 8
   },
   "J11": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a published site carries all seven",
    "green_after_wave": 13
   },
   "J12": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "an overdue invoice is chased by reason, resolution first",
    "green_after_wave": 9
   }

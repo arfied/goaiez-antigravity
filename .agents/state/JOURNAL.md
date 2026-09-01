@@ -448,3 +448,16 @@
 - `2026-08-31T13:09:37` stage contract = 104
 - `2026-08-31T13:09:37` stage capability = 120
 - `2026-08-31T13:09:37` stage anchor = 10
+- `2026-09-01T11:19:26` journey J1 -> red
+- `2026-09-01T11:19:26` journey J2 -> red
+- `2026-09-01T11:19:26` journey J3 -> red
+- `2026-09-01T11:19:26` journey J4 -> red
+- `2026-09-01T11:19:26` journey J5 -> red
+- `2026-09-01T11:19:26` journey J6 -> red
+- `2026-09-01T11:19:26` journey J7 -> red
+- `2026-09-01T11:19:26` journey J8 -> red
+- `2026-09-01T11:19:26` journey J9 -> red
+- `2026-09-01T11:19:26` journey J10 -> red
+- `2026-09-01T11:19:26` journey J11 -> red
+- `2026-09-01T11:19:26` journey J12 -> red
+- `2026-09-01T11:19:31` stage journey = 12
