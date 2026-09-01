@@ -66,6 +66,12 @@ jobs:
           php artisan doctor --stage=integrity
           php artisan doctor --stage=journey
 
+      - name: Configure Postgres Role
+        run: |
+          PGPASSWORD=password psql -h 127.0.0.1 -U postgres -d goaiez_antig_test -c "CREATE ROLE goaiez_app WITH LOGIN PASSWORD password\ NOBYPASSRLS;"
+          PGPASSWORD=password psql -h 127.0.0.1 -U postgres -d goaiez_antig_test -c "GRANT ALL PRIVILEGES ON DATABASE goaiez_antig_test TO goaiez_app;"
+          PGPASSWORD=password psql -h 127.0.0.1 -U postgres -d goaiez_antig_test -c "ALTER SCHEMA public OWNER TO goaiez_app;"
+
       - name: Run Test Suite
         working-directory: app
         env:
@@ -73,7 +79,7 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DB_DATABASE: goaiez_antig_test
-          DB_USERNAME: postgres
+          DB_USERNAME: goaiez_app
           DB_PASSWORD: password
           QUEUE_CONNECTION: database
         run: ./vendor/bin/pest
