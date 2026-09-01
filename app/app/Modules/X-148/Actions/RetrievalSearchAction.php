@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\X148\Actions;
 
+use App\Enums\AiModel;
+use App\Enums\AiTask;
 use App\Modules\X148\Events\RetrievalCompleted;
 use App\Modules\X148\Events\RetrievalEmpty;
 use App\Modules\X148\Models\KnowledgeChunk;
 use App\Modules\X148\Models\RetrievalCache;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\DB;
-use App\Services\Ai\OpenAiEmbeddingClient;
 use App\Services\Ai\EmbeddingRequest;
-use App\Enums\AiModel;
-use App\Enums\AiTask;
+use App\Services\Ai\OpenAiEmbeddingClient;
+use Illuminate\Support\Facades\Event;
 
 final class RetrievalSearchAction
 {
@@ -33,20 +32,20 @@ final class RetrievalSearchAction
             $client = new OpenAiEmbeddingClient(AiModel::TextEmbedding3Small);
             $request = new EmbeddingRequest(AiTask::ReplyGeneration, [$query]);
             $response = $client->embed($request);
-            
-            if (!$response->isUsable()) {
-                throw new \Exception("Embedding failed: " . $response->failureReason);
+
+            if (! $response->isUsable()) {
+                throw new \Exception('Embedding failed: '.$response->failureReason);
             }
-            
+
             $queryVector = $response->vectors[0];
-            $vectorString = '[' . implode(',', $queryVector) . ']';
-            
+            $vectorString = '['.implode(',', $queryVector).']';
+
             // Pgvector search: cosine distance <=>
             $chunks = KnowledgeChunk::where('business_id', $businessId)
                 ->orderByRaw('embedding_vector <=> ?', [$vectorString])
                 ->limit(5)
                 ->get();
-                
+
         } catch (\Exception $e) {
             // Fallback to text search if OpenAI is unavailable
             $chunks = KnowledgeChunk::where('business_id', $businessId)

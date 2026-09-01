@@ -10,6 +10,7 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module C-Agent
+ *
  * @intent SERVE under §227.2
  */
 return [

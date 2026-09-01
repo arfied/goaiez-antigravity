@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Patches;
 
-use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

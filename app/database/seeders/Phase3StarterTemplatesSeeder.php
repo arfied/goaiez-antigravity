@@ -11,7 +11,7 @@ class Phase3StarterTemplatesSeeder extends Seeder
     public function run()
     {
         Tenancy::set(5); // Pilot tenant
-        
+
         $templates = [
             ['business_id' => 5, 'industry_code' => 'clinic', 'funnel_type' => 'lead_gen', 'conversion_rate' => 0.12, 'design_tokens' => json_encode(['theme' => 'blue_medical', 'font' => 'sans-serif'])],
             ['business_id' => 5, 'industry_code' => 'trades', 'funnel_type' => 'quote_request', 'conversion_rate' => 0.08, 'design_tokens' => json_encode(['theme' => 'rugged_orange', 'font' => 'serif'])],

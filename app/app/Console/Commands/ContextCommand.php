@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Doctor\DeclarationParser;
 use App\Doctor\ManifestReader;
 use Illuminate\Console\Command;
 

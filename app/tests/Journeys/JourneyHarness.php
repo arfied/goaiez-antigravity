@@ -84,7 +84,7 @@ trait JourneyHarness
      * Must NOT read a queued job or an intent — only a row carrying the
      * PROVIDER'S OWN id, which nothing in this system can mint.
      *
-     * @param array<string,mixed> $tenant
+     * @param  array<string,mixed>  $tenant
      * @return array<string,mixed>|null
      */
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array

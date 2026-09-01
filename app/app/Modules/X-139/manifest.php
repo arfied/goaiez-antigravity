@@ -10,6 +10,7 @@ declare(strict_types=1);
  * re-run the scaffold.
  *
  * @module X-139
+ *
  * @intent INFORM under §227.2
  */
 return [
