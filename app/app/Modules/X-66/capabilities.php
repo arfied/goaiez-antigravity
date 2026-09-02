@@ -34,11 +34,11 @@ return [
     'G18-23' => 'transcription into the one Conversation',
 
     // status: SPECCED
-    'G16-33' => '§226.4 — the legitimate USE of enrolment: confirming the caller changing their own booking · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ enrolment confirms a caller changing their OWN booking; no other use path exists',
+    'G16-33' => '',
 
     // status: SPECCED
-    'G16-34' => '§226.4 · P-202 — the tenant\'s OWN voice only, recorded consent, AI disclosure on every message · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ the tenant OWN voice only, recorded consent; P-202 disclosure on every message, asserted per channel',
+    'G16-34' => '',
 
     // status: SPECCED
-    'G18-28' => '§217.2 · P-202 — "PASSIVELY" STRUCK; opt-in enrolment, the voiceprint is a `secure` field · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ "PASSIVELY" IS STRUCK — doctor asserts NO passive enrolment path exists; the voiceprint is a `secure` field',
+    'G18-28' => '',
 ];

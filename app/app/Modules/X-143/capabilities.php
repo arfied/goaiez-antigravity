@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-143-01' => 'an action marked surfaces webmcp is reachable there AND REFUSED on every surface it does not declare',
+    'N-143-01' => '',
 ];

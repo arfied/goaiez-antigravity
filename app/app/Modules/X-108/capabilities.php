@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-12' => 'refuses: card data touches our DOM; tokens only (P-160), the iframe boundary asserted',
+    'G1-12' => 'tokens only (P-160), the iframe boundary asserted',
 
     // status: SPECCED
     'G2-04' => 'Google/Outlook calendars; the header already owns Calendly/Eventbrite sync',
@@ -67,5 +67,5 @@ return [
     'G19-20' => '24h · 1h · 10min;  one segment = one credit, a meter and never a fee',
 
     // status: SPECCED
-    'G15-32' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R188 — work not pay; doctor asserts no pay field',
+    'G15-32' => '',
 ];

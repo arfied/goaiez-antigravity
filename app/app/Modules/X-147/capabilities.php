@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-147-01' => '⛔⛔ every RCS to SMS degrade writes rcs.degraded_to_sms — a paid-for RCS send never silently becomes an SMS',
+    'N-147-01' => '',
 ];

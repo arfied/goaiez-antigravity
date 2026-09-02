@@ -22,14 +22,14 @@ declare(strict_types=1);
  */
 return [
     // status: *asserted: `$ai->for(module, jobClass, slot)` returns a ROW, never a vendor string.* ⛔ **REFUSES with `NO_ASSIGNMENT` when no row exists — it does NOT fall back to a default model**
-    'N-219-01' => '*asserted: `$ai->for(module, jobClass, slot)` returns a ROW, never a vendor string.* ⛔ **REFUSES with `NO_ASSIGNMENT` when no row exists — it does NOT fall back to a default model**',
+    'N-219-01' => '',
 
     // status: *asserted: an assignment whose PRIMARY and BACKUP share a provider FAILS the build (`N-237-03`).* ⛔ **REFUSES the write — a vendor outage takes every model it serves**
-    'N-219-02' => '*asserted: an assignment whose PRIMARY and BACKUP share a provider FAILS the build (`N-237-03`).* ⛔ **REFUSES the write — a vendor outage takes every model it serves**',
+    'N-219-02' => '',
 
     // status: *asserted: `self_hosted = true` with a base url and no vendor key RESOLVES.* ⛔ **REFUSES any code path that assumes a commercial API**
-    'N-219-03' => '*asserted: `self_hosted = true` with a base url and no vendor key RESOLVES.* ⛔ **REFUSES any code path that assumes a commercial API**',
+    'N-219-03' => '',
 
     // status: *asserted: `deprecates_at` within 30 days RAISES (`R219`).* ⛔ **REFUSES the build when a sunset model sits in PRIMARY with no BACKUP**
-    'N-219-04' => '*asserted: `deprecates_at` within 30 days RAISES (`R219`).* ⛔ **REFUSES the build when a sunset model sits in PRIMARY with no BACKUP**',
+    'N-219-04' => '',
 ];

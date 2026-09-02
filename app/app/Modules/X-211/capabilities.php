@@ -22,20 +22,20 @@ declare(strict_types=1);
  */
 return [
     // status:
-    'N-033' => 'a fee with no matching TERM is refused · a plan past the threshold routes to a financing partner · offline payment needs a reference or a photo · collections is a human action only · an open RECOVER blocks dunning entirely',
+    'N-033' => '',
 
     // status: SPECCED
-    'G1-61' => '§226.1 — the reason is stated in plain words; the threshold is a ROW (P-193) · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ past the threshold it ROUTES TO A FINANCING PARTNER; doctor asserts no tenant-owed instalment schedule is stored by us · the threshold is a ROW (P-193)',
+    'G1-61' => '',
 
     // status: SPECCED
-    'G1-65' => '§226.1 — ⭐ **the package is BUILT autonomously**; ⛔ transmission to an agency is a human action **because money and a debt leave the tenant\'s control** *(`P-096`/`D5`\'s irreversible step — **`R235`-COMPLIANT**, not a posture)* · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ doctor asserts NO path to ar.packaged without a recorded human action · L1 forever · R211: a resolution attempt is recorded first',
+    'G1-65' => '',
 
     // status: SPECCED
-    'G1-70' => '§226.1 — beyond the threshold it ROUTES TO A FINANCING PARTNER; we never hold the paper · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ past the threshold it ROUTES TO A FINANCING PARTNER; we never hold the paper — asserted',
+    'G1-70' => '',
 
     // status: CLASSIFIED
-    'G1-71' => '§226.1 — a fee with no matching TERM in the agreement is REFUSED (P-092) · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads',
+    'G1-71' => '',
 
     // status: SPECCED
-    'G1-74' => '§226.1 — a reference or photo is MANDATORY; reconciles against the deposit · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a reference or photo is MANDATORY and reconciles against the deposit; an unreconciled logged payment is REFUSED',
+    'G1-74' => '',
 ];

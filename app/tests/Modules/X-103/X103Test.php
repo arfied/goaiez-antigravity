@@ -90,7 +90,7 @@ class X103Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $slug = 'summer-ac-' . uniqid();
+        $slug = 'summer-ac-'.uniqid();
         $funnel = $this->funnelAction->handle(
             businessId: $biz->id,
             name: 'Summer Promo Funnel',

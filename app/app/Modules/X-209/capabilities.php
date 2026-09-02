@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-209-01' => 'the employee\'s agent reaches only what THAT EMPLOYEE may reach — asserted per employee, not per tenant',
+    'N-209-01' => '',
 ];

@@ -85,5 +85,5 @@ return [
     'G18-26' => 'live webinar rooms and tokens',
 
     // status: SPECCED
-    'G16-32' => '§226.4 · P-202 — the disclosure is rendered IN the frame, not only in metadata · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ the disclosure is rendered IN THE FRAME — asserted on the output file, not the request',
+    'G16-32' => '',
 ];

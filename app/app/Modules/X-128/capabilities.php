@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status:
-    'N-049' => 'NO Fact → NO SKILL, on EVERY action, with no bypass path · a refusal always carries one of P-060\'s codes · a rate ceiling is a config ROW, never a literal ·  the gate is evaluated BEFORE the model sees the tool, not after',
+    'N-049' => '',
 ];

@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-207-01' => '⭐ every push origin passes ConsentService::decide with channel push; no push payload carries a secret field',
+    'N-207-01' => '',
 ];

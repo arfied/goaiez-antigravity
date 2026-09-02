@@ -25,17 +25,17 @@ return [
     'G1-03' => 'a categorisation below confidence goes to a review queue, never to a ledger, asserted ·  DONE-UNVERIFIED per file 13 — no QuickBooks/Xero account exists to test against',
 
     // status: SPECCED
-    'G1-77' => '§216.1 — corporate-card expense capture, NOT bank verification (a title collision) · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ EXPENSE CAPTURE, not bank verification — a title collision, asserted by absence of any verification path',
+    'G1-77' => '',
 
     // status: SPECCED
-    'G15-13' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ an uncertain OCR goes to a REVIEW QUEUE, never to a ledger',
+    'G15-13' => '',
 
     // status: SPECCED
-    'G15-22' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ P-204: lands as a JOB COST; doctor asserts NO payment-to-a-person path in this module',
+    'G15-22' => '',
 
     // status: SPECCED
-    'G15-25' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ mileage is a job cost with its route recorded; no payment path',
+    'G15-25' => '',
 
     // status: SPECCED
-    'G15-26' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ the chase is a REMINDER, never a penalty (§150.4)',
+    'G15-26' => '',
 ];

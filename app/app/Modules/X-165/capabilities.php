@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-165-01' => 'a membership price taps through X-163\'s confirmation — ⛔ X-165 NEVER authors a price',
+    'N-165-01' => '',
 ];

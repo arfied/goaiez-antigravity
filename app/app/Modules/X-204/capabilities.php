@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status:
-    'N-013' => 'refuses: a push is still a SEND; it passes X-204 and the cadence ceiling — asserted',
+    'N-013' => '',
 ];

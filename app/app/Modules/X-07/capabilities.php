@@ -52,5 +52,5 @@ return [
     'G17-19' => 'named in the header',
 
     // status: SPECCED
-    'G9-42' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ every output is labelled a SIMULATION; a simulated figure never renders like a measured one',
+    'G9-42' => '',
 ];

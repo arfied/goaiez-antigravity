@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-206-01' => '⛔⛔ a key still present in .env after wave 0\'s gate FAILS THE GATE',
+    'N-206-01' => '',
 
     // status: SPECCED
-    'N-206-02' => '⛔ **you may reveal what you OWN, never what you do not** *(§178)* — a reveal is a named, logged action carrying WHO · WHEN · WHICH KEY, and ⛔ **a secret is NEVER returned in plaintext to any caller, including its owner, including an admin, including the AI**',
+    'N-206-02' => '',
 ];

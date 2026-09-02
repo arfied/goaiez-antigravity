@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-08' => 'own table `disputes` · own events `dispute.opened/evidence.compiled/resolved` · operator queue UI — passes all three tests, no parent exists. ⛔ "instantly suspends" must ride **R83 · transcribed from the G1 audit 2026-08-27',
+    'G1-08' => '',
 ];

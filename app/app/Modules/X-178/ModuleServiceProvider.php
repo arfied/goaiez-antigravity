@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X178;
 
 use App\Modules\X178\Ui\SiteEditorAssistant;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -22,9 +23,9 @@ final class ModuleServiceProvider extends ServiceProvider
 
         if (class_exists(Livewire::class)) {
             Livewire::component('x-178.site-editor-assistant', SiteEditorAssistant::class);
-            
-            \Illuminate\Support\Facades\Route::middleware(['web'])->group(function () {
-                \Illuminate\Support\Facades\Route::get('/x-178/site-editor-assistant', SiteEditorAssistant::class)->name('x-178.site-editor-assistant');
+
+            Route::middleware(['web'])->group(function () {
+                Route::get('/x-178/site-editor-assistant', SiteEditorAssistant::class)->name('x-178.site-editor-assistant');
             });
         }
     }

@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-129-01' => '⛔ a tenant is NEVER left on a dead site during migration (R130) — cutover reversible until DNS propagates',
+    'N-129-01' => '',
 ];
