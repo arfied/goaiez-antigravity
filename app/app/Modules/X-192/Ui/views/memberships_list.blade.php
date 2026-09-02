@@ -27,7 +27,7 @@
                             @endif
                         </div>
                         @if($membership->is_noindex)
-                            <p class="mt-2 text-xs text-ink-2">Google is instructed not to index this listing.</p>
+                            <p class="mt-2 text-xs text-ink-2">Google can't see this</p>
                         @endif
                     </div>
                 </div>
