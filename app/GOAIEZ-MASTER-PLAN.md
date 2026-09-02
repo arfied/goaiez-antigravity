@@ -27876,13 +27876,13 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G10-32 | Redline Negotiation | ENH | X-172 | a clause comment from the customer; the decision routes to X-202 |
 | G10-33 | Scrubbing API | ⭐⭐ **UNMAPPED** | *ConsentService* | = Automated TCPA Scrubbing; one spec |
 | G10-34 | Sequential Logic | ENH | X-202 | multi-stage sequential approval — the desk's core state machine |
-| G10-35 | Signature Verification | ENH | X-122 | HMAC-SHA256 on every outbound webhook is named in the header |
+| G10-35 | Signature Verification | ENH | X-122 | HMAC-SHA256 on every outbound webhook is named in the header · refuses: an outbound webhook without HMAC-SHA256 |
 | G10-36 | Tax Compliance | ⭐⭐ **UNMAPPED** | *AffiliateProgram* | W-9 threshold freezes a payout; ⚠️ Law 122 — the switch and the threshold as data, never the advice |
 | G10-37 | Under-18 Guardrails | ENH | C-Agent | ⛔ P-148 — under-18 rejected at ingest; the agent halts and hands off |
 | G10-38 | Unified Guardrail Law | ENH | X-193 | = Quiet Hours Enforcement; one spec. The class is decided from the CALLER, never the content (P-062) |
 | G10-39 | Variable Injection | ENH | X-164 | CRM variables into a template; see F-19 |
 | G10-40 | WhatsApp Opt-In Engine | ENH | C-Whatsapp | a scan or shortcode registers the opt-in; the permit itself is *ConsentService*'s |
-| G10-41 | Zapier/Make Payload Signatures | ENH | X-122 | per-tenant HMAC secret on the outbound payload |
+| G10-41 | Zapier/Make Payload Signatures | ENH | X-122 | per-tenant HMAC secret on the outbound payload · refuses: an outbound payload without the per-tenant HMAC secret |
 
 **G10 COUNT:** 41 = **30 enhancement** + 3 re-homed + 2 killed + 6 unmapped · **minted by this audit: 0** · ⭐ **enhancement ratio 80%**
 
