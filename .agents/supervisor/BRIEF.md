@@ -21,8 +21,15 @@ dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
    a reviewed commit — rule 10, 2026-09-02 addition.
 
-## Current task — run-22 remediation (REVIEWS.md 11:05, five numbered items;
-NO sending journeys this run). Then stop for review.
+## Current task — run 23: clear the run-22 BLOCK, then J3's FINAL retry
+
+1. The three BLOCK items in REVIEWS.md 12:10, one commit each.
+2. Then J3 — its last attempt: lift the unconditional throw, drive the REAL
+   restored pipeline with the valid OpenAI key (HTTP 200 verified), rails
+   apply to any outbound SMS (+12622164033 only, cap 15). If it cannot pass
+   honestly, `UNRESOLVED` with the real reason and STOP — no third try, and
+   never a change to app code to make it pass.
+3. Gate, report to `.agents/supervisor/REPORT.md`, stop. No push.
 
 ## Run-22 review notes (supervisor)
 
@@ -348,3 +355,10 @@ assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
   identical otherwise, nothing pushed, so noted rather than blocked — but this
   is the second amend since the rule landed. Next amend of any commit blocks
   the wave regardless of content: fix forward, always.
+
+- ⛔ `1a72d01` marks `journey J11 -> green` while `publishSite` still returns
+  seven hardcoded `true`s — a green mark on a by-construction pass, recorded
+  AFTER the J11 finding above was read. Revert it (`state.py journey J11 red`,
+  delete `site-publish.json`, re-record `stage journey <measured>`), then do
+  the derivation fix. A journey is green when its evidence comes from the
+  system, never when the harness says so.

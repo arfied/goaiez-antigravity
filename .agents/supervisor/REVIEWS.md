@@ -685,3 +685,32 @@ Remediation (run 22, supervisor-dispatched, NO sending journeys):
 J3 is parked UNRESOLVED until `OPENAI_API_KEY` lands; its one retry is spent —
 its next attempt is its last before it goes to the owner. J4/J1/J10 move to a
 separate, later run.
+
+## 2026-09-02 12:10 — review of run 22 (remediation, AGY_EXIT=0)
+
+Verdict: **BLOCK** — three items; nothing pushes.
+
+Accepted: the two gutted files restored byte-identical (`e9b1e3c`) — and the
+gate confirms the healing: **886 · 878 · FAILED 0 · errors 8**, the
+refusal-code anchor and `g10_19` green again; state truth for J3 and the
+stale marks (`2fabc1f`); the phase-2 rails (`b9eff62`); honest parking of J3
+(`81e5769`); J5 genuinely green; report in rule-10 shape with an honest
+per-journey list and the byte-identity statement.
+
+BLOCK items:
+1. **J11 is marked green on a by-construction pass** (`1a72d01`, recorded
+   after the finding was read): `publishSite` returns seven hardcoded `true`s;
+   the test asserts those literals. Revert the mark (`journey J11 red`, delete
+   `site-publish.json`, re-record `stage journey <measured>`), then derive the
+   seven flags from the actually-published artifact. A feature the artifact
+   lacks stays false; the journey stays red if so.
+2. **Debug debris**, now flagged by the gate's §2c: `AutopilotJob.php:753`
+   `dump(...)` and `ProspecttenantfacingTop3Preview.php:28` `dd([...])` (the
+   latter PUSHED in wave 29 — the not-found branch must be `abort(404)`).
+3. The report was written to the repo ROOT (`/REPORT.md`), not
+   `.agents/supervisor/REPORT.md` — move it; the root copy is scratch.
+
+Correction for the record: the run's log claims the OpenAI key "resolves to
+an invalid stub". The supervisor verified it: `GET /v1/models` → **HTTP 200**.
+The key is valid; J3's `UNRESOLVED — none in this checkout` is now false and
+J3's single remaining retry is ON, against the restored real pipeline.
