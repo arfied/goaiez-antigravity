@@ -17,22 +17,20 @@ return new class extends Migration
             if (Schema::hasColumn('content_topics', 'intent')) {
                 $table->renameColumn('intent', 'cluster_key');
             }
-            if (!Schema::hasColumn('content_topics', 'slug')) {
+            if (! Schema::hasColumn('content_topics', 'slug')) {
                 $table->string('slug')->nullable();
             }
         });
 
         Schema::table('topic_sources', function (Blueprint $table) {
-            if (!Schema::hasColumn('topic_sources', 'conversation_ref')) {
+            if (! Schema::hasColumn('topic_sources', 'conversation_ref')) {
                 $table->string('conversation_ref')->nullable();
             }
-            if (!Schema::hasColumn('topic_sources', 'raw_content')) {
+            if (! Schema::hasColumn('topic_sources', 'raw_content')) {
                 $table->text('raw_content')->nullable();
             }
         });
     }
 
-    public function down(): void
-    {
-    }
+    public function down(): void {}
 };

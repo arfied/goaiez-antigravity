@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X140;
 
+use App\Models\User;
 use App\Modules\X140\Actions\ContentDraftFromConversationAction;
 use App\Modules\X140\Actions\TopicIdentifyAction;
 use App\Modules\X140\Events\ContentCreated;
 use App\Modules\X140\Events\TopicIdentified;
 use App\Modules\X140\Models\ContentTopic;
 use App\Modules\X140\Models\TopicSource;
-use Illuminate\Support\Facades\DB;
+use App\Modules\X140\Ui\ProposedPagesView;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -37,7 +39,7 @@ class X140Test extends TestCase
         Event::fake([TopicIdentified::class, ContentCreated::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
         $topic = $this->topicAction->identify($biz->id, 'Commercial HVAC Emergency Repairs', 'emergency_repair');
         $this->assertNotNull($topic);
@@ -106,13 +108,13 @@ class X140Test extends TestCase
     public function test_screen_loads_for_authed_user(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
-        $user = \App\Models\User::first();
+        $user = User::first();
 
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
         $this->actingAs($user)
             ->get('/account/content-topics')
             ->assertOk()
-            ->assertSeeLivewire(\App\Modules\X140\Ui\ProposedPagesView::class);
+            ->assertSeeLivewire(ProposedPagesView::class);
     }
 }

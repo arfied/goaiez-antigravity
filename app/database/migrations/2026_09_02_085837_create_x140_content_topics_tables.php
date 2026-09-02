@@ -11,7 +11,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('content_topics')) {
+        if (! Schema::hasTable('content_topics')) {
             Schema::create('content_topics', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('business_id');
@@ -35,7 +35,7 @@ return new class extends Migration
             SQL);
         }
 
-        if (!Schema::hasTable('topic_sources')) {
+        if (! Schema::hasTable('topic_sources')) {
             Schema::create('topic_sources', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('business_id');

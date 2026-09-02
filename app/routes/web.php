@@ -140,6 +140,7 @@ use App\Livewire\Setup\Welcome;
 use App\Livewire\Support\Accounts as SupportAccounts;
 use App\Livewire\Support\DataRequestQueue as SupportDataRequestQueue;
 use App\Livewire\Support\Tickets as SupportTickets;
+use App\Modules\X140\Ui\ProposedPagesView;
 use App\Services\ShortLinks\ShortLinks;
 use App\Support\Admin\AdminAccess;
 use App\Support\Admin\SupportAccess;
@@ -2200,7 +2201,7 @@ Route::middleware('auth')
 |--------------------------------------------------------------------------
 */
 Route::middleware(['web', 'auth'])
-    ->get('/account/content-topics', \App\Modules\X140\Ui\ProposedPagesView::class)
+    ->get('/account/content-topics', ProposedPagesView::class)
     ->name('account.content-topics');
 
 Route::get('/{token}', ShortLinkController::class)
