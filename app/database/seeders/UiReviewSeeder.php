@@ -36,10 +36,9 @@ class UiReviewSeeder extends Seeder
 
             Tenancy::forget();
         } else {
-            $business = Business::where('owner_user_id', $owner->id)->first();
-            if ($business) {
-                $business->update(['advanced_dashboard_enabled' => true]);
-            }
+            \Illuminate\Support\Facades\DB::table('businesses')
+                ->where('owner_user_id', $owner->id)
+                ->update(['advanced_dashboard_enabled' => true]);
         }
     }
 }
