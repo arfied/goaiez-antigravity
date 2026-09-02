@@ -78,7 +78,7 @@ final class RuntimeProofCommand extends Command
         }
 
         $hasName = str_contains($junitContent, 'an_invoice_reaches_a_real_charge_id') || str_contains($junitContent, 'An invoice reaches a real charge id');
-        
+
         $rootSuite = null;
         if ($junitXml->getName() === 'testsuites' && isset($junitXml->testsuite[0])) {
             $rootSuite = $junitXml->testsuite[0];
@@ -86,8 +86,9 @@ final class RuntimeProofCommand extends Command
             $rootSuite = $junitXml;
         }
 
-        if (!$rootSuite) {
+        if (! $rootSuite) {
             $this->error('junit.xml does not contain a root testsuite');
+
             return self::FAILURE;
         }
 
@@ -107,7 +108,7 @@ final class RuntimeProofCommand extends Command
         $capturedAt = null;
         if (isset($rootSuite['timestamp'])) {
             $capturedAt = (string) $rootSuite['timestamp'];
-        } elseif (!empty($invoicePaidData['captured_at'])) {
+        } elseif (! empty($invoicePaidData['captured_at'])) {
             $capturedAt = $invoicePaidData['captured_at'];
         } else {
             $this->error('Neither junit.xml nor invoice-to-paid.json provided a capture time');
