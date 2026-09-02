@@ -81,31 +81,45 @@ class UiReviewSeeder extends Seeder
             $location = Location::factory()->create(['business_id' => $businessId]);
         }
 
-        $page = FeedbackPage::firstWhere('slug', 'review-business-2');
+        $page = FeedbackPage::firstWhere('location_id', $location->id);
         if (! $page) {
-            $page = FeedbackPage::firstWhere('location_id', $location->id);
-            if (! $page) {
+            try {
                 FeedbackPage::factory()->forLocation($location)->create([
                     'slug' => 'review-business-2',
                     'is_published' => true,
                 ]);
-            } else {
-                $page->update(['slug' => 'review-business-2']);
+            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                // Already exists for another tenant or this tenant
+            }
+        } else {
+            if (empty($page->slug) || \Illuminate\Support\Str::startsWith($page->slug, 'review-business-2')) {
+                try {
+                    $page->update(['slug' => 'review-business-2']);
+                } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                    // Slug taken
+                }
             }
         }
 
-        $hubPage = \App\Models\ReviewHubPage::firstWhere('slug', 'review-business-2');
+        $hubPage = \App\Models\ReviewHubPage::firstWhere('location_id', $location->id);
         if (! $hubPage) {
-            $hubPage = \App\Models\ReviewHubPage::firstWhere('location_id', $location->id);
-            if (! $hubPage) {
+            try {
                 \App\Models\ReviewHubPage::factory()->create([
                     'location_id' => $location->id,
                     'business_id' => $businessId,
                     'slug' => 'review-business-2',
                     'is_published' => true,
                 ]);
-            } else {
-                $hubPage->update(['slug' => 'review-business-2']);
+            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                // Already exists
+            }
+        } else {
+            if (empty($hubPage->slug) || \Illuminate\Support\Str::startsWith($hubPage->slug, 'review-business-2')) {
+                try {
+                    $hubPage->update(['slug' => 'review-business-2']);
+                } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                    // Slug taken
+                }
             }
         }
 
