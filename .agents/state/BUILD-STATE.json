@@ -1211,6 +1211,14 @@
   {
    "at": "2026-09-02T14:08:56",
    "note": "UNRESOLVED J12 \u2014 makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue."
+  },
+  {
+   "at": "2026-09-02T15:10:38",
+   "note": "ArEscalatedToHuman in X-211 has no listener (missing reader in X-211/Ui/** which is Track 2's)."
+  },
+  {
+   "at": "2026-09-02T15:10:38",
+   "note": "UNRESOLVED J12 \u2014 waiting on track/sixty merge"
   }
  ],
  "decisions": [

@@ -491,3 +491,5 @@
 - `2026-09-02T14:06:36` note: UNRESOLVED journey J9 — payment provider test-mode keys absent
 - `2026-09-02T14:06:44` (R245) X-198 — (R245) X-198 — Stripe selected as the payment provider; StripeGatewayClient posts to api.stripe.com/v1/charges and reads config('credentials.stripe_secret') = env('STRIPE_SECRET'). X-198's migration comments list stripe, square, clover, plaid as candidates; the choice is provisional pending an owner ruling.
 - `2026-09-02T14:08:56` note: UNRESOLVED J12 — makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue.
+- `2026-09-02T15:10:38` note: ArEscalatedToHuman in X-211 has no listener (missing reader in X-211/Ui/** which is Track 2's).
+- `2026-09-02T15:10:38` note: UNRESOLVED J12 — waiting on track/sixty merge

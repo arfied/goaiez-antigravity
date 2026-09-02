@@ -48,7 +48,6 @@ final class ArOverdueQueueTest extends TestCase
         });
     }
 
-
     public function test_listener_is_idempotent_when_processing_duplicate_events(): void
     {
         $business = Business::factory()->create();
@@ -71,7 +70,7 @@ final class ArOverdueQueueTest extends TestCase
         });
 
         Tenancy::forgetAll();
-        
+
         $this->artisan('queue:work --stop-when-empty');
 
         Tenancy::actingAs((int) $business->id, function () use ($business) {
