@@ -427,16 +427,19 @@ trait JourneyHarness
             [['type' => 'hero']]
         );
 
+        $version = \App\Modules\X103\Models\PageVersion::findOrFail($published['version_id']);
+        $blocks = json_encode($version->content_blocks ?? []);
+
         return [
             'deploy_id' => $published['commit_id'],
             'features' => [
-                'pixel' => true, // G9-04 site law
-                'chat' => true,
-                'form_capture' => true,
-                'dni' => true,
-                'seo' => true,
-                'schema' => true,
-                'ssl' => true,
+                'pixel' => (bool)$version->pixel_installed,
+                'chat' => str_contains($blocks, 'chat_widget'),
+                'form_capture' => str_contains($blocks, 'form_capture'),
+                'dni' => str_contains($blocks, 'dni_script'),
+                'seo' => str_contains($blocks, 'seo_tags'),
+                'schema' => str_contains($blocks, 'schema_markup'),
+                'ssl' => isset($version->ssl_installed) ? (bool)$version->ssl_installed : false,
             ],
         ];
     }
