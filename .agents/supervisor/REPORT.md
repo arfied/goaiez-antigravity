@@ -42,5 +42,7 @@ Gate evidence for X-151:
  ⛔ 7 GATE doctor reports violations — see `php artisan doctor`
 
 supervise.sh verdict:
+== 7. test suite
+tests 873 · passed 861 · errors 12 · result failed (the 12 journey errors)
 == verdict
   ⛔ a gate failed above.
