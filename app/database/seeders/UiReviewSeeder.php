@@ -34,13 +34,13 @@ class UiReviewSeeder extends Seeder
         }
 
         $staffUser = User::updateOrCreate(['email' => 'staff@business.com'], [
-                'email' => 'staff@business.com',
-                'name' => 'Staff Review',
-                'role' => 'super_admin',
-                'two_factor_secret' => encrypt('dummy_secret'),
-                'two_factor_recovery_codes' => encrypt(json_encode(array_fill(0, 50, '12345-67890'))),
-                'two_factor_confirmed_at' => now(),
-            ]);
+            'email' => 'staff@business.com',
+            'name' => 'Staff Review',
+            'role' => 'super_admin',
+            'two_factor_secret' => encrypt('dummy_secret'),
+            'two_factor_recovery_codes' => encrypt(json_encode(array_fill(0, 50, '12345-67890'))),
+            'two_factor_confirmed_at' => now(),
+        ]);
 
         $setupUser = User::firstWhere('email', 'setup@business.com');
         if (! $setupUser) {
