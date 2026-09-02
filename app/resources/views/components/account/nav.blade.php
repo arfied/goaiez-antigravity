@@ -98,17 +98,9 @@
         @if ($more !== [])
             <details class="relative shrink-0 ms-1">
                 <summary
-                    @class([
-                        'flex min-h-9 sm:min-h-10 cursor-pointer list-none items-center rounded-[--radius-control] px-2.5 sm:px-3 text-xs sm:text-sm font-medium transition whitespace-nowrap focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent',
-                        'bg-paper text-ink font-semibold border-rule shadow-xs' => $moreIsCurrent,
-                        'text-ink-2 hover:text-ink hover:bg-paper/50' => ! $moreIsCurrent,
-                    ])
+                    class="flex min-h-9 sm:min-h-10 cursor-pointer list-none items-center rounded-[--radius-control] px-2.5 sm:px-3 text-xs sm:text-sm font-medium transition whitespace-nowrap focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent text-ink-2 hover:text-ink hover:bg-paper/50"
                 >
-                    @if ($moreCurrentLabel !== null)
-                        <span>More: {{ $moreCurrentLabel }}</span>
-                    @else
-                        <span>More ▾</span>
-                    @endif
+                    <span>More ▾</span>
 
                     @if ($moreBadge !== null)
                         <span
@@ -126,8 +118,8 @@
                                 href="{{ route($item->route) }}"
                                 @if ($current) aria-current="page" @endif
                                 @class([
-                                    'flex min-h-9 items-center justify-between rounded-[--radius-control] px-3 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none',
-                                    'bg-paper font-semibold text-ink' => $current,
+                                    'flex min-h-9 items-center justify-between rounded-[--radius-control] px-3 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent',
+                                    'bg-paper text-ink shadow-xs font-semibold border-rule' => $current,
                                     'text-ink-2 hover:text-ink hover:bg-paper/50' => ! $current,
                                 ])
                             >
