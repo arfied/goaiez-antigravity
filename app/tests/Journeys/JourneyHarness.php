@@ -5,17 +5,21 @@ declare(strict_types=1);
 namespace Tests\Journeys;
 
 use App\Exceptions\NumberPoolExhausted;
+use App\Models\AuditLogEntry;
 use App\Models\Business;
+use App\Models\ConsentRecord;
 use App\Models\Customer;
 use App\Models\OutreachMessage;
 use App\Models\User;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X186\Models\CampaignStep;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Process;
 
 /**
@@ -104,16 +108,16 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function personWithPendingSteps(array $tenant, int $count): array
     {
-        return \App\Support\Tenancy::actingAs($tenant['id'], function () use ($tenant, $count) {
+        return Tenancy::actingAs($tenant['id'], function () use ($tenant, $count) {
             $phone = '+1555000'.rand(1000, 9999);
-            $customer = \App\Models\Customer::create([
+            $customer = Customer::create([
                 'business_id' => $tenant['id'],
                 'phone' => $phone,
                 'first_name' => 'Pending',
                 'last_name' => 'Steps',
             ]);
 
-            $decision = \App\Models\ConsentRecord::create([
+            $decision = ConsentRecord::create([
                 'business_id' => $tenant['id'],
                 'customer_id' => $customer->id,
                 'channel' => 'sms',
@@ -123,7 +127,7 @@ trait JourneyHarness
             ]);
 
             for ($i = 0; $i < $count; $i++) {
-                \App\Modules\X186\Models\CampaignStep::create([
+                CampaignStep::create([
                     'business_id' => $tenant['id'],
                     'person_id' => $customer->id,
                     'sent_at' => null,
@@ -198,8 +202,8 @@ trait JourneyHarness
                     'from' => $from,
                     'to' => $tenant['_provisioned_number'] ?? null,
                     'cleanText' => $body,
-                ]
-            ]
+                ],
+            ],
         ];
         $payload = json_encode($payloadArray, JSON_THROW_ON_ERROR);
 
@@ -317,18 +321,18 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        $businessId = $this->lastProvisionedBusinessId ?? \App\Support\Tenancy::id();
+        $businessId = $this->lastProvisionedBusinessId ?? Tenancy::id();
         if (! $businessId) {
             $this->fail('consentWasCheckedFor called with no tenant context');
         }
 
-        return \App\Support\Tenancy::actingAs($businessId, function () use ($phone, $businessId) {
-            $customer = \App\Models\Customer::where('phone', $phone)->first();
+        return Tenancy::actingAs($businessId, function () use ($phone, $businessId) {
+            $customer = Customer::where('phone', $phone)->first();
             if (! $customer) {
                 return false;
             }
 
-            $sendKeys = \App\Models\OutreachMessage::where('business_id', $businessId)
+            $sendKeys = OutreachMessage::where('business_id', $businessId)
                 ->where('customer_id', $customer->id)
                 ->whereNotNull('send_key')
                 ->pluck('send_key')
@@ -338,10 +342,10 @@ trait JourneyHarness
                 return false;
             }
 
-            $auditLogs = \App\Models\AuditLogEntry::where('action', 'voice.missed_call.texted_back')->get();
+            $auditLogs = AuditLogEntry::where('action', 'voice.missed_call.texted_back')->get();
 
             foreach ($auditLogs as $log) {
-                $meta = is_array($log->metadata) ? $log->metadata : json_decode((string)$log->metadata, true);
+                $meta = is_array($log->metadata) ? $log->metadata : json_decode((string) $log->metadata, true);
                 if (isset($meta['send_key']) && in_array($meta['send_key'], $sendKeys, true)) {
                     return true;
                 }
@@ -362,11 +366,11 @@ trait JourneyHarness
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
-        return \App\Support\Tenancy::actingAs($person['business_id'], function () use ($person) {
-            $inboundMessage = \Illuminate\Support\Facades\DB::table('inbound_messages')->latest('id')->first();
+        return Tenancy::actingAs($person['business_id'], function () use ($person) {
+            $inboundMessage = DB::table('inbound_messages')->latest('id')->first();
             $receiptTime = $inboundMessage ? $inboundMessage->created_at : now()->subSeconds(2);
 
-            return \App\Models\OutreachMessage::where('business_id', $person['business_id'])
+            return OutreachMessage::where('business_id', $person['business_id'])
                 ->where('customer_id', $person['id'])
                 ->where('created_at', '>', $receiptTime)
                 ->count();
