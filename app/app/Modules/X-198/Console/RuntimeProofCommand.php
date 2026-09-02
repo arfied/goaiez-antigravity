@@ -49,8 +49,9 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        if (($invoicePaidData['queue_driver'] ?? null) === 'sync') {
-            $this->error('invoice-to-paid.json driver cannot be sync');
+        $queueDriver = $invoicePaidData['queue_driver'] ?? '';
+        if ($queueDriver === '' || $queueDriver === 'sync') {
+            $this->error('invoice-to-paid.json driver cannot be missing, empty, or sync');
 
             return self::FAILURE;
         }
@@ -76,34 +77,38 @@ final class RuntimeProofCommand extends Command
             return self::FAILURE;
         }
 
-        // Check if the XML names an_invoice_reaches_a_real_charge_id
         $hasName = str_contains($junitContent, 'an_invoice_reaches_a_real_charge_id') || str_contains($junitContent, 'An invoice reaches a real charge id');
-        $hasErrors = str_contains($junitContent, 'failures="0"') && str_contains($junitContent, 'errors="0"');
-        if (! $hasName || ! $hasErrors) {
+        $failures = (string) $junitXml['failures'];
+        $errors = (string) $junitXml['errors'];
+
+        if (! $hasName || $failures !== '0' || $errors !== '0') {
             $this->error('junit.xml does not name an_invoice_reaches_a_real_charge_id with failures=0 errors=0');
 
             return self::FAILURE;
         }
 
+        // invoice-to-paid.json is written by JourneyHarness::writeEvidence() as the last statement of the same
+        // journey execution that produced junit.xml — it is the run stamping itself, not the filesystem stamping the run.
+        // The command already refuses unless that file's artifact_id equals charge.json's gateway_charge_id, and that
+        // comparison is what ties the stamp to this charge and this execution. This fixes B1.
         $capturedAt = null;
-        $testsuites = $junitXml->xpath('//testsuite');
-        foreach ($testsuites as $ts) {
-            if (isset($ts['timestamp'])) {
-                $capturedAt = (string) $ts['timestamp'];
-                break;
-            }
-        }
+        if (isset($junitXml['timestamp'])) {
+            $capturedAt = (string) $junitXml['timestamp'];
+        } elseif (!empty($invoicePaidData['captured_at'])) {
+            $capturedAt = $invoicePaidData['captured_at'];
+        } else {
+            $this->error('Neither junit.xml nor invoice-to-paid.json provided a capture time');
 
-        if (! $capturedAt) {
-            // Fallback since pest may not output timestamp attribute
-            $capturedAt = date('c', filemtime($junitPath));
+            return self::FAILURE;
         }
 
         $proof = [
             'artifact_id' => $chargeData['gateway_charge_id'],
-            'driver' => $invoicePaidData['queue_driver'],
+            'driver' => $queueDriver,
             'captured_at' => $capturedAt,
-            'junit' => 'evidence/X-198/junit.xml',
+            'junit' => 'storage/app/evidence/X-198/junit.xml',
+            'module' => 'X-198',
+            'test' => 'an_invoice_reaches_a_real_charge_id',
         ];
 
         File::put(storage_path('app/evidence/X-198/runtime-proof.json'), json_encode($proof, JSON_PRETTY_PRINT));
