@@ -90,20 +90,21 @@ class X103Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Linker Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $slug = 'summer-ac-' . uniqid();
         $funnel = $this->funnelAction->handle(
             businessId: $biz->id,
             name: 'Summer Promo Funnel',
             steps: [['url' => '/promo/desktop']],
-            shortSlug: 'summer-ac',
+            shortSlug: $slug,
             deviceRouting: ['mobile' => '/promo/mobile', 'desktop' => '/promo/desktop'],
             clickCap: 5,
             expiresAt: Carbon::now()->addDays(7)
         );
 
-        $mobileRoute = $this->engine->resolveShortLink($biz->id, 'summer-ac', 'mobile');
+        $mobileRoute = $this->engine->resolveShortLink($biz->id, $slug, 'mobile');
         $this->assertEquals('/promo/mobile', $mobileRoute['destination_url']);
 
-        $desktopRoute = $this->engine->resolveShortLink($biz->id, 'summer-ac', 'desktop');
+        $desktopRoute = $this->engine->resolveShortLink($biz->id, $slug, 'desktop');
         $this->assertEquals('/promo/desktop', $desktopRoute['destination_url']);
     }
 
