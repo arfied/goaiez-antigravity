@@ -1208,6 +1208,26 @@
   {
    "at": "2026-08-29T14:37:58",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-02T14:24:07",
+   "note": "X-119 contract stage finding: X-119 consumes 'entity.updated' \u2014 nothing emits it. Missing dependency from X-121 (owning track unknown)."
+  },
+  {
+   "at": "2026-09-02T14:24:07",
+   "note": "X-119 contract stage finding: X-119 consumes 'site.published' \u2014 nothing emits it. Missing dependency from X-157 (track site)."
+  },
+  {
+   "at": "2026-09-02T14:24:07",
+   "note": "X-163 contract stage finding: X-163 consumes 'agent.refused' \u2014 nothing emits it. Missing dependency from C-Agent (track sixty)."
+  },
+  {
+   "at": "2026-09-02T14:38:52",
+   "note": "contract X-119 \u2014 @provides fact.confirm / fact.teach / knowledge.ingest_sync report 'does not declare whether the agent may reach it'. ContractStage:420 re-reports every provided action absent from a POPULATED allow-list; :279 already catches true silence separately. The allow-list of fact.lookup alone IS the denial (P-209). Checker gap, sealed path, not fixable from any track."
+  },
+  {
+   "at": "2026-09-02T14:38:59",
+   "note": "anchor X-119/X-126/X-163 \u2014 no runtime proof. TestAnchorStage requires a vendor-minted artifact id in storage/app/evidence/<id>/runtime-proof.json; these three modules have no external transport and this track has no vendor (CLAUDE.md TRACK 4). Owner action."
   }
  ],
  "decisions": [
