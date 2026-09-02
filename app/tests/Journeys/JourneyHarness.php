@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Exceptions\NumberPoolExhausted;
 use App\Models\Business;
+use App\Models\OutreachMessage;
 use App\Models\User;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X204\Models\SendPermit;
+use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
+use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Symfony\Component\Process\Process;
 
@@ -44,15 +49,15 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        $owner = \App\Models\User::factory()->create();
+        $owner = User::factory()->create();
         try {
-            $business = app(\App\Services\TenantProvisioner::class)->provision($owner);
-            $number = app(\App\Services\Sms\TenantNumbers::class)->displayNumberFor($business->id);
+            $business = app(TenantProvisioner::class)->provision($owner);
+            $number = app(TenantNumbers::class)->displayNumberFor($business->id);
             if (! $number) {
                 $this->fail('UNRESOLVED: No live number provisioned. Pool might be empty.');
             }
-        } catch (\App\Exceptions\NumberPoolExhausted $e) {
-            $this->fail('UNRESOLVED: ' . $e->getMessage());
+        } catch (NumberPoolExhausted $e) {
+            $this->fail('UNRESOLVED: '.$e->getMessage());
         }
 
         return $business->toArray();
@@ -102,21 +107,21 @@ trait JourneyHarness
     private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
         $body = json_encode([
-            'callId' => 'test-call-' . uniqid(),
+            'callId' => 'test-call-'.uniqid(),
             'type' => $event === 'call.missed' ? 'CALL_FINISHED' : 'CALL_FINISHED',
         ]);
-        
+
         try {
-            $secret = app(\App\Support\PlatformCredentials::class)->get('infobip_webhook_secret');
+            $secret = app(PlatformCredentials::class)->get('infobip_webhook_secret');
         } catch (\RuntimeException $e) {
-            $this->fail('UNRESOLVED: ' . $e->getMessage());
+            $this->fail('UNRESOLVED: '.$e->getMessage());
         }
-        
+
         $signature = hash_hmac('sha256', (string) $body, $secret);
         $header = config('services.infobip.signature_header') ?: 'X-Signature';
-        
+
         $this->postJson('/webhooks/infobip/voice', json_decode((string) $body, true), [
-            $header => $signature
+            $header => $signature,
         ]);
     }
 
@@ -147,16 +152,17 @@ trait JourneyHarness
     {
         $started = microtime(true);
         while (microtime(true) - $started < $timeoutSeconds) {
-            $outbound = \App\Models\OutreachMessage::where('business_id', $tenant['id'])
+            $outbound = OutreachMessage::where('business_id', $tenant['id'])
                 ->where('to', $to)
                 ->whereNotNull('provider_message_id')
                 ->first();
-                
+
             if ($outbound) {
                 return $outbound->toArray();
             }
             usleep(500_000);
         }
+
         return null;
     }
 
@@ -189,7 +195,7 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        return \App\Modules\X204\Models\SendPermit::where('recipient_phone', $phone)->exists();
+        return SendPermit::where('recipient_phone', $phone)->exists();
     }
 
     // ── counting outbound ────────────────────────────────────────────────
