@@ -109,4 +109,13 @@ class X178Test extends TestCase
         $res = $this->formAction->handle($biz->id, 1, 'solar_panel_cleaning');
         $this->assertEquals('[fill-me]', $res['form_config']['pricing_display']);
     }
+
+    public function test_screen_renders(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Design Tenant 2', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $response = $this->get('/x-178/site-editor-assistant');
+        $response->assertOk();
+    }
 }
