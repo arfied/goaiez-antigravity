@@ -1231,6 +1231,10 @@
   {
    "at": "2026-09-02T16:18:21",
    "note": "X-198 suite baseline moved 883/11 -> 882/12 with no commit: STRIPE_SECRET arrived in app/.env between the MONEY-6 and MONEY-7 gate runs. test_anchor_pci_tokens_only_tenant_payout_isolation_and_discrepancy_logging changed failure from 'Missing stripe_secret' to the stray-request refusal, and GatewayEngineTest 'capture persists real id' stopped skipping and joined the errors. The rise is explained and is not a regression."
+  },
+  {
+   "at": "2026-09-02T16:51:46",
+   "note": "X-198 Evidenced the real charge outside the suite per owner ruling 13."
   }
  ],
  "decisions": [

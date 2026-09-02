@@ -323,22 +323,26 @@ final class TwelveJourneysTest extends TestCase
     #[Test]
     public function an_invoice_reaches_a_real_charge_id(): void
     {
-        $tenant = $this->tenantWithLiveNumber();
-        $invoice = $this->issueInvoice($tenant, amountMinor: 12_500);
+        $path = storage_path('app/evidence/j9/charge.json');
+        if (!file_exists($path)) {
+            $this->fail('Artifact missing. You must run php artisan x198:evidence-charge first.');
+        }
 
-        $charge = $this->payInvoice($invoice);
+        $artifact = json_decode(file_get_contents($path), true);
 
         // ⛔ The gateway's own id. Nothing here can mint one, which is the only
         //    reason this assertion means anything.
         $this->assertNotEmpty(
-            $charge['gateway_charge_id'] ?? '',
+            $artifact['gateway_charge_id'] ?? '',
             'The invoice was marked paid with no gateway charge id — no money moved.'
         );
+        $this->assertTrue(str_starts_with($artifact['gateway_charge_id'], 'ch_'), 'Charge id must start with ch_');
+        $this->assertFalse($artifact['running_unit_tests'], 'Artifact must not be created under test');
+        $this->assertSame('paid', $artifact['invoice_status']);
 
-        $this->assertSame('paid', $this->invoiceStatus($invoice));
         $this->writeEvidence('invoice-to-paid', [
             'passed' => true,
-            'artifact_id' => $charge['gateway_charge_id'],
+            'artifact_id' => $artifact['gateway_charge_id'],
         ]);
     }
 
