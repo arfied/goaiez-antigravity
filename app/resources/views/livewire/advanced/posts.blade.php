@@ -5,11 +5,11 @@
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
                     <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:text-indigo-300 hover:underline">Advanced</a></li>
                     <li class="text-gray-400">/</li>
-                    <li class="text-gray-500 dark:text-gray-400">GBP Posts & Photos</li>
+                    <li class="text-gray-400 dark:text-gray-400">GBP Posts & Photos</li>
                 </ol>
             </nav>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Google Business Profile Posts & Job Photos <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Keep your Google profile active with weekly AI keyword posts and automated photo uploads.</p>
+            <p class="mt-1 text-sm text-gray-400 dark:text-gray-400">Keep your Google profile active with weekly AI keyword posts and automated photo uploads.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
             <button wire:click="publishPost" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
@@ -22,7 +22,7 @@
     @if ($publishNotification)
         <div class="mb-6 p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between">
             <span>{{ $publishNotification }}</span>
-            <button wire:click="$set('publishNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('publishNotification', null)" class="text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
@@ -88,7 +88,7 @@
                     <div class="p-4 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-xs font-bold text-gray-900 dark:text-white">{{ $post['type'] }}</span>
-                            <span class="text-[10px] text-gray-500">{{ $post['date'] }}</span>
+                            <span class="text-[10px] text-gray-400">{{ $post['date'] }}</span>
                         </div>
                         <p class="text-xs text-gray-600 dark:text-gray-300 mb-3">{{ $post['summary'] }}</p>
                         <div class="flex items-center gap-4 text-[11px] font-medium text-indigo-400 dark:text-indigo-400">

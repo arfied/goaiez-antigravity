@@ -6,11 +6,11 @@
                 <li class="text-gray-400">/</li>
                 <li><a href="{{ route('advanced.broadcasts') }}" class="text-indigo-400 dark:text-indigo-400 hover:underline">Broadcasts</a></li>
                 <li class="text-gray-400">/</li>
-                <li class="text-gray-500 dark:text-gray-400">Composer</li>
+                <li class="text-gray-400 dark:text-gray-400">Composer</li>
             </ol>
         </nav>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Compose Customer Broadcast <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Draft targeted SMS or email messages with dynamic merge tags, compliance opt-out, and live credit forecasting.</p>
+        <p class="mt-1 text-sm text-gray-400 dark:text-gray-400">Draft targeted SMS or email messages with dynamic merge tags, compliance opt-out, and live credit forecasting.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -48,7 +48,7 @@
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Message Content</label>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">
+                            <div class="text-xs text-gray-400 dark:text-gray-400">
                                 <span x-text="messageText.length"></span> chars · <span x-text="Math.ceil(messageText.length / 160) || 1"></span> segment(s)
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                    <div class="text-xs text-gray-400 dark:text-gray-400">
                         🛡️ <strong>TCPA Compliance:</strong> Carrier quiet hours (9pm - 8am local) and automatic opt-out handling enforced.
                     </div>
                     <button type="button" class="inline-flex items-center px-5 py-2.5 border border-transparent rounded-md shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">

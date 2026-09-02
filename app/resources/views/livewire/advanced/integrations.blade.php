@@ -5,11 +5,11 @@
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
                     <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:text-indigo-300 hover:underline">Advanced</a></li>
                     <li class="text-gray-400">/</li>
-                    <li class="text-gray-500 dark:text-gray-400">POS & Invoicing Integrations</li>
+                    <li class="text-gray-400 dark:text-gray-400">POS & Invoicing Integrations</li>
                 </ol>
             </nav>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Point-of-Sale & Invoicing Review Triggers <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Automatically trigger review requests within minutes of customer invoice payment or checkout.</p>
+            <p class="mt-1 text-sm text-gray-400 dark:text-gray-400">Automatically trigger review requests within minutes of customer invoice payment or checkout.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
             <button wire:click="triggerTestPayment" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
@@ -22,7 +22,7 @@
     @if ($testNotification)
         <div class="mb-6 p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between">
             <span>{{ $testNotification }}</span>
-            <button wire:click="$set('testNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('testNotification', null)" class="text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
@@ -43,7 +43,7 @@
                 </p>
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs">
-                <span class="text-gray-500">Last Synced: 5 mins ago</span>
+                <span class="text-gray-400">Last Synced: 5 mins ago</span>
                 <button class="text-indigo-400 font-semibold hover:underline">Configure</button>
             </div>
         </div>
@@ -53,7 +53,7 @@
             <div>
                 <div class="flex items-center justify-between mb-4">
                     <div class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="p-1.5 rounded bg-emerald-600 text-white font-black text-xs">QB</span>
+                        <span class="p-1.5 rounded bg-emerald-800 text-white font-black text-xs">QB</span>
                         <span>QuickBooks Online</span>
                     </div>
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">Ready</span>
@@ -92,7 +92,7 @@
     <!-- Webhook URL & Configuration -->
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Custom POS & CRM Webhook Endpoint</h2>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Post custom JSON payloads from any billing software or custom CRM to trigger instant review outreach.</p>
+        <p class="text-xs text-gray-400 dark:text-gray-400 mb-4">Post custom JSON payloads from any billing software or custom CRM to trigger instant review outreach.</p>
 
         <div class="space-y-4">
             <div>
@@ -114,7 +114,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Carrier TCPA Quiet Hours Guard</label>
-                    <div class="p-2.5 rounded-md bg-gray-50 dark:bg-gray-900 text-xs text-emerald-600 font-medium flex items-center gap-2">
+                    <div class="p-2.5 rounded-md bg-gray-50 dark:bg-gray-900 text-xs text-emerald-400 font-medium flex items-center gap-2">
                         <span>🛡️ Enforced: Payments after 9:00 PM automatically hold until 8:00 AM</span>
                     </div>
                 </div>

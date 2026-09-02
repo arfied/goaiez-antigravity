@@ -5,11 +5,11 @@
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
                     <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:text-indigo-300 hover:underline">Advanced</a></li>
                     <li class="text-gray-400">/</li>
-                    <li class="text-gray-500 dark:text-gray-400">Customer Segments</li>
+                    <li class="text-gray-400 dark:text-gray-400">Customer Segments</li>
                 </ol>
             </nav>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Smart Customer Segments & Audiences <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Dynamic groups computed from customer interactions, review status, feedback sentiment, and cadence recency.</p>
+            <p class="mt-1 text-sm text-gray-400 dark:text-gray-400">Dynamic groups computed from customer interactions, review status, feedback sentiment, and cadence recency.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
             <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
@@ -27,7 +27,7 @@
                     <span class="text-xs text-gray-400">Dynamic</span>
                 </div>
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">Recent Satisfied Visitors</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Customers with completed service in the last 14 days with zero complaints.</p>
+                <p class="text-xs text-gray-400 dark:text-gray-400 mt-1">Customers with completed service in the last 14 days with zero complaints.</p>
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
                 <div class="text-2xl font-bold text-gray-900 dark:text-white">86 <span class="text-xs text-gray-400 font-normal">contacts</span></div>
@@ -42,7 +42,7 @@
                     <span class="text-xs text-gray-400">Dynamic</span>
                 </div>
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">5-Star Google Reviewers</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Confirmed 5-star public reviewers eligible for loyalty rewards and referral programs.</p>
+                <p class="text-xs text-gray-400 dark:text-gray-400 mt-1">Confirmed 5-star public reviewers eligible for loyalty rewards and referral programs.</p>
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
                 <div class="text-2xl font-bold text-gray-900 dark:text-white">142 <span class="text-xs text-gray-400 font-normal">contacts</span></div>
@@ -57,7 +57,7 @@
                     <span class="text-xs text-gray-400">Dynamic</span>
                 </div>
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">Lapsed Customers (60+ Days)</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Prior clients who have not visited recently. Perfect for seasonal win-back offers.</p>
+                <p class="text-xs text-gray-400 dark:text-gray-400 mt-1">Prior clients who have not visited recently. Perfect for seasonal win-back offers.</p>
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
                 <div class="text-2xl font-bold text-gray-900 dark:text-white">112 <span class="text-xs text-gray-400 font-normal">contacts</span></div>

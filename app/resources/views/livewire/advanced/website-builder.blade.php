@@ -54,14 +54,14 @@
     @if ($leadDispatchNotification)
         <div class="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $leadDispatchNotification }}</span>
-            <button wire:click="$set('leadDispatchNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('leadDispatchNotification', null)" class="text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
     @if ($publishNotification)
         <div class="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $publishNotification }}</span>
-            <button wire:click="$set('publishNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('publishNotification', null)" class="text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
@@ -255,7 +255,7 @@
                                 <section class="px-4 py-5 bg-white border-t border-gray-100">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="font-bold text-xs text-gray-900">Verified Google Reviews</div>
-                                        <div class="text-[10px] font-bold text-emerald-600">★★★★★ 4.9</div>
+                                        <div class="text-[10px] font-bold text-emerald-400">★★★★★ 4.9</div>
                                     </div>
                                     <div class="p-3 bg-gray-50 rounded-lg border border-gray-100 text-[10px] text-gray-600">
                                         "Outstanding service! Fast response and flawless execution." — <strong>Michael R.</strong>
@@ -266,7 +266,7 @@
                             <!-- Mobile Footer -->
                             <footer class="bg-gray-900 text-white px-4 py-6 text-center text-[10px]">
                                 <div class="font-bold">{{ $businessName }}</div>
-                                <div class="text-gray-400 mt-0.5">{{ $phoneNumber }}</div>
+                                <div class="text-gray-500 mt-0.5">{{ $phoneNumber }}</div>
                                 <div class="text-gray-500 mt-2 text-[9px]">Powered by GO AI EZ</div>
                             </footer>
                         </div>
@@ -386,8 +386,8 @@
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-[11px] font-semibold text-gray-700 mb-1">Service Needed</label>
-                                            <input type="text" wire:model="leadService" class="w-full text-xs p-2 rounded border border-gray-300">
+                                            <label for="leadServiceDesktop" class="block text-[11px] font-semibold text-gray-700 mb-1">Service Needed</label>
+                                            <input type="text" id="leadServiceDesktop" wire:model="leadService" class="w-full text-xs p-2 rounded border border-gray-300">
                                         </div>
                                         <button wire:click="simulateLeadSubmission" class="w-full py-2.5 rounded bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow transition">
                                             ⚡ Submit Estimate (Trigger Real-Time SMS Alert)
@@ -405,7 +405,7 @@
                                         <h3 class="font-bold text-sm text-gray-900">Recent Verified Google Reviews</h3>
                                         <p class="text-[11px] text-gray-500">Real feedback from clients in your local area</p>
                                     </div>
-                                    <div class="text-xs font-bold text-emerald-600">★★★★★ 4.9 (128 reviews)</div>
+                                    <div class="text-xs font-bold text-emerald-400">★★★★★ 4.9 (128 reviews)</div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-3">
@@ -445,7 +445,7 @@
                         <!-- Footer -->
                         <footer class="bg-gray-900 text-white px-6 py-8 text-center text-xs">
                             <div class="font-bold text-sm">{{ $businessName }}</div>
-                            <div class="text-gray-400 text-[11px] mt-1">{{ $phoneNumber }} • All Rights Reserved</div>
+                            <div class="text-gray-500 text-[11px] mt-1">{{ $phoneNumber }} • All Rights Reserved</div>
                             <div class="text-[10px] text-gray-500 mt-3">Powered by GO AI EZ</div>
                         </footer>
                     </div>
