@@ -25,12 +25,12 @@ final class StripeGatewayClient
             ]);
 
         if ($response->failed()) {
-            throw new RuntimeException('Stripe charge failed: ' . $response->body());
+            throw new RuntimeException('Stripe charge failed: '.$response->body());
         }
 
         $id = $response->json('id');
-        if (!is_string($id)) {
-            throw new RuntimeException('Invalid response from Stripe: ' . $response->body());
+        if (! is_string($id)) {
+            throw new RuntimeException('Invalid response from Stripe: '.$response->body());
         }
 
         return $id;

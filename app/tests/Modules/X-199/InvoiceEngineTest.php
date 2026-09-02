@@ -1,13 +1,13 @@
 <?php
 
+use App\Models\Business;
+use App\Modules\X121\Models\Person;
 use App\Modules\X199\Domain\InvoiceEngine;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
 
 test('it issues invoice in integer minor units', function () {
-    $business = \App\Models\Business::factory()->create();
-    $customer = \App\Modules\X121\Models\Person::create(['business_id' => $business->id]);
-    
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
     $engine = app(InvoiceEngine::class);
     $result = $engine->issueInvoice(
         $business->id,

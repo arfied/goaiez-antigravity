@@ -1,8 +1,7 @@
 <?php
 
+use App\Models\Business;
 use App\Modules\X198\Domain\GatewayEngine;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
 
 test('capture persists real id', function () {
     $secret = config('credentials.stripe_secret');
@@ -10,8 +9,8 @@ test('capture persists real id', function () {
         $this->markTestIncomplete('UNRESOLVED: journey J9 — payment provider test-mode keys absent from app/.env (reads stripe_secret)');
     }
 
-    $business = \App\Models\Business::factory()->create();
-    
+    $business = Business::factory()->create();
+
     $engine = app(GatewayEngine::class);
     $engine->connect($business->id, 'stripe', 'acct_test');
 
