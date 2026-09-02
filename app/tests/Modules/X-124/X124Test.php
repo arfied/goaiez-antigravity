@@ -9,7 +9,7 @@ use App\Modules\X124\Actions\AssistantExecuteAction;
 use App\Modules\X124\Actions\AssistantPreviewAction;
 use App\Modules\X124\Events\AssistantRequest;
 use App\Modules\X124\Models\AssistantUnsupported;
-use Illuminate\Support\Facades\DB;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -41,7 +41,7 @@ class X124Test extends TestCase
         Event::fake([AssistantRequest::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Copilot Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
         $sessionToken = 'sess_tok_991823';
 
