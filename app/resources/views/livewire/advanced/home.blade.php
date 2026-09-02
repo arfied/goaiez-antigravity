@@ -5,7 +5,7 @@
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300">
                     Advanced Mode
                 </span>
-                <h1 class="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl">
+                <h1 class="font-display text-2xl font-bold leading-7 text-ink sm:text-3xl">
                     Power Control Center
                 </h1>
             </div>
@@ -27,7 +27,7 @@
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Citation Health</dt>
-            <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+            <dd class="mt-1 text-3xl font-semibold text-ink">
                 {{ $citationsCount > 0 ? round(($consistentCount / $citationsCount) * 100) : 0 }}%
             </dd>
             <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
@@ -53,7 +53,7 @@
 
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">POS Review Webhooks</dt>
-            <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">Connected</dd>
+            <dd class="mt-1 text-3xl font-semibold text-ink">Connected</dd>
             <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Stripe & Invoicing Active</div>
         </div>
     </div>
