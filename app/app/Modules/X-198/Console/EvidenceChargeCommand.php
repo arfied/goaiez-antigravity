@@ -59,7 +59,7 @@ final class EvidenceChargeCommand extends Command
             'invoice_status' => 'paid',
             'payment_status' => $payment->status,
             'amount_cents' => 12500,
-            'database' => config('database.connections.' . config('database.default') . '.database', 'goaiez_antig_money'),
+            'database' => config('database.connections.'.config('database.default').'.database', 'goaiez_antig_money'),
             'running_unit_tests' => false,
             'captured_at' => now()->toIso8601String(),
             'command' => 'php artisan x198:evidence-charge',
