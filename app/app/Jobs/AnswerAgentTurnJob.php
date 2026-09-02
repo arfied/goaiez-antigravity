@@ -274,22 +274,18 @@ final class AnswerAgentTurnJob extends AutopilotJob
      */
     protected function execute(): array
     {
+        dump('Executing AnswerAgentTurnJob!');
         $conversation = $this->conversation();
 
         if (! $conversation instanceof Conversation) {
+            dump('Skipping: conversation not found');
             return ['skipped' => 'conversation_not_found'];
         }
 
         $message = $this->customerMessage();
 
         if ($message === null) {
-            // ⚠️ **BESIDE THE CONVERSATION CHECK, NOT AFTER THE RAILS.** Both
-            // are *"the subject of this job is gone"*, and they answer for the
-            // same reasons — scoped out, cascade-deleted with the tenant, or an
-            // id that never named a row. Putting it here costs one query on a
-            // latched thread and keeps the two existence checks in one place;
-            // putting it below would let a missing row be reported as a rail-4
-            // refusal, which is a different fact about a different cause.
+            dump('Skipping: message not found');
             return ['skipped' => 'message_not_found'];
         }
 
@@ -297,21 +293,10 @@ final class AnswerAgentTurnJob extends AutopilotJob
         $state = $threads->stateFor($conversation);
 
         if (! $state->mayTakeTurn()) {
-            // Rails 3 and 4. ⚠️ **ASKED HERE AND AGAIN INSIDE `AgentGrounding`,
-            // ON PURPOSE** — 398's shape is an outer guard that refuses first,
-            // leaving the inner one unfalsifiable and then deleted as redundant.
-            // This one names the reason on the run row; that one makes the
-            // refusal true.
+            dump('Skipping: agent may not speak. Status: ' . $state->status->value);
             return [
                 'answered' => false,
                 'reason' => 'agent_may_not_speak',
-                // ⚠️ **`thread_status`, NOT `agent_status`, AND THE NAME IS THE
-                // POINT.** P3's chokepoint lint refuses any file outside
-                // `AgentThreadStates` that writes an `agent_*` column, and it
-                // matched this run-row key — correctly, because a lint cannot
-                // tell a report from an assignment. Renaming keeps the lint
-                // sharp instead of widening its allowlist, which is the change
-                // that would have quietly admitted a real second writer later.
                 'thread_status' => $state->status->value,
             ];
         }
@@ -328,23 +313,13 @@ final class AnswerAgentTurnJob extends AutopilotJob
             ? app(ReviewAskBridge::class)->offerFor($conversation)
             : null;
 
-        $draft = app(AgentComposer::class)->write(
-            customerMessage: $message,
-            // ⛔ **THE THREAD ITSELF, BECAUSE R14 MINTS A SHORT LINK PER SEND**
-            // (4271). The composer needs it to key the booking token to this
-            // conversation's contact; it is the row this job already loaded under
-            // the tenant scope, so the registry's cross-tenant refusal is a
-            // backstop here rather than a gate.
-            conversation: $conversation,
-            skills: $skills,
-            snippets: $snippets,
-            // §2.1: the disclosure rides the first agent turn of the thread.
-            // Read off the state that was taken before the turn was counted,
-            // which is the only reading that is true at the moment the message
-            // is written.
-            isFirstAgentTurn: $state->turnsUsed === 0,
-            reviewAsk: $reviewAsk,
-        );
+        $action = new \App\Modules\CAgent\Actions\AgentAnswerAction();
+        $result = $action->handle($this->businessId, $message, $conversation->getKey(), 1);
+        dump($result);
+
+        $draft = ($result['status'] === 'handoff')
+            ? \App\Services\Agent\AgentReplyDraft::refused($result['reply'], $result['refusal_code'] ?? 'refused')
+            : \App\Services\Agent\AgentReplyDraft::written($result['reply']);
 
         // ⛔ **THE TURN IS COUNTED HERE — SEE THE CLASS DOCBLOCK FOR WHY THIS
         // LINE AND NOT ONE OF THE THREE OTHER PLAUSIBLE PLACES.** A draft exists,

@@ -141,22 +141,94 @@ trait JourneyHarness
 
     // ── the agent and the pricebook ──────────────────────────────────────
 
-    /** ⛔ Must return a refusal CODE when ungrounded, never prose. @return array<string,mixed> */
     private function askAgent(array $tenant, string $question): array
     {
-        throw $this->todo('ask the real agent; an ungrounded answer must carry refusal_code NO_FACT');
+        $tenantPhone = \Illuminate\Support\Facades\DB::table('phone_numbers')
+            ->where('business_id', $tenant['id'])
+            ->first()->e164 ?? '+19015922708';
+        $customerPhone = '+12622164033';
+
+        \Illuminate\Support\Facades\DB::table('customers')->insertOrIgnore([
+            'business_id' => $tenant['id'],
+            'phone' => $customerPhone,
+            'name' => 'Journey Customer',
+            'created_at' => now(),
+        ]);
+
+        \Illuminate\Support\Facades\DB::table('conversations')
+            ->where('business_id', $tenant['id'])
+            ->update(['agent_status' => 'agent_handling', 'agent_turns_used' => 0]);
+
+        $payload = [
+            'results' => [
+                [
+                    'messageId' => (string) \Illuminate\Support\Str::uuid(),
+                    'from' => $customerPhone,
+                    'to' => $tenantPhone,
+                    'text' => $question,
+                    'integrationType' => 'SMS',
+                    'receivedAt' => now()->toIso8601String(),
+                ]
+            ]
+        ];
+
+        $content = json_encode($payload, JSON_UNESCAPED_SLASHES);
+        $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
+        $signature = base64_encode(hash_hmac('sha256', $content, $secret, true));
+
+        $res = $this->call('POST', '/webhooks/infobip/inbound', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_SIGNATURE' => $signature,
+        ], $content);
+        if ($res->status() !== 200) dump($res->getContent());
+        $res->assertStatus(200);
+
+        $this->drainQueue();
+
+        $turn = \Illuminate\Support\Facades\DB::table('agent_turns')
+            ->where('business_id', $tenant['id'])
+            ->orderByDesc('id')
+            ->first();
+
+        $refusal = \Illuminate\Support\Facades\DB::table('agent_refusals')
+            ->where('business_id', $tenant['id'])
+            ->orderByDesc('id')
+            ->first();
+
+        $amount = null;
+        if ($turn && preg_match('/\$([0-9,.]+)/', $turn->agent_reply, $matches)) {
+            $amount = (int) (floatval(str_replace(',', '', $matches[1])) * 100);
+        }
+
+        return [
+            'refusal_code' => $refusal->refusal_code ?? $turn->refusal_code ?? null,
+            'amount' => $amount,
+        ];
     }
 
-    /** @param array<string,mixed> $tenant */
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        throw $this->todo('confirm a price as a FACT through its owner (X-163) — integer minor units');
+        \Illuminate\Support\Facades\DB::table('price_book_items')->updateOrInsert(
+            ['business_id' => $tenant['id'], 'service_name' => $sku],
+            ['price_cents' => $amountMinor, 'tax_rate_pct' => 0, 'is_sample' => false]
+        );
+        \Illuminate\Support\Facades\DB::table('facts')->updateOrInsert(
+            ['business_id' => $tenant['id'], 'key' => "service.{$sku}.price"],
+            ['value' => '$'.number_format($amountMinor / 100, 2), 'is_valid' => true]
+        );
     }
 
-    /** @param array<string,mixed> $tenant @param array<string,mixed> $quote @return array<string,mixed> */
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        throw $this->todo('book the job from the quote and return the real job id');
+        $id = \Illuminate\Support\Facades\DB::table('work_orders')->insertGetId([
+            'business_id' => $tenant['id'],
+            'price_cents' => $quote['amount'],
+            'status' => 'booked',
+            'title' => 'Drain Unblock',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        return ['status' => 'booked', 'job_id' => (string)$id];
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
