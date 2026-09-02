@@ -70,7 +70,7 @@
 
     <!-- Main Tab Navigation (Horizontal Scroll on Mobile) -->
     <div class="mx-auto flex w-full {{ $maxWidth }} items-center justify-between gap-1 sm:gap-2 px-2 sm:px-4 py-1.5">
-        <ul class="flex items-center gap-1 sm:gap-1.5 min-w-0 overflow-x-auto scrollbar-none">
+        <ul class="flex items-center gap-1 sm:gap-1.5 min-w-0 flex-wrap">
             @foreach ($primary as $item)
                 @php $current = $item->current(); @endphp
                 <li class="shrink-0">
