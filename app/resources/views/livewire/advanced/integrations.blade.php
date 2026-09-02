@@ -53,7 +53,7 @@
             <div>
                 <div class="flex items-center justify-between mb-4">
                     <div class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="p-1.5 rounded bg-emerald-800 text-white font-black text-xs">QB</span>
+                        <span class="p-1.5 rounded bg-emerald-800 text-white font-bold text-xs">QB</span>
                         <span>QuickBooks Online</span>
                     </div>
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">Ready</span>
