@@ -69,6 +69,32 @@ function waitForServer(url) {
         await page.waitForLoadState('networkidle');
         await page.screenshot({ path: path.join(outputDir, 'home.png'), fullPage: true });
 
+        const footerLinks = await page.$$eval('footer a', anchors => anchors.map(a => ({ text: a.textContent.trim(), href: a.href })));
+        const targetTexts = ['Pricing', 'What it does', 'Compare', 'Guarantee', 'Questions', 'Customers', 'Affiliates', 'Agencies'];
+        const publicUrls = targetTexts.map(text => {
+            const link = footerLinks.find(l => l.text === text);
+            return link ? link.href : null;
+        }).filter(Boolean);
+        
+        const startFreeLink = await page.$$eval('a', anchors => {
+            const link = anchors.find(a => a.textContent.trim() === 'Start free');
+            return link ? link.href : null;
+        });
+        if (startFreeLink) publicUrls.push(startFreeLink);
+        
+        const publicScreens = publicUrls.map(url => {
+            const urlObj = new URL(url);
+            let slug = urlObj.pathname.replace(/^\/+|\/+$/g, '').replace(/\//g, '-');
+            if (!slug) slug = 'home';
+            return { name: `public-${slug}`, url };
+        });
+
+        for (const screen of publicScreens) {
+            await page.goto(screen.url);
+            await page.waitForLoadState('networkidle');
+            await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+        }
+
         await page.goto(`${baseUrl}/login`);
         await page.waitForLoadState('networkidle');
         await page.screenshot({ path: path.join(outputDir, 'login.png'), fullPage: true });
@@ -119,6 +145,12 @@ function waitForServer(url) {
         await mobilePage.goto(`${baseUrl}/`);
         await mobilePage.waitForLoadState('networkidle');
         await mobilePage.screenshot({ path: path.join(outputDir, 'home@390.png'), fullPage: true });
+
+        for (const screen of publicScreens) {
+            await mobilePage.goto(screen.url);
+            await mobilePage.waitForLoadState('networkidle');
+            await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+        }
 
         await mobilePage.goto(`${baseUrl}/login`);
         await mobilePage.waitForLoadState('networkidle');
