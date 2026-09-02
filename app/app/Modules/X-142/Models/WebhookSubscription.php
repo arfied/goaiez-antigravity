@@ -14,6 +14,7 @@ class WebhookSubscription extends Model
 
     protected $casts = [
         'events' => 'array',
+        'secret' => 'encrypted',
     ];
 
     public function business(): BelongsTo

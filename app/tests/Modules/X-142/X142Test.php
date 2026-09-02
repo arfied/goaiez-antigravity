@@ -135,4 +135,24 @@ class X142Test extends TestCase
         $this->get('/x-142/webhooks')->assertRedirect('/login');
         $this->get('/x-142/mcp-token-registry')->assertRedirect('/login');
     }
+
+    public function test_webhook_secret_is_encrypted_at_rest(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Webhook Secret Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/enc', 'event.*');
+        
+        $this->assertNotNull($sub->secret);
+        $this->assertStringStartsWith('sec_', $sub->secret);
+
+        // Fetch raw database value
+        $rawSecret = \Illuminate\Support\Facades\DB::table('webhook_subscriptions')
+            ->where('id', $sub->id)
+            ->value('secret');
+
+        $this->assertNotNull($rawSecret);
+        $this->assertNotEquals($sub->secret, $rawSecret);
+        $this->assertStringNotContainsString('sec_', $rawSecret); // the encrypted payload should not contain the raw prefix in plain text
+    }
 }
