@@ -27369,7 +27369,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | # | Register line | BL | Parent | Note |
 | :--- | :--- | :--- | :--- | :--- |
 | G3-01 | 1-Click Setup Magic | ENH | X-118 | ⚠️ X-118 needs a name and a number, not a URL — this is the same inference run with a weaker input |
-| G3-02 | 60-Second Sitemap Scraper | ENH | X-119 | the crawl is X-151's, the grounding store is X-119's. ⚠️ Pinecone is corpus vocabulary — one database (§22) |
+| G3-02 | 60-Second Sitemap Scraper | ENH | X-119 | the crawl is X-151's, the grounding store is X-119's. ⚠️ Pinecone is corpus vocabulary — one database (§22) · refuses: a domain mismatch |
 | G3-03 | Ad Library Scraping | ENH | X-135 | ad **intelligence**; §44 fences ad *management*, not research |
 | G3-04 | Algorithmic Pacing | ENH | X-200 | predictive pacing under the 3% abandonment ceiling (§160.1) |
 | G3-05 | API Limit Evasion | ENH | X-196 | ⚠️ `FetchPolicy.authenticated=false` by default (P-078); the operator's own account safety outranks any scrape (P-145) |
@@ -27525,7 +27525,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G5-22 | Bring Your Own Key - BYOK | **ENH** *(split)* | C-Ai | split: the key is C-Ai's; ⛔ **the MRR-discount half is KILLED** (T591 — no discounts) |
 | G5-23 | Comms NLP Scanning | **RE-HOME→G15** | X-113 | ⚠️ staff surveillance; §150.4's positive-only scorecard bounds it — **owner question** |
 | G5-24 | Contextual Drafts | ENH | C-Agent | named in the header |
-| G5-25 | Custom RAG Knowledge Base | ENH | X-119 | the grounding law; retrieval is X-148's. ⚠️ Pinecone is corpus vocabulary |
+| G5-25 | Custom RAG Knowledge Base | ENH | X-119 | the grounding law; retrieval is X-148's. ⚠️ Pinecone is corpus vocabulary · refuses: an insert without a source |
 | G5-26 | Deep Research Agent | ENH | X-135 | ⛔ every cited fact carries its source and its date (P-120) |
 | G5-27 | Dynamic Battle-Cards | ENH | X-105 | = G5-20; one spec |
 | G5-28 | In-App Support AI | ENH | X-124 | the assistant that configures the platform; HUMAN escalates to X-111 |
@@ -28117,7 +28117,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G13-35 | UTM Harvesting | ENH | X-155 | hidden fields write straight to the entities, no staging table |
 | G13-36 | View Tracking | ENH | X-199 | invoice opened → the alert names an action |
 | G13-37 | Widget Rage-Click Detection | ENH | X-102 | the widget offers help instead of watching them fail |
-| G13-38 | Zero-Party Data Collection | ENH | X-119 | a volunteered detail becomes a `Fact` with its source |
+| G13-38 | Zero-Party Data Collection | ENH | X-119 | a volunteered detail becomes a `Fact` with its source · refuses: an inference |
 
 **G13 COUNT:** 38 = **36 enhancement** + 0 re-homed + 2 killed + **0 unmapped** · ⭐ **ratio 95%**
 
