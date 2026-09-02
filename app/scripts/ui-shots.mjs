@@ -145,10 +145,10 @@ function waitForServer(url) {
 
         
         const customerScreens = [
-            { name: 'customer-feedback', path: '/f/test-business' },
-            { name: 'customer-thanks', path: '/f/test-business/thanks' },
-            { name: 'customer-to-google', path: '/f/test-business/to/google' },
-            { name: 'customer-review-hub', path: '/r/test-business' },
+            { name: 'customer-feedback', path: '/f/review-business-2' },
+            { name: 'customer-thanks', path: '/f/review-business-2/thanks' },
+            { name: 'customer-to-google', path: '/f/review-business-2/to/google' },
+            { name: 'customer-review-hub', path: '/r/review-business-2' },
             { name: 'customer-unsubscribe', path: '/mail/unsubscribe/eyJpdiI6Ikp4ZWNFMnF6TVl2UENGTmVoMVIrVFE9PSIsInZhbHVlIjoicGlrb01FUEZNVSsxRGhYakNITHZOS0I2SDlGUGtybDZvQ1dzS2dzYXJGRDRPaENoR2dkaG5ZQTJvQ0J1YzR4Z05nQzk4YTljS2wxdjJEeGUrdERYRE9UUkljcWw1bVM1L0N1SmpCaW9hMGM9IiwibWFjIjoiZDFiZjRmNzAxMzVlZjQyNTA0NDM5ZTZjNGFiZTcxODk5YjU3MDhiZDA4NDQ4ZTRjYjQ0YmRjMmUyOTlmMTA2YSIsInRhZyI6IiJ9' },
             { name: 'customer-legal-terms', path: '/legal/terms' },
             { name: 'customer-sms-terms', path: '/sms-terms' },

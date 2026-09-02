@@ -10,7 +10,7 @@ use App\Models\Location;
 use App\Models\ReviewDestinationSetting;
 use App\Models\Subscription;
 use App\Models\User;
-use App\Services\Tenants\TenantProvisioner;
+use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +36,8 @@ class UiReviewSeeder extends Seeder
                 'name' => 'Setup Wizard User',
                 'role' => 'owner',
             ]);
+        }
+        if (! DB::table('businesses')->where('owner_user_id', $setupUser->id)->exists()) {
             app(TenantProvisioner::class)->provision($setupUser);
         }
 
@@ -88,6 +90,20 @@ class UiReviewSeeder extends Seeder
         } else {
             if (empty($page->slug) || Str::startsWith($page->slug, 'review-business-2')) {
                 $page->update(['slug' => 'review-business-2']);
+            }
+        }
+
+        $hubPage = \App\Models\ReviewHubPage::firstWhere('location_id', $location->id);
+        if (! $hubPage) {
+            \App\Models\ReviewHubPage::factory()->create([
+                'location_id' => $location->id,
+                'business_id' => $businessId,
+                'slug' => 'review-business-2',
+                'is_published' => true,
+            ]);
+        } else {
+            if (empty($hubPage->slug) || \Illuminate\Support\Str::startsWith($hubPage->slug, 'review-business-2')) {
+                $hubPage->update(['slug' => 'review-business-2']);
             }
         }
 
