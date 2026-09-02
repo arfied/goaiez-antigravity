@@ -10,7 +10,7 @@ use App\Modules\X176\Actions\SitemapPingAction;
 use App\Modules\X176\Events\IndexRequested;
 use App\Modules\X176\Events\SchemaPublished;
 use App\Modules\X176\Models\SchemaSnapshot;
-use Illuminate\Support\Facades\DB;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -40,7 +40,7 @@ class X176Test extends TestCase
         Event::fake([SchemaPublished::class, IndexRequested::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
-        \App\Modules\Core\Tenancy::set($biz->id);
+        Tenancy::set((int) $biz->id);
 
         $sharedCommitId = 'commit_price_change_9901';
 

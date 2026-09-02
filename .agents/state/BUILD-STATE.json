@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-01T21:12:20",
+ "updated": "2026-09-02T02:39:43",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -19,7 +19,7 @@
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 104,
+   "violations": 102,
    "fails": "COMMIT"
   },
   "citation": {
@@ -27,11 +27,11 @@
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 0,
+   "violations": 13,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 120,
+   "violations": 139,
    "fails": "MERGE"
   },
   "anchor": {
@@ -157,7 +157,7 @@
   },
   "13": {
    "track": "J11 the site",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "X-137",
     "X-176"
@@ -435,10 +435,17 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-103",
+     "stage": "schema",
+     "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
+     "at": "2026-09-02T02:30:15"
+    }
+   ]
   },
   "X-104": {
    "status": "DONE",
@@ -525,10 +532,17 @@
    "unresolved": []
   },
   "X-121": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-121",
+     "stage": "schema",
+     "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
+     "at": "2026-09-02T02:39:43"
+    }
+   ]
   },
   "X-122": {
    "status": "DONE",
@@ -831,7 +845,7 @@
    "unresolved": []
   },
   "X-176": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 13,
    "intent": "GROW",
    "unresolved": []
@@ -1163,7 +1177,20 @@
    "green_after_wave": 9
   }
  },
- "unresolved": [],
+ "unresolved": [
+  {
+   "module": "X-103",
+   "stage": "schema",
+   "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
+   "at": "2026-09-02T02:30:15"
+  },
+  {
+   "module": "X-121",
+   "stage": "schema",
+   "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
+   "at": "2026-09-02T02:39:43"
+  }
+ ],
  "notes": [
   {
    "at": "2026-08-29T14:37:58",

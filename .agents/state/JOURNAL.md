@@ -468,3 +468,9 @@
 - `2026-09-01T21:11:03` X-178 -> DONE
 - `2026-09-01T21:11:45` X-103 -> DONE
 - `2026-09-01T21:12:20` X-102 -> DONE
+- `2026-09-02T02:30:15` UNRESOLVED schema X-103 - class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.
+- `2026-09-02T02:34:52` X-176 -> DONE
+- `2026-09-02T02:39:40` stage schema = 13
+- `2026-09-02T02:39:40` stage capability = 139
+- `2026-09-02T02:39:40` stage contract = 102
+- `2026-09-02T02:39:43` UNRESOLVED schema X-121 - 11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker
