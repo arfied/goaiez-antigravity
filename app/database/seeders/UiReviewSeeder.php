@@ -81,30 +81,43 @@ class UiReviewSeeder extends Seeder
             $location = Location::factory()->create(['business_id' => $businessId]);
         }
 
-        $page = FeedbackPage::firstWhere('location_id', $location->id);
+        $page = FeedbackPage::firstWhere('slug', 'review-business-2');
         if (! $page) {
-            FeedbackPage::factory()->forLocation($location)->create([
-                'slug' => 'review-business-2',
-                'is_published' => true,
-            ]);
-        } else {
-            if (empty($page->slug) || Str::startsWith($page->slug, 'review-business-2')) {
+            $page = FeedbackPage::firstWhere('location_id', $location->id);
+            if (! $page) {
+                FeedbackPage::factory()->forLocation($location)->create([
+                    'slug' => 'review-business-2',
+                    'is_published' => true,
+                ]);
+            } else {
                 $page->update(['slug' => 'review-business-2']);
             }
         }
 
-        $hubPage = \App\Models\ReviewHubPage::firstWhere('location_id', $location->id);
+        $hubPage = \App\Models\ReviewHubPage::firstWhere('slug', 'review-business-2');
         if (! $hubPage) {
-            \App\Models\ReviewHubPage::factory()->create([
-                'location_id' => $location->id,
-                'business_id' => $businessId,
-                'slug' => 'review-business-2',
-                'is_published' => true,
-            ]);
-        } else {
-            if (empty($hubPage->slug) || \Illuminate\Support\Str::startsWith($hubPage->slug, 'review-business-2')) {
+            $hubPage = \App\Models\ReviewHubPage::firstWhere('location_id', $location->id);
+            if (! $hubPage) {
+                \App\Models\ReviewHubPage::factory()->create([
+                    'location_id' => $location->id,
+                    'business_id' => $businessId,
+                    'slug' => 'review-business-2',
+                    'is_published' => true,
+                ]);
+            } else {
                 $hubPage->update(['slug' => 'review-business-2']);
             }
+        }
+
+        $autopilot = \App\Models\AutopilotSettings::firstWhere('location_id', $location->id);
+        if (! $autopilot) {
+            \App\Models\AutopilotSettings::factory()->create([
+                'location_id' => $location->id,
+                'business_id' => $businessId,
+                'update_review_hub' => true,
+            ]);
+        } else {
+            $autopilot->update(['update_review_hub' => true]);
         }
 
         $setting = ReviewDestinationSetting::where('location_id', $location->id)->where('destination', ReviewDestination::Google->value)->first();
