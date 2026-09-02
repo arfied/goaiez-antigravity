@@ -6,7 +6,6 @@ namespace App\Modules\X179\Ui;
 
 use App\Modules\X179\Models\TemplateMatch;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
