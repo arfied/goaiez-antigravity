@@ -2204,6 +2204,11 @@ Route::middleware(['web', 'auth'])
     ->get('/account/content-topics', ProposedPagesView::class)
     ->name('account.content-topics');
 
+Route::middleware(['web', 'auth'])->get('/prospects/top3-preview/{prospectId}', function ($prospectId) { return "Top 3 Preview for prospect {$prospectId}"; })->name('prospects.top3-preview');
+
+Route::middleware(['web', 'auth'])->get('/prospects/match-scores/{prospectId}', function ($prospectId) { return "Match scores for prospect {$prospectId}"; })->name('prospects.match-scores');
+
+
 Route::get('/{token}', ShortLinkController::class)
     ->where('token', '[A-Za-z0-9]{'.ShortLinks::TOKEN_LENGTH.'}')
     ->middleware('throttle:short-link')

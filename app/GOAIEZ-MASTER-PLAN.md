@@ -26418,7 +26418,7 @@ tenant asks → X-124 decides the MODE
 **DECLARATIONS** `@renders prospecttenantfacing_top3_preview · match_scores` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides template.match · content.extract` · `@emits template.matched · content.extracted` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · fetch.completed · audit.completed` · `@owns_table template_matches · extracted_content`
 
-@agent_reachable `template.match` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
+@agent_reachable `template.match` · `content.extract` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 **NEEDS / HAS** needs: a crawl or a GBP · has: match state
 **TEST ANCHOR** *a diff of extracted service descriptions against the rendered preview shows zero paraphrase; a prospect with no site and a GBP gets a Path B preview*
 

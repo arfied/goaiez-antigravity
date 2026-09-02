@@ -35,7 +35,7 @@ class X179Test extends TestCase
         Event::fake([ContentExtracted::class, TemplateMatched::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Template Matcher Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set((int) $biz->id);
 
         $prospectWithSite = 9901;
         $verbatimServiceText = 'Comprehensive heat pump installation, emergency refrigerant recharging, and annual furnace tune-ups.';
