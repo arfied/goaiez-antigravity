@@ -23,6 +23,7 @@ class UiReviewSeeder extends Seeder
             $business = Business::factory()->create([
                 'owner_user_id' => $owner->id,
                 'name' => 'Review Business 2 LLC',
+                'advanced_dashboard_enabled' => true,
             ]);
 
             Tenancy::set((int) $business->id);
@@ -34,6 +35,11 @@ class UiReviewSeeder extends Seeder
             ]);
 
             Tenancy::forget();
+        } else {
+            $business = Business::where('owner_user_id', $owner->id)->first();
+            if ($business) {
+                $business->update(['advanced_dashboard_enabled' => true]);
+            }
         }
     }
 }
