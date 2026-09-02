@@ -275,7 +275,7 @@ final class AnswerAgentTurnJob extends AutopilotJob
     protected function execute(): array
     {
         $conversation = $this->conversation();
-
+        
         if (! $conversation instanceof Conversation) {
             return ['skipped' => 'conversation_not_found'];
         }
@@ -295,6 +295,7 @@ final class AnswerAgentTurnJob extends AutopilotJob
 
         $threads = app(AgentThreadStates::class);
         $state = $threads->stateFor($conversation);
+        
 
         if (! $state->mayTakeTurn()) {
             // Rails 3 and 4. ⚠️ **ASKED HERE AND AGAIN INSIDE `AgentGrounding`,
@@ -328,7 +329,9 @@ final class AnswerAgentTurnJob extends AutopilotJob
             ? app(ReviewAskBridge::class)->offerFor($conversation)
             : null;
 
-        $draft = app(AgentComposer::class)->write(
+        $composer = app(AgentComposer::class);
+
+        $draft = $composer->write(
             customerMessage: $message,
             // ⛔ **THE THREAD ITSELF, BECAUSE R14 MINTS A SHORT LINK PER SEND**
             // (4271). The composer needs it to key the booking token to this
@@ -357,7 +360,26 @@ final class AnswerAgentTurnJob extends AutopilotJob
         $this->turnTaken = true;
 
         $outcome = $this->send($conversation, $draft);
+        
 
+        if ($draft->fallbackReason !== null) {
+            \App\Modules\CAgent\Models\AgentRefusal::create([
+                'business_id' => $conversation->business_id,
+                'refusal_code' => $draft->fallbackReason,
+                'reason' => 'Draft refused with fallback: ' . $draft->fallbackReason,
+                'user_input' => $message,
+            ]);
+        }
+
+        \App\Modules\CAgent\Models\AgentTurn::create([
+            'business_id' => $conversation->business_id,
+            'conversation_id' => $conversation->id,
+            'turn_number' => $after->turnsUsed,
+            'user_message' => $message,
+            'agent_reply' => $draft->body,
+            'status' => 'answered',
+            'refusal_code' => $draft->fallbackReason,
+        ]);
         // ⛔ **THE ASK IS SPENT AFTER THE SEND AND ONLY IF THE MESSAGE ACTUALLY
         // CARRIED THE LINK (P12).** Three conditions, and every one of them has
         // its own test: the send left, the body reproduced the URL, and there was

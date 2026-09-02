@@ -281,4 +281,44 @@ class CAgentTest extends TestCase
         $this->assertEquals('handoff', $res['status']);
         $this->assertEquals('NEGATIVE_SENTIMENT_HANDOFF', $res['refusal_code']);
     }
+
+    public function test_no_fact_refusal_for_unpriced_service_in_real_pipeline(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Real Pipeline NO FACT', 'currency' => 'USD']);
+        
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
+            \Illuminate\Support\Facades\Config::set('credentials.anthropic_api_key', 'fake-key');
+            \Illuminate\Support\Facades\Config::set('credentials.openai_api_key', 'fake-key');
+
+            $conversation = \App\Models\Conversation::factory()->create(['business_id' => $biz->id]);
+            $skills = app(\App\Services\Agent\AgentSkills::class)->forThread($conversation);
+
+            \Illuminate\Support\Facades\Http::fake([
+                'api.anthropic.com/*' => \Illuminate\Support\Facades\Http::response([
+                    'id' => 'msg_eval',
+                    'type' => 'message',
+                    'stop_reason' => 'end_turn',
+                    'content' => [['type' => 'text', 'text' => 'It will cost $150.']],
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                'api.openai.com/*' => \Illuminate\Support\Facades\Http::response([
+                    'id' => 'msg_eval',
+                    'choices' => [
+                        ['message' => ['content' => 'It will cost $150.']]
+                    ],
+                ]),
+            ]);
+
+            $composer = app(\App\Services\Agent\AgentComposer::class);
+            $draft = $composer->write(
+                customerMessage: 'How much for an unpriced service?',
+                conversation: $conversation,
+                skills: $skills,
+                snippets: [],
+                isFirstAgentTurn: true,
+            );
+
+            $this->assertEquals('NO_FACT', $draft->fallbackReason);
+        });
+    }
 }
