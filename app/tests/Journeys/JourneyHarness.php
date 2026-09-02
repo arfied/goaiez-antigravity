@@ -51,7 +51,7 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        throw $this->todo('UNRESOLVED journey J3 — tenantWithLiveNumber needs TWILIO_ACCOUNT_SID');
+        throw $this->todo('provision a real tenant and a real carrier number');
     }
 
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
