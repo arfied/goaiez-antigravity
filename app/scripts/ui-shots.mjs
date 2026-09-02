@@ -106,7 +106,7 @@ function waitForServer(url) {
         await page.evaluate(() => {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/login';
+            form.action = '/logout';
             document.body.appendChild(form);
             form.submit();
         });
