@@ -7,6 +7,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Support\Tenancy;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class UiReviewSeeder extends Seeder
 {
@@ -19,7 +20,13 @@ class UiReviewSeeder extends Seeder
                 'name' => 'Owner Review 2',
                 'role' => 'owner',
             ]);
+        }
 
+        $businessId = DB::table('businesses')
+            ->where('owner_user_id', $owner->id)
+            ->value('id');
+
+        if (! $businessId) {
             $business = Business::factory()->create([
                 'owner_user_id' => $owner->id,
                 'name' => 'Review Business 2 LLC',
@@ -36,8 +43,8 @@ class UiReviewSeeder extends Seeder
 
             Tenancy::forget();
         } else {
-            \Illuminate\Support\Facades\DB::table('businesses')
-                ->where('owner_user_id', $owner->id)
+            DB::table('businesses')
+                ->where('id', $businessId)
                 ->update(['advanced_dashboard_enabled' => true]);
         }
     }
