@@ -317,8 +317,8 @@ trait JourneyHarness
             'chat' => str_contains($html, 'chat-widget-container'),
             'form_capture' => str_contains($html, 'form-capture-x155'),
             'dni' => str_contains($html, 'dni-pool-x137'),
-            'seo' => str_contains($html, 'seo-meta-x176'),
-            'schema' => str_contains($html, 'schema-org'),
+            'seo' => str_contains($html, 'seo-meta-x176'), // remains false as per brief
+            'schema' => str_contains($html, 'schema.org'),
             'ssl' => str_contains($html, '<meta name="ssl" content="valid">'),
         ];
 
