@@ -27842,7 +27842,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 
 | # | Register line | BL | Parent | Note |
 | :--- | :--- | :--- | :--- | :--- |
-| G10-01 | "Approved as Is" E-Sign | ENH | X-164 | the customer signature freezes the version it was sold at; ⚠️ **F-19 — a contract that is not an estimate has no home** |
+| G10-01 | "Approved as Is" E-Sign | ENH | X-164 | the customer signature freezes the version it was sold at; ⚠️ **F-19 — a contract that is not an estimate has no home** · refuses: to alter a version after signature |
 | G10-02 | A2P 10DLC Compliance Automation | ENH | X-188 | the brand is auto-submitted (P-064); ⚠️ Twilio/TCR are corpus vocabulary — Infobip |
 | G10-03 | Abandonment Rate Compliance | ENH | X-200 | ⛔ hard maximum 3%, lower only; the UI and API reject higher (§160.1) |
 | G10-04 | AI Pipeline Scrubbing | ENH | X-07 | it scores the DEAL, not the rep — sandbagging detection is named in the header |

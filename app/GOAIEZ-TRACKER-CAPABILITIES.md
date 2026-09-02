@@ -533,7 +533,7 @@
 
 | # | Capability | BL | Parent / X | Status | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| G10-01 | "Approved as Is" E-Sign | ENH | X-164 | SPECCED | the customer signature freezes the version it was sold at;  F-19 — a contract that is not an estimate has n… |
+| G10-01 | "Approved as Is" E-Sign | ENH | X-164 | SPECCED | the customer signature freezes the version it was sold at;  F-19 — a contract that is not an estimate has n… · refuses: to alter a version after signature |
 | G10-02 | A2P 10DLC Compliance Automation | ENH | X-188 | SPECCED | the brand is auto-submitted (P-064);  Twilio/TCR are corpus vocabulary — Infobip |
 | G10-03 | Abandonment Rate Compliance | ENH | X-200 | SPECCED | hard maximum 3%, lower only; the UI and API reject higher (§160.1) |
 | G10-04 | AI Pipeline Scrubbing | ENH | X-07 | SPECCED | it scores the DEAL, not the rep — sandbagging detection is named in the header |
