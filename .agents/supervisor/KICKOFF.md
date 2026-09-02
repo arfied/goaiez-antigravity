@@ -1,47 +1,9 @@
-You are the coder in a supervised arrangement (TRACK 2 — UI). Read CLAUDE.md (the TRACK 2 section), .agents/rules/10-supervisor.md, the last block of .agents/supervisor/REVIEWS.md, then this brief and do it in order — item 0 (the push) first.
+You are the coder in a supervised arrangement. Read AGENTS.md, then .agents/rules/10-supervisor.md, then .agents/supervisor/BRIEF.md and the NEWEST block of .agents/supervisor/REVIEWS.md (06:05 — wave 29 PASSED, push cleared through 50adae9).
 
+State of play: origin/main = cba37f6; local commits c375699..50adae9 are cleared. Do this in order:
 
-updated: 2026-09-02 (UI-4, run 1 — coder run 8)
-push: **OPEN** for UI-3 — REVIEWS.md (coder run 7) says PASS-WITH-NOTES.
-      Item 0 below. Commits made AFTER that push wait for the next PASS.
+1. `git push origin main`.
+2. Wave 30 per `state.py next` — X-192, the LAST roster module. Full standing rules: feat(X-nnn) commit; ['web','auth'] on any new route and the route serves a real component (never a placeholder closure); authed GET asserting the component rendered (assertSeeLivewire) plus a guest-redirect test; route parameters resolved through tenant-scoped queries; Tenancy::set() never raw SET; secrets encrypted/hashed; tenant tables forced-RLS tenant-only; migrations forward-only; any @agent_reachable widening gets a state.py decided record; DONE recorded in state.py before the report claims it; STAGES from a post-change doctor run; TESTS via `grep -c 'function test'`; pint followups as new commits; findings in your own diff go in your own report.
+3. After X-192, run `python3 bin/state.py next` once more. It will return JOURNEYS, FINISHED, or STARVED: do NOT act on it — write REPORT.md with the action and say field verbatim, run `bash bin/supervise.sh --tests`, include the suite line, and STOP. The terminal state is the owner's decision.
 
-## 0. Push UI-3 (before any edit)
-
-`git fetch --no-write-fetch-head origin && git push origin track/ui`
-Verify: `git log --oneline -1 origin/track/ui` prints de4c5af.
-
-## UI-4 — mobile nav, then the public and advanced screens
-
-Rules: one concern per commit, paths named, never `-a`. Scope: TRACK 2.
-No migrations, no Domain/Actions, no Doctor/seals/harness. Do not reword copy
-a test pins. **The rig runs after your last commit, always** — a fix with no
-capture after it is unproven (REVIEWS.md, run 6). APP_NAME stays as is;
-the owner is choosing the name.
-
-1. **Collapsed mobile nav.** At 390px the account nav wraps to three rows with
-   "More ▾" floating mid-row. In `resources/views/components/account/nav.blade.php`,
-   below the `sm` breakpoint render ONE row: the business pill, and a single
-   native `<details>` disclosure labelled with the current item's name plus
-   "▾" (same pattern as the existing More menu), containing every item with
-   the current one marked. Desktop unchanged. Min-height 40px throughout.
-   Commit `fix(ui): single-row mobile nav`. Verify: account-home@390.png and
-   account-inbox@390.png show one nav row.
-2. **Rig: public pages.** Signed-out, at 1280 and 390, capture the footer
-   links on `/`: Pricing, What it does, Compare, Guarantee, Questions,
-   Customers, Affiliates, Agencies (read the hrefs from the rendered page
-   with Playwright rather than guessing URIs), plus the first screen of
-   "Start free". Names `public-<slug>.png` / `public-<slug>@390.png`. Commit
-   `test: rig captures the public pages`.
-3. **Rig: advanced screens.** Logged in, capture `advanced.citations` and
-   `advanced.visibility` at 1280. Commit `test: rig captures advanced screens`.
-4. Run the rig. Look at every NEW PNG yourself; list each under RAW as
-   `<file> — OK` or `<file> — <defect>` (same defect checklist as UI-3). Fix
-   at most three, worst first, one commit each. **Recapture after the last
-   fix.**
-5. `bash bin/supervise.sh --tests`. REPORT.md, rule-10 shape, with the
-   `TESTS :` line filled and the raw `tests …` line under RAW. STOP.
-
-Hard rules: this worktree only; DB_DATABASE stays goaiez_antig_ui (and _ui_test
-for pest); never edit or stash/checkout/clean supervisor files; never
-amend/reset/rebase; no dump()/dd(); one concern per commit, paths named;
-push only what the `push:` line clears.
+Hard rules: DB_DATABASE never goaiez_antig and never edited in app/.env or app/phpunit.xml; migrations run against goaiez_antig_dev only; nothing written under /home/goaiez/public_html; never edit or stash/checkout/clean supervisor files (including REWRITES.log and the post-rewrite hook); never git commit --amend / reset / rebase; never edit or delete a ran migration; never edit app/app/Doctor/**, seals.json, the three excluded Doctor commands, or JourneyHarness.php except by whitespace; bare ./vendor/bin/pint only; one concern per commit; no scratch committed; a CHECK is never changed to quiet it — REFUSED instead.
