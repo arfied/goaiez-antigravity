@@ -780,7 +780,7 @@
 | G16-01 | AI Stock Sourcing | ENH | X-114 | SPECCED | stock for a DEMO page only;  P-131 — a job photo is never stock |
 | G16-02 | Auto-Captions | ENH | X-158 | SPECCED | burned captions on the 90-second cut |
 | G16-03 | Chapter Orchestration | ENH | X-183 | SPECCED | long-form structure through the gate |
-| G16-04 | Direct File Uploads | ENH | X-114 | SPECCED | signed upload URL; the `Asset` row is X-121's |
+| G16-04 | Direct File Uploads | ENH | X-114 | SPECCED | signed upload URL; the `Asset` row is X-121's · refuses: an upload without a signed URL |
 | G16-05 | Dynamic Offers | ENH | X-117 | SPECCED | P-120 — a countdown must be true. A timer that resets on refresh is a manufactured claim |
 | G16-06 | Dynamic Video Ads | ENH | X-158 | SPECCED | ad PACKS as content are not fenced (P-128) |
 | G16-07 | Expiry Links | ENH | X-103 | SPECCED | an expiring short link (P-072) |

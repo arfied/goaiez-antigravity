@@ -28148,7 +28148,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G16-01 | AI Stock Sourcing | ENH | X-114 | stock for a DEMO page only; ⛔ P-131 — a job photo is never stock |
 | G16-02 | Auto-Captions | ENH | X-158 | burned captions on the 90-second cut |
 | G16-03 | Chapter Orchestration | ENH | X-183 | long-form structure through the gate |
-| G16-04 | Direct File Uploads | ENH | X-114 | signed upload URL; the `Asset` row is X-121's |
+| G16-04 | Direct File Uploads | ENH | X-114 | signed upload URL; the `Asset` row is X-121's · refuses: an upload without a signed URL |
 | G16-05 | Dynamic Offers | ENH | X-117 | ⚠️ **P-120 — a countdown must be true.** A timer that resets on refresh is a manufactured claim |
 | G16-06 | Dynamic Video Ads | ENH | X-158 | ad PACKS as content are not fenced (P-128) |
 | G16-07 | Expiry Links | ENH | X-103 | an expiring short link (P-072) |

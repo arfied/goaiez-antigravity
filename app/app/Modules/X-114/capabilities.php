@@ -28,7 +28,7 @@ return [
     'G16-01' => 'stock for a DEMO page only;  P-131 — a job photo is never stock',
 
     // status: SPECCED
-    'G16-04' => 'signed upload URL; the Asset row is X-121\'s',
+    'G16-04' => 'signed upload URL; the Asset row is X-121\'s · refuses: an upload without a signed URL',
 
     // status: SPECCED
     'G16-08' => 'generated, compressed, never a broken placeholder',
