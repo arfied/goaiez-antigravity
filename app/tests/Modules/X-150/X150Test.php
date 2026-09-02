@@ -9,8 +9,10 @@ use App\Modules\X150\Events\ProviderExhausted;
 use App\Modules\X150\Events\ProviderSucceeded;
 use App\Modules\X150\Events\ProviderTried;
 use App\Modules\X150\Models\ProviderAttempt;
-use Illuminate\Support\Facades\DB;
+use App\Modules\X150\Ui\ProviderCostPer;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X150Test extends TestCase
@@ -33,7 +35,7 @@ class X150Test extends TestCase
         Event::fake([ProviderTried::class, ProviderSucceeded::class, ProviderExhausted::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Cascading Enrichment Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
         $requestId = 'req_enrich_9901';
 
@@ -92,9 +94,9 @@ class X150Test extends TestCase
     public function test_component_renders_empty_state(): void
     {
         $biz = TestCase::provisionTenant();
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
-        \Livewire\Livewire::test(\App\Modules\X150\Ui\ProviderCostPer::class, ['businessId' => $biz->id])
+        Livewire::test(ProviderCostPer::class, ['businessId' => $biz->id])
             ->assertOk();
     }
 }

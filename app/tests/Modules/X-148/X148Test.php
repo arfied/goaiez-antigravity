@@ -8,8 +8,10 @@ use App\Modules\X148\Actions\RetrievalIndexAction;
 use App\Modules\X148\Actions\RetrievalSearchAction;
 use App\Modules\X148\Events\RetrievalCompleted;
 use App\Modules\X148\Events\RetrievalEmpty;
-use Illuminate\Support\Facades\DB;
+use App\Modules\X148\Ui\RetrievalLatencyEmptyrate;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X148Test extends TestCase
@@ -38,14 +40,14 @@ class X148Test extends TestCase
         $bizB = TestCase::provisionTenant(['name' => 'Tenant Beta Roofing', 'currency' => 'USD']);
 
         // Index chunks for Tenant A and Tenant B
-        \App\Support\Tenancy::set((int) $bizA->id);
+        Tenancy::set((int) $bizA->id);
         $this->indexAction->indexChunk(
             businessId: $bizA->id,
             title: 'Alpha HVAC Warranty Policy',
             chunkText: 'Alpha offers a 10 year heat pump compressor warranty.'
         );
 
-        \App\Support\Tenancy::set((int) $bizB->id);
+        Tenancy::set((int) $bizB->id);
         $this->indexAction->indexChunk(
             businessId: $bizB->id,
             title: 'Beta Shingle Leak Repair SLA',
@@ -53,7 +55,7 @@ class X148Test extends TestCase
         );
 
         // 1. Voice-mode retrieval trace contains exactly 1 search call and NO rerank (TEST ANCHOR)
-        \App\Support\Tenancy::set((int) $bizA->id);
+        Tenancy::set((int) $bizA->id);
         $voiceSearchRes = $this->searchAction->search(
             businessId: $bizA->id,
             query: 'warranty',
@@ -68,7 +70,7 @@ class X148Test extends TestCase
         Event::assertDispatched(RetrievalCompleted::class);
 
         // 2. Tenant isolation: a tenant-A query never returns a tenant-B chunk — asserts ZERO rows, not an exception (TEST ANCHOR)
-        \App\Support\Tenancy::set((int) $bizA->id);
+        Tenancy::set((int) $bizA->id);
         $crossTenantQuery = $this->searchAction->search(
             businessId: $bizA->id,
             query: 'Beta Shingle Leak Repair' // Content existing only in Tenant B
@@ -92,10 +94,9 @@ class X148Test extends TestCase
     public function test_component_renders_empty_state(): void
     {
         $biz = TestCase::provisionTenant();
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
-        \Livewire\Livewire::test(\App\Modules\X148\Ui\RetrievalLatencyEmptyrate::class, ['businessId' => $biz->id])
+        Livewire::test(RetrievalLatencyEmptyrate::class, ['businessId' => $biz->id])
             ->assertOk();
     }
 }
-
