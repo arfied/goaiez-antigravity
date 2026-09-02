@@ -25,6 +25,7 @@ final class ModuleServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\EvidenceChargeCommand::class,
+                Console\RuntimeProofCommand::class,
             ]);
         }
 
