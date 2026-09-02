@@ -141,6 +141,8 @@ use App\Livewire\Support\Accounts as SupportAccounts;
 use App\Livewire\Support\DataRequestQueue as SupportDataRequestQueue;
 use App\Livewire\Support\Tickets as SupportTickets;
 use App\Modules\X140\Ui\ProposedPagesView;
+use App\Modules\X179\Ui\MatchScores;
+use App\Modules\X179\Ui\ProspecttenantfacingTop3Preview;
 use App\Services\ShortLinks\ShortLinks;
 use App\Support\Admin\AdminAccess;
 use App\Support\Admin\SupportAccess;
@@ -2204,13 +2206,13 @@ Route::middleware(['web', 'auth'])
     ->get('/account/content-topics', ProposedPagesView::class)
     ->name('account.content-topics');
 
-Route::middleware(['web', 'auth'])->get('/prospects/top3-preview/{prospectId}', function ($prospectId) {
-    return "Top 3 Preview for prospect {$prospectId}";
-})->name('prospects.top3-preview');
+Route::middleware(['web', 'auth'])
+    ->get('/prospects/top3-preview/{prospectId}', ProspecttenantfacingTop3Preview::class)
+    ->name('prospects.top3-preview');
 
-Route::middleware(['web', 'auth'])->get('/prospects/match-scores/{prospectId}', function ($prospectId) {
-    return "Match scores for prospect {$prospectId}";
-})->name('prospects.match-scores');
+Route::middleware(['web', 'auth'])
+    ->get('/prospects/match-scores/{prospectId}', MatchScores::class)
+    ->name('prospects.match-scores');
 
 Route::get('/{token}', ShortLinkController::class)
     ->where('token', '[A-Za-z0-9]{'.ShortLinks::TOKEN_LENGTH.'}')
