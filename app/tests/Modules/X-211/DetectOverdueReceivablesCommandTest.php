@@ -85,19 +85,25 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
         Tenancy::forgetAll();
         $business = Business::factory()->create();
 
-        Tenancy::actingAs((int) $business->id, function () use ($business) {
-            Invoice::create([
+        $draftId = null;
+        $issuedId = null;
+
+        Tenancy::actingAs((int) $business->id, function () use ($business, &$draftId, &$issuedId) {
+            $draft = Invoice::create([
                 'business_id' => $business->id,
                 'invoice_number' => 'INV-DRAFT',
                 'status' => 'draft',
                 'due_date' => now()->subDays(10),
             ]);
-            Invoice::create([
+            $draftId = $draft->id;
+
+            $issued = Invoice::create([
                 'business_id' => $business->id,
                 'invoice_number' => 'INV-ISSUED',
                 'status' => 'issued',
                 'due_date' => now()->subDays(10),
             ]);
+            $issuedId = $issued->id;
         });
         Tenancy::forgetAll();
 
@@ -105,6 +111,7 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
 
         Artisan::call('x211:detect-overdue');
 
-        Event::assertDispatchedTimes(ArOverdue::class, 1);
+        Event::assertNotDispatched(ArOverdue::class, fn ($e) => $e->invoiceId === $draftId);
+        Event::assertDispatched(ArOverdue::class, fn ($e) => $e->invoiceId === $issuedId);
     }
 }

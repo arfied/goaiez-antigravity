@@ -493,3 +493,4 @@
 - `2026-09-02T14:08:56` note: UNRESOLVED J12 — makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue.
 - `2026-09-02T15:10:38` note: ArEscalatedToHuman in X-211 has no listener (missing reader in X-211/Ui/** which is Track 2's).
 - `2026-09-02T15:10:38` note: UNRESOLVED J12 — waiting on track/sixty merge
+- `2026-09-02T15:43:11` note: ArOverdueQueueTest deletes the whole jobs table before draining, because class-based module tests share one database (X-103); this discards any job another test queued and is relying on. Name X-211 and X-103.

@@ -1219,6 +1219,10 @@
   {
    "at": "2026-09-02T15:10:38",
    "note": "UNRESOLVED J12 \u2014 waiting on track/sixty merge"
+  },
+  {
+   "at": "2026-09-02T15:43:11",
+   "note": "ArOverdueQueueTest deletes the whole jobs table before draining, because class-based module tests share one database (X-103); this discards any job another test queued and is relying on. Name X-211 and X-103."
   }
  ],
  "decisions": [
