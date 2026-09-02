@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G2-09' => 'refuses to record an AI QA score if the conversation transcript is incomplete, ensuring agents are not penalized for partial audio capture.',
+    'G2-09' => 'qa_scorecards; an AI seat is scored exactly like a human · refuses: to score an AI seat differently from a human seat',
 
     // status: SPECCED
     'G2-26' => 'the wallboard (an X-194 view of live queue state)',
@@ -37,7 +37,7 @@ return [
     'G3-04' => 'predictive pacing under the 3% abandonment ceiling (§160.1)',
 
     // status: SPECCED
-    'G5-09' => 'refuses to save roleplay coaching feedback if no active voice input was detected for the duration of the scenario.',
+    'G5-09' => 'coaching on the desk; the voice is X-197\'s',
 
     // status: SPECCED
     'G5-40' => 'the QA scorecard',
@@ -52,7 +52,7 @@ return [
     'G10-03' => 'hard maximum 3%, lower only; the UI and API reject higher (§160.1)',
 
     // status: SPECCED
-    'G11-25' => 'refuses to accept a disposition that is not in the campaign\'s closed set, rejecting the API call instead of falling back to default.',
+    'G11-25' => 'named in the header — a closed set per campaign',
 
     // status: SPECCED
     'G13-02' => 'the wallboard;  team-level operational state only — T677 bars the punitive read',
@@ -76,10 +76,10 @@ return [
     'G18-06' => 'a wellbeing prompt on the desk — the positive side of §150.4',
 
     // status: SPECCED
-    'G18-08' => 'refuses to enable barge or whisper features if the supervisor lacks the explicit compliance role for live call intervention.',
+    'G18-08' => 'listen · whisper · barge on the seat',
 
     // status: SPECCED
-    'G18-13' => 'refuses to compile a post-call autopsy if the call duration was under 15 seconds, avoiding irrelevant feedback on immediate hang-ups.',
+    'G18-13' => 'T677 — feedback to the rep, not a scoreboard against them · refuses: to act as a scoreboard against the rep — it is feedback (T677)',
 
     // status: SPECCED
     'G18-15' => 'live queue state; the AI answers first (R11/R20)',
@@ -88,10 +88,10 @@ return [
     'G18-16' => 'T677 — a coaching signal only',
 
     // status: SPECCED
-    'G18-19' => 'refuses to dispatch power-dialing calls via Twilio, enforcing the platform rule that Infobip is the primary carrier for outbound voice.',
+    'G18-19' => 'Twilio is corpus vocabulary — Infobip primary (§120–§122) · refuses: to treat Twilio as primary — Infobip is primary (§120–§122)',
 
     // status: SPECCED
-    'G21-13' => 'refuses to sync deal notifications to Slack if the target channel is private and the bot lacks an explicit invitation, failing gracefully.',
+    'G21-13' => 'a closed deal on the wallboard and in the channel',
 
     // status: SPECCED
     'G15-29' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ §150.4 — praise only; no per-person negative output exists in the schema',
