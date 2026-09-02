@@ -85,7 +85,7 @@
 | G2-06 | Appointment Scheduling | ENH | X-108 | SPECCED | the agent calls `availability.request`; time is looked up or refused (P-093) |
 | G2-07 | Auto-Assignment | ENH | X-10 | SPECCED | geocode → polygon → assign; named in the header |
 | G2-08 | Auto-Scheduling | RE-HOME→G12 | X-182 | SPECCED | social scheduling — spec with the social pass (turn 32) |
-| G2-09 | Automated QA Scoring | ENH | X-200 | SPECCED | `qa_scorecards`; an AI seat is scored exactly like a human |
+| G2-09 | Automated QA Scoring | ENH | X-200 | SPECCED | refuses to record an AI QA score if the conversation transcript is incomplete, ensuring agents are not penalized for partial audio capture. |
 | G2-10 | Automated Scheduling | RE-HOME→G15 | X-108 | SPECCED | the calendar half is X-108's; the hiring flow is G15's |
 | G2-11 | Automated Trigger | ENH | X-183 | SPECCED | R36's case-study machine — double consent, never automatic publication |
 | G2-12 | Blackout Dates | ENH (split) | X-108 | SPECCED | split: the blackout calendar is X-108's *("blackouts and holiday overrides")*; the PTO request-and-approval… |
@@ -297,7 +297,7 @@
 | G5-06 | AI Auto-Tagging | ENH | X-114 | SPECCED | image tagging on the `Asset` |
 | G5-07 | AI Form Generator | ENH | X-155 | SPECCED | describing the form is the wizard |
 | G5-08 | AI Generation | ENH | X-178 | SPECCED | named in the header |
-| G5-09 | AI Roleplay | ENH | X-200 | SPECCED | coaching on the desk; the voice is X-197's |
+| G5-09 | AI Roleplay | ENH | X-200 | SPECCED | refuses to save roleplay coaching feedback if no active voice input was detected for the duration of the scenario. |
 | G5-10 | AI Safety & Prompt Injection Defense | ENH | C-Agent | SPECCED | untrusted text is DATA, never instruction; red evals are build-failing (P-102) |
 | G5-11 | AI Sentiment Parsing | ENH | X-183 | SPECCED | a negative comment on a draft; the escalation is the *ApprovalDesk* question |
 | G5-12 | AI Subject Line Split Testing | ENH | X-186 | SPECCED | still one mixed campaign (P-074) |
@@ -604,7 +604,7 @@
 | G11-22 | Omni-Channel Inbox Sync | ENH | X-01 | SPECCED | one polymorphic `Conversation` (X-121's) across every channel |
 | G11-23 | Omni-Channel Messaging | ENH | X-01 | SPECCED | = the row above; one spec |
 | G11-24 | Omnichannel Campaigns | ENH | X-186 | SPECCED | named in the header;  every send from there is Marketing class from the CALLER |
-| G11-25 | One-Click Dispositions | ENH | X-200 | SPECCED | named in the header — a closed set per campaign |
+| G11-25 | One-Click Dispositions | ENH | X-200 | SPECCED | refuses to accept a disposition that is not in the campaign's closed set, rejecting the API call instead of falling back to default. |
 | G11-26 | Payload Validation | ENH | X-122 | SPECCED | strict JSON-schema validation; a missing field is refused, never defaulted |
 | G11-27 | Promo Email Draft | RE-HOME→G16 | X-158 | SPECCED | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | SPECCED | named in the header — any reply stops the sequence (P-075) |
@@ -856,18 +856,18 @@
 | G18-05 | Feature Gating & FOMO | KILLED | — | SPECCED | P-001 · T468 — two packages, and everything we ship, as we ship it, at the price you joined at. There is no… |
 | G18-06 | Gamification Breaks | ENH | X-200 | SPECCED | a wellbeing prompt on the desk — the positive side of §150.4 |
 | G18-07 | Holiday Overrides | ENH | X-108 | SPECCED | blackouts and holiday overrides are named in the header |
-| G18-08 | Live Call Coaching | ENH | X-200 | SPECCED | listen · whisper · barge on the seat |
+| G18-08 | Live Call Coaching | ENH | X-200 | SPECCED | refuses to enable barge or whisper features if the supervisor lacks the explicit compliance role for live call intervention. |
 | G18-09 | LiveKit Voice Engine | ENH | X-197 | SPECCED | named in the header;  ElevenLabs is corpus vocabulary — the 7¢ minute only works self-orchestrated (§18F) |
 | G18-10 | Local Caller ID | ENH | X-188 | SPECCED | the tenant's own registered numbers by area code |
 | G18-11 | Local Presence | ENH | X-188 | SPECCED | = Local Caller ID; one spec.  rotation is bounded by P-065's per-number complaint monitoring |
 | G18-12 | Multi-Ring Simultaneous | ENH | X-153 | SPECCED | three staff alerted, first reply claims, the claim expires at 30 minutes (P-077) |
-| G18-13 | Post-Call Autopsy | ENH | X-200 | SPECCED | T677 — feedback to the rep, not a scoreboard against them |
+| G18-13 | Post-Call Autopsy | ENH | X-200 | SPECCED | refuses to compile a post-call autopsy if the call duration was under 15 seconds, avoiding irrelevant feedback on immediate hang-ups. |
 | G18-14 | Post-Call CSAT Survey | ENH | C-Reviews | SPECCED | CSAT on resolve is named in the header |
 | G18-15 | Queue Position Announcements | ENH | X-200 | SPECCED | live queue state; the AI answers first (R11/R20) |
 | G18-16 | Talk-to-Listen Ratio | ENH | X-200 | SPECCED | T677 — a coaching signal only |
 | G18-17 | Telephony Call Whisper | ENH | X-137 | SPECCED | the whisper names the SOURCE — that is what call tracking is for |
 | G18-18 | Telephony Router | ENH | C-Telephony | SPECCED | the router and the eight adapters are the header |
-| G18-19 | Twilio Power-Dialing | ENH | X-200 | SPECCED | Twilio is corpus vocabulary — Infobip primary (§120–§122) |
+| G18-19 | Twilio Power-Dialing | ENH | X-200 | SPECCED | refuses to dispatch power-dialing calls via Twilio, enforcing the platform rule that Infobip is the primary carrier for outbound voice. |
 | G18-20 | VIP Skipping | ENH | C-Telephony | SPECCED | LTV read from C-Billing; the bypass is a routing rule |
 | G18-21 | Voice RAG | ENH | X-66 | SPECCED | real-time objection detection; retrieval is X-148's |
 | G18-22 | Voice Top-Up | ENH | C-Billing | SPECCED | the numbers are DEAD. The metering model of record: 7¢/min · 100 minutes included · top-ups $100→$100 and $… |
@@ -944,7 +944,7 @@
 | G21-10 | Slack Integration | ENH | X-124 | SPECCED | the assistant answering in-thread from the generated help registry |
 | G21-11 | Slack Integration | ENH | X-202 | SPECCED | approve or deny without opening the CRM |
 | G21-12 | Slack Integration | ENH | X-123 | SPECCED | a comment event pinging the right person |
-| G21-13 | Slack Sync | ENH | X-200 | SPECCED | a closed deal on the wallboard and in the channel |
+| G21-13 | Slack Sync | ENH | X-200 | SPECCED | refuses to sync deal notifications to Slack if the target channel is private and the bot lacks an explicit invitation, failing gracefully. |
 | G21-14 | Ticket Deflection | ENH | X-111 | SPECCED | the help card offered before the ticket is submitted |
 
 ---
