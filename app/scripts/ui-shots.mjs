@@ -143,6 +143,25 @@ function waitForServer(url) {
             await runAxe(page, screen.name, outputDir);
         }
 
+        
+        const customerScreens = [
+            { name: 'customer-feedback', path: '/f/test-business' },
+            { name: 'customer-thanks', path: '/f/test-business/thanks' },
+            { name: 'customer-to-google', path: '/f/test-business/to/google' },
+            { name: 'customer-review-hub', path: '/r/test-business' },
+            { name: 'customer-unsubscribe', path: '/mail/unsubscribe/eyJpdiI6Ikp4ZWNFMnF6TVl2UENGTmVoMVIrVFE9PSIsInZhbHVlIjoicGlrb01FUEZNVSsxRGhYakNITHZOS0I2SDlGUGtybDZvQ1dzS2dzYXJGRDRPaENoR2dkaG5ZQTJvQ0J1YzR4Z05nQzk4YTljS2wxdjJEeGUrdERYRE9UUkljcWw1bVM1L0N1SmpCaW9hMGM9IiwibWFjIjoiZDFiZjRmNzAxMzVlZjQyNTA0NDM5ZTZjNGFiZTcxODk5YjU3MDhiZDA4NDQ4ZTRjYjQ0YmRjMmUyOTlmMTA2YSIsInRhZyI6IiJ9' },
+            { name: 'customer-legal-terms', path: '/legal/terms' },
+            { name: 'customer-sms-terms', path: '/sms-terms' },
+            { name: 'customer-privacy', path: '/privacy' }
+        ];
+
+        for (const screen of customerScreens) {
+            await page.goto(`${baseUrl}${screen.path}`);
+            await page.waitForLoadState('networkidle');
+            await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+            await runAxe(page, screen.name, outputDir);
+        }
+
         await page.goto(`${baseUrl}/login`);
         await page.waitForLoadState('networkidle');
         await page.screenshot({ path: path.join(outputDir, 'login.png'), fullPage: true });
@@ -220,6 +239,14 @@ function waitForServer(url) {
 
         for (const screen of publicScreens) {
             await mobilePage.goto(screen.url);
+            await mobilePage.waitForLoadState('networkidle');
+            await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+            await runAxe(mobilePage, `${screen.name}@390`, outputDir);
+        }
+
+        
+        for (const screen of customerScreens) {
+            await mobilePage.goto(`${baseUrl}${screen.path}`);
             await mobilePage.waitForLoadState('networkidle');
             await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
             await runAxe(mobilePage, `${screen.name}@390`, outputDir);
