@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T05:03:10",
+ "updated": "2026-09-02T14:06:44",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1195,6 +1195,22 @@
   {
    "at": "2026-08-29T14:37:58",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-02T14:06:35",
+   "note": "UNRESOLVED X-198 \u2014 the X-198 test anchor asserts gateway_charge_id is NULL ('Charge id is issued only by external gateway', X198Test.php:74) while J9 requires a charge id the provider minted. Both cannot hold once the gateway is real. Resolving it is a CHECK change and is an owner ruling; MONEY-1 resolved it with a null-returning test double, which was blocked and reverted."
+  },
+  {
+   "at": "2026-09-02T14:06:36",
+   "note": "X-198 tenant gateway capture reads C-Billing's platform credential config('credentials.stripe_secret') rather than a tenant-scoped gateway credential. C-Billing is shared with Track 1 and was not edited. Track 1: this needs a tenant-scoped key."
+  },
+  {
+   "at": "2026-09-02T14:06:36",
+   "note": "UNRESOLVED journey J9 \u2014 payment provider test-mode keys absent"
+  },
+  {
+   "at": "2026-09-02T14:08:56",
+   "note": "UNRESOLVED J12 \u2014 makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue."
   }
  ],
  "decisions": [
@@ -1214,6 +1230,12 @@
    "module": "X-179",
    "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
    "at": "2026-09-02T04:38:50",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) X-198 \u2014 Stripe selected as the payment provider; StripeGatewayClient posts to api.stripe.com/v1/charges and reads config('credentials.stripe_secret') = env('STRIPE_SECRET'). X-198's migration comments list stripe, square, clover, plaid as candidates; the choice is provisional pending an owner ruling.",
+   "at": "2026-09-02T14:06:44",
    "ruling": "R245"
   }
  ]

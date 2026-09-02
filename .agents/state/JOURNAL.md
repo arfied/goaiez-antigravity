@@ -486,3 +486,8 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
+- `2026-09-02T14:06:35` note: UNRESOLVED X-198 — the X-198 test anchor asserts gateway_charge_id is NULL ('Charge id is issued only by external gateway', X198Test.php:74) while J9 requires a charge id the provider minted. Both cannot hold once the gateway is real. Resolving it is a CHECK change and is an owner ruling; MONEY-1 resolved it with a null-returning test double, which was blocked and reverted.
+- `2026-09-02T14:06:36` note: X-198 tenant gateway capture reads C-Billing's platform credential config('credentials.stripe_secret') rather than a tenant-scoped gateway credential. C-Billing is shared with Track 1 and was not edited. Track 1: this needs a tenant-scoped key.
+- `2026-09-02T14:06:36` note: UNRESOLVED journey J9 — payment provider test-mode keys absent
+- `2026-09-02T14:06:44` (R245) X-198 — (R245) X-198 — Stripe selected as the payment provider; StripeGatewayClient posts to api.stripe.com/v1/charges and reads config('credentials.stripe_secret') = env('STRIPE_SECRET'). X-198's migration comments list stripe, square, clover, plaid as candidates; the choice is provisional pending an owner ruling.
+- `2026-09-02T14:08:56` note: UNRESOLVED J12 — makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue.
