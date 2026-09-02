@@ -134,11 +134,41 @@ class X163Test extends TestCase
     }
 
     /**
-     * [N-062] no refusal declared
+     * [N-062] a sample or unconfirmed line yields no number
      */
     public function test_n_062_assertion(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Quote Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-sample',
+            'price_cents' => 1850000,
+            'is_sample' => true,
+            'is_confirmed' => true,
+            'tax_rate_pct' => 0,
+        ]);
+
+        $action = new PriceQuoteAction;
+        $res = $action->handle($biz->id, 'How much to unblock a drain sample?');
+        
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertArrayNotHasKey('amount', $res);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unconfirmed',
+            'price_cents' => 1850000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'tax_rate_pct' => 0,
+        ]);
+
+        $res2 = $action->handle($biz->id, 'How much to unblock a drain unconfirmed?');
+        
+        $this->assertEquals('NO_FACT', $res2['refusal_code']);
+        $this->assertArrayNotHasKey('amount', $res2);
     }
 
     public function test_price_quote_resolves_intent_from_real_data(): void
