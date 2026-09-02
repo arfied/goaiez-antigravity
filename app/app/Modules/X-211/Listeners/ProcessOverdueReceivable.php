@@ -10,18 +10,22 @@ use App\Modules\X211\Models\ArDunningAction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Event;
 
+use App\Support\Tenancy;
+
 final class ProcessOverdueReceivable implements ShouldQueue
 {
     public function handle(ArOverdue $event): void
     {
-        // R211: resolution precedes any automatic stop
-        $action = ArDunningAction::create([
-            'business_id' => $event->businessId,
-            'invoice_id' => $event->invoiceId,
-            'action' => 'escalate_to_human',
-            'reason' => 'R211: Overdue invoice requires human resolution attempt before any suspension.',
-        ]);
+        Tenancy::actingAs((int) $event->businessId, function () use ($event) {
+            // R211: resolution precedes any automatic stop
+            $action = ArDunningAction::create([
+                'business_id' => $event->businessId,
+                'invoice_id' => $event->invoiceId,
+                'action' => 'escalate_to_human',
+                'reason' => 'R211: Overdue invoice requires human resolution attempt before any suspension.',
+            ]);
 
-        Event::dispatch(new ArEscalatedToHuman($event->businessId, $event->invoiceId, $action->reason));
+            Event::dispatch(new ArEscalatedToHuman($event->businessId, $event->invoiceId, $action->reason));
+        });
     }
 }
