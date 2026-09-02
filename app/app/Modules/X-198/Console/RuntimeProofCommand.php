@@ -78,8 +78,21 @@ final class RuntimeProofCommand extends Command
         }
 
         $hasName = str_contains($junitContent, 'an_invoice_reaches_a_real_charge_id') || str_contains($junitContent, 'An invoice reaches a real charge id');
-        $failures = (string) $junitXml['failures'];
-        $errors = (string) $junitXml['errors'];
+        
+        $rootSuite = null;
+        if ($junitXml->getName() === 'testsuites' && isset($junitXml->testsuite[0])) {
+            $rootSuite = $junitXml->testsuite[0];
+        } elseif ($junitXml->getName() === 'testsuite') {
+            $rootSuite = $junitXml;
+        }
+
+        if (!$rootSuite) {
+            $this->error('junit.xml does not contain a root testsuite');
+            return self::FAILURE;
+        }
+
+        $failures = (string) $rootSuite['failures'];
+        $errors = (string) $rootSuite['errors'];
 
         if (! $hasName || $failures !== '0' || $errors !== '0') {
             $this->error('junit.xml does not name an_invoice_reaches_a_real_charge_id with failures=0 errors=0');
@@ -92,8 +105,8 @@ final class RuntimeProofCommand extends Command
         // The command already refuses unless that file's artifact_id equals charge.json's gateway_charge_id, and that
         // comparison is what ties the stamp to this charge and this execution. This fixes B1.
         $capturedAt = null;
-        if (isset($junitXml['timestamp'])) {
-            $capturedAt = (string) $junitXml['timestamp'];
+        if (isset($rootSuite['timestamp'])) {
+            $capturedAt = (string) $rootSuite['timestamp'];
         } elseif (!empty($invoicePaidData['captured_at'])) {
             $capturedAt = $invoicePaidData['captured_at'];
         } else {
