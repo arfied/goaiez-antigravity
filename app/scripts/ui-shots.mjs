@@ -1,9 +1,39 @@
 import { chromium } from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
 import fs from 'fs';
 import path from 'path';
 import { execSync, spawn } from 'child_process';
 import http from 'http';
 import net from 'net';
+
+
+const summaryLines = [];
+async function runAxe(page, name, outputDir) {
+    const axeDir = path.join(outputDir, 'axe');
+    if (!fs.existsSync(axeDir)) {
+        fs.mkdirSync(axeDir, { recursive: true });
+    }
+    const results = await new AxeBuilder({ page }).analyze();
+    const violations = results.violations.map(v => ({
+        id: v.id,
+        impact: v.impact,
+        help: v.help,
+        nodes: v.nodes.slice(0, 3).map(n => ({
+            target: n.target,
+            html: n.html
+        }))
+    }));
+    fs.writeFileSync(path.join(axeDir, `${name}.json`), JSON.stringify(violations, null, 2));
+
+    const counts = { critical: 0, serious: 0, moderate: 0, minor: 0 };
+    violations.forEach(v => {
+        if (counts[v.impact] !== undefined) {
+            counts[v.impact]++;
+        }
+    });
+    const summaryLine = `${name}  critical ${counts.critical}  serious ${counts.serious}  moderate ${counts.moderate}  minor ${counts.minor}`;
+    summaryLines.push(summaryLine);
+}
 
 function getFreePort() {
     return new Promise((resolve, reject) => {
@@ -68,6 +98,7 @@ function waitForServer(url) {
         await page.goto(`${baseUrl}/`);
         await page.waitForLoadState('networkidle');
         await page.screenshot({ path: path.join(outputDir, 'home.png'), fullPage: true });
+        await runAxe(page, 'home.png'.replace('.png', ''), outputDir);
 
         const footerLinks = await page.$$eval('footer a', anchors => anchors.map(a => ({ text: a.textContent.trim(), href: a.href })));
         const targetTexts = ['Pricing', 'What it does', 'Compare', 'Guarantee', 'Questions', 'Customers', 'Affiliates', 'Agencies'];
@@ -93,11 +124,13 @@ function waitForServer(url) {
             await page.goto(screen.url);
             await page.waitForLoadState('networkidle');
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+            await runAxe(page, screen.name, outputDir);
         }
 
         await page.goto(`${baseUrl}/login`);
         await page.waitForLoadState('networkidle');
         await page.screenshot({ path: path.join(outputDir, 'login.png'), fullPage: true });
+        await runAxe(page, 'login.png'.replace('.png', ''), outputDir);
 
         // Login
         await page.fill('#password-email', 'owner2@business.com');
@@ -110,6 +143,7 @@ function waitForServer(url) {
             const html = await page.content();
             fs.writeFileSync(path.join(outputDir, 'login-FAILED.html'), html);
             await page.screenshot({ path: path.join(outputDir, 'login-FAILED.png'), fullPage: true });
+        await runAxe(page, 'login-FAILED.png'.replace('.png', ''), outputDir);
             console.error("Login failed. URL is still /login");
             await browser.close();
             process.exit(1);
@@ -142,6 +176,7 @@ function waitForServer(url) {
             await page.goto(`${baseUrl}${screen.path}`);
             await page.waitForLoadState('networkidle');
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+            await runAxe(page, screen.name, outputDir);
         }
         await browser.close();
 
@@ -153,16 +188,19 @@ function waitForServer(url) {
         await mobilePage.goto(`${baseUrl}/`);
         await mobilePage.waitForLoadState('networkidle');
         await mobilePage.screenshot({ path: path.join(outputDir, 'home@390.png'), fullPage: true });
+        await runAxe(mobilePage, 'home@390.png'.replace('.png', ''), outputDir);
 
         for (const screen of publicScreens) {
             await mobilePage.goto(screen.url);
             await mobilePage.waitForLoadState('networkidle');
             await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+            await runAxe(mobilePage, `${screen.name}@390`, outputDir);
         }
 
         await mobilePage.goto(`${baseUrl}/login`);
         await mobilePage.waitForLoadState('networkidle');
         await mobilePage.screenshot({ path: path.join(outputDir, 'login@390.png'), fullPage: true });
+        await runAxe(mobilePage, 'login@390.png'.replace('.png', ''), outputDir);
 
         await mobilePage.fill('#password-email', 'owner2@business.com');
         await mobilePage.fill('#password', 'password');
@@ -180,9 +218,11 @@ function waitForServer(url) {
             await mobilePage.goto(`${baseUrl}${screen.path}`);
             await mobilePage.waitForLoadState('networkidle');
             await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+            await runAxe(mobilePage, `${screen.name}@390`, outputDir);
         }
 
         await mobileBrowser.close();
+        fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
 
     } finally {
         console.log("Stopping server...");
