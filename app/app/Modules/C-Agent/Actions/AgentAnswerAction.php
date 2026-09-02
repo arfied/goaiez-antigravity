@@ -91,13 +91,8 @@ final class AgentAnswerAction
                 ->where('key', 'service.oil_change.price')
                 ->first();
 
-            $drainPrice = \Illuminate\Support\Facades\DB::table('price_book_items')
-                ->where('business_id', $businessId)
-                ->where('service_name', 'drain-unblock')
-                ->first();
-
-            if (str_contains($lower, 'price') || str_contains($lower, 'quote') || str_contains($lower, 'oil change') || str_contains($lower, 'how much') || str_contains($lower, 'drain')) {
-                if (! $drainPrice) {
+            if (str_contains($lower, 'price') || str_contains($lower, 'quote') || str_contains($lower, 'oil change')) {
+                if (! $fact) {
                     $refusal = AgentRefusal::create([
                         'business_id' => $businessId,
                         'refusal_code' => 'NO_FACT',
@@ -130,7 +125,7 @@ final class AgentAnswerAction
                     ];
                 }
 
-                $reply = 'The cost is $'.number_format($drainPrice->price_cents / 100, 2);
+                $reply = "Our standard oil change service is {$fact->value}.";
             } else {
                 $reply = 'Hello! How can I help you today?';
             }
