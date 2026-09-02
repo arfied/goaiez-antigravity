@@ -2,17 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ReviewDestination;
 use App\Models\Business;
+use App\Models\Customer;
+use App\Models\FeedbackPage;
+use App\Models\Location;
+use App\Models\ReviewDestinationSetting;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\Tenants\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Location;
-use App\Models\FeedbackPage;
-use App\Models\ReviewDestinationSetting;
-use App\Models\Customer;
-use App\Enums\ReviewDestination;
 use Illuminate\Support\Str;
 
 class UiReviewSeeder extends Seeder
@@ -28,7 +29,6 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-
         $setupUser = User::firstWhere('email', 'setup@business.com');
         if (! $setupUser) {
             $setupUser = User::factory()->create([
@@ -36,7 +36,7 @@ class UiReviewSeeder extends Seeder
                 'name' => 'Setup Wizard User',
                 'role' => 'owner',
             ]);
-            app(\App\Services\Tenants\TenantProvisioner::class)->provision($setupUser);
+            app(TenantProvisioner::class)->provision($setupUser);
         }
 
         Tenancy::actingAsUser($owner->id, function () use ($owner) {
@@ -82,7 +82,7 @@ class UiReviewSeeder extends Seeder
         $page = FeedbackPage::firstWhere('location_id', $location->id);
         if (! $page) {
             FeedbackPage::factory()->forLocation($location)->create([
-                'slug' => 'review-business-2-' . Str::random(6),
+                'slug' => 'review-business-2-'.Str::random(6),
                 'is_published' => true,
             ]);
         }
