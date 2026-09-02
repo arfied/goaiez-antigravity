@@ -10,6 +10,7 @@ use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 final class EdgeDeployAction
@@ -18,9 +19,12 @@ final class EdgeDeployAction
         int $businessId,
         int $edgeZoneId,
         int $measuredTtfbMs = 120,
-        int $speedBudgetMs = 1500
+        int $speedBudgetMs = 1500,
+        ?int $pageId = null,
+        ?string $commitId = null,
+        ?string $businessName = null
     ): array {
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs) {
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $pageId, $commitId, $businessName) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -78,6 +82,39 @@ final class EdgeDeployAction
                 domainName: $zone->domain_name,
                 deployHash: $deployHash
             ));
+
+            // Compile HTML artifact to local storage
+            $html = "<html><head>";
+            if ($zone->has_valid_ssl) {
+                $html .= "<meta name=\"ssl\" content=\"valid\">\n";
+            }
+            $html .= "</head><body>\n";
+            
+            if ($commitId) {
+                $version = \App\Modules\X103\Models\PageVersion::where('commit_id', $commitId)->first();
+                if ($version) {
+                    if ($version->pixel_installed) {
+                        $html .= "<script id=\"x110-pixel\" src=\"/pixel.js\"></script>\n";
+                    }
+                    if (is_array($version->content_blocks)) {
+                        foreach ($version->content_blocks as $block) {
+                            if (($block['type'] ?? '') === 'chat') {
+                                $html .= "<div class=\"chat-widget-container\"></div>\n";
+                            }
+                            if (($block['type'] ?? '') === 'form_capture') {
+                                $html .= "<form class=\"form-capture-x155\"></form>\n";
+                            }
+                            if (($block['type'] ?? '') === 'dni') {
+                                $html .= "<div class=\"dni-pool-x137\"></div>\n";
+                            }
+                        }
+                    }
+                }
+            }
+            
+            $html .= "</body></html>";
+            
+            Storage::disk('local')->put("sites/{$deployHash}.html", $html);
 
             return [
                 'status' => 'deployed',
