@@ -1,26 +1,18 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Modules\X192\Ui;
 
-use App\Modules\X192\Models\DirectoryMembership;
-use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Illuminate\Support\Facades\DB;
 
 class MembershipsList extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
-
     public function render()
     {
-        $memberships = ($this->businessId > 0)
-            ? DirectoryMembership::where('business_id', $this->businessId)->orderByDesc('directory_index')->get()
-            : collect();
-
-        return view('x-192::memberships-list', [
-            'memberships' => $memberships,
-        ]);
+        $memberships = DB::table('directory_memberships')
+            ->orderBy('is_noindex', 'asc') // noindex at the bottom
+            ->orderBy('directory_index', 'desc')
+            ->get();
+        return view('x-192::memberships_list', compact('memberships'));
     }
 }

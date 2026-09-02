@@ -483,3 +483,6 @@
 - `2026-09-02T04:13:54` (R245) X-140 — @agent_reachable widened with topic.identify — read-shaped, per the plan's derivation rule; owner may overrule
 - `2026-09-02T04:13:54` X-140 -> DONE
 - `2026-09-02T04:31:10` X-144 -> DONE
+- `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
+- `2026-09-02T04:39:09` X-179 -> DONE
+- `2026-09-02T05:03:10` X-192 -> DONE
