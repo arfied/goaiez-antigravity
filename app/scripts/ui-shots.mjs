@@ -95,6 +95,24 @@ function waitForServer(url) {
         // Unauthenticated screens
         await page.setViewportSize({ width: 1280, height: 720 });
 
+
+        await page.goto(`${baseUrl}/this-does-not-exist`);
+        await page.waitForLoadState('networkidle');
+        await page.screenshot({ path: path.join(outputDir, 'error-404.png'), fullPage: true });
+        await runAxe(page, 'error-404', outputDir);
+
+        await page.goto(`${baseUrl}/login`);
+        await page.evaluate(() => {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/login';
+            document.body.appendChild(form);
+            form.submit();
+        });
+        await page.waitForLoadState('networkidle');
+        await page.screenshot({ path: path.join(outputDir, 'error-419.png'), fullPage: true });
+        await runAxe(page, 'error-419', outputDir);
+
         await page.goto(`${baseUrl}/`);
         await page.waitForLoadState('networkidle');
         await page.screenshot({ path: path.join(outputDir, 'home.png'), fullPage: true });
@@ -178,6 +196,17 @@ function waitForServer(url) {
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
             await runAxe(page, screen.name, outputDir);
         }
+
+        await page.goto(`${baseUrl}/this-does-not-exist`);
+        await page.waitForLoadState('networkidle');
+        await page.screenshot({ path: path.join(outputDir, 'error-404-signed-in.png'), fullPage: true });
+        await runAxe(page, 'error-404-signed-in', outputDir);
+
+        await page.goto(`${baseUrl}/admin/settings`);
+        await page.waitForLoadState('networkidle');
+        await page.screenshot({ path: path.join(outputDir, 'error-403.png'), fullPage: true });
+        await runAxe(page, 'error-403', outputDir);
+
         await browser.close();
 
         // Mobile pass
