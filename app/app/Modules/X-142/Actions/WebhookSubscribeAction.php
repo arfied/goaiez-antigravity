@@ -12,8 +12,10 @@ class WebhookSubscribeAction
     {
         return WebhookSubscription::create([
             'business_id' => $businessId,
-            'url' => $url,
-            'events' => [$events],
+            'target_url' => $url,
+            'event_filter' => $events,
+            'secret' => 'sec_' . bin2hex(random_bytes(16)),
+            'is_active' => true,
         ]);
     }
 }

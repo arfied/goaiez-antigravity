@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X142\Actions;
 
+use App\Modules\X142\Models\McpToken;
 use App\Modules\X142\Events\TokenIssued;
 use App\Modules\X142\Events\TokenRevoked;
-use App\Modules\X142\Models\McpToken;
 use Illuminate\Support\Str;
 
 class McpTokenAction
@@ -15,9 +15,9 @@ class McpTokenAction
     {
         $token = McpToken::create([
             'business_id' => $businessId,
-            'name' => $tokenName,
+            'token_name' => $tokenName,
             'role_scope' => $roleScope,
-            'abilities' => $permissions,
+            'permissions' => json_encode($permissions),
             'token_hash' => hash('sha256', Str::random(40)),
             'is_revoked' => false,
         ]);
