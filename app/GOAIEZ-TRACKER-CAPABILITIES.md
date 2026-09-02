@@ -359,7 +359,7 @@
 | G6-09 | Deep Funnel Persistence | ENH | X-110 | SPECCED | UTM survives the session; the attribution is X-138's |
 | G6-10 | Dummy Data Injection | ENH | X-161 | SPECCED | `is_mock` on every row; `doctor` fails on one in production |
 | G6-11 | Dynamic Redirection | ENH | X-103 | SPECCED | device routing on the short-linker (P-072) |
-| G6-12 | Dynamic Service Menu | ENH | X-116 | SPECCED | named in the header; the agent upsells only from a grounded `Fact` (P-092) |
+| G6-12 | Dynamic Service Menu | ENH | X-116 | SPECCED | named in the header; the agent upsells only from a grounded `Fact` (P-092) · refuses: to upsell from an ungrounded Fact |
 | G6-13 | E-commerce Detection | ENH | X-179 | SPECCED | named in the header |
 | G6-14 | Fractional Inventory | RE-HOME→FSM | X-167 | SPECCED | fractional units — *"a van and a storage unit, not a warehouse"* bounds it |
 | G6-15 | Funnel / Website Builder | ENH | X-103 | SPECCED | the header's first line |
