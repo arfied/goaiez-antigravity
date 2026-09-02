@@ -82,9 +82,13 @@ class UiReviewSeeder extends Seeder
         $page = FeedbackPage::firstWhere('location_id', $location->id);
         if (! $page) {
             FeedbackPage::factory()->forLocation($location)->create([
-                'slug' => 'review-business-2-'.Str::random(6),
+                'slug' => 'review-business-2',
                 'is_published' => true,
             ]);
+        } else {
+            if (empty($page->slug) || Str::startsWith($page->slug, 'review-business-2')) {
+                $page->update(['slug' => 'review-business-2']);
+            }
         }
 
         $setting = ReviewDestinationSetting::where('location_id', $location->id)->where('destination', ReviewDestination::Google->value)->first();
