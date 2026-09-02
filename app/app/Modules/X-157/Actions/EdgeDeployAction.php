@@ -25,7 +25,7 @@ final class EdgeDeployAction
         ?string $commitId = null,
         ?string $businessName = null
     ): array {
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId) {
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -109,6 +109,21 @@ final class EdgeDeployAction
                         }
                     }
                 }
+            }
+
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $schemaResult = app(\App\Modules\X176\Actions\SchemaRenderAction::class)->handle(
+                    $businessId,
+                    $pageId,
+                    $businessName,
+                    $commitId
+                );
+
+                if (isset($schemaResult['json_ld'])) {
+                    $html .= "<script type=\"application/ld+json\">\n" . json_encode($schemaResult['json_ld']) . "\n</script>\n";
+                }
+                
+                // seo is completely missing from X-176, so we do not emit anything for it.
             }
 
             $html .= '</body></html>';
