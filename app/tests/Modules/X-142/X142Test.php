@@ -15,6 +15,7 @@ use App\Modules\X142\Ui\ConnectYourAi;
 use App\Modules\X142\Ui\McpTokenRegistry;
 use App\Modules\X142\Ui\WebhooksView;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -142,12 +143,12 @@ class X142Test extends TestCase
         Tenancy::set((int) $biz->id);
 
         $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/enc', 'event.*');
-        
+
         $this->assertNotNull($sub->secret);
         $this->assertStringStartsWith('sec_', $sub->secret);
 
         // Fetch raw database value
-        $rawSecret = \Illuminate\Support\Facades\DB::table('webhook_subscriptions')
+        $rawSecret = DB::table('webhook_subscriptions')
             ->where('id', $sub->id)
             ->value('secret');
 
