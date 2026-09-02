@@ -28034,7 +28034,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | # | Register line | BL | Parent | Note |
 | :--- | :--- | :--- | :--- | :--- |
 | G12-01 | "Powered By" Viral Loop | ENH | X-190 | named in the header |
-| G12-02 | AI Blog Publishing | ENH | X-183 | gated by grounding; the pre-publish gate is X-183's |
+| G12-02 | AI Blog Publishing | ENH | X-183 | gated by grounding; the pre-publish gate is X-183's · refuses: publishing without grounding |
 | G12-03 | Auto-Detection | ENH | X-176 | entity type inferred for schema, zero user input |
 | G12-04 | Auto-Publish Sync | ENH | X-202 | approval granted → the publish action fires |
 | G12-05 | Auto-Publishing | ENH | X-183 | to the builder or the plugin |
@@ -28108,7 +28108,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G13-26 | Pixel Detection | ENH | X-134 | a prospect's installed pixels as an enrichment field |
 | G13-27 | Pixel Diagnostics | ENH | X-110 | watching the tenant's OWN tags fire is not ad management |
 | G13-28 | Pixel Firing | ENH | X-110 | the 50ms hop before redirect |
-| G13-29 | Quote Attribution Verification | ENH | X-183 | the gate cites or rejects |
+| G13-29 | Quote Attribution Verification | ENH | X-183 | the gate cites or rejects · refuses: accepting without citation |
 | G13-30 | Real-Time Heatmaps | ENH | X-110 | rage-click and scroll depth, rendered by X-194 |
 | G13-31 | S3 Cloudflare Storage | ENH | X-157 | R2, zero egress; the `Asset` row is X-121's |
 | G13-32 | Session Replay | ENH | X-111 | ⚠️ **E3's property law is first-party only with NO session recording** — a watch-the-user replay needs the owner's word before it can be specced. Owner question |

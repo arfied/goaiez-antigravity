@@ -628,7 +628,7 @@
 | # | Capability | BL | Parent / X | Status | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | G12-01 | "Powered By" Viral Loop | ENH | X-190 | SPECCED | named in the header |
-| G12-02 | AI Blog Publishing | ENH | X-183 | SPECCED | gated by grounding; the pre-publish gate is X-183's |
+| G12-02 | AI Blog Publishing | ENH | X-183 | SPECCED | gated by grounding; the pre-publish gate is X-183's · refuses: publishing without grounding |
 | G12-03 | Auto-Detection | ENH | X-176 | SPECCED | entity type inferred for schema, zero user input |
 | G12-04 | Auto-Publish Sync | ENH | X-202 | SPECCED | approval granted → the publish action fires |
 | G12-05 | Auto-Publishing | ENH | X-183 | SPECCED | to the builder or the plugin |
@@ -700,7 +700,7 @@
 | G13-26 | Pixel Detection | ENH | X-134 | SPECCED | a prospect's installed pixels as an enrichment field |
 | G13-27 | Pixel Diagnostics | ENH | X-110 | SPECCED | watching the tenant's OWN tags fire is not ad management |
 | G13-28 | Pixel Firing | ENH | X-110 | SPECCED | the 50ms hop before redirect |
-| G13-29 | Quote Attribution Verification | ENH | X-183 | SPECCED | the gate cites or rejects |
+| G13-29 | Quote Attribution Verification | ENH | X-183 | SPECCED | the gate cites or rejects · refuses: accepting without citation |
 | G13-30 | Real-Time Heatmaps | ENH | X-110 | SPECCED | rage-click and scroll depth, rendered by X-194 |
 | G13-31 | S3 Cloudflare Storage | ENH | X-157 | SPECCED | R2, zero egress; the `Asset` row is X-121's |
 | G13-32 | Session Replay | KILLED | — | SPECCED | T677 owner: E3 first-party-only is absolute. X-110's rage-click and scroll aggregates survive |
