@@ -28,13 +28,15 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
+
         $setupUser = User::firstWhere('email', 'setup@business.com');
         if (! $setupUser) {
-            User::factory()->create([
+            $setupUser = User::factory()->create([
                 'email' => 'setup@business.com',
                 'name' => 'Setup Wizard User',
                 'role' => 'owner',
             ]);
+            app(\App\Services\Tenants\TenantProvisioner::class)->provision($setupUser);
         }
 
         Tenancy::actingAsUser($owner->id, function () use ($owner) {
