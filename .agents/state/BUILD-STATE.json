@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 139,
+   "violations": 120,
    "fails": "MERGE"
   },
   "anchor": {

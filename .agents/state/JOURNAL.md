@@ -476,3 +476,4 @@
 - `2026-09-02T02:39:43` UNRESOLVED schema X-121 - 11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker
 - `2026-09-02T02:55:05` X-124 -> DONE
 - `2026-09-02T02:55:54` X-151 -> DONE
+- `2026-09-02T03:08:26` stage capability = 120
