@@ -1212,7 +1212,7 @@
 | **N-213-02** | Flags, never blocks | PROPERTY | **X-213** | SPECCED | it FLAGS and never blocks publication (R219) |
 | **N-214-01** | Debit is never surcharged | PROPERTY | **X-214** | SPECCED | ⛔⛔ debit is NEVER surcharged — BIN-asserted, and an UNKNOWN card type is treated as DEBIT |
 | **N-214-02** | Disclosure precedes charge | PROPERTY | **X-214** | SPECCED | no surcharge applies without a preceding surcharge.disclosed |
-| **N-215-01** | Signature binds a hash | PROPERTY | **X-215** | SPECCED | ⭐⭐ the signature binds a HASH of the rendered document — alter one character and it is invalid |
+| **N-215-01** | Signature binds a hash | PROPERTY | **X-215** | SPECCED | ⭐⭐ the signature binds a HASH of the rendered document — alter one character and it is invalid · refuses: an altered document |
 | **N-215-02** | A comment never edits | PROPERTY | **X-215** | SPECCED | a comment NEVER edits a signed document |
 
 **25 specs · 18 modules · ⭐ all 18 now clear `LAW 128`'s floor.**
