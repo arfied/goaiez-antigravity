@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X142\Actions;
 
-use App\Modules\X142\Models\McpToken;
 use App\Modules\X142\Events\TokenIssued;
 use App\Modules\X142\Events\TokenRevoked;
+use App\Modules\X142\Models\McpToken;
 use Illuminate\Support\Str;
 
 class McpTokenAction

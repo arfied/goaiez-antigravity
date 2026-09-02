@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X142\Models;
 
+use App\Models\Business;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Business;
 
 class McpToken extends Model
 {

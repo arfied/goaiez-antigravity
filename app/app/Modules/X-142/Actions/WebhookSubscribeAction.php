@@ -14,7 +14,7 @@ class WebhookSubscribeAction
             'business_id' => $businessId,
             'target_url' => $url,
             'event_filter' => $events,
-            'secret' => 'sec_' . bin2hex(random_bytes(16)),
+            'secret' => 'sec_'.bin2hex(random_bytes(16)),
             'is_active' => true,
         ]);
     }
