@@ -33,7 +33,7 @@ class X150Test extends TestCase
         Event::fake([ProviderTried::class, ProviderSucceeded::class, ProviderExhausted::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Cascading Enrichment Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set((int) $biz->id);
 
         $requestId = 'req_enrich_9901';
 
@@ -87,5 +87,14 @@ class X150Test extends TestCase
     public function test_n_150_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_component_renders_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant();
+        \App\Support\Tenancy::set((int) $biz->id);
+
+        \Livewire\Livewire::test(\App\Modules\X150\Ui\ProviderCostPer::class, ['businessId' => $biz->id])
+            ->assertOk();
     }
 }
