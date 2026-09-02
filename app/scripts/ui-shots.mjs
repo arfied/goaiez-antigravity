@@ -129,9 +129,15 @@ function waitForServer(url) {
             { name: 'account-connections', path: '/account/connections' },
             { name: 'advanced-home', path: '/advanced' },
             { name: 'advanced-citations', path: '/advanced/citations' },
-            { name: 'advanced-visibility', path: '/advanced/visibility' }
+            { name: 'advanced-visibility', path: '/advanced/visibility' },
+            { name: 'advanced-broadcasts', path: '/advanced/broadcasts' },
+            { name: 'advanced-posts', path: '/advanced/posts' },
+            { name: 'advanced-competitors', path: '/advanced/competitors' },
+            { name: 'advanced-reports', path: '/advanced/reports' },
+            { name: 'advanced-voice', path: '/advanced/voice' },
+            { name: 'advanced-integrations', path: '/advanced/integrations' },
+            { name: 'advanced-settings', path: '/advanced/settings' }
         ];
-
         for (const screen of screens) {
             await page.goto(`${baseUrl}${screen.path}`);
             await page.waitForLoadState('networkidle');
