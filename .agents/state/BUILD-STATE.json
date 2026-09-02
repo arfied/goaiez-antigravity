@@ -1223,6 +1223,14 @@
   {
    "at": "2026-09-02T15:43:11",
    "note": "ArOverdueQueueTest deletes the whole jobs table before draining, because class-based module tests share one database (X-103); this discards any job another test queued and is relying on. Name X-211 and X-103."
+  },
+  {
+   "at": "2026-09-02T16:18:13",
+   "note": "UNRESOLVED X-198/J9 \u2014 the Stripe test key is now present in app/.env, so GatewayEngineTest 'capture persists real id' no longer skips: GatewayEngine::capture() reaches the wire and AppServiceProvider::forbidLiveVendorCallsInTests() refuses it with 'Attempted request to [https://api.stripe.com/v1/charges] without a matching fake'. J9 requires a provider-minted charge id; preventStrayRequests() forbids any real vendor call under runningUnitTests(). Resolving the conflict is a CHECK change in a file shared by every track \u2014 owner ruling, not this track's."
+  },
+  {
+   "at": "2026-09-02T16:18:21",
+   "note": "X-198 suite baseline moved 883/11 -> 882/12 with no commit: STRIPE_SECRET arrived in app/.env between the MONEY-6 and MONEY-7 gate runs. test_anchor_pci_tokens_only_tenant_payout_isolation_and_discrepancy_logging changed failure from 'Missing stripe_secret' to the stray-request refusal, and GatewayEngineTest 'capture persists real id' stopped skipping and joined the errors. The rise is explained and is not a regression."
   }
  ],
  "decisions": [
