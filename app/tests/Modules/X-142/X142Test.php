@@ -10,16 +10,19 @@ use App\Modules\X142\Actions\WebhookSubscribeAction;
 use App\Modules\X142\Events\McpInvoked;
 use App\Modules\X142\Events\TokenIssued;
 use App\Modules\X142\Events\TokenRevoked;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
+use App\Support\Tenancy;
+use App\Models\User;
+use Livewire\Livewire;
+use App\Modules\X142\Ui\ConnectYourAi;
+use App\Modules\X142\Ui\WebhooksView;
+use App\Modules\X142\Ui\McpTokenRegistry;
 
 class X142Test extends TestCase
 {
     private McpTokenAction $tokenAction;
-
     private McpInvokeAction $invokeAction;
-
     private WebhookSubscribeAction $webhookAction;
 
     protected function setUp(): void
@@ -41,7 +44,7 @@ class X142Test extends TestCase
         Event::fake([TokenIssued::class, TokenRevoked::class, McpInvoked::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'MCP Gateway Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set((int) $biz->id);
 
         // 1. Issue tenant-scoped staff MCP token (G4-02 & G4-18)
         $staffToken = $this->tokenAction->issue(
@@ -52,7 +55,7 @@ class X142Test extends TestCase
         );
 
         $this->assertEquals('staff', $staffToken->role_scope);
-        $this->assertFalse($staffToken->is_revoked);
+        $this->assertFalse((bool) $staffToken->is_revoked);
         Event::assertDispatched(TokenIssued::class);
 
         // 2. Staff user invoking owner-only action -> Refused with UI reason string (TEST ANCHOR)
@@ -88,7 +91,7 @@ class X142Test extends TestCase
 
         // 5. Token revocation
         $revoked = $this->tokenAction->revoke($biz->id, $staffToken->id);
-        $this->assertTrue($revoked->is_revoked);
+        $this->assertTrue((bool) $revoked->is_revoked);
         Event::assertDispatched(TokenRevoked::class);
 
         // 6. Webhook subscription
@@ -102,5 +105,32 @@ class X142Test extends TestCase
     public function test_mcp_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_components_render(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'MCP Component Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $user = User::find($biz->owner_user_id);
+        if (!$user) {
+            $user = User::factory()->create();
+            $biz->update(['owner_user_id' => $user->id]);
+        }
+        $this->actingAs($user);
+
+        Livewire::test(ConnectYourAi::class)->assertOk();
+        Livewire::test(WebhooksView::class)->assertOk();
+        Livewire::test(McpTokenRegistry::class)->assertOk();
+
+        $this->get('/x-142/connect-your-ai')->assertOk();
+        $this->get('/x-142/webhooks')->assertOk();
+        $this->get('/x-142/mcp-token-registry')->assertOk();
+    }
+
+    public function test_guest_redirects(): void
+    {
+        $this->get('/x-142/connect-your-ai')->assertRedirect('/login');
+        $this->get('/x-142/webhooks')->assertRedirect('/login');
+        $this->get('/x-142/mcp-token-registry')->assertRedirect('/login');
     }
 }

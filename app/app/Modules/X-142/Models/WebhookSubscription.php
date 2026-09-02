@@ -5,14 +5,19 @@ declare(strict_types=1);
 namespace App\Modules\X142\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Business;
 
 class WebhookSubscription extends Model
 {
-    protected $table = 'webhook_subscriptions';
-
     protected $guarded = [];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'events' => 'array',
     ];
+
+    public function business(): BelongsTo
+    {
+        return $this->belongsTo(Business::class);
+    }
 }

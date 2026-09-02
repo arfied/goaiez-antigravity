@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X142\Events;
 
-final class TokenRevoked
+use Illuminate\Foundation\Events\Dispatchable;
+
+class TokenRevoked
 {
-    public function __construct(
-        public readonly int $businessId,
-        public readonly int $tokenId
-    ) {}
+    use Dispatchable;
+    public function __construct(public int $businessId, public int $tokenId) {}
 }

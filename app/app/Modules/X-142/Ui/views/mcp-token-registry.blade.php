@@ -1,5 +1,4 @@
 <div>
-    <div class="mcp-registry-view p-4">
-        <h3 class="text-lg font-bold">MCP Token Registry</h3>
-    </div>
+    <h1>MCP Token Registry</h1>
+    <p>Honest empty state.</p>
 </div>
