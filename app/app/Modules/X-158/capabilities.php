@@ -31,7 +31,7 @@ return [
     'G3-46' => 'an expiring short link (P-072)',
 
     // status: SPECCED
-    'G5-02' => 'refuses to extract action items from videos that contain no spoken dialogue, returning an empty set instead of hallucinated tasks.',
+    'G5-02' => 'episode resources — spec with the video pass (turn 32)',
 
     // status: SPECCED
     'G5-52' => 'video tone → written tone',
@@ -43,22 +43,22 @@ return [
     'G9-30' => 'watch-depth as a signal, never a permit (P-068)',
 
     // status: SPECCED
-    'G11-27' => 'refuses to generate a promo email draft if the source episode lacks a defined title or transcript, ensuring valid context.',
+    'G11-27' => 'episode promo — spec with the video pass (turn 32)',
 
     // status: SPECCED
-    'G12-06' => 'refuses to auto-publish an episode without explicit manual approval of the generated show notes by a publisher role.',
+    'G12-06' => 'show notes and player — the video pass',
 
     // status: SPECCED
     'G12-22' => 'episode furniture — the video pass',
 
     // status: SPECCED
-    'G12-23' => 'refuses to generate instant show notes if the transcript confidence score is below 70%, preventing poorly summarized content.',
+    'G12-23' => 'transcribe → notes — the video pass',
 
     // status: SPECCED
     'G12-24' => 'a video summarised into slides',
 
     // status: SPECCED
-    'G12-34' => 'refuses to create social snippets containing explicit or offensive language found in the transcript, flagging them for review.',
+    'G12-34' => 'quotes pulled from a transcript',
 
     // status: SPECCED
     'G12-37' => 'transcript → thread',
@@ -79,7 +79,7 @@ return [
     'G16-23' => 'topic changes detected in the audio',
 
     // status: SPECCED
-    'G16-30' => 'refuses to generate a VSL script if the five required prerequisite questions are not fully answered, avoiding invented statistics.',
+    'G16-30' => 'five questions → a script;  no invented statistics (P-120) · refuses: to include invented statistics in the script (P-120)',
 
     // status: SPECCED
     'G18-26' => 'live webinar rooms and tokens',

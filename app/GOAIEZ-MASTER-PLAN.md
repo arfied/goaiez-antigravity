@@ -27502,7 +27502,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | # | Register line | BL | Parent | Note |
 | :--- | :--- | :--- | :--- | :--- |
 | G5-01 | Action Item Extraction | ENH | C-Agent | named in the header; the task lands in X-01 |
-| G5-02 | Action Item Extraction | **RE-HOME→G16** | X-158 | refuses to extract action items from videos that contain no spoken dialogue, returning an empty set instead of hallucinated tasks. |
+| G5-02 | Action Item Extraction | **RE-HOME→G16** | X-158 | episode resources — spec with the video pass (turn 32) |
 | G5-03 | Agent A/B Testing | ENH | X-149 | the conscience measures it; ⚠️ a persona split is a test, never a permit change |
 | G5-04 | Agent Analytics | ENH | X-149 | ⚠️ ClickHouse is corpus vocabulary — one database (§22 · P-143) |
 | G5-05 | AI Auto-Build | ENH | X-118 | the whole module is an inference run |
@@ -27917,7 +27917,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-24 | Omnichannel Campaigns | ENH | X-186 | named in the header; ⛔ every send from there is Marketing class from the CALLER · refuses: a send whose caller did not declare Marketing class — the class comes from the caller, never from the channel |
 | G11-25 | One-Click Dispositions | ENH | X-200 | named in the header — a closed set per campaign |
 | G11-26 | Payload Validation | ENH | X-122 | strict JSON-schema validation; a missing field is refused, never defaulted |
-| G11-27 | Promo Email Draft | **RE-HOME→G16** | X-158 | refuses to generate a promo email draft if the source episode lacks a defined title or transcript, ensuring valid context. |
+| G11-27 | Promo Email Draft | **RE-HOME→G16** | X-158 | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | named in the header — any reply stops the sequence (P-075) |
 | G11-29 | RSS-to-Email | ENH | C-Mail | named in the header |
 | G11-30 | Seed Audience | ⛔ **KILLED** | — | **§44 · P-128** — LTV seed lists pushed to ad platforms is ad management |
@@ -28038,7 +28038,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G12-03 | Auto-Detection | ENH | X-176 | entity type inferred for schema, zero user input |
 | G12-04 | Auto-Publish Sync | ENH | X-202 | approval granted → the publish action fires |
 | G12-05 | Auto-Publishing | ENH | X-183 | to the builder or the plugin |
-| G12-06 | Auto-Publishing | **RE-HOME→G16** | X-158 | refuses to auto-publish an episode without explicit manual approval of the generated show notes by a publisher role. |
+| G12-06 | Auto-Publishing | **RE-HOME→G16** | X-158 | show notes and player — the video pass |
 | G12-07 | Automated Follow-Ups | ENH | X-191 | ⛔ ONE follow-up only, per the header — not three |
 | G12-08 | Automated LinkedIn Connection | ENH | X-196 | ⚠️ `FetchPolicy.authenticated=false` by default (P-078) |
 | G12-09 | Batch Approvals | ENH | X-202 | thirty graphics, one decision |
@@ -28055,7 +28055,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G12-20 | Emoji Optimization | ENH | X-185 | ⛔ it may test a label, never a price (§134.6) |
 | G12-21 | Evergreen Recycling | ENH | X-140 | named in the header |
 | G12-22 | Guest Bios | **RE-HOME→G16** | X-158 | episode furniture — the video pass |
-| G12-23 | Instant Show Notes | **RE-HOME→G16** | X-158 | refuses to generate instant show notes if the transcript confidence score is below 70%, preventing poorly summarized content. |
+| G12-23 | Instant Show Notes | **RE-HOME→G16** | X-158 | transcribe → notes — the video pass |
 | G12-24 | LinkedIn Carousel Generator | **RE-HOME→G16** | X-158 | a video summarised into slides |
 | G12-25 | Live Human Interception | ENH | C-Agent | negative-sentiment handoff; the takeover latch is X-01's (R21) |
 | G12-26 | Multi-Persona Profiles | ENH | X-182 | a persona per channel; the lexicon still binds (X-154) |
@@ -28066,7 +28066,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G12-31 | Q&A Seeding | ENH | X-177 | named in the header |
 | G12-32 | Social Posting Autopilot | ENH | X-182 | the header's first line; ⛔ real job photos, never stock (P-131) |
 | G12-33 | Social Proof Webhooks | ENH | X-190 | named in the header; ⚠️ the toast states a real event or does not fire (P-120) |
-| G12-34 | Social Snippets | **RE-HOME→G16** | X-158 | refuses to create social snippets containing explicit or offensive language found in the transcript, flagging them for review. |
+| G12-34 | Social Snippets | **RE-HOME→G16** | X-158 | quotes pulled from a transcript |
 | G12-35 | Stale Posting Detection | ENH | X-136 | a hiring signal, never a permit (P-068) |
 | G12-36 | Trend Riding | ENH | X-184 | a trend proposes a topic; the cadence is what the tenant approved |
 | G12-37 | Twitter Thread Extraction | **RE-HOME→G16** | X-158 | transcript → thread |
@@ -28174,7 +28174,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G16-27 | Video Walkthrough | ENH | X-172 | a recorded explanation above the signature line |
 | G16-28 | Video-to-Blog | ENH | X-183 | transcript → post, through the gate |
 | G16-29 | Visual Creative AI | ENH | X-114 | ad packs as content (P-128); the logo and palette come from the brand kit |
-| G16-30 | VSL Script Generation | ENH | X-158 | refuses to generate a VSL script if the five required prerequisite questions are not fully answered, avoiding invented statistics. |
+| G16-30 | VSL Script Generation | ENH | X-158 | five questions → a script; ⛔ no invented statistics (P-120) · refuses: to include invented statistics in the script (P-120) |
 | G16-31 | Watermarking | ENH | X-114 | the recipient's address on every page |
 
 **G16 COUNT:** 31 = **29 enhancement** + 0 re-homed + 2 killed + **0 unmapped** · ⭐ **ratio 94%**
@@ -30587,9 +30587,9 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 | # | Capability | ① what · ② trigger | ③ data | ④ failure mode | ⑤ test — assertion · refusal | ⑥⑦ |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **G16-30** · **G16-22** | VSL script + short-form cuts — **one spec** | five questions become a script; the long form yields three cuts · **trigger:** the tenant answers, or a long video lands | the answers · the transcript | ⛔ **invented statistics.** *"90% of homeowners…" is exactly what a script model produces because it is what good scripts contain* | ⛔ **the claim lint runs here** *(§182)*: no CLAIMS, CREDENTIALS, NUMBERS or DATES that are not `Fact`s — asserted against a fixture prompt that invites a statistic | refuses to generate a VSL script if the five required prerequisite questions are not fully answered, avoiding invented statistics. |
-| **G12-23** · **G8-37** · **G12-06** | Show notes · keyword rewrite · publish — **one spec** | transcript → notes → the player · **trigger:** upload complete | the transcript | notes that paraphrase into a claim the speaker did not make | refuses to generate instant show notes if the transcript confidence score is below 70%, preventing poorly summarized content. | ⑥⑦ inherit |
-| **G12-34** · **G12-37** · **G12-24** | Snippets · thread · carousel — **one spec** | the same transcript, three shapes · **trigger:** publish | the transcript + timestamps | a quote is cut mid-sentence and reverses its meaning | refuses to create social snippets containing explicit or offensive language found in the transcript, flagging them for review. | ⑥⑦ inherit |
+| **G16-30** · **G16-22** | VSL script + short-form cuts — **one spec** | five questions become a script; the long form yields three cuts · **trigger:** the tenant answers, or a long video lands | the answers · the transcript | ⛔ **invented statistics.** *"90% of homeowners…" is exactly what a script model produces because it is what good scripts contain* | ⛔ **the claim lint runs here** *(§182)*: no CLAIMS, CREDENTIALS, NUMBERS or DATES that are not `Fact`s — asserted against a fixture prompt that invites a statistic | ⑥ five questions, once · ⑦ drafts, never publishes unattended · refuses: to include invented statistics in the script (P-120) |
+| **G12-23** · **G8-37** · **G12-06** | Show notes · keyword rewrite · publish — **one spec** | transcript → notes → the player · **trigger:** upload complete | the transcript | notes that paraphrase into a claim the speaker did not make | ⛔ **a quoted line in the notes must appear VERBATIM in the transcript**, asserted by substring match; paraphrase is unquoted | ⑥⑦ inherit |
+| **G12-34** · **G12-37** · **G12-24** | Snippets · thread · carousel — **one spec** | the same transcript, three shapes · **trigger:** publish | the transcript + timestamps | a quote is cut mid-sentence and reverses its meaning | every extracted quote carries its **timestamp**, and a clip boundary lands on a sentence boundary, asserted | ⑥⑦ inherit |
 | **G16-23** · **G16-02** | Chapters + burned captions — **one spec** | topic changes detected; captions on the 90-second cut · **trigger:** processing | the audio | captions drift out of sync after an edit and nobody watches to the end to find out | caption timing is re-derived from the **final** cut, not the source, asserted by editing a fixture mid-way | ⑥ none · ⑦ automatic |
 | ⭐ **G3-22** | Name personalisation in a video | the prospect's name spoken or rendered · **trigger:** send | ⭐ **the name as a `Fact`** | ⛔ **the name is guessed from an email local-part** — *"Hi, jsmith92" rendered into a video and sent* | a send to a `Person` with **no confirmed name** renders the neutral variant, asserted — never improvises | ⑥⑦ inherit |
 | **G16-14** | Interactive branching | the viewer chooses; the video branches · **trigger:** a click | ⭐ **the branch is a state on the `Conversation`** | the branch state lives in the player and is lost when they come back tomorrow | returning after the session expires **resumes at the branch**, asserted — because it is on the Conversation, not the page | ⑥⑦ inherit |
@@ -30597,7 +30597,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 | **G3-46** | Replay expiry | a replay link that expires · **trigger:** generation | the short-linker *(P-072)* | the "expired" link still plays from a cached URL | an expired link returns the expiry page **and the asset URL is not reachable**, asserted on both | ⑥ the window, once · ⑦ applied |
 | **G16-06** | Dynamic video ads | ad creative as **content** · **trigger:** a content pack | the brand kit | it drifts into ad **management**, which is fenced | the module produces the asset and **no campaign call**, asserted by absence *(§44 · P-128 — packs are content)* | ⑥⑦ inherit |
 | **G18-26** | Live rooms | webinar rooms and tokens · **trigger:** a scheduled session | LiveKit | a token outlives the session and the room is joinable afterwards | a token is asserted **invalid after the session ends**, not merely expired later | ⑥⑦ inherit |
-| **G5-02** · **G11-27** · **G12-22** · **G5-52** | Episode furniture — resources, promo draft, guest bios, tone match — **one spec** | the transcript furnishes everything around the episode · **trigger:** publish | the transcript | guest bios generated from the model's guess about a named person | refuses to generate a promo email draft if the source episode lacks a defined title or transcript, ensuring valid context. | ⑥⑦ inherit |
+| **G5-02** · **G11-27** · **G12-22** · **G5-52** | Episode furniture — resources, promo draft, guest bios, tone match — **one spec** | the transcript furnishes everything around the episode · **trigger:** publish | the transcript | guest bios generated from the model's guess about a named person | ⛔ **a bio for a REAL NAMED PERSON is a claim about someone: it comes from what they said or supplied, or it is not written** *(P-120)*, asserted on a fixture naming a public figure | ⑥⑦ inherit |
 
 ## 184.3 X-114 `MediaStudio` — CAPABILITY TABLE *(10 rows · 7 specs)* `[AMENDED T677]`
 

@@ -290,7 +290,7 @@
 | # | Capability | BL | Parent / X | Status | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | G5-01 | Action Item Extraction | ENH | C-Agent | SPECCED | named in the header; the task lands in X-01 |
-| G5-02 | Action Item Extraction | RE-HOME→G16 | X-158 | SPECCED | refuses to extract action items from videos that contain no spoken dialogue, returning an empty set instead of hallucinated tasks. |
+| G5-02 | Action Item Extraction | RE-HOME→G16 | X-158 | SPECCED | episode resources — spec with the video pass (turn 32) |
 | G5-03 | Agent A/B Testing | ENH | X-149 | SPECCED | the conscience measures it;  a persona split is a test, never a permit change |
 | G5-04 | Agent Analytics | ENH | X-149 | SPECCED | ClickHouse is corpus vocabulary — one database (§22 · P-143) |
 | G5-05 | AI Auto-Build | ENH | X-118 | SPECCED | the whole module is an inference run |
@@ -606,7 +606,7 @@
 | G11-24 | Omnichannel Campaigns | ENH | X-186 | SPECCED | named in the header;  every send from there is Marketing class from the CALLER · refuses: a send whose caller did not declare Marketing class — the class comes from the caller, never from the channel |
 | G11-25 | One-Click Dispositions | ENH | X-200 | SPECCED | named in the header — a closed set per campaign |
 | G11-26 | Payload Validation | ENH | X-122 | SPECCED | strict JSON-schema validation; a missing field is refused, never defaulted |
-| G11-27 | Promo Email Draft | RE-HOME→G16 | X-158 | SPECCED | refuses to generate a promo email draft if the source episode lacks a defined title or transcript, ensuring valid context. |
+| G11-27 | Promo Email Draft | RE-HOME→G16 | X-158 | SPECCED | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | SPECCED | named in the header — any reply stops the sequence (P-075) |
 | G11-29 | RSS-to-Email | ENH | C-Mail | SPECCED | named in the header |
 | G11-30 | Seed Audience | KILLED | — | SPECCED | §44 · P-128 — LTV seed lists pushed to ad platforms is ad management |
@@ -632,7 +632,7 @@
 | G12-03 | Auto-Detection | ENH | X-176 | SPECCED | entity type inferred for schema, zero user input |
 | G12-04 | Auto-Publish Sync | ENH | X-202 | SPECCED | approval granted → the publish action fires |
 | G12-05 | Auto-Publishing | ENH | X-183 | SPECCED | to the builder or the plugin |
-| G12-06 | Auto-Publishing | RE-HOME→G16 | X-158 | SPECCED | refuses to auto-publish an episode without explicit manual approval of the generated show notes by a publisher role. |
+| G12-06 | Auto-Publishing | RE-HOME→G16 | X-158 | SPECCED | show notes and player — the video pass |
 | G12-07 | Automated Follow-Ups | ENH | X-191 | SPECCED | ONE follow-up only, per the header — not three |
 | G12-08 | Automated LinkedIn Connection | ENH | X-196 | SPECCED | `FetchPolicy.authenticated=false` by default (P-078) |
 | G12-09 | Batch Approvals | ENH | X-202 | SPECCED | thirty graphics, one decision |
@@ -649,7 +649,7 @@
 | G12-20 | Emoji Optimization | ENH | X-185 | SPECCED | it may test a label, never a price (§134.6) |
 | G12-21 | Evergreen Recycling | ENH | X-140 | SPECCED | named in the header |
 | G12-22 | Guest Bios | RE-HOME→G16 | X-158 | SPECCED | episode furniture — the video pass |
-| G12-23 | Instant Show Notes | RE-HOME→G16 | X-158 | SPECCED | refuses to generate instant show notes if the transcript confidence score is below 70%, preventing poorly summarized content. |
+| G12-23 | Instant Show Notes | RE-HOME→G16 | X-158 | SPECCED | transcribe → notes — the video pass |
 | G12-24 | LinkedIn Carousel Generator | RE-HOME→G16 | X-158 | SPECCED | a video summarised into slides |
 | G12-25 | Live Human Interception | ENH | C-Agent | SPECCED | negative-sentiment handoff; the takeover latch is X-01's (R21) |
 | G12-26 | Multi-Persona Profiles | ENH | X-182 | SPECCED | a persona per channel; the lexicon still binds (X-154) |
@@ -660,7 +660,7 @@
 | G12-31 | Q&A Seeding | ENH | X-177 | SPECCED | named in the header |
 | G12-32 | Social Posting Autopilot | ENH | X-182 | SPECCED | the header's first line;  real job photos, never stock (P-131) |
 | G12-33 | Social Proof Webhooks | ENH | X-190 | SPECCED | named in the header;  the toast states a real event or does not fire (P-120) |
-| G12-34 | Social Snippets | RE-HOME→G16 | X-158 | SPECCED | refuses to create social snippets containing explicit or offensive language found in the transcript, flagging them for review. |
+| G12-34 | Social Snippets | RE-HOME→G16 | X-158 | SPECCED | quotes pulled from a transcript |
 | G12-35 | Stale Posting Detection | ENH | X-136 | SPECCED | a hiring signal, never a permit (P-068) |
 | G12-36 | Trend Riding | ENH | X-184 | SPECCED | a trend proposes a topic; the cadence is what the tenant approved |
 | G12-37 | Twitter Thread Extraction | RE-HOME→G16 | X-158 | SPECCED | transcript → thread |
@@ -806,7 +806,7 @@
 | G16-27 | Video Walkthrough | ENH | X-172 | SPECCED | a recorded explanation above the signature line |
 | G16-28 | Video-to-Blog | ENH | X-183 | SPECCED | transcript → post, through the gate |
 | G16-29 | Visual Creative AI | ENH | X-114 | SPECCED | ad packs as content (P-128); the logo and palette come from the brand kit |
-| G16-30 | VSL Script Generation | ENH | X-158 | SPECCED | refuses to generate a VSL script if the five required prerequisite questions are not fully answered, avoiding invented statistics. |
+| G16-30 | VSL Script Generation | ENH | X-158 | SPECCED | five questions → a script;  no invented statistics (P-120) · refuses: to include invented statistics in the script (P-120) |
 | G16-31 | Watermarking | ENH | X-114 | SPECCED | the recipient's address on every page |
 
 ## G17 · OTHER / CROSS-CUTTING — 29
