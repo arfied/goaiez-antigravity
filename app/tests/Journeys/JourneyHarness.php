@@ -298,7 +298,21 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function waitForProvisionedNumber(array $tenant, int $timeoutSeconds): string
     {
-        throw $this->todo('poll until the carrier returns a real number');
+        $start = microtime(true);
+        while (microtime(true) - $start < $timeoutSeconds) {
+            try {
+                $number = app(TenantNumbers::class)->displayNumberFor($tenant['id']);
+                if ($number) {
+                    return $number;
+                }
+            } catch (NumberPoolExhausted $e) {
+                $this->fail('UNRESOLVED: '.$e->getMessage());
+            }
+
+            usleep(500_000);
+        }
+
+        $this->fail('UNRESOLVED: No live number provisioned. Pool might be empty.');
     }
 
     // ── the agent and the pricebook ──────────────────────────────────────
