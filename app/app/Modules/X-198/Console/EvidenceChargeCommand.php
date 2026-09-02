@@ -48,7 +48,7 @@ final class EvidenceChargeCommand extends Command
         $invoiceRes = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
         $invoice = $invoiceRes['invoice'];
 
-        $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123'); // Is this ok? Wait, is stripe connected to our platform?
+        $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123');
         $payment = $gatewayEngine->capture($businessId, 12500, 'tok_visa', 'idem_j9_'.time());
 
         $invoiceEngine->recordPayment($businessId, $invoice->id, 12500);
@@ -56,11 +56,11 @@ final class EvidenceChargeCommand extends Command
         $data = [
             'gateway_charge_id' => $payment->gateway_charge_id,
             'invoice_id' => $invoice->id,
-            'invoice_status' => 'paid',
+            'invoice_status' => $invoice->fresh()->status,
             'payment_status' => $payment->status,
             'amount_cents' => 12500,
             'database' => config('database.connections.'.config('database.default').'.database', 'goaiez_antig_money'),
-            'running_unit_tests' => false,
+            'running_unit_tests' => app()->runningUnitTests(),
             'captured_at' => now()->toIso8601String(),
             'command' => 'php artisan x198:evidence-charge',
         ];
