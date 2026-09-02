@@ -99,4 +99,107 @@ class X157Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_feature_flags_absent(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = \App\Modules\X103\Models\Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_' . \Illuminate\Support\Str::random(16);
+        \App\Modules\X103\Models\PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [],
+            'pixel_installed' => false,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = \Illuminate\Support\Facades\Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertStringNotContainsString('x110-pixel', $html);
+        $this->assertStringNotContainsString('chat-widget-container', $html);
+        $this->assertStringNotContainsString('form-capture-x155', $html);
+        $this->assertStringNotContainsString('dni-pool-x137', $html);
+    }
+
+    public function test_feature_flags_present(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = \App\Modules\X103\Models\Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_' . \Illuminate\Support\Str::random(16);
+        \App\Modules\X103\Models\PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni']
+            ],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = \Illuminate\Support\Facades\Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertStringContainsString('x110-pixel', $html);
+        $this->assertStringContainsString('chat-widget-container', $html);
+        $this->assertStringContainsString('form-capture-x155', $html);
+        $this->assertStringContainsString('dni-pool-x137', $html);
+    }
+
+    public function test_ssl_guard_writes_no_artifact(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $noSslZone = $this->provisionAction->handle($biz->id, 'insecure.tenant.com', false);
+
+        $refusedDeploy = $this->deployAction->handle($biz->id, $noSslZone->id);
+
+        $this->assertEquals('refused', $refusedDeploy['status']);
+        $this->assertEquals('SSL_CERTIFICATE_REQUIRED', $refusedDeploy['refusal_code']);
+        
+        $files = \Illuminate\Support\Facades\Storage::disk('local')->files('sites');
+        $this->assertEmpty($files);
+    }
 }
