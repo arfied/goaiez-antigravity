@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X178;
 
+use App\Models\User;
 use App\Modules\X178\Actions\DesignChangeAction;
 use App\Modules\X178\Actions\DesignUndoAction;
 use App\Modules\X178\Actions\FormGenerateAction;
 use App\Modules\X178\Events\BlockAdded;
 use App\Modules\X178\Events\DesignChanged;
 use App\Modules\X178\Events\DesignUndone;
-use Illuminate\Support\Facades\DB;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -40,7 +41,7 @@ class X178Test extends TestCase
         Event::fake([DesignChanged::class, BlockAdded::class, DesignUndone::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Design Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set((int) $biz->id);
 
         // 1. Contrast failure: change with 3.2:1 contrast ratio (< 4.5:1 WCAG AA) is REFUSED
         $lowContrastRes = $this->changeAction->handle(
@@ -104,18 +105,25 @@ class X178Test extends TestCase
     public function test_g6_21_unmapped_niche_fill_me_only(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Niche Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set((int) $biz->id);
 
         $res = $this->formAction->handle($biz->id, 1, 'solar_panel_cleaning');
         $this->assertEquals('[fill-me]', $res['form_config']['pricing_display']);
     }
 
+    public function test_screen_renders_only_for_authenticated_users(): void
+    {
+        $response = $this->get('/x-178/site-editor-assistant');
+        $response->assertRedirect('/login');
+    }
+
     public function test_screen_renders(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Design Tenant 2', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set((int) $biz->id);
+        $user = User::find($biz->owner_user_id) ?? User::first();
 
-        $response = $this->get('/x-178/site-editor-assistant');
+        $response = $this->actingAs($user)->get('/x-178/site-editor-assistant');
         $response->assertOk();
     }
 }

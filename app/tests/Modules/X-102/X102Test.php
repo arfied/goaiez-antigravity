@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X102;
 
+use App\Models\User;
 use App\Modules\X102\Actions\ChatCaptureAction;
 use App\Modules\X102\Actions\ChatEscalateAction;
 use App\Modules\X102\Actions\ChatStartAction;
@@ -12,7 +13,7 @@ use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X121\Models\Person;
-use Illuminate\Support\Facades\DB;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -43,7 +44,7 @@ class X102Test extends TestCase
         Event::fake([ChatStarted::class, ChatLeadCaptured::class, ChatEscalated::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set((int) $biz->id);
 
         // 1. With AI-credit cap reached, widget starts in offline_form mode & submission creates Person
         $cappedSession = $this->startAction->handle($biz->id, '192.168.1.1', true);
@@ -144,12 +145,19 @@ class X102Test extends TestCase
         $this->assertTrue(true);
     }
 
+    public function test_screen_renders_only_for_authenticated_users(): void
+    {
+        $response = $this->get('/x-102/offline-form-inbox');
+        $response->assertRedirect('/login');
+    }
+
     public function test_screen_renders(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Chat Tenant 2', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set((int) $biz->id);
+        $user = User::find($biz->owner_user_id) ?? User::first();
 
-        $response = $this->get('/x-102/offline-form-inbox');
+        $response = $this->actingAs($user)->get('/x-102/offline-form-inbox');
         $response->assertOk();
     }
 }

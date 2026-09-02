@@ -30,7 +30,7 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-102.offline-form-inbox', OfflineFormInbox::class);
             Livewire::component('x-102.rageclick-rate', RageclickRate::class);
 
-            Route::middleware(['web'])->group(function () {
+            Route::middleware(['web', 'auth'])->group(function () {
                 Route::get('/x-102/offline-form-inbox', OfflineFormInbox::class)->name('x-102.offline-form-inbox');
             });
         }
