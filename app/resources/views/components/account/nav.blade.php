@@ -1,4 +1,4 @@
-@props(['maxWidth' => '{{ $maxWidth }}'])
+@props(['maxWidth' => 'max-w-5xl'])
 @php
     use App\Support\Account\OwnerNav;
     use App\Support\Account\OwnerNavBadges;
