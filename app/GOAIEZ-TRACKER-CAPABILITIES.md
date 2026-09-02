@@ -121,7 +121,7 @@
 | G2-42 | Lead Caps | ENH | X-01 | SPECCED | named in the header |
 | G2-43 | Lead Transparency | ENH | X-112 | SPECCED | the client sees the agency's price only (§17.5) |
 | G2-44 | Management Alerts | RE-HOME→G15 | X-113 | SPECCED | a wellbeing alert to a manager |
-| G2-45 | Meeting Booking AI | ENH | X-108 | SPECCED | the agent offers only a window the scheduler confirmed |
+| G2-45 | Meeting Booking AI | ENH | X-108 | SPECCED | the agent offers only a window the scheduler confirmed · refuses: a window the scheduler has not confirmed |
 | G2-46 | Meta Lead Forms Webhook | ENH | X-156 | SPECCED | named in the header; the HMAC-verified door |
 | G2-47 | Multi-Stage Routing | UNMAPPED | ApprovalDesk | SPECCED | a second mandatory sign-off above a threshold |
 | G2-48 | Natural Language Routing | ENH | X-66 | SPECCED | ElevenLabs is corpus vocabulary — the stack is X-197 (§18F) |
@@ -875,7 +875,7 @@
 | G18-24 | Whisper Messages | ENH | X-137 | SPECCED | = Telephony Call Whisper; one spec |
 | G18-25 | Whisper Mode | KILLED | — | SPECCED | X-200's own header — *uncertain → treat as human, never drop a voicemail on a live person*. A silent hang-u… |
 | G18-26 | Zoom/LiveKit Sync | ENH | X-158 | SPECCED | live webinar rooms and tokens |
-| G18-27 | Zoom/Meet Auto-Generation | ENH | X-108 | SPECCED | a booking generates its own conference link |
+| G18-27 | Zoom/Meet Auto-Generation | ENH | X-108 | SPECCED | a booking generates its own conference link · refuses: generating a conference link without a booking |
 
 ## G19 · SMS / MMS / WHATSAPP — 22
 **Modules of record:** C-Sms · X-147 · C-Whatsapp · X-188 · **Turn:** ✅ 32 C3 (T677 · §167)

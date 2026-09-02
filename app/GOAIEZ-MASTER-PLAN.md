@@ -27327,7 +27327,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G2-42 | Lead Caps | ENH | X-01 | named in the header |
 | G2-43 | Lead Transparency | ENH | X-112 | the client sees the agency's price only (§17.5) |
 | G2-44 | Management Alerts | **RE-HOME→G15** | X-113 | a wellbeing alert to a manager |
-| G2-45 | Meeting Booking AI | ENH | X-108 | the agent offers only a window the scheduler confirmed |
+| G2-45 | Meeting Booking AI | ENH | X-108 | the agent offers only a window the scheduler confirmed · refuses: a window the scheduler has not confirmed |
 | G2-46 | Meta Lead Forms Webhook | ENH | X-156 | named in the header; the HMAC-verified door |
 | G2-47 | Multi-Stage Routing | ⭐⭐ **UNMAPPED** | *ApprovalDesk* | a second mandatory sign-off above a threshold |
 | G2-48 | Natural Language Routing | ENH | X-66 | ⚠️ ElevenLabs is corpus vocabulary — the stack is X-197 (§18F) |
@@ -28247,7 +28247,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G18-24 | Whisper Messages | ENH | X-137 | = Telephony Call Whisper; one spec |
 | G18-25 | Whisper Mode | ⛔ **KILLED** | — | ⛔ **X-200's own header — *uncertain → treat as human, never drop a voicemail on a live person*.** A silent hang-up on a live human IS an abandoned call and counts against the 3% ceiling (§160.1) |
 | G18-26 | Zoom/LiveKit Sync | ENH | X-158 | live webinar rooms and tokens |
-| G18-27 | Zoom/Meet Auto-Generation | ENH | X-108 | a booking generates its own conference link |
+| G18-27 | Zoom/Meet Auto-Generation | ENH | X-108 | a booking generates its own conference link · refuses: generating a conference link without a booking |
 
 **G18 COUNT:** 27 = **25 enhancement** + 0 re-homed + 2 killed + **0 unmapped** · ⭐ **ratio 93%**
 
