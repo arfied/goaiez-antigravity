@@ -9,9 +9,13 @@ use App\Modules\X144\Actions\VisibilityReportAction;
 use App\Modules\X144\Events\CompetitorOutranking;
 use App\Modules\X144\Events\MentionedByAi;
 use App\Modules\X144\Events\VisibilityChanged;
-use Illuminate\Support\Facades\DB;
+use App\Modules\X144\Ui\QuestionList;
+use App\Modules\X144\Ui\TenantZerosOwn;
+use App\Modules\X144\Ui\VisibilityTile;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X144Test extends TestCase
@@ -37,7 +41,7 @@ class X144Test extends TestCase
         Event::fake([VisibilityChanged::class, MentionedByAi::class, CompetitorOutranking::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Answer Engine Visibility Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set((int) $biz->id);
 
         $question = 'Who is the top rated commercial HVAC repair company in Dallas?';
         $verbatimAnswer = 'Top commercial HVAC contractors in Dallas include Apex Mechanical Services and Dallas Air Specialists.';
@@ -80,5 +84,20 @@ class X144Test extends TestCase
     public function test_visibility_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_components_render_successfully(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Visibility Component Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(VisibilityTile::class, ['businessId' => $biz->id])
+            ->assertOk();
+
+        Livewire::test(QuestionList::class, ['businessId' => $biz->id])
+            ->assertOk();
+
+        Livewire::test(TenantZerosOwn::class, ['businessId' => $biz->id])
+            ->assertOk();
     }
 }
