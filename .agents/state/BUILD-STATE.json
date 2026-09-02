@@ -1228,6 +1228,10 @@
   {
    "at": "2026-09-02T14:38:59",
    "note": "anchor X-119/X-126/X-163 \u2014 no runtime proof. TestAnchorStage requires a vendor-minted artifact id in storage/app/evidence/<id>/runtime-proof.json; these three modules have no external transport and this track has no vendor (CLAUDE.md TRACK 4). Owner action."
+  },
+  {
+   "at": "2026-09-02T15:04:34",
+   "note": "capability N-062 is attributed to X-163 by capabilities:scaffold but its canonical row is X-129 MigrationEngine (GOAIEZ-MASTER-PLAN.md:35616). Likely cause: the N-062\u2026N-086 range row at GOAIEZ-TRACKER-CAPABILITIES.md:1084 names nine modules and mentions X-163 in prose. Repo-wide, not fixable from this track. Owner action."
   }
  ],
  "decisions": [
