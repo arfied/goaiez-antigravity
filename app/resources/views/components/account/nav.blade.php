@@ -28,6 +28,7 @@
 --}}
 
 <nav aria-label="Your account" class="border-b border-rule bg-card sticky top-0 z-40 backdrop-blur-md bg-card/95">
+    <div class="hidden sm:block">
     <!-- Top Utility & Brand Bar -->
     <div class="border-b border-rule/60 bg-paper/40">
         <div class="mx-auto flex w-full {{ $maxWidth }} items-center justify-between px-3 sm:px-4 py-2 sm:py-2.5">
@@ -147,5 +148,70 @@
                 </ul>
             </details>
         @endif
+    </div>
+    </div>
+    
+    <!-- Mobile Layout -->
+    <div class="flex sm:hidden items-center justify-between px-3 py-2 gap-2">
+        @if ($business)
+            <span class="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-rule bg-card px-3 text-sm font-semibold text-ink shadow-xs truncate max-w-[200px]">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <span class="truncate">{{ $business->name }}</span>
+            </span>
+        @else
+            <a href="{{ route('account.home') }}" class="font-display text-base font-bold tracking-tight text-ink flex min-h-10 items-center gap-2">
+                <span class="flex h-6 w-6 items-center justify-center rounded-md bg-ink text-paper text-xs font-black">AI</span>
+                <span>{{ config('app.name') }}</span>
+            </a>
+        @endif
+
+        @php
+            $allItems = array_merge($primary, $more);
+            $mobileCurrentLabel = 'Menu';
+            foreach ($allItems as $item) {
+                if ($item->current()) {
+                    $mobileCurrentLabel = $item->label;
+                    break;
+                }
+            }
+        @endphp
+
+        <details class="relative shrink-0">
+            <summary class="flex min-h-10 cursor-pointer list-none items-center rounded-[--radius-control] px-3 text-sm font-medium transition focus-visible:ring-2 border border-rule bg-paper text-ink shadow-xs hover:bg-paper/80">
+                <span>{{ $mobileCurrentLabel }} ▾</span>
+            </summary>
+            <ul class="absolute end-0 top-full z-30 mt-1.5 min-w-56 rounded-[--radius-card] border border-rule bg-card p-1.5 shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
+                @foreach ($allItems as $item)
+                    @php $current = $item->current(); @endphp
+                    <li>
+                        <a href="{{ route($item->route) }}" @class([
+                            'flex min-h-10 items-center justify-between rounded-[--radius-control] px-3 text-sm font-medium transition border border-transparent',
+                            'bg-paper text-ink shadow-xs font-semibold border-rule' => $current,
+                            'text-ink-2 hover:text-ink hover:bg-paper/50' => ! $current,
+                        ])>
+                            <span>{{ $item->label }}</span>
+                            @if ($item->badge !== null && isset($badges[$item->badge]))
+                                <span class="ms-2 inline-flex min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-bold text-white">{{ $badges[$item->badge] }}</span>
+                            @endif
+                        </a>
+                    </li>
+                @endforeach
+                @if ($business?->hasAdvancedDashboard())
+                    <li class="border-t border-rule mt-1 pt-1">
+                        <a href="{{ route('advanced.home') }}" class="flex min-h-10 items-center rounded-[--radius-control] px-3 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 transition">
+                            ⚡ Power Center
+                        </a>
+                    </li>
+                @endif
+                <li class="border-t border-rule mt-1 pt-1">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex w-full min-h-10 items-center rounded-[--radius-control] px-3 text-sm text-red-600 hover:bg-paper font-medium cursor-pointer text-left transition">
+                            Sign out
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </details>
     </div>
 </nav>

@@ -13,6 +13,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
+# Track 2 (UI): dev DB goaiez_antig_ui, tests goaiez_antig_ui_test (exported above pest).
 want_tests=0; want_doctor=0
 for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
@@ -53,7 +54,8 @@ else
 fi
 
 bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
-if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
+hook=$(git -C "$ROOT" rev-parse --git-path hooks/post-rewrite 2>/dev/null); [ "${hook#/}" = "$hook" ] && hook="$ROOT/$hook"
+if [ ! -x "$hook" ]; then
   echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
   tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
@@ -68,6 +70,10 @@ for f in $(printf '%s\n' "$touched" | grep -E '\.php$'); do
   if ! php -l "$ROOT/$f" >/dev/null 2>&1; then echo "  ⛔ parse error: $f"; bad=1; fi
 done
 [ $bad -eq 0 ] && echo "  all parse" || fail=1
+
+bar "2c. debug debris in app code (dump/dd/var_dump)"
+dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -vE ':[0-9]+:\s*(\*|//)' | grep -v '@allow-dump' | head -5)
+if [ -n "$dbg" ]; then printf '%s\n' "$dbg" | sed 's/^/  ⛔ /'; fail=1; else echo "  none"; fi
 
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
@@ -99,13 +105,16 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
-  out=$(./vendor/bin/pest 2>&1); rc=$?
+  out=$(DB_DATABASE=goaiez_antig_ui_test ./vendor/bin/pest 2>&1); rc=$?
+  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
-print("  tests %s · passed %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("errors"),d.get("result")))
+print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
+for f in (d.get("failures") or [])[:5]:
+    print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
 for e in (d.get("error_details") or [])[:5]:
     print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
 n=len(d.get("error_details") or [])
