@@ -226,7 +226,7 @@
                                             <span class="p-2 bg-rose-50 text-rose-700 rounded border border-rose-200">Before Inspection</span>
                                             <span class="p-2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">After Complete Work</span>
                                         </div>
-                                        <input type="range" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
+                                        <input type="range" aria-label="Comparison Slider" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
                                         <div class="text-[10px] text-gray-500 mt-1">Slide to compare transformation ({{ $sliderPosition }}%)</div>
                                     </div>
                                 </section>
@@ -241,8 +241,8 @@
                                     </div>
 
                                     <div class="space-y-2 text-xs">
-                                        <input type="text" wire:model="leadName" placeholder="Your Name" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
-                                        <input type="text" wire:model="leadPhone" placeholder="Mobile Phone" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
+                                        <input type="text" aria-label="Your Name" wire:model="leadName" placeholder="Your Name" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
+                                        <input type="text" aria-label="Mobile Phone" wire:model="leadPhone" placeholder="Mobile Phone" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
                                         <button wire:click="simulateLeadSubmission" class="w-full py-2.5 rounded bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700">
                                             Send Estimate Request (Simulate SMS)
                                         </button>
@@ -361,7 +361,7 @@
                                             <div class="text-xs text-emerald-900">Seamless copper replacement & restored flow</div>
                                         </div>
                                     </div>
-                                    <input type="range" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
+                                    <input type="range" aria-label="Comparison Slider" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
                                     <div class="text-xs text-gray-500 mt-2 font-mono">Comparison Slider Position: {{ $sliderPosition }}%</div>
                                 </div>
                             </section>
@@ -377,12 +377,12 @@
                                     <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-3 text-left">
                                         <div class="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Name</label>
-                                                <input type="text" wire:model="leadName" class="w-full text-xs p-2 rounded border border-gray-300">
+                                                <label for="leadNameDesktop" class="block text-[11px] font-semibold text-gray-700 mb-1">Name</label>
+                                                <input type="text" id="leadNameDesktop" wire:model="leadName" class="w-full text-xs p-2 rounded border border-gray-300">
                                             </div>
                                             <div>
-                                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Phone</label>
-                                                <input type="text" wire:model="leadPhone" class="w-full text-xs p-2 rounded border border-gray-300 font-mono">
+                                                <label for="leadPhoneDesktop" class="block text-[11px] font-semibold text-gray-700 mb-1">Phone</label>
+                                                <input type="text" id="leadPhoneDesktop" wire:model="leadPhone" class="w-full text-xs p-2 rounded border border-gray-300 font-mono">
                                             </div>
                                         </div>
                                         <div>
