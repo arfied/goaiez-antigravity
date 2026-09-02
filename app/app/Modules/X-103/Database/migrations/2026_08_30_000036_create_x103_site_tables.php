@@ -42,7 +42,8 @@ return new class extends Migration
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
                 $table->string('name');
                 $table->jsonb('steps');
-                $table->string('short_slug')->unique();
+                $table->string('short_slug');
+                $table->unique(['business_id', 'short_slug']);
                 $table->jsonb('device_routing')->nullable(); // G6-11
                 $table->unsignedInteger('click_cap')->nullable(); // G19-07
                 $table->unsignedInteger('clicks_count')->default(0);
