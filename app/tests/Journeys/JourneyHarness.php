@@ -246,7 +246,18 @@ trait JourneyHarness
     {
         $inv = Invoice::find($invoice['id']);
         $inv->update(['due_date' => now()->subDays(10)]);
+
+        $tenantId = Tenancy::id();
+        $userId = Tenancy::userId();
+
         Artisan::call('x211:detect-overdue');
+
+        if ($userId !== null) {
+            Tenancy::setUser($userId);
+        }
+        if ($tenantId !== null) {
+            Tenancy::set($tenantId);
+        }
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
