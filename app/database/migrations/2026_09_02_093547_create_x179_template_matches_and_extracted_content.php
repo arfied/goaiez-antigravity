@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('extracted_content')) {
+        if (! Schema::hasTable('extracted_content')) {
             Schema::create('extracted_content', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('business_id');
@@ -33,7 +33,7 @@ return new class extends Migration
             ");
         }
 
-        if (!Schema::hasTable('template_matches')) {
+        if (! Schema::hasTable('template_matches')) {
             Schema::create('template_matches', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('business_id');

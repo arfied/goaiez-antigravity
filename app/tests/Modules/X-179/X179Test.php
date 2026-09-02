@@ -8,7 +8,7 @@ use App\Modules\X179\Actions\ContentExtractAction;
 use App\Modules\X179\Actions\TemplateMatchAction;
 use App\Modules\X179\Events\ContentExtracted;
 use App\Modules\X179\Events\TemplateMatched;
-use Illuminate\Support\Facades\DB;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -35,7 +35,7 @@ class X179Test extends TestCase
         Event::fake([ContentExtracted::class, TemplateMatched::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Template Matcher Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
         $prospectWithSite = 9901;
         $verbatimServiceText = 'Comprehensive heat pump installation, emergency refrigerant recharging, and annual furnace tune-ups.';

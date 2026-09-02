@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X179;
 
-use Illuminate\Support\Facades\Event;
+use App\Support\Tenancy;
 use Tests\TestCase;
 
 class X179ScreenTest extends TestCase
@@ -18,7 +18,7 @@ class X179ScreenTest extends TestCase
     public function test_prospecttenantfacing_top3_preview_screen_authed_ok(): void
     {
         $biz = TestCase::provisionTenant();
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
         $user = $biz->owner;
 
         $response = $this->actingAs($user)->get('/prospects/top3-preview/123');
@@ -34,7 +34,7 @@ class X179ScreenTest extends TestCase
     public function test_match_scores_screen_authed_ok(): void
     {
         $biz = TestCase::provisionTenant();
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
         $user = $biz->owner;
 
         $response = $this->actingAs($user)->get('/prospects/match-scores/123');
