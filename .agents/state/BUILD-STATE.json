@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T05:03:10",
+ "updated": "2026-09-02T17:06:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -381,10 +381,29 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Reviews",
+     "stage": "J10",
+     "why": "J10 waits on track/sixty (tenantWithLiveNumber, personWithPendingSteps) and on ungranted review-platform access",
+     "at": "2026-09-02T16:49:10"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "Track-2",
+     "why": "the only caller passes customerId null (C-Reviews/Ui/ReviewsQaRequests.php:64, Track 2 under ruling 5)",
+     "at": "2026-09-02T16:49:15"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "X-121",
+     "why": "X-121 exposes no job->person link and JobCompleted carries no person, so C-Reviews cannot trigger a review ask from a completed job",
+     "at": "2026-09-02T17:06:38"
+    }
+   ]
   },
   "C-Sms": {
    "status": "DONE",
@@ -1189,6 +1208,24 @@
    "stage": "schema",
    "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
    "at": "2026-09-02T02:39:43"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "J10",
+   "why": "J10 waits on track/sixty (tenantWithLiveNumber, personWithPendingSteps) and on ungranted review-platform access",
+   "at": "2026-09-02T16:49:10"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "Track-2",
+   "why": "the only caller passes customerId null (C-Reviews/Ui/ReviewsQaRequests.php:64, Track 2 under ruling 5)",
+   "at": "2026-09-02T16:49:15"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "X-121",
+   "why": "X-121 exposes no job->person link and JobCompleted carries no person, so C-Reviews cannot trigger a review ask from a completed job",
+   "at": "2026-09-02T17:06:38"
   }
  ],
  "notes": [
@@ -1214,6 +1251,24 @@
    "module": "X-179",
    "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
    "at": "2026-09-02T04:38:50",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "(R245) ReviewRequestAction CADENCE_WINDOW_DAYS is 30, null customer bypasses rate limit",
+   "at": "2026-09-02T16:30:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "null-customerId path explicitly refused as CUSTOMER_UNKNOWN (recorded for Track 2)",
+   "at": "2026-09-02T16:49:03",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "The two-pass cap is applied as a lifetime limit (max 2 requests per person globally), reconciled with the 30-day cadence window which permits 1 request per 30 days.",
+   "at": "2026-09-02T16:49:07",
    "ruling": "R245"
   }
  ]

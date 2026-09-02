@@ -486,3 +486,9 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
+- `2026-09-02T16:30:06` (R245) C-Reviews — (R245) ReviewRequestAction CADENCE_WINDOW_DAYS is 30, null customer bypasses rate limit
+- `2026-09-02T16:49:03` (R245) C-Reviews — null-customerId path explicitly refused as CUSTOMER_UNKNOWN (recorded for Track 2)
+- `2026-09-02T16:49:07` (R245) C-Reviews — The two-pass cap is applied as a lifetime limit (max 2 requests per person globally), reconciled with the 30-day cadence window which permits 1 request per 30 days.
+- `2026-09-02T16:49:10` UNRESOLVED J10 C-Reviews - J10 waits on track/sixty (tenantWithLiveNumber, personWithPendingSteps) and on ungranted review-platform access
+- `2026-09-02T16:49:15` UNRESOLVED Track-2 C-Reviews - the only caller passes customerId null (C-Reviews/Ui/ReviewsQaRequests.php:64, Track 2 under ruling 5)
+- `2026-09-02T17:06:38` UNRESOLVED X-121 C-Reviews - X-121 exposes no job->person link and JobCompleted carries no person, so C-Reviews cannot trigger a review ask from a completed job
