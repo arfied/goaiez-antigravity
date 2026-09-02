@@ -45,7 +45,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Voice Personality / Accent Model</label>
-                    <select wire:model.live="voicePersona" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                    <select aria-label="Voice Personality" wire:model.live="voicePersona" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
                         <option value="warm_professional">Warm & Professional (Natural human cadence, clear enunciation)</option>
                         <option value="direct_concise">Direct & Concise (Fast intake, high efficiency)</option>
                         <option value="friendly_casual">Friendly & Casual (Welcoming local business tone)</option>

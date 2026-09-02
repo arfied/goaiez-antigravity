@@ -106,7 +106,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Dispatch Cadence After Payment</label>
-                    <select wire:model.live="triggerTiming" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                    <select aria-label="Trigger Timing" wire:model.live="triggerTiming" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
                         <option value="instant">Immediate (Within 60 seconds)</option>
                         <option value="15m">15 Minutes Delay (Recommended for service completion)</option>
                         <option value="2h">2 Hours Delay (Post-appointment window)</option>

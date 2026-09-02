@@ -54,7 +54,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Post Objective / Topic</label>
-                    <select wire:model.live="postTopic" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+                    <select aria-label="Post Topic" wire:model.live="postTopic" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
                         <option value="project_showcase">Project Showcase / Completed Job</option>
                         <option value="seasonal_promo">Seasonal Service Special</option>
                         <option value="expert_tip">Expert Local Maintenance Tip</option>

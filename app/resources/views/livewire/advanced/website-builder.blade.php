@@ -72,7 +72,7 @@
             <!-- Template & Industry -->
             <div class="bg-card shadow-sm rounded-lg p-4 sm:p-5 border border-rule">
                 <h3 class="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider mb-2">Industry Template</h3>
-                <select wire:model.live="template" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
+                <select aria-label="Industry Template" wire:model.live="template" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                     <option value="modern_service">Modern Local Services (Contractors & Pro Services)</option>
                     <option value="healthcare_clean">Clean Medical / Dental / Wellness Clinic</option>
                     <option value="bold_contractor">Bold Trade Specialist (HVAC, Roofing, Plumbing)</option>
