@@ -27771,7 +27771,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G8-23 | Instant Indexing | ENH | X-176 | named in the header |
 | G8-24 | Internal Cannibalization Scan | ENH | X-140 | embedding similarity before publish |
 | G8-25 | Internal Linking Graph | ENH | X-176 | named in the header |
-| G8-26 | Keyword Spotting Alerts | ENH | X-153 | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) |
+| G8-26 | Keyword Spotting Alerts | ENH | X-153 | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) · refuses: claims older than 30 min |
 | G8-27 | Local Post Automation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended` · refuses: generating while `gbp.suspended` |
 | G8-28 | Local Visibility Sync | ENH | X-192 | named in the header |
 | G8-29 | Multi-Currency Natively | ENH | X-117 | §143–§144 — minor units, integers, no floats |

@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G8-26' => 'a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077)',
+    'G8-26' => 'a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) · refuses: claims older than 30 min',
 
     // status: SPECCED
     'G18-12' => 'three staff alerted, first reply claims, the claim expires at 30 minutes (P-077)',

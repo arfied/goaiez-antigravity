@@ -466,7 +466,7 @@
 | G8-23 | Instant Indexing | ENH | X-176 | SPECCED | named in the header |
 | G8-24 | Internal Cannibalization Scan | ENH | X-140 | SPECCED | embedding similarity before publish |
 | G8-25 | Internal Linking Graph | ENH | X-176 | SPECCED | named in the header |
-| G8-26 | Keyword Spotting Alerts | ENH | X-153 | SPECCED | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) |
+| G8-26 | Keyword Spotting Alerts | ENH | X-153 | SPECCED | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) · refuses: claims older than 30 min |
 | G8-27 | Local Post Automation | ENH | X-177 | SPECCED | named in the header;  held while `gbp.suspended` · refuses: generating while `gbp.suspended` |
 | G8-28 | Local Visibility Sync | ENH | X-192 | SPECCED | named in the header |
 | G8-29 | Multi-Currency Natively | ENH | X-117 | SPECCED | §143–§144 — minor units, integers, no floats |
