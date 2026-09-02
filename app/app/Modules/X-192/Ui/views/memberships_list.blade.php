@@ -10,7 +10,7 @@
 
     @if ($memberships->isEmpty())
         <div class="rounded-[--radius-panel] border border-rule bg-card p-6 shadow-xs text-center">
-            <h3 class="text-sm font-semibold text-ink">No memberships found</h3>
+            <h2 class="text-sm font-semibold text-ink">No memberships found</h2>
             <p class="mt-1 text-sm text-ink-2">You don't have any active directory memberships at this time.</p>
         </div>
     @else
