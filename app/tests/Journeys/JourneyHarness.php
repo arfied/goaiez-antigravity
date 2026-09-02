@@ -238,11 +238,6 @@ trait JourneyHarness
     {
         $inv = \App\Modules\X199\Models\Invoice::find($invoice['id']);
         $inv->update(['due_date' => now()->subDays(10)]);
-        \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\X211\Events\ArOverdue(
-            $inv->business_id,
-            $inv->id,
-            10
-        ));
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
