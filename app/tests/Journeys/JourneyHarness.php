@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use Symfony\Component\Process\Process;
+
 /**
  * The journey harness — every action a journey performs against the real system.
  *
@@ -226,19 +228,103 @@ trait JourneyHarness
     /** @return array<string,mixed> */
     private function takeBackup(): array
     {
-        throw $this->todo('take a real backup');
+        $id = uniqid();
+        $path = storage_path("app/backup_{$id}.dump");
+        $process = new Process([
+            '/usr/bin/pg_dump', '-Fc',
+            '-h', env('DB_HOST', '127.0.0.1'),
+            '-U', env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+            '--enable-row-security',
+            '-f', $path,
+            'goaiez_antig_dev',
+        ]);
+        $process->setEnv(['PGPASSWORD' => env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')]);
+        $process->mustRun();
+
+        return ['backup_id' => $id, 'path' => $path];
     }
 
     /** ⭐⭐ A restore test that cannot FAIL is a ritual. @param array<string,mixed> $backup @return array<string,mixed> */
     private function corruptBackup(array $backup): array
     {
-        throw $this->todo('corrupt the backup ON PURPOSE so verification has something to catch');
+        $corruptPath = storage_path("app/backup_{$backup['backup_id']}_corrupt.dump");
+        $size = filesize($backup['path']);
+        file_put_contents($corruptPath, file_get_contents($backup['path'], false, null, 0, (int) ($size / 2)));
+
+        return ['backup_id' => $backup['backup_id'].'_corrupt', 'path' => $corruptPath];
     }
 
     /** @param array<string,mixed> $backup @return array<string,mixed> */
     private function restoreAndVerify(array $backup): array
     {
-        throw $this->todo('restore and verify row counts against expected');
+        $pid = getmypid();
+        $scratchDb = "goaiez_antig_drill_{$pid}";
+
+        $pdo = new \PDO(
+            'pgsql:host='.env('DB_HOST', '127.0.0.1').';port=5432;dbname=postgres',
+            env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+            env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')
+        );
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        try {
+            $pdo->exec("CREATE DATABASE {$scratchDb}");
+
+            $process = new Process([
+                '/usr/bin/pg_restore',
+                '-h', env('DB_HOST', '127.0.0.1'),
+                '-U', env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+                '-d', $scratchDb,
+                '--no-owner',
+                '--no-privileges',
+                $backup['path'],
+            ]);
+            $process->setEnv(['PGPASSWORD' => env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')]);
+            $process->run();
+
+            $devPdo = new \PDO(
+                'pgsql:host='.env('DB_HOST', '127.0.0.1').';port=5432;dbname=goaiez_antig_dev',
+                env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+                env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')
+            );
+
+            $scratchPdo = new \PDO(
+                'pgsql:host='.env('DB_HOST', '127.0.0.1').";port=5432;dbname={$scratchDb}",
+                env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+                env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')
+            );
+
+            $devTables = $devPdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")->fetchAll(\PDO::FETCH_COLUMN);
+            $expected = 0;
+            $actual = 0;
+
+            foreach ($devTables as $t) {
+                try {
+                    $expected += (int) $devPdo->query("SELECT count(*) FROM \"$t\"")->fetchColumn();
+                } catch (\Exception $e) {
+                }
+                try {
+                    $actual += (int) $scratchPdo->query("SELECT count(*) FROM \"$t\"")->fetchColumn();
+                } catch (\Exception $e) {
+                }
+            }
+
+            $scratchTables = $scratchPdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")->fetchAll(\PDO::FETCH_COLUMN);
+            $verified = ($expected === $actual);
+
+            if (count($scratchTables) < count($devTables) - 10) {
+                $verified = false;
+            }
+
+            return [
+                'verified' => $verified,
+                'expected_rows' => $expected,
+                'actual_rows' => $actual,
+            ];
+        } finally {
+            $scratchPdo = null;
+            $pdo->exec("DROP DATABASE IF EXISTS {$scratchDb} WITH (FORCE)");
+        }
     }
 
     private function todo(string $what): \RuntimeException
