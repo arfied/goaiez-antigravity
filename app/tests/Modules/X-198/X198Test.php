@@ -122,4 +122,10 @@ class X198Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_runtime_proof_returns_failure_in_tests(): void
+    {
+        $this->artisan('x198:runtime-proof')->assertExitCode(1);
+        $this->assertFileDoesNotExist(storage_path('app/evidence/X-198/runtime-proof.json'));
+    }
 }
