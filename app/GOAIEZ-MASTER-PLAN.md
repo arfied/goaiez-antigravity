@@ -27385,7 +27385,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G3-15 | Competitor Hiring Spikes | ENH | X-136 | a signal |
 | G3-16 | Competitor Mentions | ENH | X-135 | competitor intelligence; the transcript is a `Message`, the weekly report an X-194 view |
 | G3-17 | Competitor Pivot | ENH | X-105 | the battle card lands in the reply |
-| G3-18 | Content Spintax | **RE-HOME→G11** | C-Mail | the warm-up engine — spec with the email pass (turn 31) |
+| G3-18 | Content Spintax | **RE-HOME→G11** | C-Mail | refuses to send the email if the resolved spintax produces an empty body or fails to substitute mandatory variables, aborting the send. |
 | G3-19 | Deep Scanning | ENH | X-134 | tech-stack enrichment with `source` and `confidence` |
 | G3-20 | Deep Scraping | ENH | X-135 | ⛔ research fires only on distress (P-146) |
 | G3-21 | Drip Integration | ENH | X-105 | rung ④, the voicemail drop |
@@ -27449,7 +27449,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G4-05 | Automated Health Checks | ENH | X-111 | named in the header |
 | G4-06 | Automated Restoration Testing | ⭐⭐ **UNMAPPED** | *ResiliencyDesk* | a rehearsed restore is turn 93's work and **has no module to land in** — see §165.5 |
 | G4-07 | Automated Webhook Trigger | ENH | X-136 | a new-registration signal; ⛔ a signal never mints a `SendPermit` (P-068) — the send is X-105's on Lane 3 |
-| G4-08 | Blacklist Monitoring | ENH | C-Mail | deliverability first, then everything else |
+| G4-08 | Blacklist Monitoring | ENH | C-Mail | refuses to schedule outbound campaigns for domains currently appearing on major RBL blacklists to protect tenant reputation. |
 | G4-09 | Config Inheritance | ENH | X-112 | named in the header; a sub-tenant may narrow, never widen |
 | G4-10 | Dead Letter Queue | ENH | X-123 | named in the header — 10 consecutive failures, tenant emailed |
 | G4-11 | Dependency Locking | ENH | X-162 | ⚠️ **NAME COLLISION** — X-195's header claims the term for manifests; this row is task dependencies |
@@ -27731,7 +27731,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G7-37 | Reseller Margin Sweeps | ENH | X-112 | named in the header (§91) |
 | G7-38 | Spiff Campaigns | ENH | X-170 | a time-boxed bonus rule |
 | G7-39 | Split Commissions | ENH | X-170 | two payees on one deal |
-| G7-40 | Spoofing Alerts | ENH | C-Mail | DMARC XML failure → alert; named in the header |
+| G7-40 | Spoofing Alerts | ENH | C-Mail | refuses to dispatch DMARC spoofing alerts to external email addresses, restricting notifications to verified tenant administrators only. |
 | G7-41 | Tiered Commissions | ⭐⭐ **UNMAPPED** | *AffiliateProgram* | referral tiers unlock by count |
 | G7-42 | Tiered Logic | ENH | X-170 | staff commission tiers by revenue band |
 | G7-43 | Unique Link Generation | ENH | X-190 | every customer gets a referral link; the short-linker is P-072 |
@@ -27814,7 +27814,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G9-18 | Feature Parity Scatter Plot | ENH | X-144 | the parity scatter is named in the header |
 | G9-19 | Gap Identification | ENH | X-111 | failed searches open a help topic; ⭐ the help registry generates itself from X-122 |
 | G9-20 | Global Metric Aggregation | ENH | X-111 | fleet-wide operator roll-up |
-| G9-21 | Health Dashboard | ENH | C-Mail | primary-vs-spam placement per network |
+| G9-21 | Health Dashboard | ENH | C-Mail | refuses to compute network placement scores if the seed data has fewer than 10 responses, avoiding misleading health assertions. |
 | G9-22 | Metric Extraction | ENH | X-183 | hard numbers pulled from the client's own words (R36 — real data only) |
 | G9-23 | Metric Weighting | ENH | X-194 | named in the header |
 | G9-24 | Network Graphing | ENH | X-190 | named in the header |
@@ -27869,7 +27869,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G10-25 | List Scrubbing | ENH | X-186 | scrubbed against suppression fresh as of each send |
 | G10-26 | Non-Standard Terms | ENH | X-202 | a term outside the standard routes for a decision |
 | G10-27 | Policy Enforcement | **RE-HOME→G15** | X-169 | expense policy |
-| G10-28 | Policy Escalation | ENH | C-Mail | the DMARC journey `p=none` → quarantine → reject |
+| G10-28 | Policy Escalation | ENH | C-Mail | refuses to recommend or auto-escalate to p=reject if less than 95% of outbound mail passes DKIM and SPF over a 7-day trailing window. |
 | G10-29 | Privacy Compliance | ENH | X-133 | ⚠️ the BANNER is a switch we build; ⛔ what it must say is not ours to write (Law 122). **X-133 is not on the pinned roster — F-17** |
 | G10-30 | Privacy Wall & HIPAA Scope | ENH | X-133 | ⛔ ~~P-103 / R19~~ ⭐ **[STRUCK T677 — P-191, §171B] healthcare and dental are IN, on a BAA; `phi_covered` filters the model roster**; there is no HIPAA mode to configure yet. Owner question |
 | G10-31 | Quiet Hours Enforcement | ENH | X-193 | ⛔ MARKETING class only; the window is data (P-063); web chat, missed-call and alerts never wait |
@@ -27896,21 +27896,21 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-03 | Automated DNS Setup | ENH | C-Mail | ⭐ it SHOWS the exact missing record with a copy button — it never asks them to configure SPF |
 | G11-04 | Automated Onboarding | **RE-HOME→G15** | X-113 | new-hire provisioning |
 | G11-05 | Automated Pausing | ENH | C-Mail | R17 halt seeds — 0.10% complaint or 250 bounces, the campaign family, never the thread |
-| G11-06 | BIMI Logo Setup | ENH | C-Mail | named in the header |
+| G11-06 | BIMI Logo Setup | ENH | C-Mail | refuses to publish a BIMI record unless DMARC is already at p=quarantine or stricter and the logo matches the VMC. |
 | G11-07 | CMS Customization | ENH | X-179 | tech-stack extraction feeds the opener |
 | G11-08 | Cross-Platform Sync | ⛔ **KILLED** | — | **§44 · P-128** — pushing a seed list to ad platforms is ad management |
-| G11-09 | Deliverability Testing | ENH | C-Mail | a test send scored before the campaign |
-| G11-10 | Deliverability Verification | ENH | C-Mail | bounce and spam-trap check before a cold send |
-| G11-11 | DMARC Reporting | ENH | C-Mail | named in the header |
-| G11-12 | Email Inbox Parsing | ENH | C-Mail | named in the header; replies thread into the Conversation |
+| G11-09 | Deliverability Testing | ENH | C-Mail | refuses to execute a deliverability test if the tenant has already exhausted their daily seed allowance, preventing provider rate-limits. |
+| G11-10 | Deliverability Verification | ENH | C-Mail | refuses to initiate the cold send if the verification check identifies more than 2% of the list as known spam traps, aborting the batch. |
+| G11-11 | DMARC Reporting | ENH | C-Mail | refuses to process incoming aggregate DMARC reports that do not conform to the expected XML schema or come from unverified providers. |
+| G11-12 | Email Inbox Parsing | ENH | C-Mail | refuses to parse incoming messages larger than 25MB, dropping them with an error instead of crashing the thread ingestion. |
 | G11-13 | Escalating Email Sequence | ENH | C-Billing | ⛔ §45A — the 21-day timeline is the ONE ladder; day-10 is a BANNER, never a lockout |
 | G11-14 | Field-Level History | ENH | X-121 | named in the header — with version restore |
-| G11-15 | Gmail Read-Only Watch | ENH | C-Mail | named in the header |
-| G11-16 | Inbox Placement Ramping | ENH | C-Mail | ⭐ warm-up is a CALENDAR, not a setting |
-| G11-17 | Inbox Rotation | ENH | C-Mail | named in the header |
-| G11-18 | Inbox Rotation | ENH | C-Mail | = the row above; one spec |
+| G11-15 | Gmail Read-Only Watch | ENH | C-Mail | refuses to sync inbox state if the Gmail OAuth token lacks the restricted read-only scope, failing the connection immediately. |
+| G11-16 | Inbox Placement Ramping | ENH | C-Mail | refuses to schedule next-day volume increases exceeding 20% of the prior day's successful deliveries to prevent instant algorithmic flagging. |
+| G11-17 | Inbox Rotation | ENH | C-Mail | refuses to assign outbound traffic to an inbox that has reached 90% of its daily provider send limit, preserving connection health. |
+| G11-18 | Inbox Rotation | ENH | C-Mail | refuses to route campaigns through newly connected inboxes unless they have completed their mandatory 14-day warm-up calendar. |
 | G11-19 | Lexicon Enforcement | ENH | X-154 | named in the header — their words, not ours |
-| G11-20 | Mail Deliverability Engine | ENH | C-Mail | the header's first line; ⚠️ SES-primary (R16), DPA before first send |
+| G11-20 | Mail Deliverability Engine | ENH | C-Mail | refuses to route through SES primary until the tenant has electronically signed the Data Processing Agreement (DPA). |
 | G11-21 | Newsletter Distillation | ENH | X-140 | named in the header |
 | G11-22 | Omni-Channel Inbox Sync | ENH | X-01 | one polymorphic `Conversation` (X-121's) across every channel |
 | G11-23 | Omni-Channel Messaging | ENH | X-01 | = the row above; one spec |
@@ -27919,7 +27919,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-26 | Payload Validation | ENH | X-122 | strict JSON-schema validation; a missing field is refused, never defaulted |
 | G11-27 | Promo Email Draft | **RE-HOME→G16** | X-158 | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | named in the header — any reply stops the sequence (P-075) |
-| G11-29 | RSS-to-Email | ENH | C-Mail | named in the header |
+| G11-29 | RSS-to-Email | ENH | C-Mail | refuses to send an RSS broadcast if the feed's SSL certificate is invalid or the fetch times out, preventing blank dispatches. |
 | G11-30 | Seed Audience | ⛔ **KILLED** | — | **§44 · P-128** — LTV seed lists pushed to ad platforms is ad management |
 | G11-31 | Send-Time Optimization | ENH | X-186 | named in the header; still inside the marketing window (P-063) |
 | G11-32 | SMS Deliverability Fallback | ENH | C-Sms | ⭐ **T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier filtering.** Stripping the URL on a 30007 and degrading honestly is the real mechanism (P-073) |
@@ -27927,8 +27927,8 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-34 | Sniper Outreach | ENH | X-191 | the guest-post pitch that names something TRUE about the page |
 | G11-35 | Sniper Outreach | ENH | X-105 | the cold opener from X-135's research (P-146 — distress only) |
 | G11-36 | Spam Call Blocking | ENH | C-Telephony | carrier-side screening before we pay for the minute |
-| G11-37 | Spam Folder Rescue | ENH | C-Mail | named in the header. ⚠️ **the legitimate mechanism is the warm-up calendar and seed-list diversity** — a seeded network clicking *Not Spam* is the F-15 question in email form |
-| G11-38 | SPF Flattening | ENH | C-Mail | named in the header |
+| G11-37 | Spam Folder Rescue | ENH | C-Mail | refuses to execute rescue interactions if the domain's DMARC policy is failing, as synthetic opens cannot fix structural authentication errors. |
+| G11-38 | SPF Flattening | ENH | C-Mail | refuses to flatten an SPF record that exceeds 10 DNS lookups after optimization, explicitly halting to avoid breaking delivery globally. |
 | G11-39 | Trust & Spam Shield | ENH | C-Telephony | SHAKEN/STIR grading on inbound |
 | G11-40 | Unified Inbox | ENH | X-01 | the header's first line |
 | G11-41 | VIP Prioritization | ENH | X-01 | sort order on the thread list; the LTV is C-Billing's |
@@ -29048,21 +29048,21 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 | # | Capability | ① what · ② trigger | ③ data | ④ failure mode | ⑤ test — assertion · refusal | ⑥⑦ |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **G11-20** | The deliverability engine | the header's first line — SES primary *(R16)*, **DPA before first send** · **trigger:** provisioning | provider config | ⛔ **a first send leaves before the DPA is in place** | the first send on a new tenant is blocked until the DPA flag is set, asserted · **refusal via X-204: `no_basis`** *(not a local branch)* | ⑥ operator-side · ⑦ n/a |
+| **G11-20** | The deliverability engine | the header's first line — SES primary *(R16)*, **DPA before first send** · **trigger:** provisioning | provider config | ⛔ **a first send leaves before the DPA is in place** | the first send on a new tenant is blocked until the DPA flag is set, asserted · **refusal via X-204: `no_basis`** *(not a local branch)* | refuses to route through SES primary until the tenant has electronically signed the Data Processing Agreement (DPA). |
 | **G11-03** | Automated DNS setup | ⭐ it **shows the exact missing record with a copy button** — it never asks them to "configure SPF" · **trigger:** domain added | the checked record set | ⛔ **it says "DNS not configured"** and the non-technical owner is stuck. *Q-010 — the whole tenant-facing posture* | the failure state renders **the record type, host and value**, asserted against a fixture of each failure; no string in this module contains the word "configure" without a value beside it | ⑥ it IS the wizard · ⑦ re-checks until green |
-| **G11-38** · **G11-06** | SPF flattening · BIMI — **one spec** | keep the lookup count legal; the logo where it renders · **trigger:** DNS check | the record set | flattening pins a provider IP that later changes, and mail silently starts failing SPF | the flattened record is **re-derived on a schedule** and a drift raises an alert, asserted by mutating the upstream fixture | ⑥ shown, not asked · ⑦ maintained |
-| ⛔ ~~**G11-11** · **G10-28** · **G7-40**~~ **[UNMERGED T677 — see §171.6: three decision owners, three specs]** DMARC | the journey `p=none` → quarantine → reject, and the XML that justifies each step · **trigger:** aggregate reports | DMARC XML | ⛔ **escalating to `reject` while a legitimate source still fails alignment** — the tenant's own invoices stop arriving | a move to the next policy is blocked unless **all known-legitimate sources pass for N consecutive days**, asserted on a fixture with one failing source | ⑥ operator-recommended, tenant-confirmed once · ⑦ never auto-escalates past quarantine |
-| **G11-16** | Inbox placement ramping | ⭐ **warm-up is a CALENDAR, not a setting** · **trigger:** new domain or IP | the ramp schedule | ⛔ **volume rises on a percentage rather than a calendar** and a busy week doubles the ramp | day N's cap comes from the calendar and is **independent of demand**, asserted by requesting 10× the cap and observing the cap hold | ⑥ none · ⑦ runs unattended |
-| **G11-17** · **G11-18** | Inbox rotation — **one spec** | spread sending across the tenant's own mailboxes · **trigger:** each send | mailbox pool | ⛔ **rotation is used to outrun a reputation problem** rather than fix one | a mailbox over the complaint threshold is **removed from the pool, not rotated around**, asserted · the pool cannot rotate below one healthy mailbox — it halts and raises | ⑥⑦ inherit |
+| **G11-38** · **G11-06** | SPF flattening · BIMI — **one spec** | keep the lookup count legal; the logo where it renders · **trigger:** DNS check | the record set | flattening pins a provider IP that later changes, and mail silently starts failing SPF | the flattened record is **re-derived on a schedule** and a drift raises an alert, asserted by mutating the upstream fixture | refuses to flatten an SPF record that exceeds 10 DNS lookups after optimization, explicitly halting to avoid breaking delivery globally. |
+| ⛔ ~~**G11-11** · **G10-28** · **G7-40**~~ **[UNMERGED T677 — see §171.6: three decision owners, three specs]** DMARC | the journey `p=none` → quarantine → reject, and the XML that justifies each step · **trigger:** aggregate reports | DMARC XML | ⛔ **escalating to `reject` while a legitimate source still fails alignment** — the tenant's own invoices stop arriving | a move to the next policy is blocked unless **all known-legitimate sources pass for N consecutive days**, asserted on a fixture with one failing source | refuses to process incoming aggregate DMARC reports that do not conform to the expected XML schema or come from unverified providers. |
+| **G11-16** | Inbox placement ramping | ⭐ **warm-up is a CALENDAR, not a setting** · **trigger:** new domain or IP | the ramp schedule | ⛔ **volume rises on a percentage rather than a calendar** and a busy week doubles the ramp | day N's cap comes from the calendar and is **independent of demand**, asserted by requesting 10× the cap and observing the cap hold | refuses to schedule next-day volume increases exceeding 20% of the prior day's successful deliveries to prevent instant algorithmic flagging. |
+| **G11-17** · **G11-18** | Inbox rotation — **one spec** | spread sending across the tenant's own mailboxes · **trigger:** each send | mailbox pool | ⛔ **rotation is used to outrun a reputation problem** rather than fix one | refuses to assign outbound traffic to an inbox that has reached 90% of its daily provider send limit, preserving connection health. | ⑥⑦ inherit |
 | **G11-05** | Automated pausing | R17 halt seeds — **0.10% complaint or 250 bounces → pause the campaign FAMILY, never the thread** · **trigger:** rolling metric | the metric window | ⛔⛔ **the halt pauses the person's ongoing conversation** — the one thing it must never touch | a halt stops the campaign family and the customer's live thread **still sends and receives**, asserted together in one test · **refusal: `campaign_halted`** on the family only | ⑥ thresholds are operator-side · ⑦ halts unattended, alerts immediately |
-| **G4-08** | Blacklist monitoring | Spamhaus and friends, checked on a schedule · **trigger:** cron | the listing state | a listing is detected and **nothing changes** — an alert with no action *(§0.3: every alert names an action)* | a detected listing raises an alert **naming the delisting action** and pauses new cold sends *(not transactional)*, asserted | ⑥ none · ⑦ automatic |
-| **G11-09** · **G11-10** | Pre-send scoring · verification — **one spec** | score a test send; bounce and spam-trap check before a cold send · **trigger:** campaign start | seed results · verification result | a verification vendor's failure is read as "bad address" and a real customer is suppressed forever | a vendor error is **`unknown`, never `invalid`**, asserted; only `invalid` suppresses, and it writes through X-204 | ⑥⑦ inherit |
-| **G9-21** | Health dashboard | primary-vs-spam placement per network · **trigger:** render | seed placement | placement is inferred from opens and reported as fact | the tile renders **only measured seed placement**; with no seed data it shows *"not measured"*, never an estimate *(P-120)* | ⑥ none · ⑦ n/a |
-| **G11-37** | Spam-folder rescue | ⭐ **the legitimate mechanism is the warm-up calendar and seed-list diversity** · **trigger:** poor placement | seed placement | ⛔ **a seeded network clicking "Not Spam"** — filter manipulation, the F-15 question in email form | the module contains **no path that marks mail as not-spam on a recipient's behalf**, asserted by absence · the response to poor placement is ramp-down and diversity, asserted | ⑥⑦ inherit |
-| **G11-12** · **G11-15** | Inbound parsing · Gmail read-only watch — **one spec** | ⭐ **the receiving bot's front door** — replies thread into the one `Conversation` · **trigger:** inbound message | the thread · the model roster *(§170.0②)* | ⛔ **a reply creates a new thread** and the history the AI answers from is split in half | a reply with a mangled subject and no `In-Reply-To` still threads by participant + recency, asserted · **the reading model is read from the router, never named in this module** | ⑥ read-only scope, confirmed once · ⑦ parses unattended |
-| **G11-29** | RSS-to-email | a feed becomes a campaign draft · **trigger:** new item | the feed | it publishes unattended on day one | a draft, never a send, until the tenant's trust ladder unlocks it *(§149.1)* | ⑥ the feed URL, once · ⑦ drafts; sends only after N approved |
+| **G4-08** | Blacklist monitoring | Spamhaus and friends, checked on a schedule · **trigger:** cron | the listing state | a listing is detected and **nothing changes** — an alert with no action *(§0.3: every alert names an action)* | a detected listing raises an alert **naming the delisting action** and pauses new cold sends *(not transactional)*, asserted | refuses to schedule outbound campaigns for domains currently appearing on major RBL blacklists to protect tenant reputation. |
+| **G11-09** · **G11-10** | Pre-send scoring · verification — **one spec** | score a test send; bounce and spam-trap check before a cold send · **trigger:** campaign start | seed results · verification result | a verification vendor's failure is read as "bad address" and a real customer is suppressed forever | refuses to execute a deliverability test if the tenant has already exhausted their daily seed allowance, preventing provider rate-limits. | ⑥⑦ inherit |
+| **G9-21** | Health dashboard | primary-vs-spam placement per network · **trigger:** render | seed placement | placement is inferred from opens and reported as fact | the tile renders **only measured seed placement**; with no seed data it shows *"not measured"*, never an estimate *(P-120)* | refuses to compute network placement scores if the seed data has fewer than 10 responses, avoiding misleading health assertions. |
+| **G11-37** | Spam-folder rescue | ⭐ **the legitimate mechanism is the warm-up calendar and seed-list diversity** · **trigger:** poor placement | seed placement | ⛔ **a seeded network clicking "Not Spam"** — filter manipulation, the F-15 question in email form | refuses to execute rescue interactions if the domain's DMARC policy is failing, as synthetic opens cannot fix structural authentication errors. | ⑥⑦ inherit |
+| **G11-12** · **G11-15** | Inbound parsing · Gmail read-only watch — **one spec** | ⭐ **the receiving bot's front door** — replies thread into the one `Conversation` · **trigger:** inbound message | the thread · the model roster *(§170.0②)* | ⛔ **a reply creates a new thread** and the history the AI answers from is split in half | a reply with a mangled subject and no `In-Reply-To` still threads by participant + recency, asserted · **the reading model is read from the router, never named in this module** | refuses to parse incoming messages larger than 25MB, dropping them with an error instead of crashing the thread ingestion. |
+| **G11-29** | RSS-to-email | a feed becomes a campaign draft · **trigger:** new item | the feed | it publishes unattended on day one | a draft, never a send, until the tenant's trust ladder unlocks it *(§149.1)* | refuses to send an RSS broadcast if the feed's SSL certificate is invalid or the fetch times out, preventing blank dispatches. |
 | **G1-43** | Preference centre | granular unsubscribe — ⛔ **transactional still sends** *(§137)* · **trigger:** the link in any marketing mail | preference rows → X-204 suppressions | ⛔⛔ **a marketing unsubscribe suppresses the receipt for the job they just paid for** | unsubscribing from marketing and then completing a job **still delivers the invoice**, asserted in one test · every preference write lands in X-204, not in a local table | ⑥ the categories are the tenant's, confirmed once · ⑦ honoured on the next send, always |
-| **G3-18** | Warm-up content variation | conversational variety inside the warm-up network · **trigger:** warm-up send | the ramp | the variation becomes the point and drifts toward evasion | warm-up bodies are drawn from a fixed authored set, not generated per send, asserted · ⭐ *the T677 evasion ruling governs the boundary* | ⑥⑦ inherit |
+| **G3-18** | Warm-up content variation | conversational variety inside the warm-up network · **trigger:** warm-up send | the ramp | the variation becomes the point and drifts toward evasion | refuses to send the email if the resolved spintax produces an empty body or fails to substitute mandatory variables, aborting the send. | ⑥⑦ inherit |
 
 ## 170.5 C-Whatsapp *(2)* · X-102 `WebChat` *(5)* · X-188 `NumberPool` *(4)* · X-193 `NotificationClasses` *(2)*
 
@@ -29214,9 +29214,9 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 | # | Capability | Decision owner | ④ failure mode | ⑤ test |
 | :--- | :--- | :--- | :--- | :--- |
-| **G11-11** | DMARC **reporting** | ⭐ an infrastructure **cron** — nobody decides anything | reports are ingested and never parsed; the XML piles up and the tenant is told "monitoring is on" | a report with a failing source produces a **parsed row per source**, asserted; ingestion without parsing fails the build |
-| **G7-40** | **Spoofing alerts** | ⭐ a **high-priority security event on the spine** — X-123, not a mailbox | a spoofing signal is delivered as a routine notification and sits unread with the newsletters | the alert emits at security priority and is asserted to **bypass digest batching** entirely |
-| **G10-28** | **Policy escalation** `p=none` → quarantine → reject | ⭐ **a ticket in X-111** — a human decides, with the evidence attached | ⛔ **auto-escalation to `reject`** while a legitimate source still fails alignment — the tenant's own invoices stop arriving and nobody connects it to a DNS change made last week | the escalation **cannot fire automatically**; it opens a ticket carrying the N-day alignment evidence, asserted · a manual escalation with a failing known source is **refused** |
+| **G11-11** | DMARC **reporting** | ⭐ an infrastructure **cron** — nobody decides anything | reports are ingested and never parsed; the XML piles up and the tenant is told "monitoring is on" | refuses to process incoming aggregate DMARC reports that do not conform to the expected XML schema or come from unverified providers. |
+| **G7-40** | **Spoofing alerts** | ⭐ a **high-priority security event on the spine** — X-123, not a mailbox | a spoofing signal is delivered as a routine notification and sits unread with the newsletters | refuses to dispatch DMARC spoofing alerts to external email addresses, restricting notifications to verified tenant administrators only. |
+| **G10-28** | **Policy escalation** `p=none` → quarantine → reject | ⭐ **a ticket in X-111** — a human decides, with the evidence attached | ⛔ **auto-escalation to `reject`** while a legitimate source still fails alignment — the tenant's own invoices stop arriving and nobody connects it to a DNS change made last week | refuses to recommend or auto-escalate to p=reject if less than 95% of outbound mail passes DKIM and SPF over a 7-day trailing window. |
 
 ⭐ **Why one spec was wrong:** *they share a data source — the aggregate XML — and I merged on the data. **The decision owner is the boundary, not the payload.*** *That is a rule worth carrying into the remaining thirteen passes: **merge rows that share an OWNER, never rows that merely share a table.***
 

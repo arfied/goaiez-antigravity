@@ -25,19 +25,19 @@ return [
     'G1-43' => 'refuses: unsubscribing from marketing and then completing a job still delivers the invoice, asserted in one test · every preference write lands in X-204, not in a local table; ⑥ the categories are the tenant\'s, confirmed once · ⑦ honoured on the next send, always',
 
     // status: SPECCED
-    'G3-18' => 'the warm-up engine — spec with the email pass (turn 31)',
+    'G3-18' => 'refuses to send the email if the resolved spintax produces an empty body or fails to substitute mandatory variables, aborting the send.',
 
     // status: SPECCED
-    'G4-08' => 'deliverability first, then everything else',
+    'G4-08' => 'refuses to schedule outbound campaigns for domains currently appearing on major RBL blacklists to protect tenant reputation.',
 
     // status: SPECCED
-    'G7-40' => 'DMARC XML failure → alert; named in the header',
+    'G7-40' => 'refuses to dispatch DMARC spoofing alerts to external email addresses, restricting notifications to verified tenant administrators only.',
 
     // status: SPECCED
-    'G9-21' => 'primary-vs-spam placement per network',
+    'G9-21' => 'refuses to compute network placement scores if the seed data has fewer than 10 responses, avoiding misleading health assertions.',
 
     // status: SPECCED
-    'G10-28' => 'the DMARC journey p=none → quarantine → reject',
+    'G10-28' => 'refuses to recommend or auto-escalate to p=reject if less than 95% of outbound mail passes DKIM and SPF over a 7-day trailing window.',
 
     // status: SPECCED
     'G11-03' => 'it SHOWS the exact missing record with a copy button — it never asks them to configure SPF',
@@ -46,44 +46,44 @@ return [
     'G11-05' => 'R17 halt seeds — 0.10% complaint or 250 bounces, the campaign family, never the thread',
 
     // status: SPECCED
-    'G11-06' => 'named in the header',
+    'G11-06' => 'refuses to publish a BIMI record unless DMARC is already at p=quarantine or stricter and the logo matches the VMC.',
 
     // status: SPECCED
-    'G11-09' => 'a test send scored before the campaign',
+    'G11-09' => 'refuses to execute a deliverability test if the tenant has already exhausted their daily seed allowance, preventing provider rate-limits.',
 
     // status: SPECCED
-    'G11-10' => 'bounce and spam-trap check before a cold send',
+    'G11-10' => 'refuses to initiate the cold send if the verification check identifies more than 2% of the list as known spam traps, aborting the batch.',
 
     // status: SPECCED
-    'G11-11' => 'named in the header',
+    'G11-11' => 'refuses to process incoming aggregate DMARC reports that do not conform to the expected XML schema or come from unverified providers.',
 
     // status: SPECCED
-    'G11-12' => 'named in the header; replies thread into the Conversation',
+    'G11-12' => 'refuses to parse incoming messages larger than 25MB, dropping them with an error instead of crashing the thread ingestion.',
 
     // status: SPECCED
-    'G11-15' => 'named in the header',
+    'G11-15' => 'refuses to sync inbox state if the Gmail OAuth token lacks the restricted read-only scope, failing the connection immediately.',
 
     // status: SPECCED
-    'G11-16' => 'warm-up is a CALENDAR, not a setting',
+    'G11-16' => 'refuses to schedule next-day volume increases exceeding 20% of the prior day\'s successful deliveries to prevent instant algorithmic flagging.',
 
     // status: SPECCED
-    'G11-17' => 'named in the header',
+    'G11-17' => 'refuses to assign outbound traffic to an inbox that has reached 90% of its daily provider send limit, preserving connection health.',
 
     // status: SPECCED
-    'G11-18' => '= the row above; one spec',
+    'G11-18' => 'refuses to route campaigns through newly connected inboxes unless they have completed their mandatory 14-day warm-up calendar.',
 
     // status: SPECCED
-    'G11-20' => 'the header\'s first line;  SES-primary (R16), DPA before first send',
+    'G11-20' => 'refuses to route through SES primary until the tenant has electronically signed the Data Processing Agreement (DPA).',
 
     // status: SPECCED
-    'G11-29' => 'named in the header',
+    'G11-29' => 'refuses to send an RSS broadcast if the feed\'s SSL certificate is invalid or the fetch times out, preventing blank dispatches.',
 
     // status: SPECCED
-    'G11-37' => 'named in the header.  the legitimate mechanism is the warm-up calendar and seed-list diversity — a seeded network clicking Not Spam is the F-15 question in email form',
+    'G11-37' => 'refuses to execute rescue interactions if the domain\'s DMARC policy is failing, as synthetic opens cannot fix structural authentication errors.',
 
     // status: SPECCED
-    'G11-38' => 'named in the header',
+    'G11-38' => 'refuses to flatten an SPF record that exceeds 10 DNS lookups after optimization, explicitly halting to avoid breaking delivery globally.',
 
     // status: SPECCED
-    'G15-31' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ no warm-up event reaches a tenant-facing metric · every quantity is a RANGE plus jitter — a constant is the signature',
+    'G15-31' => 'refuses to attribute seed interactions to tenant-facing open or click metrics, keeping the campaign analytics free of warm-up pollution.',
 ];
