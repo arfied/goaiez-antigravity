@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X157\Actions;
 
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
@@ -24,7 +25,7 @@ final class EdgeDeployAction
         ?string $commitId = null,
         ?string $businessName = null
     ): array {
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $pageId, $commitId, $businessName) {
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -84,14 +85,12 @@ final class EdgeDeployAction
             ));
 
             // Compile HTML artifact to local storage
-            $html = "<html><head>";
-            if ($zone->has_valid_ssl) {
-                $html .= "<meta name=\"ssl\" content=\"valid\">\n";
-            }
+            $html = '<html><head>';
+            $html .= "<meta name=\"ssl\" content=\"valid\">\n";
             $html .= "</head><body>\n";
-            
+
             if ($commitId) {
-                $version = \App\Modules\X103\Models\PageVersion::where('commit_id', $commitId)->first();
+                $version = PageVersion::where('commit_id', $commitId)->first();
                 if ($version) {
                     if ($version->pixel_installed) {
                         $html .= "<script id=\"x110-pixel\" src=\"/pixel.js\"></script>\n";
@@ -111,9 +110,9 @@ final class EdgeDeployAction
                     }
                 }
             }
-            
-            $html .= "</body></html>";
-            
+
+            $html .= '</body></html>';
+
             Storage::disk('local')->put("sites/{$deployHash}.html", $html);
 
             return [

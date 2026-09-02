@@ -6,11 +6,16 @@ namespace Tests\Journeys;
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X103\Actions\SitePublishAction;
+use App\Modules\X103\Models\Page;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 
 /**
@@ -279,23 +284,23 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function publishSite(array $tenant): array
     {
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $tenant['id'],
             'title' => 'Home',
             'slug' => 'home',
         ]);
 
-        $site = app(\App\Modules\X103\Actions\SitePublishAction::class)
+        $site = app(SitePublishAction::class)
             ->handle($tenant['id'], $page->id, [
                 ['type' => 'chat'],
                 ['type' => 'form_capture'],
                 ['type' => 'dni'],
             ]);
 
-        $zone = app(\App\Modules\X157\Actions\EdgeProvisionAction::class)
+        $zone = app(EdgeProvisionAction::class)
             ->handle($tenant['id'], 'test.com');
 
-        $deploy = app(\App\Modules\X157\Actions\EdgeDeployAction::class)->handle(
+        $deploy = app(EdgeDeployAction::class)->handle(
             businessId: $tenant['id'],
             edgeZoneId: $zone->id,
             measuredTtfbMs: 120,
@@ -305,8 +310,8 @@ trait JourneyHarness
             businessName: $tenant['name']
         );
 
-        $html = \Illuminate\Support\Facades\Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
-        
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
         $features = [
             'pixel' => str_contains($html, 'x110-pixel'),
             'chat' => str_contains($html, 'chat-widget-container'),
