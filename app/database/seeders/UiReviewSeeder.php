@@ -32,6 +32,15 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
+        $staffUser = User::firstWhere('email', 'staff@business.com');
+        if (! $staffUser) {
+            $staffUser = User::factory()->create([
+                'email' => 'staff@business.com',
+                'name' => 'Staff Review',
+                'role' => 'super_admin',
+            ]);
+        }
+
         $setupUser = User::firstWhere('email', 'setup@business.com');
         if (! $setupUser) {
             $setupUser = User::factory()->create([
