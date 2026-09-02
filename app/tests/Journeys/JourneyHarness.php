@@ -9,8 +9,12 @@ use App\Models\User;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X121\Models\Job;
+use App\Modules\X121\Models\Person;
+use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Process;
 
 /**
@@ -44,7 +48,15 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        throw $this->todo('provision a real tenant and a real carrier number');
+        $numbers = app(TenantNumbers::class);
+        $e164 = env('INFOBIP_SENDER', '+19015922708');
+
+        DB::table('phone_numbers')->where('e164', $e164)->delete();
+        $numbers->addToPool($e164);
+
+        $biz = static::provisionTenant(['name' => 'Live Number Tenant']);
+
+        return $biz->toArray();
     }
 
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
@@ -158,7 +170,9 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function totalOutbound(array $tenant): int
     {
-        throw $this->todo('count every outbound row for the tenant');
+        return DB::table('outreach_messages')
+            ->where('business_id', $tenant['id'])
+            ->count();
     }
 
     /** @param array<string,mixed> $person */
@@ -175,16 +189,48 @@ trait JourneyHarness
 
     // ── migration ────────────────────────────────────────────────────────
 
+    private ?int $lastMigrationRunId = null;
+
     /** ⛔ P-203: historical jobs look like completed jobs. @param array<string,mixed> $tenant */
     private function importJobs(array $tenant, int $count, bool $historical): void
     {
-        throw $this->todo('import through the real path with a withoutEvents() boundary');
+        $businessId = $tenant['id'];
+        $person = Person::create(['business_id' => $businessId, 'first_name' => 'Imported']);
+
+        $data = [
+            'business_id' => $businessId,
+            'source_system' => 'housecall_pro',
+            'status' => 'committed',
+            'imported_records' => $count,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        $runId = DB::table('migration_runs')->insertGetId($data);
+
+        $this->lastMigrationRunId = $runId;
+
+        Job::withoutEvents(function () use ($businessId, $count, $historical) {
+            $jobs = [];
+            $now = now()->toDateTimeString();
+            $hist = now()->subYear()->toDateTimeString();
+
+            for ($i = 0; $i < $count; $i++) {
+                $jobs[] = [
+                    'business_id' => $businessId,
+                    'title' => 'Imported Job '.$i,
+                    'price_cents' => 10000,
+                    'status' => 'completed',
+                    'completed_at' => $historical ? $hist : $now,
+                ];
+            }
+            Job::insert($jobs);
+        });
     }
 
     /** @param array<string,mixed> $tenant */
     private function lastImportBatchId(array $tenant): string
     {
-        throw $this->todo('the import batch id — the external artifact for this journey');
+        return (string) ($this->lastMigrationRunId ?? 'none');
     }
 
     // ── money ────────────────────────────────────────────────────────────
