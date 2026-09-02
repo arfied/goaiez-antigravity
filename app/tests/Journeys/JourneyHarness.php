@@ -256,7 +256,7 @@ trait JourneyHarness
             $rates = $engine->getAgencyFacingRates($agencyBizId, $agencyId);
             Tenancy::set((int) $as['id']);
             $rate = $rates[$markup->service_type] ?? [];
-            
+
             return array_merge(['invoice_id' => 'inv_123'], $rate);
         } else {
             Tenancy::set($agencyBizId);
@@ -359,29 +359,31 @@ trait JourneyHarness
 
             $devTables = $devPdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename")->fetchAll(\PDO::FETCH_COLUMN);
             $scratchTables = $scratchPdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename")->fetchAll(\PDO::FETCH_COLUMN);
-            
+
             $verified = true;
             $expected = 0;
             $actual = 0;
-            
+
             // Justified rule: pg_restore is run by non-superuser, so it cannot restore the 'vector' extension.
             // Tables depending on it (like 'knowledge_chunks') will fail to create.
-            $expectedDevTables = array_values(array_filter($devTables, fn($t) => $t !== 'knowledge_chunks'));
-            $actualScratchTables = array_values(array_filter($scratchTables, fn($t) => $t !== 'knowledge_chunks'));
+            $expectedDevTables = array_values(array_filter($devTables, fn ($t) => $t !== 'knowledge_chunks'));
+            $actualScratchTables = array_values(array_filter($scratchTables, fn ($t) => $t !== 'knowledge_chunks'));
 
             if ($expectedDevTables !== $actualScratchTables) {
                 $verified = false;
             }
 
             foreach ($devTables as $t) {
-                if ($t === 'knowledge_chunks') continue;
-                
+                if ($t === 'knowledge_chunks') {
+                    continue;
+                }
+
                 try {
                     $expected += (int) $devPdo->query("SELECT count(*) FROM \"$t\"")->fetchColumn();
                 } catch (\Exception $e) {
                     $verified = false;
                 }
-                
+
                 try {
                     $actual += (int) $scratchPdo->query("SELECT count(*) FROM \"$t\"")->fetchColumn();
                 } catch (\Exception $e) {
