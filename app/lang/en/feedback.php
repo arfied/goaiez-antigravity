@@ -9,7 +9,24 @@ return [
         'terms' => 'Terms of Service',
         'privacy' => 'Privacy Policy',
         'email_label' => 'Email Updates',
+        'sms_label' => 'SMS Updates',
         'phi_analysis_label' => 'Health Information Undertaking',
         'phi_analysis_text' => 'I confirm that this review does not contain protected health information.',
     ],
+    'heading' => 'How did we do?',
+    'intro' => 'We would love to hear about your experience.',
+    'rating' => [
+        'legend' => 'Tap to rate',
+    ],
+    'comment' => [
+        'label' => 'Your feedback',
+        'placeholder' => 'Tell us what you loved, or what we can do better...',
+    ],
+    'contact' => [
+        'heading' => 'About you',
+        'name' => 'Name',
+        'email' => 'Email',
+        'phone' => 'Phone number',
+    ],
+    'submit' => 'Submit Feedback',
 ];
