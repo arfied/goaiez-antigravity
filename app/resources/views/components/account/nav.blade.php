@@ -1,3 +1,4 @@
+@props(['maxWidth' => '{{ $maxWidth }}'])
 @php
     use App\Support\Account\OwnerNav;
     use App\Support\Account\OwnerNavBadges;
@@ -29,7 +30,7 @@
 <nav aria-label="Your account" class="border-b border-rule bg-card sticky top-0 z-40 backdrop-blur-md bg-card/95">
     <!-- Top Utility & Brand Bar -->
     <div class="border-b border-rule/60 bg-paper/40">
-        <div class="mx-auto flex w-full max-w-5xl items-center justify-between px-3 sm:px-4 py-2 sm:py-2.5">
+        <div class="mx-auto flex w-full {{ $maxWidth }} items-center justify-between px-3 sm:px-4 py-2 sm:py-2.5">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <a href="{{ route('account.home') }}" class="font-display text-sm sm:text-base font-bold tracking-tight text-ink hover:opacity-80 transition flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <span class="flex h-6 w-6 items-center justify-center rounded-md bg-ink text-paper text-xs font-black">AI</span>
@@ -68,7 +69,7 @@
     </div>
 
     <!-- Main Tab Navigation (Horizontal Scroll on Mobile) -->
-    <div class="mx-auto flex w-full max-w-5xl items-center justify-between gap-1 sm:gap-2 px-2 sm:px-4 py-1.5">
+    <div class="mx-auto flex w-full {{ $maxWidth }} items-center justify-between gap-1 sm:gap-2 px-2 sm:px-4 py-1.5">
         <ul class="flex items-center gap-1 sm:gap-1.5 min-w-0 overflow-x-auto scrollbar-none">
             @foreach ($primary as $item)
                 @php $current = $item->current(); @endphp

@@ -44,7 +44,7 @@
             class="sr-only rounded-[--radius-control] bg-card px-4 py-2 focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:ring-2 focus:ring-ink"
         >Skip to content</a>
 
-        <x-account.nav />
+        <x-account.nav :max-width="$maxWidth" />
     @endif
 
     <main id="main" class="mx-auto w-full {{ $maxWidth }} px-4 py-10 sm:py-16">
