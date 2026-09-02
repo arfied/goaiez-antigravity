@@ -14,9 +14,10 @@ import { execSync } from 'child_process';
     const page = await browser.newPage();
     
     const outputDir = path.resolve('storage/app/ui-review');
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
+    if (fs.existsSync(outputDir)) {
+        fs.rmSync(outputDir, { recursive: true, force: true });
     }
+    fs.mkdirSync(outputDir, { recursive: true });
     
     // Unauthenticated screens
     await page.goto(`${baseUrl}/login`);
