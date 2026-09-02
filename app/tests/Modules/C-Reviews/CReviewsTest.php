@@ -13,6 +13,8 @@ use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewReply;
+use App\Modules\CReviews\Models\ReviewRequest;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -254,11 +256,33 @@ class CReviewsTest extends TestCase
     }
 
     /**
-     * [G20-13] named in the header; the send is Marketing class and waits for the window
+     * [G20-13] CADENCE_WINDOW_ACTIVE (test_g20_13_marketing_send_window)
      */
     public function test_g20_13_marketing_send_window(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Cadence Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Test Customer',
+        ]);
+
+        // First request is sent
+        $res1 = $this->requestAction->handle($biz->id, $customerId, 'How did it go?');
+        $this->assertEquals('sent', $res1['status']);
+
+        // Second request inside the window is refused
+        $res2 = $this->requestAction->handle($biz->id, $customerId, 'How did it go again?');
+        $this->assertEquals('refused', $res2['status']);
+        $this->assertEquals('CADENCE_WINDOW_ACTIVE', $res2['refusal_code']);
+
+        // A request outside the window is sent (mocking the time of the first request)
+        ReviewRequest::where('id', $res1['review_request_id'])
+            ->update(['created_at' => Carbon::now()->subDays(31)]);
+
+        $res3 = $this->requestAction->handle($biz->id, $customerId, 'How did it go after a month?');
+        $this->assertEquals('sent', $res3['status']);
     }
 
     /**

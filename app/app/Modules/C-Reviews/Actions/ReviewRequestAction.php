@@ -6,10 +6,13 @@ namespace App\Modules\CReviews\Actions;
 
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewRequest;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class ReviewRequestAction
 {
+    private const CADENCE_WINDOW_DAYS = 30;
+
     /**
      * Send review request with prompt and incentive lints (TEST ANCHOR, G19-10, G20-03).
      */
@@ -37,6 +40,22 @@ final class ReviewRequestAction
                 'refusal_code' => 'STAFF_PROMPT_BANNED',
                 'message' => 'Staff-name prompts are banned; ask "how did the repair go" instead',
             ];
+        }
+
+        if ($customerId !== null) {
+            $recentRequest = ReviewRequest::where('business_id', $businessId)
+                ->where('customer_id', $customerId)
+                ->where('platform', $platform)
+                ->where('created_at', '>=', Carbon::now()->subDays(self::CADENCE_WINDOW_DAYS))
+                ->exists();
+
+            if ($recentRequest) {
+                return [
+                    'status' => 'refused',
+                    'refusal_code' => 'CADENCE_WINDOW_ACTIVE',
+                    'message' => 'A review request was already sent to this customer on this platform within the cadence window',
+                ];
+            }
         }
 
         $req = ReviewRequest::create([
