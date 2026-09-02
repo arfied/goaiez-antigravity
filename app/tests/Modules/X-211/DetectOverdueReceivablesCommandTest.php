@@ -6,9 +6,11 @@ namespace Tests\Modules\X211;
 
 use App\Models\Business;
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
@@ -21,19 +23,19 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
 
         Tenancy::actingAs((int) $business->id, function () use ($business) {
             Invoice::create([
-                "business_id" => $business->id,
-                "invoice_number" => "INV-TEST-AGE",
-                "status" => "due",
-                "due_date" => now()->subDays(10),
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-TEST-AGE',
+                'status' => 'due',
+                'due_date' => now()->subDays(10),
             ]);
         });
         Tenancy::forgetAll();
 
-        \Illuminate\Support\Facades\Event::fake([\App\Modules\X211\Events\ArOverdue::class]);
+        Event::fake([ArOverdue::class]);
 
-        Artisan::call("x211:detect-overdue");
+        Artisan::call('x211:detect-overdue');
 
-        \Illuminate\Support\Facades\Event::assertDispatched(\App\Modules\X211\Events\ArOverdue::class, function ($event) {
+        Event::assertDispatched(ArOverdue::class, function ($event) {
             return $event->ageDays === 10;
         });
     }
