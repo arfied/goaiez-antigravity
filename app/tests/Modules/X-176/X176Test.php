@@ -40,7 +40,7 @@ class X176Test extends TestCase
         Event::fake([SchemaPublished::class, IndexRequested::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Modules\Core\Tenancy::set($biz->id);
 
         $sharedCommitId = 'commit_price_change_9901';
 
