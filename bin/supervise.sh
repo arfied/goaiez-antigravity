@@ -38,7 +38,10 @@ git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
   | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
 
 bar "2. forbidden paths touched  (uncommitted + last commit)"
-touched=$( { git diff --name-only HEAD; git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
+touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
+sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/supervise.sh 2>/dev/null)
+[ -n "$sup_edits" ] && printf '%s\n' "$sup_edits" | sed 's/^/  ℹ supervisor working notes (uncommitted — leave them alone): /'
+touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
 pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
 hits=$(printf '%s\n' "$touched" | grep -E "$pat" || true)
 if [ -n "$hits" ]; then
@@ -47,6 +50,15 @@ if [ -n "$hits" ]; then
   fail=1
 else
   echo "  none"
+fi
+
+bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
+if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
+  echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
+elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
+  tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
+else
+  echo "  empty — no history rewrites since the ledger began"
 fi
 
 bar "2b. php -l on every PHP file in that set"

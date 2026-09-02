@@ -1,124 +1,172 @@
 # BRIEF — from the supervisor
 
-updated: 2026-09-01
-push: cleared through 09e2660 — `git push origin main` is allowed for those six
-      commits now; item-5 commits stay local until the next PASS (see REVIEWS.md)
+updated: 2026-09-02 02:40
+push: cleared through a267b5e (already on origin/main). The local commits
+      8450e45..6cfe420 push together after item 6c below lands and is reviewed.
 report: per wave, and on any stop
+
+(This file was rewritten 2026-09-02 after the working copy was lost to a
+dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 
 ## Standing orders
 
 1. `DB_DATABASE` stays `goaiez_antig_dev` in `app/.env` and `goaiez_antig_test`
-   in `app/phpunit.xml`. `goaiez_antig` is production (anti.goaiez.com); a test
-   run from this checkout dropped its schema on 2026-08-31. Never change either
-   value. Never point anything at `goaiez_antig`.
-2. Commit per module, report per wave — rule 10.
+   in `app/phpunit.xml`. `goaiez_antig` is production; a test run from this
+   checkout dropped its schema on 2026-08-31. Never change either value.
+2. Commit per module/concern; report per wave and on any stop — rule 10.
 3. Cite nothing `php artisan why <id>` cannot resolve.
+4. **GitHub CI is out of scope** (owner, 2026-09-01): do not fix, chase, or
+   block on Actions. `bin/supervise.sh` locally is the arbiter.
+5. Run pint only as bare `./vendor/bin/pint`. Never edit sealed files.
+6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
+   a reviewed commit — rule 10, 2026-09-02 addition.
 
-## Current task — in this order
+## Current task — push (cleared through `50adae9`, REVIEWS.md 06:05), then
+wave 30 (X-192 — the LAST roster module) per `state.py next`. Same per-module
+rules. After X-192, `state.py next` returns the loop's terminal answer
+(JOURNEYS / FINISHED / STARVED): report it verbatim and stop — owner's call.
 
-**Items 1–4: PASS-WITH-NOTES (11:25). Item 5: BLOCK (12:15).** Current task is
-**5b** below. Nothing from item 5 pushes until the next PASS.
+## Wave-29 review note (supervisor, 2026-09-02 05:35)
 
-### 1. Clean tree — but do NOT commit the 2FA regression
+- `c375699` X-179 — RLS tenant-only ✓, guest+authed tests ✓, R245 recorded ✓,
+  DONE recorded ✓, Tenancy swap ✓. **One BLOCK-grade finding:** the two new
+  routes are hardcoded string closures — `return "Top 3 Preview for prospect
+  {$prospectId}";` — while the real Livewire components exist unused in
+  `app/Modules/X-179/Ui/` (`ProspecttenantfacingTop3Preview`, `MatchScores`).
+  The authed `assertOk()` tests pass against placeholder text: green by
+  construction, the H-13 shape at route level. Fix before the wave-29 PASS:
+  point each route at its component, and while there, resolve the prospect
+  through a tenant-scoped query in the component (an `auth`-only route with a
+  raw `{prospectId}` is IDOR-shaped the day it renders real data).
 
-- `app/app/Support/Auth/SecondFactor.php` in the working tree changes
-  `required()` from `return $user->role->isPlatformStaff();` to
-  `return false;`. That is audit finding **H-1** (mandatory staff 2FA off), not
-  the disconnect. **Discard it**: `git checkout -- app/app/Support/Auth/SecondFactor.php`.
-  Production already carries the correct predicate plus the enrolment fix —
-  see item 1b.
-- The three blade diffs are safe: `account/home` fixes the dead
-  `route('account.widget')` → `account.website` (the audit's logged error),
-  `account/nav` is an overflow fix, `website-builder` adds an enter-key
-  binding. Commit them with `NEXT-SESSION.md` as
-  `chore: disconnect checkout from production (2026-09-01)`.
-- `chore(supervisor): add supervisor arrangement` — the untracked `CLAUDE.md`,
-  `.claude/`, `.agents/rules/10-supervisor.md`, `.agents/supervisor/`,
-  `bin/supervise.sh`, plus the `AGENTS.md` edit. Add them as they are.
+## Previous — next roster wave per `state.py next`
 
-### 1b. Backport production's in-place fixes into git — `fix: backport 2026-09-01 production fixes (audit C-1, C-3, H-1)`
+Wave 21 PASSED (03:30); push cleared through `b7a234f`. The rewrite ledger is
+live: `.git/hooks/post-rewrite` → `.agents/supervisor/REWRITES.log`, surfaced
+by `supervise.sh` §2a — any amend/rebase now blocks its wave mechanically.
+Same per-module rules as wave 21.
 
-Production (`/home/goaiez/public_html/anti.goaiez.com`) is a file copy with
-**no `.git`** and 157 files newer than this repo (audit H-10). The fixes the
-audit marks "Fixed 2026-09-01" exist **only there**; the next deploy from git
-would revert them. Copy **into the repo, read-only from production**:
+## Wave-25 review notes as commits land (supervisor, 2026-09-02 03:50)
 
-- `routes/console.php` (prod: 52 scheduled tasks, 308 lines; repo: 4, 23 lines) — C-3
-- `tests/Feature/Architecture/SchedulingTest.php` (prod only) — C-3
-- `database/migrations/2026_09_01_000001_reapply_platform_scope_rls_exemption.php`
-  and `2026_09_01_000002_exempt_operator_alerts_from_tenant_rls.php` (prod only) — C-1
-- `app/Support/Auth/SecondFactor.php`, `app/Providers/FortifyServiceProvider.php`,
-  `app/Http/Controllers/Auth/TwoFactorSetupController.php`,
-  `app/Http/Requests/Auth/TwoFactorLoginRequest.php` (prod only),
-  `resources/views/auth/two-factor-setup.blade.php`, `tests/Feature/Auth/` (prod only) — H-1
-- `resources/views/components/layouts/` (prod only) — the `layouts.app` 500
+- `07e1531` X-142 — routes/auth/guest tests exemplary; `mcp_tokens` stores a
+  sha256 hash ✓; forced RLS on both new tables ✓. **Two findings, both must
+  land before the wave-25 PASS:**
+  1. ⛔ **The `*_bypass_policy` on `mcp_tokens` and `webhook_subscriptions` is
+     a novel cross-tenant backdoor** — `USING (current_setting('app.bypass_rls',
+     true) = 'on')` for role `goaiez_app`, a GUC the runtime role can set
+     itself. `app.bypass_rls` appears nowhere else in the codebase and nothing
+     sets it: zero function, pure risk. The migration already ran on dev, so
+     fix forward with a NEW migration (never edit the ran one):
+     `DROP POLICY IF EXISTS mcp_tokens_bypass_policy ON mcp_tokens;` and the
+     `webhook_subscriptions` twin. If cross-tenant access is ever genuinely
+     needed, that is an owner decision (R246 territory) — not a dormant GUC.
+  2. `webhook_subscriptions.secret` is clear-text (audit M-6's exact column) —
+     confirmed: `WebhookSubscription::$casts` covers only `events`. Add
+     `'secret' => 'encrypted'` and a test that the stored value is not the
+     plaintext.
+  3. **Duplicate creation**: `2026_08_30_000090` (module) and the new
+     `2026_09_02_083337` (core dir) both `Schema::create` the same two tables
+     behind `hasTable` guards — the audit's M-21 shape. Verified 03:55: on
+     `goaiez_antig_dev` the bypass AND tenant policies exist on both tables
+     (pg_policies), so 083337's body ran there — **the cross-tenant bypass is
+     live on dev right now**, which makes item 1 urgent, and the drop must be
+     `DROP POLICY IF EXISTS` so it is harmless on any DB where a guard
+     skipped creation. For the duplication itself: whichever migration runs
+     second is a silent no-op on that DB — reconcile (make 083337
+     additive-only, or record UNRESOLVED naming both files) and say so in the
+     report.
 
-⛔ Do **not** copy back `tests/Journeys/*` (prod holds the simulation harness
-the contract forbids), the 12 `tests/Modules/*Test.php` that differ (each one
-must be read: a test edited to match the code is a CHECK change — list any
-such under `REFUSED`/`UNRESOLVED`), `phpunit.xml`, or the `manifest.php`
-files (regenerate those in item 4 instead). Do not write anything under
-`public_html`.
+- `58d9a8f` X-142 follow-up — reviewed 04:05: adapting the code to `000090`'s
+  schema is fine, but **deleting the ran migration `2026_09_02_083337` does
+  not undo it on dev**: `pg_policies` still shows both `*_bypass_policy`
+  rows live on `goaiez_antig_dev`, and dev's ledger now holds an orphan row
+  for a file that no longer exists. Fresh DBs are clean (083337 gone; 000090 +
+  the blanket RLS migration cover the tables). Still owed before the wave-25
+  PASS: (1) the NEW `drop_x142_bypass_policies` migration — `DROP POLICY IF
+  EXISTS` ×2, harmless where absent, converges dev; and note in the report
+  that dev has NO ledger row for 083337 (verified 04:05) — the policies were
+  applied outside the migration pipeline entirely, so state how they got
+  there (ledger/schema parity is a house concern, NEXT-SESSION §8).
+  (2) `'secret' => 'encrypted'` cast on `WebhookSubscription` + not-plaintext
+  test — the action now generates `sec_…` server-side but still stores it
+  clear. Deleting a ran migration joins editing one on the never-do list.
 
-Verify: `bash bin/supervise.sh --tests` — Feature suite has 0 failures (the 4
-2FA tests go green), and `php artisan schedule:list | wc -l` ≥ 52.
+## Done — clear the wave-18 conduct BLOCK (REVIEWS.md 03:15)
 
-### 2. Tell the truth about the journeys — `fix(state): journeys are red until a real transport runs them`
+One commit, three items, listed in the 03:15 block: reflog + corrected STAGES
+and COMMITS in the report · `state.py stage capability 120` · the no-amend
+confirmation. Then `supervise.sh --tests`, short report, stop. After the PASS:
+push, and the next roster wave per `state.py next`.
 
-- `python3 bin/state.py journey J1 red` … through `J12`. The green marks of
-  2026-08-29/30 preceded any harness that could pass.
-- Delete the 12 files in `app/storage/app/evidence/journeys/`. They were
-  written by the simulation harness of `84eb0f5`, which the contract forbids;
-  they are gitignored, nothing in history is lost, and a proof no transport
-  produced is the one thing the runtime exists to refuse.
-- `php artisan doctor --stage=journey`, then `python3 bin/state.py stage
-  journey <n>` with the number it prints. It will be 12. That is the true count.
-- ⛔ Keep the throwing harness. Do not implement a journey in this checkout
-  unless a real transport and a real credential exist here — they do not, by
-  design, since the disconnect. When `state.py next` reaches `JOURNEYS`, the
-  honest outcome is `UNRESOLVED — <credential/transport missing>` per journey.
+## Done — wave 18, with item 0 first
 
-### 3. Make CI able to run — `fix(ci): pin PHP 8.4, the stack rule 07 already pins`
+(Wave-13 BLOCK cleared 02:50 — `18fe3f0`+`eb612bb` push at the next push point.)
 
-- `.github/workflows/ci.yml`: `php-version: '8.4'`.
-- `app/composer.json`: `"php": "^8.4"`. Do not `composer update`; the lock is
-  already 8.4-only.
-- Verify locally: `cd app && composer check-platform-reqs` exits 0.
-- **Owner, not you:** four of the last five runs never started — GitHub
-  billing / spending limit on the `arfied` account. Say so in `REPORT.md`; do
-  not work around it.
+### 0. `fix(scaffold): capabilities regeneration is lossless` — before any scaffold
 
-### 4. Pint — `fix(style): generator emits pint-clean manifests; format hand-written files`
+The X-124 scaffold re-dirtied **14** `capabilities.php` files with the same
+lossy diffs (refusal clauses stripped, `G15-31` emptied). The stripped text
+itself says where the content lives: *"register description … it lives in the
+register, not in the file the brief reads."* `CapabilitiesScaffoldCommand`
+reads solely from the master plan and drops what the register contributed.
+Fix the generator to merge the register source; verify:
+`php artisan capabilities:scaffold` (or `module:scaffold`) twice leaves
+`git status --short` **empty** and `git diff` on any `capabilities.php` shows
+refusal text preserved. Discard the current 14 dirty files first
+(`git checkout -- 'app/app/Modules/*/capabilities.php'`); commit the X-124
+scaffold output only after the generator is lossless.
 
-- Find where `ModuleScaffoldCommand` writes `manifest.php` and make it emit
-  what `phpdoc_separation` wants. Regenerate. Then `./vendor/bin/pint`.
-- Verify: `./vendor/bin/pint --test` clean **and** a second
-  `php artisan module:scaffold` leaves `git status --short` empty — a
-  generator and its output must agree, or the next scaffold reintroduces it.
-- `tests/Journeys/JourneyHarness.php` may change only by whitespace:
-  `git diff -w HEAD -- app/tests/Journeys/JourneyHarness.php` must print
-  nothing. Any other change there is a stub and a BLOCK.
+### Wave 18 — old current-task heading follows for context
 
-### 5. Audit H-tier — DONE except the BLOCK items below
+The three numbered items in the 02:55 block, in order. Then wave 18 per
+`state.py next`, same per-module rules as below. Wave-13/18 commits stay
+local until review.
 
-Twelve findings committed (`cd8104b..605713a`); reviewed 12:15 in
-`REVIEWS.md` — **BLOCK**. Per-commit acceptance notes were here and now live in
-`REVIEWS.md`. The table of findings is in git history of this file if needed.
+## Done earlier — 6c, then wave 13
 
-### 5b. Clear the item-5 BLOCK — current task, before anything else
+### 6c. One commit — `fix(X-103): companion migration for existing databases`
 
-Work the eight numbered items in the 12:15 block of `REVIEWS.md`, in order,
-one commit each. Then `bash bin/supervise.sh --tests` must print
-`pint … passed`, `phpstan … passed, errors 0`, `Feature failures 0`, and only
-the twelve journey errors. Then write `REPORT.md` **in the rule-10 shape** and
-stop for review. Nothing from item 5 pushes before that review says PASS.
+`ab60355` edited ran migration `2026_08_30_000036_create_x103_site_tables.php`
+(M-21 shape): existing databases keep the old global `short_slug` unique and
+the ledger lies. Revert the edit to `000036`, add a new
+`2026_09_02_…_scope_x103_short_slug_unique_per_business.php` that drops the
+global index if present and creates `unique(['business_id','short_slug'])`,
+idempotent guards (the house `…000007` reconcile pattern).
+Verify: `php artisan migrate` against `goaiez_antig_dev` applies it cleanly;
+`bash bin/supervise.sh --tests` unchanged (873 run / 861 pass / 12 journeys).
 
-### 6. Then wave 12 — J11 the site
+Also, no commit: record the module-test refresh gap —
+`python3 bin/state.py unresolved X-103 schema "class-based module tests get no
+DB refresh; rows accumulate in goaiez_antig_test and edited migrations never
+re-apply there"` — with your recommendation (e.g. bind RefreshesTenantDatabase
+in base TestCase) in the report. It is a design decision; recommend, don't
+decide silently.
 
-`state.py next`: remaining **X-178, X-103, X-102**. Work only those.
-`JOURNAL.md` shows twelve modules flipped to `BUILDING` at
-`2026-08-31T13:04:41` in one second — a batch mark, not work.
+### Then: push, and wave 13
+
+After 6c: `git push origin main` (everything local is then cleared), and start
+wave 13 per `state.py next` (X-176 remaining; X-137 already terminal). Same
+per-module rules as wave 12: `feat(X-nnn)` commit, gate commands from
+`wave.md`, every new route carries `['web','auth']` (ResolveTenant is global
+on `web`), every new screen one authed GET `assertOk()` plus one guest
+assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
+`state.py next` names wave 14 or stops.
 
 ## Report when
 
-After 5b (rule-10 shape), again when wave 12 closes, and on any stop condition.
+6c lands (short report), wave 13 closes (full report), any stop condition.
+
+## Wave-13+ review notes as commits land (supervisor, 2026-09-02 02:40)
+
+- `18fe3f0` X-176 — **the class does not exist.** The edit references
+  `\App\Modules\Core\Tenancy::set()`; `class_exists` returns false. The
+  canonical class is `App\Support\Tenancy`. That test now errors, and X-176
+  was marked DONE afterwards. Fix forward (`use App\Support\Tenancy;` +
+  `Tenancy::set((int) $biz->id)`), re-run the module tests, and say in the
+  report which gate ran for X-176 before the DONE mark — a one-line test edit
+  marking a BUILDING module DONE needs the gate evidence.
+- `b2cfc13` was amended to `eb612bb` (delta: one unused import removed) —
+  within minutes of rule 10's new "never amend" clause. Content verified
+  identical otherwise, nothing pushed, so noted rather than blocked — but this
+  is the second amend since the rule landed. Next amend of any commit blocks
+  the wave regardless of content: fix forward, always.

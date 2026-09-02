@@ -66,3 +66,14 @@ RAW       : <doctor output for anything not fixed>
   reason. The supervisor can be wrong; the seal cannot.
 - **Paste raw output.** Stage lines, `grep -c` counts, the doctor build stamp.
   Every wrong turn in this programme came from acting on a paraphrase.
+
+## ⛔ ADDED 2026-09-02 — THE SUPERVISOR'S WORKING TREE
+
+The supervisor edits `BRIEF.md`, `REVIEWS.md` and its own files **in the
+working tree, uncommitted**. ⛔ **Never `git stash`, `git checkout`,
+`git restore`, `git clean` or otherwise displace those files.** If a gate or a
+status flags them, that is the supervisor mid-thought: leave the files exactly
+as they are and note it in `REPORT.md`. A stash of the supervisor's ledger was
+dropped once and the record had to be reconstructed; that is why this rule has
+its own heading. The same applies to history: **never amend or rebase a commit
+that has already been reviewed** — fix forward.

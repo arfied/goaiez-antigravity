@@ -3,12 +3,11 @@
 namespace Tests\Modules\X192;
 
 use App\Models\User;
-use App\Support\Tenancy;
+use App\Modules\X192\Actions\MembershipBuildAction;
+use App\Modules\X192\Ui\MembershipsList;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
-use App\Modules\X192\Ui\MembershipsList;
-use App\Modules\X192\Actions\MembershipBuildAction;
 
 class X192Test extends TestCase
 {
@@ -24,14 +23,14 @@ class X192Test extends TestCase
 
         DB::table('directory_memberships')->insert([
             ['business_id' => $business->id, 'directory_name' => 'Indexed Dir', 'directory_url' => 'http://example.com/1', 'is_noindex' => false, 'directory_index' => 10, 'approved_by_action_id' => 1, 'is_purchased' => true],
-            ['business_id' => $business->id, 'directory_name' => 'NoIndex Dir', 'directory_url' => 'http://example.com/2', 'is_noindex' => true, 'directory_index' => 20, 'approved_by_action_id' => 1, 'is_purchased' => true]
+            ['business_id' => $business->id, 'directory_name' => 'NoIndex Dir', 'directory_url' => 'http://example.com/2', 'is_noindex' => true, 'directory_index' => 20, 'approved_by_action_id' => 1, 'is_purchased' => true],
         ]);
 
         $response = $this->actingAs($user)->get('/memberships');
         $response->assertOk();
         $response->assertSeeLivewire(MembershipsList::class);
         $response->assertSee("Google can't see this", false);
-        
+
         Livewire::test(MembershipsList::class)
             ->assertSeeInOrder(['Indexed Dir', 'NoIndex Dir']);
     }
@@ -55,7 +54,7 @@ class X192Test extends TestCase
             'is_purchased' => false,
         ]);
 
-        $action = new MembershipBuildAction();
+        $action = new MembershipBuildAction;
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Purchase rejected: paid directory membership requires an explicit approval action row (TEST ANCHOR)');
