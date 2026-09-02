@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T05:03:10",
+ "updated": "2026-09-02T14:07:07",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -779,10 +779,17 @@
    "unresolved": []
   },
   "X-163": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 7,
    "intent": "NONE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-163",
+     "stage": "journey",
+     "why": "journey J3 \u2014 C-Agent\\Actions\\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.",
+     "at": "2026-09-02T13:49:13"
+    }
+   ]
   },
   "X-164": {
    "status": "DONE",
@@ -1189,6 +1196,12 @@
    "stage": "schema",
    "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
    "at": "2026-09-02T02:39:43"
+  },
+  {
+   "module": "X-163",
+   "stage": "journey",
+   "why": "journey J3 \u2014 C-Agent\\Actions\\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.",
+   "at": "2026-09-02T13:49:13"
   }
  ],
  "notes": [
@@ -1214,6 +1227,18 @@
    "module": "X-179",
    "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
    "at": "2026-09-02T04:38:50",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "PriceQuoteAction does intent resolution by checking if any space-separated words of a confirmed pricebook item's service_name appear in the user question.",
+   "at": "2026-09-02T13:48:45",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "PriceQuoteAction resolves intent by splitting each confirmed pricebook item's service_name on '-' and requiring ALL resulting words to appear in the lowercased question, or the whole hyphenated SKU to appear verbatim",
+   "at": "2026-09-02T14:07:07",
    "ruling": "R245"
   }
  ]

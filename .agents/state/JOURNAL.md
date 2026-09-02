@@ -486,3 +486,6 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
+- `2026-09-02T13:48:45` (R245) X-163 — PriceQuoteAction does intent resolution by checking if any space-separated words of a confirmed pricebook item's service_name appear in the user question.
+- `2026-09-02T13:49:13` UNRESOLVED journey X-163 - journey J3 — C-Agent\Actions\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.
+- `2026-09-02T14:07:07` (R245) X-163 — PriceQuoteAction resolves intent by splitting each confirmed pricebook item's service_name on '-' and requiring ALL resulting words to appear in the lowercased question, or the whole hyphenated SKU to appear verbatim
