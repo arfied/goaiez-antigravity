@@ -125,7 +125,14 @@ class X198Test extends TestCase
 
     public function test_runtime_proof_returns_failure_in_tests(): void
     {
-        $this->artisan('x198:runtime-proof')->assertExitCode(1);
-        $this->assertFileDoesNotExist(storage_path('app/evidence/X-198/runtime-proof.json'));
+        $proofPath = storage_path('app/evidence/X-198/runtime-proof.json');
+        $before = file_exists($proofPath) ? file_get_contents($proofPath) : null;
+
+        $this->artisan('x198:runtime-proof')
+            ->assertExitCode(1)
+            ->expectsOutputToContain('may only be produced by a real CLI run');
+
+        $after = file_exists($proofPath) ? file_get_contents($proofPath) : null;
+        $this->assertSame($before, $after);
     }
 }
