@@ -361,7 +361,7 @@ function waitForServer(url) {
         await setupBrowser.close();
 
         
-        const locationId = execSync('php artisan tinker --execute="echo App\\Models\\Location::first()->id;"').toString().trim();
+        const locationId = fs.readFileSync('storage/app/location_id.txt', 'utf8').trim();
         
         const staffBrowser = await chromium.launch();
         const staffContext = await staffBrowser.newContext();
@@ -371,8 +371,15 @@ function waitForServer(url) {
         await staffPage.waitForLoadState('networkidle');
         await staffPage.fill('#password-email', 'staff@business.com');
         await staffPage.fill('#password', 'password');
-        await staffPage.click('form:has(#password) button[type="submit"]');
+        await Promise.all([staffPage.waitForNavigation(), staffPage.click('form:has(#password) button[type="submit"]')]);
         await staffPage.waitForLoadState('networkidle');
+        console.log('Desktop URL after password:', staffPage.url());
+        if (staffPage.url().includes('two-factor-challenge')) {
+            await staffPage.fill('#recovery_code', '12345-67890');
+            await Promise.all([staffPage.waitForNavigation(), staffPage.click('form:has(#recovery_code) button[type="submit"]')]);
+            await staffPage.waitForLoadState('networkidle');
+            console.log('Desktop URL after 2FA:', staffPage.url());
+        }
 
         const staffScreens = [
             { name: 'staff-settings', path: '/admin/settings' },
@@ -402,8 +409,13 @@ function waitForServer(url) {
         await staffMobilePage.waitForLoadState('networkidle');
         await staffMobilePage.fill('#password-email', 'staff@business.com');
         await staffMobilePage.fill('#password', 'password');
-        await staffMobilePage.click('form:has(#password) button[type="submit"]');
+        await Promise.all([staffMobilePage.waitForNavigation(), staffMobilePage.click('form:has(#password) button[type="submit"]')]);
         await staffMobilePage.waitForLoadState('networkidle');
+        if (staffMobilePage.url().includes('two-factor-challenge')) {
+            await staffMobilePage.fill('#recovery_code', '12345-67890');
+            await Promise.all([staffMobilePage.waitForNavigation(), staffMobilePage.click('form:has(#recovery_code) button[type="submit"]')]);
+            await staffMobilePage.waitForLoadState('networkidle');
+        }
 
         for (const screen of staffScreens) {
             if (!shouldCapture(`${screen.name}@390`)) continue;

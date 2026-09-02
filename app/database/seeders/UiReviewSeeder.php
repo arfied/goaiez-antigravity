@@ -30,16 +30,17 @@ class UiReviewSeeder extends Seeder
                 'name' => 'Owner Review 2',
                 'role' => 'owner',
             ]);
+
         }
 
-        $staffUser = User::firstWhere('email', 'staff@business.com');
-        if (! $staffUser) {
-            $staffUser = User::factory()->create([
+        $staffUser = User::updateOrCreate(['email' => 'staff@business.com'], [
                 'email' => 'staff@business.com',
                 'name' => 'Staff Review',
                 'role' => 'super_admin',
+                'two_factor_secret' => encrypt('dummy_secret'),
+                'two_factor_recovery_codes' => encrypt(json_encode(array_fill(0, 50, '12345-67890'))),
+                'two_factor_confirmed_at' => now(),
             ]);
-        }
 
         $setupUser = User::firstWhere('email', 'setup@business.com');
         if (! $setupUser) {
@@ -90,6 +91,10 @@ class UiReviewSeeder extends Seeder
     {
         $location = Location::firstWhere('business_id', $businessId);
         if (! $location) {
+            $location = Location::factory()->create(['business_id' => $businessId]);
+        }
+        file_put_contents(storage_path('app/location_id.txt'), $location->id);
+        if (false) {
             $location = Location::factory()->create(['business_id' => $businessId]);
         }
 
