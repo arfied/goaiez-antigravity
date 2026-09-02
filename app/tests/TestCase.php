@@ -17,7 +17,7 @@ use Tests\Concerns\RefreshesTenantDatabase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, RefreshesTenantDatabase;
+    use RefreshesTenantDatabase;
 
     /**
      * ⚠️ LIVEWIRE'S ASSET-INJECTION FLAG IS A CLASS STATIC AND SURVIVES THE

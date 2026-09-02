@@ -121,6 +121,23 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
+## Dispatching the coder (added 2026-09-02)
+
+When the user has enabled the settings rule for
+`.agents/supervisor/launch-coder.sh`, the supervisor launches runs itself:
+write `KICKOFF.md`, arm the run's monitor, then
+`bash .agents/supervisor/launch-coder.sh`. The script refuses a second
+concurrent run and auto-numbers logs.
+
+**Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
+run plus one fix run). If the same BLOCK item survives a second dispatch,
+STOP and put it to the user — never dispatch a third time for the same
+failure, never loosen the check to get past it. A journey/wave marked green
+by the coder is never taken at face value: the supervisor's own gate decides.
+Never run `state.py done/journey/stage` from the supervisor; never touch
+`app/Doctor`; never let the coder and supervisor loop without a human seeing
+each verdict block in `REVIEWS.md`.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",

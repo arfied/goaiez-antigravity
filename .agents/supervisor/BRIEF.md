@@ -21,10 +21,137 @@ dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
    a reviewed commit — rule 10, 2026-09-02 addition.
 
-## Current task — push (cleared through `50adae9`, REVIEWS.md 06:05), then
-wave 30 (X-192 — the LAST roster module) per `state.py next`. Same per-module
-rules. After X-192, `state.py next` returns the loop's terminal answer
-(JOURNEYS / FINISHED / STARVED): report it verbatim and stop — owner's call.
+## Current task — run-22 remediation (REVIEWS.md 11:05, five numbered items;
+NO sending journeys this run). Then stop for review.
+
+## Phase 2 as originally briefed — the carrier six (J5, J11, J4, J1, J10, J3)
+
+Owner-granted resources (2026-09-02): Infobip live key + webhook secret in
+`app/.env`, `SMS_DRIVER=infobip`, sender number `19015922708` (INFOBIP_FROM).
+
+### ⛔ Hard rules for every carrier journey — violating any one is an instant BLOCK
+
+1. **Sender reuse only.** The test tenant binds the EXISTING number
+   `19015922708` through the real number-pool path. Never call any Infobip
+   number-provisioning/purchase endpoint. `waitForProvisionedNumber` stays
+   throwing (it is J2's, and J2 is deferred).
+2. **One destination.** Every outbound SMS goes to `+12622164033` and nowhere
+   else. Assert it in the harness: any other destination aborts the run.
+3. **Send cap 15 per suite run**, counted in the harness; the 16th send throws.
+4. **Consent through the real paths**: record consent for `+12622164033` via
+   the app's own consent machinery before sending; STOP handling (J4) must
+   run the real ConsentService, and after STOP the assertion is zero further
+   sends — reflect reality, never bypass quiet-hours/DNC code.
+5. No voice (`VOICE_DRIVER` stays unset). Inbound legs post the carrier's
+   REAL webhook shape (HMAC-signed with the real secret) to the local app —
+   never a synthetic event shape.
+6. `waitForOutbound` accepts only a row carrying Infobip's OWN message id.
+
+### Running review notes, phase 2 (supervisor)
+
+- `6c4d766` J5 — green for real (evidence written, doctor journey = 9). Three
+  notes: (1) **the journal recorded `stage journey = 5`; the measured count is
+  9** — re-record with `state.py stage journey <measured>` at the next mark;
+  a wrong recorded count is the exact defect this arrangement polices.
+  (2) The suite-wide `RefreshesTenantDatabase` on base `TestCase` is the right
+  fix for the recorded `UNRESOLVED schema X-103` — but it rode inside a J5
+  commit; state in the report that X-103's unresolved entry is now addressed,
+  and watch the suite duration at the gate. (3) `tenantWithLiveNumber` binds
+  the real sender through `TenantNumbers::addToPool` ✓.
+- ⛔ **Before the first sending journey (J4): the hard-rule rails must exist in
+  the harness** — the destination assertion (`+12622164033` only) and the
+  15-send counter that throws on the 16th. A sending commit that arrives
+  without them is an instant BLOCK per the rules above.
+
+### Order (cheapest and safest first), one journey per commit
+
+1. **J5** migration-of-500-sends-nothing (tenant+number bind; zero sends —
+   the assertion IS the zero).
+2. **J11** published site carries all seven.
+3. **J4** STOP halts pending steps (a real send or two, then the STOP shape).
+4. **J1** missed call → consented text back (real outbound, provider id).
+5. **J10** review invite inside cadence — Places key is ABSENT: implement the
+   SMS leg; the Places-dependent part records `UNRESOLVED — google.places.key
+   absent from this checkout` if it cannot pass without it.
+6. **J3** quote from pricebook — `askAgent` needs a real AI provider;
+   `OPENAI_API_KEY`/`ANTHROPIC_API_KEY` are ABSENT: if the real agent cannot
+   answer, record `UNRESOLVED — no AI provider key in this checkout` and do
+   NOT fake the agent (NO_FACT discipline stays).
+
+Per journey: implement only the harness methods it needs (others keep
+throwing), evidence written by the passing run, `state.py journey Jn green` +
+`stage journey <n>` only after the gate shows it, one `feat(Jn): …` commit.
+Report (rule-10, suite line with FAILED count) when the six are terminal
+(green or honestly UNRESOLVED) or on any stop. No push until PASS.
+
+Phase 1 PASSED (08:55); rotation done and verified (09:40) — **push cleared
+through `7f50138`**. Remaining owner input for phase 2: infobip.key + a
+number, authorizenet.key/name (sandbox), google.places.key; J2 needs the
+owner's real call when its turn comes.
+
+## Phase 1 as originally briefed — J8 and J7 (the vendor-free pair)
+
+The owner has opened the journeys (2026-09-02). Phase 1 needs no vendor:
+
+### J8 — a deliberately corrupted backup fails the restore
+
+Implement the harness methods this journey uses (`takeBackup`,
+`corruptBackup`, `restoreAndVerify`) against the REAL tools:
+`/usr/bin/pg_dump -Fc` of **`goaiez_antig_dev` only**, restore with
+`pg_restore` into a **fresh scratch database named `goaiez_antig_drill_<pid>`**
+created via the migrate (owner-role) connection — `goaiez_owner` has CREATEDB
+(verified). Verify by row count and checksum as the test demands; the
+corrupted-backup path must FAIL the restore. Drop the scratch DB afterwards,
+success or failure. ⛔ The restore target is never an existing database;
+`goaiez_antig` (production) is never touched in any direction; the backup file
+lives under `storage/app/` (gitignored) and is never committed.
+
+### ⛔ J8 review finding (supervisor, 2026-09-02): committed DB password — fix BEFORE anything pushes
+
+`9746929` embeds the migrate/owner DB password as an `env()` fallback literal,
+four times, in `JourneyHarness.php` — **it is the LIVE owner-role password
+(matches app/.env)**, and NEXT-SESSION says `goaiez_owner` is shared with
+production goaiez.com. The commits are LOCAL (nothing pushed past `2f948b4`),
+which is the only reason this is fixable. Required, in order:
+
+1. `fix(J8): no credential literals` — every
+   `env('DB_MIGRATE_PASSWORD', '...')` becomes `env('DB_MIGRATE_PASSWORD')`
+   (no default; fail loudly if unset); same for the username. Proof:
+   `git grep d0326e` returns nothing in the working tree.
+2. The literal remains in local history; **the push stays BLOCKED until the
+   owner rotates `goaiez_owner`/`goaiez_app`** (owed since the audit) or
+   explicitly accepts pushing history containing the then-dead password.
+3. Standing rule: no secret-shaped literal ever appears in a diff — no
+   fallback defaults carrying real values.
+
+Also for J8 before PASS: implement the checksum the journey demands (e.g. md5
+over ordered rows for a deterministic sample of tables); remove the arbitrary
+"10 missing tables is fine" tolerance (exact table-set match, or justify);
+an empty catch around a count query must mark verification FAILED, not
+continue at 0 == 0.
+
+### J7 — an agency client never sees cost or margin
+
+Implement `agencyWithClient` (a real agency + client with a real grant row,
+R233 N-233-01 — through the real provisioning/grant paths, no raw inserts
+beyond what the app's own services do) and `billingView` (what each side
+actually renders/returns). The assertion is the journey's: agency sees cost
+and margin; the client sees the agency price only.
+
+Rules for both: replace `throw $this->todo(...)` ONLY in the methods these two
+journeys call — every other harness method keeps throwing. Evidence
+(`storage/app/evidence/journeys/*.json`) is written by the passing test run,
+never by hand. After the gate shows both passing: `python3 bin/state.py
+journey J8 green` and `journey J7 green`, `state.py stage journey <n>` with
+the measured count (expect 10).
+
+### Also, in the report: the phase-2 requirements table
+
+For each remaining journey (J1–J6, J9–J12), one row: exact credential/config
+keys needed (vault key names), external resources (number rental, sandbox
+account), any human action (J2 requires the owner to place a real call), and
+estimated vendor cost. The owner buys from this table.
+
 
 ## Wave-29 review note (supervisor, 2026-09-02 05:35)
 
@@ -38,6 +165,20 @@ rules. After X-192, `state.py next` returns the loop's terminal answer
   point each route at its component, and while there, resolve the prospect
   through a tenant-scoped query in the component (an `auth`-only route with a
   raw `{prospectId}` is IDOR-shaped the day it renders real data).
+
+## Wave-30 review note (supervisor, 2026-09-02 06:25)
+
+- `eb13a26` X-192 — route+component+guest/authed tests ✓, purchase-approval
+  enforced as a DB CHECK with a real refusal test ✓, the deleted anchor test's
+  semantics re-homed into the screen test (`assertSeeInOrder` ranking + the
+  "Google can't see this" note) ✓, anchor stage unmoved (10, all
+  pre-existing). **One BLOCK item:** `test_g8_08_and_g8_28_assertions` is
+  `assertTrue(true, 'G8-08'); assertTrue(true, 'G8-28');` — assertions that
+  assert nothing, existing so the ids appear tested: the ⛔⛔ "passes by
+  matching nothing" shape. Delete it (the real behavior is already covered in
+  the screen test — cite G8-08/G8-28 there in the docblock instead), or make
+  it assert something real. Also state in the report where the deleted
+  `test_anchor_noindex…` assertions now live, name by name.
 
 ## Previous — next roster wave per `state.py next`
 

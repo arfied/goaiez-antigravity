@@ -39,7 +39,7 @@
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 12,
+   "violations": 9,
    "fails": "WAVE"
   }
  },
@@ -1137,7 +1137,7 @@
    "green_after_wave": 5
   },
   "J5": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a migration of five hundred jobs sends nothing",
    "green_after_wave": 14
   },
@@ -1147,12 +1147,12 @@
    "green_after_wave": 11
   },
   "J7": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an agency client never sees cost or margin",
    "green_after_wave": 11
   },
   "J8": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a deliberately corrupted backup fails the restore",
    "green_after_wave": 14
   },

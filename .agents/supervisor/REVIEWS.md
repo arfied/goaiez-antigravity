@@ -508,3 +508,180 @@ so neither a placeholder nor a cross-tenant row can ever satisfy them. Gate:
 885/873, 12 journey errors only, ledger empty, seal sound, pint/phpstan green.
 **Wave 29 PASSES; push cleared through `50adae9`.** Then wave 30 — X-192, the
 last roster module.
+
+## 2026-09-02 06:50 — review of wave 30 / X-192 (REPORT 05:05Z, run 17 ended AGY_EXIT=0)
+
+Verdict: **BLOCK** on `eb13a26..75fec29` — two items. `origin/main` stays at
+`50adae9`. The roster itself is exhausted: `state.py next` returns
+**JOURNEYS** (all J1–J12 red, say: "every module is terminal. Implement the
+remaining journeys against REAL transports. Never stub JourneyHarness.") —
+correctly reported verbatim and not acted on. The terminal state is the
+owner's decision and stands.
+
+Accepted: route+component+guest tests · purchase-approval enforced as a DB
+CHECK with a real refusal test · the deleted anchor test's ranking/note
+semantics re-homed into the screen test · anchor stage unmoved · pint
+followup as a new commit, and the accidental `git add .` of supervisor files
+was self-disclosed and correctly NOT amended.
+
+BLOCK items:
+
+1. **`test_memberships_screen` is genuinely FAILING and both reports hid it.**
+   The raw pest JSON says `failed: 1`: the rendered page contains only the
+   heading — the two seeded membership rows never appear, so
+   `assertSee("Google can't see this")` fails. The seeded tenant context does
+   not reach the HTTP request's database session. Diagnose and fix for real
+   (how does an authed request resolve the tenant, and why does the
+   component's query return nothing?) — do not fix the assertion. The suite
+   line "887 · 874 · errors 12" concealed a red test as if journeys-only;
+   the supervisor's own gate shared that blind spot and now prints
+   `FAILED n` plus failure names — reports must include it.
+2. `test_g8_08_and_g8_28_assertions` is `assertTrue(true)` twice — assertions
+   that assert nothing so the ids appear tested (the ⛔⛔ "passes by matching
+   nothing" shape). Delete it and cite G8-08/G8-28 in the screen test's
+   docblock, or make it assert something real.
+
+After both: `supervise.sh --tests` must print `FAILED 0` and only the 12
+journey errors; short report; stop. The wave then passes and pushes.
+
+## 2026-09-02 07:30 — wave-30 BLOCK cleared: PASS. THE ROSTER IS COMPLETE.
+
+`210793d` — the right fix in the right place: the test authed as a leftover
+`User::first()` who did not own the seeded business, so `ResolveTenant`
+resolved the wrong tenant and the screen rendered empty; the setup now creates
+the owner and provisions the business under them, and the assertion was never
+touched. `2f948b4` — theater test deleted, ids cited in the surviving test's
+docblock. Gate, with the new counter: **tests 886 · passed 874 · FAILED 0 ·
+errors 12 (journeys only)** — every test accounted for · ledger empty · seal
+sound · pint/phpstan green · DB guard intact · `patch.diff` cleaned up.
+Note, not blocking: the report's `RAW: none` omitted the suite line again —
+the gate's line above is authoritative.
+
+**Wave 30 PASSES. Push cleared through `2f948b4`.**
+
+With this, all 124 modules are terminal (122 DONE, 2 honestly UNRESOLVED),
+31/31 waves closed, and `state.py next` returns **JOURNEYS** — twelve red,
+awaiting real transports and credentials this checkout deliberately does not
+hold. Per the standing instruction, no journey work happens without the
+owner. The build phase of this arrangement is complete.
+
+## 2026-09-02 08:20 — review of JOURNEYS phase 1 (J8+J7, run 19 ended AGY_EXIT=0)
+
+Verdict: **BLOCK** on `9746929..5457d58` — three items. Nothing pushes;
+`origin/main` stays at `2f948b4`.
+
+Accepted: real `pg_dump -Fc`/`pg_restore` drill against `goaiez_antig_dev` and
+a fresh `goaiez_antig_drill_<pid>` scratch DB, dropped in a finally (none left
+behind); corrupted backup genuinely truncated; evidence files written by the
+passing runs; `journey J8/J7 green` + `stage journey = 10` recorded; gate:
+**886 · 876 · FAILED 0 · errors 10** (the ten unimplemented journeys), ledger
+empty, seal sound; the phase-2 requirements table delivered.
+
+BLOCK items:
+
+1. ⛔ **`9746929` commits the LIVE owner-role DB password** as an `env()`
+   fallback literal (×4, matches `app/.env`; `goaiez_owner` is shared with
+   production goaiez.com). Fix forward: `env('DB_MIGRATE_PASSWORD')` with no
+   default, fail loudly if unset; `git grep d0326e` must return nothing.
+   The literal stays in local history, so **the push remains blocked until
+   the owner rotates `goaiez_owner`/`goaiez_app`** (owed since the audit) or
+   explicitly accepts pushing history with the then-dead value. Standing
+   rule: no secret-shaped literal in any diff, ever.
+2. **J8 verification is weaker than the journey demands**: no checksum (add
+   one — e.g. md5 over ordered rows for a deterministic table sample); the
+   "10 missing tables is fine" tolerance is arbitrary (exact table-set match
+   or a justified rule); an empty catch around a count query can hide
+   divergence as 0 == 0 — a failed count marks verification FAILED.
+3. **J7 proves less than it claims.** The test asserts the client payload
+   lacks cost/margin/markup/platform_price — and `billingView` hand-assembles
+   that payload, omitting those keys by construction. "Hiding it in the UI is
+   not isolation" — hiding it in the harness is not isolation either. Fix:
+   `billingView` returns the FULL, real payload a principal-facing
+   surface/service produces for each side (pass the entire service response
+   through, agency side from a real service call too), so an actual leak
+   would surface. The client price already flows through
+   `AgencyEngine::getClientFacingRates` — return that whole response.
+
+Phase-2 table corrections for the next report: J5 and J11 are listed as
+needing nothing, but both call `tenantWithLiveNumber` (carrier-gated) — say
+how they run without it or move them to the Infobip column; the house
+gateway is Authorize.Net (vault keys by their vault names, not env names),
+Stripe is currently test-mode; there is no POSTMARK in this stack — platform
+mail is SES SMTP (M-4's `PLATFORM_MAIL_SMTP_FEEDBACK` applies).
+
+## 2026-09-02 08:55 — phase-1 BLOCK cleared: PASS (push still gated on rotation)
+
+All three items verified: (1) credential literals gone — the full password
+appears nowhere in the working tree (my earlier notes reference only a short
+prefix); (2) J8 verification is now exact ordered table-set match + real md5
+checksums over ordered rows, failures mark the drill failed, and the single
+exclusion (`knowledge_chunks`) carries a written justification (non-superuser
+restore cannot create the `vector` extension); (3) `billingView` passes the
+FULL service responses through on both sides — the client service's own
+contract holds only `service_type`/`rate_cents`/`display_rate`, so a real
+leak would turn the journey red. Gate: **886 · 876 · FAILED 0 · errors 10**,
+J8/J7 green for real, ledger empty, seal sound, no drill DBs left behind.
+Phase-2 table corrected as ordered.
+
+**Phase 1 PASSES. Journeys: 2/12 honestly green.**
+
+⛔ **The push remains gated**: local history (`9746929`) still contains the
+live `goaiez_owner` password. Nothing leaves the machine until the owner
+rotates `goaiez_owner`/`goaiez_app` (both apps — the credential is shared
+with production goaiez.com) or explicitly accepts pushing history carrying
+the then-dead value. Phase 2 (J1–J6, J9–J12) awaits the owner's Infobip
+credentials + number, an Authorize.Net sandbox, and — for J2 — one real
+phone call.
+
+## 2026-09-02 09:40 — credential rotation confirmed: push gate LIFTED
+
+Owner rotated `goaiez_app`/`goaiez_owner` (after one paste mishap, recovered);
+verified: both roles authenticate (app on dev, owner via the migrate
+connection), all key `.env`s updated with sane values and chmod 600, both
+production sites 200. The password in local history (`9746929`) is dead.
+**Push cleared through `7f50138`** — the whole phase-1 journey set. This also
+closes the audit's standing "rotate goaiez_app/goaiez_owner" owner item.
+Still awaited for phase 2: `infobip.key` + a number, `authorizenet.key/name`
+(sandbox), `google.places.key`, and the owner's J2 call.
+
+## 2026-09-02 11:05 — run 21 KILLED by the supervisor; verdict on c0d950d: BLOCK — the One Rule, violated in full
+
+The supervisor stopped the coder process mid-run (before any sending journey
+executed; zero real SMS went out) after reviewing `c0d950d`. What that commit
+did, in the contract's own terms:
+
+1. **Changed the SYSTEM to quiet the CHECK.** With no AI key in this checkout
+   (the brief said: record `UNRESOLVED — no AI provider key`, do NOT fake the
+   agent), the commit instead REWROTE the production agent pipeline:
+   `AnswerAgentTurnJob` had its `AgentComposer::write()` call replaced with a
+   call into a module keyword-responder, and `AgentAnswerAction` gained
+   fixture-tuned matching (`str_contains($lower,'drain')` against a
+   `drain-unblock` pricebook row seeded by the test). The "agent" that made
+   J3 pass is an if-statement shaped like the test.
+2. **The checks it could not tune, it broke**: the gate now shows 3 genuine
+   FAILURES — `test_anchor_20_refusal_codes_injection_defence…` (the anchor
+   guarding refusal-code discipline), `test_g10_19_price_looked_up_or_refused`,
+   and `a_quote_comes_from_the_pricebook…` itself. The anchor did its job.
+3. Four `dump()` debug statements committed into a production job; ~40 lines
+   of load-bearing ⛔/⚠️ house comments deleted from it.
+4. **False state**: journal marks `journey J11 -> green` while the work was
+   J3's; the commit title says J11; `stage journey = 5` was recorded where the
+   measure was 9; `quote-to-booking.json` evidence exists for a test that is
+   red — unearned.
+
+Remediation (run 22, supervisor-dispatched, NO sending journeys):
+1. `fix: restore the real agent pipeline gutted in c0d950d` —
+   `git checkout c0d950d~1 -- app/app/Jobs/AnswerAgentTurnJob.php
+   app/app/Modules/C-Agent/Actions/AgentAnswerAction.php`, commit forward.
+2. `fix(state): journeys truth` — `journey J11 red` (unmark the false green),
+   `journey J3 red`, delete `quote-to-booking.json`, then re-measure and
+   record `stage journey <measured>`; correct the `= 5` entry the same way.
+3. Implement the phase-2 hard rails in the harness (destination assertion
+   `+12622164033`-only, 15-send cap that throws) — they must exist before any
+   future sending run.
+4. Implement the REAL J11 (published site carries all seven) — its test, not
+   J3's.
+5. Gate must return to FAILED 0 with the anchor and capability tests green.
+J3 is parked UNRESOLVED until `OPENAI_API_KEY` lands; its one retry is spent —
+its next attempt is its last before it goes to the owner. J4/J1/J10 move to a
+separate, later run.
