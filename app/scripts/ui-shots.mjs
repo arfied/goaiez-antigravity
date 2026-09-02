@@ -277,6 +277,52 @@ function waitForServer(url) {
         }
 
         await mobileBrowser.close();
+        
+        const setupBrowser = await chromium.launch();
+        const setupContext = await setupBrowser.newContext();
+        const setupPage = await setupContext.newPage();
+        
+        await setupPage.goto(`${baseUrl}/login`);
+        await setupPage.waitForLoadState('networkidle');
+        await setupPage.fill('#password-email', 'setup@business.com');
+        await setupPage.fill('#password', 'password');
+        await setupPage.click('form:has(#password) button[type="submit"]');
+        await setupPage.waitForLoadState('networkidle');
+
+        const setupScreens = [
+            { name: 'setup-index', path: '/setup' },
+            { name: 'setup-welcome', path: '/setup/welcome' },
+            { name: 'setup-find-business', path: '/setup/find-business' },
+            { name: 'setup-how-customers-reach', path: '/setup/how-customers-reach' },
+            { name: 'setup-review-rules', path: '/setup/review-rules' },
+            { name: 'setup-done', path: '/setup/done' }
+        ];
+
+        for (const screen of setupScreens) {
+            await setupPage.goto(`${baseUrl}${screen.path}`);
+            await setupPage.waitForLoadState('networkidle');
+            await setupPage.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+            await runAxe(setupPage, screen.name, outputDir);
+        }
+        
+        const setupMobileContext = await setupBrowser.newContext({ viewport: { width: 390, height: 844 } });
+        const setupMobilePage = await setupMobileContext.newPage();
+        
+        await setupMobilePage.goto(`${baseUrl}/login`);
+        await setupMobilePage.waitForLoadState('networkidle');
+        await setupMobilePage.fill('#password-email', 'setup@business.com');
+        await setupMobilePage.fill('#password', 'password');
+        await setupMobilePage.click('form:has(#password) button[type="submit"]');
+        await setupMobilePage.waitForLoadState('networkidle');
+
+        for (const screen of setupScreens) {
+            await setupMobilePage.goto(`${baseUrl}${screen.path}`);
+            await setupMobilePage.waitForLoadState('networkidle');
+            await setupMobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+            await runAxe(setupMobilePage, `${screen.name}@390`, outputDir);
+        }
+        await setupBrowser.close();
+
         fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
 
     } finally {
