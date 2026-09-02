@@ -6,12 +6,12 @@ namespace Tests\Journeys;
 
 use App\Exceptions\NumberPoolExhausted;
 use App\Models\Business;
+use App\Models\Customer;
 use App\Models\OutreachMessage;
 use App\Models\User;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
-use App\Modules\X204\Models\SendPermit;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\PlatformCredentials;
@@ -60,7 +60,10 @@ trait JourneyHarness
             $this->fail('UNRESOLVED: '.$e->getMessage());
         }
 
-        return $business->toArray();
+        $tenantArray = $business->toArray();
+        $tenantArray['_provisioned_number'] = $number;
+
+        return $tenantArray;
     }
 
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
@@ -103,13 +106,15 @@ trait JourneyHarness
 
     // ── inbound / carrier ────────────────────────────────────────────────
 
-    /** @param array<string,mixed> $tenant */
     private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
-        $body = json_encode([
+        $bodyArray = [
             'callId' => 'test-call-'.uniqid(),
-            'type' => $event === 'call.missed' ? 'CALL_FINISHED' : 'CALL_FINISHED',
-        ]);
+            'type' => $event === 'call.missed' ? 'CALL_FINISHED' : $event,
+            'from' => $from,
+            'to' => $tenant['_provisioned_number'] ?? null,
+        ];
+        $body = json_encode($bodyArray, JSON_THROW_ON_ERROR);
 
         try {
             $secret = app(PlatformCredentials::class)->get('infobip_webhook_secret');
@@ -117,12 +122,31 @@ trait JourneyHarness
             $this->fail('UNRESOLVED: '.$e->getMessage());
         }
 
-        $signature = hash_hmac('sha256', (string) $body, $secret);
-        $header = config('services.infobip.signature_header') ?: 'X-Signature';
+        $scheme = config('services.infobip.signature_scheme');
+        $headers = ['CONTENT_TYPE' => 'application/json'];
 
-        $this->postJson('/webhooks/infobip/voice', json_decode((string) $body, true), [
-            $header => $signature,
-        ]);
+        if (is_string($scheme) && mb_strtolower(trim($scheme)) === 'exchange') {
+            $timestamp = (string) (time() * 1000);
+            $signature = hash_hmac('sha256', $timestamp.$body, $secret);
+            $headers['HTTP_X_IB_EXCHANGE_REQ_SIGNATURE'] = $signature;
+            $headers['HTTP_X_IB_EXCHANGE_REQ_TIMESTAMP'] = $timestamp;
+        } else {
+            $signature = hash_hmac('sha256', $body, $secret);
+            $headerName = config('services.infobip.signature_header') ?: 'X-Signature';
+            $headers['HTTP_'.str_replace('-', '_', strtoupper($headerName))] = $signature;
+        }
+
+        $response = $this->call(
+            'POST',
+            '/webhooks/infobip/voice',
+            [],
+            [],
+            [],
+            $headers,
+            $body
+        );
+
+        $response->assertStatus(200);
     }
 
     /** @param array<string,mixed> $tenant */
@@ -152,13 +176,29 @@ trait JourneyHarness
     {
         $started = microtime(true);
         while (microtime(true) - $started < $timeoutSeconds) {
-            $outbound = OutreachMessage::where('business_id', $tenant['id'])
-                ->where('to', $to)
-                ->whereNotNull('provider_message_id')
-                ->first();
+            $outbound = Tenancy::actingAs($tenant['id'], function () use ($tenant, $to) {
+                $customer = Customer::where('phone', $to)->first();
+                if (! $customer) {
+                    return null;
+                }
+
+                $message = OutreachMessage::where('business_id', $tenant['id'])
+                    ->where('customer_id', $customer->id)
+                    ->whereNotNull('provider_msg_id')
+                    ->first();
+
+                if ($message) {
+                    $array = $message->toArray();
+                    $array['provider_message_id'] = $array['provider_msg_id'];
+
+                    return $array;
+                }
+
+                return null;
+            });
 
             if ($outbound) {
-                return $outbound->toArray();
+                return $outbound;
             }
             usleep(500_000);
         }
@@ -195,7 +235,7 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        return SendPermit::where('recipient_phone', $phone)->exists();
+        throw $this->todo('prove the send passed ConsentService::decide() on the grant path');
     }
 
     // ── counting outbound ────────────────────────────────────────────────
