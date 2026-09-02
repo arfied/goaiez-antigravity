@@ -37,7 +37,7 @@ class X140Test extends TestCase
         Event::fake([TopicIdentified::class, ContentCreated::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set((int) $biz->id);
 
         $topic = $this->topicAction->identify($biz->id, 'Commercial HVAC Emergency Repairs', 'emergency_repair');
         $this->assertNotNull($topic);
@@ -95,5 +95,24 @@ class X140Test extends TestCase
     public function test_content_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_screen_requires_auth_and_redirects_guest(): void
+    {
+        $this->get('/account/content-topics')
+            ->assertRedirect('/login');
+    }
+
+    public function test_screen_loads_for_authed_user(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'SEO Content Cluster Tenant', 'currency' => 'USD']);
+        $user = \App\Models\User::first();
+
+        \App\Support\Tenancy::set((int) $biz->id);
+
+        $this->actingAs($user)
+            ->get('/account/content-topics')
+            ->assertOk()
+            ->assertSeeLivewire(\App\Modules\X140\Ui\ProposedPagesView::class);
     }
 }

@@ -2194,6 +2194,15 @@ Route::middleware('auth')
 | `ShortLinkRateLimits` because only a failed resolve is worth counting.
 |
 */
+/*
+|--------------------------------------------------------------------------
+| X-140 Proposed Pages
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['web', 'auth'])
+    ->get('/account/content-topics', \App\Modules\X140\Ui\ProposedPagesView::class)
+    ->name('account.content-topics');
+
 Route::get('/{token}', ShortLinkController::class)
     ->where('token', '[A-Za-z0-9]{'.ShortLinks::TOKEN_LENGTH.'}')
     ->middleware('throttle:short-link')

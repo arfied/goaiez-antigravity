@@ -26982,7 +26982,7 @@ tenant asks → X-124 decides the MODE
 **DECLARATIONS** `@renders proposed_pages` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides topic.identify · content.draft_from_conversation` · `@emits topic.identified · content.created` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · agent.refused · conversation.updated · signal.detected · visibility.changed` · `@owns_table content_topics · topic_sources`
 
-@agent_reachable `content.draft_from_conversation` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
+@agent_reachable `topic.identify · content.draft_from_conversation` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 **NEEDS / HAS** needs: ≥N conversations *(data)* · has: open topics
 **TEST ANCHOR** *a page drafted from a refusal cites the refusal id; a draft containing a SAMPLE price fails the gate and is never published*
 
