@@ -44,9 +44,11 @@ class UiReviewSeeder extends Seeder
 
                 Tenancy::forget();
             } else {
-                DB::table('businesses')
-                    ->where('id', $businessId)
-                    ->update(['advanced_dashboard_enabled' => true]);
+                Tenancy::actingAs($businessId, function () use ($businessId) {
+                    DB::table('businesses')
+                        ->where('id', $businessId)
+                        ->update(['advanced_dashboard_enabled' => true]);
+                });
             }
         });
     }
