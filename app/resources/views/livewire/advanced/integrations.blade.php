@@ -98,7 +98,7 @@
             <div>
                 <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Your Dedicated Webhook URL</label>
                 <div class="flex items-center gap-2">
-                    <input type="text" readonly value="{{ $webhookUrl }}" class="w-full font-mono text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 select-all">
+                    <input aria-label="Your Dedicated Webhook URL" type="text" readonly value="{{ $webhookUrl }}" class="w-full font-mono text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 select-all">
                     <button type="button" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-md hover:bg-gray-200">Copy</button>
                 </div>
             </div>

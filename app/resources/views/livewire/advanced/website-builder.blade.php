@@ -86,18 +86,18 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-ink-2 mb-1">Main Headline</label>
-                    <input type="text" wire:model.live.debounce.200ms="headline" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
+                    <input aria-label="Main Headline" type="text" wire:model.live.debounce.200ms="headline" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-ink-2 mb-1">Subheadline Description</label>
-                    <textarea wire:model.live.debounce.200ms="subheadline" rows="3" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink"></textarea>
+                    <textarea aria-label="Subheadline" wire:model.live.debounce.200ms="subheadline" rows="3" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-ink-2 mb-1">Call to Action</label>
-                        <input type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
+                        <input aria-label="CTA Button Text" type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-ink-2 mb-1">Direct Phone Call</label>

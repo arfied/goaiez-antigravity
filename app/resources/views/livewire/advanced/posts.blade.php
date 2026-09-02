@@ -64,7 +64,7 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Post Copy & Local Keywords</label>
-                    <textarea wire:model="postContent" rows="5" class="w-full text-xs p-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans"></textarea>
+                    <textarea aria-label="Post Content" wire:model="postContent" rows="5" class="w-full text-xs p-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans"></textarea>
                 </div>
 
                 <div class="flex items-center justify-between pt-2">

@@ -38,7 +38,7 @@
                         <div class="text-xs text-gray-500">Pick up incoming calls after 2 rings or when lines are busy.</div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" wire:model.live="voiceEnabled" class="sr-only peer">
+                        <input aria-label="Enable AI Voice Receptionist" type="checkbox" wire:model.live="voiceEnabled" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                 </div>
@@ -54,12 +54,12 @@
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Custom Voice Greeting Script</label>
-                    <textarea wire:model="greetingText" rows="3" class="w-full text-xs p-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans"></textarea>
+                    <textarea aria-label="Custom Voice Greeting Script" wire:model="greetingText" rows="3" class="w-full text-xs p-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans"></textarea>
                 </div>
 
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Emergency Escalation Forwarding Phone Number</label>
-                    <input type="text" wire:model="emergencyForwardNumber" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-mono">
+                    <input aria-label="Emergency Call Forwarding Number" type="text" wire:model="emergencyForwardNumber" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-mono">
                     <p class="text-[11px] text-gray-500 mt-1">If the caller reports a critical emergency, the AI will bridge the call directly to this number.</p>
                 </div>
             </div>
