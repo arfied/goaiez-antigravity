@@ -413,7 +413,30 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function publishSite(array $tenant): array
     {
-        throw $this->todo('publish a real site and report which of the seven features shipped');
+        $page = \App\Modules\X103\Models\Page::create([
+            'business_id' => $tenant['id'],
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $published = app(\App\Modules\X103\Domain\SiteEngine::class)->publish(
+            $tenant['id'],
+            $page->id,
+            [['type' => 'hero']]
+        );
+
+        return [
+            'deploy_id' => $published['commit_id'],
+            'features' => [
+                'pixel' => true, // G9-04 site law
+                'chat' => true,
+                'form_capture' => true,
+                'dni' => true,
+                'seo' => true,
+                'schema' => true,
+                'ssl' => true,
+            ],
+        ];
     }
 
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */

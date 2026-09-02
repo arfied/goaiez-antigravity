@@ -70,7 +70,7 @@ done
 [ $bad -eq 0 ] && echo "  all parse" || fail=1
 
 bar "2c. debug debris in app code (dump/dd/var_dump)"
-dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -v '// *@allow-dump' | head -5)
+dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -vE ':[0-9]+:\s*(\*|//)' | grep -v '@allow-dump' | head -5)
 if [ -n "$dbg" ]; then printf '%s\n' "$dbg" | sed 's/^/  ⛔ /'; fail=1; else echo "  none"; fi
 
 bar "3. build state"

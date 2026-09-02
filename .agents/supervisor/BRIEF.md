@@ -37,6 +37,16 @@ NO sending journeys this run). Then stop for review.
   rule from here: `dump()`/`dd()`/`var_dump()` never appear in `app/app/**` —
   the gate will start grepping for them.
 
+- ⛔ Found by the new gate check: `50adae9` (wave 29, PUSHED) left a `dd([...])`
+  in `ProspecttenantfacingTop3Preview::mount()`'s not-found branch — an authed
+  user hitting a missing prospect gets a debug dump (leaking business id,
+  auth id, counts) instead of the ordered 404. Supervisor's miss at the
+  wave-29 review; the gate now greps for debris. Required in run 22 before the
+  report, one commit `fix: remove debug debris (AutopilotJob, X-179 preview)`:
+  delete both `dump()`/`dd()` sites; the preview's not-found branch becomes
+  `abort(404)` (as MatchScores does); keep the exception context in
+  AutopilotJob via its real logging path if worth keeping.
+
 ## Phase 2 as originally briefed — the carrier six (J5, J11, J4, J1, J10, J3)
 
 Owner-granted resources (2026-09-02): Infobip live key + webhook secret in
