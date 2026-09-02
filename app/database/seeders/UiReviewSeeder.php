@@ -38,7 +38,7 @@ class UiReviewSeeder extends Seeder
             'name' => 'Staff Review',
             'role' => 'super_admin',
             'two_factor_secret' => encrypt('dummy_secret'),
-            'two_factor_recovery_codes' => encrypt(json_encode(array_fill(0, 50, '12345-67890'))),
+            'two_factor_recovery_codes' => encrypt(json_encode(['12345-67890', '09876-54321'])),
             'two_factor_confirmed_at' => now(),
         ]);
 
@@ -93,10 +93,7 @@ class UiReviewSeeder extends Seeder
         if (! $location) {
             $location = Location::factory()->create(['business_id' => $businessId]);
         }
-        file_put_contents(storage_path('app/location_id.txt'), $location->id);
-        if (false) {
-            $location = Location::factory()->create(['business_id' => $businessId]);
-        }
+
 
         $page = FeedbackPage::firstWhere('location_id', $location->id);
         if (! $page) {
