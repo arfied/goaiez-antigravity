@@ -19,20 +19,20 @@ class UiReviewSeeder extends Seeder
                 'name' => 'Owner Review 2',
                 'role' => 'owner',
             ]);
-            
+
             $business = Business::factory()->create([
                 'owner_user_id' => $owner->id,
                 'name' => 'Review Business 2 LLC',
             ]);
-            
+
             Tenancy::set((int) $business->id);
-            
+
             Subscription::factory()->create([
                 'business_id' => $business->id,
                 'plan' => 'base',
                 'status' => 'active',
             ]);
-            
+
             Tenancy::forget();
         }
     }
