@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Listeners;
 
-use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Events\ArEscalatedToHuman;
+use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Models\ArDunningAction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Event;

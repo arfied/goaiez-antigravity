@@ -9,8 +9,14 @@ use App\Models\User;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X121\Models\Person;
+use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X199\Models\Invoice;
+use App\Modules\X211\Models\ArDunningAction;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Process\Process;
 
 /**
@@ -192,24 +198,25 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function issueInvoice(array $tenant, int $amountMinor): array
     {
-        $customer = \App\Modules\X121\Models\Person::create(['business_id' => $tenant['id']]);
+        $customer = Person::create(['business_id' => $tenant['id']]);
 
-        $engine = app(\App\Modules\X199\Domain\InvoiceEngine::class);
+        $engine = app(InvoiceEngine::class);
         $result = $engine->issueInvoice(
             $tenant['id'],
             $customer->id,
             [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => $amountMinor]],
             'net_30'
         );
+
         return $result['invoice']->toArray();
     }
 
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        $gatewayEngine = app(\App\Modules\X198\Domain\GatewayEngine::class);
+        $gatewayEngine = app(GatewayEngine::class);
         $gatewayEngine->connect($invoice['business_id'], 'stripe', 'acct_test');
-        
+
         $payment = $gatewayEngine->capture(
             $invoice['business_id'],
             $invoice['total_cents'],
@@ -217,7 +224,7 @@ trait JourneyHarness
             'idempotent_'.uniqid()
         );
 
-        app(\App\Modules\X199\Domain\InvoiceEngine::class)->recordPayment(
+        app(InvoiceEngine::class)->recordPayment(
             $invoice['business_id'],
             $invoice['id'],
             $payment->amount_cents
@@ -229,23 +236,26 @@ trait JourneyHarness
     /** @param array<string,mixed> $invoice */
     private function invoiceStatus(array $invoice): string
     {
-        $inv = \App\Modules\X199\Models\Invoice::find($invoice['id']);
+        $inv = Invoice::find($invoice['id']);
+
         return $inv->status;
     }
 
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        $inv = \App\Modules\X199\Models\Invoice::find($invoice['id']);
+        $inv = Invoice::find($invoice['id']);
         $inv->update(['due_date' => now()->subDays(10)]);
+        Artisan::call('x211:detect-overdue');
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        $action = \App\Modules\X211\Models\ArDunningAction::where('invoice_id', $invoice['id'])
+        $action = ArDunningAction::where('invoice_id', $invoice['id'])
             ->latest('id')
             ->first();
+
         return $action ? $action->toArray() : [];
     }
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('reason');
             $table->timestamps();
         });
-        
+
         DB::statement('ALTER TABLE ar_dunning_actions ENABLE ROW LEVEL SECURITY');
         DB::statement('ALTER TABLE ar_dunning_actions FORCE ROW LEVEL SECURITY');
-        DB::statement(<<<SQL
+        DB::statement(<<<'SQL'
             CREATE POLICY tenant_isolation ON ar_dunning_actions
                 USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
                 WITH CHECK (business_id = nullif(current_setting('app.business_id', true), '')::bigint)
