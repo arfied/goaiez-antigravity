@@ -57,7 +57,7 @@
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">98</td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">+2 / mo</td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-400">#4 in Area</td>
-                    <td class="px-6 py-4 text-rose-400">▼ Declining</td>
+                    <td class="px-6 py-4 text-rose-300">▼ Declining</td>
                 </tr>
             </tbody>
         </table>
