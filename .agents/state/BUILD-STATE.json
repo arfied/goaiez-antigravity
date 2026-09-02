@@ -1195,6 +1195,14 @@
   {
    "at": "2026-08-29T14:37:58",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-02T15:10:58",
+   "note": "anchor 134: every finding is the identical '<module>: no runtime proof' for all 134 modules, fix 'run the module'\\''s TEST ANCHOR against real transports and write the artifact id to evidence/'. No code-side change clears one. The only route writes to storage/app/evidence/, which is forbidden on every track because the artifacts already on disk came from the forbidden simulation harness. Same blocker as journey 10: real transports, real credentials, one job. Not fixable by track/stages or any other track. Owner action."
+  },
+  {
+   "at": "2026-09-02T15:11:06",
+   "note": "capability roll call at 82, classified by owner ruling 5: track sixty 15 (C-Agent 6, C-Sms 4, X-188 2, X-118 2, X-66 1) \u00b7 site 7 (X-137 4, X-102 2, X-155 1) \u00b7 Track 1 4 (X-212, X-172, X-112, C-Billing) \u00b7 pricebook 3 (X-119) \u00b7 money 2 (X-198, X-199) \u00b7 owner 3 (X-121) \u00b7 stages 48. Of the 48 stages-owned, 47 are declined by id across REVIEWS.md waves S-1-fix, S-2 and S-3; X-215 N-215-01 is S-4 item 1. After S-4 track/stages has no capability work left. Earlier declines are recorded in REVIEWS.md, not in this ledger."
   }
  ],
  "decisions": [
