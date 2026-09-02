@@ -18,8 +18,9 @@ class X192Test extends TestCase
 
     public function test_memberships_screen()
     {
-        $business = static::provisionTenant();
-        $user = User::first();
+        $user = User::factory()->create();
+        $business = static::provisionTenant(['owner_user_id' => $user->id]);
+        
 
         DB::table('directory_memberships')->insert([
             ['business_id' => $business->id, 'directory_name' => 'Indexed Dir', 'directory_url' => 'http://example.com/1', 'is_noindex' => false, 'directory_index' => 10, 'approved_by_action_id' => 1, 'is_purchased' => true],
@@ -43,7 +44,8 @@ class X192Test extends TestCase
 
     public function test_no_membership_purchased_without_approval_action_row()
     {
-        $business = static::provisionTenant();
+        $user = User::factory()->create();
+        $business = static::provisionTenant(['owner_user_id' => $user->id]);
 
         $id = DB::table('directory_memberships')->insertGetId([
             'business_id' => $business->id,
