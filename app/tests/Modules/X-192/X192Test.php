@@ -16,11 +16,14 @@ class X192Test extends TestCase
         $this->get('/memberships')->assertRedirect('/login');
     }
 
+    /**
+     * @see [G8-08] - Memberships screen correctly fetches tenant data.
+     * @see [G8-28] - Memberships component successfully lists directory memberships.
+     */
     public function test_memberships_screen()
     {
         $user = User::factory()->create();
         $business = static::provisionTenant(['owner_user_id' => $user->id]);
-        
 
         DB::table('directory_memberships')->insert([
             ['business_id' => $business->id, 'directory_name' => 'Indexed Dir', 'directory_url' => 'http://example.com/1', 'is_noindex' => false, 'directory_index' => 10, 'approved_by_action_id' => 1, 'is_purchased' => true],
@@ -34,12 +37,6 @@ class X192Test extends TestCase
 
         Livewire::test(MembershipsList::class)
             ->assertSeeInOrder(['Indexed Dir', 'NoIndex Dir']);
-    }
-
-    public function test_g8_08_and_g8_28_assertions()
-    {
-        $this->assertTrue(true, 'G8-08');
-        $this->assertTrue(true, 'G8-28');
     }
 
     public function test_no_membership_purchased_without_approval_action_row()
