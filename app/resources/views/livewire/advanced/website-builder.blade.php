@@ -100,8 +100,8 @@
                         <input aria-label="CTA Button Text" type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-ink-2 mb-1">Direct Phone Call</label>
-                        <input type="text" wire:model.live.debounce.200ms="phoneNumber" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink font-mono">
+                        <label for="phoneNumber" class="block text-xs font-semibold text-ink-2 mb-1">Direct Phone Call</label>
+                        <input type="text" id="phoneNumber" wire:model.live.debounce.200ms="phoneNumber" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink font-mono">
                     </div>
                 </div>
             </div>
