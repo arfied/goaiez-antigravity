@@ -17,11 +17,11 @@ final class EdgeDeployAction
     public function handle(
         int $businessId,
         int $edgeZoneId,
+        int $measuredTtfbMs = 120,
+        int $speedBudgetMs = 1500,
         int $pageId = 0,
         string $commitId = '',
-        string $businessName = '',
-        int $measuredTtfbMs = 120,
-        int $speedBudgetMs = 1500
+        string $businessName = ''
     ): array {
         return DB::transaction(function () use ($businessId, $edgeZoneId, $pageId, $commitId, $businessName, $measuredTtfbMs, $speedBudgetMs) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
@@ -92,13 +92,13 @@ final class EdgeDeployAction
                 'ssl' => $zone->has_valid_ssl,
             ];
 
-            if ($zone->domain_name) {
-                app(\App\Modules\X110\Actions\PixelInstallAction::class)->handle($businessId, $zone->domain_name);
+            if ($zone->domain_name !== null && $zone->domain_name !== '') {
+                $_pixelResult = app(\App\Modules\X110\Actions\PixelInstallAction::class)->handle($businessId, $zone->domain_name);
                 $features['pixel'] = true;
             }
 
             if ($pageId > 0 && $commitId !== '') {
-                app(\App\Modules\X176\Actions\SchemaRenderAction::class)->handle($businessId, $pageId, $businessName, $commitId);
+                $_schemaResult = app(\App\Modules\X176\Actions\SchemaRenderAction::class)->handle($businessId, $pageId, $businessName, $commitId);
                 $features['schema'] = true;
             }
 
