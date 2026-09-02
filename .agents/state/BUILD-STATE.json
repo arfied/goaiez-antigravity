@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-08-31T13:04:41",
+ "updated": "2026-09-01T21:12:20",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 0,
+   "violations": 2,
    "fails": "COMMIT"
   },
   "contract": {
@@ -146,7 +146,7 @@
   },
   "12": {
    "track": "J11 the site",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "X-157",
     "X-178",
@@ -429,13 +429,13 @@
    "unresolved": []
   },
   "X-102": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 12,
    "intent": "INFORM",
    "unresolved": []
   },
   "X-103": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 12,
    "intent": "GROW",
    "unresolved": []
@@ -843,7 +843,7 @@
    "unresolved": []
   },
   "X-178": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 12,
    "intent": "INFORM",
    "unresolved": []
