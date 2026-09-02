@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T14:06:44",
+ "updated": "2026-09-02T16:46:55",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1256,6 +1256,12 @@
    "module": "X-198",
    "chose": "(R245) X-198 \u2014 Stripe selected as the payment provider; StripeGatewayClient posts to api.stripe.com/v1/charges and reads config('credentials.stripe_secret') = env('STRIPE_SECRET'). X-198's migration comments list stripe, square, clover, plaid as candidates; the choice is provisional pending an owner ruling.",
    "at": "2026-09-02T14:06:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) X-198 \u2014 owner ruling 10 (2026-09-02) confirms Stripe as the payment provider and relaxes the X-198 anchor from 'charge id is issued only by the external gateway' to 'null unless the gateway returned one'. X198Test.php's anchor now connects a gateway with no client, so the null it asserts is observed, not prevented; the stripe path's proof moves to the x198 evidence command and J9's artifact assertion under ruling 13.",
+   "at": "2026-09-02T16:46:55",
    "ruling": "R245"
   }
  ]

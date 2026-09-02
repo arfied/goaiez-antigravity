@@ -55,16 +55,17 @@ class X198Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Gateway Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $conn = $this->connectAction->handle($biz->id, 'stripe', 'acct_tenant_stripe_123');
+        $conn = $this->connectAction->handle($biz->id, 'square', 'acct_tenant_square_123');
 
         // 1. Idempotent payment capture using payment token (G17-04, G1-23, G1-34)
         $idempotencyKey = 'idem_unique_tx_999';
-        $pay1 = $this->captureAction->handle($biz->id, 5000, 'tok_visa_tokenized', $idempotencyKey);
-        $pay2 = $this->captureAction->handle($biz->id, 5000, 'tok_visa_tokenized', $idempotencyKey);
+        $pay1 = $this->captureAction->handle($biz->id, 5000, 'sq_tok_tokenized', $idempotencyKey);
+        $pay2 = $this->captureAction->handle($biz->id, 5000, 'sq_tok_tokenized', $idempotencyKey);
 
         $this->assertEquals($pay1->id, $pay2->id, 'Duplicated ref charges once and returns identical payment record');
         $this->assertEquals(5000, $pay1->amount_cents);
-        $this->assertNull($pay1->gateway_charge_id, 'Charge id is issued only by external gateway');
+        // (R245) owner ruling 10 (2026-09-02)
+        $this->assertNull($pay1->gateway_charge_id, 'Charge id is null unless the gateway returned one');
         $this->assertEquals('pending', $pay1->status);
         Event::assertDispatched(PaymentCaptured::class);
 
