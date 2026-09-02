@@ -67,7 +67,7 @@ final class DetectOverdueReceivablesCommand extends Command
                         ->exists();
 
                     if (! $alreadyChased) {
-                        $daysOverdue = now()->startOfDay()->diffInDays($invoice->due_date->startOfDay());
+                        $daysOverdue = (int) $invoice->due_date->startOfDay()->diffInDays(now()->startOfDay());
                         Event::dispatch(new ArOverdue((int) $business->id, (int) $invoice->id, (int) $daysOverdue));
                         $localDispatched++;
                     }

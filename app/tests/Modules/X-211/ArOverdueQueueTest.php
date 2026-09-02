@@ -17,23 +17,30 @@ final class ArOverdueQueueTest extends TestCase
     public function test_ar_overdue_event_queues_and_processes_asynchronously(): void
     {
         $business = Business::factory()->create();
+        $invoiceId = null;
 
-        Tenancy::actingAs((int) $business->id, function () use ($business) {
+        Tenancy::actingAs((int) $business->id, function () use ($business, &$invoiceId) {
             $invoice = Invoice::create([
                 'business_id' => $business->id,
                 'invoice_number' => 'INV-Q-1',
                 'status' => 'due',
                 'due_date' => now()->subDays(10),
             ]);
+            $invoiceId = (int) $invoice->id;
 
             config(['queue.default' => 'database']);
 
             Event::dispatch(new ArOverdue((int) $business->id, (int) $invoice->id, 10));
 
             $this->assertCount(0, ArDunningAction::where('business_id', $business->id)->get(), 'Action should not exist yet before draining queue.');
+        });
 
-            $this->artisan('queue:work --stop-when-empty');
+        Tenancy::forgetAll();
+        $this->assertNull(Tenancy::id());
 
+        $this->artisan('queue:work --stop-when-empty');
+
+        Tenancy::actingAs((int) $business->id, function () use ($business) {
             $actions = ArDunningAction::where('business_id', $business->id)->get();
             $this->assertCount(1, $actions);
             $this->assertEquals('escalate_to_human', $actions->first()->action);
