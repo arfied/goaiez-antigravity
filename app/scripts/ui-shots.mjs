@@ -8,6 +8,17 @@ import net from 'net';
 
 
 const summaryLines = [];
+let onlyRegex = null;
+const onlyArg = process.argv.find(arg => arg.startsWith('--only='));
+if (onlyArg) {
+    onlyRegex = new RegExp(onlyArg.split('=')[1]);
+}
+
+function shouldCapture(name) {
+    if (!onlyRegex) return true;
+    return onlyRegex.test(name);
+}
+
 async function runAxe(page, name, outputDir) {
     const axeDir = path.join(outputDir, 'axe');
     if (!fs.existsSync(axeDir)) {
@@ -97,11 +108,14 @@ function waitForServer(url) {
         await page.setViewportSize({ width: 1280, height: 720 });
 
 
-        await page.goto(`${baseUrl}/this-does-not-exist`);
-        await page.waitForLoadState('networkidle');
-        await page.screenshot({ path: path.join(outputDir, 'error-404.png'), fullPage: true });
-        await runAxe(page, 'error-404', outputDir);
+        if (shouldCapture('error-404')) {
+            await page.goto(`${baseUrl}/this-does-not-exist`);
+            await page.waitForLoadState('networkidle');
+            await page.screenshot({ path: path.join(outputDir, 'error-404.png'), fullPage: true });
+            await runAxe(page, 'error-404', outputDir);
+        }
 
+        if (shouldCapture('error-419')) {
         const r = await page.request.post(baseUrl + '/login', { form: { email: 'x' }, headers: { 'X-Requested-With': '' } });
         if (r.status() !== 419) {
             console.error(`419 capture failed, status was ${r.status()}`);
@@ -110,11 +124,14 @@ function waitForServer(url) {
         await page.setContent(await r.text());
         await page.screenshot({ path: path.join(outputDir, 'error-419.png'), fullPage: true });
         await runAxe(page, 'error-419', outputDir);
+        }
 
         await page.goto(`${baseUrl}/`);
         await page.waitForLoadState('networkidle');
-        await page.screenshot({ path: path.join(outputDir, 'home.png'), fullPage: true });
-        await runAxe(page, 'home.png'.replace('.png', ''), outputDir);
+        if (shouldCapture('home')) {
+            await page.screenshot({ path: path.join(outputDir, 'home.png'), fullPage: true });
+            await runAxe(page, 'home', outputDir);
+        }
 
         const footerLinks = await page.$$eval('footer a', anchors => anchors.map(a => ({ text: a.textContent.trim(), href: a.href })));
         const targetTexts = ['Pricing', 'What it does', 'Compare', 'Guarantee', 'Questions', 'Customers', 'Affiliates', 'Agencies'];
@@ -137,6 +154,7 @@ function waitForServer(url) {
         });
 
         for (const screen of publicScreens) {
+            if (!shouldCapture(screen.name)) continue;
             await page.goto(screen.url);
             await page.waitForLoadState('networkidle');
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
@@ -156,6 +174,7 @@ function waitForServer(url) {
         ];
 
         for (const screen of customerScreens) {
+            if (!shouldCapture(screen.name)) continue;
             await page.goto(`${baseUrl}${screen.path}`);
             await page.waitForLoadState('networkidle');
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
@@ -164,8 +183,10 @@ function waitForServer(url) {
 
         await page.goto(`${baseUrl}/login`);
         await page.waitForLoadState('networkidle');
-        await page.screenshot({ path: path.join(outputDir, 'login.png'), fullPage: true });
-        await runAxe(page, 'login.png'.replace('.png', ''), outputDir);
+        if (shouldCapture('login')) {
+            await page.screenshot({ path: path.join(outputDir, 'login.png'), fullPage: true });
+            await runAxe(page, 'login', outputDir);
+        }
 
         // Login
         await page.fill('#password-email', 'owner2@business.com');
@@ -177,8 +198,10 @@ function waitForServer(url) {
         if (page.url().endsWith('/login')) {
             const html = await page.content();
             fs.writeFileSync(path.join(outputDir, 'login-FAILED.html'), html);
-            await page.screenshot({ path: path.join(outputDir, 'login-FAILED.png'), fullPage: true });
-        await runAxe(page, 'login-FAILED.png'.replace('.png', ''), outputDir);
+            if (shouldCapture('login-FAILED')) {
+                await page.screenshot({ path: path.join(outputDir, 'login-FAILED.png'), fullPage: true });
+                await runAxe(page, 'login-FAILED', outputDir);
+            }
             console.error("Login failed. URL is still /login");
             await browser.close();
             process.exit(1);
@@ -208,21 +231,26 @@ function waitForServer(url) {
             { name: 'advanced-settings', path: '/advanced/settings' }
         ];
         for (const screen of screens) {
+            if (!shouldCapture(screen.name)) continue;
             await page.goto(`${baseUrl}${screen.path}`);
             await page.waitForLoadState('networkidle');
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
             await runAxe(page, screen.name, outputDir);
         }
 
-        await page.goto(`${baseUrl}/this-does-not-exist`);
-        await page.waitForLoadState('networkidle');
-        await page.screenshot({ path: path.join(outputDir, 'error-404-signed-in.png'), fullPage: true });
-        await runAxe(page, 'error-404-signed-in', outputDir);
+        if (shouldCapture('error-404-signed-in')) {
+            await page.goto(`${baseUrl}/this-does-not-exist`);
+            await page.waitForLoadState('networkidle');
+            await page.screenshot({ path: path.join(outputDir, 'error-404-signed-in.png'), fullPage: true });
+            await runAxe(page, 'error-404-signed-in', outputDir);
+        }
 
-        await page.goto(`${baseUrl}/admin/settings`);
-        await page.waitForLoadState('networkidle');
-        await page.screenshot({ path: path.join(outputDir, 'error-403.png'), fullPage: true });
-        await runAxe(page, 'error-403', outputDir);
+        if (shouldCapture('error-403')) {
+            await page.goto(`${baseUrl}/admin/settings`);
+            await page.waitForLoadState('networkidle');
+            await page.screenshot({ path: path.join(outputDir, 'error-403.png'), fullPage: true });
+            await runAxe(page, 'error-403', outputDir);
+        }
 
         await browser.close();
 
@@ -232,12 +260,15 @@ function waitForServer(url) {
         const mobilePage = await mobileContext.newPage();
         await mobilePage.setViewportSize({ width: 390, height: 844 });
 
-        await mobilePage.goto(`${baseUrl}/`);
-        await mobilePage.waitForLoadState('networkidle');
-        await mobilePage.screenshot({ path: path.join(outputDir, 'home@390.png'), fullPage: true });
-        await runAxe(mobilePage, 'home@390.png'.replace('.png', ''), outputDir);
+        if (shouldCapture('home@390')) {
+            await mobilePage.goto(`${baseUrl}/`);
+            await mobilePage.waitForLoadState('networkidle');
+            await mobilePage.screenshot({ path: path.join(outputDir, 'home@390.png'), fullPage: true });
+            await runAxe(mobilePage, 'home@390', outputDir);
+        }
 
         for (const screen of publicScreens) {
+            if (!shouldCapture(`${screen.name}@390`)) continue;
             await mobilePage.goto(screen.url);
             await mobilePage.waitForLoadState('networkidle');
             await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
@@ -246,6 +277,7 @@ function waitForServer(url) {
 
         
         for (const screen of customerScreens) {
+            if (!shouldCapture(`${screen.name}@390`)) continue;
             await mobilePage.goto(`${baseUrl}${screen.path}`);
             await mobilePage.waitForLoadState('networkidle');
             await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
@@ -254,8 +286,10 @@ function waitForServer(url) {
 
         await mobilePage.goto(`${baseUrl}/login`);
         await mobilePage.waitForLoadState('networkidle');
-        await mobilePage.screenshot({ path: path.join(outputDir, 'login@390.png'), fullPage: true });
-        await runAxe(mobilePage, 'login@390.png'.replace('.png', ''), outputDir);
+        if (shouldCapture('login@390')) {
+            await mobilePage.screenshot({ path: path.join(outputDir, 'login@390.png'), fullPage: true });
+            await runAxe(mobilePage, 'login@390', outputDir);
+        }
 
         await mobilePage.fill('#password-email', 'owner2@business.com');
         await mobilePage.fill('#password', 'password');
@@ -270,6 +304,7 @@ function waitForServer(url) {
         ];
 
         for (const screen of mobileScreens) {
+            if (!shouldCapture(`${screen.name}@390`)) continue;
             await mobilePage.goto(`${baseUrl}${screen.path}`);
             await mobilePage.waitForLoadState('networkidle');
             await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
@@ -299,6 +334,7 @@ function waitForServer(url) {
         ];
 
         for (const screen of setupScreens) {
+            if (!shouldCapture(screen.name)) continue;
             await setupPage.goto(`${baseUrl}${screen.path}`);
             await setupPage.waitForLoadState('networkidle');
             await setupPage.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
@@ -316,6 +352,7 @@ function waitForServer(url) {
         await setupMobilePage.waitForLoadState('networkidle');
 
         for (const screen of setupScreens) {
+            if (!shouldCapture(`${screen.name}@390`)) continue;
             await setupMobilePage.goto(`${baseUrl}${screen.path}`);
             await setupMobilePage.waitForLoadState('networkidle');
             await setupMobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
