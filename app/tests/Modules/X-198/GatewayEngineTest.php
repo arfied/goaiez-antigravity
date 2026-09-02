@@ -1,11 +1,8 @@
 <?php
 
-use App\Models\Business;
-use App\Modules\X198\Domain\GatewayEngine;
-
 test('capture persists real id', function () {
     $path = storage_path('app/evidence/j9/charge.json');
-    if (!file_exists($path)) {
+    if (! file_exists($path)) {
         $this->fail('Artifact missing. You must run php artisan x198:evidence-charge first.');
     }
 

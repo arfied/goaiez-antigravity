@@ -324,7 +324,7 @@ final class TwelveJourneysTest extends TestCase
     public function an_invoice_reaches_a_real_charge_id(): void
     {
         $path = storage_path('app/evidence/j9/charge.json');
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             $this->fail('Artifact missing. You must run php artisan x198:evidence-charge first.');
         }
 

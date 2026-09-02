@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\X198\Console;
 
 use App\Models\User;
+use App\Modules\X121\Models\Person;
+use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X199\Domain\InvoiceEngine;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
-use App\Modules\X199\Domain\InvoiceEngine;
-use App\Modules\X198\Domain\GatewayEngine;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -25,6 +26,7 @@ final class EvidenceChargeCommand extends Command
     ): int {
         if (app()->runningUnitTests()) {
             $this->error('The artifact may only be produced by a real CLI run.');
+
             return self::FAILURE;
         }
 
@@ -33,7 +35,7 @@ final class EvidenceChargeCommand extends Command
         Tenancy::set($tenant->id);
         $businessId = $tenant->id;
 
-        $person = \App\Modules\X121\Models\Person::create([
+        $person = Person::create([
             'business_id' => $businessId,
             'first_name' => 'Evidence',
             'last_name' => 'Customer',
@@ -41,26 +43,26 @@ final class EvidenceChargeCommand extends Command
         ]);
 
         $lines = [
-            ['description' => 'Test Line', 'quantity' => 1, 'unit_price_cents' => 12500]
+            ['description' => 'Test Line', 'quantity' => 1, 'unit_price_cents' => 12500],
         ];
         $invoiceRes = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
         $invoice = $invoiceRes['invoice'];
 
-        $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123'); // Is this ok? Wait, is stripe connected to our platform? 
+        $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123'); // Is this ok? Wait, is stripe connected to our platform?
         $payment = $gatewayEngine->capture($businessId, 12500, 'tok_visa', 'idem_j9_'.time());
-        
+
         $invoiceEngine->recordPayment($businessId, $invoice->id, 12500);
 
         $data = [
-            "gateway_charge_id" => $payment->gateway_charge_id,
-            "invoice_id" => $invoice->id,
-            "invoice_status" => "paid",
-            "payment_status" => $payment->status,
-            "amount_cents" => 12500,
-            "database" => env('DB_DATABASE', 'goaiez_antig_money'),
-            "running_unit_tests" => false,
-            "captured_at" => now()->toIso8601String(),
-            "command" => "php artisan x198:evidence-charge"
+            'gateway_charge_id' => $payment->gateway_charge_id,
+            'invoice_id' => $invoice->id,
+            'invoice_status' => 'paid',
+            'payment_status' => $payment->status,
+            'amount_cents' => 12500,
+            'database' => config('database.connections.' . config('database.default') . '.database', 'goaiez_antig_money'),
+            'running_unit_tests' => false,
+            'captured_at' => now()->toIso8601String(),
+            'command' => 'php artisan x198:evidence-charge',
         ];
 
         $path = storage_path('app/evidence/j9/charge.json');
