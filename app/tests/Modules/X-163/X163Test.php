@@ -8,6 +8,7 @@ use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Actions\PriceLookupAction;
+use App\Modules\X163\Actions\PriceQuoteAction;
 use App\Modules\X163\Actions\PriceRangeAction;
 use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Events\PriceRefusalFlagged;
@@ -138,5 +139,33 @@ class X163Test extends TestCase
     public function test_n_062_assertion(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_price_quote_resolves_intent_from_real_data(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Quote Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // Grounding data
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'tax_rate_pct' => 0,
+        ]);
+
+        $action = new PriceQuoteAction;
+
+        // Match exact or spaced intent
+        $res = $action->handle($biz->id, 'How much to unblock a drain?');
+        $this->assertArrayHasKey('amount', $res);
+        $this->assertEquals(1850000, $res['amount']);
+
+        // Missing intent returns NO_FACT
+        $res2 = $action->handle($biz->id, 'How much for a new roof?');
+        $this->assertArrayHasKey('refusal_code', $res2);
+        $this->assertEquals('NO_FACT', $res2['refusal_code']);
     }
 }

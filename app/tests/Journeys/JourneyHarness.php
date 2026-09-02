@@ -9,8 +9,15 @@ use App\Models\User;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X119\Actions\FactConfirmAction;
+use App\Modules\X119\Actions\FactTeachAction;
+use App\Modules\X121\Actions\EntityWriteAction;
+use App\Modules\X163\Actions\PriceConfirmAction;
+use App\Modules\X163\Actions\PriceQuoteAction;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Process;
 
 /**
@@ -132,42 +139,44 @@ trait JourneyHarness
     /** ⛔ Must return a refusal CODE when ungrounded, never prose. @return array<string,mixed> */
     private function askAgent(array $tenant, string $question): array
     {
-        // Simulate intent extraction for J3: "how much to unblock a drain?" -> 'drain-unblock'
-        $sku = str_contains(strtolower($question), 'drain') ? 'drain-unblock' : 'unknown';
-        
-        $action = app(\App\Modules\X163\Actions\PriceLookupAction::class);
-        $result = $action->handle($tenant['id'], $sku);
-        
-        // Map price_cents to amount for the test assertion
-        if (isset($result['price_cents'])) {
-            $result['amount'] = $result['price_cents'];
-        }
-        
-        return $result;
+        return app(PriceQuoteAction::class)->handle($tenant['id'], $question);
     }
 
     /** @param array<string,mixed> $tenant */
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        $item = \App\Modules\X163\Models\PriceBookItem::updateOrCreate(
+        $item = PriceBookItem::updateOrCreate(
             ['business_id' => $tenant['id'], 'service_name' => $sku],
             ['price_cents' => $amountMinor, 'is_confirmed' => false, 'is_sample' => true, 'tax_rate_pct' => 0]
         );
-        app(\App\Modules\X163\Actions\PriceConfirmAction::class)->handle($tenant['id'], $item->id);
+        app(PriceConfirmAction::class)->handle($tenant['id'], $item->id);
+
+        $teachRes = app(FactTeachAction::class)->handle(
+            $tenant['id'],
+            'service.'.$sku.'.price',
+            (string) $amountMinor
+        );
+        app(FactConfirmAction::class)->handle($tenant['id'], $teachRes['fact_id']);
     }
 
     /** @param array<string,mixed> $tenant @param array<string,mixed> $quote @return array<string,mixed> */
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        $job = \App\Modules\X121\Models\Job::create([
+        $id = DB::table('work_orders')->insertGetId([
             'business_id' => $tenant['id'],
             'title' => 'Booked from quote',
-            'price_cents' => $quote['amount'] ?? 0,
             'total_amount' => $quote['amount'] ?? 0,
-            'status' => 'pending'
+            'status' => 'draft',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        return ['job_id' => (string) $job->id];
+        $write = app(EntityWriteAction::class);
+        $write->handle('work_orders', $id, $tenant['id'], [
+            'status' => 'pending',
+        ]);
+
+        return ['job_id' => (string) $id];
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
