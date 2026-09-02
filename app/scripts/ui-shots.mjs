@@ -360,6 +360,60 @@ function waitForServer(url) {
         }
         await setupBrowser.close();
 
+        
+        const locationId = execSync('php artisan tinker --execute="echo App\\Models\\Location::first()->id;"').toString().trim();
+        
+        const staffBrowser = await chromium.launch();
+        const staffContext = await staffBrowser.newContext();
+        const staffPage = await staffContext.newPage();
+        
+        await staffPage.goto(`${baseUrl}/login`);
+        await staffPage.waitForLoadState('networkidle');
+        await staffPage.fill('#password-email', 'staff@business.com');
+        await staffPage.fill('#password', 'password');
+        await staffPage.click('form:has(#password) button[type="submit"]');
+        await staffPage.waitForLoadState('networkidle');
+
+        const staffScreens = [
+            { name: 'staff-settings', path: '/admin/settings' },
+            { name: 'staff-credentials', path: '/admin/credentials' },
+            { name: 'staff-audit-account', path: '/admin/audit/account' },
+            { name: 'staff-audit-staff', path: '/admin/audit/staff' },
+            { name: 'staff-internal-users', path: '/admin/internal-users' },
+            { name: 'staff-legal', path: '/admin/legal' },
+            { name: 'staff-phi-tenants', path: '/admin/phi-tenants' },
+            { name: 'staff-tenant-locations', path: '/admin/tenant-locations' },
+            { name: 'staff-terms-acceptances', path: '/admin/terms-acceptances' },
+            { name: 'staff-location-reviews', path: `/admin/locations/${locationId}/reviews` }
+        ];
+
+        for (const screen of staffScreens) {
+            if (!shouldCapture(screen.name)) continue;
+            await staffPage.goto(`${baseUrl}${screen.path}`);
+            await staffPage.waitForLoadState('networkidle');
+            await staffPage.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+            await runAxe(staffPage, screen.name, outputDir);
+        }
+        
+        const staffMobileContext = await staffBrowser.newContext({ viewport: { width: 390, height: 844 } });
+        const staffMobilePage = await staffMobileContext.newPage();
+        
+        await staffMobilePage.goto(`${baseUrl}/login`);
+        await staffMobilePage.waitForLoadState('networkidle');
+        await staffMobilePage.fill('#password-email', 'staff@business.com');
+        await staffMobilePage.fill('#password', 'password');
+        await staffMobilePage.click('form:has(#password) button[type="submit"]');
+        await staffMobilePage.waitForLoadState('networkidle');
+
+        for (const screen of staffScreens) {
+            if (!shouldCapture(`${screen.name}@390`)) continue;
+            await staffMobilePage.goto(`${baseUrl}${screen.path}`);
+            await staffMobilePage.waitForLoadState('networkidle');
+            await staffMobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+            await runAxe(staffMobilePage, `${screen.name}@390`, outputDir);
+        }
+        await staffBrowser.close();
+
         fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
 
     } finally {
