@@ -45,7 +45,7 @@ class X151Test extends TestCase
         Event::fake([FetchRequested::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Web Scraper Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set((int) $biz->id);
 
         $domain = 'example-plumbing-supplies.com';
 
@@ -117,7 +117,7 @@ class X151Test extends TestCase
     public function test_proxy_pool_and_sitemap_scanning(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Sitemap Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set((int) $biz->id);
 
         $sitemapRes = $this->sitemapAction->handle($biz->id, 'contractor.io', 'https://contractor.io/sitemap.xml');
         $this->assertCount(3, $sitemapRes['urls_discovered']);
