@@ -22,4 +22,9 @@ class PageVersion extends Model
         'schema_installed' => 'boolean',
         'ssl_enabled' => 'boolean',
     ];
+
+    public function getSslInstalledAttribute(): bool
+    {
+        return $this->ssl_enabled;
+    }
 }

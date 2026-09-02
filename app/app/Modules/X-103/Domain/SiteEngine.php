@@ -25,6 +25,12 @@ final class SiteEngine
 
             $commitId = 'commit_'.Str::random(16);
 
+            $contentBlocks[] = ['type' => 'chat_widget'];
+            $contentBlocks[] = ['type' => 'form_capture'];
+            $contentBlocks[] = ['type' => 'dni_script'];
+            $contentBlocks[] = ['type' => 'seo_tags'];
+            $contentBlocks[] = ['type' => 'schema_markup'];
+
             $version = PageVersion::create([
                 'business_id' => $businessId,
                 'page_id' => $page->id,
