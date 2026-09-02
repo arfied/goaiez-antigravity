@@ -29,7 +29,7 @@
         <section class="rounded-[--radius-panel] border border-rule bg-card p-5">
             <h2 class="font-display text-lg font-semibold text-ink">{{ $group }}</h2>
 
-            <ul class="mt-4 space-y-5">
+            <ul class="mt-4 space-y-5 max-h-[600px] overflow-y-auto pr-2">
                 @foreach ($rows as $row)
                     <li wire:key="setting-{{ $row['key'] }}" class="border-t border-rule pt-5 first:border-0 first:pt-0">
                         <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
