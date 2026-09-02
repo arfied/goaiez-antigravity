@@ -20,7 +20,7 @@
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Search Impressions</div>
-            <div class="mt-1 text-3xl font-bold text-indigo-600">48,200</div>
+            <div class="mt-1 text-3xl font-bold text-indigo-400">48,200</div>
             <div class="mt-1 text-xs text-emerald-600 font-medium">+18.2% search reach</div>
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">

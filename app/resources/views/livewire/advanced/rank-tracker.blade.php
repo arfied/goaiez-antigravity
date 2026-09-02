@@ -35,7 +35,7 @@
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">3-Pack Dominance</div>
-            <div class="mt-1 text-3xl font-bold text-indigo-600">{{ $top3Dominance }}%</div>
+            <div class="mt-1 text-3xl font-bold text-indigo-400">{{ $top3Dominance }}%</div>
             <div class="mt-1 text-xs text-emerald-600 font-medium">Top 3 rank on 8 of 9 nodes</div>
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">

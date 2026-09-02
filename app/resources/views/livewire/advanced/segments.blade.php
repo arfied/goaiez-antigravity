@@ -31,7 +31,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
                 <div class="text-2xl font-bold text-gray-900 dark:text-white">86 <span class="text-xs text-gray-400 font-normal">contacts</span></div>
-                <a href="{{ route('advanced.broadcasts.compose') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">Message Segment &rarr;</a>
+                <a href="{{ route('advanced.broadcasts.compose') }}" class="text-xs font-semibold text-indigo-400 dark:text-indigo-400 hover:underline">Message Segment &rarr;</a>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
                 <div class="text-2xl font-bold text-gray-900 dark:text-white">142 <span class="text-xs text-gray-400 font-normal">contacts</span></div>
-                <a href="{{ route('advanced.broadcasts.compose') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">Message Segment &rarr;</a>
+                <a href="{{ route('advanced.broadcasts.compose') }}" class="text-xs font-semibold text-indigo-400 dark:text-indigo-400 hover:underline">Message Segment &rarr;</a>
             </div>
         </div>
 
@@ -61,7 +61,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
                 <div class="text-2xl font-bold text-gray-900 dark:text-white">112 <span class="text-xs text-gray-400 font-normal">contacts</span></div>
-                <a href="{{ route('advanced.broadcasts.compose') }}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">Message Segment &rarr;</a>
+                <a href="{{ route('advanced.broadcasts.compose') }}" class="text-xs font-semibold text-indigo-400 dark:text-indigo-400 hover:underline">Message Segment &rarr;</a>
             </div>
         </div>
     </div>

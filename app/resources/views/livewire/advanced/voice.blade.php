@@ -84,7 +84,7 @@
                     </div>
                     <div class="flex justify-between py-1.5 border-b border-gray-100 dark:border-gray-700">
                         <span>Appointments Booked:</span>
-                        <strong class="text-indigo-600">14 this week</strong>
+                        <strong class="text-indigo-400">14 this week</strong>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@
                             <td class="py-3 px-4 font-mono font-medium text-gray-900 dark:text-white">{{ $call['caller'] }}</td>
                             <td class="py-3 px-4 text-gray-600 dark:text-gray-300">{{ $call['duration'] }}</td>
                             <td class="py-3 px-4 font-medium text-gray-900 dark:text-white">{{ $call['intent'] }}</td>
-                            <td class="py-3 px-4 text-indigo-600 dark:text-indigo-400">{{ $call['action'] }}</td>
+                            <td class="py-3 px-4 text-indigo-400 dark:text-indigo-400">{{ $call['action'] }}</td>
                             <td class="py-3 px-4 text-right">
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $call['status'] === 'escalated' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' }}">
                                     {{ ucfirst($call['status']) }}

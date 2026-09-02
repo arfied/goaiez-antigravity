@@ -33,7 +33,7 @@
             </div>
             <div class="border-l-4 border-indigo-500 pl-4">
                 <div class="text-xs text-gray-500 uppercase font-semibold">Estimated Revenue Impact</div>
-                <div class="text-2xl font-bold text-indigo-600 mt-1">$14,200</div>
+                <div class="text-2xl font-bold text-indigo-400 mt-1">$14,200</div>
                 <div class="text-xs text-gray-500 mt-1">Based on local conversion uplift</div>
             </div>
             <div class="border-l-4 border-purple-500 pl-4">

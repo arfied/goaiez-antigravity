@@ -15,7 +15,7 @@
         <!-- Balance Card -->
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-200 dark:border-gray-700">
             <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Credit Balance</div>
-            <div class="mt-2 text-4xl font-extrabold text-indigo-600">2,450</div>
+            <div class="mt-2 text-4xl font-extrabold text-indigo-400">2,450</div>
             <div class="text-xs text-gray-500 mt-1">Equivalent to ~2,450 SMS segments</div>
             <div class="mt-6">
                 <a href="{{ route('account.credit') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 w-full justify-center">

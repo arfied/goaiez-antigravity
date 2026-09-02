@@ -28,7 +28,7 @@
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
             <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Click-Through</div>
-            <div class="mt-1 text-3xl font-bold text-indigo-600">38.4%</div>
+            <div class="mt-1 text-3xl font-bold text-indigo-400">38.4%</div>
             <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">+12% vs industry avg</div>
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">

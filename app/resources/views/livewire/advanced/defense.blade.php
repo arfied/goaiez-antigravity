@@ -53,7 +53,7 @@
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Unhappy Customers Recovered</div>
                 </div>
                 <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg text-center">
-                    <div class="text-2xl font-bold text-indigo-600">0</div>
+                    <div class="text-2xl font-bold text-indigo-400">0</div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Escalated Negative Google Reviews</div>
                 </div>
                 <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg text-center">

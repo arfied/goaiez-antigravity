@@ -69,7 +69,7 @@
 
                 <div class="flex items-center justify-between pt-2">
                     <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-700 dark:text-gray-300">
-                        <input type="checkbox" wire:model="autoSchedule" class="rounded border-gray-300 text-indigo-600">
+                        <input type="checkbox" wire:model="autoSchedule" class="rounded border-gray-300 text-indigo-400">
                         <span>Include "Book Online" Call-to-Action Link</span>
                     </label>
                     <button wire:click="publishPost" class="px-4 py-2 bg-indigo-600 text-white rounded text-xs font-semibold hover:bg-indigo-700">
@@ -91,7 +91,7 @@
                             <span class="text-[10px] text-gray-500">{{ $post['date'] }}</span>
                         </div>
                         <p class="text-xs text-gray-600 dark:text-gray-300 mb-3">{{ $post['summary'] }}</p>
-                        <div class="flex items-center gap-4 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+                        <div class="flex items-center gap-4 text-[11px] font-medium text-indigo-400 dark:text-indigo-400">
                             <span>👁️ {{ $post['views'] }} views on Google Maps</span>
                             <span>👆 {{ $post['clicks'] }} clicks</span>
                         </div>

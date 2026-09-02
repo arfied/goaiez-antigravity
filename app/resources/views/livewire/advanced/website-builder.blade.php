@@ -47,7 +47,7 @@
     @if ($aiNotification)
         <div class="mb-6 p-4 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $aiNotification }}</span>
-            <button wire:click="$set('aiNotification', null)" class="text-indigo-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('aiNotification', null)" class="text-indigo-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
@@ -112,27 +112,27 @@
 
                 <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>⚡ Instant Booking & Quote Form (with SMS alerts)</span>
-                    <input type="checkbox" wire:model.live="showBookingForm" class="rounded border-rule text-indigo-600">
+                    <input type="checkbox" wire:model.live="showBookingForm" class="rounded border-rule text-indigo-400">
                 </label>
 
                 <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>↔️ Interactive Before & After Photo Slider</span>
-                    <input type="checkbox" wire:model.live="showBeforeAfter" class="rounded border-rule text-indigo-600">
+                    <input type="checkbox" wire:model.live="showBeforeAfter" class="rounded border-rule text-indigo-400">
                 </label>
 
                 <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>⭐ Embed Live Google Reviews Feed</span>
-                    <input type="checkbox" wire:model.live="showReviewsWidget" class="rounded border-rule text-indigo-600">
+                    <input type="checkbox" wire:model.live="showReviewsWidget" class="rounded border-rule text-indigo-400">
                 </label>
 
                 <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>📱 Floating Mobile Speed-Dial Bar</span>
-                    <input type="checkbox" wire:model.live="showStickySpeedDial" class="rounded border-rule text-indigo-600">
+                    <input type="checkbox" wire:model.live="showStickySpeedDial" class="rounded border-rule text-indigo-400">
                 </label>
 
                 <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>❓ Auto-Generated FAQ Accordion</span>
-                    <input type="checkbox" wire:model.live="showFaqSection" class="rounded border-rule text-indigo-600">
+                    <input type="checkbox" wire:model.live="showFaqSection" class="rounded border-rule text-indigo-400">
                 </label>
             </div>
         </div>
@@ -148,8 +148,8 @@
                     <span class="text-[11px] text-ink-3 font-mono ms-2 truncate max-w-[150px] sm:max-w-none">https://{{ Str::slug($businessName) }}.goaiez.com</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-600 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
-                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-600 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
+                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
+                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
                 </div>
             </div>
 

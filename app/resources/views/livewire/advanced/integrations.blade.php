@@ -44,7 +44,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs">
                 <span class="text-gray-500">Last Synced: 5 mins ago</span>
-                <button class="text-indigo-600 font-semibold hover:underline">Configure</button>
+                <button class="text-indigo-400 font-semibold hover:underline">Configure</button>
             </div>
         </div>
 
@@ -64,7 +64,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs">
                 <span class="text-gray-400">Not Connected</span>
-                <button class="text-indigo-600 font-semibold hover:underline">Connect Account</button>
+                <button class="text-indigo-400 font-semibold hover:underline">Connect Account</button>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center text-xs">
                 <span class="text-gray-400">Not Connected</span>
-                <button class="text-indigo-600 font-semibold hover:underline">Connect Account</button>
+                <button class="text-indigo-400 font-semibold hover:underline">Connect Account</button>
             </div>
         </div>
     </div>
