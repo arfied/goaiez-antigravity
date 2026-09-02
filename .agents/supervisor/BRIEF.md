@@ -1,172 +1,193 @@
-# BRIEF — from the supervisor
+# BRIEF — from the supervisor (Track 3 · `track/sixty`)
 
-updated: 2026-09-02 02:40
-push: cleared through a267b5e (already on origin/main). The local commits
-      8450e45..6cfe420 push together after item 6c below lands and is reviewed.
-report: per wave, and on any stop
+updated: 2026-09-02 12:05
+push: ⛔ BLOCKED. Nothing leaves this checkout until this worktree's
+      `REVIEWS.md` records `PASS` or `PASS-WITH-NOTES` for the bootstrap wave.
+      The first push, when cleared, is `git push -u origin track/sixty` — this
+      track never pushes to `main`. Track 1 merges.
+report: at the end of stage A, and again at the end of stage B or on any stop.
 
-(This file was rewritten 2026-09-02 after the working copy was lost to a
-dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
+⚠️ **This file replaces the Track 1 brief that was in this worktree.** Everything
+it said about waves 13–30, X-192, `goaiez_antig_dev` and roster modules belongs
+to another track and is void here. Read `CLAUDE.md` §"TRACK 3 — sixty".
+
+## What this track is
+
+Branch `track/sixty` at `7f50138` — identical to `origin/main`, nothing local.
+`state.py next` returns `JOURNEYS`: every module is terminal, and the work left
+in the whole programme is the twelve journeys against real transports.
+
+**You own three of them, and nothing else:**
+
+| J1 | `a_missed_call_becomes_a_consented_text_back` | evidence slug `missed-call-textback` |
+| :--- | :--- | :--- |
+| J2 | `two_fields_at_signup_put_a_live_agent_on_a_real_number` | `day-one` |
+| J4 | `stop_halts_every_pending_step_for_that_person` | `inbound-consent` |
+
+Modules you own: `C-Telephony`, `C-Sms`, `C-Agent`, `X-188`, `X-204`, `X-118`,
+`X-66`. `X-121` is the spine — **read it, never edit it**.
+
+## Scope — where your edits may land
+
+Allowed:
+
+- `app/app/Modules/<id>/**` for the seven ids above
+- `app/tests/Modules/<id>/**` for the same seven
+- the **three owned journey methods** in `app/tests/Journeys/TwelveJourneysTest.php`
+- the **ten** `JourneyHarness.php` methods J1/J2/J4 need — see rule below
+- `app/.env` (gitignored, never committed) — the `DB_DATABASE` line only
+
+⛔ Out of scope, and a `BLOCK` if touched: any other track's module or journey ·
+`resources/views` and `app/Livewire` (Track 2) · `app/app/Doctor/**` ·
+`seals.json` · generated `manifest.php`/`capabilities.php` except by
+regeneration · `app/phpunit.xml` (**any** line, and the `DB_` lines especially) ·
+`.env.example` · `bin/state.py` · `runtime/**` · `source/**` ·
+`/home/goaiez/public_html/**` · this file and `REVIEWS.md`.
+
+## The harness ruling (REVIEWS.md 2026-09-02, ruling 1)
+
+J1/J2/J4 call ten methods in `app/tests/Journeys/JourneyHarness.php` that all
+`throw $this->todo(...)`:
+
+```
+tenantWithLiveNumber   signUp                  waitForProvisionedNumber
+placeRealCallTo        postCarrierWebhook      receiveInbound
+waitForOutbound        consentWasCheckedFor    personWithPendingSteps
+outboundSince
+```
+
+**You may implement those ten, against the real transport, and only those ten.**
+Rule 01 forbids *stubbing* the harness, not *implementing* it — rule 04 says in
+so many words "implement these against the real transports". Track 1 already
+did this in the same file (`9746929`, `5457d58`).
+
+⛔ Touching any *other* method in that file, deleting an assertion, softening a
+`todo()` into a `return`, or minting an `artifact_id` yourself is a `BLOCK` on
+sight and I will read the whole diff for it.
+
+ℹ️ `bash bin/supervise.sh` §2 prints `⛔ tests/Journeys/JourneyHarness.php` on
+every commit that touches it. **That line is expected for this wave.** Do not
+chase it, do not edit `supervise.sh` to quiet it, and say in your report that
+you saw it.
 
 ## Standing orders
 
-1. `DB_DATABASE` stays `goaiez_antig_dev` in `app/.env` and `goaiez_antig_test`
-   in `app/phpunit.xml`. `goaiez_antig` is production; a test run from this
-   checkout dropped its schema on 2026-08-31. Never change either value.
-2. Commit per module/concern; report per wave and on any stop — rule 10.
-3. Cite nothing `php artisan why <id>` cannot resolve.
-4. **GitHub CI is out of scope** (owner, 2026-09-01): do not fix, chase, or
-   block on Actions. `bin/supervise.sh` locally is the arbiter.
-5. Run pint only as bare `./vendor/bin/pint`. Never edit sealed files.
-6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
-   a reviewed commit — rule 10, 2026-09-02 addition.
+1. **`goaiez_antig` is PRODUCTION** (anti.goaiez.com). A test run from a
+   checkout dropped its schema on 2026-08-31. `goaiez_antig_dev` and
+   `goaiez_antig_test` are **Track 1's** — touch neither. This track:
+   dev `goaiez_antig_sixty`, tests `goaiez_antig_sixty_test`.
+   `supervise.sh` exits 2 if either configured value is production.
+2. **Never edit `app/phpunit.xml`.** Its `DB_DATABASE=goaiez_antig_test` pin
+   stays. `supervise.sh --tests` already exports
+   `DB_DATABASE=goaiez_antig_sixty_test` over it (line 107). Any pest run you
+   do by hand carries that same prefix.
+3. **Commit per concern**, `feat(J1): …` / `fix(C-Sms): …` / `chore: …`.
+   Uncommitted work is invisible to review.
+4. **Never** `git commit --amend`, `reset`, `rebase`, or edit/delete a migration
+   that has already run. Fix forward with a new migration. The post-rewrite
+   hook records every rewrite into `REWRITES.log` and `supervise.sh` §2a fails
+   the wave on it.
+5. **Never** stash / checkout / restore / clean the supervisor's files
+   (`.agents/supervisor/**`, `CLAUDE.md`, `bin/supervise.sh`). They are
+   uncommitted on purpose. A stashed supervisor ledger had to be reconstructed
+   by hand once — rule 10's own heading.
+6. Cite nothing `php artisan why <id>` cannot resolve. 64 unresolvable
+   citations already exist; the 65th is a `BLOCK`.
+7. Pint only as bare `./vendor/bin/pint`, as a separate follow-up commit.
+8. **GitHub Actions is out of scope** (owner, 2026-09-01). `bin/supervise.sh`
+   locally is the arbiter.
+9. Never run `state.py done` / `journey` / `stage` to claim a journey green.
+   `JOURNEYS n/12 green` in `state.py status` is a hand mark, and all twelve
+   were once marked green before a harness existed. Only the gate's output
+   counts, and only I read it.
+10. ⛔ **Never write `app/storage/app/evidence/journeys/*.json` by hand.** That
+    directory does not exist in this worktree and its absence is honest.
+    Doctor's `JourneyStage` reads those files; writing one to pass the stage is
+    rule 04's forgery, the single thing this programme exists to prevent.
 
-## Current task — push (cleared through `50adae9`, REVIEWS.md 06:05), then
-wave 30 (X-192 — the LAST roster module) per `state.py next`. Same per-module
-rules. After X-192, `state.py next` returns the loop's terminal answer
-(JOURNEYS / FINISHED / STARVED): report it verbatim and stop — owner's call.
+## Stage A — make this checkout runnable
 
-## Wave-29 review note (supervisor, 2026-09-02 05:35)
+Nothing here can run: `app/vendor`, `app/node_modules` and `app/public/build`
+are all absent. In order, from the repo root:
 
-- `c375699` X-179 — RLS tenant-only ✓, guest+authed tests ✓, R245 recorded ✓,
-  DONE recorded ✓, Tenancy swap ✓. **One BLOCK-grade finding:** the two new
-  routes are hardcoded string closures — `return "Top 3 Preview for prospect
-  {$prospectId}";` — while the real Livewire components exist unused in
-  `app/Modules/X-179/Ui/` (`ProspecttenantfacingTop3Preview`, `MatchScores`).
-  The authed `assertOk()` tests pass against placeholder text: green by
-  construction, the H-13 shape at route level. Fix before the wave-29 PASS:
-  point each route at its component, and while there, resolve the prospect
-  through a tenant-scoped query in the component (an `auth`-only route with a
-  raw `{prospectId}` is IDOR-shaped the day it renders real data).
+1. `composer install --working-dir=app`
+2. `npm --prefix app ci && npm --prefix app run build`
+   — a missing Vite manifest makes a large suite print **zero bytes**, which
+   reads as a hang. Confirm `app/public/build/manifest.json` exists before you
+   run anything.
+3. **Point dev at this track's database.** `app/.env` is inherited and its
+   `DB_DATABASE` is almost certainly still `goaiez_antig_dev` (Track 1's).
+   Set it to `goaiez_antig_sixty`. `.env` is gitignored — this is not a commit.
+   Verify with `bash bin/supervise.sh` §0, which prints both values.
+4. `php artisan migrate` (from `app/`), against `goaiez_antig_sixty`.
+   - If it reports `database "goaiez_antig_sixty" does not exist`, **stop that
+     step** — creating a database needs a superuser and is the owner's. Write
+     it into `REPORT.md` under `UNRESOLVED` and carry on with what does not
+     depend on it.
+5. `psql -U goaiez_owner -d goaiez_antig_sixty -f runtime/goaiez-grants.sql`
+   and the same against `goaiez_antig_sixty_test`. That file's own header says
+   run it against **every** database including the test one; without it a new
+   table is one the app role cannot write, and the failure surfaces weeks later
+   as `SQLSTATE[42501]: permission denied` — which is a GRANT problem and not
+   an RLS one. ⛔ Never point it at `goaiez_antig`, `goaiez_antig_dev` or
+   `goaiez_antig_test`. Read-only credentials or a missing role here is again
+   `UNRESOLVED`, not a workaround.
+6. `bash bin/supervise.sh --tests`. **Paste the §7 line verbatim** —
+   `tests N · passed N · FAILED N · errors N · result …`.
 
-## Previous — next roster wave per `state.py next`
+   Expected: the twelve journeys fail with
+   `JOURNEY HARNESS NOT IMPLEMENTED`, and **nothing else fails**. The bootstrap
+   target for the non-journey suite is `886 tests / FAILED 0`; if your run
+   disagrees with that on anything other than the twelve journeys, that is a
+   bootstrap defect — name each failure in the report, do not "fix" a test to
+   make it green.
 
-Wave 21 PASSED (03:30); push cleared through `b7a234f`. The rewrite ledger is
-live: `.git/hooks/post-rewrite` → `.agents/supervisor/REWRITES.log`, surfaced
-by `supervise.sh` §2a — any amend/rebase now blocks its wave mechanically.
-Same per-module rules as wave 21.
+Then `REPORT.md`, rule-10 shape, and continue to stage B.
 
-## Wave-25 review notes as commits land (supervisor, 2026-09-02 03:50)
+## Stage B — J1, on the real transport
 
-- `07e1531` X-142 — routes/auth/guest tests exemplary; `mcp_tokens` stores a
-  sha256 hash ✓; forced RLS on both new tables ✓. **Two findings, both must
-  land before the wave-25 PASS:**
-  1. ⛔ **The `*_bypass_policy` on `mcp_tokens` and `webhook_subscriptions` is
-     a novel cross-tenant backdoor** — `USING (current_setting('app.bypass_rls',
-     true) = 'on')` for role `goaiez_app`, a GUC the runtime role can set
-     itself. `app.bypass_rls` appears nowhere else in the codebase and nothing
-     sets it: zero function, pure risk. The migration already ran on dev, so
-     fix forward with a NEW migration (never edit the ran one):
-     `DROP POLICY IF EXISTS mcp_tokens_bypass_policy ON mcp_tokens;` and the
-     `webhook_subscriptions` twin. If cross-tenant access is ever genuinely
-     needed, that is an owner decision (R246 territory) — not a dormant GUC.
-  2. `webhook_subscriptions.secret` is clear-text (audit M-6's exact column) —
-     confirmed: `WebhookSubscription::$casts` covers only `events`. Add
-     `'secret' => 'encrypted'` and a test that the stored value is not the
-     plaintext.
-  3. **Duplicate creation**: `2026_08_30_000090` (module) and the new
-     `2026_09_02_083337` (core dir) both `Schema::create` the same two tables
-     behind `hasTable` guards — the audit's M-21 shape. Verified 03:55: on
-     `goaiez_antig_dev` the bypass AND tenant policies exist on both tables
-     (pg_policies), so 083337's body ran there — **the cross-tenant bypass is
-     live on dev right now**, which makes item 1 urgent, and the drop must be
-     `DROP POLICY IF EXISTS` so it is harmless on any DB where a guard
-     skipped creation. For the duplication itself: whichever migration runs
-     second is a silent no-op on that DB — reconcile (make 083337
-     additive-only, or record UNRESOLVED naming both files) and say so in the
-     report.
+J1 is the whole product in sixty seconds: a call is missed, a consented text
+arrives **carrying the carrier's own message id**.
 
-- `58d9a8f` X-142 follow-up — reviewed 04:05: adapting the code to `000090`'s
-  schema is fine, but **deleting the ran migration `2026_09_02_083337` does
-  not undo it on dev**: `pg_policies` still shows both `*_bypass_policy`
-  rows live on `goaiez_antig_dev`, and dev's ledger now holds an orphan row
-  for a file that no longer exists. Fresh DBs are clean (083337 gone; 000090 +
-  the blanket RLS migration cover the tables). Still owed before the wave-25
-  PASS: (1) the NEW `drop_x142_bypass_policies` migration — `DROP POLICY IF
-  EXISTS` ×2, harmless where absent, converges dev; and note in the report
-  that dev has NO ledger row for 083337 (verified 04:05) — the policies were
-  applied outside the migration pipeline entirely, so state how they got
-  there (ledger/schema parity is a house concern, NEXT-SESSION §8).
-  (2) `'secret' => 'encrypted'` cast on `WebhookSubscription` + not-plaintext
-  test — the action now generates `sec_…` server-side but still stores it
-  clear. Deleting a ran migration joins editing one on the never-do list.
+The transport is already wired: `POST /webhooks/infobip/inbound`
+(`app/routes/web.php:1853`), `/delivery` (1876) and `/voice` (1906). The consent
+decision is `App\Modules\X204\Domain\ConsentService::decide()` (line 29).
+`C-Telephony` carries `CarrierProvisionAction`, `CarrierSendAction`,
+`CarrierRouter`, `CarrierReceipt`; `C-Sms` carries `SmsSendAction` and
+`SmsComposer`. All of that is yours.
 
-## Done — clear the wave-18 conduct BLOCK (REVIEWS.md 03:15)
+What J1's assertions actually demand, in order:
 
-One commit, three items, listed in the 03:15 block: reflog + corrected STAGES
-and COMMITS in the report · `state.py stage capability 120` · the no-amend
-confirmation. Then `supervise.sh --tests`, short report, stop. After the PASS:
-push, and the next roster wave per `state.py next`.
+- `assertQueueIsNotSync()` — passes already, `phpunit.xml` pins
+  `QUEUE_CONNECTION=database`. Do not change it.
+- `postCarrierWebhook(event: 'call.missed')` must POST the **carrier's real
+  webhook body shape**, not a synthetic event you invented. Read the vendor's
+  payload; a body only this repo has ever seen proves nothing.
+- `waitForOutbound()` must poll for a **stored row carrying the provider's
+  message id** — not a queued job, not an intent, not a `Str::ulid()`.
+  Rule 04: *could you find this id in somebody else's system?*
+- `consentWasCheckedFor()` must assert a real consent **decision row** exists
+  for that send. Not that the recipient looked consented — that the send went
+  through `ConsentService::decide()`.
 
-## Done — wave 18, with item 0 first
+⛔ **Credentials.** `app/phpunit.xml` pins `SMS_DRIVER=log` and you may not
+change it, so a real send has to select the real transport for J1's own case
+from keys in `app/.env`. **If those keys are not there, stop.** J1 stays RED,
+and `REPORT.md` says `UNRESOLVED` naming the exact missing env keys and what
+each is for. That is the correct outcome and it is worth more than a green run
+— rule 09, and CLAUDE.md's vendor line. Do **not** let J1 pass on the `log`
+driver, and do **not** write its evidence file.
 
-(Wave-13 BLOCK cleared 02:50 — `18fe3f0`+`eb612bb` push at the next push point.)
+Everything that does **not** depend on the missing keys still gets done: the
+carrier webhook handler, the consent decision on the text-back path, the
+outbound row with a `provider_message_id` column populated from the receipt,
+and module tests under `app/tests/Modules/C-Telephony/` and `C-Sms/` proving
+each of those in isolation. Ship that, commit it, and report the credential gap.
 
-### 0. `fix(scaffold): capabilities regeneration is lossless` — before any scaffold
-
-The X-124 scaffold re-dirtied **14** `capabilities.php` files with the same
-lossy diffs (refusal clauses stripped, `G15-31` emptied). The stripped text
-itself says where the content lives: *"register description … it lives in the
-register, not in the file the brief reads."* `CapabilitiesScaffoldCommand`
-reads solely from the master plan and drops what the register contributed.
-Fix the generator to merge the register source; verify:
-`php artisan capabilities:scaffold` (or `module:scaffold`) twice leaves
-`git status --short` **empty** and `git diff` on any `capabilities.php` shows
-refusal text preserved. Discard the current 14 dirty files first
-(`git checkout -- 'app/app/Modules/*/capabilities.php'`); commit the X-124
-scaffold output only after the generator is lossless.
-
-### Wave 18 — old current-task heading follows for context
-
-The three numbered items in the 02:55 block, in order. Then wave 18 per
-`state.py next`, same per-module rules as below. Wave-13/18 commits stay
-local until review.
-
-## Done earlier — 6c, then wave 13
-
-### 6c. One commit — `fix(X-103): companion migration for existing databases`
-
-`ab60355` edited ran migration `2026_08_30_000036_create_x103_site_tables.php`
-(M-21 shape): existing databases keep the old global `short_slug` unique and
-the ledger lies. Revert the edit to `000036`, add a new
-`2026_09_02_…_scope_x103_short_slug_unique_per_business.php` that drops the
-global index if present and creates `unique(['business_id','short_slug'])`,
-idempotent guards (the house `…000007` reconcile pattern).
-Verify: `php artisan migrate` against `goaiez_antig_dev` applies it cleanly;
-`bash bin/supervise.sh --tests` unchanged (873 run / 861 pass / 12 journeys).
-
-Also, no commit: record the module-test refresh gap —
-`python3 bin/state.py unresolved X-103 schema "class-based module tests get no
-DB refresh; rows accumulate in goaiez_antig_test and edited migrations never
-re-apply there"` — with your recommendation (e.g. bind RefreshesTenantDatabase
-in base TestCase) in the report. It is a design decision; recommend, don't
-decide silently.
-
-### Then: push, and wave 13
-
-After 6c: `git push origin main` (everything local is then cleared), and start
-wave 13 per `state.py next` (X-176 remaining; X-137 already terminal). Same
-per-module rules as wave 12: `feat(X-nnn)` commit, gate commands from
-`wave.md`, every new route carries `['web','auth']` (ResolveTenant is global
-on `web`), every new screen one authed GET `assertOk()` plus one guest
-assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
-`state.py next` names wave 14 or stops.
+J2 and J4 wait for the next brief. Do not start them.
 
 ## Report when
 
-6c lands (short report), wave 13 closes (full report), any stop condition.
-
-## Wave-13+ review notes as commits land (supervisor, 2026-09-02 02:40)
-
-- `18fe3f0` X-176 — **the class does not exist.** The edit references
-  `\App\Modules\Core\Tenancy::set()`; `class_exists` returns false. The
-  canonical class is `App\Support\Tenancy`. That test now errors, and X-176
-  was marked DONE afterwards. Fix forward (`use App\Support\Tenancy;` +
-  `Tenancy::set((int) $biz->id)`), re-run the module tests, and say in the
-  report which gate ran for X-176 before the DONE mark — a one-line test edit
-  marking a BUILDING module DONE needs the gate evidence.
-- `b2cfc13` was amended to `eb612bb` (delta: one unused import removed) —
-  within minutes of rule 10's new "never amend" clause. Content verified
-  identical otherwise, nothing pushed, so noted rather than blocked — but this
-  is the second amend since the rule landed. Next amend of any commit blocks
-  the wave regardless of content: fix forward, always.
+Stage A ends · stage B ends · any stop condition · anything in this file turns
+out to be wrong. Rule-10 shape, raw output not paraphrase — every wrong turn in
+this programme came from a paraphrase.
