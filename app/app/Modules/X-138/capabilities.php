@@ -28,7 +28,7 @@ return [
     'G9-13' => 'attribution is a query, not a pipeline',
 
     // status: SPECCED
-    'G9-14' => 'reading spend for attribution is not ad MANAGEMENT (§44 fences management); the connection is X-139\'s',
+    'G9-14' => 'reading spend for attribution is not ad MANAGEMENT (§44 fences management); the connection is X-139\'s · refuses: ad management',
 
     // status: SPECCED
     'G9-33' => 'campaign → closed revenue',

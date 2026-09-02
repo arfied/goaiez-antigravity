@@ -500,7 +500,7 @@
 | G9-11 | Chart Generation | ENH | X-194 | SPECCED | named in the header |
 | G9-12 | Competitor Benchmarks | ENH | X-161 | SPECCED | demo metrics are `is_mock`;  *"local industry averages"* must be measured or absent (P-120) |
 | G9-13 | Consolidated Reporting | ENH | X-138 | SPECCED | attribution is a query, not a pipeline |
-| G9-14 | Cross-Platform Dashboard | ENH | X-138 | SPECCED | reading spend for attribution is not ad MANAGEMENT (§44 fences management); the connection is X-139's |
+| G9-14 | Cross-Platform Dashboard | ENH | X-138 | SPECCED | reading spend for attribution is not ad MANAGEMENT (§44 fences management); the connection is X-139's · refuses: ad management |
 | G9-15 | Decay Modeling | ENH | X-08 | SPECCED | tenant login decay = churn risk → an alert and a RECOMMEND, never an automatic offer |
 | G9-16 | Decay Prediction | ENH | X-184 | SPECCED | creative fatigue → refresh the content pack; ad PACKS as content are not fenced (P-128) |
 | G9-17 | Executive Summary | ENH | X-183 | SPECCED | the summary is content, gated by the pre-publish gate |
