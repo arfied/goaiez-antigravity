@@ -361,7 +361,7 @@ function waitForServer(url) {
         await setupBrowser.close();
 
         
-        const locationId = execSync('php artisan tinker --execute="echo App\\\\Models\\\\Location::first()->id;"').toString().trim();
+        const locationId = execSync('php artisan tinker --execute="echo App\\\\Models\\\\Location::withoutGlobalScopes()->first()->id;"').toString().trim();
         
         const staffBrowser = await chromium.launch();
         const staffContext = await staffBrowser.newContext();
