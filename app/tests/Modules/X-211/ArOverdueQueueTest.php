@@ -23,7 +23,7 @@ final class ArOverdueQueueTest extends TestCase
             $invoice = Invoice::create([
                 'business_id' => $business->id,
                 'invoice_number' => 'INV-Q-1',
-                'status' => 'due',
+                'status' => 'issued',
                 'due_date' => now()->subDays(10),
             ]);
             $invoiceId = (int) $invoice->id;
@@ -45,6 +45,38 @@ final class ArOverdueQueueTest extends TestCase
             $this->assertCount(1, $actions);
             $this->assertEquals('escalate_to_human', $actions->first()->action);
             $this->assertEquals('R211: Overdue invoice requires human resolution attempt before any suspension.', $actions->first()->reason);
+        });
+    }
+
+
+    public function test_listener_is_idempotent_when_processing_duplicate_events(): void
+    {
+        $business = Business::factory()->create();
+        $invoiceId = null;
+
+        Tenancy::actingAs((int) $business->id, function () use ($business, &$invoiceId) {
+            $invoice = Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-DUP-1',
+                'status' => 'issued',
+                'due_date' => now()->subDays(10),
+            ]);
+            $invoiceId = (int) $invoice->id;
+
+            config(['queue.default' => 'database']);
+
+            // Dispatch twice
+            Event::dispatch(new ArOverdue((int) $business->id, (int) $invoice->id, 10));
+            Event::dispatch(new ArOverdue((int) $business->id, (int) $invoice->id, 10));
+        });
+
+        Tenancy::forgetAll();
+        
+        $this->artisan('queue:work --stop-when-empty');
+
+        Tenancy::actingAs((int) $business->id, function () use ($business) {
+            $actions = ArDunningAction::where('business_id', $business->id)->get();
+            $this->assertCount(1, $actions, 'Should only create one action even if dispatched twice');
         });
     }
 }

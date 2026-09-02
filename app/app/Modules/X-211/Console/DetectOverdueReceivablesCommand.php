@@ -57,7 +57,7 @@ final class DetectOverdueReceivablesCommand extends Command
         foreach ($businesses as $business) {
             $dispatched += Tenancy::actingAs((int) $business->id, function () use ($business) {
                 $overdueInvoices = Invoice::where('due_date', '<', now()->toDateString())
-                    ->where('status', '!=', 'paid')
+                    ->where('status', 'issued')
                     ->get();
 
                 $localDispatched = 0;

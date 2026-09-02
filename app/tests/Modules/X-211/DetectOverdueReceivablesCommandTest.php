@@ -25,7 +25,7 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
             Invoice::create([
                 'business_id' => $business->id,
                 'invoice_number' => 'INV-TEST-AGE',
-                'status' => 'due',
+                'status' => 'issued',
                 'due_date' => now()->subDays(10),
             ]);
         });
@@ -50,7 +50,7 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
             Invoice::create([
                 'business_id' => $business->id,
                 'invoice_number' => 'INV-TEST-1',
-                'status' => 'due',
+                'status' => 'issued',
                 'due_date' => now()->subDays(5),
             ]);
         });
@@ -78,5 +78,33 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
             $actions = ArDunningAction::where('business_id', $business->id)->get();
             $this->assertCount(1, $actions, 'Command should be idempotent and not create duplicate actions.');
         });
+    }
+
+    public function test_ignores_draft_and_chases_issued(): void
+    {
+        Tenancy::forgetAll();
+        $business = Business::factory()->create();
+
+        Tenancy::actingAs((int) $business->id, function () use ($business) {
+            Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-DRAFT',
+                'status' => 'draft',
+                'due_date' => now()->subDays(10),
+            ]);
+            Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-ISSUED',
+                'status' => 'issued',
+                'due_date' => now()->subDays(10),
+            ]);
+        });
+        Tenancy::forgetAll();
+
+        Event::fake([ArOverdue::class]);
+
+        Artisan::call('x211:detect-overdue');
+
+        Event::assertDispatchedTimes(ArOverdue::class, 1);
     }
 }
