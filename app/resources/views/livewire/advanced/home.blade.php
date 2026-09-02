@@ -26,34 +26,34 @@
     <!-- Power Stats Grid -->
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Citation Health</dt>
-            <dd class="mt-1 text-3xl font-semibold text-ink">
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Citation Health</p>
+            <p class="mt-1 text-3xl font-semibold text-ink">
                 {{ $citationsCount > 0 ? round(($consistentCount / $citationsCount) * 100) : 0 }}%
-            </dd>
+            </p>
             <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 {{ $consistentCount }} / {{ $citationsCount }} Consistent Listings
             </div>
         </div>
 
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Local Map 3-Pack</dt>
-            <dd class="mt-1 text-3xl font-semibold text-emerald-600">
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Local Map 3-Pack</p>
+            <p class="mt-1 text-3xl font-semibold text-emerald-600">
                 #1.6 Avg
-            </dd>
+            </p>
             <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 89% top 3 dominance across 5mi catchment
             </div>
         </div>
 
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">AI Voice Receptionist</dt>
-            <dd class="mt-1 text-3xl font-semibold text-indigo-600">Active</dd>
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">AI Voice Receptionist</p>
+            <p class="mt-1 text-3xl font-semibold text-indigo-600">Active</p>
             <div class="mt-2 text-xs text-emerald-600 font-medium">24/7 Autonomous Triage</div>
         </div>
 
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">POS Review Webhooks</dt>
-            <dd class="mt-1 text-3xl font-semibold text-ink">Connected</dd>
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">POS Review Webhooks</p>
+            <p class="mt-1 text-3xl font-semibold text-ink">Connected</p>
             <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Stripe & Invoicing Active</div>
         </div>
     </div>
