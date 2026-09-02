@@ -27772,7 +27772,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G8-24 | Internal Cannibalization Scan | ENH | X-140 | embedding similarity before publish |
 | G8-25 | Internal Linking Graph | ENH | X-176 | named in the header |
 | G8-26 | Keyword Spotting Alerts | ENH | X-153 | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) |
-| G8-27 | Local Post Automation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended` |
+| G8-27 | Local Post Automation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended` · refuses: generating while `gbp.suspended` |
 | G8-28 | Local Visibility Sync | ENH | X-192 | named in the header |
 | G8-29 | Multi-Currency Natively | ENH | X-117 | §143–§144 — minor units, integers, no floats |
 | G8-30 | PageRank Sculpting | ENH | X-176 | nofollow on low-value internal links |
@@ -28043,7 +28043,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G12-08 | Automated LinkedIn Connection | ENH | X-196 | ⚠️ `FetchPolicy.authenticated=false` by default (P-078) |
 | G12-09 | Batch Approvals | ENH | X-202 | thirty graphics, one decision |
 | G12-10 | Best Time to Post | ENH | X-182 | from the tenant's own engagement history |
-| G12-11 | Bulk Google Post Generation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended`. ⚠️ DALL-E is corpus vocabulary — images are X-114/X-189 |
+| G12-11 | Bulk Google Post Generation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended`. ⚠️ DALL-E is corpus vocabulary — images are X-114/X-189 · refuses: generating while `gbp.suspended` |
 | G12-12 | Comment Auto-Reply | ENH | X-182 | the reply threads into the Conversation (X-01); R20 — the agent takes every inbound |
 | G12-13 | Competitor Content Inspiration | ENH | X-184 | a RECOMMEND, never an auto-post |
 | G12-14 | Competitor Content Theft Alert | ENH | X-191 | named in the header |

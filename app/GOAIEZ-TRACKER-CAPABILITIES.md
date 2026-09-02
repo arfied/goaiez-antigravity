@@ -467,7 +467,7 @@
 | G8-24 | Internal Cannibalization Scan | ENH | X-140 | SPECCED | embedding similarity before publish |
 | G8-25 | Internal Linking Graph | ENH | X-176 | SPECCED | named in the header |
 | G8-26 | Keyword Spotting Alerts | ENH | X-153 | SPECCED | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) |
-| G8-27 | Local Post Automation | ENH | X-177 | SPECCED | named in the header;  held while `gbp.suspended` |
+| G8-27 | Local Post Automation | ENH | X-177 | SPECCED | named in the header;  held while `gbp.suspended` · refuses: generating while `gbp.suspended` |
 | G8-28 | Local Visibility Sync | ENH | X-192 | SPECCED | named in the header |
 | G8-29 | Multi-Currency Natively | ENH | X-117 | SPECCED | §143–§144 — minor units, integers, no floats |
 | G8-30 | PageRank Sculpting | ENH | X-176 | SPECCED | nofollow on low-value internal links |
@@ -637,7 +637,7 @@
 | G12-08 | Automated LinkedIn Connection | ENH | X-196 | SPECCED | `FetchPolicy.authenticated=false` by default (P-078) |
 | G12-09 | Batch Approvals | ENH | X-202 | SPECCED | thirty graphics, one decision |
 | G12-10 | Best Time to Post | ENH | X-182 | SPECCED | from the tenant's own engagement history |
-| G12-11 | Bulk Google Post Generation | ENH | X-177 | SPECCED | named in the header;  held while `gbp.suspended`.  DALL-E is corpus vocabulary — images are X-114/X-189 |
+| G12-11 | Bulk Google Post Generation | ENH | X-177 | SPECCED | named in the header;  held while `gbp.suspended`.  DALL-E is corpus vocabulary — images are X-114/X-189 · refuses: generating while `gbp.suspended` |
 | G12-12 | Comment Auto-Reply | ENH | X-182 | SPECCED | the reply threads into the Conversation (X-01); R20 — the agent takes every inbound |
 | G12-13 | Competitor Content Inspiration | ENH | X-184 | SPECCED | a RECOMMEND, never an auto-post |
 | G12-14 | Competitor Content Theft Alert | ENH | X-191 | SPECCED | named in the header |

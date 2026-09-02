@@ -34,10 +34,10 @@ return [
     'G8-18' => 'named in the header',
 
     // status: SPECCED
-    'G8-27' => 'named in the header;  held while gbp.suspended',
+    'G8-27' => 'named in the header;  held while gbp.suspended · refuses: generating while gbp.suspended',
 
     // status: SPECCED
-    'G12-11' => 'named in the header;  held while gbp.suspended.  DALL-E is corpus vocabulary — images are X-114/X-189',
+    'G12-11' => 'named in the header;  held while gbp.suspended.  DALL-E is corpus vocabulary — images are X-114/X-189 · refuses: generating while gbp.suspended',
 
     // status: SPECCED
     'G12-31' => 'named in the header',
