@@ -300,12 +300,12 @@ trait JourneyHarness
         $process = new Process([
             '/usr/bin/pg_dump', '-Fc',
             '-h', env('DB_HOST', '127.0.0.1'),
-            '-U', env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+            '-U', env('DB_MIGRATE_USERNAME'),
             '--enable-row-security',
             '-f', $path,
             'goaiez_antig_dev',
         ]);
-        $process->setEnv(['PGPASSWORD' => env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')]);
+        $process->setEnv(['PGPASSWORD' => env('DB_MIGRATE_PASSWORD')]);
         $process->mustRun();
 
         return ['backup_id' => $id, 'path' => $path];
@@ -329,8 +329,8 @@ trait JourneyHarness
 
         $pdo = new \PDO(
             'pgsql:host='.env('DB_HOST', '127.0.0.1').';port=5432;dbname=postgres',
-            env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
-            env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')
+            env('DB_MIGRATE_USERNAME'),
+            env('DB_MIGRATE_PASSWORD')
         );
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
@@ -340,25 +340,25 @@ trait JourneyHarness
             $process = new Process([
                 '/usr/bin/pg_restore',
                 '-h', env('DB_HOST', '127.0.0.1'),
-                '-U', env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
+                '-U', env('DB_MIGRATE_USERNAME'),
                 '-d', $scratchDb,
                 '--no-owner',
                 '--no-privileges',
                 $backup['path'],
             ]);
-            $process->setEnv(['PGPASSWORD' => env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')]);
+            $process->setEnv(['PGPASSWORD' => env('DB_MIGRATE_PASSWORD')]);
             $process->run();
 
             $devPdo = new \PDO(
                 'pgsql:host='.env('DB_HOST', '127.0.0.1').';port=5432;dbname=goaiez_antig_dev',
-                env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
-                env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')
+                env('DB_MIGRATE_USERNAME'),
+                env('DB_MIGRATE_PASSWORD')
             );
 
             $scratchPdo = new \PDO(
                 'pgsql:host='.env('DB_HOST', '127.0.0.1').";port=5432;dbname={$scratchDb}",
-                env('DB_MIGRATE_USERNAME', 'goaiez_owner'),
-                env('DB_MIGRATE_PASSWORD', 'd0326e6831320a9ea267dc91835e4817cce1ff9f')
+                env('DB_MIGRATE_USERNAME'),
+                env('DB_MIGRATE_PASSWORD')
             );
 
             $devTables = $devPdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")->fetchAll(\PDO::FETCH_COLUMN);
