@@ -28,5 +28,9 @@ return [
         'email' => 'Email',
         'phone' => 'Phone number',
     ],
+    'thanks' => [
+        'heading' => 'Thank you!',
+        'body' => 'Your feedback has been received.',
+    ],
     'submit' => 'Submit Feedback',
 ];
