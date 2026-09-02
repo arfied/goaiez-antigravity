@@ -21,13 +21,13 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: 
     'N-027' => 'no cap → cannot save · margin guard NAMES every below-cost service · no stacking by default · the AI honours and never invents · issuer_scope never crosses · incrementality holdout mandatory',
 
-    // status:
+    // status: 
     'N-028' => '',
 
-    // status:
+    // status: 
     'N-030' => '',
 
     // status: SPECCED
@@ -46,5 +46,5 @@ return [
     'G7-47' => '§226.2 — a cohort rate is a ROW; an existing tenant\'s rate never changes without a NOTIFIED action · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a cohort rate is a ROW; an existing rate never changes without a NOTIFIED action — asserted',
 
     // status: SPECCED
-    'G15-21' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34 overrides: cancel stays ONE TAP; the save-offer renders beside it',
+    'G15-21' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34 overrides: cancel stays ONE TAP; the save-offer renders beside it · refuses: anything but one tap to cancel',
 ];
