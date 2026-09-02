@@ -371,7 +371,10 @@ trait JourneyHarness
     {
         return Tenancy::actingAs($person['business_id'], function () use ($person) {
             $inboundMessage = DB::table('inbound_messages')->latest('id')->first();
-            $receiptTime = $inboundMessage ? $inboundMessage->created_at : now()->subSeconds(2);
+            if (! $inboundMessage) {
+                $this->fail('UNRESOLVED: No inbound message was recorded.');
+            }
+            $receiptTime = $inboundMessage->created_at;
 
             return OutreachMessage::where('business_id', $person['business_id'])
                 ->where('customer_id', $person['id'])
