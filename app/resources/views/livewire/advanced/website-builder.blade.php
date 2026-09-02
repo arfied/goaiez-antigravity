@@ -207,7 +207,7 @@
                                         <span class="text-base">{{ $service['icon'] }}</span>
                                         <div>
                                             <div class="font-bold text-xs text-gray-900">{{ $service['title'] }}</div>
-                                            <div class="text-[10px] text-gray-500">{{ $service['desc'] }}</div>
+                                            <div class="text-[10px] text-gray-600">{{ $service['desc'] }}</div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -338,7 +338,7 @@
                                     <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
                                         <div class="text-xl mb-1">{{ $service['icon'] }}</div>
                                         <div class="font-bold text-xs text-gray-900">{{ $service['title'] }}</div>
-                                        <div class="text-[11px] text-gray-500 mt-1">{{ $service['desc'] }}</div>
+                                        <div class="text-[11px] text-gray-600 mt-1">{{ $service['desc'] }}</div>
                                     </div>
                                 @endforeach
                             </div>
