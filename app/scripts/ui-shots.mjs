@@ -361,7 +361,7 @@ function waitForServer(url) {
         await setupBrowser.close();
 
         
-        const locationId = fs.readFileSync('storage/app/location_id.txt', 'utf8').trim();
+        const locationId = execSync('php artisan tinker --execute="echo App\\\\Models\\\\Location::first()->id;"').toString().trim();
         
         const staffBrowser = await chromium.launch();
         const staffContext = await staffBrowser.newContext();
@@ -412,9 +412,22 @@ function waitForServer(url) {
         await Promise.all([staffMobilePage.waitForNavigation(), staffMobilePage.click('form:has(#password) button[type="submit"]')]);
         await staffMobilePage.waitForLoadState('networkidle');
         if (staffMobilePage.url().includes('two-factor-challenge')) {
-            await staffMobilePage.fill('#recovery_code', '12345-67890');
+            await staffMobilePage.fill('#recovery_code', '09876-54321');
             await Promise.all([staffMobilePage.waitForNavigation(), staffMobilePage.click('form:has(#recovery_code) button[type="submit"]')]);
             await staffMobilePage.waitForLoadState('networkidle');
+        }
+
+        const urlAfterLoginMobile = staffMobilePage.url();
+        if (urlAfterLoginMobile.endsWith('/login') || urlAfterLoginMobile.includes('two-factor-challenge')) {
+            const html = await staffMobilePage.content();
+            fs.writeFileSync(path.join(outputDir, 'staff-login-FAILED@390.html'), html);
+            if (shouldCapture('staff-login-FAILED@390')) {
+                await staffMobilePage.screenshot({ path: path.join(outputDir, 'staff-login-FAILED@390.png'), fullPage: true });
+                await runAxe(staffMobilePage, 'staff-login-FAILED@390', outputDir);
+            }
+            console.error("Mobile staff login failed. URL is " + urlAfterLoginMobile);
+            await staffBrowser.close();
+            process.exit(1);
         }
 
         for (const screen of staffScreens) {
