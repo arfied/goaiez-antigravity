@@ -18,12 +18,9 @@ final class EdgeDeployAction
         int $businessId,
         int $edgeZoneId,
         int $measuredTtfbMs = 120,
-        int $speedBudgetMs = 1500,
-        int $pageId = 0,
-        string $commitId = '',
-        string $businessName = ''
+        int $speedBudgetMs = 1500
     ): array {
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $pageId, $commitId, $businessName, $measuredTtfbMs, $speedBudgetMs) {
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -82,37 +79,11 @@ final class EdgeDeployAction
                 deployHash: $deployHash
             ));
 
-            $features = [
-                'pixel' => false,
-                'chat' => true,
-                'form_capture' => true,
-                'dni' => true,
-                'seo' => false, // Not provided by any module
-                'schema' => false,
-                'ssl' => $zone->has_valid_ssl,
-            ];
-
-            if ($zone->domain_name !== null && $zone->domain_name !== '') {
-                $_pixelResult = app(\App\Modules\X110\Actions\PixelInstallAction::class)->handle($businessId, $zone->domain_name);
-                $features['pixel'] = true;
-            }
-
-            if ($pageId > 0 && $commitId !== '') {
-                $_schemaResult = app(\App\Modules\X176\Actions\SchemaRenderAction::class)->handle($businessId, $pageId, $businessName, $commitId);
-                $features['schema'] = true;
-            }
-
-            \Illuminate\Support\Facades\Storage::disk('local')->put("publish_{$deployHash}.json", json_encode([
-                'deploy_id' => $deployHash,
-                'features' => $features,
-            ]));
-
             return [
                 'status' => 'deployed',
                 'deployment_id' => $deployment->id,
                 'deploy_hash' => $deployHash,
                 'measured_ttfb_ms' => $measuredTtfbMs,
-                'features' => $features,
             ];
         });
     }

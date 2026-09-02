@@ -44,9 +44,7 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        $owner = \App\Models\User::factory()->create();
-        $business = app(\App\Services\TenantProvisioner::class)->provision($owner);
-        return $business->toArray();
+        throw $this->todo('provision a real tenant and a real carrier number');
     }
 
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
@@ -281,28 +279,7 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function publishSite(array $tenant): array
     {
-        $page = \App\Modules\X103\Models\Page::create([
-            'business_id' => $tenant['id'],
-            'title' => 'Home',
-            'slug' => 'home',
-        ]);
-
-        $site = app(\App\Modules\X103\Actions\SitePublishAction::class)
-            ->handle($tenant['id'], $page->id, []);
-
-        $zone = app(\App\Modules\X157\Actions\EdgeProvisionAction::class)
-            ->handle($tenant['id'], 'test.com');
-
-        $deploy = app(\App\Modules\X157\Actions\EdgeDeployAction::class)->handle(
-            businessId: $tenant['id'],
-            edgeZoneId: $zone->id,
-            pageId: $page->id,
-            commitId: $site['commit_id'],
-            businessName: $tenant['name']
-        );
-
-        $json = \Illuminate\Support\Facades\Storage::disk('local')->get("publish_{$deploy['deploy_hash']}.json");
-        return json_decode($json, true);
+        throw $this->todo('publish a real site and report which of the seven features shipped');
     }
 
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
