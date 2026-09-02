@@ -63,6 +63,12 @@ function waitForServer(url) {
         fs.mkdirSync(outputDir, { recursive: true });
         
         // Unauthenticated screens
+        await page.setViewportSize({ width: 1280, height: 720 });
+
+        await page.goto(`${baseUrl}/`);
+        await page.waitForLoadState('networkidle');
+        await page.screenshot({ path: path.join(outputDir, 'home.png'), fullPage: true });
+
         await page.goto(`${baseUrl}/login`);
         await page.waitForLoadState('networkidle');
         await page.screenshot({ path: path.join(outputDir, 'login.png'), fullPage: true });
@@ -85,10 +91,17 @@ function waitForServer(url) {
         
         // Screens to capture
         const screens = [
-            { name: 'home', path: '/home' },
+            { name: 'account-home', path: '/home' },
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },
-            { name: 'website-builder', path: '/advanced/website-builder' }
+            { name: 'website-builder', path: '/advanced/website-builder' },
+            { name: 'account-inbox', path: '/account/inbox' },
+            { name: 'account-customers', path: '/account/customers' },
+            { name: 'account-messages', path: '/account/messages' },
+            { name: 'account-plan', path: '/account/plan' },
+            { name: 'account-support', path: '/account/support' },
+            { name: 'account-connections', path: '/account/connections' },
+            { name: 'advanced-home', path: '/advanced' }
         ];
 
         for (const screen of screens) {
@@ -98,6 +111,8 @@ function waitForServer(url) {
         }
         
         await browser.close();
+
+
     } finally {
         console.log("Stopping server...");
         serverProcess.kill();
