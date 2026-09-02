@@ -90,7 +90,7 @@
 | G2-11 | Automated Trigger | ENH | X-183 | SPECCED | R36's case-study machine — double consent, never automatic publication |
 | G2-12 | Blackout Dates | ENH (split) | X-108 | SPECCED | split: the blackout calendar is X-108's *("blackouts and holiday overrides")*; the PTO request-and-approval… |
 | G2-13 | Calendar Auto-Block | ENH | X-108 | SPECCED | out-of-office is named in the header |
-| G2-14 | Campaign ML Optimization | ENH | X-186 | SPECCED | best send time from the tenant's own history; still Marketing class, still inside the window (P-063) |
+| G2-14 | Campaign ML Optimization | ENH | X-186 | SPECCED | refuses to schedule a campaign send time outside the tenant's permitted marketing window, even if the ML model identifies a better time. |
 | G2-15 | Collision Detection | RE-HOME→G15 | X-113 | SPECCED | overlapping time-off requests |
 | G2-16 | Collision Detection | ENH | X-01 | SPECCED | "Rep A is typing" presence on the shared thread |
 | G2-17 | Conditional Logic | ENH | X-155 | SPECCED | multi-step form logic |
@@ -557,7 +557,7 @@
 | G10-22 | Latency Guardrails | ENH | C-Ai | SPECCED | TTFT demotion in the model waterfall |
 | G10-23 | Legal & Privacy Engine | KILLED | — | SPECCED | P-167 · Law 122 — eight EMPTY admin slots, nothing authored, no generated ToS or privacy copy |
 | G10-24 | Legally Binding Signatures | ENH | X-172 | SPECCED | the signature pad lives in the customer portal; see F-19 |
-| G10-25 | List Scrubbing | ENH | X-186 | SPECCED | scrubbed against suppression fresh as of each send |
+| G10-25 | List Scrubbing | ENH | X-186 | SPECCED | refuses to send to any contact that appears on the global suppression list refreshed at the exact moment of dispatch. |
 | G10-26 | Non-Standard Terms | ENH | X-202 | SPECCED | a term outside the standard routes for a decision |
 | ⛔ FENCED | ~~Policy Enforcement (payroll)~~ (G10-27) | **⛔ FENCED T677** | **—** | FENCED | §220 — ⛔⛔ **NO PAYROLL. "The cleanest way to never produce a wrong wage is to never produce a wage."** The export ships HOURS and COMMISSION-EARNED only. |
 | G10-28 | Policy Escalation | ENH | C-Mail | SPECCED | refuses to recommend or auto-escalate to p=reject if less than 95% of outbound mail passes DKIM and SPF over a 7-day trailing window. |
@@ -581,7 +581,7 @@
 | # | Capability | BL | Parent / X | Status | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | G11-01 | Abandonment Tracking | ENH | X-155 | SPECCED | the abandon point, with the pixel |
-| G11-02 | Auto-Resend to Unopens | ENH | X-186 | SPECCED | named in the header |
+| G11-02 | Auto-Resend to Unopens | ENH | X-186 | SPECCED | refuses to auto-resend to unopens if the original dispatch occurred less than 24 hours prior, preventing spam complaints. |
 | G11-03 | Automated DNS Setup | ENH | C-Mail | SPECCED | it SHOWS the exact missing record with a copy button — it never asks them to configure SPF |
 | G11-04 | Automated Onboarding | RE-HOME→G15 | X-113 | SPECCED | new-hire provisioning |
 | G11-05 | Automated Pausing | ENH | C-Mail | SPECCED | R17 halt seeds — 0.10% complaint or 250 bounces, the campaign family, never the thread |
@@ -603,14 +603,14 @@
 | G11-21 | Newsletter Distillation | ENH | X-140 | SPECCED | named in the header |
 | G11-22 | Omni-Channel Inbox Sync | ENH | X-01 | SPECCED | one polymorphic `Conversation` (X-121's) across every channel |
 | G11-23 | Omni-Channel Messaging | ENH | X-01 | SPECCED | = the row above; one spec |
-| G11-24 | Omnichannel Campaigns | ENH | X-186 | SPECCED | named in the header;  every send from there is Marketing class from the CALLER |
+| G11-24 | Omnichannel Campaigns | ENH | X-186 | SPECCED | refuses to dispatch omnichannel messages if the underlying channel lacks an opt-in for marketing class communications. |
 | G11-25 | One-Click Dispositions | ENH | X-200 | SPECCED | refuses to accept a disposition that is not in the campaign's closed set, rejecting the API call instead of falling back to default. |
 | G11-26 | Payload Validation | ENH | X-122 | SPECCED | strict JSON-schema validation; a missing field is refused, never defaulted |
 | G11-27 | Promo Email Draft | RE-HOME→G16 | X-158 | SPECCED | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | SPECCED | named in the header — any reply stops the sequence (P-075) |
 | G11-29 | RSS-to-Email | ENH | C-Mail | SPECCED | refuses to send an RSS broadcast if the feed's SSL certificate is invalid or the fetch times out, preventing blank dispatches. |
 | G11-30 | Seed Audience | KILLED | — | SPECCED | §44 · P-128 — LTV seed lists pushed to ad platforms is ad management |
-| G11-31 | Send-Time Optimization | ENH | X-186 | SPECCED | named in the header; still inside the marketing window (P-063) |
+| G11-31 | Send-Time Optimization | ENH | X-186 | SPECCED | refuses to optimize send times beyond the legal 8 AM to 8 PM local window of the recipient. |
 | G11-32 | SMS Deliverability Fallback | ENH | C-Sms | SPECCED | T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier fil… |
 | G11-33 | SMS/Email Blackholing | ENH | X-161 | SPECCED | the sandbox intercepts every outbound; `is_mock` end to end |
 | G11-34 | Sniper Outreach | ENH | X-191 | SPECCED | the guest-post pitch that names something TRUE about the page |
@@ -654,7 +654,7 @@
 | G12-25 | Live Human Interception | ENH | C-Agent | SPECCED | negative-sentiment handoff; the takeover latch is X-01's (R21) |
 | G12-26 | Multi-Persona Profiles | ENH | X-182 | SPECCED | a persona per channel; the lexicon still binds (X-154) |
 | G12-27 | Personalized Icebreakers | ENH | X-135 | SPECCED | every icebreaker names something TRUE (P-146) |
-| G12-28 | Post-Purchase Exclusion | ENH | X-186 | SPECCED | a won deal stops the sequence (P-075);  the ad-audience purge half is FENCED (§44) |
+| G12-28 | Post-Purchase Exclusion | ENH | X-186 | SPECCED | refuses to keep a contact in the sequence if they match a won deal condition, immediately purging them from the audience. |
 | G12-29 | Pre-Publish Gate | ENH | X-183 | SPECCED | named in the header — cannibalisation · SAMPLE prices never rendered · nothing contradicts the pricebook |
 | G12-30 | Proof A/B Testing | ENH | X-185 | SPECCED | fleet evidence, never four data points at one tenant |
 | G12-31 | Q&A Seeding | ENH | X-177 | SPECCED | named in the header |

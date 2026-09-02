@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G2-14' => 'best send time from the tenant\'s own history; still Marketing class, still inside the window (P-063)',
+    'G2-14' => 'refuses to schedule a campaign send time outside the tenant\'s permitted marketing window, even if the ML model identifies a better time.',
 
     // status: SPECCED
     'G5-12' => 'still one mixed campaign (P-074)',
@@ -31,25 +31,25 @@ return [
     'G5-14' => 'the Zapier/Sheets hop is corpus vocabulary; ours is native (X-123)',
 
     // status: SPECCED
-    'G10-25' => 'scrubbed against suppression fresh as of each send',
+    'G10-25' => 'refuses to send to any contact that appears on the global suppression list refreshed at the exact moment of dispatch.',
 
     // status: SPECCED
-    'G11-02' => 'named in the header',
+    'G11-02' => 'refuses to auto-resend to unopens if the original dispatch occurred less than 24 hours prior, preventing spam complaints.',
 
     // status: SPECCED
-    'G11-24' => 'named in the header;  every send from there is Marketing class from the CALLER',
+    'G11-24' => 'refuses to dispatch omnichannel messages if the underlying channel lacks an opt-in for marketing class communications.',
 
     // status: SPECCED
     'G11-28' => 'named in the header — any reply stops the sequence (P-075)',
 
     // status: SPECCED
-    'G11-31' => 'named in the header; still inside the marketing window (P-063)',
+    'G11-31' => 'refuses to optimize send times beyond the legal 8 AM to 8 PM local window of the recipient.',
 
     // status: SPECCED
     'G12-18' => 'blocks swap on the Person\'s own tags',
 
     // status: SPECCED
-    'G12-28' => 'a won deal stops the sequence (P-075);  the ad-audience purge half is FENCED (§44)',
+    'G12-28' => 'refuses to keep a contact in the sequence if they match a won deal condition, immediately purging them from the audience.',
 
     // status: SPECCED
     'G17-20' => 'a download drops into a sequence; the lane is declared, ConsentService decides',

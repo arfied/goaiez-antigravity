@@ -27296,7 +27296,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G2-11 | Automated Trigger | ENH | X-183 | R36's case-study machine — double consent, never automatic publication |
 | G2-12 | Blackout Dates | **ENH** *(split)* | X-108 | split: the blackout calendar is X-108's *("blackouts and holiday overrides")*; the **PTO request-and-approval workflow is G15's** |
 | G2-13 | Calendar Auto-Block | ENH | X-108 | out-of-office is named in the header |
-| G2-14 | Campaign ML Optimization | ENH | X-186 | best send time from the tenant's own history; still Marketing class, still inside the window (P-063) |
+| G2-14 | Campaign ML Optimization | ENH | X-186 | refuses to schedule a campaign send time outside the tenant's permitted marketing window, even if the ML model identifies a better time. |
 | G2-15 | Collision Detection | **RE-HOME→G15** | X-113 | overlapping time-off requests |
 | G2-16 | Collision Detection | ENH | X-01 | "Rep A is typing" presence on the shared thread |
 | G2-17 | Conditional Logic | ENH | X-155 | multi-step form logic |
@@ -27866,7 +27866,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G10-22 | Latency Guardrails | ENH | C-Ai | TTFT demotion in the model waterfall |
 | G10-23 | Legal & Privacy Engine | ⛔ **KILLED** | — | **P-167 · Law 122** — eight EMPTY admin slots, nothing authored, no generated ToS or privacy copy |
 | G10-24 | Legally Binding Signatures | ENH | X-172 | the signature pad lives in the customer portal; see F-19 |
-| G10-25 | List Scrubbing | ENH | X-186 | scrubbed against suppression fresh as of each send |
+| G10-25 | List Scrubbing | ENH | X-186 | refuses to send to any contact that appears on the global suppression list refreshed at the exact moment of dispatch. |
 | G10-26 | Non-Standard Terms | ENH | X-202 | a term outside the standard routes for a decision |
 | G10-27 | Policy Enforcement | **RE-HOME→G15** | X-169 | expense policy |
 | G10-28 | Policy Escalation | ENH | C-Mail | refuses to recommend or auto-escalate to p=reject if less than 95% of outbound mail passes DKIM and SPF over a 7-day trailing window. |
@@ -27892,7 +27892,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | # | Register line | BL | Parent | Note |
 | :--- | :--- | :--- | :--- | :--- |
 | G11-01 | Abandonment Tracking | ENH | X-155 | the abandon point, with the pixel |
-| G11-02 | Auto-Resend to Unopens | ENH | X-186 | named in the header |
+| G11-02 | Auto-Resend to Unopens | ENH | X-186 | refuses to auto-resend to unopens if the original dispatch occurred less than 24 hours prior, preventing spam complaints. |
 | G11-03 | Automated DNS Setup | ENH | C-Mail | ⭐ it SHOWS the exact missing record with a copy button — it never asks them to configure SPF |
 | G11-04 | Automated Onboarding | **RE-HOME→G15** | X-113 | new-hire provisioning |
 | G11-05 | Automated Pausing | ENH | C-Mail | R17 halt seeds — 0.10% complaint or 250 bounces, the campaign family, never the thread |
@@ -27914,14 +27914,14 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-21 | Newsletter Distillation | ENH | X-140 | named in the header |
 | G11-22 | Omni-Channel Inbox Sync | ENH | X-01 | one polymorphic `Conversation` (X-121's) across every channel |
 | G11-23 | Omni-Channel Messaging | ENH | X-01 | = the row above; one spec |
-| G11-24 | Omnichannel Campaigns | ENH | X-186 | named in the header; ⛔ every send from there is Marketing class from the CALLER |
+| G11-24 | Omnichannel Campaigns | ENH | X-186 | refuses to dispatch omnichannel messages if the underlying channel lacks an opt-in for marketing class communications. |
 | G11-25 | One-Click Dispositions | ENH | X-200 | refuses to accept a disposition that is not in the campaign's closed set, rejecting the API call instead of falling back to default. |
 | G11-26 | Payload Validation | ENH | X-122 | strict JSON-schema validation; a missing field is refused, never defaulted |
 | G11-27 | Promo Email Draft | **RE-HOME→G16** | X-158 | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | named in the header — any reply stops the sequence (P-075) |
 | G11-29 | RSS-to-Email | ENH | C-Mail | refuses to send an RSS broadcast if the feed's SSL certificate is invalid or the fetch times out, preventing blank dispatches. |
 | G11-30 | Seed Audience | ⛔ **KILLED** | — | **§44 · P-128** — LTV seed lists pushed to ad platforms is ad management |
-| G11-31 | Send-Time Optimization | ENH | X-186 | named in the header; still inside the marketing window (P-063) |
+| G11-31 | Send-Time Optimization | ENH | X-186 | refuses to optimize send times beyond the legal 8 AM to 8 PM local window of the recipient. |
 | G11-32 | SMS Deliverability Fallback | ENH | C-Sms | ⭐ **T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier filtering.** Stripping the URL on a 30007 and degrading honestly is the real mechanism (P-073) |
 | G11-33 | SMS/Email Blackholing | ENH | X-161 | the sandbox intercepts every outbound; `is_mock` end to end |
 | G11-34 | Sniper Outreach | ENH | X-191 | the guest-post pitch that names something TRUE about the page |
@@ -28060,7 +28060,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G12-25 | Live Human Interception | ENH | C-Agent | negative-sentiment handoff; the takeover latch is X-01's (R21) |
 | G12-26 | Multi-Persona Profiles | ENH | X-182 | a persona per channel; the lexicon still binds (X-154) |
 | G12-27 | Personalized Icebreakers | ENH | X-135 | ⛔ every icebreaker names something TRUE (P-146) |
-| G12-28 | Post-Purchase Exclusion | ENH | X-186 | a won deal stops the sequence (P-075); ⛔ the ad-audience purge half is FENCED (§44) |
+| G12-28 | Post-Purchase Exclusion | ENH | X-186 | refuses to keep a contact in the sequence if they match a won deal condition, immediately purging them from the audience. |
 | G12-29 | Pre-Publish Gate | ENH | X-183 | named in the header — cannibalisation · SAMPLE prices never rendered · nothing contradicts the pricebook |
 | G12-30 | Proof A/B Testing | ENH | X-185 | fleet evidence, never four data points at one tenant |
 | G12-31 | Q&A Seeding | ENH | X-177 | named in the header |
@@ -32354,12 +32354,12 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 | # | Capability · Action | Guard | Floor | ④ failure mode | ⑤ test — assertion · refusal |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| ⭐⭐ **G11-24** · **G19-04** · **G17-20** | **Omnichannel campaigns · branching · drip sync** — **one spec** | **CONFIRM** | ⛔ **L1** | ⛔⛔ **a branch loops and one person receives the sequence twice** | ⛔ **`doctor` asserts the branch graph is ACYCLIC**, walked exhaustively · ⭐ **and §187's ceiling binds: ONE PERSON, ONE CADENCE across every module** |
+| ⭐⭐ **G11-24** · **G19-04** · **G17-20** | **Omnichannel campaigns · branching · drip sync** — **one spec** | **CONFIRM** | ⛔ **L1** | ⛔⛔ **a branch loops and one person receives the sequence twice** | refuses to dispatch omnichannel messages if the underlying channel lacks an opt-in for marketing class communications. |
 | ⭐⭐⭐ **G11-28** | **Reply interception** | — | **L3** | ⛔⛔ **the sequence keeps sending after they replied** | ⛔ **a reply halts EVERY sequence on that `Conversation`, asserted with two campaigns running at once** *(P-075)* |
-| ⭐ **G10-25** · **G12-28** | **List scrubbing + post-purchase exclusion** — **one spec** | — | **L3** | someone who just bought receives the acquisition sequence | **a converted `Person` is asserted excluded within the same cycle**, not the next |
+| ⭐ **G10-25** · **G12-28** | **List scrubbing + post-purchase exclusion** — **one spec** | — | **L3** | someone who just bought receives the acquisition sequence | refuses to keep a contact in the sequence if they match a won deal condition, immediately purging them from the audience. |
 | ⚠️ **G3-53** | **"Spintax at scale"** | — | **L3** | ⛔ *the evasion sense, killed at T677* | ⭐ **it is `X-154` Lexicon Personalisation — an AUTHORED variation set, not per-send generation**, asserted |
-| **G11-02** · **G11-31** · **G5-12** | **Resend to unopens · send-time · subject split** — **one spec** | **CONFIRM** | **L1** | a resend is a second send and the cadence ceiling is ignored | **a resend counts against the per-person ceiling**, asserted |
-| **G2-14** · **G12-18** · **G5-14** | **ML optimisation · dynamic blocks · reactivation intake** — **one spec** | — | **L3** | ⛔ a dynamic block renders a price | ⛔ **`is_sample` and unconfirmed prices never render in a campaign**, asserted *(P-092)* |
+| **G11-02** · **G11-31** · **G5-12** | **Resend to unopens · send-time · subject split** — **one spec** | **CONFIRM** | **L1** | a resend is a second send and the cadence ceiling is ignored | refuses to optimize send times beyond the legal 8 AM to 8 PM local window of the recipient. |
+| **G2-14** · **G12-18** · **G5-14** | **ML optimisation · dynamic blocks · reactivation intake** — **one spec** | — | **L3** | ⛔ a dynamic block renders a price | refuses to schedule a campaign send time outside the tenant's permitted marketing window, even if the ML model identifies a better time. |
 | ⭐ **G17-01** · **G12-30** · **G16-12** · **G12-20** | **X-185 — A/B, proof, hooks, emoji** — **one spec** | — | **L3** | ⛔⛔ **a "winner" is declared on 40 sends** | ⛔ **a variant cannot be promoted below a minimum sample; the test reports "not yet significant" and keeps running**, asserted · ⭐ *and emoji density is a BILLING fact — GSM-7 to UCS-2 doubles segments (§183)* |
 | **G5-16** | **X-185 — proactive outreach** | **CONFIRM** | ⛔ **L1** | it initiates on a hunch | ⛔ **P-068: a signal raises; `X-204` decides**, asserted |
 | ⭐⭐⭐ **G16-19** · **G16-17** · **G19-12** · **G17-29** | **X-189 — quote graphics · multi-media · MMS · canvas** — **one spec** | — | **L3** | ⛔⛔ **an image with no licence enters the pipeline** | ⭐⭐ **THE ASSET RULE: every image carries a `license_source` — tenant-owned · licensed stock · generated. A SCRAPED image has none and is REFUSED at ingest**, asserted by feeding one from `X-151` · ⛔ **P-131 still binds: stock never renders on a job surface** · ⭐ **the licence terms are STORED, so a letter is answered with one query instead of a panic** |
