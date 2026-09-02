@@ -3,13 +3,13 @@
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs sm:text-sm">
-                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Advanced</a></li>
-                    <li class="text-gray-400">/</li>
-                    <li class="text-gray-500 dark:text-gray-400">AI Website & Funnel Builder</li>
+                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-600 hover:underline">Advanced</a></li>
+                    <li class="text-ink-3">/</li>
+                    <li class="text-ink-2">AI Website & Funnel Builder</li>
                 </ol>
             </nav>
-            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Autonomous Local Website & Funnel Builder <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
-            <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">AI-generated landing pages with instant SMS lead dispatch, interactive before/after proof, and live reviews.</p>
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-ink">Autonomous Local Website & Funnel Builder <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
+            <p class="mt-1 text-xs sm:text-sm text-ink-2">AI-generated landing pages with instant SMS lead dispatch, interactive before/after proof, and live reviews.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4 gap-2">
             <button wire:click="publishSite" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition">
@@ -45,21 +45,21 @@
     </div>
 
     @if ($aiNotification)
-        <div class="mb-6 p-4 rounded-md bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 text-indigo-900 dark:text-indigo-200 text-xs sm:text-sm flex items-center justify-between">
+        <div class="mb-6 p-4 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $aiNotification }}</span>
             <button wire:click="$set('aiNotification', null)" class="text-indigo-600 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
     @if ($leadDispatchNotification)
-        <div class="mb-6 p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between">
+        <div class="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $leadDispatchNotification }}</span>
             <button wire:click="$set('leadDispatchNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
     @if ($publishNotification)
-        <div class="mb-6 p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm flex items-center justify-between">
+        <div class="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $publishNotification }}</span>
             <button wire:click="$set('publishNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
         </div>
@@ -70,9 +70,9 @@
         <!-- Editor Controls (Left 4 cols) -->
         <div class="lg:col-span-4 space-y-5">
             <!-- Template & Industry -->
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-5 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">Industry Template</h3>
-                <select wire:model.live="template" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+            <div class="bg-card shadow-sm rounded-lg p-4 sm:p-5 border border-rule">
+                <h3 class="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider mb-2">Industry Template</h3>
+                <select wire:model.live="template" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                     <option value="modern_service">Modern Local Services (Contractors & Pro Services)</option>
                     <option value="healthcare_clean">Clean Medical / Dental / Wellness Clinic</option>
                     <option value="bold_contractor">Bold Trade Specialist (HVAC, Roofing, Plumbing)</option>
@@ -81,58 +81,58 @@
             </div>
 
             <!-- Content Customizer -->
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-5 border border-gray-200 dark:border-gray-700 space-y-3.5">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Hero Section & Copy</h3>
+            <div class="bg-card shadow-sm rounded-lg p-4 sm:p-5 border border-rule space-y-3.5">
+                <h3 class="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider">Hero Section & Copy</h3>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Main Headline</label>
-                    <input type="text" wire:model.live.debounce.200ms="headline" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+                    <label class="block text-xs font-semibold text-ink-2 mb-1">Main Headline</label>
+                    <input type="text" wire:model.live.debounce.200ms="headline" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Subheadline Description</label>
-                    <textarea wire:model.live.debounce.200ms="subheadline" rows="3" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white"></textarea>
+                    <label class="block text-xs font-semibold text-ink-2 mb-1">Subheadline Description</label>
+                    <textarea wire:model.live.debounce.200ms="subheadline" rows="3" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Call to Action</label>
-                        <input type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+                        <label class="block text-xs font-semibold text-ink-2 mb-1">Call to Action</label>
+                        <input type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Direct Phone Call</label>
-                        <input type="text" wire:model.live.debounce.200ms="phoneNumber" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-mono">
+                        <label class="block text-xs font-semibold text-ink-2 mb-1">Direct Phone Call</label>
+                        <input type="text" wire:model.live.debounce.200ms="phoneNumber" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink font-mono">
                     </div>
                 </div>
             </div>
 
             <!-- Dynamic Conversion Modules -->
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-5 border border-gray-200 dark:border-gray-700 space-y-2.5">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">High-Conversion Modules</h3>
+            <div class="bg-card shadow-sm rounded-lg p-4 sm:p-5 border border-rule space-y-2.5">
+                <h3 class="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider mb-2">High-Conversion Modules</h3>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>⚡ Instant Booking & Quote Form (with SMS alerts)</span>
-                    <input type="checkbox" wire:model.live="showBookingForm" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showBookingForm" class="rounded border-rule text-indigo-600">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>↔️ Interactive Before & After Photo Slider</span>
-                    <input type="checkbox" wire:model.live="showBeforeAfter" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showBeforeAfter" class="rounded border-rule text-indigo-600">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>⭐ Embed Live Google Reviews Feed</span>
-                    <input type="checkbox" wire:model.live="showReviewsWidget" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showReviewsWidget" class="rounded border-rule text-indigo-600">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>📱 Floating Mobile Speed-Dial Bar</span>
-                    <input type="checkbox" wire:model.live="showStickySpeedDial" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showStickySpeedDial" class="rounded border-rule text-indigo-600">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>❓ Auto-Generated FAQ Accordion</span>
-                    <input type="checkbox" wire:model.live="showFaqSection" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showFaqSection" class="rounded border-rule text-indigo-600">
                 </label>
             </div>
         </div>
@@ -140,21 +140,21 @@
         <!-- Live Visual Preview (Right 8 cols) -->
         <div class="lg:col-span-8">
             <!-- Viewport Switcher Toolbar -->
-            <div class="bg-gray-100 dark:bg-gray-800 p-2.5 rounded-t-xl border border-b-0 border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <div class="bg-card p-2.5 rounded-t-xl border border-b-0 border-rule flex justify-between items-center">
                 <div class="flex items-center gap-1.5">
                     <span class="h-2.5 w-2.5 rounded-full bg-red-400"></span>
                     <span class="h-2.5 w-2.5 rounded-full bg-yellow-400"></span>
                     <span class="h-2.5 w-2.5 rounded-full bg-green-400"></span>
-                    <span class="text-[11px] text-gray-500 font-mono ms-2 truncate max-w-[150px] sm:max-w-none">https://{{ Str::slug($businessName) }}.goaiez.com</span>
+                    <span class="text-[11px] text-ink-3 font-mono ms-2 truncate max-w-[150px] sm:max-w-none">https://{{ Str::slug($businessName) }}.goaiez.com</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-white dark:bg-gray-700 text-indigo-600 font-bold shadow-xs' : 'text-gray-500 hover:text-gray-700' }}">🖥️ Desktop</button>
-                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-white dark:bg-gray-700 text-indigo-600 font-bold shadow-xs' : 'text-gray-500 hover:text-gray-700' }}">📱 Mobile Mockup</button>
+                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-600 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
+                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-600 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
                 </div>
             </div>
 
             <!-- Preview Canvas Shell -->
-            <div class="bg-slate-100 dark:bg-slate-950 p-3 sm:p-8 rounded-b-xl border border-gray-200 dark:border-gray-700 flex justify-center min-h-[700px] overflow-hidden items-start">
+            <div class="bg-paper p-3 sm:p-8 rounded-b-xl border border-rule flex justify-center min-h-[700px] overflow-hidden items-start">
                 
                 @if ($previewDevice === 'mobile')
                     <!-- Realistic Smartphone Mockup Frame -->
