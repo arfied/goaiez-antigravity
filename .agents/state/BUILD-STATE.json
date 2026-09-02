@@ -1157,7 +1157,7 @@
    "green_after_wave": 14
   },
   "J9": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an invoice reaches a real charge id",
    "green_after_wave": 10
   },
@@ -1235,6 +1235,10 @@
   {
    "at": "2026-09-02T16:51:46",
    "note": "X-198 Evidenced the real charge outside the suite per owner ruling 13."
+  },
+  {
+   "at": "2026-09-02T17:09:30",
+   "note": "X-198 J9 green \u2014 an_invoice_reaches_a_real_charge_id passes against the artifact written by php artisan x198:evidence-charge outside runningUnitTests(). Supervisor gate 2026-09-02: tests 894 passed 885 FAILED 0 errors 9, all nine JOURNEY HARNESS NOT IMPLEMENTED on tenantWithLiveNumber() (track sixty, ruling 6). Charge id minted by Stripe; nothing in app/app/Modules/X-198 can produce a ch_ prefix."
   }
  ],
  "decisions": [
