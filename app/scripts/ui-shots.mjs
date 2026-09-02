@@ -24,13 +24,15 @@ import { execSync } from 'child_process';
     await page.screenshot({ path: path.join(outputDir, 'login.png'), fullPage: true });
 
     // Login
-    await page.fill('input[name="email"]', 'owner@business.com');
-    await page.fill('input[name="password"]', 'password');
-    await page.click('button[type="submit"]');
+    await page.fill('#password-email', 'owner2@business.com');
+    await page.fill('#password', 'password');
+    await page.click('form:has(#password) button[type="submit"]');
     await page.waitForLoadState('networkidle');
     
     // Assert login succeeded
     if (page.url().endsWith('/login')) {
+        const html = await page.content();
+        fs.writeFileSync(path.join(outputDir, 'login-FAILED.html'), html);
         await page.screenshot({ path: path.join(outputDir, 'login-FAILED.png'), fullPage: true });
         console.error("Login failed. URL is still /login");
         await browser.close();

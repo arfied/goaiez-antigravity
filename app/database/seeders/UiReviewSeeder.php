@@ -12,18 +12,17 @@ class UiReviewSeeder extends Seeder
 {
     public function run(): void
     {
-        $owner = User::firstWhere('email', 'owner@business.com');
+        $owner = User::firstWhere('email', 'owner2@business.com');
         if (! $owner) {
             $owner = User::factory()->create([
-                'email' => 'owner@business.com',
-                'name' => 'Owner Review',
+                'email' => 'owner2@business.com',
+                'name' => 'Owner Review 2',
                 'role' => 'owner',
             ]);
             
             $business = Business::factory()->create([
                 'owner_user_id' => $owner->id,
-                'name' => 'Review Business LLC',
-                'advanced_dashboard_enabled' => true,
+                'name' => 'Review Business 2 LLC',
             ]);
             
             Tenancy::set((int) $business->id);
