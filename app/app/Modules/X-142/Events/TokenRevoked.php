@@ -9,5 +9,6 @@ use Illuminate\Foundation\Events\Dispatchable;
 class TokenRevoked
 {
     use Dispatchable;
+
     public function __construct(public int $businessId, public int $tokenId) {}
 }

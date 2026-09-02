@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X142\Actions;
 
-use App\Modules\X142\Models\McpToken;
 use App\Modules\X142\Events\McpInvoked;
+use App\Modules\X142\Models\McpToken;
 
 class McpInvokeAction
 {
@@ -15,7 +15,7 @@ class McpInvokeAction
             ->where('token_hash', $tokenHash)
             ->first();
 
-        if (!$token || $token->is_revoked) {
+        if (! $token || $token->is_revoked) {
             return ['success' => false, 'refusal_reason' => 'Invalid or revoked token'];
         }
 
@@ -23,11 +23,11 @@ class McpInvokeAction
             return ['success' => false, 'refusal_reason' => 'Action restricted to business owner'];
         }
 
-        if ($actionName === 'customer.delete' && !$isExplicitlyConfirmed) {
+        if ($actionName === 'customer.delete' && ! $isExplicitlyConfirmed) {
             return [
-                'success' => false, 
-                'refusal_reason' => 'Terminal action requires explicit confirmation', 
-                'confirmation_required' => true
+                'success' => false,
+                'refusal_reason' => 'Terminal action requires explicit confirmation',
+                'confirmation_required' => true,
             ];
         }
 

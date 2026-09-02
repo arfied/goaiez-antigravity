@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X142;
 
+use App\Models\User;
 use App\Modules\X142\Actions\McpInvokeAction;
 use App\Modules\X142\Actions\McpTokenAction;
 use App\Modules\X142\Actions\WebhookSubscribeAction;
 use App\Modules\X142\Events\McpInvoked;
 use App\Modules\X142\Events\TokenIssued;
 use App\Modules\X142\Events\TokenRevoked;
-use Illuminate\Support\Facades\Event;
-use Tests\TestCase;
-use App\Support\Tenancy;
-use App\Models\User;
-use Livewire\Livewire;
 use App\Modules\X142\Ui\ConnectYourAi;
-use App\Modules\X142\Ui\WebhooksView;
 use App\Modules\X142\Ui\McpTokenRegistry;
+use App\Modules\X142\Ui\WebhooksView;
+use App\Support\Tenancy;
+use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
+use Tests\TestCase;
 
 class X142Test extends TestCase
 {
     private McpTokenAction $tokenAction;
+
     private McpInvokeAction $invokeAction;
+
     private WebhookSubscribeAction $webhookAction;
 
     protected function setUp(): void
@@ -112,7 +114,7 @@ class X142Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'MCP Component Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
         $user = User::find($biz->owner_user_id);
-        if (!$user) {
+        if (! $user) {
             $user = User::factory()->create();
             $biz->update(['owner_user_id' => $user->id]);
         }

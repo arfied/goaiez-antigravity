@@ -9,5 +9,6 @@ use Illuminate\Foundation\Events\Dispatchable;
 class McpInvoked
 {
     use Dispatchable;
+
     public function __construct(public int $businessId, public string $actionName) {}
 }

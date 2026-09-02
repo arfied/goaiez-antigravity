@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('mcp_tokens')) {
+        if (! Schema::hasTable('mcp_tokens')) {
             Schema::create('mcp_tokens', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
@@ -34,7 +34,7 @@ return new class extends Migration
             DB::statement('CREATE POLICY mcp_tokens_bypass_policy ON mcp_tokens FOR ALL TO goaiez_app USING (current_setting(\'app.bypass_rls\', true) = \'on\')');
         }
 
-        if (!Schema::hasTable('webhook_subscriptions')) {
+        if (! Schema::hasTable('webhook_subscriptions')) {
             Schema::create('webhook_subscriptions', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
