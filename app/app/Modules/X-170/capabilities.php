@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-16' => 'asserted: no commission is payable until the money is in (the single most common commission dispute in field service)',
+    'G1-16' => 'refuses: commission pays on invoiced, not collected; asserted: no commission is payable until the money is in (the single most common commission dispute in field service)',
 
     // status: SPECCED
     'G7-03' => 'a projection over commission rules; rendered by X-194',

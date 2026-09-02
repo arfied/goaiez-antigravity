@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-150-01' => '',
+    'N-150-01' => '⭐⭐ a phone field of N/A from tier 1 is REJECTED and tier 2 is called — a junk value that satisfies NOT NULL is the expensive failure',
 
     // status: SPECCED
-    'N-150-02' => '',
+    'N-150-02' => 'the expensive tier\'s call count over a month is bounded and asserted',
 ];

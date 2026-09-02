@@ -22,19 +22,19 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-05' => '',
+    'G1-05' => 'AI structures lines from the job; fails → one line at the total · transcribed from the G1 audit 2026-08-27',
 
     // status: SPECCED
-    'G1-31' => '',
+    'G1-31' => 'branding columns on the invoice template; PDF fails → HTML, never no invoice · transcribed from the G1 audit 2026-08-27',
 
     // status: SPECCED
-    'G1-40' => '',
+    'G1-40' => 'links off an invoice/quote, on the short-linker (R14); **zero 404s, the agent never invents a URL** · transcribed from the G1 audit 2026-08-27',
 
     // status: SPECCED
-    'G1-51' => '',
+    'G1-51' => 'gateway-agnostic — "Stripe" is corpus vocabulary · transcribed from the G1 audit 2026-08-27',
 
     // status: SPECCED
-    'G1-60' => '',
+    'G1-60' => 'a channel choice on an existing link · transcribed from the G1 audit 2026-08-27',
 
     // status: SPECCED
     'G13-36' => 'invoice opened → the alert names an action',

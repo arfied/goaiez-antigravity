@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-126-01' => '',
+    'N-126-01' => '⭐⭐ an agent skill invoked with NO grounding Fact is REFUSED with reason NO_FACT — the refusal path\'s load-bearing assertion',
 
     // status: SPECCED
-    'N-126-02' => '',
+    'N-126-02' => 'a message with valid grounding passes, and the decision is logged either way',
 ];

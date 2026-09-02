@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-215-01' => '',
+    'N-215-01' => '⭐⭐ the signature binds a HASH of the rendered document — alter one character and it is invalid',
 
     // status: SPECCED
-    'N-215-02' => '',
+    'N-215-02' => 'a comment NEVER edits a signed document',
 ];

@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-175-01' => '',
+    'N-175-01' => '⛔ the field surface works OFFLINE — asserted on a throttled fixture, because a basement has no signal',
 ];

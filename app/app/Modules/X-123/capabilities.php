@@ -22,13 +22,13 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G1-11' => '⑥⑦ none — it is a seam',
+    'G1-11' => 'refuses: X-128\'s matrix regenerates with zero orphans and lists exactly three subscribers on invoice.paid, asserted at the wave gate; ⑥⑦ none — it is a seam',
 
     // status: SPECCED
-    'G1-22' => '⑥ tenant-facing on X-142 · ⑦ none',
+    'G1-22' => 'refuses: the subscribe list is generated from @emits across the roster, so an unemittable event cannot be chosen · the screen is X-142\'s (F-11); ⑥ tenant-facing on X-142 · ⑦ none',
 
     // status: SPECCED
-    'G1-41' => '',
+    'G1-41' => 'refuses: the test passes against a body the real event never sends; the sample is generated from the same serializer as the live event, asserted by diffing the two',
 
     // status: SPECCED
     'G2-52' => 'the outbound payload map on the broker',

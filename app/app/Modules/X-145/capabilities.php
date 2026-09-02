@@ -22,5 +22,5 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-145-01' => '',
+    'N-145-01' => 'the candidate set is the action registry FILTERED BY THE GATE — an ungated action is never a candidate',
 ];

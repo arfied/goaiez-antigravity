@@ -22,8 +22,8 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'N-213-01' => '',
+    'N-213-01' => '⭐⭐⭐ every check stores its screenshot and checklist version — A PASS WITH NO ARTIFACT DID NOT HAPPEN',
 
     // status: SPECCED
-    'N-213-02' => '',
+    'N-213-02' => 'it FLAGS and never blocks publication (R219)',
 ];
