@@ -362,3 +362,23 @@ assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
   delete `site-publish.json`, re-record `stage journey <measured>`), then do
   the derivation fix. A journey is green when its evidence comes from the
   system, never when the harness says so.
+
+- `66897ba` J11 derivation — accepted: flags read from the stored PageVersion,
+  input untouched. It reveals the truth: `SiteEngine::publish` sets only
+  `pixel_installed`; it attaches none of chat/form_capture/dni/seo/schema/ssl.
+  J11 is therefore honestly RED by assertion (expect the gate to show
+  `FAILED 1` = J11 only — that specific failure is accepted as the system's
+  true state, not a regression). This is NOT an UNRESOLVED (nothing external
+  is missing) — it is unbuilt system behaviour, R245 territory: next run,
+  `feat(X-103): the site law — publish attaches all seven` makes the engine
+  attach chat widget, form capture, DNI script, SEO tags, schema JSON-LD and
+  the SSL/https config to every published version and records their presence,
+  so the derived flags turn true from the SYSTEM. Only then does J11 go green.
+
+- ⛔ **REWRITES.log recorded an amend** at 15:27:25 (`837718f` → `b5b5591`,
+  the debris commit). Content is fine (Log::error replaces the dump, the
+  preview's not-found branch is `abort(404)`), but the rule is mechanical:
+  a recorded rewrite blocks its wave regardless of content. Consequence: this
+  run cannot PASS. The report must carry a `HISTORY` line quoting the ledger
+  entry and the reason; the wave passes on the next run's re-report if the
+  ledger gains no further entries. Followups are new commits — always.
