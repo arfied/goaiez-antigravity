@@ -38,14 +38,14 @@ class X148Test extends TestCase
         $bizB = TestCase::provisionTenant(['name' => 'Tenant Beta Roofing', 'currency' => 'USD']);
 
         // Index chunks for Tenant A and Tenant B
-        DB::statement("SET app.business_id = '{$bizA->id}'");
+        \App\Support\Tenancy::set((int) $bizA->id);
         $this->indexAction->indexChunk(
             businessId: $bizA->id,
             title: 'Alpha HVAC Warranty Policy',
             chunkText: 'Alpha offers a 10 year heat pump compressor warranty.'
         );
 
-        DB::statement("SET app.business_id = '{$bizB->id}'");
+        \App\Support\Tenancy::set((int) $bizB->id);
         $this->indexAction->indexChunk(
             businessId: $bizB->id,
             title: 'Beta Shingle Leak Repair SLA',
@@ -53,7 +53,7 @@ class X148Test extends TestCase
         );
 
         // 1. Voice-mode retrieval trace contains exactly 1 search call and NO rerank (TEST ANCHOR)
-        DB::statement("SET app.business_id = '{$bizA->id}'");
+        \App\Support\Tenancy::set((int) $bizA->id);
         $voiceSearchRes = $this->searchAction->search(
             businessId: $bizA->id,
             query: 'warranty',
@@ -68,7 +68,7 @@ class X148Test extends TestCase
         Event::assertDispatched(RetrievalCompleted::class);
 
         // 2. Tenant isolation: a tenant-A query never returns a tenant-B chunk — asserts ZERO rows, not an exception (TEST ANCHOR)
-        DB::statement("SET app.business_id = '{$bizA->id}'");
+        \App\Support\Tenancy::set((int) $bizA->id);
         $crossTenantQuery = $this->searchAction->search(
             businessId: $bizA->id,
             query: 'Beta Shingle Leak Repair' // Content existing only in Tenant B
@@ -88,4 +88,14 @@ class X148Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_component_renders_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant();
+        \App\Support\Tenancy::set((int) $biz->id);
+
+        \Livewire\Livewire::test(\App\Modules\X148\Ui\RetrievalLatencyEmptyrate::class, ['businessId' => $biz->id])
+            ->assertOk();
+    }
 }
+
