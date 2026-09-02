@@ -24,6 +24,19 @@ dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 ## Current task — run-22 remediation (REVIEWS.md 11:05, five numbered items;
 NO sending journeys this run). Then stop for review.
 
+## Run-22 review notes (supervisor)
+
+- `e9b1e3c` restore — verified byte-identical to `c0d950d~1`, dump-free ✓.
+- `2fabc1f` state truth — marks/evidence/count all correct (measured 9) ✓;
+  swept-in supervisor files committed as-is (allowed) ✓; dropping
+  `CreatesApplication` is safe (framework base provides it) ✓. **One defect:
+  `app/app/Jobs/AutopilotJob.php` gained a `dump(...)` in its catch block** —
+  debug debris in a production job, the same species as c0d950d's. Before the
+  report: `fix: remove debug dump from AutopilotJob` (use the job's real
+  logging/recording path if the exception context is worth keeping). Standing
+  rule from here: `dump()`/`dd()`/`var_dump()` never appear in `app/app/**` —
+  the gate will start grepping for them.
+
 ## Phase 2 as originally briefed — the carrier six (J5, J11, J4, J1, J10, J3)
 
 Owner-granted resources (2026-09-02): Infobip live key + webhook secret in

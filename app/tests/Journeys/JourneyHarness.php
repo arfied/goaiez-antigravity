@@ -119,6 +119,21 @@ trait JourneyHarness
 
     // ── waiting on asynchronous work ─────────────────────────────────────
 
+    protected static int $sendCapCounter = 0;
+
+    protected function guardOutboundSend(string $destination): void
+    {
+        if ($destination !== '+12622164033') {
+            throw new \RuntimeException("HARD RULE VIOLATION: Every outbound SMS must go to +12622164033. Got {$destination}");
+        }
+
+        self::$sendCapCounter++;
+
+        if (self::$sendCapCounter > 15) {
+            throw new \RuntimeException("HARD RULE VIOLATION: Send cap of 15 per suite run exceeded.");
+        }
+    }
+
     /**
      * ⛔ Polls until the outbound appears or the timeout expires.
      *
@@ -130,6 +145,7 @@ trait JourneyHarness
      */
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
+        $this->guardOutboundSend($to);
         throw $this->todo('poll for an outbound row carrying the provider message id');
     }
 

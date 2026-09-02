@@ -498,3 +498,4 @@
 - `2026-09-02T10:10:53` journey J11 -> red
 - `2026-09-02T10:10:53` journey J3 -> red
 - `2026-09-02T10:11:06` stage journey = 9
+- `2026-09-02T10:12:36` UNRESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout

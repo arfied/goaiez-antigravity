@@ -69,6 +69,10 @@ for f in $(printf '%s\n' "$touched" | grep -E '\.php$'); do
 done
 [ $bad -eq 0 ] && echo "  all parse" || fail=1
 
+bar "2c. debug debris in app code (dump/dd/var_dump)"
+dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -v '// *@allow-dump' | head -5)
+if [ -n "$dbg" ]; then printf '%s\n' "$dbg" | sed 's/^/  ⛔ /'; fail=1; else echo "  none"; fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'
