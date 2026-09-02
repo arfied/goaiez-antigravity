@@ -614,7 +614,7 @@
 | G11-32 | SMS Deliverability Fallback | ENH | C-Sms | SPECCED | T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier fil… |
 | G11-33 | SMS/Email Blackholing | ENH | X-161 | SPECCED | the sandbox intercepts every outbound; `is_mock` end to end |
 | G11-34 | Sniper Outreach | ENH | X-191 | SPECCED | the guest-post pitch that names something TRUE about the page |
-| G11-35 | Sniper Outreach | ENH | X-105 | SPECCED | the cold opener from X-135's research (P-146 — distress only) |
+| G11-35 | Sniper Outreach | ENH | X-105 | SPECCED | the cold opener from X-135's research (P-146 — distress only) · refuses: an opener without distress (P-146) |
 | G11-36 | Spam Call Blocking | ENH | C-Telephony | SPECCED | carrier-side screening before we pay for the minute |
 | G11-37 | Spam Folder Rescue | ENH | C-Mail | SPECCED | named in the header.  the legitimate mechanism is the warm-up calendar and seed-list diversity — a seeded n… · refuses: any illegitimate warm-up mechanism outside the calendar and seed-list diversity |
 | G11-38 | SPF Flattening | ENH | C-Mail | SPECCED | named in the header |
@@ -919,7 +919,7 @@
 | G20-07 | NPS Polling | ENH | C-Reviews | SPECCED | day 60, <7 → triage (P-113) |
 | G20-08 | Omni-Review Hub UI | ENH | C-Reviews | SPECCED | named in the header — Google via Zernio · Yelp · Facebook · BBB |
 | G20-09 | Reputation Engine | ENH | C-Reviews | SPECCED | the owner's original ask, now the header |
-| G20-10 | Reputation Targeting | ENH | X-105 | SPECCED | named in the header — under 3.5★ is a distress signal (P-146) |
+| G20-10 | Reputation Targeting | ENH | X-105 | SPECCED | named in the header — under 3.5★ is a distress signal (P-146) · refuses: targeting over 3.5★ — under 3.5★ is the distress signal (P-146) |
 | G20-11 | Review Gating | ENH | C-Reviews | SPECCED | OWNER §168A: the gate LIVES as a tenant preference (threshold 4 default, 5 max) and is a SEQUENCE — gated / ticket / resolved / re-ask / the link |
 | G20-12 | Review Gating/Triage | ENH | C-Reviews | SPECCED | = G20-11; one spec. fix_then_ask flips ON, firing on ticket.resolved |
 | G20-13 | Review Reactivation | ENH | C-Reviews | SPECCED | named in the header; the send is Marketing class and waits for the window |
