@@ -127,7 +127,9 @@ function waitForServer(url) {
             { name: 'account-plan', path: '/account/plan' },
             { name: 'account-support', path: '/account/support' },
             { name: 'account-connections', path: '/account/connections' },
-            { name: 'advanced-home', path: '/advanced' }
+            { name: 'advanced-home', path: '/advanced' },
+            { name: 'advanced-citations', path: '/advanced/citations' },
+            { name: 'advanced-visibility', path: '/advanced/visibility' }
         ];
 
         for (const screen of screens) {
