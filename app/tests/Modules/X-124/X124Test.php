@@ -41,7 +41,7 @@ class X124Test extends TestCase
         Event::fake([AssistantRequest::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Copilot Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set((int) $biz->id);
 
         $sessionToken = 'sess_tok_991823';
 
