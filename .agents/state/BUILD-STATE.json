@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T03:15:48",
+ "updated": "2026-09-02T04:13:54",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -279,7 +279,7 @@
   },
   "25": {
    "track": "roster",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "X-141",
     "X-142",
@@ -301,7 +301,7 @@
   },
   "27": {
    "track": "roster",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "X-131",
     "X-132",
@@ -647,7 +647,7 @@
    "unresolved": []
   },
   "X-140": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 27,
    "intent": "GROW",
    "unresolved": []
@@ -659,7 +659,7 @@
    "unresolved": []
   },
   "X-142": {
-   "status": "BUILDING",
+   "status": "DONE",
    "wave": 25,
    "intent": "OBSERVE",
    "unresolved": []
@@ -1202,6 +1202,12 @@
    "module": "X-211",
    "chose": "R245: Built AR recovery engine with late fee capping (max 10% or 0), structured installment payment plan contracts, ACH enforcement, offline reconciliation, and collections packaging with evidence bundle.",
    "at": "2026-08-29T15:20:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-140",
+   "chose": "@agent_reachable widened with topic.identify \u2014 read-shaped, per the plan's derivation rule; owner may overrule",
+   "at": "2026-09-02T04:13:54",
    "ruling": "R245"
   }
  ]
