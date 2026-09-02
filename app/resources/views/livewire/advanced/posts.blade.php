@@ -33,7 +33,7 @@
                 📸
             </div>
             <div>
-                <h3 class="text-base font-bold text-indigo-950 dark:text-indigo-200">Text-to-Post Job Photos (Zero-App Workflow)</h3>
+                <h2 class="text-base font-bold text-indigo-950 dark:text-indigo-200">Text-to-Post Job Photos (Zero-App Workflow)</h2>
                 <p class="text-xs text-indigo-800 dark:text-indigo-300 mt-1 max-w-2xl">
                     Technicians in the field can text completed project photos directly to your dedicated number. The AI formats them with local SEO keywords and schedules the GBP update automatically.
                 </p>
