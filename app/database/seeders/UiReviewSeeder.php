@@ -3,16 +3,19 @@
 namespace Database\Seeders;
 
 use App\Enums\ReviewDestination;
+use App\Models\AutopilotSettings;
 use App\Models\Business;
 use App\Models\Customer;
 use App\Models\FeedbackPage;
 use App\Models\Location;
 use App\Models\ReviewDestinationSetting;
+use App\Models\ReviewHubPage;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -88,44 +91,44 @@ class UiReviewSeeder extends Seeder
                     'slug' => 'review-business-2',
                     'is_published' => true,
                 ]);
-            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+            } catch (UniqueConstraintViolationException $e) {
                 // Already exists for another tenant or this tenant
             }
         } else {
-            if (empty($page->slug) || \Illuminate\Support\Str::startsWith($page->slug, 'review-business-2')) {
+            if (empty($page->slug) || Str::startsWith($page->slug, 'review-business-2')) {
                 try {
                     $page->update(['slug' => 'review-business-2']);
-                } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                } catch (UniqueConstraintViolationException $e) {
                     // Slug taken
                 }
             }
         }
 
-        $hubPage = \App\Models\ReviewHubPage::firstWhere('location_id', $location->id);
+        $hubPage = ReviewHubPage::firstWhere('location_id', $location->id);
         if (! $hubPage) {
             try {
-                \App\Models\ReviewHubPage::factory()->create([
+                ReviewHubPage::factory()->create([
                     'location_id' => $location->id,
                     'business_id' => $businessId,
                     'slug' => 'review-business-2',
                     'is_published' => true,
                 ]);
-            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+            } catch (UniqueConstraintViolationException $e) {
                 // Already exists
             }
         } else {
-            if (empty($hubPage->slug) || \Illuminate\Support\Str::startsWith($hubPage->slug, 'review-business-2')) {
+            if (empty($hubPage->slug) || Str::startsWith($hubPage->slug, 'review-business-2')) {
                 try {
                     $hubPage->update(['slug' => 'review-business-2']);
-                } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                } catch (UniqueConstraintViolationException $e) {
                     // Slug taken
                 }
             }
         }
 
-        $autopilot = \App\Models\AutopilotSettings::firstWhere('location_id', $location->id);
+        $autopilot = AutopilotSettings::firstWhere('location_id', $location->id);
         if (! $autopilot) {
-            \App\Models\AutopilotSettings::factory()->create([
+            AutopilotSettings::factory()->create([
                 'location_id' => $location->id,
                 'business_id' => $businessId,
                 'update_review_hub' => true,
