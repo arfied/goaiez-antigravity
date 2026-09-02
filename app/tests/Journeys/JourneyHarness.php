@@ -130,10 +130,13 @@ trait JourneyHarness
                 CampaignStep::create([
                     'business_id' => $tenant['id'],
                     'person_id' => $customer->id,
+                    'campaign_id' => 'journey-test-campaign',
+                    'step_number' => $i + 1,
+                    'channel' => 'sms',
+                    'template_name' => 'journey-test-template',
+                    'delay_days' => 1,
                     'sent_at' => null,
                     'cancelled_at' => null,
-                    'step_number' => $i + 1,
-                    'delay_days' => 1,
                 ]);
             }
 
