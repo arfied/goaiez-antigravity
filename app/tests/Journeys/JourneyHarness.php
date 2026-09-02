@@ -44,6 +44,8 @@ use Symfony\Component\Process\Process;
  */
 trait JourneyHarness
 {
+    private ?int $lastProvisionedBusinessId = null;
+
     // ── tenants and setup ────────────────────────────────────────────────
 
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
@@ -52,6 +54,7 @@ trait JourneyHarness
         $owner = User::factory()->create();
         try {
             $business = app(TenantProvisioner::class)->provision($owner);
+            $this->lastProvisionedBusinessId = $business->id;
             $number = app(TenantNumbers::class)->displayNumberFor($business->id);
             if (! $number) {
                 $this->fail('UNRESOLVED: No live number provisioned. Pool might be empty.');
@@ -235,7 +238,38 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        throw $this->todo('prove the send passed ConsentService::decide() on the grant path');
+        $businessId = $this->lastProvisionedBusinessId ?? \App\Support\Tenancy::id();
+        if (! $businessId) {
+            $this->fail('consentWasCheckedFor called with no tenant context');
+        }
+
+        return \App\Support\Tenancy::actingAs($businessId, function () use ($phone, $businessId) {
+            $customer = \App\Models\Customer::where('phone', $phone)->first();
+            if (! $customer) {
+                return false;
+            }
+
+            $sendKeys = \App\Models\OutreachMessage::where('business_id', $businessId)
+                ->where('customer_id', $customer->id)
+                ->whereNotNull('send_key')
+                ->pluck('send_key')
+                ->toArray();
+
+            if (empty($sendKeys)) {
+                return false;
+            }
+
+            $auditLogs = \App\Models\AuditLogEntry::where('action', 'voice.missed_call.texted_back')->get();
+
+            foreach ($auditLogs as $log) {
+                $meta = is_array($log->metadata) ? $log->metadata : json_decode((string)$log->metadata, true);
+                if (isset($meta['send_key']) && in_array($meta['send_key'], $sendKeys, true)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
     }
 
     // ── counting outbound ────────────────────────────────────────────────
