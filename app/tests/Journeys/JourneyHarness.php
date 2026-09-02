@@ -192,31 +192,66 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function issueInvoice(array $tenant, int $amountMinor): array
     {
-        throw $this->todo('issue a real invoice — integer minor units, never a float');
+        $customer = \App\Modules\X121\Models\Person::create(['business_id' => $tenant['id']]);
+
+        $engine = app(\App\Modules\X199\Domain\InvoiceEngine::class);
+        $result = $engine->issueInvoice(
+            $tenant['id'],
+            $customer->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => $amountMinor]],
+            'net_30'
+        );
+        return $result['invoice']->toArray();
     }
 
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        throw $this->todo('pay through the gateway sandbox and return the gateway charge id');
+        $gatewayEngine = app(\App\Modules\X198\Domain\GatewayEngine::class);
+        $gatewayEngine->connect($invoice['business_id'], 'stripe', 'acct_test');
+        
+        $payment = $gatewayEngine->capture(
+            $invoice['business_id'],
+            $invoice['total_cents'],
+            'tok_visa',
+            'idempotent_'.uniqid()
+        );
+
+        app(\App\Modules\X199\Domain\InvoiceEngine::class)->recordPayment(
+            $invoice['business_id'],
+            $invoice['id'],
+            $payment->amount_cents
+        );
+
+        return $payment->toArray();
     }
 
     /** @param array<string,mixed> $invoice */
     private function invoiceStatus(array $invoice): string
     {
-        throw $this->todo('read the invoice status from its owning module');
+        $inv = \App\Modules\X199\Models\Invoice::find($invoice['id']);
+        return $inv->status;
     }
 
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        throw $this->todo('advance the invoice past its due date so invoice.overdue fires');
+        $inv = \App\Modules\X199\Models\Invoice::find($invoice['id']);
+        $inv->update(['due_date' => now()->subDays(10)]);
+        \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\X211\Events\ArOverdue(
+            $inv->business_id,
+            $inv->id,
+            10
+        ));
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        throw $this->todo('the most recent dunning action, with its recorded reason');
+        $action = \App\Modules\X211\Models\ArDunningAction::where('invoice_id', $invoice['id'])
+            ->latest('id')
+            ->first();
+        return $action ? $action->toArray() : [];
     }
 
     // ── agency isolation ─────────────────────────────────────────────────

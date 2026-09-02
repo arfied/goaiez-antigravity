@@ -54,10 +54,15 @@ final class GatewayEngine
                 throw new \InvalidArgumentException('Gateway connection is absent; payment capture refused before external request');
             }
 
+            $gatewayChargeId = null;
+            if ($connection->gateway_name === 'stripe') {
+                $gatewayChargeId = app(StripeGatewayClient::class)->charge($amountCents, $paymentToken, $currency);
+            }
+
             $payment = Payment::create([
                 'business_id' => $businessId,
                 'merchant_connection_id' => $connection->id,
-                'gateway_charge_id' => null,
+                'gateway_charge_id' => $gatewayChargeId,
                 'amount_cents' => $amountCents,
                 'currency' => $currency,
                 'payment_token' => $paymentToken,

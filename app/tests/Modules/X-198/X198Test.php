@@ -34,6 +34,14 @@ class X198Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        $this->app->instance(\App\Modules\X198\Domain\StripeGatewayClient::class, new class {
+            #[\ReturnTypeWillChange]
+            public function charge(int $amountCents, string $source, string $currency = 'USD') {
+                return null;
+            }
+        });
+
         $this->engine = new GatewayEngine;
         $this->connectAction = new MerchantConnectAction($this->engine);
         $this->captureAction = new PaymentCaptureAction($this->engine);
