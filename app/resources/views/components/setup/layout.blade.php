@@ -15,10 +15,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title>{{ $title }}</title>
+    @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen bg-paper text-ink">
+<body class="min-h-screen bg-paper font-sans text-ink">
     <main class="mx-auto w-full max-w-2xl px-4 py-10 sm:py-16">
         {{ $slot }}
     </main>
