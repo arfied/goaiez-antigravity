@@ -279,7 +279,48 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function publishSite(array $tenant): array
     {
-        throw $this->todo('publish a real site and report which of the seven features shipped');
+        $page = \App\Modules\X103\Models\Page::create([
+            'business_id' => $tenant['id'],
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(\App\Modules\X103\Actions\SitePublishAction::class)
+            ->handle($tenant['id'], $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = app(\App\Modules\X157\Actions\EdgeProvisionAction::class)
+            ->handle($tenant['id'], 'test.com');
+
+        $deploy = app(\App\Modules\X157\Actions\EdgeDeployAction::class)->handle(
+            businessId: $tenant['id'],
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $tenant['name']
+        );
+
+        $html = \Illuminate\Support\Facades\Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+        
+        $features = [
+            'pixel' => str_contains($html, 'x110-pixel'),
+            'chat' => str_contains($html, 'chat-widget-container'),
+            'form_capture' => str_contains($html, 'form-capture-x155'),
+            'dni' => str_contains($html, 'dni-pool-x137'),
+            'seo' => str_contains($html, 'seo-meta-x176'),
+            'schema' => str_contains($html, 'schema-org'),
+            'ssl' => str_contains($html, '<meta name="ssl" content="valid">'),
+        ];
+
+        return [
+            'deploy_id' => $deploy['deploy_hash'],
+            'features' => $features,
+        ];
     }
 
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
