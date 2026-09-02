@@ -51,10 +51,15 @@ class CReviewsTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Reviews Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Anchor Customer',
+        ]);
+
         // 1. Staff mention lint test: Prompt containing staff names is blocked
         $staffPromptRes = $this->requestAction->handle(
             businessId: $biz->id,
-            customerId: null,
+            customerId: $customerId,
             promptTemplate: 'Please leave a review and mention Dave for a great job!'
         );
         $this->assertEquals('refused', $staffPromptRes['status']);
@@ -63,7 +68,7 @@ class CReviewsTest extends TestCase
         // Legitimate review request succeeds
         $validPromptRes = $this->requestAction->handle(
             businessId: $biz->id,
-            customerId: null,
+            customerId: $customerId,
             promptTemplate: 'How did the repair go? We would love your feedback.'
         );
         $this->assertEquals('sent', $validPromptRes['status']);
@@ -171,7 +176,12 @@ class CReviewsTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Lint Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $res = $this->requestAction->handle($biz->id, null, 'How did the repair go?');
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Lint Customer',
+        ]);
+
+        $res = $this->requestAction->handle($biz->id, $customerId, 'How did the repair go?');
         $this->assertEquals('sent', $res['status']);
     }
 
@@ -268,21 +278,34 @@ class CReviewsTest extends TestCase
             'first_name' => 'Test Customer',
         ]);
 
-        // First request is sent
-        $res1 = $this->requestAction->handle($biz->id, $customerId, 'How did it go?');
+        // 1. null customerId is refused
+        $resNull = $this->requestAction->handle($biz->id, null, 'How did it go?');
+        $this->assertEquals('refused', $resNull['status']);
+        $this->assertEquals('CUSTOMER_UNKNOWN', $resNull['refusal_code']);
+
+        // 2. First request is sent on google
+        $res1 = $this->requestAction->handle($biz->id, $customerId, 'How did it go?', 'google');
         $this->assertEquals('sent', $res1['status']);
 
-        // Second request inside the window is refused
-        $res2 = $this->requestAction->handle($biz->id, $customerId, 'How did it go again?');
+        // 3. Second request inside the window on a different platform (yelp) is refused
+        $res2 = $this->requestAction->handle($biz->id, $customerId, 'How did it go again?', 'yelp');
         $this->assertEquals('refused', $res2['status']);
         $this->assertEquals('CADENCE_WINDOW_ACTIVE', $res2['refusal_code']);
 
-        // A request outside the window is sent (mocking the time of the first request)
+        // 4. A request outside the window is sent
         ReviewRequest::where('id', $res1['review_request_id'])
             ->update(['created_at' => Carbon::now()->subDays(31)]);
 
-        $res3 = $this->requestAction->handle($biz->id, $customerId, 'How did it go after a month?');
+        $res3 = $this->requestAction->handle($biz->id, $customerId, 'How did it go after a month?', 'yelp');
         $this->assertEquals('sent', $res3['status']);
+
+        // 5. A third request (after the 2-pass cap is reached) is refused, regardless of window
+        ReviewRequest::where('id', $res3['review_request_id'])
+            ->update(['created_at' => Carbon::now()->subDays(31)]); // outside window again
+
+        $res4 = $this->requestAction->handle($biz->id, $customerId, 'How did it go a third time?', 'facebook');
+        $this->assertEquals('refused', $res4['status']);
+        $this->assertEquals('TWO_PASS_CAP_REACHED', $res4['refusal_code']);
     }
 
     /**

@@ -58,7 +58,7 @@ return [
     'G20-12' => 'refuses: C-Reviews; = Review Gating; one spec, under P-110',
 
     // status: SPECCED
-    'G20-13' => 'refuses: C-Reviews CADENCE_WINDOW_ACTIVE (test_g20_13_marketing_send_window); named in the header; the send is Marketing class and waits for the window',
+    'G20-13' => 'refuses: C-Reviews; named in the header; the send is Marketing class and waits for the window',
 
     // status: SPECCED
     'G20-14' => 'anything ambiguous is DRAFTED to the inbox, never published — sarcasm read as praise is a brand disaster (§149.1)',

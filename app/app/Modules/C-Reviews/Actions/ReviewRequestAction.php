@@ -42,20 +42,37 @@ final class ReviewRequestAction
             ];
         }
 
-        if ($customerId !== null) {
-            $recentRequest = ReviewRequest::where('business_id', $businessId)
-                ->where('customer_id', $customerId)
-                ->where('platform', $platform)
-                ->where('created_at', '>=', Carbon::now()->subDays(self::CADENCE_WINDOW_DAYS))
-                ->exists();
+        if ($customerId === null) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'CUSTOMER_UNKNOWN',
+                'message' => 'Review requests require a known customer',
+            ];
+        }
 
-            if ($recentRequest) {
-                return [
-                    'status' => 'refused',
-                    'refusal_code' => 'CADENCE_WINDOW_ACTIVE',
-                    'message' => 'A review request was already sent to this customer on this platform within the cadence window',
-                ];
-            }
+        $lifetimeRequests = ReviewRequest::where('business_id', $businessId)
+            ->where('customer_id', $customerId)
+            ->count();
+
+        if ($lifetimeRequests >= 2) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'TWO_PASS_CAP_REACHED',
+                'message' => 'The two-pass lifetime cap was reached for this customer globally',
+            ];
+        }
+
+        $recentRequest = ReviewRequest::where('business_id', $businessId)
+            ->where('customer_id', $customerId)
+            ->where('created_at', '>=', Carbon::now()->subDays(self::CADENCE_WINDOW_DAYS))
+            ->exists();
+
+        if ($recentRequest) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'CADENCE_WINDOW_ACTIVE',
+                'message' => 'A review request was already sent to this customer within the cadence window',
+            ];
         }
 
         $req = ReviewRequest::create([
