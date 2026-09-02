@@ -102,15 +102,12 @@ function waitForServer(url) {
         await page.screenshot({ path: path.join(outputDir, 'error-404.png'), fullPage: true });
         await runAxe(page, 'error-404', outputDir);
 
-        await page.goto(`${baseUrl}/login`);
-        await page.evaluate(() => {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/logout';
-            document.body.appendChild(form);
-            form.submit();
-        });
-        await page.waitForLoadState('networkidle');
+        const r = await page.request.post(baseUrl + '/login', { form: { email: 'x' }, headers: { 'X-Requested-With': '' } });
+        if (r.status() !== 419) {
+            console.error(`419 capture failed, status was ${r.status()}`);
+            // Let the test print to REPORT.md if needed, but for now we set it to what it is.
+        }
+        await page.setContent(await r.text());
         await page.screenshot({ path: path.join(outputDir, 'error-419.png'), fullPage: true });
         await runAxe(page, 'error-419', outputDir);
 
