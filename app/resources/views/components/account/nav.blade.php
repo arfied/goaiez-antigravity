@@ -78,7 +78,7 @@
                         href="{{ route($item->route) }}"
                         @if ($current) aria-current="page" @endif
                         @class([
-                            'flex min-h-9 sm:min-h-10 items-center rounded-[--radius-control] px-2.5 sm:px-3 text-xs sm:text-sm font-medium transition whitespace-nowrap focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none',
+                            'flex min-h-10 items-center rounded-[--radius-control] px-2.5 sm:px-3 text-xs sm:text-sm font-medium transition whitespace-nowrap focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none',
                             'bg-paper text-ink shadow-xs font-semibold border border-rule' => $current,
                             'text-ink-2 hover:text-ink hover:bg-paper/50' => ! $current,
                         ])
@@ -98,7 +98,7 @@
         @if ($more !== [])
             <details class="relative shrink-0 ms-1">
                 <summary
-                    class="flex min-h-9 sm:min-h-10 cursor-pointer list-none items-center rounded-[--radius-control] px-2.5 sm:px-3 text-xs sm:text-sm font-medium transition whitespace-nowrap focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent text-ink-2 hover:text-ink hover:bg-paper/50"
+                    class="flex min-h-10 cursor-pointer list-none items-center rounded-[--radius-control] px-2.5 sm:px-3 text-xs sm:text-sm font-medium transition whitespace-nowrap focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent text-ink-2 hover:text-ink hover:bg-paper/50"
                 >
                     <span>More ▾</span>
 
@@ -118,7 +118,7 @@
                                 href="{{ route($item->route) }}"
                                 @if ($current) aria-current="page" @endif
                                 @class([
-                                    'flex min-h-9 items-center justify-between rounded-[--radius-control] px-3 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent',
+                                    'flex min-h-10 items-center justify-between rounded-[--radius-control] px-3 text-xs font-medium transition focus-visible:ring-2 focus-visible:ring-ink focus-visible:outline-none border border-transparent',
                                     'bg-paper text-ink shadow-xs font-semibold border-rule' => $current,
                                     'text-ink-2 hover:text-ink hover:bg-paper/50' => ! $current,
                                 ])
@@ -138,7 +138,7 @@
                             @csrf
                             <button
                                 type="submit"
-                                class="flex w-full min-h-9 items-center rounded-[--radius-control] px-3 text-xs text-red-600 dark:text-red-400 hover:bg-paper font-medium cursor-pointer text-left transition"
+                                class="flex w-full min-h-10 items-center rounded-[--radius-control] px-3 text-xs text-red-600 dark:text-red-400 hover:bg-paper font-medium cursor-pointer text-left transition"
                             >
                                 Sign out
                             </button>
