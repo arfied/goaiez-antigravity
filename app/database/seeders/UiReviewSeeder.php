@@ -8,6 +8,12 @@ use App\Models\User;
 use App\Support\Tenancy;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Location;
+use App\Models\FeedbackPage;
+use App\Models\ReviewDestinationSetting;
+use App\Models\Customer;
+use App\Enums\ReviewDestination;
+use Illuminate\Support\Str;
 
 class UiReviewSeeder extends Seeder
 {
@@ -18,6 +24,15 @@ class UiReviewSeeder extends Seeder
             $owner = User::factory()->create([
                 'email' => 'owner2@business.com',
                 'name' => 'Owner Review 2',
+                'role' => 'owner',
+            ]);
+        }
+
+        $setupUser = User::firstWhere('email', 'setup@business.com');
+        if (! $setupUser) {
+            User::factory()->create([
+                'email' => 'setup@business.com',
+                'name' => 'Setup Wizard User',
                 'role' => 'owner',
             ]);
         }
@@ -41,6 +56,7 @@ class UiReviewSeeder extends Seeder
                     'plan' => 'base',
                     'status' => 'active',
                 ]);
+                $this->ensureBusinessDependencies($business->id);
 
                 Tenancy::forget();
             } else {
@@ -48,8 +64,46 @@ class UiReviewSeeder extends Seeder
                     DB::table('businesses')
                         ->where('id', $businessId)
                         ->update(['advanced_dashboard_enabled' => true]);
+                    $this->ensureBusinessDependencies($businessId);
                 });
             }
         });
+    }
+
+    private function ensureBusinessDependencies(int $businessId): void
+    {
+        $location = Location::firstWhere('business_id', $businessId);
+        if (! $location) {
+            $location = Location::factory()->create(['business_id' => $businessId]);
+        }
+
+        $page = FeedbackPage::firstWhere('location_id', $location->id);
+        if (! $page) {
+            FeedbackPage::factory()->forLocation($location)->create([
+                'slug' => 'review-business-2-' . Str::random(6),
+                'is_published' => true,
+            ]);
+        }
+
+        $setting = ReviewDestinationSetting::where('location_id', $location->id)->where('destination', ReviewDestination::Google->value)->first();
+        if (! $setting) {
+            ReviewDestinationSetting::factory()->create([
+                'location_id' => $location->id,
+                'destination' => ReviewDestination::Google,
+                'enabled' => true,
+                'invite_threshold' => 4,
+                'link_url' => 'https://google.com',
+            ]);
+        }
+
+        $customer = Customer::firstWhere('email', 'customer2@reviewbusiness2.com');
+        if (! $customer) {
+            Customer::factory()->create([
+                'email' => 'customer2@reviewbusiness2.com',
+                'name' => 'Test Customer',
+                'business_id' => $businessId,
+                'location_id' => $location->id,
+            ]);
+        }
     }
 }
