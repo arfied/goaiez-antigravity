@@ -159,6 +159,10 @@ trait JourneyHarness
 
     private function askAgent(array $tenant, string $question): array
     {
+        if (!env('OPENAI_API_KEY') && !env('ANTHROPIC_API_KEY')) {
+            throw $this->todo('J3 needs an AI provider key; none in this checkout');
+        }
+
         $tenantPhone = \Illuminate\Support\Facades\DB::table('phone_numbers')
             ->where('business_id', $tenant['id'])
             ->first()->e164 ?? '+19015922708';

@@ -47,6 +47,20 @@ NO sending journeys this run). Then stop for review.
   `abort(404)` (as MatchScores does); keep the exception context in
   AutopilotJob via its real logging path if worth keeping.
 
+- ⛔ `067dbf3` J11 — **by-construction, third instance of the shape.** The
+  test asserts seven feature booleans; `publishSite` returns seven hardcoded
+  `true`s. `SiteEngine::publish` really runs (real commit_id), but that proves
+  "publish executed", not "the site carries pixel/chat/forms/DNI/SEO/schema/
+  SSL". Required before the report, `fix(J11): derive the seven from the
+  published artifact`: load what was actually published (the version's
+  rendered content / the page HTML / the site payload the engine stored) and
+  set each feature flag from its real presence — pixel snippet present, chat
+  widget present, form capture present, DNI markup present, SEO tags present,
+  schema JSON-LD present, SSL/https in the published URL config. A feature
+  the artifact does not carry stays false and the journey stays red — that is
+  the honest outcome. If a green mark or `site-publish.json` evidence was
+  recorded on the hardcoded pass, revert/delete it in the same commit.
+
 ## Phase 2 as originally briefed — the carrier six (J5, J11, J4, J1, J10, J3)
 
 Owner-granted resources (2026-09-02): Infobip live key + webhook secret in
