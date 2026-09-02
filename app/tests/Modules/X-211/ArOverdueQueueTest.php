@@ -9,6 +9,7 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -16,6 +17,7 @@ final class ArOverdueQueueTest extends TestCase
 {
     public function test_ar_overdue_event_queues_and_processes_asynchronously(): void
     {
+        DB::table('jobs')->delete();
         $business = Business::factory()->create();
         $invoiceId = null;
 
@@ -50,6 +52,7 @@ final class ArOverdueQueueTest extends TestCase
 
     public function test_listener_is_idempotent_when_processing_duplicate_events(): void
     {
+        DB::table('jobs')->delete();
         $business = Business::factory()->create();
         $invoiceId = null;
 
