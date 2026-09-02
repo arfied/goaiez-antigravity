@@ -43,16 +43,16 @@ return [
     'G8-11' => 'named in the header',
 
     // status: SPECCED
-    'G8-20' => 'named in the header — one follow-up only',
+    'G8-20' => 'named in the header — one follow-up only · refuses: a second follow-up',
 
     // status: SPECCED
-    'G8-21' => '= the row above; one spec',
+    'G8-21' => '= the row above; one spec · refuses: a second follow-up',
 
     // status: SPECCED
     'G8-34' => 'placement monitoring is named in the header',
 
     // status: SPECCED
-    'G11-34' => 'the guest-post pitch that names something TRUE about the page',
+    'G11-34' => 'the guest-post pitch that names something TRUE about the page · refuses: a pitch that names nothing TRUE about the page',
 
     // status: SPECCED
     'G12-07' => 'ONE follow-up only, per the header — not three',

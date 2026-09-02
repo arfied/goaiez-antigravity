@@ -27765,8 +27765,8 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G8-17 | GBP Auto-Sync | ENH | X-177 | named in the header — through Zernio (§156.3) |
 | G8-18 | GBP Q&A Seeding | ENH | X-177 | named in the header |
 | G8-19 | Google Maps Embedding | ENH | X-116 | a block in the local template |
-| G8-20 | Guest Post AI Pitching | ENH | X-191 | named in the header — one follow-up only |
-| G8-21 | Guest Post AI Pitching | ENH | X-191 | = the row above; one spec |
+| G8-20 | Guest Post AI Pitching | ENH | X-191 | named in the header — one follow-up only · refuses: a second follow-up |
+| G8-21 | Guest Post AI Pitching | ENH | X-191 | = the row above; one spec · refuses: a second follow-up |
 | G8-22 | Hyper-Local Schema | ENH | X-176 | named in the header |
 | G8-23 | Instant Indexing | ENH | X-176 | named in the header |
 | G8-24 | Internal Cannibalization Scan | ENH | X-140 | embedding similarity before publish |
@@ -27924,7 +27924,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-31 | Send-Time Optimization | ENH | X-186 | named in the header; still inside the marketing window (P-063) · refuses: a send time outside the marketing window (P-063) |
 | G11-32 | SMS Deliverability Fallback | ENH | C-Sms | ⭐ **T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier filtering.** Stripping the URL on a 30007 and degrading honestly is the real mechanism (P-073) |
 | G11-33 | SMS/Email Blackholing | ENH | X-161 | the sandbox intercepts every outbound; `is_mock` end to end |
-| G11-34 | Sniper Outreach | ENH | X-191 | the guest-post pitch that names something TRUE about the page |
+| G11-34 | Sniper Outreach | ENH | X-191 | the guest-post pitch that names something TRUE about the page · refuses: a pitch that names nothing TRUE about the page |
 | G11-35 | Sniper Outreach | ENH | X-105 | the cold opener from X-135's research (P-146 — distress only) · refuses: an opener without distress (P-146) |
 | G11-36 | Spam Call Blocking | ENH | C-Telephony | carrier-side screening before we pay for the minute |
 | G11-37 | Spam Folder Rescue | ENH | C-Mail | named in the header. ⚠️ **the legitimate mechanism is the warm-up calendar and seed-list diversity** — a seeded network clicking *Not Spam* is the F-15 question in email form · refuses: any illegitimate warm-up mechanism outside the calendar and seed-list diversity |

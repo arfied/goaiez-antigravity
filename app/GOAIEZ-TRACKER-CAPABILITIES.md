@@ -460,8 +460,8 @@
 | G8-17 | GBP Auto-Sync | ENH | X-177 | SPECCED | named in the header — through Zernio (§156.3) |
 | G8-18 | GBP Q&A Seeding | ENH | X-177 | SPECCED | named in the header |
 | G8-19 | Google Maps Embedding | ENH | X-116 | SPECCED | a block in the local template |
-| G8-20 | Guest Post AI Pitching | ENH | X-191 | SPECCED | named in the header — one follow-up only |
-| G8-21 | Guest Post AI Pitching | ENH | X-191 | SPECCED | = the row above; one spec |
+| G8-20 | Guest Post AI Pitching | ENH | X-191 | SPECCED | named in the header — one follow-up only · refuses: a second follow-up |
+| G8-21 | Guest Post AI Pitching | ENH | X-191 | SPECCED | = the row above; one spec · refuses: a second follow-up |
 | G8-22 | Hyper-Local Schema | ENH | X-176 | SPECCED | named in the header |
 | G8-23 | Instant Indexing | ENH | X-176 | SPECCED | named in the header |
 | G8-24 | Internal Cannibalization Scan | ENH | X-140 | SPECCED | embedding similarity before publish |
@@ -613,7 +613,7 @@
 | G11-31 | Send-Time Optimization | ENH | X-186 | SPECCED | named in the header; still inside the marketing window (P-063) · refuses: a send time outside the marketing window (P-063) |
 | G11-32 | SMS Deliverability Fallback | ENH | C-Sms | SPECCED | T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier fil… |
 | G11-33 | SMS/Email Blackholing | ENH | X-161 | SPECCED | the sandbox intercepts every outbound; `is_mock` end to end |
-| G11-34 | Sniper Outreach | ENH | X-191 | SPECCED | the guest-post pitch that names something TRUE about the page |
+| G11-34 | Sniper Outreach | ENH | X-191 | SPECCED | the guest-post pitch that names something TRUE about the page · refuses: a pitch that names nothing TRUE about the page |
 | G11-35 | Sniper Outreach | ENH | X-105 | SPECCED | the cold opener from X-135's research (P-146 — distress only) · refuses: an opener without distress (P-146) |
 | G11-36 | Spam Call Blocking | ENH | C-Telephony | SPECCED | carrier-side screening before we pay for the minute |
 | G11-37 | Spam Folder Rescue | ENH | C-Mail | SPECCED | named in the header.  the legitimate mechanism is the warm-up calendar and seed-list diversity — a seeded n… · refuses: any illegitimate warm-up mechanism outside the calendar and seed-list diversity |
