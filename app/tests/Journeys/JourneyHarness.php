@@ -104,7 +104,42 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function personWithPendingSteps(array $tenant, int $count): array
     {
-        throw $this->todo('a person with N campaign steps ALREADY QUEUED — the STOP test needs in-flight work');
+        return \App\Support\Tenancy::actingAs($tenant['id'], function () use ($tenant, $count) {
+            $phone = '+1555000'.rand(1000, 9999);
+            $customer = \App\Models\Customer::create([
+                'business_id' => $tenant['id'],
+                'phone' => $phone,
+                'first_name' => 'Pending',
+                'last_name' => 'Steps',
+            ]);
+
+            $decision = \App\Models\ConsentRecord::create([
+                'business_id' => $tenant['id'],
+                'customer_id' => $customer->id,
+                'channel' => 'sms',
+                'captured_by' => 'platform',
+                'capture_surface' => 'feedback_page',
+                'disclosure_version' => '1.0',
+            ]);
+
+            for ($i = 0; $i < $count; $i++) {
+                \App\Modules\X186\Models\CampaignStep::create([
+                    'business_id' => $tenant['id'],
+                    'person_id' => $customer->id,
+                    'sent_at' => null,
+                    'cancelled_at' => null,
+                    'step_number' => $i + 1,
+                    'delay_days' => 1,
+                ]);
+            }
+
+            return [
+                'id' => $customer->id,
+                'phone' => $phone,
+                'consent_decision_id' => $decision->id,
+                'business_id' => $tenant['id'],
+            ];
+        });
     }
 
     // ── inbound / carrier ────────────────────────────────────────────────
@@ -149,13 +184,57 @@ trait JourneyHarness
             $body
         );
 
-        $response->assertStatus(200);
+        $response->assertOk();
+        $response->assertJson(['handled' => true]);
     }
 
     /** @param array<string,mixed> $tenant */
     private function receiveInbound(array $tenant, string $from, string $body): void
     {
-        throw $this->todo('deliver a real inbound message through the carrier webhook');
+        $payloadArray = [
+            'results' => [
+                [
+                    'messageId' => 'test-msg-'.uniqid(),
+                    'from' => $from,
+                    'to' => $tenant['_provisioned_number'] ?? null,
+                    'cleanText' => $body,
+                ]
+            ]
+        ];
+        $payload = json_encode($payloadArray, JSON_THROW_ON_ERROR);
+
+        try {
+            $secret = app(PlatformCredentials::class)->get('infobip_webhook_secret');
+        } catch (\RuntimeException $e) {
+            $this->fail('UNRESOLVED: '.$e->getMessage());
+        }
+
+        $scheme = config('services.infobip.signature_scheme');
+        $headers = ['CONTENT_TYPE' => 'application/json'];
+
+        if (is_string($scheme) && mb_strtolower(trim($scheme)) === 'exchange') {
+            $timestamp = (string) (time() * 1000);
+            $signature = hash_hmac('sha256', $timestamp.$payload, $secret);
+            $headers['HTTP_X_IB_EXCHANGE_REQ_SIGNATURE'] = $signature;
+            $headers['HTTP_X_IB_EXCHANGE_REQ_TIMESTAMP'] = $timestamp;
+        } else {
+            $signature = hash_hmac('sha256', $payload, $secret);
+            $headerName = config('services.infobip.signature_header') ?: 'X-Signature';
+            $headers['HTTP_'.str_replace('-', '_', strtoupper($headerName))] = $signature;
+        }
+
+        $response = $this->call(
+            'POST',
+            '/webhooks/infobip/inbound',
+            [],
+            [],
+            [],
+            $headers,
+            $payload
+        );
+
+        $response->assertOk();
+        $response->assertJson(['handled' => 1]);
     }
 
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
@@ -283,7 +362,15 @@ trait JourneyHarness
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
-        throw $this->todo('count outbound to this person AFTER the STOP was received');
+        return \App\Support\Tenancy::actingAs($person['business_id'], function () use ($person) {
+            $inboundMessage = \Illuminate\Support\Facades\DB::table('inbound_messages')->latest('id')->first();
+            $receiptTime = $inboundMessage ? $inboundMessage->created_at : now()->subSeconds(2);
+
+            return \App\Models\OutreachMessage::where('business_id', $person['business_id'])
+                ->where('customer_id', $person['id'])
+                ->where('created_at', '>', $receiptTime)
+                ->count();
+        });
     }
 
     /** @param array<string,mixed> $person @return list<array<string,mixed>> */
