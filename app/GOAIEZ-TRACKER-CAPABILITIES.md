@@ -241,7 +241,7 @@
 | G4-07 | Automated Webhook Trigger | ENH | X-136 | SPECCED | a new-registration signal;  a signal never mints a `SendPermit` (P-068) — the send is X-105's on Lane 3 |
 | G4-08 | Blacklist Monitoring | ENH | C-Mail | SPECCED | deliverability first, then everything else · refuses: any action that compromises deliverability — deliverability comes first |
 | G4-09 | Config Inheritance | ENH | X-112 | SPECCED | named in the header; a sub-tenant may narrow, never widen |
-| G4-10 | Dead Letter Queue | ENH | X-123 | SPECCED | named in the header — 10 consecutive failures, tenant emailed |
+| G4-10 | Dead Letter Queue | ENH | X-123 | SPECCED | named in the header — 10 consecutive failures, tenant emailed · refuses: retrying after 10 consecutive failures |
 | G4-11 | Dependency Locking | ENH | X-162 | SPECCED | NAME COLLISION — X-195's header claims the term for manifests; this row is task dependencies |
 | G4-12 | Eloquent Models & Caching | ENH | X-121 | SPECCED | Redis on high-read nouns, invalidated inline on write |
 | G4-13 | Feature Toggling | ENH | X-195 | SPECCED | flags are blast-radius control (P-182) |
