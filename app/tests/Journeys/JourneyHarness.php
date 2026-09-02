@@ -252,23 +252,19 @@ trait JourneyHarness
         Tenancy::set((int) $as['id']);
 
         if ((int) $as['id'] === $agencyBizId) {
-            return [
-                'invoice_id' => 'inv_123',
-                'cost' => $markup->wholesale_rate_cents,
-                'margin' => $markup->retail_markup_cents,
-                'markup' => $markup->retail_markup_cents,
-                'platform_price' => $markup->wholesale_rate_cents,
-            ];
+            Tenancy::set($agencyBizId);
+            $rates = $engine->getAgencyFacingRates($agencyBizId, $agencyId);
+            Tenancy::set((int) $as['id']);
+            $rate = $rates[$markup->service_type] ?? [];
+            
+            return array_merge(['invoice_id' => 'inv_123'], $rate);
         } else {
             Tenancy::set($agencyBizId);
             $rates = $engine->getClientFacingRates($agencyBizId, $agencyId);
             Tenancy::set((int) $as['id']);
-            $rate = $rates[$markup->service_type];
+            $rate = $rates[$markup->service_type] ?? [];
 
-            return [
-                'invoice_id' => 'inv_123',
-                'price' => $rate['rate_cents'],
-            ];
+            return array_merge(['invoice_id' => 'inv_123'], $rate);
         }
     }
 

@@ -96,6 +96,29 @@ final class AgencyEngine
     }
 
     /**
+     * Agency-facing rate view — FULL payload including cost and margin.
+     */
+    public function getAgencyFacingRates(int $businessId, int $agencyId): array
+    {
+        $markups = Markup::where('business_id', $businessId)->where('agency_id', $agencyId)->get();
+
+        $agencyView = [];
+        foreach ($markups as $m) {
+            $agencyView[$m->service_type] = [
+                'service_type' => $m->service_type,
+                'cost' => $m->wholesale_rate_cents,
+                'margin' => $m->retail_markup_cents,
+                'markup' => $m->retail_markup_cents,
+                'platform_price' => $m->wholesale_rate_cents,
+                'rate_cents' => $m->retail_rate_cents,
+                'display_rate' => '$'.number_format($m->retail_rate_cents / 100, 2),
+            ];
+        }
+
+        return $agencyView;
+    }
+
+    /**
      * Impersonate agency client with audit logging (TEST ANCHOR, G7-27, G7-34).
      */
     public function impersonate(int $businessId, int $agencyId, int $userId, int $targetClientBusinessId, string $reason): ImpersonationLog
