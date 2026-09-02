@@ -22,30 +22,32 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-        $businessId = DB::table('businesses')
-            ->where('owner_user_id', $owner->id)
-            ->value('id');
+        Tenancy::actingAsUser($owner->id, function () use ($owner) {
+            $businessId = DB::table('businesses')
+                ->where('owner_user_id', $owner->id)
+                ->value('id');
 
-        if (! $businessId) {
-            $business = Business::factory()->create([
-                'owner_user_id' => $owner->id,
-                'name' => 'Review Business 2 LLC',
-                'advanced_dashboard_enabled' => true,
-            ]);
+            if (! $businessId) {
+                $business = Business::factory()->create([
+                    'owner_user_id' => $owner->id,
+                    'name' => 'Review Business 2 LLC',
+                    'advanced_dashboard_enabled' => true,
+                ]);
 
-            Tenancy::set((int) $business->id);
+                Tenancy::set((int) $business->id);
 
-            Subscription::factory()->create([
-                'business_id' => $business->id,
-                'plan' => 'base',
-                'status' => 'active',
-            ]);
+                Subscription::factory()->create([
+                    'business_id' => $business->id,
+                    'plan' => 'base',
+                    'status' => 'active',
+                ]);
 
-            Tenancy::forget();
-        } else {
-            DB::table('businesses')
-                ->where('id', $businessId)
-                ->update(['advanced_dashboard_enabled' => true]);
-        }
+                Tenancy::forget();
+            } else {
+                DB::table('businesses')
+                    ->where('id', $businessId)
+                    ->update(['advanced_dashboard_enabled' => true]);
+            }
+        });
     }
 }
