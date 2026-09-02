@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T05:03:10",
+ "updated": "2026-09-02T14:50:48",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1214,6 +1214,72 @@
    "module": "X-179",
    "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
    "at": "2026-09-02T04:38:50",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Ai",
+   "chose": "DECLINED: CANNOT REFUSE: cell asserts a mechanism, not a refusal",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "DECLINED: CANNOT REFUSE: cell describes sources, not a refusal",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-07",
+   "chose": "DECLINED: CANNOT REFUSE: cell says named in the header",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "DECLINED: CANNOT REFUSE: cell describes token properties, no refusal asserted",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-148",
+   "chose": "DECLINED: CANNOT REFUSE: cell names a source, no refusal asserted",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "DECLINED: CANNOT REFUSE: cell describes answering from a registry, no refusal asserted",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-170",
+   "chose": "DECLINED: CANNOT REFUSE: cell says a time-boxed bonus rule",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-182",
+   "chose": "DECLINED: CANNOT REFUSE: cell describes source of history, no refusal asserted",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-189",
+   "chose": "DECLINED: CANNOT REFUSE: cell says the branded card",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-197",
+   "chose": "DECLINED: CANNOT REFUSE: cell describes the source of name and voice, no refusal asserted",
+   "at": "2026-09-02T14:50:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-202",
+   "chose": "DECLINED: CANNOT REFUSE: cell describes a sequence, no refusal asserted",
+   "at": "2026-09-02T14:50:48",
    "ruling": "R245"
   }
  ]

@@ -486,3 +486,14 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
+- `2026-09-02T14:50:48` (R245) C-Ai — DECLINED: CANNOT REFUSE: cell asserts a mechanism, not a refusal
+- `2026-09-02T14:50:48` (R245) X-01 — DECLINED: CANNOT REFUSE: cell describes sources, not a refusal
+- `2026-09-02T14:50:48` (R245) X-07 — DECLINED: CANNOT REFUSE: cell says named in the header
+- `2026-09-02T14:50:48` (R245) X-142 — DECLINED: CANNOT REFUSE: cell describes token properties, no refusal asserted
+- `2026-09-02T14:50:48` (R245) X-148 — DECLINED: CANNOT REFUSE: cell names a source, no refusal asserted
+- `2026-09-02T14:50:48` (R245) X-124 — DECLINED: CANNOT REFUSE: cell describes answering from a registry, no refusal asserted
+- `2026-09-02T14:50:48` (R245) X-170 — DECLINED: CANNOT REFUSE: cell says a time-boxed bonus rule
+- `2026-09-02T14:50:48` (R245) X-182 — DECLINED: CANNOT REFUSE: cell describes source of history, no refusal asserted
+- `2026-09-02T14:50:48` (R245) X-189 — DECLINED: CANNOT REFUSE: cell says the branded card
+- `2026-09-02T14:50:48` (R245) X-197 — DECLINED: CANNOT REFUSE: cell describes the source of name and voice, no refusal asserted
+- `2026-09-02T14:50:48` (R245) X-202 — DECLINED: CANNOT REFUSE: cell describes a sequence, no refusal asserted
