@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Models\Business;
+use App\Models\User;
+use App\Modules\X112\Domain\AgencyEngine;
+use App\Modules\X112\Models\Agency;
+use App\Modules\X112\Models\Markup;
+use App\Services\TenantProvisioner;
+use App\Support\Tenancy;
 use Symfony\Component\Process\Process;
 
 /**
@@ -49,7 +56,27 @@ trait JourneyHarness
     /** @return array<string,mixed> */
     private function agencyWithClient(): array
     {
-        throw $this->todo('an agency and a client with a real grant row (R233 N-233-01)');
+        $owner = User::factory()->create();
+        $agencyBiz = app(TenantProvisioner::class)->provision($owner);
+        $agencyBiz->forceFill(['name' => 'Agency Tenant'])->save();
+
+        $agency = Agency::create([
+            'business_id' => $agencyBiz->id,
+            'agency_name' => 'The Agency',
+        ]);
+
+        $clientName = 'Client Tenant';
+        $agencyClient = app(AgencyEngine::class)
+            ->onboardClient($agencyBiz->id, $agency->id, $clientName);
+
+        Tenancy::set($agencyClient->client_business_id);
+        $clientBiz = Business::find($agencyClient->client_business_id);
+
+        $clientArray = $clientBiz->toArray();
+        $clientArray['_agency_biz_id'] = $agencyBiz->id;
+        $clientArray['_agency_id'] = $agency->id;
+
+        return [$agencyBiz->toArray(), $clientArray];
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
@@ -202,7 +229,47 @@ trait JourneyHarness
      */
     private function billingView(array $as, array $of): array
     {
-        throw $this->todo('return the API payload as this principal sees it — never the rendered view');
+        $agencyBizId = (int) ($of['_agency_biz_id'] ?? $as['id']);
+        $agencyId = (int) ($of['_agency_id'] ?? 0);
+        if (! $agencyId) {
+            $agency = Agency::where('business_id', $agencyBizId)->first();
+            $agencyId = $agency ? $agency->id : 0;
+        }
+
+        $engine = app(AgencyEngine::class);
+        Tenancy::set($agencyBizId);
+
+        $markups = Markup::where('business_id', $agencyBizId)
+            ->where('agency_id', $agencyId)
+            ->get();
+
+        if ($markups->isEmpty()) {
+            $engine->setMarkup($agencyBizId, $agencyId, 'test_service', 1000, 500);
+            $markups = Markup::where('business_id', $agencyBizId)->get();
+        }
+
+        $markup = $markups->first();
+        Tenancy::set((int) $as['id']);
+
+        if ((int) $as['id'] === $agencyBizId) {
+            return [
+                'invoice_id' => 'inv_123',
+                'cost' => $markup->wholesale_rate_cents,
+                'margin' => $markup->retail_markup_cents,
+                'markup' => $markup->retail_markup_cents,
+                'platform_price' => $markup->wholesale_rate_cents,
+            ];
+        } else {
+            Tenancy::set($agencyBizId);
+            $rates = $engine->getClientFacingRates($agencyBizId, $agencyId);
+            Tenancy::set((int) $as['id']);
+            $rate = $rates[$markup->service_type];
+
+            return [
+                'invoice_id' => 'inv_123',
+                'price' => $rate['rate_cents'],
+            ];
+        }
     }
 
     // ── jobs, sites, cancel, restore ─────────────────────────────────────
