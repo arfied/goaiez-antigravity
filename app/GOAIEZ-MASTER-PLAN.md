@@ -27516,7 +27516,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G5-13 | AI Summarization | ENH | X-01 | the thread's three-bullet head |
 | G5-14 | AI-Driven Reactivation Intake | ENH | X-186 | ⚠️ the Zapier/Sheets hop is corpus vocabulary; ours is native (X-123) |
 | G5-15 | Assistant Multi-Lingual Auto-Detect | ENH | C-Agent | = G5-31/32; one spec |
-| G5-16 | Assistant Proactive Outreach | ENH | X-185 | ⛔ a gap in the calendar is a signal, not a permit (P-068) — the send runs Lane 2 through `ConsentService` |
+| G5-16 | Assistant Proactive Outreach | ENH | X-185 | ⛔ a gap in the calendar is a signal, not a permit (P-068) — the send runs Lane 2 through `ConsentService` · refuses: to treat a calendar gap as a permit |
 | G5-17 | Auto-Documentation | ENH | X-111 | a resolved ticket drafts a help row; ⭐ the help registry generates itself from X-122 |
 | G5-18 | Autonomous L1 Resolution | ENH | X-111 | the HELP path; reply HUMAN always escalates (R37) |
 | G5-19 | Base Prompt Engine | ENH | C-Agent | named in the header |
