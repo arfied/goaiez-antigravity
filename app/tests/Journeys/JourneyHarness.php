@@ -44,7 +44,18 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        throw $this->todo('provision a real tenant and a real carrier number');
+        $owner = \App\Models\User::factory()->create();
+        try {
+            $business = app(\App\Services\TenantProvisioner::class)->provision($owner);
+            $number = app(\App\Services\Sms\TenantNumbers::class)->displayNumberFor($business->id);
+            if (! $number) {
+                $this->fail('UNRESOLVED: No live number provisioned. Pool might be empty.');
+            }
+        } catch (\App\Exceptions\NumberPoolExhausted $e) {
+            $this->fail('UNRESOLVED: ' . $e->getMessage());
+        }
+
+        return $business->toArray();
     }
 
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
@@ -90,7 +101,23 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
-        throw $this->todo('POST the carrier\'s real webhook shape — not a synthetic event');
+        $body = json_encode([
+            'callId' => 'test-call-' . uniqid(),
+            'type' => $event === 'call.missed' ? 'CALL_FINISHED' : 'CALL_FINISHED',
+        ]);
+        
+        try {
+            $secret = app(\App\Support\PlatformCredentials::class)->get('infobip_webhook_secret');
+        } catch (\RuntimeException $e) {
+            $this->fail('UNRESOLVED: ' . $e->getMessage());
+        }
+        
+        $signature = hash_hmac('sha256', (string) $body, $secret);
+        $header = config('services.infobip.signature_header') ?: 'X-Signature';
+        
+        $this->postJson('/webhooks/infobip/voice', json_decode((string) $body, true), [
+            $header => $signature
+        ]);
     }
 
     /** @param array<string,mixed> $tenant */
@@ -118,7 +145,19 @@ trait JourneyHarness
      */
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
-        throw $this->todo('poll for an outbound row carrying the provider message id');
+        $started = microtime(true);
+        while (microtime(true) - $started < $timeoutSeconds) {
+            $outbound = \App\Models\OutreachMessage::where('business_id', $tenant['id'])
+                ->where('to', $to)
+                ->whereNotNull('provider_message_id')
+                ->first();
+                
+            if ($outbound) {
+                return $outbound->toArray();
+            }
+            usleep(500_000);
+        }
+        return null;
     }
 
     /** @param array<string,mixed> $tenant */
@@ -150,7 +189,7 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        throw $this->todo('assert a consent DECISION row exists for this send');
+        return \App\Modules\X204\Models\SendPermit::where('recipient_phone', $phone)->exists();
     }
 
     // ── counting outbound ────────────────────────────────────────────────
