@@ -109,9 +109,40 @@ function waitForServer(url) {
             await page.waitForLoadState('networkidle');
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
         }
-        
         await browser.close();
 
+        // Mobile pass
+        const mobileBrowser = await chromium.launch();
+        const mobilePage = await mobileBrowser.newPage();
+        await mobilePage.setViewportSize({ width: 390, height: 844 });
+
+        await mobilePage.goto(`${baseUrl}/`);
+        await mobilePage.waitForLoadState('networkidle');
+        await mobilePage.screenshot({ path: path.join(outputDir, 'home@390.png'), fullPage: true });
+
+        await mobilePage.goto(`${baseUrl}/login`);
+        await mobilePage.waitForLoadState('networkidle');
+        await mobilePage.screenshot({ path: path.join(outputDir, 'login@390.png'), fullPage: true });
+
+        await mobilePage.fill('#password-email', 'owner2@business.com');
+        await mobilePage.fill('#password', 'password');
+        await mobilePage.click('form:has(#password) button[type="submit"]');
+        await mobilePage.waitForLoadState('networkidle');
+
+        const mobileScreens = [
+            { name: 'account-home', path: '/home' },
+            { name: 'account-settings', path: '/account' },
+            { name: 'memberships', path: '/memberships' },
+            { name: 'account-inbox', path: '/account/inbox' }
+        ];
+
+        for (const screen of mobileScreens) {
+            await mobilePage.goto(`${baseUrl}${screen.path}`);
+            await mobilePage.waitForLoadState('networkidle');
+            await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+        }
+
+        await mobileBrowser.close();
 
     } finally {
         console.log("Stopping server...");
