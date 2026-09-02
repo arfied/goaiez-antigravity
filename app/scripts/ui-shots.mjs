@@ -84,7 +84,8 @@ function waitForServer(url) {
         console.log("Server is ready.");
 
         const browser = await chromium.launch();
-        const page = await browser.newPage();
+        const context = await browser.newContext();
+        const page = await context.newPage();
         
         const outputDir = path.resolve('storage/app/ui-review');
         if (fs.existsSync(outputDir)) {
@@ -211,7 +212,8 @@ function waitForServer(url) {
 
         // Mobile pass
         const mobileBrowser = await chromium.launch();
-        const mobilePage = await mobileBrowser.newPage();
+        const mobileContext = await mobileBrowser.newContext();
+        const mobilePage = await mobileContext.newPage();
         await mobilePage.setViewportSize({ width: 390, height: 844 });
 
         await mobilePage.goto(`${baseUrl}/`);
