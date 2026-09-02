@@ -121,58 +121,9 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
-## Dispatching the coder (added 2026-09-02)
-
-When the user has enabled the settings rule for
-`.agents/supervisor/launch-coder.sh`, the supervisor launches runs itself:
-write `KICKOFF.md`, arm the run's monitor, then
-`bash .agents/supervisor/launch-coder.sh`. The script refuses a second
-concurrent run and auto-numbers logs.
-
-**Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
-run plus one fix run). If the same BLOCK item survives a second dispatch,
-STOP and put it to the user — never dispatch a third time for the same
-failure, never loosen the check to get past it. A journey/wave marked green
-by the coder is never taken at face value: the supervisor's own gate decides.
-Never run `state.py done/journey/stage` from the supervisor; never touch
-`app/Doctor`; never let the coder and supervisor loop without a human seeing
-each verdict block in `REVIEWS.md`.
-
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
 "that is the count-did-not-fall trap". Warn on dangerous git operations rather
 than assuming they are blocked: the deny rules are prefix matches and stop a
 habit, not a determined reordering.
-
-## TRACK 3 — sixty (this worktree)
-
-This checkout is **Track 3**: branch `track/sixty`, worktree
-`/home/goaiez/agents/grs-antig-sixty`. Track 1 (`/home/goaiez/agents/grs-antig`
-on `main`) is the ONLY track that merges to `main`. This track pushes to
-`origin track/sixty` after a PASS; Track 1's supervisor reviews and merges.
-
-- Databases: dev `goaiez_antig_sixty`, tests `goaiez_antig_sixty_test` (the gate
-  exports it over phpunit.xml's pin; brief every pest run with the
-  `DB_DATABASE=goaiez_antig_sixty_test` prefix). `goaiez_antig` is production and
-  `goaiez_antig_dev`/`goaiez_antig_test` belong to Track 1 — touch neither.
-- Journeys owned: J1 (a missed call becomes a consented text back), J2 (two fields at signup put a live agent on a real number), J4 (STOP halts every pending step for that person).
-- Modules owned: C-Telephony, C-Sms, C-Agent, X-188, X-204, X-118, X-66. X-121 is the spine: read it, never edit it. Edits stay under `app/app/Modules/<id>/**` for
-  those ids, plus the owned journeys' methods in
-  `tests/Journeys/TwelveJourneysTest.php`. OUT of scope: every other track's
-  modules and journeys, `resources/views` and `app/Livewire` (Track 2),
-  and everything in Track 1's never-list (Doctor, seals,
-  `JourneyHarness.php`, phpunit DB lines, generated manifests).
-- Goal: the three journeys green in `supervise.sh --tests` and the doctor journey stage, on real telephony and SMS transports.
-- Vendor: Telephony and SMS credentials come from the owner into `app/.env`, never into a commit. Until they exist the journeys stay RED and REPORT.md says UNRESOLVED (missing dependency), per rule 09. Rule 04: a journey on the sync driver proves nothing.
-- The loop: coder builds → `bash bin/supervise.sh --tests` → THIS track's
-  supervisor reads the diff, the raw doctor journey line and the test count
-  → verdicts in this worktree's REVIEWS.md. Two dispatches per BLOCK, then
-  the owner. A journey the coder marks green is never taken at face value;
-  only the gate's output counts.
-- Shared files: `.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written
-  by every track through `state.py`. Rebase onto `origin/main` before each
-  push with `git fetch --no-write-fetch-head origin`; keep both sides'
-  journal lines in time order. Never edit either file by hand.
-- SMS/mail drivers stay `log` in tests. A vendor send happens only in a
-  journey on the real transport, with the owner's credentials.
