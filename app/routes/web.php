@@ -161,6 +161,10 @@ use Laravel\Fortify\RoutePath;
 */
 Route::get('/', [MarketingController::class, 'home'])->name('home');
 
+Route::get('/signup', function () {
+    return view('x-118::signup-page');
+})->name('signup');
+
 Route::get('/audit/{token}', [MarketingController::class, 'audit'])->name('audit.show');
 
 /*
