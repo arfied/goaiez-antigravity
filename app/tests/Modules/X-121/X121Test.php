@@ -304,9 +304,10 @@ class X121Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Person Job Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $person = Person::create([
+        $person = \App\Modules\X121\Models\Person::create([
             'business_id' => $biz->id,
-            'name' => 'Jane Doe',
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
         ]);
 
         $job = Job::create([
