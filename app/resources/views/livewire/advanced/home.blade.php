@@ -37,7 +37,7 @@
 
         <div class="bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule">
             <p class="text-sm font-medium text-ink-2 truncate">Local Map 3-Pack</p>
-            <p class="mt-1 text-3xl font-semibold text-ok">
+            <p class="mt-1 text-3xl font-semibold text-ink">
                 #1.6 Avg
             </p>
             <div class="mt-2 text-xs text-ink-2">
