@@ -10,16 +10,13 @@ use App\Modules\X123\Mail\DeadLetterNotification;
 use App\Modules\X123\Models\DeadLetter;
 use App\Modules\X123\Models\EventLog;
 use App\Modules\X123\Models\EventSubscription;
-use App\Modules\X204\Domain\ConsentService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
 final class EventPublishAction
 {
-    public function __construct(
-        private readonly ConsentService $consentService
-    ) {}
+    public function __construct() {}
 
     public function handle(
         int $businessId,
@@ -83,10 +80,15 @@ final class EventPublishAction
                 errorMessage: $dlq->error_message
             ));
 
-            $decision = $this->consentService->decide($log->business_id, 'tenant@example.com', 'email', 'transactional');
-            if ($decision['granted']) {
+            // P-060 limits the decider to customer communications. This is an operator alert (platform -> tenant owner).
+            $ownerEmail = DB::table('businesses')
+                ->join('users', 'businesses.owner_user_id', '=', 'users.id')
+                ->where('businesses.id', $log->business_id)
+                ->value('users.email');
+
+            if ($ownerEmail) {
                 // Send exactly one notification email
-                Mail::to('tenant@example.com')->send(new DeadLetterNotification(
+                Mail::to($ownerEmail)->send(new DeadLetterNotification(
                     businessId: $log->business_id,
                     eventLogId: $log->id,
                     eventName: $log->event_name,
