@@ -56,11 +56,16 @@ class ConsentAssertionTest extends TestCase
         $violators = [];
         $modules = array_filter(glob($modulesPath.'/*'), 'is_dir');
 
+        $operatorAlertSenders = ['X-123' => 'dead-letter mail to the Business owner — operator alert, outside P-060 (R245 X-123)'];
+
         foreach ($modules as $moduleDir) {
             $moduleName = basename($moduleDir);
+            $sendMatches = [];
+            $decideMatches = [];
 
             // Exclude operator alerts (X-123 EventBus dead-letter notification)
-            if ($moduleName === 'X-123') {
+            if (isset($operatorAlertSenders[$moduleName])) {
+                echo "Skipping {$moduleName}: {$operatorAlertSenders[$moduleName]}\n";
                 continue;
             }
 
