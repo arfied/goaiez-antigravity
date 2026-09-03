@@ -26,7 +26,7 @@
             </thead>
             <tbody class="divide-y divide-rule">
                 <tr>
-                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sample-bg text-sample">Schema JSON-LD</span></td>
+                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">Schema JSON-LD</span></td>
                     <td class="px-6 py-4 font-mono text-xs text-ink-2">/services/consulting</td>
                     <td class="px-6 py-4 text-ink">Injected LocalBusiness & AggregateRating schema with review counts</td>
                     <td class="px-6 py-4 text-ink">Eligible for Rich Stars in SERP</td>
@@ -34,7 +34,7 @@
                     <td class="px-6 py-4 text-right"><button class="p-2 min-h-[40px] inline-flex items-center text-xs text-alert hover:underline">Rollback</button></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-ok-bg text-ok">Core Web Vitals</span></td>
+                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">Core Web Vitals</span></td>
                     <td class="px-6 py-4 font-mono text-xs text-ink-2">/</td>
                     <td class="px-6 py-4 text-ink">Preloaded critical webfonts and deferred non-essential JavaScript</td>
                     <td class="px-6 py-4 text-ink">LCP reduced by 420ms</td>
@@ -42,7 +42,7 @@
                     <td class="px-6 py-4 text-right"><button class="p-2 min-h-[40px] inline-flex items-center text-xs text-alert hover:underline">Rollback</button></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sample-bg text-sample">Meta Tags</span></td>
+                    <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">Meta Tags</span></td>
                     <td class="px-6 py-4 font-mono text-xs text-ink-2">/reviews</td>
                     <td class="px-6 py-4 text-ink">Updated OpenGraph titles & Twitter cards with dynamic 4.9 rating summary</td>
                     <td class="px-6 py-4 text-ink">+14% Social CTR</td>
