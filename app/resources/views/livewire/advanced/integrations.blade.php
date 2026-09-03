@@ -8,7 +8,7 @@
                     <li class="text-ink-2">POS & Invoicing Integrations</li>
                 </ol>
             </nav>
-            <h1 class="text-2xl font-bold text-ink sm:text-3xl">Point-of-Sale & Invoicing Review Triggers <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-attention-bg text-attention">Preview — not live</span></h1>
+            <h1 class="text-2xl font-bold text-ink sm:text-3xl">Point-of-Sale & Invoicing Review Triggers <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400">Preview — not live</span></h1>
             <p class="mt-1 text-sm text-ink-2">Automatically trigger review requests within minutes of customer invoice payment or checkout.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4">
@@ -20,9 +20,9 @@
     </div>
 
     @if ($testNotification)
-        <div class="mb-6 p-4 rounded-md bg-ok-bg border border-ok text-ok text-sm flex items-center justify-between">
+        <div class="mb-6 p-4 rounded-md bg-ok-bg border border-ok text-emerald-600 dark:text-emerald-400 text-sm flex items-center justify-between">
             <span>{{ $testNotification }}</span>
-            <button wire:click="$set('testNotification', null)" class="text-ok hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('testNotification', null)" class="text-emerald-600 dark:text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
@@ -36,7 +36,7 @@
                         <span class="p-1.5 rounded bg-indigo-600 text-white font-black text-xs">S</span>
                         <span>Stripe Payments</span>
                     </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-ok-bg text-ok">Active</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Active</span>
                 </div>
                 <p class="text-xs text-ink-2">
                     Triggers automated feedback asks upon successful <code>charge.succeeded</code> or customer invoice settlement.
@@ -56,7 +56,7 @@
                         <span class="p-1.5 rounded bg-emerald-800 text-white font-bold text-xs">QB</span>
                         <span>QuickBooks Online</span>
                     </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-paper text-ink-2 border border-rule">Ready</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">Ready</span>
                 </div>
                 <p class="text-xs text-ink-2">
                     Dispatches review asks when paid receipts or closed job work orders are recorded in QuickBooks.
@@ -76,7 +76,7 @@
                         <span class="p-1.5 rounded bg-gray-900 text-white font-black text-xs">SQ</span>
                         <span>Square POS</span>
                     </div>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-paper text-ink-2 border border-rule">Ready</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">Ready</span>
                 </div>
                 <p class="text-xs text-ink-2">
                     Connects in-person terminal card swipes, register receipts, and appointment checkouts.
@@ -114,7 +114,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-ink-2 mb-1">Carrier TCPA Quiet Hours Guard</label>
-                    <div class="p-2.5 rounded-md bg-paper text-xs text-ok font-medium flex items-center gap-2">
+                    <div class="p-2.5 rounded-md bg-paper text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-2">
                         <span>🛡️ Enforced: Payments after 9:00 PM automatically hold until 8:00 AM</span>
                     </div>
                 </div>
