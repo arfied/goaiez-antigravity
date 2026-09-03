@@ -14,18 +14,16 @@ final class AffiliateProposeClawbackAction
      * Proposes a commission clawback on refunded order.
      * TEST ANCHOR: A refund on an attributed sale produces a clawback PROPOSAL and moves NO money.
      */
-    public function proposeClawback(int $businessId, int $attributionId, string $refundReason = 'Customer order refunded', bool $isChargeback = false): AffiliateAttribution
+    public function proposeClawback(int $businessId, int $attributionId, string $refundReason = 'Customer order refunded', ?string $disputeRef = null): AffiliateAttribution
     {
         $attribution = AffiliateAttribution::where('business_id', $businessId)->findOrFail($attributionId);
 
-        if ($isChargeback) {
-            throw new \DomainException('REFUSAL_G7_11_CHARGEBACK');
-        }
-
         // TEST ANCHOR: Status set to proposed, is_clawed_back remains false until human approval (moves no money)
+        // G7-11: triggering refund/dispute attached
         $attribution->update([
             'clawback_status' => 'proposed',
             'is_clawed_back' => false, // No money moved
+            'triggering_dispute_ref' => $disputeRef,
         ]);
 
         Event::dispatch(new ApprovalRequested(

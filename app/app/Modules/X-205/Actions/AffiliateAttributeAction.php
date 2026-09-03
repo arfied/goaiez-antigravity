@@ -25,18 +25,27 @@ final class AffiliateAttributeAction
         string $affiliateCode,
         string $orderId,
         int $saleAmountCents,
-        bool $isSelfClick = false,
-        bool $isStolenCard = false
+        string $visitorId = '',
+        array $orderTags = []
     ): AffiliateAttribution {
-        if ($isSelfClick || $isStolenCard) {
-            throw new \DomainException('REFUSAL_G7_23_FRAUD');
-        }
-        
         $affiliate = Affiliate::where('business_id', $businessId)
             ->where('affiliate_code', $affiliateCode)
             ->firstOrFail();
 
-        $commission = $this->engine->calculateCommission($saleAmountCents, $affiliate->commission_rate_bps);
+        // G7-41: Tiers
+        // Calculate referral count (existing attributions)
+        $referralCount = AffiliateAttribution::where('business_id', $businessId)
+            ->where('affiliate_id', $affiliate->id)
+            ->count();
+
+        $rateBps = $this->engine->getCommissionRateForReferralCount($businessId, $referralCount, $affiliate->commission_rate_bps);
+        $commission = $this->engine->calculateCommission($saleAmountCents, $rateBps);
+
+        // G7-23: Fraud Detection
+        $fraudReviewStatus = 'none';
+        if ($visitorId === $affiliate->affiliate_code || in_array('stolen_card', $orderTags, true)) {
+            $fraudReviewStatus = 'proposed';
+        }
 
         $attribution = AffiliateAttribution::create([
             'business_id' => $businessId,
@@ -47,6 +56,7 @@ final class AffiliateAttributeAction
             'attributed_at' => now(),
             'is_clawed_back' => false,
             'clawback_status' => 'none',
+            'fraud_review_status' => $fraudReviewStatus,
         ]);
 
         $affiliate->increment('lifetime_earnings_cents', $commission);

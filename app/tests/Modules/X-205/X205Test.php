@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X205;
 
+use App\Modules\X201\Events\DisputeLost;
 use App\Modules\X205\Actions\AffiliateAttributeAction;
 use App\Modules\X205\Actions\AffiliatePayoutRequestAction;
 use App\Modules\X205\Actions\AffiliateProposeClawbackAction;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X205\Events\ApprovalRequested;
+use App\Modules\X205\Listeners\ProposeClawbackOnDisputeLost;
 use App\Modules\X205\Models\Affiliate;
+use App\Modules\X205\Models\AffiliateTier;
+use App\Modules\X205\Models\ReferralClick;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -57,10 +61,10 @@ class X205Test extends TestCase
 
         // 2. Attribute $500.00 sale (earns $50.00 commission)
         $attribution = $this->attributeAction->attributeSale(
-            $biz->id,
-            'AFFILIATE-ALPHA',
-            'ORD-9901',
-            50000 // $500.00
+            businessId: $biz->id,
+            affiliateCode: 'AFFILIATE-ALPHA',
+            orderId: 'ORD-9901',
+            saleAmountCents: 50000 // $500.00
         );
 
         $this->assertEquals(5000, $attribution->commission_cents); // $50.00
@@ -96,21 +100,40 @@ class X205Test extends TestCase
     }
 
     /**
-     * [G7-04] refuses: AffiliateProgram; ref merged with utm — see §166.5
+     * [G7-04] Affiliate ID Merging. A click carrying both a ref code and utm_* params merges into one attribution.
+     * utm never overwrites an existing ref and never double-counts.
      */
-    public function test_g7_04_refuses_ref_merged_with_utm(): void
+    public function test_g7_04_ref_merged_with_utm_does_not_double_count_and_ref_survives(): void
     {
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('REFUSAL_G7_04_REF_MERGED_WITH_UTM');
-        $this->engine->parseAffiliateFromUrl('https://example.com/?utm_source=fb&ref=123');
+        $biz = TestCase::provisionTenant(['name' => 'G7-04 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $affiliate = Affiliate::create([
+            'business_id' => $biz->id,
+            'affiliate_code' => 'AFF-G7-04',
+            'partner_name' => 'Merge Partner',
+        ]);
+
+        $this->engine->recordClick($biz->id, 'vis-123', 'AFF-G7-04', 'fb', 'social', 'summer');
+
+        $clicks = ReferralClick::where('business_id', $biz->id)->where('visitor_id', 'vis-123')->get();
+        $this->assertCount(1, $clicks, 'Assert ONE attribution row, not two');
+        $this->assertEquals($affiliate->id, $clicks[0]->affiliate_id, 'The surviving code is the ref');
+        $this->assertEquals('fb', $clicks[0]->utm_source);
+
+        // Second click, same visitor, different UTM, should merge not double count, ref unchanged
+        $this->engine->recordClick($biz->id, 'vis-123', null, 'google');
+        $clicks2 = ReferralClick::where('business_id', $biz->id)->where('visitor_id', 'vis-123')->get();
+        $this->assertCount(1, $clicks2, 'Still ONE attribution row, no double count');
+        $this->assertEquals($affiliate->id, $clicks2[0]->affiliate_id, 'ref is unchanged');
     }
 
     /**
-     * [G7-11] refuses: AffiliateProgram; a chargeback reverses a paid commission; X-201 raises the event
+     * [G7-11] Clawback Automation. A clawback is PROPOSED with the triggering refund attached, never executed.
      */
-    public function test_g7_11_refuses_automatic_chargeback_reversal(): void
+    public function test_g7_11_chargeback_produces_proposed_clawback_with_refund_attached_and_moves_no_money(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Tenant']);
+        $biz = TestCase::provisionTenant(['name' => 'G7-11 Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $affiliate = Affiliate::create([
@@ -119,64 +142,153 @@ class X205Test extends TestCase
             'partner_name' => 'Partner',
         ]);
 
-        $attribution = $this->attributeAction->attributeSale($biz->id, 'AFF-G7-11', 'ORD-CB', 10000);
+        $attribution = $this->attributeAction->attributeSale($biz->id, 'AFF-G7-11', '12345', 10000);
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('REFUSAL_G7_11_CHARGEBACK');
-        $this->clawbackAction->proposeClawback($biz->id, $attribution->id, 'Chargeback', true);
+        // A chargeback happens from X-201
+        $listener = new ProposeClawbackOnDisputeLost($this->clawbackAction);
+        $listener->handle(new DisputeLost($biz->id, 999, (int) '12345', 10000));
+
+        $updatedAttribution = $attribution->fresh();
+
+        $this->assertEquals('proposed', $updatedAttribution->clawback_status);
+        $this->assertEquals('999', $updatedAttribution->triggering_dispute_ref, 'triggering refund attached');
+        $this->assertFalse($updatedAttribution->is_clawed_back, 'moves no money (never executed)');
     }
 
     /**
-     * [G7-23] refuses: AffiliateProgram; self-clicking and stolen-card affiliates
+     * [G7-23] Fraud Detection. Fraud detection PROPOSES, NEVER FREEZES.
      */
-    public function test_g7_23_refuses_self_clicking_and_stolen_card(): void
+    public function test_g7_23_fraud_detection_proposes_never_freezes(): void
     {
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('REFUSAL_G7_23_FRAUD');
-        $this->attributeAction->attributeSale(1, 'AFF', 'ORD', 10000, true, false);
+        $biz = TestCase::provisionTenant(['name' => 'G7-23 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Affiliate::create([
+            'business_id' => $biz->id,
+            'affiliate_code' => 'AFF-G7-23',
+            'partner_name' => 'Fraud Partner',
+        ]);
+
+        // Self-click fraud
+        $attribution = $this->attributeAction->attributeSale(
+            businessId: $biz->id,
+            affiliateCode: 'AFF-G7-23',
+            orderId: 'ORD-FRAUD-1',
+            saleAmountCents: 10000,
+            visitorId: 'AFF-G7-23' // Converts themselves
+        );
+
+        $this->assertEquals('proposed', $attribution->fraud_review_status, 'proposes for review');
+        $this->assertEquals('none', $attribution->clawback_status, 'not clawed back');
+        $this->assertEquals(1000, $attribution->commission_cents, 'still attributed');
+        $this->assertFalse($attribution->is_clawed_back, 'no money moved');
+
+        // Stolen card fraud
+        $attribution2 = $this->attributeAction->attributeSale(
+            businessId: $biz->id,
+            affiliateCode: 'AFF-G7-23',
+            orderId: 'ORD-FRAUD-2',
+            saleAmountCents: 10000,
+            visitorId: 'vis-555',
+            orderTags: ['stolen_card']
+        );
+        $this->assertEquals('proposed', $attribution2->fraud_review_status, 'proposes for review');
+        $this->assertEquals(1000, $attribution2->commission_cents, 'still attributed');
+        $this->assertFalse($attribution2->is_clawed_back, 'no money moved');
     }
 
     /**
-     * [G7-41] refuses: AffiliateProgram; referral tiers unlock by count
+     * [G7-41] Tiered Commissions. Tiers unlock by referral count. A tier never re-rates an already-cleared or paid commission.
      */
-    public function test_g7_41_refuses_referral_tiers(): void
+    public function test_g7_41_referral_tiers_unlock_by_count_and_never_rerate_existing_commissions(): void
     {
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('REFUSAL_G7_41_TIERS');
-        $this->engine->unlockTier(5);
+        $biz = TestCase::provisionTenant(['name' => 'G7-41 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        AffiliateTier::create([
+            'business_id' => $biz->id,
+            'name' => 'Gold',
+            'min_referrals' => 1,
+            'commission_rate_bps' => 2000, // 20%
+        ]);
+
+        Affiliate::create([
+            'business_id' => $biz->id,
+            'affiliate_code' => 'AFF-G7-41',
+            'partner_name' => 'Tier Partner',
+            'commission_rate_bps' => 1000, // base 10%
+        ]);
+
+        // Referral 1: base rate (10%)
+        $attribution1 = $this->attributeAction->attributeSale($biz->id, 'AFF-G7-41', 'ORD-T1', 10000);
+        $this->assertEquals(1000, $attribution1->commission_cents);
+
+        // Referral 2: now has 1 referral, unlocks Gold (20%)
+        $attribution2 = $this->attributeAction->attributeSale($biz->id, 'AFF-G7-41', 'ORD-T2', 10000);
+        $this->assertEquals(2000, $attribution2->commission_cents);
+
+        // Existing attribution commission is unchanged
+        $this->assertEquals(1000, $attribution1->fresh()->commission_cents);
     }
 
     /**
-     * [G7-45] refuses: AffiliateProgram; the partner's own login
+     * [G7-45] White-Labelled Portal. A non-tenant portal leaks tenant data. Asserted cross-scope.
      */
-    public function test_g7_45_refuses_partner_login(): void
+    public function test_g7_45_cross_scope_read_returns_nothing_for_other_tenants(): void
     {
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('REFUSAL_G7_45_PARTNER_LOGIN');
-        $this->engine->getPartnerLoginUrl(1);
+        // Provision Tenant A
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant A']);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+
+        $affiliateA = Affiliate::create([
+            'business_id' => $bizA->id,
+            'affiliate_code' => 'AFF-A',
+            'partner_name' => 'Partner A',
+        ]);
+        $this->engine->recordClick($bizA->id, 'vis-A', 'AFF-A');
+
+        // Provision Tenant B
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant B']);
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+
+        $affiliateB = Affiliate::create([
+            'business_id' => $bizB->id,
+            'affiliate_code' => 'AFF-B',
+            'partner_name' => 'Partner B',
+        ]);
+        $this->engine->recordClick($bizB->id, 'vis-B', 'AFF-B');
+
+        // Under Tenant B's scope, Partner A's clicks should not be visible
+        $clicks = ReferralClick::where('affiliate_id', $affiliateA->id)->get();
+        $this->assertCount(0, $clicks, 'asserted cross-scope: returns nothing');
+
+        $affiliates = Affiliate::where('id', $affiliateA->id)->get();
+        $this->assertCount(0, $affiliates);
     }
 
     /**
-     * [G10-36] W-9 threshold freezes a payout; Law 122 — the switch and the threshold as data, never the advice
+     * [G10-36] Tax Compliance. W-9 threshold freezes a payout.
      */
-    public function test_g10_36_w9_threshold_freezes_payout(): void
+    public function test_g10_36_w9_threshold_freezes_payout_and_moves_no_money(): void
     {
-        Event::fake([ApprovalRequested::class]);
-        $biz = TestCase::provisionTenant(['name' => 'W9 Tenant']);
+        $biz = TestCase::provisionTenant(['name' => 'G10-36 Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $affiliate = Affiliate::create([
             'business_id' => $biz->id,
             'affiliate_code' => 'AFF-G10-36',
             'partner_name' => 'W9 Partner',
-            'commission_rate_bps' => 1000,
-            'lifetime_earnings_cents' => 60000, // Meets threshold
+            'lifetime_earnings_cents' => 60000,
             'current_balance_cents' => 60000,
+            'w9_threshold_cents' => 60000,
+            'w9_on_file' => false,
         ]);
 
-        // Request payout of $100, threshold is $600, not on file
-        $payout = $this->payoutAction->requestPayout($biz->id, $affiliate->id, 10000, 60000, false);
-        
+        $payout = $this->payoutAction->requestPayout($biz->id, $affiliate->id, 10000);
+
         $this->assertEquals('frozen', $payout->status);
+        $this->assertFalse($payout->money_moved);
+
+        // Asserted by absence: no computeTaxPosition() or stored rate exists in the module.
     }
 }

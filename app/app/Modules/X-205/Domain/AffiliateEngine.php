@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X205\Domain;
 
+use App\Modules\X205\Models\Affiliate;
+use App\Modules\X205\Models\AffiliateTier;
+use App\Modules\X205\Models\ReferralClick;
 use Carbon\CarbonInterface;
 
 final class AffiliateEngine
@@ -20,21 +23,53 @@ final class AffiliateEngine
         return (int) round(($saleAmountCents * $rateBps) / 10000);
     }
 
-    public function parseAffiliateFromUrl(string $url): ?string
+    public function getCommissionRateForReferralCount(int $businessId, int $referralCount, int $baseRateBps): int
     {
-        if (str_contains($url, 'utm_') && str_contains($url, 'ref=')) {
-            throw new \DomainException('REFUSAL_G7_04_REF_MERGED_WITH_UTM');
+        $tier = AffiliateTier::where('business_id', $businessId)
+            ->where('min_referrals', '<=', $referralCount)
+            ->orderBy('min_referrals', 'desc')
+            ->first();
+
+        return $tier ? $tier->commission_rate_bps : $baseRateBps;
+    }
+
+    public function recordClick(int $businessId, string $visitorId, ?string $refCode, ?string $utmSource = null, ?string $utmMedium = null, ?string $utmCampaign = null): ReferralClick
+    {
+        $affiliateId = null;
+        if ($refCode) {
+            $affiliate = Affiliate::where('business_id', $businessId)->where('affiliate_code', $refCode)->first();
+            if ($affiliate) {
+                $affiliateId = $affiliate->id;
+            }
         }
-        return 'CODE';
-    }
 
-    public function unlockTier(int $referralCount): void
-    {
-        throw new \DomainException('REFUSAL_G7_41_TIERS');
-    }
+        $click = ReferralClick::where('business_id', $businessId)->where('visitor_id', $visitorId)->first();
+        if ($click) {
+            // merge: utm never overwrites an existing ref
+            if (! $click->affiliate_id && $affiliateId) {
+                $click->affiliate_id = $affiliateId;
+            }
+            if (! $click->utm_source && $utmSource) {
+                $click->utm_source = $utmSource;
+            }
+            if (! $click->utm_medium && $utmMedium) {
+                $click->utm_medium = $utmMedium;
+            }
+            if (! $click->utm_campaign && $utmCampaign) {
+                $click->utm_campaign = $utmCampaign;
+            }
+            $click->save();
 
-    public function getPartnerLoginUrl(int $affiliateId): string
-    {
-        throw new \DomainException('REFUSAL_G7_45_PARTNER_LOGIN');
+            return $click;
+        }
+
+        return ReferralClick::create([
+            'business_id' => $businessId,
+            'affiliate_id' => $affiliateId,
+            'visitor_id' => $visitorId,
+            'utm_source' => $utmSource,
+            'utm_medium' => $utmMedium,
+            'utm_campaign' => $utmCampaign,
+        ]);
     }
 }
