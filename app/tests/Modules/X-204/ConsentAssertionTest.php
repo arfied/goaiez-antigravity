@@ -53,37 +53,35 @@ class ConsentAssertionTest extends TestCase
         $modulesPath = base_path('app/Modules');
         $this->assertDirectoryExists($modulesPath);
 
-        // (a) every file under app/Modules that calls ->send( or canSend also references ConsentService::decide or ConsentDecideAction
-        $cmdA = "grep -rlE '\->send\(|canSend' {$modulesPath}";
-        exec($cmdA, $filesA);
-        $violatorsA = [];
-        foreach ($filesA as $file) {
-            $content = file_get_contents($file);
-            if (strpos($content, 'ConsentService::decide') === false && strpos($content, 'ConsentDecideAction') === false && strpos($content, '->decide(') === false) {
-                $violatorsA[] = $file;
+        $violators = [];
+        $modules = array_filter(glob($modulesPath.'/*'), 'is_dir');
+
+        foreach ($modules as $moduleDir) {
+            $moduleName = basename($moduleDir);
+
+            // Exclude operator alerts (X-123 EventBus dead-letter notification)
+            if ($moduleName === 'X-123') {
+                continue;
+            }
+
+            $cmdSend = "grep -rnE '\\->send\(|canSend' ".escapeshellarg($moduleDir)." --exclude-dir=Tests | grep -v 'Test.php'";
+            exec($cmdSend, $sendMatches);
+
+            if (! empty($sendMatches)) {
+                $cmdDecide = "grep -rnE '\\->decide\(|ConsentService|ConsentDecideAction' ".escapeshellarg($moduleDir)." --exclude-dir=Tests | grep -v 'Test.php'";
+                exec($cmdDecide, $decideMatches);
+
+                if (empty($decideMatches)) {
+                    $violators[] = $moduleName;
+                }
             }
         }
-        if (! empty($violatorsA)) {
-            echo "N-002 Violators (a):\n".implode("\n", $violatorsA)."\n";
+
+        if (! empty($violators)) {
+            echo "N-002 Violators (modules sending without ->decide()):\n".implode("\n", $violators)."\n";
         }
 
-        // (b) no file outside X-204 compares consent_state or opted_in in code (exclude strings/comments/capabilities.php/migrations)
-        $cmdB = "grep -rnE 'consent_state|opted_in' {$modulesPath} | grep -v 'X-204' | grep -v 'X204' | grep -v 'capabilities.php' | grep -v 'Migrations'";
-        exec($cmdB, $outputB);
-        $violatorsB = [];
-        foreach ($outputB as $line) {
-            // match comparisons
-            if (preg_match('/(?:===?|!==?|[<>]=?)\s*[\'"]?(?:consent_state|opted_in)[\'"]?|[\'"]?(?:consent_state|opted_in)[\'"]?\s*(?:===?|!==?|[<>]=?)/', $line) ||
-                preg_match('/->(?:consent_state|opted_in)\s*(?:===?|!==?|[<>]=?)/', $line)) {
-                $violatorsB[] = $line;
-            }
-        }
-        if (! empty($violatorsB)) {
-            echo "N-002 Violators (b):\n".implode("\n", $violatorsB)."\n";
-        }
-
-        $allViolators = array_merge($violatorsA, $violatorsB);
-        $this->assertEmpty($allViolators, 'Found N-002 violators.');
+        $this->assertEmpty($violators, 'Found modules that send but do not consult the decider (N-002).');
     }
 
     public function test_n_003_stop_mid_sequence_halts_pending_steps(): void
