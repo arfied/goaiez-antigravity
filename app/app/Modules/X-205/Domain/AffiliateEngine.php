@@ -77,6 +77,7 @@ final class AffiliateEngine
     {
         $clicks = ReferralClick::where('business_id', $businessId)->where('affiliate_id', $affiliateId)->get();
         $affiliate = Affiliate::where('business_id', $businessId)->where('id', $affiliateId)->first();
+
         return [
             'clicks' => $clicks,
             'pending_earnings' => $affiliate ? $affiliate->current_balance_cents : 0,

@@ -310,18 +310,18 @@ class X205Test extends TestCase
         $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($moduleDir));
         $taxKeywords = ['tax_rate', 'tax_amount', 'taxOwed', 'computeTax', 'withholding_rate'];
         $found = [];
-        
+
         foreach ($files as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
                 $content = file_get_contents($file->getPathname());
                 foreach ($taxKeywords as $keyword) {
                     if (stripos($content, $keyword) !== false) {
-                        $found[] = $file->getFilename() . ':' . $keyword;
+                        $found[] = $file->getFilename().':'.$keyword;
                     }
                 }
             }
         }
-        
-        $this->assertEmpty($found, 'No computeTaxPosition() or stored rate exists in the module: ' . implode(', ', $found));
+
+        $this->assertEmpty($found, 'No computeTaxPosition() or stored rate exists in the module: '.implode(', ', $found));
     }
 }

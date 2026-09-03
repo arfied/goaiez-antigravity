@@ -7,6 +7,7 @@ namespace App\Modules\X205\Actions;
 use App\Modules\X205\Domain\AffiliateEngine;
 use App\Modules\X205\Models\Affiliate;
 use App\Modules\X205\Models\AffiliateAttribution;
+use App\Modules\X205\Models\ReferralClick;
 
 final class AffiliateAttributeAction
 {
@@ -43,8 +44,8 @@ final class AffiliateAttributeAction
 
         // G7-23: Fraud Detection
         $fraudReviewStatus = 'none';
-        
-        $click = \App\Modules\X205\Models\ReferralClick::where('business_id', $businessId)
+
+        $click = ReferralClick::where('business_id', $businessId)
             ->where('visitor_id', $visitorId)
             ->latest('id')
             ->first();
