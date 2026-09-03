@@ -330,4 +330,76 @@ class CReviewsTest extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_job_completed_creates_review_request(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Test Customer',
+        ]);
+
+        \Illuminate\Support\Facades\Event::dispatch(
+            new \App\Modules\X171\Events\JobCompleted($biz->id, 100, 200, $customerId)
+        );
+
+        $count = \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)
+            ->where('customer_id', $customerId)
+            ->count();
+        $this->assertEquals(1, $count);
+    }
+
+    public function test_second_job_inside_window_creates_no_second_request(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Test Customer',
+        ]);
+
+        \Illuminate\Support\Facades\Event::dispatch(
+            new \App\Modules\X171\Events\JobCompleted($biz->id, 101, 200, $customerId)
+        );
+        \Illuminate\Support\Facades\Event::dispatch(
+            new \App\Modules\X171\Events\JobCompleted($biz->id, 102, 200, $customerId)
+        );
+
+        $count = \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)
+            ->where('customer_id', $customerId)
+            ->count();
+        $this->assertEquals(1, $count);
+    }
+
+    public function test_job_completed_with_null_person_id_creates_no_request(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        \Illuminate\Support\Facades\Event::dispatch(
+            new \App\Modules\X171\Events\JobCompleted($biz->id, 103, 200, null)
+        );
+
+        $count = \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)->count();
+        $this->assertEquals(0, $count);
+    }
+
+    public function test_default_prompt_returns_sent_not_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Test Customer',
+        ]);
+
+        $action = new \App\Modules\CReviews\Actions\ReviewRequestAction();
+        $result = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
+
+        $this->assertEquals('sent', $result['status']);
+    }
 }
