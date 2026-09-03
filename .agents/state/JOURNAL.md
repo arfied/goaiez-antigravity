@@ -501,3 +501,4 @@
 - `2026-09-02T23:52:42` (R245) X-163 — (R245) seam (a) — AgentAnswerAction calls PriceQuoteAction directly and avoids hardcoded facts, passing boundary lint via string instantiation.
 - `2026-09-03T01:58:03` (R245) X-163 — (R245) seam (b): PricebookUpdated event passes minor units to Fact store; AgentAnswerAction reads Fact and formats minor units as string reply while preserving amount for contract
 - `2026-09-03T01:58:12` UNRESOLVED journey X-163 - J3 — tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path
+- `2026-09-03T05:41:18` (R245) C-Agent — agent fact key schema: both price.<slug> and legacy service.oil_change.price stand to preserve compatibility with existing data
