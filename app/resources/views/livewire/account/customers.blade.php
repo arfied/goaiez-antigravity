@@ -219,9 +219,8 @@
                             cannot disagree. Standing suppression included: a
                             contact who said STOP no longer reads as "agreed".
                         --}}
-                        @php $badge = $consentBadges[$customer->id] ?? null; @endphp
-                        <p class="mt-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badge && $badge->stopped !== [] ? 'bg-alert-bg text-alert' : ($badge && $badge->agreed !== [] ? 'bg-ok-bg text-ok' : 'bg-paper text-ink-2 border border-rule') }}" data-consent-badge>
-                            {{ $badge?->label() ?? 'Hasn’t agreed to messages' }}
+                        <p class="mt-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ ($consentBadges[$customer->id] ?? null) !== null && ($consentBadges[$customer->id] ?? null)->stopped !== [] ? 'bg-alert-bg text-alert' : (($consentBadges[$customer->id] ?? null) !== null && ($consentBadges[$customer->id] ?? null)->agreed !== [] ? 'bg-ok-bg text-ok' : 'bg-paper text-ink-2 border border-rule') }}" data-consent-badge>
+                            {{ ($consentBadges[$customer->id] ?? null)?->label() ?? 'Hasn’t agreed to messages' }}
                         </p>
 
                         {{--
