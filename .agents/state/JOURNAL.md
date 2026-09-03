@@ -508,3 +508,4 @@
 - `2026-09-03T01:03:21` stage capability = 352
 - `2026-09-03T01:03:24` stage contract = 100
 - `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read
