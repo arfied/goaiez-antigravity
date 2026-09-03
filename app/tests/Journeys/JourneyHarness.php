@@ -6,13 +6,13 @@ namespace Tests\Journeys;
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X119\Actions\FactConfirmAction;
 use App\Modules\X119\Actions\FactTeachAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
-use App\Modules\X163\Actions\PriceQuoteAction;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
@@ -137,7 +137,7 @@ trait JourneyHarness
     /** ⛔ Must return a refusal CODE when ungrounded, never prose. @return array<string,mixed> */
     private function askAgent(array $tenant, string $question): array
     {
-        return app(PriceQuoteAction::class)->handle($tenant['id'], $question);
+        return app(AgentAnswerAction::class)->handle($tenant['id'], $question);
     }
 
     /** @param array<string,mixed> $tenant */
