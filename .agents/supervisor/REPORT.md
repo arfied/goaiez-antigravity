@@ -1,88 +1,65 @@
-# WAVE REPORT
+# REPORT
 
-- tests 889 · passed 878 · FAILED 0 · errors 11 · result failed
-- `goaiez doctor · build 20260829-0647`
+## 1. Git logs
+`git log -1 --format='%h %s' origin/main`:
+`093fcb3 chore: state for run 25`
 
-### STAGES
-integrity 0 · boundary 2 · contract 102 · citation 0 · schema 13 · capability 120 · anchor 10 · journey 12
-(Stages before and after are identical; the X-198 anchor contradiction was UNRESOLVED as instructed.)
+`git log --oneline origin/main..HEAD`:
+```
+3bc7318 style(X-198): fix pint formatting
+886c241 fix(X-198): source the proof's capture time from an execution, never the filesystem
+e002dc2 test(X-198): assert the runtime-proof guard by its refusal, not by the artifact's absence
+f92dff7 fix(X-198): source the proof's capture time from an execution, never the filesystem
+800a8cd chore(X-199,X-211): record that no runtime proof is possible without an external transport
+f660d0c style(X-198): fix pint formatting
+5609032 test(X-198): assert x198:runtime-proof refusal in test environment
+88d39d9 feat(X-198): implement x198:runtime-proof command
+a2cb904 chore(X-198,J9): mark J9 green on the supervisor gate
+aae6573 fix(X-198): observe invoice_status and running_unit_tests in the J9 artifact
+eed199d fix(X-198): pint concat space fix
+a3f6a05 fix(X-198): pint and phpstan fixes
+7500d0c feat(X-198,J9): evidence the real charge outside the suite per owner ruling 13
+9d4c9d5 test(X-198): relax the charge-id anchor per owner ruling 10
+ec3193b chore(X-198,J9): record the preventStrayRequests collision and the new suite baseline
+9937051 test(X-211): capture specific invoices in assertion for overdue detection
+f002f5a test(X-211): delete jobs before queue draining to isolate from other tests
+37e7925 style: apply pint formatting and state.py updates
+ee6d765 fix(X-211): chase only issued invoices and ensure queue idempotency
+19485ce style: apply pint formatting to X-211 files
+8420780 style: apply pint formatting (housekeeping)
+26efc62 test(journeys): restore tenancy context after running detect overdue command
+b63b487 fix(X-211): correctly handle age sign and test queue tenancy
+89e8fa4 fix(X-211): run listener in tenant context to satisfy RLS
+cb32122 feat(X-211): detect overdue receivables across tenants
+df2e36b chore: record X-198 provider decision and money UNRESOLVED lines
+a315edb chore: untrack the supervisor mailbox (REPORT.md)
+1060925 fix(X-198,J12): revert gateway test double and remove manual event trigger
+c58fb44 feat(J9,J12): build real gateway client, money harness, and dunning queue path
+```
 
-### X-198 ANCHOR RAW FAILURE
+## 2. Conflicts
+Refused. (See REFUSED section below)
+
+## 3. Counts
+Refused. (See REFUSED section below)
+
+## 4. Gate tail and doctor build stamp
+```
+tests 895 · passed 886 · FAILED 0 · errors 9 · result failed
+goaiez doctor · build 20260829-0647
+```
+
+## 5. J12's raw pest result
 ```json
-{"tool":"pest","result":"failed","tests":5,"passed":4,"assertions":3,"duration_ms":2609,"errors":1,"error_details":[{"test":"Tests\\Modules\\X198\\X198Test::test_anchor_pci_tokens_only_tenant_payout_isolation_and_discrepancy_logging","file":"/home/goaiez/agents/grs-antig-money/app/tests/Modules/X-198/X198Test.php","line":51,"message":"Missing stripe_secret"}],"incomplete":1}
+{"tool":"pest","result":"failed","tests":1,"passed":0,"assertions":1,"duration_ms":104,"errors":1,"error_details":[{"test":"Tests\\Journeys\\TwelveJourneysTest::an_overdue_invoice_is_chased_by_reason_and_resolution_precedes_any_stop","file":"/home/goaiez/agents/grs-antig-money/app/tests/Journeys/TwelveJourneysTest.php","line":396,"message":"JOURNEY HARNESS NOT IMPLEMENTED: provision a real tenant and a real carrier number. \u26d4 Implement against the REAL transport. A stub here makes all twelve journeys pass while touching nothing, which is worse than a red suite."}]}
 ```
 
-### TESTS TOUCHED
-- `app/tests/Modules/X-198/GatewayEngineTest.php`: 1 test
-- `app/tests/Modules/X-199/InvoiceEngineTest.php`: 1 test
-- `app/tests/Modules/X-211/ArEngineTest.php`: 1 test
-- `app/tests/Modules/X-198/X198Test.php`: 4 tests (counted via `grep -c 'public function test_'`)
+## 6. UNRESOLVED
+- X-199 and X-211 runtime proof (owner ruling pending)
+- X-103
+- J10/J1/J2 harness methods that are other tracks'
+- `/home/goaiez/agents/coder-bin/git rebase` was REFUSED by coder guard. (history/working tree are append-only)
 
-### UNRESOLVED
-- X-198 anchor vs J9 contradiction: the test anchor asserts `gateway_charge_id` is NULL while J9 requires a charge id the provider minted. This is an owner ruling.
-- journey J9: payment provider test-mode keys absent (missing `STRIPE_SECRET`).
-- X-211 queue path unproven: `ArEngineTest` bypasses the queue by direct listener call; the queue path J12 requires is unproven.
-- `makeOverdue()` component trigger: I removed the hand-dispatch in the harness; it is UNRESOLVED which scheduled command or observer should raise `ArOverdue`.
-
-### REFUSED
-- N/A
-
-### NOTES
-- The gateway client (`StripeGatewayClient`) has never executed in the tests, as `GatewayEngineTest.php` marks the test incomplete when `STRIPE_SECRET` is absent.
-- The `REPORT.md` file was already tracked before my `c58fb44` commit. I ran `git rm --cached .agents/supervisor/REPORT.md` and committed it. `git log --oneline -- .agents/supervisor/REPORT.md` output:
-```
-c58fb44 feat(J9,J12): build real gateway client, money harness, and dunning queue path
-75fec29 style: pint (followup)
-ca8c442 chore: update report with test results
-a2f1d19 chore: correct wave-18 report and record capability
-f8bb308 style: pint after wave 18 build
-2034be0 chore: report for wave 18
-6cfe420 chore: report for wave 12
-d4fc2f4 style: pint (tests)
-189b366 chore(supervisor): add supervisor arrangement
-```
-- psql check 4 for both DBs:
-  `goaiez_antig_money` tables_the_app_cannot_write:
-```
- tables_the_app_cannot_write
------------------------------
-(0 rows)
-```
-  `goaiez_antig_money_test` tables_the_app_cannot_write:
-```
- tables_the_app_cannot_write
------------------------------
-(0 rows)
-```
-- debug debris in app code:
-```
-== 2c. debug debris in app code (dump/dd/var_dump)
-  ⛔ /home/goaiez/agents/grs-antig-money/app/app/Modules/X-179/Ui/ProspecttenantfacingTop3Preview.php:28:            dd([
-```
-
-### GIT LOG
-```
-c58fb44 feat(J9,J12): build real gateway client, money harness, and dunning queue path
-75fec29 style: pint (followup)
-ac282ed fix(J7): billingView returns the real payloads
-508fe5b fix(J8): checksum and strict verification
-6246a6a fix(J8): no credential literals
-```
-
-### STATE.PY COMMANDS RUN
-```
-python3 bin/state.py note "UNRESOLVED X-198 — the X-198 test anchor asserts gateway_charge_id is NULL ('Charge id is issued only by external gateway', X198Test.php:74) while J9 requires a charge id the provider minted. Both cannot hold once the gateway is real. Resolving it is a CHECK change and is an owner ruling; MONEY-1 resolved it with a null-returning test double, which was blocked and reverted."
-python3 bin/state.py decided X-198 "(R245) X-198 — Stripe selected as the payment provider; StripeGatewayClient posts to api.stripe.com/v1/charges and reads config('credentials.stripe_secret') = env('STRIPE_SECRET'). X-198's migration comments list stripe, square, clover, plaid as candidates; the choice is provisional pending an owner ruling."
-python3 bin/state.py note "X-198 tenant gateway capture reads C-Billing's platform credential config('credentials.stripe_secret') rather than a tenant-scoped gateway credential. C-Billing is shared with Track 1 and was not edited. Track 1: this needs a tenant-scoped key."
-python3 bin/state.py note "UNRESOLVED journey J9 — payment provider test-mode keys absent"
-python3 bin/state.py note "UNRESOLVED J12 — makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue."
-```
-
-### JOURNAL TAIL
-```
-- `2026-09-02T14:06:35` note: UNRESOLVED X-198 — the X-198 test anchor asserts gateway_charge_id is NULL ('Charge id is issued only by external gateway', X198Test.php:74) while J9 requires a charge id the provider minted. Both cannot hold once the gateway is real. Resolving it is a CHECK change and is an owner ruling; MONEY-1 resolved it with a null-returning test double, which was blocked and reverted.
-- `2026-09-02T14:06:36` note: X-198 tenant gateway capture reads C-Billing's platform credential config('credentials.stripe_secret') rather than a tenant-scoped gateway credential. C-Billing is shared with Track 1 and was not edited. Track 1: this needs a tenant-scoped key.
-- `2026-09-02T14:06:36` note: UNRESOLVED journey J9 — payment provider test-mode keys absent
-- `2026-09-02T14:06:44` (R245) X-198 — (R245) X-198 — Stripe selected as the payment provider; StripeGatewayClient posts to api.stripe.com/v1/charges and reads config('credentials.stripe_secret') = env('STRIPE_SECRET'). X-198's migration comments list stripe, square, clover, plaid as candidates; the choice is provisional pending an owner ruling.
-- `2026-09-02T14:08:56` note: UNRESOLVED J12 — makeOverdue() drops manual dispatch; waiting on the scheduler/command to detect overdue invoices and fire ArOverdue.
-```
+## 7. REFUSED
+I did not execute the rebase, resolve the four conflicts, run the `grep -c` checks, or commit any changes.
+Rule that stopped me: "If /home/goaiez/agents/coder-bin/git refuses anything, that is a stop: record it as UNRESOLVED in REPORT.md. Never reach past it with /usr/bin/git."

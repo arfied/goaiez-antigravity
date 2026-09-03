@@ -121,9 +121,121 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
+## Dispatching the coder (added 2026-09-02)
+
+When the user has enabled the settings rule for
+`.agents/supervisor/launch-coder.sh`, the supervisor launches runs itself:
+write `KICKOFF.md`, arm the run's monitor, then
+`bash .agents/supervisor/launch-coder.sh`. The script refuses a second
+concurrent run and auto-numbers logs.
+
+**Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
+run plus one fix run). If the same BLOCK item survives a second dispatch,
+STOP and put it to the user — never dispatch a third time for the same
+failure, never loosen the check to get past it. A journey/wave marked green
+by the coder is never taken at face value: the supervisor's own gate decides.
+Never run `state.py done/journey/stage` from the supervisor; never touch
+`app/Doctor`; never let the coder and supervisor loop without a human seeing
+each verdict block in `REVIEWS.md`.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
 "that is the count-did-not-fall trap". Warn on dangerous git operations rather
 than assuming they are blocked: the deny rules are prefix matches and stop a
 habit, not a determined reordering.
+
+## TRACK 5 — money (this worktree)
+
+This checkout is **Track 5**: branch `track/money`, worktree
+`/home/goaiez/agents/grs-antig-money`. Track 1 (`/home/goaiez/agents/grs-antig`
+on `main`) is the ONLY track that merges to `main`. This track pushes to
+`origin track/money` after a PASS; Track 1's supervisor reviews and merges.
+
+- Databases: dev `goaiez_antig_money`, tests `goaiez_antig_money_test` (the gate
+  exports it over phpunit.xml's pin; brief every pest run with the
+  `DB_DATABASE=goaiez_antig_money_test` prefix). `goaiez_antig` is production and
+  `goaiez_antig_dev`/`goaiez_antig_test` belong to Track 1 — touch neither.
+- Journeys owned: J9 (an invoice reaches a real charge id), J12 (an overdue invoice is chased by reason, resolution first).
+- Modules owned: X-199, X-198, X-211. C-Billing is shared with Track 1 (J6): touch it only through a note in REPORT.md. X-204 belongs to track sixty. Edits stay under `app/app/Modules/<id>/**` for
+  those ids, plus the owned journeys' methods in
+  `tests/Journeys/TwelveJourneysTest.php`. OUT of scope: every other track's
+  modules and journeys, `resources/views` and `app/Livewire` (Track 2),
+  and everything in Track 1's never-list (Doctor, seals,
+  `JourneyHarness.php`, phpunit DB lines, generated manifests).
+- Goal: J9 and J12 green against the real payment provider in test mode; a charge id that exists at the provider.
+- Vendor: Payment-provider test-mode keys come from the owner into `app/.env`, never into a commit. Until they exist J9 stays RED and REPORT.md says UNRESOLVED (missing dependency).
+- The loop: coder builds → `bash bin/supervise.sh --tests` → THIS track's
+  supervisor reads the diff, the raw doctor journey line and the test count
+  → verdicts in this worktree's REVIEWS.md. Two dispatches per BLOCK, then
+  the owner. A journey the coder marks green is never taken at face value;
+  only the gate's output counts.
+- Shared files: `.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written
+  by every track through `state.py`. Rebase onto `origin/main` before each
+  push with `git fetch --no-write-fetch-head origin`; keep both sides'
+  journal lines in time order. Never edit either file by hand.
+- SMS/mail drivers stay `log` in tests. A vendor send happens only in a
+  journey on the real transport, with the owner's credentials.
+
+## Owner rulings — 2026-09-02
+
+1. **Harness.** A journey track may implement, in `app/tests/Journeys/JourneyHarness.php`,
+   only the `todo()` methods its own journeys call, against the real transport.
+   Touching any other method, assertion or guard there is a BLOCK. Track 1 merges
+   and expects harness hunks from several branches.
+2. **X-179 belongs to Track 2 (UI).** Its `dd()` is removed on `track/ui`
+   (commit 88d85c1). No other track touches that file; §2c stays red on every
+   track until Track 1 merges it. Record it, do not fix it.
+3. **`app/phpunit.xml` keeps its pin.** It is a never-list file. The gate exports
+   this track's test database over it; every hand-run pest carries the same
+   `DB_DATABASE=` prefix. Accepted as a standing hazard, briefed every time.
+4. **Databases exist** for every track, owner goaiez_owner, pgvector installed.
+   The grants file needs a superuser and runs on request after the first
+   `migrate`: write the request as an OWNER ACTION and stop.
+5. **Module ownership.** sixty: C-Telephony, C-Sms, C-Agent, X-188, X-204,
+   X-118, X-66 · pricebook: X-163, X-119, X-126 · money: X-199, X-198, X-211 ·
+   reviews: C-Reviews, X-181 · site: X-157, X-110, X-102, X-155, X-137 ·
+   Track 1: X-212, X-172, X-112, X-166, X-203, C-Billing · Track 2: all Ui/,
+   views, Livewire · stages: everything not listed, checker findings only.
+6. **Shared harness methods have one owner.** `tenantWithLiveNumber` (nine
+   journeys) and `personWithPendingSteps` are owned by track sixty;
+   `issueInvoice` by track money. No other track edits them, rewrites their
+   `todo()` message, or waits on them with a vendor guess: if your journey
+   needs one, record `UNRESOLVED — waiting on track/sixty merge` and build
+   everything that does not depend on it. Pricebook commit a4b2d5a edited
+   `tenantWithLiveNumber`; that is a BLOCK, to be reverted forward.
+7. **The carrier is Infobip.** Inbound, delivery and voice webhooks, the
+   verifier, and 113 files say so. There are no `TWILIO_*` keys anywhere and
+   none will be added. A brief or report that names Twilio as a dependency is
+   the vendor-from-memory trap: read `app/app/Modules/C-Telephony/` and
+   `config/services.php` before naming a key.
+8. **X-121 is the spine and belongs to Track 1.** Pricebook: `bookFromQuote()`
+   records `UNRESOLVED — X-121 exposes no create path` (option b); the raw
+   insert is not accepted.
+9. **Harness scope wording.** Where this file's TRACK section lists
+   `JourneyHarness.php` as out of scope, read "except the methods rulings 1
+   and 6 allow". Ruling 1 governs.
+10. **Payment provider is Stripe**, recorded as an R245 decision. The X-198
+    anchor "charge id is issued only by the external gateway" is relaxed to
+    "null unless the gateway returned one" — an owner-authorised CHECK change,
+    one commit citing this ruling. STRIPE_SECRET (test mode) is in money's
+    app/.env.
+11. **Sixty sequencing and evidence.** Waves run J4 → J2 → J1. J1's evidence
+    run places a real inbound call and the harness posts the callId Infobip
+    sent. B3 resolves by option (a) — the voice.missed_call.texted_back audit
+    row inside Tenancy::actingAs(). One further B3 dispatch authorised.
+12. **J8 "permission denied to terminate process" is concurrency, not
+    grants.** Rerun when idle; never request the grants file for it.
+13. **Journeys that need a live vendor call are proven outside the suite.**
+    The repo-wide no-live-calls guard in tests stands. J9 (and any journey
+    like it) is evidenced by a console command run outside runningUnitTests()
+    that leaves an artifact; the journey test asserts on that artifact.
+14. **P-207 is defined: signup is two fields, business name and phone.** The
+    name/email/password/terms door is sign-in for existing owners, not signup.
+    `CreateNewUser` is not the signup contract; J2 builds the two-field door.
+15. **A refusal clause is not a refusal.** A capability cell gaining
+    "refuses …" without a matching `state.py decided` line AND a named test or
+    refusal code is a merge blocker on every track. Track 1 owns the checker
+    change that ties the two together.
+16. **Reviews builds the cadence guard now** (`ReviewRequestAction`), with J10
+    recorded UNRESOLVED while review-platform access is ungranted.

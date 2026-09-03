@@ -1,9 +1,52 @@
-You are the coder in a supervised arrangement. Read AGENTS.md, then .agents/rules/10-supervisor.md, then .agents/supervisor/BRIEF.md and the NEWEST block of .agents/supervisor/REVIEWS.md (06:05 — wave 29 PASSED, push cleared through 50adae9).
+You are the coder on track/money in /home/goaiez/agents/grs-antig-money.
 
-State of play: origin/main = cba37f6; local commits c375699..50adae9 are cleared. Do this in order:
+There is no wave. This kickoff exists so that an accidental dispatch is a no-op
+rather than a retry of a withdrawn brief.
 
-1. `git push origin main`.
-2. Wave 30 per `state.py next` — X-192, the LAST roster module. Full standing rules: feat(X-nnn) commit; ['web','auth'] on any new route and the route serves a real component (never a placeholder closure); authed GET asserting the component rendered (assertSeeLivewire) plus a guest-redirect test; route parameters resolved through tenant-scoped queries; Tenancy::set() never raw SET; secrets encrypted/hashed; tenant tables forced-RLS tenant-only; migrations forward-only; any @agent_reachable widening gets a state.py decided record; DONE recorded in state.py before the report claims it; STAGES from a post-change doctor run; TESTS via `grep -c 'function test'`; pint followups as new commits; findings in your own diff go in your own report.
-3. After X-192, run `python3 bin/state.py next` once more. It will return JOURNEYS, FINISHED, or STARVED: do NOT act on it — write REPORT.md with the action and say field verbatim, run `bash bin/supervise.sh --tests`, include the suite line, and STOP. The terminal state is the owner's decision.
+1. Read .agents/supervisor/BRIEF.md. It is a HOLD.
+2. Read the newest block of .agents/supervisor/REVIEWS.md (2026-09-03 00:41).
+   Verdict PASS-WITH-NOTES. No BLOCK is open.
 
-Hard rules: DB_DATABASE never goaiez_antig and never edited in app/.env or app/phpunit.xml; migrations run against goaiez_antig_dev only; nothing written under /home/goaiez/public_html; never edit or stash/checkout/clean supervisor files (including REWRITES.log and the post-rewrite hook); never git commit --amend / reset / rebase; never edit or delete a ran migration; never edit app/app/Doctor/**, seals.json, the three excluded Doctor commands, or JourneyHarness.php except by whitespace; bare ./vendor/bin/pint only; one concern per commit; no scratch committed; a CHECK is never changed to quiet it — REFUSED instead.
+MONEY-13 is WITHDRAWN. It ordered `git rebase --autostash origin/main`; rule 10
+lines 73 and 78-79 forbid both the stash and the rebase of a reviewed commit.
+You refused it and that was correct. Do not attempt it now or in any later run.
+
+Do exactly this and nothing more:
+
+    bash bin/supervise.sh --tests
+
+Expect, unchanged: tests 895 · passed 886 · FAILED 0 · errors 9, and
+doctor build 20260829-0647.
+
+Then overwrite .agents/supervisor/REPORT.md with:
+  STATUS   : stopped: STARVED
+  COMMITS  : git log --oneline origin/main..HEAD, pasted raw
+  the raw gate tail line, and the `goaiez doctor · build <stamp>` line
+  UNRESOLVED: J12 waiting on track/sixty merge (route closed, OWNER ACTION 5/6);
+              X-199 and X-211 runtime proof (owner ruling pending); X-103;
+              J1/J2/J10 harness methods are other tracks'
+  REFUSED  : none
+
+If any gate number moved, that is the finding: paste it verbatim and stop.
+Do not chase it, do not fix it, do not build.
+
+FORBIDDEN, without exception:
+- No git rebase, merge, stash, --autostash, checkout, restore or clean.
+- No push. No state.py done|journey|stage. No php artisan x198:evidence-charge.
+- No edit to app/app/Doctor/**, seals.json, app/phpunit.xml, any .env, any
+  manifest.php or capabilities.php.
+- No edit to any JourneyHarness.php method money does not own; no implementing
+  tenantWithLiveNumber() or personWithPendingSteps() (rulings 1 and 6).
+- No edit to BRIEF.md, REVIEWS.md, CLAUDE.md, .claude/ or bin/.
+- Never weaken an assertion, anchor, capability id or refusal to move a count.
+  That is the One Rule.
+- If /home/goaiez/agents/coder-bin/git refuses anything, that is a stop: record
+  it UNRESOLVED. Never reach past it with /usr/bin/git.
+
+Any pest you run by hand carries DB_DATABASE=goaiez_antig_money_test.
+Never goaiez_antig — that is production.
+
+If you commit anything at all, use named paths:
+    git commit -m "…" -- <explicit paths>
+Never -a. Never git add -A. A commit touching .agents/supervisor, CLAUDE.md,
+.claude or bin is a BLOCK.
