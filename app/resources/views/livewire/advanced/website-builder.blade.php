@@ -170,7 +170,7 @@
                             <header class="border-b border-gray-100 px-4 py-3 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur z-20">
                                 <div class="font-display text-xs font-bold text-gray-900 flex items-center gap-1.5">
                                     <span class="h-5 w-5 rounded bg-indigo-600 text-white font-black text-[10px] flex items-center justify-center">AI</span>
-                                    <span class="truncate max-w-[130px]">{{ $businessName }}</span>
+                                    <span class="truncate max-w-[130px]" title="{{ $businessName }}">{{ $businessName }}</span>
                                 </div>
                                 <a href="#quote" class="px-2.5 py-1 rounded bg-indigo-600 text-white text-[11px] font-semibold">
                                     {{ $ctaText }}
