@@ -63,7 +63,7 @@
                     </div>
                 </div>
 
-                <div class="mt-6 pt-4 border-t border-rule flex justify-between items-center">
+                <div class="mt-6 pt-4 border-t border-rule flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
                     <div class="text-xs text-ink-2">
                         🛡️ <strong>TCPA Compliance:</strong> Carrier quiet hours (9pm - 8am local) and automatic opt-out handling enforced.
                     </div>
