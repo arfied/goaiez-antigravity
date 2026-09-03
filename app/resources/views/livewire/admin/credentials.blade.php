@@ -85,7 +85,7 @@
                     <li wire:key="credential-{{ $row['key'] }}" class="border-t border-rule pt-5 first:border-0 first:pt-0">
                         <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                             <p class="font-display text-base font-semibold text-ink">{{ $row['label'] }}</p>
-                            <p class="font-mono text-sm text-ink-3">{{ $row['key'] }}</p>
+                            <p class="font-mono text-sm text-ink-3 break-all">{{ $row['key'] }}</p>
                         </div>
 
                         <p class="mt-1 text-base text-ink-2">{{ $row['description'] }}</p>
