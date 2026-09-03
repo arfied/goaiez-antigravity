@@ -30,7 +30,8 @@
                     type="text"
                     wire:model="subject"
                     maxlength="{{ \App\Services\Support\SupportDesk::SUBJECT_LIMIT }}"
-                    class="rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
+                    class="rounded-[--radius-control] border {{ $errors->has('subject') ? 'border-alert' : 'border-rule' }} bg-card px-3 py-2 text-base text-ink"
+                    @error('subject') aria-invalid="true" @enderror
                 />
             </label>
             @error('subject')
@@ -42,7 +43,8 @@
                 <textarea
                     wire:model="body"
                     rows="4"
-                    class="rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
+                    class="rounded-[--radius-control] border {{ $errors->has('body') ? 'border-alert' : 'border-rule' }} bg-card px-3 py-2 text-base text-ink"
+                    @error('body') aria-invalid="true" @enderror
                 ></textarea>
             </label>
             @error('body')
@@ -117,7 +119,8 @@
                     <textarea
                         wire:model="reply"
                         rows="3"
-                        class="rounded-[--radius-control] border border-rule bg-card px-3 py-2 text-base text-ink"
+                        class="rounded-[--radius-control] border {{ $errors->has('reply') ? 'border-alert' : 'border-rule' }} bg-card px-3 py-2 text-base text-ink"
+                        @error('reply') aria-invalid="true" @enderror
                     ></textarea>
                 </label>
                 @error('reply')
