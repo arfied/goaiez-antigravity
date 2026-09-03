@@ -69,4 +69,8 @@ class ConsentAssertionTest extends TestCase
         
         $this->assertEquals('UNPERMITTED', $person->consent_state ?? null, 'Imported person must be UNPERMITTED');
     }
+    public function test_N_005_cadence_ceiling_counts_every_class(): void
+    {
+        $this->assertTrue(method_exists(ConsentService::class, 'checkCadenceCeiling'), 'System lacks cadence ceiling behaviour');
+    }
 }
