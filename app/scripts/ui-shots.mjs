@@ -261,6 +261,8 @@ function waitForServer(url) {
             await page.goto(`${baseUrl}${screen.path}`);
             await page.waitForLoadState('networkidle');
             await page.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+            const html = await page.content();
+            fs.writeFileSync(path.join(outputDir, `${screen.name}.html`), html);
             await runAxe(page, screen.name, outputDir);
         }
 
@@ -334,6 +336,8 @@ function waitForServer(url) {
             await mobilePage.goto(`${baseUrl}${screen.path}`);
             await mobilePage.waitForLoadState('networkidle');
             await mobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+            const html = await mobilePage.content();
+            fs.writeFileSync(path.join(outputDir, `${screen.name}@390.html`), html);
             await runAxe(mobilePage, `${screen.name}@390`, outputDir);
         }
 
@@ -434,6 +438,8 @@ function waitForServer(url) {
             }
 
             await staffPage.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
+            const html = await staffPage.content();
+            fs.writeFileSync(path.join(outputDir, `${screen.name}.html`), html);
             await runAxe(staffPage, screen.name, outputDir);
         }
         
@@ -480,6 +486,8 @@ function waitForServer(url) {
             }
 
             await staffMobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
+            const html = await staffMobilePage.content();
+            fs.writeFileSync(path.join(outputDir, `${screen.name}@390.html`), html);
             await runAxe(staffMobilePage, `${screen.name}@390`, outputDir);
         }
         await staffBrowser.close();
