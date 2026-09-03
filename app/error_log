@@ -1,0 +1,168 @@
+[03-Sep-2026 19:56:32 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x11, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:71
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 19:56:32 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 19:56:38 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x11, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:71
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 19:56:38 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 19:56:42 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x11, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:71
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 /home/goaiez/agents/grs-antig/app/vendor/bin/pest(119): include('/home/goaiez/ag...')
+#13 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 19:56:42 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 19:56:46 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in tests/Journeys/JourneyHarness.php on line 71
+[03-Sep-2026 19:56:49 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in tests/Journeys/JourneyHarness.php on line 71
+[03-Sep-2026 19:56:53 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php on line 71
+[03-Sep-2026 19:57:07 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in tests/Journeys/JourneyHarness.php on line 71
+[03-Sep-2026 19:57:10 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in tests/Journeys/JourneyHarness.php on line 71
+[03-Sep-2026 19:57:13 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php on line 71
+[03-Sep-2026 19:57:17 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in tests/Journeys/JourneyHarness.php on line 71
+[03-Sep-2026 20:19:29 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x11, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:72
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 20:19:29 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 20:19:58 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x11, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:72
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 20:19:58 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 20:50:37 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x19, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:551
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 20:50:37 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 20:55:21 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x17, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:646
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 20:55:21 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 20:55:25 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected character 0x17, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:646
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 20:55:25 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 21:04:44 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected token "!", expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:580
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 21:04:44 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[03-Sep-2026 21:05:45 UTC] PHP Fatal error:  During class fetch: Uncaught ParseError: syntax error, unexpected token "!", expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php:580
+Stack trace:
+#0 /home/goaiez/agents/grs-antig/app/vendor/composer/ClassLoader.php(427): {closure:Composer\Autoload\ClassLoader::initializeIncludeClosure():575}('/home/goaiez/ag...')
+#1 /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php(40): Composer\Autoload\ClassLoader->loadClass('Tests\\Journeys\\...')
+#2 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(92): include_once('/home/goaiez/ag...')
+#3 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/overrides/Runner/TestSuiteLoader.php(98): PHPUnit\Runner\TestSuiteLoader::{closure:PHPUnit\Runner\TestSuiteLoader::load():90}()
+#4 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/Framework/TestSuite.php(237): PHPUnit\Runner\TestSuiteLoader->load('/home/goaiez/ag...')
+#5 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/TestSuiteMapper.php(104): PHPUnit\Framework\TestSuite->addTestFile('/home/goaiez/ag...', Array)
+#6 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Configuration/TestSuiteBuilder.php(75): PHPUnit\TextUI\XmlConfiguration\TestSuiteMapper->map('/home/goaiez/ag...', Object(PHPUnit\TextUI\Configuration\TestSuiteCollection), Array, Array)
+#7 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(389): PHPUnit\TextUI\Configuration\TestSuiteBuilder->build(Object(PHPUnit\TextUI\Configuration\Configuration))
+#8 /home/goaiez/agents/grs-antig/app/vendor/phpunit/phpunit/src/TextUI/Application.php(196): PHPUnit\TextUI\Application->buildTestSuite(Object(PHPUnit\TextUI\Configuration\Configuration))
+#9 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/src/Kernel.php(103): PHPUnit\TextUI\Application->run(Array)
+#10 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(196): Pest\Kernel->handle(Array, Array)
+#11 /home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest(204): {closure:/home/goaiez/agents/grs-antig/app/vendor/pestphp/pest/bin/pest:19}()
+#12 {main} in /home/goaiez/agents/grs-antig/app/tests/Journeys/TwelveJourneysTest.php on line 40
+[03-Sep-2026 21:05:45 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81

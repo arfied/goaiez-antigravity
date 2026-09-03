@@ -20,6 +20,10 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Modules\X171\Events\JobCompleted::class,
+            \App\Modules\CReviews\Listeners\RequestReviewOnJobCompleted::class
+        );
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'c-reviews');
 

@@ -714,3 +714,30 @@
 [03-Sep-2026 15:14:51 UTC] PHP Warning:  foreach() argument must be of type array|object, string given in /home/goaiez/agents/grs-antig/test_parse.php on line 24
 [03-Sep-2026 15:14:51 UTC] PHP Warning:  foreach() argument must be of type array|object, string given in /home/goaiez/agents/grs-antig/test_parse.php on line 24
 [03-Sep-2026 15:14:51 UTC] PHP Warning:  foreach() argument must be of type array|object, string given in /home/goaiez/agents/grs-antig/test_parse.php on line 24
+[03-Sep-2026 20:08:56 UTC] PHP Parse error:  syntax error, unexpected token "\", expecting end of file in /home/goaiez/agents/grs-antig/fix-j2-8.php on line 4
+[03-Sep-2026 20:17:03 UTC] PHP Parse error:  syntax error, unexpected token "\", expecting end of file in /home/goaiez/agents/grs-antig/fix-j2-final.php on line 5
+[03-Sep-2026 20:19:32 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 72
+[03-Sep-2026 20:19:36 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 72
+[03-Sep-2026 20:20:01 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 72
+[03-Sep-2026 20:20:26 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 72
+[03-Sep-2026 20:20:29 UTC] PHP Parse error:  syntax error, unexpected character 0x11, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 72
+[03-Sep-2026 20:37:49 UTC] PHP Parse error:  syntax error, unexpected token "\", expecting end of file in /home/goaiez/agents/grs-antig/patch_outbound.php on line 2
+[03-Sep-2026 20:37:53 UTC] PHP Parse error:  syntax error, unexpected token "\", expecting end of file in patch_outbound.php on line 2
+[03-Sep-2026 20:50:41 UTC] PHP Parse error:  syntax error, unexpected character 0x19, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 551
+[03-Sep-2026 20:50:48 UTC] PHP Parse error:  syntax error, unexpected character 0x19, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 551
+[03-Sep-2026 20:50:52 UTC] PHP Parse error:  syntax error, unexpected character 0x19, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 551
+[03-Sep-2026 20:50:56 UTC] PHP Parse error:  syntax error, unexpected character 0x19, expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php on line 551
+[03-Sep-2026 20:55:32 UTC] PHP Parse error:  syntax error, unexpected character 0x17, expecting ")" in app/tests/Journeys/JourneyHarness.php on line 646
+[03-Sep-2026 20:58:44 UTC] PHP Parse error:  syntax error, unexpected character 0x17, expecting ")" in app/app/Modules/C-Reviews/ModuleServiceProvider.php on line 24
+[03-Sep-2026 20:58:58 UTC] PHP Parse error:  syntax error, unexpected token "\" in app/app/Modules/C-Reviews/ModuleServiceProvider.php on line 27
+[03-Sep-2026 20:59:02 UTC] PHP Parse error:  syntax error, unexpected token "\" in app/app/Modules/C-Reviews/ModuleServiceProvider.php on line 27
+[03-Sep-2026 21:00:14 UTC] PHP Parse error:  syntax error, unexpected token "\", expecting variable in app/app/Modules/C-Reviews/Listeners/RequestReviewOnJobCompleted.php on line 13
+[03-Sep-2026 21:04:47 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:04:54 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:05:11 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:05:14 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:05:33 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:05:38 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:05:41 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:05:49 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in /home/goaiez/agents/grs-antig/app/tests/Journeys/JourneyHarness.php on line 580
+[03-Sep-2026 21:05:54 UTC] PHP Parse error:  syntax error, unexpected token "!", expecting ")" in app/tests/Journeys/JourneyHarness.php on line 580

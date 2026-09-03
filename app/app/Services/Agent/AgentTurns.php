@@ -219,6 +219,7 @@ final class AgentTurns
         // both. {@see EscalateUrgentThreadJob} refused the identical data on the
         // identical path for the identical reason and was right; this arm was
         // the one that did not.
+        \Illuminate\Support\Facades\Log::warning("Dispatching AnswerAgentTurnJob for business " . $businessId);
         AnswerAgentTurnJob::dispatch(
             $businessId,
             is_numeric($locationId) ? (int) $locationId : null,
