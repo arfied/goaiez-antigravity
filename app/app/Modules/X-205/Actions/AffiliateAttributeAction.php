@@ -24,8 +24,14 @@ final class AffiliateAttributeAction
         int $businessId,
         string $affiliateCode,
         string $orderId,
-        int $saleAmountCents
+        int $saleAmountCents,
+        bool $isSelfClick = false,
+        bool $isStolenCard = false
     ): AffiliateAttribution {
+        if ($isSelfClick || $isStolenCard) {
+            throw new \DomainException('REFUSAL_G7_23_FRAUD');
+        }
+        
         $affiliate = Affiliate::where('business_id', $businessId)
             ->where('affiliate_code', $affiliateCode)
             ->firstOrFail();

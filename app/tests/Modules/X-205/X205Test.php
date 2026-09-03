@@ -57,10 +57,10 @@ class X205Test extends TestCase
 
         // 2. Attribute $500.00 sale (earns $50.00 commission)
         $attribution = $this->attributeAction->attributeSale(
-            businessId: $biz->id,
-            affiliateCode: 'AFFILIATE-ALPHA',
-            orderId: 'ORD-9901',
-            saleAmountCents: 50000 // $500.00
+            $biz->id,
+            'AFFILIATE-ALPHA',
+            'ORD-9901',
+            50000 // $500.00
         );
 
         $this->assertEquals(5000, $attribution->commission_cents); // $50.00
@@ -93,5 +93,90 @@ class X205Test extends TestCase
     public function test_affiliate_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    /**
+     * [G7-04] refuses: AffiliateProgram; ref merged with utm — see §166.5
+     */
+    public function test_g7_04_refuses_ref_merged_with_utm(): void
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSAL_G7_04_REF_MERGED_WITH_UTM');
+        $this->engine->parseAffiliateFromUrl('https://example.com/?utm_source=fb&ref=123');
+    }
+
+    /**
+     * [G7-11] refuses: AffiliateProgram; a chargeback reverses a paid commission; X-201 raises the event
+     */
+    public function test_g7_11_refuses_automatic_chargeback_reversal(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $affiliate = Affiliate::create([
+            'business_id' => $biz->id,
+            'affiliate_code' => 'AFF-G7-11',
+            'partner_name' => 'Partner',
+        ]);
+
+        $attribution = $this->attributeAction->attributeSale($biz->id, 'AFF-G7-11', 'ORD-CB', 10000);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSAL_G7_11_CHARGEBACK');
+        $this->clawbackAction->proposeClawback($biz->id, $attribution->id, 'Chargeback', true);
+    }
+
+    /**
+     * [G7-23] refuses: AffiliateProgram; self-clicking and stolen-card affiliates
+     */
+    public function test_g7_23_refuses_self_clicking_and_stolen_card(): void
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSAL_G7_23_FRAUD');
+        $this->attributeAction->attributeSale(1, 'AFF', 'ORD', 10000, true, false);
+    }
+
+    /**
+     * [G7-41] refuses: AffiliateProgram; referral tiers unlock by count
+     */
+    public function test_g7_41_refuses_referral_tiers(): void
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSAL_G7_41_TIERS');
+        $this->engine->unlockTier(5);
+    }
+
+    /**
+     * [G7-45] refuses: AffiliateProgram; the partner's own login
+     */
+    public function test_g7_45_refuses_partner_login(): void
+    {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSAL_G7_45_PARTNER_LOGIN');
+        $this->engine->getPartnerLoginUrl(1);
+    }
+
+    /**
+     * [G10-36] W-9 threshold freezes a payout; Law 122 — the switch and the threshold as data, never the advice
+     */
+    public function test_g10_36_w9_threshold_freezes_payout(): void
+    {
+        Event::fake([ApprovalRequested::class]);
+        $biz = TestCase::provisionTenant(['name' => 'W9 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $affiliate = Affiliate::create([
+            'business_id' => $biz->id,
+            'affiliate_code' => 'AFF-G10-36',
+            'partner_name' => 'W9 Partner',
+            'commission_rate_bps' => 1000,
+            'lifetime_earnings_cents' => 60000, // Meets threshold
+            'current_balance_cents' => 60000,
+        ]);
+
+        // Request payout of $100, threshold is $600, not on file
+        $payout = $this->payoutAction->requestPayout($biz->id, $affiliate->id, 10000, 60000, false);
+        
+        $this->assertEquals('frozen', $payout->status);
     }
 }

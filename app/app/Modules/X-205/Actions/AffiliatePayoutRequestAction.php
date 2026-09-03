@@ -12,7 +12,7 @@ use InvalidArgumentException;
 
 final class AffiliatePayoutRequestAction
 {
-    public function requestPayout(int $businessId, int $affiliateId, int $amountCents): AffiliatePayout
+    public function requestPayout(int $businessId, int $affiliateId, int $amountCents, ?int $w9ThresholdCents = null, bool $w9OnFile = false): AffiliatePayout
     {
         $affiliate = Affiliate::where('business_id', $businessId)->findOrFail($affiliateId);
 
@@ -24,7 +24,7 @@ final class AffiliatePayoutRequestAction
             'business_id' => $businessId,
             'affiliate_id' => $affiliate->id,
             'amount_cents' => $amountCents,
-            'status' => 'requested',
+            'status' => ($w9ThresholdCents !== null && !$w9OnFile && $affiliate->lifetime_earnings_cents >= $w9ThresholdCents) ? 'frozen' : 'requested',
             'money_moved' => false, // Moves no money until approved
         ]);
 

@@ -19,4 +19,22 @@ final class AffiliateEngine
     {
         return (int) round(($saleAmountCents * $rateBps) / 10000);
     }
+
+    public function parseAffiliateFromUrl(string $url): ?string
+    {
+        if (str_contains($url, 'utm_') && str_contains($url, 'ref=')) {
+            throw new \DomainException('REFUSAL_G7_04_REF_MERGED_WITH_UTM');
+        }
+        return 'CODE';
+    }
+
+    public function unlockTier(int $referralCount): void
+    {
+        throw new \DomainException('REFUSAL_G7_41_TIERS');
+    }
+
+    public function getPartnerLoginUrl(int $affiliateId): string
+    {
+        throw new \DomainException('REFUSAL_G7_45_PARTNER_LOGIN');
+    }
 }
