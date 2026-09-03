@@ -14,6 +14,7 @@ use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X171\Events\JobCompleted;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -341,11 +342,11 @@ class CReviewsTest extends TestCase
             'first_name' => 'Test Customer',
         ]);
 
-        \Illuminate\Support\Facades\Event::dispatch(
-            new \App\Modules\X171\Events\JobCompleted($biz->id, 100, 200, $customerId)
+        Event::dispatch(
+            new JobCompleted($biz->id, 100, 200, $customerId)
         );
 
-        $count = \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)
+        $count = ReviewRequest::where('business_id', $biz->id)
             ->where('customer_id', $customerId)
             ->count();
         $this->assertEquals(1, $count);
@@ -361,14 +362,14 @@ class CReviewsTest extends TestCase
             'first_name' => 'Test Customer',
         ]);
 
-        \Illuminate\Support\Facades\Event::dispatch(
-            new \App\Modules\X171\Events\JobCompleted($biz->id, 101, 200, $customerId)
+        Event::dispatch(
+            new JobCompleted($biz->id, 101, 200, $customerId)
         );
-        \Illuminate\Support\Facades\Event::dispatch(
-            new \App\Modules\X171\Events\JobCompleted($biz->id, 102, 200, $customerId)
+        Event::dispatch(
+            new JobCompleted($biz->id, 102, 200, $customerId)
         );
 
-        $count = \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)
+        $count = ReviewRequest::where('business_id', $biz->id)
             ->where('customer_id', $customerId)
             ->count();
         $this->assertEquals(1, $count);
@@ -379,11 +380,11 @@ class CReviewsTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \Illuminate\Support\Facades\Event::dispatch(
-            new \App\Modules\X171\Events\JobCompleted($biz->id, 103, 200, null)
+        Event::dispatch(
+            new JobCompleted($biz->id, 103, 200, null)
         );
 
-        $count = \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)->count();
+        $count = ReviewRequest::where('business_id', $biz->id)->count();
         $this->assertEquals(0, $count);
     }
 
