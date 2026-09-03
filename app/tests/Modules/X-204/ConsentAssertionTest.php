@@ -54,4 +54,19 @@ class ConsentAssertionTest extends TestCase
     {
         $this->assertTrue(method_exists(ConsentService::class, 'haltPendingSequences'), 'ConsentService lacks haltPendingSequences behaviour');
     }
+    public function test_N_004_imported_person_is_unpermitted(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'N-004 Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->assertTrue(class_exists(\App\Modules\X121\Models\Person::class), 'Person model not found');
+        
+        $person = \App\Modules\X121\Models\Person::create([
+            'business_id' => $biz->id,
+            'name' => 'Imported User',
+            'phone' => '+15125550004',
+        ]);
+        
+        $this->assertEquals('UNPERMITTED', $person->consent_state ?? null, 'Imported person must be UNPERMITTED');
+    }
 }
