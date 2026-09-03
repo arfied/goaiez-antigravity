@@ -187,13 +187,22 @@ class UiReviewSeeder extends Seeder
             $ratings = [5, 4, 2];
             $customers->take(3)->values()->each(function ($c, $index) use ($location, $ratings) {
                 $days = rand(1, 30);
-                Review::factory()->create([
+                $review = Review::factory()->create([
                     'location_id' => $location->id,
                     'customer_id' => $c->id,
                     'rating' => $ratings[$index],
                     'created_at' => now()->subDays($days),
                     'updated_at' => now()->subDays($days),
                 ]);
+
+                if ($ratings[$index] <= 3) {
+                    \App\Models\TriageConversation::factory()->create([
+                        'review_id' => $review->id,
+                        'status' => 'resolved',
+                        'resolution' => 'Customer is happy now',
+                        'updated_at' => now()->subDays($days),
+                    ]);
+                }
             });
         }
 
@@ -290,5 +299,8 @@ class UiReviewSeeder extends Seeder
                 ['business_id' => $businessId, 'invoice_number' => 'INV-002', 'total_cents' => 5000, 'paid_cents' => 0, 'status' => 'overdue', 'due_date' => now()->subDays(5), 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
+
+        app(\App\Services\Proof\ProofNumbers::class)->recompute(\App\Services\Proof\ProofNumbers::monthOf());
+        app(\App\Services\Proof\ProofNumbers::class)->recompute(\App\Services\Proof\ProofNumbers::ALL);
     }
 }
