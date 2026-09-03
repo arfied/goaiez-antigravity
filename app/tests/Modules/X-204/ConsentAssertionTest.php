@@ -25,4 +25,18 @@ class ConsentAssertionTest extends TestCase
         $this->decider = new ConsentDecideAction($this->consent);
         $this->suppressor = new ConsentSuppressAction($this->consent);
     }
+    public function test_N_001_refusal_without_p060_code_fails(): void
+    {
+        $this->assertTrue(defined(ConsentService::class . '::P060_CODES'), 'System lacks P-060 code set definition');
+        $this->assertCount(20, ConsentService::P060_CODES, 'P-060 code set must have 20 codes');
+
+        $this->expectException(\InvalidArgumentException::class);
+        SendPermit::create([
+            'business_id' => 1,
+            'recipient_phone' => '+123',
+            'channel' => 'sms',
+            'permit_status' => 'refused',
+            'refusal_reason' => 'NOT_A_P060_CODE',
+        ]);
+    }
 }
