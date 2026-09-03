@@ -278,7 +278,7 @@
                         @if ($showStickySpeedDial)
                             <!-- Floating Mobile Sticky Speed-Dial Bar -->
                             <div class="absolute bottom-4 inset-x-3 bg-white/95 backdrop-blur-md p-2 rounded-xl shadow-lg border border-gray-200 flex items-center justify-between gap-2 z-30">
-                                <a href="tel:{{ $phoneNumber }}" class="flex-1 py-2 px-3 rounded-lg bg-emerald-600 text-white text-[11px] font-bold text-center flex items-center justify-center gap-1">
+                                <a href="tel:{{ $phoneNumber }}" class="flex-1 py-2 px-3 rounded-lg bg-emerald-700 text-white text-[11px] font-bold text-center flex items-center justify-center gap-1">
                                     <span>📞 Call Now</span>
                                 </a>
                                 <a href="#quote" class="flex-1 py-2 px-3 rounded-lg bg-indigo-600 text-white text-[11px] font-bold text-center flex items-center justify-center gap-1">
