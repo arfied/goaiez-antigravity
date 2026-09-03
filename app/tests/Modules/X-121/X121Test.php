@@ -297,4 +297,38 @@ class X121Test extends TestCase
         $writeAction = new EntityWriteAction($this->service);
         $writeAction->handle('facts', 999999, $biz->id, ['value' => 'Non existent']);
     }
+
+    public function test_job_resolves_its_person(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Person Job Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = \App\Modules\X121\Models\Person::create([
+            'business_id' => $biz->id,
+            'name' => 'Jane Doe',
+        ]);
+
+        $job = Job::create([
+            'business_id' => $biz->id,
+            'title' => 'Fix the AC',
+            'person_id' => $person->id,
+            'price_cents' => 15000,
+        ]);
+
+        $this->assertEquals($person->id, $job->person->id);
+    }
+
+    public function test_person_id_is_nullable(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Legacy Job Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $job = Job::create([
+            'business_id' => $biz->id,
+            'title' => 'Legacy Job',
+            'price_cents' => 15000,
+        ]);
+
+        $this->assertNull($job->person_id);
+    }
 }
