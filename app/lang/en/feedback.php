@@ -33,4 +33,7 @@ return [
         'body' => 'Your feedback has been received.',
     ],
     'submit' => 'Submit Feedback',
+    'errors' => [
+        'rate_limited' => 'You have submitted too many requests. Please try again later.',
+    ],
 ];
