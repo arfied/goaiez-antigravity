@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X204;
 
+use App\Enums\SendRefusalReason;
 use App\Modules\X121\Models\Person;
 use App\Modules\X204\Actions\ConsentDecideAction;
 use App\Modules\X204\Actions\ConsentSuppressAction;
@@ -33,8 +34,8 @@ class ConsentAssertionTest extends TestCase
     public function test_n_001_refusal_without_p060_code_fails(): void
     {
         // N-001
-        $this->assertTrue(class_exists(\App\Enums\SendRefusalReason::class), 'System lacks P-060 code set definition');
-        $this->assertCount(count(\App\Enums\SendRefusalReason::cases()), \App\Enums\SendRefusalReason::cases(), 'P-060 code set must have 20 codes');
+        $this->assertTrue(class_exists(SendRefusalReason::class), 'System lacks P-060 code set definition');
+        $this->assertCount(count(SendRefusalReason::cases()), SendRefusalReason::cases(), 'P-060 code set must have 20 codes');
 
         $this->expectException(\InvalidArgumentException::class);
         SendPermit::create([

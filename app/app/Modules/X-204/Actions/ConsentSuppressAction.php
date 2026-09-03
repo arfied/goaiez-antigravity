@@ -21,6 +21,7 @@ final class ConsentSuppressAction
             'channel' => $channel,
             'reason' => $reason,
         ]]);
+
         return $suppression;
     }
 }

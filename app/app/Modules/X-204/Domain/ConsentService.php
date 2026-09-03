@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Event;
 
 final class ConsentService
 {
-
     private const VALID_CONSENT_STATES = [
         'opted_in',
         'transactional',

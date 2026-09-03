@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X204\Models;
 
+use App\Enums\SendRefusalReason;
 use Illuminate\Database\Eloquent\Model;
 
 class SendPermit extends Model
@@ -22,7 +23,7 @@ class SendPermit extends Model
 
         static::saving(function ($model) {
             if ($model->permit_status === 'refused' && $model->refusal_reason) {
-                if (!in_array($model->refusal_reason, array_column(\App\Enums\SendRefusalReason::cases(), 'value'), true)) {
+                if (! in_array($model->refusal_reason, array_column(SendRefusalReason::cases(), 'value'), true)) {
                     throw new \InvalidArgumentException('Refusal reason must be a valid P-060 code.');
                 }
             }
