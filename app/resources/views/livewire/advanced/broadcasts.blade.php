@@ -49,7 +49,7 @@
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Broadcasts</h2>
             <span class="text-xs text-gray-400 dark:text-gray-400">Updated automatically</span>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" aria-label="Recent broadcasts table">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-900/50">
                 <tr>
