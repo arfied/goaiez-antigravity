@@ -52,11 +52,37 @@ class ConsentAssertionTest extends TestCase
         $modulesPath = base_path('app/Modules');
         $this->assertDirectoryExists($modulesPath);
 
-        $output = [];
-        $cmd = "grep -rE 'status.*opted_in|suppressed|permit_status' {$modulesPath} | grep -v 'X-204' | grep -v 'X204'";
-        exec($cmd, $output);
+        // (a) every file under app/Modules that calls ->send( or canSend also references ConsentService::decide or ConsentDecideAction
+        $cmdA = "grep -rlE '\->send\(|canSend' {$modulesPath}";
+        exec($cmdA, $filesA);
+        $violatorsA = [];
+        foreach ($filesA as $file) {
+            $content = file_get_contents($file);
+            if (strpos($content, 'ConsentService::decide') === false && strpos($content, 'ConsentDecideAction') === false) {
+                $violatorsA[] = $file;
+            }
+        }
+        if (!empty($violatorsA)) {
+            echo "N-002 Violators (a):\n" . implode("\n", $violatorsA) . "\n";
+        }
 
-        $this->assertEmpty($output, "Found consent branch outside X-204:\n".implode("\n", $output));
+        // (b) no file outside X-204 compares consent_state or opted_in in code (exclude strings/comments/capabilities.php/migrations)
+        $cmdB = "grep -rnE 'consent_state|opted_in' {$modulesPath} | grep -v 'X-204' | grep -v 'X204' | grep -v 'capabilities.php' | grep -v 'Migrations'";
+        exec($cmdB, $outputB);
+        $violatorsB = [];
+        foreach ($outputB as $line) {
+            // match comparisons
+            if (preg_match('/(?:===?|!==?|[<>]=?)\s*[\'"]?(?:consent_state|opted_in)[\'"]?|[\'"]?(?:consent_state|opted_in)[\'"]?\s*(?:===?|!==?|[<>]=?)/', $line) ||
+                preg_match('/->(?:consent_state|opted_in)\s*(?:===?|!==?|[<>]=?)/', $line)) {
+                $violatorsB[] = $line;
+            }
+        }
+        if (!empty($violatorsB)) {
+            echo "N-002 Violators (b):\n" . implode("\n", $violatorsB) . "\n";
+        }
+
+        $allViolators = array_merge($violatorsA, $violatorsB);
+        $this->assertEmpty($allViolators, "Found N-002 violators.");
     }
 
     public function test_n_003_stop_mid_sequence_halts_pending_steps(): void
