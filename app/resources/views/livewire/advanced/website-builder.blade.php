@@ -218,7 +218,7 @@
                                 <section class="px-4 py-6 bg-slate-50 border-t border-gray-100">
                                     <div class="text-center mb-3">
                                         <div class="font-bold text-xs text-gray-900">Before & After Results</div>
-                                        <div class="text-[10px] text-gray-500">Real verified job-site transformations</div>
+                                        <div class="text-[10px] text-gray-600">Real verified job-site transformations</div>
                                     </div>
 
                                     <div class="relative rounded-lg overflow-x-auto overflow-y-hidden border border-gray-200 shadow-sm bg-gray-100 p-4 text-center">
@@ -227,7 +227,7 @@
                                             <span class="p-2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">After Complete Work</span>
                                         </div>
                                         <input type="range" aria-label="Comparison Slider" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
-                                        <div class="text-[10px] text-gray-500 mt-1">Slide to compare transformation ({{ $sliderPosition }}%)</div>
+                                        <div class="text-[10px] text-gray-600 mt-1">Slide to compare transformation ({{ $sliderPosition }}%)</div>
                                     </div>
                                 </section>
                             @endif
@@ -266,8 +266,8 @@
                             <!-- Mobile Footer -->
                             <footer class="bg-gray-900 text-white px-4 py-6 text-center text-[10px]">
                                 <div class="font-bold">{{ $businessName }}</div>
-                                <div class="text-gray-500 mt-0.5">{{ $phoneNumber }}</div>
-                                <div class="text-gray-500 mt-2 text-[9px]">Powered by GO AI EZ</div>
+                                <div class="text-gray-600 mt-0.5">{{ $phoneNumber }}</div>
+                                <div class="text-gray-600 mt-2 text-[9px]">Powered by GO AI EZ</div>
                             </footer>
                         </div>
 
@@ -348,7 +348,7 @@
                             <!-- Before & After Transformation Slider Section -->
                             <section class="px-6 py-10 bg-slate-50 border-t border-gray-100 text-center">
                                 <h3 class="font-bold text-base text-gray-900 mb-1">Recent Job Transformations</h3>
-                                <p class="text-xs text-gray-500 mb-6">Interactive Before & After project verification</p>
+                                <p class="text-xs text-gray-600 mb-6">Interactive Before & After project verification</p>
 
                                 <div class="max-w-xl mx-auto bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
                                     <div class="grid grid-cols-2 gap-4 mb-4">
@@ -362,7 +362,7 @@
                                         </div>
                                     </div>
                                     <input type="range" aria-label="Comparison Slider" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
-                                    <div class="text-xs text-gray-500 mt-2 font-mono">Comparison Slider Position: {{ $sliderPosition }}%</div>
+                                    <div class="text-xs text-gray-600 mt-2 font-mono">Comparison Slider Position: {{ $sliderPosition }}%</div>
                                 </div>
                             </section>
                         @endif
@@ -403,7 +403,7 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <h3 class="font-bold text-sm text-gray-900">Recent Verified Google Reviews</h3>
-                                        <p class="text-[11px] text-gray-500">Real feedback from clients in your local area</p>
+                                        <p class="text-[11px] text-gray-600">Real feedback from clients in your local area</p>
                                     </div>
                                     <div class="text-xs font-bold text-emerald-700">★★★★★ 4.9 (128 reviews)</div>
                                 </div>
@@ -445,8 +445,8 @@
                         <!-- Footer -->
                         <footer class="bg-gray-900 text-white px-6 py-8 text-center text-xs">
                             <div class="font-bold text-sm">{{ $businessName }}</div>
-                            <div class="text-gray-500 text-[11px] mt-1">{{ $phoneNumber }} • All Rights Reserved</div>
-                            <div class="text-[10px] text-gray-500 mt-3">Powered by GO AI EZ</div>
+                            <div class="text-gray-600 text-[11px] mt-1">{{ $phoneNumber }} • All Rights Reserved</div>
+                            <div class="text-[10px] text-gray-600 mt-3">Powered by GO AI EZ</div>
                         </footer>
                     </div>
                 @endif
