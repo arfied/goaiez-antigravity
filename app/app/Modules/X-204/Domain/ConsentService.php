@@ -41,7 +41,7 @@ final class ConsentService
                     'recipient_phone' => $recipientPhone,
                     'channel' => $channel,
                     'permit_status' => 'refused',
-                    'refusal_reason' => 'SUPPRESSED: '.$suppressed->reason,
+                    'refusal_reason' => $suppressed->reason,
                 ]);
 
                 Event::dispatch(new ConsentDecided(
@@ -65,7 +65,7 @@ final class ConsentService
                     'recipient_phone' => $recipientPhone,
                     'channel' => $channel,
                     'permit_status' => 'refused',
-                    'refusal_reason' => 'UNKNOWN_STATE: '.$state,
+                    'refusal_reason' => 'state_unknown',
                 ]);
 
                 Event::dispatch(new ConsentDecided(
