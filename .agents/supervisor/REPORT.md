@@ -1,14 +1,30 @@
-# REPORT — wave 29 / brief item done — 2026-09-02T04:54:02-05:00
-STATUS    : brief item done
-COMMITS   : 
-50adae9 (HEAD -> main) fix(X-179): serve the real components
-944f8d7 chore: pint fixes for X-179
-c375699 feat(X-179): content extract and template match tables, screens, routes, agent_reachable
-MODULES   : X-179 DONE
-STAGES    : (no stages moved)
-TESTS     : app/tests/Modules/X-179/X179ScreenTest.php  grep -c 'function test' before 4 after 4
-DECIDED   : (none)
-UNRESOLVED: none
-REFUSED   : none
-DOCTOR    : goaiez doctor · build 20260829-0647
-RAW       : tests 885 · passed 873 · errors 12 · result failed
+STATUS: stopped: FINISHED
+COMMITS: none
+MODULES: none
+
+RAW:
+ M .agents/supervisor/BRIEF.md
+ M .agents/supervisor/KICKOFF.md
+ M .agents/supervisor/REPORT.md
+ M .agents/supervisor/REVIEWS.md
+ M .claude/settings.json
+ M CLAUDE.md
+ M bin/supervise.sh
+?? .agents/supervisor/.block.md
+?? .agents/supervisor/.permprobe.txt
+?? .agents/supervisor/.planfix.diff
+?? .agents/supervisor/.s2.diff
+?? .agents/supervisor/.s3.diff
+?? .agents/supervisor/.s4-gate2.out
+?? .agents/supervisor/.s4-tests.out
+?? .agents/supervisor/.s5-gate.out
+?? .agents/supervisor/.s6-gate.out
+?? .agents/supervisor/.sup-tests.out
+?? .agents/supervisor/.trk.diff
+?? .agents/supervisor/.trkfix.diff
+?? .agents/supervisor/launch-coder.sh
+?? schema_after.txt
+?? schema_before.txt
+6b64614
+
+UNRESOLVED: no task — track stood down by REVIEWS.md OWNER ACTION 32, awaiting an owner mandate
