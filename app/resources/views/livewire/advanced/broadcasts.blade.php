@@ -49,43 +49,45 @@
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Broadcasts</h2>
             <span class="text-xs text-gray-400 dark:text-gray-400">Updated automatically</span>
         </div>
+        <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-900/50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Campaign Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Channel</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Audience</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Delivery</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Date Sent</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Campaign Name</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Channel</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Audience</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Delivery</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Date Sent</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                 <tr>
-                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">Spring Review & Feedback Drive</td>
-                    <td class="px-6 py-4"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">SMS</span></td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">All Recent Customers (300)</td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">298 / 300 (99.3%)</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Completed</span></td>
-                    <td class="px-6 py-4 text-gray-400 dark:text-gray-400">3 days ago</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-white">Spring Review & Feedback Drive</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">SMS</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">All Recent Customers (300)</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">298 / 300 (99.3%)</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Completed</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-400 dark:text-gray-400">3 days ago</td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">Loyalty VIP Special Offer</td>
-                    <td class="px-6 py-4"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300">SMS + Email</span></td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">5-Star Reviewers (142)</td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">142 / 142 (100%)</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Completed</span></td>
-                    <td class="px-6 py-4 text-gray-400 dark:text-gray-400">1 week ago</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-white">Loyalty VIP Special Offer</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300">SMS + Email</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">5-Star Reviewers (142)</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">142 / 142 (100%)</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Completed</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-400 dark:text-gray-400">1 week ago</td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">Service Check-in & Autopilot Ask</td>
-                    <td class="px-6 py-4"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">SMS</span></td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">Post-Visit Cadence (88)</td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">88 / 88 (100%)</td>
-                    <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Completed</span></td>
-                    <td class="px-6 py-4 text-gray-400 dark:text-gray-400">2 weeks ago</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-white">Service Check-in & Autopilot Ask</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300">SMS</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">Post-Visit Cadence (88)</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">88 / 88 (100%)</td>
+                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Completed</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-400 dark:text-gray-400">2 weeks ago</td>
                 </tr>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
