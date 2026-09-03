@@ -525,3 +525,5 @@
 - `2026-09-03T01:03:24` stage contract = 100
 - `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
 - `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read
+- `2026-09-03T06:19:36` journey J12 -> green
+- `2026-09-03T06:19:41` note: gate line: 'tests 899 · passed 892 · FAILED 2 · errors 5 · result failed' - X-211 now reachable via merge commit 32749e6

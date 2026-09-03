@@ -1185,7 +1185,7 @@
    "green_after_wave": 13
   },
   "J12": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an overdue invoice is chased by reason, resolution first",
    "green_after_wave": 9
   }
@@ -1266,6 +1266,10 @@
   {
    "at": "2026-09-02T17:38:49",
    "note": "X-211 UNRESOLVED \u2014 no runtime proof possible: TestAnchorStage requires an external artifact_id and X-211 (receivables) touches no external transport. Its chase rides C-Sms, which track sixty owns. Needs an owner ruling (REVIEWS.md, eleventh OWNER ACTION block, item 3); this track will not invent one."
+  },
+  {
+   "at": "2026-09-03T06:19:41",
+   "note": "gate line: 'tests 899 \u00b7 passed 892 \u00b7 FAILED 2 \u00b7 errors 5 \u00b7 result failed' - X-211 now reachable via merge commit 32749e6"
   }
  ],
  "decisions": [
