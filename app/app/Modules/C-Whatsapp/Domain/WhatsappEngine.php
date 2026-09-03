@@ -18,6 +18,7 @@ final class WhatsappEngine
     public function __construct(
         private readonly ConsentService $consentService
     ) {}
+
     /**
      * Inbound message opens/extends 24-hour conversational window.
      */
@@ -49,6 +50,7 @@ final class WhatsappEngine
         $decision = $this->consentService->decide($businessId, $recipientPhone, 'whatsapp', 'transactional');
         if (! $decision['granted']) {
             $reason = ($decision['reason'] === 'SUPPRESSED') ? 'STOP_SUPPRESSED' : $decision['reason'];
+
             return [
                 'status' => 'refused',
                 'refusal_code' => $reason,

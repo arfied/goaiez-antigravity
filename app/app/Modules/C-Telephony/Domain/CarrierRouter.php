@@ -46,6 +46,7 @@ final class CarrierRouter
             $decision = $this->consentService->decide($businessId, $toPhone, 'telephony', 'transactional');
             if (! $decision['granted']) {
                 $reason = ($decision['reason'] === 'SUPPRESSED') ? 'STOP_SUPPRESSED' : $decision['reason'];
+
                 return [
                     'status' => 'refused',
                     'reason' => $reason,
