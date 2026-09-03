@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X204\Domain;
 
+use App\Enums\SendRefusalReason;
 use App\Modules\X204\Events\AttestationRecorded;
 use App\Modules\X204\Events\ConsentDecided;
 use App\Modules\X204\Events\PermitGranted;
@@ -41,7 +42,7 @@ final class ConsentService
                     'recipient_phone' => $recipientPhone,
                     'channel' => $channel,
                     'permit_status' => 'refused',
-                    'refusal_reason' => in_array($suppressed->reason, array_column(\App\Enums\SendRefusalReason::cases(), 'value')) ? $suppressed->reason : 'opted_out',
+                    'refusal_reason' => in_array($suppressed->reason, array_column(SendRefusalReason::cases(), 'value')) ? $suppressed->reason : 'opted_out',
                 ]);
 
                 Event::dispatch(new ConsentDecided(
