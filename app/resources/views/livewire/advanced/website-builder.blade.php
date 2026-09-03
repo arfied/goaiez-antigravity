@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+<div class="space-y-6 sm:space-y-8">
     <div class="md:flex md:items-center md:justify-between mb-6">
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
