@@ -44,7 +44,7 @@
     </div>
 
     <!-- Campaigns List -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-x-auto overflow-y-hidden">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Broadcasts</h2>
             <span class="text-xs text-gray-400 dark:text-gray-400">Updated automatically</span>

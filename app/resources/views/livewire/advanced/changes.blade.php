@@ -12,7 +12,7 @@
     </div>
 
     <!-- Changes Table -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 overflow-x-auto overflow-y-hidden">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
             <thead class="bg-gray-50 dark:bg-gray-900/50">
                 <tr>

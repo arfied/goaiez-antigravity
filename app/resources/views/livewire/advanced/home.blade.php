@@ -25,7 +25,7 @@
 
     <!-- Power Stats Grid -->
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
             <p class="text-sm font-medium text-gray-400 dark:text-gray-400 truncate">Citation Health</p>
             <p class="mt-1 text-3xl font-semibold text-ink">
                 {{ $citationsCount > 0 ? round(($consistentCount / $citationsCount) * 100) : 0 }}%
@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
             <p class="text-sm font-medium text-gray-400 dark:text-gray-400 truncate">Local Map 3-Pack</p>
             <p class="mt-1 text-3xl font-semibold text-emerald-400">
                 #1.6 Avg
@@ -45,13 +45,13 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
             <p class="text-sm font-medium text-gray-400 dark:text-gray-400 truncate">AI Voice Receptionist</p>
             <p class="mt-1 text-3xl font-semibold text-indigo-400">Active</p>
             <div class="mt-2 text-xs text-emerald-400 font-medium">24/7 Autonomous Triage</div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+        <div class="bg-white dark:bg-gray-800 overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-gray-200 dark:border-gray-700">
             <p class="text-sm font-medium text-gray-400 dark:text-gray-400 truncate">POS Review Webhooks</p>
             <p class="mt-1 text-3xl font-semibold text-ink">Connected</p>
             <div class="mt-2 text-xs text-gray-400 dark:text-gray-400">Stripe & Invoicing Active</div>

@@ -154,11 +154,11 @@
             </div>
 
             <!-- Preview Canvas Shell -->
-            <div class="bg-paper p-3 sm:p-8 rounded-b-xl border border-rule flex justify-center min-h-[700px] overflow-hidden items-start">
+            <div class="bg-paper p-3 sm:p-8 rounded-b-xl border border-rule flex justify-center min-h-[700px] overflow-x-auto overflow-y-hidden items-start">
                 
                 @if ($previewDevice === 'mobile')
                     <!-- Realistic Smartphone Mockup Frame -->
-                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 bg-white shadow-2xl overflow-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
+                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 bg-white shadow-2xl overflow-x-auto overflow-y-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
                         <!-- Dynamic Island / Speaker Notch -->
                         <div class="h-6 bg-slate-900 w-full flex items-center justify-center shrink-0">
                             <div class="h-3.5 w-24 bg-black rounded-full"></div>
@@ -221,7 +221,7 @@
                                         <div class="text-[10px] text-gray-500">Real verified job-site transformations</div>
                                     </div>
 
-                                    <div class="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-gray-100 p-4 text-center">
+                                    <div class="relative rounded-lg overflow-x-auto overflow-y-hidden border border-gray-200 shadow-sm bg-gray-100 p-4 text-center">
                                         <div class="grid grid-cols-2 gap-2 text-xs font-bold mb-2">
                                             <span class="p-2 bg-rose-50 text-rose-700 rounded border border-rose-200">Before Inspection</span>
                                             <span class="p-2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">After Complete Work</span>

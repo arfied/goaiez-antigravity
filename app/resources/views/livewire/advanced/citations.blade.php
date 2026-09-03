@@ -50,7 +50,7 @@
     </div>
 
     <!-- Citations Table -->
-    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700">
+    <div class="bg-white dark:bg-gray-800 shadow overflow-x-auto overflow-y-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-900/50">
                 <tr>

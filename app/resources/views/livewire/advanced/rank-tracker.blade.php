@@ -89,7 +89,7 @@
         </div>
 
         <!-- Simulated Map Canvas Container -->
-        <div class="relative bg-slate-100 dark:bg-slate-900 rounded-xl p-8 border border-slate-200 dark:border-slate-800 min-h-[420px] flex items-center justify-center overflow-hidden">
+        <div class="relative bg-slate-100 dark:bg-slate-900 rounded-xl p-8 border border-slate-200 dark:border-slate-800 min-h-[420px] flex items-center justify-center overflow-x-auto overflow-y-hidden">
             <!-- Simulated Map Background Grid Lines -->
             <div class="absolute inset-0 opacity-20 dark:opacity-10 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
