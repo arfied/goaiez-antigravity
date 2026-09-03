@@ -529,7 +529,20 @@ function waitForServer(url) {
                 await runAxe(page, `invalid-login-wrong${suffix}`, outputDir);
             }
 
+            if (shouldCapture('error-429' + suffix)) {
+                execSync('php artisan cache:clear', { stdio: 'inherit' });
+                await page.goto(`${baseUrl}/f/review-business-2`);
+                await page.waitForLoadState('networkidle');
+                for (let i = 0; i < 6; i++) {
+                    await page.click('form button[type="submit"]');
+                    await page.waitForLoadState('networkidle');
+                }
+                await page.screenshot({ path: path.join(outputDir, `error-429${suffix}.png`), fullPage: true });
+                await runAxe(page, `error-429${suffix}`, outputDir);
+            }
+
             if (shouldCapture('invalid-feedback-empty' + suffix)) {
+                execSync('php artisan cache:clear', { stdio: 'inherit' });
                 await page.goto(`${baseUrl}/f/review-business-2`);
                 await page.waitForLoadState('networkidle');
                 await page.click('form button[type="submit"]');
@@ -539,6 +552,7 @@ function waitForServer(url) {
             }
 
             if (shouldCapture('invalid-feedback-rating' + suffix)) {
+                execSync('php artisan cache:clear', { stdio: 'inherit' });
                 await page.goto(`${baseUrl}/f/review-business-2`);
                 await page.waitForLoadState('networkidle');
                 await page.click('label[for="rating-5"]');
