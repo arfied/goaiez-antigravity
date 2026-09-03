@@ -494,3 +494,4 @@
 - `2026-09-02T17:06:38` UNRESOLVED X-121 C-Reviews - X-121 exposes no job->person link and JobCompleted carries no person, so C-Reviews cannot trigger a review ask from a completed job
 - `2026-09-03T02:05:03` (R245) C-Reviews — the job-completed review ask sends 'How did the repair go? Please leave us a review!'; it names no staff member and offers no incentive, so it passes the G19-10 and G20-03 lints at compose time
 - `2026-09-03T02:05:03` (R245) C-Reviews — no new guard for replay: the 30-day CADENCE_WINDOW_ACTIVE guard plus the two-pass cap already bound the damage of ReplayOfflineSyncAction, and history import is safe via withoutEvents
+- `2026-09-03T02:05:23` note: X-121 job->person landed on origin/main (ac89b6a work_orders.person_id, b9701c4 JobCompleted carries the person); C-Reviews now asks for a review from a real completed job
