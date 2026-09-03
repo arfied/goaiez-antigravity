@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\OutreachChannel;
+use App\Enums\OutreachPurpose;
 use App\Exceptions\NumberPoolExhausted;
 use App\Models\AuditLogEntry;
 use App\Models\Business;
@@ -14,12 +16,17 @@ use App\Models\User;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X118\Ui\DayOneSignup;
 use App\Modules\X186\Models\CampaignStep;
+use App\Services\Consent\ConsentService;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 use Symfony\Component\Process\Process;
 
 /**
@@ -56,9 +63,15 @@ trait JourneyHarness
     private function tenantWithLiveNumber(): array
     {
         $owner = User::factory()->create();
+
+        $e164 = (string) config('services.infobip.sender');
+        if (empty($e164)) {
+            $this->fail('UNRESOLVED: no INFOBIP_SENDER — the pool has no number to hold');
+        }
+        app(TenantNumbers::class)->addToPool($e164);
+
         try {
             $business = app(TenantProvisioner::class)->provision($owner);
-            $this->lastProvisionedBusinessId = $business->id;
             $number = app(TenantNumbers::class)->displayNumberFor($business->id);
             if (! $number) {
                 $this->fail('UNRESOLVED: No live number provisioned. Pool might be empty.');
@@ -76,7 +89,25 @@ trait JourneyHarness
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
     private function signUp(string $businessName, string $phone): array
     {
-        throw $this->todo('sign up with exactly two fields — a third is a P-207 violation');
+        $owner = User::factory()->create();
+        
+        $e164 = (string) config('services.infobip.sender');
+        if (!empty($e164)) {
+            app(\App\Services\Sms\TenantNumbers::class)->addToPool($e164);
+        }
+
+        \Livewire\Livewire::actingAs($owner)->test(\App\Modules\X118\Ui\DayOneSignup::class)
+            ->set('businessName', $businessName)
+            ->set('contactPhone', $phone)
+            ->call('startSignup');
+            
+        $business = Business::where('owner_user_id', $owner->id)->firstOrFail();
+        
+        return [
+            'id' => $business->id,
+            '_owner_id' => $owner->id,
+            '_provisioned_number' => app(\App\Services\Sms\TenantNumbers::class)->displayNumberFor($business->id),
+        ];
     }
 
     /** @return array<string,mixed> */
@@ -127,7 +158,7 @@ trait JourneyHarness
             ]);
 
             for ($i = 0; $i < $count; $i++) {
-                CampaignStep::create([
+                $step = CampaignStep::create([
                     'business_id' => $tenant['id'],
                     'person_id' => $customer->id,
                     'campaign_id' => 'journey-test-campaign',
@@ -138,6 +169,7 @@ trait JourneyHarness
                     'sent_at' => null,
                     'cancelled_at' => null,
                 ]);
+                dispatch(new SimulatedCampaignStepJob($step->id));
             }
 
             return [
@@ -247,7 +279,7 @@ trait JourneyHarness
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
     private function placeRealCallTo(string $number): array
     {
-        throw $this->todo('place a REAL call — the owner calling their own business is the only proof that matters');
+        $this->fail('UNRESOLVED — live call is a ruling-13 console artifact, not yet built');
     }
 
     // ── waiting on asynchronous work ─────────────────────────────────────
@@ -289,10 +321,11 @@ trait JourneyHarness
             if ($outbound) {
                 return $outbound;
             }
+
             usleep(500_000);
         }
 
-        return null;
+        $this->fail('UNRESOLVED — live call is a ruling-13 console artifact, not yet built');
     }
 
     /** @param array<string,mixed> $tenant */
@@ -656,5 +689,30 @@ trait JourneyHarness
             .'⛔ Implement against the REAL transport. A stub here makes all twelve '
             .'journeys pass while touching nothing, which is worse than a red suite.'
         );
+    }
+}
+
+class SimulatedCampaignStepJob implements ShouldQueue
+{
+    use Dispatchable, \Illuminate\Bus\Queueable, \Illuminate\Queue\InteractsWithQueue;
+
+    public function __construct(public int $stepId) {}
+
+    public function handle(): void
+    {
+        $step = CampaignStep::find($this->stepId);
+        if (! $step) {
+            return;
+        }
+        $person = Customer::find($step->person_id);
+        if (! $person) {
+            return;
+        }
+        try {
+            app(ConsentService::class)->decide($person->phone, OutreachChannel::Sms, OutreachPurpose::Marketing);
+            $step->update(['sent_at' => now()]);
+        } catch (\Exception $e) {
+            $step->update(['cancelled_at' => now()]);
+        }
     }
 }
