@@ -398,7 +398,7 @@ class CReviewsTest extends TestCase
             'first_name' => 'Test Customer',
         ]);
 
-        $action = new \App\Modules\CReviews\Actions\ReviewRequestAction();
+        $action = new ReviewRequestAction;
         $result = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
 
         $this->assertEquals('sent', $result['status']);
