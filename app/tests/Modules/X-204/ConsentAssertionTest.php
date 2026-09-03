@@ -39,4 +39,15 @@ class ConsentAssertionTest extends TestCase
             'refusal_reason' => 'NOT_A_P060_CODE',
         ]);
     }
+    public function test_N_002_no_channel_decides_permission_for_itself(): void
+    {
+        $modulesPath = base_path('app/Modules');
+        $this->assertDirectoryExists($modulesPath);
+
+        $output = [];
+        $cmd = "grep -rE 'status.*opted_in|suppressed|permit_status' {$modulesPath} | grep -v 'X-204' | grep -v 'X204'";
+        exec($cmd, $output);
+        
+        $this->assertEmpty($output, "Found consent branch outside X-204:\n" . implode("\n", $output));
+    }
 }
