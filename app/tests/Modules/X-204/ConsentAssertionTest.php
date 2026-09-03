@@ -127,6 +127,7 @@ class ConsentAssertionTest extends TestCase
             'phone' => '+15125550004',
         ]);
 
+        $person->refresh();
         $this->assertEquals('UNPERMITTED', $person->consent_state ?? null, 'Imported person must be UNPERMITTED');
     }
 
