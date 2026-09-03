@@ -29,7 +29,7 @@ return [
         'email' => 'Email',
         'phone' => 'Phone number',
     ],
-        'thanks' => [
+    'thanks' => [
         'heading' => 'Thank you!',
         'body' => 'Your feedback has been received.',
         'triage' => [
