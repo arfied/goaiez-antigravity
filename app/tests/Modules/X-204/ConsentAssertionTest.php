@@ -88,7 +88,29 @@ class ConsentAssertionTest extends TestCase
     public function test_n_003_stop_mid_sequence_halts_pending_steps(): void
     {
         // N-003
-        $this->assertTrue(method_exists(ConsentService::class, 'haltPendingSequences'), 'ConsentService lacks haltPendingSequences behaviour');
+        $biz = TestCase::provisionTenant(['name' => 'N-003 Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Stop User',
+            'phone' => '+15125550005',
+        ]);
+
+        DB::table('campaign_steps')->insert([
+            ['business_id' => $biz->id, 'campaign_id' => 'camp1', 'step_number' => 1, 'channel' => 'sms', 'template_name' => 't1', 'person_id' => $person->id, 'recipient' => $person->phone, 'cancelled_at' => null, 'sent_at' => null],
+            ['business_id' => $biz->id, 'campaign_id' => 'camp1', 'step_number' => 2, 'channel' => 'sms', 'template_name' => 't2', 'person_id' => $person->id, 'recipient' => $person->phone, 'cancelled_at' => null, 'sent_at' => null],
+        ]);
+
+        $this->suppressor->handle($biz->id, $person->phone, 'sms', 'customer_stop');
+
+        $pendingCount = DB::table('campaign_steps')
+            ->where('person_id', $person->id)
+            ->whereNull('cancelled_at')
+            ->whereNull('sent_at')
+            ->count();
+
+        $this->assertEquals(0, $pendingCount, 'Pending steps must be halted when STOP is delivered');
     }
 
     public function test_n_004_imported_person_is_unpermitted(): void
@@ -111,7 +133,18 @@ class ConsentAssertionTest extends TestCase
     public function test_n_005_cadence_ceiling_counts_every_class(): void
     {
         // N-005
-        $this->assertTrue(method_exists(ConsentService::class, 'checkCadenceCeiling'), 'System lacks cadence ceiling behaviour');
+        $biz = TestCase::provisionTenant(['name' => 'N-005 Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $phone = '+15125550006';
+
+        $this->decider->handle($biz->id, $phone, 'sms', 'opted_in');
+        $this->decider->handle($biz->id, $phone, 'sms', 'transactional');
+
+        $this->assertTrue(method_exists($this->consent, 'getSendCountInWindow'), 'ConsentService lacks getSendCountInWindow behaviour');
+        $count = $this->consent->getSendCountInWindow($biz->id, $phone, 'sms', 24);
+
+        $this->assertEquals(2, $count, 'Cadence ceiling must count every class');
     }
 
     public function test_n_006_suppression_is_per_destination_never_per_customer(): void
