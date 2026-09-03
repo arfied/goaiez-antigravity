@@ -82,8 +82,8 @@
     --shadow-card: 0 1px 2px rgb(22 25 28 / 6%);
 }
 
-/* Dark mode inverts surface and ink. Signal hues do not change — a colour that
-   means "attention" must mean it in both themes. */
+/* Dark mode inverts surface and ink. Signal meaning is what is constant across themes;
+   the hue is retuned for the surface. */
 @media (prefers-color-scheme: dark) {
     @theme {
         --color-paper: #16191c;
@@ -96,6 +96,12 @@
         --color-gauge-track: #2b3035;
         --color-alert: #f87171;
         --color-alert-bg: #451a16;
+        --color-ok: #34d399;
+        --color-ok-bg: #064e3b;
+        --color-attention: #facc15;
+        --color-attention-bg: #713f12;
+        --color-sample: #a5b4fc;
+        --color-sample-bg: #312e81;
     }
 }
 
