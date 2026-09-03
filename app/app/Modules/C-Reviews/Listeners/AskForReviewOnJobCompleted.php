@@ -11,7 +11,7 @@ final class AskForReviewOnJobCompleted
 {
     public function handle(JobCompleted $event): void
     {
-        $action = new ReviewRequestAction();
+        $action = new ReviewRequestAction;
         $action->handle(
             $event->businessId,
             $event->personId,
