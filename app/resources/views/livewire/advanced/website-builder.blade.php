@@ -37,7 +37,7 @@
             <button
                 wire:click="generateWithAI"
                 wire:loading.attr="disabled"
-                class="w-full sm:w-auto px-5 py-3 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs sm:text-sm shrink-0 shadow transition flex items-center justify-center gap-1.5"
+                class="w-full sm:w-auto px-5 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm shrink-0 shadow transition flex items-center justify-center gap-1.5"
             >
                 <span wire:loading.remove>✨ Generate Page</span>
                 <span wire:loading>Writing Copy & SEO...</span>
