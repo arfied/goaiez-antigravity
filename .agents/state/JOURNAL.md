@@ -492,3 +492,5 @@
 - `2026-09-02T16:49:10` UNRESOLVED J10 C-Reviews - J10 waits on track/sixty (tenantWithLiveNumber, personWithPendingSteps) and on ungranted review-platform access
 - `2026-09-02T16:49:15` UNRESOLVED Track-2 C-Reviews - the only caller passes customerId null (C-Reviews/Ui/ReviewsQaRequests.php:64, Track 2 under ruling 5)
 - `2026-09-02T17:06:38` UNRESOLVED X-121 C-Reviews - X-121 exposes no job->person link and JobCompleted carries no person, so C-Reviews cannot trigger a review ask from a completed job
+- `2026-09-03T02:05:03` (R245) C-Reviews — the job-completed review ask sends 'How did the repair go? Please leave us a review!'; it names no staff member and offers no incentive, so it passes the G19-10 and G20-03 lints at compose time
+- `2026-09-03T02:05:03` (R245) C-Reviews — no new guard for replay: the 30-day CADENCE_WINDOW_ACTIVE guard plus the two-pass cap already bound the damage of ReplayOfflineSyncAction, and history import is safe via withoutEvents
