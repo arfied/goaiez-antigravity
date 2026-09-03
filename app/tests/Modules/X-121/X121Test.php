@@ -13,6 +13,7 @@ use App\Modules\X121\Events\FactInvalidated;
 use App\Modules\X121\Models\EntityHistoryRecord;
 use App\Modules\X121\Models\Fact;
 use App\Modules\X121\Models\Job;
+use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -303,7 +304,7 @@ class X121Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Person Job Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $person = \App\Modules\X121\Models\Person::create([
+        $person = Person::create([
             'business_id' => $biz->id,
             'name' => 'Jane Doe',
         ]);

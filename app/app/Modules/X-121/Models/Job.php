@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X121\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Job extends Model
 {
@@ -22,9 +23,9 @@ class Job extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Person, $this>
+     * @return BelongsTo<Person, $this>
      */
-    public function person(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class);
     }

@@ -8,6 +8,7 @@ use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X171\Events\SyncConflict;
 use App\Modules\X171\Models\DeviceSyncConflict;
 use App\Modules\X171\Models\DeviceSyncQueue;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class ReplayOfflineSyncAction
@@ -79,7 +80,7 @@ final class ReplayOfflineSyncAction
         ]);
 
         if ($actionName === 'job.completed') {
-            $personId = \Illuminate\Support\Facades\DB::table('work_orders')
+            $personId = DB::table('work_orders')
                 ->where('id', (int) $payload['job_id'])
                 ->value('person_id');
             Event::dispatch(new JobCompleted($businessId, (int) $payload['job_id'], (int) $payload['tech_id'], $personId));
