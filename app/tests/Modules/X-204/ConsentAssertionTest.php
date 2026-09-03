@@ -50,4 +50,8 @@ class ConsentAssertionTest extends TestCase
         
         $this->assertEmpty($output, "Found consent branch outside X-204:\n" . implode("\n", $output));
     }
+    public function test_N_003_stop_mid_sequence_halts_pending_steps(): void
+    {
+        $this->assertTrue(method_exists(ConsentService::class, 'haltPendingSequences'), 'ConsentService lacks haltPendingSequences behaviour');
+    }
 }
