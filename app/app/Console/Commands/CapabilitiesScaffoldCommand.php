@@ -194,6 +194,7 @@ final class CapabilitiesScaffoldCommand extends Command
                 } else {
                     $currentHeadingModule = null;
                 }
+
                 continue;
             }
 
