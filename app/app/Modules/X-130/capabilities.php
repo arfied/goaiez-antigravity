@@ -21,6 +21,6 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status: 
+    // status:
     'N-062' => 'a tenant is never left on an empty domain — rankings, links and redirects MOVE (R130) · the drain is idempotent — replayed twice, one result · the old domain redirects, never 404s · the EXPORT works too',
 ];
