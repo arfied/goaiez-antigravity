@@ -56,7 +56,7 @@ use Illuminate\Database\Eloquent\Builder;
 final class CustomerDirectory
 {
     /** How many contacts one page of the list shows. */
-    public const int PER_PAGE = 10;
+    public const int PER_PAGE = 25;
 
     public function __construct(private readonly CrmTasks $tasks) {}
 
