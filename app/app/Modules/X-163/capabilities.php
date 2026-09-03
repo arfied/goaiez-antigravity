@@ -24,6 +24,6 @@ return [
     // status: SPECCED
     'G17-18' => 'a rate per pricebook (§145.4 — no nexus, no jurisdiction math)',
 
-    // status:
+    // status: 
     'N-062' => 'a tenant is never left on an empty domain — rankings, links and redirects MOVE (R130) · the drain is idempotent — replayed twice, one result · the old domain redirects, never 404s · the EXPORT works too',
 ];

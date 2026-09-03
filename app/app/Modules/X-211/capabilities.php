@@ -21,7 +21,7 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: 
     'N-033' => 'a fee with no matching TERM is refused · a plan past the threshold routes to a financing partner · offline payment needs a reference or a photo · collections is a human action only · an open RECOVER blocks dunning entirely',
 
     // status: SPECCED

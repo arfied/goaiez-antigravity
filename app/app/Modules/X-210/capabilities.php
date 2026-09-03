@@ -21,13 +21,13 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: 
     'N-027' => 'no cap → cannot save · margin guard NAMES every below-cost service · no stacking by default · the AI honours and never invents · issuer_scope never crosses · incrementality holdout mandatory',
 
-    // status:
+    // status: 
     'N-028' => '',
 
-    // status:
+    // status: 
     'N-030' => '',
 
     // status: SPECCED
