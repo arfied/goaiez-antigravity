@@ -922,3 +922,18 @@ it differs in (11, all expected) are restored by procedure step 2. Merge
 dispatched as run 29. **Owner note:** production `goaiez_antig` gains a
 column-drop migration at the next deploy — `deploy.sh` runs `migrate`; a
 backup first is the usual courtesy for a drop.
+
+## 2026-09-03 — run 29 (merge track/stages): coder aborted correctly; brief was wrong
+
+The merge conflicted in `.agents/state/BUILD-STATE.json` and `JOURNAL.md`
+and the coder did what the brief said — `git merge --abort`, report, stop.
+Good. The fault is the supervisor's: the "zero conflicts (pre-checked)" line
+came from the legacy 3-arg `git merge-tree` whose conflict lines are `+`-prefixed
+diff, so my `^<<<<<<<` grep matched nothing. `git merge-tree --write-tree`
+(the real check) shows exactly those two files — both **per-track paths**,
+which step 2 overwrites with HEAD anyway. So a conflict inside a per-track path
+is not a conflict; it is step 2 running one line earlier. Re-brief (run 30,
+second and last dispatch for this item): resolve per-track conflicts with
+`git checkout HEAD -- <path>`, abort only on a conflict OUTSIDE the seven
+per-track paths. Tree after the abort: clean at `5fe6621`, no MERGE_HEAD.
+Standard pre-check is now `git merge-tree --write-tree HEAD origin/track/<x>`.

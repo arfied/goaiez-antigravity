@@ -32,7 +32,12 @@ Procedure is CLAUDE.md §"Merging a track branch (revised 2026-09-03)". Exactly:
    Proof: `git diff HEAD~1 HEAD --stat -- <the seven per-track paths>` prints NOTHING; quote it.
 4. `bash bin/supervise.sh --tests`; report quotes pint AND phpstan lines; STOP. No push.
 Expected: 25 app files; suite 888/879 or better; zero conflicts (pre-checked).
-If any conflict appears: abort with `git merge --abort`, report, STOP.
+**Conflicts (run 29 correction):** `git merge-tree --write-tree` shows exactly two,
+both per-track: `.agents/state/BUILD-STATE.json` and `.agents/state/JOURNAL.md`.
+A conflict in a per-track path is resolved by step 2 itself — `git checkout HEAD --
+<path>` takes main's copy and clears the conflict. Do that, then continue to step 3.
+Abort (`git merge --abort`, report, STOP) ONLY if a conflict lands outside the seven
+per-track paths. Run 30 = the retry; the cap for this item is reached after it.
 
 ## Previous — run 28: pint + commit supervisor notes (then push, then merge stages)
 
