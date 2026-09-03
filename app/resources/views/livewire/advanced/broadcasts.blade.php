@@ -3,7 +3,7 @@
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
-                    <li><a href="{{ route('advanced.home') }}" class="text-ink-2 hover:text-ink hover:underline">Advanced</a></li>
+                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:text-indigo-300 hover:underline">Advanced</a></li>
                     <li class="text-ink-2">/</li>
                     <li class="text-ink-2">Broadcasts</li>
                 </ol>
