@@ -704,6 +704,31 @@ function waitForServer(url) {
         
         await valBrowser.close();
 
+        console.log("Capturing light color-scheme...");
+
+        const lightBrowser = await chromium.launch();
+        for (const [suffix, width, height] of [['', 1280, 720], ['@390', 390, 844]]) {
+            const lightContext = await lightBrowser.newContext({
+                colorScheme: 'light',
+                viewport: { width, height },
+            });
+            const lightPage = await lightContext.newPage();
+
+            console.log('light pass matchMedia dark =', await lightPage.evaluate(
+                () => window.matchMedia('(prefers-color-scheme: dark)').matches));
+
+            for (const [name, url] of [['home-light', '/'], ['login-light', '/login']]) {
+                if (!shouldCapture(name + suffix)) continue;
+                await lightPage.goto(`${baseUrl}${url}`);
+                await lightPage.waitForLoadState('networkidle');
+                await lightPage.screenshot({ path: path.join(outputDir, `${name}${suffix}.png`), fullPage: true });
+                await runAxe(lightPage, `${name}${suffix}`, outputDir);
+            }
+
+            await lightContext.close();
+        }
+        await lightBrowser.close();
+
 
         fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
     } finally {
