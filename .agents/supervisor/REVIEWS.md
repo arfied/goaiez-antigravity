@@ -893,3 +893,32 @@ Two conditions before the push:
    also commits the supervisor notes so nothing uncommitted exists again.
 
 After run 28's review: push (merge + pint + notes), then merge `track/stages`.
+
+## 2026-09-03 — review of run 28 (pint + notes, AGY_EXIT=0): PASS — push cleared
+
+`8e7985b style: pint` touches exactly the five flagged files, whitespace/format
+only (+53/−38, no logic); `5dbf917 chore(supervisor): notes after run 27` commits
+the restored notes and the two-entry ledger as-is. Gate on 5dbf917, run by the
+supervisor: `{"tool":"pint","result":"passed"}  {"tool":"phpstan","result":"passed","errors":0}`;
+seal sound; debris none; suite 888 · 879 · FAILED 2 (J3, J11 — pricebook/site
+tracks' own) · errors 7 — identical to pre-merge. The gate's ⛔ is that suite
+line, which is the measured truth, not a regression.
+
+Nothing uncommitted remains except REPORT.md. **Push cleared:** `origin/main`
+093fcb3 → 5dbf917 (merge of track/ui + pint + notes). Next merge: `track/stages`.
+
+## 2026-09-03 — pushed 093fcb3..5dbf917; pre-merge read of `track/stages`
+
+`origin/main` = `5dbf917` (monitor confirmed). `track/stages` (31 commits,
+tip `6b64614`, == its worktree HEAD, its supervisor in HOLD with no open BLOCK
+and every commit carrying a recorded PASS): 25 app files +153/−126 —
+23 `capabilities.php` refusal-attribution fixes, the two plan/tracker
+regenerations that go with them, and one schema fix: `c33dcc7` drops
+`conversations.csat_score` (§150.4 says a per-person score does not exist).
+Only reader on main was the model cast, which the same commit removes; no
+view, test or service reads it. Doctor, JourneyHarness, phpunit.xml untouched.
+`git merge-tree` against `5dbf917`: **zero conflict markers**. Per-track files
+it differs in (11, all expected) are restored by procedure step 2. Merge
+dispatched as run 29. **Owner note:** production `goaiez_antig` gains a
+column-drop migration at the next deploy — `deploy.sh` runs `migrate`; a
+backup first is the usual courtesy for a drop.

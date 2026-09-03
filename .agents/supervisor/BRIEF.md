@@ -1,7 +1,7 @@
 # BRIEF — from the supervisor
 
 updated: 2026-09-02 02:40
-push: cleared through a267b5e (already on origin/main). The local commits
+push: YES — 093fcb3..5dbf917 (merge track/ui + pint + notes), cleared 2026-09-03 run 28
       8450e45..6cfe420 push together after item 6c below lands and is reviewed.
 report: per wave, and on any stop
 
@@ -21,7 +21,20 @@ dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
    a reviewed commit — rule 10, 2026-09-02 addition.
 
-## Current task — run 28: pint + commit supervisor notes (then push, then merge stages)
+## Current task — run 29: MERGE `track/stages` into main (second track merge)
+
+Procedure is CLAUDE.md §"Merging a track branch (revised 2026-09-03)". Exactly:
+0. `git add .agents/supervisor CLAUDE.md bin/supervise.sh .claude/settings.json && git commit -m "chore(supervisor): notes before merge"`
+1. `git fetch --no-write-fetch-head origin && git merge --no-ff --no-commit origin/track/stages`
+2. `git diff --name-only HEAD MERGE_HEAD -- .agents/supervisor CLAUDE.md .claude/settings.json bin/supervise.sh .agents/rules/10-supervisor.md app/phpunit.xml .agents/state`
+   → for EACH path printed: `git checkout HEAD -- <path>`. Nothing else. No blanket checkout.
+3. `git commit -m "merge: track/stages — capability refusals attributed, csat_score dropped"`
+   Proof: `git diff HEAD~1 HEAD --stat -- <the seven per-track paths>` prints NOTHING; quote it.
+4. `bash bin/supervise.sh --tests`; report quotes pint AND phpstan lines; STOP. No push.
+Expected: 25 app files; suite 888/879 or better; zero conflicts (pre-checked).
+If any conflict appears: abort with `git merge --abort`, report, STOP.
+
+## Previous — run 28: pint + commit supervisor notes (then push, then merge stages)
 
 1. `style: pint` — bare `./vendor/bin/pint`, commit the five files it fixes
    (AgentComposer, AutopilotJob, AnswerAgentTurnJob, JourneyHarness, CAgentTest);

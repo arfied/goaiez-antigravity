@@ -1,10 +1,10 @@
-# REPORT — wave 27 / track/ui — 2026-09-03T05:33:00Z
+# REPORT — wave 28 / track 1 — 2026-09-03T05:40:00Z
 STATUS    : brief item done
 COMMITS   :
-  9623aed (HEAD -> main) merge: track/ui — UI-1..UI-12 (screens, rig, brand Go AI EZ)
-  a00da44 (origin/track/ui) fix(voice): fix scrollable-region-focusable rule
-  3b685fd fix(broadcasts): fix scrollable-region-focusable rule
-  [... 110 branch commits omitted for brevity]
+  5dbf917 (HEAD -> main) chore(supervisor): notes after run 27
+  8e7985b style: pint
+  9623aed merge: track/ui — UI-1..UI-12 (screens, rig, brand Go AI EZ)
+  [... track/ui commits omitted for brevity]
   093fcb3 chore: state for run 25
   abe9b8a Revert "feat(X-103): the site law — publish attaches all seven"
   59f6776 Revert "fix(X-103): inject site law features into content blocks"
@@ -20,6 +20,9 @@ UNRESOLVED:
 REFUSED   : none
 DOCTOR    : goaiez doctor · build 20260829-0647
 RAW       : 
+== 6. style + static analysis
+  {"tool":"pint","result":"passed"}  {"tool":"phpstan","result":"passed","errors":0}
+
 == 7. test suite  (phpunit.xml → goaiez_antig_test)
   tests 888 · passed 879 · FAILED 2 · errors 7 · result failed
    ✗ FAILURE a_quote_comes_from_the_pricebook_or_does_not_come_at_all
@@ -36,4 +39,5 @@ RAW       :
       JOURNEY HARNESS NOT IMPLEMENTED: issue a real invoice — integer minor units, never a float. ⛔ Implement against the REAL transport. A stub here makes all twelve
    … 2 more
 
-Proof: `git diff HEAD~1 HEAD --stat -- .agents/supervisor CLAUDE.md .claude/settings.json bin/supervise.sh .agents/rules/10-supervisor.md app/phpunit.xml .agents/state` is empty.
+== verdict
+  ⛔ a gate failed above.
