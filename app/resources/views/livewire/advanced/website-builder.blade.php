@@ -30,8 +30,9 @@
                 type="text"
                 wire:model="aiPrompt"
                 wire:keydown.enter="generateWithAI"
-                class="w-full text-xs sm:text-sm p-3 rounded-lg bg-indigo-950/80 border border-indigo-600 text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full text-xs sm:text-sm p-3 rounded-lg bg-indigo-950/80 border {{ $errors->has('aiPrompt') ? 'border-red-400 focus:ring-red-400' : 'border-indigo-600 focus:ring-indigo-400' }} text-white placeholder-indigo-300 focus:outline-none focus:ring-2"
                 placeholder="Describe your business, specialty & location (e.g. 24/7 Emergency plumbing in Austin)..."
+                {{ $errors->has('aiPrompt') ? 'aria-invalid="true"' : '' }}
             />
             <button
                 wire:click="generateWithAI"
@@ -42,6 +43,9 @@
                 <span wire:loading>Writing Copy & SEO...</span>
             </button>
         </div>
+        @error('aiPrompt')
+            <p class="mt-2 text-sm text-red-300" role="alert">{{ $message }}</p>
+        @enderror
     </div>
 
     @if ($aiNotification)
