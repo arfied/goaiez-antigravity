@@ -247,11 +247,11 @@ class UiReviewSeeder extends Seeder
             }
         }
 
-        if (Review::where('is_platform', false)->count() < 4) {
+        if (Review::where('location_id', $location->id)->where('status', 'pending')->count() < 4) {
             // 4 reviews (one unhappy)
             for ($i = 0; $i < 3; $i++) {
                 $days = rand(1, 30);
-                Review::factory()->fromGoogle()->create([
+                Review::factory()->create([
                     'location_id' => $location->id,
                     'rating' => 5,
                     'created_at' => now()->subDays($days),
@@ -259,7 +259,7 @@ class UiReviewSeeder extends Seeder
                 ]);
             }
             $days = rand(1, 30);
-            Review::factory()->fromGoogle()->create([
+            Review::factory()->create([
                 'location_id' => $location->id,
                 'rating' => 1,
                 'created_at' => now()->subDays($days),
