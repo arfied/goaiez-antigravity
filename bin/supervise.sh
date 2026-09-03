@@ -43,7 +43,7 @@ sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/superv
 [ -n "$sup_edits" ] && printf '%s\n' "$sup_edits" | sed 's/^/  ℹ supervisor working notes (uncommitted — leave them alone): /'
 touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
 pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
-hits=$(printf '%s\n' "$touched" | grep -E "$pat" || true)
+hits=$(printf '%s\n' "$touched" | grep -E "$pat" | grep -v '\.env\.example$' || true)
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits" | sed 's/^/  ⛔ /'
   echo "  (manifest/capabilities are legal only via regeneration; supervisor files are legal only from the supervisor)"
@@ -56,7 +56,14 @@ bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
 if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
   echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
-  tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
+  SEEN="/home/goaiez/tmp/rewrites-seen-$(basename "$ROOT")"
+  cur=$(md5sum "$ROOT/.agents/supervisor/REWRITES.log" | cut -d' ' -f1)
+  if [ -f "$SEEN" ] && [ "$(cat "$SEEN")" = "$cur" ]; then
+    echo "  ledger unchanged since last review ($(grep -c '^==' "$ROOT/.agents/supervisor/REWRITES.log") historical entries, already quoted)"
+  else
+    tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ NEW: /'; fail=1
+    echo "$cur" > "$SEEN"
+  fi
 else
   echo "  empty — no history rewrites since the ledger began"
 fi

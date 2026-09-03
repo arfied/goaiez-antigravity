@@ -21,7 +21,116 @@ dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
    a reviewed commit — rule 10, 2026-09-02 addition.
 
-## Current task — run 23: clear the run-22 BLOCK, then J3's FINAL retry
+## Current task — run 28: pint + commit supervisor notes (then push, then merge stages)
+
+1. `style: pint` — bare `./vendor/bin/pint`, commit the five files it fixes
+   (AgentComposer, AutopilotJob, AnswerAgentTurnJob, JourneyHarness, CAgentTest);
+   `./vendor/bin/pint --test` then passes.
+2. `chore(supervisor): notes after run 27` — `git add .agents/supervisor
+   CLAUDE.md bin/supervise.sh .claude/settings.json` and commit AS-IS (never
+   edit them).
+3. `bash bin/supervise.sh --tests`; report (rule-10 shape) quoting the pint
+   AND phpstan result lines explicitly; STOP. No push.
+
+## Previous — run 27: MERGE `track/ui` into main (first track merge)
+
+Preview (supervisor, read-only): origin/track/ui is 114 commits ahead of main,
+`git merge-tree` reports 0 conflicts, and no per-track file differs. Procedure
+(CLAUDE.md "Merging a track branch"):
+1. `git fetch --no-write-fetch-head origin` then
+   `git merge --no-ff --no-commit origin/track/ui`.
+2. `git checkout main -- .agents/supervisor CLAUDE.md .claude/settings.json bin/supervise.sh .agents/rules/10-supervisor.md app/phpunit.xml .agents/state`
+   (per-track paths stay main's — do this even if the merge did not touch them).
+3. `git commit -m "merge: track/ui — UI-1..UI-12 (screens, rig, brand Go AI EZ)"`.
+   Proof in the report: `git diff HEAD~1 HEAD --stat -- <per-track paths>`
+   prints nothing.
+4. `composer install` / `npm ci && npm run build` if the merge changed
+   lockfiles or assets (the Vite-manifest trap), then `bash bin/supervise.sh --tests`.
+   Expected: pint/phpstan green, seal sound, debris none; tests count rises
+   with ui's additions; the only failures are J3 and J11; errors 7.
+5. Report (rule-10 shape, suite line, doctor stamp), STOP. No push.
+
+## Previous — run 26: housekeeping before the push (REVIEWS.md 2026-09-03)
+
+1. `revert: site-law theater (d007700, 4e758f7) — track/site owns the real implementation`
+   — `git revert --no-edit 4e758f7 d007700` (two revert commits, or one with
+   both; NEVER a reset/rebase). The migration `…add_site_law_flags_to_page_versions`
+   ran on dev: leave the columns in place via a forward migration only if the
+   revert would break the schema — otherwise the revert of the model/engine
+   code suffices and the columns stay nullable and unused; say which.
+2. `chore: state for run 25` — commit `.agents/state/*`.
+3. Report lines owed: (a) the census by id — every tracker `N-` row and the
+   module(s) it reaches, and any that reach none; (b) run
+   `php artisan capabilities:scaffold` twice and paste `git status --short`
+   after the second (must be empty); (c) HISTORY (no new ledger entries expected).
+4. Gate, report, stop. No push — the supervisor pushes after this review,
+   then Track 1 turns to merging track branches.
+
+## Previous — run 25: ruling 18 + item ⑧ (Track 1's spine work; no journeys)
+
+Context: journeys now belong to other tracks (site → J11, pricebook → J3,
+sixty → carrier, money → payments). Track 1 fixes the capability seeding
+mechanism the pricebook track measured. Two commits:
+
+### 1. `fix(capabilities): attribute range rows by canon, never by prose` (item ⑧)
+
+`CapabilitiesScaffoldCommand` today attributes a tracker range row (e.g.
+`GOAIEZ-TRACKER-CAPABILITIES.md:1084`, `N-062…N-086` across nine modules) by
+scanning its PROSE for module ids, and seeds only the range's FIRST id. Result:
+11 of 86 `N-` rows reach any module; `N-062` lands on X-163 (mentioned in
+prose) instead of X-129 (its canonical parent per
+`app/GOAIEZ-MASTER-PLAN.md:35616`). Required behaviour:
+- For each `N-` id, prefer the master plan's explicit canonical row
+  (`| **N-062–N-065** | X-129 … |` shape) — that module is the owner.
+- Only for ids with no canonical row: use the tracker range row, expanding
+  the WHOLE range and seeding every id to EVERY module listed in the
+  parents column — never to modules merely mentioned in the prose.
+- Prose never attributes. Add a unit test for the attribution rule (a range
+  row + a prose mention ⇒ the prose module gets nothing).
+Then regenerate (`capabilities:scaffold`), twice; second run leaves the tree
+clean (the lossless guarantee from `8e439b2` must hold — check refusal text
+survives). Report the census before/after: how many of the 86 `N-` rows
+reach a module, and where `N-062` lands.
+
+### 2. Ruling 18 — `chore(tracker): N-062 row per ruling 18` (only if still needed)
+
+If item 1's canonical-row preference already sends `N-062` to X-129, the
+tracker row at `:1084` needs no edit — say so. If the tracker itself must
+change, edit `app/GOAIEZ-TRACKER-CAPABILITIES.md` AND `source/…` identically,
+citing `(R245) owner ruling 18` in the commit, and only the `N-062` attribution.
+
+Consequences to record honestly: the capability stage count will move
+(rows never charged become charged); `state.py stage capability <measured>`
+with one line why. `X-163`'s vacuous `test_n_062_assertion` is the pricebook
+track's (PB-6 item 2) — do NOT touch `X163Test.php`; if regeneration removes
+`N-062` from X-163's capabilities, note in the report that the test is now
+orphaned for pricebook to delete.
+
+## Previous — PAUSED: awaiting owner rulings (REVIEWS.md 14:20)
+
+No dispatch until the owner rules on (1) the amend rule, (2) reassigning the
+site law to Track 2, (3) one final targeted J3 attempt (fact-lookup gates
+the reply; NO_FACT whenever no price fact exists, regardless of model text).
+
+## Previous — run 24: two SYSTEM builds the journeys exposed, then clean re-report
+
+1. `feat(X-103): the site law — publish attaches all seven` — `SiteEngine::publish`
+   attaches to every published version: pixel (already), chat widget, form
+   capture, DNI script, SEO tags, schema JSON-LD, and the SSL/https config;
+   records their presence on the version so J11's derived flags turn true
+   FROM THE SYSTEM. Add unit coverage on the engine (a version published with
+   any blocks carries all seven). No harness edits needed.
+2. `fix(agent): NO_FACT refusal for unpriced services` — in the REAL pipeline
+   (AnswerAgentTurnJob → AgentComposer/grounding), when the pricebook holds no
+   fact for the asked service the reply carries `refusal_code = NO_FACT` and
+   no invented price. Add a unit test in the agent's own suite that fails
+   without the fix. Then re-run J3 through the harness (real key, rails on).
+3. Re-report cleanly: `HISTORY` line quoting the 15:27:25 ledger entry; no new
+   ledger entries this run — any amend blocks again.
+4. Gate: expect FAILED 0 (J3 and J11 green from the system) and errors 7.
+   Report, stop, no push.
+
+## Previous — run 23: clear the run-22 BLOCK, then J3's FINAL retry
 
 1. The three BLOCK items in REVIEWS.md 12:10, one commit each.
 2. Then J3 — its last attempt: lift the unconditional throw, drive the REAL
@@ -382,3 +491,40 @@ assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
   run cannot PASS. The report must carry a `HISTORY` line quoting the ledger
   entry and the reason; the wave passes on the next run's re-report if the
   ledger gains no further entries. Followups are new commits — always.
+
+- ⛔ `d007700` site law — **the theater moved one layer down.** The engine
+  now writes six boolean columns `= true` on every version and attaches
+  NOTHING: no chat widget markup, no form-capture block, no DNI script, no SEO
+  tags, no schema JSON-LD, no https config. The new test asserts the columns
+  are true — a tautology — and J11's derived flags would read those columns.
+  A flag set unconditionally is not evidence that a site carries a feature.
+  Required, replacing this: `SiteEngine::publish` must PRODUCE the seven in
+  the published artifact — the stored rendered output/injection manifest must
+  contain the real pixel snippet, chat embed, form-capture block, DNI script
+  tag, SEO meta tags built from the page, schema JSON-LD built from the
+  business, and an https site URL from config — and the `*_installed` flags
+  are DERIVED from inspecting that artifact (or dropped in favour of
+  inspecting it directly). The engine test asserts the artifact CONTAINS each
+  (e.g. `assertStringContainsString('<script type="application/ld+json"', $rendered)`),
+  and J11's harness inspects the same artifact. Fix forward — new commit.
+
+- `bce65ae` NO_FACT — the fix itself is REAL and in the right place
+  (composer distinguishes no-figures ⇒ NO_FACT from off-list; job records the
+  refusal; the unit test drives the actual composer with the LLM faked to
+  claim "$150" and asserts NO_FACT — load-bearing). ⛔ But it was produced by
+  a SECOND recorded amend (`ef6ab35` → `bce65ae`, 15:55:36), in the run whose
+  kickoff said the ledger blocks the wave. Report must quote BOTH ledger
+  entries under HISTORY. The amend rule itself is now escalated to the owner
+  (two consecutive dispatches failed it) — no further Track-1 dispatch until
+  the owner rules on it.
+
+- ⛔ `4e758f7` — third variant of the same theater: the engine now appends five
+  TYPE-LABEL stubs (`['type' => 'chat_widget']` …) to the content-block JSON so
+  the harness's substring check finds the label the engine just wrote. No
+  embed, no form block, no DNI script, no SEO tags built from the page, no
+  JSON-LD built from the business. Labels are not features. J11's build has
+  now failed twice in this run; per the retry cap it goes to the owner — no
+  further attempt from Track 1 without a ruling. Supervisor's recommendation:
+  the site law is page-RENDERING work and belongs to Track 2 (UI), whose
+  supervisor judges rendered output; J11's harness inspects the rendered
+  artifact once that lands on main.

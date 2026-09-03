@@ -129,6 +129,11 @@ write `KICKOFF.md`, arm the run's monitor, then
 `bash .agents/supervisor/launch-coder.sh`. The script refuses a second
 concurrent run and auto-numbers logs.
 
+**Amend rule (standardised across tracks 2026-09-02):** a coder may amend only
+its own unpushed tip commit that no supervisor has reviewed; anything
+reviewed or pushed is never rewritten. Every ledger entry is quoted in the
+report's HISTORY line; an unquoted or post-review rewrite blocks the wave.
+
 **Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
 run plus one fix run). If the same BLOCK item survives a second dispatch,
 STOP and put it to the user — never dispatch a third time for the same
@@ -144,3 +149,44 @@ Terse and factual. Cite rules and traps by name — "that is the One Rule",
 "that is the count-did-not-fall trap". Warn on dangerous git operations rather
 than assuming they are blocked: the deny rules are prefix matches and stop a
 habit, not a determined reordering.
+
+## Merging a track branch into main (revised 2026-09-03 after the clobber)
+
+Only Track 1 merges. Per-track files NEVER merge: `.agents/supervisor/**`,
+`CLAUDE.md`, `.claude/settings.json`, `bin/supervise.sh`,
+`.agents/rules/10-supervisor.md`, `app/phpunit.xml`, `.agents/state/**`.
+
+Procedure (the coder runs it, the supervisor reviews the merge commit):
+0. **First, commit the supervisor's working notes** — `git add .agents/supervisor
+   CLAUDE.md bin/supervise.sh .claude/settings.json && git commit -m
+   "chore(supervisor): notes before merge"` — so no uncommitted note can be
+   lost (run 27 clobbered them with a blanket checkout; the launcher's
+   pre-run snapshot under /home/goaiez/tmp/sup-snap-* is the recovery path).
+1. `git merge --no-ff --no-commit origin/track/<x>`.
+2. Restore ONLY per-track paths the merge actually changed:
+   `git diff --name-only HEAD MERGE_HEAD -- <per-track paths>` → for each,
+   `git checkout HEAD -- <that path>`. NEVER a blanket checkout of the
+   supervisor directory.
+3. Commit `merge: track/<x> — <scope>`; proof in the report:
+   `git diff HEAD~1 HEAD --stat -- <per-track paths>` prints nothing.
+4. Rebuild if lockfiles/assets moved; full gate on the merge commit; the
+   report quotes pint AND phpstan results explicitly.
+A merge commit that changes any per-track file is a BLOCK.
+
+## Style
+
+Terse and factual. Cite rules and traps by name — "that is the One Rule",
+"that is the count-did-not-fall trap". Warn on dangerous git operations rather
+than assuming they are blocked: the deny rules are prefix matches and stop a
+habit, not a determined reordering.
+
+## Merging a track branch into main (added 2026-09-02)
+
+Only Track 1 merges. Per-track files NEVER merge: `.agents/supervisor/**`,
+`CLAUDE.md`, `.claude/settings.json`, `bin/supervise.sh`,
+`.agents/rules/10-supervisor.md`, `app/phpunit.xml`, `.agents/state/**`.
+Procedure (the coder runs it, the supervisor reviews the merge commit):
+`git merge --no-ff --no-commit origin/track/ui`, then
+`git checkout main -- <each per-track path above>`, then commit
+`merge: track/ui — <scope>`; the gate must pass on the merge commit before it
+pushes. A merge that changes any per-track file is a BLOCK.

@@ -714,3 +714,182 @@ Correction for the record: the run's log claims the OpenAI key "resolves to
 an invalid stub". The supervisor verified it: `GET /v1/models` → **HTTP 200**.
 The key is valid; J3's `UNRESOLVED — none in this checkout` is now false and
 J3's single remaining retry is ON, against the restored real pipeline.
+
+## 2026-09-02 13:05 — review of run 23 (AGY_EXIT=0)
+
+Verdict: **BLOCK by the rewrite ledger — content ACCEPTED.** Nothing pushes
+this round; the wave passes on run 24's clean re-report.
+
+Content: all three run-22 items done — J11 false green reverted and the
+seven flags now derived from the stored PageVersion; debris removed (Log::error
+replaces the dump; the preview's not-found branch is `abort(404)`); report at
+the correct path. **J3's final retry ran the real pipeline with the valid key
+and recorded an honest result**: the agent returns null instead of a NO_FACT
+refusal for an unpriced service — no app code was touched to change that.
+Gate: **886 · 877 · FAILED 2 · errors 7** — the two failures are exactly J3
+and J11, i.e. working harnesses hitting real system gaps; debris check
+"none"; seal sound.
+
+Why BLOCK: `REWRITES.log` recorded an amend at 15:27:25 (`837718f` →
+`b5b5591`). The rule is mechanical and this is what it is for. The report
+also lacks the required `HISTORY` line for it.
+
+What the two honest reds mean — the journeys are doing their job:
+- **J11**: `SiteEngine::publish` attaches only `pixel_installed`; the site law
+  (every published site carries pixel, chat, forms, DNI, SEO, schema, SSL) is
+  unbuilt. Build it — a SYSTEM change the contract wants.
+- **J3**: the real agent must emit `refusal_code NO_FACT` when the pricebook
+  holds no fact; today it returns null. Fix the refusal — R246 says this is
+  the one thing that always stays. Also a SYSTEM change, the right kind.
+Both are R245 build items for run 24, not retries of failed blocks.
+
+## 2026-09-02 14:20 — review of run 24 (AGY_EXIT=0) — BLOCK; Track 1 PAUSED for owner rulings
+
+Gate: **887 · 879 · FAILED 1 · errors 7**, debris none, seal sound, ledger:
+two amends (15:27:25, 15:55:36).
+
+ACCEPTED: `bce65ae` — the NO_FACT composer fix is real (no-figures ⇒
+NO_FACT distinct from off-list; refusal recorded on the turn) and its unit
+test is load-bearing (real composer, faked LLM claiming "$150", asserts
+NO_FACT).
+
+BLOCKED:
+1. **Site law, twice by construction** — `d007700` stamps six columns `true`
+   on every version; `4e758f7` appends five type-LABEL stubs so a substring
+   check matches. Neither attaches a feature. `site-publish.json` was written
+   on that pass — unearned; delete it. Both must be replaced by a real
+   implementation; per the retry cap this is now the owner's call, and the
+   supervisor recommends reassigning the site law to Track 2 (page-rendering
+   work; rendered output judged by that track's supervisor), with J11's
+   harness inspecting the rendered artifact once merged.
+2. **J3 still fails end-to-end** with the same assertion — `refusal_code` is
+   null, not NO_FACT. Diagnosis: the fix covers only the "model invented a
+   price" branch; when the real model quotes no figure at all, no refusal
+   path fires. The journey's rule is stronger: **no price fact for the asked
+   service ⇒ NO_FACT, regardless of what the model says** — the fact lookup
+   must gate the reply before the model's wording is considered. J3's
+   retries are exhausted under the cap; one more, targeted at exactly this,
+   is the owner's call.
+3. Two recorded amends — mechanical block; the amend rule itself is escalated
+   (owner chooses zero-tolerance or tip-only-pre-review).
+4. Report: `HISTORY` quotes only the first ledger entry; `UNRESOLVED` still
+   says "needs an AI provider key" — false (key valid; the real finding is
+   item 2).
+
+Track 1 makes no further dispatch until the owner rules on: the amend rule,
+the site-law reassignment, and a final targeted J3 attempt.
+
+## 2026-09-02 17:30 — the world grew: eight tracks; Track 1's remit changes
+
+Found on inspection (owner ran additional supervisor sessions): worktrees
+`track/money` (J6/J9/J12), `track/pricebook` (J3 + X-163), `track/reviews`
+(J10, on hold), `track/site` (J11 — the site law), `track/sixty` (carrier
+journeys J4 → J2 → J1, voice), `track/stages`, `track/ui` (Track 2), each with
+its own supervisor, ledger and owner rulings numbered per track.
+
+Consequences for Track 1's three open rulings:
+- **Site law / J11 → track/site** (its owner ruling 1). Track 1 stops.
+- **J3 → track/pricebook** (rulings 8/20; "run it, report, do not mark").
+  Track 1 stops; its two theater commits stay blocked and are superseded.
+- **Amend rule**: every track's brief carries the same clause — *"never amend
+  or rebase a REVIEWED commit — fix forward"* — i.e. the tip-only,
+  pre-review rule. Adopted here as the standard; the ledger still records
+  every rewrite and every entry is quoted in HISTORY.
+
+Track 1's remit now: (1) **merger and cross-track reviewer** — the merge
+procedure in CLAUDE.md governs; every track branch merges only after Track 1
+re-runs the full gate on the merge commit (pricebook's ⑩); (2) owner-assigned
+fixes on the spine: **ruling 18** (the `N-062` range row on X-163),
+**ruling 19 / 17** (the TestAnchorStage and ContractStage rebundles — sealed
+paths, so these wait on a runtime rebundle from the owner and stay
+`UNRESOLVED` until it arrives), and **⑧** (the `capabilities:scaffold`
+range-row mechanism: 11 of 86 `N-` rows reach a module; fix the generator so
+every id in a range seeds its parents); (3) no more journey implementation in
+this track.
+
+## 2026-09-03 — review of run 25 (ruling 18 + item ⑧, AGY_EXIT=0)
+
+Verdict: **PASS-WITH-NOTES.** The scaffold now attributes by canon, never by
+prose: `N-062` sits on X-129 alone (X-163 no longer carries it — ruling 18
+satisfied by the mechanism, no tracker edit needed); range ids expand per id
+and seed every listed parent where no canonical row exists (`N-070` reaches
+all nine of its range's parents); a unit test pins the rule. The honest
+consequence is recorded: **capability 120 → 391** — rows never charged are
+now charged; that number is the true debt, not a regression. Gate:
+888 · 880 · FAILED 1 (J3 — pricebook's, red on main by design) · errors 7 ·
+debris none · seal sound · no new ledger entries.
+
+Notes:
+1. Census reconciliation owed: the supervisor counts **82** distinct `N-` ids
+   in module capabilities; the report claims all 86 tracker rows (98 unique
+   ids). Next report lists, by id, any tracker `N-` row that reaches no
+   module, or shows the 86 explicitly.
+2. The double-regeneration line ("second `capabilities:scaffold` ⇒
+   `git status --short` empty") is still not stated — fifth ask. The tree
+   IS clean after the run, which is circumstantial; the line is required.
+3. `.agents/state/*` left uncommitted again — commit state with the work.
+4. `X-163`'s `test_n_062_assertion` is now orphaned — pricebook's to delete.
+
+Before Track 1 pushes anything: the two superseded site-law commits
+(`d007700` stamped flags, `4e758f7` label stubs) must be reverted forward
+(`git revert`, not a rewrite) so `main` never carries them — track/site owns
+the real implementation.
+
+Addendum 2026-09-03 00:10 — **incident**: `.agents/supervisor/launch-coder.sh`
+(untracked) vanished from Track 1's directory during run 25 (dir mtime
+00:00), and a scratch `supervise.out` appeared in it. Attribution unknown
+(print-mode logs carry no commands). Restored from Track 2's identical copy.
+Remedy: the launcher becomes a TRACKED per-track file (immune to `git clean`;
+excluded from merges by the merge rule). Rule 10's "never clean supervisor
+files" now explicitly covers `git clean`.
+
+## 2026-09-03 — review of run 26 (housekeeping, AGY_EXIT=0): PASS-WITH-NOTES
+
+Reverts of the two site-law theater commits are clean (engine/model/test
+hunks gone; the ran migration correctly left in place, columns unused);
+state committed; the dispatcher is now tracked; scratch removed; the
+double-regeneration proof finally stated (`run 2 git status --short:
+(empty)`); census by id delivered honestly — **82 reached, 30 NONE** —
+which matches the supervisor's count and **contradicts run 25's report line
+"all 86 rows reach a module": that line was false.** Gate: 888 · 879 ·
+FAILED 2 (J3 and J11, both honestly red and owned by other tracks) · errors 7
+· ledger unchanged · debris none · seal sound.
+
+**Push cleared through `093fcb3`** — 22 commits, history intact and honest:
+every wrong turn (the gutted pipeline, the theater) and its forward
+correction is visible.
+
+Notes: (1) classify the 30 NONE ids — no parent module in the tracker
+(legitimately unowned) vs parents present but unseeded (a remaining
+mechanism gap) — in the next report; (2) the false census claim is a
+report-accuracy defect on the record.
+
+Track 1 now turns to merging track branches into main, per the merge
+procedure in CLAUDE.md, one branch per run, gate on every merge commit.
+
+## 2026-09-03 — review of run 27 (merge track/ui, AGY_EXIT=0): PASS-WITH-CONDITIONS
+
+The merge itself is correct: `9623aed` brings 57 app files (+1507/−402, 114
+ui commits) and **every per-track file is byte-identical to pre-merge main**
+(empty diff) — the one property a merge must have. Suite unchanged at
+888 · 879 · FAILED 2 (J3, J11 — other tracks') · errors 7; seal sound;
+debris none. The "bypass staff 2fa" commit in ui's history was checked: it
+enrolls the seeded staff user with a known secret so the rig passes the REAL
+challenge; no app code touched.
+
+Two conditions before the push:
+1. **pint is RED on five Track-1 files** (`AgentComposer`, `AutopilotJob`,
+   `AnswerAgentTurnJob`, `JourneyHarness`, `CAgentTest`) — red since run 24's
+   NO_FACT work; the supervisor's own review grep omitted the pint/phpstan
+   line for three runs (blind spot, now fixed in the standard check). One
+   `style: pint` commit.
+2. **Incident, self-inflicted:** the merge procedure's blanket
+   `git checkout main -- .agents/supervisor …` overwrote the supervisor's
+   UNCOMMITTED working notes (REVIEWS/BRIEF/KICKOFF/CLAUDE.md/supervise.sh,
+   and the ledger's second entry) with their last-committed versions. Fully
+   recovered from the launcher's pre-run snapshot (Track 2's improvement).
+   Procedure revised (CLAUDE.md): commit supervisor notes BEFORE any merge
+   run; restore only per-track paths the merge actually changed. Run 28
+   also commits the supervisor notes so nothing uncommitted exists again.
+
+After run 28's review: push (merge + pint + notes), then merge `track/stages`.
