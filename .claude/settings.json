@@ -28,8 +28,7 @@
       "Bash(php artisan why:*)",
       "Bash(php -l:*)",
       "Bash(./vendor/bin/phpstan:*)",
-      "Bash(./vendor/bin/pint --test:*)",
-      "Bash(bash .agents/supervisor/launch-coder.sh:*)"
+      "Bash(./vendor/bin/pint --test:*)"
     ],
     "deny": [
       "NotebookEdit",

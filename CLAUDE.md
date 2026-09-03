@@ -121,48 +121,9 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
-## Dispatching the coder (added 2026-09-02)
-
-When the user has enabled the settings rule for
-`.agents/supervisor/launch-coder.sh`, the supervisor launches runs itself:
-write `KICKOFF.md`, arm the run's monitor, then
-`bash .agents/supervisor/launch-coder.sh`. The script refuses a second
-concurrent run and auto-numbers logs.
-
-**Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
-run plus one fix run). If the same BLOCK item survives a second dispatch,
-STOP and put it to the user — never dispatch a third time for the same
-failure, never loosen the check to get past it. A journey/wave marked green
-by the coder is never taken at face value: the supervisor's own gate decides.
-Never run `state.py done/journey/stage` from the supervisor; never touch
-`app/Doctor`; never let the coder and supervisor loop without a human seeing
-each verdict block in `REVIEWS.md`.
-
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
 "that is the count-did-not-fall trap". Warn on dangerous git operations rather
 than assuming they are blocked: the deny rules are prefix matches and stop a
 habit, not a determined reordering.
-
-## TRACK 2 — UI & website-builder quality (this worktree)
-
-This checkout is **Track 2**: branch `track/ui`, worktree
-`/home/goaiez/agents/grs-antig-ui`. Track 1 (journeys/integrations) runs in
-`/home/goaiez/agents/grs-antig` on `main` and is the ONLY track that merges to
-`main`. Track 2 pushes to `origin track/ui` after a PASS; Track 1's supervisor
-reviews and merges.
-
-- Databases: dev `goaiez_antig_ui`, tests `goaiez_antig_ui_test` (the gate
-  exports it over phpunit.xml's pin). `goaiez_antig` is production and
-  `goaiez_antig_dev`/`goaiez_antig_test` belong to Track 1 — touch neither.
-- Scope: `resources/views`, `app/Livewire`, `app/Modules/*/Ui`, public assets,
-  Playwright/screenshot tooling, frontend build. OUT of scope: module
-  Domain/Actions/Database, `tests/Journeys`, migrations (a UI change needing a
-  migration goes to Track 1 via a note in REPORT.md), anything in Track 1's
-  never-list (Doctor, seals, harness, phpunit DB lines).
-- The loop: coder builds → captures Playwright screenshots to
-  `storage/app/ui-review/` → THIS track's supervisor views the images (Read
-  renders them) and judges against the brief's concrete criteria → verdicts in
-  this worktree's REVIEWS.md. Two dispatches per BLOCK, then the owner.
-- SMS/mail drivers are `log` here permanently. No vendor sends from Track 2.

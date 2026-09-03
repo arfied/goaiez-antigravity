@@ -1,48 +1,9 @@
-You are the coder in a supervised arrangement (TRACK 2 — UI). Read CLAUDE.md (the TRACK 2 section), .agents/rules/10-supervisor.md (REPORT.md template verbatim), the last block of .agents/supervisor/REVIEWS.md, then this brief and do it in order, item 0 (the push) first.
+You are the coder in a supervised arrangement. Read AGENTS.md, then .agents/rules/10-supervisor.md, then .agents/supervisor/BRIEF.md and the NEWEST block of .agents/supervisor/REVIEWS.md (06:05 — wave 29 PASSED, push cleared through 50adae9).
 
+State of play: origin/main = cba37f6; local commits c375699..50adae9 are cleared. Do this in order:
 
-updated: 2026-09-03 00:00 (UI-11, run 1 — coder run 22)
-push: **OPEN** for UI-10 — REVIEWS.md (coder run 21) says PASS-WITH-NOTES.
-      Item 0 below. Commits made AFTER that push wait for the next PASS.
+1. `git push origin main`.
+2. Wave 30 per `state.py next` — X-192, the LAST roster module. Full standing rules: feat(X-nnn) commit; ['web','auth'] on any new route and the route serves a real component (never a placeholder closure); authed GET asserting the component rendered (assertSeeLivewire) plus a guest-redirect test; route parameters resolved through tenant-scoped queries; Tenancy::set() never raw SET; secrets encrypted/hashed; tenant tables forced-RLS tenant-only; migrations forward-only; any @agent_reachable widening gets a state.py decided record; DONE recorded in state.py before the report claims it; STAGES from a post-change doctor run; TESTS via `grep -c 'function test'`; pint followups as new commits; findings in your own diff go in your own report.
+3. After X-192, run `python3 bin/state.py next` once more. It will return JOURNEYS, FINISHED, or STARVED: do NOT act on it — write REPORT.md with the action and say field verbatim, run `bash bin/supervise.sh --tests`, include the suite line, and STOP. The terminal state is the owner's decision.
 
-## 0. Push UI-10 (before any edit)
-
-`git fetch --no-write-fetch-head origin && git push origin track/ui`
-Verify: `git log --oneline -1 origin/track/ui` prints b947283.
-
-## Standing rules
-
-Guard on git; no foreground processes; build → commit → rig → LOOK → report
-in the template (keep doing what run 21 did); one-off scripts in
-/home/goaiez/tmp; never edit `app/app/Services/**`, `Domain/**`,
-`Actions/**` — refuse in REPORT instead; no vendor calls.
-
-## UI-11 — the advanced area on mobile, and the seed's loose ends
-
-1. **Rig: mobile pass for the advanced area.** Capture at 390×844, logged in
-   as the owner: `advanced.home`, `advanced.website-builder`,
-   `advanced.citations`, `advanced.visibility`, `advanced.broadcasts`,
-   `advanced.voice`, `advanced.integrations`, `advanced.settings`. Names
-   `advanced-<slug>@390.png`. Commit `test: rig mobile pass for advanced`.
-2. **Seed dates.** Spread the seeded messages, conversations, feedback and
-   reviews over the last 30 days (created_at / sent_at as the models name
-   them). Commit `chore: seed dates spread over 30 days`. Verify: messages
-   page shows different relative times.
-3. **Home tiles read 0/0/0 with seeded feedback.** Read what the three tiles
-   count (the Livewire component and whatever it calls). If the seeder writes
-   the wrong table/column, fix the SEEDER. If the tiles count something the
-   seed cannot produce without a vendor (Google reviews), say so under RAW
-   and leave them. No Service/Domain edits. Commit only if the seeder changes.
-4. **axe**: website-builder preview footer `text-gray-500` on white → a shade
-   passing 4.5:1. Commit `fix(advanced): builder preview footer contrast`.
-5. Full rig after the last commit. Look at every NEW @390 capture and list it
-   under RAW (`— OK` / `— <defect>`): horizontal scroll, tables, tap targets,
-   text clipping. Fix at most three, worst first, one commit each; recapture.
-6. `bash bin/supervise.sh --tests`. REPORT.md in the template with the raw
-   `tests …` line, `axe/SUMMARY.txt`, PNG count, capture/commit times, the
-   per-screen list. STOP.
-
-Hard rules: this worktree only; DB_DATABASE stays goaiez_antig_ui (and _ui_test
-for pest); never edit or stash/checkout/clean supervisor files; never
-amend/reset/rebase; no dump()/dd(); one concern per commit, paths named; no
-foreground long-running process; push only what the `push:` line clears.
+Hard rules: DB_DATABASE never goaiez_antig and never edited in app/.env or app/phpunit.xml; migrations run against goaiez_antig_dev only; nothing written under /home/goaiez/public_html; never edit or stash/checkout/clean supervisor files (including REWRITES.log and the post-rewrite hook); never git commit --amend / reset / rebase; never edit or delete a ran migration; never edit app/app/Doctor/**, seals.json, the three excluded Doctor commands, or JourneyHarness.php except by whitespace; bare ./vendor/bin/pint only; one concern per commit; no scratch committed; a CHECK is never changed to quiet it — REFUSED instead.

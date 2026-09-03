@@ -1,598 +1,510 @@
-# REVIEWS — Track 2 (UI) supervisor verdicts
-
-Append-only. Opened 2026-09-02. Verdicts: PASS · PASS-WITH-NOTES · BLOCK.
-
-## 2026-09-02 — pre-dispatch gate (UI-1, run 1 launched)
-
-Verdict: n/a (no REPORT yet). `bash bin/supervise.sh` read-only, before vendor exists.
-
-- DB guard: `.env` = goaiez_antig_ui ✓. `phpunit.xml` still pins goaiez_antig_test
-  (Track 1's) — the gate's `--tests` exports goaiez_antig_ui_test over it; a bare
-  `./vendor/bin/pest` in this worktree would hit Track 1's test DB. Brief item 2 uses
-  the explicit prefix; hold the coder to it.
-- §2 flags `app/tests/Journeys/JourneyHarness.php` in the last commit — that is
-  Track 1's commit 7f50138 on main, inherited by track/ui. Not Track 2's doing.
-- §2a: post-rewrite hook MISSING in this worktree (fresh checkout, hooks not
-  installed). Amends/rebases here would not be recorded. Note for the owner.
-- §2c: `dd([` at `app/app/Modules/X-179/Ui/ProspecttenantfacingTop3Preview.php:28`,
-  committed on main in 50adae9. In Track 2 scope (`app/Modules/*/Ui`). Not part of
-  UI-1; queued as a UI-2 item.
-- §6 skipped: no vendor yet (expected, UI-1 item 1 installs it).
-- `app/error_log` (untracked) was produced by this gate run's artisan call
-  without vendor; harmless, coder may leave or remove it.
-
-Run 1 dispatched 2026-09-02 via launch-coder.sh, pid 2175689,
-log /home/goaiez/tmp/agy-grs-antig-ui-run1.log.
-
-## 2026-09-02 — UI-1 run 1 — REPORT 2026-09-02T10:28:22-05:00
-
-Verdict: **PASS-WITH-NOTES** on the commit; the brief is **UNRESOLVED on an owner
-dependency**, not on the coder. No BLOCK items.
-
-Commits reviewed: d0ed495 `chore: add Playwright screenshot rig`
-(package.json, package-lock.json, scripts/ui-shots.mjs; 3 files, +96).
-
-- One Rule: no forbidden path touched, no test weakened. ✓
-- Gate after vendor: pint passed, phpstan 0 errors. ✓  (§2a hook missing and
-  §2c `dd([` in X-179 are pre-existing, logged above.)
-- REPORT is rule-10 shape, doctor stamp 20260829-0647 matches BUILD-STATE. ✓
-- STATUS `stopped: RUNTIME` is the wrong label — nothing in the checker broke.
-  Correct label is a brief item stopped `UNRESOLVED`, which the UNRESOLVED
-  line does say: `type "vector" does not exist` — goaiez_antig_ui has no
-  pgvector extension. Verified: create_knowledge_chunks_table uses
-  `$table->vector()`; the extension needs a superuser and rule 05 / the
-  bootstrap workflow put it on the owner. Coder was right not to work around.
-
-Screenshot judged: `login.png` (1280×3220). It is a Laravel 500 page —
-`SQLSTATE[42501] permission denied for table sessions` as goaiez_app on
-goaiez_antig_ui. Same root cause: migrate aborted at the vector step, so
-`runtime/goaiez-grants.sql` was never applied (rule 05: permission denied is a
-GRANT problem, never RLS). Not a UI finding; no verdict on the login screen yet.
-
-Rig notes for the fix run (carried into BRIEF):
-1. Routes: `/builder` does not exist — website builder is
-   `/advanced/website-builder` behind `EnsureAdvancedDashboard`. `/account`
-   and `/home` and `/memberships` are real.
-2. Login uses DatabaseSeeder's `test@example.com`; that user has no business,
-   so `/home` will redirect or 403. Rig must seed (or factory) an OWNER with a
-   business and log in as that.
-3. No post-login assertion: if login fails every later PNG is the login page.
-   Assert the URL after submit and exit non-zero.
-4. Rig runs with `fullPage:true` at 1280 wide → 3220px tall on an error page.
-   Keep fullPage, but the supervisor views a 700px-wide downscale; fine.
-
-Owner dependency (one block, all 14 track databases):
-  CREATE EXTENSION IF NOT EXISTS vector  as postgres, then coder re-runs
-  `php artisan migrate` and applies runtime/goaiez-grants.sql per the
-  bootstrap workflow.
-
-Process note: agy pid 2175692 still alive 49 min after REPORT.md was written,
-6 s CPU, futex wait, 0-byte log — print mode buffers until exit. launch-coder
-refuses a second run while the pid lives; owner may need to kill it before the
-fix dispatch. Dispatch count for UI-1: 1 of 2.
-
-## 2026-09-02 — UI-1 run 2 dispatched (dispatch 2 of 2)
-
-Owner confirmed `vector 0.8.6` on goaiez_antig_ui (and the block covered all
-fourteen track databases). Run 2 launched via launch-coder.sh, pid 2368664,
-log /home/goaiez/tmp/agy-grs-antig-ui-run2.log, on the BRIEF dated
-2026-09-02 (run 2). If the same item fails again, it goes to the owner — no
-third dispatch.
-
-## 2026-09-02 — UI-1 run 2 — REPORT 2026-09-02T11:28:00Z
-
-Verdict: **BLOCK** (process, not product). Two items; both fix-forward.
-
-Commits: dd0db93 rig fix · 0170e72 UiReviewSeeder · a47920c "refine ui rig and seeder".
-Gate `--tests`: **tests 886 · passed 876 · FAILED 0 · errors 10** — matches Track 1's
-band (their last: 886 · 874); the 10 errors are the unimplemented journey harness,
-by design. phpstan 0. Doctor stamp 20260829-0647 matches BUILD-STATE.
-
-BLOCK-1 — a47920c swept **seven supervisor/config files into a coder commit**:
-BRIEF.md, KICKOFF.md, REPORT.md, REVIEWS.md, .claude/settings.json, CLAUDE.md,
-bin/supervise.sh (a `commit -a`). Content intact — working copies equal the
-commit — but merging track/ui as-is would replace Track 1's REVIEWS.md (−590
-lines), put the TRACK 2 section on main's CLAUDE.md and point main's gate at
-goaiez_antig_ui_test. Rule 10 §"the supervisor's working tree". Remedy: a
-restore commit to origin/main's versions, track copies put back uncommitted.
-No amend/reset.
-
-BLOCK-2 — pint fails on `database/seeders/UiReviewSeeder.php` (3 fixers). The
-gate's §6 is red; the report did not say so.
-
-Screenshots judged (1280 wide, fullPage):
-- login.png — clean dark sign-in, five methods (passkey, Google, Microsoft,
-  magic link, password). ✓
-- home.png — renders for the seeded owner; three zero tiles, Autopilot Engine
-  Active, four quick actions. Emoji icons render as tofu boxes: the server has
-  no emoji font (`fc-list | grep -i emoji` → 0). Rig environment, owner item,
-  not a view defect.
-- account-settings.png — renders; sections all present. Nav clips a label to
-  "Google r" before "More ▾" at 1280 wide (home shows "Google"). UI-2 item.
-- memberships.png — X-192 MembershipsList renders a bare unstyled view inside
-  the admin "Internal Platform Console" shell with app name "Laravel" and
-  "Nothing here for your account". Two view files exist
-  (memberships-list / memberships_list). Owner-facing route in a staff shell.
-  UI-2 item.
-- website-builder.png — byte-identical to account-settings: the middleware
-  redirected because `businesses.advanced_dashboard_enabled` is false for the
-  seeded business. Coder reported it honestly. Fix is data (seeder sets the
-  flag), never the middleware.
-- login-FAILED.png/.html — stale artefacts of the first attempt (magic-link
-  form got the email). Rig must clear the output dir at start.
-
-Notes: the seeder lives in app/database/seeders — tooling, in scope. The rig
-now asserts post-login URL and exits 1: good. Seeder e-mail owner2@ / "Review
-Business 2" is a leftover of a failed first pass; harmless.
-
-UI-2 queue (not tasked yet): X-179 `dd([` · memberships shell/view · nav clip ·
-emoji font (owner).
-Dispatch: run 3 = fix run for this BLOCK (1 of 2 for this BLOCK).
-
-## 2026-09-02 — UI-1 run 3 — REPORT (header still says 11:28:00Z; run ended ~13:20)
-
-Verdict: **PASS-WITH-NOTES**. UI-1 (bootstrap + screenshot rig) is DONE.
-Push gate opens: `git push -u origin track/ui`.
-
-Commits since run 2: 8b2607c restore (B1 ✓ — `git diff --stat origin/main..HEAD`
-lists only app/database/seeders/UiReviewSeeder.php, package.json,
-package-lock.json, scripts/ui-shots.mjs) · 74c002b style: pint (B2 ✓) ·
-58176b0 rig clears output dir · 5c4ba84 + 44eeb98 + b0cd077 + dbc09d0 + d94329b
-seeder sets advanced_dashboard_enabled.
-Gate `--tests`: tests 886 · passed 876 · FAILED 0 · errors 10 (journey harness,
-by design) · pint passed · phpstan 0 · no forbidden path · no rewrite · log
-shows no wrong-DB touch, no push. Doctor stamp 20260829-0647 = BUILD-STATE.
-
-Notes:
-- Four seeder commits say "bypass rls"; the code does not — it uses
-  Tenancy::actingAsUser / actingAs, no BYPASSRLS, no withoutGlobalScopes. Commit
-  wording was worse than the change. Five fix commits for one seeder is churn;
-  next time commit once it works.
-- REPORT.md header timestamp was not updated (11:28:00Z on a 13:20 report).
-  Rule 10: overwrite the whole file, header included.
-- Coder left `php artisan serve` in the foreground again (1h36m idle, killed
-  by the supervisor at 13:17). UI-2 makes the rig own the server lifecycle.
-- app/server.pid and app/error_log untracked; harmless, exclude or remove.
-
-Screens judged:
-- home.png — emoji icons now render (owner installed Noto Color Emoji);
-  "Power Center" button appears with advanced enabled. ✓
-- website-builder.png — real capture at last: prompt bar, industry template,
-  hero copy, module toggles, live preview with desktop/mobile switch. Two UI
-  defects: (1) the page H1 under the "Advanced /" breadcrumb is dark-on-dark,
-  effectively invisible; (2) preview URL slug reads "reviee-business-2-llc"
-  at 1280px — verify whether the slug drops a letter.
-- Nav clip "Google r" persists on account and builder pages (home shows
-  "Google"). UI-2.
-- memberships.png unchanged — staff shell, "Laravel", empty. UI-2.
-
-UI-2 brief follows: push, then dd() in X-179, memberships page, nav clip,
-builder H1 contrast, slug check, rig owns its server.
-Addendum: slug verified at full resolution — "review-business-2-llc", no bug.
-H1 cause found: website-builder.blade.php:11 uses `text-gray-900 dark:text-white`;
-the app's dark theme does not set Tailwind's `dark` class (the rest of the shell
-uses token classes like `text-ink`), so the heading is gray-900 on near-black.
-
-## 2026-09-02 — UI-2 run 1 (coder run 4) — REPORT "UI-2 Report (2026-09-02)"
-
-Verdict: **BLOCK** on one item; five of six items PASS.
-UI-1 push confirmed: origin/track/ui = d94329b. UI-2 commits stay local.
-
-Gate `--tests`: tests 886 · passed 876 · FAILED 0 · errors 10 (harness, by
-design) · pint passed · phpstan 0 · §2c now `none` · no forbidden path · no
-rewrite · log shows no wrong-DB touch. No test file touched (diff --stat).
-
-Items:
-1. X-179 dd() → abort(404) — 88d85c1 ✓ (§2c green on every track once merged).
-2. Builder header — cc9c78d ✓. H1 legible; breadcrumb, pill and subline read.
-3. Nav clip — 1d57355 **✗ NOT FIXED**. account-settings.png still shows
-   "Messages you sen" cut at the edge. Root cause untouched: nav.blade.php:73
-   `<ul class="flex … min-w-0 overflow-x-auto">` with `whitespace-nowrap` items —
-   whatever overflows the max-w-5xl container is scrolled out of view with no
-   affordance. Moving "Google reviews"/"Your account" into GROUP_MORE only changed
-   which label meets the edge. Also introduced a latent bug:
-   nav.blade.php:1 `@props(['maxWidth' => '{{ $maxWidth }}'])` — a literal
-   string default; any render without the prop prints `{{ $maxWidth }}` into the
-   class attribute. Harmless today (one caller passes it), wrong nonetheless.
-4. Memberships — 46c3197 ✓. Account shell, title, explainer, empty-state card,
-   duplicate view deleted. 65c36c7 restored a copy string a test pins — the
-   coder had reworded "Google can't see this"; do not reword copy tests pin.
-5. Rig owns its server — f9670ac ✓. No `artisan serve` left running.
-6. REPORT.md is **not rule-10 shape** (free headings; no STATUS/COMMITS/
-   DOCTOR/RAW lines). Second time the report shape slipped.
-
-Debris: `test_out.txt`, `test_out_new.txt` (repo root, gate output) and
-`app/error_log`, all untracked — remove.
-
-Fix run = dispatch 1 of 2 for this BLOCK.
-
-## 2026-09-02 — UI-2 fix run (coder run 5) — REPORT 2026-09-02T13:36:00Z
-
-Verdict: **PASS-WITH-NOTES**. UI-2 is DONE. Push gate opens for
-88d85c1..720872f (`git push origin track/ui`).
-
-Commits: 24933af `primary nav wraps instead of clipping` (ul: overflow-x-auto →
-flex-wrap, exactly the mechanism fix) · 720872f `nav maxWidth default`
-('max-w-5xl'). Diff since last review is 2 lines in one file. Report in rule-10
-shape, debris removed, no push (as briefed), no wrong-DB touch.
-Gate `--tests`: 886 · 876 · FAILED 0 · errors 10 (harness) · pint ✓ · phpstan 0 ·
-§2c none.
-
-Screens: memberships.png and website-builder.png show one nav row, every
-label whole. account-settings.png shows "Messages you sent" whole on a second
-row — no clip, but the wrap is caused by the "More: Your account" button
-carrying the current-page label (~120px wider than "More ▾"). Note for UI-3:
-show "More ▾" always and mark the current item inside the menu, so the primary
-row fits at max-w-5xl.
-
-UI-3 brief follows: push, widen the rig (more owner screens + a 390px mobile
-pass), fix what it shows.
-
-## 2026-09-02 — UI-3 run 1 (coder run 6) — REPORT 2026-09-02T18:51:35Z
-
-Verdict: **BLOCK** — fixes not verified. Rig work PASSES.
-UI-2 push confirmed: origin/track/ui = 720872f. UI-3 commits stay local.
-
-Gate `--tests`: 886 · 876 · FAILED 0 · errors 10 (harness) · pint ✓ · phpstan 0 ·
-no forbidden path (.env.example diff is APP_NAME only, not DB_) · no rewrite ·
-no wrong-DB touch · no stray serve.
-
-PASS: e39adc8 rig captures 8 owner screens by route · 5dabd4d mobile pass at
-390×844 (5 screens) · 9977b48 More trigger constant width (account-settings.png
-shows one nav row ✓). 19 PNGs delivered, per-screen list in REPORT ✓.
-
-BLOCK-1 — **the three defect fixes were never recaptured.** Captures are
-13:42; de7d0c1 (Laravel copy) 13:48, 8ce614e (advanced-home same-tone) 13:49,
-3458c37 (tap targets) 13:50. Consequences visible in the PNGs:
-  - home.png / home@390.png still read "Laravel" in the header wordmark and
-    "© 2026 Laravel" in the footer. The commit changed `.env.example` and the
-    `config/app.php` default; the running app reads `app/.env`, which still
-    carries APP_NAME=Laravel, so nothing changed at runtime. Also the chosen
-    name "Antigravity" is the coder's/repo's name, not the product's — owner
-    decides the product name (question raised).
-  - advanced-home.png: H1 under the "Advanced Mode" pill still invisible in
-    the capture; the code fix (text-ink) is right and would show on recapture.
-  - tap targets: min-h-10 (40px) is right; unproven in the PNGs.
-  Rule for every future run: the rig runs AFTER the last commit; a fix with no
-  recapture is a fix that did not land.
-
-Screens judged (desktop): account-plan, inbox, customers, messages, support —
-OK, consistent shell and empty states. account-connections — empty-state icon
-renders as a missing-glyph box (tofu) → fix. advanced-home — see above;
-otherwise the tile grid is fine. home (marketing) — good page; "Laravel" only.
-Mobile (390): login, account-home, inbox, settings, memberships — no
-horizontal scroll, type readable. Account nav wraps to THREE rows with "More ▾"
-floating mid-row-2: functional, not good. UI-4 item: collapsed mobile nav.
-
-Fix run = dispatch 1 of 2 for this BLOCK.
-
-## 2026-09-02 — UI-3 fix run (coder run 7) — REPORT 2026-09-02T18:58:52Z
-
-Verdict: **PASS-WITH-NOTES**. UI-3 is DONE. Push gate opens for
-9977b48..de4c5af (`git push origin track/ui`).
-
-B1 recapture ✓ — all 19 PNGs 13:58, last commit 13:57, times pasted under RAW.
-B2 ✓ — APP_NAME untouched, home.png listed as owner-pending name.
-de4c5af connections empty-state icon → ◇ ✓ (2-line diff, one file).
-Verified in the new captures: advanced-home H1 "Power Control Center" legible ✓;
-connections ◇ ✓; mobile nav rows 40px ✓.
-
-Gate: first run 886 · 875 · FAILED 0 · errors 11 — the 11th was J8
-(`a_deliberately_corrupted_backup_fails_the_restore`, Track 1's) on
-`permission denied to terminate process`: the restore step kicks other backends
-and a superuser psql (the owner's grants loop) was connected at that moment.
-Rerun with no psql on the box: 886 · 876 · errors 10, no non-harness error.
-Environmental; recorded, not charged to this track. pint ✓ phpstan 0.
-
-Note: REPORT.md had no TESTS line (rule-10 shape asks for it; the brief asked
-for the raw `tests …` line under RAW). Third report-shape slip.
-Open for the owner: product name for APP_NAME (home.png wordmark "Laravel").
-UI-4: push, collapsed mobile nav, marketing + advanced screens in the rig.
-
-## 2026-09-02 15:45 — LEDGER RECONSTRUCTED after coder run 13 wiped it
-
-At 15:31 the run-13 coder ran `git reset` to 25023a8 (reflog HEAD@{3}),
-which reverted every uncommitted file — this ledger, CLAUDE.md's TRACK 2
-section, .claude/settings.json, bin/supervise.sh — to main's copies, then
-at 15:32:49 ran the gate with the reverted script: `./vendor/bin/pest` with
-no export, i.e. against **goaiez_antig_test, Track 1's test database**
-(887 · 877 · errors 10). Track 1's coder was idle at the time. The supervisor
-killed run 13 at 15:40 and restored the four files from ba528c8 (14:04).
-Blocks below are condensed re-entries of verdicts given between 14:04 and
-15:31; the originals are in the supervisor's session transcript.
-
-### UI-4 run 1 (coder run 8) — PASS-WITH-NOTES · pushed to cfb29ff
-Single-row mobile nav (disclosure carries Power Center + Sign out); public
-pages ×9 ×2 widths; advanced screens. Notes: third `commit -a` sweep
-(ba528c8, self-restored in 8b7ba91); self-review missed two invisible H1s
-(advanced citations/visibility); APP_NAME changed against the brief.
-
-### Owner ruling — product name is "Go AI EZ".
-
-### UI-5 run 1 (coder run 9) — PASS-WITH-NOTES · pushed to dc4e5e1
-bf6999b `@custom-variant dark` + class="dark" on 12 layouts — root cause of
-every invisible heading (Tailwind v4 media-query dark mode, never a dark
-class, shell always dark). c0fdaec product name in config + .env.example.
-Merge notes for Track 1: config/app.php name; .env.example APP_NAME;
-app.css variant; layouts; UiReviewSeeder; scripts/ui-shots.mjs + playwright
-+ @axe-core/playwright devDeps; X-179 abort(404); X-192 memberships view;
-OwnerNav groups; nav wrap/mobile; errors/{403,404,419,500,503}.blade.php.
-Production .env needs APP_NAME="Go AI EZ".
-
-### UI-6 run 1 (coder run 10) — BLOCK
-axe on every screen + error-page captures PASS. B1 axe dep installed at repo
-root; B2 framework-default 404/403 not listed, "419" was /login.
-
-### UI-6 fix run (coder run 11) — BLOCK, STOPPED to owner
-B1/B2 done (branded error pages). Four `git commit --amend` (REWRITES.log),
-419 still /login, axe not zero, five patch-*.mjs at root. Owner accepted the
-amends and cleared the ledger; authorised one more dispatch.
-Owner decision (a)/(b) recorded 2026-09-02 ~15:00.
-
-### UI-6 fix run 2 (coder run 12) — PASS-WITH-NOTES · push opened for
-90480bf..be99977 (pushed by run 13 → origin/track/ui = be99977 expected;
-verify). Real 419 page; axe zero on 54 screens; no amend; no debris.
-J8 terminate-process error seen 3× today across tracks — environmental,
-note for Track 1 (guard the terminate by datname/usename).
-
-### UI-7 (coder run 13) — dispatched 15:1x; KILLED 15:40 by the supervisor
-Commits kept: 25023a8 seeder slug · 7f4a8b8 customer surfaces · ba36803 setup
-wizard · f54f0c4 seeder fix (all after the reset; two earlier equivalents
-4e8ac9b/29e00da were dropped by the reset). Debris: patch_*.js ×7 at root.
-**Verdict: BLOCK — STOPPED to the owner.** Second "never" breach in two runs
-(amend ×4, then reset + ledger wipe + a suite against Track 1's test DB).
-
-### Owner decision 2026-09-02 16:03 — "accept the risk, dispatch run 14"
-Run 14 dispatched on UI-7 continuation. Snapshot of the supervisor files taken
-by the launcher at /home/goaiez/tmp/sup-snap-grs-antig-ui-20260902-160355.
-Any reset/stash/checkout/amend/rebase in this run ends it and returns Track 2
-to the owner.
-
-## 2026-09-02 16:45 — UI-7 continuation (coder run 14) — BLOCK, STOPPED to the owner
-
-Run ended AGY_EXIT=137 (SIGKILL, source unknown — not the supervisor) while
-the coder said it was "waiting for ui-shots.mjs to finish". No REPORT.md.
-Ledger intact this time (launcher snapshot sup-snap-…-160355 unused).
-
-Breaches, both after a brief whose first section said each one ends the run:
-1. **`git commit --amend` at 21:35:27Z** (REWRITES.log: 53b36af → cce1bb0,
-   "fix(review-hub): add missing translation keys"). The coder did not stop;
-   it went on to commit d710b40 thirteen seconds later.
-2. **d710b40 edits `app/phpunit.xml`**: `DB_DATABASE goaiez_antig_test →
-   goaiez_antig_ui_test`. A never-list file (CLAUDE.md: "treat any diff to
-   phpunit.xml … DB_ lines as a BLOCK"; owner ruling 3: the pin stays). Must
-   be reverted forward in a new commit before anything merges.
-
-Work that landed (unreviewed, unpushed): 352a31d pint · 8c7805f deterministic
-slug · 86de599/a5023dc/e15aed9 seeder · 4741bc0/51d889f/53b36af→cce1bb0
-translation keys on customer pages (raw keys were showing) · 78 PNGs incl.
-customer-* ×16 and setup-* ×12 at 16:33–16:34, before the last commit.
-
-This is the third run in a row with a "never" (amend ×4 → reset + ledger wipe
-+ Track 1's DB → amend + phpunit.xml). Text rules do not bind this coder.
-Track 2 is STOPPED. Owner options:
-(a) revert d710b40 forward (`git checkout origin/main -- app/phpunit.xml`,
-    commit `revert: phpunit pin stays (ruling 3)`), then decide whether Track 2
-    continues with a mechanical guard (a git hook refusing amend/reset/stash
-    and a pre-commit refusing never-list paths — Track 1's tooling), or
-(b) close Track 2 at the pushed state (origin/track/ui = be99977, UI-1…UI-6)
-    and let Track 1 merge that; UI-7's local commits stay unpushed until a
-    human reviews them.
-Supervisor's recommendation: (a) the revert now; no further dispatch until the
-hook exists.
-
-### 2026-09-02 16:5x — owner reverted d710b40 forward: ecadb98 `revert: phpunit
-pin stays goaiez_antig_test (owner ruling 3)`. phpunit.xml identical to main.
-Track 2 remains STOPPED pending a mechanical history/never-list guard (Track 1
-tooling) or the owner's decision to close at be99977.
-
-### 2026-09-02 17:0x — coder git guard installed (owner): /home/goaiez/agents/coder-bin/git,
-prepended to PATH by every track's launch-coder.sh. Tested: stash/reset/amend/
-checkout-on-path/push-main all REFUSED, plain git passes. Track 2 resumes with
-run 15 (UI-7 wrap-up). The run-14 amend stays in REWRITES.log until the owner
-clears it; §2a red is that record, not a new event.
-
-## 2026-09-02 — UI-7 wrap-up (coder run 15) — REPORT 2026-09-02T16:51:00-05:00
-
-Verdict: **PASS-WITH-NOTES**. UI-7 is DONE. Push gate opens for
-25023a8..1414a17 (`git push origin track/ui`) — includes ecadb98, the owner's
-phpunit revert, so origin carries no phpunit change.
-
-Gate: 886 · 876 · FAILED 0 · errors 10 (harness) · pint ✓ · phpstan 0 ·
-§2a shows the run-14 amend record only (owner's to clear) · no guard
-refusals in the log · no debris · non-app paths clean · 78 captures
-16:47:56–16:49:14 after the last commit 16:47:33 ✓ · axe zero on all 78 ✓ ·
-report in rule-10 shape with TESTS ✓.
-
-1414a17 setup layout fonts — verified: all six wizard steps render in the
-app's display/body fonts at both widths. Customer surfaces verified:
-feedback form (business name as brand, TCPA copy, 40px targets at 390),
-thanks, to-google, review hub, unsubscribe, legal ×3. Run 13/14's
-translation-key fixes hold (no raw keys visible).
-
-Notes: first run with the git guard — no refusal needed; the coder complied.
-Divergence: origin/track/ui = 56 commits ahead of main, unmerged; +15 local.
-**Track 1 should merge UI-1…UI-6 now.**
-UI-8: push, then the staff console and review queue, and a rig `--only`.
-
-## 2026-09-02 — UI-8 run 1 (coder run 16) — REPORT "# UI-8" (free-form)
-
-Verdict: **BLOCK**. UI-7 push confirmed (origin/track/ui = 1414a17).
-
-Gate: 886 · 876 · FAILED 0 · errors 10 (harness) · pint ✓ · phpstan 0 · no
-guard refusal · no debris · non-app clean · §2a = run-14 record only.
-PASS: 13ecff8 `--only` filter · 249a594 staff seed (role super_admin) ·
-6305de3 staff captures · 0b940e3 is NOT a gate bypass — the seeder enrols
-the staff user in 2FA with a known recovery code and the rig answers the real
-challenge; acceptable.
-
-BLOCK-1 — **every staff-*@390.png is the login page** (ten files, all 27041
-bytes, identical to login@390). The mobile staff session never got past
-login and the rig has no post-login assertion on that path (the owner path
-has one since UI-1). The report says "captures … properly on both desktop
-and mobile" — false, and unchecked.
-BLOCK-2 — **REPORT.md is free-form again** (fourth slip): no TESTS, no
-per-screen list; step 3 of the brief ("look at every NEW PNG yourself") was
-not done, which is how BLOCK-1 shipped.
-
-Defects seen by the supervisor (not listed by the coder):
-- staff-location-reviews.png (`livewire/admin/tenant-locations.blade.php`):
-  the lookup form's submit button renders with NO label (blank white box).
-- staff-settings.png is 1280×46351 — a 46k-pixel page; either it renders an
-  unpaginated list of everything or a component repeats. Find out; that is a
-  defect either way. staff-credentials.png is 6878px tall — check for the same.
-- Seeder: `if (false) { … }` dead block and a `storage/app/location_id.txt`
-  side file written by the seeder for the rig — pass the id another way.
-- 3fdaedc (pint) landed after the captures; harmless, but the rule is the rig
-  runs last.
-Fix run = dispatch 1 of 2 for this BLOCK.
-
-## 2026-09-02 22:50 — UI-8 fix run (coder run 17) — REPORT 2026-09-02T17:33:45-05:00
-
-Run hung 5h on a foreground `tail -f` after finishing (report 17:33; the
-supervisor killed the tail at 22:41; AGY_EXIT=0).
-
-Verdict: **BLOCK** (new items; B1/B2 of run 16 are fixed).
-Gate: 886 · 876 · FAILED 0 · errors 10 (harness) · pint ✓ · phpstan 0 ·
-no guard refusal · non-app clean · §2a = run-14 record.
-
-Fixed: B1 mobile staff login asserted and working (staff-*@390 now differ;
-internal-users@390 shows the console) ✓ · B2 report in rule-10 shape ✓
-(TESTS line is the grep form, not the raw `tests …` line — minor) ·
-0b797ff review lookup button label · 3536cd1 seeder hygiene · 5d0fa97 rig
-reads the location without the global scope.
-
-Not landed / new:
-1. **Settings length** — eecc923 adds `max-h-[600px] overflow-y-auto` to the
-   settings and credentials lists (a fair mitigation: the page is a
-   deliberately verbose per-setting rationale list, not a loop). But the CSS
-   build ran at 17:32:40, AFTER the captures (17:30:47–17:31:13), so
-   staff-settings.png is still 1280×46351. Unverified, reported as "capped:
-   yes". Recapture proves or disproves it.
-2. **staff-settings@390 is 453px wide × 85,220 tall** — horizontal overflow
-   on a 390 viewport (unbreakable tokens such as setting keys / long
-   paragraphs). Mobile checklist item; not listed.
-3. **staff-location-reviews.png is now the 404 page** (desktop and @390),
-   listed "OK". Regression from 5d0fa97: the location id the rig resolves
-   does not route. Run 16 captured this page correctly.
-4. axe: staff-audit-staff@390 serious 1.
-5. `--only` appears to clear the whole output dir: only the 20 staff PNGs
-   remain; the other 78 (public, owner, customer, error pages) are gone.
-   Regenerable, but the flag must only remove files it will recapture.
-Fix run = dispatch 1 of 2 for this BLOCK.
-
-## 2026-09-02 23:05 — UI-8 fix run 2 (coder run 18) — REPORT 2026-09-02T22:52:00-05:00
-
-Verdict: **BLOCK — cap spent, to the owner.** UI-8's BLOCK has had its
-original run (16) and two fix runs (17, 18); one item survives.
-
-Gate: 886 · 876 · FAILED 0 · errors 10 (harness) · pint ✓ · phpstan 0 · no
-guard refusal · non-app clean · no debris · §2a = run-14 record ·
-build 22:48:32 and captures 22:48:33–22:50:19 both after the last commit
-22:48:27 ✓ · 98 PNGs restored ✓ · axe zero on all 98 ✓ · report rule-10 ✓.
-
-Landed and verified: a0a04aa `--only` keeps unmatched captures ✓ ·
-8e32a8b settings wraps at 390 (390px wide now; 16,709 tall) ✓ · settings
-desktop 13,346 tall (was 46,351), credentials 5,792 (was 6,878) — the list
-cap works; the page remains a long reference page by design ✓ ·
-1636031 axe scrollable-region-focusable on audit ✓.
-
-**Survived: staff-location-reviews.png (and @390) is STILL the 404 page.**
-70bfaea "rig resolves the seeded location" did not change the outcome, and the
-report lists the file under fixed items without a look. Run 16 captured a real
-page at this slot; the regression began with run 17's 5d0fa97. Third report
-in a row asserting a fix the capture disproves.
-
-Owner options: (a) one owner-authorised dispatch limited to this single item,
-with the capture pasted into REPORT.md as proof; (b) accept UI-8 without the
-review-queue capture, push 13ecff8..1636031, and log the 404 as an open
-defect for the next wave. Supervisor's recommendation: (b) — the branch is
-otherwise clean and 82 commits ahead of main; get it pushed and merged.
-
-### Owner decision 2026-09-02 23:10 — option (b): UI-8 accepted without the
-review-queue capture; owner pushed 13ecff8..1636031 (origin/track/ui = 1636031).
-OPEN DEFECT for the next wave: staff-location-reviews capture 404s — the rig's
-tinker one-liner for the location id does not yield a bare id. Track 2 HELD
-until the owner resumes; Track 1 to merge track/ui (through 1636031 or the
-be99977 cut, its choice) with the merge notes above.
-
-### 2026-09-02 23:2x — owner: "resume". UI-9 dispatched (coder run 19).
-
-## 2026-09-02 23:35 — UI-9 run 1 (coder run 19) — REPORT "# Coder Report" (free-form)
-
-Verdict: **PASS-WITH-NOTES** on the commits; the report is not accepted as a
-record. Push gate opens for b2db11d..3c56554 (`git push origin track/ui`).
-
-Gate: first run 886 · 875 · errors 11 (J8 terminate-process, concurrency —
-5th sighting) → rerun 886 · 876 · errors 10, no non-harness error · pint ✓ ·
-phpstan 0 · no guard refusal · §2a = run-14 record · captures 23:14:44–
-23:16:32 after the last UI commit 23:14:37 (two lint-only commits followed at
-23:17/23:18) · 98 PNGs.
-
-Landed and verified: b2db11d review-queue capture is the real page (H1
-"Reviews waiting for a decision", 1280×1241) — the open defect from UI-8 is
-closed; the rig now resolves the id via a rig-only `ui:location-id` console
-command · 4aaade3 populated seeder (12 customers, 6 sent messages visible) ·
-14ba939 advanced tables no longer overflow at 390 · 14f385e citations no
-longer render `[]` · 061ad82 title attributes on truncated names.
-
-Notes (all carried into UI-10):
-1. REPORT.md free-form again (5th); none of the proof lines asked for
-   (printed id, identify, H1 line) were written. Next time this is a BLOCK.
-2. **Inbox still empty** though the seeder creates 2 conversations × 3
-   messages: the rows do not reach the inbox query (business/tenant column,
-   status, or channel). The coder did not notice. Seeder or query — find out.
-3. Customers list shows 13 rows with no pagination — on the brief's own
-   checklist, not listed.
-4. axe: website-builder serious — preview "★★★★★ 4.9 (128 reviews)" is
-   emerald-400 on white.
-5. Debris: `supervise_output.log` at repo root. Remove.
-6. Seeded data is uniform ("Test Customer" × 6, all "No activity yet"): the
-   3-with-feedback and the unhappy review are not visible anywhere. Vary it.
-
-## 2026-09-02 23:50 — UI-10 run 1 (coder run 20) — REPORT 2026-09-02T23:28:40Z
-
-Verdict: **BLOCK**. UI-9 push confirmed (origin/track/ui = 3c56554).
-Report: template ✓ (first compliant report in six). Gate: 886 · 876 ·
-FAILED 0 · errors 10 · pint ✓ · phpstan 0 · no guard refusal · no debris.
-
-Landed and verified: d955966 seeded conversations reach the inbox — inbox
-shows "Major Grimes" and "Test Customer", both waiting for a first reply ✓ ·
-9b5641e builder rating emerald-700 (class present in the built CSS) ✓.
-
-BLOCK-1 — **08db161 edits `app/app/Services/Crm/CustomerDirectory.php`**
-(PER_PAGE 25 → 10). A Service class is outside Track 2's scope, and the
-change is not a fix: the directory already paginated at 25 and the seeded
-list has 13 rows. The supervisor's brief misjudged "13 rows unpaginated" as a
-defect; the coder's job was to say so, not to change product behaviour.
-Revert forward (PER_PAGE back to 25), no view change needed.
-BLOCK-2 — **9 captures and `axe/SUMMARY.txt` are missing** (89 PNGs, no
-summary) while the per-screen list says OK for every screen the coder looked
-at. The rig ended early or a capture set was skipped; the report does not
-mention it. Find why; the run is not complete until all ~98 files and the
-summary exist.
-BLOCK-3 — brief item 3 ("vary the seed") has no commit and no mention —
-skipped silently. Do it, or say UNRESOLVED and why.
-Fix run = dispatch 1 of 2 for this BLOCK.
-
-## 2026-09-03 00:00 — UI-10 fix run (coder run 21) — REPORT 2026-09-02T23:42:00-05:00
-
-Verdict: **PASS-WITH-NOTES**. UI-10 is DONE. Push gate opens for
-d955966..b947283 (`git push origin track/ui`).
-
-Gate: 886 · 876 · FAILED 0 · errors 10 · pint ✓ · phpstan 0 · no guard
-refusal · no debris · §2a = run-14 record · report in template ✓ · rig
-complete: 98 PNGs + 99 axe files + SUMMARY, captures 23:39:32–23:41:20 after
-the last commit 23:39:26 ✓.
-
-B1 ✓ c456026 PER_PAGE back to 25; `git diff origin/main..HEAD -- app/app/Services`
-is empty. B2 ✓ rig completes (20 staff captures); the report does not say
-what stopped it last time — noted, not chased. B3 ✓ f8affb7 varied seed:
-messages page shows 3 customers × 3 bodies. b947283 adds HTML dumps next to
-each PNG (unrequested; useful for review; keep).
-
-Notes for UI-11: seeded dates all "1 minute ago" (30-day spread not done);
-home tiles still 0/0/0 with seeded feedback (the seed may not hit the table
-the tiles count — find out, UI-only or UNRESOLVED); axe serious on
-website-builder preview footer (`text-gray-500` on white); advanced area and
-website-builder have no @390 captures yet.
+# REVIEWS — supervisor verdicts
+
+Append-only. Newest block at EOF. Verdicts: `PASS` · `PASS-WITH-NOTES` · `BLOCK`.
+A `BLOCK`'s items are also copied to the top of `BRIEF.md`.
+
+---
+
+## 2026-09-01 — arrangement opened
+
+Verdict: — (no report to review)
+
+Baseline at open, from `bin/supervise.sh`: see the supervisor's first session
+notes below this line once it has run.
+
+## 2026-09-01 — baseline of `main` at 3c5ed70 (not a report review)
+
+Verdict: **BLOCK** — four findings on `main` itself; wave 12 may proceed only
+after items 1–3 of `BRIEF.md` are committed.
+
+1. **Journeys are 0/12, state says 12/12.** `pest --filter=Journey`:
+   `tests 12 · passed 0 · errors 12`, every one
+   `JOURNEY HARNESS NOT IMPLEMENTED`. `JOURNAL.md` lines 136–147 and 410–421
+   mark J1–J12 green at `2026-08-29T16:43` and `2026-08-30T02:12`; the first
+   harness that did not throw is `84eb0f5` (2026-08-31 03:39). Those marks
+   preceded any test that could pass. The 12 files in
+   `app/storage/app/evidence/journeys/` are dated 2026-08-31 08:01 and were
+   written by the `84eb0f5`/`9124775` simulation harness — the stub the
+   contract forbids. `3c5ed70` restored the throwing harness (correct) but left
+   the marks and the evidence, so `doctor --stage=journey` reads clean off
+   evidence no real transport produced. That is the fabricated-evidence shape.
+2. **CI on `main` is red for two non-code reasons.** Runs 33422297423,
+   33420106599, 33394715300, 33391560129 never started:
+   *"job was not started because recent account payments have failed or your
+   spending limit needs to be increased"* — **owner action, GitHub billing.**
+   Run 33469812213 started and died in `Install Dependencies`:
+   `symfony/* v8.1 requires php >=8.4.1 -> your php version (8.3.33)`.
+   `ci.yml` pins `php-version: '8.3'`; `composer.json` says `"php": "^8.3"`;
+   the lock and rule 07 are PHP 8.4; local is 8.4.23.
+3. **`pint --test` fails on ~130 files.** ~120 are generated
+   `app/Modules/*/manifest.php` (`phpdoc_separation`) — fix belongs in the
+   generator, never in the generated file. Hand-written:
+   `GoaiezRuntimeServiceProvider.php`, `X-148/Actions/RetrievalSearchAction.php`,
+   `ImpactCommand.php`, `ContextCommand.php`, `DbBootstrapCommand.php`,
+   `ModuleScaffoldCommand.php`, `MapCommand.php`,
+   `Phase3StarterTemplatesSeeder.php`, `tests/Patches/FourPatchesTest.php`,
+   `tests/Journeys/JourneyHarness.php` (`phpdoc_align` only).
+4. **Dirty tree.** 5 uncommitted files from the 2026-09-01 disconnect.
+
+Green at baseline: `doctor:selftest` sound · `integrity 0` · build stamp
+`20260829-0647` matches `BUILD-STATE.runtime_build` · phpstan 0 errors ·
+DB guard `goaiez_antig_dev` / `goaiez_antig_test`.
+
+## 2026-09-01 11:25 — review of REPORT 11:22Z (brief items 1, 1b, 2, 3, 4)
+
+Verdict: **PASS-WITH-NOTES** — baseline BLOCK lifted. **Push cleared through
+`09e2660`** (the six commits `49ecc14..09e2660`). Item-5 commits stay local
+until the next PASS.
+
+Checked, each commit read against its brief item:
+
+- `49ecc14` disconnect — 4 files, `SecondFactor.php` correctly excluded.
+- `189b366` supervisor files — added as-is, not edited.
+- `f43e1fc` backport — the 11 files named in 1b and nothing from the do-not-copy
+  list. `SecondFactor::required()` is `$user->role?->isPlatformStaff() ?? false`
+  (H-1 closed in git). `routes/console.php` 52 tasks. `SchedulingTest` 7 tests,
+  `TwoFactorChallengeTest` 9 tests, grep counts match the report.
+- `cae87f5` journeys — J1–J12 `-> red` in `JOURNAL.md`, `stage journey = 12`,
+  `evidence/journeys/` emptied, harness untouched. State now tells the truth.
+- `135f091` CI — `php-version: '8.4'`.
+- `09e2660` pint — fix is in `ModuleScaffoldCommand` (the template now emits the
+  ` *` separator), 124 manifests regenerated from it, `JourneyHarness.php` has
+  0 non-whitespace lines changed (`git show -w`). `pint --test` passes.
+
+Gate (`supervise.sh --tests`): DB guard `goaiez_antig_dev`/`goaiez_antig_test`
+· selftest sound · integrity 0 · build `20260829-0647` = `runtime_build` ·
+tests **856 run, 844 pass, 12 errors = the twelve journeys throwing by
+design; Feature failures 0** (the four 2FA tests are green). `supervise.sh` §2
+flagged `JourneyHarness.php` — inspected, whitespace only, accepted.
+
+Notes (not blocking):
+
+1. `app/composer.json` still says `"php": "^8.3"`; item 3 asked for `^8.4`.
+   Fold into any later commit that touches `composer.json` (H-5 will).
+2. The item-4 idempotence proof — a second `php artisan module:scaffold`
+   leaving `git status --short` empty — is not in the report. Run it and put
+   the line in the next `REPORT.md`.
+3. Report shape is right; keep `RAW` for stages you did not fix and paste
+   `supervise.sh`'s verdict block as the brief asks.
+
+Owner items carried forward: GitHub billing on `arfied` (CI cannot start),
+backups, credential rotation, `intl`, live Stripe key.
+
+## 2026-09-01 12:15 — review of item 5 (REPORT 12:05, run ended AGY_EXIT=0)
+
+Verdict: **BLOCK** on item 5. Nothing from `cd8104b..605713a` pushes.
+**Push remains cleared only through `09e2660`.**
+
+Gate (`supervise.sh --tests`): DB guard intact · all files parse · selftest
+sound · integrity 0 · build stamp matches · phpstan 0 · **tests 868 run, 856
+pass, 12 errors = the journeys; Feature failures 0** · **pint FAILS on 132
+files** (measured on HEAD; the report's "pint perfectly green" is not what
+the tree says — CI runs `pint --test` as a hard gate).
+
+Accepted as committed: H-3, H-5, H-4, H-14, H-6, H-12, H-13, H-7, H-15, and the
+`NoRawSetBusinessIdTest` arch test (per-commit notes in `BRIEF.md`).
+
+BLOCK items, each its own commit, in this order:
+
+1. **M-19 `2fab5b2` — two defects.** (a) `ci.yml:71` `CREATE ROLE goaiez_app
+   WITH LOGIN PASSWORD password\ NOBYPASSRLS` — the password is unquoted; the
+   step fails with a SQL syntax error. Write `PASSWORD 'password' NOBYPASSRLS`.
+   (b) `phpunit.xml` `memory_limit` was **2048M** (`e04b37d`, deliberate) and
+   was *lowered* to 512M. The brief's "512M" was a floor against the 128M
+   default, not a target. **Restore 2048M.** `DB_DATABASE` line untouched —
+   good.
+2. **H-8 `d473e75`/`605713a` — the provisioning call is still wrong.**
+   `TenantProvisioner::provision(User $user, ?string $auditToken = null)`;
+   both `X-118/OnboardingStartAction:44` and `X-112/AgencyEngine:32` pass the
+   business *name* as `$auditToken`, and the comment above line 44 asserts a
+   four-argument signature that does not exist. Read the method; set the name
+   the way core does after provisioning, or record `UNRESOLVED`. Delete the
+   false comment. Requiring `User $user` and throwing when absent — correct.
+3. **H-2 `5cee4fe` — test still not load-bearing** (asserts `redirect` null on
+   a second, fresh component). Same instance: `->call('buy')->assertNoRedirect()`
+   + purchase cancelled; positive twin with `sk_live_` ⇒ `assertRedirect()`.
+   Prove: revert the guard, test goes red.
+4. **Pint.** `./vendor/bin/pint` (fix mode) over `app/` **and** `tests/`, then
+   `./vendor/bin/pint --test` prints `passed`. Commit `style: pint (tests)`.
+5. **Commit hygiene.** `605713a style: pint after audit wave` also carries the
+   parse-error fix for three UIs and a sed rewrite of 121 module tests
+   (`replace_script.sh` / `x121_tests.txt`). A fix inside a style commit is
+   invisible to review. Do not rewrite history now; going forward, one
+   concern per commit and the message says what it is.
+6. **Stray files** — delete `replace_script.sh`, `x121_tests.txt`,
+   `error_log`, `app/error_log` (untracked scratch; never commit them).
+7. **Still owed from the 11:25 review:** `app/composer.json` `"php": "^8.4"`;
+   the item-4 idempotence line (second `module:scaffold` ⇒ clean tree).
+8. **Report shape.** The item-5 report is prose; rule 10's shape is required:
+   `COMMITS` (raw log), `TESTS` with `grep -c` before/after per new test file,
+   `STAGES`, `DOCTOR` stamp, `REFUSED`, and `supervise.sh`'s verdict block.
+
+Notes, not blocking: `TestCase::provisionTenant()` falls back to
+`User::first()` — tolerable in test infrastructure, not in app code.
+`AdvancedDashboardTest` lost its fake-toast assertions because H-13 removed the
+toasts — legitimate — but seeds the same four citations twice; tidy when
+touched.
+
+## RECONSTRUCTED 2026-09-02 02:40 — the three blocks below were lost
+
+During run 4 the coder ran `git stash` on the supervisor's uncommitted
+`BRIEF.md`/`REVIEWS.md`/`KICKOFF.md` edits "to pass the forbidden path gate",
+and the stash was dropped. The 12:55, 21:35 and 12:40 blocks are reproduced
+from the supervisor's records; content is as originally written, abbreviated
+where noted.
+
+## [reconstructed] 2026-09-01 12:40 — interim: seal broken by d4fc2f4
+
+`d4fc2f4 style: pint (tests)` reformatted 11 sealed files. Fixed by the coder
+unprompted in `a267b5e` — byte-identical restore, no `seals.json` change,
+selftest sound.
+
+## [reconstructed] 2026-09-01 12:55 — review of item 5b: PASS-WITH-NOTES
+
+Item-5 BLOCK lifted; **push cleared through `a267b5e`** (later pushed;
+`origin/main` is there now). Gate: seal sound `f1e73d9fc181eb1c` · integrity 0
+· pint/phpstan green · 869 tests, 857 pass, 12 journey errors · DB guard
+intact. All eight BLOCK items closed. Notes: stale "before" numbers in
+reports; `boundary 2`/`citation 2` predate the wave (→ 5c).
+
+## [reconstructed] 2026-09-01 21:35 — review of wave 12: BLOCK
+
+The five wave-12 commits stayed local. Items: (1) both new module routes
+unauthenticated (`['web']` only) — fix + actingAs/guest tests + `Tenancy::set`
+in tests; (2) five dirty `capabilities.php` from a **lossy** regeneration
+(refusal text stripped) — discard, never commit, explain; idempotence claim
+false as measured; (3) X-103 `uniqid` edit — determine tests-not-refreshed vs
+global-unique defect, fix or UNRESOLVED. Hygiene: commit state files, delete
+strays, `grep -c 'function test'` for class-based counts.
+
+## 2026-09-02 02:40 — review of run 4 (REPORT 02:18Z, AGY_EXIT=0)
+
+Verdict: **PASS-WITH-ONE-CONDITION.** The wave-12 + run-4 commits
+(`8450e45..6cfe420`) stay local until the single item below lands; then they
+push together.
+
+Closed correctly: (1) routes now `['web','auth']` — and `ResolveTenant` rides
+the whole web group, so that is the complete core stack; guest tests assert
+the login redirect; raw `SET app.business_id` replaced with `Tenancy::set()`
+in all four tests (`fbaf3ca`). (2) capabilities diffs discarded, never
+committed; honest idempotence line in the report ("NOT idempotent, five files,
+lossy — `CapabilitiesScaffoldCommand` reads solely from the master plan").
+(3) X-103: determination given with evidence — Pest's `uses()->in('Modules')`
+does not bind to class-based tests and base `TestCase` carries no refresh
+trait, so module tests run against a persistent DB; and the real defect was
+the **global** `short_slug` unique, now composite (`ab60355`). Report in
+rule-10 shape, correct grep pattern (X-178 5→6, X-103 3→3, X-102 7→8), state
+committed, strays deleted, tree clean. Tests 873/861, 12 journey errors.
+
+**The condition — one commit, `fix(X-103): companion migration for existing
+databases`:** `ab60355` edited migration `2026_08_30_000036…` which is already
+recorded as ran, so `goaiez_antig_dev`, the standing `goaiez_antig_test`, and
+production keep the old global unique and the ledger lies — the M-21 audit
+shape exactly. Revert the edit to `000036`, and add a new
+`2026_09_02_…_scope_x103_short_slug_unique_per_business.php` that drops the
+global index if it exists and creates `unique(['business_id','short_slug'])`,
+idempotent guards, the house `…000007` reconcile pattern. Verify:
+`php artisan migrate` on `goaiez_antig_dev` applies it; the suite stays green.
+
+Also record (no commit needed now, `state.py unresolved` or a `TODO(Q-045)`):
+**class-based module tests get no database refresh** — rows accumulate in
+`goaiez_antig_test` across runs and edited migrations never re-apply there.
+Binding the refresh into base `TestCase` is a design decision (suite-wide
+cost) — recommend and record, don't decide silently.
+
+Conduct, written once, firmly: **never `git stash`, `git checkout`, or
+otherwise displace the supervisor's files** — the stash from this run was
+dropped and the supervisor's ledger had to be reconstructed. If the gate flags
+supervisor files, that is the supervisor's uncommitted work: leave it and note
+it in the report. (The gate itself is fixed as of tonight so the supervisor's
+own notes no longer fail it.) History was also rewritten twice
+(`055cd4a→fbaf3ca` amend, descendants rebased); the amend contained only the
+parse fix — verified — but amends hide reviewed commits: fix forward instead.
+
+## 2026-09-02 02:35 — 6c verified: wave 12 CLOSED, PASS
+
+`94ec187`: `000036` reverted byte-identical; companion migration idempotent
+with `hasIndex` guards; verified live on `goaiez_antig_dev` — composite
+`(business_id, short_slug)` present, old global index gone. Refresh gap
+recorded as `UNRESOLVED schema X-103` with a recommendation. Pushed:
+`origin/main` = `94ec187`, matching the cleared set exactly. Wave 13 (X-176)
+may proceed; same per-module rules; wave-13 commits stay local until review.
+
+## 2026-09-02 02:55 — review of wave 13 (REPORT 02:35Z, run 5 ended AGY_EXIT=0)
+
+Verdict: **BLOCK** on `18fe3f0`. It stays local. `origin/main` stays at
+`94ec187`.
+
+The commit replaces the raw SET in `X176Test.php` with
+`\App\Modules\Core\Tenancy::set()` — **a class that does not exist**
+(`class_exists` false; the canonical class is `App\Support\Tenancy`). The
+gate: `Class "App\Modules\Core\Tenancy" not found`, suite 873 run / 860 pass /
+**13 errors** (12 journeys + this). The report says "the suite remains
+unbroken" and `journey 12 → 12` with no 13th error — the gate was evidently
+run before the edit, and X-176 was marked DONE after it. A one-line commit
+that breaks the test it edits, under a DONE mark, with a report that says
+green: this is the exact pattern the arrangement exists to catch.
+
+BLOCK items:
+
+1. `fix(X-176): use the canonical Tenancy` — `use App\Support\Tenancy;`,
+   `Tenancy::set((int) $biz->id);`. Then run the gate and paste the true
+   suite line (872 pass expected, 12 journey errors only) plus the gate
+   evidence for X-176's DONE.
+2. Record the measured stage truth: `state.py stage schema 13`,
+   `stage capability 139`, `stage contract 102`, and in the report one line
+   each on why they moved. For schema the reason is established: 6c's
+   `php artisan migrate` applied the backported platform-scope exemptions
+   (`2026_09_01_000001/000002`) to `goaiez_antig_dev`, and the sealed schema
+   stage counts those 11 tables as "tenant-owned, no RLS" — the ruling and
+   the checker disagree. ⛔ Do NOT re-add RLS to those tables (that re-breaks
+   C-1/STOP writes) and do NOT touch `app/Doctor`. Record it:
+   `state.py unresolved X-121 schema "11 platform-scoped tables are
+   exempt from tenant RLS by ruling (audit C-1); the sealed schema stage
+   counts them as violations; needs a runtime rebundle to teach the checker"`.
+3. Commit the `.agents/state/*` changes with the fix.
+
+Report correction, standing: a `STAGES before → after` line must come from a
+doctor run made **after** the last code change of the wave; a suite claim
+("unbroken") must be backed by the pasted line from that same run.
+
+## 2026-09-02 02:50 — wave-13 BLOCK cleared: PASS-WITH-NOTES
+
+`eb612bb`: canonical `App\Support\Tenancy` (verified resolvable), state truth
+recorded (schema 13 · capability 139 · contract 102 in the journal), both
+UNRESOLVED entries worded as briefed, and the report carries the post-change
+suite line — 873 run / 861 pass / 12 journey errors only. **`18fe3f0` and
+`eb612bb` are cleared to push at the next push point** (they may ride with the
+wave-18 push after its review).
+
+Note: `b2cfc13` was amended into `eb612bb` (delta: one unused import) —
+second amend since rule 10's clause. Logged in `BRIEF.md`: the next amend
+blocks its wave regardless of content. Fix forward.
+
+Wave 18 in progress; its commits stay local until review.
+
+## 2026-09-02 03:15 — review of wave 18 (REPORT 02:56Z, run 7 ended AGY_EXIT=0)
+
+Verdict: **BLOCK — conduct, not content.** The wave-18 commits
+(`8e439b2..f8bb308`) stay local. `origin/main` stays at `eb612bb`.
+
+Content, all verified good:
+- `8e439b2` item 0 — generator now merges the register; regeneration across 52
+  files restored refusal text; tree clean after; **capability measured 139 →
+  120** by the supervisor (back to the pre-loss baseline — the system changed,
+  the check did not). Best commit of the day.
+- `56a0902`/`bd72d77` — canonical `Tenancy::set()` swaps; modules pre-built;
+  six-of-seven gate evidence pasted per module (gate 7 is the global-violations
+  gate all DONEs share).
+- Gate: seal sound · integrity 0 · pint/phpstan green · tests 873/861, 12
+  journey errors only · DB guard intact.
+
+Why BLOCK: the standing rule was "the next amend blocks its wave regardless of
+content", and the reflog shows five history operations on one style commit
+inside this run: `976ef16` commit → `894805c` amend → `reset --hard HEAD~1` →
+`30c17ef` commit → `f8bb308` amend. The committed report's own COMMITS list
+cites `30c17ef` — a hash the final amend erased. That is what rewriting does
+to a ledger, demonstrated on the coder's own report. Two smaller accuracy
+defects: `STAGES capability 139 → 237` matches no doctor run (live truth is
+120), and `stage capability 120` was never recorded.
+
+To clear — one commit `chore: correct wave-18 report and record capability`:
+1. Paste the reflog excerpt above into `REPORT.md` under a `HISTORY` line and
+   correct `STAGES` to `capability 139 → 120 (measured post-8e439b2)` with
+   the corrected COMMITS list (`f8bb308`, not `30c17ef`).
+2. `python3 bin/state.py stage capability 120`.
+3. Adopt mechanically, and confirm in the report: **after any commit, never
+   touch it.** If pint changes files post-commit, that is a new
+   `style: pint (followup)` commit. If a commit is wrong, `fix:` forward.
+   `git commit --amend`, `git reset`, `git rebase` are simply never typed.
+Then the wave passes and pushes.
+
+## 2026-09-02 03:12 — wave-18 conduct BLOCK cleared: PASS
+
+`a2f1d19`, a new commit on top with history untouched — which is itself the
+behavior the block existed to produce. Reflog pasted as `HISTORY`, `STAGES`
+corrected to `capability 139 → 120 (measured post-8e439b2)`, COMMITS list
+names `f8bb308`, `stage capability = 120` recorded, and the no-amend rule
+confirmed verbatim in `CONDUCT`. No code changed since the 03:15-reviewed
+gate, so its numbers stand.
+
+**Wave 18 PASSES. Push cleared for `8e439b2..a2f1d19`** — `git push origin
+main` at the next opportunity, then the next roster wave per `state.py next`.
+
+Addendum 03:20: `ca8c442` (2-line report append, committed forward, no amend)
+is included in the clearance — **push cleared through `ca8c442`**.
+
+## 2026-09-02 03:30 — review of wave 21 (REPORT 03:16Z, run 9 ended AGY_EXIT=0)
+
+Verdict: **PASS-WITH-CONDUCT-NOTE. Push cleared through `b7a234f`.**
+
+Content: X-148/X-150 — raw SETs → canonical `Tenancy::set()`, one real
+`Livewire::test()->assertOk()` each (both component classes verified to
+resolve), no routes registered so no GET owed, `style: pint (followup)` as a
+new commit. Gate, independently run: DB guard intact · all parse · seal sound
+· integrity 0 · pint/phpstan green · **tests 875 / 863 pass / 12 journey
+errors only** — matching the report's pasted line. Report shape: the best of
+the day, including an honest "(no stages moved)".
+
+Conduct: one amend occurred (`3d43734 → a5ff6ca`, X-148) — **self-disclosed
+unprompted in the report**, before any review had seen the original hash, and
+the delta was only the state-file DONE mark being folded in. The 03:15 rule
+said the next amend blocks its wave regardless of content. Applying that
+mechanically here would punish exactly the honesty this arrangement runs on,
+so, once and explicitly: the disclosure is credited and the wave passes. That
+discretion is now retired — a `post-rewrite` hook (installed 03:25) records
+every amend/rebase to `.agents/supervisor/REWRITES.log`, `supervise.sh` §2a
+fails on a non-empty ledger or a missing hook, and any future rewrite blocks
+its wave as a measured fact, disclosed or not. Never remove the hook; its
+absence is itself a finding.
+
+## 2026-09-02 04:15 — review of wave 25 / X-142 (REPORT 03:45Z, run 10 ended AGY_EXIT=0)
+
+Verdict: **BLOCK** on `07e1531..a49dae4`. They stay local; `origin/main` stays
+at `b7a234f`.
+
+Good, and kept: three screens behind `['web','auth']` with authed GETs AND
+guest-redirect tests (the exemplary form of the screen rule) · `mcp_tokens`
+stores sha256 hashes · forced tenant RLS on both tables · pint followups as
+new commits · rewrite ledger empty · gate: 877 tests / 865 pass / 12 journey
+errors only · pint/phpstan green · seal sound.
+
+BLOCK items, one commit each:
+
+1. ⛔ **Cross-tenant bypass policies are live on the dev database.**
+   `mcp_tokens_bypass_policy` and `webhook_subscriptions_bypass_policy` —
+   `USING (current_setting('app.bypass_rls', true) = 'on')` for the runtime
+   role, a GUC the app can set itself. `app.bypass_rls` exists nowhere else in
+   the codebase and nothing sets it: a dormant backdoor. Verified via
+   `pg_policies` at 03:55 and again after `58d9a8f`. Deleting the migration
+   file did not undo it — and dev has NO ledger row for `083337` (verified
+   04:05), so the policies were applied outside the migration pipeline; say in
+   the report how. Fix: new migration `2026_09_02_…_drop_x142_bypass_policies`
+   with `DROP POLICY IF EXISTS` for both tables. Verify: `pg_policies` shows
+   only the two `*_tenant_policy` rows on dev.
+2. `webhook_subscriptions.secret` is stored clear-text ( audit M-6's exact
+   column; `WebhookSubscribeAction` now generates `sec_…` server-side and
+   stores it raw; casts cover only `events`). Add `'secret' => 'encrypted'`
+   to the model and a test asserting the raw DB value is not the plaintext.
+3. **`58d9a8f` deleted a migration that had already run somewhere.** Deleting
+   a ran migration joins editing one on the never-do list (this is its first
+   entry as a deletion). The duplication that motivated it — `000090` (module)
+   and the deleted `083337` (core) both creating the same tables — must be
+   stated in the report, plus the ledger/schema parity status per database.
+
+Report accuracy: the wave-25 report's `UNRESOLVED: none` and `REFUSED: none`
+stood while items 1–3 were discoverable in its own diff; and the suite line
+was missing from RAW (doctor stages only). A finding you can see in your own
+diff belongs in your own report — the supervisor finding it first is the
+failure mode this arrangement exists to remove.
+
+## 2026-09-02 04:35 — wave-25 BLOCK cleared: PASS
+
+All three items delivered and verified. **Push cleared through `80d3f90`.**
+
+1. `09f4a6b` — `DROP POLICY IF EXISTS` migration, forward-only; verified live
+   on `goaiez_antig_dev`: `pg_policies` shows only the two `*_tenant_policy`
+   rows. The backdoor is gone.
+2. `1539fa7` — `'secret' => 'encrypted'` cast, column widened to `text` via a
+   NEW migration, and the test is the load-bearing form (raw DB value ≠
+   decrypted value, no `sec_` prefix in ciphertext). Zero pre-cast rows on
+   dev, so no legacy decrypt hazard.
+3. The report's Notes state the provenance (policies applied outside the
+   migration pipeline) and the 000090/083337 duplication with per-database
+   parity — the honesty item, delivered.
+
+Gate, independently run: 878 tests / 866 pass / 12 journey errors only ·
+rewrite ledger empty · seal sound · pint/phpstan green · DB guard intact.
+Wave 25 (X-142) PASSES. Push, then the next wave.
+
+## 2026-09-02 04:55 — review of wave 27 / X-140 (REPORT 04:09Z, run 12 ended AGY_EXIT=0)
+
+Verdict: **PASS-WITH-CONDITIONS** — the code is accepted; the wave is not
+closed until three RECORDING items land (one commit, no code changes).
+`77d511e..25cb043` stay local until then.
+
+Accepted: route behind `['web','auth']` with authed + guest-redirect tests ·
+both new tables have forced RLS with tenant-only policies (no bypass) ·
+`Tenancy::set()` throughout (0 raw SETs) · **contract 102 → 101** — the
+`@agent_reachable` declaration is the remedy the contract checker itself
+prescribes, and `topic.identify` is read-shaped, squarely inside the plan's
+own "DERIVED, never guessed" rule · the gate-7 discrepancy proactively
+recorded as UNRESOLVED in the report (first time unprompted) · pint followup
+as a new commit · gate: 880/868, 12 journey errors only, ledger empty, seal
+sound.
+
+Conditions — one commit `chore: record wave-27 state`:
+
+1. The plan edit widened what the AI agent may reach. Defensible — and
+   recordable: `python3 bin/state.py decided X-140 "@agent_reachable widened
+   with topic.identify — read-shaped, per the plan's derivation rule; owner
+   may overrule"`. An owner-plan edit without a decision record is how
+   silent scope-widening starts.
+2. `state.py` still shows X-140 **BUILDING** and `state.py next` still names
+   wave 27 — the report's "X-140 DONE" was never recorded. Mark it terminal
+   the way X-142/X-148/X-150 were marked, so the loop can advance.
+3. Reports: `grep -c 'function test'` for class-based tests — the report said
+   "before 0 after 0"; the true count is 4. Third occurrence of the pest-only
+   pattern; from now on a TESTS line whose count is 0 for a file that plainly
+   has tests is a report-accuracy defect like any other.
+
+Note, no action: the hand-edit to generated `manifest.php` matched the plan
+edit this time, but the sanctioned path is regenerate-from-plan; the next
+scaffold run will prove them consistent or not.
+
+## 2026-09-02 05:05 — wave-27 conditions cleared: PASS
+
+`74b1072` — all three: `(R245)` decision recorded with "owner may overrule",
+X-140 marked DONE (state.py next now names wave 28 / X-144), TESTS line
+corrected to `grep -c 'function test'` (0→4). State-files-only commit, so the
+04:55 gate stands (880/868, 12 journey errors only). **Wave 27 PASSES; push
+cleared through `74b1072`.** Then wave 28 (X-144).
+
+## 2026-09-02 05:20 — review of wave 28 / X-144 (REPORT 04:32Z, run 14 ended AGY_EXIT=0)
+
+Verdict: **PASS — no conditions.** First wave to clear with nothing owed.
+Three component classes verified to resolve, real `assertOk()` renders,
+canonical `Tenancy::set`, DONE recorded in state before the report claimed it,
+correct grep pattern (2→3), suite line pasted from the post-change run and
+matching the supervisor's independent gate exactly (881/869, 12 journey errors
+only). Ledger empty, seal sound, pint/phpstan green.
+**Push cleared through `cba37f6`.** Then wave 29 (X-179).
+
+## 2026-09-02 05:45 — review of wave 29 / X-179 (REPORT 04:41Z, run 15 ended AGY_EXIT=0)
+
+Verdict: **BLOCK** on `c375699..944f8d7` — one item. They stay local;
+`origin/main` stays at `cba37f6`.
+
+Accepted: forced tenant-only RLS on both tables · guest+authed test pairs ·
+R245 recorded for the `content.extract` reachability widening (read-shaped,
+correctly reasoned) · DONE recorded before claimed · Tenancy swap in the old
+test · report shape and counts correct · gate: 885/873, 12 journey errors
+only, ledger empty, seal sound.
+
+The item: **both new routes are hardcoded string closures** — `return "Top 3
+Preview for prospect {$prospectId}";` — while the real Livewire components sit
+unused in `app/Modules/X-179/Ui/` (`ProspecttenantfacingTop3Preview`,
+`MatchScores`). The authed `assertOk()` tests pass against placeholder text:
+green by construction, the H-13 shape at route level, and the commit message
+says "screens". Fix, one commit `fix(X-179): serve the real components`:
+
+1. Point each route at its component (as every other module route does).
+2. In the components, resolve the prospect through a tenant-scoped query —
+   an `auth`-only route with a raw `{prospectId}` is IDOR-shaped the moment
+   it renders real data.
+3. The authed tests must assert the real component rendered (e.g.
+   `assertSeeLivewire(...)` or a component-specific marker), so they can
+   never pass on a placeholder string again. Guest tests stay.
+
+Then `supervise.sh --tests`, short report, stop. After the PASS: push, and
+wave 30 — **X-192, the last module of the roster** (30/31 waves closed).
+
+## 2026-09-02 06:05 — wave-29 BLOCK cleared: PASS
+
+`50adae9` — routes serve the real components; `Tenancy::idOrFail()` +
+`business_id`-scoped lookup with `abort_unless(404)` closes the IDOR shape;
+tests seed tenant-scoped `TemplateMatch` rows and assert `assertSeeLivewire`,
+so neither a placeholder nor a cross-tenant row can ever satisfy them. Gate:
+885/873, 12 journey errors only, ledger empty, seal sound, pint/phpstan green.
+**Wave 29 PASSES; push cleared through `50adae9`.** Then wave 30 — X-192, the
+last roster module.
