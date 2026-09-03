@@ -16,7 +16,9 @@ use App\Models\Review;
 use App\Models\ReviewDestinationSetting;
 use App\Models\ReviewHubPage;
 use App\Models\Subscription;
+use App\Models\TriageConversation;
 use App\Models\User;
+use App\Services\Proof\ProofNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Database\Seeder;
@@ -196,7 +198,7 @@ class UiReviewSeeder extends Seeder
                 ]);
 
                 if ($ratings[$index] <= 3) {
-                    \App\Models\TriageConversation::factory()->create([
+                    TriageConversation::factory()->create([
                         'review_id' => $review->id,
                         'status' => 'resolved',
                         'resolution' => 'Customer is happy now',
@@ -300,7 +302,7 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-        app(\App\Services\Proof\ProofNumbers::class)->recompute(\App\Services\Proof\ProofNumbers::monthOf());
-        app(\App\Services\Proof\ProofNumbers::class)->recompute(\App\Services\Proof\ProofNumbers::ALL);
+        app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());
+        app(ProofNumbers::class)->recompute(ProofNumbers::ALL);
     }
 }
