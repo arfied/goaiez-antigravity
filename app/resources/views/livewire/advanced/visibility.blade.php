@@ -40,39 +40,41 @@
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Top Converting Search Queries</h2>
         </div>
+        <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-900/50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Search Query</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Impressions</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Clicks</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">CTR</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Avg Position</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Search Query</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Impressions</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Clicks</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">CTR</th>
+                    <th class="px-6 py-3 whitespace-nowrap text-left text-xs font-medium text-gray-400 dark:text-gray-400 uppercase tracking-wider">Avg Position</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                 <tr>
-                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">best service near me</td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">12,400</td>
-                    <td class="px-6 py-4 text-gray-900 dark:text-white font-semibold">1,120</td>
-                    <td class="px-6 py-4 text-emerald-400 font-semibold">9.0%</td>
-                    <td class="px-6 py-4 font-bold text-emerald-400">#1.4</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-white">best service near me</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">12,400</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white font-semibold">1,120</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-emerald-400 font-semibold">9.0%</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-bold text-emerald-400">#1.4</td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">licensed consultant reviews</td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">8,650</td>
-                    <td class="px-6 py-4 text-gray-900 dark:text-white font-semibold">840</td>
-                    <td class="px-6 py-4 text-emerald-400 font-semibold">9.7%</td>
-                    <td class="px-6 py-4 font-bold text-emerald-400">#2.1</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-white">licensed consultant reviews</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">8,650</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white font-semibold">840</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-emerald-400 font-semibold">9.7%</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-bold text-emerald-400">#2.1</td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">affordable local specialist</td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">5,120</td>
-                    <td class="px-6 py-4 text-gray-900 dark:text-white font-semibold">390</td>
-                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300">7.6%</td>
-                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">#3.8</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-white">affordable local specialist</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">5,120</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-white font-semibold">390</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300">7.6%</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-900 dark:text-white">#3.8</td>
                 </tr>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
