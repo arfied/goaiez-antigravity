@@ -62,8 +62,8 @@ class ConsentAssertionTest extends TestCase
                 $violatorsA[] = $file;
             }
         }
-        if (!empty($violatorsA)) {
-            echo "N-002 Violators (a):\n" . implode("\n", $violatorsA) . "\n";
+        if (! empty($violatorsA)) {
+            echo "N-002 Violators (a):\n".implode("\n", $violatorsA)."\n";
         }
 
         // (b) no file outside X-204 compares consent_state or opted_in in code (exclude strings/comments/capabilities.php/migrations)
@@ -77,12 +77,12 @@ class ConsentAssertionTest extends TestCase
                 $violatorsB[] = $line;
             }
         }
-        if (!empty($violatorsB)) {
-            echo "N-002 Violators (b):\n" . implode("\n", $violatorsB) . "\n";
+        if (! empty($violatorsB)) {
+            echo "N-002 Violators (b):\n".implode("\n", $violatorsB)."\n";
         }
 
         $allViolators = array_merge($violatorsA, $violatorsB);
-        $this->assertEmpty($allViolators, "Found N-002 violators.");
+        $this->assertEmpty($allViolators, 'Found N-002 violators.');
     }
 
     public function test_n_003_stop_mid_sequence_halts_pending_steps(): void
