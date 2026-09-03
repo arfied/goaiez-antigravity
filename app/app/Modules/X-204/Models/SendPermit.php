@@ -22,7 +22,7 @@ class SendPermit extends Model
 
         static::saving(function ($model) {
             if ($model->permit_status === 'refused' && $model->refusal_reason) {
-                if (!in_array($model->refusal_reason, \App\Modules\X204\Domain\ConsentService::P060_CODES, true)) {
+                if (!in_array($model->refusal_reason, array_column(\App\Enums\SendRefusalReason::cases(), 'value'), true)) {
                     throw new \InvalidArgumentException('Refusal reason must be a valid P-060 code.');
                 }
             }
