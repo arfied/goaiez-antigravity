@@ -181,31 +181,46 @@ class UiReviewSeeder extends Seeder
             ]);
 
             // 3 with feedback (first-party review)
-            $customers->take(3)->each(function ($c) use ($location) {
-                Review::factory()->create([
+            $ratings = [5, 4, 2];
+            $customers->take(3)->values()->each(function ($c, $index) use ($location, $ratings) {
+                \App\Models\Review::factory()->create([
                     'location_id' => $location->id,
                     'customer_id' => $c->id,
+                    'rating' => $ratings[$index],
                 ]);
             });
         }
 
         if (Conversation::count() < 2) {
-            $conversations = Conversation::factory()->count(2)->create([
-                'location_id' => $location->id,
-                'customer_id' => Customer::first()->id ?? null,
-            ]);
-
-            foreach ($conversations as $conv) {
-                Message::factory()->count(3)->create([
+            $convCustomers = Customer::where('location_id', $location->id)->take(2)->get();
+            foreach ($convCustomers as $c) {
+                $conv = Conversation::factory()->create([
+                    'location_id' => $location->id,
+                    'customer_id' => $c->id,
+                    'channel' => 'sms',
+                ]);
+                \App\Models\Message::factory()->count(3)->create([
                     'conversation_id' => $conv->id,
                 ]);
             }
         }
 
-        if (OutreachMessage::count() < 6) {
-            OutreachMessage::factory()->count(6)->sent()->create([
-                'customer_id' => Customer::first()->id ?? null,
-            ]);
+        if (\App\Models\OutreachMessage::count() < 6) {
+            $messageCustomers = Customer::where('location_id', $location->id)->inRandomOrder()->take(3)->get();
+            $bodies = [
+                'Hi, thanks for visiting us!',
+                'Don\'t forget to leave a review.',
+                'Your appointment is confirmed for tomorrow.',
+            ];
+            
+            for ($i = 0; $i < 6; $i++) {
+                $c = $messageCustomers[$i % 3] ?? Customer::first();
+                \App\Models\OutreachMessage::factory()->sent()->create([
+                    'customer_id' => $c->id,
+                    'body' => $bodies[$i % 3],
+                    'created_at' => now()->subDays(rand(1, 30)),
+                ]);
+            }
         }
 
         if (Review::where('is_platform', false)->count() < 4) {
