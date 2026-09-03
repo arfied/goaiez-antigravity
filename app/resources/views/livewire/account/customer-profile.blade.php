@@ -48,8 +48,9 @@
             standing suppression rather than the trail, so it agrees with the
             Never-contact control below. The panel at the bottom is the history.
         --}}
-        <p class="mt-2 text-sm text-ink" data-consent-badge>{{ $consentBadge->label() }}</p>
-
+        <p class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $consentBadge->stopped !== [] ? 'bg-alert-bg text-alert' : ($consentBadge->agreed !== [] ? 'bg-ok-bg text-ok' : 'bg-paper text-ink-2 border border-rule') }}" data-consent-badge>
+            {{ $consentBadge->label() }}
+        </p>
         @if ($customer->tags)
             <p class="mt-2 flex flex-wrap gap-2" data-tags>
                 @foreach ($customer->tags as $tag)
