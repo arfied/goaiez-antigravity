@@ -27,7 +27,7 @@ class UiLocationIdCommand extends Command
                     Tenancy::actingAs($businessId, function () use ($businessId) {
                         $location = Location::withoutGlobalScopes()->where('business_id', $businessId)->first();
                         if ($location) {
-                            $this->getOutput()->write($location->id);
+                            $this->getOutput()->write((string) $location->id);
                         }
                     });
                 }
