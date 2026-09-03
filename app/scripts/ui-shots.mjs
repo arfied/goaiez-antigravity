@@ -500,8 +500,138 @@ function waitForServer(url) {
         }
         await staffBrowser.close();
 
-        fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
+        console.log("Capturing validation states...");
 
+        async function captureValidationStates(context, suffix, width, height) {
+            const page = await context.newPage();
+            await page.setViewportSize({ width, height });
+
+            if (shouldCapture('invalid-login-empty' + suffix)) {
+                await page.goto(`${baseUrl}/login`);
+                await page.waitForLoadState('networkidle');
+                await page.click('form:has(#password) button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-login-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-login-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-login-wrong' + suffix)) {
+                await page.goto(`${baseUrl}/login`);
+                await page.waitForLoadState('networkidle');
+                await page.fill('#password-email', 'owner2@business.com');
+                await page.fill('#password', 'wrongpass');
+                await page.click('form:has(#password) button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-login-wrong${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-login-wrong${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-feedback-empty' + suffix)) {
+                await page.goto(`${baseUrl}/f/review-business-2`);
+                await page.waitForLoadState('networkidle');
+                await page.click('form button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-feedback-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-feedback-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-feedback-rating' + suffix)) {
+                await page.goto(`${baseUrl}/f/review-business-2`);
+                await page.waitForLoadState('networkidle');
+                await page.click('label[for="rating-5"]');
+                await page.click('form button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-feedback-rating${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-feedback-rating${suffix}`, outputDir);
+            }
+
+            // owner2 login
+            await page.goto(`${baseUrl}/login`);
+            await page.waitForLoadState('networkidle');
+            await page.fill('#password-email', 'owner2@business.com');
+            await page.fill('#password', 'password');
+            await page.click('form:has(#password) button[type="submit"]');
+            await page.waitForLoadState('networkidle');
+
+            if (shouldCapture('invalid-support-empty' + suffix)) {
+                await page.goto(`${baseUrl}/account/support`);
+                await page.waitForLoadState('networkidle');
+                await page.click('form[wire\\:submit="send"] button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                // Support form might take a moment to show validation error from livewire
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-support-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-support-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-settings-replies-empty' + suffix)) {
+                await page.goto(`${baseUrl}/account`);
+                await page.waitForLoadState('networkidle');
+                await page.click('form[wire\\:submit="add"] button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-settings-replies-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-settings-replies-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-website-builder-empty' + suffix)) {
+                await page.goto(`${baseUrl}/advanced/website-builder`);
+                await page.waitForLoadState('networkidle');
+                await page.click('button[wire\\:click="generateWithAI"]');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-website-builder-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-website-builder-empty${suffix}`, outputDir);
+            }
+
+            // setup logout and login as setup@business.com
+            await page.goto(`${baseUrl}/logout`); // if there's a logout route, or just clear cookies
+            await context.clearCookies();
+
+            await page.goto(`${baseUrl}/login`);
+            await page.waitForLoadState('networkidle');
+            await page.fill('#password-email', 'setup@business.com');
+            await page.fill('#password', 'password');
+            await page.click('form:has(#password) button[type="submit"]');
+            await page.waitForLoadState('networkidle');
+
+            if (shouldCapture('invalid-setup-find-business-empty' + suffix)) {
+                await page.goto(`${baseUrl}/setup/find-business`);
+                await page.waitForLoadState('networkidle');
+                await page.click('form[wire\\:submit="resolve"] button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-setup-find-business-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-setup-find-business-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-setup-find-business-wrong' + suffix)) {
+                await page.goto(`${baseUrl}/setup/find-business`);
+                await page.waitForLoadState('networkidle');
+                await page.fill('#pasted-url', 'not-a-url');
+                await page.click('form[wire\\:submit="resolve"] button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-setup-find-business-wrong${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-setup-find-business-wrong${suffix}`, outputDir);
+            }
+            
+            await page.close();
+        }
+
+        const valBrowser = await chromium.launch();
+        const valContext1 = await valBrowser.newContext();
+        await captureValidationStates(valContext1, '', 1280, 720);
+        await valContext1.close();
+        
+        const valContext2 = await valBrowser.newContext();
+        await captureValidationStates(valContext2, '@390', 390, 844);
+        await valContext2.close();
+        
+        await valBrowser.close();
+
+
+        fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
     } finally {
         console.log("Stopping server...");
         serverProcess.kill();
