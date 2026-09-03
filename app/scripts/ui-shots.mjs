@@ -99,10 +99,36 @@ function waitForServer(url) {
         const page = await context.newPage();
         
         const outputDir = path.resolve('storage/app/ui-review');
-        if (fs.existsSync(outputDir)) {
-            fs.rmSync(outputDir, { recursive: true, force: true });
+        if (!onlyRegex) {
+            if (fs.existsSync(outputDir)) {
+                fs.rmSync(outputDir, { recursive: true, force: true });
+            }
+            fs.mkdirSync(outputDir, { recursive: true });
+        } else if (fs.existsSync(outputDir)) {
+            const files = fs.readdirSync(outputDir);
+            for (const file of files) {
+                if (file.endsWith('.png') || file.endsWith('.html')) {
+                    const name = file.replace(/\.[^/.]+$/, "");
+                    if (onlyRegex.test(name)) {
+                        fs.unlinkSync(path.join(outputDir, file));
+                    }
+                }
+            }
+            const axeDir = path.join(outputDir, 'axe');
+            if (fs.existsSync(axeDir)) {
+                const axeFiles = fs.readdirSync(axeDir);
+                for (const file of axeFiles) {
+                    if (file.endsWith('.json')) {
+                        const name = file.replace(/\.json$/, "");
+                        if (onlyRegex.test(name)) {
+                            fs.unlinkSync(path.join(axeDir, file));
+                        }
+                    }
+                }
+            }
+        } else {
+            fs.mkdirSync(outputDir, { recursive: true });
         }
-        fs.mkdirSync(outputDir, { recursive: true });
         
         // Unauthenticated screens
         await page.setViewportSize({ width: 1280, height: 720 });
