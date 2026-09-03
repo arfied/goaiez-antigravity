@@ -41,7 +41,7 @@ final class ConsentService
                     'recipient_phone' => $recipientPhone,
                     'channel' => $channel,
                     'permit_status' => 'refused',
-                    'refusal_reason' => $suppressed->reason,
+                    'refusal_reason' => in_array($suppressed->reason, array_column(\App\Enums\SendRefusalReason::cases(), 'value')) ? $suppressed->reason : 'opted_out',
                 ]);
 
                 Event::dispatch(new ConsentDecided(
