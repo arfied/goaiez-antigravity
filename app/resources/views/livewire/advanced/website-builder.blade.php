@@ -152,8 +152,8 @@
                     <span class="text-[11px] text-ink-3 font-mono ms-2 truncate max-w-[150px] sm:max-w-none">https://{{ Str::slug($businessName) }}.goaiez.com</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
-                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
+                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 min-h-[40px] text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-400 font-bold shadow-xs ring-1 ring-rule-strong' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
+                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 min-h-[40px] text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-400 font-bold shadow-xs ring-1 ring-rule-strong' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
                 </div>
             </div>
 
@@ -270,8 +270,8 @@
                             <!-- Mobile Footer -->
                             <footer class="bg-gray-900 text-white px-4 py-6 text-center text-[10px]">
                                 <div class="font-bold">{{ $businessName }}</div>
-                                <div class="text-gray-600 mt-0.5">{{ $phoneNumber }}</div>
-                                <div class="text-gray-600 mt-2 text-[9px]">Powered by GO AI EZ</div>
+                                <div class="text-gray-400 mt-0.5">{{ $phoneNumber }}</div>
+                                <div class="text-gray-400 mt-2 text-[9px]">Powered by GO AI EZ</div>
                             </footer>
                         </div>
 
