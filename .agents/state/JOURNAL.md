@@ -504,3 +504,4 @@
 - `2026-09-02T10:24:52` journey J11 -> red
 - `2026-09-02T10:24:59` stage journey = 9
 - `2026-09-02T10:28:55` UNRESOLVED journey X-126 - Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)
+- `2026-09-02T23:58:57` stage capability = 391
