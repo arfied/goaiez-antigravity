@@ -445,8 +445,8 @@
                         <!-- Footer -->
                         <footer class="bg-gray-900 text-white px-6 py-8 text-center text-xs">
                             <div class="font-bold text-sm">{{ $businessName }}</div>
-                            <div class="text-gray-600 text-[11px] mt-1">{{ $phoneNumber }} • All Rights Reserved</div>
-                            <div class="text-[10px] text-gray-600 mt-3">Powered by GO AI EZ</div>
+                            <div class="text-gray-400 text-[11px] mt-1">{{ $phoneNumber }} • All Rights Reserved</div>
+                            <div class="text-[10px] text-gray-400 mt-3">Powered by GO AI EZ</div>
                         </footer>
                     </div>
                 @endif
