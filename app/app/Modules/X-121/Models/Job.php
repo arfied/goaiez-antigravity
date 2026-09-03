@@ -15,8 +15,17 @@ class Job extends Model
     public $timestamps = false;
 
     protected $casts = [
+        'person_id' => 'integer',
         'price_cents' => 'integer',
         'scheduled_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Person, $this>
+     */
+    public function person(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Person::class);
+    }
 }
