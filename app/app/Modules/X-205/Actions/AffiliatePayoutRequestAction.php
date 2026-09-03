@@ -34,14 +34,13 @@ final class AffiliatePayoutRequestAction
             'money_moved' => false, // Moves no money until approved
         ]);
 
-        if ($status !== 'frozen') {
-            Event::dispatch(new ApprovalRequested(
-                businessId: $businessId,
-                requestType: 'payout_request',
-                referenceId: $payout->id,
-                amountCents: $amountCents
-            ));
-        }
+        Event::dispatch(new ApprovalRequested(
+            businessId: $businessId,
+            requestType: 'payout_request',
+            referenceId: $payout->id,
+            amountCents: $amountCents,
+            status: $status
+        ));
 
         return $payout;
     }

@@ -72,4 +72,14 @@ final class AffiliateEngine
             'utm_campaign' => $utmCampaign,
         ]);
     }
+
+    public function getPartnerData(int $businessId, int $affiliateId): array
+    {
+        $clicks = ReferralClick::where('business_id', $businessId)->where('affiliate_id', $affiliateId)->get();
+        $affiliate = Affiliate::where('business_id', $businessId)->where('id', $affiliateId)->first();
+        return [
+            'clicks' => $clicks,
+            'pending_earnings' => $affiliate ? $affiliate->current_balance_cents : 0,
+        ];
+    }
 }

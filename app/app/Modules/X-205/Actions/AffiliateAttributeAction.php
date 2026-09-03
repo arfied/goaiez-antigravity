@@ -43,7 +43,13 @@ final class AffiliateAttributeAction
 
         // G7-23: Fraud Detection
         $fraudReviewStatus = 'none';
-        if ($visitorId === $affiliate->affiliate_code || in_array('stolen_card', $orderTags, true)) {
+        
+        $click = \App\Modules\X205\Models\ReferralClick::where('business_id', $businessId)
+            ->where('visitor_id', $visitorId)
+            ->latest('id')
+            ->first();
+
+        if (($click && $click->affiliate_id === $affiliate->id) || in_array('stolen_card', $orderTags, true)) {
             $fraudReviewStatus = 'proposed';
         }
 

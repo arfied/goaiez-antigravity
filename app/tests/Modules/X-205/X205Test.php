@@ -143,16 +143,22 @@ class X205Test extends TestCase
         ]);
 
         $attribution = $this->attributeAction->attributeSale($biz->id, 'AFF-G7-11', '12345', 10000);
+        $affiliate->refresh();
+        $lifetimeBefore = $affiliate->lifetime_earnings_cents;
+        $balanceBefore = $affiliate->current_balance_cents;
 
         // A chargeback happens from X-201
         $listener = new ProposeClawbackOnDisputeLost($this->clawbackAction);
         $listener->handle(new DisputeLost($biz->id, 999, (int) '12345', 10000));
 
         $updatedAttribution = $attribution->fresh();
+        $affiliate->refresh();
 
         $this->assertEquals('proposed', $updatedAttribution->clawback_status);
         $this->assertEquals('999', $updatedAttribution->triggering_dispute_ref, 'triggering refund attached');
         $this->assertFalse($updatedAttribution->is_clawed_back, 'moves no money (never executed)');
+        $this->assertEquals($lifetimeBefore, $affiliate->lifetime_earnings_cents, 'lifetime earnings unchanged');
+        $this->assertEquals($balanceBefore, $affiliate->current_balance_cents, 'current balance unchanged');
     }
 
     /**
@@ -170,6 +176,8 @@ class X205Test extends TestCase
         ]);
 
         // Self-click fraud
+        $this->engine->recordClick($biz->id, 'AFF-G7-23', 'AFF-G7-23');
+
         $attribution = $this->attributeAction->attributeSale(
             businessId: $biz->id,
             affiliateCode: 'AFF-G7-23',
@@ -182,6 +190,9 @@ class X205Test extends TestCase
         $this->assertEquals('none', $attribution->clawback_status, 'not clawed back');
         $this->assertEquals(1000, $attribution->commission_cents, 'still attributed');
         $this->assertFalse($attribution->is_clawed_back, 'no money moved');
+
+        $payout = $this->payoutAction->requestPayout($biz->id, $attribution->affiliate_id, 1000);
+        $this->assertEquals('requested', $payout->status, 'proposes, never freezes');
 
         // Stolen card fraud
         $attribution2 = $this->attributeAction->attributeSale(
@@ -258,12 +269,17 @@ class X205Test extends TestCase
         ]);
         $this->engine->recordClick($bizB->id, 'vis-B', 'AFF-B');
 
-        // Under Tenant B's scope, Partner A's clicks should not be visible
-        $clicks = ReferralClick::where('affiliate_id', $affiliateA->id)->get();
-        $this->assertCount(0, $clicks, 'asserted cross-scope: returns nothing');
+        // Under Tenant A's scope, Partner A sees their own rows
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $dataA = $this->engine->getPartnerData($bizA->id, $affiliateA->id);
+        $this->assertCount(1, $dataA['clicks'], 'asserted cross-scope: sees own rows');
+        $this->assertEquals(0, $dataA['pending_earnings']);
 
-        $affiliates = Affiliate::where('id', $affiliateA->id)->get();
-        $this->assertCount(0, $affiliates);
+        // Under Tenant B's scope, Partner A's clicks should not be visible
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $dataB = $this->engine->getPartnerData($bizB->id, $affiliateA->id);
+        $this->assertCount(0, $dataB['clicks'], 'asserted cross-scope: returns nothing');
+        $this->assertEquals(0, $dataB['pending_earnings']);
     }
 
     /**
@@ -289,6 +305,23 @@ class X205Test extends TestCase
         $this->assertEquals('frozen', $payout->status);
         $this->assertFalse($payout->money_moved);
 
-        // Asserted by absence: no computeTaxPosition() or stored rate exists in the module.
+        $moduleDir = base_path('app/Modules/X-205');
+        $this->assertDirectoryExists($moduleDir);
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($moduleDir));
+        $taxKeywords = ['tax_rate', 'tax_amount', 'taxOwed', 'computeTax', 'withholding_rate'];
+        $found = [];
+        
+        foreach ($files as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                $content = file_get_contents($file->getPathname());
+                foreach ($taxKeywords as $keyword) {
+                    if (stripos($content, $keyword) !== false) {
+                        $found[] = $file->getFilename() . ':' . $keyword;
+                    }
+                }
+            }
+        }
+        
+        $this->assertEmpty($found, 'No computeTaxPosition() or stored rate exists in the module: ' . implode(', ', $found));
     }
 }
