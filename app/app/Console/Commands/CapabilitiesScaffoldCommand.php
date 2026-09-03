@@ -188,7 +188,7 @@ final class CapabilitiesScaffoldCommand extends Command
         $currentHeadingModule = null;
 
         foreach (explode("\n", (string) file_get_contents($plan)) as $line) {
-            if (str_starts_with($line, '###')) {
+            if (preg_match('/^#{1,6}\s/', $line)) {
                 if (preg_match_all('/\b((?:X|C)-[A-Za-z0-9]+)\b/', $line, $hm) === 1) {
                     $currentHeadingModule = $hm[1][0];
                 } else {
@@ -228,7 +228,9 @@ final class CapabilitiesScaffoldCommand extends Command
                 }
             } elseif ($currentHeadingModule !== null) {
                 foreach ($matchedIds as $id) {
-                    $cache[$id] = $currentHeadingModule;
+                    if (str_starts_with($id, 'N-')) {
+                        $cache[$id] = $currentHeadingModule;
+                    }
                 }
             }
         }
