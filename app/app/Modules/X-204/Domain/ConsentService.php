@@ -164,4 +164,14 @@ final class ConsentService
 
         return $attestation;
     }
+
+    public function getSendCountInWindow(int $businessId, string $recipientPhone, string $channel, int $hours): int
+    {
+        return SendPermit::where('business_id', $businessId)
+            ->where('recipient_phone', $recipientPhone)
+            ->where('channel', $channel)
+            ->where('permit_status', 'granted')
+            ->where('created_at', '>=', now()->subHours($hours))
+            ->count();
+    }
 }
