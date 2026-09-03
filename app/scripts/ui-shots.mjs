@@ -585,9 +585,9 @@ function waitForServer(url) {
             }
 
             if (shouldCapture('invalid-settings-replies-empty' + suffix)) {
-                await page.screenshot({ path: "DEBUG-login-after.png", fullPage: true }); const html = await page.content(); fs.writeFileSync("DEBUG-login-after.html", html); await page.goto(`${baseUrl}/account`);
+                await page.goto(`${baseUrl}/account`);
                 await page.waitForLoadState('networkidle');
-                 await page.screenshot({ path: "DEBUG-account-before-click.png", fullPage: true }); await page.click('button:has-text("Save this example")');
+                await page.click('button:has-text("Save this example")');
                 await page.waitForLoadState('networkidle');
                 await page.waitForTimeout(500);
                 await page.screenshot({ path: path.join(outputDir, `invalid-settings-replies-empty${suffix}.png`), fullPage: true });
