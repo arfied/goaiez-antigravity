@@ -73,4 +73,22 @@ class ConsentAssertionTest extends TestCase
     {
         $this->assertTrue(method_exists(ConsentService::class, 'checkCadenceCeiling'), 'System lacks cadence ceiling behaviour');
     }
+    public function test_N_006_suppression_is_per_destination_never_per_customer(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'N-006 Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $phone1 = '+15125550061';
+        $phone2 = '+15125550062';
+        
+        $this->suppressor->handle($biz->id, $phone1, 'sms', 'customer_stop');
+        
+        $tableColumns = \Illuminate\Support\Facades\Schema::getColumnListing((new Suppression)->getTable());
+        
+        $this->assertContains('recipient_phone', $tableColumns, 'Suppression must be by destination');
+        $this->assertNotContains('customer_id', $tableColumns, 'Suppression must NEVER be per customer');
+        
+        $res = $this->decider->handle($biz->id, $phone2, 'sms', 'opted_in');
+        $this->assertTrue($res['granted'], 'Phone2 must remain unsuppressed');
+    }
 }
