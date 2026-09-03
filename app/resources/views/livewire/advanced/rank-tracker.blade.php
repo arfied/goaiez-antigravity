@@ -49,23 +49,23 @@
     <div class="bg-card border border-rule rounded-card shadow-card p-5 mb-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <label class="block text-xs font-semibold text-ink-2 mb-1">Target Keyword</label>
-                <select wire:model.live="selectedKeyword" class="w-full rounded-md bg-paper text-ink border-rule text-sm py-2 px-3 border shadow-sm">
+                <label for="target_keyword" class="block text-xs font-semibold text-ink-2 mb-1">Target Keyword</label>
+                <select id="target_keyword" wire:model.live="selectedKeyword" class="w-full rounded-md bg-paper text-ink border-rule text-sm py-2 px-3 border shadow-sm">
                     @foreach ($keywords as $kw)
                         <option value="{{ $kw }}">{{ $kw }}</option>
                     @endforeach
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-ink-2 mb-1">Grid Resolution</label>
-                <select wire:model.live="gridSize" class="w-full rounded-md bg-paper text-ink border-rule text-sm py-2 px-3 border shadow-sm">
+                <label for="grid_resolution" class="block text-xs font-semibold text-ink-2 mb-1">Grid Resolution</label>
+                <select id="grid_resolution" wire:model.live="gridSize" class="w-full rounded-md bg-paper text-ink border-rule text-sm py-2 px-3 border shadow-sm">
                     <option value="3">3 x 3 Node Matrix (9 points)</option>
                     <option value="5">5 x 5 Node Matrix (25 points)</option>
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-ink-2 mb-1">Catchment Radius</label>
-                <select wire:model.live="radiusMiles" class="w-full rounded-md bg-paper text-ink border-rule text-sm py-2 px-3 border shadow-sm">
+                <label for="catchment_radius" class="block text-xs font-semibold text-ink-2 mb-1">Catchment Radius</label>
+                <select id="catchment_radius" wire:model.live="radiusMiles" class="w-full rounded-md bg-paper text-ink border-rule text-sm py-2 px-3 border shadow-sm">
                     <option value="3">3 Miles Radius</option>
                     <option value="5">5 Miles Radius</option>
                     <option value="10">10 Miles Radius</option>
@@ -103,7 +103,7 @@
                 @foreach ($gridData as $point)
                     @php
                         $isTop3 = $point['rank'] <= 3;
-                        $colorClass = $isTop3 ? 'bg-emerald-600 text-white ring-4 ring-emerald-100' : ($point['rank'] <= 10 ? 'bg-amber-500 text-white ring-4 ring-amber-100' : 'bg-rose-600 text-white ring-4 ring-rose-100');
+                        $colorClass = $isTop3 ? 'bg-emerald-800 text-white' : ($point['rank'] <= 10 ? 'bg-amber-900 text-white' : 'bg-rose-800 text-white');
                     @endphp
                     <div class="flex flex-col items-center group cursor-pointer">
                         <div class="h-12 w-12 rounded-full {{ $colorClass }} font-display text-lg font-bold flex items-center justify-center shadow-lg transform transition group-hover:scale-110">
