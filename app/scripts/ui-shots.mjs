@@ -639,6 +639,8 @@ function waitForServer(url) {
                 await page.click('button:has-text("Mobile Mockup")');
                 await page.waitForLoadState('networkidle');
                 await page.waitForTimeout(500);
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.waitForTimeout(250);
                 await page.screenshot({ path: path.join(outputDir, `advanced-website-builder-mobile${suffix}.png`), fullPage: true });
                 await runAxe(page, `advanced-website-builder-mobile${suffix}`, outputDir);
             }
