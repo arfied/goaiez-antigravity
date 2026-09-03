@@ -386,9 +386,8 @@ function waitForServer(url) {
         }
         await setupBrowser.close();
 
-        
-        const locationId = execSync('php artisan tinker --execute="App\\\\Support\\\\Tenancy::actingAsUser(App\\\\Models\\\\User::where(\'email\', \'owner2@business.com\')->first()->id, function() { echo App\\\\Models\\\\Location::withoutGlobalScopes()->where(\'business_id\', \\Illuminate\\\\Support\\\\Facades\\\\DB::table(\'businesses\')->where(\'owner_user_id\', App\\\\Models\\\\User::where(\'email\', \'owner2@business.com\')->first()->id)->value(\'id\'))->first()->id; });"').toString().trim();
-        
+        const locationId = execSync('php artisan ui:location-id').toString().trim();
+        console.log("Resolved locationId: " + locationId);
         const staffBrowser = await chromium.launch();
         const staffContext = await staffBrowser.newContext();
         const staffPage = await staffContext.newPage();
@@ -424,6 +423,16 @@ function waitForServer(url) {
             if (!shouldCapture(screen.name)) continue;
             await staffPage.goto(`${baseUrl}${screen.path}`);
             await staffPage.waitForLoadState('networkidle');
+            
+            if (screen.name === 'staff-location-reviews') {
+                const h1Text = await staffPage.textContent('h1');
+                console.log(`H1 = ${h1Text.trim()}`);
+                if (h1Text.includes('404')) {
+                    console.error("staff-location-reviews returned 404");
+                    process.exit(1);
+                }
+            }
+
             await staffPage.screenshot({ path: path.join(outputDir, `${screen.name}.png`), fullPage: true });
             await runAxe(staffPage, screen.name, outputDir);
         }
@@ -460,6 +469,16 @@ function waitForServer(url) {
             if (!shouldCapture(`${screen.name}@390`)) continue;
             await staffMobilePage.goto(`${baseUrl}${screen.path}`);
             await staffMobilePage.waitForLoadState('networkidle');
+            
+            if (screen.name === 'staff-location-reviews') {
+                const h1Text = await staffMobilePage.textContent('h1');
+                console.log(`H1 = ${h1Text.trim()}`);
+                if (h1Text.includes('404')) {
+                    console.error("staff-location-reviews@390 returned 404");
+                    process.exit(1);
+                }
+            }
+
             await staffMobilePage.screenshot({ path: path.join(outputDir, `${screen.name}@390.png`), fullPage: true });
             await runAxe(staffMobilePage, `${screen.name}@390`, outputDir);
         }

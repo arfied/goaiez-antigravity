@@ -91,7 +91,9 @@ class UiReviewSeeder extends Seeder
     {
         $location = Location::firstWhere('business_id', $businessId);
         if (! $location) {
-            $location = Location::factory()->create(['business_id' => $businessId]);
+            $location = Location::factory()->create(['business_id' => $businessId, 'name' => 'Review Location 2']);
+        } else {
+            $location->update(['name' => 'Review Location 2']);
         }
 
         $page = FeedbackPage::firstWhere('location_id', $location->id);
