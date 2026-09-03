@@ -75,7 +75,7 @@ class ConsentAssertionTest extends TestCase
 
         $person = Person::create([
             'business_id' => $biz->id,
-            'name' => 'Imported User',
+            'first_name' => 'Imported User',
             'phone' => '+15125550004',
         ]);
 
