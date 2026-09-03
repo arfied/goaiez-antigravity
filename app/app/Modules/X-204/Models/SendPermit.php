@@ -15,4 +15,17 @@ class SendPermit extends Model
     protected $casts = [
         'expires_at' => 'datetime',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            if ($model->permit_status === 'refused' && $model->refusal_reason) {
+                if (!in_array($model->refusal_reason, \App\Modules 4\Domain\ConsentService::P060_CODES, true)) {
+                    throw new \InvalidArgumentException('Refusal reason must be a valid P-060 code.');
+                }
+            }
+        });
+    }
 }

@@ -16,6 +16,14 @@ use Illuminate\Support\Facades\Event;
 
 final class ConsentService
 {
+        public const P060_CODES = [
+        'archived', 'deleted', 'merged_away', 'no_identifier', 'unparseable_identifier',
+        'caller_mismatch', 'opted_out', 'do_not_call', 'litigator', 'number_reassigned',
+        'no_consent_record', 'registry_not_loaded', 'suppression_unreadable', 'state_unknown',
+        'quiet_hours', 'consent_too_weak_for_state', 'tenant_paused', 'global_halt',
+        'insufficient_credit', 'channel_unavailable', 'message_too_long',
+    ];
+
     private const VALID_CONSENT_STATES = [
         'opted_in',
         'transactional',
