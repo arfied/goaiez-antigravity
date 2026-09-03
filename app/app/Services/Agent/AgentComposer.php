@@ -281,6 +281,7 @@ final class AgentComposer
         $allowedFigures = $this->allowedFigures($skills);
         if ($this->refusals->quotesOffList($body, $allowedFigures)) {
             $reason = empty($allowedFigures) ? 'NO_FACT' : 'off_list_price';
+
             return AgentReplyDraft::refused(
                 $this->withDisclosure($this->refusals->replacementFor($businessName, $reason), $businessName, $isFirstAgentTurn),
                 $reason,

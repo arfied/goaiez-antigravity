@@ -6,6 +6,9 @@ namespace Tests\Journeys;
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X103\Domain\SiteEngine;
+use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
@@ -13,8 +16,10 @@ use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
+use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
 /**
@@ -130,7 +135,7 @@ trait JourneyHarness
         self::$sendCapCounter++;
 
         if (self::$sendCapCounter > 15) {
-            throw new \RuntimeException("HARD RULE VIOLATION: Send cap of 15 per suite run exceeded.");
+            throw new \RuntimeException('HARD RULE VIOLATION: Send cap of 15 per suite run exceeded.');
         }
     }
 
@@ -160,54 +165,56 @@ trait JourneyHarness
     private function askAgent(array $tenant, string $question): array
     {
 
-        $tenantPhone = \Illuminate\Support\Facades\DB::table('phone_numbers')
+        $tenantPhone = DB::table('phone_numbers')
             ->where('business_id', $tenant['id'])
             ->first()->e164 ?? '+19015922708';
         $customerPhone = '+12622164033';
 
-        \Illuminate\Support\Facades\DB::table('customers')->insertOrIgnore([
+        DB::table('customers')->insertOrIgnore([
             'business_id' => $tenant['id'],
             'phone' => $customerPhone,
             'name' => 'Journey Customer',
             'created_at' => now(),
         ]);
 
-        \Illuminate\Support\Facades\DB::table('conversations')
+        DB::table('conversations')
             ->where('business_id', $tenant['id'])
             ->update(['agent_status' => 'agent_handling', 'agent_turns_used' => 0]);
 
         $payload = [
             'results' => [
                 [
-                    'messageId' => (string) \Illuminate\Support\Str::uuid(),
+                    'messageId' => (string) Str::uuid(),
                     'from' => $customerPhone,
                     'to' => $tenantPhone,
                     'text' => $question,
                     'integrationType' => 'SMS',
                     'receivedAt' => now()->toIso8601String(),
-                ]
-            ]
+                ],
+            ],
         ];
 
         $content = json_encode($payload, JSON_UNESCAPED_SLASHES);
-        $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
+        $secret = PlatformCredentials::get('infobip_webhook_secret');
         $signature = base64_encode(hash_hmac('sha256', $content, $secret, true));
 
         $res = $this->call('POST', '/webhooks/infobip/inbound', [], [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_X_SIGNATURE' => $signature,
         ], $content);
-        if ($res->status() !== 200) dump($res->getContent());
+        if ($res->status() !== 200) {
+            dump($res->getContent());
+        }
         $res->assertStatus(200);
 
         $this->drainQueue();
 
-        $turn = \Illuminate\Support\Facades\DB::table('agent_turns')
+        $turn = DB::table('agent_turns')
             ->where('business_id', $tenant['id'])
             ->orderByDesc('id')
             ->first();
 
-        $refusal = \Illuminate\Support\Facades\DB::table('agent_refusals')
+        $refusal = DB::table('agent_refusals')
             ->where('business_id', $tenant['id'])
             ->orderByDesc('id')
             ->first();
@@ -225,11 +232,11 @@ trait JourneyHarness
 
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        \Illuminate\Support\Facades\DB::table('price_book_items')->updateOrInsert(
+        DB::table('price_book_items')->updateOrInsert(
             ['business_id' => $tenant['id'], 'service_name' => $sku],
             ['price_cents' => $amountMinor, 'tax_rate_pct' => 0, 'is_sample' => false]
         );
-        \Illuminate\Support\Facades\DB::table('facts')->updateOrInsert(
+        DB::table('facts')->updateOrInsert(
             ['business_id' => $tenant['id'], 'key' => "service.{$sku}.price"],
             ['value' => '$'.number_format($amountMinor / 100, 2), 'is_valid' => true]
         );
@@ -237,7 +244,7 @@ trait JourneyHarness
 
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        $id = \Illuminate\Support\Facades\DB::table('work_orders')->insertGetId([
+        $id = DB::table('work_orders')->insertGetId([
             'business_id' => $tenant['id'],
             'price_cents' => $quote['amount'],
             'status' => 'booked',
@@ -245,7 +252,8 @@ trait JourneyHarness
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        return ['status' => 'booked', 'job_id' => (string)$id];
+
+        return ['status' => 'booked', 'job_id' => (string) $id];
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
@@ -414,31 +422,31 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function publishSite(array $tenant): array
     {
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $tenant['id'],
             'title' => 'Home',
             'slug' => 'home',
         ]);
 
-        $published = app(\App\Modules\X103\Domain\SiteEngine::class)->publish(
+        $published = app(SiteEngine::class)->publish(
             $tenant['id'],
             $page->id,
             [['type' => 'hero']]
         );
 
-        $version = \App\Modules\X103\Models\PageVersion::findOrFail($published['version_id']);
+        $version = PageVersion::findOrFail($published['version_id']);
         $blocks = json_encode($version->content_blocks ?? []);
 
         return [
             'deploy_id' => $published['commit_id'],
             'features' => [
-                'pixel' => (bool)$version->pixel_installed,
+                'pixel' => (bool) $version->pixel_installed,
                 'chat' => str_contains($blocks, 'chat_widget'),
                 'form_capture' => str_contains($blocks, 'form_capture'),
                 'dni' => str_contains($blocks, 'dni_script'),
                 'seo' => str_contains($blocks, 'seo_tags'),
                 'schema' => str_contains($blocks, 'schema_markup'),
-                'ssl' => isset($version->ssl_installed) ? (bool)$version->ssl_installed : false,
+                'ssl' => isset($version->ssl_installed) ? (bool) $version->ssl_installed : false,
             ],
         ];
     }

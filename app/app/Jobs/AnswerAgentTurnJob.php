@@ -16,6 +16,8 @@ use App\Livewire\Account\Inbox;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
+use App\Modules\CAgent\Models\AgentRefusal;
+use App\Modules\CAgent\Models\AgentTurn;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentGrounding;
 use App\Services\Agent\AgentReplyDraft;
@@ -275,7 +277,7 @@ final class AnswerAgentTurnJob extends AutopilotJob
     protected function execute(): array
     {
         $conversation = $this->conversation();
-        
+
         if (! $conversation instanceof Conversation) {
             return ['skipped' => 'conversation_not_found'];
         }
@@ -295,7 +297,6 @@ final class AnswerAgentTurnJob extends AutopilotJob
 
         $threads = app(AgentThreadStates::class);
         $state = $threads->stateFor($conversation);
-        
 
         if (! $state->mayTakeTurn()) {
             // Rails 3 and 4. ⚠️ **ASKED HERE AND AGAIN INSIDE `AgentGrounding`,
@@ -360,18 +361,17 @@ final class AnswerAgentTurnJob extends AutopilotJob
         $this->turnTaken = true;
 
         $outcome = $this->send($conversation, $draft);
-        
 
         if ($draft->fallbackReason !== null) {
-            \App\Modules\CAgent\Models\AgentRefusal::create([
+            AgentRefusal::create([
                 'business_id' => $conversation->business_id,
                 'refusal_code' => $draft->fallbackReason,
-                'reason' => 'Draft refused with fallback: ' . $draft->fallbackReason,
+                'reason' => 'Draft refused with fallback: '.$draft->fallbackReason,
                 'user_input' => $message,
             ]);
         }
 
-        \App\Modules\CAgent\Models\AgentTurn::create([
+        AgentTurn::create([
             'business_id' => $conversation->business_id,
             'conversation_id' => $conversation->id,
             'turn_number' => $after->turnsUsed,
