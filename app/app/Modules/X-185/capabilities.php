@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G5-16' => 'a gap in the calendar is a signal, not a permit (P-068) — the send runs Lane 2 through ConsentService',
+    'G5-16' => 'a gap in the calendar is a signal, not a permit (P-068) — the send runs Lane 2 through ConsentService · refuses: to treat a calendar gap as a permit',
 
     // status: SPECCED
     'G12-20' => 'it may test a label, never a price (§134.6)',

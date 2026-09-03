@@ -6,6 +6,7 @@ namespace App\Modules\X171\Actions;
 
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X171\Events\TechOnSite;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class JobStateAction
@@ -26,7 +27,10 @@ final class JobStateAction
         }
 
         if ($newState === 'completed') {
-            Event::dispatch(new JobCompleted($businessId, $jobId, $techId));
+            $personId = DB::table('work_orders')
+                ->where('id', $jobId)
+                ->value('person_id');
+            Event::dispatch(new JobCompleted($businessId, $jobId, $techId, $personId));
 
             return [
                 'status' => 'completed',

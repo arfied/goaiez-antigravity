@@ -750,6 +750,7 @@ abstract class AutopilotJob implements ShouldQueue
 
             $this->recordActivity();
         } catch (Throwable $e) {
+            Log::error('Exception in AutopilotJob: '.$e->getMessage(), ['exception' => $e]);
             $run->update([
                 'status' => AutomationRunStatus::Failed,
                 // ⛔ **THE CLASS, NEVER THE MESSAGE** — {@see self::failed()}'s

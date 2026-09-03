@@ -31,7 +31,7 @@
     <span aria-hidden="true" class="text-3xl leading-none text-ink-3">{{ $icon }}</span>
 
     @if ($heading)
-        <h3 class="font-display text-lg font-semibold text-ink">{{ $heading }}</h3>
+        <h2 class="font-display text-lg font-semibold text-ink">{{ $heading }}</h2>
     @endif
 
     <p class="max-w-[28rem] text-base text-ink-2">{{ $slot }}</p>

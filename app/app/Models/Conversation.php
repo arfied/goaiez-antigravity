@@ -81,7 +81,6 @@ final class Conversation extends Model implements TenantScoped
             'resolved_at' => 'datetime',
             'sla_due_at' => 'datetime',
             'consent_logged_at' => 'datetime',
-            'csat_score' => 'integer',
             // T176 §2.3 rails 3 and 4. ⛔ **READ THROUGH `AgentThreads`, NEVER
             // WRITTEN FROM ANYWHERE ELSE.** These are cast so a state read is
             // typed, not so a second caller can set them — the contract's own

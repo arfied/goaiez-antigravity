@@ -955,6 +955,7 @@ final class AgentRefusals
             'arrival_time' => AgentSkill::BookAppointment,
             'advice' => AgentSkill::CustomerQuestions,
             'off_list_price' => AgentSkill::Quotes,
+            'NO_FACT' => AgentSkill::Quotes,
             'off_list_link' => AgentSkill::BookAppointment,
             'off_list_address' => AgentSkill::HoursAndDirections,
             // ⚠️ **SKILL 9 IS THE ONLY SKILL THAT WOULD LEGITIMATELY GIVE A

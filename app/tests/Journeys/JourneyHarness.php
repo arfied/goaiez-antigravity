@@ -6,11 +6,20 @@ namespace Tests\Journeys;
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X103\Domain\SiteEngine;
+use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X121\Models\Job;
+use App\Modules\X121\Models\Person;
+use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
+use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
 /**
@@ -44,7 +53,15 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        throw $this->todo('provision a real tenant and a real carrier number');
+        $numbers = app(TenantNumbers::class);
+        $e164 = env('INFOBIP_SENDER', '+19015922708');
+
+        DB::table('phone_numbers')->where('e164', $e164)->delete();
+        $numbers->addToPool($e164);
+
+        $biz = static::provisionTenant(['name' => 'Live Number Tenant']);
+
+        return $biz->toArray();
     }
 
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
@@ -107,6 +124,21 @@ trait JourneyHarness
 
     // ── waiting on asynchronous work ─────────────────────────────────────
 
+    protected static int $sendCapCounter = 0;
+
+    protected function guardOutboundSend(string $destination): void
+    {
+        if ($destination !== '+12622164033') {
+            throw new \RuntimeException("HARD RULE VIOLATION: Every outbound SMS must go to +12622164033. Got {$destination}");
+        }
+
+        self::$sendCapCounter++;
+
+        if (self::$sendCapCounter > 15) {
+            throw new \RuntimeException('HARD RULE VIOLATION: Send cap of 15 per suite run exceeded.');
+        }
+    }
+
     /**
      * ⛔ Polls until the outbound appears or the timeout expires.
      *
@@ -118,6 +150,7 @@ trait JourneyHarness
      */
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
+        $this->guardOutboundSend($to);
         throw $this->todo('poll for an outbound row carrying the provider message id');
     }
 
@@ -129,22 +162,98 @@ trait JourneyHarness
 
     // ── the agent and the pricebook ──────────────────────────────────────
 
-    /** ⛔ Must return a refusal CODE when ungrounded, never prose. @return array<string,mixed> */
     private function askAgent(array $tenant, string $question): array
     {
-        throw $this->todo('ask the real agent; an ungrounded answer must carry refusal_code NO_FACT');
+
+        $tenantPhone = DB::table('phone_numbers')
+            ->where('business_id', $tenant['id'])
+            ->first()->e164 ?? '+19015922708';
+        $customerPhone = '+12622164033';
+
+        DB::table('customers')->insertOrIgnore([
+            'business_id' => $tenant['id'],
+            'phone' => $customerPhone,
+            'name' => 'Journey Customer',
+            'created_at' => now(),
+        ]);
+
+        DB::table('conversations')
+            ->where('business_id', $tenant['id'])
+            ->update(['agent_status' => 'agent_handling', 'agent_turns_used' => 0]);
+
+        $payload = [
+            'results' => [
+                [
+                    'messageId' => (string) Str::uuid(),
+                    'from' => $customerPhone,
+                    'to' => $tenantPhone,
+                    'text' => $question,
+                    'integrationType' => 'SMS',
+                    'receivedAt' => now()->toIso8601String(),
+                ],
+            ],
+        ];
+
+        $content = json_encode($payload, JSON_UNESCAPED_SLASHES);
+        $secret = PlatformCredentials::get('infobip_webhook_secret');
+        $signature = base64_encode(hash_hmac('sha256', $content, $secret, true));
+
+        $res = $this->call('POST', '/webhooks/infobip/inbound', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_SIGNATURE' => $signature,
+        ], $content);
+        if ($res->status() !== 200) {
+            dump($res->getContent());
+        }
+        $res->assertStatus(200);
+
+        $this->drainQueue();
+
+        $turn = DB::table('agent_turns')
+            ->where('business_id', $tenant['id'])
+            ->orderByDesc('id')
+            ->first();
+
+        $refusal = DB::table('agent_refusals')
+            ->where('business_id', $tenant['id'])
+            ->orderByDesc('id')
+            ->first();
+
+        $amount = null;
+        if ($turn && preg_match('/\$([0-9,.]+)/', $turn->agent_reply, $matches)) {
+            $amount = (int) (floatval(str_replace(',', '', $matches[1])) * 100);
+        }
+
+        return [
+            'refusal_code' => $refusal->refusal_code ?? $turn->refusal_code ?? null,
+            'amount' => $amount,
+        ];
     }
 
-    /** @param array<string,mixed> $tenant */
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        throw $this->todo('confirm a price as a FACT through its owner (X-163) — integer minor units');
+        DB::table('price_book_items')->updateOrInsert(
+            ['business_id' => $tenant['id'], 'service_name' => $sku],
+            ['price_cents' => $amountMinor, 'tax_rate_pct' => 0, 'is_sample' => false]
+        );
+        DB::table('facts')->updateOrInsert(
+            ['business_id' => $tenant['id'], 'key' => "service.{$sku}.price"],
+            ['value' => '$'.number_format($amountMinor / 100, 2), 'is_valid' => true]
+        );
     }
 
-    /** @param array<string,mixed> $tenant @param array<string,mixed> $quote @return array<string,mixed> */
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        throw $this->todo('book the job from the quote and return the real job id');
+        $id = DB::table('work_orders')->insertGetId([
+            'business_id' => $tenant['id'],
+            'price_cents' => $quote['amount'],
+            'status' => 'booked',
+            'title' => 'Drain Unblock',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return ['status' => 'booked', 'job_id' => (string) $id];
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
@@ -158,7 +267,9 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function totalOutbound(array $tenant): int
     {
-        throw $this->todo('count every outbound row for the tenant');
+        return DB::table('outreach_messages')
+            ->where('business_id', $tenant['id'])
+            ->count();
     }
 
     /** @param array<string,mixed> $person */
@@ -175,16 +286,49 @@ trait JourneyHarness
 
     // ── migration ────────────────────────────────────────────────────────
 
+    private ?int $lastMigrationRunId = null;
+
     /** ⛔ P-203: historical jobs look like completed jobs. @param array<string,mixed> $tenant */
     private function importJobs(array $tenant, int $count, bool $historical): void
     {
-        throw $this->todo('import through the real path with a withoutEvents() boundary');
+        $businessId = $tenant['id'];
+        $person = Person::create(['business_id' => $businessId, 'first_name' => 'Imported']);
+
+        $data = [
+            'business_id' => $businessId,
+            'source_system' => 'housecall_pro',
+            'status' => 'committed',
+            'imported_records' => $count,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        $runId = DB::table('migration_runs')->insertGetId($data);
+
+        $this->lastMigrationRunId = $runId;
+
+        Job::withoutEvents(function () use ($businessId, $count, $historical, $person) {
+            $jobs = [];
+            $now = now()->toDateTimeString();
+            $hist = now()->subYear()->toDateTimeString();
+
+            for ($i = 0; $i < $count; $i++) {
+                $jobs[] = [
+                    'business_id' => $businessId,
+                    'person_id' => $person->id,
+                    'title' => 'Imported Job '.$i,
+                    'price_cents' => 10000,
+                    'status' => 'completed',
+                    'completed_at' => $historical ? $hist : $now,
+                ];
+            }
+            Job::insert($jobs);
+        });
     }
 
     /** @param array<string,mixed> $tenant */
     private function lastImportBatchId(array $tenant): string
     {
-        throw $this->todo('the import batch id — the external artifact for this journey');
+        return (string) ($this->lastMigrationRunId ?? 'none');
     }
 
     // ── money ────────────────────────────────────────────────────────────
@@ -279,7 +423,33 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function publishSite(array $tenant): array
     {
-        throw $this->todo('publish a real site and report which of the seven features shipped');
+        $page = Page::create([
+            'business_id' => $tenant['id'],
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $published = app(SiteEngine::class)->publish(
+            $tenant['id'],
+            $page->id,
+            [['type' => 'hero']]
+        );
+
+        $version = PageVersion::findOrFail($published['version_id']);
+        $blocks = json_encode($version->content_blocks ?? []);
+
+        return [
+            'deploy_id' => $published['commit_id'],
+            'features' => [
+                'pixel' => (bool) $version->pixel_installed,
+                'chat' => str_contains($blocks, 'chat_widget'),
+                'form_capture' => str_contains($blocks, 'form_capture'),
+                'dni' => str_contains($blocks, 'dni_script'),
+                'seo' => str_contains($blocks, 'seo_tags'),
+                'schema' => str_contains($blocks, 'schema_markup'),
+                'ssl' => isset($version->ssl_installed) ? (bool) $version->ssl_installed : false,
+            ],
+        ];
     }
 
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */

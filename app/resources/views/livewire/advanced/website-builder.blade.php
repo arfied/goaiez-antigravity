@@ -3,13 +3,13 @@
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-xs sm:text-sm">
-                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Advanced</a></li>
-                    <li class="text-gray-400">/</li>
-                    <li class="text-gray-500 dark:text-gray-400">AI Website & Funnel Builder</li>
+                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:text-indigo-300 hover:underline">Advanced</a></li>
+                    <li class="text-ink-3">/</li>
+                    <li class="text-ink-2">AI Website & Funnel Builder</li>
                 </ol>
             </nav>
-            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Autonomous Local Website & Funnel Builder <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
-            <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">AI-generated landing pages with instant SMS lead dispatch, interactive before/after proof, and live reviews.</p>
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-ink">Autonomous Local Website & Funnel Builder <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
+            <p class="mt-1 text-xs sm:text-sm text-ink-2">AI-generated landing pages with instant SMS lead dispatch, interactive before/after proof, and live reviews.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4 gap-2">
             <button wire:click="publishSite" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition">
@@ -45,23 +45,23 @@
     </div>
 
     @if ($aiNotification)
-        <div class="mb-6 p-4 rounded-md bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 text-indigo-900 dark:text-indigo-200 text-xs sm:text-sm flex items-center justify-between">
+        <div class="mb-6 p-4 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $aiNotification }}</span>
-            <button wire:click="$set('aiNotification', null)" class="text-indigo-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('aiNotification', null)" class="text-indigo-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
     @if ($leadDispatchNotification)
-        <div class="mb-6 p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs sm:text-sm flex items-center justify-between">
+        <div class="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $leadDispatchNotification }}</span>
-            <button wire:click="$set('leadDispatchNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('leadDispatchNotification', null)" class="text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
     @if ($publishNotification)
-        <div class="mb-6 p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm flex items-center justify-between">
+        <div class="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center justify-between">
             <span>{{ $publishNotification }}</span>
-            <button wire:click="$set('publishNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('publishNotification', null)" class="text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
@@ -70,9 +70,9 @@
         <!-- Editor Controls (Left 4 cols) -->
         <div class="lg:col-span-4 space-y-5">
             <!-- Template & Industry -->
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-5 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">Industry Template</h3>
-                <select wire:model.live="template" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white">
+            <div class="bg-card shadow-sm rounded-lg p-4 sm:p-5 border border-rule">
+                <h3 class="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider mb-2">Industry Template</h3>
+                <select aria-label="Industry Template" wire:model.live="template" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                     <option value="modern_service">Modern Local Services (Contractors & Pro Services)</option>
                     <option value="healthcare_clean">Clean Medical / Dental / Wellness Clinic</option>
                     <option value="bold_contractor">Bold Trade Specialist (HVAC, Roofing, Plumbing)</option>
@@ -81,58 +81,58 @@
             </div>
 
             <!-- Content Customizer -->
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-5 border border-gray-200 dark:border-gray-700 space-y-3.5">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Hero Section & Copy</h3>
+            <div class="bg-card shadow-sm rounded-lg p-4 sm:p-5 border border-rule space-y-3.5">
+                <h3 class="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider">Hero Section & Copy</h3>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Main Headline</label>
-                    <input type="text" wire:model.live.debounce.200ms="headline" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+                    <label class="block text-xs font-semibold text-ink-2 mb-1">Main Headline</label>
+                    <input aria-label="Main Headline" type="text" wire:model.live.debounce.200ms="headline" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Subheadline Description</label>
-                    <textarea wire:model.live.debounce.200ms="subheadline" rows="3" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white"></textarea>
+                    <label class="block text-xs font-semibold text-ink-2 mb-1">Subheadline Description</label>
+                    <textarea aria-label="Subheadline" wire:model.live.debounce.200ms="subheadline" rows="3" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink"></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Call to Action</label>
-                        <input type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+                        <label class="block text-xs font-semibold text-ink-2 mb-1">Call to Action</label>
+                        <input aria-label="CTA Button Text" type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Direct Phone Call</label>
-                        <input type="text" wire:model.live.debounce.200ms="phoneNumber" class="w-full text-xs p-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-mono">
+                        <label for="phoneNumber" class="block text-xs font-semibold text-ink-2 mb-1">Direct Phone Call</label>
+                        <input type="text" id="phoneNumber" wire:model.live.debounce.200ms="phoneNumber" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink font-mono">
                     </div>
                 </div>
             </div>
 
             <!-- Dynamic Conversion Modules -->
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 sm:p-5 border border-gray-200 dark:border-gray-700 space-y-2.5">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-2">High-Conversion Modules</h3>
+            <div class="bg-card shadow-sm rounded-lg p-4 sm:p-5 border border-rule space-y-2.5">
+                <h3 class="text-xs sm:text-sm font-bold text-ink uppercase tracking-wider mb-2">High-Conversion Modules</h3>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>⚡ Instant Booking & Quote Form (with SMS alerts)</span>
-                    <input type="checkbox" wire:model.live="showBookingForm" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showBookingForm" class="rounded border-rule text-indigo-400">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>↔️ Interactive Before & After Photo Slider</span>
-                    <input type="checkbox" wire:model.live="showBeforeAfter" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showBeforeAfter" class="rounded border-rule text-indigo-400">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>⭐ Embed Live Google Reviews Feed</span>
-                    <input type="checkbox" wire:model.live="showReviewsWidget" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showReviewsWidget" class="rounded border-rule text-indigo-400">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>📱 Floating Mobile Speed-Dial Bar</span>
-                    <input type="checkbox" wire:model.live="showStickySpeedDial" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showStickySpeedDial" class="rounded border-rule text-indigo-400">
                 </label>
 
-                <label class="flex items-center justify-between text-xs text-gray-700 dark:text-gray-300 cursor-pointer p-1.5 rounded hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <label class="flex items-center justify-between text-xs text-ink-2 cursor-pointer p-1.5 rounded hover:bg-paper">
                     <span>❓ Auto-Generated FAQ Accordion</span>
-                    <input type="checkbox" wire:model.live="showFaqSection" class="rounded border-gray-300 text-indigo-600">
+                    <input type="checkbox" wire:model.live="showFaqSection" class="rounded border-rule text-indigo-400">
                 </label>
             </div>
         </div>
@@ -140,25 +140,25 @@
         <!-- Live Visual Preview (Right 8 cols) -->
         <div class="lg:col-span-8">
             <!-- Viewport Switcher Toolbar -->
-            <div class="bg-gray-100 dark:bg-gray-800 p-2.5 rounded-t-xl border border-b-0 border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <div class="bg-card p-2.5 rounded-t-xl border border-b-0 border-rule flex justify-between items-center">
                 <div class="flex items-center gap-1.5">
                     <span class="h-2.5 w-2.5 rounded-full bg-red-400"></span>
                     <span class="h-2.5 w-2.5 rounded-full bg-yellow-400"></span>
                     <span class="h-2.5 w-2.5 rounded-full bg-green-400"></span>
-                    <span class="text-[11px] text-gray-500 font-mono ms-2 truncate max-w-[150px] sm:max-w-none">https://{{ Str::slug($businessName) }}.goaiez.com</span>
+                    <span class="text-[11px] text-ink-3 font-mono ms-2 truncate max-w-[150px] sm:max-w-none">https://{{ Str::slug($businessName) }}.goaiez.com</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-white dark:bg-gray-700 text-indigo-600 font-bold shadow-xs' : 'text-gray-500 hover:text-gray-700' }}">🖥️ Desktop</button>
-                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-white dark:bg-gray-700 text-indigo-600 font-bold shadow-xs' : 'text-gray-500 hover:text-gray-700' }}">📱 Mobile Mockup</button>
+                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
+                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
                 </div>
             </div>
 
             <!-- Preview Canvas Shell -->
-            <div class="bg-slate-100 dark:bg-slate-950 p-3 sm:p-8 rounded-b-xl border border-gray-200 dark:border-gray-700 flex justify-center min-h-[700px] overflow-hidden items-start">
+            <div class="bg-paper p-3 sm:p-8 rounded-b-xl border border-rule flex justify-center min-h-[700px] overflow-x-auto overflow-y-hidden items-start">
                 
                 @if ($previewDevice === 'mobile')
                     <!-- Realistic Smartphone Mockup Frame -->
-                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 bg-white shadow-2xl overflow-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
+                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 bg-white shadow-2xl overflow-x-auto overflow-y-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
                         <!-- Dynamic Island / Speaker Notch -->
                         <div class="h-6 bg-slate-900 w-full flex items-center justify-center shrink-0">
                             <div class="h-3.5 w-24 bg-black rounded-full"></div>
@@ -170,7 +170,7 @@
                             <header class="border-b border-gray-100 px-4 py-3 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur z-20">
                                 <div class="font-display text-xs font-bold text-gray-900 flex items-center gap-1.5">
                                     <span class="h-5 w-5 rounded bg-indigo-600 text-white font-black text-[10px] flex items-center justify-center">AI</span>
-                                    <span class="truncate max-w-[130px]">{{ $businessName }}</span>
+                                    <span class="truncate max-w-[130px]" title="{{ $businessName }}">{{ $businessName }}</span>
                                 </div>
                                 <a href="#quote" class="px-2.5 py-1 rounded bg-indigo-600 text-white text-[11px] font-semibold">
                                     {{ $ctaText }}
@@ -207,7 +207,7 @@
                                         <span class="text-base">{{ $service['icon'] }}</span>
                                         <div>
                                             <div class="font-bold text-xs text-gray-900">{{ $service['title'] }}</div>
-                                            <div class="text-[10px] text-gray-500">{{ $service['desc'] }}</div>
+                                            <div class="text-[10px] text-gray-600">{{ $service['desc'] }}</div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -218,16 +218,16 @@
                                 <section class="px-4 py-6 bg-slate-50 border-t border-gray-100">
                                     <div class="text-center mb-3">
                                         <div class="font-bold text-xs text-gray-900">Before & After Results</div>
-                                        <div class="text-[10px] text-gray-500">Real verified job-site transformations</div>
+                                        <div class="text-[10px] text-gray-600">Real verified job-site transformations</div>
                                     </div>
 
-                                    <div class="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-gray-100 p-4 text-center">
+                                    <div class="relative rounded-lg overflow-x-auto overflow-y-hidden border border-gray-200 shadow-sm bg-gray-100 p-4 text-center">
                                         <div class="grid grid-cols-2 gap-2 text-xs font-bold mb-2">
                                             <span class="p-2 bg-rose-50 text-rose-700 rounded border border-rose-200">Before Inspection</span>
                                             <span class="p-2 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">After Complete Work</span>
                                         </div>
-                                        <input type="range" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
-                                        <div class="text-[10px] text-gray-500 mt-1">Slide to compare transformation ({{ $sliderPosition }}%)</div>
+                                        <input type="range" aria-label="Comparison Slider" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
+                                        <div class="text-[10px] text-gray-600 mt-1">Slide to compare transformation ({{ $sliderPosition }}%)</div>
                                     </div>
                                 </section>
                             @endif
@@ -241,8 +241,8 @@
                                     </div>
 
                                     <div class="space-y-2 text-xs">
-                                        <input type="text" wire:model="leadName" placeholder="Your Name" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
-                                        <input type="text" wire:model="leadPhone" placeholder="Mobile Phone" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
+                                        <input type="text" aria-label="Your Name" wire:model="leadName" placeholder="Your Name" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
+                                        <input type="text" aria-label="Mobile Phone" wire:model="leadPhone" placeholder="Mobile Phone" class="w-full p-2 text-xs rounded border border-gray-300 bg-white">
                                         <button wire:click="simulateLeadSubmission" class="w-full py-2.5 rounded bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700">
                                             Send Estimate Request (Simulate SMS)
                                         </button>
@@ -255,7 +255,7 @@
                                 <section class="px-4 py-5 bg-white border-t border-gray-100">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="font-bold text-xs text-gray-900">Verified Google Reviews</div>
-                                        <div class="text-[10px] font-bold text-emerald-600">★★★★★ 4.9</div>
+                                        <div class="text-[10px] font-bold text-emerald-700">★★★★★ 4.9</div>
                                     </div>
                                     <div class="p-3 bg-gray-50 rounded-lg border border-gray-100 text-[10px] text-gray-600">
                                         "Outstanding service! Fast response and flawless execution." — <strong>Michael R.</strong>
@@ -266,8 +266,8 @@
                             <!-- Mobile Footer -->
                             <footer class="bg-gray-900 text-white px-4 py-6 text-center text-[10px]">
                                 <div class="font-bold">{{ $businessName }}</div>
-                                <div class="text-gray-400 mt-0.5">{{ $phoneNumber }}</div>
-                                <div class="text-gray-500 mt-2 text-[9px]">Powered by GO AI EZ</div>
+                                <div class="text-gray-600 mt-0.5">{{ $phoneNumber }}</div>
+                                <div class="text-gray-600 mt-2 text-[9px]">Powered by GO AI EZ</div>
                             </footer>
                         </div>
 
@@ -338,7 +338,7 @@
                                     <div class="p-4 rounded-lg bg-gray-50 border border-gray-100">
                                         <div class="text-xl mb-1">{{ $service['icon'] }}</div>
                                         <div class="font-bold text-xs text-gray-900">{{ $service['title'] }}</div>
-                                        <div class="text-[11px] text-gray-500 mt-1">{{ $service['desc'] }}</div>
+                                        <div class="text-[11px] text-gray-600 mt-1">{{ $service['desc'] }}</div>
                                     </div>
                                 @endforeach
                             </div>
@@ -348,7 +348,7 @@
                             <!-- Before & After Transformation Slider Section -->
                             <section class="px-6 py-10 bg-slate-50 border-t border-gray-100 text-center">
                                 <h3 class="font-bold text-base text-gray-900 mb-1">Recent Job Transformations</h3>
-                                <p class="text-xs text-gray-500 mb-6">Interactive Before & After project verification</p>
+                                <p class="text-xs text-gray-600 mb-6">Interactive Before & After project verification</p>
 
                                 <div class="max-w-xl mx-auto bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
                                     <div class="grid grid-cols-2 gap-4 mb-4">
@@ -361,8 +361,8 @@
                                             <div class="text-xs text-emerald-900">Seamless copper replacement & restored flow</div>
                                         </div>
                                     </div>
-                                    <input type="range" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
-                                    <div class="text-xs text-gray-500 mt-2 font-mono">Comparison Slider Position: {{ $sliderPosition }}%</div>
+                                    <input type="range" aria-label="Comparison Slider" min="0" max="100" wire:model.live="sliderPosition" class="w-full accent-indigo-600 cursor-pointer">
+                                    <div class="text-xs text-gray-600 mt-2 font-mono">Comparison Slider Position: {{ $sliderPosition }}%</div>
                                 </div>
                             </section>
                         @endif
@@ -377,17 +377,17 @@
                                     <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-3 text-left">
                                         <div class="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Name</label>
-                                                <input type="text" wire:model="leadName" class="w-full text-xs p-2 rounded border border-gray-300">
+                                                <label for="leadNameDesktop" class="block text-[11px] font-semibold text-gray-700 mb-1">Name</label>
+                                                <input type="text" id="leadNameDesktop" wire:model="leadName" class="w-full text-xs p-2 rounded border border-gray-300">
                                             </div>
                                             <div>
-                                                <label class="block text-[11px] font-semibold text-gray-700 mb-1">Phone</label>
-                                                <input type="text" wire:model="leadPhone" class="w-full text-xs p-2 rounded border border-gray-300 font-mono">
+                                                <label for="leadPhoneDesktop" class="block text-[11px] font-semibold text-gray-700 mb-1">Phone</label>
+                                                <input type="text" id="leadPhoneDesktop" wire:model="leadPhone" class="w-full text-xs p-2 rounded border border-gray-300 font-mono">
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-[11px] font-semibold text-gray-700 mb-1">Service Needed</label>
-                                            <input type="text" wire:model="leadService" class="w-full text-xs p-2 rounded border border-gray-300">
+                                            <label for="leadServiceDesktop" class="block text-[11px] font-semibold text-gray-700 mb-1">Service Needed</label>
+                                            <input type="text" id="leadServiceDesktop" wire:model="leadService" class="w-full text-xs p-2 rounded border border-gray-300">
                                         </div>
                                         <button wire:click="simulateLeadSubmission" class="w-full py-2.5 rounded bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow transition">
                                             ⚡ Submit Estimate (Trigger Real-Time SMS Alert)
@@ -403,9 +403,9 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <h3 class="font-bold text-sm text-gray-900">Recent Verified Google Reviews</h3>
-                                        <p class="text-[11px] text-gray-500">Real feedback from clients in your local area</p>
+                                        <p class="text-[11px] text-gray-600">Real feedback from clients in your local area</p>
                                     </div>
-                                    <div class="text-xs font-bold text-emerald-600">★★★★★ 4.9 (128 reviews)</div>
+                                    <div class="text-xs font-bold text-emerald-700">★★★★★ 4.9 (128 reviews)</div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-3">
@@ -446,7 +446,7 @@
                         <footer class="bg-gray-900 text-white px-6 py-8 text-center text-xs">
                             <div class="font-bold text-sm">{{ $businessName }}</div>
                             <div class="text-gray-400 text-[11px] mt-1">{{ $phoneNumber }} • All Rights Reserved</div>
-                            <div class="text-[10px] text-gray-500 mt-3">Powered by GO AI EZ</div>
+                            <div class="text-[10px] text-gray-400 mt-3">Powered by GO AI EZ</div>
                         </footer>
                     </div>
                 @endif
