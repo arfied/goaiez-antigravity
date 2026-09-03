@@ -26703,7 +26703,7 @@ tenant asks → X-124 decides the MODE
 **DECLARATIONS** `@renders pricebook · confirmation_screen · daily_pricing_digest` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides price.quote · price.lookup · price.confirm · price.range · callout.lookup · book.version` · `@emits pricebook.updated · price.confirmed · version.bumped · price.refusal_flagged` · `@consumes document.ingested · job.completed · agent.refused` · `@owns_table price_book_items · price_book_versions · location_books · callout_fees`
 
-@agent_reachable `price.quote` ⭐ *(Seam (a) selected for R245 — agent asks X-163 directly for quotes.)*
+@agent_reachable price.quote ⭐ *(Seam (a) selected for R245 — agent asks X-163 directly for quotes.)*
 **NEEDS / HAS** needs: the callout fee confirmed · ≥1 CONFIRMED price · has: counts by state *(the completeness model's most valuable row)*
 **TEST ANCHOR** *a SAMPLE price is never returned to any customer channel; a version bump on the London book leaves the Leeds book's version unchanged; the agent's answer to "how much to come out?" cites `callout_fees` and `deducted_if_proceeding` verbatim*
 
