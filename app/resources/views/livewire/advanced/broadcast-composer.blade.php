@@ -25,7 +25,7 @@
                         <input id="campaign_title" type="text" value="Summer Customer Check-in & Review Drive" class="w-full rounded-md border-rule bg-paper text-ink shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2 border">
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 gap-4">
                         <div>
                             <label for="campaign_channel" class="block text-sm font-medium text-ink-2 mb-1">Channel</label>
                             <select id="campaign_channel" x-model="channel" class="w-full rounded-md border-rule bg-paper text-ink shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm px-3 py-2 border">
