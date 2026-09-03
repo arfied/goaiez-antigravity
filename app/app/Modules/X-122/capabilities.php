@@ -31,10 +31,10 @@ return [
     'G10-21' => 'append-only action log;  QLDB is corpus vocabulary — one database (§22)',
 
     // status: SPECCED
-    'G10-35' => 'HMAC-SHA256 on every outbound webhook is named in the header',
+    'G10-35' => 'HMAC-SHA256 on every outbound webhook is named in the header · refuses: an outbound webhook without HMAC-SHA256',
 
     // status: SPECCED
-    'G10-41' => 'per-tenant HMAC secret on the outbound payload',
+    'G10-41' => 'per-tenant HMAC secret on the outbound payload · refuses: an outbound payload without the per-tenant HMAC secret',
 
     // status: SPECCED
     'G11-26' => 'strict JSON-schema validation; a missing field is refused, never defaulted',

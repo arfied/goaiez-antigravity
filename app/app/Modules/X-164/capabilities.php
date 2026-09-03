@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G10-01' => 'the customer signature freezes the version it was sold at;  F-19 — a contract that is not an estimate has no home',
+    'G10-01' => 'the customer signature freezes the version it was sold at;  F-19 — a contract that is not an estimate has no home · refuses: to alter a version after signature',
 
     // status: SPECCED
     'G10-05' => 'the countersign step; see F-19',

@@ -27291,12 +27291,12 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G2-06 | Appointment Scheduling | ENH | X-108 | the agent calls `availability.request`; time is looked up or refused (P-093) |
 | G2-07 | Auto-Assignment | ENH | X-10 | geocode → polygon → assign; named in the header |
 | G2-08 | Auto-Scheduling | **RE-HOME→G12** | X-182 | social scheduling — spec with the social pass (turn 32) |
-| G2-09 | Automated QA Scoring | ENH | X-200 | `qa_scorecards`; an AI seat is scored exactly like a human |
+| G2-09 | Automated QA Scoring | ENH | X-200 | `qa_scorecards`; an AI seat is scored exactly like a human · refuses: to score an AI seat differently from a human seat |
 | G2-10 | Automated Scheduling | **RE-HOME→G15** | X-108 | the calendar half is X-108's; the hiring flow is G15's |
 | G2-11 | Automated Trigger | ENH | X-183 | R36's case-study machine — double consent, never automatic publication |
 | G2-12 | Blackout Dates | **ENH** *(split)* | X-108 | split: the blackout calendar is X-108's *("blackouts and holiday overrides")*; the **PTO request-and-approval workflow is G15's** |
 | G2-13 | Calendar Auto-Block | ENH | X-108 | out-of-office is named in the header |
-| G2-14 | Campaign ML Optimization | ENH | X-186 | best send time from the tenant's own history; still Marketing class, still inside the window (P-063) |
+| G2-14 | Campaign ML Optimization | ENH | X-186 | best send time from the tenant's own history; still Marketing class, still inside the window (P-063) · refuses: a send time outside the tenant's marketing window (P-063), whatever the model proposes |
 | G2-15 | Collision Detection | **RE-HOME→G15** | X-113 | overlapping time-off requests |
 | G2-16 | Collision Detection | ENH | X-01 | "Rep A is typing" presence on the shared thread |
 | G2-17 | Conditional Logic | ENH | X-155 | multi-step form logic |
@@ -27327,7 +27327,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G2-42 | Lead Caps | ENH | X-01 | named in the header |
 | G2-43 | Lead Transparency | ENH | X-112 | the client sees the agency's price only (§17.5) |
 | G2-44 | Management Alerts | **RE-HOME→G15** | X-113 | a wellbeing alert to a manager |
-| G2-45 | Meeting Booking AI | ENH | X-108 | the agent offers only a window the scheduler confirmed |
+| G2-45 | Meeting Booking AI | ENH | X-108 | the agent offers only a window the scheduler confirmed · refuses: a window the scheduler has not confirmed |
 | G2-46 | Meta Lead Forms Webhook | ENH | X-156 | named in the header; the HMAC-verified door |
 | G2-47 | Multi-Stage Routing | ⭐⭐ **UNMAPPED** | *ApprovalDesk* | a second mandatory sign-off above a threshold |
 | G2-48 | Natural Language Routing | ENH | X-66 | ⚠️ ElevenLabs is corpus vocabulary — the stack is X-197 (§18F) |
@@ -27449,9 +27449,9 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G4-05 | Automated Health Checks | ENH | X-111 | named in the header |
 | G4-06 | Automated Restoration Testing | ⭐⭐ **UNMAPPED** | *ResiliencyDesk* | a rehearsed restore is turn 93's work and **has no module to land in** — see §165.5 |
 | G4-07 | Automated Webhook Trigger | ENH | X-136 | a new-registration signal; ⛔ a signal never mints a `SendPermit` (P-068) — the send is X-105's on Lane 3 |
-| G4-08 | Blacklist Monitoring | ENH | C-Mail | deliverability first, then everything else |
+| G4-08 | Blacklist Monitoring | ENH | C-Mail | deliverability first, then everything else · refuses: any action that compromises deliverability — deliverability comes first |
 | G4-09 | Config Inheritance | ENH | X-112 | named in the header; a sub-tenant may narrow, never widen |
-| G4-10 | Dead Letter Queue | ENH | X-123 | named in the header — 10 consecutive failures, tenant emailed |
+| G4-10 | Dead Letter Queue | ENH | X-123 | named in the header — 10 consecutive failures, tenant emailed · refuses: retrying after 10 consecutive failures |
 | G4-11 | Dependency Locking | ENH | X-162 | ⚠️ **NAME COLLISION** — X-195's header claims the term for manifests; this row is task dependencies |
 | G4-12 | Eloquent Models & Caching | ENH | X-121 | Redis on high-read nouns, invalidated inline on write |
 | G4-13 | Feature Toggling | ENH | X-195 | flags are blast-radius control (P-182) |
@@ -27516,7 +27516,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G5-13 | AI Summarization | ENH | X-01 | the thread's three-bullet head |
 | G5-14 | AI-Driven Reactivation Intake | ENH | X-186 | ⚠️ the Zapier/Sheets hop is corpus vocabulary; ours is native (X-123) |
 | G5-15 | Assistant Multi-Lingual Auto-Detect | ENH | C-Agent | = G5-31/32; one spec |
-| G5-16 | Assistant Proactive Outreach | ENH | X-185 | ⛔ a gap in the calendar is a signal, not a permit (P-068) — the send runs Lane 2 through `ConsentService` |
+| G5-16 | Assistant Proactive Outreach | ENH | X-185 | ⛔ a gap in the calendar is a signal, not a permit (P-068) — the send runs Lane 2 through `ConsentService` · refuses: to treat a calendar gap as a permit |
 | G5-17 | Auto-Documentation | ENH | X-111 | a resolved ticket drafts a help row; ⭐ the help registry generates itself from X-122 |
 | G5-18 | Autonomous L1 Resolution | ENH | X-111 | the HELP path; reply HUMAN always escalates (R37) |
 | G5-19 | Base Prompt Engine | ENH | C-Agent | named in the header |
@@ -27660,7 +27660,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G6-09 | Deep Funnel Persistence | ENH | X-110 | UTM survives the session; the attribution is X-138's |
 | G6-10 | Dummy Data Injection | ENH | X-161 | ⛔ `is_mock` on every row; `doctor` fails on one in production |
 | G6-11 | Dynamic Redirection | ENH | X-103 | device routing on the short-linker (P-072) |
-| G6-12 | Dynamic Service Menu | ENH | X-116 | named in the header; the agent upsells only from a grounded `Fact` (P-092) |
+| G6-12 | Dynamic Service Menu | ENH | X-116 | named in the header; the agent upsells only from a grounded `Fact` (P-092) · refuses: to upsell from an ungrounded Fact |
 | G6-13 | E-commerce Detection | ENH | X-179 | named in the header |
 | G6-14 | Fractional Inventory | **RE-HOME→FSM** | X-167 | fractional units — *"a van and a storage unit, not a warehouse"* bounds it |
 | G6-15 | Funnel / Website Builder | ENH | X-103 | the header's first line |
@@ -27731,7 +27731,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G7-37 | Reseller Margin Sweeps | ENH | X-112 | named in the header (§91) |
 | G7-38 | Spiff Campaigns | ENH | X-170 | a time-boxed bonus rule |
 | G7-39 | Split Commissions | ENH | X-170 | two payees on one deal |
-| G7-40 | Spoofing Alerts | ENH | C-Mail | DMARC XML failure → alert; named in the header |
+| G7-40 | Spoofing Alerts | ENH | C-Mail | DMARC XML failure → alert; named in the header · refuses: to suppress a DMARC XML failure alert |
 | G7-41 | Tiered Commissions | ⭐⭐ **UNMAPPED** | *AffiliateProgram* | referral tiers unlock by count |
 | G7-42 | Tiered Logic | ENH | X-170 | staff commission tiers by revenue band |
 | G7-43 | Unique Link Generation | ENH | X-190 | every customer gets a referral link; the short-linker is P-072 |
@@ -27765,14 +27765,14 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G8-17 | GBP Auto-Sync | ENH | X-177 | named in the header — through Zernio (§156.3) |
 | G8-18 | GBP Q&A Seeding | ENH | X-177 | named in the header |
 | G8-19 | Google Maps Embedding | ENH | X-116 | a block in the local template |
-| G8-20 | Guest Post AI Pitching | ENH | X-191 | named in the header — one follow-up only |
-| G8-21 | Guest Post AI Pitching | ENH | X-191 | = the row above; one spec |
+| G8-20 | Guest Post AI Pitching | ENH | X-191 | named in the header — one follow-up only · refuses: a second follow-up |
+| G8-21 | Guest Post AI Pitching | ENH | X-191 | = the row above; one spec · refuses: a second follow-up |
 | G8-22 | Hyper-Local Schema | ENH | X-176 | named in the header |
 | G8-23 | Instant Indexing | ENH | X-176 | named in the header |
 | G8-24 | Internal Cannibalization Scan | ENH | X-140 | embedding similarity before publish |
 | G8-25 | Internal Linking Graph | ENH | X-176 | named in the header |
-| G8-26 | Keyword Spotting Alerts | ENH | X-153 | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) |
-| G8-27 | Local Post Automation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended` |
+| G8-26 | Keyword Spotting Alerts | ENH | X-153 | a risk word on a call raises an alert conversation; the claim expires at 30 min (P-077) · refuses: claims older than 30 min |
+| G8-27 | Local Post Automation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended` · refuses: generating while `gbp.suspended` |
 | G8-28 | Local Visibility Sync | ENH | X-192 | named in the header |
 | G8-29 | Multi-Currency Natively | ENH | X-117 | §143–§144 — minor units, integers, no floats |
 | G8-30 | PageRank Sculpting | ENH | X-176 | nofollow on low-value internal links |
@@ -27807,7 +27807,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G9-11 | Chart Generation | ENH | X-194 | named in the header |
 | G9-12 | Competitor Benchmarks | ENH | X-161 | ⛔ demo metrics are `is_mock`; ⚠️ *"local industry averages"* must be measured or absent (P-120) |
 | G9-13 | Consolidated Reporting | ENH | X-138 | attribution is a query, not a pipeline |
-| G9-14 | Cross-Platform Dashboard | ENH | X-138 | reading spend for attribution is not ad MANAGEMENT (§44 fences management); the connection is X-139's |
+| G9-14 | Cross-Platform Dashboard | ENH | X-138 | reading spend for attribution is not ad MANAGEMENT (§44 fences management); the connection is X-139's · refuses: ad management |
 | G9-15 | Decay Modeling | ENH | X-08 | tenant login decay = churn risk → an alert and a RECOMMEND, never an automatic offer |
 | G9-16 | Decay Prediction | ENH | X-184 | creative fatigue → refresh the content pack; ad PACKS as content are not fenced (P-128) |
 | G9-17 | Executive Summary | ENH | X-183 | the summary is content, gated by the pre-publish gate |
@@ -27842,7 +27842,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 
 | # | Register line | BL | Parent | Note |
 | :--- | :--- | :--- | :--- | :--- |
-| G10-01 | "Approved as Is" E-Sign | ENH | X-164 | the customer signature freezes the version it was sold at; ⚠️ **F-19 — a contract that is not an estimate has no home** |
+| G10-01 | "Approved as Is" E-Sign | ENH | X-164 | the customer signature freezes the version it was sold at; ⚠️ **F-19 — a contract that is not an estimate has no home** · refuses: to alter a version after signature |
 | G10-02 | A2P 10DLC Compliance Automation | ENH | X-188 | the brand is auto-submitted (P-064); ⚠️ Twilio/TCR are corpus vocabulary — Infobip |
 | G10-03 | Abandonment Rate Compliance | ENH | X-200 | ⛔ hard maximum 3%, lower only; the UI and API reject higher (§160.1) |
 | G10-04 | AI Pipeline Scrubbing | ENH | X-07 | it scores the DEAL, not the rep — sandbagging detection is named in the header |
@@ -27866,7 +27866,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G10-22 | Latency Guardrails | ENH | C-Ai | TTFT demotion in the model waterfall |
 | G10-23 | Legal & Privacy Engine | ⛔ **KILLED** | — | **P-167 · Law 122** — eight EMPTY admin slots, nothing authored, no generated ToS or privacy copy |
 | G10-24 | Legally Binding Signatures | ENH | X-172 | the signature pad lives in the customer portal; see F-19 |
-| G10-25 | List Scrubbing | ENH | X-186 | scrubbed against suppression fresh as of each send |
+| G10-25 | List Scrubbing | ENH | X-186 | scrubbed against suppression fresh as of each send · refuses: to send without scrubbing against a fresh suppression list |
 | G10-26 | Non-Standard Terms | ENH | X-202 | a term outside the standard routes for a decision |
 | G10-27 | Policy Enforcement | **RE-HOME→G15** | X-169 | expense policy |
 | G10-28 | Policy Escalation | ENH | C-Mail | the DMARC journey `p=none` → quarantine → reject |
@@ -27876,13 +27876,13 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G10-32 | Redline Negotiation | ENH | X-172 | a clause comment from the customer; the decision routes to X-202 |
 | G10-33 | Scrubbing API | ⭐⭐ **UNMAPPED** | *ConsentService* | = Automated TCPA Scrubbing; one spec |
 | G10-34 | Sequential Logic | ENH | X-202 | multi-stage sequential approval — the desk's core state machine |
-| G10-35 | Signature Verification | ENH | X-122 | HMAC-SHA256 on every outbound webhook is named in the header |
+| G10-35 | Signature Verification | ENH | X-122 | HMAC-SHA256 on every outbound webhook is named in the header · refuses: an outbound webhook without HMAC-SHA256 |
 | G10-36 | Tax Compliance | ⭐⭐ **UNMAPPED** | *AffiliateProgram* | W-9 threshold freezes a payout; ⚠️ Law 122 — the switch and the threshold as data, never the advice |
 | G10-37 | Under-18 Guardrails | ENH | C-Agent | ⛔ P-148 — under-18 rejected at ingest; the agent halts and hands off |
 | G10-38 | Unified Guardrail Law | ENH | X-193 | = Quiet Hours Enforcement; one spec. The class is decided from the CALLER, never the content (P-062) |
 | G10-39 | Variable Injection | ENH | X-164 | CRM variables into a template; see F-19 |
 | G10-40 | WhatsApp Opt-In Engine | ENH | C-Whatsapp | a scan or shortcode registers the opt-in; the permit itself is *ConsentService*'s |
-| G10-41 | Zapier/Make Payload Signatures | ENH | X-122 | per-tenant HMAC secret on the outbound payload |
+| G10-41 | Zapier/Make Payload Signatures | ENH | X-122 | per-tenant HMAC secret on the outbound payload · refuses: an outbound payload without the per-tenant HMAC secret |
 
 **G10 COUNT:** 41 = **30 enhancement** + 3 re-homed + 2 killed + 6 unmapped · **minted by this audit: 0** · ⭐ **enhancement ratio 80%**
 
@@ -27900,7 +27900,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-07 | CMS Customization | ENH | X-179 | tech-stack extraction feeds the opener |
 | G11-08 | Cross-Platform Sync | ⛔ **KILLED** | — | **§44 · P-128** — pushing a seed list to ad platforms is ad management |
 | G11-09 | Deliverability Testing | ENH | C-Mail | a test send scored before the campaign |
-| G11-10 | Deliverability Verification | ENH | C-Mail | bounce and spam-trap check before a cold send |
+| G11-10 | Deliverability Verification | ENH | C-Mail | bounce and spam-trap check before a cold send · refuses: a cold send without a bounce and spam-trap check |
 | G11-11 | DMARC Reporting | ENH | C-Mail | named in the header |
 | G11-12 | Email Inbox Parsing | ENH | C-Mail | named in the header; replies thread into the Conversation |
 | G11-13 | Escalating Email Sequence | ENH | C-Billing | ⛔ §45A — the 21-day timeline is the ONE ladder; day-10 is a BANNER, never a lockout |
@@ -27910,24 +27910,24 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-17 | Inbox Rotation | ENH | C-Mail | named in the header |
 | G11-18 | Inbox Rotation | ENH | C-Mail | = the row above; one spec |
 | G11-19 | Lexicon Enforcement | ENH | X-154 | named in the header — their words, not ours |
-| G11-20 | Mail Deliverability Engine | ENH | C-Mail | the header's first line; ⚠️ SES-primary (R16), DPA before first send |
+| G11-20 | Mail Deliverability Engine | ENH | C-Mail | the header's first line; ⚠️ SES-primary (R16), DPA before first send · refuses: to send before a DPA is in place |
 | G11-21 | Newsletter Distillation | ENH | X-140 | named in the header |
 | G11-22 | Omni-Channel Inbox Sync | ENH | X-01 | one polymorphic `Conversation` (X-121's) across every channel |
 | G11-23 | Omni-Channel Messaging | ENH | X-01 | = the row above; one spec |
-| G11-24 | Omnichannel Campaigns | ENH | X-186 | named in the header; ⛔ every send from there is Marketing class from the CALLER |
+| G11-24 | Omnichannel Campaigns | ENH | X-186 | named in the header; ⛔ every send from there is Marketing class from the CALLER · refuses: a send whose caller did not declare Marketing class — the class comes from the caller, never from the channel |
 | G11-25 | One-Click Dispositions | ENH | X-200 | named in the header — a closed set per campaign |
 | G11-26 | Payload Validation | ENH | X-122 | strict JSON-schema validation; a missing field is refused, never defaulted |
 | G11-27 | Promo Email Draft | **RE-HOME→G16** | X-158 | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | named in the header — any reply stops the sequence (P-075) |
 | G11-29 | RSS-to-Email | ENH | C-Mail | named in the header |
 | G11-30 | Seed Audience | ⛔ **KILLED** | — | **§44 · P-128** — LTV seed lists pushed to ad platforms is ad management |
-| G11-31 | Send-Time Optimization | ENH | X-186 | named in the header; still inside the marketing window (P-063) |
+| G11-31 | Send-Time Optimization | ENH | X-186 | named in the header; still inside the marketing window (P-063) · refuses: a send time outside the marketing window (P-063) |
 | G11-32 | SMS Deliverability Fallback | ENH | C-Sms | ⭐ **T677 (owner): the spintax half is reframed as Lexicon Personalization (X-154) — we do not evade carrier filtering.** Stripping the URL on a 30007 and degrading honestly is the real mechanism (P-073) |
-| G11-33 | SMS/Email Blackholing | ENH | X-161 | the sandbox intercepts every outbound; `is_mock` end to end |
-| G11-34 | Sniper Outreach | ENH | X-191 | the guest-post pitch that names something TRUE about the page |
-| G11-35 | Sniper Outreach | ENH | X-105 | the cold opener from X-135's research (P-146 — distress only) |
+| G11-33 | SMS/Email Blackholing | ENH | X-161 | the sandbox intercepts every outbound; `is_mock` end to end · refuses: unintercepted outbound messages |
+| G11-34 | Sniper Outreach | ENH | X-191 | the guest-post pitch that names something TRUE about the page · refuses: a pitch that names nothing TRUE about the page |
+| G11-35 | Sniper Outreach | ENH | X-105 | the cold opener from X-135's research (P-146 — distress only) · refuses: an opener without distress (P-146) |
 | G11-36 | Spam Call Blocking | ENH | C-Telephony | carrier-side screening before we pay for the minute |
-| G11-37 | Spam Folder Rescue | ENH | C-Mail | named in the header. ⚠️ **the legitimate mechanism is the warm-up calendar and seed-list diversity** — a seeded network clicking *Not Spam* is the F-15 question in email form |
+| G11-37 | Spam Folder Rescue | ENH | C-Mail | named in the header. ⚠️ **the legitimate mechanism is the warm-up calendar and seed-list diversity** — a seeded network clicking *Not Spam* is the F-15 question in email form · refuses: any illegitimate warm-up mechanism outside the calendar and seed-list diversity |
 | G11-38 | SPF Flattening | ENH | C-Mail | named in the header |
 | G11-39 | Trust & Spam Shield | ENH | C-Telephony | SHAKEN/STIR grading on inbound |
 | G11-40 | Unified Inbox | ENH | X-01 | the header's first line |
@@ -28034,7 +28034,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | # | Register line | BL | Parent | Note |
 | :--- | :--- | :--- | :--- | :--- |
 | G12-01 | "Powered By" Viral Loop | ENH | X-190 | named in the header |
-| G12-02 | AI Blog Publishing | ENH | X-183 | gated by grounding; the pre-publish gate is X-183's |
+| G12-02 | AI Blog Publishing | ENH | X-183 | gated by grounding; the pre-publish gate is X-183's · refuses: publishing without grounding |
 | G12-03 | Auto-Detection | ENH | X-176 | entity type inferred for schema, zero user input |
 | G12-04 | Auto-Publish Sync | ENH | X-202 | approval granted → the publish action fires |
 | G12-05 | Auto-Publishing | ENH | X-183 | to the builder or the plugin |
@@ -28043,7 +28043,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G12-08 | Automated LinkedIn Connection | ENH | X-196 | ⚠️ `FetchPolicy.authenticated=false` by default (P-078) |
 | G12-09 | Batch Approvals | ENH | X-202 | thirty graphics, one decision |
 | G12-10 | Best Time to Post | ENH | X-182 | from the tenant's own engagement history |
-| G12-11 | Bulk Google Post Generation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended`. ⚠️ DALL-E is corpus vocabulary — images are X-114/X-189 |
+| G12-11 | Bulk Google Post Generation | ENH | X-177 | named in the header; ⛔ held while `gbp.suspended`. ⚠️ DALL-E is corpus vocabulary — images are X-114/X-189 · refuses: generating while `gbp.suspended` |
 | G12-12 | Comment Auto-Reply | ENH | X-182 | the reply threads into the Conversation (X-01); R20 — the agent takes every inbound |
 | G12-13 | Competitor Content Inspiration | ENH | X-184 | a RECOMMEND, never an auto-post |
 | G12-14 | Competitor Content Theft Alert | ENH | X-191 | named in the header |
@@ -28060,7 +28060,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G12-25 | Live Human Interception | ENH | C-Agent | negative-sentiment handoff; the takeover latch is X-01's (R21) |
 | G12-26 | Multi-Persona Profiles | ENH | X-182 | a persona per channel; the lexicon still binds (X-154) |
 | G12-27 | Personalized Icebreakers | ENH | X-135 | ⛔ every icebreaker names something TRUE (P-146) |
-| G12-28 | Post-Purchase Exclusion | ENH | X-186 | a won deal stops the sequence (P-075); ⛔ the ad-audience purge half is FENCED (§44) |
+| G12-28 | Post-Purchase Exclusion | ENH | X-186 | a won deal stops the sequence (P-075); ⛔ the ad-audience purge half is FENCED (§44) · refuses: to continue the sequence after a won deal (P-075) |
 | G12-29 | Pre-Publish Gate | ENH | X-183 | named in the header — cannibalisation · SAMPLE prices never rendered · nothing contradicts the pricebook |
 | G12-30 | Proof A/B Testing | ENH | X-185 | fleet evidence, never four data points at one tenant |
 | G12-31 | Q&A Seeding | ENH | X-177 | named in the header |
@@ -28108,7 +28108,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G13-26 | Pixel Detection | ENH | X-134 | a prospect's installed pixels as an enrichment field |
 | G13-27 | Pixel Diagnostics | ENH | X-110 | watching the tenant's OWN tags fire is not ad management |
 | G13-28 | Pixel Firing | ENH | X-110 | the 50ms hop before redirect |
-| G13-29 | Quote Attribution Verification | ENH | X-183 | the gate cites or rejects |
+| G13-29 | Quote Attribution Verification | ENH | X-183 | the gate cites or rejects · refuses: accepting without citation |
 | G13-30 | Real-Time Heatmaps | ENH | X-110 | rage-click and scroll depth, rendered by X-194 |
 | G13-31 | S3 Cloudflare Storage | ENH | X-157 | R2, zero egress; the `Asset` row is X-121's |
 | G13-32 | Session Replay | ENH | X-111 | ⚠️ **E3's property law is first-party only with NO session recording** — a watch-the-user replay needs the owner's word before it can be specced. Owner question |
@@ -28148,7 +28148,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G16-01 | AI Stock Sourcing | ENH | X-114 | stock for a DEMO page only; ⛔ P-131 — a job photo is never stock |
 | G16-02 | Auto-Captions | ENH | X-158 | burned captions on the 90-second cut |
 | G16-03 | Chapter Orchestration | ENH | X-183 | long-form structure through the gate |
-| G16-04 | Direct File Uploads | ENH | X-114 | signed upload URL; the `Asset` row is X-121's |
+| G16-04 | Direct File Uploads | ENH | X-114 | signed upload URL; the `Asset` row is X-121's · refuses: an upload without a signed URL |
 | G16-05 | Dynamic Offers | ENH | X-117 | ⚠️ **P-120 — a countdown must be true.** A timer that resets on refresh is a manufactured claim |
 | G16-06 | Dynamic Video Ads | ENH | X-158 | ad PACKS as content are not fenced (P-128) |
 | G16-07 | Expiry Links | ENH | X-103 | an expiring short link (P-072) |
@@ -28174,7 +28174,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G16-27 | Video Walkthrough | ENH | X-172 | a recorded explanation above the signature line |
 | G16-28 | Video-to-Blog | ENH | X-183 | transcript → post, through the gate |
 | G16-29 | Visual Creative AI | ENH | X-114 | ad packs as content (P-128); the logo and palette come from the brand kit |
-| G16-30 | VSL Script Generation | ENH | X-158 | five questions → a script; ⛔ no invented statistics (P-120) |
+| G16-30 | VSL Script Generation | ENH | X-158 | five questions → a script; ⛔ no invented statistics (P-120) · refuses: to include invented statistics in the script (P-120) |
 | G16-31 | Watermarking | ENH | X-114 | the recipient's address on every page |
 
 **G16 COUNT:** 31 = **29 enhancement** + 0 re-homed + 2 killed + **0 unmapped** · ⭐ **ratio 94%**
@@ -28233,13 +28233,13 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G18-10 | Local Caller ID | ENH | X-188 | the tenant's own registered numbers by area code |
 | G18-11 | Local Presence | ENH | X-188 | = Local Caller ID; one spec. ⚠️ rotation is bounded by P-065's per-number complaint monitoring |
 | G18-12 | Multi-Ring Simultaneous | ENH | X-153 | three staff alerted, first reply claims, the claim expires at 30 minutes (P-077) |
-| G18-13 | Post-Call Autopsy | ENH | X-200 | ⭐ T677 — feedback to the rep, not a scoreboard against them |
+| G18-13 | Post-Call Autopsy | ENH | X-200 | ⭐ T677 — feedback to the rep, not a scoreboard against them · refuses: to act as a scoreboard against the rep — it is feedback (T677) |
 | G18-14 | Post-Call CSAT Survey | ENH | C-Reviews | CSAT on resolve is named in the header |
 | G18-15 | Queue Position Announcements | ENH | X-200 | live queue state; the AI answers first (R11/R20) |
 | G18-16 | Talk-to-Listen Ratio | ENH | X-200 | ⭐ T677 — a coaching signal only |
 | G18-17 | Telephony Call Whisper | ENH | X-137 | the whisper names the SOURCE — that is what call tracking is for |
 | G18-18 | Telephony Router | ENH | C-Telephony | the router and the eight adapters are the header |
-| G18-19 | Twilio Power-Dialing | ENH | X-200 | ⚠️ Twilio is corpus vocabulary — Infobip primary (§120–§122) |
+| G18-19 | Twilio Power-Dialing | ENH | X-200 | ⚠️ Twilio is corpus vocabulary — Infobip primary (§120–§122) · refuses: to treat Twilio as primary — Infobip is primary (§120–§122) |
 | G18-20 | VIP Skipping | ENH | C-Telephony | LTV read from C-Billing; the bypass is a routing rule |
 | G18-21 | Voice RAG | ENH | X-66 | real-time objection detection; retrieval is X-148's |
 | G18-22 | Voice Top-Up | ENH | C-Billing | ⛔ **the numbers are DEAD.** The metering model of record: **7¢/min · 100 minutes included · top-ups $100→$100 and $300→$400** — and they live in X-82, never in a document |
@@ -28247,7 +28247,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G18-24 | Whisper Messages | ENH | X-137 | = Telephony Call Whisper; one spec |
 | G18-25 | Whisper Mode | ⛔ **KILLED** | — | ⛔ **X-200's own header — *uncertain → treat as human, never drop a voicemail on a live person*.** A silent hang-up on a live human IS an abandoned call and counts against the 3% ceiling (§160.1) |
 | G18-26 | Zoom/LiveKit Sync | ENH | X-158 | live webinar rooms and tokens |
-| G18-27 | Zoom/Meet Auto-Generation | ENH | X-108 | a booking generates its own conference link |
+| G18-27 | Zoom/Meet Auto-Generation | ENH | X-108 | a booking generates its own conference link · refuses: generating a conference link without a booking |
 
 **G18 COUNT:** 27 = **25 enhancement** + 0 re-homed + 2 killed + **0 unmapped** · ⭐ **ratio 93%**
 
@@ -28295,7 +28295,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G20-07 | NPS Polling | ENH | C-Reviews | day 60, <7 → triage (P-113) |
 | G20-08 | Omni-Review Hub UI | ENH | C-Reviews | named in the header — Google via Zernio · Yelp · Facebook · BBB |
 | G20-09 | Reputation Engine | ENH | C-Reviews | the owner's original ask, now the header |
-| G20-10 | Reputation Targeting | ENH | X-105 | named in the header — under 3.5★ is a distress signal (P-146) |
+| G20-10 | Reputation Targeting | ENH | X-105 | named in the header — under 3.5★ is a distress signal (P-146) · refuses: targeting over 3.5★ — under 3.5★ is the distress signal (P-146) |
 | G20-11 | Review Gating | ENH | C-Reviews | ⭐⭐ **P-110 supersedes the legacy review gate as the MECHANISM: every request is triaged, low ratings become a ticket with an SLA, high ratings are asked publicly.** The register's wording is the old gate's name. ⚠️ **`keep-gate` is still an open reverse word — the owner's, not the audit's** |
 | G20-12 | Review Gating/Triage | ENH | C-Reviews | = Review Gating; one spec, under P-110 |
 | G20-13 | Review Reactivation | ENH | C-Reviews | named in the header; the send is Marketing class and waits for the window |
@@ -29048,17 +29048,17 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 | # | Capability | ① what · ② trigger | ③ data | ④ failure mode | ⑤ test — assertion · refusal | ⑥⑦ |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **G11-20** | The deliverability engine | the header's first line — SES primary *(R16)*, **DPA before first send** · **trigger:** provisioning | provider config | ⛔ **a first send leaves before the DPA is in place** | the first send on a new tenant is blocked until the DPA flag is set, asserted · **refusal via X-204: `no_basis`** *(not a local branch)* | ⑥ operator-side · ⑦ n/a |
+| **G11-20** | The deliverability engine | the header's first line — SES primary *(R16)*, **DPA before first send** · **trigger:** provisioning | provider config | ⛔ **a first send leaves before the DPA is in place** | the first send on a new tenant is blocked until the DPA flag is set, asserted · **refusal via X-204: `no_basis`** *(not a local branch)* | ⑥ operator-side · ⑦ n/a · refuses: to send before a DPA is in place |
 | **G11-03** | Automated DNS setup | ⭐ it **shows the exact missing record with a copy button** — it never asks them to "configure SPF" · **trigger:** domain added | the checked record set | ⛔ **it says "DNS not configured"** and the non-technical owner is stuck. *Q-010 — the whole tenant-facing posture* | the failure state renders **the record type, host and value**, asserted against a fixture of each failure; no string in this module contains the word "configure" without a value beside it | ⑥ it IS the wizard · ⑦ re-checks until green |
 | **G11-38** · **G11-06** | SPF flattening · BIMI — **one spec** | keep the lookup count legal; the logo where it renders · **trigger:** DNS check | the record set | flattening pins a provider IP that later changes, and mail silently starts failing SPF | the flattened record is **re-derived on a schedule** and a drift raises an alert, asserted by mutating the upstream fixture | ⑥ shown, not asked · ⑦ maintained |
-| ⛔ ~~**G11-11** · **G10-28** · **G7-40**~~ **[UNMERGED T677 — see §171.6: three decision owners, three specs]** DMARC | the journey `p=none` → quarantine → reject, and the XML that justifies each step · **trigger:** aggregate reports | DMARC XML | ⛔ **escalating to `reject` while a legitimate source still fails alignment** — the tenant's own invoices stop arriving | a move to the next policy is blocked unless **all known-legitimate sources pass for N consecutive days**, asserted on a fixture with one failing source | ⑥ operator-recommended, tenant-confirmed once · ⑦ never auto-escalates past quarantine |
+| ⛔ ~~**G11-11** · **G10-28** · **G7-40**~~ **[UNMERGED T677 — see §171.6: three decision owners, three specs]** DMARC | the journey `p=none` → quarantine → reject, and the XML that justifies each step · **trigger:** aggregate reports | DMARC XML | ⛔ **escalating to `reject` while a legitimate source still fails alignment** — the tenant's own invoices stop arriving | a move to the next policy is blocked unless **all known-legitimate sources pass for N consecutive days**, asserted on a fixture with one failing source | ⑥ operator-recommended, tenant-confirmed once · ⑦ never auto-escalates past quarantine · refuses: to suppress a DMARC XML failure alert |
 | **G11-16** | Inbox placement ramping | ⭐ **warm-up is a CALENDAR, not a setting** · **trigger:** new domain or IP | the ramp schedule | ⛔ **volume rises on a percentage rather than a calendar** and a busy week doubles the ramp | day N's cap comes from the calendar and is **independent of demand**, asserted by requesting 10× the cap and observing the cap hold | ⑥ none · ⑦ runs unattended |
 | **G11-17** · **G11-18** | Inbox rotation — **one spec** | spread sending across the tenant's own mailboxes · **trigger:** each send | mailbox pool | ⛔ **rotation is used to outrun a reputation problem** rather than fix one | a mailbox over the complaint threshold is **removed from the pool, not rotated around**, asserted · the pool cannot rotate below one healthy mailbox — it halts and raises | ⑥⑦ inherit |
 | **G11-05** | Automated pausing | R17 halt seeds — **0.10% complaint or 250 bounces → pause the campaign FAMILY, never the thread** · **trigger:** rolling metric | the metric window | ⛔⛔ **the halt pauses the person's ongoing conversation** — the one thing it must never touch | a halt stops the campaign family and the customer's live thread **still sends and receives**, asserted together in one test · **refusal: `campaign_halted`** on the family only | ⑥ thresholds are operator-side · ⑦ halts unattended, alerts immediately |
-| **G4-08** | Blacklist monitoring | Spamhaus and friends, checked on a schedule · **trigger:** cron | the listing state | a listing is detected and **nothing changes** — an alert with no action *(§0.3: every alert names an action)* | a detected listing raises an alert **naming the delisting action** and pauses new cold sends *(not transactional)*, asserted | ⑥ none · ⑦ automatic |
+| **G4-08** | Blacklist monitoring | Spamhaus and friends, checked on a schedule · **trigger:** cron | the listing state | a listing is detected and **nothing changes** — an alert with no action *(§0.3: every alert names an action)* | a detected listing raises an alert **naming the delisting action** and pauses new cold sends *(not transactional)*, asserted | ⑥ none · ⑦ automatic · refuses: any action that compromises deliverability — deliverability comes first |
 | **G11-09** · **G11-10** | Pre-send scoring · verification — **one spec** | score a test send; bounce and spam-trap check before a cold send · **trigger:** campaign start | seed results · verification result | a verification vendor's failure is read as "bad address" and a real customer is suppressed forever | a vendor error is **`unknown`, never `invalid`**, asserted; only `invalid` suppresses, and it writes through X-204 | ⑥⑦ inherit |
 | **G9-21** | Health dashboard | primary-vs-spam placement per network · **trigger:** render | seed placement | placement is inferred from opens and reported as fact | the tile renders **only measured seed placement**; with no seed data it shows *"not measured"*, never an estimate *(P-120)* | ⑥ none · ⑦ n/a |
-| **G11-37** | Spam-folder rescue | ⭐ **the legitimate mechanism is the warm-up calendar and seed-list diversity** · **trigger:** poor placement | seed placement | ⛔ **a seeded network clicking "Not Spam"** — filter manipulation, the F-15 question in email form | the module contains **no path that marks mail as not-spam on a recipient's behalf**, asserted by absence · the response to poor placement is ramp-down and diversity, asserted | ⑥⑦ inherit |
+| **G11-37** | Spam-folder rescue | ⭐ **the legitimate mechanism is the warm-up calendar and seed-list diversity** · **trigger:** poor placement | seed placement | ⛔ **a seeded network clicking "Not Spam"** — filter manipulation, the F-15 question in email form | the module contains **no path that marks mail as not-spam on a recipient's behalf**, asserted by absence · the response to poor placement is ramp-down and diversity, asserted | ⑥⑦ inherit · refuses: any illegitimate warm-up mechanism outside the calendar and seed-list diversity |
 | **G11-12** · **G11-15** | Inbound parsing · Gmail read-only watch — **one spec** | ⭐ **the receiving bot's front door** — replies thread into the one `Conversation` · **trigger:** inbound message | the thread · the model roster *(§170.0②)* | ⛔ **a reply creates a new thread** and the history the AI answers from is split in half | a reply with a mangled subject and no `In-Reply-To` still threads by participant + recency, asserted · **the reading model is read from the router, never named in this module** | ⑥ read-only scope, confirmed once · ⑦ parses unattended |
 | **G11-29** | RSS-to-email | a feed becomes a campaign draft · **trigger:** new item | the feed | it publishes unattended on day one | a draft, never a send, until the tenant's trust ladder unlocks it *(§149.1)* | ⑥ the feed URL, once · ⑦ drafts; sends only after N approved |
 | **G1-43** | Preference centre | granular unsubscribe — ⛔ **transactional still sends** *(§137)* · **trigger:** the link in any marketing mail | preference rows → X-204 suppressions | ⛔⛔ **a marketing unsubscribe suppresses the receipt for the job they just paid for** | unsubscribing from marketing and then completing a job **still delivers the invoice**, asserted in one test · every preference write lands in X-204, not in a local table | ⑥ the categories are the tenant's, confirmed once · ⑦ honoured on the next send, always |
@@ -29196,12 +29196,12 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 | **G10-03** · **G3-04** | ⭐⭐ The 3% abandonment cap + predictive pacing — **one spec** | ⛔ **hard maximum 3%, lower only; the UI and the API REJECT a higher value** · **trigger:** every dial decision | the rolling abandonment rate over **all** seats | ⛔⛔ **the rate is computed over human seats only**, or over a window short enough to hide a breach. *Either way the cap is measured against a number that is not the truth and the ceiling is decorative* | ⭐ **[AMENDED T677 · §171A — the prior assertion was wrong under the owner's ruling]** the denominator is asserted to contain **human-required calls ONLY** *(answered-then-transferred, plus anything queued straight to a human)*, proven on a mixed fixture · **AI-answered-and-resolved calls are out of BOTH numerator and denominator** · ⛔ **the exemption is a DENOMINATOR DEFINITION, never a branch** — `doctor` asserts no `if ($seat->isAi())` near the meter · ⭐ **a `silent_answer` event is asserted to fire when AI concurrency is forced to exhaustion** · a `PUT` of `abandonment_target: 5` returns **422**, asserted on both UI and API paths · pacing throttles **before** the cap, not at it | ⑥ a value at or below 3 confirmed once *(P-100)* · ⑦ paces unattended |
 | **G18-01** | AMD | ⛔ **uncertain → treat as HUMAN. Never drop a voicemail on a live person** · **trigger:** answer | the AMD verdict | ⛔ **an "uncertain" verdict is treated as a machine** to save a second — and a real person hears a recording start, or silence | a forced `uncertain` verdict routes to a **live seat**, asserted · a silent hang-up path does not exist in this module, asserted by absence *(§167 killed Whisper Mode for exactly this)* | ⑥ operator-side · ⑦ always |
 | **G11-25** | One-click dispositions | ⭐ **a closed set per campaign**, one tap · **trigger:** call end | `dispositions` | a free-text disposition, and the reporting becomes unaggregatable within a week | the set is closed and enforced at the write — an unknown value is **refused, not stored**, asserted · **both seat types write the same table** | ⑥ the set is confirmed once per campaign · ⑦ the AI seat dispositions itself |
-| **G18-19** | Dial modes | preview · progressive · predictive · **trigger:** campaign start | the mode | predictive is offered where the list is too small for the maths to hold | predictive is **refused below the minimum list size** with the reason shown, asserted. ⚠️ *Twilio is corpus vocabulary — Infobip primary* | ⑥ mode confirmed once · ⑦ n/a |
+| **G18-19** | Dial modes | preview · progressive · predictive · **trigger:** campaign start | the mode | predictive is offered where the list is too small for the maths to hold | predictive is **refused below the minimum list size** with the reason shown, asserted. ⚠️ *Twilio is corpus vocabulary — Infobip primary* | ⑥ mode confirmed once · ⑦ n/a · refuses: to treat Twilio as primary — Infobip is primary (§120–§122) |
 | **G18-15** | Queue announcements | live position and wait · **trigger:** hold | live queue state | it announces a wait computed from an average that ignores the AI seats now answering | the announced wait is asserted against the **actual** next-answer time within tolerance, on a mixed-seat fixture · ⭐ *the AI answers first (R11/R20), so the queue is usually empty — the announcement exists for when it is not* | ⑥⑦ inherit |
 | **G18-03** | Screen pop | the record before hello · **trigger:** connect | X-01's thread | the pop shows a record for the wrong `Person` on a shared number | a shared/unknown number pops a **disambiguation**, never a guess, asserted | ⑥⑦ inherit |
 | **G18-08** | Live coaching | listen · whisper · barge · **trigger:** supervisor action | the bridge | barge is audible to the customer as a click, or whisper leaks | whisper is asserted **absent on the customer leg**; barge announces itself to the agent before it opens, asserted | ⑥ roles, confirmed once · ⑦ n/a |
-| **G2-09** · **G5-40** · **G9-01** | QA scoring · objection extraction · the roll-up — **one spec** | ⭐ **an AI seat is scored exactly like a human** · **trigger:** call end | `qa_scorecards` | ⛔ **AI calls are excluded from QA** — the seats doing the most volume are the ones nobody is measuring | a mixed fixture produces scorecards for **both** seat types with the same rubric, asserted · the objection roll-up renders through X-194 | ⑥ the rubric, confirmed once · ⑦ scores every call |
-| **G18-13** · **G18-02** · **G18-16** | Post-call feedback · course correction · talk-to-listen — **one spec** | ⭐ **T677: a coaching signal and a next action — never a ranking** · **trigger:** call end | the call's metrics | ⛔ **it becomes a leaderboard of people.** *§150.4's scorecard is positive-only, and this is the row where that law is either honoured or quietly broken* | the output for a rep contains **their own metric and a suggested action** and **no comparative rank**, asserted by schema — there is no `rank` field to populate | ⑥ none · ⑦ after every call |
+| **G2-09** · **G5-40** · **G9-01** | QA scoring · objection extraction · the roll-up — **one spec** | ⭐ **an AI seat is scored exactly like a human** · **trigger:** call end | `qa_scorecards` | ⛔ **AI calls are excluded from QA** — the seats doing the most volume are the ones nobody is measuring | a mixed fixture produces scorecards for **both** seat types with the same rubric, asserted · the objection roll-up renders through X-194 | ⑥ the rubric, confirmed once · ⑦ scores every call · refuses: to score an AI seat differently from a human seat |
+| **G18-13** · **G18-02** · **G18-16** | Post-call feedback · course correction · talk-to-listen — **one spec** | ⭐ **T677: a coaching signal and a next action — never a ranking** · **trigger:** call end | the call's metrics | ⛔ **it becomes a leaderboard of people.** *§150.4's scorecard is positive-only, and this is the row where that law is either honoured or quietly broken* | the output for a rep contains **their own metric and a suggested action** and **no comparative rank**, asserted by schema — there is no `rank` field to populate | ⑥ none · ⑦ after every call · refuses: to act as a scoreboard against the rep — it is feedback (T677) |
 | **G5-09** · **G16-11** | AI roleplay · highlight reels — **one spec** | practice against a synthetic caller; a library of **positive** examples · **trigger:** the rep opens training | X-197's voice · past calls | a "what not to do" reel of a named colleague | a reel clip requires the **participant's** consent flag before it can be shared, asserted — the same shape as the customer-photo grant *(§169.0)* | ⑥ none · ⑦ suggests, never assigns |
 | **G9-38** · **G13-02** | ⭐ **[RE-CUT T677 · §171B O-5] A — the live wallboard** *(operations)* | live queue state and team-level activity on a screen · **trigger:** render | live state | ⛔ **the heat map is read as a surveillance tool** — *"everyone stopped dialling at 3pm"* pointed at people rather than at the queue | renders **team-level state only**; there is no per-person tile in the schema, asserted | ⑥ what shows is confirmed once · ⑦ unattended |
 | **G2-26** · **G2-35** · **G2-37** · **G16-15** | ⭐ **[RE-CUT T677] B — the achievement layer** *(people — §150.4, positive only)* | anthems · battles · trophies · milestones · **trigger:** an achievement event | achievements | ⛔ **it becomes a ranking of people** — the row where §150.4 is honoured or quietly broken | **individual POSITIVE achievements only; there is no `rank` field to populate**, asserted by schema | ⑥ opt-in per team · ⑦ celebrates unasked | live queue state on a screen, plus the celebratory layer · **trigger:** render | live state · achievements | ⛔ **the heat map is read as a surveillance tool** — *"everyone stopped dialling at 3pm"* pointed at people rather than at the queue | the wallboard renders **team-level** state and **individual POSITIVE achievements only**; there is no per-person negative tile, asserted by schema *(§150.4 · T677)* | ⑥ what shows is confirmed once · ⑦ runs unattended |
@@ -29215,7 +29215,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 | # | Capability | Decision owner | ④ failure mode | ⑤ test |
 | :--- | :--- | :--- | :--- | :--- |
 | **G11-11** | DMARC **reporting** | ⭐ an infrastructure **cron** — nobody decides anything | reports are ingested and never parsed; the XML piles up and the tenant is told "monitoring is on" | a report with a failing source produces a **parsed row per source**, asserted; ingestion without parsing fails the build |
-| **G7-40** | **Spoofing alerts** | ⭐ a **high-priority security event on the spine** — X-123, not a mailbox | a spoofing signal is delivered as a routine notification and sits unread with the newsletters | the alert emits at security priority and is asserted to **bypass digest batching** entirely |
+| **G7-40** | **Spoofing alerts** | ⭐ a **high-priority security event on the spine** — X-123, not a mailbox | a spoofing signal is delivered as a routine notification and sits unread with the newsletters | the alert emits at security priority and is asserted to **bypass digest batching** entirely · refuses: to suppress a DMARC XML failure alert |
 | **G10-28** | **Policy escalation** `p=none` → quarantine → reject | ⭐ **a ticket in X-111** — a human decides, with the evidence attached | ⛔ **auto-escalation to `reject`** while a legitimate source still fails alignment — the tenant's own invoices stop arriving and nobody connects it to a DNS change made last week | the escalation **cannot fire automatically**; it opens a ticket carrying the N-day alignment evidence, asserted · a manual escalation with a failing known source is **refused** |
 
 ⭐ **Why one spec was wrong:** *they share a data source — the aggregate XML — and I merged on the data. **The decision owner is the boundary, not the payload.*** *That is a rule worth carrying into the remaining thirteen passes: **merge rows that share an OWNER, never rows that merely share a table.***
@@ -30587,7 +30587,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 | # | Capability | ① what · ② trigger | ③ data | ④ failure mode | ⑤ test — assertion · refusal | ⑥⑦ |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **G16-30** · **G16-22** | VSL script + short-form cuts — **one spec** | five questions become a script; the long form yields three cuts · **trigger:** the tenant answers, or a long video lands | the answers · the transcript | ⛔ **invented statistics.** *"90% of homeowners…" is exactly what a script model produces because it is what good scripts contain* | ⛔ **the claim lint runs here** *(§182)*: no CLAIMS, CREDENTIALS, NUMBERS or DATES that are not `Fact`s — asserted against a fixture prompt that invites a statistic | ⑥ five questions, once · ⑦ drafts, never publishes unattended |
+| **G16-30** · **G16-22** | VSL script + short-form cuts — **one spec** | five questions become a script; the long form yields three cuts · **trigger:** the tenant answers, or a long video lands | the answers · the transcript | ⛔ **invented statistics.** *"90% of homeowners…" is exactly what a script model produces because it is what good scripts contain* | ⛔ **the claim lint runs here** *(§182)*: no CLAIMS, CREDENTIALS, NUMBERS or DATES that are not `Fact`s — asserted against a fixture prompt that invites a statistic | ⑥ five questions, once · ⑦ drafts, never publishes unattended · refuses: to include invented statistics in the script (P-120) |
 | **G12-23** · **G8-37** · **G12-06** | Show notes · keyword rewrite · publish — **one spec** | transcript → notes → the player · **trigger:** upload complete | the transcript | notes that paraphrase into a claim the speaker did not make | ⛔ **a quoted line in the notes must appear VERBATIM in the transcript**, asserted by substring match; paraphrase is unquoted | ⑥⑦ inherit |
 | **G12-34** · **G12-37** · **G12-24** | Snippets · thread · carousel — **one spec** | the same transcript, three shapes · **trigger:** publish | the transcript + timestamps | a quote is cut mid-sentence and reverses its meaning | every extracted quote carries its **timestamp**, and a clip boundary lands on a sentence boundary, asserted | ⑥⑦ inherit |
 | **G16-23** · **G16-02** | Chapters + burned captions — **one spec** | topic changes detected; captions on the 90-second cut · **trigger:** processing | the audio | captions drift out of sync after an edit and nobody watches to the end to find out | caption timing is re-derived from the **final** cut, not the source, asserted by editing a fixture mid-way | ⑥ none · ⑦ automatic |
@@ -32354,12 +32354,12 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 | # | Capability · Action | Guard | Floor | ④ failure mode | ⑤ test — assertion · refusal |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| ⭐⭐ **G11-24** · **G19-04** · **G17-20** | **Omnichannel campaigns · branching · drip sync** — **one spec** | **CONFIRM** | ⛔ **L1** | ⛔⛔ **a branch loops and one person receives the sequence twice** | ⛔ **`doctor` asserts the branch graph is ACYCLIC**, walked exhaustively · ⭐ **and §187's ceiling binds: ONE PERSON, ONE CADENCE across every module** |
+| ⭐⭐ **G11-24** · **G19-04** · **G17-20** | **Omnichannel campaigns · branching · drip sync** — **one spec** | **CONFIRM** | ⛔ **L1** | ⛔⛔ **a branch loops and one person receives the sequence twice** | ⛔ **`doctor` asserts the branch graph is ACYCLIC**, walked exhaustively · ⭐ **and §187's ceiling binds: ONE PERSON, ONE CADENCE across every module** · refuses: a send whose caller did not declare Marketing class — the class comes from the caller, never from the channel |
 | ⭐⭐⭐ **G11-28** | **Reply interception** | — | **L3** | ⛔⛔ **the sequence keeps sending after they replied** | ⛔ **a reply halts EVERY sequence on that `Conversation`, asserted with two campaigns running at once** *(P-075)* |
-| ⭐ **G10-25** · **G12-28** | **List scrubbing + post-purchase exclusion** — **one spec** | — | **L3** | someone who just bought receives the acquisition sequence | **a converted `Person` is asserted excluded within the same cycle**, not the next |
+| ⭐ **G10-25** · **G12-28** | **List scrubbing + post-purchase exclusion** — **one spec** | — | **L3** | someone who just bought receives the acquisition sequence | **a converted `Person` is asserted excluded within the same cycle**, not the next · refuses: to send without scrubbing against a fresh suppression list |
 | ⚠️ **G3-53** | **"Spintax at scale"** | — | **L3** | ⛔ *the evasion sense, killed at T677* | ⭐ **it is `X-154` Lexicon Personalisation — an AUTHORED variation set, not per-send generation**, asserted |
 | **G11-02** · **G11-31** · **G5-12** | **Resend to unopens · send-time · subject split** — **one spec** | **CONFIRM** | **L1** | a resend is a second send and the cadence ceiling is ignored | **a resend counts against the per-person ceiling**, asserted |
-| **G2-14** · **G12-18** · **G5-14** | **ML optimisation · dynamic blocks · reactivation intake** — **one spec** | — | **L3** | ⛔ a dynamic block renders a price | ⛔ **`is_sample` and unconfirmed prices never render in a campaign**, asserted *(P-092)* |
+| **G2-14** · **G12-18** · **G5-14** | **ML optimisation · dynamic blocks · reactivation intake** — **one spec** | — | **L3** | ⛔ a dynamic block renders a price | ⛔ **`is_sample` and unconfirmed prices never render in a campaign**, asserted *(P-092)* · refuses: a send time outside the tenant's marketing window (P-063), whatever the model proposes |
 | ⭐ **G17-01** · **G12-30** · **G16-12** · **G12-20** | **X-185 — A/B, proof, hooks, emoji** — **one spec** | — | **L3** | ⛔⛔ **a "winner" is declared on 40 sends** | ⛔ **a variant cannot be promoted below a minimum sample; the test reports "not yet significant" and keeps running**, asserted · ⭐ *and emoji density is a BILLING fact — GSM-7 to UCS-2 doubles segments (§183)* |
 | **G5-16** | **X-185 — proactive outreach** | **CONFIRM** | ⛔ **L1** | it initiates on a hunch | ⛔ **P-068: a signal raises; `X-204` decides**, asserted |
 | ⭐⭐⭐ **G16-19** · **G16-17** · **G19-12** · **G17-29** | **X-189 — quote graphics · multi-media · MMS · canvas** — **one spec** | — | **L3** | ⛔⛔ **an image with no licence enters the pipeline** | ⭐⭐ **THE ASSET RULE: every image carries a `license_source` — tenant-owned · licensed stock · generated. A SCRAPED image has none and is REFUSED at ingest**, asserted by feeding one from `X-151` · ⛔ **P-131 still binds: stock never renders on a job surface** · ⭐ **the licence terms are STORED, so a letter is answered with one query instead of a panic** |

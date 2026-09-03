@@ -37,5 +37,5 @@ return [
     'G9-12' => 'demo metrics are is_mock;  "local industry averages" must be measured or absent (P-120)',
 
     // status: SPECCED
-    'G11-33' => 'the sandbox intercepts every outbound; is_mock end to end',
+    'G11-33' => 'the sandbox intercepts every outbound; is_mock end to end · refuses: unintercepted outbound messages',
 ];
