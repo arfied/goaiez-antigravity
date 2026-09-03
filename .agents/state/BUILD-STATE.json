@@ -1232,6 +1232,10 @@
   {
    "at": "2026-08-29T14:37:58",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-03T02:05:23",
+   "note": "X-121 job->person landed on origin/main (ac89b6a work_orders.person_id, b9701c4 JobCompleted carries the person); C-Reviews now asks for a review from a real completed job"
   }
  ],
  "decisions": [
