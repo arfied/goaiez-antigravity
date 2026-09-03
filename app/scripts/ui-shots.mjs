@@ -216,9 +216,12 @@ function waitForServer(url) {
 
         // Login
         await page.fill('#password-email', 'owner2@business.com');
-        await page.fill('#password', 'password');
-        await page.click('form:has(#password) button[type="submit"]');
-        await page.waitForLoadState('networkidle');
+            await page.fill('#password', 'password');
+            await Promise.all([
+                page.waitForNavigation(),
+                page.click('form:has(#password) button[type="submit"]')
+            ]);
+            await page.waitForLoadState('networkidle');
         
         // Assert login succeeded
         if (page.url().endsWith('/login')) {
@@ -518,7 +521,7 @@ function waitForServer(url) {
             if (shouldCapture('invalid-login-wrong' + suffix)) {
                 await page.goto(`${baseUrl}/login`);
                 await page.waitForLoadState('networkidle');
-                await page.fill('#password-email', 'owner2@business.com');
+                await page.fill('#password-email', 'owner@business.com');
                 await page.fill('#password', 'wrongpass');
                 await page.click('form:has(#password) button[type="submit"]');
                 await page.waitForLoadState('networkidle');
@@ -550,13 +553,16 @@ function waitForServer(url) {
             await page.waitForLoadState('networkidle');
             await page.fill('#password-email', 'owner2@business.com');
             await page.fill('#password', 'password');
-            await page.click('form:has(#password) button[type="submit"]');
+            await Promise.all([
+                page.waitForNavigation(),
+                page.click('form:has(#password) button[type="submit"]')
+            ]);
             await page.waitForLoadState('networkidle');
 
             if (shouldCapture('invalid-support-empty' + suffix)) {
                 await page.goto(`${baseUrl}/account/support`);
                 await page.waitForLoadState('networkidle');
-                await page.click('form[wire\\:submit="send"] button[type="submit"]');
+                await page.click('button:has-text("Send")');
                 await page.waitForLoadState('networkidle');
                 // Support form might take a moment to show validation error from livewire
                 await page.waitForTimeout(500);
@@ -565,9 +571,9 @@ function waitForServer(url) {
             }
 
             if (shouldCapture('invalid-settings-replies-empty' + suffix)) {
-                await page.goto(`${baseUrl}/account`);
+                await page.screenshot({ path: "DEBUG-login-after.png", fullPage: true }); const html = await page.content(); fs.writeFileSync("DEBUG-login-after.html", html); await page.goto(`${baseUrl}/account`);
                 await page.waitForLoadState('networkidle');
-                await page.click('form[wire\\:submit="add"] button[type="submit"]');
+                 await page.screenshot({ path: "DEBUG-account-before-click.png", fullPage: true }); await page.click('button:has-text("Save this example")');
                 await page.waitForLoadState('networkidle');
                 await page.waitForTimeout(500);
                 await page.screenshot({ path: path.join(outputDir, `invalid-settings-replies-empty${suffix}.png`), fullPage: true });
@@ -577,7 +583,7 @@ function waitForServer(url) {
             if (shouldCapture('invalid-website-builder-empty' + suffix)) {
                 await page.goto(`${baseUrl}/advanced/website-builder`);
                 await page.waitForLoadState('networkidle');
-                await page.click('button[wire\\:click="generateWithAI"]');
+                 await page.click('button:has-text("Generate Page")');
                 await page.waitForLoadState('networkidle');
                 await page.waitForTimeout(500);
                 await page.screenshot({ path: path.join(outputDir, `invalid-website-builder-empty${suffix}.png`), fullPage: true });
@@ -592,13 +598,16 @@ function waitForServer(url) {
             await page.waitForLoadState('networkidle');
             await page.fill('#password-email', 'setup@business.com');
             await page.fill('#password', 'password');
-            await page.click('form:has(#password) button[type="submit"]');
+            await Promise.all([
+                page.waitForNavigation(),
+                page.click('form:has(#password) button[type="submit"]')
+            ]);
             await page.waitForLoadState('networkidle');
 
             if (shouldCapture('invalid-setup-find-business-empty' + suffix)) {
                 await page.goto(`${baseUrl}/setup/find-business`);
                 await page.waitForLoadState('networkidle');
-                await page.click('form[wire\\:submit="resolve"] button[type="submit"]');
+                 await page.click('button:has-text("Find it")');
                 await page.waitForLoadState('networkidle');
                 await page.waitForTimeout(500);
                 await page.screenshot({ path: path.join(outputDir, `invalid-setup-find-business-empty${suffix}.png`), fullPage: true });
@@ -609,7 +618,7 @@ function waitForServer(url) {
                 await page.goto(`${baseUrl}/setup/find-business`);
                 await page.waitForLoadState('networkidle');
                 await page.fill('#pasted-url', 'not-a-url');
-                await page.click('form[wire\\:submit="resolve"] button[type="submit"]');
+                 await page.click('button:has-text("Find it")');
                 await page.waitForLoadState('networkidle');
                 await page.waitForTimeout(500);
                 await page.screenshot({ path: path.join(outputDir, `invalid-setup-find-business-wrong${suffix}.png`), fullPage: true });
