@@ -101,7 +101,7 @@
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 border border-gray-200 dark:border-gray-700">
         <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Recent Inbound Voice Calls</h2>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" aria-label="Recent voice calls log">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-left text-xs">
                 <thead class="bg-gray-50 dark:bg-gray-900 font-semibold text-gray-600 dark:text-gray-300">
                     <tr>
