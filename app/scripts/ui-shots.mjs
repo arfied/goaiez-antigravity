@@ -633,6 +633,16 @@ function waitForServer(url) {
                 await runAxe(page, `account-inbox-thread${suffix}`, outputDir);
             }
 
+            if (shouldCapture('advanced-website-builder-mobile' + suffix)) {
+                await page.goto(`${baseUrl}/advanced/website-builder`);
+                await page.waitForLoadState('networkidle');
+                await page.click('button:has-text("Mobile Mockup")');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `advanced-website-builder-mobile${suffix}.png`), fullPage: true });
+                await runAxe(page, `advanced-website-builder-mobile${suffix}`, outputDir);
+            }
+
             if (shouldCapture('account-customer-profile' + suffix)) {
                 await page.goto(`${baseUrl}/account/customers`);
                 await page.waitForLoadState('networkidle');
