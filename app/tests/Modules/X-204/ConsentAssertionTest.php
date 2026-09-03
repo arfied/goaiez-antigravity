@@ -25,8 +25,9 @@ class ConsentAssertionTest extends TestCase
         $this->decider = new ConsentDecideAction($this->consent);
         $this->suppressor = new ConsentSuppressAction($this->consent);
     }
-    public function test_N_001_N-001_refusal_without_p060_code_fails(): void
+    public function test_n_001_refusal_without_p060_code_fails(): void
     {
+        // N-001
         $this->assertTrue(defined(ConsentService::class . '::P060_CODES'), 'System lacks P-060 code set definition');
         $this->assertCount(20, ConsentService::P060_CODES, 'P-060 code set must have 20 codes');
 
@@ -39,8 +40,9 @@ class ConsentAssertionTest extends TestCase
             'refusal_reason' => 'NOT_A_P060_CODE',
         ]);
     }
-    public function test_N_002_N-002_no_channel_decides_permission_for_itself(): void
+    public function test_n_002_no_channel_decides_permission_for_itself(): void
     {
+        // N-002
         $modulesPath = base_path('app/Modules');
         $this->assertDirectoryExists($modulesPath);
 
@@ -50,12 +52,14 @@ class ConsentAssertionTest extends TestCase
         
         $this->assertEmpty($output, "Found consent branch outside X-204:\n" . implode("\n", $output));
     }
-    public function test_N_003_N-003_stop_mid_sequence_halts_pending_steps(): void
+    public function test_n_003_stop_mid_sequence_halts_pending_steps(): void
     {
+        // N-003
         $this->assertTrue(method_exists(ConsentService::class, 'haltPendingSequences'), 'ConsentService lacks haltPendingSequences behaviour');
     }
     public function test_n_004_imported_person_is_unpermitted(): void
     {
+        // N-004
         $biz = TestCase::provisionTenant(['name' => 'N-004 Biz']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -69,12 +73,14 @@ class ConsentAssertionTest extends TestCase
         
         $this->assertEquals('UNPERMITTED', $person->consent_state ?? null, 'Imported person must be UNPERMITTED');
     }
-    public function test_N_005_N-005_cadence_ceiling_counts_every_class(): void
+    public function test_n_005_cadence_ceiling_counts_every_class(): void
     {
+        // N-005
         $this->assertTrue(method_exists(ConsentService::class, 'checkCadenceCeiling'), 'System lacks cadence ceiling behaviour');
     }
     public function test_n_006_suppression_is_per_destination_never_per_customer(): void
     {
+        // N-006
         $biz = TestCase::provisionTenant(['name' => 'N-006 Biz']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
