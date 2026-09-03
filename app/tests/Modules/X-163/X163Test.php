@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
+use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
@@ -202,9 +203,9 @@ class X163Test extends TestCase
     public function test_price_confirm_writes_fact_and_agent_answers(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Seam Biz', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $item = \App\Modules\X163\Models\PriceBookItem::create([
+        $item = PriceBookItem::create([
             'business_id' => $biz->id,
             'service_name' => 'drain unblock',
             'price_cents' => 12500,
@@ -215,18 +216,18 @@ class X163Test extends TestCase
 
         $this->confirm->handle($biz->id, $item->id);
 
-        $fact = \Illuminate\Support\Facades\DB::table('facts')
+        $fact = DB::table('facts')
             ->where('business_id', $biz->id)
             ->where('key', 'price.drain-unblock')
             ->first();
 
         $this->assertNotNull($fact, 'Fact should be written by X-119 listener');
-        $this->assertTrue((bool)$fact->is_valid);
+        $this->assertTrue((bool) $fact->is_valid);
         $this->assertEquals('12500', $fact->value);
 
-        $agent = app(\App\Modules\CAgent\Actions\AgentAnswerAction::class);
+        $agent = app(AgentAnswerAction::class);
         $res = $agent->handle($biz->id, 'How much for a drain unblock?');
-        
+
         $this->assertEquals(12500, $res['amount']);
 
         $resNegative = $agent->handle($biz->id, 'How much for a roof repair?');

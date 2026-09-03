@@ -106,7 +106,7 @@ final class AgentAnswerAction
                         $slugWords = explode('-', $slug);
                         $matchesAll = true;
                         foreach ($slugWords as $word) {
-                            if (!str_contains($lower, $word)) {
+                            if (! str_contains($lower, $word)) {
                                 $matchesAll = false;
                                 break;
                             }
@@ -154,7 +154,7 @@ final class AgentAnswerAction
                 $val = $fact->value;
                 if (is_numeric($val)) {
                     $amount = (int) $val;
-                    $formatted = '$' . number_format($amount / 100, 2);
+                    $formatted = '$'.number_format($amount / 100, 2);
                     $reply = "Our standard service is {$formatted}.";
                 } else {
                     $amount = null;
