@@ -186,10 +186,13 @@ class UiReviewSeeder extends Seeder
             // 3 with feedback (first-party review)
             $ratings = [5, 4, 2];
             $customers->take(3)->values()->each(function ($c, $index) use ($location, $ratings) {
+                $days = rand(1, 30);
                 Review::factory()->create([
                     'location_id' => $location->id,
                     'customer_id' => $c->id,
                     'rating' => $ratings[$index],
+                    'created_at' => now()->subDays($days),
+                    'updated_at' => now()->subDays($days),
                 ]);
             });
         }
@@ -197,14 +200,21 @@ class UiReviewSeeder extends Seeder
         if (Conversation::count() < 2) {
             $convCustomers = Customer::where('location_id', $location->id)->take(2)->get();
             foreach ($convCustomers as $c) {
+                $days = rand(1, 30);
                 $conv = Conversation::factory()->create([
                     'location_id' => $location->id,
                     'customer_id' => $c->id,
                     'channel' => 'sms',
+                    'created_at' => now()->subDays($days),
+                    'updated_at' => now()->subDays($days),
                 ]);
-                Message::factory()->count(3)->create([
-                    'conversation_id' => $conv->id,
-                ]);
+                for ($j = 0; $j < 3; $j++) {
+                    Message::factory()->create([
+                        'conversation_id' => $conv->id,
+                        'created_at' => now()->subDays($days)->addMinutes($j * 5),
+                        'updated_at' => now()->subDays($days)->addMinutes($j * 5),
+                    ]);
+                }
             }
         }
 
@@ -228,13 +238,21 @@ class UiReviewSeeder extends Seeder
 
         if (Review::where('is_platform', false)->count() < 4) {
             // 4 reviews (one unhappy)
-            Review::factory()->fromGoogle()->count(3)->create([
-                'location_id' => $location->id,
-                'rating' => 5,
-            ]);
+            for ($i = 0; $i < 3; $i++) {
+                $days = rand(1, 30);
+                Review::factory()->fromGoogle()->create([
+                    'location_id' => $location->id,
+                    'rating' => 5,
+                    'created_at' => now()->subDays($days),
+                    'updated_at' => now()->subDays($days),
+                ]);
+            }
+            $days = rand(1, 30);
             Review::factory()->fromGoogle()->create([
                 'location_id' => $location->id,
                 'rating' => 1,
+                'created_at' => now()->subDays($days),
+                'updated_at' => now()->subDays($days),
             ]);
         }
 
