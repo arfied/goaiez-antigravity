@@ -338,6 +338,7 @@ function waitForServer(url) {
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },
             { name: 'account-inbox', path: '/account/inbox' },
+            { name: 'account-customers', path: '/account/customers' },
             { name: 'advanced-home', path: '/advanced' },
             { name: 'advanced-website-builder', path: '/advanced/website-builder' },
             { name: 'advanced-citations', path: '/advanced/citations' },
