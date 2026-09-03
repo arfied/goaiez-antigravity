@@ -187,13 +187,13 @@
                     <div>
                         <dt class="text-base text-ink-2">Included with your plan</dt>
                         <dd class="mt-1 font-display text-xl font-semibold text-ink">{{ $card['monthly'] }}</dd>
-                        <p class="mt-1 text-base text-ink-2">Starts again on {{ $resetsOn }}.</p>
+                        <dd class="mt-1 text-base text-ink-2">Starts again on {{ $resetsOn }}.</dd>
                     </div>
 
                     <div>
                         <dt class="text-base text-ink-2">Credit you bought</dt>
                         <dd class="mt-1 font-display text-xl font-semibold text-ink">{{ $card['bought'] }}</dd>
-                        <p class="mt-1 text-base text-ink-2">Never runs out of time.</p>
+                        <dd class="mt-1 text-base text-ink-2">Never runs out of time.</dd>
                     </div>
                 </dl>
             </div>
