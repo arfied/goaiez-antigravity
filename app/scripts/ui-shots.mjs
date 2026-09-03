@@ -619,6 +619,16 @@ function waitForServer(url) {
                 await runAxe(page, `invalid-website-builder-empty${suffix}`, outputDir);
             }
 
+            if (shouldCapture('account-inbox-thread' + suffix)) {
+                await page.goto(`${baseUrl}/account/inbox`);
+                await page.waitForLoadState('networkidle');
+                await page.click('ul.space-y-3 li:nth-child(1) button');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `account-inbox-thread${suffix}.png`), fullPage: true });
+                await runAxe(page, `account-inbox-thread${suffix}`, outputDir);
+            }
+
             // setup logout and login as setup@business.com
             await page.goto(`${baseUrl}/logout`); // if there's a logout route, or just clear cookies
             await context.clearCookies();
