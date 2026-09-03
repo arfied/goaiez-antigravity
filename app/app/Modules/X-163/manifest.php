@@ -29,7 +29,6 @@ return [
     'ceiling' => 'L3',
 
     'provides' => [
-        'price.quote',
         'price.lookup',
         'price.confirm',
         'price.range',
@@ -65,6 +64,6 @@ return [
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.
     'agent_reachable' => [
-        'price.quote',
+        'none',
     ],
 ];
