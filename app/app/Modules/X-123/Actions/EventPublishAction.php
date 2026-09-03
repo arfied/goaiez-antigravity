@@ -10,12 +10,17 @@ use App\Modules\X123\Mail\DeadLetterNotification;
 use App\Modules\X123\Models\DeadLetter;
 use App\Modules\X123\Models\EventLog;
 use App\Modules\X123\Models\EventSubscription;
+use App\Modules\X204\Domain\ConsentService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 
 final class EventPublishAction
 {
+    public function __construct(
+        private readonly ConsentService $consentService
+    ) {}
+
     public function handle(
         int $businessId,
         string $eventName,
@@ -78,13 +83,16 @@ final class EventPublishAction
                 errorMessage: $dlq->error_message
             ));
 
-            // Send exactly one notification email
-            Mail::to('tenant@example.com')->send(new DeadLetterNotification(
-                businessId: $log->business_id,
-                eventLogId: $log->id,
-                eventName: $log->event_name,
-                errorMessage: $dlq->error_message
-            ));
+            $decision = $this->consentService->decide($log->business_id, 'tenant@example.com', 'email', 'transactional');
+            if ($decision['granted']) {
+                // Send exactly one notification email
+                Mail::to('tenant@example.com')->send(new DeadLetterNotification(
+                    businessId: $log->business_id,
+                    eventLogId: $log->id,
+                    eventName: $log->event_name,
+                    errorMessage: $dlq->error_message
+                ));
+            }
 
             return ['status' => 'dead_lettered', 'dlq_id' => $dlq->id];
         }
