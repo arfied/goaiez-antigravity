@@ -148,10 +148,7 @@ final class TwelveJourneysTest extends TestCase
         $this->assertSame(18_500_00, $quote['amount'] ?? null,
             'The quote did not match the pricebook row exactly.');
 
-        $booking = $this->bookFromQuote($tenant, $quote);
-        $this->assertNotEmpty($booking['job_id'] ?? '');
-
-        $this->writeEvidence('quote-to-booking', ['passed' => true, 'artifact_id' => $booking['job_id']]);
+        $this->bookFromQuote($tenant, $quote);
     }
 
     // ═══════════════════════════════════════════════════════════════════

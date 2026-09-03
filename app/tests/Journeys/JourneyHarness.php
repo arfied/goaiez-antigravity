@@ -162,21 +162,7 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @param array<string,mixed> $quote @return array<string,mixed> */
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        $id = DB::table('work_orders')->insertGetId([
-            'business_id' => $tenant['id'],
-            'title' => 'Booked from quote',
-            'total_amount' => $quote['amount'] ?? 0,
-            'status' => 'draft',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $write = app(EntityWriteAction::class);
-        $write->handle('work_orders', $id, $tenant['id'], [
-            'status' => 'pending',
-        ]);
-
-        return ['job_id' => (string) $id];
+        throw $this->todo('UNRESOLVED — X-121 exposes no create path — a work order cannot be created from a quote until X-121 (Track 1) provides one');
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
