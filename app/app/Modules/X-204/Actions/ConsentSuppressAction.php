@@ -6,6 +6,7 @@ namespace App\Modules\X204\Actions;
 
 use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
+use Illuminate\Support\Facades\Event;
 
 final class ConsentSuppressAction
 {
@@ -13,6 +14,13 @@ final class ConsentSuppressAction
 
     public function handle(int $businessId, string $recipientPhone, string $channel = 'sms', string $reason = 'opt_out'): Suppression
     {
-        return $this->service->suppress($businessId, $recipientPhone, $channel, $reason);
+        $suppression = $this->service->suppress($businessId, $recipientPhone, $channel, $reason);
+        Event::dispatch('suppression.added', [[
+            'business_id' => $businessId,
+            'recipient_phone' => $recipientPhone,
+            'channel' => $channel,
+            'reason' => $reason,
+        ]]);
+        return $suppression;
     }
 }

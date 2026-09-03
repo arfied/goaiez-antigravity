@@ -23,6 +23,15 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-186');
 
+        \Illuminate\Support\Facades\Event::listen('suppression.added', function (array $payload) {
+            \App\Modules\X186\Models\CampaignStep::where('business_id', $payload['business_id'])
+                ->where('recipient', $payload['recipient_phone'])
+                ->where('channel', $payload['channel'])
+                ->whereNull('sent_at')
+                ->whereNull('cancelled_at')
+                ->update(['cancelled_at' => now()]);
+        });
+
         if (class_exists(Livewire::class)) {
             Livewire::component('x-186.sequence-builder', SequenceBuilder::class);
             Livewire::component('x-186.audience-preview-count', AudiencePreviewCount::class);
