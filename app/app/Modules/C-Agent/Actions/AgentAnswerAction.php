@@ -11,6 +11,9 @@ use App\Modules\CAgent\Models\AgentTurn;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * (R245) agent fact key schema: both price.<slug> and legacy service.oil_change.price stand to preserve compatibility with existing data
+ */
 final class AgentAnswerAction
 {
     public function handle(
