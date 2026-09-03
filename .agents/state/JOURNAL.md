@@ -507,3 +507,4 @@
 - `2026-09-02T23:58:57` stage capability = 391
 - `2026-09-03T01:03:21` stage capability = 352
 - `2026-09-03T01:03:24` stage contract = 100
+- `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
