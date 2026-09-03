@@ -74,9 +74,9 @@
                             <div><strong>Name:</strong> {{ $citation->listing_name ?? 'N/A' }}</div>
                             <div><strong>Phone:</strong> {{ $citation->listing_phone ?? 'N/A' }}</div>
                             <div><strong>Address:</strong> {{ $citation->listing_address ?? 'N/A' }}</div>
-                            @if ($citation->mismatch_details)
+                            @if (!empty($citation->mismatch_details))
                                 <div class="mt-1 text-xs text-amber-700 dark:text-amber-400 font-medium">
-                                    Issue: {{ json_encode($citation->mismatch_details) }}
+                                    Issue: {{ is_array($citation->mismatch_details) ? implode(', ', $citation->mismatch_details) : $citation->mismatch_details }}
                                 </div>
                             @endif
                         </td>
