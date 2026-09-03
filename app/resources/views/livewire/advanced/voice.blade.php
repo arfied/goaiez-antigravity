@@ -90,8 +90,8 @@
             </div>
 
             <div class="mt-6 pt-4 border-t border-rule">
-                <button wire:click="saveSettings" class="w-full py-2 bg-paper border border-rule text-ink rounded text-xs font-semibold hover:bg-card">
-                    Test Voice Greeting via Audio Preview 🔊
+                <button wire:click="saveSettings" class="w-full min-h-[40px] px-3 py-2.5 bg-paper border border-rule text-ink rounded text-xs font-semibold hover:bg-card">
+                    Save voice settings
                 </button>
             </div>
         </div>
