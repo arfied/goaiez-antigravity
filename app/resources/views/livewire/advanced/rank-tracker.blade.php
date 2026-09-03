@@ -76,15 +76,15 @@
 
     <!-- Visual Geo-Grid Map Simulation -->
     <div class="bg-card border border-rule rounded-card shadow-card p-6 mb-8">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
             <div>
                 <h2 class="text-lg font-bold text-ink">Local Map Ranking Heatmap</h2>
                 <p class="text-xs text-ink-2">Search Query: <strong>"{{ $selectedKeyword }}"</strong></p>
             </div>
-            <div class="flex items-center gap-4 text-xs font-medium">
-                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-emerald-500"></span> #1–3 (3-Pack)</span>
-                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-amber-500"></span> #4–10 (First Page)</span>
-                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-rose-500"></span> #11+ (Low Rank)</span>
+            <div class="flex flex-wrap items-center gap-4 text-xs font-medium">
+                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-emerald-800"></span> #1–3 (3-Pack)</span>
+                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-amber-900"></span> #4–10 (First Page)</span>
+                <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-rose-800"></span> #11+ (Low Rank)</span>
             </div>
         </div>
 
