@@ -1236,6 +1236,10 @@
   {
    "at": "2026-09-03T02:05:23",
    "note": "X-121 job->person landed on origin/main (ac89b6a work_orders.person_id, b9701c4 JobCompleted carries the person); C-Reviews now asks for a review from a real completed job"
+  },
+  {
+   "at": "2026-09-03T02:30:05",
+   "note": "correction to the 2026-09-03T02:05:03 replay decision: importJobs is safe because JourneyHarness:309 writes rows directly and never calls JobStateAction, not because of Job::withoutEvents \u2014 withoutEvents suppresses model events, not the explicit Event::dispatch at JobStateAction:33. The decision itself is unchanged: no new guard."
   }
  ],
  "decisions": [
