@@ -17,6 +17,7 @@ return [
     'intro' => 'We would love to hear about your experience.',
     'rating' => [
         'legend' => 'Tap to rate',
+        'required' => 'Please select a rating.',
     ],
     'comment' => [
         'label' => 'Your feedback',
@@ -35,5 +36,8 @@ return [
     'submit' => 'Submit Feedback',
     'errors' => [
         'rate_limited' => 'You have submitted too many requests. Please try again later.',
+        'sms_needs_phone' => 'A phone number is required to receive SMS updates.',
+        'email_needs_email' => 'An email address is required to receive email updates.',
+        'too_fast' => 'You are submitting too fast. Please wait a moment.',
     ],
 ];
