@@ -45,11 +45,12 @@ final class WhatsappEngine
         int $businessId,
         string $recipientPhone,
         string $messageText,
-        ?string $templateName = null
+        ?string $templateName = null,
+        string $class = 'transactional'
     ): array {
-        $decision = $this->consentService->decide($businessId, $recipientPhone, 'whatsapp', 'transactional');
+        $decision = $this->consentService->decide($businessId, $recipientPhone, 'whatsapp', $class);
         if (! $decision['granted']) {
-            $reason = ($decision['reason'] === 'SUPPRESSED') ? 'STOP_SUPPRESSED' : $decision['reason'];
+            $reason = $decision['reason'];
 
             return [
                 'status' => 'refused',

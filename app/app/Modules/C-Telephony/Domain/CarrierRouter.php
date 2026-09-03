@@ -40,12 +40,13 @@ final class CarrierRouter
         string $toPhone,
         string $body,
         bool $isRcs = false,
-        ?string $preferredCarrier = null
+        ?string $preferredCarrier = null,
+        string $class = 'transactional'
     ): array {
-        return DB::transaction(function () use ($businessId, $threadKey, $toPhone, $isRcs, $preferredCarrier) {
-            $decision = $this->consentService->decide($businessId, $toPhone, 'telephony', 'transactional');
+        return DB::transaction(function () use ($businessId, $threadKey, $toPhone, $isRcs, $preferredCarrier, $class) {
+            $decision = $this->consentService->decide($businessId, $toPhone, 'telephony', $class);
             if (! $decision['granted']) {
-                $reason = ($decision['reason'] === 'SUPPRESSED') ? 'STOP_SUPPRESSED' : $decision['reason'];
+                $reason = $decision['reason'];
 
                 return [
                     'status' => 'refused',
