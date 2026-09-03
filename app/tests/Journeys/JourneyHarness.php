@@ -306,7 +306,7 @@ trait JourneyHarness
 
         $this->lastMigrationRunId = $runId;
 
-        Job::withoutEvents(function () use ($businessId, $count, $historical) {
+        Job::withoutEvents(function () use ($businessId, $count, $historical, $person) {
             $jobs = [];
             $now = now()->toDateTimeString();
             $hist = now()->subYear()->toDateTimeString();
@@ -314,6 +314,7 @@ trait JourneyHarness
             for ($i = 0; $i < $count; $i++) {
                 $jobs[] = [
                     'business_id' => $businessId,
+                    'person_id' => $person->id,
                     'title' => 'Imported Job '.$i,
                     'price_cents' => 10000,
                     'status' => 'completed',
