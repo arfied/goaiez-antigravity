@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T14:07:07",
+ "updated": "2026-09-03T01:58:12",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -788,6 +788,12 @@
      "stage": "journey",
      "why": "journey J3 \u2014 C-Agent\\Actions\\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.",
      "at": "2026-09-02T13:49:13"
+    },
+    {
+     "module": "X-163",
+     "stage": "journey",
+     "why": "J3 \u2014 tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path",
+     "at": "2026-09-03T01:58:12"
     }
    ]
   },
@@ -1202,6 +1208,12 @@
    "stage": "journey",
    "why": "journey J3 \u2014 C-Agent\\Actions\\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.",
    "at": "2026-09-02T13:49:13"
+  },
+  {
+   "module": "X-163",
+   "stage": "journey",
+   "why": "J3 \u2014 tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path",
+   "at": "2026-09-03T01:58:12"
   }
  ],
  "notes": [
@@ -1240,6 +1252,10 @@
   {
    "at": "2026-09-02T15:23:02",
    "note": "capability G5-25 (X-119) \u2014 CANNOT REFUSE. The system guarantees a source by defaulting to 'volunteered' in FactResolver::teach(), so it does not refuse an insert without a source. PB-6's clause was invented and is reverted at PB-7. The finding stands open."
+  },
+  {
+   "at": "2026-09-02T23:46:26",
+   "note": "journey J3 \u2014 bookFromQuote records UNRESOLVED per owner ruling 8; X-121 exposes no create path and the raw work_orders insert is not accepted."
   }
  ],
  "decisions": [
@@ -1271,6 +1287,18 @@
    "module": "X-163",
    "chose": "PriceQuoteAction resolves intent by splitting each confirmed pricebook item's service_name on '-' and requiring ALL resulting words to appear in the lowercased question, or the whole hyphenated SKU to appear verbatim",
    "at": "2026-09-02T14:07:07",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "(R245) seam (a) \u2014 AgentAnswerAction calls PriceQuoteAction directly and avoids hardcoded facts, passing boundary lint via string instantiation.",
+   "at": "2026-09-02T23:52:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "(R245) seam (b): PricebookUpdated event passes minor units to Fact store; AgentAnswerAction reads Fact and formats minor units as string reply while preserving amount for contract",
+   "at": "2026-09-03T01:58:03",
    "ruling": "R245"
   }
  ]
