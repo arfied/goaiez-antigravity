@@ -33,13 +33,13 @@ return [
     // status:
     'N-067' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
-    // status:
+    // status: SPECCED
     'N-069' => 'GL categorisation carries a CONFIDENCE and below threshold it asks ·  a sync conflict goes UNKNOWN, never STALE (§192) · the payroll export ships hours and commission-earned ONLY (P-204)',
 
-    // status:
-    'N-070' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
+    // status: SPECCED
+    'N-070' => 'GL categorisation carries a CONFIDENCE and below threshold it asks · a sync conflict goes UNKNOWN, never STALE (§192) · the payroll export ships hours and commission-earned ONLY (P-204)',
 
-    // status:
+    // status: SPECCED
     'N-071' => 'GL categorisation carries a CONFIDENCE and below threshold it asks ·  a sync conflict goes UNKNOWN, never STALE (§192) · the payroll export ships hours and commission-earned ONLY (P-204)',
 
     // status:

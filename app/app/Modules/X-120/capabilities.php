@@ -21,10 +21,10 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
-    // status:
+    // status: SPECCED
     'N-046' => 'CVV IS NEVER PERSISTED, ANYWHERE, FOR ANY DURATION (P-196) — asserted against the buffer, the trace and the dump',
 
-    // status:
+    // status: SPECCED
     'N-047' => 'no screen anywhere returns a decrypted PAN (P-199) — the SYSTEM has access; no PERSON does',
 
     // status: SPECCED

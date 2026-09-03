@@ -88,7 +88,7 @@ class X205Test extends TestCase
     }
 
     /**
-     * [G13-20]
+     * [G7-04], [G7-11], [G7-23], [G7-41], [G7-45], [G10-36], [G13-20]
      */
     public function test_affiliate_capabilities(): void
     {

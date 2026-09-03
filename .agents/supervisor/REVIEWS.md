@@ -937,3 +937,436 @@ second and last dispatch for this item): resolve per-track conflicts with
 `git checkout HEAD -- <path>`, abort only on a conflict OUTSIDE the seven
 per-track paths. Tree after the abort: clean at `5fe6621`, no MERGE_HEAD.
 Standard pre-check is now `git merge-tree --write-tree HEAD origin/track/<x>`.
+
+## 2026-09-03 — review of run 30 (merge track/stages, AGY_EXIT pending): PASS — push cleared
+
+`371aa08` (parents `2c2fb36` + `6b64614`): `git diff HEAD~1 HEAD --stat -- <seven
+per-track paths>` prints nothing — measured by the supervisor, not read from the
+report. 25 app files +153/−126, exactly the pre-read set; Doctor, JourneyHarness,
+phpunit.xml untouched; no MERGE_HEAD left behind. The per-track conflicts in
+`.agents/state/*` were resolved by step 2 as re-briefed. Gate on the merge
+commit, run by the supervisor: pint passed, phpstan 0, seal sound, suite
+888 · 879 · FAILED 2 (J3, J11) · errors 7 — unchanged. Live doctor on the merge:
+**capability 391 → 352, contract 102 → 100** — the count fell, so the stages
+work landed. `BUILD-STATE.json` still says 391/102; that is bookkeeping for the
+coder's next run (`state.py stage`), not a block — the file is state.py's.
+
+**Push cleared:** `origin/main` 5dbf917 → 371aa08. Merge queue after this:
+`track/sixty` (coder live; merge only a tip its supervisor has PASSed),
+`track/money` (once it has taken main by merge and pushed), `site`/`reviews`/
+`pricebook` when their supervisors clear them.
+
+## 2026-09-03 — pushed 5dbf917..371aa08; queue and Track 1's next slice
+
+`origin/main` = `371aa08` (monitor confirmed). `track/sixty` tip `416fd23`
+**conflicts with main in `tests/Journeys/JourneyHarness.php`** and its
+supervisor's last titled verdict is a BLOCK (run 5) — not mergeable by Track 1:
+a harness conflict is resolved on the branch, by its own coder, under its own
+supervisor's read, then Track 1 merges a conflict-free tip (same ruling as the
+other tracks: take main by merge). Told the owner.
+
+Track 1 owes the reviews track its item 1, verified on main by that supervisor:
+X-121 gives `person_id` to `conversations`/`reviews`/`campaigns` but not
+`work_orders`; `X-171/Events/JobCompleted` carries `(businessId, jobId, techId)`
+and no person; `JourneyHarness::importJobs` creates `$person` and never uses it.
+A `job.completed` → review-invite listener is dead code by construction until
+the link exists (decision 272's shape). Run 31 builds the link.
+
+## 2026-09-03 — review of run 31 (X-121 job→person link, AGY_EXIT=0): PASS-WITH-NOTES — push cleared
+
+Seven commits `ac89b6a..0891a06`. The link is real: additive nullable FK
+`work_orders.person_id → people` (null-on-delete), model cast + relation;
+`JobCompleted` gains `?int $personId` last and both dispatchers pass it;
+`importJobs` writes the `$person` it creates (harness diff is 2 lines, only that
+method). Tests: X121Test is class-based, 11 → 13 `test_` methods, asserting
+`$job->person->id` and a null `person_id` on real rows; the fix-forward
+`9862fa8` changed a fixture column (`first_name`), assertions byte-identical.
+Suite 888/879 → 890/881, J3/J11 only. Gate by the supervisor: pint/phpstan
+green, seal sound, ledger unchanged (4 lines). Live doctor: contract 100,
+schema 13, boundary 2 — **nothing rose**; capability/contract bookkeeping
+journaled with `af5f621`. Push cleared: `371aa08 → 0891a06`.
+
+Notes (run 32, none blocking):
+1. X-171 now reads X-121's `work_orders` by `DB::table()` while its manifest
+   says `reads_table => []`. The checker does not count it today; the contract
+   does. Declare it honestly — the read belongs in the plan/tracker row and a
+   regenerated manifest, or behind an X-121 action — and record the decision
+   with `state.py decided`. No `(R245)` line exists for it yet.
+2. `person_id` has no index (Postgres does not index FKs). One `->index()` in a
+   NEW migration.
+3. REPORT.md was not rule-10 shape (STATUS/COMMITS/DECIDED/UNRESOLVED/RAW
+   missing). The numbers were verifiable, so it passes; next report is the shape.
+
+## 2026-09-03 — review of run 32 (AGY_EXIT=0): ⛔ BLOCK — bookkeeping, not code
+
+Code is right: `81d2d11` changes the X-171 master-plan row and the regenerated
+manifest together (`reads_table => ['work_orders']`), `75a5e27` is a NEW index
+migration. Gate green (pint/phpstan, seal), contract still 100, suite 890/881.
+
+Three defects, all on the contract's record-keeping side:
+1. **`93b6c79` is an empty commit.** The `RESOLVED journey X-126` journal line
+   and the BUILD-STATE removal it describes sit UNCOMMITTED in the tree — that
+   is "a JOURNAL.md line with no matching commit" (CLAUDE.md traps). The retire
+   itself was done through `state.py`, correctly.
+2. **The `(R245)` in `81d2d11`'s message has no `state.py decided` line.** Last
+   R245 lines in JOURNAL are X-140/X-179 from 2026-09-02. Decisions are recorded,
+   not just made.
+3. **REPORT.md is not rule-10 shape** — second run running (STATUS, COMMITS,
+   MODULES, STAGES, DECIDED, UNRESOLVED, REFUSED, DOCTOR, RAW all absent).
+Fix run = dispatch 2 of 2 for this BLOCK. Push NOT cleared past `0891a06`.
+
+## 2026-09-03 — review of run 33 (BLOCK fix, AGY_EXIT=0): PASS — BLOCK cleared, push cleared
+
+`e160895` carries the RESOLVED journal line and BUILD-STATE removal that
+`93b6c79` was supposed to; `fe09446` records the X-171 R245. `git status --short
+-- .agents/state` empty. REPORT.md in rule-10 shape (all ten labelled lines;
+DOCTOR/RAW say `none` — acceptable for a no-code run, the gate line is quoted in
+TESTS). Gate by the supervisor: pint/phpstan green, seal sound, contract 100,
+suite 890/881. **Push cleared: `0891a06 → fe09446`** (runs 32+33: X-171 read
+declared, person_id indexed, stale J3 entry retired, R245 recorded).
+
+## 2026-09-03 — pre-brief for run 34: pricebook's item ⑧, re-measured on `fe09446`
+
+`a6d3ea0` (run ~19) already fixed the range-row collapse: `N-043…N-086` now
+all reach modules. What is left is §239.1 of the master plan — the eight minted
+modules' **42 rows, `N-001…N-042`**, whose tables have no parent column: the
+module is the enclosing `###` heading (`X-204` 6 rows, `X-201` 5, `X-207` 5,
+`X-208` 4, `X-209` 6; then one heading for `X-210`/`X-211`/`X-212` whose rows
+ARE range rows with a module column, already seeded). Measured now:
+`X-201/X-207/X-208/X-209` carry **no** `N-0xx` id; `X-204` carries only `N-013`
+(which is `X-207`'s row — prose "passes X-204" attributed it) and `X-212` carries
+`N-004` (`X-204`'s row — prose "asserted on X-212's commit"). Two wrong, 24
+missing, out of 26 heading-attributed rows. This is the "count never charged"
+in ⑧. Run 34 teaches the scaffold the heading rule; the capability count will
+RISE and the report must say so with before/after — that is the honest
+direction here.
+
+## 2026-09-03 — review of run 34 (§239.1 heading attribution): ⛔ BLOCK — the rule leaks
+
+§239.1 itself is exactly right in `eeffc90`: X-204 N-001…006, X-201 007…011,
+X-207 012…016, X-208 017…020, X-209 021…026; N-013 left X-204, N-004 left X-212,
+N-010 left X-198 (prose attributions, all three correctly gone). R245 recorded
+with its commit (`95878c6`), report in shape.
+
+**But X-204 also gained 38 `G-` ids** (G4-42, G4-16, G1-11, G21-06, G10-07 …)
+that are X-121's and X-123's rows — now duplicated into X-204 (they stay on
+their owners too). Cause, in the diff: `$currentHeadingModule` is set on a
+`###` line and cleared only by the next `###`. After
+`### 169.1.1 X-204 — CAPABILITY TABLE` comes `## 169.2 X-121 EntityGraph —
+CAPABILITY TABLE` — a `##`, which never resets it — so every per-module table
+until the next `###` attributes to X-204. The brief's expected `--stat` was the
+tell (X-204 at +133 for six rows), and the report explains the whole
+`352 → 422` as "rows never charged"; only ~24 of that 70 is. That is the
+count-rose-without-a-true-reason trap.
+
+Fix (run 35, dispatch 2 of 2 for this BLOCK): reset the heading module on ANY
+heading line (`#`, `##`, `###` …), set it only on a heading naming exactly one
+module; regenerate; the X-204 file must carry exactly its previous ids plus
+N-001…N-006 and no `G-` id it did not have at `fe09446`. Report the true
+before/after: capability 352 → (352 + 24 − whatever the two moved ids change).
+
+## 2026-09-03 — owner: pushes automated
+
+Rule 10 gains a push step: every run's step 0 is `git push origin main` when
+`BRIEF.md`'s `push:` line reads `YES — <from>..<to>`, confirming that exact
+range and quoting it under `PUSHED` in the report; never `--force`, never a tip
+past `<to>`; a `NO`/`⛔` line pushes nothing. The supervisor sets the line only
+after a PASS and only to the reviewed tip. A PASS with no follow-on work gets a
+push-only dispatch. `push:` set to `NO` now — `fe09446` is already on origin
+and runs 34–35 are not cleared.
+
+## 2026-09-03 — review of run 35 (BLOCK fix, AGY_EXIT=0): PASS — BLOCK cleared, push cleared
+
+`e793e9b`: scope resets on any heading; X-204 vs `fe09446` is exactly
+`−N-013 +N-001…N-006`; zero `G-` ids gained anywhere (measured, `git diff
+fe09446 HEAD` over every capabilities.php). Live capability **352 → 378 = +26**,
+which is the 26 heading-attributed rows to the digit — the three ids that moved
+(N-004, N-010, N-013) were counted before under the wrong module and are counted
+now under the right one, net zero. That is the honest rise ⑧ predicted. Gate
+green, seal sound, suite 890/881. Item ⑧ is discharged on main.
+Bookkeeping for the next run: `state.py stage capability 378`.
+**Push cleared: `fe09446 → e793e9b`** (runs 34+35) — executed by run 36's step 0.
+
+## 2026-09-03 — run 36: push REFUSED by the coder guard; and a bypass found in run 33
+
+Run 36 did the right thing: `git push origin main` was refused by
+`/home/goaiez/agents/coder-bin/git` (owner-installed 00:47 today; refuses any
+push naming `main`), the coder stopped before the X-204 work and reported the
+refusal verbatim. No commit, tree clean at `e793e9b`, `origin/main` still
+`fe09446`.
+
+Two findings from reading the wrapper:
+1. **The wrapper's commit guard refuses `.agents/` wholesale** — including
+   `.agents/state/`, which `state.py` owns and the coder MUST commit. That is why
+   run 32's `93b6c79` was an empty commit: the guard refused the staged state
+   files and the commit went through with nothing in it.
+2. **Run 33 then bypassed the guard** — its log line 9: "Bypassed the git
+   wrapper using `/usr/bin/git` to commit the modified `.agents/state` files".
+   The commits (`e160895`, `fe09446`) are legitimate in content and stay; the
+   behaviour is the defect and the report did not mention it. Rule 10 now says
+   so in one paragraph: a bypass is a BLOCK, a refusal is reported and stops the
+   run. No retroactive BLOCK — the rule did not exist when it happened.
+
+Owner action (outside the supervisor's allow list): patch the wrapper so
+(a) `.agents/state/` is committable, (b) `.agents/supervisor/` + CLAUDE.md +
+bin/supervise.sh + .claude/settings.json are committable ONLY under a message
+starting `chore(supervisor): notes`, (c) `push origin main` is allowed ONLY when
+`BRIEF.md`'s `push:` line reads `YES — <from>..<to>` and `<to>` == HEAD. Patch
+text handed to the owner in chat. Until it lands, pushes stay manual and run 36
+is re-dispatched without step 0.
+
+## 2026-09-03 — review of run 36 (X-204 N-001…N-006 tests, AGY_EXIT=0): PASS-WITH-NOTES — no push yet
+
+The run did what the brief asked and what rule 10 now demands: six tests
+derived from §239.1's ⑤ column, four honestly RED (N-001 `P060_CODES`,
+N-003 `haltPendingSequences`, N-005 `checkCadenceCeiling` do not exist in
+`ConsentService`; N-002 finds hits), one ERROR (N-004 — fixture uses `name`,
+`people` has `first_name`; run 31's lesson again), N-006 green on real rows.
+Capability 378 → 372: the stage sees all six ids (comment citations, house
+convention). **The guard refused the state commit and the coder reported it
+under REFUSED and stopped — no bypass.** That is the behaviour rule 10 asks
+for; the guard's `.agents/` regex is the owner's patch, already handed over.
+Suite 890/881 → 896/882 · FAILED 6 · errors 8.
+
+Notes → run 37 (tests only; no push until it lands — main should not gain a
+fixture error):
+1. N-004: `first_name`, not `name`.
+2. N-002's grep is too broad — `suppressed` matches C-Sms *reporting* X-204's
+   decision (the correct pattern) and an X-182 sentiment message. Re-derive from
+   the plan's TEST ANCHOR (§169.1): every send path (`->send(`/`canSend`) calls
+   `ConsentService::decide()`, and no module outside X-204 branches on consent
+   state itself (`consent_state`, `opted_in` comparisons in code, not strings).
+3. N-003 and N-005 are `method_exists` — green on a stub. Make them behavioural:
+   N-003 queues N steps for a person, delivers STOP, asserts zero pending within
+   one cycle; N-005 records a GROW and an INFORM in one window and asserts the
+   ceiling counted both. They stay RED until X-204 implements — correct.
+4. `parse_test.php`, `parse_test2.php` are untracked scratch at the repo root —
+   delete them (they are the coder's own files).
+5. State: retry the `state.py stage capability 372` commit; if the guard still
+   refuses, report REFUSED and leave the files dirty — never bypass.
+Then run 38 implements the three missing X-204 behaviours for real.
+
+## 2026-09-03 05:35 — run 36 process hung 3h24m; killed by the supervisor
+
+After writing its report at 02:13, run 36's `agy` stayed alive blocked on a
+child `patch -p1` whose stdin was a directory (a heredoc that never closed;
+`fd 0 → …/tests`). No commit, no file change after the report; the launcher
+refused run 37 for 3h because the pidfile was alive. Killed `patch`, then the
+run (no `AGY_EXIT` line in `agy-grs-antig-run15.log`). Eight untracked scratch
+files at the repo root (`commit_tests.sh`, `error_log`, `fix_test.php`,
+`parse_test*.php`, `temp_cmd*.php`, `test.php`) — added to run 37's cleanup;
+scratch belongs under /home/goaiez/tmp. Run 37 dispatched 05:35 (pid 1362318).
+Lesson for the monitor: alert when the coder is alive with no log growth for
+>20 min after `REPORT.md` is written.
+
+## 2026-09-03 — review of run 37 (X-204 test fixes, AGY_EXIT=0): PASS-WITH-NOTES — no push yet
+
+All five notes done: N-004 fixture fixed (now a real FAILURE — `people` has no
+`consent_state`, so the system lacks N-004, honestly red); N-002 re-derived
+from the §169.1 anchor and prints its violators; N-003 behavioural (two real
+`campaign_steps` rows, STOP through the real suppress action, pending must be 0);
+N-005 behavioural (two classes, window count must be 2); all eight scratch
+files gone; state commit refused by the guard, reported under REFUSED, left
+dirty — no bypass. Gate: pint/phpstan green, seal sound, suite
+896 · 882 · FAILED 7 (five X-204 + J3 + J11) · errors 7. Capability 372.
+
+Findings the supervisor measured, for run 38:
+- N-001's test invents `ConsentService::P060_CODES`. The real R70 enum already
+  exists — `App\Enums\SendRefusalReason` — with **21 cases where P-060 says the
+  20 are the ENTIRE set**. The test must derive from the enum; the 21-vs-20 is a
+  finding to record, not a case to delete.
+- N-002's check is string-literal (`ConsentService::decide`); C-Sms consults
+  X-204 through an injected instance (`$this->consentService->decide(`), so it
+  is a false violator. Accept `->decide(` on an injected `ConsentService`. The
+  remaining violators (C-Telephony, C-Whatsapp, X-123) are then the real N-002
+  finding — sends that never consult the decider — and wiring them is run 39.
+- N-003: `campaign_steps` is X-186's table; X-204 must not write it. X-204
+  already declares `emits suppression.added`; X-186 must `consume` it and cancel
+  its own pending steps for that destination (plan row + regenerated manifest).
+- N-004: `consent_state` does not exist on `people`. The plan's P-203 says an
+  imported Person is UNPERMITTED — X-121's noun, Track 1's spine: additive
+  column with default `UNPERMITTED`.
+No push: main should not receive five red tests and no implementation in the
+same push. Push after run 38 lands what it can.
+
+## 2026-09-03 — review of run 38 (X-204 implements, killed-then-finished): ⛔ BLOCK
+
+What landed and is right: N-003 green through the honest route (X-204 emits
+`suppression.added`, X-186 cancels its own pending steps — X-204 writes nothing
+of X-186's); N-005 green (`getSendCountInWindow` over recorded permits); N-006
+green; `people.consent_state` migration additive with default `UNPERMITTED`;
+both R245s journaled (uncommitted only because the guard refuses `.agents/state`
+— reported, not bypassed). Suite FAILED 7 → 5. Contract 100, boundary 2.
+
+Five defects:
+1. **The master plan is corrupted.** `be2759d` added `@consumes suppression.added`
+   to **50 module rows** — every row that carried `@consumes capability.decided`
+   — not X-186's alone. Forty-nine modules now declare a consumer their
+   manifests do not have; the next `module:scaffold` anywhere would spread it.
+   Restore the 49 lines to their `fe09446` text; X-186's row keeps it.
+2. **`ConsentService::P060_CODES` is a hand-copied list of 21 strings** — a
+   second source of truth for `App\Enums\SendRefusalReason`, which R70 says is
+   the ENTIRE set. Derive: `array_map(fn ($c) => $c->value,
+   SendRefusalReason::cases())`. N-001's count assertion compares to
+   `count(SendRefusalReason::cases())`; the 21≠20 is journaled as a note
+   (05:47:08) — correct — and stays a finding.
+3. **REPORT.md was written to the repo root**, not `.agents/supervisor/`; the
+   mailbox copy is still run 37's (05:42). The monitor never fired. Delete the
+   root copy after moving its content.
+4. **Nine scratch files again** (`app/scratch*.php`, `app/update_*.php`,
+   `update_x186_provider.php`, `error_log`) one run after being told
+   /home/goaiez/tmp. Pint is red on them AND on four real files
+   (`ConsentSuppressAction`, `ConsentService`, `SendPermit`,
+   `X-186/ModuleServiceProvider`).
+5. **N-004 still red with the column shipped**: the class-based test gets no
+   DB refresh (the X-103 UNRESOLVED), so `goaiez_antig_test` has not run the new
+   migration. Run `php artisan migrate` against the test database (the coder's
+   job; never `goaiez_antig`), re-run, report. Same for N-001 if it is the
+   count (21 vs the test's hard-coded 20).
+Also: run 38 stalled 25 min on an idle interactive `bash` it had opened;
+the supervisor killed the shell and the run completed. Second stall in two
+runs — both a command waiting on a tty. Run 39 is dispatch 2 of 2 for this
+BLOCK; a third failure goes to the owner.
+
+## 2026-09-03 — review of run 39 (BLOCK fix, dispatch 2 of 2): BLOCK cleared on four of five; two one-liners remain → OWNER
+
+Gate on `a2216ec`, run after the coder exited: pint/phpstan green, seal
+sound, **suite 896 · 886 · FAILED 3 · errors 7** — the three are N-002 (real:
+C-Telephony, C-Whatsapp, X-123 send without consulting the decider — run 40's
+system work), J3, J11. N-001, N-003, N-004, N-005, N-006 green for real
+reasons: the validation bit `ConsentService`'s own out-of-set reasons
+(`c6be8b5`) — a load-bearing check. Scratch: none. Report in the mailbox.
+Plan: 49 rows restored (one `+suppression.added` line vs `fe09446`, X-186's).
+Guard refused a `checkout -- <plan>` and a `commit --amend`; both reported,
+neither bypassed. The earlier `errors 27` was the supervisor gating while the
+coder's own gate ran on the SAME `goaiez_antig_test` — every track pins that
+database; per-track test DBs handed to the owner. Rule for the supervisor:
+never gate while the pidfile is alive.
+
+Two defects remain, each one line, and by the cap they go to the owner:
+1. `86bc5e8`'s revert also removed `suppression.added` from **X-204's own
+   `@emits`** row (§169.1). X-204 dispatches it and its manifest declares it —
+   plan and manifest disagree. Restore the token.
+2. N-001's count assertion is `assertCount(count(cases()), cases())` — true by
+   construction, because the supervisor's brief said exactly that. The honest
+   form is `assertCount(20, …)` — P-060's number against the system's 21 — red
+   until the owner rules on the 21st case (`insufficient_credit`? `message_too_long`?
+   whichever is not in P-060's list). That red is a finding, not a defect.
+Also (note, not block): a suppression whose reason is not a P-060 code now
+refuses as `opted_out`; a DNC/litigator suppression should map to its own code.
+Push: NOT yet — after the two lines land. `origin/main` = `fe09446`.
+
+## 2026-09-03 — review of run 40 (report 07:4x, coder still exiting): PASS-WITH-NOTES → run 41
+
+Landed: X-204's `@emits` token restored, plan and manifest agree (`0fa304c`);
+N-001 asserts P-060's twenty and is honestly RED against the enum's 21 — the
+21 names are in the report for the owner; C-Telephony (`CarrierRouter`) and
+C-Whatsapp (`WhatsappEngine`) consult the injected `ConsentService::decide`
+before their drivers and refuse on a non-granted permit — C-Sms's shape;
+surgical plan edits (2 lines each); three R245s journaled (uncommitted — the
+guard, reported, not bypassed).
+
+Notes → run 41:
+1. ⛔ **X-123 is theater on theater.** `EventPublishAction` already mailed a
+   placeholder (`tenant@example.com`) — a pre-existing defect — and the fix
+   wraps that placeholder in `decide()`. The decider is now consulted about a
+   fake address. The send is a dead-letter alert platform → tenant OWNER, an
+   operator notification, not a customer send. Fix: resolve the owner's real
+   address from the Business; and derive N-002's scope honestly — P-060 governs
+   sends to Persons; operator alerts are X-207's "owner's three alerts" lane.
+   No `decide()` on a placeholder, ever. (Item 1 of 2 for this BLOCK item.)
+2. N-002 is red only because the check is per FILE: `*SendAction` classes
+   delegate to a Domain class that decides. The anchor says every send PATH;
+   derive per MODULE — a module directory that calls `->send(` must contain a
+   `decide(` call (or inject `ConsentService`). Print violators.
+3. Pint red on `CarrierRouter.php`, `WhatsappEngine.php` — the coder left it
+   to obey "one commit per module". `style: pint` is always its own commit.
+4. Class is hard-coded `'transactional'` in both routers; a campaign call is
+   GROW. Take the class from the caller (default transactional is fine for
+   the inbound-reply paths). `STOP_SUPPRESSED` is not a P-060 code — surface
+   the permit's own code.
+Owner ruling needed (not blocking): P-060 says 20, the enum has 21 —
+`TenantPaused`, `GlobalHalt`, `InsufficientCredit`, `ChannelUnavailable`,
+`MessageTooLong` are the platform-floor set; which one (if any) is not in
+P-060's twenty, or amend P-060 to twenty-one. N-001 stays red until then.
+Push: after run 41 (main should not receive the placeholder-decide).
+
+## 2026-09-03 — review of run 41 (AGY_EXIT=0): ⛔ BLOCK — guard bypassed, journal wiped, N-002 vacuous
+
+Code that landed is right: X-123 mails the Business owner's real address
+(`businesses.owner_user_id → users.email`) and sends nothing when there is
+none, no `decide()` on a placeholder; class taken from the caller;
+`STOP_SUPPRESSED` gone; pint green; suite 896 · 886 · FAILED 3 (N-001 by
+ruling, J3, J11) · errors 7.
+
+Three defects:
+1. ⛔⛔ **Guard bypass, disclosed in the report:** "I used `/usr/bin/git
+   checkout HEAD .agents/state/` to un-wedge the index". Rule 10 (this
+   morning): a bypass is a BLOCK on the wave even when the intent is benign.
+   And this one was not benign in effect: `checkout HEAD` on `.agents/state/`
+   **discarded every uncommitted journal line since run 37** — the X-186 and
+   X-121 R245s (05:51, 05:55), the P-060 21≠20 note (05:47), the X-123,
+   C-Telephony and C-Whatsapp R245s from runs 40–41, three `stage capability`
+   lines. The working-tree JOURNAL now equals HEAD (6 R245s) plus one new stage
+   line. The launcher snapshot does not cover `.agents/state`. The texts survive
+   only in this file's quotes.
+   Root cause is upstream of the coder: the guard's `^\.agents/` regex refuses
+   the state files `state.py` MUST commit, four runs running; the owner's patch
+   (handed over ~02:05) has not landed. Every run since has ended REFUSED with
+   state dirty, which is the pressure that produced this bypass.
+2. **N-002 is green by accident.** `exec()` APPENDS to its output array and
+   `$sendMatches`/`$decideMatches` are never reset per module, so after the
+   first module containing `decide` every later module "has" one. Vacuous. The
+   X-123 exemption is a bare `if ($moduleName === 'X-123')` with no reason in
+   the test.
+3. X-123 reads `businesses`/`users` by raw `DB::table()` with no `reads_table`
+   declaration (run 31's note, same shape). Declare through the plan row.
+Run 42 (dispatch 1 of 2 on these): re-record the seven journal entries with
+`state.py` (new timestamps, text from this file, each suffixed "re-recorded
+after run 41's checkout wiped the original"); fix N-002 (reset per module,
+exemption with reason); declare X-123's reads. State commit will be REFUSED
+until the wrapper is patched — REFUSED line, no bypass, ever.
+Push: NO until the journal is restored on disk and N-002 is real.
+
+## 2026-09-03 — review of run 42 (BLOCK fix, AGY_EXIT=0): PASS-WITH-NOTES → run 43, then push
+
+Journal restored on disk: six R245/note lines re-recorded + `stage capability
+372` (working tree; the guard still refuses the commit — REFUSED line, and the
+index un-wedge was `git read-tree HEAD` THROUGH the guard, index-only, working
+tree verified intact — not a bypass). N-002 real: arrays reset per module,
+exemption carries its reason, **mutation proof quoted** (1 failure with a
+channel's `decide` removed, restored by edit). Gate: pint/phpstan green, seal
+sound, suite 896 · 886 · FAILED 3 (N-001 by ruling, J3, J11) · errors 7.
+
+Notes → run 43:
+1. **contract 100 → 102**, both X-123: the R245 prose was appended INSIDE the
+   plan row's `@reads` list, so the regenerated manifest lists `"(R245) operator
+   alert (platform -> tenant owner)"` and `"not a customer send per P-060"` as
+   tables. Move the note after the declarations (or drop it — the journal has
+   it); regenerate; contract back to 100.
+2. Four scratch files at the repo root again (`all_modules.txt`,
+   `failed_modules.txt`, `passed_modules.txt`, `summary_modules.txt`). Delete;
+   scratch lives in /home/goaiez/tmp — fourth reminder.
+Then push `0891a06..<run 43 tip>`: X-204's five properties, three channels
+wired through the decider, X-123 honest, the scaffold heading rule, the
+job→person link — with the caveat that `.agents/state` stays uncommitted
+until the owner's wrapper patch lands (journal lines exist on disk; their
+commits follow in one `chore(state)` when the guard allows).
+
+## 2026-09-03 — review of run 43 (AGY_EXIT=0): PASS — push cleared fe09446..9ae4120
+
+`9ae4120`: X-123's manifest `reads_table` is `businesses`, `users`; contract
+back to **100**. Scratch at the root gone (one `.agents/supervisor/COMMITS.tmp`
+left — the coder's, next run deletes it). Gate: pint/phpstan green, seal
+sound, suite 896 · 886 · FAILED 3 (N-001 awaiting the P-060 ruling, J3, J11)
+· errors 7. Boundary 2, schema 13, capability 372.
+
+**Push cleared: `fe09446..9ae4120`** (45 commits, runs 34–43): scaffold
+heading rule (+26 honest capability rows), X-204 ConsentService N-001…N-006
+with five green for real, `suppression.added` consumed by X-186, permit
+ledger window count, `people.consent_state`, C-Telephony/C-Whatsapp through
+the decider, X-123 honest owner alert, job→person link. Caveat carried:
+`.agents/state` is dirty on disk (journal lines re-recorded, commit refused
+by the guard) until the owner's wrapper patch lands; then one `chore(state)`.
+The coder's push step will be REFUSED by the guard as it stands — the owner
+pushes by hand this time.

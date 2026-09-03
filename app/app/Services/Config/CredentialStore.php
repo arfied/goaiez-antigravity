@@ -165,6 +165,7 @@ final class CredentialStore
         }
 
         $stored = PlatformCredential::query()->find($key);
+        \Illuminate\Support\Facades\Log::info("CredentialStore resolve($key) found: " . json_encode($stored));
 
         if ($stored !== null) {
             $value = $this->readable($stored);

@@ -1,45 +1,45 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
- "started": "2026-08-30T02:05:15",
- "updated": "2026-09-03T01:48:06",
- "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
+ "started": "2026-09-03T09:33:12",
+ "updated": "2026-09-03T14:02:19",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
- "seal_digest_observed": "f1e73d9fc181eb1c",
- "runtime_sound": true,
+ "seal_digest_observed": null,
+ "runtime_sound": null,
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 2,
+   "violations": null,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 100,
+   "violations": null,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 13,
+   "violations": null,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 352,
+   "violations": 372,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 10,
+   "violations": null,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 9,
+   "violations": null,
    "fails": "WAVE"
   }
  },
@@ -435,17 +435,10 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-103",
-     "stage": "schema",
-     "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-     "at": "2026-09-02T02:30:15"
-    }
-   ]
+   "unresolved": []
   },
   "X-104": {
    "status": "DONE",
@@ -532,17 +525,10 @@
    "unresolved": []
   },
   "X-121": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-121",
-     "stage": "schema",
-     "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-     "at": "2026-09-02T02:39:43"
-    }
-   ]
+   "unresolved": []
   },
   "X-122": {
    "status": "DONE",
@@ -569,23 +555,10 @@
    "unresolved": []
   },
   "X-126": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-126",
-     "stage": "journey",
-     "why": "J3 needs an AI provider key; none in this checkout",
-     "at": "2026-09-02T10:12:36"
-    },
-    {
-     "module": "X-126",
-     "stage": "journey",
-     "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
-     "at": "2026-09-02T10:28:55"
-    }
-   ]
+   "unresolved": []
   },
   "X-127": {
    "status": "DONE",
@@ -918,10 +891,17 @@
    "unresolved": []
   },
   "X-186": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-186",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T13:47:25"
+    }
+   ]
   },
   "X-188": {
    "status": "DONE",
@@ -936,10 +916,17 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-190",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:48:24"
+    }
+   ]
   },
   "X-191": {
    "status": "DONE",
@@ -1029,7 +1016,14 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-205",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:56:38"
+    }
+   ]
   },
   "X-206": {
    "status": "DONE",
@@ -1095,13 +1089,27 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-217",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:00:33"
+    }
+   ]
   },
   "X-218": {
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-218",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:01:55"
+    }
+   ]
   },
   "X-219": {
    "status": "DONE",
@@ -1130,7 +1138,7 @@
  },
  "journeys": {
   "J1": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a missed call becomes a consented text back",
    "green_after_wave": 5
   },
@@ -1150,7 +1158,7 @@
    "green_after_wave": 5
   },
   "J5": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a migration of five hundred jobs sends nothing",
    "green_after_wave": 14
   },
@@ -1160,12 +1168,12 @@
    "green_after_wave": 11
   },
   "J7": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "an agency client never sees cost or margin",
    "green_after_wave": 11
   },
   "J8": {
-   "status": "GREEN",
+   "status": "RED",
    "title": "a deliberately corrupted backup fails the restore",
    "green_after_wave": 14
   },
@@ -1192,60 +1200,41 @@
  },
  "unresolved": [
   {
-   "module": "X-103",
-   "stage": "schema",
-   "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-   "at": "2026-09-02T02:30:15"
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
   },
   {
-   "module": "X-121",
-   "stage": "schema",
-   "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-   "at": "2026-09-02T02:39:43"
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
   },
   {
-   "module": "X-126",
-   "stage": "journey",
-   "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
-   "at": "2026-09-02T10:28:55"
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
+  },
+  {
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
+  },
+  {
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
   }
  ],
+ "decisions": [],
  "notes": [
   {
-   "at": "2026-08-29T14:37:58",
+   "at": "2026-09-03T09:34:34",
    "note": "bootstrap-done"
-  }
- ],
- "decisions": [
-  {
-   "module": "X-211",
-   "chose": "R245: Built AR recovery engine with late fee capping (max 10% or 0), structured installment payment plan contracts, ACH enforcement, offline reconciliation, and collections packaging with evidence bundle.",
-   "at": "2026-08-29T15:20:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-140",
-   "chose": "@agent_reachable widened with topic.identify \u2014 read-shaped, per the plan's derivation rule; owner may overrule",
-   "at": "2026-09-02T04:13:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-179",
-   "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
-   "at": "2026-09-02T04:38:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) \u2014 declared in the plan row and regenerated manifest, not a raw undeclared read",
-   "at": "2026-09-03T01:20:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-204",
-   "chose": "(R245) \u00a7239.1 rows attribute to their nearest enclosing heading module when the table lacks a parent column, never by prose",
-   "at": "2026-09-03T01:48:06",
-   "ruling": "R245"
   }
  ]
 }

@@ -88,7 +88,7 @@ final class SendMissedCallTextBackJob extends AutopilotJob
 
     public function automationKey(): string
     {
-        return 'voice.missed_call.text_back';
+        return \App\Enums\AutopilotActionType::CallMissed->value;
     }
 
     /**
@@ -191,7 +191,9 @@ final class SendMissedCallTextBackJob extends AutopilotJob
      */
     protected function execute(): array
     {
-        return $this->textBack();
+        $res = $this->textBack();
+        \Illuminate\Support\Facades\Log::info("TextBack job outcome: " . json_encode($res));
+        return $res;
     }
 
     /**

@@ -1,7 +1,7 @@
 # BRIEF — from the supervisor
 
 updated: 2026-09-02 02:40
-push: YES — 093fcb3..5dbf917 (merge track/ui + pint + notes), cleared 2026-09-03 run 28
+push: NO — 9ae4120 is on origin (pushed by the owner 08:2x); nothing cleared past it yet
       8450e45..6cfe420 push together after item 6c below lands and is reviewed.
 report: per wave, and on any stop
 
@@ -21,7 +21,342 @@ dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
    a reviewed commit — rule 10, 2026-09-02 addition.
 
-## Current task — run 29: MERGE `track/stages` into main (second track merge)
+## ⛔ Current task — run 45: discard the 09:16 overlay (working tree only), then re-gate run 44
+
+At 09:16 today `app/place-files.sh` (the original flat-download installer) was run into
+this checkout by something outside the coder. ~170 tracked files under app/ are modified
+in the working tree (plan, tracker, capabilities/manifests, the scaffold command, the
+JourneyHarness gutted −365 lines) plus ~20 untracked overlay files. Commits are intact.
+Do EXACTLY this, in order, nothing else:
+0. `mkdir -p /home/goaiez/tmp/state-backup-$(date +%s) && cp .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md /home/goaiez/tmp/state-backup-*/` — the journal lines re-recorded in run 42 live only in the working tree.
+1. `git ls-files -m -- app > /home/goaiez/tmp/overlay-modified.txt && wc -l /home/goaiez/tmp/overlay-modified.txt` (expect ~170).
+2. `git checkout-index -f -- $(cat /home/goaiez/tmp/overlay-modified.txt)` — index → working tree for THOSE paths only. Not `-a`, not `.`, nothing outside app/. (`checkout-index` is not `checkout`; the guard allows it; it rewrites no history.)
+3. `git status --short -- app | grep -v '^??'` must print NOTHING. If it prints anything, STOP and report it.
+4. Delete the overlay's untracked files — this list and only this list:
+   app/place-files.sh app/goaiez-status.sh app/goaiez-triage.json app/goaiez-grants.sql app/Procfile
+   app/install-step-0.sh app/gitattributes.txt app/README-RUNTIME.md app/ci.yml app/deploy app/test_src.php
+   app/app/Modules/X-07/Domain app/app/Modules/X-138/Domain app/app/Modules/X-165/Domain app/app/Modules/X-215/Domain
+   app/app/Modules/X-111/Domain/OperatorConsoleEngine.php app/app/Modules/X-170/Domain/CommissionsEngine.php
+   app/app/Modules/X-201/Domain/DisputeEngine.php
+   app/storage/app/backup_6a9980330912b.dump app/storage/app/backup_6a9980330912b_corrupt.dump
+   BEFORE deleting X-201/Domain/DisputeEngine.php: `grep -rn DisputeEngine app/tests/Modules/X-201` — if run 44's
+   tests import it, note that in the report (they will error, honestly, until X-201 has its own engine).
+5. `git status --short -- app` must print NOTHING (no M, no ??). Quote it. Never `git clean`.
+6. `bash bin/supervise.sh --tests`; REPORT rule-10 with the suite line and the five X-201 results; STOP. No push.
+Verify: `git status --short -- app` empty; `.agents/state/JOURNAL.md` still contains "re-recorded" ×6; seal ✓.
+
+## (ran on a polluted tree — re-gated by run 45) run 44: X-201 DisputeDesk proves N-007…N-011
+
+Step 0: none — push line is NO. First: delete `.agents/supervisor/COMMITS.tmp` (yours).
+Same discipline as X-204 (runs 36–42): for each row read §239.1's ⑤ column and
+write the test that FAILS if the system does not hold it, against the real
+X-201 code (`DisputeEngine`, `DisputeDefenseEngine`, the three Actions):
+- N-007 the evidence bundle assembles itself — compile a dispute for a real
+  invoice and assert call logs, transcripts, signatures, delivery receipts, the
+  invoice AND the consent record are each PRESENT before submission; a bundle
+  missing one is refused.
+- N-008 `chargeback.received` from ANY gateway — a real grep of X-201's
+  non-test PHP for gateway names (stripe, authorize, braintree, square, paypal,
+  adyen, the vendor strings this repo uses) must be empty; and the record
+  action accepts an event whose gateway field is an unknown string.
+- N-009 the exposure ledger — money taken vs work delivered, per tenant:
+  seed a paid invoice and a partly-delivered job in ONE tenant and assert the
+  exposure number; a second tenant sees only its own (Tenancy::actingAs).
+- N-010 the refund verb does not exist here — grep X-201's non-test PHP for
+  `refund` (case-insensitive) must be empty; a dispute can only be defended or
+  conceded (assert the state machine refuses any other verb).
+- N-011 deadlines are a clock — a dispute whose deadline is < 48h away RAISES
+  to a human regardless of state: assert the raise event/audit row appears
+  when the clock crosses (use the real scheduler entry or command; travel
+  time with Carbon::setTestNow, never sleep).
+Cite each id as `// N-00x` inside its test. One commit per test. A property the
+system lacks stays RED and is NAMED in the report — no stubs, no weakened
+assertion, no UNRESOLVED (it is unmade work). Then `state.py stage capability
+<live>` (attempt; REFUSED line if refused); gate; REPORT rule-10; STOP.
+Verify: `doctor --stage=capability` shows no `X-201 · N-0xx` line; test count
+in tests/Modules/X-201 +5; scratch none.
+
+## (run 43 done) X-123 row note out of @reads; scratch; then the push is cleared
+
+Step 0: none — push line is NO (it flips to YES after this run's review).
+1. `fix(plan): X-123 R245 note is not a table` — in X-123's DECLARATIONS row move
+   the "(R245) …" / "not a customer send per P-060" prose OUT of the `@reads`
+   list (after the declarations, or delete it — the journal holds it).
+   Regenerate X-123's manifest in the same commit. `php artisan doctor
+   --stage=contract` prints 100.
+2. Delete `all_modules.txt failed_modules.txt passed_modules.txt summary_modules.txt`
+   at the repo root. `git status --short | grep '^??'` prints nothing.
+3. `bash bin/supervise.sh --tests`; REPORT rule-10 (state commit attempt →
+   REFUSED line if refused); STOP.
+Verify: contract 100; no `??` lines; suite still 886/896.
+
+## (cleared run 42) BLOCK from run 41 — fix run 42 (dispatch 1 of 2 on these items)
+
+Step 0: none — push line is NO.
+1. **Restore the journal.** Run 41's `/usr/bin/git checkout HEAD .agents/state/` discarded
+   every uncommitted state line since run 37. Re-record each with state.py (they get new
+   timestamps; append " — re-recorded after run 41's checkout wiped the original" to each):
+   - `state.py decided X-186 "(R245) X-186 sets cancelled_at on pending campaign_steps when suppression.added is emitted by X-204"`
+   - `state.py decided X-121 "(R245) Added people.consent_state string NOT NULL default 'UNPERMITTED'"`
+   - `state.py decided X-123 "(R245) X-123 dead-letter mail is an operator alert to the Business owner (P-060 governs customer sends); reads businesses+users for the owner address"`
+   - `state.py decided C-Telephony "(R245) CarrierRouter consults ConsentService::decide before any carrier; class from the caller"`
+   - `state.py decided C-Whatsapp "(R245) WhatsappEngine consults ConsentService::decide before the driver; class from the caller"`
+   - `state.py note "P-060 discrepancy: SendRefusalReason enum has 21 cases, but P-060 says 20"`
+   - `state.py stage capability 372`
+   Then attempt the commit; if the guard refuses, REFUSED line verbatim and STOP touching
+   state. NEVER `/usr/bin/git`, NEVER checkout/restore/reset on `.agents/state`. If the index
+   is wedged with state files staged, commit app/ paths explicitly:
+   `git commit -m "…" -- <app paths>` (the guard allows path-scoped commits).
+2. **N-002 for real.** In the per-module loop: `$sendMatches = []; $decideMatches = [];` at
+   the top of EVERY iteration (exec appends). The X-123 exemption stays but reads
+   `$operatorAlertSenders = ['X-123' => 'dead-letter mail to the Business owner — operator
+   alert, outside P-060 (R245 X-123)']` and the test prints that reason when skipping.
+   Prove it is load-bearing: temporarily remove `decide` from one channel module, run the
+   test, quote the RED line in the report, restore (commit before mutating; never leave
+   the mutation).
+3. X-123 plan row gains `@reads businesses · users` (surgical, that row only) + regenerate
+   its manifest in the same commit.
+4. `bash bin/supervise.sh --tests`; REPORT rule-10; STOP. No push.
+Verify: JOURNAL.md tail shows the seven lines; N-002 green AND its mutation quote red;
+`git diff fe09446 HEAD -- app/GOAIEZ-MASTER-PLAN.md` still surgical.
+
+## (blocked) run 41: X-123 honestly, N-002 per module, pint, class from the caller
+
+Step 0: none — push line is NO.
+1. **X-123.** Remove the `decide()` on `'tenant@example.com'`. Resolve the real
+   owner address (the Business's owner email — find the column X-121 gives it;
+   if none exists, `UNRESOLVED` naming the missing column, and keep the send
+   unsent rather than mailing a placeholder). This is an operator alert
+   (platform → tenant owner), not a customer send: say so in a one-line comment
+   citing P-060's scope, and `state.py decided X-123 "(R245) …"`.
+2. **N-002 per module.** Re-derive: for each module directory under app/Modules
+   that contains `->send(` or `canSend` in non-test PHP, the SAME directory must
+   contain `->decide(` on an injected `ConsentService` or `ConsentDecideAction`
+   — EXCEPT operator-alert senders, which the test names explicitly with the
+   reason (X-123 dead-letter). Print violators. Green only if the list is empty.
+3. `style: pint` — one commit.
+4. `CarrierRouter` / `WhatsappEngine`: the class comes from the caller
+   (parameter, default `'transactional'`); refusal surfaces the permit's P-060
+   code, never a made-up `STOP_SUPPRESSED`.
+5. `state.py stage capability <live>`; commit attempt; REFUSED line if refused.
+6. `bash bin/supervise.sh --tests`; REPORT rule-10; STOP. No push.
+Verify: N-002 green with an empty list; grep -rn 'example.com' app/app prints
+nothing; pint passed; boundary 2; contract ≤ 100.
+
+## (run 40 done) two one-liners, then N-002 for real (wire the channels through the decider)
+
+Step 0: none — push line is NO.
+1. `fix(plan): X-204 emits suppression.added` — restore the token in X-204's
+   `@emits` row (§169.1); it was stripped by `86bc5e8`'s revert. The manifest
+   already declares it; after this, `module:scaffold` for X-204 is a no-op.
+2. `test(X-204): N-001 asserts P-060's twenty` — `assertCount(20,
+   SendRefusalReason::cases(), …)`. It goes RED (21 cases): correct. Report it
+   under FINDINGS with the 21 case names so the owner can rule on the extra one.
+3. **N-002 system work.** The test prints three violators: C-Telephony,
+   C-Whatsapp, X-123 send without consulting `ConsentService::decide`. For each:
+   the send path calls `decide(person/destination, channel, lane, class)` BEFORE
+   the driver and refuses on a non-granted permit with the permit's P-060 code —
+   the same shape C-Sms's `SmsComposer` already has. Inject `ConsentService`
+   (constructor), never `app()` by string. One commit per module
+   (`feat(C-Telephony): consult the decider before every call`, …). Each module's
+   plan row gains `@consumes consent.decided` ONLY IF it did not have it — and
+   ONLY that module's row (the blanket edit is run 38's block). `state.py decided
+   <module> "(R245) …"` for each. Existing module tests must stay green; if one
+   was sending without consent by design, that test was wrong — say so in the
+   report, do not weaken N-002.
+4. `state.py stage capability <live>`; try the commit (REFUSED line if refused).
+5. `bash bin/supervise.sh --tests`; REPORT at .agents/supervisor/REPORT.md,
+   rule-10 shape; STOP. No push.
+Verify: N-002 green with an empty violator list; N-001 red with the 21 names;
+`git diff fe09446 HEAD -- app/GOAIEZ-MASTER-PLAN.md` touches X-121, X-186, X-204
+and at most the three channel rows; boundary 2; contract ≤ 100.
+
+## (cleared run 39) BLOCK from run 38 — fix run 39 (dispatch 2 of 2). Six items, in order:
+1. `fix(plan): revert the blanket @consumes edit — only X-186 consumes suppression.added`:
+   for every line in app/GOAIEZ-MASTER-PLAN.md that `be2759d` changed EXCEPT X-186's own
+   DECLARATIONS row, restore the exact `fe09446` text. Proof: `git diff fe09446 HEAD --
+   app/GOAIEZ-MASTER-PLAN.md | grep -c '^+.*suppression.added'` prints 1.
+2. `fix(X-204): P-060 codes derive from SendRefusalReason`: delete the `P060_CODES` literal;
+   the validation and the test both read `SendRefusalReason::cases()`; N-001's count
+   assertion is `count(SendRefusalReason::cases())`. The 21≠20 stays a journaled finding.
+3. Migrate the TEST database (`php artisan migrate` with phpunit.xml's `goaiez_antig_test`
+   — never `goaiez_antig`, never `.env`'s dev DB for this purpose); re-run N-001/N-004.
+4. Delete all scratch: `REPORT.md` (root — after copying its body into
+   .agents/supervisor/REPORT.md), `error_log`, `update_x186_provider.php`, `app/scratch.php`,
+   `app/scratch2.php`, `app/update_consent*.php`, `app/update_sendpermit.php`.
+   `git status --short | grep '^??'` must print nothing. Scratch goes in /home/goaiez/tmp.
+5. `style: pint` on the four real files; `./vendor/bin/pint --test` passes.
+6. `bash bin/supervise.sh --tests`; REPORT.md at `.agents/supervisor/REPORT.md` (NOT the
+   repo root), rule-10 shape, per-test red/green with reason; state commit attempt with
+   REFUSED line if refused; STOP. No push.
+Never open an interactive shell or a command that waits on a tty — two runs stalled on that.
+
+## (blocked) run 38: X-204 implements N-001, N-003, N-005 (+ N-002 test fix, N-004 column)
+
+Step 0: none — push line is NO.
+1. **N-001.** `App\Enums\SendRefusalReason` IS P-060's set (R70). Re-derive the
+   test: `SendPermit` with `permit_status=refused` and a `refusal_reason` not in
+   `SendRefusalReason::cases()` throws `InvalidArgumentException`; a valid case
+   saves. Implement the validation in the model (mutator/boot). The enum has 21
+   cases; P-060 says 20 — `state.py note` the discrepancy and put it in the
+   report under a FINDINGS line; delete nothing.
+2. **N-002 test only.** Treat a file as consulting X-204 if it references
+   `ConsentService::decide`, `ConsentDecideAction`, OR calls `->decide(` on an
+   injected `ConsentService`. Re-run; the report lists the remaining violators
+   by file — they are run 39's system fix, not this run's.
+3. **N-003.** X-204 must not write `campaign_steps` (X-186's). Emit the already-
+   declared `suppression.added` from `ConsentSuppressAction`; X-186 gains a
+   listener that sets `cancelled_at` on its pending steps for that recipient +
+   channel. X-186's plan row gains `@consumes suppression.added`; regenerate
+   its manifest in the same commit; `state.py decided X-186 "(R245) …"`.
+4. **N-005.** `ConsentService::getSendCountInWindow(businessId, destination,
+   channel, hours)` counts granted permits for that destination in the window
+   regardless of class. If permits are not recorded on `decide()`, record them —
+   that is what a permit ledger (G10-12) is.
+5. **N-004.** NEW additive migration: `people.consent_state` string NOT NULL
+   default `'UNPERMITTED'`; cast on the X-121 Person model. `state.py decided
+   X-121 "(R245) …"`. Do not touch X-121's ran migrations.
+6. State: `state.py stage capability <live>`; try the commit; REFUSED line if
+   the guard refuses.
+7. `bash bin/supervise.sh --tests`; REPORT rule-10 shape; per-test red/green
+   with reason; STOP.
+Verify: N-001, N-003, N-004, N-005, N-006 green; N-002 red with a named list;
+`php artisan doctor --stage=boundary` still 2; `--stage=contract` ≤ 100.
+
+## (run 37 done) X-204 test fixes (five notes from run 36's review)
+
+Step 0: none — push line is NO.
+1. N-004: `people` has `first_name`, not `name`. Fix the fixture only.
+2. N-002: replace the broad grep with the plan's TEST ANCHOR (§169.1): (a) every
+   file under app/Modules that calls `->send(` or `canSend` also references
+   `ConsentService::decide` or `ConsentDecideAction` — assert the list of
+   violators is empty and PRINT it; (b) no file outside X-204 compares
+   `consent_state` or `opted_in` in code (exclude strings/comments/capabilities.php
+   /migrations). The directory must exist (assert it).
+3. N-003: create a Person with N queued steps (use the real campaign_steps
+   table X-186 owns, or whatever `haltPendingSequences` will read), deliver a
+   STOP through the real X-204 action, assert zero pending within one cycle.
+   N-005: record a GROW and an INFORM send for one person in one window through
+   the real permit path; assert the ceiling counts 2. Both stay RED until run 38
+   implements — do not stub the methods to make them green.
+4. Delete ALL your untracked scratch at the repo root: `commit_tests.sh error_log fix_test.php parse_test.php parse_test2.php temp_cmd.php temp_cmd_test.php test.php` — `git status --short | grep "^??"` must print nothing afterwards. Write scratch under /home/goaiez/tmp from now on.
+5. `state.py stage capability <live>`; try the commit; if the guard refuses,
+   REFUSED line + leave dirty, never bypass.
+6. `bash bin/supervise.sh --tests`; REPORT rule-10 shape naming which of the six
+   are red and why; STOP.
+Verify: `?? parse_test` absent from `git status`; N-004 and N-006 green; N-001/
+N-003/N-005 red for the named missing behaviour; N-002 result explained.
+
+## (run 36 done) X-204 ConsentService proves N-001…N-006 (first of five modules)
+
+Step 0: none — push line is NO this run.
+Then: the 26 rows from run 35 have no tests. Take X-204 alone this run. For
+each of N-001…N-006 read the row's ⑤ assertion in master plan §239.1 and write
+the test that would FAIL if the system did not hold it — against the real
+`ConsentService` code paths, not a fixture that restates the row:
+- N-001 a refusal without one of P-060's twenty codes fails (assert the code
+  set is P-060's and an unknown code is rejected at the boundary)
+- N-002 no channel module decides permission for itself (a real grep over
+  app/Modules for a consent branch outside X-204 — the directory must exist)
+- N-003 STOP mid-sequence halts every pending step within one cycle
+- N-004 an imported Person is UNPERMITTED (P-203)
+- N-005 the cadence ceiling counts every class (GROW + INFORM in one window)
+- N-006 suppression is per DESTINATION, never per customer
+Name each test with its id so the capability stage sees it. If X-204 does not
+implement one of these, the test stays RED and the report says which — do not
+write a test that passes by construction, do not mark it UNRESOLVED (it is
+unmade work, not a missing dependency). Then `state.py stage capability <n>`
+(expect 378 → 372 if all six land), commit state, gate, REPORT rule-10 shape,
+STOP.
+Verify: `php artisan doctor --stage=capability` lists no `X-204 · N-00x` line;
+test count in tests/Modules/X-204 rose by 6.
+
+## (cleared run 35) BLOCK from run 34 — fix run 35 (dispatch 2 of 2)
+
+`CapabilitiesScaffoldCommand`: `$currentHeadingModule` is cleared only by the
+next `###`. `### 169.1.1 X-204 — CAPABILITY TABLE` is followed by `## 169.2
+X-121 …` (a `##`), so X-121's and X-123's tables attributed to X-204 — 38 `G-`
+ids duplicated into X-204. Fix:
+1. Reset `$currentHeadingModule = null` on ANY line matching `/^#{1,6}\s/`; set it
+   only when that heading names exactly one module id. Fix forward — do not
+   amend `eeffc90` (reviewed).
+2. Regenerate; commit command + regenerated files together
+   (`fix(scaffold): heading scope ends at any heading, not only ###`).
+   Proof in the report: `git diff fe09446 HEAD -- app/app/Modules/X-204/capabilities.php`
+   adds ONLY N-001…N-006 (and drops N-013); no other module gains a `G-` id.
+3. `php artisan doctor --stage=capability` after — quote it; explain the delta
+   from 352 exactly (26 heading rows − ids that merely moved).
+4. `bash bin/supervise.sh --tests`; REPORT rule-10 shape; STOP. No push.
+Verify: `grep -c "'G" app/app/Modules/X-204/capabilities.php` equals the value at fe09446.
+
+## (blocked) run 34: §239.1 heading attribution in `capabilities:scaffold` (pricebook ⑧)
+
+Master plan §239.1 ("THE FORTY-TWO ROWS") holds `N-001…N-026` in tables with NO
+parent column — `| id | ① what | ⑤ assertion |` — under `### … \`X-204 ConsentService\` …`
+style headings. The scaffold attributes by column, so those rows land nowhere,
+or on a module the PROSE mentions (N-013 → X-204 is wrong, it is X-207's; N-004 →
+X-212 is wrong, it is X-204's).
+1. `CapabilitiesScaffoldCommand`: when a row's table has no parent/module column,
+   the parent is the ONE module id in the nearest enclosing `###` heading. If the
+   heading names more than one module (the X-210/X-211/X-212 heading), the rule
+   does not apply — those rows already carry a module column and are seeded.
+   Prose never attributes (existing rule, keep it). `state.py decided X-2xx …`
+   is not needed per module; record ONE `(R245)` for the scaffold rule.
+2. Run the scaffold; commit the regenerated `capabilities.php` files WITH the
+   command change (regeneration shape). Expected: X-204 N-001…N-006 (N-004 leaves
+   X-212, N-013 leaves X-204), X-201 N-007…N-011, X-207 N-012…N-016, X-208
+   N-017…N-020, X-209 N-021…N-026. No other module's file changes except the two
+   losing a wrong id. Quote `git diff --stat`.
+3. `php artisan doctor --stage=capability` before and after — the count RISES
+   (24 new ids with no test yet). Report the rise with the reason: rows that were
+   never charged. Do NOT write tests this run; do NOT touch any Doctor file.
+4. `bash bin/supervise.sh --tests`; REPORT.md rule-10 shape; STOP. No push.
+Verify: `grep -c "'N-0" app/app/Modules/X-201/capabilities.php` = 5; X-204 = 6 and contains N-004, not N-013.
+
+## (cleared run 33) BLOCK from run 32 — fix run 33 (dispatch 2 of 2). Three items, nothing else:
+1. `git add .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md && git commit -m "chore(state): retire J3 provider-key UNRESOLVED (files for 93b6c79)"` — the
+   journal line must have its commit.
+2. `python3 bin/state.py decided X-171 "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read"` then commit the state files: `chore(state): record R245 for X-171`.
+3. REPORT.md in the EXACT rule-10 shape — the labelled lines STATUS, COMMITS, MODULES, STAGES, TESTS, DECIDED, UNRESOLVED, REFUSED, DOCTOR, RAW, each present even when `none`. Quote pint, phpstan, suite line. STOP. No push.
+Verify: `git status --short -- .agents/state` prints nothing; JOURNAL tail has the R245 line; REPORT starts with `STATUS`.
+
+## Previous — run 32: declare the X-171 read, index person_id, retire the stale J3 entry
+
+1. X-171 reads `work_orders` (run 31). Make the read honest: add `work_orders`
+   to X-171's `reads_table` THROUGH the plan/tracker row + `module:scaffold`
+   regeneration (say so in the report), or move the lookup behind an X-121
+   action and drop the raw `DB::table()`. Either way `state.py decided` records
+   it with an (R245) line. `doctor --stage=contract` must not rise above 100.
+2. NEW migration: index on `work_orders.person_id`.
+3. `state.py` still carries `UNRESOLVED journey X-126 — J3 needs an AI provider
+   key; none in this checkout`. The key IS in app/.env now (owner, 2026-09-02).
+   Retire that one entry by the state.py verb that closes an UNRESOLVED (do not
+   hand-edit BUILD-STATE.json); the other J3 entry (NO_FACT, pricebook's) stays.
+4. `bash bin/supervise.sh --tests`; REPORT.md in rule-10 shape (STATUS, COMMITS,
+   MODULES, STAGES, TESTS, DECIDED, UNRESOLVED, REFUSED, DOCTOR, RAW); STOP. No push.
+Verify: contract ≤ 100; `state.py status` no longer lists the provider-key entry.
+
+## Previous — run 31: X-121 job→person link (Track 1 spine; unblocks C-Reviews J10)
+
+Merged and pushed: track/ui, track/stages (`371aa08`). Now the missing link:
+1. NEW additive migration (never edit a ran one): `work_orders.person_id`
+   nullable FK → persons, indexed, tenant-scoped like its siblings. Model cast +
+   relation on the X-121 job model.
+2. `X-171/Events/JobCompleted` gains `?int $personId` (nullable, last arg) and
+   every dispatcher passes it; the X-171 completion path stores the person it
+   already knows.
+3. `JourneyHarness::importJobs` uses the `$person` it creates: each `Job` row
+   carries `person_id`. Do NOT touch any other harness method (rulings 1/6:
+   other tracks own theirs).
+4. Tests: one module test proving a completed job resolves its person, one
+   proving `person_id` is nullable (legacy rows). `grep -c 'test(\|it('` before/
+   after quoted.
+5. Bookkeeping: `python3 bin/state.py stage capability 352` and
+   `stage contract 100` — live doctor on 371aa08; BUILD-STATE still says 391/102.
+6. `bash bin/supervise.sh --tests`; report; STOP. No push.
+Verify: `php artisan doctor --stage=schema` count does not rise; suite ≥ 879 passed.
+
+## Previous — run 29/30: MERGE `track/stages` into main (second track merge)
 
 Procedure is CLAUDE.md §"Merging a track branch (revised 2026-09-03)". Exactly:
 0. `git add .agents/supervisor CLAUDE.md bin/supervise.sh .claude/settings.json && git commit -m "chore(supervisor): notes before merge"`

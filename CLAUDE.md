@@ -24,7 +24,7 @@ deny list blocks, that is the signal it is the coder's job — brief it.
 
 ## The mailbox — `.agents/supervisor/`
 
-| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line is the push gate |
+| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line is the push gate — `YES — <from>..<to>` is executed by the coder as step 0 of its next run (owner automated pushes 2026-09-03); the supervisor sets it only after a PASS and only to the reviewed tip |
 | :--- | :--- |
 | `REPORT.md` | coder → you. Overwritten at every wave close or stop, fixed shape (rule 10) |
 | `REVIEWS.md` | you → coder. **Append-only**, dated blocks at EOF, verdict `PASS` / `PASS-WITH-NOTES` / `BLOCK` |
@@ -137,7 +137,13 @@ report's HISTORY line; an unquoted or post-review rewrite blocks the wave.
 **Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
 run plus one fix run). If the same BLOCK item survives a second dispatch,
 STOP and put it to the user — never dispatch a third time for the same
-failure, never loosen the check to get past it. A journey/wave marked green
+failure, never loosen the check to get past it. **The cap stops an ITEM, never
+the track (2026-09-03, after an idle hour):** a defect the fix run introduced,
+or one the supervisor's own brief caused, is a new item with its own two
+dispatches; and work that is not blocked at all (the next brief item, the next
+merge) is dispatched immediately. Idle is never the default — when a cap
+stops one item, list it for the owner AND dispatch the next work in the same
+breath. A journey/wave marked green
 by the coder is never taken at face value: the supervisor's own gate decides.
 Never run `state.py done/journey/stage` from the supervisor; never touch
 `app/Doctor`; never let the coder and supervisor loop without a human seeing

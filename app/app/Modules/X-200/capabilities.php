@@ -37,7 +37,7 @@ return [
     'G3-04' => 'predictive pacing under the 3% abandonment ceiling (§160.1)',
 
     // status: SPECCED
-    'G5-09' => 'coaching on the desk; the voice is X-197\'s',
+    'G5-09' => 'coaching on the desk; the voice is X-197\'s  ·  REFUSES with BAD_STATE',
 
     // status: SPECCED
     'G5-40' => 'the QA scorecard',
@@ -52,7 +52,7 @@ return [
     'G10-03' => 'hard maximum 3%, lower only; the UI and API reject higher (§160.1)',
 
     // status: SPECCED
-    'G11-25' => 'named in the header — a closed set per campaign',
+    'G11-25' => 'named in the header — a closed set per campaign  ·  REFUSES with BAD_STATE',
 
     // status: SPECCED
     'G13-02' => 'the wallboard;  team-level operational state only — T677 bars the punitive read',
@@ -76,7 +76,7 @@ return [
     'G18-06' => 'a wellbeing prompt on the desk — the positive side of §150.4',
 
     // status: SPECCED
-    'G18-08' => 'listen · whisper · barge on the seat',
+    'G18-08' => 'listen · whisper · barge on the seat  ·  REFUSES with BAD_STATE',
 
     // status: SPECCED
     'G18-13' => 'T677 — feedback to the rep, not a scoreboard against them · refuses: to act as a scoreboard against the rep — it is feedback (T677)',
@@ -94,7 +94,7 @@ return [
     'G18-25' => 'X-200\'s own header — uncertain → treat as human, never drop a voicemail on a live person. A silent hang-up on a live human IS an abandoned call and counts against the 3% ceiling (§160.1)',
 
     // status: SPECCED
-    'G21-13' => 'a closed deal on the wallboard and in the channel',
+    'G21-13' => 'a closed deal on the wallboard and in the channel  ·  REFUSES with BAD_STATE',
 
     // status: SPECCED
     'G15-29' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ §150.4 — praise only; no per-person negative output exists in the schema',

@@ -36,6 +36,7 @@ return [
         'research.completed',
         'icebreaker.generated',
         'signal.found',
+        'prospect.scored',
     ],
     'consumes' => [
         'capability.decided',

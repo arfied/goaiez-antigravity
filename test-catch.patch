@@ -1,0 +1,21 @@
+--- app/app/Jobs/Voice/IngestVoiceEventJob.php
++++ app/app/Jobs/Voice/IngestVoiceEventJob.php
+@@ -109,6 +109,8 @@
+             return;
+         }
+ 
++        try {
++
+         $outcome = match ($this->event) {
+             VoiceWebhookEvent::RecordingReady => $calls->attachRecording($this->providerCallId),
+             VoiceWebhookEvent::CallEnded => $calls->record($this->providerCallId),
+@@ -159,5 +161,9 @@
+                 'event' => $this->event->value,
+             ]);
+         }
++        
++        } catch (\Throwable $e) {
++            \Illuminate\Support\Facades\Log::error("EXCEPTION IN JOB: " . $e->getMessage() . " " . $e->getTraceAsString());
++        }
+     }
+ }

@@ -1,0 +1,8 @@
+--- app/app/Providers/AppServiceProvider.php
++++ app/app/Providers/AppServiceProvider.php
+@@ -387,6 +387,7 @@
+         $this->app->bind(VoiceProvider::class, function (): VoiceProvider {
+             $driver = config('services.voice.driver');
++            \Illuminate\Support\Facades\Log::info("VoiceProvider resolved with driver: " . var_export($driver, true));
+ 
+             if ($driver === 'null') {

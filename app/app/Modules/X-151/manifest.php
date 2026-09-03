@@ -35,6 +35,10 @@ return [
     ],
     'emits' => [
         'fetch.requested',
+        'fetch.completed',
+        'fetch.blocked',
+        'fetch.stale',
+        'prospect.discovered',
     ],
     'consumes' => [
         'capability.decided',

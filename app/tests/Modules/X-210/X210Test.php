@@ -85,7 +85,7 @@ class X210Test extends TestCase
     }
 
     /**
-     * [N-027], [N-028], [N-030], [G1-66], [G1-67], [G1-69], [G6-38], [G7-47], [G15-21]
+     * [N-027], [N-028], [N-030], [N-032], [G1-66], [G1-67], [G1-69], [G6-38], [G7-47], [G15-21]
      */
     public function test_promotion_capabilities(): void
     {

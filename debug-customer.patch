@@ -1,0 +1,16 @@
+--- app/app/Services/Voice/VoiceCalls.php
++++ app/app/Services/Voice/VoiceCalls.php
+@@ -453,7 +453,7 @@
+                 ]);
+ 
+-                \App\Models\ConsentRecord::forceCreate([
++                $consent = \App\Models\ConsentRecord::forceCreate([
+                     'customer_id' => $customer->id,
+                     'channel' => \App\Enums\OutreachChannel::Sms->value,
+                     'consent_type' => \App\Enums\ConsentType::Express->value,
+@@ -462,6 +462,7 @@
+                     'disclosure_version' => '1.0',
+                     'basis' => 'Inbound call',
+                 ]);
++                \Illuminate\Support\Facades\Log::info("Created ConsentRecord: " . $consent->id . " for customer: " . $customer->id);
+             }

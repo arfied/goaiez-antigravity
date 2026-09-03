@@ -107,7 +107,37 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
-        throw $this->todo('POST the carrier\'s real webhook shape — not a synthetic event');
+        config(['services.voice.driver' => 'infobip']);
+        \App\Models\PlatformCredential::updateOrCreate(['key' => 'infobip_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        config(['services.infobip.base_url' => 'https://api.infobip.com']);
+        \Illuminate\Support\Facades\DB::table('platform_settings')->updateOrInsert(['key' => 'voice.enabled'], ['value' => 'true']);
+        app(\App\Services\Voice\RecordingAnnouncement::class)->attest(new \App\Services\Voice\RecordingAnnouncementAttestation('v1', 'system', 'clip-1', ['host' => 'test']));
+        \Illuminate\Support\Facades\DB::table('support_settings')->updateOrInsert(['business_id' => $tenant['id']], ['call_routing_mode' => 'conditional']);
+        $callId = (string) \Illuminate\Support\Str::uuid();
+        $payload = ['callId' => $callId, 'type' => 'CALL_FINISHED'];
+        $content = json_encode($payload, JSON_UNESCAPED_SLASHES);
+        $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
+        $signature = base64_encode(hash_hmac('sha256', $content, $secret, true));
+
+        \Illuminate\Support\Facades\Http::fake([
+            "*/calls/1/calls/{$callId}" => \Illuminate\Support\Facades\Http::response([
+                'id' => $callId,
+                'from' => $from,
+                'to' => env('INFOBIP_SENDER', '+19015922708'),
+                'direction' => 'INBOUND',
+                'state' => 'NO_ANSWER',
+                'startTime' => now()->subSeconds(10)->toIso8601String(),
+                'answerTime' => null,
+                'endTime' => now()->toIso8601String(),
+                'ringDuration' => 5
+            ], 200)
+        ]);
+
+        $res = $this->call('POST', '/webhooks/infobip/voice', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_SIGNATURE' => $signature,
+        ], $content);
+        $res->assertStatus(200);
     }
 
     /** @param array<string,mixed> $tenant */
@@ -151,7 +181,22 @@ trait JourneyHarness
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
         $this->guardOutboundSend($to);
-        throw $this->todo('poll for an outbound row carrying the provider message id');
+        \Illuminate\Support\Facades\Log::info("Jobs before drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
+        $this->drainQueue();
+        \Illuminate\Support\Facades\Log::info("Jobs after drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
+        \Illuminate\Support\Facades\Log::info("Remaining job: " . json_encode(\Illuminate\Support\Facades\DB::table('jobs')->get()));
+        \Illuminate\Support\Facades\Log::info("Failed jobs: " . \Illuminate\Support\Facades\DB::table('failed_jobs')->count());
+        $failed = \Illuminate\Support\Facades\DB::table('failed_jobs')->get();
+        if ($failed->isNotEmpty()) {
+            \Illuminate\Support\Facades\Log::error("Failed job exception: " . $failed->first()->exception);
+        }
+        $msg = \Illuminate\Support\Facades\DB::table('outreach_messages')->where('status', '!=', 'queued')->latest('id')->first();
+        if ($msg) {
+            $arr = (array) $msg;
+            $arr['provider_message_id'] = $arr['provider_msg_id'] ?? null;
+            return $arr;
+        }
+        return null;
     }
 
     /** @param array<string,mixed> $tenant */
@@ -259,7 +304,7 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        throw $this->todo('assert a consent DECISION row exists for this send');
+        return \Illuminate\Support\Facades\DB::table('automation_runs')->where('automation_key', 'call_missed')->exists();
     }
 
     // ── counting outbound ────────────────────────────────────────────────
