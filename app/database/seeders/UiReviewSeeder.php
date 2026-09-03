@@ -42,6 +42,7 @@ class UiReviewSeeder extends Seeder
             'email' => 'staff@business.com',
             'name' => 'Staff Review',
             'role' => 'super_admin',
+            'password' => bcrypt('password'),
             'two_factor_secret' => encrypt('dummy_secret'),
             'two_factor_recovery_codes' => encrypt(json_encode(['12345-67890', '09876-54321'])),
             'two_factor_confirmed_at' => now(),
@@ -56,7 +57,9 @@ class UiReviewSeeder extends Seeder
             ]);
         }
         if (! DB::table('businesses')->where('owner_user_id', $setupUser->id)->exists()) {
-            app(TenantProvisioner::class)->provision($setupUser);
+            Tenancy::actingAsUser($setupUser->id, function () use ($setupUser) {
+                app(TenantProvisioner::class)->provision($setupUser);
+            });
         }
 
         Tenancy::actingAsUser($owner->id, function () use ($owner) {
