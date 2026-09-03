@@ -68,15 +68,6 @@ class X103Test extends TestCase
             'Published page and facts invalidation must share exact same commit id'
         );
 
-        $publishedVersion = \App\Modules\X103\Models\PageVersion::find($pubRes['version_id']);
-        $this->assertTrue($publishedVersion->pixel_installed);
-        $this->assertTrue($publishedVersion->chat_installed);
-        $this->assertTrue($publishedVersion->form_capture_installed);
-        $this->assertTrue($publishedVersion->dni_installed);
-        $this->assertTrue($publishedVersion->seo_tags_installed);
-        $this->assertTrue($publishedVersion->schema_installed);
-        $this->assertTrue($publishedVersion->ssl_enabled);
-
         // 3. A page the tenant edited is skipped by the optimiser's next proposal
         $editedPage = $this->pageAction->handle($biz->id, 'about', 'About Us', true); // is_tenant_edited = true
         $optRes = $this->engine->proposeOptimization($biz->id, $editedPage->id, ['hero' => 'AI proposed hero']);

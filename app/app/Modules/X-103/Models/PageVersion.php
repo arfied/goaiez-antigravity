@@ -15,11 +15,5 @@ class PageVersion extends Model
     protected $casts = [
         'content_blocks' => 'array',
         'pixel_installed' => 'boolean',
-        'chat_installed' => 'boolean',
-        'form_capture_installed' => 'boolean',
-        'dni_installed' => 'boolean',
-        'seo_tags_installed' => 'boolean',
-        'schema_installed' => 'boolean',
-        'ssl_enabled' => 'boolean',
     ];
 }
