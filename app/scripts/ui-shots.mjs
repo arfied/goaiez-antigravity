@@ -629,6 +629,16 @@ function waitForServer(url) {
                 await runAxe(page, `account-inbox-thread${suffix}`, outputDir);
             }
 
+            if (shouldCapture('account-customer-profile' + suffix)) {
+                await page.goto(`${baseUrl}/account/customers`);
+                await page.waitForLoadState('networkidle');
+                await page.click('ul.space-y-3 li:nth-child(1) a[data-customer]');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `account-customer-profile${suffix}.png`), fullPage: true });
+                await runAxe(page, `account-customer-profile${suffix}`, outputDir);
+            }
+
             // setup logout and login as setup@business.com
             await page.goto(`${baseUrl}/logout`); // if there's a logout route, or just clear cookies
             await context.clearCookies();
