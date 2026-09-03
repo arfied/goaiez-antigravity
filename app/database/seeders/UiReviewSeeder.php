@@ -169,5 +169,85 @@ class UiReviewSeeder extends Seeder
                 'location_id' => $location->id,
             ]);
         }
+
+        if (Customer::count() < 12) {
+            $customers = Customer::factory()->count(12)->create([
+                'location_id' => $location->id,
+            ]);
+            
+            // 3 with feedback (first-party review)
+            $customers->take(3)->each(function ($c) use ($location) {
+                \App\Models\Review::factory()->create([
+                    'location_id' => $location->id,
+                    'customer_id' => $c->id,
+                ]);
+            });
+        }
+        
+        if (\App\Models\Conversation::count() < 2) {
+            $conversations = \App\Models\Conversation::factory()->count(2)->create([
+                'location_id' => $location->id,
+                'customer_id' => Customer::first()->id ?? null,
+            ]);
+            
+            foreach ($conversations as $conv) {
+                \App\Models\Message::factory()->count(3)->create([
+                    'conversation_id' => $conv->id,
+                ]);
+            }
+        }
+        
+        if (\App\Models\OutreachMessage::count() < 6) {
+            \App\Models\OutreachMessage::factory()->count(6)->sent()->create([
+                'customer_id' => Customer::first()->id ?? null,
+            ]);
+        }
+        
+        if (\App\Models\Review::where('is_platform', false)->count() < 4) {
+            // 4 reviews (one unhappy)
+            \App\Models\Review::factory()->fromGoogle()->count(3)->create([
+                'location_id' => $location->id,
+                'rating' => 5,
+            ]);
+            \App\Models\Review::factory()->fromGoogle()->create([
+                'location_id' => $location->id,
+                'rating' => 1,
+            ]);
+        }
+        
+        if (! DB::table('directory_memberships')->where('business_id', $businessId)->exists()) {
+            DB::table('directory_memberships')->insert([
+                ['business_id' => $businessId, 'directory_name' => 'Google', 'directory_url' => 'https://google.com', 'is_noindex' => false, 'directory_index' => 1, 'is_purchased' => false, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'directory_name' => 'Yelp', 'directory_url' => 'https://yelp.com', 'is_noindex' => false, 'directory_index' => 2, 'is_purchased' => false, 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+        
+        if (! DB::table('citations')->where('business_id', $businessId)->exists()) {
+            DB::table('citations')->insert([
+                ['business_id' => $businessId, 'membership_id' => null, 'nap_business_name' => 'Test Business', 'nap_phone' => '1234567890', 'nap_address' => '123 Test St', 'is_verified' => true, 'directory' => 'Google', 'created_at' => now(), 'updated_at' => now(), 'nap_status' => 'correct'],
+                ['business_id' => $businessId, 'membership_id' => null, 'nap_business_name' => 'Test Business', 'nap_phone' => '1234567890', 'nap_address' => '123 Test St', 'is_verified' => true, 'directory' => 'Yelp', 'created_at' => now(), 'updated_at' => now(), 'nap_status' => 'correct'],
+                ['business_id' => $businessId, 'membership_id' => null, 'nap_business_name' => 'Test Business', 'nap_phone' => '1234567890', 'nap_address' => '123 Test St', 'is_verified' => true, 'directory' => 'Bing', 'created_at' => now(), 'updated_at' => now(), 'nap_status' => 'missing'],
+            ]);
+        }
+        
+        if (\App\Models\AuditLogEntry::count() < 2) {
+            \App\Models\AuditLogEntry::factory()->create([
+                'action' => 'settings.updated',
+                'metadata' => ['field' => 'automation_mode'],
+                'created_at' => now()->subDays(1),
+            ]);
+            \App\Models\AuditLogEntry::factory()->create([
+                'action' => 'user.invited',
+                'metadata' => ['role' => 'staff'],
+                'created_at' => now(),
+            ]);
+        }
+        
+        if (! DB::table('invoices')->where('business_id', $businessId)->exists()) {
+            DB::table('invoices')->insert([
+                ['business_id' => $businessId, 'invoice_number' => 'INV-001', 'total_cents' => 10000, 'paid_cents' => 10000, 'status' => 'paid', 'due_date' => now()->subDays(10), 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'invoice_number' => 'INV-002', 'total_cents' => 5000, 'paid_cents' => 0, 'status' => 'overdue', 'due_date' => now()->subDays(5), 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
     }
 }
