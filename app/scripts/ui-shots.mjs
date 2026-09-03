@@ -387,7 +387,7 @@ function waitForServer(url) {
         await setupBrowser.close();
 
         
-        const locationId = execSync('php artisan tinker --execute="echo App\\\\Models\\\\Location::withoutGlobalScopes()->first()->id;"').toString().trim();
+        const locationId = execSync('php artisan tinker --execute="App\\\\Support\\\\Tenancy::actingAsUser(App\\\\Models\\\\User::where(\'email\', \'owner2@business.com\')->first()->id, function() { echo App\\\\Models\\\\Location::withoutGlobalScopes()->where(\'business_id\', \\Illuminate\\\\Support\\\\Facades\\\\DB::table(\'businesses\')->where(\'owner_user_id\', App\\\\Models\\\\User::where(\'email\', \'owner2@business.com\')->first()->id)->value(\'id\'))->first()->id; });"').toString().trim();
         
         const staffBrowser = await chromium.launch();
         const staffContext = await staffBrowser.newContext();
