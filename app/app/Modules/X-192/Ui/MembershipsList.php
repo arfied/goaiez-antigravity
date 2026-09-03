@@ -3,8 +3,10 @@
 namespace App\Modules\X192\Ui;
 
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout')]
 class MembershipsList extends Component
 {
     public function render()

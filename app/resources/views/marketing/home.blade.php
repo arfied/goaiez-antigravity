@@ -70,6 +70,7 @@
                             placeholder="Enter your business name (e.g. Rachel Taylor Clinic)"
                             aria-describedby="business-name-help"
                             aria-autocomplete="list"
+                            role="combobox"
                             aria-expanded="false"
                             aria-controls="business-suggestions"
                             class="min-h-12 w-full border-none bg-transparent px-3 text-base text-ink placeholder:text-ink-3 focus:outline-none focus:ring-0"
