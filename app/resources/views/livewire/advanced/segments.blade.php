@@ -23,7 +23,7 @@
         <div class="bg-card border border-rule rounded-card shadow-card p-6 flex flex-col justify-between">
             <div>
                 <div class="flex justify-between items-center mb-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-ok-bg text-ok">High Review Propensity</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">High Review Propensity</span>
                     <span class="text-xs text-ink-2">Dynamic</span>
                 </div>
                 <h3 class="text-lg font-bold text-ink">Recent Satisfied Visitors</h3>
@@ -38,7 +38,7 @@
         <div class="bg-card border border-rule rounded-card shadow-card p-6 flex flex-col justify-between">
             <div>
                 <div class="flex justify-between items-center mb-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-sample-bg text-sample">VIP Advocates</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">VIP Advocates</span>
                     <span class="text-xs text-ink-2">Dynamic</span>
                 </div>
                 <h3 class="text-lg font-bold text-ink">5-Star Google Reviewers</h3>
@@ -53,7 +53,7 @@
         <div class="bg-card border border-rule rounded-card shadow-card p-6 flex flex-col justify-between">
             <div>
                 <div class="flex justify-between items-center mb-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-attention-bg text-attention">Re-engagement</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule whitespace-nowrap">Re-engagement</span>
                     <span class="text-xs text-ink-2">Dynamic</span>
                 </div>
                 <h3 class="text-lg font-bold text-ink">Lapsed Customers (60+ Days)</h3>
