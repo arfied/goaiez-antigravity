@@ -49,7 +49,12 @@ return [
         'event_subscriptions',
         'dead_letters',
     ],
-    'reads_table' => [],
+    'reads_table' => [
+        'businesses',
+        'users',
+        '(R245) operator alert (platform -> tenant owner)',
+        'not a customer send per P-060',
+    ],
 
     'renders' => [
         'dlq_request_inspector',
