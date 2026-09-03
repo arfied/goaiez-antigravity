@@ -3,7 +3,7 @@
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
-                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Advanced</a></li>
+                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:underline">Advanced</a></li>
                     <li class="text-ink-2">/</li>
                     <li class="text-ink-2">POS & Invoicing Integrations</li>
                 </ol>
@@ -44,7 +44,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-rule flex justify-between items-center text-xs">
                 <span class="text-ink-2">Last Synced: 5 mins ago</span>
-                <button class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Configure</button>
+                <button class="text-indigo-400 font-semibold hover:underline">Configure</button>
             </div>
         </div>
 
@@ -64,7 +64,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-rule flex justify-between items-center text-xs">
                 <span class="text-ink-2">Not Connected</span>
-                <button class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Connect Account</button>
+                <button class="text-indigo-400 font-semibold hover:underline">Connect Account</button>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
             </div>
             <div class="mt-6 pt-4 border-t border-rule flex justify-between items-center text-xs">
                 <span class="text-ink-2">Not Connected</span>
-                <button class="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Connect Account</button>
+                <button class="text-indigo-400 font-semibold hover:underline">Connect Account</button>
             </div>
         </div>
     </div>

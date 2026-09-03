@@ -3,7 +3,7 @@
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
-                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Advanced</a></li>
+                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:underline">Advanced</a></li>
                     <li class="text-ink-2">/</li>
                     <li class="text-ink-2">Citations</li>
                 </ol>
@@ -67,7 +67,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="font-medium text-ink">{{ $citation->directory }}</div>
                             @if ($citation->directory_url)
-                                <a href="{{ $citation->directory_url }}" target="_blank" class="text-xs text-indigo-400 dark:text-indigo-400 hover:underline">View Listing &rarr;</a>
+                                <a href="{{ $citation->directory_url }}" target="_blank" class="text-xs text-indigo-400 hover:underline">View Listing &rarr;</a>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-ink-2">
@@ -75,7 +75,7 @@
                             <div><strong>Phone:</strong> {{ $citation->listing_phone ?? 'N/A' }}</div>
                             <div><strong>Address:</strong> {{ $citation->listing_address ?? 'N/A' }}</div>
                             @if (!empty($citation->mismatch_details))
-                                <div class="mt-1 text-xs text-amber-700 dark:text-amber-400 font-medium">
+                                <div class="mt-1 text-xs text-attention font-medium">
                                     Issue: {{ is_array($citation->mismatch_details) ? implode(', ', $citation->mismatch_details) : $citation->mismatch_details }}
                                 </div>
                             @endif
@@ -90,7 +90,7 @@
                                     Mismatch
                                 </span>
                             @else
-                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300">
+                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-alert-bg text-alert">
                                     Missing
                                 </span>
                             @endif
@@ -100,7 +100,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             @if ($citation->nap_status !== 'consistent')
-                                <button wire:click="markResolved({{ $citation->id }})" class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs font-semibold p-2 min-h-[40px] inline-flex items-center">
+                                <button wire:click="markResolved({{ $citation->id }})" class="text-indigo-400 hover:underline text-xs font-semibold p-2 min-h-[40px] inline-flex items-center">
                                     Mark Fixed
                                 </button>
                             @endif

@@ -162,7 +162,7 @@
                 
                 @if ($previewDevice === 'mobile')
                     <!-- Realistic Smartphone Mockup Frame -->
-                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 bg-white shadow-2xl overflow-x-auto overflow-y-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
+                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 bg-white shadow-2xl overflow-x-auto overflow-y-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
                         <!-- Dynamic Island / Speaker Notch -->
                         <div class="h-6 bg-slate-900 w-full flex items-center justify-center shrink-0">
                             <div class="h-3.5 w-24 bg-black rounded-full"></div>
