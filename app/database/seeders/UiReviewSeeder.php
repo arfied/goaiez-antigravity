@@ -183,7 +183,7 @@ class UiReviewSeeder extends Seeder
             // 3 with feedback (first-party review)
             $ratings = [5, 4, 2];
             $customers->take(3)->values()->each(function ($c, $index) use ($location, $ratings) {
-                \App\Models\Review::factory()->create([
+                Review::factory()->create([
                     'location_id' => $location->id,
                     'customer_id' => $c->id,
                     'rating' => $ratings[$index],
@@ -199,23 +199,23 @@ class UiReviewSeeder extends Seeder
                     'customer_id' => $c->id,
                     'channel' => 'sms',
                 ]);
-                \App\Models\Message::factory()->count(3)->create([
+                Message::factory()->count(3)->create([
                     'conversation_id' => $conv->id,
                 ]);
             }
         }
 
-        if (\App\Models\OutreachMessage::count() < 6) {
+        if (OutreachMessage::count() < 6) {
             $messageCustomers = Customer::where('location_id', $location->id)->inRandomOrder()->take(3)->get();
             $bodies = [
                 'Hi, thanks for visiting us!',
                 'Don\'t forget to leave a review.',
                 'Your appointment is confirmed for tomorrow.',
             ];
-            
+
             for ($i = 0; $i < 6; $i++) {
                 $c = $messageCustomers[$i % 3] ?? Customer::first();
-                \App\Models\OutreachMessage::factory()->sent()->create([
+                OutreachMessage::factory()->sent()->create([
                     'customer_id' => $c->id,
                     'body' => $bodies[$i % 3],
                     'created_at' => now()->subDays(rand(1, 30)),
