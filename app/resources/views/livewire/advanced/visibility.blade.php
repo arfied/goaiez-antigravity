@@ -40,7 +40,7 @@
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Top Converting Search Queries</h2>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" aria-label="Search queries table">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-900/50">
                 <tr>
