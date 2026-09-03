@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T14:50:48",
+ "updated": "2026-09-03T01:20:26",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -19,7 +19,7 @@
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 102,
+   "violations": 100,
    "fails": "COMMIT"
   },
   "citation": {
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 120,
+   "violations": 352,
    "fails": "MERGE"
   },
   "anchor": {
@@ -39,7 +39,7 @@
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 12,
+   "violations": 9,
    "fails": "WAVE"
   }
  },
@@ -569,10 +569,23 @@
    "unresolved": []
   },
   "X-126": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-126",
+     "stage": "journey",
+     "why": "J3 needs an AI provider key; none in this checkout",
+     "at": "2026-09-02T10:12:36"
+    },
+    {
+     "module": "X-126",
+     "stage": "journey",
+     "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
+     "at": "2026-09-02T10:28:55"
+    }
+   ]
   },
   "X-127": {
    "status": "DONE",
@@ -1137,7 +1150,7 @@
    "green_after_wave": 5
   },
   "J5": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a migration of five hundred jobs sends nothing",
    "green_after_wave": 14
   },
@@ -1147,12 +1160,12 @@
    "green_after_wave": 11
   },
   "J7": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an agency client never sees cost or margin",
    "green_after_wave": 11
   },
   "J8": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a deliberately corrupted backup fails the restore",
    "green_after_wave": 14
   },
@@ -1189,36 +1202,18 @@
    "stage": "schema",
    "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
    "at": "2026-09-02T02:39:43"
+  },
+  {
+   "module": "X-126",
+   "stage": "journey",
+   "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
+   "at": "2026-09-02T10:28:55"
   }
  ],
  "notes": [
   {
    "at": "2026-08-29T14:37:58",
    "note": "bootstrap-done"
-  },
-  {
-   "at": "2026-09-02T15:10:58",
-   "note": "anchor 134: every finding is the identical '<module>: no runtime proof' for all 134 modules, fix 'run the module'\\''s TEST ANCHOR against real transports and write the artifact id to evidence/'. No code-side change clears one. The only route writes to storage/app/evidence/, which is forbidden on every track because the artifacts already on disk came from the forbidden simulation harness. Same blocker as journey 10: real transports, real credentials, one job. Not fixable by track/stages or any other track. Owner action."
-  },
-  {
-   "at": "2026-09-02T15:11:06",
-   "note": "capability roll call at 82, classified by owner ruling 5: track sixty 15 (C-Agent 6, C-Sms 4, X-188 2, X-118 2, X-66 1) \u00b7 site 7 (X-137 4, X-102 2, X-155 1) \u00b7 Track 1 4 (X-212, X-172, X-112, C-Billing) \u00b7 pricebook 3 (X-119) \u00b7 money 2 (X-198, X-199) \u00b7 owner 3 (X-121) \u00b7 stages 48. Of the 48 stages-owned, 47 are declined by id across REVIEWS.md waves S-1-fix, S-2 and S-3; X-215 N-215-01 is S-4 item 1. After S-4 track/stages has no capability work left. Earlier declines are recorded in REVIEWS.md, not in this ledger."
-  },
-  {
-   "at": "2026-09-02T15:42:41",
-   "note": "contract 66 of 100: '@provides <action>: does not declare whether the agent may reach it', 54 of them stages-owned across 21 modules. NOT FIXABLE from the code side. Each module declares one read-shaped action reachable and provides several that are correctly not; the check offers only 'add it to the allow-list' (which makes token.issue, action.reverse, assistant.execute and dial.next agent-reachable, contradicting P-209's backfill rule the plan states verbatim) or '@agent_reachable none' (which is module-wide and deletes the one correct entry). ContractStage:229 says silence means NOT reachable; the finding at :433 says silence fails OPEN; the check has no per-action negative. ContractStage.php is sealed. Owner action."
-  },
-  {
-   "at": "2026-09-02T15:42:41",
-   "note": "contract 28 of 100: 'consumes <event> \u2014 nothing emits it'. ContractStage:552 exempts @ingress and @scheduled events but harvests them at :199 from the compiled manifest.php, and ModuleScaffoldCommand:143-167 never carries those two fields out of the plan. The annotation never reaches the file the stage reads, so the exemption never fires. Ninth instance of the regex-the-manifest-source defect that file documents eight times. ManifestReader.php is sealed. Owner action."
-  },
-  {
-   "at": "2026-09-02T15:42:41",
-   "note": "schema 12 of 14: tenant-owned table has no RLS, on the eleven tables named in 2026_09_01_000001_reapply_platform_scope_rls_exemption.php plus operator_alerts. All twelve are exempt by owner ruling audit C-1 and both exemption migrations have run. Enabling RLS on them reintroduces the 42501 that broke every STOP, data request and deletion request. SchemaStage::isTenantOwned tests only that a business_id column exists and every one carries a nullable one by design. Same finding as the existing X-121 UNRESOLVED. Not fixable; do not clear."
-  },
-  {
-   "at": "2026-09-02T15:42:41",
-   "note": "schema 1 of 14: 'this deploy contains a SWITCH and a CONTRACT together'. SchemaStage:100-105 scans all 275 files in database/migrations for any ->change() and any dropColumn, so the finding is true of any repo with history and cannot be cleared. Permanently red."
   }
  ],
  "decisions": [
@@ -1241,69 +1236,9 @@
    "ruling": "R245"
   },
   {
-   "module": "C-Ai",
-   "chose": "DECLINED: CANNOT REFUSE: cell asserts a mechanism, not a refusal",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "DECLINED: CANNOT REFUSE: cell describes sources, not a refusal",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-07",
-   "chose": "DECLINED: CANNOT REFUSE: cell says named in the header",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "DECLINED: CANNOT REFUSE: cell describes token properties, no refusal asserted",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-148",
-   "chose": "DECLINED: CANNOT REFUSE: cell names a source, no refusal asserted",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-124",
-   "chose": "DECLINED: CANNOT REFUSE: cell describes answering from a registry, no refusal asserted",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-170",
-   "chose": "DECLINED: CANNOT REFUSE: cell says a time-boxed bonus rule",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-182",
-   "chose": "DECLINED: CANNOT REFUSE: cell describes source of history, no refusal asserted",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-189",
-   "chose": "DECLINED: CANNOT REFUSE: cell says the branded card",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-197",
-   "chose": "DECLINED: CANNOT REFUSE: cell describes the source of name and voice, no refusal asserted",
-   "at": "2026-09-02T14:50:48",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-202",
-   "chose": "DECLINED: CANNOT REFUSE: cell describes a sequence, no refusal asserted",
-   "at": "2026-09-02T14:50:48",
+   "module": "X-171",
+   "chose": "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) \u2014 declared in the plan row and regenerated manifest, not a raw undeclared read",
+   "at": "2026-09-03T01:20:26",
    "ruling": "R245"
   }
  ]

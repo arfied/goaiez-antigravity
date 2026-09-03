@@ -6,7 +6,6 @@ namespace App\Modules\X179\Ui;
 
 use App\Modules\X179\Models\TemplateMatch;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -25,12 +24,7 @@ class ProspecttenantfacingTop3Preview extends Component
             ->where('prospect_id', $prospectId)
             ->exists();
         if (! $exists) {
-            dd([
-                'resolved' => $businessId,
-                'prospect' => $prospectId,
-                'count' => TemplateMatch::where('business_id', $businessId)->count(),
-                'auth_id' => Auth::id(),
-            ]);
+            abort(404);
         }
 
         $this->businessId = (int) $businessId;

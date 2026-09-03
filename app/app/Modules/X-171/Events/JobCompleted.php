@@ -9,6 +9,7 @@ final class JobCompleted
     public function __construct(
         public readonly int $businessId,
         public readonly int $jobId,
-        public readonly int $techId
+        public readonly int $techId,
+        public readonly ?int $personId = null
     ) {}
 }

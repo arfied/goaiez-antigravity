@@ -1,162 +1,13 @@
-- `2026-08-30T02:05:15` state initialised
-- `2026-08-30T02:05:26` note: bootstrap-done
-- `2026-08-30T02:05:26` selftest: sound
-- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
-- `2026-08-30T02:05:26` X-123 -> DONE
-- `2026-08-30T02:05:26` X-122 -> DONE
-- `2026-08-30T02:05:26` X-126 -> DONE
-- `2026-08-30T02:05:26` X-119 -> DONE
-- `2026-08-30T02:05:26` seal observed deadbeef00000000
-- `2026-08-30T02:12:17` note: bootstrap-done
-- `2026-08-30T02:12:17` selftest: sound
-- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
-- `2026-08-30T02:12:17` X-123 -> DONE
-- `2026-08-30T02:12:17` X-122 -> DONE
-- `2026-08-30T02:12:17` X-126 -> DONE
-- `2026-08-30T02:12:17` X-119 -> DONE
-- `2026-08-30T02:12:17` X-128 -> DONE
-- `2026-08-30T02:12:17` C-Ai -> DONE
-- `2026-08-30T02:12:17` X-219 -> DONE
-- `2026-08-30T02:12:17` X-220 -> DONE
-- `2026-08-30T02:12:18` X-204 -> DONE
-- `2026-08-30T02:12:18` X-206 -> DONE
-- `2026-08-30T02:12:18` C-Telephony -> DONE
-- `2026-08-30T02:12:18` C-Sms -> DONE
-- `2026-08-30T02:12:18` C-Agent -> DONE
-- `2026-08-30T02:12:18` X-66 -> DONE
-- `2026-08-30T02:12:18` X-188 -> DONE
-- `2026-08-30T02:12:18` X-153 -> DONE
-- `2026-08-30T02:12:18` X-01 -> DONE
-- `2026-08-30T02:12:18` X-118 -> DONE
-- `2026-08-30T02:12:18` X-163 -> DONE
-- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
-- `2026-08-30T02:12:18` X-108 -> DONE
-- `2026-08-30T02:12:18` C-Reviews -> DONE
-- `2026-08-30T02:12:18` X-181 -> DONE
-- `2026-08-30T02:12:18` X-110 -> DONE
-- `2026-08-30T02:12:18` C-Billing -> DONE
-- `2026-08-30T02:12:18` X-199 -> DONE
-- `2026-08-30T02:12:18` X-211 -> DONE
-- `2026-08-30T02:12:18` X-202 -> DONE
-- `2026-08-30T02:12:18` X-117 -> DONE
-- `2026-08-30T02:12:18` X-198 -> DONE
-- `2026-08-30T02:12:18` X-172 -> DONE
-- `2026-08-30T02:12:18` X-112 -> DONE
-- `2026-08-30T02:12:18` X-166 -> DONE
-- `2026-08-30T02:12:18` X-157 -> DONE
-- `2026-08-30T02:12:18` X-178 -> DONE
-- `2026-08-30T02:12:18` X-103 -> DONE
-- `2026-08-30T02:12:18` X-102 -> DONE
-- `2026-08-30T02:12:18` X-155 -> DONE
-- `2026-08-30T02:12:19` X-137 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
-- `2026-08-30T02:12:19` X-212 -> DONE
-- `2026-08-30T02:12:19` X-203 -> DONE
-- `2026-08-30T02:12:19` C-Mail -> DONE
-- `2026-08-30T02:12:19` C-Whatsapp -> DONE
-- `2026-08-30T02:12:19` X-147 -> DONE
-- `2026-08-30T02:12:19` X-207 -> DONE
-- `2026-08-30T02:12:19` X-193 -> DONE
-- `2026-08-30T02:12:19` X-208 -> DONE
-- `2026-08-30T02:12:19` X-125 -> DONE
-- `2026-08-30T02:12:19` X-127 -> DONE
-- `2026-08-30T02:12:19` X-149 -> DONE
-- `2026-08-30T02:12:19` X-170 -> DONE
-- `2026-08-30T02:12:19` X-201 -> DONE
-- `2026-08-30T02:12:19` X-10 -> DONE
-- `2026-08-30T02:12:19` X-113 -> DONE
-- `2026-08-30T02:12:19` X-124 -> DONE
-- `2026-08-30T02:12:19` X-143 -> DONE
-- `2026-08-30T02:12:19` X-151 -> DONE
-- `2026-08-30T02:12:19` X-162 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
-- `2026-08-30T02:12:19` X-171 -> DONE
-- `2026-08-30T02:12:19` X-189 -> DONE
-- `2026-08-30T02:12:19` X-214 -> DONE
-- `2026-08-30T02:12:19` X-215 -> DONE
-- `2026-08-30T02:12:19` X-07 -> DONE
-- `2026-08-30T02:12:19` X-104 -> DONE
-- `2026-08-30T02:12:19` X-111 -> DONE
-- `2026-08-30T02:12:19` X-129 -> DONE
-- `2026-08-30T02:12:19` X-138 -> DONE
-- `2026-08-30T02:12:20` X-139 -> DONE
-- `2026-08-30T02:12:20` X-145 -> DONE
-- `2026-08-30T02:12:20` X-148 -> DONE
-- `2026-08-30T02:12:20` X-150 -> DONE
-- `2026-08-30T02:12:20` X-16 -> DONE
-- `2026-08-30T02:12:20` X-160 -> DONE
-- `2026-08-30T02:12:20` X-167 -> DONE
-- `2026-08-30T02:12:20` X-168 -> DONE
-- `2026-08-30T02:12:20` X-175 -> DONE
-- `2026-08-30T02:12:20` X-177 -> DONE
-- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
-- `2026-08-30T02:12:20` X-194 -> DONE
-- `2026-08-30T02:12:20` X-195 -> DONE
-- `2026-08-30T02:12:20` X-197 -> DONE
-- `2026-08-30T02:12:20` X-209 -> DONE
-- `2026-08-30T02:12:20` X-82 -> DONE
-- `2026-08-30T02:12:20` X-08 -> DONE
-- `2026-08-30T02:12:20` X-120 -> DONE
-- `2026-08-30T02:12:20` X-136 -> DONE
-- `2026-08-30T02:12:20` X-141 -> DONE
-- `2026-08-30T02:12:20` X-142 -> DONE
-- `2026-08-30T02:12:20` X-156 -> DONE
-- `2026-08-30T02:12:20` X-173 -> DONE
-- `2026-08-30T02:12:20` X-213 -> DONE
-- `2026-08-30T02:12:20` X-105 -> DONE
-- `2026-08-30T02:12:20` X-109 -> DONE
-- `2026-08-30T02:12:21` X-114 -> DONE
-- `2026-08-30T02:12:21` X-116 -> DONE
-- `2026-08-30T02:12:21` X-130 -> DONE
-- `2026-08-30T02:12:21` X-131 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
-- `2026-08-30T02:12:21` X-134 -> DONE
-- `2026-08-30T02:12:21` X-135 -> DONE
-- `2026-08-30T02:12:21` X-140 -> DONE
-- `2026-08-30T02:12:21` X-144 -> DONE
-- `2026-08-30T02:12:21` X-154 -> DONE
-- `2026-08-30T02:12:21` X-158 -> DONE
-- `2026-08-30T02:12:21` X-159 -> DONE
-- `2026-08-30T02:12:21` X-161 -> DONE
-- `2026-08-30T02:12:21` X-179 -> DONE
-- `2026-08-30T02:12:21` X-182 -> DONE
-- `2026-08-30T02:12:21` X-183 -> DONE
-- `2026-08-30T02:12:21` X-184 -> DONE
-- `2026-08-30T02:12:21` X-185 -> DONE
-- `2026-08-30T02:12:21` X-186 -> DONE
-- `2026-08-30T02:12:21` X-190 -> DONE
-- `2026-08-30T02:12:21` X-191 -> DONE
-- `2026-08-30T02:12:21` X-192 -> DONE
-- `2026-08-30T02:12:21` X-196 -> DONE
-- `2026-08-30T02:12:21` X-200 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
-- `2026-08-30T02:12:21` X-210 -> DONE
-- `2026-08-30T02:12:21` X-217 -> DONE
-- `2026-08-30T02:12:21` X-218 -> DONE
-- `2026-08-30T02:12:21` journey J1 -> green
-- `2026-08-30T02:12:21` journey J2 -> green
-- `2026-08-30T02:12:22` journey J3 -> green
-- `2026-08-30T02:12:22` journey J4 -> green
-- `2026-08-30T02:12:22` journey J5 -> green
-- `2026-08-30T02:12:22` journey J6 -> green
-- `2026-08-30T02:12:22` journey J7 -> green
-- `2026-08-30T02:12:22` journey J8 -> green
-- `2026-08-30T02:12:22` journey J9 -> green
-- `2026-08-30T02:12:22` journey J10 -> green
-- `2026-08-30T02:12:22` journey J11 -> green
-- `2026-08-30T02:12:22` journey J12 -> green
-- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
-- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-29T14:30:24` seal observed f1e73d9fc181eb1c
 - `2026-08-29T14:31:11` selftest: sound
 - `2026-08-29T14:37:58` note: bootstrap-done
-- `2026-08-29T14:41:45` stage integrity = 0
 - `2026-08-29T14:41:45` stage boundary = 0
-- `2026-08-29T14:41:45` stage schema = 0
 - `2026-08-29T14:41:45` stage citation = 2
-- `2026-08-29T14:41:46` stage contract = 104
-- `2026-08-29T14:41:46` stage capability = 957
+- `2026-08-29T14:41:45` stage integrity = 0
+- `2026-08-29T14:41:45` stage schema = 0
 - `2026-08-29T14:41:46` stage anchor = 134
+- `2026-08-29T14:41:46` stage capability = 957
+- `2026-08-29T14:41:46` stage contract = 104
 - `2026-08-29T14:41:46` stage journey = 12
 - `2026-08-29T14:42:43` X-121 -> BUILDING
 - `2026-08-29T14:48:58` X-121 -> DONE
@@ -407,6 +258,9 @@
 - `2026-08-29T16:39:14` X-217 -> DONE
 - `2026-08-29T16:39:21` X-218 -> BUILDING
 - `2026-08-29T16:39:59` X-218 -> DONE
+- `2026-08-29T16:43:19` journey J10 -> green
+- `2026-08-29T16:43:19` journey J11 -> green
+- `2026-08-29T16:43:19` journey J12 -> green
 - `2026-08-29T16:43:19` journey J1 -> green
 - `2026-08-29T16:43:19` journey J2 -> green
 - `2026-08-29T16:43:19` journey J3 -> green
@@ -416,38 +270,187 @@
 - `2026-08-29T16:43:19` journey J7 -> green
 - `2026-08-29T16:43:19` journey J8 -> green
 - `2026-08-29T16:43:19` journey J9 -> green
-- `2026-08-29T16:43:19` journey J10 -> green
-- `2026-08-29T16:43:19` journey J11 -> green
-- `2026-08-29T16:43:19` journey J12 -> green
+- `2026-08-30T02:05:15` state initialised
+- `2026-08-30T02:05:26` note: bootstrap-done
+- `2026-08-30T02:05:26` seal observed deadbeef00000000
+- `2026-08-30T02:05:26` selftest: sound
+- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
+- `2026-08-30T02:05:26` X-119 -> DONE
+- `2026-08-30T02:05:26` X-122 -> DONE
+- `2026-08-30T02:05:26` X-123 -> DONE
+- `2026-08-30T02:05:26` X-126 -> DONE
+- `2026-08-30T02:12:17` C-Ai -> DONE
+- `2026-08-30T02:12:17` note: bootstrap-done
+- `2026-08-30T02:12:17` selftest: sound
+- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
+- `2026-08-30T02:12:17` X-119 -> DONE
+- `2026-08-30T02:12:17` X-122 -> DONE
+- `2026-08-30T02:12:17` X-123 -> DONE
+- `2026-08-30T02:12:17` X-126 -> DONE
+- `2026-08-30T02:12:17` X-128 -> DONE
+- `2026-08-30T02:12:17` X-219 -> DONE
+- `2026-08-30T02:12:17` X-220 -> DONE
+- `2026-08-30T02:12:18` C-Agent -> DONE
+- `2026-08-30T02:12:18` C-Billing -> DONE
+- `2026-08-30T02:12:18` C-Reviews -> DONE
+- `2026-08-30T02:12:18` C-Sms -> DONE
+- `2026-08-30T02:12:18` C-Telephony -> DONE
+- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
+- `2026-08-30T02:12:18` X-01 -> DONE
+- `2026-08-30T02:12:18` X-102 -> DONE
+- `2026-08-30T02:12:18` X-103 -> DONE
+- `2026-08-30T02:12:18` X-108 -> DONE
+- `2026-08-30T02:12:18` X-110 -> DONE
+- `2026-08-30T02:12:18` X-112 -> DONE
+- `2026-08-30T02:12:18` X-117 -> DONE
+- `2026-08-30T02:12:18` X-118 -> DONE
+- `2026-08-30T02:12:18` X-153 -> DONE
+- `2026-08-30T02:12:18` X-155 -> DONE
+- `2026-08-30T02:12:18` X-157 -> DONE
+- `2026-08-30T02:12:18` X-163 -> DONE
+- `2026-08-30T02:12:18` X-166 -> DONE
+- `2026-08-30T02:12:18` X-172 -> DONE
+- `2026-08-30T02:12:18` X-178 -> DONE
+- `2026-08-30T02:12:18` X-181 -> DONE
+- `2026-08-30T02:12:18` X-188 -> DONE
+- `2026-08-30T02:12:18` X-198 -> DONE
+- `2026-08-30T02:12:18` X-199 -> DONE
+- `2026-08-30T02:12:18` X-202 -> DONE
+- `2026-08-30T02:12:18` X-204 -> DONE
+- `2026-08-30T02:12:18` X-206 -> DONE
+- `2026-08-30T02:12:18` X-211 -> DONE
+- `2026-08-30T02:12:18` X-66 -> DONE
+- `2026-08-30T02:12:19` C-Mail -> DONE
+- `2026-08-30T02:12:19` C-Whatsapp -> DONE
+- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
+- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
+- `2026-08-30T02:12:19` X-07 -> DONE
+- `2026-08-30T02:12:19` X-104 -> DONE
+- `2026-08-30T02:12:19` X-10 -> DONE
+- `2026-08-30T02:12:19` X-111 -> DONE
+- `2026-08-30T02:12:19` X-113 -> DONE
+- `2026-08-30T02:12:19` X-124 -> DONE
+- `2026-08-30T02:12:19` X-125 -> DONE
+- `2026-08-30T02:12:19` X-127 -> DONE
+- `2026-08-30T02:12:19` X-129 -> DONE
+- `2026-08-30T02:12:19` X-137 -> DONE
+- `2026-08-30T02:12:19` X-138 -> DONE
+- `2026-08-30T02:12:19` X-143 -> DONE
+- `2026-08-30T02:12:19` X-147 -> DONE
+- `2026-08-30T02:12:19` X-149 -> DONE
+- `2026-08-30T02:12:19` X-151 -> DONE
+- `2026-08-30T02:12:19` X-162 -> DONE
+- `2026-08-30T02:12:19` X-170 -> DONE
+- `2026-08-30T02:12:19` X-171 -> DONE
+- `2026-08-30T02:12:19` X-189 -> DONE
+- `2026-08-30T02:12:19` X-193 -> DONE
+- `2026-08-30T02:12:19` X-201 -> DONE
+- `2026-08-30T02:12:19` X-203 -> DONE
+- `2026-08-30T02:12:19` X-207 -> DONE
+- `2026-08-30T02:12:19` X-208 -> DONE
+- `2026-08-30T02:12:19` X-212 -> DONE
+- `2026-08-30T02:12:19` X-214 -> DONE
+- `2026-08-30T02:12:19` X-215 -> DONE
+- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
+- `2026-08-30T02:12:20` X-08 -> DONE
+- `2026-08-30T02:12:20` X-105 -> DONE
+- `2026-08-30T02:12:20` X-109 -> DONE
+- `2026-08-30T02:12:20` X-120 -> DONE
+- `2026-08-30T02:12:20` X-136 -> DONE
+- `2026-08-30T02:12:20` X-139 -> DONE
+- `2026-08-30T02:12:20` X-141 -> DONE
+- `2026-08-30T02:12:20` X-142 -> DONE
+- `2026-08-30T02:12:20` X-145 -> DONE
+- `2026-08-30T02:12:20` X-148 -> DONE
+- `2026-08-30T02:12:20` X-150 -> DONE
+- `2026-08-30T02:12:20` X-156 -> DONE
+- `2026-08-30T02:12:20` X-160 -> DONE
+- `2026-08-30T02:12:20` X-167 -> DONE
+- `2026-08-30T02:12:20` X-168 -> DONE
+- `2026-08-30T02:12:20` X-16 -> DONE
+- `2026-08-30T02:12:20` X-173 -> DONE
+- `2026-08-30T02:12:20` X-175 -> DONE
+- `2026-08-30T02:12:20` X-177 -> DONE
+- `2026-08-30T02:12:20` X-194 -> DONE
+- `2026-08-30T02:12:20` X-195 -> DONE
+- `2026-08-30T02:12:20` X-197 -> DONE
+- `2026-08-30T02:12:20` X-209 -> DONE
+- `2026-08-30T02:12:20` X-213 -> DONE
+- `2026-08-30T02:12:20` X-82 -> DONE
+- `2026-08-30T02:12:21` journey J1 -> green
+- `2026-08-30T02:12:21` journey J2 -> green
+- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
+- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
+- `2026-08-30T02:12:21` X-114 -> DONE
+- `2026-08-30T02:12:21` X-116 -> DONE
+- `2026-08-30T02:12:21` X-130 -> DONE
+- `2026-08-30T02:12:21` X-131 -> DONE
+- `2026-08-30T02:12:21` X-134 -> DONE
+- `2026-08-30T02:12:21` X-135 -> DONE
+- `2026-08-30T02:12:21` X-140 -> DONE
+- `2026-08-30T02:12:21` X-144 -> DONE
+- `2026-08-30T02:12:21` X-154 -> DONE
+- `2026-08-30T02:12:21` X-158 -> DONE
+- `2026-08-30T02:12:21` X-159 -> DONE
+- `2026-08-30T02:12:21` X-161 -> DONE
+- `2026-08-30T02:12:21` X-179 -> DONE
+- `2026-08-30T02:12:21` X-182 -> DONE
+- `2026-08-30T02:12:21` X-183 -> DONE
+- `2026-08-30T02:12:21` X-184 -> DONE
+- `2026-08-30T02:12:21` X-185 -> DONE
+- `2026-08-30T02:12:21` X-186 -> DONE
+- `2026-08-30T02:12:21` X-190 -> DONE
+- `2026-08-30T02:12:21` X-191 -> DONE
+- `2026-08-30T02:12:21` X-192 -> DONE
+- `2026-08-30T02:12:21` X-196 -> DONE
+- `2026-08-30T02:12:21` X-200 -> DONE
+- `2026-08-30T02:12:21` X-210 -> DONE
+- `2026-08-30T02:12:21` X-217 -> DONE
+- `2026-08-30T02:12:21` X-218 -> DONE
+- `2026-08-30T02:12:22` journey J10 -> green
+- `2026-08-30T02:12:22` journey J11 -> green
+- `2026-08-30T02:12:22` journey J12 -> green
+- `2026-08-30T02:12:22` journey J3 -> green
+- `2026-08-30T02:12:22` journey J4 -> green
+- `2026-08-30T02:12:22` journey J5 -> green
+- `2026-08-30T02:12:22` journey J6 -> green
+- `2026-08-30T02:12:22` journey J7 -> green
+- `2026-08-30T02:12:22` journey J8 -> green
+- `2026-08-30T02:12:22` journey J9 -> green
+- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
+- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-31T04:18:42` UNRESOLVED schema X-121 - 12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per §150.4 and §259
-- `2026-08-31T04:24:07` stage integrity = 0
-- `2026-08-31T04:24:07` stage boundary = 0
-- `2026-08-31T04:24:07` stage contract = 104
-- `2026-08-31T04:24:07` stage citation = 108
-- `2026-08-31T04:24:07` stage schema = 0
-- `2026-08-31T04:24:07` stage capability = 120
 - `2026-08-31T04:24:07` stage anchor = 10
+- `2026-08-31T04:24:07` stage boundary = 0
+- `2026-08-31T04:24:07` stage capability = 120
+- `2026-08-31T04:24:07` stage citation = 108
+- `2026-08-31T04:24:07` stage contract = 104
+- `2026-08-31T04:24:07` stage integrity = 0
 - `2026-08-31T04:24:07` stage journey = 0
+- `2026-08-31T04:24:07` stage schema = 0
 - `2026-08-31T04:38:59` selftest: sound
 - `2026-08-31T06:17:18` X-121 -> DONE
 - `2026-08-31T13:02:19` selftest: sound
 - `2026-08-31T13:04:30` X-103 -> BUILDING
 - `2026-08-31T13:04:40` X-103 -> BUILDING
-- `2026-08-31T13:04:41` X-178 -> BUILDING
-- `2026-08-31T13:04:41` X-179 -> BUILDING
+- `2026-08-31T13:04:41` X-102 -> BUILDING
+- `2026-08-31T13:04:41` X-124 -> BUILDING
+- `2026-08-31T13:04:41` X-140 -> BUILDING
+- `2026-08-31T13:04:41` X-142 -> BUILDING
+- `2026-08-31T13:04:41` X-144 -> BUILDING
 - `2026-08-31T13:04:41` X-148 -> BUILDING
 - `2026-08-31T13:04:41` X-150 -> BUILDING
 - `2026-08-31T13:04:41` X-151 -> BUILDING
-- `2026-08-31T13:04:41` X-102 -> BUILDING
-- `2026-08-31T13:04:41` X-124 -> BUILDING
-- `2026-08-31T13:04:41` X-142 -> BUILDING
-- `2026-08-31T13:04:41` X-140 -> BUILDING
-- `2026-08-31T13:04:41` X-144 -> BUILDING
 - `2026-08-31T13:04:41` X-176 -> BUILDING
+- `2026-08-31T13:04:41` X-178 -> BUILDING
+- `2026-08-31T13:04:41` X-179 -> BUILDING
 - `2026-08-31T13:04:41` X-192 -> BUILDING
-- `2026-08-31T13:09:37` stage contract = 104
-- `2026-08-31T13:09:37` stage capability = 120
 - `2026-08-31T13:09:37` stage anchor = 10
+- `2026-08-31T13:09:37` stage capability = 120
+- `2026-08-31T13:09:37` stage contract = 104
+- `2026-09-01T11:19:26` journey J10 -> red
+- `2026-09-01T11:19:26` journey J11 -> red
+- `2026-09-01T11:19:26` journey J12 -> red
 - `2026-09-01T11:19:26` journey J1 -> red
 - `2026-09-01T11:19:26` journey J2 -> red
 - `2026-09-01T11:19:26` journey J3 -> red
@@ -457,9 +460,6 @@
 - `2026-09-01T11:19:26` journey J7 -> red
 - `2026-09-01T11:19:26` journey J8 -> red
 - `2026-09-01T11:19:26` journey J9 -> red
-- `2026-09-01T11:19:26` journey J10 -> red
-- `2026-09-01T11:19:26` journey J11 -> red
-- `2026-09-01T11:19:26` journey J12 -> red
 - `2026-09-01T11:19:31` stage journey = 12
 - `2026-09-01T21:07:46` stage boundary = 2
 - `2026-09-01T21:07:46` stage citation = 2
@@ -470,9 +470,9 @@
 - `2026-09-01T21:12:20` X-102 -> DONE
 - `2026-09-02T02:30:15` UNRESOLVED schema X-103 - class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.
 - `2026-09-02T02:34:52` X-176 -> DONE
-- `2026-09-02T02:39:40` stage schema = 13
 - `2026-09-02T02:39:40` stage capability = 139
 - `2026-09-02T02:39:40` stage contract = 102
+- `2026-09-02T02:39:40` stage schema = 13
 - `2026-09-02T02:39:43` UNRESOLVED schema X-121 - 11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker
 - `2026-09-02T02:55:05` X-124 -> DONE
 - `2026-09-02T02:55:54` X-151 -> DONE
@@ -486,12 +486,30 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
+- `2026-09-02T05:38:33` journey J7 -> green
+- `2026-09-02T05:38:33` journey J8 -> green
+- `2026-09-02T05:38:33` stage journey = 10
+- `2026-09-02T05:53:55` journey J7 -> green
+- `2026-09-02T05:53:55` journey J8 -> green
+- `2026-09-02T05:54:05` stage journey = 10
+- `2026-09-02T09:32:31` journey J5 -> green
+- `2026-09-02T09:32:31` stage journey = 5
+- `2026-09-02T10:06:30` journey J11 -> green
+- `2026-09-02T10:10:53` journey J11 -> red
+- `2026-09-02T10:10:53` journey J3 -> red
+- `2026-09-02T10:11:06` stage journey = 9
+- `2026-09-02T10:12:36` UNRESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-02T10:19:45` journey J11 -> green
+- `2026-09-02T10:19:56` stage journey = 8
+- `2026-09-02T10:24:52` journey J11 -> red
+- `2026-09-02T10:24:59` stage journey = 9
+- `2026-09-02T10:28:55` UNRESOLVED journey X-126 - Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)
 - `2026-09-02T14:50:48` (R245) C-Ai — DECLINED: CANNOT REFUSE: cell asserts a mechanism, not a refusal
 - `2026-09-02T14:50:48` (R245) X-01 — DECLINED: CANNOT REFUSE: cell describes sources, not a refusal
 - `2026-09-02T14:50:48` (R245) X-07 — DECLINED: CANNOT REFUSE: cell says named in the header
+- `2026-09-02T14:50:48` (R245) X-124 — DECLINED: CANNOT REFUSE: cell describes answering from a registry, no refusal asserted
 - `2026-09-02T14:50:48` (R245) X-142 — DECLINED: CANNOT REFUSE: cell describes token properties, no refusal asserted
 - `2026-09-02T14:50:48` (R245) X-148 — DECLINED: CANNOT REFUSE: cell names a source, no refusal asserted
-- `2026-09-02T14:50:48` (R245) X-124 — DECLINED: CANNOT REFUSE: cell describes answering from a registry, no refusal asserted
 - `2026-09-02T14:50:48` (R245) X-170 — DECLINED: CANNOT REFUSE: cell says a time-boxed bonus rule
 - `2026-09-02T14:50:48` (R245) X-182 — DECLINED: CANNOT REFUSE: cell describes source of history, no refusal asserted
 - `2026-09-02T14:50:48` (R245) X-189 — DECLINED: CANNOT REFUSE: cell says the branded card
@@ -499,7 +517,12 @@
 - `2026-09-02T14:50:48` (R245) X-202 — DECLINED: CANNOT REFUSE: cell describes a sequence, no refusal asserted
 - `2026-09-02T15:10:58` note: anchor 134: every finding is the identical '<module>: no runtime proof' for all 134 modules, fix 'run the module'\''s TEST ANCHOR against real transports and write the artifact id to evidence/'. No code-side change clears one. The only route writes to storage/app/evidence/, which is forbidden on every track because the artifacts already on disk came from the forbidden simulation harness. Same blocker as journey 10: real transports, real credentials, one job. Not fixable by track/stages or any other track. Owner action.
 - `2026-09-02T15:11:06` note: capability roll call at 82, classified by owner ruling 5: track sixty 15 (C-Agent 6, C-Sms 4, X-188 2, X-118 2, X-66 1) · site 7 (X-137 4, X-102 2, X-155 1) · Track 1 4 (X-212, X-172, X-112, C-Billing) · pricebook 3 (X-119) · money 2 (X-198, X-199) · owner 3 (X-121) · stages 48. Of the 48 stages-owned, 47 are declined by id across REVIEWS.md waves S-1-fix, S-2 and S-3; X-215 N-215-01 is S-4 item 1. After S-4 track/stages has no capability work left. Earlier declines are recorded in REVIEWS.md, not in this ledger.
-- `2026-09-02T15:42:41` note: contract 66 of 100: '@provides <action>: does not declare whether the agent may reach it', 54 of them stages-owned across 21 modules. NOT FIXABLE from the code side. Each module declares one read-shaped action reachable and provides several that are correctly not; the check offers only 'add it to the allow-list' (which makes token.issue, action.reverse, assistant.execute and dial.next agent-reachable, contradicting P-209's backfill rule the plan states verbatim) or '@agent_reachable none' (which is module-wide and deletes the one correct entry). ContractStage:229 says silence means NOT reachable; the finding at :433 says silence fails OPEN; the check has no per-action negative. ContractStage.php is sealed. Owner action.
 - `2026-09-02T15:42:41` note: contract 28 of 100: 'consumes <event> — nothing emits it'. ContractStage:552 exempts @ingress and @scheduled events but harvests them at :199 from the compiled manifest.php, and ModuleScaffoldCommand:143-167 never carries those two fields out of the plan. The annotation never reaches the file the stage reads, so the exemption never fires. Ninth instance of the regex-the-manifest-source defect that file documents eight times. ManifestReader.php is sealed. Owner action.
+- `2026-09-02T15:42:41` note: contract 66 of 100: '@provides <action>: does not declare whether the agent may reach it', 54 of them stages-owned across 21 modules. NOT FIXABLE from the code side. Each module declares one read-shaped action reachable and provides several that are correctly not; the check offers only 'add it to the allow-list' (which makes token.issue, action.reverse, assistant.execute and dial.next agent-reachable, contradicting P-209's backfill rule the plan states verbatim) or '@agent_reachable none' (which is module-wide and deletes the one correct entry). ContractStage:229 says silence means NOT reachable; the finding at :433 says silence fails OPEN; the check has no per-action negative. ContractStage.php is sealed. Owner action.
 - `2026-09-02T15:42:41` note: schema 12 of 14: tenant-owned table has no RLS, on the eleven tables named in 2026_09_01_000001_reapply_platform_scope_rls_exemption.php plus operator_alerts. All twelve are exempt by owner ruling audit C-1 and both exemption migrations have run. Enabling RLS on them reintroduces the 42501 that broke every STOP, data request and deletion request. SchemaStage::isTenantOwned tests only that a business_id column exists and every one carries a nullable one by design. Same finding as the existing X-121 UNRESOLVED. Not fixable; do not clear.
 - `2026-09-02T15:42:41` note: schema 1 of 14: 'this deploy contains a SWITCH and a CONTRACT together'. SchemaStage:100-105 scans all 275 files in database/migrations for any ->change() and any dropColumn, so the finding is true of any repo with history and cannot be cleared. Permanently red.
+- `2026-09-02T23:58:57` stage capability = 391
+- `2026-09-03T01:03:21` stage capability = 352
+- `2026-09-03T01:03:24` stage contract = 100
+- `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read

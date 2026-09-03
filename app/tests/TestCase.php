@@ -13,9 +13,12 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Carbon;
 use Livewire\Features\SupportAutoInjectedAssets\SupportAutoInjectedAssets;
 use RuntimeException;
+use Tests\Concerns\RefreshesTenantDatabase;
 
 abstract class TestCase extends BaseTestCase
 {
+    use RefreshesTenantDatabase;
+
     /**
      * ⚠️ LIVEWIRE'S ASSET-INJECTION FLAG IS A CLASS STATIC AND SURVIVES THE
      * APPLICATION REFRESH BETWEEN TESTS.
