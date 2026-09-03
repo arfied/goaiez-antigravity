@@ -328,7 +328,15 @@ function waitForServer(url) {
             { name: 'account-home', path: '/home' },
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },
-            { name: 'account-inbox', path: '/account/inbox' }
+            { name: 'account-inbox', path: '/account/inbox' },
+            { name: 'advanced-home', path: '/advanced' },
+            { name: 'advanced-website-builder', path: '/advanced/website-builder' },
+            { name: 'advanced-citations', path: '/advanced/citations' },
+            { name: 'advanced-visibility', path: '/advanced/visibility' },
+            { name: 'advanced-broadcasts', path: '/advanced/broadcasts' },
+            { name: 'advanced-voice', path: '/advanced/voice' },
+            { name: 'advanced-integrations', path: '/advanced/integrations' },
+            { name: 'advanced-settings', path: '/advanced/settings' }
         ];
 
         for (const screen of mobileScreens) {
