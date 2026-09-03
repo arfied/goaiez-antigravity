@@ -198,4 +198,38 @@ class X163Test extends TestCase
         $this->assertArrayHasKey('refusal_code', $res2);
         $this->assertEquals('NO_FACT', $res2['refusal_code']);
     }
+
+    public function test_price_confirm_writes_fact_and_agent_answers(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Seam Biz', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $item = \App\Modules\X163\Models\PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain unblock',
+            'price_cents' => 12500,
+            'is_sample' => true,
+            'is_confirmed' => false,
+            'tax_rate_pct' => 0,
+        ]);
+
+        $this->confirm->handle($biz->id, $item->id);
+
+        $fact = \Illuminate\Support\Facades\DB::table('facts')
+            ->where('business_id', $biz->id)
+            ->where('key', 'price.drain-unblock')
+            ->first();
+
+        $this->assertNotNull($fact, 'Fact should be written by X-119 listener');
+        $this->assertTrue((bool)$fact->is_valid);
+        $this->assertEquals('12500', $fact->value);
+
+        $agent = app(\App\Modules\CAgent\Actions\AgentAnswerAction::class);
+        $res = $agent->handle($biz->id, 'How much for a drain unblock?');
+        
+        $this->assertEquals(12500, $res['amount']);
+
+        $resNegative = $agent->handle($biz->id, 'How much for a roof repair?');
+        $this->assertEquals('NO_FACT', $resNegative['refusal_code']);
+    }
 }
