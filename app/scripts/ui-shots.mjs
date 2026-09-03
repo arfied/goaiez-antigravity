@@ -257,7 +257,13 @@ function waitForServer(url) {
             { name: 'advanced-reports', path: '/advanced/reports' },
             { name: 'advanced-voice', path: '/advanced/voice' },
             { name: 'advanced-integrations', path: '/advanced/integrations' },
-            { name: 'advanced-settings', path: '/advanced/settings' }
+            { name: 'advanced-settings', path: '/advanced/settings' },
+            { name: 'advanced-defense', path: '/advanced/defense' },
+            { name: 'advanced-changes', path: '/advanced/changes' },
+            { name: 'advanced-credits', path: '/advanced/credits' },
+            { name: 'advanced-segments', path: '/advanced/segments' },
+            { name: 'advanced-rank-tracker', path: '/advanced/rank-tracker' },
+            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' }
         ];
         for (const screen of screens) {
             if (!shouldCapture(screen.name)) continue;
@@ -339,7 +345,13 @@ function waitForServer(url) {
             { name: 'advanced-broadcasts', path: '/advanced/broadcasts' },
             { name: 'advanced-voice', path: '/advanced/voice' },
             { name: 'advanced-integrations', path: '/advanced/integrations' },
-            { name: 'advanced-settings', path: '/advanced/settings' }
+            { name: 'advanced-settings', path: '/advanced/settings' },
+            { name: 'advanced-defense', path: '/advanced/defense' },
+            { name: 'advanced-changes', path: '/advanced/changes' },
+            { name: 'advanced-credits', path: '/advanced/credits' },
+            { name: 'advanced-segments', path: '/advanced/segments' },
+            { name: 'advanced-rank-tracker', path: '/advanced/rank-tracker' },
+            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' }
         ];
 
         for (const screen of mobileScreens) {
