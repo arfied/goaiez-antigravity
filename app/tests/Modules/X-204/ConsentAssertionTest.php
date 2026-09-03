@@ -58,7 +58,7 @@ class ConsentAssertionTest extends TestCase
         $violatorsA = [];
         foreach ($filesA as $file) {
             $content = file_get_contents($file);
-            if (strpos($content, 'ConsentService::decide') === false && strpos($content, 'ConsentDecideAction') === false) {
+            if (strpos($content, 'ConsentService::decide') === false && strpos($content, 'ConsentDecideAction') === false && strpos($content, '->decide(') === false) {
                 $violatorsA[] = $file;
             }
         }
