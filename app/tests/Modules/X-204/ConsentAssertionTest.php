@@ -66,6 +66,7 @@ class ConsentAssertionTest extends TestCase
             // Exclude operator alerts (X-123 EventBus dead-letter notification)
             if (isset($operatorAlertSenders[$moduleName])) {
                 echo "Skipping {$moduleName}: {$operatorAlertSenders[$moduleName]}\n";
+
                 continue;
             }
 
