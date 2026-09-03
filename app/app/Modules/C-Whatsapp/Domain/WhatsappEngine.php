@@ -9,11 +9,15 @@ use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
 use App\Modules\CWhatsapp\Models\WhatsappTemplate;
+use App\Modules\X204\Domain\ConsentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class WhatsappEngine
 {
+    public function __construct(
+        private readonly ConsentService $consentService
+    ) {}
     /**
      * Inbound message opens/extends 24-hour conversational window.
      */
@@ -42,6 +46,16 @@ final class WhatsappEngine
         string $messageText,
         ?string $templateName = null
     ): array {
+        $decision = $this->consentService->decide($businessId, $recipientPhone, 'whatsapp', 'transactional');
+        if (! $decision['granted']) {
+            $reason = ($decision['reason'] === 'SUPPRESSED') ? 'STOP_SUPPRESSED' : $decision['reason'];
+            return [
+                'status' => 'refused',
+                'refusal_code' => $reason,
+                'message' => 'Send suppressed due to consent check: '.$decision['reason'],
+            ];
+        }
+
         $session = WhatsappSession::where('business_id', $businessId)
             ->where('recipient_phone', $recipientPhone)
             ->first();
