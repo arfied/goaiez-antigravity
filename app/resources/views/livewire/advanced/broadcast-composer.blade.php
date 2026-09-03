@@ -85,19 +85,19 @@
                         <!-- Phone Header -->
                         <div class="text-center pb-2 border-b border-gray-100">
                             <div class="text-xs font-semibold text-gray-800">Verified Business SMS</div>
-                            <div class="text-[10px] text-gray-500">10DLC Shortcode</div>
+                            <div class="text-[10px] text-gray-600">10DLC Shortcode</div>
                         </div>
 
                         <!-- Bubble -->
                         <div class="my-auto space-y-2">
                             <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-sm p-3 text-xs shadow-sm leading-relaxed" x-text="messageText.replace('{First Name}', 'Alex').replace('{Business Name}', 'Rachel Taylor').replace('{Link}', 'goai.ez/r9x2')">
                             </div>
-                            <div class="text-[9px] text-gray-500 text-right">Delivered · Just now</div>
+                            <div class="text-[9px] text-gray-600 text-right">Delivered · Just now</div>
                         </div>
 
                         <!-- Phone Footer Input -->
                         <div class="pt-2 border-t border-gray-100 flex items-center gap-1">
-                            <div class="h-6 flex-1 bg-gray-100 rounded-full px-2 text-[10px] text-gray-500 flex items-center">iMessage / SMS</div>
+                            <div class="h-6 flex-1 bg-gray-100 rounded-full px-2 text-[10px] text-gray-600 flex items-center">iMessage / SMS</div>
                         </div>
                     </div>
                 </div>
