@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X205\Domain;
 
 use App\Modules\X205\Models\Affiliate;
+use App\Modules\X205\Models\AffiliateAttribution;
 use App\Modules\X205\Models\AffiliateTier;
 use App\Modules\X205\Models\ReferralClick;
 use Carbon\CarbonInterface;
@@ -76,11 +77,14 @@ final class AffiliateEngine
     public function getPartnerData(int $businessId, int $affiliateId): array
     {
         $clicks = ReferralClick::where('business_id', $businessId)->where('affiliate_id', $affiliateId)->get();
-        $affiliate = Affiliate::where('business_id', $businessId)->where('id', $affiliateId)->first();
+        $pendingEarnings = AffiliateAttribution::where('business_id', $businessId)
+            ->where('affiliate_id', $affiliateId)
+            ->where('is_clawed_back', false)
+            ->sum('commission_cents');
 
         return [
             'clicks' => $clicks,
-            'pending_earnings' => $affiliate ? $affiliate->current_balance_cents : 0,
+            'pending_earnings' => (int) $pendingEarnings,
         ];
     }
 }

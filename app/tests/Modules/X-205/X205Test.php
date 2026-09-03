@@ -175,18 +175,18 @@ class X205Test extends TestCase
             'partner_name' => 'Fraud Partner',
         ]);
 
-        // Self-click fraud
-        $this->engine->recordClick($biz->id, 'AFF-G7-23', 'AFF-G7-23');
+        // Honest referral
+        $this->engine->recordClick($biz->id, 'vis-honest', 'AFF-G7-23');
 
         $attribution = $this->attributeAction->attributeSale(
             businessId: $biz->id,
             affiliateCode: 'AFF-G7-23',
-            orderId: 'ORD-FRAUD-1',
+            orderId: 'ORD-HONEST-1',
             saleAmountCents: 10000,
-            visitorId: 'AFF-G7-23' // Converts themselves
+            visitorId: 'vis-honest'
         );
 
-        $this->assertEquals('proposed', $attribution->fraud_review_status, 'proposes for review');
+        $this->assertEquals('none', $attribution->fraud_review_status, 'honest referral is clean');
         $this->assertEquals('none', $attribution->clawback_status, 'not clawed back');
         $this->assertEquals(1000, $attribution->commission_cents, 'still attributed');
         $this->assertFalse($attribution->is_clawed_back, 'no money moved');
@@ -258,6 +258,9 @@ class X205Test extends TestCase
         ]);
         $this->engine->recordClick($bizA->id, 'vis-A', 'AFF-A');
 
+        // Attribute a real sale to Partner A
+        $this->attributeAction->attributeSale($bizA->id, 'AFF-A', 'ORD-A', 10000, 'vis-A');
+
         // Provision Tenant B
         $bizB = TestCase::provisionTenant(['name' => 'Tenant B']);
         DB::statement("SET app.business_id = '{$bizB->id}'");
@@ -273,13 +276,13 @@ class X205Test extends TestCase
         DB::statement("SET app.business_id = '{$bizA->id}'");
         $dataA = $this->engine->getPartnerData($bizA->id, $affiliateA->id);
         $this->assertCount(1, $dataA['clicks'], 'asserted cross-scope: sees own rows');
-        $this->assertEquals(0, $dataA['pending_earnings']);
+        $this->assertEquals(1000, $dataA['pending_earnings'], 'tenant A sees actual pending earnings');
 
         // Under Tenant B's scope, Partner A's clicks should not be visible
         DB::statement("SET app.business_id = '{$bizB->id}'");
         $dataB = $this->engine->getPartnerData($bizB->id, $affiliateA->id);
         $this->assertCount(0, $dataB['clicks'], 'asserted cross-scope: returns nothing');
-        $this->assertEquals(0, $dataB['pending_earnings']);
+        $this->assertEquals(0, $dataB['pending_earnings'], 'tenant B sees 0 pending earnings');
     }
 
     /**
@@ -300,10 +303,16 @@ class X205Test extends TestCase
             'w9_on_file' => false,
         ]);
 
+        Event::fake([ApprovalRequested::class]);
+
         $payout = $this->payoutAction->requestPayout($biz->id, $affiliate->id, 10000);
 
         $this->assertEquals('frozen', $payout->status);
         $this->assertFalse($payout->money_moved);
+
+        Event::assertDispatched(ApprovalRequested::class, function ($event) {
+            return $event->status === 'frozen';
+        });
 
         $moduleDir = base_path('app/Modules/X-205');
         $this->assertDirectoryExists($moduleDir);

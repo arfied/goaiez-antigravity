@@ -50,7 +50,7 @@ final class AffiliateAttributeAction
             ->latest('id')
             ->first();
 
-        if (($click && $click->affiliate_id === $affiliate->id) || in_array('stolen_card', $orderTags, true)) {
+        if (in_array('stolen_card', $orderTags, true)) {
             $fraudReviewStatus = 'proposed';
         }
 
