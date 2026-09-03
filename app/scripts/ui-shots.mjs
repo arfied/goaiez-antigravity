@@ -241,7 +241,7 @@ function waitForServer(url) {
             { name: 'account-home', path: '/home' },
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },
-            { name: 'website-builder', path: '/advanced/website-builder' },
+            { name: 'advanced-website-builder', path: '/advanced/website-builder' },
             { name: 'account-inbox', path: '/account/inbox' },
             { name: 'account-customers', path: '/account/customers' },
             { name: 'account-messages', path: '/account/messages' },
@@ -351,7 +351,10 @@ function waitForServer(url) {
             { name: 'advanced-credits', path: '/advanced/credits' },
             { name: 'advanced-segments', path: '/advanced/segments' },
             { name: 'advanced-rank-tracker', path: '/advanced/rank-tracker' },
-            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' }
+            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' },
+            { name: 'advanced-posts', path: '/advanced/posts' },
+            { name: 'advanced-competitors', path: '/advanced/competitors' },
+            { name: 'advanced-reports', path: '/advanced/reports' }
         ];
 
         for (const screen of mobileScreens) {
