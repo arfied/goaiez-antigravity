@@ -34,7 +34,7 @@ return [
     'G2-52' => 'the outbound payload map on the broker',
 
     // status: SPECCED
-    'G4-10' => 'named in the header — 10 consecutive failures, tenant emailed',
+    'G4-10' => 'named in the header — 10 consecutive failures, tenant emailed · refuses: retrying after 10 consecutive failures',
 
     // status: SPECCED
     'G4-17' => 'Horizon scales on queue depth',

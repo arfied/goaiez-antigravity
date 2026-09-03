@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# Supervisor's coder dispatcher. Launches ONE Antigravity run on the current
+# KICKOFF.md, detached, logging to /home/goaiez/tmp/agy-run<N>.log.
+#
+#   bash .agents/supervisor/launch-coder.sh          # auto-numbers the run
+#   bash .agents/supervisor/launch-coder.sh --check  # liveness only, no launch
+#
+# Refuses to start if a coder is already running (never two in one tree).
+set -euo pipefail
+cd "$(dirname "$0")/../.." || exit 1
+
+PIDFILE=".agents/supervisor/coder.pid"
+
+# --check: report liveness and exit without launching anything. Used by the
+# unattended supervisor tick, whose allowlist has no ps/pgrep/kill.
+if [ "${1:-}" = "--check" ]; then
+  if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+    echo "CODER ALIVE pid=$(cat "$PIDFILE")"
+  else
+    echo "CODER DEAD"
+  fi
+  exit 0
+fi
+
+if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+  echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
+  exit 1
+fi
+[ -s .agents/supervisor/KICKOFF.md ] || { echo "REFUSED: KICKOFF.md missing or empty"; exit 1; }
+
+
+# Snapshot the supervisor's uncommitted files before every dispatch (a coder
+# reset/checkout/stash wiped them once, 2026-09-02 15:31).
+SNAP="/home/goaiez/tmp/sup-snap-$(basename "$PWD")-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$SNAP/.agents/supervisor" "$SNAP/.claude" "$SNAP/bin"
+cp .agents/supervisor/*.md "$SNAP/.agents/supervisor/" 2>/dev/null
+cp .claude/settings.json "$SNAP/.claude/" 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
+echo "snapshot: $SNAP"
+
+n=1
+TRACK=$(basename "$PWD")
+while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
+LOG="/home/goaiez/tmp/agy-${TRACK}-run${n}.log"
+
+nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+echo $! > "$PIDFILE"
+
+sleep 2
+if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) log=$LOG"
+else
+  echo "LAUNCH FAILED — check $LOG"; exit 1
+fi

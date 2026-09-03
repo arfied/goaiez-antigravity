@@ -55,7 +55,7 @@ return [
     'G5-27' => '= G5-20; one spec',
 
     // status: SPECCED
-    'G11-35' => 'the cold opener from X-135\'s research (P-146 — distress only)',
+    'G11-35' => 'the cold opener from X-135\'s research (P-146 — distress only) · refuses: an opener without distress (P-146)',
 
     // status: SPECCED
     'G17-02' => 'named in the header',
@@ -64,7 +64,7 @@ return [
     'G19-19' => 'the battle card drafted into a reply the human sends',
 
     // status: SPECCED
-    'G20-10' => 'named in the header — under 3.5★ is a distress signal (P-146)',
+    'G20-10' => 'named in the header — under 3.5★ is a distress signal (P-146) · refuses: targeting over 3.5★ — under 3.5★ is the distress signal (P-146)',
 
     // status: SPECCED
     'G15-15' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ webinar watch time, NOT staff attendance — attendance policy fences the SUBJECT; doctor asserts no staff-directed use',

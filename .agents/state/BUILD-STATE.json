@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T16:46:55",
+ "updated": "2026-09-03T01:20:26",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -19,7 +19,7 @@
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 102,
+   "violations": 100,
    "fails": "COMMIT"
   },
   "citation": {
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 120,
+   "violations": 352,
    "fails": "MERGE"
   },
   "anchor": {
@@ -39,7 +39,7 @@
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 12,
+   "violations": 9,
    "fails": "WAVE"
   }
  },
@@ -569,10 +569,23 @@
    "unresolved": []
   },
   "X-126": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-126",
+     "stage": "journey",
+     "why": "J3 needs an AI provider key; none in this checkout",
+     "at": "2026-09-02T10:12:36"
+    },
+    {
+     "module": "X-126",
+     "stage": "journey",
+     "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
+     "at": "2026-09-02T10:28:55"
+    }
+   ]
   },
   "X-127": {
    "status": "DONE",
@@ -1137,7 +1150,7 @@
    "green_after_wave": 5
   },
   "J5": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a migration of five hundred jobs sends nothing",
    "green_after_wave": 14
   },
@@ -1147,12 +1160,12 @@
    "green_after_wave": 11
   },
   "J7": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an agency client never sees cost or margin",
    "green_after_wave": 11
   },
   "J8": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a deliberately corrupted backup fails the restore",
    "green_after_wave": 14
   },
@@ -1189,6 +1202,12 @@
    "stage": "schema",
    "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
    "at": "2026-09-02T02:39:43"
+  },
+  {
+   "module": "X-126",
+   "stage": "journey",
+   "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
+   "at": "2026-09-02T10:28:55"
   }
  ],
  "notes": [
@@ -1278,6 +1297,12 @@
    "module": "X-198",
    "chose": "(R245) X-198 \u2014 owner ruling 10 (2026-09-02) confirms Stripe as the payment provider and relaxes the X-198 anchor from 'charge id is issued only by the external gateway' to 'null unless the gateway returned one'. X198Test.php's anchor now connects a gateway with no client, so the null it asserts is observed, not prevented; the stripe path's proof moves to the x198 evidence command and J9's artifact assertion under ruling 13.",
    "at": "2026-09-02T16:46:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) \u2014 declared in the plan row and regenerated manifest, not a raw undeclared read",
+   "at": "2026-09-03T01:20:26",
    "ruling": "R245"
   }
  ]

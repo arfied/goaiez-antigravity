@@ -79,7 +79,7 @@ return [
     'G16-23' => 'topic changes detected in the audio',
 
     // status: SPECCED
-    'G16-30' => 'five questions → a script;  no invented statistics (P-120)',
+    'G16-30' => 'five questions → a script;  no invented statistics (P-120) · refuses: to include invented statistics in the script (P-120)',
 
     // status: SPECCED
     'G18-26' => 'live webinar rooms and tokens',

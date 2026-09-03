@@ -486,6 +486,24 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
+- `2026-09-02T05:38:33` journey J8 -> green
+- `2026-09-02T05:38:33` journey J7 -> green
+- `2026-09-02T05:38:33` stage journey = 10
+- `2026-09-02T05:53:55` journey J8 -> green
+- `2026-09-02T05:53:55` journey J7 -> green
+- `2026-09-02T05:54:05` stage journey = 10
+- `2026-09-02T09:32:31` journey J5 -> green
+- `2026-09-02T09:32:31` stage journey = 5
+- `2026-09-02T10:06:30` journey J11 -> green
+- `2026-09-02T10:10:53` journey J11 -> red
+- `2026-09-02T10:10:53` journey J3 -> red
+- `2026-09-02T10:11:06` stage journey = 9
+- `2026-09-02T10:12:36` UNRESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-02T10:19:45` journey J11 -> green
+- `2026-09-02T10:19:56` stage journey = 8
+- `2026-09-02T10:24:52` journey J11 -> red
+- `2026-09-02T10:24:59` stage journey = 9
+- `2026-09-02T10:28:55` UNRESOLVED journey X-126 - Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)
 - `2026-09-02T14:06:35` note: UNRESOLVED X-198 — the X-198 test anchor asserts gateway_charge_id is NULL ('Charge id is issued only by external gateway', X198Test.php:74) while J9 requires a charge id the provider minted. Both cannot hold once the gateway is real. Resolving it is a CHECK change and is an owner ruling; MONEY-1 resolved it with a null-returning test double, which was blocked and reverted.
 - `2026-09-02T14:06:36` note: X-198 tenant gateway capture reads C-Billing's platform credential config('credentials.stripe_secret') rather than a tenant-scoped gateway credential. C-Billing is shared with Track 1 and was not edited. Track 1: this needs a tenant-scoped key.
 - `2026-09-02T14:06:36` note: UNRESOLVED journey J9 — payment provider test-mode keys absent
@@ -502,3 +520,8 @@
 - `2026-09-02T17:09:30` note: X-198 J9 green — an_invoice_reaches_a_real_charge_id passes against the artifact written by php artisan x198:evidence-charge outside runningUnitTests(). Supervisor gate 2026-09-02: tests 894 passed 885 FAILED 0 errors 9, all nine JOURNEY HARNESS NOT IMPLEMENTED on tenantWithLiveNumber() (track sixty, ruling 6). Charge id minted by Stripe; nothing in app/app/Modules/X-198 can produce a ch_ prefix.
 - `2026-09-02T17:38:49` note: X-199 UNRESOLVED — no runtime proof possible: TestAnchorStage requires an external artifact_id and X-199 (invoicing) touches no external transport. Every id it holds is its own. Needs an owner ruling (REVIEWS.md, eleventh OWNER ACTION block, item 3); this track will not invent one.
 - `2026-09-02T17:38:49` note: X-211 UNRESOLVED — no runtime proof possible: TestAnchorStage requires an external artifact_id and X-211 (receivables) touches no external transport. Its chase rides C-Sms, which track sixty owns. Needs an owner ruling (REVIEWS.md, eleventh OWNER ACTION block, item 3); this track will not invent one.
+- `2026-09-02T23:58:57` stage capability = 391
+- `2026-09-03T01:03:21` stage capability = 352
+- `2026-09-03T01:03:24` stage contract = 100
+- `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read

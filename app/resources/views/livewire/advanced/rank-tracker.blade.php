@@ -3,13 +3,13 @@
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
-                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">Advanced</a></li>
+                    <li><a href="{{ route('advanced.home') }}" class="text-indigo-400 hover:text-indigo-300 hover:underline">Advanced</a></li>
                     <li class="text-gray-400">/</li>
-                    <li class="text-gray-500 dark:text-gray-400">Geo-Grid Rank Tracker</li>
+                    <li class="text-gray-400 dark:text-gray-400">Geo-Grid Rank Tracker</li>
                 </ol>
             </nav>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">Visual Geo-Grid Map Rank Tracker <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Preview — not live</span></h1>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Pin-by-pin local Google Maps 3-Pack rank telemetry measured across your catchment area radius.</p>
+            <p class="mt-1 text-sm text-gray-400 dark:text-gray-400">Pin-by-pin local Google Maps 3-Pack rank telemetry measured across your catchment area radius.</p>
         </div>
         <div class="mt-4 flex md:mt-0 md:ml-4 gap-3">
             <button wire:click="runScan" wire:loading.attr="disabled" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
@@ -22,26 +22,26 @@
     @if ($scanNotification)
         <div class="mb-6 p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between">
             <span>{{ $scanNotification }}</span>
-            <button wire:click="$set('scanNotification', null)" class="text-emerald-600 hover:underline text-xs">Dismiss</button>
+            <button wire:click="$set('scanNotification', null)" class="text-emerald-400 hover:underline text-xs">Dismiss</button>
         </div>
     @endif
 
     <!-- Metric Summary -->
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Average Grid Position</div>
-            <div class="mt-1 text-3xl font-bold text-emerald-600">#{{ $avgRank }}</div>
-            <div class="mt-1 text-xs text-gray-500">Across {{ count($gridData) }} geo-coordinates</div>
+            <div class="text-xs font-medium text-gray-400 dark:text-gray-400 uppercase">Average Grid Position</div>
+            <div class="mt-1 text-3xl font-bold text-emerald-400">#{{ $avgRank }}</div>
+            <div class="mt-1 text-xs text-gray-400">Across {{ count($gridData) }} geo-coordinates</div>
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">3-Pack Dominance</div>
-            <div class="mt-1 text-3xl font-bold text-indigo-600">{{ $top3Dominance }}%</div>
-            <div class="mt-1 text-xs text-emerald-600 font-medium">Top 3 rank on 8 of 9 nodes</div>
+            <div class="text-xs font-medium text-gray-400 dark:text-gray-400 uppercase">3-Pack Dominance</div>
+            <div class="mt-1 text-3xl font-bold text-indigo-400">{{ $top3Dominance }}%</div>
+            <div class="mt-1 text-xs text-emerald-400 font-medium">Top 3 rank on 8 of 9 nodes</div>
         </div>
         <div class="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Catchment Coverage</div>
+            <div class="text-xs font-medium text-gray-400 dark:text-gray-400 uppercase">Catchment Coverage</div>
             <div class="mt-1 text-3xl font-bold text-gray-900 dark:text-white">{{ $radiusMiles }} mi</div>
-            <div class="mt-1 text-xs text-gray-500">Service area radius monitored</div>
+            <div class="mt-1 text-xs text-gray-400">Service area radius monitored</div>
         </div>
     </div>
 
@@ -79,7 +79,7 @@
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h2 class="text-lg font-bold text-gray-900 dark:text-white">Local Map Ranking Heatmap</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Search Query: <strong>"{{ $selectedKeyword }}"</strong></p>
+                <p class="text-xs text-gray-400 dark:text-gray-400">Search Query: <strong>"{{ $selectedKeyword }}"</strong></p>
             </div>
             <div class="flex items-center gap-4 text-xs font-medium">
                 <span class="flex items-center gap-1.5"><span class="h-3 w-3 rounded-full bg-emerald-500"></span> #1–3 (3-Pack)</span>
@@ -89,7 +89,7 @@
         </div>
 
         <!-- Simulated Map Canvas Container -->
-        <div class="relative bg-slate-100 dark:bg-slate-900 rounded-xl p-8 border border-slate-200 dark:border-slate-800 min-h-[420px] flex items-center justify-center overflow-hidden">
+        <div class="relative bg-slate-100 dark:bg-slate-900 rounded-xl p-8 border border-slate-200 dark:border-slate-800 min-h-[420px] flex items-center justify-center overflow-x-auto overflow-y-hidden">
             <!-- Simulated Map Background Grid Lines -->
             <div class="absolute inset-0 opacity-20 dark:opacity-10 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
@@ -109,7 +109,7 @@
                         <div class="h-12 w-12 rounded-full {{ $colorClass }} font-display text-lg font-bold flex items-center justify-center shadow-lg transform transition group-hover:scale-110">
                             #{{ $point['rank'] }}
                         </div>
-                        <div class="mt-2 text-[10px] font-mono text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-2 py-0.5 rounded shadow-xs">
+                        <div class="mt-2 text-[10px] font-mono text-gray-400 dark:text-gray-400 bg-white/80 dark:bg-gray-800/80 px-2 py-0.5 rounded shadow-xs">
                             {{ $point['lat'] }}
                         </div>
                     </div>

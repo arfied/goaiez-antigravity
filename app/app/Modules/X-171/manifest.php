@@ -52,7 +52,9 @@ return [
         'device_sync_queue',
         'device_sync_conflicts',
     ],
-    'reads_table' => [],
+    'reads_table' => [
+        'work_orders',
+    ],
 
     'renders' => [
         'stafffacing_app',
