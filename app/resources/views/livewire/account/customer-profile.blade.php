@@ -84,9 +84,10 @@
             code (numbers port), not from the business's own address. A guessed
             jurisdiction produces confident compliance with the wrong statute.
         --}}
-        <details class="mt-3">
-            <summary class="flex min-h-11 cursor-pointer items-center text-base font-medium text-ink underline">
+        <details class="mt-3 group">
+            <summary class="flex min-h-11 cursor-pointer items-center text-base font-medium text-ink underline [&::-webkit-details-marker]:hidden">
                 Edit name, tags and state
+                <svg class="ml-2 h-4 w-4 text-ink-2 transition-transform group-open:-rotate-180" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
             </summary>
             <form wire:submit="saveDetails" class="mt-2 space-y-3">
                 <div>
