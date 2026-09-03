@@ -19,7 +19,7 @@
     </div>
 
     <!-- Competitor Radar Table -->
-    <div class="bg-card shadow-card rounded-card border border-rule overflow-x-auto overflow-y-hidden mb-8">
+    <div class="bg-card shadow-card rounded-card border border-rule overflow-x-auto overflow-y-hidden mb-8" tabindex="0">
         <table class="min-w-full divide-y divide-rule">
             <thead class="bg-paper">
                 <tr>
