@@ -2,7 +2,7 @@
     <div class="md:flex md:items-center md:justify-between mb-8">
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sample-bg text-sample">
                     Advanced Mode
                 </span>
                 <h1 class="font-display text-2xl font-bold leading-7 text-ink sm:text-3xl">
@@ -48,7 +48,7 @@
         <div class="bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule">
             <p class="text-sm font-medium text-ink-2 truncate">AI Voice Receptionist</p>
             <p class="mt-1 text-3xl font-semibold text-ink">Active</p>
-            <div class="mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium">24/7 Autonomous Triage</div>
+            <div class="mt-2 text-xs text-ok font-medium">24/7 Autonomous Triage</div>
         </div>
 
         <div class="bg-card overflow-x-auto overflow-y-hidden shadow rounded-lg p-5 border border-rule">
@@ -63,7 +63,7 @@
         <a href="{{ route('advanced.rank-tracker') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
             <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
                 <span>📍 Geo-Grid Rank Tracker</span>
-                <span class="text-[10px] uppercase font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 px-2 py-0.5 rounded-full">New</span>
+                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
             </div>
             <p class="text-sm text-ink-2">Interactive 3x3 / 5x5 pin heatmap showing exact Google Maps 3-Pack rankings across your catchment area radius.</p>
         </a>
@@ -71,7 +71,7 @@
         <a href="{{ route('advanced.integrations') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
             <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
                 <span>⚡ POS & Invoicing Triggers</span>
-                <span class="text-[10px] uppercase font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 px-2 py-0.5 rounded-full">New</span>
+                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
             </div>
             <p class="text-sm text-ink-2">Connect Stripe, QuickBooks, and Square to automatically dispatch review requests within minutes of customer invoice settlement.</p>
         </a>
@@ -79,7 +79,7 @@
         <a href="{{ route('advanced.posts') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
             <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
                 <span>📸 GBP Posts & Photo Sweeps</span>
-                <span class="text-[10px] uppercase font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 px-2 py-0.5 rounded-full">New</span>
+                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
             </div>
             <p class="text-sm text-ink-2">Weekly automated GBP updates with local keywords, and zero-app MMS text-to-post photo uploading from the job site.</p>
         </a>
@@ -87,7 +87,7 @@
         <a href="{{ route('advanced.voice') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
             <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
                 <span>🎙️ AI Voice Receptionist</span>
-                <span class="text-[10px] uppercase font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 px-2 py-0.5 rounded-full">New</span>
+                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
             </div>
             <p class="text-sm text-ink-2">24/7 conversational voice call answering, emergency forwarding to owner mobile, and automated appointment calendar links.</p>
         </a>
@@ -95,7 +95,7 @@
         <a href="{{ route('advanced.website-builder') }}" class="block p-6 bg-card border-2 border-rule rounded-lg hover:border-indigo-500 transition shadow-xs">
             <div class="text-ink font-semibold text-lg mb-2 flex items-center justify-between">
                 <span>🌐 Visual Website & Funnel Builder</span>
-                <span class="text-[10px] uppercase font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300 px-2 py-0.5 rounded-full">New</span>
+                <span class="text-[10px] uppercase font-bold bg-sample-bg text-sample px-2 py-0.5 rounded-full">New</span>
             </div>
             <p class="text-sm text-ink-2">Design and launch high-converting local service landing pages with auto-injected schema SEO, live reviews, and mobile preview.</p>
         </a>

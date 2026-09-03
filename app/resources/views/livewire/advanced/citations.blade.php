@@ -10,7 +10,7 @@
             </nav>
             <h1 class="text-2xl font-bold leading-7 text-ink sm:text-3xl">
                 NAP Consistency & Local Directory Citations
-             <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400">Preview — not live</span></h1>
+             <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-attention-bg text-attention">Preview — not live</span></h1>
             <p class="mt-1 text-sm text-ink-2">
                 Search engines require exact Name, Address, and Phone (NAP) match across all directories to rank your business locally.
             </p>
@@ -24,7 +24,7 @@
     </div>
 
     @if ($scanMessage)
-        <div class="mb-6 p-4 rounded-md bg-ok-bg border border-ok text-emerald-600 dark:text-emerald-400 text-sm">
+        <div class="mb-6 p-4 rounded-md bg-ok-bg border border-ok text-ok text-sm">
             {{ $scanMessage }}
         </div>
     @endif
@@ -82,11 +82,11 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if ($citation->nap_status === 'consistent')
-                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">
+                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-ok-bg text-ok">
                                     Consistent
                                 </span>
                             @elseif ($citation->nap_status === 'mismatch')
-                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400">
+                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-attention-bg text-attention">
                                     Mismatch
                                 </span>
                             @else
