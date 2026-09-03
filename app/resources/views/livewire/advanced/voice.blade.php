@@ -105,23 +105,23 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-left text-xs">
                 <thead class="bg-gray-50 dark:bg-gray-900 font-semibold text-gray-600 dark:text-gray-300">
                     <tr>
-                        <th class="py-3 px-4">Time</th>
-                        <th class="py-3 px-4">Caller ID</th>
-                        <th class="py-3 px-4">Duration</th>
-                        <th class="py-3 px-4">Detected Intent</th>
-                        <th class="py-3 px-4">AI Resolution Action</th>
-                        <th class="py-3 px-4 text-right">Status</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Time</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Caller ID</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Duration</th>
+                        <th class="py-3 px-4 whitespace-nowrap">Detected Intent</th>
+                        <th class="py-3 px-4 whitespace-nowrap">AI Resolution Action</th>
+                        <th class="py-3 px-4 text-right whitespace-nowrap">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @foreach ($recentCalls as $call)
                         <tr>
-                            <td class="py-3 px-4 text-gray-400">{{ $call['time'] }}</td>
-                            <td class="py-3 px-4 font-mono font-medium text-gray-900 dark:text-white">{{ $call['caller'] }}</td>
-                            <td class="py-3 px-4 text-gray-600 dark:text-gray-300">{{ $call['duration'] }}</td>
-                            <td class="py-3 px-4 font-medium text-gray-900 dark:text-white">{{ $call['intent'] }}</td>
-                            <td class="py-3 px-4 text-indigo-400 dark:text-indigo-400">{{ $call['action'] }}</td>
-                            <td class="py-3 px-4 text-right">
+                            <td class="py-3 px-4 whitespace-nowrap text-gray-400">{{ $call['time'] }}</td>
+                            <td class="py-3 px-4 whitespace-nowrap font-mono font-medium text-gray-900 dark:text-white">{{ $call['caller'] }}</td>
+                            <td class="py-3 px-4 whitespace-nowrap text-gray-600 dark:text-gray-300">{{ $call['duration'] }}</td>
+                            <td class="py-3 px-4 whitespace-nowrap font-medium text-gray-900 dark:text-white">{{ $call['intent'] }}</td>
+                            <td class="py-3 px-4 whitespace-nowrap text-indigo-400 dark:text-indigo-400">{{ $call['action'] }}</td>
+                            <td class="py-3 px-4 whitespace-nowrap text-right">
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $call['status'] === 'escalated' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' }}">
                                     {{ ucfirst($call['status']) }}
                                 </span>
