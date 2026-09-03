@@ -26,7 +26,10 @@ final class JobStateAction
         }
 
         if ($newState === 'completed') {
-            Event::dispatch(new JobCompleted($businessId, $jobId, $techId));
+            $personId = \Illuminate\Support\Facades\DB::table('work_orders')
+                ->where('id', $jobId)
+                ->value('person_id');
+            Event::dispatch(new JobCompleted($businessId, $jobId, $techId, $personId));
 
             return [
                 'status' => 'completed',

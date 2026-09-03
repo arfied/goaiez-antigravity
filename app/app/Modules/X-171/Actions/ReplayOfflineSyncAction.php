@@ -79,7 +79,10 @@ final class ReplayOfflineSyncAction
         ]);
 
         if ($actionName === 'job.completed') {
-            Event::dispatch(new JobCompleted($businessId, (int) $payload['job_id'], (int) $payload['tech_id']));
+            $personId = \Illuminate\Support\Facades\DB::table('work_orders')
+                ->where('id', (int) $payload['job_id'])
+                ->value('person_id');
+            Event::dispatch(new JobCompleted($businessId, (int) $payload['job_id'], (int) $payload['tech_id'], $personId));
         }
 
         return [
