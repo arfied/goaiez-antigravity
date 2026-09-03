@@ -255,7 +255,7 @@
                                 <section class="px-4 py-5 bg-white border-t border-gray-100">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="font-bold text-xs text-gray-900">Verified Google Reviews</div>
-                                        <div class="text-[10px] font-bold text-emerald-400">★★★★★ 4.9</div>
+                                        <div class="text-[10px] font-bold text-emerald-700">★★★★★ 4.9</div>
                                     </div>
                                     <div class="p-3 bg-gray-50 rounded-lg border border-gray-100 text-[10px] text-gray-600">
                                         "Outstanding service! Fast response and flawless execution." — <strong>Michael R.</strong>
@@ -405,7 +405,7 @@
                                         <h3 class="font-bold text-sm text-gray-900">Recent Verified Google Reviews</h3>
                                         <p class="text-[11px] text-gray-500">Real feedback from clients in your local area</p>
                                     </div>
-                                    <div class="text-xs font-bold text-emerald-400">★★★★★ 4.9 (128 reviews)</div>
+                                    <div class="text-xs font-bold text-emerald-700">★★★★★ 4.9 (128 reviews)</div>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-3">
