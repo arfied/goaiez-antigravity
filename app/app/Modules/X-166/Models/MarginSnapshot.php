@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X166\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class MarginSnapshot extends Model
+class MarginSnapshot extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'margin_snapshots';
 
     protected $guarded = [];

@@ -70,6 +70,6 @@ class X136Test extends TestCase
      */
     public function test_signal_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

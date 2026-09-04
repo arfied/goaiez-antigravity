@@ -177,14 +177,6 @@ return new class extends Migration
 
         // 9. carrier_credentials table & RLS
         if (! Schema::hasTable('carrier_credentials')) {
-            Schema::create('carrier_credentials', function (Blueprint $table): void {
-                $table->id();
-                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
-                $table->string('carrier_name');
-                $table->text('api_key')->nullable();
-                $table->text('api_secret')->nullable();
-                $table->timestamps();
-            });
 
             DB::statement('ALTER TABLE carrier_credentials ENABLE ROW LEVEL SECURITY');
             DB::statement('ALTER TABLE carrier_credentials FORCE ROW LEVEL SECURITY');

@@ -100,6 +100,6 @@ class X197Test extends TestCase
      */
     public function test_voice_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

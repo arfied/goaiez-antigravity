@@ -109,7 +109,7 @@ class X112Test extends TestCase
      */
     public function test_g2_43_client_sees_agency_price_only(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -117,7 +117,7 @@ class X112Test extends TestCase
      */
     public function test_g2_67_weekly_report(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -125,7 +125,7 @@ class X112Test extends TestCase
      */
     public function test_g4_09_subtenant_scope(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -133,7 +133,7 @@ class X112Test extends TestCase
      */
     public function test_g4_22_client_zero_password_results(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -141,7 +141,7 @@ class X112Test extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -166,7 +166,7 @@ class X112Test extends TestCase
      */
     public function test_g7_13_task_visibility(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -174,7 +174,7 @@ class X112Test extends TestCase
      */
     public function test_g7_19_loom_on_dashboard(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -206,7 +206,7 @@ class X112Test extends TestCase
      */
     public function test_g7_30_gross_margin(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -214,7 +214,7 @@ class X112Test extends TestCase
      */
     public function test_g7_31_rates(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -222,7 +222,7 @@ class X112Test extends TestCase
      */
     public function test_g9_32_client_health(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -230,7 +230,7 @@ class X112Test extends TestCase
      */
     public function test_g16_10_agency_announcements(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -238,6 +238,6 @@ class X112Test extends TestCase
      */
     public function test_g19_21_account_manager_notification(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

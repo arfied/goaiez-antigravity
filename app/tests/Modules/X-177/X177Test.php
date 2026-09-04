@@ -133,6 +133,6 @@ class X177Test extends TestCase
      */
     public function test_gbp_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

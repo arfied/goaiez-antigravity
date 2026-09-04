@@ -109,7 +109,7 @@ class CMailTest extends TestCase
      */
     public function test_g1_43_categories(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -117,7 +117,7 @@ class CMailTest extends TestCase
      */
     public function test_warmup_engine(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -139,6 +139,6 @@ class CMailTest extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

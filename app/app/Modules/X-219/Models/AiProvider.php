@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X219\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class AiProvider extends Model
+class AiProvider extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'ai_providers';
 
     protected $guarded = [];

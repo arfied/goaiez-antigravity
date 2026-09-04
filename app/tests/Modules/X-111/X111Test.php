@@ -98,6 +98,6 @@ class X111Test extends TestCase
      */
     public function test_ops_console_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

@@ -14,6 +14,7 @@ use App\Support\CredentialManifest;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Throwable;
 
@@ -165,7 +166,7 @@ final class CredentialStore
         }
 
         $stored = PlatformCredential::query()->find($key);
-        \Illuminate\Support\Facades\Log::info("CredentialStore resolve($key) found: " . json_encode($stored));
+        Log::info("CredentialStore resolve($key) found: ".json_encode($stored));
 
         if ($stored !== null) {
             $value = $this->readable($stored);

@@ -110,7 +110,7 @@ class X199Test extends TestCase
      */
     public function test_g1_no_refusals(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -118,7 +118,7 @@ class X199Test extends TestCase
      */
     public function test_g13_36_invoice_alert(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -141,6 +141,6 @@ class X199Test extends TestCase
      */
     public function test_g21_04_billing_screen_summary(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

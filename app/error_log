@@ -471,3 +471,19 @@ Stack trace:
 [04-Sep-2026 05:18:44 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
 [04-Sep-2026 05:18:48 UTC] PHP Fatal error:  Cannot redeclare class Tests\Modules\DummyTest (previously declared in /home/goaiez/agents/grs-antig/app/tests/Feature/Advanced/AdvancedDashboardTest.php:4) in /home/goaiez/agents/grs-antig/app/tests/Feature/Advanced/AdvancedSettingsTest.php on line 4
 [04-Sep-2026 05:18:48 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
+[04-Sep-2026 05:43:19 UTC] PHP Parse error:  syntax error, unexpected token "public" in app/Modules/X-143/Actions/WebmcpEmitAction.php on line 22
+[04-Sep-2026 06:30:49 UTC] PHP Fatal error:  Cannot redeclare App\Modules\X110\Domain\PixelEngine::enforceG1312ChatPageContext() in /home/goaiez/agents/grs-antig/app/app/Modules/X-110/Domain/PixelEngine.php on line 178
+[04-Sep-2026 06:32:20 UTC] PHP Fatal error:  Cannot redeclare App\Modules\X110\Domain\PixelEngine::enforceG1312ChatPageContext() in app/Modules/X-110/Domain/PixelEngine.php on line 178
+[04-Sep-2026 06:32:20 UTC] PHP Fatal error:  Cannot redeclare App\Modules\X112\Domain\AgencyEngine::enforceG267WeeklyReport() in app/Modules/X-112/Domain/AgencyEngine.php on line 260
+[04-Sep-2026 06:32:20 UTC] PHP Fatal error:  Cannot redeclare App\Modules\X110\Domain\PixelEngine::enforceG1312ChatPageContext() in /home/goaiez/agents/grs-antig/app/app/Modules/X-110/Domain/PixelEngine.php on line 178
+[04-Sep-2026 06:32:37 UTC] PHP Fatal error:  Cannot redeclare App\Modules\X110\Domain\PixelEngine::enforceG1312ChatPageContext() in app/Modules/X-110/Domain/PixelEngine.php on line 178
+[04-Sep-2026 06:33:34 UTC] PHP Fatal error:  Cannot redeclare App\Modules\X110\Domain\PixelEngine::enforceG1312ChatPageContext() in app/Modules/X-110/Domain/PixelEngine.php on line 178
+[04-Sep-2026 06:33:34 UTC] PHP Fatal error:  Cannot redeclare App\Modules\X112\Domain\AgencyEngine::enforceG267WeeklyReport() in app/Modules/X-112/Domain/AgencyEngine.php on line 260
+[04-Sep-2026 08:54:08 UTC] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in Command line code on line 3
+[04-Sep-2026 08:55:27 UTC] PHP Parse error:  syntax error, unexpected token "class" in Command line code on line 12
+[04-Sep-2026 08:58:49 UTC] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in /home/goaiez/agents/grs-antig/app/fix_locked.php on line 3
+[04-Sep-2026 08:59:07 UTC] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in /home/goaiez/agents/grs-antig/app/fix_locked2.php on line 3
+[04-Sep-2026 08:59:28 UTC] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in /home/goaiez/agents/grs-antig/app/fix_locked3.php on line 3
+[04-Sep-2026 08:59:44 UTC] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in Command line code on line 3
+[04-Sep-2026 09:00:03 UTC] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in Command line code on line 3
+[04-Sep-2026 09:00:19 UTC] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in Command line code on line 3

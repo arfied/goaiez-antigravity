@@ -88,7 +88,7 @@ class X178Test extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -96,7 +96,7 @@ class X178Test extends TestCase
      */
     public function test_g5_21_design_tokens(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**

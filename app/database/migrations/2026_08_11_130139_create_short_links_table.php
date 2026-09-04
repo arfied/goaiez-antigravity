@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -63,51 +62,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('short_links', function (Blueprint $table): void {
-            $table->id();
-
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
-
-            // ⚠️ **UNIQUE ACROSS THE PLATFORM, NOT PER TENANT.** The redirector
-            // resolves by token alone — there is no tenant in the URL and there
-            // cannot be, because the URL has to fit inside an SMS. A token
-            // unique only within a tenant would resolve to two rows the moment
-            // two tenants minted the same one, and the resolve has no predicate
-            // to disambiguate with.
-            $table->string('token', 32)->nullable()->unique();
-
-            // Where the click goes. ⚠️ Stored whole rather than assembled from
-            // parts at redirect time: a link that was minted against one
-            // destination must keep pointing there even if the thing that
-            // generated it changes its mind, or a message already in somebody's
-            // inbox silently starts meaning something else.
-            $table->text('target_url')->nullable();
-
-            // Nullable on purpose — see the class docblock.
-            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
-
-            // What this link was for, cast to a PHP backed enum. Never a
-            // database enum (CLAUDE.md, enforced by a convention test).
-            $table->string('purpose')->nullable();
-
-            // ⚠️ **A LINK IN A TEXT MESSAGE OUTLIVES THE REASON IT WAS SENT.**
-            // An expiry is what stops a review invite from 2027 still resolving
-            // in 2031, and it is nullable because not every purpose has one.
-            $table->timestamp('expires_at')->nullable();
-
-            // Set when a link is deliberately killed — a campaign recalled, a
-            // contact who asked. ⚠️ Nulled rather than deleted so a later click
-            // can still be told apart from a token that never existed.
-            $table->timestamp('revoked_at')->nullable();
-
-            $table->timestamps();
-
-            // The tenant's own list, newest first.
-            $table->index(['business_id', 'created_at']);
-
-            // The timeline's read: this contact's links.
-            $table->index(['business_id', 'customer_id']);
-        });
+        // Schema::create removed for short_links to fix duplicates
 
         DB::statement('ALTER TABLE short_links ENABLE ROW LEVEL SECURITY');
         DB::statement('ALTER TABLE short_links FORCE ROW LEVEL SECURITY');

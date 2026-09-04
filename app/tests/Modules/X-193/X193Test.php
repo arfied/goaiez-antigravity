@@ -78,7 +78,7 @@ class X193Test extends TestCase
      */
     public function test_g10_31_alerts_never_wait(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -86,6 +86,6 @@ class X193Test extends TestCase
      */
     public function test_g10_38_caller_based_decision(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

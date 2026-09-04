@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X147\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class RcsCapability extends Model
+class RcsCapability extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'rcs_capabilities';
 
     protected $guarded = [];

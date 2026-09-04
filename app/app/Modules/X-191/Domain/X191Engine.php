@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Modules\X191\Domain;
 
 final class X191Engine
@@ -13,7 +15,7 @@ final class X191Engine
 
     public function validatePitch(bool $hasPageFact): void
     {
-        if (!$hasPageFact) {
+        if (! $hasPageFact) {
             throw new \DomainException('REFUSES: a pitch that names nothing TRUE about the page [G11-34]');
         }
     }

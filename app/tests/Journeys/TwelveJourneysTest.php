@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CreditKind;
+use App\Enums\CreditProduct;
+use App\Models\ConsentRecord;
+use App\Models\Customer;
+use App\Services\Billing\CreditLedger;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -59,10 +66,10 @@ final class TwelveJourneysTest extends TestCase
 
         $tenant = $this->tenantWithLiveNumber();
         $started = microtime(true);
-        \App\Support\Tenancy::actingAs($tenant['id'], function() {
-            app(\App\Services\Billing\CreditLedger::class)->record(
-                \App\Enums\CreditProduct::Sms,
-                \App\Enums\CreditKind::Adjust,
+        Tenancy::actingAs($tenant['id'], function () {
+            app(CreditLedger::class)->record(
+                CreditProduct::Sms,
+                CreditKind::Adjust,
                 100,
                 'system',
                 'test top up'
@@ -74,13 +81,15 @@ final class TwelveJourneysTest extends TestCase
         // sync-driver run would prove nothing.
         $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+12622164033');
 
-        \App\Support\Tenancy::actingAs($tenant['id'], function() {
-            $customer = \App\Models\Customer::where('phone', '+12622164033')->first();
-            \Illuminate\Support\Facades\Log::info("Customer after webhook: " . json_encode($customer));
+        Tenancy::actingAs($tenant['id'], function () {
+            $customer = Customer::where('phone', '+12622164033')->first();
+            Log::info('Customer after webhook: '.json_encode($customer));
             if ($customer) {
-                $consent = \App\Models\ConsentRecord::where('customer_id', $customer->id)->first();
-                \Illuminate\Support\Facades\Log::info("Consent after webhook: " . json_encode($consent));
-                if (!$consent) { \Illuminate\Support\Facades\Log::error("NO CONSENT RECORD!"); }
+                $consent = ConsentRecord::where('customer_id', $customer->id)->first();
+                Log::info('Consent after webhook: '.json_encode($consent));
+                if (! $consent) {
+                    Log::error('NO CONSENT RECORD!');
+                }
             }
         });
 

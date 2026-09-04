@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X150\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class ProviderRoster extends Model
+class ProviderRoster extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'provider_roster';
 
     protected $guarded = [];

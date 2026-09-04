@@ -119,7 +119,7 @@ class X117Test extends TestCase
      */
     public function test_g6_02_upsell_token(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -148,7 +148,7 @@ class X117Test extends TestCase
      */
     public function test_g7_10_bundle_allocation(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -195,6 +195,6 @@ class X117Test extends TestCase
      */
     public function test_no_refusal_declared(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

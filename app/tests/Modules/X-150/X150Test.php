@@ -88,7 +88,7 @@ class X150Test extends TestCase
      */
     public function test_n_150_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     public function test_component_renders_empty_state(): void

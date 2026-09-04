@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X190\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class PartnerPool extends Model
+class PartnerPool extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'partner_pool';
 
     protected $guarded = [];

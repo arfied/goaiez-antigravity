@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CredentialEnvironment;
 use App\Models\Business;
+use App\Models\PlatformCredential;
 use App\Models\User;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
@@ -12,13 +14,23 @@ use App\Modules\X103\Models\PageVersion;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X118\Actions\OnboardingStartAction;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
+use App\Modules\X171\Actions\JobStateAction;
+use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X211\Domain\ArEngine;
+use App\Services\Assistant\PriceBook;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
+use App\Services\Voice\RecordingAnnouncement;
+use App\Services\Voice\RecordingAnnouncementAttestation;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
@@ -67,13 +79,14 @@ trait JourneyHarness
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
     private function signUp(string $businessName, string $phone): array
     {
-                $owner = \App\Models\User::factory()->create();
-        app(\App\Services\Sms\TenantNumbers::class)->addToPool('+15125550999');
-        $res = app(\App\Modules\X118\Actions\OnboardingStartAction::class)->handle($owner, $businessName, $phone);
+        $owner = User::factory()->create();
+        app(TenantNumbers::class)->addToPool('+15125550999');
+        $res = app(OnboardingStartAction::class)->handle($owner, $businessName, $phone);
         if ($res['asked_fields_count'] !== 2) {
-            throw new \RuntimeException("HARD RULE VIOLATION: P-207 requires exactly two fields.");
+            throw new \RuntimeException('HARD RULE VIOLATION: P-207 requires exactly two fields.');
         }
-        return \App\Models\Business::find($res['business_id'])->toArray();
+
+        return Business::find($res['business_id'])->toArray();
     }
 
     /** @return array<string,mixed> */
@@ -99,20 +112,20 @@ trait JourneyHarness
         $clientArray['_agency_biz_id'] = $agencyBiz->id;
         $clientArray['_agency_id'] = $agency->id;
 
-                                        return [$agencyBiz->toArray(), $clientArray];
+        return [$agencyBiz->toArray(), $clientArray];
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function personWithPendingSteps(array $tenant, int $count): array
     {
-        $phone = '+1555000' . rand(1000, 9999);
-        $customerId = \Illuminate\Support\Facades\DB::table('people')->insertGetId([
+        $phone = '+1555000'.rand(1000, 9999);
+        $customerId = DB::table('people')->insertGetId([
             'business_id' => $tenant['id'],
             'phone' => $phone,
         ]);
-        
+
         for ($i = 0; $i < $count; $i++) {
-            \Illuminate\Support\Facades\DB::table('campaign_steps')->insert([
+            DB::table('campaign_steps')->insert([
                 'business_id' => $tenant['id'],
                 'campaign_id' => 1,
                 'step_number' => $i + 1,
@@ -123,61 +136,61 @@ trait JourneyHarness
                 'recipient' => $phone,
             ]);
         }
-        
+
         return ['id' => $customerId, 'phone' => $phone, 'consent_decision_id' => 1];
     }
 
     // ── inbound / carrier ────────────────────────────────────────────────
 
     /** @param array<string,mixed> $tenant */
-            private function postCarrierWebhook(array $tenant, string $event, string $from): void
+    private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
-        \App\Models\PlatformCredential::updateOrCreate(['key' => 'anthropic_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
-        \App\Models\PlatformCredential::updateOrCreate(['key' => 'openai_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
-        \Illuminate\Support\Facades\Http::fake([
-            'api.anthropic.com/*' => \Illuminate\Support\Facades\Http::response([
+        PlatformCredential::updateOrCreate(['key' => 'anthropic_api_key', 'environment' => CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        PlatformCredential::updateOrCreate(['key' => 'openai_api_key', 'environment' => CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        Http::fake([
+            'api.anthropic.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'type' => 'message',
                 'stop_reason' => 'end_turn',
-                'content' => [['type' => 'text', 'text' => "The price is $18,500.00."]],
+                'content' => [['type' => 'text', 'text' => 'The price is $18,500.00.']],
                 'usage' => ['input_tokens' => 100, 'output_tokens' => 50],
             ], 200),
-            'api.openai.com/v1/embeddings' => \Illuminate\Support\Facades\Http::response([
+            'api.openai.com/v1/embeddings' => Http::response([
                 'object' => 'list',
                 'data' => [
-                    ['object' => 'embedding', 'embedding' => array_fill(0, 1536, 0.0), 'index' => 0]
+                    ['object' => 'embedding', 'embedding' => array_fill(0, 1536, 0.0), 'index' => 0],
                 ],
                 'model' => 'text-embedding-3-small',
                 'usage' => ['prompt_tokens' => 10, 'total_tokens' => 10],
             ], 200),
         ]);
         config(['services.voice.driver' => 'infobip']);
-        \App\Models\PlatformCredential::updateOrCreate(['key' => 'infobip_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        PlatformCredential::updateOrCreate(['key' => 'infobip_api_key', 'environment' => CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
         config(['services.infobip.base_url' => 'https://api.infobip.com']);
-        \Illuminate\Support\Facades\DB::table('platform_settings')->updateOrInsert(['key' => 'voice.enabled'], ['value' => 'true']);
-        app(\App\Services\Voice\RecordingAnnouncement::class)->attest(new \App\Services\Voice\RecordingAnnouncementAttestation('v1', 'system', 'clip-1', ['host' => 'test']));
-        \Illuminate\Support\Facades\DB::table('support_settings')->updateOrInsert(['business_id' => $tenant['id']], ['call_routing_mode' => 'conditional']);
-        $callId = (string) \Illuminate\Support\Str::uuid();
+        DB::table('platform_settings')->updateOrInsert(['key' => 'voice.enabled'], ['value' => 'true']);
+        app(RecordingAnnouncement::class)->attest(new RecordingAnnouncementAttestation('v1', 'system', 'clip-1', ['host' => 'test']));
+        DB::table('support_settings')->updateOrInsert(['business_id' => $tenant['id']], ['call_routing_mode' => 'conditional']);
+        $callId = (string) Str::uuid();
         $payload = ['callId' => $callId, 'type' => 'CALL_FINISHED'];
         $content = json_encode($payload, JSON_UNESCAPED_SLASHES);
-        $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
+        $secret = PlatformCredentials::get('infobip_webhook_secret');
         $signature = base64_encode(hash_hmac('sha256', $content, $secret, true));
 
         $state = 'NO_ANSWER';
         if ($event === 'call.answered') {
             $state = 'FINISHED';
         }
-        
+
         $to = env('INFOBIP_SENDER', '+19015922708');
-        $row = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('business_id', $tenant['id'])->first();
+        $row = DB::table('phone_numbers')->where('business_id', $tenant['id'])->first();
         if ($row) {
             $to = $row->e164;
         }
 
-        \App\Models\PlatformCredential::updateOrCreate(['key' => 'anthropic_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
-        \App\Models\PlatformCredential::updateOrCreate(['key' => 'openai_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
-        \Illuminate\Support\Facades\Http::fake([
-            "*/calls/1/calls/{$callId}" => \Illuminate\Support\Facades\Http::response([
+        PlatformCredential::updateOrCreate(['key' => 'anthropic_api_key', 'environment' => CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        PlatformCredential::updateOrCreate(['key' => 'openai_api_key', 'environment' => CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        Http::fake([
+            "*/calls/1/calls/{$callId}" => Http::response([
                 'id' => $callId,
                 'from' => $from,
                 'to' => $to,
@@ -186,8 +199,8 @@ trait JourneyHarness
                 'startTime' => now()->subSeconds(10)->toIso8601String(),
                 'answerTime' => $state === 'FINISHED' ? now()->subSeconds(5)->toIso8601String() : null,
                 'endTime' => now()->toIso8601String(),
-                'ringDuration' => 5
-            ], 200)
+                'ringDuration' => 5,
+            ], 200),
         ]);
 
         $res = $this->call('POST', '/webhooks/infobip/voice', [], [], [], [
@@ -196,22 +209,23 @@ trait JourneyHarness
         ], $content);
         $res->assertStatus(200);
     }
+
     private function receiveInbound(array $tenant, string $from, string $body): void
     {
-        $tenantPhone = \Illuminate\Support\Facades\DB::table('phone_numbers')
+        $tenantPhone = DB::table('phone_numbers')
             ->where('business_id', $tenant['id'])
             ->first()->e164 ?? '+19015922708';
-        
+
         $payload = [
             'results' => [
                 [
-                    'messageId' => (string) \Illuminate\Support\Str::uuid(),
+                    'messageId' => (string) Str::uuid(),
                     'from' => $from,
                     'to' => $tenantPhone,
                     'text' => $body,
-                    'integrationType' => 'SMS'
-                ]
-            ]
+                    'integrationType' => 'SMS',
+                ],
+            ],
         ];
         $this->call('POST', '/webhooks/infobip/inbound', [], [], [], [], json_encode($payload));
     }
@@ -219,25 +233,25 @@ trait JourneyHarness
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
     private function placeRealCallTo(string $number): array
     {
-                $row = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('e164', $number)->first();
-        \App\Support\Tenancy::set($row->business_id);
-        $biz = \App\Models\Business::find($row->business_id);
+        $row = DB::table('phone_numbers')->where('e164', $number)->first();
+        Tenancy::set($row->business_id);
+        $biz = Business::find($row->business_id);
         $caller = '+12622164033';
-        
+
         $this->postCarrierWebhook($biz->toArray(), 'call.answered', $caller);
         $this->drainQueue();
-        \App\Support\Tenancy::set($biz->id); // RESTORE TENANCY
-        
-        $call = \Illuminate\Support\Facades\DB::table('calls')
+        Tenancy::set($biz->id); // RESTORE TENANCY
+
+        $call = DB::table('calls')
             ->where('business_id', $biz->id)
             ->where('from_e164', $caller)
             ->latest('id')
             ->first();
-            
+
         return $call ? [
             'answered' => $call->outcome === 'answered' || $call->outcome === 'in_progress',
             'quoted_a_price' => false,
-            'call_sid' => $call->provider_call_id
+            'call_sid' => $call->provider_call_id,
         ] : [];
     }
 
@@ -270,50 +284,53 @@ trait JourneyHarness
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
         $this->guardOutboundSend($to);
-        \Illuminate\Support\Facades\Log::info("Jobs before drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
+        Log::info('Jobs before drain: '.DB::table('jobs')->count());
         $this->drainQueue();
-        \Illuminate\Support\Facades\Log::info("Jobs after drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
-        \Illuminate\Support\Facades\Log::info("Remaining job: " . json_encode(\Illuminate\Support\Facades\DB::table('jobs')->get()));
-        \Illuminate\Support\Facades\Log::info("Failed jobs: " . \Illuminate\Support\Facades\DB::table('failed_jobs')->count());
-        $failed = \Illuminate\Support\Facades\DB::table('failed_jobs')->get();
+        Log::info('Jobs after drain: '.DB::table('jobs')->count());
+        Log::info('Remaining job: '.json_encode(DB::table('jobs')->get()));
+        Log::info('Failed jobs: '.DB::table('failed_jobs')->count());
+        $failed = DB::table('failed_jobs')->get();
         if ($failed->isNotEmpty()) {
-            \Illuminate\Support\Facades\Log::error("Failed job exception: " . $failed->first()->exception);
+            Log::error('Failed job exception: '.$failed->first()->exception);
         }
-        $msg = \Illuminate\Support\Facades\DB::table('outreach_messages')->where('status', '!=', 'queued')->latest('id')->first();
+        $msg = DB::table('outreach_messages')->where('status', '!=', 'queued')->latest('id')->first();
         if ($msg) {
             $arr = (array) $msg;
             $arr['provider_message_id'] = $arr['provider_msg_id'] ?? null;
+
             return $arr;
         }
+
         return null;
     }
 
     /** @param array<string,mixed> $tenant */
     private function waitForProvisionedNumber(array $tenant, int $timeoutSeconds): string
     {
-                $this->drainQueue();
-        $number = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('business_id', $tenant['id'])->first();
+        $this->drainQueue();
+        $number = DB::table('phone_numbers')->where('business_id', $tenant['id'])->first();
+
         return $number ? $number->e164 : '';
     }
 
     // ── the agent and the pricebook ──────────────────────────────────────
 
-        private function askAgent(array $tenant, string $question): array
+    private function askAgent(array $tenant, string $question): array
     {
-        \App\Models\PlatformCredential::updateOrCreate(['key' => 'anthropic_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
-        \App\Models\PlatformCredential::updateOrCreate(['key' => 'openai_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
-        \Illuminate\Support\Facades\Http::fake([
-            'api.anthropic.com/*' => \Illuminate\Support\Facades\Http::response([
+        PlatformCredential::updateOrCreate(['key' => 'anthropic_api_key', 'environment' => CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        PlatformCredential::updateOrCreate(['key' => 'openai_api_key', 'environment' => CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+        Http::fake([
+            'api.anthropic.com/*' => Http::response([
                 'id' => 'msg_eval',
                 'type' => 'message',
                 'stop_reason' => 'end_turn',
-                'content' => [['type' => 'text', 'text' => "The price is $18,500.00."]],
+                'content' => [['type' => 'text', 'text' => 'The price is $18,500.00.']],
                 'usage' => ['input_tokens' => 100, 'output_tokens' => 50],
             ], 200),
-            'api.openai.com/v1/embeddings' => \Illuminate\Support\Facades\Http::response([
+            'api.openai.com/v1/embeddings' => Http::response([
                 'object' => 'list',
                 'data' => [
-                    ['object' => 'embedding', 'embedding' => array_fill(0, 1536, 0.0), 'index' => 0]
+                    ['object' => 'embedding', 'embedding' => array_fill(0, 1536, 0.0), 'index' => 0],
                 ],
                 'model' => 'text-embedding-3-small',
                 'usage' => ['prompt_tokens' => 10, 'total_tokens' => 10],
@@ -369,7 +386,7 @@ trait JourneyHarness
         $res->assertStatus(200);
 
         $this->drainQueue();
-        \App\Support\Tenancy::set($tenant['id']); // RESTORE TENANCY
+        Tenancy::set($tenant['id']); // RESTORE TENANCY
 
         $turn = DB::table('agent_turns')
             ->where('business_id', $tenant['id'])
@@ -386,7 +403,7 @@ trait JourneyHarness
             $amount = (int) (floatval(str_replace(',', '', $matches[1])) * 100);
         }
 
-                                        return [
+        return [
             'refusal_code' => $refusal->refusal_code ?? $turn->refusal_code ?? null,
             'amount' => $amount,
         ];
@@ -394,8 +411,8 @@ trait JourneyHarness
 
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        \App\Support\Tenancy::set($tenant['id']);
-        app(\App\Services\Assistant\PriceBook::class)->set($sku, $amountMinor);
+        Tenancy::set($tenant['id']);
+        app(PriceBook::class)->set($sku, $amountMinor);
     }
 
     private function bookFromQuote(array $tenant, array $quote): array
@@ -407,13 +424,13 @@ trait JourneyHarness
             'title' => 'Drain Unblock',
         ]);
 
-                                        return ['status' => 'booked', 'job_id' => (string) $id];
+        return ['status' => 'booked', 'job_id' => (string) $id];
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        return \Illuminate\Support\Facades\DB::table('automation_runs')->where('automation_key', 'call_missed')->exists();
+        return DB::table('automation_runs')->where('automation_key', 'call_missed')->exists();
     }
 
     // ── counting outbound ────────────────────────────────────────────────
@@ -430,30 +447,31 @@ trait JourneyHarness
     private function outboundSince(array $person, string $marker): int
     {
         $personId = $person['id'];
-        
-        $conversations = \Illuminate\Support\Facades\DB::table('conversations')
+
+        $conversations = DB::table('conversations')
             ->where('customer_id', $personId)
             ->pluck('id');
-            
-        $messageCount = \Illuminate\Support\Facades\DB::table('messages')
+
+        $messageCount = DB::table('messages')
             ->whereIn('conversation_id', $conversations)
             ->where('direction', 'outbound')
             ->count();
-            
-        $campaignCount = \Illuminate\Support\Facades\DB::table('campaign_steps')
+
+        $campaignCount = DB::table('campaign_steps')
             ->where('person_id', $personId)
             ->whereNotNull('sent_at')
             ->count();
-            
+
         return $messageCount + $campaignCount;
     }
 
     /** @param array<string,mixed> $person @return list<array<string,mixed>> */
     private function reviewInvitesFor(array $person): array
     {
-        $rows = \Illuminate\Support\Facades\DB::table('review_requests')
+        $rows = DB::table('review_requests')
             ->where('customer_id', $person['id'])
             ->get();
+
         return json_decode(json_encode($rows), true);
     }
 
@@ -508,76 +526,77 @@ trait JourneyHarness
     private function issueInvoice(array $tenant, int $amountMinor): array
     {
         $customerPhone = '+15552345678';
-        \Illuminate\Support\Facades\DB::table('people')->insertOrIgnore([
+        DB::table('people')->insertOrIgnore([
             'business_id' => $tenant['id'],
             'phone' => $customerPhone,
         ]);
-        $customer = \Illuminate\Support\Facades\DB::table('people')->where('business_id', $tenant['id'])->where('phone', $customerPhone)->first();
-        
-        $invoiceId = \Illuminate\Support\Facades\DB::table('invoices')->insertGetId([
+        $customer = DB::table('people')->where('business_id', $tenant['id'])->where('phone', $customerPhone)->first();
+
+        $invoiceId = DB::table('invoices')->insertGetId([
             'business_id' => $tenant['id'],
             'customer_id' => $customer->id,
-            'invoice_number' => 'INV-' . uniqid(),
+            'invoice_number' => 'INV-'.uniqid(),
             'total_cents' => $amountMinor,
             'status' => 'issued',
             'due_date' => now()->addDays(30),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        
-        return (array) \Illuminate\Support\Facades\DB::table('invoices')->where('id', $invoiceId)->first();
+
+        return (array) DB::table('invoices')->where('id', $invoiceId)->first();
     }
 
     private function payInvoice(array $invoice): array
     {
-        \Illuminate\Support\Facades\Http::fake([
-            'api.stripe.com/v1/charges' => \Illuminate\Support\Facades\Http::response([
-                'id' => 'ch_' . uniqid(),
+        Http::fake([
+            'api.stripe.com/v1/charges' => Http::response([
+                'id' => 'ch_'.uniqid(),
                 'status' => 'succeeded',
             ], 200),
         ]);
 
         // 1. Create a MerchantConnection so GatewayEngine::capture works
-        \Illuminate\Support\Facades\DB::table('merchant_connections')->insertOrIgnore([
+        DB::table('merchant_connections')->insertOrIgnore([
             'business_id' => $invoice['business_id'],
             'gateway_name' => 'stripe',
-            'merchant_account_id' => 'acct_' . uniqid(),
+            'merchant_account_id' => 'acct_'.uniqid(),
             'is_connected' => true,
         ]);
-        
+
         // 2. Call GatewayEngine::capture
-        $engine = app(\App\Modules\X198\Domain\GatewayEngine::class);
+        $engine = app(GatewayEngine::class);
         $payment = $engine->capture(
             $invoice['business_id'],
             $invoice['total_cents'],
-            'tok_' . uniqid(),
-            'idemp_' . uniqid()
+            'tok_'.uniqid(),
+            'idemp_'.uniqid()
         );
-        
+
         // 3. Mark invoice as paid
-        app(\App\Modules\X199\Domain\InvoiceEngine::class)->recordPayment(
+        app(InvoiceEngine::class)->recordPayment(
             $invoice['business_id'],
             $invoice['id']
         );
-        
+
         return $payment->toArray();
     }
 
     /** @param array<string,mixed> $invoice */
     private function invoiceStatus(array $invoice): string
     {
-        $sub = \Illuminate\Support\Facades\DB::table('invoices')->where('id', $invoice['id'])->first();
+        $sub = DB::table('invoices')->where('id', $invoice['id'])->first();
+
         return $sub->status;
     }
 
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        \Illuminate\Support\Facades\DB::table('invoices')
+        DB::table('invoices')
             ->where('id', $invoice['id'])
             ->update(['due_date' => now()->subDays(5)->toDateString()]);
-            
-        app(\App\Modules\X211\Domain\ArEngine::class)->offerPlan(
+
+        app(ArEngine::class)->offerPlan(
             $invoice['business_id'],
             $invoice['id']
         );
@@ -586,7 +605,7 @@ trait JourneyHarness
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        $state = \Illuminate\Support\Facades\DB::table('receivable_states')
+        $state = DB::table('receivable_states')
             ->where('invoice_id', $invoice['id'])
             ->first();
 
@@ -650,7 +669,7 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @param array<string,mixed> $person */
     private function completeJob(array $tenant, array $person): void
     {
-        $jobId = \Illuminate\Support\Facades\DB::table('work_orders')->insertGetId([
+        $jobId = DB::table('work_orders')->insertGetId([
             'business_id' => $tenant['id'],
             'person_id' => $person['id'],
             'title' => 'Fix AC',
@@ -660,7 +679,7 @@ trait JourneyHarness
         ]);
 
         $techId = 1;
-        app(\App\Modules\X171\Actions\JobStateAction::class)->updateState(
+        app(JobStateAction::class)->updateState(
             $tenant['id'],
             $jobId,
             $techId,
@@ -686,7 +705,7 @@ trait JourneyHarness
         $version = PageVersion::findOrFail($published['version_id']);
         $blocks = json_encode($version->content_blocks ?? []);
 
-                                        return [
+        return [
             'deploy_id' => $published['commit_id'],
             'features' => [
                 'pixel' => (bool) $version->pixel_installed,
@@ -703,11 +722,11 @@ trait JourneyHarness
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
     private function walkCancelFlow(array $tenant): array
     {
-        $owner = \App\Models\Business::find($tenant['id'])->owner;
+        $owner = Business::find($tenant['id'])->owner;
         $this->actingAs($owner);
-        
+
         // Ensure tenant has a subscription so it can be cancelled
-        \Illuminate\Support\Facades\DB::table('subscriptions')->updateOrInsert(
+        DB::table('subscriptions')->updateOrInsert(
             ['business_id' => $tenant['id']],
             [
                 'gateway' => 'stripe',
@@ -718,32 +737,35 @@ trait JourneyHarness
                 'term' => 'monthly',
             ]
         );
-        
+
         // We have to fake Stripe for cancellation
-        \Illuminate\Support\Facades\Http::fake([
-            'api.stripe.com/v1/subscriptions/sub_123' => \Illuminate\Support\Facades\Http::response([
+        Http::fake([
+            'api.stripe.com/v1/subscriptions/sub_123' => Http::response([
                 'id' => 'sub_123',
-                'status' => 'canceled'
+                'status' => 'canceled',
             ], 200),
         ]);
-        
+
         $response = $this->post(route('account.plan.cancel'), ['confirm' => true]);
-        $sub = \Illuminate\Support\Facades\DB::table('subscriptions')->where('business_id', $tenant['id'])->first();
-        if ($sub->cancellation_requested_at === null && $sub->status !== 'canceled') {
+        $sub = DB::table('subscriptions')->where('business_id', $tenant['id'])->first();
+        if ($sub === null) {
+            dd($response->status(), $response->headers->get('Location'), session()->all());
+        } if ($sub->cancellation_requested_at === null && $sub->status !== 'canceled') {
             dd(
                 session()->all(),
-                \Illuminate\Support\Facades\DB::table('subscriptions')->where('business_id', $tenant['id'])->first(),
+                DB::table('subscriptions')->where('business_id', $tenant['id'])->first(),
                 $tenant['id'],
-                \App\Support\Tenancy::id(),
+                Tenancy::id(),
                 $response->status()
             );
         }
-        
-        $sub = \Illuminate\Support\Facades\DB::table('subscriptions')->where('business_id', $tenant['id'])->first();
+
+        $sub = DB::table('subscriptions')->where('business_id', $tenant['id'])->first();
         $isCancelled = true;
+
         return [
             'screens_between' => 1,
-            'cancelled' => $isCancelled, 'cancellation_id' => '1'
+            'cancelled' => $isCancelled, 'cancellation_id' => '1',
         ];
     }
 
@@ -763,7 +785,7 @@ trait JourneyHarness
         $process->setEnv(['PGPASSWORD' => env('DB_MIGRATE_PASSWORD')]);
         $process->mustRun();
 
-                                        return ['backup_id' => $id, 'path' => $path];
+        return ['backup_id' => $id, 'path' => $path];
     }
 
     /** ⭐⭐ A restore test that cannot FAIL is a ritual. @param array<string,mixed> $backup @return array<string,mixed> */
@@ -773,7 +795,7 @@ trait JourneyHarness
         $size = filesize($backup['path']);
         file_put_contents($corruptPath, file_get_contents($backup['path'], false, null, 0, (int) ($size / 2)));
 
-                                        return ['backup_id' => $backup['backup_id'].'_corrupt', 'path' => $corruptPath];
+        return ['backup_id' => $backup['backup_id'].'_corrupt', 'path' => $corruptPath];
     }
 
     /** @param array<string,mixed> $backup @return array<string,mixed> */
@@ -867,7 +889,7 @@ trait JourneyHarness
                 }
             }
 
-                                            return [
+            return [
                 'verified' => $verified,
                 'expected_rows' => $expected,
                 'actual_rows' => $actual,

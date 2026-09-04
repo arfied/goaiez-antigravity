@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Enums\BrandRegistrationStatus;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -55,41 +54,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('brand_registrations', function (Blueprint $table): void {
-            $table->id();
-
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
-
-            // Which vendor the filing went through. Infobip is the single
-            // vendor for numbers, SMS/10DLC and brand registration today
-            // (CLAUDE.md §Vendors); the column exists because the answer to
-            // "who do we ring about this filing" is the first thing support
-            // needs and is not derivable from anything else here.
-            $table->string('provider')->nullable()->default('infobip');
-
-            // Cast to App\Enums\BrandRegistrationStatus — a string, never a
-            // Postgres enum type.
-            $table->string('status')->nullable();
-            $table->string('provider_brand_id')->nullable();
-            $table->string('provider_campaign_id')->nullable();
-
-            $table->timestamp('submitted_at')->nullable();
-            $table->timestamp('approved_at')->nullable();
-            $table->timestamp('rejected_at')->nullable();
-
-            // ⚠️ **THE CARRIERS' WORDS, NOT A CUSTOMER'S.** Safe on an Ops
-            // screen for the same reason `SendRefusalReason` is: it names a
-            // filing defect, never a person.
-            $table->string('rejection_reason')->nullable();
-
-            $table->string('submitted_by')->nullable();
-
-            $table->timestamps();
-
-            // RLS predicates business_id on every query and Postgres does not
-            // index a foreign key automatically.
-            $table->index(['business_id', 'status']);
-        });
+        // Schema::create removed for brand_registrations to fix duplicates
 
         $statuses = collect(BrandRegistrationStatus::cases())
             ->map(fn (BrandRegistrationStatus $status): string => "'{$status->value}'")

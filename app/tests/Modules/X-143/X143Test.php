@@ -68,6 +68,6 @@ class X143Test extends TestCase
      */
     public function test_n_143_01(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

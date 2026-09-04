@@ -83,6 +83,6 @@ class X173Test extends TestCase
      */
     public function test_accounting_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

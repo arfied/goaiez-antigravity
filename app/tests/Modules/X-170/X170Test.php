@@ -104,7 +104,7 @@ class X170Test extends TestCase
      */
     public function test_g1_16_money_in(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -112,6 +112,6 @@ class X170Test extends TestCase
      */
     public function test_commission_tiers_and_bonus(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

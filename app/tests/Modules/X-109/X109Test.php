@@ -105,6 +105,6 @@ class X109Test extends TestCase
      */
     public function test_form_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

@@ -102,6 +102,6 @@ class X120Test extends TestCase
      */
     public function test_card_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

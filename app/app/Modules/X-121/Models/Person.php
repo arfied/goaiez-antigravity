@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X121\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,8 +17,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $address
  * @property ?array<string, mixed> $metadata
  */
-class Person extends Model
+class Person extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'people';
 
     protected $guarded = [];

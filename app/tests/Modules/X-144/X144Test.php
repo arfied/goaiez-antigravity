@@ -83,7 +83,7 @@ class X144Test extends TestCase
      */
     public function test_visibility_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     public function test_components_render_successfully(): void

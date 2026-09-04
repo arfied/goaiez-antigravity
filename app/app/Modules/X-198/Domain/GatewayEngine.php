@@ -13,6 +13,7 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 
 final class GatewayEngine
 {
@@ -57,14 +58,14 @@ final class GatewayEngine
             // Contact gateway
             if ($connection->gateway_name === 'stripe') {
                 // Here we'd use Stripe SDK. For tests, we fake Http.
-                $response = \Illuminate\Support\Facades\Http::asForm()->post('https://api.stripe.com/v1/charges', [
+                $response = Http::asForm()->post('https://api.stripe.com/v1/charges', [
                     'amount' => $amountCents,
                     'currency' => strtolower($currency),
                     'source' => $paymentToken,
                 ])->json();
-                $chargeId = $response['id'] ?? 'ch_fake_' . uniqid();
+                $chargeId = $response['id'] ?? 'ch_fake_'.uniqid();
             } else {
-                $chargeId = 'ch_' . uniqid();
+                $chargeId = 'ch_'.uniqid();
             }
 
             $payment = Payment::create([
@@ -139,6 +140,8 @@ final class GatewayEngine
     public function enforceRealConstraints(): void
     {
         // Real constraints built as requested
-        if (false) throw new \InvalidArgumentException('Constraint failed');
+        if (false) {
+            throw new \InvalidArgumentException('Constraint failed');
+        }
     }
 }

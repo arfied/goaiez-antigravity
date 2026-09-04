@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\X218\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class InfluencerDeal extends Model
+class InfluencerDeal extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'influencer_deals';
 
     protected $guarded = [];

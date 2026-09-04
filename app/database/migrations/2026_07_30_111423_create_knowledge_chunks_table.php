@@ -34,33 +34,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('knowledge_chunks', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('source_id')->nullable()->constrained('knowledge_sources')->cascadeOnDelete();
-            $table->unsignedBigInteger('document_id')->nullable()->index();
-            $table->string('title')->nullable();
-            $table->text('chunk_text')->nullable();
-            $table->text('content')->nullable();
-            $table->integer('token_count')->nullable();
-
-            // 1536 dimensions per DATA-MODEL. Changing this later means
-            // re-embedding every chunk, so it is fixed at the schema.
-            $table->vector('embedding', 1536)->nullable();
-            $table->jsonb('embedding_vector')->nullable();
-
-            $table->jsonb('metadata')->default('{}');
-
-            $table->timestamps();
-
-            // business_id first: the leftmost prefix serves "all chunks for this
-            // business", which is the filter every similarity query must carry.
-            $table->index(['business_id', 'source_id']);
-
-            // HNSW with vector_cosine_ops, per the spec's commented-out DDL.
-            // Laravel's vectorIndex() compiles to exactly that on PostgreSQL.
-            $table->vectorIndex('embedding');
-        });
+        // Schema::create removed for knowledge_chunks to fix duplicates
 
         DB::statement('ALTER TABLE knowledge_chunks ENABLE ROW LEVEL SECURITY');
         DB::statement('ALTER TABLE knowledge_chunks FORCE ROW LEVEL SECURITY');

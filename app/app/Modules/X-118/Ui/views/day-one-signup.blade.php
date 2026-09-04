@@ -45,7 +45,7 @@
                         </label>
                         <input 
                             type="text" 
-                            wire:model.defer="businessName" 
+                            wire:model="businessName" 
                             placeholder="e.g. Austin Master Plumbing" 
                             class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition"
                         />
@@ -58,7 +58,7 @@
                         </label>
                         <input 
                             type="text" 
-                            wire:model.defer="contactPhone" 
+                            wire:model="contactPhone" 
                             placeholder="e.g. +1 512 555 0199" 
                             class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition"
                         />

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CMail\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,8 +17,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $is_warmed
  * @property ?array<string, mixed> $schedule
  */
-class WarmupCalendar extends Model
+class WarmupCalendar extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'warmup_calendars';
 
     protected $guarded = [];

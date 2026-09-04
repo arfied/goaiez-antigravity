@@ -107,7 +107,7 @@ class X142Test extends TestCase
      */
     public function test_mcp_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     public function test_components_render(): void

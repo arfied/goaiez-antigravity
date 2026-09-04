@@ -110,7 +110,7 @@ class X102Test extends TestCase
      */
     public function test_g2_57_capture_first(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -118,7 +118,7 @@ class X102Test extends TestCase
      */
     public function test_g8_36_shadow_dom(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -126,7 +126,7 @@ class X102Test extends TestCase
      */
     public function test_g13_15_grounded_answers(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -134,7 +134,7 @@ class X102Test extends TestCase
      */
     public function test_g13_37_proactive_help(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -142,7 +142,7 @@ class X102Test extends TestCase
      */
     public function test_g16_21_chat_carousels(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     public function test_screen_renders_only_for_authenticated_users(): void

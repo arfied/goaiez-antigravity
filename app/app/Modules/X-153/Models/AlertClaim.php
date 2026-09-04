@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X153\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class AlertClaim extends Model
+class AlertClaim extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'alert_claims';
 
     protected $guarded = [];

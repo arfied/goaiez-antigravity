@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CAgent\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -14,8 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $reason
  * @property ?array<string, mixed> $context
  */
-class AgentRefusal extends Model
+class AgentRefusal extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     public const VALID_REFUSAL_CODES = [
         'NO_FACT',
         'CONSENT_MISSING',

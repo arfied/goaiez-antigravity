@@ -83,6 +83,6 @@ class X131Test extends TestCase
      */
     public function test_interest_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

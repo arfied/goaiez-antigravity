@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\CTelephony\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class CarrierRoster extends Model
+class CarrierRoster extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'carrier_roster';
 
     protected $guarded = [];

@@ -14,6 +14,6 @@ class CardVaultTest extends TestCase
      */
     public function test_capabilities_are_enforced_for_card_vault()
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

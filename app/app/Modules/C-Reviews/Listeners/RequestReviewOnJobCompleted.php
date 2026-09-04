@@ -19,7 +19,7 @@ final class RequestReviewOnJobCompleted
             ->where('customer_id', $event->personId)
             ->where('created_at', '>=', now()->subDays(30))
             ->exists();
-            
+
         if ($recent) {
             return;
         }

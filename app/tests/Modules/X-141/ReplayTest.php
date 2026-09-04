@@ -14,6 +14,6 @@ class ReplayTest extends TestCase
      */
     public function test_capabilities_are_enforced_for_replay()
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

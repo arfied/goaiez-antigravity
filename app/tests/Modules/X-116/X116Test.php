@@ -100,6 +100,6 @@ class X116Test extends TestCase
      */
     public function test_template_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

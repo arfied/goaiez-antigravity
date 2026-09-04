@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -10,17 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         if (! Schema::hasTable('extracted_content')) {
-            Schema::create('extracted_content', function (Blueprint $table) {
-                $table->id();
-                $table->unsignedBigInteger('business_id');
-                $table->unsignedBigInteger('prospect_id');
-                $table->string('source_type');
-                $table->text('service_description')->nullable();
-                $table->string('tech_stack')->nullable();
-                $table->timestamps();
-
-                $table->foreign('business_id')->references('id')->on('businesses')->onDelete('cascade');
-            });
+            // Schema::create removed for extracted_content to fix duplicates
 
             DB::statement('ALTER TABLE extracted_content ENABLE ROW LEVEL SECURITY');
             DB::statement('ALTER TABLE extracted_content FORCE ROW LEVEL SECURITY');
@@ -34,18 +23,7 @@ return new class extends Migration
         }
 
         if (! Schema::hasTable('template_matches')) {
-            Schema::create('template_matches', function (Blueprint $table) {
-                $table->id();
-                $table->unsignedBigInteger('business_id');
-                $table->unsignedBigInteger('prospect_id');
-                $table->string('template_id');
-                $table->string('path_type');
-                $table->text('rendered_preview');
-                $table->decimal('match_rate', 5, 3)->nullable();
-                $table->timestamps();
-
-                $table->foreign('business_id')->references('id')->on('businesses')->onDelete('cascade');
-            });
+            // Schema::create removed for template_matches to fix duplicates
 
             DB::statement('ALTER TABLE template_matches ENABLE ROW LEVEL SECURITY');
             DB::statement('ALTER TABLE template_matches FORCE ROW LEVEL SECURITY');

@@ -104,6 +104,6 @@ class X190Test extends TestCase
      */
     public function test_referral_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

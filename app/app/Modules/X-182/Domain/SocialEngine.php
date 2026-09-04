@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\X182\Domain;
@@ -12,7 +13,7 @@ final class SocialEngine
 
     public function useTenantHistory(array $history): bool
     {
-        return !empty($history);
+        return ! empty($history);
     }
 
     public function threadIntoConversation(int $replyId, int $conversationId): bool
@@ -27,7 +28,7 @@ final class SocialEngine
 
     public function personaPerChannel(string $channel, string $persona): bool
     {
-        return !empty($persona);
+        return ! empty($persona);
     }
 
     public function ensureRealJobPhotos(string $photoUrl): bool

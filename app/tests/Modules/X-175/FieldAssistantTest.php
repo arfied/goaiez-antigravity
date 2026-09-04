@@ -12,6 +12,6 @@ class FieldAssistantTest extends TestCase
      */
     public function test_capabilities_are_enforced()
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

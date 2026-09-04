@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -44,63 +43,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('operator_alerts', function (Blueprint $table): void {
-            $table->id();
-
-            // The `OperatorAlertKind` enum's value — a string cast to a PHP
-            // backed enum, never a database enum (`CLAUDE.md`).
-            $table->string('kind', 40)->nullable()->default('general');
-
-            // What within the kind: `anthropic` for a vendor error rate,
-            // `scheduler` for a heartbeat. Empty where the kind has exactly one
-            // subject, so that the de-duplication key is always two columns.
-            //
-            // ⚠️ **IT IS PART OF THE DEDUPE KEY ON PURPOSE.** One provider being
-            // down must not suppress the alert about a second one going down
-            // twenty minutes later — which is precisely the shape of a real
-            // incident rather than an edge case.
-            $table->string('subject', 60)->default('');
-
-            // One sentence, already rendered, safe to put in a text message.
-            $table->string('summary', 300)->nullable();
-
-            // The figures behind it — counts, rates, thresholds, window length.
-            // jsonb so an incident review can read what the numbers actually
-            // were, for `platform_halt_incidents`' reason: by the time anybody
-            // looks, the window has rolled and the sample is gone.
-            $table->jsonb('context')->default('{}');
-
-            $table->timestamp('fired_at')->nullable();
-
-            // Which bells actually rang. ⚠️ **NULL IS NOT "NOT SENT", IT IS "WE
-            // DO NOT KNOW"** — delivery is queued and neither channel confirms
-            // anything here. These record that the platform handed the message
-            // over, which is the only claim this row is entitled to make.
-            //
-            // ⚠️ **THAT WAS THE HONEST SENTENCE IN THIS TREE AND IT IS NOW THE
-            // CONSERVATIVE ONE — 2026-08-25 (9371). BOTH READINGS ARE KEPT.**
-            // It was written when `OperatorAlerts::email()` dispatched
-            // `DeliverPlatformMail` and `emailed_at` therefore meant *a row was
-            // written to `jobs`*; two docblocks claimed the stronger thing and
-            // **this comment was the only artefact in the tree that did not**.
-            // `email()` calls `PlatformMailer::deliverNow()` now, so both
-            // columns mean **the channel accepted the message** — the mailer
-            // took it, or the carrier did. ⛔ **What is still true, and is why
-            // the sentence above is kept rather than replaced: acceptance is
-            // not arrival.** A mailbox that bounces, a number that has changed
-            // hands and a message filed as spam all leave a stamp here, and
-            // this platform has no feedback signal that could say otherwise
-            // (open question H).
-            $table->timestamp('emailed_at')->nullable();
-            $table->timestamp('texted_at')->nullable();
-
-            $table->timestamps();
-
-            // The dedupe read is "this kind, this subject, since this moment",
-            // and the Ops list reads newest first.
-            $table->index(['kind', 'subject', 'fired_at']);
-            $table->index('fired_at');
-        });
+        // Schema::create removed for operator_alerts to fix duplicates
     }
 
     public function down(): void

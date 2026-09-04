@@ -93,6 +93,6 @@ class X209Test extends TestCase
      */
     public function test_n_209_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

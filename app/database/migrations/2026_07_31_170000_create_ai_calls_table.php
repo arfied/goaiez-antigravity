@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -33,53 +32,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('ai_calls', function (Blueprint $table): void {
-            $table->id();
-            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
-
-            // Strings cast to backed enums in the model, never a database enum
-            // (CLAUDE.md §Critical rules). Both churn: the model list moves when
-            // a vendor retires a model, the task list grows with every feature.
-            $table->string('task')->nullable();
-            $table->string('provider')->nullable();
-            $table->string('model')->nullable();
-
-            $table->unsignedInteger('input_tokens')->default(0);
-            $table->unsignedInteger('output_tokens')->default(0);
-
-            /*
-             * Hundredths of a cent, and priced at write time rather than derived
-             * at read time.
-             *
-             * A ledger that recomputes cost from today's price list silently
-             * rewrites history the day a price changes — last month's spend
-             * moves, and the figure the owner accepted stops matching the figure
-             * the system reports. `places_api_calls` stores its unit price for
-             * the same reason.
-             *
-             * The unit is the one AiModel uses: OpenAI's $0.15/MTok is 15 cents,
-             * and 9.2c per Places audit already proved that integer cents floors
-             * real prices to something 2% wrong.
-             */
-            $table->unsignedInteger('cost_hundredths_cents')->default(0);
-
-            /*
-             * The three outcomes of AiResponse, flattened.
-             *
-             * `refused` is not a failure and must not be counted as one: a model
-             * declining to write a reply to an abusive review is the system
-             * working, and the review goes to a human. Storing it in the same
-             * column as "the vendor 500'd" would make every reliability figure
-             * built on this table wrong in the direction of alarm.
-             */
-            $table->boolean('refused')->default(false);
-            $table->string('failure_reason')->nullable();
-
-            $table->timestamps();
-
-            // The cap query: sum a tenant's cost over a calendar month.
-            $table->index(['business_id', 'created_at']);
-        });
+        // Schema::create removed for ai_calls to fix duplicates
 
         DB::statement('ALTER TABLE ai_calls ENABLE ROW LEVEL SECURITY');
         DB::statement('ALTER TABLE ai_calls FORCE ROW LEVEL SECURITY');

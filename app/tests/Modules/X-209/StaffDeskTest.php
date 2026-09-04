@@ -17,6 +17,6 @@ class StaffDeskTest extends TestCase
      */
     public function test_capabilities_are_enforced_for_staff_desk()
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

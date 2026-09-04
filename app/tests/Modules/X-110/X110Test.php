@@ -107,7 +107,7 @@ class X110Test extends TestCase
      */
     public function test_g9_02_single_database(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -127,7 +127,7 @@ class X110Test extends TestCase
      */
     public function test_g13_12_chat_page_context(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -135,7 +135,7 @@ class X110Test extends TestCase
      */
     public function test_g13_27_tenant_tags(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -143,7 +143,7 @@ class X110Test extends TestCase
      */
     public function test_g13_28_redirect_hop(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**

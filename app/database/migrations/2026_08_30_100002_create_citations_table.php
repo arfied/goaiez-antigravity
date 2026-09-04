@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -15,23 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         if (! Schema::hasTable('citations')) {
-            Schema::create('citations', function (Blueprint $table): void {
-                $table->id();
-                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
-                $table->foreignId('location_id')->nullable()->constrained('locations')->nullOnDelete();
-                $table->string('directory');
-                $table->text('directory_url')->nullable();
-                $table->string('nap_status')->default('pending');
-                $table->string('listing_name')->nullable();
-                $table->string('listing_address')->nullable();
-                $table->string('listing_phone')->nullable();
-                $table->jsonb('mismatch_details')->nullable();
-                $table->timestamp('last_checked_at')->nullable();
-                $table->timestamps();
-
-                $table->index(['business_id', 'directory']);
-                $table->index(['business_id', 'nap_status']);
-            });
+            // Schema::create removed for citations to fix duplicates
 
             if (DB::getDriverName() === 'pgsql') {
                 DB::statement('ALTER TABLE citations ENABLE ROW LEVEL SECURITY');

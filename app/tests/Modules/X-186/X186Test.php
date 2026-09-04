@@ -87,6 +87,6 @@ class X186Test extends TestCase
      */
     public function test_campaign_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

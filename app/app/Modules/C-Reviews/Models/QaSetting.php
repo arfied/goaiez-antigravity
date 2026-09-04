@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class QaSetting extends Model
+class QaSetting extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'qa_settings';
 
     protected $guarded = [];

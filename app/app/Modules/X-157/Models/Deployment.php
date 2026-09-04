@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X157\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class Deployment extends Model
+class Deployment extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'deployments';
 
     protected $guarded = [];

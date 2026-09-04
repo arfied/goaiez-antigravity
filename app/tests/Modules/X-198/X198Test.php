@@ -17,6 +17,7 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X198Test extends TestCase
@@ -50,8 +51,8 @@ class X198Test extends TestCase
     public function test_anchor_pci_tokens_only_tenant_payout_isolation_and_discrepancy_logging(): void
     {
         Event::fake([PaymentCaptured::class, ReconciliationDiscrepancy::class, PayoutReconciled::class]);
-        \Illuminate\Support\Facades\Http::fake([
-            '*stripe.com*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_fake_123'], 200),
+        Http::fake([
+            '*stripe.com*' => Http::response(['id' => 'ch_fake_123'], 200),
         ]);
 
         $biz = TestCase::provisionTenant(['name' => 'Gateway Tenant', 'currency' => 'USD']);
@@ -113,7 +114,7 @@ class X198Test extends TestCase
      */
     public function test_g17_04_refid_deduplication(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -121,6 +122,6 @@ class X198Test extends TestCase
      */
     public function test_n_010_no_refusal(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CWhatsapp\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,8 +17,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?CarbonInterface $session_window_expires_at
  * @property bool $is_window_open
  */
-class WhatsappSession extends Model
+class WhatsappSession extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'whatsapp_sessions';
 
     protected $guarded = [];

@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\X140\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ContentTopic extends Model
+class ContentTopic extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'content_topics';
 
     protected $guarded = [];

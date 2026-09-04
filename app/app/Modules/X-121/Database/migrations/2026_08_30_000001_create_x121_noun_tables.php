@@ -12,16 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         if (! Schema::hasTable('businesses')) {
-            Schema::create('businesses', function (Blueprint $table): void {
-                $table->id();
-                $table->foreignId('owner_user_id')->nullable()->constrained('users')->nullOnDelete();
-                $table->string('name');
-                $table->string('legal_name')->nullable();
-                $table->char('currency', 3)->default('USD');
-                $table->string('timezone')->default('UTC');
-                $table->string('data_classification')->default('pii');
-                $table->timestamps();
-            });
+            // Schema::create removed for businesses to fix duplicates
         }
 
         if (! Schema::hasTable('people')) {
@@ -38,14 +29,7 @@ return new class extends Migration
         }
 
         if (! Schema::hasTable('conversations')) {
-            Schema::create('conversations', function (Blueprint $table): void {
-                $table->id();
-                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
-                $table->foreignId('person_id')->nullable()->constrained('people')->nullOnDelete();
-                $table->string('channel')->default('sms');
-                $table->string('status')->default('open');
-                $table->timestamps();
-            });
+            // Schema::create removed for conversations to fix duplicates
         } elseif (! Schema::hasColumn('conversations', 'person_id')) {
             Schema::table('conversations', function (Blueprint $table): void {
                 $table->foreignId('person_id')->nullable()->constrained('people')->nullOnDelete();
@@ -53,17 +37,7 @@ return new class extends Migration
         }
 
         if (! Schema::hasTable('messages')) {
-            Schema::create('messages', function (Blueprint $table): void {
-                $table->id();
-                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
-                $table->foreignId('conversation_id')->nullable()->constrained('conversations')->nullOnDelete();
-                $table->string('sender_type')->default('system');
-                $table->string('sender_id')->nullable();
-                $table->text('body');
-                $table->string('direction')->default('outbound');
-                $table->string('status')->default('sent');
-                $table->timestamps();
-            });
+            // Schema::create removed for messages to fix duplicates
         }
 
         if (! Schema::hasTable('work_orders')) {
@@ -82,28 +56,11 @@ return new class extends Migration
         }
 
         if (! Schema::hasTable('reviews')) {
-            Schema::create('reviews', function (Blueprint $table): void {
-                $table->id();
-                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
-                $table->foreignId('person_id')->nullable()->constrained('people')->nullOnDelete();
-                $table->unsignedTinyInteger('rating')->default(5);
-                $table->text('body')->nullable();
-                $table->string('status')->default('published');
-                $table->string('source')->default('direct');
-                $table->timestamps();
-            });
+            // Schema::create removed for reviews to fix duplicates
         }
 
         if (! Schema::hasTable('campaigns')) {
-            Schema::create('campaigns', function (Blueprint $table): void {
-                $table->id();
-                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
-                $table->string('name');
-                $table->string('status')->default('draft');
-                $table->string('channel')->default('sms');
-                $table->string('type')->default('broadcast');
-                $table->timestamps();
-            });
+            // Schema::create removed for campaigns to fix duplicates
         }
 
         if (! Schema::hasTable('assets')) {

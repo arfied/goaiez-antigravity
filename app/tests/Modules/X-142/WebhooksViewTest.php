@@ -2,9 +2,9 @@
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X142\Ui\WebhooksView;
 use App\Support\Tenancy;
 use Livewire\Livewire;
-use App\Modules\X142\Ui\WebhooksView;
 
 it('forbids guest access to WebhooksView', function () {
     Livewire::test(WebhooksView::class)
@@ -18,6 +18,6 @@ it('allows owner access to WebhooksView', function () {
     Tenancy::setUser($owner->id);
 
     Livewire::actingAs($owner)
-        ->test(WebhooksView::class, )
+        ->test(WebhooksView::class)
         ->assertOk();
 });

@@ -108,6 +108,6 @@ class X16Test extends TestCase
      */
     public function test_maps_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

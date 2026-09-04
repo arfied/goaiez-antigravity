@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CAi\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,8 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $max_ttft_ms
  * @property int $cost_limit_cents
  */
-class AiTask extends Model
+class AiTask extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'ai_tasks';
 
     protected $guarded = [];

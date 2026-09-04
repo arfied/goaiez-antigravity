@@ -80,6 +80,6 @@ class X189Test extends TestCase
      */
     public function test_branded_card_and_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

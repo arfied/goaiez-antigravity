@@ -113,7 +113,7 @@ class X155Test extends TestCase
      */
     public function test_g2_17_multi_step_logic(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -121,7 +121,7 @@ class X155Test extends TestCase
      */
     public function test_g2_20_direct_entity_write(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -129,7 +129,7 @@ class X155Test extends TestCase
      */
     public function test_g2_39_header(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -137,7 +137,7 @@ class X155Test extends TestCase
      */
     public function test_g3_64_bot_filtering(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -145,7 +145,7 @@ class X155Test extends TestCase
      */
     public function test_g5_07_wizard(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -153,7 +153,7 @@ class X155Test extends TestCase
      */
     public function test_g5_30_adaptive_questions(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -161,7 +161,7 @@ class X155Test extends TestCase
      */
     public function test_g11_01_abandon_pixel(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -169,7 +169,7 @@ class X155Test extends TestCase
      */
     public function test_g13_35_no_staging(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 
     /**
@@ -177,6 +177,6 @@ class X155Test extends TestCase
      */
     public function test_g17_12_ip_timezone_signal(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

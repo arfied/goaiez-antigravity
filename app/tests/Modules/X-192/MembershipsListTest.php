@@ -2,9 +2,9 @@
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X192\Ui\MembershipsList;
 use App\Support\Tenancy;
 use Livewire\Livewire;
-use App\Modules\X192\Ui\MembershipsList;
 
 it('forbids guest access to MembershipsList', function () {
     Livewire::test(MembershipsList::class)
@@ -18,6 +18,6 @@ it('allows owner access to MembershipsList', function () {
     Tenancy::setUser($owner->id);
 
     Livewire::actingAs($owner)
-        ->test(MembershipsList::class, )
+        ->test(MembershipsList::class)
         ->assertOk();
 });

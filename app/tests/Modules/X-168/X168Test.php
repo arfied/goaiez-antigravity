@@ -100,6 +100,6 @@ class X168Test extends TestCase
      */
     public function test_n_062_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

@@ -121,6 +121,6 @@ class X194Test extends TestCase
      */
     public function test_reporting_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CBilling\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,8 +19,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $description
  * @property ?CarbonInterface $created_at
  */
-class CreditLedgerEntry extends Model
+class CreditLedgerEntry extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     public $timestamps = false;
 
     protected $table = 'credit_ledger_entries';

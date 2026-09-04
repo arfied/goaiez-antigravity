@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CBilling\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,8 +19,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $current_balance_hundredths_cents
  * @property ?CarbonInterface $last_topup_date
  */
-class TrialLimit extends Model
+class TrialLimit extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'trial_limits';
 
     protected $guarded = [];

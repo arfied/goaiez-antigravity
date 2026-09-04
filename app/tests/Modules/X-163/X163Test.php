@@ -15,8 +15,10 @@ use App\Modules\X163\Events\VersionBumped;
 use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\LocationBook;
 use App\Modules\X163\Models\PriceBookItem;
+use App\Modules\X163\Ui\Pricebook;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X163Test extends TestCase
@@ -137,16 +139,17 @@ class X163Test extends TestCase
      */
     public function test_n_062_assertion(): void
     {
-        $this->assertTrue(true);
+        $this->markTestIncomplete('TODO: implement real assertions');
     }
+
     public function test_no_fake_rows_written_on_mount(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \Livewire\Livewire::test(\App\Modules\X163\Ui\Pricebook::class)
+        Livewire::test(Pricebook::class)
             ->assertOk();
 
-        $this->assertEquals(0, \App\Modules\X163\Models\PriceBookItem::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, PriceBookItem::where('business_id', $biz->id)->count());
     }
 }
