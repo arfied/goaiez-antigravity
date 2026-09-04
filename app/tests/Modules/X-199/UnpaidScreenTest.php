@@ -73,6 +73,8 @@ class UnpaidScreenTest extends TestCase
             ->assertSee($inv3->invoice_number)
             ->assertDontSee($inv1->invoice_number)
             ->assertSee('250.00') // Outstanding for inv2
-            ->assertSee('covered by the card on file; service never stopped');
+            ->assertSee('covered by the card on file; service never stopped')
+            ->call('recordPayment', 999999)
+            ->assertSee("isn't in this account");
     }
 }

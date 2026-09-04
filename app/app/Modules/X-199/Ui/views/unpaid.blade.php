@@ -20,6 +20,12 @@
             <div wire:loading class="w-full text-center p-4">
                 <span class="text-gray-500 text-base">Loading...</span>
             </div>
+
+            @if($error)
+                <div role="alert" class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative text-base">
+                    {{ $error }}
+                </div>
+            @endif
             
             @if($invoices->isEmpty() && !$showLastFivePaid)
                 <div wire:loading.remove class="text-center p-8 bg-white rounded-lg border border-gray-200">
@@ -67,7 +73,7 @@
                                         <button class="hover:underline font-semibold text-indigo-600">{{ number_format($invoice->outstanding_cents / 100, 2) }}</button>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                        <button wire:click="recordPayment({{ $invoice->id }})" class="text-indigo-600 hover:text-indigo-900 p-2">Record payment</button>
+                                        <button wire:loading.attr="disabled" wire:target="recordPayment({{ $invoice->id }})" wire:click="recordPayment({{ $invoice->id }})" class="text-indigo-600 hover:text-indigo-900 p-2">Record payment</button>
                                         <a href="{{ $invoice->pdf_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 p-2">Receipt</a>
                                     </td>
                                 </tr>

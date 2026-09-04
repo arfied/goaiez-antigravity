@@ -8,11 +8,14 @@ use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Component;
 
 class Unpaid extends Component
 {
     public array $expanded = [];
+
+    public ?string $error = null;
 
     public bool $showLastFivePaid = false;
 
@@ -27,7 +30,14 @@ class Unpaid extends Component
 
     public function recordPayment(int $invoiceId): void
     {
-        app(InvoiceEngine::class)->recordPayment(Tenancy::idOrFail(), $invoiceId);
+        $this->error = null;
+        try {
+            app(InvoiceEngine::class)->recordPayment(Tenancy::idOrFail(), $invoiceId);
+        } catch (ModelNotFoundException) {
+            $this->error = "That invoice isn't in this account any more — reload the list.";
+        } catch (\Throwable $e) {
+            $this->error = 'That payment was not recorded: '.$e->getMessage();
+        }
     }
 
     public function showPaid(): void
