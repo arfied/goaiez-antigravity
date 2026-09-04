@@ -6,6 +6,6 @@ namespace App\Modules\X218\Domain;
 final class X218Engine
 {
     public function enforceCapabilities(): void {
-        throw new \InvalidArgumentException("X-218 REFUSES");
+        throw new \InvalidArgumentException("REFUSES: Domain constraints enforced.");
     }
 }
