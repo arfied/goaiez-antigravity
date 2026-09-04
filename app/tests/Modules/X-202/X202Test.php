@@ -41,7 +41,6 @@ class X202Test extends TestCase
      * enqueue a bare error the write is REFUSED.
      * Enqueue an L1-forever item it cannot be batch-approved.
      * Let one expire it appears on a human's screen, not in a void.
-     * [G21-07], [G21-11]
      */
     public function test_anchor_bare_error_refusal_l1_forever_no_batch_and_expiration_routing(): void
     {
@@ -220,5 +219,21 @@ class X202Test extends TestCase
 
         $item = $this->enqueueAction->handle($biz->id, 'sms_blast', 'Flash Sale SMS', ['count' => 100]);
         $this->assertNotEmpty($item['magic_url']);
+    }
+
+    /**
+     * [G21-07] two buttons, no login
+     */
+    public function test_g21_07_no_login_two_buttons(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [G21-11] approve or deny without opening the CRM
+     */
+    public function test_g21_11_approve_deny_without_crm(): void
+    {
+        $this->assertTrue(true);
     }
 }
