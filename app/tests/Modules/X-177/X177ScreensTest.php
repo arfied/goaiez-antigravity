@@ -119,4 +119,17 @@ class X177ScreensTest extends TestCase
 
         $this->assertEquals($initialLogCount + 1, GbpStateLog::count());
     }
+
+    public function test_suspension_risk_sample_state(): void
+    {
+        $before = GbpStateLog::count();
+        Livewire::test(SuspensionriskEventsFleetwide::class, ['businessId' => $this->bizId])
+            ->call('toggleSample')
+            ->assertOk()
+            ->assertSee('Risk flagged')
+            ->assertSee('Suspension detected')
+            ->call('pollState', 9991)
+            ->assertOk();
+        $this->assertEquals($before, GbpStateLog::count());
+    }
 }

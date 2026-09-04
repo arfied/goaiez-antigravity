@@ -30,6 +30,10 @@ class SuspensionriskEventsFleetwide extends Component
 
     public function pollState(int $connectionId): void
     {
+        if ($this->isSample) {
+            return;
+        }
+        Tenancy::set($this->businessId);
         app(GbpStateAction::class)->pollState($this->businessId, $connectionId);
     }
 
@@ -62,23 +66,23 @@ class SuspensionriskEventsFleetwide extends Component
             $posts = GbpPost::where('business_id', $this->businessId)
                 ->whereIn('status', ['rejected_risk', 'blocked_by_suspension'])
                 ->get()
-                ->map(function ($post) {
+                ->map(function (GbpPost $post): object {
                     $conn = GbpConnection::find($post->connection_id);
 
                     return (object) [
                         'type' => 'post',
-                        'status' => $post->status,
-                        'label' => $conn ? ($conn->external_label ?? $conn->location_id) : 'Unknown',
-                        'content' => Str::limit($post->content, 80),
-                        'created_at' => $post->created_at,
-                        'connection_id' => $post->connection_id,
+                        'status' => (string) $post->status,
+                        'label' => (string) ($conn ? ($conn->external_label ?? $conn->location_id) : 'Unknown'),
+                        'content' => Str::limit((string) $post->content, 80),
+                        'created_at' => \Illuminate\Support\Carbon::parse($post->created_at),
+                        'connection_id' => (int) $post->connection_id,
                     ];
                 });
 
             $logs = GbpStateLog::where('business_id', $this->businessId)
                 ->where('details->new_status', 'suspended')
                 ->get()
-                ->map(function ($log) {
+                ->map(function (GbpStateLog $log): object {
                     $conn = GbpConnection::find($log->connection_id);
                     $old = $log->details['old_status'] ?? 'unknown';
                     $new = $log->details['new_status'] ?? 'unknown';
@@ -86,10 +90,10 @@ class SuspensionriskEventsFleetwide extends Component
                     return (object) [
                         'type' => 'log',
                         'status' => 'suspended',
-                        'label' => $conn ? ($conn->external_label ?? $conn->location_id) : 'Unknown',
+                        'label' => (string) ($conn ? ($conn->external_label ?? $conn->location_id) : 'Unknown'),
                         'content' => "$old → $new",
-                        'created_at' => $log->created_at,
-                        'connection_id' => $log->connection_id,
+                        'created_at' => \Illuminate\Support\Carbon::parse($log->created_at),
+                        'connection_id' => (int) $log->connection_id,
                     ];
                 });
 
