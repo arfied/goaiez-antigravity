@@ -44,4 +44,16 @@ class MoneyPaidTodayTest extends TestCase
             ->assertSee('$0.00')
             ->assertSee('No invoices have been paid today');
     }
+
+    public function test_home_renders_money_paid(): void
+    {
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Home Tenant']);
+        \App\Support\Tenancy::set((int) $biz->id);
+        $this->seed(\App\Database\Seeders\UiReviewSeeder::class);
+        $owner = \App\Models\User::first();
+
+        $this->actingAs($owner)->get('/home')
+            ->assertOk()
+            ->assertSee('14 missed calls');
+    }
 }

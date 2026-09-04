@@ -58,4 +58,16 @@ class TodaysRecommendationStripTest extends TestCase
         Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
             ->assertSee('Nothing on your desk right now');
     }
+
+    public function test_home_renders_recommendation(): void
+    {
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Home Tenant']);
+        \App\Support\Tenancy::set((int) $biz->id);
+        $this->seed(\App\Database\Seeders\UiReviewSeeder::class);
+        $owner = \App\Models\User::first();
+
+        $this->actingAs($owner)->get('/home')
+            ->assertOk()
+            ->assertSee('14 missed calls');
+    }
 }
