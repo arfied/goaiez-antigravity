@@ -14,6 +14,7 @@ class MerchantApplied
 
     public function __construct(
         public int $businessId,
-        public string $gatewayName
+        public int $connectionId,
+        public string $applicationRef
     ) {}
 }

@@ -10,8 +10,8 @@ class MerchantApplyAction
 {
     public function __construct(private GatewayEngine $engine) {}
 
-    public function execute(int $businessId): array
+    public function handle(int $businessId, int $connectionId): array
     {
-        return $this->engine->applyForSubMerchant($businessId);
+        return $this->engine->applyForSubMerchant($businessId, $connectionId);
     }
 }

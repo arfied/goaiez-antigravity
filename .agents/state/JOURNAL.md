@@ -527,3 +527,6 @@
 - `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read
 - `2026-09-03T06:19:36` journey J12 -> green
 - `2026-09-03T06:19:41` note: gate line: 'tests 899 · passed 892 · FAILED 2 · errors 5 · result failed' - X-211 now reachable via merge commit 32749e6
+- `2026-09-04T15:13:31` (R245) X-198 — P-197's state machine added to merchant_connections
+- `2026-09-04T15:22:06` UNRESOLVED capability X-211 - waiting on Track 2's kit (no input component)
+- `2026-09-04T15:22:06` UNRESOLVED capability X-211 - engine lacks the term/threshold refusals — N-033, G1-61, G1-71

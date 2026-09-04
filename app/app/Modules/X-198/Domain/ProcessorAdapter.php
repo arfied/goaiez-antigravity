@@ -6,5 +6,5 @@ namespace App\Modules\X198\Domain;
 
 interface ProcessorAdapter
 {
-    public function applyForSubMerchant(int $businessId): string;
+    public function beginKyc(int $businessId): string;
 }

@@ -17,33 +17,27 @@ use Illuminate\Support\Facades\Event;
 
 final class GatewayEngine
 {
-    public function applyForSubMerchant(int $businessId): array
+    public function applyForSubMerchant(int $businessId, int $connectionId): array
     {
-        $connection = MerchantConnection::where('business_id', $businessId)->first();
+        $connection = MerchantConnection::where('business_id', $businessId)->findOrFail($connectionId);
 
-        if (! app()->bound(ProcessorAdapter::class)) {
-            return ['status' => 'refused', 'reason' => 'no_adapter_bound'];
+        if (($connection->merchant_status ?? 'external_gateway') !== 'external_gateway') {
+            return ['status' => 'refused', 'refusal_code' => 'MERCHANT_STATUS_NOT_EXTERNAL', 'message' => 'Status is not external'];
         }
 
-        if ($connection !== null && $connection->merchant_status === 'pending_kyc') {
-            return ['status' => 'refused', 'reason' => 'already_applied'];
+        if (! app()->bound(ProcessorAdapter::class)) {
+            return ['status' => 'refused', 'refusal_code' => 'PROCESSOR_ADAPTER_ABSENT', 'message' => 'No adapter bound'];
         }
 
         $adapter = app(ProcessorAdapter::class);
-        $gatewayName = $adapter->applyForSubMerchant($businessId);
+        $applicationRef = $adapter->beginKyc($businessId);
 
-        MerchantConnection::updateOrCreate(
-            ['business_id' => $businessId],
-            [
-                'gateway_name' => $gatewayName,
-                'merchant_account_id' => 'pending',
-                'is_connected' => false,
-                'merchant_status' => 'pending_kyc',
-                'merchant_relationship' => 'sub_merchant',
-            ]
-        );
+        $connection->update([
+            'merchant_status' => 'pending_kyc',
+            'merchant_relationship' => 'sub_merchant',
+        ]);
 
-        Event::dispatch(new MerchantApplied($businessId, $gatewayName));
+        Event::dispatch(new MerchantApplied($businessId, $connection->id, $applicationRef));
 
         return ['status' => 'applied'];
     }

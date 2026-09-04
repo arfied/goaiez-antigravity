@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-03T01:20:26",
+ "updated": "2026-09-04T15:22:06",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1062,10 +1062,23 @@
    "unresolved": []
   },
   "X-211": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 9,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-211",
+     "stage": "capability",
+     "why": "waiting on Track 2's kit (no input component)",
+     "at": "2026-09-04T15:22:06"
+    },
+    {
+     "module": "X-211",
+     "stage": "capability",
+     "why": "engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71",
+     "at": "2026-09-04T15:22:06"
+    }
+   ]
   },
   "X-212": {
    "status": "DONE",
@@ -1208,6 +1221,18 @@
    "stage": "journey",
    "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
    "at": "2026-09-02T10:28:55"
+  },
+  {
+   "module": "X-211",
+   "stage": "capability",
+   "why": "waiting on Track 2's kit (no input component)",
+   "at": "2026-09-04T15:22:06"
+  },
+  {
+   "module": "X-211",
+   "stage": "capability",
+   "why": "engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71",
+   "at": "2026-09-04T15:22:06"
   }
  ],
  "notes": [
@@ -1307,6 +1332,12 @@
    "module": "X-171",
    "chose": "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) \u2014 declared in the plan row and regenerated manifest, not a raw undeclared read",
    "at": "2026-09-03T01:20:26",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "P-197's state machine added to merchant_connections",
+   "at": "2026-09-04T15:13:31",
    "ruling": "R245"
   }
  ]
