@@ -145,7 +145,7 @@ class X181ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('SLA met')
             ->assertSee('SLA missed')
-            ->assertSeeInOrder(['OnTime Ticket', 'Late Ticket']); // newest resolved_at first, they have same resolved_at here. Let's make one newer.
+            ->assertSeeInOrder(['OnTime Ticket', 'Late Ticket']);
     }
 
     public function test_resolution_reopen_action(): void
@@ -165,5 +165,21 @@ class X181ScreensTest extends TestCase
         $ticket->refresh();
         $this->assertEquals('open', $ticket->status);
         $this->assertNull($ticket->resolved_at);
+    }
+
+    public function test_ticket_resolve_error_shows_panel(): void
+    {
+        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => 0])
+            ->call('resolve', 'x')
+            ->assertOk()
+            ->assertSee('Action failed');
+    }
+
+    public function test_resolution_reopen_error_shows_panel(): void
+    {
+        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+            ->call('reopen', 999999)
+            ->assertOk()
+            ->assertSee('Action failed');
     }
 }

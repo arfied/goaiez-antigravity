@@ -1,7 +1,7 @@
 <div>
     @if ($actionNotice)
         <div class="mb-4">
-            <x-ui.error-panel :message="$actionNotice" />
+            <x-ui.error-panel heading="Action failed">{{ $actionNotice }}</x-ui.error-panel>
         </div>
     @endif
 
