@@ -9,6 +9,7 @@ use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X176\Actions\SchemaRenderAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
@@ -112,7 +113,7 @@ final class EdgeDeployAction
             }
 
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
-                $schemaResult = app(\App\Modules\X176\Actions\SchemaRenderAction::class)->handle(
+                $schemaResult = app(SchemaRenderAction::class)->handle(
                     $businessId,
                     $pageId,
                     $businessName,
@@ -120,9 +121,9 @@ final class EdgeDeployAction
                 );
 
                 if (isset($schemaResult['json_ld'])) {
-                    $html .= "<script type=\"application/ld+json\">\n" . json_encode($schemaResult['json_ld']) . "\n</script>\n";
+                    $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'])."\n</script>\n";
                 }
-                
+
                 // seo is completely missing from X-176, so we do not emit anything for it.
             }
 

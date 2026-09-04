@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
@@ -12,6 +14,8 @@ use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class X157Test extends TestCase
@@ -102,20 +106,20 @@ class X157Test extends TestCase
 
     public function test_feature_flags_absent(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('local');
+        Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
 
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $biz->id,
             'title' => 'Home',
             'slug' => 'home',
         ]);
 
-        $commitId = 'commit_' . \Illuminate\Support\Str::random(16);
-        \App\Modules\X103\Models\PageVersion::create([
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
             'business_id' => $biz->id,
             'page_id' => $page->id,
             'commit_id' => $commitId,
@@ -133,7 +137,7 @@ class X157Test extends TestCase
             businessName: $biz->name
         );
 
-        $html = \Illuminate\Support\Facades\Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
 
         $this->assertStringNotContainsString('x110-pixel', $html);
         $this->assertStringNotContainsString('chat-widget-container', $html);
@@ -143,27 +147,27 @@ class X157Test extends TestCase
 
     public function test_feature_flags_present(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('local');
+        Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
 
-        $page = \App\Modules\X103\Models\Page::create([
+        $page = Page::create([
             'business_id' => $biz->id,
             'title' => 'Home',
             'slug' => 'home',
         ]);
 
-        $commitId = 'commit_' . \Illuminate\Support\Str::random(16);
-        \App\Modules\X103\Models\PageVersion::create([
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
             'business_id' => $biz->id,
             'page_id' => $page->id,
             'commit_id' => $commitId,
             'content_blocks' => [
                 ['type' => 'chat'],
                 ['type' => 'form_capture'],
-                ['type' => 'dni']
+                ['type' => 'dni'],
             ],
             'pixel_installed' => true,
         ]);
@@ -178,7 +182,7 @@ class X157Test extends TestCase
             businessName: $biz->name
         );
 
-        $html = \Illuminate\Support\Facades\Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
 
         $this->assertStringContainsString('x110-pixel', $html);
         $this->assertStringContainsString('chat-widget-container', $html);
@@ -188,7 +192,7 @@ class X157Test extends TestCase
 
     public function test_ssl_guard_writes_no_artifact(): void
     {
-        \Illuminate\Support\Facades\Storage::fake('local');
+        Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -198,8 +202,8 @@ class X157Test extends TestCase
 
         $this->assertEquals('refused', $refusedDeploy['status']);
         $this->assertEquals('SSL_CERTIFICATE_REQUIRED', $refusedDeploy['refusal_code']);
-        
-        $files = \Illuminate\Support\Facades\Storage::disk('local')->files('sites');
+
+        $files = Storage::disk('local')->files('sites');
         $this->assertEmpty($files);
     }
 }
