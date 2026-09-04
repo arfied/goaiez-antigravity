@@ -295,11 +295,41 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-        if (! DB::table('invoices')->where('business_id', $businessId)->exists()) {
-            DB::table('invoices')->insert([
-                ['business_id' => $businessId, 'invoice_number' => 'INV-001', 'total_cents' => 10000, 'paid_cents' => 10000, 'status' => 'paid', 'due_date' => now()->subDays(10), 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'invoice_number' => 'INV-002', 'total_cents' => 5000, 'paid_cents' => 0, 'status' => 'overdue', 'due_date' => now()->subDays(5), 'created_at' => now(), 'updated_at' => now()],
+                if (\App\Modules\X124\Models\AssistantRecommendation::where('business_id', $businessId)->count() === 0) {
+            $asess = \App\Modules\X124\Models\AssistantSession::create(['business_id' => $businessId, 'session_token' => 'asess_1']);
+            \App\Modules\X124\Models\AssistantRecommendation::create([
+                'business_id' => $businessId,
+                'session_id' => $asess->id,
+                'title' => '14 missed calls, no text-back template — turn it on?',
+                'action_key' => 'enable_text_back',
+                'status' => 'active',
             ]);
+        }
+
+        if (\App\Modules\X110\Models\Visit::where('business_id', $businessId)->count() === 0) {
+            for ($v = 1; $v <= 3; $v++) {
+                $visit = \App\Modules\X110\Models\Visit::create([
+                    'business_id' => $businessId,
+                    'visitor_id' => 'vis_' . $v,
+                    'ip_hash' => 'hash' . $v,
+                    'user_agent' => 'Mozilla',
+                    'landing_page' => '/',
+                ]);
+                $session = \App\Modules\X110\Models\Session::create([
+                    'business_id' => $businessId,
+                    'visit_id' => $visit->id,
+                    'session_token' => 'sess_tok_' . $v,
+                    'started_at' => now()->startOfDay(),
+                    'ended_at' => now()->startOfDay()->addMinutes(5),
+                ]);
+                \App\Modules\X110\Models\PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $session->id,
+                    'event_name' => 'pageview',
+                    'payload' => ['url' => '/'],
+                    'created_at' => now(),
+                ]);
+            }
         }
 
         app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());
