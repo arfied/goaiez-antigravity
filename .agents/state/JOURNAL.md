@@ -534,3 +534,10 @@
 - `2026-09-04T16:26:13` (R245) X-166 — job_costs.tech_id is the technician's users.id, the id X-168 records as person_id; names resolve from users in one query (R245)
 - `2026-09-04T16:26:13` (R245) X-166 — the margin pill turns attention below 20.0 %, the threshold JobCostAction already alerts on; one number, two readers (R245)
 - `2026-09-04T16:26:13` UNRESOLVED surface X-166 - GET→assertOk for X-166 margin_by_job, by_tech and by_service waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T16:51:42` (R245) X-166 — margin by source keys on job_costs.source as JobCostAction records it (inbound_call by default); no source table exists to rename it (R245)
+- `2026-09-04T16:51:42` UNRESOLVED surface X-166 - GET→assertOk for X-166 by_source waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T16:52:25` (R245) X-167 — add is_sample to stock_items and purchase_orders (R245)
+- `2026-09-04T16:52:25` UNRESOLVED surface X-167 - GET→assertOk for X-167 stock_by_van and reorders waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T16:53:19` (R245) X-167 — a stock row reads Low when quantity <= reorder_point, the threshold InventoryEngine already emits StockLow on; one number, two readers (R245)
+- `2026-09-04T16:53:19` (R245) X-167 — Propose restock proposes one reorder_point of the item with no supplier and total 0 — the supplier prices it; nothing on the screen orders, approves or sends (R245)
+- `2026-09-04T16:54:43` UNRESOLVED approval X-167 - approved_action_id is written by no module in this lane (grep: X-167 only); Approve-and-send stays off the Reorders screen until the approval desk that issues it exists
