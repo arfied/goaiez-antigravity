@@ -10,9 +10,14 @@ use App\Modules\X110\Actions\PixelVerifyAction;
 use App\Modules\X110\Domain\PixelEngine;
 use App\Modules\X110\Events\FormAbandoned;
 use App\Modules\X110\Events\VisitStarted;
+use App\Modules\X110\Models\CwvSample;
+use App\Modules\X110\Models\IdentityLink;
 use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X110Test extends TestCase
@@ -109,11 +114,11 @@ class X110Test extends TestCase
     {
         $this->assertFalse(array_key_exists('clickhouse', config('database.connections')));
 
-        $this->assertNull((new \App\Modules\X110\Models\PixelEvent)->getConnectionName());
-        $this->assertNull((new \App\Modules\X110\Models\Visit)->getConnectionName());
-        $this->assertNull((new \App\Modules\X110\Models\Session)->getConnectionName());
-        $this->assertNull((new \App\Modules\X110\Models\CwvSample)->getConnectionName());
-        $this->assertNull((new \App\Modules\X110\Models\IdentityLink)->getConnectionName());
+        $this->assertNull((new PixelEvent)->getConnectionName());
+        $this->assertNull((new Visit)->getConnectionName());
+        $this->assertNull((new Session)->getConnectionName());
+        $this->assertNull((new CwvSample)->getConnectionName());
+        $this->assertNull((new IdentityLink)->getConnectionName());
 
         $biz = TestCase::provisionTenant(['name' => 'Single DB Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -126,10 +131,10 @@ class X110Test extends TestCase
             payload: ['foo' => 'bar']
         );
 
-        $readEvent = \App\Modules\X110\Models\PixelEvent::where('business_id', $biz->id)
+        $readEvent = PixelEvent::where('business_id', $biz->id)
             ->where('event_name', 'custom_event')
             ->first();
-        
+
         $this->assertNotNull($readEvent);
         $this->assertEquals('custom_event', $readEvent->event_name);
     }
@@ -159,31 +164,31 @@ class X110Test extends TestCase
      */
     public function test_g13_27_tenant_tags(): void
     {
-        \Illuminate\Support\Facades\Http::fake();
+        Http::fake();
 
         $biz = TestCase::provisionTenant(['name' => 'Ads Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $v = $this->engine->recordVisit($biz->id, 'vis_ads_1');
-        
+
         $this->eventAction->handle(
             businessId: $biz->id,
             sessionId: $v['session_id'],
             eventName: 'tag.fired',
             payload: [
                 'tag_id' => 'GTM-XXXXXXX',
-                'script_name' => 'google_tag_manager'
+                'script_name' => 'google_tag_manager',
             ]
         );
 
-        $readEvent = \App\Modules\X110\Models\PixelEvent::where('business_id', $biz->id)
+        $readEvent = PixelEvent::where('business_id', $biz->id)
             ->where('event_name', 'tag.fired')
             ->first();
-            
+
         $this->assertNotNull($readEvent);
         $this->assertEquals('GTM-XXXXXXX', $readEvent->payload['tag_id']);
-        
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+
+        Http::assertNothingSent();
     }
 
     /**

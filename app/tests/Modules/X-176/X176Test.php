@@ -220,7 +220,7 @@ class X176Test extends TestCase
         ]));
         $this->assertFalse($method->invoke($this->renderAction, [
             '@context' => 'https://schema.org', '@type' => 'LocalBusiness', 'name' => 'SEO', 'url' => 'https://seo.com',
-            'hasOfferCatalog' => ['@type' => 'OfferCatalog', 'itemListElement' => [['@type' => 'Thing']]]
+            'hasOfferCatalog' => ['@type' => 'OfferCatalog', 'itemListElement' => [['@type' => 'Thing']]],
         ]));
     }
 
