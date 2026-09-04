@@ -282,4 +282,74 @@ class X157Test extends TestCase
 
         $this->assertFalse(Deployment::where('deploy_hash', 'test_hash_ssl_read')->first()->edgeZone->has_valid_ssl);
     }
+
+    public function test_edge_status_per_lists_deployments_with_zone_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        \App\Support\Tenancy::set((int) $biz->id);
+
+        $zone = \App\Modules\X157\Models\EdgeZone::create([
+            'business_id' => $biz->id,
+            'domain_name' => 'acme-hvac.com',
+            'zone_id' => 'z1',
+            'has_valid_ssl' => true,
+        ]);
+
+        $d = \App\Modules\X157\Models\Deployment::create([
+            'business_id' => $biz->id,
+            'edge_zone_id' => $zone->id,
+            'deploy_hash' => 'hash-12345',
+            'status' => 'deployed',
+        ]);
+
+        $biz2 = TestCase::provisionTenant(['name' => 'Other Tenant', 'currency' => 'USD']);
+        \App\Support\Tenancy::set((int) $biz2->id);
+        $zone2 = \App\Modules\X157\Models\EdgeZone::create([
+            'business_id' => $biz2->id,
+            'domain_name' => 'other.com',
+            'zone_id' => 'z2',
+        ]);
+        \App\Modules\X157\Models\Deployment::create([
+            'business_id' => $biz2->id,
+            'edge_zone_id' => $zone2->id,
+            'deploy_hash' => 'hash-other',
+            'status' => 'deployed',
+        ]);
+
+        \App\Support\Tenancy::set((int) $biz->id);
+
+        \Livewire\Livewire::test(\App\Modules\X157\Ui\EdgeStatusPer::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('hash-12345')
+            ->assertSee('acme-hvac.com')
+            ->assertDontSee('hash-other');
+    }
+
+    public function test_edge_status_per_rolls_back_a_deployment(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        \App\Support\Tenancy::set((int) $biz->id);
+
+        $zone = \App\Modules\X157\Models\EdgeZone::create([
+            'business_id' => $biz->id,
+            'domain_name' => 'acme-hvac.com',
+            'zone_id' => 'z1',
+            'has_valid_ssl' => true,
+        ]);
+
+        $d = \App\Modules\X157\Models\Deployment::create([
+            'business_id' => $biz->id,
+            'edge_zone_id' => $zone->id,
+            'deploy_hash' => 'hash-12345',
+            'status' => 'deployed',
+        ]);
+
+        \Livewire\Livewire::test(\App\Modules\X157\Ui\EdgeStatusPer::class, ['businessId' => $biz->id])
+            ->call('rollback', $d->id)
+            ->assertOk();
+
+        $d->refresh();
+        $this->assertEquals('rolled_back', $d->status);
+    }
 }
+
