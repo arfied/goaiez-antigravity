@@ -49,10 +49,13 @@ class ConnectCardScreenTest extends TestCase
         $this->app->instance(ProcessorAdapter::class, $adapter);
 
         Livewire::actingAs($owner)->test(ConnectCard::class)
-            ->assertSee('stripe')
+            ->assertOk()
+            ->assertSee('acct_A1')
             ->assertDontSee('acct_B9')
+            ->call('connect')
+            ->assertSee('waits on Stripe Connect')
             ->call('applyForMerchant', $connA->id)
-            ->assertDontSee('No adapter bound');
+            ->assertSee('Application sent (app_123)');
 
         $this->assertSame('pending_kyc', $connA->fresh()->merchant_status);
         $this->assertSame('sub_merchant', $connA->fresh()->merchant_relationship);

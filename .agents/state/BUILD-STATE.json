@@ -1295,6 +1295,14 @@
   {
    "at": "2026-09-03T06:19:41",
    "note": "gate line: 'tests 899 \u00b7 passed 892 \u00b7 FAILED 2 \u00b7 errors 5 \u00b7 result failed' - X-211 now reachable via merge commit 32749e6"
+  },
+  {
+   "at": "2026-09-04T15:54:33",
+   "note": "MONEY-19b: fix run for the 15:50 BLOCK \u2014 X-198 apply is the state machine only; X-211 logs through its action"
+  },
+  {
+   "at": "2026-09-04T16:07:18",
+   "note": "MONEY-19c: dead retry buttons out, X-211 refuses a zero amount, X-198 shows the account id and the Stripe Connect waiting state"
   }
  ],
  "decisions": [

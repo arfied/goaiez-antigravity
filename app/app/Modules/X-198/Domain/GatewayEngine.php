@@ -39,7 +39,7 @@ final class GatewayEngine
 
         Event::dispatch(new MerchantApplied($businessId, $connection->id, $applicationRef));
 
-        return ['status' => 'applied'];
+        return ['status' => 'applied', 'application_ref' => $applicationRef];
     }
 
     /**
