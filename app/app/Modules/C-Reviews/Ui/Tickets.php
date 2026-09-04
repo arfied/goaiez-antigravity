@@ -124,7 +124,42 @@ class Tickets extends Component
                 return $t;
             });
         } else {
-            // For sample mode we can leave it empty, as the blade will show sample data manually or just show sample message
+            $sampleData = collect([
+                (object) [
+                    'id' => 9201,
+                    'status' => 'open',
+                    'is_breached' => true,
+                    'customer_name' => 'Sample Customer A',
+                    'arrived_at' => now()->subHours(30),
+                    'resolved_at' => null,
+                    'sla_due_at' => now()->subHours(6),
+                    'time_to_fix' => null,
+                    'review_rating' => 2,
+                    'review_text' => 'Sample: technician left without testing the unit',
+                    'resolution_notes' => null,
+                ],
+                (object) [
+                    'id' => 9202,
+                    'status' => 'resolved',
+                    'is_breached' => false,
+                    'customer_name' => 'Sample Customer B',
+                    'arrived_at' => now()->subHours(20),
+                    'resolved_at' => now()->subHours(16),
+                    'sla_due_at' => now()->addHours(4),
+                    'time_to_fix' => '4 hours',
+                    'review_rating' => 3,
+                    'review_text' => 'Sample: fixed on the second visit',
+                    'resolution_notes' => 'Sample: sent a senior technician, waived the call-out fee',
+                ],
+            ]);
+            
+            $tickets = $sampleData->filter(function ($t) {
+                if ($this->tab === 'open') {
+                    return in_array($t->status, ['open', 'in_progress']);
+                } else {
+                    return $t->status === 'resolved';
+                }
+            })->values();
         }
 
         $isEmpty = ! $this->isSample && QaTicket::where('business_id', $this->businessId)->count() === 0;

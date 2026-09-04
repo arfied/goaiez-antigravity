@@ -9,38 +9,28 @@
             <h1 class="text-lg font-bold text-white flex items-center gap-2">
                 QA Tickets
                 @if($isSample)
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</span>
+                    <x-ui.status-pill state="attention" label="SAMPLE" />
                 @endif
             </h1>
             <p class="text-sm text-slate-400">Internal triage for low reviews and service failures.</p>
         </div>
         
         <div class="flex items-center gap-1.5 bg-slate-900 rounded-lg p-1 border border-slate-800">
-            <button wire:click="$set('tab', 'open')" class="px-3 py-1 text-xs font-medium rounded-md {{ $tab === 'open' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white' }}">Open</button>
-            <button wire:click="$set('tab', 'resolved')" class="px-3 py-1 text-xs font-medium rounded-md {{ $tab === 'resolved' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white' }}">Resolved</button>
+            <x-ui.button size="default" :variant="$tab === 'open' ? 'primary' : 'quiet'" wire:click="$set('tab', 'open')">Open</x-ui.button>
+            <x-ui.button size="default" :variant="$tab === 'resolved' ? 'primary' : 'quiet'" wire:click="$set('tab', 'resolved')">Resolved</x-ui.button>
         </div>
     </div>
 
     @if($actionNotice)
-        <div class="p-4 rounded-xl text-sm font-medium border shadow-lg {{ $noticeType === 'error' ? 'bg-rose-950/50 border-rose-900 text-rose-300' : ($noticeType === 'warning' ? 'bg-amber-950/50 border-amber-900 text-amber-300' : 'bg-emerald-950/50 border-emerald-900 text-emerald-300') }}">
-            {{ $actionNotice }}
-            <button wire:click="$set('actionNotice', null)" class="float-right text-current opacity-70 hover:opacity-100">&times;</button>
-        </div>
+        @if($noticeType === 'error')
+            <x-ui.error-panel heading="Error">{{ $actionNotice }}</x-ui.error-panel>
+        @else
+            <x-ui.attention-card :state="$noticeType === 'warning' ? 'attention' : 'ok'" heading="Notice">{{ $actionNotice }}</x-ui.attention-card>
+        @endif
     @endif
 
     @if($isEmpty && $tab === 'open')
-        <div class="p-12 rounded-2xl border border-dashed border-slate-800 text-center space-y-4">
-            <p class="text-slate-400">No open tickets — every recent review met the threshold.</p>
-            <div class="flex items-center justify-center gap-4">
-                <button wire:click="toggleSample" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition">Show Sample Data</button>
-            </div>
-        </div>
-    @elseif($isSample)
-        <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</span>
-            No sample tickets generated yet. Exit sample mode to see live data.
-            <div class="mt-4"><button wire:click="toggleSample" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition">Exit Sample Mode</button></div>
-        </div>
+        <x-ui.empty-state heading="No open tickets" action="Show a sample" target="toggleSample">Every recent review met the threshold.</x-ui.empty-state>
     @else
         <div class="space-y-4">
             @forelse($tickets as $t)
@@ -49,11 +39,9 @@
                         <div class="flex flex-col gap-1">
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-white text-sm">Ticket #{{ $t->id }}</span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {{ $t->status === 'resolved' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30' }}">
-                                    {{ $t->status }}
-                                </span>
+                                <x-ui.status-pill :state="$t->status === 'resolved' ? 'ok' : 'attention'" :label="$t->status === 'resolved' ? 'Resolved' : 'Open'" />
                                 @if($t->is_breached)
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-500 text-white animate-pulse">BREACHED</span>
+                                    <x-ui.status-pill state="alert" label="SLA breached" />
                                 @endif
                             </div>
                             <div class="text-xs text-slate-400">
@@ -91,20 +79,16 @@
                         <div class="mt-3 p-4 rounded-xl bg-slate-950 border border-emerald-500/40 space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-white">Resolve Ticket #{{ $t->id }}</span>
-                                <button wire:click="cancelResolve" class="text-xs text-slate-400 hover:text-white">&times; Cancel</button>
+                                <x-ui.button variant="quiet" wire:click="cancelResolve">Cancel</x-ui.button>
                             </div>
                             <textarea wire:model="resolutionNotes" rows="2" placeholder="Resolution notes..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"></textarea>
                             <div class="text-right">
-                                <button wire:click="resolve({{ $t->id }}, $wire.resolutionNotes)" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition">
-                                    Mark Resolved
-                                </button>
+                                <x-ui.submit target="resolve" busy="Resolving…" wire:click="resolve({{ $t->id }}, $wire.resolutionNotes)">Mark resolved</x-ui.submit>
                             </div>
                         </div>
                     @elseif($t->status !== 'resolved')
                         <div class="flex items-center justify-end pt-2 border-t border-slate-800/50">
-                            <button wire:click="startResolve({{ $t->id }})" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-600/40 text-xs font-medium transition">
-                                Resolve
-                            </button>
+                            <x-ui.button wire:click="startResolve({{ $t->id }})">Resolve</x-ui.button>
                         </div>
                     @else
                         @if($t->resolution_notes)
@@ -115,9 +99,7 @@
                     @endif
                 </div>
             @empty
-                <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
-                    No tickets found in this tab.
-                </div>
+                <x-ui.empty-state heading="Nothing resolved yet">A ticket lands here when it is marked resolved.</x-ui.empty-state>
             @endforelse
         </div>
     @endif
