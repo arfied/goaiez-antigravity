@@ -7,16 +7,13 @@ namespace Tests\Modules\X204;
 use App\Models\Customer;
 use App\Modules\X186\Models\CampaignRun;
 use App\Modules\X204\Domain\ConsentService;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class CancelPendingStepsTest extends TestCase
 {
-    public function test_opt_out_cancels_pending_campaign_steps(): void
+    public function test_opt_out_deactivates_campaign_runs_for_that_person(): void
     {
-        $num = '+1555000'.rand(1000, 9999);
-        Artisan::call('sms:load-number-pool', ['numbers' => [$num]]);
         $tenant = self::provisionTenant(['name' => 'Opt Out Cancel Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$tenant->id}'");
 
