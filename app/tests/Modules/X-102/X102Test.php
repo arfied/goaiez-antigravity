@@ -147,7 +147,7 @@ class X102Test extends TestCase
 
     public function test_screen_renders_only_for_authenticated_users(): void
     {
-        $response = $this->get('/x-102/offline-form-inbox');
+        $response = $this->get(route('x-102.offline-form-inbox'));
         $response->assertRedirect('/login');
     }
 
@@ -157,7 +157,7 @@ class X102Test extends TestCase
         Tenancy::set((int) $biz->id);
         $user = User::find($biz->owner_user_id) ?? User::first();
 
-        $response = $this->actingAs($user)->get('/x-102/offline-form-inbox');
+        $response = $this->actingAs($user)->get(route('x-102.offline-form-inbox'));
         $response->assertOk();
     }
 }
