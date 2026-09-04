@@ -6,6 +6,8 @@ namespace App\Modules\CReviews\Actions;
 
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X121\Models\Person;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
@@ -105,18 +107,16 @@ final class ReviewRequestAction
             'csat_score' => $csatScore,
         ]);
 
-        if ($customerId !== null) {
-            $person = \App\Modules\X121\Models\Person::find($customerId);
-            if ($person !== null && !empty($person->phone)) {
-                Event::dispatch(new \App\Modules\CSms\Events\SendRequested(
-                    businessId: $businessId,
-                    compositionId: $req->id,
-                    recipientPhone: $person->phone,
-                    messageClass: 'marketing',
-                    body: $promptTemplate,
-                    segmentsCount: 1
-                ));
-            }
+        $person = Person::find($customerId);
+        if ($person !== null && ! empty($person->phone)) {
+            Event::dispatch(new SendRequested(
+                businessId: $businessId,
+                compositionId: $req->id,
+                recipientPhone: $person->phone,
+                messageClass: 'marketing',
+                body: $promptTemplate,
+                segmentsCount: 1
+            ));
         }
 
         Event::dispatch(new ReviewRequested(
