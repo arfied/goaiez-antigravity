@@ -100,9 +100,7 @@ class ReviewsQaRequests extends Component
         }
 
         $action = app(ReviewRequestAction::class);
-        // We do not have a specific customer to send to in this global form, passing null will trigger CUSTOMER_UNKNOWN from the action.
-        // Actually, the instruction says "sent request with no rating yet -> Resend ask". The form is for new requests.
-        // I will just call it with null customerId to let the action refuse it and show the error.
+
         try {
             $res = $action->handle($this->businessId, null, $this->promptTemplate, $this->platform);
             if ($res['status'] === 'refused') {
@@ -202,7 +200,7 @@ class ReviewsQaRequests extends Component
         $res = $action->handle($this->businessId, $id);
 
         $this->noticeType = 'warning';
-        $this->actionNotice = "🚨 Escalated Review #{$id} to QA Ticket with Status [{$res['ticket_status']}]. CSAT follow-up scheduled on resolve.";
+        $this->actionNotice = "🚨 Escalated Review #{$id} to QA Ticket [{$res['ticket_status']}].";
     }
 
     public function render()

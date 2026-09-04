@@ -32,7 +32,7 @@
         <div class="p-12 rounded-2xl border border-dashed border-slate-800 text-center space-y-4">
             <p class="text-slate-400">Nothing to report yet — the first review request goes out when a job completes.</p>
             <div class="flex items-center justify-center gap-4">
-                <a href="/reviews-qa-requests" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition">Go to Requests &rarr;</a>
+                <span class="text-sm font-semibold text-slate-400">Go to Requests &rarr;</span>
                 <button wire:click="toggleSample" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition">Show Sample Data</button>
             </div>
         </div>
@@ -99,6 +99,7 @@
                                 <div class="text-xs text-slate-300">
                                     @if(!empty($row->is_request))
                                         Request #{{ $row->id }} - {{ $row->platform }} ({{ $row->rating ?? 'no rating' }}) - {{ $row->status }}
+                                        <div class="italic text-[10px] mt-1 text-slate-400">"{{ $row->review_text ?? 'no text' }}"</div>
                                     @elseif(!empty($row->is_reply))
                                         Reply #{{ $row->id }} for Request #{{ $row->review_request_id }} - {{ $row->status }}
                                     @elseif(!empty($row->is_ticket))
@@ -111,13 +112,11 @@
                                     @if(!$row->ticket && $row->rating !== null && $row->rating < $threshold)
                                         <button wire:click="escalateToQa({{ $row->id }})" class="px-2 py-1 rounded bg-rose-600/20 text-rose-300 text-[10px] font-medium hover:bg-rose-600/30">Escalate to QA</button>
                                     @endif
-                                    <a href="/reviews-qa-requests" class="px-2 py-1 rounded bg-slate-800 text-slate-300 text-[10px] font-medium hover:bg-slate-700">Open</a>
                                 @endif
                                 @if(!empty($row->is_ticket))
                                     @if($drilldown === 'breached_tickets' || $row->status === 'open')
                                         <button wire:click="resolveTicket({{ $row->id }})" class="px-2 py-1 rounded bg-emerald-600/20 text-emerald-300 text-[10px] font-medium hover:bg-emerald-600/30">Resolve</button>
                                     @endif
-                                    <a href="/tickets/{{ $row->id }}" class="px-2 py-1 rounded bg-slate-800 text-slate-300 text-[10px] font-medium hover:bg-slate-700">Open</a>
                                 @endif
                             </div>
                         </div>

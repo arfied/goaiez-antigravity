@@ -144,9 +144,9 @@
 
                                 @if($r->rating !== null && $r->rating < $threshold)
                                     @if($r->ticket)
-                                        <a href="/tickets/{{ $r->ticket->id }}" class="px-2.5 py-1 rounded bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-600/40 text-[11px] font-medium transition inline-block">
-                                            Open ticket
-                                        </a>
+                                        <span class="text-[11px] text-blue-300">
+                                            Ticket #{{ $r->ticket->id }} &middot; {{ $r->ticket->status }} &middot; due {{ $r->ticket->sla_due_at ? $r->ticket->sla_due_at->diffForHumans() : 'N/A' }}
+                                        </span>
                                     @else
                                         <button wire:click="escalateToQa({{ $r->id }})" class="px-2.5 py-1 rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-600/40 text-[11px] font-medium transition">
                                             Escalate to QA

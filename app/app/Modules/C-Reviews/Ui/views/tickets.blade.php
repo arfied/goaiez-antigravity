@@ -32,7 +32,7 @@
         <div class="p-12 rounded-2xl border border-dashed border-slate-800 text-center space-y-4">
             <p class="text-slate-400">No open tickets — every recent review met the threshold.</p>
             <div class="flex items-center justify-center gap-4">
-                <a href="/qa-report" class="text-sm font-semibold text-purple-400 hover:text-purple-300 transition">View QA Report &rarr;</a>
+                <span class="text-sm font-semibold text-slate-400">View QA Report &rarr;</span>
                 <button wire:click="toggleSample" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition">Show Sample Data</button>
             </div>
         </div>
@@ -85,7 +85,6 @@
                                 </div>
                             </div>
                             <p class="text-xs text-slate-300 italic">"{{ $t->review_text ?? 'No text provided' }}"</p>
-                            <a href="/reviews-qa-requests" class="text-[10px] text-purple-400 hover:underline inline-block mt-1">Open review row</a>
                         </div>
                     @endif
 
@@ -97,7 +96,7 @@
                             </div>
                             <textarea wire:model="resolutionNotes" rows="2" placeholder="Resolution notes..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"></textarea>
                             <div class="text-right">
-                                <button wire:click="resolve({{ $t->id }}, resolutionNotes)" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition">
+                                <button wire:click="resolve({{ $t->id }}, $wire.resolutionNotes)" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition">
                                     Mark Resolved
                                 </button>
                             </div>
