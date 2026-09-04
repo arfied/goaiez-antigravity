@@ -1,15 +1,27 @@
 <div>
     <h1 class="text-xl font-semibold mb-4">Payment Methods</h1>
 
+    @if($error)
+        <x-ui.error-panel heading="Error" retry="">
+            {{ $error }}
+        </x-ui.error-panel>
+    @endif
+
+    @if($success)
+        <p class="text-green-600 mb-4">{{ $success }}</p>
+    @endif
+
     @foreach($expiringCards as $card)
-        <x-ui.attention-card title="Card Expiring Soon">
+        <x-ui.attention-card heading="Card Expiring Soon">
             Card ending in {{ $card->last_four }} expires {{ $card->exp_month }}/{{ $card->exp_year }}
         </x-ui.attention-card>
     @endforeach
 
     <div class="mt-4">
         @if($cards->isEmpty())
-            <x-ui.empty-state>No cards on file</x-ui.empty-state>
+            <x-ui.empty-state heading="No cards on file" action="Add Card" target="addCard">
+                Please add a card.
+            </x-ui.empty-state>
         @else
             <ul class="space-y-2">
                 @foreach($cards as $card)

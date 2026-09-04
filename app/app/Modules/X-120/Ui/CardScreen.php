@@ -8,15 +8,29 @@ use App\Modules\X120\Actions\CardRotateAction;
 use App\Modules\X120\Models\CardToken;
 use App\Support\Tenancy;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Component;
 
 class CardScreen extends Component
 {
     public ?string $status = null;
 
+    public ?string $error = null;
+
+    public ?string $success = null;
+
     public function makeDefault(int $cardId, CardRotateAction $action): void
     {
-        $action->rotateDefault(Tenancy::idOrFail(), $cardId);
+        $this->error = null;
+        $this->success = null;
+
+        try {
+            $card = CardToken::where('business_id', Tenancy::idOrFail())->findOrFail($cardId);
+            $action->rotateDefault(Tenancy::idOrFail(), $card->id);
+            $this->success = 'Card set as default.';
+        } catch (ModelNotFoundException) {
+            $this->error = 'Card not found in this account.';
+        }
     }
 
     public function addCard(): void

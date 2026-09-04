@@ -16,7 +16,21 @@ class CardScreenTest extends TestCase
     public function test_card_screen_shows_cards_and_can_make_default(): void
     {
         $biz = self::provisionTenant();
+        $bizB = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($bizB->id);
+        CardToken::create([
+            'business_id' => $bizB->id,
+            'gateway_payment_method_id' => 'tok_9',
+            'gateway_customer_id' => 'cus_9',
+            'brand' => 'Visa',
+            'last_four' => '9999',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => true,
+        ]);
+
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
@@ -45,11 +59,17 @@ class CardScreenTest extends TestCase
         Livewire::actingAs($owner)->test(CardScreen::class)
             ->assertSee('4242')
             ->assertSee('5555')
+            ->assertDontSee('9999')
             ->assertSee('Card Expiring Soon')
-            ->call('makeDefault', $card2->id);
+            ->call('makeDefault', $card2->id)
+            ->assertSee('Card set as default');
 
         $this->assertTrue($card2->fresh()->is_default);
         $this->assertFalse($card1->fresh()->is_default);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->call('makeDefault', 999999)
+            ->assertSee('Card not found in this account');
     }
 
     public function test_add_card_shows_waiting_state(): void
