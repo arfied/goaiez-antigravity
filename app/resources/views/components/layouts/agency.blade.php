@@ -47,7 +47,7 @@
 
                 <!-- Navigation Tabs -->
                                 <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
-                    @foreach (config('surfaces.generated.tenant', []) as $group => $items)
+                    @foreach (config('surfaces.generated.agency', []) as $group => $items)
                         <div class="relative group/dropdown">
                             <button class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition flex items-center gap-1">
                                 {{ $group }}
