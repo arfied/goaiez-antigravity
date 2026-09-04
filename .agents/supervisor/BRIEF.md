@@ -1,172 +1,128 @@
-# BRIEF — from the supervisor
+# BRIEF — Track reviews (`track/reviews`) — REV-9, **route A: merge `origin/main`, one listener, J10 on the gate**
 
-updated: 2026-09-02 02:40
-push: cleared through a267b5e (already on origin/main). The local commits
-      8450e45..6cfe420 push together after item 6c below lands and is reviewed.
-report: per wave, and on any stop
+updated: 2026-09-04T12:20Z
+push: ⛔ **CLOSED for this run.** Commit; do not push. The push gate opens in
+REV-10 after the supervisor's PASS on your REPORT.
 
-(This file was rewritten 2026-09-02 after the working copy was lost to a
-dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
+Owner's go: `OWNER.md` (12:17Z). The HOLD is over. Read `OWNER.md` before this.
 
-## Standing orders
+## What changed while we were parked (verified from the tree, not from notes)
 
-1. `DB_DATABASE` stays `goaiez_antig_dev` in `app/.env` and `goaiez_antig_test`
-   in `app/phpunit.xml`. `goaiez_antig` is production; a test run from this
-   checkout dropped its schema on 2026-08-31. Never change either value.
-2. Commit per module/concern; report per wave and on any stop — rule 10.
-3. Cite nothing `php artisan why <id>` cannot resolve.
-4. **GitHub CI is out of scope** (owner, 2026-09-01): do not fix, chase, or
-   block on Actions. `bin/supervise.sh` locally is the arbiter.
-5. Run pint only as bare `./vendor/bin/pint`. Never edit sealed files.
-6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
-   a reviewed commit — rule 10, 2026-09-02 addition.
+- `origin/main` = `79a8b43` (2026-09-04 06:02). `HEAD` = `e340d98`, **76 behind,
+  13 ahead**.
+- `work_orders.person_id` (`ac89b6a`) and `JobCompleted.personId` (`b9701c4`)
+  are on `main` and already ancestors of `HEAD`. `JobStateAction` reads the
+  column onto the event. **The X-121 `UNRESOLVED` is stale.**
+- `origin/main`'s `JourneyHarness` implements **every** method J10 calls
+  (`0583871`). After the merge, J10 reaches our code.
+- `0583871` also dropped a second `JobCompleted` listener into **our** module:
+  `C-Reviews/Listeners/RequestReviewOnJobCompleted.php`, registered in
+  `ModuleServiceProvider::boot()` with a hand-rolled 30-day query. Ours,
+  `AskForReviewOnJobCompleted`, delegates cadence to `ReviewRequestAction`
+  (tested in `c98a078`). **Ours survives; main's goes.** Ruling 5.
 
-## Current task — push (cleared through `50adae9`, REVIEWS.md 06:05), then
-wave 30 (X-192 — the LAST roster module) per `state.py next`. Same per-module
-rules. After X-192, `state.py next` returns the loop's terminal answer
-(JOURNEYS / FINISHED / STARVED): report it verbatim and stop — owner's call.
+## The wave — in this order, one commit per numbered step where noted
 
-## Wave-29 review note (supervisor, 2026-09-02 05:35)
+### 1. Fetch and measure (no commit)
 
-- `c375699` X-179 — RLS tenant-only ✓, guest+authed tests ✓, R245 recorded ✓,
-  DONE recorded ✓, Tenancy swap ✓. **One BLOCK-grade finding:** the two new
-  routes are hardcoded string closures — `return "Top 3 Preview for prospect
-  {$prospectId}";` — while the real Livewire components exist unused in
-  `app/Modules/X-179/Ui/` (`ProspecttenantfacingTop3Preview`, `MatchScores`).
-  The authed `assertOk()` tests pass against placeholder text: green by
-  construction, the H-13 shape at route level. Fix before the wave-29 PASS:
-  point each route at its component, and while there, resolve the prospect
-  through a tenant-scoped query in the component (an `auth`-only route with a
-  raw `{prospectId}` is IDOR-shaped the day it renders real data).
+```
+git fetch --no-write-fetch-head --prune origin
+git rev-parse --short origin/main
+git rev-list --left-right --count origin/main...HEAD
+grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php
+```
+Paste all four outputs in REPORT `RAW`. Expected `79a8b43`, `76 13`, `20`. If
+`origin/main` has moved past `79a8b43`, proceed anyway and say so — the seam
+below was measured against `79a8b43`, so re-check each conflict rather than
+assume it.
 
-## Previous — next roster wave per `state.py next`
+### 2. Commit the supervisor's working notes — the ONE authorised touch (commit)
 
-Wave 21 PASSED (03:30); push cleared through `b7a234f`. The rewrite ledger is
-live: `.git/hooks/post-rewrite` → `.agents/supervisor/REWRITES.log`, surfaced
-by `supervise.sh` §2a — any amend/rebase now blocks its wave mechanically.
-Same per-module rules as wave 21.
+The merge cannot start over dirty tracked files, and `main` also carries these
+paths. You write **nothing** into them; you commit them as they are:
 
-## Wave-25 review notes as commits land (supervisor, 2026-09-02 03:50)
+```
+git add .agents/supervisor/launch-coder.sh .agents/supervisor/OWNER.md .agents/supervisor/TICK-ADDENDUM.md
+git commit -m "chore(supervisor): track/reviews notes as of REV-9" -- .agents/supervisor/BRIEF.md .agents/supervisor/KICKOFF.md .agents/supervisor/REPORT.md .agents/supervisor/REVIEWS.md .agents/supervisor/launch-coder.sh .agents/supervisor/OWNER.md .agents/supervisor/TICK-ADDENDUM.md CLAUDE.md bin/supervise.sh .claude/settings.json
+```
+⛔ Do not `git add` the `tick*-gate.txt` / `rev*-gate.txt` / `*.out` /
+`*-block.md` files. Do not `-a`, do not `add -A`, do not stash, reset or
+checkout anything.
 
-- `07e1531` X-142 — routes/auth/guest tests exemplary; `mcp_tokens` stores a
-  sha256 hash ✓; forced RLS on both new tables ✓. **Two findings, both must
-  land before the wave-25 PASS:**
-  1. ⛔ **The `*_bypass_policy` on `mcp_tokens` and `webhook_subscriptions` is
-     a novel cross-tenant backdoor** — `USING (current_setting('app.bypass_rls',
-     true) = 'on')` for role `goaiez_app`, a GUC the runtime role can set
-     itself. `app.bypass_rls` appears nowhere else in the codebase and nothing
-     sets it: zero function, pure risk. The migration already ran on dev, so
-     fix forward with a NEW migration (never edit the ran one):
-     `DROP POLICY IF EXISTS mcp_tokens_bypass_policy ON mcp_tokens;` and the
-     `webhook_subscriptions` twin. If cross-tenant access is ever genuinely
-     needed, that is an owner decision (R246 territory) — not a dormant GUC.
-  2. `webhook_subscriptions.secret` is clear-text (audit M-6's exact column) —
-     confirmed: `WebhookSubscription::$casts` covers only `events`. Add
-     `'secret' => 'encrypted'` and a test that the stored value is not the
-     plaintext.
-  3. **Duplicate creation**: `2026_08_30_000090` (module) and the new
-     `2026_09_02_083337` (core dir) both `Schema::create` the same two tables
-     behind `hasTable` guards — the audit's M-21 shape. Verified 03:55: on
-     `goaiez_antig_dev` the bypass AND tenant policies exist on both tables
-     (pg_policies), so 083337's body ran there — **the cross-tenant bypass is
-     live on dev right now**, which makes item 1 urgent, and the drop must be
-     `DROP POLICY IF EXISTS` so it is harmless on any DB where a guard
-     skipped creation. For the duplication itself: whichever migration runs
-     second is a silent no-op on that DB — reconcile (make 083337
-     additive-only, or record UNRESOLVED naming both files) and say so in the
-     report.
+### 3. Merge `origin/main` (commit — the merge commit)
 
-- `58d9a8f` X-142 follow-up — reviewed 04:05: adapting the code to `000090`'s
-  schema is fine, but **deleting the ran migration `2026_09_02_083337` does
-  not undo it on dev**: `pg_policies` still shows both `*_bypass_policy`
-  rows live on `goaiez_antig_dev`, and dev's ledger now holds an orphan row
-  for a file that no longer exists. Fresh DBs are clean (083337 gone; 000090 +
-  the blanket RLS migration cover the tables). Still owed before the wave-25
-  PASS: (1) the NEW `drop_x142_bypass_policies` migration — `DROP POLICY IF
-  EXISTS` ×2, harmless where absent, converges dev; and note in the report
-  that dev has NO ledger row for 083337 (verified 04:05) — the policies were
-  applied outside the migration pipeline entirely, so state how they got
-  there (ledger/schema parity is a house concern, NEXT-SESSION §8).
-  (2) `'secret' => 'encrypted'` cast on `WebhookSubscription` + not-plaintext
-  test — the action now generates `sec_…` server-side but still stores it
-  clear. Deleting a ran migration joins editing one on the never-do list.
+```
+git merge --no-ff origin/main
+```
+Ten conflicts are expected (`git merge-tree` dry run, 12:16Z). Resolve **each**
+exactly so, `git add <path>` after each, then `git commit` with no `-a` (a merge
+commit takes no pathspec; the staged resolutions are the commit):
 
-## Done — clear the wave-18 conduct BLOCK (REVIEWS.md 03:15)
+| path | resolution |
+| :--- | :--- |
+| `.agents/supervisor/{BRIEF,KICKOFF,REPORT,REVIEWS}.md`, `.agents/supervisor/launch-coder.sh`, `CLAUDE.md` | **ours** — `git checkout --ours -- <path>`. This track's supervisor files stay this track's. |
+| `.agents/state/JOURNAL.md` | **both sides, every line, in timestamp order**, markers removed. No line edited, none dropped. |
+| `.agents/state/BUILD-STATE.json` | Start from **theirs** (`main`'s), then carry in this track's own entries so nothing of ours is lost: `C-Reviews` and `X-181` status/decisions/notes, and our three `unresolved` lines. Validate: `python3 -m json.tool .agents/state/BUILD-STATE.json > /dev/null` and `python3 bin/state.py status` shows C-Reviews `DONE`, our UNRESOLVED lines present, and `main`'s stage counts. This is the one place a merge may touch the file by hand; say so in REPORT. |
+| `app/app/Modules/C-Reviews/ModuleServiceProvider.php` | **ours** — keep the `AskForReviewOnJobCompleted` registration; drop `main`'s `Event::listen(... RequestReviewOnJobCompleted::class)` block and its `use`. Then `git rm app/app/Modules/C-Reviews/Listeners/RequestReviewOnJobCompleted.php`. |
+| `app/tests/Modules/C-Reviews/CReviewsTest.php` | **both** — our 20 plus `main`'s `test_no_fake_rows_written_on_mount`. Count after: **21**. |
 
-One commit, three items, listed in the 03:15 block: reflog + corrected STAGES
-and COMMITS in the report · `state.py stage capability 120` · the no-amend
-confirmation. Then `supervise.sh --tests`, short report, stop. After the PASS:
-push, and the next roster wave per `state.py next`.
+`app/app/Modules/C-Reviews/Ui/ReviewsQaRequests.php` auto-merges to `main`'s
+version (no seeded fake rows on mount). Leave it.
 
-## Done — wave 18, with item 0 first
+After the commit: `grep -rn "RequestReviewOnJobCompleted" app/` must print
+**nothing**, and `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php`
+must print **21**.
 
-(Wave-13 BLOCK cleared 02:50 — `18fe3f0`+`eb612bb` push at the next push point.)
+### 4. Migrate both of this track's databases (no commit)
 
-### 0. `fix(scaffold): capabilities regeneration is lossless` — before any scaffold
+```
+php artisan migrate --force
+DB_DATABASE=goaiez_antig_reviews_test php artisan migrate --force
+```
+`.env` is `goaiez_antig_reviews`. **Never** `goaiez_antig`, `goaiez_antig_dev`,
+`goaiez_antig_test`. Never `migrate:fresh`. Never edit `phpunit.xml`.
 
-The X-124 scaffold re-dirtied **14** `capabilities.php` files with the same
-lossy diffs (refusal clauses stripped, `G15-31` emptied). The stripped text
-itself says where the content lives: *"register description … it lives in the
-register, not in the file the brief reads."* `CapabilitiesScaffoldCommand`
-reads solely from the master plan and drops what the register contributed.
-Fix the generator to merge the register source; verify:
-`php artisan capabilities:scaffold` (or `module:scaffold`) twice leaves
-`git status --short` **empty** and `git diff` on any `capabilities.php` shows
-refusal text preserved. Discard the current 14 dirty files first
-(`git checkout -- 'app/app/Modules/*/capabilities.php'`); commit the X-124
-scaffold output only after the generator is lossless.
+### 5. Record the decisions (commit: `.agents/state/**` only)
 
-### Wave 18 — old current-task heading follows for context
+```
+python3 bin/state.py decided C-Reviews "One JobCompleted listener: AskForReviewOnJobCompleted; cadence lives in ReviewRequestAction. main's RequestReviewOnJobCompleted (0583871) removed on merge. Owner go 2026-09-04T12:17Z, OWNER.md."
+python3 bin/state.py note C-Reviews "X-121 UNRESOLVED (2026-09-02T17:06) closed: work_orders.person_id ac89b6a and JobCompleted.personId b9701c4 are on main; JobStateAction reads the column onto the event."
+python3 bin/state.py note C-Reviews "J10 sixty-dependency closed: origin/main 0583871 implements tenantWithLiveNumber, personWithPendingSteps, completeJob, reviewInvitesFor. Review-platform access still ungranted: real send stays UNRESOLVED (ruling 13)."
+git commit -m "chore(state): C-Reviews one-listener decision; X-121 and sixty dependencies closed" -- .agents/state/JOURNAL.md .agents/state/BUILD-STATE.json
+```
+If `state.py` has a verb that closes an `unresolved` entry, use it in place of
+the first `note` and say which. If it does not, the note is the record; do not
+hand-edit the list.
 
-The three numbered items in the 02:55 block, in order. Then wave 18 per
-`state.py next`, same per-module rules as below. Wave-13/18 commits stay
-local until review.
+### 6. The gate
 
-## Done earlier — 6c, then wave 13
+```
+bash bin/supervise.sh --tests
+```
+Paste the raw `§7` line into REPORT `RAW`, and state explicitly whether
+`a_completed_job_asks_for_a_review_once_inside_the_cadence` appears in the
+failure/error list. Expected: **it does not appear** — J10 green on the gate.
 
-### 6c. One commit — `fix(X-103): companion migration for existing databases`
+- If J10 fails **inside `app/app/Modules/C-Reviews/**`**: fix there, one commit,
+  re-run the gate, report both runs. That is the only fix in scope.
+- If J10 fails in `JourneyHarness.php`, `TwelveJourneysTest.php`, another
+  module, or the DB: **stop**, `python3 bin/state.py unresolved J10 C-Reviews "<the raw line, and the path it names>"`,
+  commit that, report. ⛔ Ruling 1: not one line of the harness is ours to
+  edit now — every method J10 calls is implemented.
 
-`ab60355` edited ran migration `2026_08_30_000036_create_x103_site_tables.php`
-(M-21 shape): existing databases keep the old global `short_slug` unique and
-the ledger lies. Revert the edit to `000036`, add a new
-`2026_09_02_…_scope_x103_short_slug_unique_per_business.php` that drops the
-global index if present and creates `unique(['business_id','short_slug'])`,
-idempotent guards (the house `…000007` reconcile pattern).
-Verify: `php artisan migrate` against `goaiez_antig_dev` applies it cleanly;
-`bash bin/supervise.sh --tests` unchanged (873 run / 861 pass / 12 journeys).
+### 7. REPORT.md — rule 10 shape
 
-Also, no commit: record the module-test refresh gap —
-`python3 bin/state.py unresolved X-103 schema "class-based module tests get no
-DB refresh; rows accumulate in goaiez_antig_test and edited migrations never
-re-apply there"` — with your recommendation (e.g. bind RefreshesTenantDatabase
-in base TestCase) in the report. It is a design decision; recommend, don't
-decide silently.
+Must carry: the four measurements from step 1; the merge commit sha and the
+resolution actually taken per file; the two grep results after step 3; the
+migrate output tails; the `state.py` lines as journaled; the raw `§7` line;
+the doctor build stamp; `git log --oneline origin/main..HEAD | wc -l`.
+`UNRESOLVED:` lists the vendor grant only (plus anything step 6 added).
+`REFUSED:` anything above you would not do, with the rule.
 
-### Then: push, and wave 13
+## Never, this run
 
-After 6c: `git push origin main` (everything local is then cleared), and start
-wave 13 per `state.py next` (X-176 remaining; X-137 already terminal). Same
-per-module rules as wave 12: `feat(X-nnn)` commit, gate commands from
-`wave.md`, every new route carries `['web','auth']` (ResolveTenant is global
-on `web`), every new screen one authed GET `assertOk()` plus one guest
-assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
-`state.py next` names wave 14 or stops.
-
-## Report when
-
-6c lands (short report), wave 13 closes (full report), any stop condition.
-
-## Wave-13+ review notes as commits land (supervisor, 2026-09-02 02:40)
-
-- `18fe3f0` X-176 — **the class does not exist.** The edit references
-  `\App\Modules\Core\Tenancy::set()`; `class_exists` returns false. The
-  canonical class is `App\Support\Tenancy`. That test now errors, and X-176
-  was marked DONE afterwards. Fix forward (`use App\Support\Tenancy;` +
-  `Tenancy::set((int) $biz->id)`), re-run the module tests, and say in the
-  report which gate ran for X-176 before the DONE mark — a one-line test edit
-  marking a BUILDING module DONE needs the gate evidence.
-- `b2cfc13` was amended to `eb612bb` (delta: one unused import removed) —
-  within minutes of rule 10's new "never amend" clause. Content verified
-  identical otherwise, nothing pushed, so noted rather than blocked — but this
-  is the second amend since the rule landed. Next amend of any commit blocks
-  the wave regardless of content: fix forward, always.
+Push · rebase · amend · `--force` · `git add -A` / `-a` · stash · reset ·
+checkout of any supervisor file except the `--ours` resolutions in step 3 ·
+`JourneyHarness.php` · `TwelveJourneysTest.php` · `app/app/Doctor/**` ·
+`seals.json` · `phpunit.xml` · any `DB_` line · `state.py done|journey|stage` ·
+any database not named in step 4 · `migrate:fresh` on anything.

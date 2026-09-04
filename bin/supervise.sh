@@ -13,6 +13,24 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
+# Track 6 (reviews): dev DB goaiez_antig_reviews, tests goaiez_antig_reviews_test (exported above pest).
+# The `php` on PATH here is the cgi-fcgi SAPI; laravel/pao refuses it, which is why
+# §6 dies with "may only be invoked from a command line". Point GOAIEZ_PHP at a real
+# CLI binary to fix §6; everything else tolerates the CGI SAPI.
+#
+# 2026-09-02 (REV-2): the coder found real CLI builds under /opt/cpanel. Pin one by
+# probing PHP_SAPI rather than trusting a path — a `php` that prints cgi-fcgi makes
+# §6 print two blank lines, which reads exactly like a passing gate.
+PHP="${GOAIEZ_PHP:-}"
+if [ -z "$PHP" ]; then
+  for cand in /opt/cpanel/ea-php84/root/usr/bin/php /opt/cpanel/ea-php83/root/usr/bin/php \
+              /opt/cpanel/ea-php82/root/usr/bin/php /usr/local/bin/php php; do
+    command -v "$cand" >/dev/null 2>&1 || continue
+    [ "$("$cand" -r 'echo PHP_SAPI;' 2>/dev/null)" = "cli" ] || continue
+    PHP="$cand"; break
+  done
+  PHP="${PHP:-php}"
+fi
 want_tests=0; want_doctor=0
 for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
@@ -53,7 +71,8 @@ else
 fi
 
 bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
-if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
+hook=$(git -C "$ROOT" rev-parse --git-path hooks/post-rewrite 2>/dev/null); [ "${hook#/}" = "$hook" ] && hook="$ROOT/$hook"
+if [ ! -x "$hook" ]; then
   echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
   tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
@@ -68,6 +87,10 @@ for f in $(printf '%s\n' "$touched" | grep -E '\.php$'); do
   if ! php -l "$ROOT/$f" >/dev/null 2>&1; then echo "  ⛔ parse error: $f"; bad=1; fi
 done
 [ $bad -eq 0 ] && echo "  all parse" || fail=1
+
+bar "2c. debug debris in app code (dump/dd/var_dump)"
+dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -vE ':[0-9]+:\s*(\*|//)' | grep -v '@allow-dump' | head -5)
+if [ -n "$dbg" ]; then printf '%s\n' "$dbg" | sed 's/^/  ⛔ /'; fail=1; else echo "  none"; fi
 
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
@@ -84,28 +107,40 @@ cd "$APP" || exit 1
 [ -d /home/goaiez/tmp ] && export TMPDIR=/home/goaiez/tmp
 
 bar "4. checker soundness + seal"
-php artisan doctor:selftest 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
-php artisan doctor --stage=integrity 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ SEAL/integrity red"; }
+# Through $PHP, not bare `php`: on the cgi-fcgi SAPI artisan emits a `Content-type:`
+# header and the `goaiez doctor · build <stamp>` line gets pushed out of the tail —
+# and that stamp is the only proof the counts came from the live checker.
+"$PHP" artisan doctor:selftest 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
+"$PHP" artisan doctor --stage=integrity 2>&1 | tail -6 | sed 's/^/  /' || { fail=1; echo "  ⛔ SEAL/integrity red"; }
 echo "  runtime_build in BUILD-STATE: $(python3 -c "import json;print(json.load(open('$ROOT/.agents/state/BUILD-STATE.json'))['runtime_build'])" 2>/dev/null) — compare with the doctor build stamp above"
 
 if [ $want_doctor -eq 1 ]; then
   bar "5. all eight stages  (non-zero exit on any red stage is by design)"
-  php artisan doctor 2>&1 | tail -30 | sed 's/^/  /'
+  "$PHP" artisan doctor 2>&1 | tail -30 | sed 's/^/  /'
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+echo "  php: $(command -v "$PHP") — $("$PHP" -v 2>&1 | head -1)"
+"$PHP" ./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
+"$PHP" ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
 
 if [ $want_tests -eq 1 ]; then
-  bar "7. test suite  (phpunit.xml → $xml_db)"
-  out=$(./vendor/bin/pest 2>&1); rc=$?
+  # The DB_DATABASE= export on the next line overrides phpunit.xml's $xml_db pin
+  # (owner ruling 3: the pin stays, this track exports over it). Label the DB the
+  # run actually used — the pin's name here once read as "we hit Track 1's DB".
+  bar "7. test suite  (DB_DATABASE=goaiez_antig_reviews_test, over phpunit.xml's $xml_db pin)"
+  out=$(DB_DATABASE=goaiez_antig_reviews_test "$PHP" ./vendor/bin/pest 2>&1); rc=$?
+  # Track-scoped: /home/goaiez/tmp is shared by every worktree, and an unscoped
+  # last-pest.json means one track reads another track's run as its own.
+  printf '%s' "$out" | tail -1 > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
-print("  tests %s · passed %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("errors"),d.get("result")))
+print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
+for f in (d.get("failures") or [])[:5]:
+    print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
 for e in (d.get("error_details") or [])[:5]:
     print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
 n=len(d.get("error_details") or [])
