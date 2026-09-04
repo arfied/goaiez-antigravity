@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X196\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ExtensionSession extends Model implements TenantScoped
+class ExtensionSession extends Model
 {
-    use BelongsToTenant;
-
     public const ACTIONS_PER_MINUTE_CAP = 30; // TEST ANCHOR: constant in bundle asserted by test
 
     protected $table = 'extension_sessions';

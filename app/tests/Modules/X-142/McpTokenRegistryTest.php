@@ -2,9 +2,9 @@
 
 use App\Models\Business;
 use App\Models\User;
-use App\Modules\X142\Ui\McpTokenRegistry;
 use App\Support\Tenancy;
 use Livewire\Livewire;
+use App\Modules\X142\Ui\McpTokenRegistry;
 
 it('forbids guest access to McpTokenRegistry', function () {
     Livewire::test(McpTokenRegistry::class)
@@ -18,6 +18,6 @@ it('allows owner access to McpTokenRegistry', function () {
     Tenancy::setUser($owner->id);
 
     Livewire::actingAs($owner)
-        ->test(McpTokenRegistry::class)
+        ->test(McpTokenRegistry::class, )
         ->assertOk();
 });

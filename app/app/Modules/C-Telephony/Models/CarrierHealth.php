@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\CTelephony\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,10 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $latency_ms
  * @property int $error_rate_pct
  */
-class CarrierHealth extends Model implements TenantScoped
+class CarrierHealth extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'carrier_health';
 
     protected $guarded = [];

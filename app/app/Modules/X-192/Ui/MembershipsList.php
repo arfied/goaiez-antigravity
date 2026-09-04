@@ -2,7 +2,6 @@
 
 namespace App\Modules\X192\Ui;
 
-use App\Enums\UserRole;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -10,9 +9,8 @@ use Livewire\Component;
 #[Layout('components.account.layout')]
 class MembershipsList extends Component
 {
-    public function mount(): void
-    {
-        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+    public function mount(): void {
+        abort_unless(auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
     }
 
     public function render()

@@ -8,7 +8,6 @@ use App\Modules\X218\Actions\InfluencerDealAction;
 use App\Modules\X218\Actions\InfluencerDeliverableAction;
 use App\Modules\X218\Actions\InfluencerDiscoverAction;
 use App\Modules\X218\Actions\InfluencerOutreachAction;
-use App\Modules\X218\Domain\X218Engine;
 use App\Modules\X218\Events\InfluencerDelivered;
 use App\Modules\X218\Events\InfluencerEngaged;
 use App\Modules\X218\Events\SendRequested;
@@ -107,12 +106,12 @@ class X218Test extends TestCase
      */
     public function test_capabilities(): void
     {
-        $engine = new X218Engine;
+        $engine = new \App\Modules\X218\Domain\X218Engine();
         try {
             $engine->enforceCapabilities();
-            $this->fail('Should enforce constraints');
-        } catch (InvalidArgumentException $e) {
-            $this->assertStringContainsString('REFUSES', $e->getMessage());
+            $this->fail("Should enforce constraints");
+        } catch (\InvalidArgumentException $e) {
+            $this->assertStringContainsString("REFUSES", $e->getMessage());
         }
     }
 }

@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X151\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class FetchTarget extends Model implements TenantScoped
+class FetchTarget extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'fetch_targets';
 
     protected $guarded = [];

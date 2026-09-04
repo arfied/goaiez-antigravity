@@ -13,7 +13,6 @@ class ResearchDossierPer extends Component
     #[Locked]
     public int $businessId = 0;
 
-    #[Locked]
     public int $prospectId = 0;
 
     public function render()

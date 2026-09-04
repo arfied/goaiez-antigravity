@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X112\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class Markup extends Model implements TenantScoped
+class Markup extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'markups';
 
     protected $guarded = [];

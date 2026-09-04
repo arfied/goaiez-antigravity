@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X164\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class EstimateVersion extends Model implements TenantScoped
+class EstimateVersion extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'estimate_versions';
 
     protected $guarded = [];

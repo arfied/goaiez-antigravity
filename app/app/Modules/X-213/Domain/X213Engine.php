@@ -1,7 +1,5 @@
 <?php
-
 declare(strict_types=1);
-
 namespace App\Modules\X213\Domain;
 
 final class X213Engine

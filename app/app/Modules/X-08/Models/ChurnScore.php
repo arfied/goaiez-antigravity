@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X08\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class ChurnScore extends Model implements TenantScoped
+class ChurnScore extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'churn_scores';
 
     protected $guarded = [];

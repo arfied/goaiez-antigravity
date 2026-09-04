@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class ReceivableState extends Model implements TenantScoped
+class ReceivableState extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'receivable_states';
 
     protected $guarded = [];

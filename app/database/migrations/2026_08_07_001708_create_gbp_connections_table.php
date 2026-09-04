@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Enums\GbpConnectionStatus;
+use App\Enums\GbpProvider;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -49,7 +52,60 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Schema::create removed for gbp_connections to fix duplicates
+        Schema::create('gbp_connections', function (Blueprint $table): void {
+            $table->id();
+
+            // business_id is the tenant key every RLS policy compares, on the
+            // same reasoning as `reviews` (decision 176): DATA-MODEL would key
+            // this by location alone, and a tenant-owned table without the
+            // column has no second layer.
+            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->string('account_id')->nullable();
+            $table->string('location_id')->nullable()->index();
+
+            // Which implementation of `GbpClient` serves this location. Decision
+            // 547: the owner settled 530 *neither* way — both providers stay
+            // live permanently and a location sits on one — so this is a stored
+            // fact resolved per call, never a container binding chosen once.
+            $table->string('provider')->default(GbpProvider::Zernio->value);
+
+            // Zernio groups accounts under a profile, and its connect flow
+            // requires one. Ours is per business and is derived rather than
+            // configured — see GbpConnections::profileNameFor(). Null on a
+            // direct-access row, which has no such concept.
+            $table->string('provider_profile_ref')->nullable();
+
+            // Opaque to us, in both providers' worlds. Null until the owner
+            // finishes the flow: the row is created when it starts, so a
+            // half-finished connection is a state we can see rather than an
+            // absence we have to guess at.
+            $table->string('account_ref')->nullable();
+
+            // What the provider calls this connection — Zernio returns the
+            // location's own display name. Shown so an owner with three
+            // shopfronts can tell which one they just connected; never used to
+            // build an API path (their spec says so of `selectedLocationName`
+            // in as many words).
+            $table->string('external_label')->nullable();
+
+            $table->string('status')->default(GbpConnectionStatus::Pending->value);
+
+            $table->timestamp('connected_at')->nullable();
+            $table->timestamp('disconnected_at')->nullable();
+
+            // When we last asked the provider whether this connection still
+            // works, which is not the same question as when we last used it.
+            $table->timestamp('last_checked_at')->nullable();
+
+            // The provider's own reason, kept short and never shown raw: a 403
+            // means two opposite things here (532) and the label an owner reads
+            // is chosen from the classification, not copied from the vendor.
+            $table->string('last_error')->nullable();
+
+            $table->timestamps();
+
+            $table->index(['business_id', 'status']);
+        });
 
         DB::statement('ALTER TABLE gbp_connections ENABLE ROW LEVEL SECURITY');
         DB::statement('ALTER TABLE gbp_connections FORCE ROW LEVEL SECURITY');

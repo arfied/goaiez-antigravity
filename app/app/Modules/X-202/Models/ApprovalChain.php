@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X202\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class ApprovalChain extends Model implements TenantScoped
+class ApprovalChain extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'approval_chains';
 
     protected $guarded = [];

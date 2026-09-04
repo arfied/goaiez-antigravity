@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\CBilling\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class Meter extends Model implements TenantScoped
+class Meter extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'meters';
 
     protected $guarded = [];

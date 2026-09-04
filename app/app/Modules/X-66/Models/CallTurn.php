@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X66\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class CallTurn extends Model implements TenantScoped
+class CallTurn extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'call_turns';
 
     protected $guarded = [];

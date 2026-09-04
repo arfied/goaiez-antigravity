@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\CMail\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,10 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $is_marketing_paused
  * @property float $complaint_rate
  */
-class MailDomain extends Model implements TenantScoped
+class MailDomain extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'mail_domains';
 
     protected $guarded = [];

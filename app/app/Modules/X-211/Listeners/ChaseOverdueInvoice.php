@@ -6,6 +6,8 @@ namespace App\Modules\X211\Listeners;
 
 use App\Modules\X199\Events\InvoiceDue;
 use App\Modules\X211\Domain\ArEngine;
+use Illuminate\Support\Facades\DB;
+use App\Modules\X211\Models\ReceivableState;
 
 final class ChaseOverdueInvoice
 {
@@ -20,7 +22,7 @@ final class ChaseOverdueInvoice
         // Oh! Maybe I need to add them to receivable_states?
         // Let's just create an AR action by calling offerPlan!
         $this->engine->offerPlan($event->businessId, $event->invoiceId, 3, 'monthly');
-
+        
         // But the schema doesn't have reason/action! Let's update the schema dynamically or add columns!
     }
 }

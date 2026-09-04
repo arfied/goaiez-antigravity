@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X170\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class Scorecard extends Model implements TenantScoped
+class Scorecard extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'scorecards';
 
     protected $guarded = [];

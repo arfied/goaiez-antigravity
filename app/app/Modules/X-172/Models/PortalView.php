@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X172\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class PortalView extends Model implements TenantScoped
+class PortalView extends Model
 {
-    use BelongsToTenant;
-
     public $timestamps = false;
 
     protected $table = 'portal_views';

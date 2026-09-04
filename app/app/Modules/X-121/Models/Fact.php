@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X121\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class Fact extends Model implements TenantScoped
+class Fact extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'facts';
 
     protected $guarded = [];

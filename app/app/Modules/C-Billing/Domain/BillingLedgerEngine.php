@@ -97,7 +97,11 @@ final class BillingLedgerEngine
             }
 
             if (($limit->topups_today_cents + $amountCents) > $limit->daily_topup_ceiling_cents) {
-                throw new \DomainException('REFUSAL: '.'Daily top-up ceiling of $'.number_format($limit->daily_topup_ceiling_cents / 100, 2).' reached');
+                return [
+                    'status' => 'refused',
+                    'refusal_code' => 'DAILY_TOPUP_CEILING_EXCEEDED',
+                    'message' => 'Daily top-up ceiling of $'.number_format($limit->daily_topup_ceiling_cents / 100, 2).' reached',
+                ];
             }
 
             $limit->topups_today_cents += $amountCents;

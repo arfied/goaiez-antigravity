@@ -12,7 +12,6 @@ use App\Services\Messaging\Outbound\SendOutcome;
 use App\Services\Voice\InboundCall;
 use App\Services\Voice\MissedCallTextBack;
 use App\Services\Voice\VoiceCalls;
-use Illuminate\Support\Facades\Log;
 
 /**
  * SM-001, off the webhook — one text-back for one missed call.
@@ -89,7 +88,7 @@ final class SendMissedCallTextBackJob extends AutopilotJob
 
     public function automationKey(): string
     {
-        return AutopilotActionType::CallMissed->value;
+        return \App\Enums\AutopilotActionType::CallMissed->value;
     }
 
     /**
@@ -193,8 +192,7 @@ final class SendMissedCallTextBackJob extends AutopilotJob
     protected function execute(): array
     {
         $res = $this->textBack();
-        Log::info('TextBack job outcome: '.json_encode($res));
-
+        \Illuminate\Support\Facades\Log::info("TextBack job outcome: " . json_encode($res));
         return $res;
     }
 

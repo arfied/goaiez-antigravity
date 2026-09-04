@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X120\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class CardToken extends Model implements TenantScoped
+class CardToken extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'card_tokens';
 
     protected $guarded = [];

@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X135\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ResearchRun extends Model implements TenantScoped
+class ResearchRun extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'research_runs';
 
     protected $guarded = [];

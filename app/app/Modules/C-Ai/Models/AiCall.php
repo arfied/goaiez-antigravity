@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\CAi\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class AiCall extends Model implements TenantScoped
+class AiCall extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'ai_calls';
 
     protected $guarded = [];

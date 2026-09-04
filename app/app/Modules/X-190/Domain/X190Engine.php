@@ -1,7 +1,5 @@
 <?php
-
 declare(strict_types=1);
-
 namespace App\Modules\X190\Domain;
 
 final class X190Engine
@@ -15,7 +13,7 @@ final class X190Engine
 
     public function validateSocialProofToast(bool $isRealEvent): void
     {
-        if (! $isRealEvent) {
+        if (!$isRealEvent) {
             throw new \DomainException('REFUSES: the toast states a real event or does not fire [G12-33]');
         }
     }

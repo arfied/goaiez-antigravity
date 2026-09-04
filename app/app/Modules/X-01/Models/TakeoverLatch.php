@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X01\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class TakeoverLatch extends Model implements TenantScoped
+class TakeoverLatch extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'takeover_latches';
 
     protected $guarded = [];

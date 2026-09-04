@@ -13,7 +13,6 @@ class OwnHoursView extends Component
     #[Locked]
     public int $businessId = 0;
 
-    #[Locked]
     public int $personId = 0;
 
     public function render()

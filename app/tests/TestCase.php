@@ -6,13 +6,11 @@ namespace Tests;
 
 use App\Models\Business;
 use App\Models\User;
-use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Livewire\Features\SupportAutoInjectedAssets\SupportAutoInjectedAssets;
 use RuntimeException;
 use Tests\Concerns\RefreshesTenantDatabase;
@@ -58,7 +56,7 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         // Release numbers so journeys committing their transactions do not exhaust the pool
-        DB::table('phone_numbers')
+        \Illuminate\Support\Facades\DB::table('phone_numbers')
             ->where('e164', 'like', '+1512555%')
             ->update([
                 'business_id' => null,
@@ -157,9 +155,9 @@ abstract class TestCase extends BaseTestCase
     public static function provisionTenant(array $attributes = []): Business
     {
         static $numberSeed = 1000;
-        app(TenantNumbers::class)->addToPool('+1512555'.$numberSeed++);
+        app(\App\Services\Sms\TenantNumbers::class)->addToPool('+1512555' . $numberSeed++);
 
-        $owner = isset($attributes['owner_user_id']) ? User::find($attributes['owner_user_id']) : User::factory()->create();
+        $owner = isset($attributes["owner_user_id"]) ? User::find($attributes["owner_user_id"]) : User::factory()->create();
         $name = $attributes['name'] ?? 'Test Business';
         $biz = app(TenantProvisioner::class)->provision($owner);
 

@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X190\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class ReferralSlot extends Model implements TenantScoped
+class ReferralSlot extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'referral_slots';
 
     protected $guarded = [];

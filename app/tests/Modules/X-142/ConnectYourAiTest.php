@@ -2,9 +2,9 @@
 
 use App\Models\Business;
 use App\Models\User;
-use App\Modules\X142\Ui\ConnectYourAi;
 use App\Support\Tenancy;
 use Livewire\Livewire;
+use App\Modules\X142\Ui\ConnectYourAi;
 
 it('forbids guest access to ConnectYourAi', function () {
     Livewire::test(ConnectYourAi::class)
@@ -18,6 +18,6 @@ it('allows owner access to ConnectYourAi', function () {
     Tenancy::setUser($owner->id);
 
     Livewire::actingAs($owner)
-        ->test(ConnectYourAi::class)
+        ->test(ConnectYourAi::class, )
         ->assertOk();
 });

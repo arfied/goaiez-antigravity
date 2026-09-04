@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X105\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class OutreachLadder extends Model implements TenantScoped
+class OutreachLadder extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'outreach_ladders';
 
     protected $guarded = [];

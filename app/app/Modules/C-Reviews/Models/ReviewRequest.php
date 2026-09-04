@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,10 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $gbp_suspended
  * @property ?string $status
  */
-class ReviewRequest extends Model implements TenantScoped
+class ReviewRequest extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'review_requests';
 
     protected $guarded = [];

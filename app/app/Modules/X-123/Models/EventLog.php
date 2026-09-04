@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X123\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class EventLog extends Model implements TenantScoped
+class EventLog extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'event_log';
 
     protected $guarded = [];

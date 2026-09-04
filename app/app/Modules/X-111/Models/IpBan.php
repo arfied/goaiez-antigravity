@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X111\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class IpBan extends Model implements TenantScoped
+class IpBan extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'ip_bans';
 
     protected $guarded = [];

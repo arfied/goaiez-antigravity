@@ -86,7 +86,7 @@ class DayOneSignup extends Component
             $this->step = 3;
 
             $this->callTranscript = $res['transcript'] ?? [];
-        } catch (\Throwable $e) {
+            } catch (\Throwable $e) {
             $this->errorMessage = 'Failed to place test call. Please try again.';
         }
     }

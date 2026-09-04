@@ -1,15 +1,10 @@
 <?php
-
 namespace Tests\Modules\X183;
-
-use App\Modules\X183\Domain\GateEngine;
 use Tests\TestCase;
-
-class X183Test extends TestCase
-{
-    public function test_capabilities()
-    {
-        $engine = new GateEngine;
+use App\Modules\X183\Domain\GateEngine;
+class X183Test extends TestCase {
+    public function test_capabilities() {
+        $engine = new GateEngine();
         $this->assertTrue($engine->requireDoubleConsent(true, true));
         $this->assertEquals('ApprovalDesk', $engine->escalateNegativeComment('this is bad'));
         $this->assertTrue($engine->requireRealData(true));

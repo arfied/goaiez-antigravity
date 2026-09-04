@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Modules\X201;
 
 use App\Modules\X201\Domain\DisputeDefenseEngine;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
+use Illuminate\Support\Facades\DB;
 
 class N010Test extends TestCase
 {
@@ -16,7 +16,7 @@ class N010Test extends TestCase
         // N-010
         $path = app_path('Modules/X-201');
         $files = File::allFiles($path);
-
+        
         $foundRefund = false;
         foreach ($files as $file) {
             $content = strtolower(file_get_contents($file->getPathname()));
@@ -25,19 +25,19 @@ class N010Test extends TestCase
                 break;
             }
         }
-
+        
         $this->assertFalse($foundRefund, 'X-201 code must not contain refund verb');
-
-        $engine = new DisputeDefenseEngine;
+        
+        $engine = new DisputeDefenseEngine();
         $biz = TestCase::provisionTenant(['name' => 'N-010 Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $dispute = clone $engine->record($biz->id, 103, 10000, 'fraudulent');
-
+        
         // Assert the state machine refuses any other verb (e.g., 'refunded' or 'invalid')
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Invalid outcome'); // Or similar, expecting it to fail
-
+        
         $engine->recordOutcome($biz->id, $dispute->id, 'refunded');
     }
 }

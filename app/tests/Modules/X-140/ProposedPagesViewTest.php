@@ -2,9 +2,9 @@
 
 use App\Models\Business;
 use App\Models\User;
-use App\Modules\X140\Ui\ProposedPagesView;
 use App\Support\Tenancy;
 use Livewire\Livewire;
+use App\Modules\X140\Ui\ProposedPagesView;
 
 it('forbids guest access to ProposedPagesView', function () {
     Livewire::test(ProposedPagesView::class)
@@ -18,6 +18,6 @@ it('allows owner access to ProposedPagesView', function () {
     Tenancy::setUser($owner->id);
 
     Livewire::actingAs($owner)
-        ->test(ProposedPagesView::class)
+        ->test(ProposedPagesView::class, )
         ->assertOk();
 });

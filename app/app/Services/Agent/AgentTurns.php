@@ -16,7 +16,6 @@ use App\Services\Conversations\FiledInboundMessage;
 use App\Services\Conversations\InboundThreading;
 use App\Services\Sms\InboundMessages;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 /**
@@ -220,7 +219,7 @@ final class AgentTurns
         // both. {@see EscalateUrgentThreadJob} refused the identical data on the
         // identical path for the identical reason and was right; this arm was
         // the one that did not.
-        Log::warning('Dispatching AnswerAgentTurnJob for business '.$businessId);
+        \Illuminate\Support\Facades\Log::warning("Dispatching AnswerAgentTurnJob for business " . $businessId);
         AnswerAgentTurnJob::dispatch(
             $businessId,
             is_numeric($locationId) ? (int) $locationId : null,

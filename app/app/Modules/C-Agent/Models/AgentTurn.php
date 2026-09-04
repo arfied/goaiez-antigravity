@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\CAgent\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,10 +16,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $intent
  * @property ?array<string, mixed> $context
  */
-class AgentTurn extends Model implements TenantScoped
+class AgentTurn extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'agent_turns';
 
     protected $guarded = [];

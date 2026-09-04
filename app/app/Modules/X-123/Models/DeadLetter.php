@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X123\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class DeadLetter extends Model implements TenantScoped
+class DeadLetter extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'dead_letters';
 
     protected $guarded = [];

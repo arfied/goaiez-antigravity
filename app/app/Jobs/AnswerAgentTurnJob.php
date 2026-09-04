@@ -33,7 +33,6 @@ use App\Services\Consent\SendPermit;
 use App\Services\Conversations\InboundThreading;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Takes one agent turn on a thread — T176 §2, patch P4.
@@ -300,7 +299,7 @@ final class AnswerAgentTurnJob extends AutopilotJob
         $threads = app(AgentThreadStates::class);
         $state = $threads->stateFor($conversation);
 
-        Log::warning('Agent turn state for conversation '.$conversation->id.' is '.$state->status->value.' turns used '.$state->turnsUsed.' cap '.$state->turnCap);
+        \Illuminate\Support\Facades\Log::warning("Agent turn state for conversation " . $conversation->id . " is " . $state->status->value . " turns used " . $state->turnsUsed . " cap " . $state->turnCap);
         if (! $state->mayTakeTurn()) {
             // Rails 3 and 4. ⚠️ **ASKED HERE AND AGAIN INSIDE `AgentGrounding`,
             // ON PURPOSE** — 398's shape is an outer guard that refuses first,
@@ -335,7 +334,7 @@ final class AnswerAgentTurnJob extends AutopilotJob
 
         $composer = app(AgentComposer::class);
 
-        Log::warning('Writing draft for conversation '.$conversation->id);
+        \Illuminate\Support\Facades\Log::warning("Writing draft for conversation " . $conversation->id);
         $draft = $composer->write(
             customerMessage: $message,
             // ⛔ **THE THREAD ITSELF, BECAUSE R14 MINTS A SHORT LINK PER SEND**

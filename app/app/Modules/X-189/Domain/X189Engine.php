@@ -1,7 +1,5 @@
 <?php
-
 declare(strict_types=1);
-
 namespace App\Modules\X189\Domain;
 
 final class X189Engine

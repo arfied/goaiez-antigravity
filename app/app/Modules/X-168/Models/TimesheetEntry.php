@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X168\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class TimesheetEntry extends Model implements TenantScoped
+class TimesheetEntry extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'timesheet_entries';
 
     protected $guarded = [];

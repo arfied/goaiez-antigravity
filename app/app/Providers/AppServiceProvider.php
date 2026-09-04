@@ -386,7 +386,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(VoiceProvider::class, function (): VoiceProvider {
             $driver = config('services.voice.driver');
-            Log::info('VoiceProvider resolved with driver: '.var_export($driver, true));
+            \Illuminate\Support\Facades\Log::info("VoiceProvider resolved with driver: " . var_export($driver, true));
 
             if ($driver === 'null') {
                 return new NullVoiceProvider;

@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X166\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class JobCost extends Model implements TenantScoped
+class JobCost extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'job_costs';
 
     protected $guarded = [];

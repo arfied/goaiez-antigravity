@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Enums\VoicemailAudioState;
 use App\Enums\VoicemailTranscriptState;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -40,7 +41,51 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Schema::create removed for voicemails to fix duplicates
+        Schema::create('voicemails', function (Blueprint $table): void {
+            $table->id();
+
+            $table->foreignId('business_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('call_id')->nullable()->constrained()->cascadeOnDelete();
+
+            // Infobip's `files[].id` — verified 2026-08-16 against
+            // https://www.infobip.com/docs/api/channels/voice/calls/files-and-recordings/get-call-recordings
+            // It is the path parameter of GET /calls/1/recordings/files/{fileId},
+            // which is the only way to reach the bytes.
+            $table->string('provider_file_id')->nullable();
+
+            $table->string('recording_path')->nullable();
+            $table->string('recording_format')->nullable();
+            $table->unsignedInteger('recording_bytes')->nullable();
+            $table->unsignedInteger('recording_seconds')->nullable();
+
+            // Cast to VoicemailAudioState. A string, never a database enum.
+            $table->string('audio_state')->default(VoicemailAudioState::Pending->value);
+
+            $table->text('transcript')->nullable();
+
+            // A name, never a credential — `VoicemailTranscribed::$engine`'s own
+            // rule, so a bad batch can be identified later.
+            $table->string('transcript_engine')->nullable();
+
+            // 0–1 where the engine reports one. ⚠️ Low confidence is a reason to
+            // LABEL a transcript, never to withhold it: the owner already has the
+            // audio and can listen.
+            $table->decimal('transcript_confidence', 4, 3)->nullable();
+
+            // Cast to VoicemailTranscriptState. A string, never a database enum.
+            $table->string('transcript_state')->default(VoicemailTranscriptState::Pending->value);
+
+            $table->timestamp('transcribed_at')->nullable();
+
+            // ⚠️ **SET WHEN THE OWNER WAS TOLD, AND READ AS THE IDEMPOTENCY FACT
+            // FOR THE NOTIFY.** A redelivered recording event must not mail an
+            // owner twice about one message.
+            $table->timestamp('notified_at')->nullable();
+
+            $table->timestamps();
+
+            $table->index(['business_id', 'created_at']);
+        });
 
         $audio = collect(VoicemailAudioState::cases())
             ->map(fn (VoicemailAudioState $state): string => "'{$state->value}'")

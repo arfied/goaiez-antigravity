@@ -22,7 +22,7 @@ final class ArEngine
     public function applyLateFee(int $businessId, int $invoiceId, int $feeCents, bool $hasTerm = true): array
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $feeCents, $hasTerm) {
-            if (! $hasTerm) {
+            if (!$hasTerm) {
                 throw new \DomainException('A fee with no matching TERM in the agreement is refused');
             }
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
@@ -127,7 +127,7 @@ final class ArEngine
     public function packageForCollections(int $businessId, int $invoiceId, bool $isHumanAction = false): array
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $isHumanAction) {
-            if (! $isHumanAction) {
+            if (!$isHumanAction) {
                 throw new \DomainException('Collections transmission is a human action only');
             }
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);

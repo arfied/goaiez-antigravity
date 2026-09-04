@@ -36,6 +36,15 @@ return new class extends Migration
         }
 
         if (! Schema::hasTable('content_packs')) {
+            Schema::create('content_packs', function (Blueprint $table): void {
+                $table->id();
+                $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
+                $table->string('pack_name');
+                $table->string('label_text')->nullable();
+                $table->unsignedInteger('fleet_sample_size')->default(0);
+                $table->boolean('is_promoted')->default(false);
+                $table->timestamps();
+            });
         } else {
             Schema::table('content_packs', function (Blueprint $table): void {
                 if (! Schema::hasColumn('content_packs', 'label_text')) {

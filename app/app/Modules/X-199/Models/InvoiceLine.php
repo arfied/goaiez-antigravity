@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X199\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class InvoiceLine extends Model implements TenantScoped
+class InvoiceLine extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'invoice_lines';
 
     protected $guarded = [];

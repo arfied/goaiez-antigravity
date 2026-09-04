@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X217\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RecruitmentOffer extends Model implements TenantScoped
+class RecruitmentOffer extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'recruitment_offers';
 
     protected $guarded = [];

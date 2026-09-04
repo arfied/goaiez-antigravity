@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -11,7 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         if (! Schema::hasTable('content_topics')) {
-            // Schema::create removed for content_topics to fix duplicates
+            Schema::create('content_topics', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('business_id');
+                $table->string('name');
+                $table->string('intent')->nullable();
+                $table->text('raw_content')->nullable();
+                $table->float('similarity_rate')->nullable();
+                $table->boolean('is_published')->default(false);
+                $table->timestamps();
+
+                $table->index('business_id');
+            });
 
             DB::statement('ALTER TABLE content_topics ENABLE ROW LEVEL SECURITY');
             DB::statement('ALTER TABLE content_topics FORCE ROW LEVEL SECURITY');
@@ -24,7 +36,17 @@ return new class extends Migration
         }
 
         if (! Schema::hasTable('topic_sources')) {
-            // Schema::create removed for topic_sources to fix duplicates
+            Schema::create('topic_sources', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('business_id');
+                $table->foreignId('topic_id');
+                $table->string('source_type')->nullable();
+                $table->string('refusal_id')->nullable();
+                $table->timestamps();
+
+                $table->index('business_id');
+                $table->index('topic_id');
+            });
 
             DB::statement('ALTER TABLE topic_sources ENABLE ROW LEVEL SECURITY');
             DB::statement('ALTER TABLE topic_sources FORCE ROW LEVEL SECURITY');

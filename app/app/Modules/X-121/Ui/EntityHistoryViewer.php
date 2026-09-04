@@ -12,7 +12,6 @@ class EntityHistoryViewer extends Component
 {
     public string $entityType = '';
 
-    #[Locked]
     public int $entityId = 0;
 
     #[Locked]

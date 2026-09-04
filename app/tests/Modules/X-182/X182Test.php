@@ -1,15 +1,10 @@
 <?php
-
 namespace Tests\Modules\X182;
-
-use App\Modules\X182\Domain\SocialEngine;
 use Tests\TestCase;
-
-class X182Test extends TestCase
-{
-    public function test_capabilities()
-    {
-        $engine = new SocialEngine;
+use App\Modules\X182\Domain\SocialEngine;
+class X182Test extends TestCase {
+    public function test_capabilities() {
+        $engine = new SocialEngine();
         $this->assertTrue($engine->scheduleWithPass(['social_pass' => true]));
         $this->assertTrue($engine->useTenantHistory(['item1']));
         $this->assertTrue($engine->threadIntoConversation(1, 10));

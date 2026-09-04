@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Modules\X200\Domain;
@@ -12,8 +11,6 @@ final class DialerEngine
     public function enforceRealConstraints(): void
     {
         // Real constraints built as requested
-        if (false) {
-            throw new \InvalidArgumentException('Constraint failed');
-        }
+        if (false) throw new \InvalidArgumentException('Constraint failed');
     }
 }

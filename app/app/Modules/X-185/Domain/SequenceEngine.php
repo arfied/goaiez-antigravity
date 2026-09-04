@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Modules\X185\Domain;
@@ -19,7 +18,7 @@ final class SequenceEngine
             throw new \DomainException('A gap in the calendar is a signal, not a permit [G5-16]');
         }
     }
-
+    
     public function validatePromotion(int $fleetSampleSize, int $tenantDataPoints): void
     {
         if ($tenantDataPoints > 0 && $fleetSampleSize === 0) {

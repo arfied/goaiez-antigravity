@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X167\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class StockItem extends Model implements TenantScoped
+class StockItem extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'stock_items';
 
     protected $guarded = [];

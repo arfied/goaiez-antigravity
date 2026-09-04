@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X163\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class PriceBookItem extends Model implements TenantScoped
+class PriceBookItem extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'price_book_items';
 
     protected $guarded = [];

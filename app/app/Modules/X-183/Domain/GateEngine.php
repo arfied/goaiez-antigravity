@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Modules\X183\Domain;
@@ -28,6 +27,6 @@ final class GateEngine
 
     public function noSamplePrices(string $content): bool
     {
-        return ! str_contains($content, 'SAMPLE PRICE');
+        return !str_contains($content, 'SAMPLE PRICE');
     }
 }

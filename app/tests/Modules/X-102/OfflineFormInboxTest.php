@@ -2,9 +2,9 @@
 
 use App\Models\Business;
 use App\Models\User;
-use App\Modules\X102\Ui\OfflineFormInbox;
 use App\Support\Tenancy;
 use Livewire\Livewire;
+use App\Modules\X102\Ui\OfflineFormInbox;
 
 it('forbids guest access to OfflineFormInbox', function () {
     Livewire::test(OfflineFormInbox::class)
@@ -18,6 +18,6 @@ it('allows owner access to OfflineFormInbox', function () {
     Tenancy::setUser($owner->id);
 
     Livewire::actingAs($owner)
-        ->test(OfflineFormInbox::class)
+        ->test(OfflineFormInbox::class, )
         ->assertOk();
 });

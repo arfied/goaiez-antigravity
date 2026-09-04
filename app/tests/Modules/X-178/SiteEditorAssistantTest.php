@@ -2,9 +2,9 @@
 
 use App\Models\Business;
 use App\Models\User;
-use App\Modules\X178\Ui\SiteEditorAssistant;
 use App\Support\Tenancy;
 use Livewire\Livewire;
+use App\Modules\X178\Ui\SiteEditorAssistant;
 
 it('forbids guest access to SiteEditorAssistant', function () {
     Livewire::test(SiteEditorAssistant::class)
@@ -18,6 +18,6 @@ it('allows owner access to SiteEditorAssistant', function () {
     Tenancy::setUser($owner->id);
 
     Livewire::actingAs($owner)
-        ->test(SiteEditorAssistant::class)
+        ->test(SiteEditorAssistant::class, )
         ->assertOk();
 });

@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X204\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use App\Enums\SendRefusalReason;
 use Illuminate\Database\Eloquent\Model;
 
-class SendPermit extends Model implements TenantScoped
+class SendPermit extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'send_permits';
 
     protected $guarded = [];

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\CWhatsapp\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -14,10 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $category
  * @property string $body
  */
-class WhatsappTemplate extends Model implements TenantScoped
+class WhatsappTemplate extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'whatsapp_templates';
 
     protected $guarded = [];

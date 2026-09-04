@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X200\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class CallCampaign extends Model implements TenantScoped
+class CallCampaign extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'call_campaigns';
 
     protected $guarded = [];

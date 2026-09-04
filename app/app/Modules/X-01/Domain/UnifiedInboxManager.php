@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X01\Domain;
 
-use App\Models\Conversation;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
+use App\Models\Conversation;
 use App\Modules\X121\Models\Person;
-use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -67,7 +66,7 @@ final class UnifiedInboxManager
             }
 
             // Find or create Conversation for this Person
-            $conversation = Tenancy::actingAs($businessId, function () use ($person, $channel) {
+            $conversation = \App\Support\Tenancy::actingAs($businessId, function () use ($person, $channel) {
                 return Conversation::firstOrCreate(
                     ['person_id' => $person->id],
                     ['channel' => $channel, 'status' => 'open']

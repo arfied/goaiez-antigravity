@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X185\Models;
 
-use App\Concerns\BelongsToTenant;
-use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class Sequence extends Model implements TenantScoped
+class Sequence extends Model
 {
-    use BelongsToTenant;
-
     protected $table = 'sequences';
 
     protected $guarded = [];
