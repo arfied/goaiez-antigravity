@@ -51,7 +51,7 @@ class MoneyPaidTodayScreenTest extends TestCase
             'unit_price_cents' => 10000,
             'subtotal_cents' => 10000,
         ]);
-        
+
         InvoiceLine::create([
             'business_id' => $biz->id,
             'invoice_id' => $invA->id,
