@@ -3,7 +3,7 @@
     
     <div class="max-w-md mx-auto px-4 py-6" wire:loading.class="opacity-50">
         @if($errorMessage)
-            <x-ui.error-panel class="mb-6">
+            <x-ui.error-panel heading="Error" class="mb-6">
                 {{ $errorMessage }}
             </x-ui.error-panel>
         @endif
@@ -35,9 +35,22 @@
                             <button wire:click="tap({{ $job->job_id }}, 'en_route')" class="h-12 bg-accent text-white rounded font-medium">En route</button>
                             <button wire:click="tap({{ $job->job_id }}, 'on_site')" class="h-12 bg-accent text-white rounded font-medium">On site</button>
                             <button wire:click="tap({{ $job->job_id }}, 'completed')" class="h-12 bg-accent text-white rounded font-medium">Done (+ Photo)</button>
-                            <button wire:click="sign({{ $job->job_id }})" class="h-12 bg-paper border border-rule text-ink rounded font-medium">Sign</button>
-                            <button wire:click="scan({{ $job->job_id }})" class="h-12 bg-paper border border-rule text-ink rounded font-medium">Scan</button>
-                            <button wire:click="voiceNote({{ $job->job_id }})" class="h-12 bg-paper border border-rule text-ink rounded font-medium">Voice note</button>
+                            <div class="flex gap-2">
+                                <input type="text" wire:model="signatureInput.{{ $job->job_id }}" placeholder="Signature" class="w-20 border rounded px-1">
+                                <button wire:click="sign({{ $job->job_id }})" class="flex-1 h-12 bg-paper border border-rule text-ink rounded font-medium">Sign</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" wire:model="scanInput.{{ $job->job_id }}" placeholder="Barcode" class="w-20 border rounded px-1">
+                                <button wire:click="scan({{ $job->job_id }})" class="flex-1 h-12 bg-paper border border-rule text-ink rounded font-medium">Scan</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" wire:model="voiceInput.{{ $job->job_id }}" placeholder="Note" class="w-20 border rounded px-1">
+                                <button wire:click="voiceNote({{ $job->job_id }})" class="flex-1 h-12 bg-paper border border-rule text-ink rounded font-medium">Voice note</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" wire:model="photoInput.{{ $job->job_id }}" placeholder="Photo" class="w-20 border rounded px-1">
+                                <button wire:click="photo({{ $job->job_id }})" class="flex-1 h-12 bg-paper border border-rule text-ink rounded font-medium">Photo</button>
+                            </div>
                         </div>
                         <div class="mt-2">
                             <button disabled class="w-full h-12 bg-gray-200 text-gray-500 rounded font-medium cursor-not-allowed" title="payment arrives with the money track">Pay on site</button>

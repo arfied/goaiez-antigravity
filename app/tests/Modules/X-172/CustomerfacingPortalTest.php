@@ -7,7 +7,6 @@ namespace Tests\Modules\X172;
 use App\Models\User;
 use App\Modules\X172\Models\PortalLink;
 use App\Modules\X172\Ui\CustomerfacingPortal;
-use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -24,7 +23,7 @@ class CustomerfacingPortalTest extends TestCase
     {
         $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         $jobId = DB::table('work_orders')->insertGetId([
             'business_id' => $biz->id,
             'title' => 'Fix Sink',
@@ -65,7 +64,7 @@ class CustomerfacingPortalTest extends TestCase
             ->assertSee('Fix Sink')
             ->assertSee('15 minutes out')
             ->assertSeeHtml('<span', false);
-            
+
         $this->assertDatabaseHas('portal_views', [
             'portal_link_id' => $link->id,
         ]);
@@ -124,10 +123,10 @@ class CustomerfacingPortalTest extends TestCase
             'is_active' => true,
         ]);
     }
-    
+
     public function test_no_password_text_exists(): void
     {
-        $out = shell_exec("grep -riE password " . app_path('Modules/X-172'));
+        $out = shell_exec('grep -riE password '.app_path('Modules/X-172'));
         $this->assertEmpty($out, 'No handwritten password text should exist in X-172');
     }
 }

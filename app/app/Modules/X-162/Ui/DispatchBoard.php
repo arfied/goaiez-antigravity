@@ -18,7 +18,9 @@ use Livewire\Component;
 class DispatchBoard extends Component
 {
     public $techIds = [];
+
     public $queryResults = [];
+
     public $errorMessage = null;
 
     public function mount()
@@ -36,7 +38,7 @@ class DispatchBoard extends Component
             $action = app(TechEnRouteAction::class);
             $action->markEnRoute($businessId, $jobId, $techId);
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not mark as en route.";
+            $this->errorMessage = 'Could not mark as en route.';
         }
     }
 
@@ -49,7 +51,7 @@ class DispatchBoard extends Component
             $result = $action->handle($businessId, $jobId);
             $this->queryResults[$jobId] = $result['grounded_answer'];
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not query ETA.";
+            $this->errorMessage = 'Could not query ETA.';
         }
     }
 
@@ -64,7 +66,7 @@ class DispatchBoard extends Component
                 $action->handle($businessId, $jobId, $techId);
             }
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not reassign job.";
+            $this->errorMessage = 'Could not reassign job.';
         }
     }
 
@@ -81,13 +83,13 @@ class DispatchBoard extends Component
         $assignments = DispatchAssignment::where('business_id', $businessId)
             ->where(function ($q) use ($today) {
                 $q->whereDate('created_at', $today)
-                  ->orWhereDate('en_route_at', $today);
+                    ->orWhereDate('en_route_at', $today);
             })
             ->get();
 
         $jobIds = $assignments->pluck('job_id')->unique()->toArray();
         $workOrders = DB::table('work_orders')->whereIn('id', $jobIds)->pluck('title', 'id');
-        
+
         $predictions = EtaPrediction::where('business_id', $businessId)
             ->whereIn('job_id', $jobIds)
             ->orderBy('id', 'desc')

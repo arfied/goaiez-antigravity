@@ -20,8 +20,17 @@ use Livewire\Component;
 
 class StafffacingApp extends Component
 {
-    public $deviceId = 'device_default';
+    public $deviceId = 'device_default'; // the default until the app sends a device id
+
     public $errorMessage = null;
+
+    public $scanInput = [];
+
+    public $signatureInput = [];
+
+    public $photoInput = [];
+
+    public $voiceInput = [];
 
     public function mount()
     {
@@ -39,43 +48,71 @@ class StafffacingApp extends Component
             $action = app(JobStateAction::class);
             $action->updateState($businessId, $jobId, $techId, $newState, 1);
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not update job state.";
+            $this->errorMessage = 'Could not update job state.';
         }
     }
 
     public function scan(int $jobId)
     {
+        $payload = $this->scanInput[$jobId] ?? '';
+        if (empty($payload)) {
+            $this->errorMessage = 'Scan a barcode first.';
+
+            return;
+        }
         try {
-            app(BarcodeScanAction::class)->handle(Tenancy::id(), $jobId, auth()->id(), 'fake-barcode');
+            $res = app(BarcodeScanAction::class)->handle(Tenancy::id(), $jobId, $payload);
+            $this->errorMessage = null;
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not scan barcode.";
+            $this->errorMessage = 'Could not scan barcode.';
         }
     }
 
     public function sign(int $jobId)
     {
+        $payload = $this->signatureInput[$jobId] ?? '';
+        if (empty($payload)) {
+            $this->errorMessage = 'Sign the job first.';
+
+            return;
+        }
         try {
-            app(JobSignAction::class)->handle(Tenancy::id(), $jobId, auth()->id(), 'fake-signature');
+            $res = app(JobSignAction::class)->handle(Tenancy::id(), $jobId, $payload);
+            $this->errorMessage = null;
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not sign job.";
+            $this->errorMessage = 'Could not sign job.';
         }
     }
 
     public function photo(int $jobId)
     {
+        $payload = $this->photoInput[$jobId] ?? '';
+        if (empty($payload)) {
+            $this->errorMessage = 'Attach a photo first.';
+
+            return;
+        }
         try {
-            app(JobPhotoAction::class)->handle(Tenancy::id(), $jobId, auth()->id(), 'fake-photo-path');
+            $res = app(JobPhotoAction::class)->handle(Tenancy::id(), $jobId, $payload);
+            $this->errorMessage = null;
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not attach photo.";
+            $this->errorMessage = 'Could not attach photo.';
         }
     }
 
     public function voiceNote(int $jobId)
     {
+        $payload = $this->voiceInput[$jobId] ?? '';
+        if (empty($payload)) {
+            $this->errorMessage = 'Record a voice note first.';
+
+            return;
+        }
         try {
-            app(NoteVoiceAction::class)->handle(Tenancy::id(), $jobId, auth()->id(), 'fake-voice-note');
+            $result = app(NoteVoiceAction::class)->handle(Tenancy::id(), $jobId, $payload);
+            $this->errorMessage = null;
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not attach voice note.";
+            $this->errorMessage = 'Could not attach voice note.';
         }
     }
 
@@ -91,7 +128,7 @@ class StafffacingApp extends Component
                     // increment client version to surpass server version
                     $action->replayMutation(
                         $businessId,
-                        $queue->client_mutation_id . '_replayed',
+                        $queue->client_mutation_id.'_replayed',
                         $queue->device_id,
                         $queue->action_name,
                         $queue->payload,
@@ -99,11 +136,11 @@ class StafffacingApp extends Component
                         $conflict->server_version
                     );
                 }
-                $conflict->conflict_reason = "Resolved: " . $resolution;
+                $conflict->conflict_reason = 'Resolved: '.$resolution;
                 $conflict->save();
             }
         } catch (\Exception $e) {
-            $this->errorMessage = "Could not resolve conflict.";
+            $this->errorMessage = 'Could not resolve conflict.';
         }
     }
 
@@ -120,13 +157,13 @@ class StafffacingApp extends Component
 
         // tech's jobs — work_orders scheduled today for the tenant, joined to the tech's dispatch_assignments
         $jobs = DB::table('work_orders')
-            ->leftJoin('dispatch_assignments', 'work_orders.id', '=', 'dispatch_assignments.job_id')
+            ->leftJoin('dispatch_assignments', function ($join) use ($businessId) {
+                $join->on('work_orders.id', '=', 'dispatch_assignments.job_id')
+                    ->where('dispatch_assignments.business_id', '=', $businessId);
+            })
             ->where('work_orders.business_id', $businessId)
             ->whereDate('work_orders.scheduled_at', $today)
-            ->where(function ($q) use ($techId) {
-                $q->where('dispatch_assignments.tech_id', $techId)
-                  ->orWhereNull('dispatch_assignments.tech_id');
-            })
+            ->where('dispatch_assignments.tech_id', $techId)
             ->select('work_orders.id as job_id', 'work_orders.title', 'work_orders.scheduled_at', 'dispatch_assignments.status', 'dispatch_assignments.is_sample as da_sample')
             ->get();
 

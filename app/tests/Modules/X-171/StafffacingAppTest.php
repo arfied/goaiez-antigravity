@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X171;
 
+use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X171\Events\BarcodeScanned;
 use App\Modules\X171\Events\TechOnSite;
 use App\Modules\X171\Models\DeviceSyncConflict;
 use App\Modules\X171\Ui\StafffacingApp;
@@ -18,13 +20,13 @@ class StafffacingAppTest extends TestCase
 {
     public function test_guest_is_forbidden(): void
     {
-        $this->assertTrue(true);
+        Livewire::test(StafffacingApp::class)->assertForbidden();
     }
 
     public function test_staff_with_nothing_today_sees_empty_sentence(): void
     {
-        $staff = User::factory()->role(\App\Enums\UserRole::Staff)->create();
-        
+        $staff = User::factory()->role(UserRole::Staff)->create();
+
         $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
         Tenancy::setUser($staff->id);
 
@@ -38,8 +40,8 @@ class StafffacingAppTest extends TestCase
     {
         Event::fake([TechOnSite::class]);
 
-        $staff = User::factory()->role(\App\Enums\UserRole::Staff)->create();
-        
+        $staff = User::factory()->role(UserRole::Staff)->create();
+
         $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
         Tenancy::setUser($staff->id);
 
@@ -71,8 +73,8 @@ class StafffacingAppTest extends TestCase
 
     public function test_seeded_sync_conflict_renders(): void
     {
-        $staff = User::factory()->role(\App\Enums\UserRole::Staff)->create();
-        
+        $staff = User::factory()->role(UserRole::Staff)->create();
+
         $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
         Tenancy::setUser($staff->id);
 
@@ -103,5 +105,53 @@ class StafffacingAppTest extends TestCase
             ->assertSee('Sync Conflicts')
             ->assertSee('Client stale')
             ->assertSeeHtml('<span', false);
+    }
+
+    public function test_scan_input_fires_action(): void
+    {
+        Event::fake([BarcodeScanned::class]);
+        $staff = User::factory()->role(UserRole::Staff)->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        Tenancy::setUser($staff->id);
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job',
+            'scheduled_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Livewire::actingAs($staff)
+            ->test(StafffacingApp::class)
+            ->set("scanInput.{$jobId}", 'ABC-123')
+            ->call('scan', $jobId);
+
+        Event::assertDispatched(BarcodeScanned::class, function ($e) use ($jobId) {
+            return $e->jobId === $jobId && $e->barcode === 'ABC-123';
+        });
+    }
+
+    public function test_scan_input_empty_fires_nothing(): void
+    {
+        Event::fake([BarcodeScanned::class]);
+        $staff = User::factory()->role(UserRole::Staff)->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        Tenancy::setUser($staff->id);
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job',
+            'scheduled_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Livewire::actingAs($staff)
+            ->test(StafffacingApp::class)
+            ->call('scan', $jobId)
+            ->assertSee('Scan a barcode first.');
+
+        Event::assertNotDispatched(BarcodeScanned::class);
     }
 }
