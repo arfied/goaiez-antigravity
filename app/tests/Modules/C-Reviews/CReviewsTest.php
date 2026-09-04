@@ -402,6 +402,8 @@ class CReviewsTest extends TestCase
         $result = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
 
         $this->assertEquals('sent', $result['status']);
+    }
+
     public function test_no_fake_rows_written_on_mount(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
