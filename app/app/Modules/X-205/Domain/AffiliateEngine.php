@@ -49,4 +49,8 @@ final class AffiliateEngine
     public function isCookieValid(int $cookieAgeDays): bool {
         return $cookieAgeDays <= 90;
     }
+
+    public function calculateCommission(int $saleAmountCents, int $commissionRateBps): int {
+        return (int) round(($saleAmountCents * $commissionRateBps) / 10000);
+    }
 }
