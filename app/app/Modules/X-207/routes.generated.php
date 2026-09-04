@@ -4,17 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-if (! class_exists('TenantRoleMiddleware')) {
-    class TenantRoleMiddleware
-    {
-        public function handle($request, $next) {
-            abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
-            return $next($request);
-        }
-    }
-}
-
-Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-207')->group(function () {
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-207')->group(function () {
     Route::get('/one-confirmonce-toggle', \App\Modules\X207\Ui\OneConfirmonceToggle::class)->name('x-207.one-confirmonce-toggle');
     Route::get('/promptcopy-editor', \App\Modules\X207\Ui\PromptcopyEditor::class)->name('x-207.promptcopy-editor');
     Route::get('/retirement-reasons', \App\Modules\X207\Ui\RetirementReasons::class)->name('x-207.retirement-reasons');

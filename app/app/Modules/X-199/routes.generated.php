@@ -4,17 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-if (! class_exists('TenantRoleMiddleware')) {
-    class TenantRoleMiddleware
-    {
-        public function handle($request, $next) {
-            abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
-            return $next($request);
-        }
-    }
-}
-
-Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-199')->group(function () {
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-199')->group(function () {
     Route::get('/money-paid-today', \App\Modules\X199\Ui\MoneyPaidToday::class)->name('x-199.money-paid-today');
     Route::get('/unpaid', \App\Modules\X199\Ui\Unpaid::class)->name('x-199.unpaid');
     Route::get('/declines', \App\Modules\X199\Ui\Declines::class)->name('x-199.declines');

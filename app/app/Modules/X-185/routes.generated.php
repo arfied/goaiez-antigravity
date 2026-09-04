@@ -4,17 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-if (! class_exists('TenantRoleMiddleware')) {
-    class TenantRoleMiddleware
-    {
-        public function handle($request, $next) {
-            abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
-            return $next($request);
-        }
-    }
-}
-
-Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-185')->group(function () {
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-185')->group(function () {
     Route::get('/digest-line', \App\Modules\X185\Ui\DigestLine::class)->name('x-185.digest-line');
     Route::get('/experiment-board', \App\Modules\X185\Ui\ExperimentBoard::class)->name('x-185.experiment-board');
 });

@@ -4,17 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-if (! class_exists('TenantRoleMiddleware')) {
-    class TenantRoleMiddleware
-    {
-        public function handle($request, $next) {
-            abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
-            return $next($request);
-        }
-    }
-}
-
-Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-118')->group(function () {
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-118')->group(function () {
     Route::get('/day-one-signup', \App\Modules\X118\Ui\DayOneSignup::class)->name('x-118.day-one-signup');
     Route::get('/groundcheck', \App\Modules\X118\Ui\Groundcheck::class)->name('x-118.groundcheck');
     Route::get('/test-call', \App\Modules\X118\Ui\TestCall::class)->name('x-118.test-call');

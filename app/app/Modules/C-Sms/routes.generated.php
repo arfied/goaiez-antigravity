@@ -4,17 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-if (! class_exists('TenantRoleMiddleware')) {
-    class TenantRoleMiddleware
-    {
-        public function handle($request, $next) {
-            abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
-            return $next($request);
-        }
-    }
-}
-
-Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/c-sms')->group(function () {
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/c-sms')->group(function () {
     Route::get('/thread', \App\Modules\CSms\Ui\Thread::class)->name('c-sms.thread');
     Route::get('/composer-segment-warning', \App\Modules\CSms\Ui\ComposerSegmentWarning::class)->name('c-sms.composer-segment-warning');
     Route::get('/donottext-list', \App\Modules\CSms\Ui\DonottextList::class)->name('c-sms.donottext-list');

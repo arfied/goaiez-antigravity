@@ -4,17 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-if (! class_exists('TenantRoleMiddleware')) {
-    class TenantRoleMiddleware
-    {
-        public function handle($request, $next) {
-            abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
-            return $next($request);
-        }
-    }
-}
-
-Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-66')->group(function () {
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-66')->group(function () {
     Route::get('/calls', \App\Modules\X66\Ui\Calls::class)->name('x-66.calls');
     Route::get('/livecoaching-whisper-panel', \App\Modules\X66\Ui\LivecoachingWhisperPanel::class)->name('x-66.livecoaching-whisper-panel');
     Route::get('/customerfacing-call-itself', \App\Modules\X66\Ui\CustomerfacingCallItself::class)->name('x-66.customerfacing-call-itself');
