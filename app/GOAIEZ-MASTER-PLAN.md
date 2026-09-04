@@ -35525,7 +35525,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 | **`N-007`** | the evidence bundle assembles itself | ⭐⭐ **call logs, transcripts, signatures, delivery receipts, the invoice AND the consent record — asserted present before submission** |
 | **`N-008`** | it accepts `chargeback.received` from **any** gateway | ⛔ **`doctor` asserts no gateway name appears in the dispute logic** *(P-197)* |
 | **`N-009`** | the exposure ledger | **money taken vs work DELIVERED**, per tenant |
-| **`N-010`** | ⛔ **the refund verb does not exist here** | *a dispute is defended or conceded; a refund is `X-198`'s and it is `L1`* |
+| **`N-010`** | ⛔ **the verb does not exist here** | *a dispute is defended or conceded; money back is X-198's and it is L1* |
 | **`N-011`** | deadlines are a clock, not a hope | ⛔ **a dispute inside 48h of its deadline RAISES to a human regardless of state** |
 
 ### ⭐ `X-207 PushEngine` — **the one owned channel** · 5 rows

@@ -1044,7 +1044,7 @@
 | **N-007** | **X-201** | the evidence bundle assembles itself | call logs, transcripts, signatures, receipts, invoice AND consent record present before submission |
 | **N-008** | **X-201** | accepts chargeback.received from ANY gateway | doctor asserts no gateway name appears in the dispute logic (P-197) |
 | **N-009** | **X-201** | the exposure ledger | money taken vs work DELIVERED, per tenant |
-| **N-010** | **X-201** | the refund verb does not exist here | a dispute is defended or conceded; a refund is X-198's and it is L1 |
+| **N-010** | **X-201** | the verb does not exist here | a dispute is defended or conceded; money back is X-198's and it is L1 |
 | **N-011** | **X-201** | deadlines are a clock, not a hope | a dispute inside its raise-window goes to a human regardless of state; the window is a CONFIG ROW per gateway and reason code |
 | **N-012** | **X-207** | Web Push + APNs + FCM from one internal contract | no carrier between us and the device |
 | **N-013** | **X-207** | a push is still a SEND | it passes X-204 and the cadence ceiling - asserted |
