@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X108;
 
-use App\Models\User;
-use App\Modules\X121\Models\Person;
 use App\Modules\X108\Models\Appointment;
 use App\Modules\X108\Models\Resource;
 use App\Modules\X108\Ui\Calendar;
+use App\Modules\X121\Models\Person;
 use App\Support\Tenancy;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -29,11 +28,11 @@ class CalendarTest extends TestCase
             'first_name' => 'Linus',
             'last_name' => 'Van Pelt',
         ]);
-        
+
         $resource = Resource::create([
             'business_id' => $biz->id,
             'name' => 'Room 101',
-            'calendar_type' => 'internal'
+            'calendar_type' => 'internal',
         ]);
 
         $apt = Appointment::create([
@@ -58,7 +57,7 @@ class CalendarTest extends TestCase
             ->assertSee('Room 101')
             ->assertSee('Security Blanket Check')
             ->call('cancelAppointment', $apt->id);
-            
+
         // Appointment is cancelled in engine
         $this->assertEquals('cancelled', $apt->fresh()->status);
         // Empty state

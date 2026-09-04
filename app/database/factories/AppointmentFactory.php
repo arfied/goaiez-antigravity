@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Modules\X108\Models\Appointment;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AppointmentFactory extends Factory
 {
