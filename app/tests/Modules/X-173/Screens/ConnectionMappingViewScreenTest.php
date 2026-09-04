@@ -6,6 +6,7 @@ namespace Tests\Modules\X173\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X173\Ui\ConnectionMappingView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ConnectionMappingViewScreenTest extends TestCase
 
         $this->get(route('x-173.connection-mapping'))->assertOk();
 
-        Livewire::test(\App\Modules\X173\Ui\ConnectionMappingView::class)->assertOk();
+        Livewire::test(ConnectionMappingView::class)->assertOk();
     }
 }

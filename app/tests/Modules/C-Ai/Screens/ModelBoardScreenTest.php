@@ -6,6 +6,7 @@ namespace Tests\Modules\CAi\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CAi\Ui\ModelBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ModelBoardScreenTest extends TestCase
 
         $this->get(route('c-ai.model-board'))->assertOk();
 
-        Livewire::test(\App\Modules\CAi\Ui\ModelBoard::class)->assertOk();
+        Livewire::test(ModelBoard::class)->assertOk();
     }
 }

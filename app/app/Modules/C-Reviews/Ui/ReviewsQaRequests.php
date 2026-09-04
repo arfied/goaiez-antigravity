@@ -65,7 +65,10 @@ class ReviewsQaRequests extends Component
         }
     }
 
-    public function unselectReview(): void { $this->selectedReviewId = null; }
+    public function unselectReview(): void
+    {
+        $this->selectedReviewId = null;
+    }
 
     public function selectReview(int $id): void
     {

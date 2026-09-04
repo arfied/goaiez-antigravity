@@ -6,6 +6,7 @@ namespace Tests\Modules\X109\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X109\Ui\ManualQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ManualQueueScreenTest extends TestCase
 
         $this->get(route('x-109.manual-queue'))->assertOk();
 
-        Livewire::test(\App\Modules\X109\Ui\ManualQueue::class)->assertOk();
+        Livewire::test(ManualQueue::class)->assertOk();
     }
 }

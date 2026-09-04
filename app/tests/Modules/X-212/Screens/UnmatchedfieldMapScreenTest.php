@@ -6,6 +6,7 @@ namespace Tests\Modules\X212\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X212\Ui\UnmatchedfieldMap;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class UnmatchedfieldMapScreenTest extends TestCase
 
         $this->get(route('x-212.unmatchedfield-map'))->assertOk();
 
-        Livewire::test(\App\Modules\X212\Ui\UnmatchedfieldMap::class)->assertOk();
+        Livewire::test(UnmatchedfieldMap::class)->assertOk();
     }
 }

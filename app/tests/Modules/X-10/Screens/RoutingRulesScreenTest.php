@@ -6,6 +6,7 @@ namespace Tests\Modules\X10\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X10\Ui\RoutingRules;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class RoutingRulesScreenTest extends TestCase
 
         $this->get(route('x-10.routing-rules'))->assertOk();
 
-        Livewire::test(\App\Modules\X10\Ui\RoutingRules::class)->assertOk();
+        Livewire::test(RoutingRules::class)->assertOk();
     }
 }

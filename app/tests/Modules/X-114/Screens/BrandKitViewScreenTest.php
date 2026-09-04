@@ -6,6 +6,7 @@ namespace Tests\Modules\X114\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X114\Ui\BrandKitView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class BrandKitViewScreenTest extends TestCase
 
         $this->get(route('x-114.brand-kit'))->assertOk();
 
-        Livewire::test(\App\Modules\X114\Ui\BrandKitView::class)->assertOk();
+        Livewire::test(BrandKitView::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X204\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X204\Ui\RefusalsByReason;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class RefusalsByReasonScreenTest extends TestCase
 
         $this->get(route('x-204.refusals-by-reason'))->assertOk();
 
-        Livewire::test(\App\Modules\X204\Ui\RefusalsByReason::class)->assertOk();
+        Livewire::test(RefusalsByReason::class)->assertOk();
     }
 }

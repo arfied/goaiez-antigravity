@@ -6,6 +6,7 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X112\Ui\Staff;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class StaffScreenTest extends TestCase
 
         $this->get(route('x-112.staff'))->assertOk();
 
-        Livewire::test(\App\Modules\X112\Ui\Staff::class)->assertOk();
+        Livewire::test(Staff::class)->assertOk();
     }
 }

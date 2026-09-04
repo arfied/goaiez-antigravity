@@ -6,6 +6,7 @@ namespace Tests\Modules\X184\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X184\Ui\CalendarView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class CalendarViewScreenTest extends TestCase
 
         $this->get(route('x-184.calendar'))->assertOk();
 
-        Livewire::test(\App\Modules\X184\Ui\CalendarView::class)->assertOk();
+        Livewire::test(CalendarView::class)->assertOk();
     }
 }

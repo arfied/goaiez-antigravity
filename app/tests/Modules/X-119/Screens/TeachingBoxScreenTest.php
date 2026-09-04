@@ -6,6 +6,7 @@ namespace Tests\Modules\X119\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X119\Ui\TeachingBox;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class TeachingBoxScreenTest extends TestCase
 
         $this->get(route('x-119.teaching-box'))->assertOk();
 
-        Livewire::test(\App\Modules\X119\Ui\TeachingBox::class)->assertOk();
+        Livewire::test(TeachingBox::class)->assertOk();
     }
 }

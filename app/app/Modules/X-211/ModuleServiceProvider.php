@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X211;
 
+use App\Modules\X199\Events\InvoiceOverdue;
+use App\Modules\X211\Listeners\ChaseOverdueInvoice;
 use App\Modules\X211\Ui\AgeingByReason;
 use App\Modules\X211\Ui\CollectionsPackagePreview;
 use App\Modules\X211\Ui\InvoiceThreadBeside;
 use App\Modules\X211\Ui\PaymentplanBuilder;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -22,17 +25,12 @@ final class ModuleServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
-
-
-
-
-
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-211');
 
-        \Illuminate\Support\Facades\Event::listen(
-            \App\Modules\X199\Events\InvoiceOverdue::class,
-            \App\Modules\X211\Listeners\ChaseOverdueInvoice::class
+        Event::listen(
+            InvoiceOverdue::class,
+            ChaseOverdueInvoice::class
         );
 
         if (class_exists(Livewire::class)) {

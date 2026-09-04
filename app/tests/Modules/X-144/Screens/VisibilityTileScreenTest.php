@@ -6,6 +6,7 @@ namespace Tests\Modules\X144\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X144\Ui\VisibilityTile;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class VisibilityTileScreenTest extends TestCase
 
         $this->get(route('x-144.visibility-tile'))->assertOk();
 
-        Livewire::test(\App\Modules\X144\Ui\VisibilityTile::class)->assertOk();
+        Livewire::test(VisibilityTile::class)->assertOk();
     }
 }

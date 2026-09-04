@@ -6,6 +6,7 @@ namespace Tests\Modules\X124\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class TodaysRecommendationStripScreenTest extends TestCase
 
         $this->get(route('x-124.todays-recommendation-strip'))->assertOk();
 
-        Livewire::test(\App\Modules\X124\Ui\TodaysRecommendationStrip::class)->assertOk();
+        Livewire::test(TodaysRecommendationStrip::class)->assertOk();
     }
 }

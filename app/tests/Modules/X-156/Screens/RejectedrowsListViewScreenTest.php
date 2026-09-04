@@ -6,6 +6,7 @@ namespace Tests\Modules\X156\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X156\Ui\RejectedrowsListView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class RejectedrowsListViewScreenTest extends TestCase
 
         $this->get(route('x-156.rejectedrows-list'))->assertOk();
 
-        Livewire::test(\App\Modules\X156\Ui\RejectedrowsListView::class)->assertOk();
+        Livewire::test(RejectedrowsListView::class)->assertOk();
     }
 }

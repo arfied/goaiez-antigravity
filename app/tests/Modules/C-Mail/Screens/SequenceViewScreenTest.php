@@ -6,6 +6,7 @@ namespace Tests\Modules\CMail\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CMail\Ui\SequenceView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class SequenceViewScreenTest extends TestCase
 
         $this->get(route('c-mail.sequence-view'))->assertOk();
 
-        Livewire::test(\App\Modules\CMail\Ui\SequenceView::class)->assertOk();
+        Livewire::test(SequenceView::class)->assertOk();
     }
 }

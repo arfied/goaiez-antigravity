@@ -6,6 +6,7 @@ namespace Tests\Modules\X185\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X185\Ui\DigestLine;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class DigestLineScreenTest extends TestCase
 
         $this->get(route('x-185.digest-line'))->assertOk();
 
-        Livewire::test(\App\Modules\X185\Ui\DigestLine::class)->assertOk();
+        Livewire::test(DigestLine::class)->assertOk();
     }
 }

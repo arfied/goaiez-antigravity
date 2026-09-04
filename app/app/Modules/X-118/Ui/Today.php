@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X118\Ui;
 
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.agency')]
 class Today extends Component

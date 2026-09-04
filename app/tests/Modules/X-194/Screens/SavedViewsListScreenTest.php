@@ -6,6 +6,7 @@ namespace Tests\Modules\X194\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X194\Ui\SavedViewsList;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class SavedViewsListScreenTest extends TestCase
 
         $this->get(route('x-194.saved-views-list'))->assertOk();
 
-        Livewire::test(\App\Modules\X194\Ui\SavedViewsList::class)->assertOk();
+        Livewire::test(SavedViewsList::class)->assertOk();
     }
 }

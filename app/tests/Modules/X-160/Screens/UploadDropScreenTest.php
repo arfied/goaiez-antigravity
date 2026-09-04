@@ -6,6 +6,7 @@ namespace Tests\Modules\X160\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X160\Ui\UploadDrop;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class UploadDropScreenTest extends TestCase
 
         $this->get(route('x-160.upload-drop'))->assertOk();
 
-        Livewire::test(\App\Modules\X160\Ui\UploadDrop::class)->assertOk();
+        Livewire::test(UploadDrop::class)->assertOk();
     }
 }

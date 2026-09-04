@@ -6,6 +6,7 @@ namespace Tests\Modules\X220\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X220\Ui\EvalReport;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class EvalReportScreenTest extends TestCase
 
         $this->get(route('x-220.eval-report'))->assertOk();
 
-        Livewire::test(\App\Modules\X220\Ui\EvalReport::class)->assertOk();
+        Livewire::test(EvalReport::class)->assertOk();
     }
 }

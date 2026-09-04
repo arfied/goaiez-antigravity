@@ -6,6 +6,7 @@ namespace Tests\Modules\X163\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X163\Ui\Pricebook;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class PricebookScreenTest extends TestCase
 
         $this->get(route('x-163.pricebook'))->assertOk();
 
-        Livewire::test(\App\Modules\X163\Ui\Pricebook::class)->assertOk();
+        Livewire::test(Pricebook::class)->assertOk();
     }
 }

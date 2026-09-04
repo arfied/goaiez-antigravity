@@ -6,6 +6,7 @@ namespace Tests\Modules\X167\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X167\Ui\Reorders;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ReordersScreenTest extends TestCase
 
         $this->get(route('x-167.reorders'))->assertOk();
 
-        Livewire::test(\App\Modules\X167\Ui\Reorders::class)->assertOk();
+        Livewire::test(Reorders::class)->assertOk();
     }
 }

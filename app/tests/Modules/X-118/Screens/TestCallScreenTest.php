@@ -6,6 +6,7 @@ namespace Tests\Modules\X118\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X118\Ui\TestCall;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class TestCallScreenTest extends TestCase
 
         $this->get(route('x-118.test-call'))->assertOk();
 
-        Livewire::test(\App\Modules\X118\Ui\TestCall::class)->assertOk();
+        Livewire::test(TestCall::class)->assertOk();
     }
 }

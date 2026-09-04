@@ -6,6 +6,7 @@ namespace Tests\Modules\X210\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X210\Ui\TargetingPreview;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class TargetingPreviewScreenTest extends TestCase
 
         $this->get(route('x-210.targeting-preview'))->assertOk();
 
-        Livewire::test(\App\Modules\X210\Ui\TargetingPreview::class)->assertOk();
+        Livewire::test(TargetingPreview::class)->assertOk();
     }
 }

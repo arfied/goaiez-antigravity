@@ -6,6 +6,7 @@ namespace Tests\Modules\X153\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X153\Ui\ClaimexpiryRate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ClaimexpiryRateScreenTest extends TestCase
 
         $this->get(route('x-153.claimexpiry-rate'))->assertOk();
 
-        Livewire::test(\App\Modules\X153\Ui\ClaimexpiryRate::class)->assertOk();
+        Livewire::test(ClaimexpiryRate::class)->assertOk();
     }
 }

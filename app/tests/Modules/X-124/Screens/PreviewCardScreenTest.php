@@ -6,6 +6,7 @@ namespace Tests\Modules\X124\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X124\Ui\PreviewCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class PreviewCardScreenTest extends TestCase
 
         $this->get(route('x-124.preview-card'))->assertOk();
 
-        Livewire::test(\App\Modules\X124\Ui\PreviewCard::class)->assertOk();
+        Livewire::test(PreviewCard::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X185\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X185\Ui\ExperimentBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ExperimentBoardScreenTest extends TestCase
 
         $this->get(route('x-185.experiment-board'))->assertOk();
 
-        Livewire::test(\App\Modules\X185\Ui\ExperimentBoard::class)->assertOk();
+        Livewire::test(ExperimentBoard::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X210\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X210\Ui\PromotionBuilder;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class PromotionBuilderScreenTest extends TestCase
 
         $this->get(route('x-210.promotion-builder'))->assertOk();
 
-        Livewire::test(\App\Modules\X210\Ui\PromotionBuilder::class)->assertOk();
+        Livewire::test(PromotionBuilder::class)->assertOk();
     }
 }

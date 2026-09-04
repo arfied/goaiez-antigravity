@@ -6,6 +6,7 @@ namespace Tests\Modules\X119\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X119\Ui\ReviewwhatifoundScreen;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ReviewwhatifoundScreenScreenTest extends TestCase
 
         $this->get(route('x-119.reviewwhatifound-screen'))->assertOk();
 
-        Livewire::test(\App\Modules\X119\Ui\ReviewwhatifoundScreen::class)->assertOk();
+        Livewire::test(ReviewwhatifoundScreen::class)->assertOk();
     }
 }

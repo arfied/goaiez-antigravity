@@ -6,6 +6,7 @@ namespace Tests\Modules\CSms\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CSms\Ui\ComposerSegmentWarning;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ComposerSegmentWarningScreenTest extends TestCase
 
         $this->get(route('c-sms.composer-segment-warning'))->assertOk();
 
-        Livewire::test(\App\Modules\CSms\Ui\ComposerSegmentWarning::class)->assertOk();
+        Livewire::test(ComposerSegmentWarning::class)->assertOk();
     }
 }

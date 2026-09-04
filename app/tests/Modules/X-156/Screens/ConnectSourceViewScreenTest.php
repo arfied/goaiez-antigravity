@@ -6,6 +6,7 @@ namespace Tests\Modules\X156\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X156\Ui\ConnectSourceView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ConnectSourceViewScreenTest extends TestCase
 
         $this->get(route('x-156.connect-source'))->assertOk();
 
-        Livewire::test(\App\Modules\X156\Ui\ConnectSourceView::class)->assertOk();
+        Livewire::test(ConnectSourceView::class)->assertOk();
     }
 }

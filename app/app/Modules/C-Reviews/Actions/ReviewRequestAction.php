@@ -6,6 +6,8 @@ namespace App\Modules\CReviews\Actions;
 
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\Event;
 
 final class ReviewRequestAction
@@ -70,9 +72,9 @@ final class ReviewRequestAction
         ]);
 
         if ($customerId !== null) {
-            $person = \App\Modules\X121\Models\Person::find($customerId);
-            if ($person !== null && !empty($person->phone)) {
-                Event::dispatch(new \App\Modules\CSms\Events\SendRequested(
+            $person = Person::find($customerId);
+            if ($person !== null && ! empty($person->phone)) {
+                Event::dispatch(new SendRequested(
                     businessId: $businessId,
                     compositionId: $req->id,
                     recipientPhone: $person->phone,

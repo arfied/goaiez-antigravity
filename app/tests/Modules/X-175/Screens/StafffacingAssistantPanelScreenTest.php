@@ -6,6 +6,7 @@ namespace Tests\Modules\X175\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X175\Ui\StafffacingAssistantPanel;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class StafffacingAssistantPanelScreenTest extends TestCase
 
         $this->get(route('x-175.stafffacing-assistant-panel'))->assertOk();
 
-        Livewire::test(\App\Modules\X175\Ui\StafffacingAssistantPanel::class)->assertOk();
+        Livewire::test(StafffacingAssistantPanel::class)->assertOk();
     }
 }

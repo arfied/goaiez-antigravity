@@ -6,6 +6,7 @@ namespace Tests\Modules\CBilling\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CBilling\Ui\RevenueRecovery;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class RevenueRecoveryScreenTest extends TestCase
 
         $this->get(route('c-billing.revenue-recovery'))->assertOk();
 
-        Livewire::test(\App\Modules\CBilling\Ui\RevenueRecovery::class)->assertOk();
+        Livewire::test(RevenueRecovery::class)->assertOk();
     }
 }

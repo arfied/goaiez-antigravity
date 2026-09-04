@@ -6,6 +6,7 @@ namespace Tests\Modules\X129\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X129\Ui\MigrationCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class MigrationCardScreenTest extends TestCase
 
         $this->get(route('x-129.migration-card'))->assertOk();
 
-        Livewire::test(\App\Modules\X129\Ui\MigrationCard::class)->assertOk();
+        Livewire::test(MigrationCard::class)->assertOk();
     }
 }

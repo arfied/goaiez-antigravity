@@ -6,6 +6,7 @@ namespace Tests\Modules\X109\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X109\Ui\SubmissionLog;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class SubmissionLogScreenTest extends TestCase
 
         $this->get(route('x-109.submission-log'))->assertOk();
 
-        Livewire::test(\App\Modules\X109\Ui\SubmissionLog::class)->assertOk();
+        Livewire::test(SubmissionLog::class)->assertOk();
     }
 }

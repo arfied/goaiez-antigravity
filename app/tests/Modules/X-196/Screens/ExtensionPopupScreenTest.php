@@ -6,6 +6,7 @@ namespace Tests\Modules\X196\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X196\Ui\ExtensionPopup;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ExtensionPopupScreenTest extends TestCase
 
         $this->get(route('x-196.extension-popup'))->assertOk();
 
-        Livewire::test(\App\Modules\X196\Ui\ExtensionPopup::class)->assertOk();
+        Livewire::test(ExtensionPopup::class)->assertOk();
     }
 }

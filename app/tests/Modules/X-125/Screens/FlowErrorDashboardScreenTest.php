@@ -6,6 +6,7 @@ namespace Tests\Modules\X125\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X125\Ui\FlowErrorDashboard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class FlowErrorDashboardScreenTest extends TestCase
 
         $this->get(route('x-125.flow-error-dashboard'))->assertOk();
 
-        Livewire::test(\App\Modules\X125\Ui\FlowErrorDashboard::class)->assertOk();
+        Livewire::test(FlowErrorDashboard::class)->assertOk();
     }
 }

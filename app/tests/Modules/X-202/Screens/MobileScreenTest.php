@@ -6,6 +6,7 @@ namespace Tests\Modules\X202\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X202\Ui\Mobile;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class MobileScreenTest extends TestCase
 
         $this->get(route('x-202.mobile'))->assertOk();
 
-        Livewire::test(\App\Modules\X202\Ui\Mobile::class)->assertOk();
+        Livewire::test(Mobile::class)->assertOk();
     }
 }

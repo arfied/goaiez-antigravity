@@ -6,6 +6,7 @@ namespace Tests\Modules\X164\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X164\Ui\EstimatesList;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class EstimatesListScreenTest extends TestCase
 
         $this->get(route('x-164.estimates-list'))->assertOk();
 
-        Livewire::test(\App\Modules\X164\Ui\EstimatesList::class)->assertOk();
+        Livewire::test(EstimatesList::class)->assertOk();
     }
 }

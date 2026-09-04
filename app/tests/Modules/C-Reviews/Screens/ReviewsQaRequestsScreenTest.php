@@ -6,6 +6,7 @@ namespace Tests\Modules\CReviews\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ReviewsQaRequestsScreenTest extends TestCase
 
         $this->get(route('c-reviews.reviews-qa-requests'))->assertOk();
 
-        Livewire::test(\App\Modules\CReviews\Ui\ReviewsQaRequests::class)->assertOk();
+        Livewire::test(ReviewsQaRequests::class)->assertOk();
     }
 }

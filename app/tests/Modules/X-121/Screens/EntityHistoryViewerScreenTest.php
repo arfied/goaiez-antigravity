@@ -6,6 +6,7 @@ namespace Tests\Modules\X121\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X121\Ui\EntityHistoryViewer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class EntityHistoryViewerScreenTest extends TestCase
 
         $this->get(route('x-121.entity-history-viewer'))->assertOk();
 
-        Livewire::test(\App\Modules\X121\Ui\EntityHistoryViewer::class)->assertOk();
+        Livewire::test(EntityHistoryViewer::class)->assertOk();
     }
 }

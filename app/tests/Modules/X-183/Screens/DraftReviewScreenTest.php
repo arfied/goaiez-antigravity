@@ -6,6 +6,7 @@ namespace Tests\Modules\X183\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X183\Ui\DraftReview;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class DraftReviewScreenTest extends TestCase
 
         $this->get(route('x-183.draft-review'))->assertOk();
 
-        Livewire::test(\App\Modules\X183\Ui\DraftReview::class)->assertOk();
+        Livewire::test(DraftReview::class)->assertOk();
     }
 }

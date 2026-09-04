@@ -6,6 +6,7 @@ namespace Tests\Modules\X168\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X168\Ui\TimesheetsView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class TimesheetsViewScreenTest extends TestCase
 
         $this->get(route('x-168.timesheets'))->assertOk();
 
-        Livewire::test(\App\Modules\X168\Ui\TimesheetsView::class)->assertOk();
+        Livewire::test(TimesheetsView::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X117\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X117\Ui\CartBlock;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class CartBlockScreenTest extends TestCase
 
         $this->get(route('x-117.cart-block'))->assertOk();
 
-        Livewire::test(\App\Modules\X117\Ui\CartBlock::class)->assertOk();
+        Livewire::test(CartBlock::class)->assertOk();
     }
 }

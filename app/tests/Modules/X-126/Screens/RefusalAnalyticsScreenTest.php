@@ -6,6 +6,7 @@ namespace Tests\Modules\X126\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X126\Ui\RefusalAnalytics;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class RefusalAnalyticsScreenTest extends TestCase
 
         $this->get(route('x-126.refusal-analytics'))->assertOk();
 
-        Livewire::test(\App\Modules\X126\Ui\RefusalAnalytics::class)->assertOk();
+        Livewire::test(RefusalAnalytics::class)->assertOk();
     }
 }

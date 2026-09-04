@@ -6,6 +6,7 @@ namespace Tests\Modules\X141\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X141\Ui\CounterfactualView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class CounterfactualViewScreenTest extends TestCase
 
         $this->get(route('x-141.counterfactual-view'))->assertOk();
 
-        Livewire::test(\App\Modules\X141\Ui\CounterfactualView::class)->assertOk();
+        Livewire::test(CounterfactualView::class)->assertOk();
     }
 }

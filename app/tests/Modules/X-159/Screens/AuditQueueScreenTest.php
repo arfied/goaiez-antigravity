@@ -6,6 +6,7 @@ namespace Tests\Modules\X159\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X159\Ui\AuditQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class AuditQueueScreenTest extends TestCase
 
         $this->get(route('x-159.audit-queue'))->assertOk();
 
-        Livewire::test(\App\Modules\X159\Ui\AuditQueue::class)->assertOk();
+        Livewire::test(AuditQueue::class)->assertOk();
     }
 }

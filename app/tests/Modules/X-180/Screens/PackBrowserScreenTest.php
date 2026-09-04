@@ -6,6 +6,7 @@ namespace Tests\Modules\X180\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X180\Ui\PackBrowser;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class PackBrowserScreenTest extends TestCase
 
         $this->get(route('x-180.pack-browser'))->assertOk();
 
-        Livewire::test(\App\Modules\X180\Ui\PackBrowser::class)->assertOk();
+        Livewire::test(PackBrowser::class)->assertOk();
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X198\Ui;
 
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('components.layouts.agency')]
 class ReconciliationDiscrepancies extends Component

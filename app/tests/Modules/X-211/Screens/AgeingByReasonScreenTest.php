@@ -6,6 +6,7 @@ namespace Tests\Modules\X211\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X211\Ui\AgeingByReason;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class AgeingByReasonScreenTest extends TestCase
 
         $this->get(route('x-211.ageing-by-reason'))->assertOk();
 
-        Livewire::test(\App\Modules\X211\Ui\AgeingByReason::class)->assertOk();
+        Livewire::test(AgeingByReason::class)->assertOk();
     }
 }

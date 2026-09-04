@@ -6,6 +6,7 @@ namespace Tests\Modules\CAgent\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CAgent\Ui\RefusalcodeDistributionPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class RefusalcodeDistributionPerScreenTest extends TestCase
 
         $this->get(route('c-agent.refusalcode-distribution-per'))->assertOk();
 
-        Livewire::test(\App\Modules\CAgent\Ui\RefusalcodeDistributionPer::class)->assertOk();
+        Livewire::test(RefusalcodeDistributionPer::class)->assertOk();
     }
 }

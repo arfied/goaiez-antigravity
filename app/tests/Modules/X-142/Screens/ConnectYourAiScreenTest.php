@@ -6,6 +6,7 @@ namespace Tests\Modules\X142\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X142\Ui\ConnectYourAi;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ConnectYourAiScreenTest extends TestCase
 
         $this->get(route('x-142.connect-your-ai'))->assertOk();
 
-        Livewire::test(\App\Modules\X142\Ui\ConnectYourAi::class)->assertOk();
+        Livewire::test(ConnectYourAi::class)->assertOk();
     }
 }

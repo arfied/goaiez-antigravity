@@ -6,6 +6,7 @@ namespace Tests\Modules\CBilling\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CBilling\Ui\DunningBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class DunningBoardScreenTest extends TestCase
 
         $this->get(route('c-billing.dunning-board'))->assertOk();
 
-        Livewire::test(\App\Modules\CBilling\Ui\DunningBoard::class)->assertOk();
+        Livewire::test(DunningBoard::class)->assertOk();
     }
 }

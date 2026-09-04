@@ -6,6 +6,7 @@ namespace Tests\Modules\X82\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X82\Ui\RateRegistryView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class RateRegistryViewScreenTest extends TestCase
 
         $this->get(route('x-82.rate-registry'))->assertOk();
 
-        Livewire::test(\App\Modules\X82\Ui\RateRegistryView::class)->assertOk();
+        Livewire::test(RateRegistryView::class)->assertOk();
     }
 }

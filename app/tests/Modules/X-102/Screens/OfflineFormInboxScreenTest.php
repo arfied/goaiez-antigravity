@@ -6,6 +6,7 @@ namespace Tests\Modules\X102\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X102\Ui\OfflineFormInbox;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class OfflineFormInboxScreenTest extends TestCase
 
         $this->get(route('x-102.offline-form-inbox'))->assertOk();
 
-        Livewire::test(\App\Modules\X102\Ui\OfflineFormInbox::class)->assertOk();
+        Livewire::test(OfflineFormInbox::class)->assertOk();
     }
 }

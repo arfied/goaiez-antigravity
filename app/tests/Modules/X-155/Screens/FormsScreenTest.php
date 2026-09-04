@@ -6,6 +6,7 @@ namespace Tests\Modules\X155\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X155\Ui\Forms;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class FormsScreenTest extends TestCase
 
         $this->get(route('x-155.forms'))->assertOk();
 
-        Livewire::test(\App\Modules\X155\Ui\Forms::class)->assertOk();
+        Livewire::test(Forms::class)->assertOk();
     }
 }

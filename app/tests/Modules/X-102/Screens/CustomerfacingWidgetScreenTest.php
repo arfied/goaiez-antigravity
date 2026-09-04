@@ -6,6 +6,7 @@ namespace Tests\Modules\X102\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X102\Ui\CustomerfacingWidget;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class CustomerfacingWidgetScreenTest extends TestCase
 
         $this->get(route('x-102.customerfacing-widget'))->assertOk();
 
-        Livewire::test(\App\Modules\X102\Ui\CustomerfacingWidget::class)->assertOk();
+        Livewire::test(CustomerfacingWidget::class)->assertOk();
     }
 }

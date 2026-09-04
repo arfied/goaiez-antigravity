@@ -17,8 +17,8 @@ use App\Console\Commands\MakeModuleCommand;
 use App\Console\Commands\MapCommand;
 use App\Console\Commands\ModuleDoneCommand;
 use App\Console\Commands\ModuleScaffoldCommand;
-use App\Console\Commands\WhyCommand;
 use App\Console\Commands\SurfacesGenerateCommand;
+use App\Console\Commands\WhyCommand;
 use App\Doctor\ManifestReader;
 use Illuminate\Support\ServiceProvider;
 

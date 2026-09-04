@@ -6,6 +6,7 @@ namespace Tests\Modules\X102\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X102\Ui\RageclickRate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class RageclickRateScreenTest extends TestCase
 
         $this->get(route('x-102.rageclick-rate'))->assertOk();
 
-        Livewire::test(\App\Modules\X102\Ui\RageclickRate::class)->assertOk();
+        Livewire::test(RageclickRate::class)->assertOk();
     }
 }

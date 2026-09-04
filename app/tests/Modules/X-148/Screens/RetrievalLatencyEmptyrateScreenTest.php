@@ -6,6 +6,7 @@ namespace Tests\Modules\X148\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X148\Ui\RetrievalLatencyEmptyrate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class RetrievalLatencyEmptyrateScreenTest extends TestCase
 
         $this->get(route('x-148.retrieval-latency-emptyrate'))->assertOk();
 
-        Livewire::test(\App\Modules\X148\Ui\RetrievalLatencyEmptyrate::class)->assertOk();
+        Livewire::test(RetrievalLatencyEmptyrate::class)->assertOk();
     }
 }

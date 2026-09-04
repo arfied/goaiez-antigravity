@@ -6,6 +6,7 @@ namespace Tests\Modules\X190\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X190\Ui\SlotBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class SlotBoardScreenTest extends TestCase
 
         $this->get(route('x-190.slot-board'))->assertOk();
 
-        Livewire::test(\App\Modules\X190\Ui\SlotBoard::class)->assertOk();
+        Livewire::test(SlotBoard::class)->assertOk();
     }
 }

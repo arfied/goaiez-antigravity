@@ -6,6 +6,7 @@ namespace Tests\Modules\X200\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X200\Ui\CustomerfacingNone;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class CustomerfacingNoneScreenTest extends TestCase
 
         $this->get(route('x-200.customerfacing-none'))->assertOk();
 
-        Livewire::test(\App\Modules\X200\Ui\CustomerfacingNone::class)->assertOk();
+        Livewire::test(CustomerfacingNone::class)->assertOk();
     }
 }

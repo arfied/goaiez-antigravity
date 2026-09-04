@@ -6,6 +6,7 @@ namespace Tests\Modules\X07\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X07\Ui\ForecastRiskTiles;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ForecastRiskTilesScreenTest extends TestCase
 
         $this->get(route('x-07.forecast-risk-tiles'))->assertOk();
 
-        Livewire::test(\App\Modules\X07\Ui\ForecastRiskTiles::class)->assertOk();
+        Livewire::test(ForecastRiskTiles::class)->assertOk();
     }
 }

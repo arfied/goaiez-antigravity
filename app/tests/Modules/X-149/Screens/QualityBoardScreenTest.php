@@ -6,6 +6,7 @@ namespace Tests\Modules\X149\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X149\Ui\QualityBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class QualityBoardScreenTest extends TestCase
 
         $this->get(route('x-149.quality-board'))->assertOk();
 
-        Livewire::test(\App\Modules\X149\Ui\QualityBoard::class)->assertOk();
+        Livewire::test(QualityBoard::class)->assertOk();
     }
 }

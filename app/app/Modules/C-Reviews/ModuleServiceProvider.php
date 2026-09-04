@@ -25,11 +25,6 @@ final class ModuleServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
-
-
-
-
-
         Event::listen(
             JobCompleted::class,
             RequestReviewOnJobCompleted::class

@@ -6,6 +6,7 @@ namespace Tests\Modules\CReviews\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CReviews\Ui\Tickets;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class TicketsScreenTest extends TestCase
 
         $this->get(route('c-reviews.tickets'))->assertOk();
 
-        Livewire::test(\App\Modules\CReviews\Ui\Tickets::class)->assertOk();
+        Livewire::test(Tickets::class)->assertOk();
     }
 }

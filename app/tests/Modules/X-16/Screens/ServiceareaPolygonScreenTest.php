@@ -6,6 +6,7 @@ namespace Tests\Modules\X16\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X16\Ui\ServiceareaPolygon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class ServiceareaPolygonScreenTest extends TestCase
 
         $this->get(route('x-16.servicearea-polygon'))->assertOk();
 
-        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class)->assertOk();
+        Livewire::test(ServiceareaPolygon::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X166\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X166\Ui\ByTech;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ByTechScreenTest extends TestCase
 
         $this->get(route('x-166.by-tech'))->assertOk();
 
-        Livewire::test(\App\Modules\X166\Ui\ByTech::class)->assertOk();
+        Livewire::test(ByTech::class)->assertOk();
     }
 }

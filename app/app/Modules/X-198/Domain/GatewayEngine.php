@@ -11,6 +11,7 @@ use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
+use App\Support\PlatformCredentials;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -122,7 +123,7 @@ final class GatewayEngine
         }
 
         if ($connection->gateway_name === 'stripe') {
-            if (!\App\Support\PlatformCredentials::has('stripe_secret')) {
+            if (! PlatformCredentials::has('stripe_secret')) {
                 throw new \InvalidArgumentException('Gateway connection carries no credential; request refused');
             }
 
@@ -139,13 +140,13 @@ final class GatewayEngine
                 $payload['metadata[invoice_id]'] = $invoiceId;
             }
 
-            $response = Http::withToken(\App\Support\PlatformCredentials::get('stripe_secret'))
+            $response = Http::withToken(PlatformCredentials::get('stripe_secret'))
                 ->withHeaders($headers)
                 ->asForm()
                 ->post('https://api.stripe.com/v1/payment_intents', $payload);
 
-            if (!$response->successful()) {
-                throw new \RuntimeException('Stripe Error: ' . $response->body());
+            if (! $response->successful()) {
+                throw new \RuntimeException('Stripe Error: '.$response->body());
             }
 
             $gatewayChargeId = $response->json('id');

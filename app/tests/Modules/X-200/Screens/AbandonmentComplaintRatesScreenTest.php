@@ -6,6 +6,7 @@ namespace Tests\Modules\X200\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X200\Ui\AbandonmentComplaintRates;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class AbandonmentComplaintRatesScreenTest extends TestCase
 
         $this->get(route('x-200.abandonment-complaint-rates'))->assertOk();
 
-        Livewire::test(\App\Modules\X200\Ui\AbandonmentComplaintRates::class)->assertOk();
+        Livewire::test(AbandonmentComplaintRates::class)->assertOk();
     }
 }

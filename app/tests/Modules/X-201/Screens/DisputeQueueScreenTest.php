@@ -6,6 +6,7 @@ namespace Tests\Modules\X201\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X201\Ui\DisputeQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class DisputeQueueScreenTest extends TestCase
 
         $this->get(route('x-201.dispute-queue'))->assertOk();
 
-        Livewire::test(\App\Modules\X201\Ui\DisputeQueue::class)->assertOk();
+        Livewire::test(DisputeQueue::class)->assertOk();
     }
 }

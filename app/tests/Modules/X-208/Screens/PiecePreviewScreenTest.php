@@ -6,6 +6,7 @@ namespace Tests\Modules\X208\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X208\Ui\PiecePreview;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class PiecePreviewScreenTest extends TestCase
 
         $this->get(route('x-208.piece-preview'))->assertOk();
 
-        Livewire::test(\App\Modules\X208\Ui\PiecePreview::class)->assertOk();
+        Livewire::test(PiecePreview::class)->assertOk();
     }
 }

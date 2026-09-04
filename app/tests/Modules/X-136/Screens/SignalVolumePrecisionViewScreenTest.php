@@ -6,6 +6,7 @@ namespace Tests\Modules\X136\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X136\Ui\SignalVolumePrecisionView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class SignalVolumePrecisionViewScreenTest extends TestCase
 
         $this->get(route('x-136.signal-volume-precision'))->assertOk();
 
-        Livewire::test(\App\Modules\X136\Ui\SignalVolumePrecisionView::class)->assertOk();
+        Livewire::test(SignalVolumePrecisionView::class)->assertOk();
     }
 }

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasColumn('qa_tickets', 'csat_requested_at')) {
+        if (! Schema::hasColumn('qa_tickets', 'csat_requested_at')) {
             Schema::table('qa_tickets', function (Blueprint $table) {
                 $table->timestamp('csat_requested_at')->nullable();
                 $table->integer('csat_score')->nullable();

@@ -6,6 +6,7 @@ namespace Tests\Modules\CAgent\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CAgent\Ui\Thread;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ThreadScreenTest extends TestCase
 
         $this->get(route('c-agent.thread'))->assertOk();
 
-        Livewire::test(\App\Modules\CAgent\Ui\Thread::class)->assertOk();
+        Livewire::test(Thread::class)->assertOk();
     }
 }

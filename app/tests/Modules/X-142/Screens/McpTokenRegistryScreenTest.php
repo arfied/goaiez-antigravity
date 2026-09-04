@@ -6,6 +6,7 @@ namespace Tests\Modules\X142\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X142\Ui\McpTokenRegistry;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class McpTokenRegistryScreenTest extends TestCase
 
         $this->get(route('x-142.mcp-token-registry'))->assertOk();
 
-        Livewire::test(\App\Modules\X142\Ui\McpTokenRegistry::class)->assertOk();
+        Livewire::test(McpTokenRegistry::class)->assertOk();
     }
 }

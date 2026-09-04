@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X199\Domain;
 
 use App\Modules\X199\Events\InvoiceIssued;
+use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
@@ -159,17 +160,17 @@ final class InvoiceEngine
     {
         DB::transaction(function () use ($businessId, $invoiceId) {
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
-            
+
             if ($invoice->status !== 'issued') {
                 return;
             }
 
             $invoice->update(['status' => 'overdue']);
-            
+
             // Calculate days overdue based on due_date (just 1 if it's forced by harness)
             $daysOverdue = max(1, now()->diffInDays($invoice->due_date));
 
-            Event::dispatch(new \App\Modules\X199\Events\InvoiceOverdue(
+            Event::dispatch(new InvoiceOverdue(
                 businessId: $businessId,
                 invoiceId: $invoice->id,
                 daysOverdue: $daysOverdue

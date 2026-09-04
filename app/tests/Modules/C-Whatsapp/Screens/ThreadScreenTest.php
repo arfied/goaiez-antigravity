@@ -6,6 +6,7 @@ namespace Tests\Modules\CWhatsapp\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CWhatsapp\Ui\Thread;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ThreadScreenTest extends TestCase
 
         $this->get(route('c-whatsapp.thread'))->assertOk();
 
-        Livewire::test(\App\Modules\CWhatsapp\Ui\Thread::class)->assertOk();
+        Livewire::test(Thread::class)->assertOk();
     }
 }

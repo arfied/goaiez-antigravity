@@ -19,11 +19,6 @@ final class ModuleServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
-
-
-
-
-
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-192');
         $this->loadRoutesFrom(__DIR__.'/routes.php');

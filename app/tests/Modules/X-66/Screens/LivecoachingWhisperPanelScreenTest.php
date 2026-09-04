@@ -6,6 +6,7 @@ namespace Tests\Modules\X66\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X66\Ui\LivecoachingWhisperPanel;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class LivecoachingWhisperPanelScreenTest extends TestCase
 
         $this->get(route('x-66.livecoaching-whisper-panel'))->assertOk();
 
-        Livewire::test(\App\Modules\X66\Ui\LivecoachingWhisperPanel::class)->assertOk();
+        Livewire::test(LivecoachingWhisperPanel::class)->assertOk();
     }
 }

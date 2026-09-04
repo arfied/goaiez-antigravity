@@ -6,6 +6,7 @@ namespace Tests\Modules\X188\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X188\Ui\PoolInventory;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class PoolInventoryScreenTest extends TestCase
 
         $this->get(route('x-188.pool-inventory'))->assertOk();
 
-        Livewire::test(\App\Modules\X188\Ui\PoolInventory::class)->assertOk();
+        Livewire::test(PoolInventory::class)->assertOk();
     }
 }

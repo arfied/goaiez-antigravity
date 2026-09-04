@@ -6,6 +6,7 @@ namespace Tests\Modules\X162\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X162\Ui\DispatchBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class DispatchBoardScreenTest extends TestCase
 
         $this->get(route('x-162.dispatch-board'))->assertOk();
 
-        Livewire::test(\App\Modules\X162\Ui\DispatchBoard::class)->assertOk();
+        Livewire::test(DispatchBoard::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X161\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X161\Ui\DemoLedgerDaily;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -18,6 +19,6 @@ class DemoLedgerDailyScreenTest extends TestCase
 
         $this->get(route('x-161.demo-ledger-daily'))->assertOk();
 
-        Livewire::test(\App\Modules\X161\Ui\DemoLedgerDaily::class)->assertOk();
+        Livewire::test(DemoLedgerDaily::class)->assertOk();
     }
 }

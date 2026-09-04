@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
+use App\Models\ConsentRecord;
 use App\Modules\CReviews\Actions\QaTicketAction;
+use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
+use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
+use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X121\Models\Person;
+use App\Modules\X181\Models\QaTicket;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -135,12 +142,12 @@ class CReviewsTest extends TestCase
      */
     public function test_g18_14_csat_on_resolve(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'CSAT Biz', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        $biz = TestCase::provisionTenant(['name' => 'CSAT Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $person = \App\Modules\X121\Models\Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+        $person = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
 
-        $ticket = \App\Modules\X181\Models\QaTicket::create([
+        $ticket = QaTicket::create([
             'business_id' => $biz->id,
             'person_id' => $person->id,
             'subject' => 'Triage',
@@ -150,18 +157,18 @@ class CReviewsTest extends TestCase
             'sla_due_at' => now()->addHours(48),
         ]);
 
-        \Illuminate\Support\Facades\Event::fake([\App\Modules\CReviews\Events\CsatRequested::class]);
+        Event::fake([CsatRequested::class]);
 
-        $action = new \App\Modules\CReviews\Actions\QaTicketAction();
+        $action = new QaTicketAction;
         $action->resolve($biz->id, $ticket->id);
 
-        \Illuminate\Support\Facades\Event::assertDispatched(\App\Modules\CReviews\Events\CsatRequested::class, function ($e) use ($biz, $ticket) {
+        Event::assertDispatched(CsatRequested::class, function ($e) use ($biz, $ticket) {
             return $e->businessId === $biz->id && $e->ticketId === $ticket->id && $e->personId === $ticket->person_id;
         });
 
         $action->resolve($biz->id, $ticket->id);
 
-        \Illuminate\Support\Facades\Event::assertDispatched(\App\Modules\CReviews\Events\CsatRequested::class, 1);
+        Event::assertDispatched(CsatRequested::class, 1);
     }
 
     /**
@@ -208,16 +215,16 @@ class CReviewsTest extends TestCase
     public function test_g20_04_reviewer_name_signal_refused_without_consent(): void
     {
         $biz = self::provisionTenant(['name' => 'Reviewer Contact Test Biz']);
-        
-        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+
+        $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'customer_name' => 'John Doe',
         ]);
-        
-        $action = new \App\Modules\CReviews\Actions\ReviewerContactAction();
+
+        $action = new ReviewerContactAction;
         $res = $action->handle($biz->id, $req->id);
-        
+
         $this->assertEquals('refused', $res['status']);
         $this->assertEquals('REVIEWER_NAME_IS_NOT_CONSENT', $res['refusal_code']);
     }
@@ -225,21 +232,21 @@ class CReviewsTest extends TestCase
     public function test_g20_04_reviewer_name_signal_allowed_with_consent(): void
     {
         $biz = self::provisionTenant(['name' => 'Reviewer Contact Test Biz 2']);
-        
-        $person = \App\Modules\X121\Models\Person::create([
+
+        $person = Person::create([
             'business_id' => $biz->id,
             'first_name' => 'John',
             'phone' => '+15125559999',
         ]);
-        
+
         // Satisfy the legacy foreign key
-        \Illuminate\Support\Facades\DB::table('customers')->insert([
+        DB::table('customers')->insert([
             'id' => $person->id,
             'business_id' => $biz->id,
             'created_at' => now(),
         ]);
-        
-        \App\Models\ConsentRecord::create([
+
+        ConsentRecord::create([
             'business_id' => $biz->id,
             'customer_id' => $person->id,
             'channel' => 'sms',
@@ -250,17 +257,17 @@ class CReviewsTest extends TestCase
             'proof_hash' => 'dummy',
             'terms_version' => '1.0',
         ]);
-        
-        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+
+        $req = ReviewRequest::create([
             'business_id' => $biz->id,
             'platform' => 'google',
             'customer_name' => 'John Doe',
             'customer_id' => $person->id,
         ]);
-        
-        $action = new \App\Modules\CReviews\Actions\ReviewerContactAction();
+
+        $action = new ReviewerContactAction;
         $res = $action->handle($biz->id, $req->id);
-        
+
         $this->assertEquals('sent', $res['status']);
     }
 
@@ -270,35 +277,35 @@ class CReviewsTest extends TestCase
     public function test_g20_05_reopen_ticket_on_one_star(): void
     {
         $biz = self::provisionTenant(['name' => 'One Star Biz', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $r = $this->syncAction->handle($biz->id, 'google', 1, 'Terrible experience');
         $ticketRes = $this->ticketAction->handle($biz->id, $r->id);
-        
-        $ticketId = \App\Modules\X181\Models\QaTicket::where('review_request_id', $r->id)->first()->id;
+
+        $ticketId = QaTicket::where('review_request_id', $r->id)->first()->id;
 
         $this->ticketAction->resolve($biz->id, $ticketId);
-        
-        $ticket = \App\Modules\X181\Models\QaTicket::find($ticketId);
+
+        $ticket = QaTicket::find($ticketId);
         $this->assertNotNull($ticket->csat_requested_at);
         $this->assertEquals('resolved', $ticket->status);
-        
+
         $this->ticketAction->receiveCsat($biz->id, $ticketId, 1);
         $ticket->refresh();
-        
+
         $this->assertEquals('open', $ticket->status);
         $this->assertNotNull($ticket->reopened_at);
         $this->assertEquals(1, $ticket->csat_score);
-        
+
         // test 5 leaves it resolved
         $r2 = $this->syncAction->handle($biz->id, 'google', 1, 'Bad again');
         $this->ticketAction->handle($biz->id, $r2->id);
-        $ticketId2 = \App\Modules\X181\Models\QaTicket::where('review_request_id', $r2->id)->first()->id;
-        
+        $ticketId2 = QaTicket::where('review_request_id', $r2->id)->first()->id;
+
         $this->ticketAction->resolve($biz->id, $ticketId2);
         $this->ticketAction->receiveCsat($biz->id, $ticketId2, 5);
-        $ticket2 = \App\Modules\X181\Models\QaTicket::find($ticketId2);
-        
+        $ticket2 = QaTicket::find($ticketId2);
+
         $this->assertEquals('resolved', $ticket2->status);
         $this->assertNull($ticket2->reopened_at);
         $this->assertEquals(5, $ticket2->csat_score);
@@ -318,19 +325,19 @@ class CReviewsTest extends TestCase
     public function test_g20_07_day_60_triage(): void
     {
         $biz = $this->provisionTenant();
-        
+
         // Score 6 -> refused + ticket
         $resRefused = $this->requestAction->handle($biz->id, null, 'Please review', 'google', 6, 60);
         $this->assertEquals('refused', $resRefused['status']);
         $this->assertEquals('LOW_CSAT_TRIAGE', $resRefused['refusal_code']);
-        
+
         $req = ReviewRequest::latest()->first();
         $this->assertEquals('triaged_internal', $req->status);
         $this->assertEquals(6, $req->csat_score);
-        
-        $ticket = \App\Modules\X181\Models\QaTicket::where('review_request_id', $req->id)->first();
+
+        $ticket = QaTicket::where('review_request_id', $req->id)->first();
         $this->assertNotNull($ticket);
-        
+
         // Score 8 -> sent
         $resSent = $this->requestAction->handle($biz->id, null, 'Please review', 'google', 8, 60);
         $this->assertEquals('sent', $resSent['status']);
@@ -370,28 +377,28 @@ class CReviewsTest extends TestCase
     public function test_g20_11_and_g20_12_triage_mechanism_and_gating(): void
     {
         $biz = $this->provisionTenant();
-        \App\Modules\CReviews\Models\QaSetting::create(['business_id' => $biz->id, 'sla_hours' => 24]);
-        
+        QaSetting::create(['business_id' => $biz->id, 'sla_hours' => 24]);
+
         // 3-star review
         $req3 = $this->syncAction->handle($biz->id, 'google', 3, 'Bad');
         $replyResult = $this->replyAction->handle($biz->id, $req3->id, 'Sorry');
-        
+
         if ($replyResult['status'] === 'triaged_internal') {
             $this->ticketAction->handle($biz->id, $req3->id);
         }
-        
+
         $req3->refresh();
         $this->assertEquals(0, ReviewReply::where('review_request_id', $req3->id)->where('is_public', true)->count());
         $this->assertEquals('triaged_internal', $req3->status);
-        
-        $ticket = \App\Modules\X181\Models\QaTicket::where('review_request_id', $req3->id)->first();
+
+        $ticket = QaTicket::where('review_request_id', $req3->id)->first();
         $this->assertNotNull($ticket);
         $this->assertNotNull($ticket->sla_due_at);
-        
+
         // 5-star review
         $req5 = $this->syncAction->handle($biz->id, 'google', 5, 'Good');
         $replyResult5 = $this->replyAction->handle($biz->id, $req5->id, 'Thanks');
-        
+
         $req5->refresh();
         $this->assertNotEquals('triaged_internal', $req5->status);
         $this->assertNotEquals('triaged_internal', $replyResult5['status']);
@@ -402,26 +409,26 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_13_marketing_send_window(): void
     {
-        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
-        
+        Event::fake([SendRequested::class]);
+
         $biz = $this->provisionTenant();
-        $person = \App\Modules\X121\Models\Person::create([
+        $person = Person::create([
             'business_id' => $biz->id,
             'first_name' => 'John',
             'phone' => '+15550001111',
         ]);
-        
+
         // Sent request
         $this->requestAction->handle($biz->id, $person->id, 'How did the repair go? Please review us.');
-        
-        Event::assertDispatched(\App\Modules\CSms\Events\SendRequested::class, function ($e) {
+
+        Event::assertDispatched(SendRequested::class, function ($e) {
             return $e->messageClass === 'marketing';
         });
-        
+
         // Refused by incentive lint -> no send
-        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
+        Event::fake([SendRequested::class]);
         $this->requestAction->handle($biz->id, $person->id, 'Leave a review for 10% off your next visit!');
-        Event::assertNotDispatched(\App\Modules\CSms\Events\SendRequested::class);
+        Event::assertNotDispatched(SendRequested::class);
     }
 
     /**
