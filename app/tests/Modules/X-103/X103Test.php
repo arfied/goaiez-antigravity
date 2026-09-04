@@ -11,6 +11,7 @@ use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -108,11 +109,124 @@ class X103Test extends TestCase
         $this->assertEquals('/promo/desktop', $desktopRoute['destination_url']);
     }
 
-    /**
-     * [G6-15], [G6-16], [G6-17], [G6-20], [G6-27], [G6-32], [G7-18], [G9-04], [G12-39]
-     */
-    public function test_header_capabilities(): void
+    public function test_g9_04_every_built_page_version_carries_the_pixel(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'pixel', 'Pixel', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertTrue($version->pixel_installed);
+    }
+
+    public function test_g12_39_the_review_widget_is_not_yet_on_the_built_site(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'widget', 'Widget', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, [
+            ['type' => 'chat'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni'],
+        ]);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertIsArray($version->content_blocks);
+        $this->assertCount(3, $version->content_blocks);
+
+        $types = array_column($version->content_blocks, 'type');
+        $this->assertEquals(['chat', 'form_capture', 'dni'], $types);
+
+        $hasReviewWidget = false;
+        foreach ($version->content_blocks as $block) {
+            if (isset($block['type']) && in_array($block['type'], ['review_widget', 'review-widget'], true)) {
+                $hasReviewWidget = true;
+                break;
+            }
+        }
+        $this->assertFalse($hasReviewWidget);
+    }
+
+    /** (R245) */
+    public function test_g6_15_header_first_line(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-15', $caps);
+    }
+
+    /** (R245) */
+    public function test_g6_16_header_tenant_offer(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-16', $caps);
+    }
+
+    /** (R245) */
+    public function test_g6_17_header_x194(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-17', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-194')));
+    }
+
+    /** (R245) */
+    public function test_g6_20_header_x195(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-20', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-195')));
+    }
+
+    /** (R245) */
+    public function test_g6_27_header_c_sms(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-27', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/C-Sms')));
+    }
+
+    /** (R245) */
+    public function test_g6_32_header_x199(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-32', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-199')));
+    }
+
+    /** (R245) */
+    public function test_g7_18_header_c_reviews(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G7-18', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/C-Reviews')));
+    }
+
+    public function test_page_create_and_site_publish_resolve_from_container(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Container Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $pageAction = app(PageCreateAction::class);
+        $publishAction = app(SitePublishAction::class);
+
+        $page = $pageAction->handle($biz->id, 'builder-test', 'Builder Title', false);
+
+        $this->assertInstanceOf(Page::class, $page);
+        $this->assertEquals('builder-test', $page->slug);
+        $this->assertFalse($page->is_published);
+
+        $res = $publishAction->handle($biz->id, $page->id, ['block1' => 'content']);
+
+        $this->assertIsArray($res);
+        $this->assertArrayHasKey('status', $res);
+        $this->assertArrayHasKey('page_id', $res);
+        $this->assertArrayHasKey('version_id', $res);
+        $this->assertArrayHasKey('commit_id', $res);
+        $this->assertArrayHasKey('facts_invalidation_commit_id', $res);
+        $this->assertEquals('published', $res['status']);
+        $this->assertEquals($page->id, $res['page_id']);
     }
 }

@@ -11,8 +11,13 @@ use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Events\FormSpamRejected;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
+use App\Modules\X155\Ui\Forms;
+use App\Modules\X155\Ui\SpamRate;
+use App\Modules\X155\Ui\SubmissionsThread;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X155Test extends TestCase
@@ -100,8 +105,8 @@ class X155Test extends TestCase
             businessId: $biz->id,
             formDefinitionId: $form->id,
             payload: ['first_name' => 'Bot 2', 'phone' => '+15558888888'],
-            ipAddress: '10.0.0.99_bot',
-            userTimezone: 'bot_synthetic_zone'
+            ipAddress: '203.0.113.10',
+            userTimezone: 'Not/AZone'
         );
 
         $this->assertEquals('rejected', $tzSpamRes['status']);
@@ -177,6 +182,264 @@ class X155Test extends TestCase
      */
     public function test_g17_12_ip_timezone_signal(): void
     {
-        $this->assertTrue(true);
+        Event::fake([FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'T']);
+        $form = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+
+        $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', 'Not/AZone');
+
+        $this->assertTrue($res['is_spam']);
+        $this->assertFalse($res['is_valid']);
+        $this->assertEquals('ip_timezone_mismatch', $res['reason']);
+        Event::assertDispatched(FormSpamRejected::class);
+    }
+
+    public function test_g17_12_null_timezone_is_not_spam(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T']);
+        $form = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+
+        $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', null);
+
+        $this->assertFalse($res['is_spam']);
+        $this->assertTrue($res['is_valid']);
+    }
+
+    public function test_g17_12_valid_timezone_is_not_spam(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T']);
+        $form = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+
+        $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', 'America/Chicago');
+
+        $this->assertFalse($res['is_spam']);
+        $this->assertTrue($res['is_valid']);
+    }
+
+    public function test_forms_lists_this_businesses_forms_with_counts(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Forms Biz A', 'currency' => 'USD']);
+        Tenancy::set((int) $bizA->id);
+
+        $form1 = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 1',
+            'slug' => 'biz-a-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+        $form2 = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 2',
+            'slug' => 'biz-a-2',
+            'steps' => [['step' => 1], ['step' => 2]],
+            'schema' => [],
+        ]);
+
+        $personA = Person::create([
+            'business_id' => $bizA->id,
+            'first_name' => 'Test',
+        ]);
+
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $form1->id,
+            'person_id' => $personA->id,
+            'is_spam' => false,
+            'payload' => [],
+        ]);
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $form1->id,
+            'person_id' => $personA->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Forms Biz B', 'currency' => 'USD']);
+        Tenancy::set((int) $bizB->id);
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Biz B Form 1',
+            'slug' => 'biz-b-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+
+        Tenancy::set((int) $bizA->id);
+
+        Livewire::test(Forms::class, ['businessId' => $bizA->id])
+            ->assertOk()
+            ->assertSee('Biz A Form 1')
+            ->assertSee('biz-a-1')
+            ->assertSee('2 submissions')
+            ->assertSee('1 spam')
+            ->assertSee('1 step(s)')
+            ->assertSee('Biz A Form 2')
+            ->assertSee('2 step(s)')
+            ->assertDontSee('Biz B Form 1');
+    }
+
+    public function test_forms_shows_the_empty_state_for_a_business_with_no_forms(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(Forms::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('No forms constructed yet.')
+            ->assertDontSee('<ul', false);
+    }
+
+    public function test_submissions_thread_lists_this_businesses_submissions(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A']);
+        Tenancy::set((int) $bizA->id);
+
+        $formA = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 1',
+            'slug' => 'biz-a-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+
+        $personA1 = Person::create(['business_id' => $bizA->id, 'first_name' => 'John']);
+        $personA2 = Person::create(['business_id' => $bizA->id, 'first_name' => 'Jane']);
+
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $formA->id,
+            'person_id' => $personA1->id,
+            'is_spam' => false,
+            'payload' => [],
+        ]);
+
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $formA->id,
+            'person_id' => $personA2->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B']);
+        Tenancy::set((int) $bizB->id);
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Biz B Form 1',
+            'slug' => 'biz-b-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+        $personB = Person::create(['business_id' => $bizB->id, 'first_name' => 'Bob']);
+        FormSubmission::create([
+            'business_id' => $bizB->id,
+            'form_definition_id' => $formB->id,
+            'person_id' => $personB->id,
+            'is_spam' => false,
+            'payload' => [],
+        ]);
+
+        Tenancy::set((int) $bizA->id);
+        Livewire::test(SubmissionsThread::class, ['businessId' => $bizA->id])
+            ->assertOk()
+            ->assertSee('Biz A Form 1')
+            ->assertSee('Person #'.$personA1->id)
+            ->assertSee('VALID')
+            ->assertSee('Person #'.$personA2->id)
+            ->assertSee('SPAM')
+            ->assertDontSee('Biz B Form 1')
+            ->assertDontSee('Person #'.$personB->id);
+    }
+
+    public function test_submissions_thread_shows_the_empty_state_for_a_business_with_no_submissions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Biz']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(SubmissionsThread::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('No submissions recorded.')
+            ->assertDontSee('<ul', false);
+    }
+
+    public function test_spam_rate_reports_the_share_of_spam_for_this_business(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A Rate']);
+        Tenancy::set((int) $bizA->id);
+
+        $formA = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 1',
+            'slug' => 'biz-a-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+
+        $person = Person::create(['business_id' => $bizA->id, 'first_name' => 'John']);
+
+        // 4 submissions, 1 spam -> 25%
+        for ($i = 0; $i < 3; $i++) {
+            FormSubmission::create([
+                'business_id' => $bizA->id,
+                'form_definition_id' => $formA->id,
+                'person_id' => $person->id,
+                'is_spam' => false,
+                'payload' => [],
+            ]);
+        }
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $formA->id,
+            'person_id' => $person->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        // Biz B gets 1 spam
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B Rate']);
+        Tenancy::set((int) $bizB->id);
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Biz B Form 1',
+            'slug' => 'biz-b-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+        $personB = Person::create(['business_id' => $bizB->id, 'first_name' => 'Bob']);
+        FormSubmission::create([
+            'business_id' => $bizB->id,
+            'form_definition_id' => $formB->id,
+            'person_id' => $personB->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        Tenancy::set((int) $bizA->id);
+        Livewire::test(SpamRate::class, ['businessId' => $bizA->id])
+            ->assertOk()
+            ->assertSee('Total: 4')
+            ->assertSee('Spam: 1')
+            ->assertSee('Rate: 25%')
+            ->assertDontSee('Total: 5')
+            ->assertDontSee('Spam: 2')
+            ->assertDontSee('40%');
+    }
+
+    public function test_spam_rate_shows_no_submissions_yet_for_an_empty_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Biz Rate']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(SpamRate::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('No submissions yet.')
+            ->assertDontSee('NAN')
+            ->assertDontSee('%');
     }
 }

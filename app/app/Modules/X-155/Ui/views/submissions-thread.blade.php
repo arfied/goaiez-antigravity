@@ -7,7 +7,12 @@
         @else
             <ul>
                 @foreach($submissions as $s)
-                    <li>#{{ $s->id }}: Person #{{ $s->person_id }} [{{ $s->is_spam ? 'SPAM' : 'VALID' }}]</li>
+                    <li>
+                        {{ $s->formDefinition->form_name }} — 
+                        Person #{{ $s->person_id }} 
+                        [{{ $s->is_spam ? 'SPAM' : 'VALID' }}] 
+                        — {{ $s->created_at }}
+                    </li>
                 @endforeach
             </ul>
         @endif
