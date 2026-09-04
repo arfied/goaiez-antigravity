@@ -102,19 +102,20 @@ class QaReport extends Component
 
         $drilldownRows = [];
 
+        $threshold = 4;
+        $setting = QaSetting::where('business_id', $this->businessId)->first();
+        if ($setting) {
+            $threshold = (int) $setting->min_public_stars;
+        }
+
         if (! $this->isSample) {
-            $threshold = 4;
-            $setting = QaSetting::where('business_id', $this->businessId)->first();
-            if ($setting) {
-                $threshold = (int) $setting->min_public_stars;
-            }
 
             $internalPredicate = function ($q) use ($threshold) {
                 $q->whereNotNull('rating')->where(function ($q) use ($threshold) {
                     $q->where('rating', '<', $threshold)
-                      ->orWhere(function ($q) {
-                          $q->whereNotNull('csat_score')->where('csat_score', '<', 7);
-                      });
+                        ->orWhere(function ($q) {
+                            $q->whereNotNull('csat_score')->where('csat_score', '<', 7);
+                        });
                 });
             };
 
@@ -186,8 +187,6 @@ class QaReport extends Component
         }
 
         $isEmpty = ! $this->isSample && $requestsSent === 0 && $reviewsReceived === 0 && $internalQa === 0 && $repliesPublished === 0 && $openTicketsSla === 0 && $breachedTickets === 0;
-
-        $threshold = $threshold ?? 4;
 
         return view('c-reviews::qa-report', [
             'requestsSent' => $requestsSent,
