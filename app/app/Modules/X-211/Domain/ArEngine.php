@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\X211\Domain;
 
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X211\Events\ArEscalatedToHuman;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArPackaged;
 use App\Modules\X211\Events\ArPlanAccepted;
+use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\OfflinePayment;
 use App\Modules\X211\Models\PaymentPlan;
@@ -17,6 +19,22 @@ use Illuminate\Support\Facades\Event;
 
 final class ArEngine
 {
+    /**
+     * §216.3 THE REASON RULE — dunning is decided by WHY, not by DAYS. The
+     * four reasons the plan names, plus the promise the ageing screen already
+     * groups on. Only silence is automatable; two of these need a human NOW.
+     */
+    public const REASONS = [
+        'card_expired' => 'Card expired',
+        'disputed_line' => 'Disputed line item',
+        'complaint' => 'Complaint on the thread',
+        'promised' => 'Customer promised to pay',
+        'silence' => 'No reply yet',
+    ];
+
+    /** N-033: an open RECOVER blocks dunning entirely — these route to a human, immediately. */
+    public const NEEDS_HUMAN = ['disputed_line', 'complaint'];
+
     /**
      * Apply late fee with standard legal capping (max 10% or $50).
      */
@@ -155,6 +173,49 @@ final class ArEngine
                 'status' => 'packaged_collections',
                 'bundle_url' => $bundleUrl,
             ];
+        });
+    }
+
+    /**
+     * Record WHY an invoice is unpaid. A reason that needs a human escalates —
+     * the escalate_to_human row is what the ageing screen and the dunning
+     * listener both read, so it is a gate, not a sort (§216.5 FAILS IF).
+     */
+    public function recordReason(int $businessId, int $invoiceId, string $reasonCode): ArDunningAction
+    {
+        $label = self::REASONS[$reasonCode] ?? null;
+        if ($label === null) {
+            throw new \InvalidArgumentException("Unknown reason {$reasonCode}.");
+        }
+
+        return DB::transaction(function () use ($businessId, $invoiceId, $reasonCode, $label) {
+            Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+
+            $recorded = ArDunningAction::create([
+                'business_id' => $businessId,
+                'invoice_id' => $invoiceId,
+                'action' => 'reason_recorded',
+                'reason' => $label,
+            ]);
+
+            if (in_array($reasonCode, self::NEEDS_HUMAN, true)) {
+                $escalation = ArDunningAction::firstOrCreate(
+                    ['business_id' => $businessId, 'invoice_id' => $invoiceId, 'action' => 'escalate_to_human'],
+                    ['reason' => $label]
+                );
+
+                $state = ReceivableState::firstOrCreate(
+                    ['business_id' => $businessId, 'invoice_id' => $invoiceId],
+                    ['status' => 'escalated']
+                );
+                $state->update(['status' => 'escalated']);
+
+                if ($escalation->wasRecentlyCreated) {
+                    Event::dispatch(new ArEscalatedToHuman($businessId, $invoiceId, $label));
+                }
+            }
+
+            return $recorded;
         });
     }
 }

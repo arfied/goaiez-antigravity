@@ -535,3 +535,4 @@
 - `2026-09-04T16:30:58` note: MONEY-20: ageing-by-reason's Log payment submits a form; payment-plan builder — ar_plan_terms threshold row, a plan past it routes to a financing partner and stores nothing
 - `2026-09-04T16:36:18` (R245) X-211 — a plan past ar_plan_terms (max_installments/max_term_days, defaults 3/90, P-193 row) throws PlanPastThresholdException before any write; the builder shows the financing-partner waiting state (G1-61, G1-70, N-033). Test: PaymentplanBuilderScreenTest
 - `2026-09-04T16:53:17` note: Push 1569172..9879c1da landed
+- `2026-09-04T16:59:40` (R245) X-211 — the reason rule is a gate, not a sort: recordReason writes ar_dunning_actions (reason_recorded) and a disputed line or a complaint escalates — escalate_to_human row, receivable_states escalated, ArEscalatedToHuman — so the invoice never enters a reminder sequence (§216.3, §216.5, N-033). Test: InvoiceThreadBesideScreenTest
