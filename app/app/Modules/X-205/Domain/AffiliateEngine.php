@@ -9,6 +9,7 @@ use App\Modules\X205\Models\AffiliateAttribution;
 use App\Modules\X205\Models\AffiliateTier;
 use App\Modules\X205\Models\ReferralClick;
 use Carbon\CarbonInterface;
+
 final class AffiliateEngine
 {
     public function validateUtm(array $payload): array
@@ -66,6 +67,13 @@ final class AffiliateEngine
         }
 
         return ['status' => 'ok'];
+    }
+
+    public const COOKIE_LIFETIME_DAYS = 90;
+
+    public function isWithinAttributionWindow(CarbonInterface $clickTime, CarbonInterface $saleTime): bool
+    {
+        return $clickTime->diffInDays($saleTime) <= self::COOKIE_LIFETIME_DAYS;
     }
 
     public function isCookieValid(int $cookieAgeDays): bool

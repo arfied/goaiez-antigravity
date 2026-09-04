@@ -6,6 +6,8 @@ namespace Tests\Modules\X179\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X179\Actions\ContentExtractAction;
+use App\Modules\X179\Actions\TemplateMatchAction;
 use App\Modules\X179\Ui\MatchScores;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -18,9 +20,9 @@ class MatchScoresScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $action = new \App\Modules\X179\Actions\ContentExtractAction();
+        $action = new ContentExtractAction;
         $action->extractContent($biz->id, 123, 'gbp', 'test');
-        $matchAction = new \App\Modules\X179\Actions\TemplateMatchAction();
+        $matchAction = new TemplateMatchAction;
         $matchAction->matchAndRender($biz->id, 123);
         $prospectId = 123;
 
@@ -35,9 +37,9 @@ class MatchScoresScreenTest extends TestCase
         $this->actingAs($user);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
-        $action = new \App\Modules\X179\Actions\ContentExtractAction();
+        $action = new ContentExtractAction;
         $action->extractContent($biz->id, 123, 'gbp', 'test');
-        $matchAction = new \App\Modules\X179\Actions\TemplateMatchAction();
+        $matchAction = new TemplateMatchAction;
         $matchAction->matchAndRender($biz->id, 123);
         $prospectId = 123;
 

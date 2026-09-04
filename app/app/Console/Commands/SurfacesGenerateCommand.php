@@ -333,6 +333,10 @@ class SurfacesGenerateCommand extends Command
             "Livewire\Livewire",
             "Tests\TestCase",
         ];
+        if ($modId === 'X-179' && ! empty($routeArgsArray)) {
+            $imports[] = 'App\Modules\X179\Actions\ContentExtractAction';
+            $imports[] = 'App\Modules\X179\Actions\TemplateMatchAction';
+        }
         sort($imports);
         $importsStr = '';
         foreach ($imports as $import) {
@@ -348,9 +352,9 @@ class SurfacesGenerateCommand extends Command
         if (! empty($routeArgsArray)) {
             $routeArgsStr = ', ['.implode(', ', $routeArgsArray).']';
             if ($modId === 'X-179') {
-                $provisioningStr .= "\n        \$action = new \\App\\Modules\\X179\\Actions\\ContentExtractAction();\n";
+                $provisioningStr .= "\n        \$action = new ContentExtractAction;\n";
                 $provisioningStr .= "        \$action->extractContent(\$biz->id, 123, 'gbp', 'test');\n";
-                $provisioningStr .= "        \$matchAction = new \\App\\Modules\\X179\\Actions\\TemplateMatchAction();\n";
+                $provisioningStr .= "        \$matchAction = new TemplateMatchAction;\n";
                 $provisioningStr .= "        \$matchAction->matchAndRender(\$biz->id, 123);\n";
                 $provisioningStr .= "        \$prospectId = 123;\n";
             } else {
@@ -455,7 +459,5 @@ class SurfacesGenerateCommand extends Command
         file_put_contents($dir.'/sample-state.blade.php', $content);
     }
 
-    private function updatePlaceholderTemplate(string $modId, string $classRef, string $render, string $title): void
-    {
-    }
+    private function updatePlaceholderTemplate(string $modId, string $classRef, string $render, string $title): void {}
 }
