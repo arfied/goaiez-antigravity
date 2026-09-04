@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X124;
 
+use App\Modules\X124\Actions\AssistantActOnRecommendationAction;
 use App\Modules\X124\Actions\AssistantAskAction;
 use App\Modules\X124\Actions\AssistantExecuteAction;
 use App\Modules\X124\Actions\AssistantPreviewAction;
+use App\Modules\X124\Actions\AssistantRecommendAction;
+use App\Modules\X124\Domain\AssistantRecommendationActionRefused;
+use App\Modules\X124\Events\AssistantActed;
+use App\Modules\X124\Events\AssistantRecommended;
 use App\Modules\X124\Events\AssistantRequest;
+use App\Modules\X124\Models\AssistantSession;
 use App\Modules\X124\Models\AssistantUnsupported;
+use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X124Test extends TestCase
@@ -98,5 +106,64 @@ class X124Test extends TestCase
     public function test_help_and_escalation(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_todays_recommendation_strip_renders_active_and_emits_events(): void
+    {
+        Event::fake([
+            AssistantRecommended::class,
+            AssistantActed::class,
+        ]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Strip Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = AssistantSession::create(['business_id' => $biz->id, 'session_token' => 'sess_test', 'user_id' => null, 'context' => '[]']);
+        $recommendAction = app(AssistantRecommendAction::class);
+        $rec = $recommendAction->handle($biz->id, $session->id, 'Enable Two-Factor Auth', 'enable_2fa');
+
+        Event::assertDispatched(AssistantRecommended::class);
+
+        $component = Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('Enable Two-Factor Auth')
+            ->call('accept', $rec->id)
+            ->assertHasNoErrors();
+
+        Event::assertDispatched(AssistantActed::class, function ($event) use ($rec) {
+            return $event->recommendationId === $rec->id && $event->action === 'accepted';
+        });
+
+        $this->assertEquals('accepted', $rec->refresh()->status);
+
+        Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertDontSee('Enable Two-Factor Auth');
+    }
+
+    public function test_assistant_act_on_recommendation_refuses_invalid_status(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Strip Biz 2', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = AssistantSession::create(['business_id' => $biz->id, 'session_token' => 'sess_test2', 'user_id' => null, 'context' => '[]']);
+        $recommendAction = app(AssistantRecommendAction::class);
+        $rec = $recommendAction->handle($biz->id, $session->id, 'Enable Two-Factor Auth 2', 'enable_2fa');
+
+        $this->expectException(AssistantRecommendationActionRefused::class);
+
+        $actAction = app(AssistantActOnRecommendationAction::class);
+        $actAction->handle($biz->id, $rec->id, 'invalid_status');
+    }
+
+    public function test_todays_recommendation_strip_handles_error_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Strip Biz Error', 'currency' => 'USD']);
+
+        Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->set('errorMessage', 'Failed')
+            ->assertSee('We could not load recommendations.')
+            ->assertSee('wire:click="load"', false);
     }
 }

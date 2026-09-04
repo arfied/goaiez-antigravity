@@ -14,7 +14,7 @@ class NeverSettingScreenTest extends TestCase
 {
     public function test_screen_renders_for_tenant(): void
     {
-        $owner = User::factory()->create(['role' => UserRole::Owner, 'email' => uniqid().'@example.com']);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 

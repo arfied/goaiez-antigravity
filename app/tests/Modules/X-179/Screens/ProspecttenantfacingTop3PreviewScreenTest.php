@@ -6,8 +6,6 @@ namespace Tests\Modules\X179\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X179\Actions\ContentExtractAction;
-use App\Modules\X179\Actions\TemplateMatchAction;
 use App\Modules\X179\Ui\ProspecttenantfacingTop3Preview;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -20,9 +18,9 @@ class ProspecttenantfacingTop3PreviewScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $action = new ContentExtractAction;
+        $action = new \App\Modules\X179\Actions\ContentExtractAction();
         $action->extractContent($biz->id, 123, 'gbp', 'test');
-        $matchAction = new TemplateMatchAction;
+        $matchAction = new \App\Modules\X179\Actions\TemplateMatchAction();
         $matchAction->matchAndRender($biz->id, 123);
         $prospectId = 123;
 
@@ -37,9 +35,9 @@ class ProspecttenantfacingTop3PreviewScreenTest extends TestCase
         $this->actingAs($user);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
-        $action = new ContentExtractAction;
+        $action = new \App\Modules\X179\Actions\ContentExtractAction();
         $action->extractContent($biz->id, 123, 'gbp', 'test');
-        $matchAction = new TemplateMatchAction;
+        $matchAction = new \App\Modules\X179\Actions\TemplateMatchAction();
         $matchAction->matchAndRender($biz->id, 123);
         $prospectId = 123;
 
