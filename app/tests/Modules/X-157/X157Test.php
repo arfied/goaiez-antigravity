@@ -6,6 +6,7 @@ namespace Tests\Modules\X157;
 
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X121\Models\Asset;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
@@ -17,6 +18,7 @@ use App\Modules\X157\Ui\EdgeStatusPer;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -127,7 +129,7 @@ class X157Test extends TestCase
     {
         $this->assertFalse(array_key_exists('r2', config('filesystems.disks')));
 
-        \Illuminate\Support\Facades\Http::fake();
+        Http::fake();
         Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -160,13 +162,13 @@ class X157Test extends TestCase
         );
 
         Storage::disk('local')->assertExists("sites/{$deploy['deploy_hash']}.html");
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
 
         $this->get("/sites/{$deploy['deploy_hash']}")->assertOk();
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
 
         $this->assertFalse(class_exists('App\Modules\X157\Models\Asset'));
-        $this->assertTrue(class_exists(\App\Modules\X121\Models\Asset::class));
+        $this->assertTrue(class_exists(Asset::class));
     }
 
     public function test_feature_flags_absent(): void
