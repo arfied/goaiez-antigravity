@@ -27,3 +27,8 @@ Homestead.yaml
 Thumbs.db
 /composer.phar
 /error_log
+doctor_*.txt
+pint_output.json
+stan.json
+composer.phar
+error_log
