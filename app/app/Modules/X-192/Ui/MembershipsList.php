@@ -9,6 +9,10 @@ use Livewire\Component;
 #[Layout('components.account.layout')]
 class MembershipsList extends Component
 {
+    public function mount(): void {
+        abort_unless(auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
+    }
+
     public function render()
     {
         $memberships = DB::table('directory_memberships')

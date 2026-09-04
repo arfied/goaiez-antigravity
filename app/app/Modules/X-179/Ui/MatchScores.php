@@ -16,8 +16,8 @@ class MatchScores extends Component
 
     public int $prospectId = 0;
 
-    public function mount(int $prospectId)
-    {
+    public function mount(int $prospectId) {
+        abort_unless(auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
         $businessId = Tenancy::idOrFail();
 
         $exists = TemplateMatch::where('business_id', $businessId)
