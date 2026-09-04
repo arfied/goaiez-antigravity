@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X124;
 
+use App\Models\User;
 use App\Modules\X124\Models\AssistantRecommendation;
 use App\Modules\X124\Models\AssistantSession;
 use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use App\Support\Tenancy;
+use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -61,10 +63,10 @@ class TodaysRecommendationStripTest extends TestCase
 
     public function test_home_renders_recommendation(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Home Tenant']);
-        \App\Support\Tenancy::set((int) $biz->id);
-        $this->seed(\Database\Seeders\UiReviewSeeder::class);
-        $owner = \App\Models\User::where('email', 'owner2@business.com')->first();
+        $biz = TestCase::provisionTenant(['name' => 'Home Tenant']);
+        Tenancy::set((int) $biz->id);
+        $this->seed(UiReviewSeeder::class);
+        $owner = User::where('email', 'owner2@business.com')->first();
 
         $this->actingAs($owner)->get('/home')
             ->assertOk()

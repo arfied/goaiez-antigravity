@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X199;
 
+use App\Models\User;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Support\Tenancy;
+use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -35,7 +37,6 @@ class MoneyPaidTodayTest extends TestCase
         Livewire::test(MoneyPaidToday::class, ['businessId' => $biz->id])
             ->assertSee('$125.00')
             ->assertSee('INV-TEST-001');
-            
 
         Invoice::where('business_id', $biz->id)->delete();
 
@@ -47,10 +48,10 @@ class MoneyPaidTodayTest extends TestCase
 
     public function test_home_renders_money_paid(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Home Tenant']);
-        \App\Support\Tenancy::set((int) $biz->id);
-        $this->seed(\Database\Seeders\UiReviewSeeder::class);
-        $owner = \App\Models\User::where('email', 'owner2@business.com')->first();
+        $biz = TestCase::provisionTenant(['name' => 'Home Tenant']);
+        Tenancy::set((int) $biz->id);
+        $this->seed(UiReviewSeeder::class);
+        $owner = User::where('email', 'owner2@business.com')->first();
 
         $this->actingAs($owner)->get('/home')
             ->assertOk()

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X110;
 
+use App\Models\User;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
 use App\Modules\X110\Ui\Today;
 use App\Support\Tenancy;
+use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -53,10 +55,10 @@ class TodayTest extends TestCase
 
     public function test_home_renders_today(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Home Tenant']);
-        \App\Support\Tenancy::set((int) $biz->id);
-        $this->seed(\Database\Seeders\UiReviewSeeder::class);
-        $owner = \App\Models\User::where('email', 'owner2@business.com')->first();
+        $biz = TestCase::provisionTenant(['name' => 'Home Tenant']);
+        Tenancy::set((int) $biz->id);
+        $this->seed(UiReviewSeeder::class);
+        $owner = User::where('email', 'owner2@business.com')->first();
 
         $this->actingAs($owner)->get('/home')
             ->assertOk()
