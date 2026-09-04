@@ -31,12 +31,5 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-142.mcp-token-registry', McpTokenRegistry::class);
         }
 
-        $this->app->booted(function () {
-            Route::middleware(['web', 'auth'])->group(function () {
-                Route::get('/x-142/connect-your-ai', ConnectYourAi::class)->name('x-142.connect-your-ai');
-                Route::get('/x-142/webhooks', WebhooksView::class)->name('x-142.webhooks');
-                Route::get('/x-142/mcp-token-registry', McpTokenRegistry::class)->name('x-142.mcp-token-registry');
-            });
-        });
     }
 }

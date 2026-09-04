@@ -161,6 +161,9 @@ class SurfacesGenerateCommand extends Command
                 }
 
                 $screenSlug = Str::slug(str_replace('_', '-', $render));
+                if (str_starts_with($screenSlug, "$modSlug-")) {
+                    $screenSlug = substr($screenSlug, strlen("$modSlug-"));
+                }
                 $humanName = Str::title(str_replace('_', ' ', $render));
 
                 $rawGroup = $moduleGroups[$modId] ?? '';
@@ -196,7 +199,7 @@ class SurfacesGenerateCommand extends Command
 
                             return 1;
                         }
-                        $operatorRoutes[] = "    Route::get('/".ltrim(str_replace('/admin/', '', $uri), '/')."', $classRef::class)->name('$alias');";
+                        $operatorRoutes[] = "    Route::get('/{$screenSlug}', $classRef::class)->name('$alias.admin');";
                         $addedToRoutesFile = true;
                     } else {
                         $uri = "/app/{$modSlug}/{$screenSlug}";
@@ -206,7 +209,7 @@ class SurfacesGenerateCommand extends Command
                             return 1;
                         }
                         if (! $addedToRoutesFile) {
-                            $tenantRoutes[] = "    Route::get('/".ltrim(str_replace('/app/', '', $uri), '/')."', $classRef::class)->name('$alias');";
+                            $tenantRoutes[] = "    Route::get('/{$screenSlug}', $classRef::class)->name('$alias');";
                             $addedToRoutesFile = true;
                         }
                     }
@@ -289,8 +292,6 @@ class SurfacesGenerateCommand extends Command
         $className = preg_replace('/^.*\\\\/', '', $class);
         $testFile = $testDir."/{$className}ScreenTest.php";
 
-        $isOperator = in_array('operator', $primarySurfaces);
-
         $imports = [
             "use App\Enums\UserRole;",
             "use App\Models\User;",
@@ -300,25 +301,29 @@ class SurfacesGenerateCommand extends Command
         $content = "<?php\n\ndeclare(strict_types=1);\n\nnamespace Tests\Modules\\".str_replace('-', '', $modId)."\Screens;\n\n".implode("\n", $imports)."\n\n";
 
         $content .= "class {$className}ScreenTest extends TestCase\n{\n";
-        $content .= "    public function test_screen_renders(): void\n    {\n";
 
-        if ($isOperator) {
-            $content .= "        \$user = User::factory()->create(['role' => UserRole::SuperAdmin]);\n";
-            $content .= "        \$this->actingAs(\$user);\n";
-        } else {
+        $fqcn = str_starts_with($class, '\\') ? $class : '\\App\\Modules\\'.str_replace('-', '', $modId)."\\Ui\\$class";
+
+        if (in_array('tenant', $primarySurfaces) || in_array('agency', $primarySurfaces) || in_array('tech', $primarySurfaces) || empty($primarySurfaces)) {
+            $content .= "    public function test_screen_renders_for_tenant(): void\n    {\n";
             $content .= "        \$owner = User::factory()->create(['role' => UserRole::Owner]);\n";
             $content .= "        \$biz = \$this->provisionTenant(['owner_user_id' => \$owner->id]);\n";
             $content .= "        \$this->actingAs(\$owner);\n";
+            $content .= "\n        \$this->get(route('$alias'))->assertOk();\n";
+            $content .= "\n        Livewire::test($fqcn::class)->assertOk();\n";
+            $content .= "    }\n";
         }
 
-        $content .= "\n        \$this->get(route('$alias'))->assertOk();\n";
+        if (in_array('operator', $primarySurfaces)) {
+            $content .= "\n    public function test_screen_renders_for_admin(): void\n    {\n";
+            $content .= "        \$user = User::factory()->create(['role' => UserRole::SuperAdmin]);\n";
+            $content .= "        \$this->actingAs(\$user);\n";
+            $content .= "\n        \$this->get(route('$alias.admin'))->assertOk();\n";
+            $content .= "\n        Livewire::test($fqcn::class)->assertOk();\n";
+            $content .= "    }\n";
+        }
 
-        // Assuming $class is full name or just use the alias via route
-        // For Livewire::test we need FQCN
-        $fqcn = str_starts_with($class, '\\') ? $class : '\\App\\Modules\\'.str_replace('-', '', $modId)."\\Ui\\$class";
-        $content .= "\n        Livewire::test($fqcn::class)->assertOk();\n";
-
-        $content .= "    }\n}\n";
+        $content .= "}\n";
 
         file_put_contents($testFile, $content);
     }

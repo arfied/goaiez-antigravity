@@ -26,9 +26,6 @@ final class ModuleServiceProvider extends ServiceProvider
         if (class_exists(Livewire::class)) {
             Livewire::component('x-178.site-editor-assistant', SiteEditorAssistant::class);
 
-            Route::middleware(['web', 'auth'])->group(function () {
-                Route::get('/x-178/site-editor-assistant', SiteEditorAssistant::class)->name('x-178.site-editor-assistant');
-            });
         }
     }
 }
