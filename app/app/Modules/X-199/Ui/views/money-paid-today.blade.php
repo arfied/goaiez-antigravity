@@ -13,7 +13,7 @@
             <x-ui.row-list>
                 @foreach($invoices as $inv)
                     {{-- Row acts: leads to the receipt/invoice details --}}
-                    <x-ui.row href="/invoices/{{ $inv->id }}">
+                    <x-ui.row >
                         <div class="flex-1 min-w-0 pr-4">
                             <p class="text-sm font-medium text-ink truncate">Invoice {{ $inv->invoice_number }}</p>
                         </div>
