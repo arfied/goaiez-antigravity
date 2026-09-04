@@ -62,7 +62,7 @@ class ByService extends Component
                 'cost' => number_format($totalCost / 100, 2, '.', ''),
                 'margin' => number_format($totalMargin / 100, 2, '.', ''),
                 'margin_pct' => $marginPct,
-                'margin_pct_formatted' => number_format($marginPct, 2, '.', '') . ' %',
+                'margin_pct_formatted' => number_format($marginPct, 2, '.', '').' %',
             ];
         }
 

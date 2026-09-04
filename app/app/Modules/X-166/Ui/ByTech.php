@@ -38,7 +38,7 @@ class ByTech extends Component
     {
         $rows = app(MarginReportAction::class)->handle($this->businessId, 'tech');
 
-        $techIds = array_filter(array_column($rows, 'tech_id'), fn($id) => $id !== null);
+        $techIds = array_filter(array_column($rows, 'tech_id'), fn ($id) => $id !== null);
         $names = User::whereIn('id', $techIds)->get()->keyBy('id');
 
         $allJobs = JobCost::where('business_id', $this->businessId)
@@ -71,7 +71,7 @@ class ByTech extends Component
                 'cost' => number_format($totalCost / 100, 2, '.', ''),
                 'margin' => number_format($totalMargin / 100, 2, '.', ''),
                 'margin_pct' => $marginPct,
-                'margin_pct_formatted' => number_format($marginPct, 2, '.', '') . ' %',
+                'margin_pct_formatted' => number_format($marginPct, 2, '.', '').' %',
             ];
         }
 
