@@ -749,3 +749,5 @@
 - `2026-09-03T22:14:14` selftest: sound
 - `2026-09-04T02:05:53` UNRESOLVED tests X-193 - column quiet_hours_start is missing from notification_classes and not named in the brief
 - `2026-09-04T02:05:53` UNRESOLVED tests X-201 - column deadline_at is missing from disputes and not named in the brief
+- `2026-09-04T07:55:55` UNRESOLVED tests C-Reviews - ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change
+- `2026-09-04T08:05:31` UNRESOLVED contract C-Reviews - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
