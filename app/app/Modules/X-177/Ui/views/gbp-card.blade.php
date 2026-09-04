@@ -3,9 +3,9 @@
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-bold">Google Business Profile</h3>
             <div class="flex items-center space-x-2">
-                <button wire:click="toggleSample" class="text-sm px-2 py-1 bg-gray-200 rounded">
+                <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
                     {{ $isSample ? 'Exit Sample' : 'Sample' }}
-                </button>
+                </x-ui.button>
             </div>
         </div>
 
@@ -16,17 +16,20 @@
         @endif
 
         @if($isEmpty)
-            <div class="text-gray-500 py-8 text-center border rounded">
-                <p>connect Google</p>
-            </div>
+            <x-ui.empty-state heading="Connect Google" icon="G">
+                Link the Google Business Profile through Zernio and this card shows its status, latest post and any suspension in plain words.
+            </x-ui.empty-state>
         @else
             <div class="space-y-4">
                 @foreach($connections as $c)
                     <div class="border rounded p-4 flex flex-col md:flex-row justify-between items-start md:items-center {{ $c->profile_status === 'suspended' ? 'bg-red-50' : 'bg-green-50' }}">
                         <div class="space-y-2">
                             <div class="font-bold">{{ $c->external_label ?? 'Location' }}</div>
-                            <div class="text-sm font-semibold {{ $c->profile_status === 'suspended' ? 'text-red-600' : 'text-green-600' }}">
-                                Status: {{ $c->plain_status ?? $c->profile_status }}
+                            <div class="mt-1">
+                                <x-ui.status-pill 
+                                    state="{{ $c->profile_status === 'suspended' ? 'alert' : ($c->profile_status === 'active' ? 'ok' : 'unknown') }}" 
+                                    label="{{ $c->plain_status ?? $c->profile_status }}" 
+                                />
                             </div>
                             
                             @if($c->latest_post)
@@ -37,12 +40,12 @@
                         </div>
                         
                         <div class="mt-4 md:mt-0 flex flex-col space-y-2 items-end">
-                            <button wire:click="toggleLog({{ $c->id }})" class="bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm font-semibold">
+                            <x-ui.button wire:click="toggleLog({{ $c->id }})" size="default" variant="secondary">
                                 {{ $viewingLogId === $c->id ? 'Hide Log' : 'View State Log' }}
-                            </button>
-                            <button wire:click="pollState({{ $c->id }})" class="bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold">
+                            </x-ui.button>
+                            <x-ui.button wire:click="pollState({{ $c->id }})" size="default" variant="primary">
                                 Poll Status
-                            </button>
+                            </x-ui.button>
                         </div>
                     </div>
                     

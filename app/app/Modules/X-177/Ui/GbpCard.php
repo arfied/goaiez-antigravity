@@ -18,6 +18,7 @@ class GbpCard extends Component
     public int $businessId = 0;
 
     public bool $isSample = false;
+
     public ?int $viewingLogId = null;
 
     public function mount(): void
@@ -34,7 +35,7 @@ class GbpCard extends Component
 
     public function toggleSample(): void
     {
-        $this->isSample = !$this->isSample;
+        $this->isSample = ! $this->isSample;
         $this->viewingLogId = null;
     }
 
@@ -49,9 +50,11 @@ class GbpCard extends Component
 
     public function pollState(int $connectionId): void
     {
-        if ($this->isSample) return;
+        if ($this->isSample) {
+            return;
+        }
         Tenancy::set($this->businessId);
-        
+
         $action = app(GbpStateAction::class);
         $action->pollState($this->businessId, $connectionId);
     }
@@ -59,38 +62,38 @@ class GbpCard extends Component
     public function render()
     {
         Tenancy::set($this->businessId);
-        
+
         $connections = collect();
-        if (!$this->isSample) {
+        if (! $this->isSample) {
             $connections = GbpConnection::where('business_id', $this->businessId)->get()->map(function ($c) {
                 $c->latest_post = GbpPost::where('business_id', $this->businessId)
                     ->where('connection_id', $c->id)
                     ->latest('created_at')
                     ->first();
-                    
+
                 $c->latest_log = GbpStateLog::where('business_id', $this->businessId)
                     ->where('connection_id', $c->id)
                     ->latest('created_at')
                     ->first();
-                    
+
                 $c->plain_status = $c->profile_status === 'suspended' ? 'Profile is suspended' : ($c->profile_status === 'active' ? 'Profile is active' : 'Status unknown');
-                
+
                 return $c;
             });
         } else {
             $connections = collect([
-                (object)[
+                (object) [
                     'id' => 999,
                     'external_label' => 'Sample Location',
                     'profile_status' => 'suspended',
                     'plain_status' => 'Profile is suspended',
-                    'latest_post' => (object)['summary' => 'Summer Sale started today!'],
-                    'latest_log' => (object)['event_type' => 'state_read', 'details' => ['old' => 'active', 'new' => 'suspended'], 'created_at' => now()],
+                    'latest_post' => (object) ['content' => 'Summer sale started today'],
+                    'latest_log' => (object) ['event_type' => 'state_read', 'details' => ['old' => 'active', 'new' => 'suspended'], 'created_at' => now()],
                 ],
             ]);
         }
 
-        $isEmpty = !$this->isSample && $connections->isEmpty();
+        $isEmpty = ! $this->isSample && $connections->isEmpty();
 
         return view('x-177::gbp-card', [
             'connections' => $connections,

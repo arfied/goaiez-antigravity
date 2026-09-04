@@ -30,7 +30,16 @@ class X177ScreensTest extends TestCase
         Livewire::test(GbpCard::class, ['businessId' => $this->bizId])
             ->assertOk()
             ->assertSee('Google Business Profile')
-            ->assertSee('connect Google');
+            ->assertSee('Connect Google');
+    }
+
+    public function test_gbp_card_sample_state(): void
+    {
+        Livewire::test(GbpCard::class, ['businessId' => $this->bizId])
+            ->call('toggleSample')
+            ->assertOk()
+            ->assertSee('Profile is suspended')
+            ->assertSee('Summer sale started today');
     }
 
     public function test_gbp_card_latest_post_and_suspended_state(): void
@@ -39,7 +48,7 @@ class X177ScreensTest extends TestCase
             'business_id' => $this->bizId,
             'account_ref' => '123',
             'external_label' => 'Main St Store',
-            'profile_status' => 'suspended'
+            'profile_status' => 'suspended',
         ]);
 
         GbpPost::create([
@@ -59,12 +68,12 @@ class X177ScreensTest extends TestCase
             'business_id' => $this->bizId,
             'account_ref' => '123',
             'external_label' => 'Main St Store',
-            'profile_status' => 'suspended'
+            'profile_status' => 'suspended',
         ]);
 
         Livewire::test(GbpCard::class, ['businessId' => $this->bizId])
             ->call('pollState', $conn->id);
-            
+
         $this->assertEquals(1, GbpStateLog::where('connection_id', $conn->id)->count());
     }
 }
