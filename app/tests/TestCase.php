@@ -53,6 +53,24 @@ abstract class TestCase extends BaseTestCase
         SupportAutoInjectedAssets::$forceAssetInjection = false;
     }
 
+    protected function tearDown(): void
+    {
+        // Release numbers so journeys committing their transactions do not exhaust the pool
+        try {
+            \Illuminate\Support\Facades\DB::table('phone_numbers')->update([
+                'business_id' => null,
+                'location_id' => null,
+                'role' => 'shared_pool',
+                'state' => 'provisioning',
+                'state_reason' => 'Released in teardown',
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Teardown error: ' . $e->getMessage());
+        }
+
+        parent::tearDown();
+    }
+
     /**
      * ⛔ **`TEST_CLOCK` PINS THE WHOLE SUITE'S `now()`, AND IT EXISTS BECAUSE A
      * TEST THAT TRAVELS ACROSS A PERIOD BOUNDARY IS RED ON TWO DAYS IN THIRTY
@@ -138,6 +156,9 @@ abstract class TestCase extends BaseTestCase
 
     public static function provisionTenant(array $attributes = []): Business
     {
+        static $numberSeed = 1000;
+        app(\App\Services\Sms\TenantNumbers::class)->addToPool('+1512555' . $numberSeed++);
+
         $owner = User::first() ?? User::factory()->create();
         $name = $attributes['name'] ?? 'Test Business';
         $biz = app(TenantProvisioner::class)->provision($owner);
