@@ -121,7 +121,7 @@ class ConnectSourceView extends Component
             ]);
         } else {
             $dbSources = IngestSource::where('business_id', $this->businessId)->orderByDesc('id')->get();
-            $sources = $dbSources->map(function ($s) {
+            $sources = $dbSources->map(function (IngestSource $s): object {
                 $lastRun = IngestRun::where('business_id', $this->businessId)
                     ->where('source_id', $s->id)
                     ->latest('id')
@@ -132,12 +132,12 @@ class ConnectSourceView extends Component
                     ->count();
 
                 return (object) [
-                    'id' => $s->id,
-                    'source_name' => $s->source_name,
-                    'source_type' => $s->source_type,
-                    'is_active' => $s->is_active,
-                    'last_run_records' => $lastRun ? $lastRun->records_ingested : null,
-                    'last_run_time' => $lastRun ? $lastRun->created_at : null,
+                    'id' => (int) $s->id,
+                    'source_name' => (string) $s->source_name,
+                    'source_type' => (string) $s->source_type,
+                    'is_active' => (bool) $s->is_active,
+                    'last_run_records' => $lastRun ? (int) $lastRun->records_ingested : null,
+                    'last_run_time' => $lastRun ? \Illuminate\Support\Carbon::parse($lastRun->created_at) : null,
                     'rejections_count' => $rejections,
                 ];
             });

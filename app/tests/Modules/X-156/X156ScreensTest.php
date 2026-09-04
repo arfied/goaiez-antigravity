@@ -76,6 +76,15 @@ class X156ScreensTest extends TestCase
         $this->assertFalse($source->is_active);
     }
 
+    public function test_connect_source_error_state(): void
+    {
+        Livewire::test(ConnectSourceView::class, ['businessId' => $this->businessId])
+            ->call('pause', 999999)
+            ->assertSee('Action failed');
+
+        $this->assertSame(0, IngestSource::where('business_id', $this->businessId)->count());
+    }
+
     public function test_connect_source_sample_state(): void
     {
         $count = IngestSource::where('business_id', $this->businessId)->count();
