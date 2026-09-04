@@ -85,11 +85,135 @@ class X176Test extends TestCase
     }
 
     /**
-     * [G3-34], [G8-02], [G8-03], [G8-04], [G8-14], [G8-15], [G8-16], [G8-22], [G8-23], [G8-25], [G8-30], [G8-32], [G8-33], [G12-03], [G16-25], [G7-48]
-     */
-    public function test_header_capabilities(): void
+    /** (R245) */
+    public function test_g3_34_capabilities(): void
     {
-        $this->assertTrue(true);
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G3-34', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_02_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-02', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_03_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-03', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_04_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-04', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_14_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-14', $caps);
+        // product schema from the pricebook (delegates to X-163/X-119, but we just assert the shape here)
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        \App\Support\Tenancy::set((int) $biz->id);
+        $res = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com', entityType: 'Plumber',
+            productOffers: [['name' => 'Drain Clearing', 'price' => '99.00']]
+        );
+        $this->assertArrayHasKey('hasOfferCatalog', $res['json_ld']);
+        $this->assertEquals('c123', $res['commit_id']);
+    }
+
+    /** (R245) */
+    public function test_g8_15_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-15', $caps);
+        // Delegates to X-108
+        $this->assertTrue(is_dir(app_path('Modules/X-108')));
+    }
+
+    /** (R245) */
+    public function test_g8_16_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-16', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_22_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-22', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_23_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-23', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_25_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-25', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_30_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-30', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_32_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-32', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_33_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-33', $caps);
+    }
+
+    /** (R245) */
+    public function test_g12_03_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G12-03', $caps);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        $biz->vertical = 'HVAC';
+        $biz->save();
+        \App\Support\Tenancy::set((int) $biz->id);
+        $res = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
+        );
+        $this->assertEquals('HVACBusiness', $res['json_ld']['@type'] ?? null);
+    }
+
+    /** (R245) */
+    public function test_g16_25_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G16-25', $caps);
+    }
+
+    /** (R245) */
+    public function test_g7_48_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G7-48', $caps);
     }
 
     public function test_seo_block_present_and_absent(): void
