@@ -241,19 +241,37 @@ class CReviewsTest extends TestCase
     }
 
     /**
-     * [G20-11] P-110 supersedes T89/R45 gate as the MECHANISM: every request triaged
-     */
-    public function test_g20_11_triage_mechanism(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
+     * [G20-11] = Triage Mechanism
      * [G20-12] = Review Gating; one spec, under P-110
      */
-    public function test_g20_12_review_gating_spec(): void
+    public function test_g20_11_and_g20_12_triage_mechanism_and_gating(): void
     {
-        $this->assertTrue(true);
+        $biz = $this->provisionTenant();
+        \App\Modules\CReviews\Models\QaSetting::create(['business_id' => $biz->id, 'sla_hours' => 24]);
+        
+        // 3-star review
+        $req3 = $this->syncAction->handle($biz->id, 'google', 3, 'Bad');
+        $replyResult = $this->replyAction->handle($biz->id, $req3->id, 'Sorry');
+        
+        if ($replyResult['status'] === 'triaged_internal') {
+            $this->ticketAction->handle($biz->id, $req3->id);
+        }
+        
+        $req3->refresh();
+        $this->assertEquals(0, ReviewReply::where('review_request_id', $req3->id)->where('is_public', true)->count());
+        $this->assertEquals('triaged_internal', $req3->status);
+        
+        $ticket = \App\Modules\X181\Models\QaTicket::where('review_request_id', $req3->id)->first();
+        $this->assertNotNull($ticket);
+        $this->assertNotNull($ticket->sla_due_at);
+        
+        // 5-star review
+        $req5 = $this->syncAction->handle($biz->id, 'google', 5, 'Good');
+        $replyResult5 = $this->replyAction->handle($biz->id, $req5->id, 'Thanks');
+        
+        $req5->refresh();
+        $this->assertNotEquals('triaged_internal', $req5->status);
+        $this->assertNotEquals('triaged_internal', $replyResult5['status']);
     }
 
     /**
