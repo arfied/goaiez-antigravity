@@ -67,7 +67,8 @@ class DispatchBoardTest extends TestCase
             ->test(DispatchBoard::class)
             ->assertSee('Test Job')
             ->assertSee('en route, 12 minutes out')
-            ->assertSeeHtml('<span', false);
+            ->assertSeeHtml('<span aria-hidden="true">▲</span>
+    <span>Sample</span>');
     }
 
     public function test_mark_en_route_updates_status(): void

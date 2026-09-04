@@ -104,7 +104,8 @@ class StafffacingAppTest extends TestCase
             ->test(StafffacingApp::class)
             ->assertSee('Sync Conflicts')
             ->assertSee('Client stale')
-            ->assertSeeHtml('<span', false);
+            ->assertSeeHtml('<span aria-hidden="true">▲</span>
+    <span>Sample</span>', false);
     }
 
     public function test_scan_input_fires_action(): void

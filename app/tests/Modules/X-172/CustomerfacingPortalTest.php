@@ -63,7 +63,8 @@ class CustomerfacingPortalTest extends TestCase
             ->assertOk()
             ->assertSee('Fix Sink')
             ->assertSee('15 minutes out')
-            ->assertSeeHtml('<span', false);
+            ->assertSeeHtml('<span aria-hidden="true">▲</span>
+    <span>Sample</span>', false);
 
         $this->assertDatabaseHas('portal_views', [
             'portal_link_id' => $link->id,

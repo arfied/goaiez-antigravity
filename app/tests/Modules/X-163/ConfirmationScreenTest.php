@@ -36,7 +36,8 @@ class ConfirmationScreenTest extends TestCase
             ->test(ConfirmationScreen::class)
             ->assertOk()
             ->assertSee('Test Service')
-            ->assertSee('Sample')
+            ->assertSeeHtml('<span aria-hidden="true">▲</span>
+    <span>Sample</span>')
             ->assertSee('1 left to review');
 
         Livewire::actingAs($owner)

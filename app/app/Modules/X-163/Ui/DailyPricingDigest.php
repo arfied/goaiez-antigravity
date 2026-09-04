@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X163\Ui;
 
 use App\Enums\UserRole;
+use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
 use Carbon\Carbon;
@@ -21,9 +22,10 @@ class DailyPricingDigest extends Component
         abort_unless($businessId !== null && $businessId > 0, 403);
     }
 
-    public function openConfirmation()
+    public function confirm(int $itemId)
     {
-        $this->dispatch('open-confirmation');
+        $businessId = Tenancy::id();
+        app(PriceConfirmAction::class)->handle($businessId, $itemId);
     }
 
     public function render()
@@ -32,6 +34,7 @@ class DailyPricingDigest extends Component
 
         $items = PriceBookItem::where('business_id', $businessId)
             ->whereNotNull('refusal_flagged_at')
+            ->where('is_confirmed', false)
             ->whereDate('refusal_flagged_at', Carbon::today())
             ->orderByDesc('refusal_count')
             ->get();

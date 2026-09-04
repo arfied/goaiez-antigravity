@@ -28,7 +28,7 @@ class DailyPricingDigestTest extends TestCase
         Livewire::actingAs($owner)
             ->test(DailyPricingDigest::class)
             ->assertOk()
-            ->assertSee('No pricing questions refused today.');
+            ->assertSee('Every pricing question today was answered');
     }
 
     public function test_renders_refused_item(): void
@@ -53,6 +53,35 @@ class DailyPricingDigestTest extends TestCase
             ->assertOk()
             ->assertSee('Refused Service')
             ->assertSee('1 refusals')
-            ->assertSee('Click to confirm');
+            ->assertSee('1 pricing questions we could not answer today');
+    }
+
+    public function test_confirming_item_removes_it_from_digest(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirmable Service',
+            'price_cents' => 15000,
+            'is_sample' => true,
+            'is_confirmed' => false,
+        ]);
+
+        $engine = new PricebookEngine;
+        $engine->lookup($biz->id, 'Confirmable Service', 'customer');
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->assertSee('Confirmable Service')
+            ->call('confirm', $item->id)
+            ->assertDontSee('Confirmable Service');
+
+        $this->assertDatabaseHas('price_book_items', [
+            'id' => $item->id,
+            'is_confirmed' => true,
+        ]);
     }
 }
