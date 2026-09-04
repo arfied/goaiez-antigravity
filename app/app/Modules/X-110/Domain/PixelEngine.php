@@ -175,21 +175,4 @@ final class PixelEngine
     }
 
 
-    public function enforceG1312ChatPageContext(): bool
-    {
-        return true;
-    }
-
-
-    public function enforceG1327TenantTags(): bool
-    {
-        return true;
-    }
-
-
-    public function enforceG1328RedirectHop(): bool
-    {
-        return true;
-    }
-
 }
