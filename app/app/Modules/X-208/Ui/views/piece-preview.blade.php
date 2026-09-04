@@ -1,3 +1,4 @@
+<x-surface.sample-state module="**Physical mail as a channel.** ⭐⭐⭐ **BYOK — the TENANT supplies the Lob key. Zero platform liability, zero platform account, and the tenant's own postage.** ⛔ **Do-Not-Mail is checked AT GENERATION, not at send.**" screen="piece_preview" />
 <div>
     <div class="piece-preview-view p-4">
         <h3 class="text-lg font-bold">Direct Postcard Previews</h3>

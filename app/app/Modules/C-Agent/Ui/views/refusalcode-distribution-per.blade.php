@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Agent" screen="refusalcode_distribution_per" />
 <div>
     <div class="refusal-dist-container p-4">
         <h3 class="text-lg font-bold">Refusal Code Distribution</h3>

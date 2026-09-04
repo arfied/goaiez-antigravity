@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Sms" screen="pernumber_complaint_monitoring" />
 <div>
     <div class="complaints-container p-4">
         <h3 class="text-lg font-bold">Per-Number Complaint Monitoring</h3>

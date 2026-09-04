@@ -1,3 +1,4 @@
+<x-surface.sample-state module="services with prices" screen="pricebook" />
 <div class="max-w-6xl mx-auto space-y-6">
     <!-- Header & Stats Overview -->
     <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl space-y-6">

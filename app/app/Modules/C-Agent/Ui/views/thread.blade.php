@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Agent" screen="thread" />
 <div>
     <div class="agent-thread-container p-4">
         <h3 class="text-lg font-bold">Agent Turns Thread</h3>

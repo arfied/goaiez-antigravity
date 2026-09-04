@@ -1,3 +1,4 @@
+<x-surface.sample-state module="design by conversation" screen="site_editor_assistant" />
 <section class="site-editor-assistant-panel p-4">
     <h3 class="text-lg font-bold">Site Editor Assistant</h3>
     @if($changes->isEmpty())

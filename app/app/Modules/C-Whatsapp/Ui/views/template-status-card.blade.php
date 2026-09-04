@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Whatsapp" screen="template_status_card" />
 <div>
     <div class="whatsapp-card-view p-4">
         <h3 class="text-lg font-bold">WhatsApp Templates</h3>

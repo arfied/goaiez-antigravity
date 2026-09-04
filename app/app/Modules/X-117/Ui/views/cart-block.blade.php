@@ -1,3 +1,4 @@
+<x-surface.sample-state module="checkout overlay" screen="cart_block" />
 <div>
     <div class="cart-block p-4">
         <h3 class="text-lg font-bold">Shopping Cart</h3>

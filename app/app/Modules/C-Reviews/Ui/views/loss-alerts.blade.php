@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Reviews" screen="loss_alerts" />
 <div>
     <div class="loss-alerts p-4">
         <h3 class="text-lg font-bold">Customer Loss & Churn Risk Alerts</h3>

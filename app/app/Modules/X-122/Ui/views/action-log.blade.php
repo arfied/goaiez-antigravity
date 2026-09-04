@@ -1,3 +1,4 @@
+<x-surface.sample-state module="each module publishes actions *(id" screen="action_log" />
 <div>
     <div class="action-log-container p-4">
         <h3 class="text-lg font-bold">Action Catalog & Dispatcher Log</h3>

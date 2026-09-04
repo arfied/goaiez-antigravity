@@ -1,3 +1,4 @@
+<x-surface.sample-state module="⭐⭐⭐ **IT IS THE WIZARD, and it asks for two things: a business name and a phone number. The AI FINDS GBP" screen="day_one_signup" />
 <div class="max-w-4xl mx-auto space-y-6">
     <!-- Header & Progress Steps -->
     <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl">

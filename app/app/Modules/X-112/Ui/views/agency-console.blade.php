@@ -1,3 +1,4 @@
+<x-surface.sample-state module="white-labelling" screen="agency_console" />
 <div>
     <div class="agency-console p-4">
         <h3 class="text-lg font-bold">Agency Multi-Client Console</h3>

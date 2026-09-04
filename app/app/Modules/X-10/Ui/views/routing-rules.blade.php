@@ -1,3 +1,4 @@
+<x-surface.sample-state module="skill-based" screen="routing_rules" />
 <div>
     <div class="routing-rules-view p-4">
         <h3 class="text-lg font-bold">Lead Routing Rules</h3>

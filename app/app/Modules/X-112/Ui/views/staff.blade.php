@@ -1,3 +1,4 @@
+<x-surface.sample-state module="white-labelling" screen="staff" />
 <div>
     <div class="staff-view p-4">
         <h3 class="text-lg font-bold">Agency Staff Management</h3>

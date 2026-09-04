@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Sms" screen="donottext_list" />
 <div>
     <div class="dnt-list-container p-4">
         <h3 class="text-lg font-bold">Do-Not-Text / Suppression Registry</h3>

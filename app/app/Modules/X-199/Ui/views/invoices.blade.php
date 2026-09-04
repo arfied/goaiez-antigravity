@@ -1,3 +1,4 @@
+<x-surface.sample-state module="**generates EVERY invoice — ours and the tenant's; C-Billing is the subscription and metering LEDGER and hands data here (§139.1)**" screen="invoices" />
 <div>
     <div class="invoices-list p-4">
         <h3 class="text-lg font-bold">Customer Invoices</h3>

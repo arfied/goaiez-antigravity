@@ -1,3 +1,4 @@
+<x-surface.sample-state module="persistent chat on every page. **OPERATE** *("text everyone who called last week")*" screen="assistantunsupported_log" />
 <div>
     <div class="unsupported-log-view p-4">
         <h3 class="text-lg font-bold">Unsupported Utterance Logs</h3>

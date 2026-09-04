@@ -1,3 +1,4 @@
+<x-surface.sample-state module="commission injection" screen="commissions" />
 <div>
     <div class="commissions-view p-4">
         <h3 class="text-lg font-bold">Staff Commissions</h3>

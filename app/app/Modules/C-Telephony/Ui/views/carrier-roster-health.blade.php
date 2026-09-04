@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Telephony" screen="carrier_roster_health" />
 <div>
     <div class="carrier-health-container p-4">
         <h3 class="text-lg font-bold">Carrier Roster & Network Health</h3>

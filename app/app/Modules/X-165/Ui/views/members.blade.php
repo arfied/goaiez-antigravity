@@ -1,3 +1,4 @@
+<x-surface.sample-state module="recurring service plans" screen="members" />
 <div>
     <div class="members-view p-4">
         <h3 class="text-lg font-bold">VIP Members</h3>

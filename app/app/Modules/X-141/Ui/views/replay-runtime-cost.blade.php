@@ -1,3 +1,4 @@
+<x-surface.sample-state module="replay simulation" screen="replay_runtime_cost" />
 <div>
     <div class="replay-cost-view p-4">
         <h3 class="text-lg font-bold">Replay Runtime Cost</h3>

@@ -1,3 +1,4 @@
+<x-surface.sample-state module="the 14 KB smart pixel" screen="install_verify" />
 <div>
     <div class="install-verify p-4">
         <h3 class="text-lg font-bold">Tag Installation Verification</h3>

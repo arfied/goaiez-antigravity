@@ -1,3 +1,4 @@
+<x-surface.sample-state module="assigns a GO AI EZ number at signup" screen="pernumber_complaint_board" />
 <div>
     <div class="complaints-board p-4">
         <h3 class="text-lg font-bold">Per-Number Complaint Board</h3>

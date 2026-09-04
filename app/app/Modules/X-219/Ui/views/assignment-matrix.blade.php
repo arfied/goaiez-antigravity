@@ -1,3 +1,4 @@
+<x-surface.sample-state module="X-219" screen="assignment_matrix" />
 <div>
     <div class="assignment-matrix-container p-4">
         <h3 class="text-lg font-bold">Model Assignment Matrix</h3>

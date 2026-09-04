@@ -1,3 +1,4 @@
+<x-surface.sample-state module="**the structured resolver: prices, hours and services BYPASS vector search and do an exact lookup against `Fact`**" screen="fact_freshness_per" />
 <div>
     <div class="fact-freshness p-4">
         <h3 class="text-lg font-bold">Fact Freshness Monitor</h3>

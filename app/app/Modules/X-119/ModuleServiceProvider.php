@@ -20,6 +20,13 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
+
+
+
+
+
+
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-119');
 
         if (class_exists(Livewire::class)) {

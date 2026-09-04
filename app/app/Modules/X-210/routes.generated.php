@@ -1,0 +1,17 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+app('router')->aliasMiddleware('tenant.role', function ($request, $next) {
+    abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
+    return $next($request);
+});
+
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-210')->group(function () {
+    Route::get('/x-210/promotion-builder', \App\Modules\X210\Ui\PromotionBuilder::class)->name('x-210.promotion-builder');
+    Route::get('/x-210/active-promotions', \App\Modules\X210\Ui\ActivePromotions::class)->name('x-210.active-promotions');
+    Route::get('/x-210/redemptions', \App\Modules\X210\Ui\RedemptionsList::class)->name('x-210.redemptions');
+    Route::get('/x-210/earnedvsgiven-panel', \App\Modules\X210\Ui\EarnedVsGivenPanel::class)->name('x-210.earnedvsgiven-panel');
+    Route::get('/x-210/targeting-preview', \App\Modules\X210\Ui\TargetingPreview::class)->name('x-210.targeting-preview');
+});
+

@@ -1,3 +1,4 @@
+<x-surface.sample-state module="explicit allow for AI crawlers *(GPTBot" screen="seo_tab_website" />
 <div>
     <div class="seo-tab-view p-4">
         <h3 class="text-lg font-bold">SEO & Schema.org Status</h3>

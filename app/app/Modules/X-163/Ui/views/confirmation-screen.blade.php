@@ -1,3 +1,4 @@
+<x-surface.sample-state module="services with prices" screen="confirmation_screen" />
 <div>
     <div class="confirm-container p-4">
         <h3 class="text-lg font-bold">Price Confirmation Screen</h3>

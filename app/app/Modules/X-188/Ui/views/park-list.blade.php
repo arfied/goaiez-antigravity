@@ -1,3 +1,4 @@
+<x-surface.sample-state module="assigns a GO AI EZ number at signup" screen="park_list" />
 <div>
     <div class="park-list p-4">
         <h3 class="text-lg font-bold">Parked Numbers</h3>

@@ -1,3 +1,4 @@
+<x-surface.sample-state module="click- and keyword-level attribution" screen="roi_dashboard" />
 <div>
     <div class="roi-dashboard-view p-4">
         <h3 class="text-lg font-bold">Campaign ROI Dashboard</h3>

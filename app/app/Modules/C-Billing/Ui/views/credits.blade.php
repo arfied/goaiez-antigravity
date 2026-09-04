@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Billing" screen="credits" />
 <div>
     <div class="credits-ledger p-4">
         <h3 class="text-lg font-bold">Credits Ledger</h3>

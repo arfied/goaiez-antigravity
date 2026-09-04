@@ -1,3 +1,4 @@
+<x-surface.sample-state module="`Business" screen="entity_history_viewer" />
 <div>
     <div class="entity-history-container p-4">
         <h3 class="text-lg font-bold">Entity History</h3>

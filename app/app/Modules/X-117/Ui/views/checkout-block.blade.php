@@ -1,3 +1,4 @@
+<x-surface.sample-state module="checkout overlay" screen="checkout_block" />
 <div>
     <div class="checkout-block p-4">
         <h3 class="text-lg font-bold">Instant Checkout</h3>

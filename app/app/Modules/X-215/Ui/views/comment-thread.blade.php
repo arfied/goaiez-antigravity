@@ -1,3 +1,4 @@
+<x-surface.sample-state module="documents sent, viewed, commented on, signed and stored. ⛔ **The provider is a DRIVER and a CONFIG ROW** — DocuSign is the first driver, never a name in code." screen="comment_thread" />
 <div>
     <div class="comment-thread-view p-4">
         <h3 class="text-lg font-bold">Document Revision Comment Thread</h3>

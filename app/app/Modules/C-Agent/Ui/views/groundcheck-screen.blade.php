@@ -1,3 +1,4 @@
+<x-surface.sample-state module="C-Agent" screen="groundcheck_screen" />
 <div>
     <div class="groundcheck-container p-4">
         <h3 class="text-lg font-bold">Grounding Validation Screen</h3>

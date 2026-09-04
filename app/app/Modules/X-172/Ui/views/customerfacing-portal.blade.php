@@ -1,3 +1,4 @@
+<x-surface.sample-state module="self-service" screen="customerfacing_portal" />
 <div class="max-w-4xl mx-auto space-y-6">
     <!-- Portal Header & Customer Info -->
     <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl space-y-6">
