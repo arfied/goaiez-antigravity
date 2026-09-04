@@ -18,11 +18,6 @@
                             <div class="flex items-center gap-2">
                                 <span class="font-mono text-sm">{{ $d->deploy_hash }}</span>
                                 <span class="text-xs px-2 py-1 rounded bg-gray-100">{{ $d->status }}</span>
-                                @if($d->is_sample ?? false)
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                        SAMPLE / DRAFT
-                                    </span>
-                                @endif
                             </div>
                             <div class="text-sm mt-1 text-gray-600">
                                 @if($d->edgeZone)
