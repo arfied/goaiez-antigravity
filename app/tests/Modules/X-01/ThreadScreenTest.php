@@ -10,14 +10,16 @@ use App\Modules\X121\Models\Conversation;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
-use Tests\TestCase; // will be deleted in a moment via pint or manual, I will just leave it out
+use Tests\TestCase;
 
 class ThreadScreenTest extends TestCase
 {
     public function test_thread_screen_renders_states(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Thread Tenant', 'currency' => 'USD']);
-        Tenancy::actingAs($biz->id, function () use ($biz) {
+        $user = \App\Models\User::factory()->create();
+        Tenancy::actingAs($biz->id, function () use ($biz, $user) {
+            Tenancy::setUser($user->id);
             // Default and empty state
             $customer = Customer::create([
                 'business_id' => $biz->id,
