@@ -88,4 +88,42 @@ class CreditsScreenTest extends TestCase
             ->call('explain', 999999)
             ->assertSee("isn't in this account");
     }
+    
+    
+    public function test_credits_topup_refuses_at_the_daily_ceiling(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = \App\Models\User::findOrFail($biz->owner_user_id);
+
+        \App\Support\Tenancy::set($biz->id);
+        \App\Support\Tenancy::setUser($owner->id);
+
+        \App\Modules\CBilling\Models\TrialLimit::create([
+            'business_id' => $biz->id,
+            'daily_topup_ceiling_cents' => 5000,
+            'topups_today_cents' => 0,
+            'current_balance_hundredths_cents' => 0,
+        ]);
+
+        $lw = \Livewire\Livewire::actingAs($owner)->test(\App\Modules\CBilling\Ui\Credits::class)
+            ->call('topup')
+            ->assertSee('Topped up');
+            
+        $entry = \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)
+            ->where('entry_type', 'topup')->first();
+            
+        $lw->call('explain', $entry->id)
+            ->assertSee('Automatic balance top-up')
+            ->call('topup')
+            ->assertSee('Daily top-up ceiling')
+            ->assertDontSee('Topped up');
+
+        $this->assertEquals(
+            1,
+            \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)
+                ->where('entry_type', 'topup')
+                ->count()
+        );
+    }
 }
+

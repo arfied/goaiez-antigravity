@@ -45,8 +45,12 @@ class Credits extends Component
         $this->error = null;
         $this->success = null;
         try {
-            $action->handle(Tenancy::idOrFail(), 5000);
-            $this->success = 'Successfully topped up.';
+            $result = $action->handle(Tenancy::idOrFail(), 5000);
+            if ($result['status'] === 'charged') {
+                $this->success = 'Topped up $'.number_format($result['charged_amount_cents'] / 100, 2).'.';
+            } else {
+                $this->error = $result['message'] ?? 'Top-up refused.';
+            }
         } catch (\Throwable $e) {
             $this->error = 'Error topping up: '.$e->getMessage();
         }
