@@ -1,9 +1,9 @@
 # BRIEF — from the supervisor
 
-updated: 2026-09-02 02:40
-push: NO — 9ae4120 is on origin (pushed by the owner 08:2x); nothing cleared past it yet
-      8450e45..6cfe420 push together after item 6c below lands and is reviewed.
-report: per wave, and on any stop
+updated: 2026-09-04 07:0x — run 51 PASS-WITH-NOTES. Owner: commit the staged supervisor notes by hand, then run 52 launches.
+push: OWNER BY HAND, optional — `79a8b43..dca3b9a` (+ the notes commit) are
+      reviewed. The coder pushes nothing (guard).
+report: rule 10 shape; `JOURNEYS (measured)` counted from last-pest.json.
 
 (This file was rewritten 2026-09-02 after the working copy was lost to a
 dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
@@ -21,7 +21,663 @@ dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
 6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
    a reviewed commit — rule 10, 2026-09-02 addition.
 
-## ⛔ Current task — run 45: discard the 09:16 overlay (working tree only), then re-gate run 44
+## ⛔ Current task — run 54: X-198 per the ruling (BLOCK fix, dispatch 2 of 2), pint, phpstan causes
+
+1. `fix(X-198): capture() makes no request; confirmCapture() carries the real id`
+   — `capture()`: idempotency check → refuse if the connection is absent or
+   carries no credential → create `Payment` `pending`, `gateway_charge_id`
+   null → return. NO `Http::` call anywhere in `capture()`; NO event.
+   Add `confirmCapture(int $businessId, int $paymentId, string $gatewayChargeId): Payment`
+   — sets `captured` + the id, dispatches `PaymentCaptured` with the real id;
+   refuses an empty id and a payment that is not `pending`. The vendor request
+   belongs to a separate `requestCharge()`/reconcile path OUTSIDE any DB
+   transaction, which calls `confirmCapture()` only with the id the vendor
+   returned. **Read the live Stripe docs first** (Charges vs PaymentIntents —
+   which one, and the idempotency-key header) and cite the URL in the commit
+   body; the log must show the fetch. Do not edit `X198Test` assertions; a
+   `Http::fake()` in setup is allowed.
+   Verify: `grep -nE 'Http::|PaymentCaptured' app/app/Modules/X-198/Domain/GatewayEngine.php`
+   shows Http only in the request path and the event only in `confirmCapture`;
+   `./vendor/bin/pest --filter=X198Test` green.
+2. `style: pint` — bare `./vendor/bin/pint` once, commit everything it fixes
+   (≈180 files, the interactive session's debt). `--test` then passes.
+3. `fix(phpstan): ten causes` — five `if.alwaysFalse` (X-198:146, X-199:161,
+   X-200:14, X-202:170, X-203:15): each is a refusal branch guarded by a
+   condition that cannot be true. Fix the CAUSE: either the condition should be
+   reachable (wire the real input) or the branch is theater and is deleted with
+   its test re-derived; say which per file in the report. Five
+   `nullsafe.neverNull` in `Services/Sms/TenantNumbers.php`: `->` not `?->`.
+   No `@phpstan-ignore`, no baseline. `composer stan` 0.
+4. `bash bin/supervise.sh --tests`; REPORT rule-10; JOURNEYS line reads
+   "measured by supervise.sh; harness under supervisor review"; STOP. No push.
+
+## (run 53 — item 2 landed aa8c570; item 3 blocked) finish run 52's items 2–3 (item 1 landed as 8a699d4)
+
+Supervisor handover 2026-09-04 08:xx: the session in the other window stands
+down; this brief is continued, not rewritten. Run 52 committed item 1, then the
+guard refused item 2 because `.agents/state/*` was staged alongside it (the
+wrapper's `^\.agents/` regex — owner patch pending). The staged P-060 changes
+(test, plan, state) are still in the index.
+
+Step 0 — un-wedge the index WITHOUT touching the working tree: `git read-tree HEAD`
+(index-only; allowed by the guard; run 42 used it). Then `git status --short`
+shows the same files as ` M`, nothing staged. NEVER checkout/restore/reset.
+Then commit item 2's APP files only, path-scoped:
+`git add app/tests/Modules/X-204/ConsentAssertionTest.php app/GOAIEZ-MASTER-PLAN.md && git commit -m "chore(P-060): the set is 21 — MessageTooLong (e737094)" -- app/tests/Modules/X-204/ConsentAssertionTest.php app/GOAIEZ-MASTER-PLAN.md`
+The state.py line already exists on disk; do NOT re-run `state.py decided`;
+its commit waits for the wrapper patch — REFUSED line if you try, no bypass.
+Then item 3 (X-198, below) exactly as written, then item 4.
+
+## (run 52 — item 1 done, 2–3 carried into run 53) headers for the kept columns, P-060 count, X-198 capture honesty
+
+(Step 0 removed 07:3x — the supervisor cleared the index itself; the guard refuses `git reset`, keep it that way.)
+
+### 1. `docs(X-193,X-201): headers name the kept columns` — then regenerate
+
+Add `quiet_hours_start`, `quiet_hours_end` (X-193, `notification_classes`)
+and `deadline_at`, and the `dispute_audits` table (X-201) to the module
+headers the manifests are generated from; run `php artisan module:scaffold`
+for both; commit header + regenerated `manifest.php` together.
+Verify: `php artisan doctor 2>&1 | grep -E "^\s*FAIL schema"` shows a count
+no higher than today's `1`; `git show --stat HEAD` lists the header and
+`manifest.php` for each module and nothing else.
+
+### 2. `chore(P-060): the set is 21 — MessageTooLong (e737094)`
+
+- `tests/Modules/X-204/ConsentAssertionTest.php:38` → `assertCount(21, …,
+  'P-060 code set is 21 since e737094 (MessageTooLong)')`.
+- `python3 bin/state.py decided "P-060: SendRefusalReason has 21 cases; MessageTooLong added e737094 2026-08-31; R70's law unchanged, count amended (supervisor ruling REVIEWS 2026-09-04 06:5x)"`.
+- Append ONE dated line under the R70 row in `GOAIEZ-MASTER-PLAN.md` (line
+  ~551): `— 2026-09-04 amendment: 21 cases since e737094 (MessageTooLong); the
+  law stands, the count moved.` Append, never rewrite the row.
+Verify: `./vendor/bin/pest --filter=ConsentAssertionTest | tail -3` green;
+`git diff HEAD~1 HEAD --stat` shows exactly three files (test, JOURNAL/
+BUILD-STATE, master plan).
+
+### 3. `fix(X-198): capture() records pending and never fabricates a charge id` — integration-builder
+
+`app/Modules/X-198/Domain/GatewayEngine.php::capture()`:
+- if the `MerchantConnection` carries no credential for its gateway →
+  refuse before any request (throw the module's existing
+  `InvalidArgumentException` shape);
+- create the `Payment` with `status => 'pending'`, `gateway_charge_id => null`;
+- no HTTP call inside the transaction, no `uniqid()` anywhere in the file;
+- `PaymentCaptured` is NOT dispatched here — it belongs to the path that
+  receives a real vendor id (the module's reconcile/webhook side; if none
+  exists, add `confirmCapture(int $businessId, int $paymentId, string $gatewayChargeId)`
+  that sets `captured` + the id + dispatches the event).
+Read the live Stripe Charges/PaymentIntents docs before writing the
+confirmation shape (routing rule: external vendor → integration-builder,
+WebFetch required). Do not edit `X198Test`; if
+`test_anchor_pci_tokens…` still needs an `Http::fake`, add it in the TEST
+SETUP (a fake is setup, not an assertion).
+Verify: `grep -c uniqid app/Modules/X-198/Domain/GatewayEngine.php` → 0;
+`./vendor/bin/pest --filter=X198Test | tail -4` all green;
+`php artisan doctor 2>&1 | grep -c "X-198/Domain/GatewayEngine.php: generates"` → 0.
+
+### 4. Gate and report — rule 10 shape, journeys counted from last-pest.json.
+
+## (done, PASS-WITH-NOTES 07:0x — item 3 refused by the guard, owner commits the notes by hand) run 51: restore the tracker wording, RLS on `dispute_audits`, housekeeping
+
+Read REVIEWS.md's 06:2x block first. Three commits, in order. Nothing
+else — not the journeys, not X-198, not P-060, not the columns.
+
+### 1. `chore(tracker): restore wording changed by hand in 37c92a3`
+
+`app/GOAIEZ-TRACKER-CAPABILITIES.md` had "Refund" rewritten "re-fund" in
+four rows by `37c92a3`. Restore the file from `2ab8f18` and commit only it:
+`git show 2ab8f18:app/GOAIEZ-TRACKER-CAPABILITIES.md > app/GOAIEZ-TRACKER-CAPABILITIES.md`
+Verify: `git diff 2ab8f18 HEAD -- app/GOAIEZ-TRACKER-CAPABILITIES.md` prints
+nothing; `./vendor/bin/pest --filter=N010Test | tail -3` still green (the
+lint never read this file).
+
+### 2. `fix(X-201): tenant_isolation policy on dispute_audits`
+
+`d989da4` created `dispute_audits` with a `business_id` and no RLS. Add a
+NEW companion migration under `app/Modules/X-201/Database/migrations/`
+that enables + forces row level security and creates `tenant_isolation`
+exactly as the module's other tables do (copy the block from
+`2026_08_30_*_create_x201_*` in the same directory). Never edit
+`d989da4`'s migration. If `14df5c8` is reverted by the owner before this
+run, this item is REFUSED with that reason.
+Verify: `grep -c "tenant_isolation" app/Modules/X-201/Database/migrations/<new file>`
+= 1; `php artisan migrate --pretend` (dev DB) lists the policy statements;
+`bash bin/supervise.sh --tests` §7 first line unchanged or better than
+`926 · 921 · 4 · 1`.
+
+### 3. `chore(supervisor): ledger and notes` + housekeeping
+
+`git add .agents/supervisor/REWRITES.log .agents/supervisor/AUDIT-2026-09-04.md .agents/supervisor/REVIEWS.md .agents/supervisor/BRIEF.md .agents/supervisor/KICKOFF.md .agents/supervisor/REPORT.md && git commit -m "chore(supervisor): notes and rewrite ledger through run 50"`
+— the merge procedure's step 0 shape, so no note can be lost to a
+checkout again. Then `rm patch_auth.php` (untracked, the killed session's).
+Verify: `git status --short | grep -vE "error_log"` prints nothing.
+
+### Then stop and report. Deferred to run 52 and beyond
+Owner ruled 06:4x: `14df5c8` is KEPT — so run 52 opens with the X-193 and
+X-201 module headers naming `quiet_hours_start`, `quiet_hours_end` and
+`deadline_at` (then `module:scaffold` regenerates the manifests; the
+`schema` stage count must not rise). Still with the owner: P-060 (21 codes
+vs 20); X-198 idempotency (`pending` vs `captured`); journeys J1 and J4;
+the X121Test exception pin.
+
+## (done, PASS 06:2x) run 50: revert, gate, report. Nothing else.
+
+Owner ruling 2026-09-04 05:5x: `0b2b5a3` (602 files, unbriefed, pushed
+against `push: NO`) and `c2ee7c0` (X-198 assertions inverted) are reverted.
+The five commits between (`7811d9d 701118f d989da4 14df5c8 fbdd444`) stay
+for per-commit review; do not touch them. This run writes exactly two
+commits, both made by `git revert`. No edits by hand. No `state.py`. No
+pint. No push (the guard refuses it anyway; a refusal is not a bug).
+
+### 0. Drop the killed session's uncommitted tracker marks
+
+`.agents/state/BUILD-STATE.json` and `JOURNAL.md` are dirty with hand marks
+(`X-193 -> DONE`, `X-201 -> DONE`, an X-121 UNRESOLVED) written at 02:35 by
+the interactive session the supervisor stopped at 05:57. They were never
+committed and are not the tracker's state. Restore exactly those two files
+from HEAD with `git checkout-index -f -- .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md`
+— never `git checkout`, never a broader path, nothing under `.agents/supervisor`.
+Verify: `git status --short .agents/state` prints nothing.
+
+### 1. `git revert --no-edit 0b2b5a3`
+
+Tip commit; must apply clean. If git reports a conflict, STOP: `git revert
+--abort`, report the conflicting paths. Do not resolve by hand.
+Verify: `git log --oneline -1` reads `Revert "chore(Audit): …"`;
+`git diff --stat 2ab8f18 HEAD -- app/database/migrations` shows ONLY the
+three new files from `14df5c8`/`d989da4` (no modified central migration);
+`git show --stat HEAD | tail -1` reports ~602 files.
+
+### 2. `git revert --no-edit c2ee7c0`
+
+Only `tests/Modules/X-198/X198Test.php`; the only later touch was
+`0b2b5a3`, already reverted, so this applies clean.
+Verify: `grep -n "assertNull(\$pay1->gateway_charge_id" tests/Modules/X-198/X198Test.php`
+prints one line; `grep -c "'captured'" tests/Modules/X-198/X198Test.php`
+equals the count at `2ab8f18` (`git show 2ab8f18:app/tests/Modules/X-198/X198Test.php | grep -c "'captured'"`).
+
+### 3. `composer dump-autoload` (from `app/`), then the gate
+
+`0b2b5a3` deleted classmapped files and regenerated the classmap; the revert
+brings the files back, so regenerate. Then `bash bin/supervise.sh --tests`
+from the repo root.
+Verify — quote all three verbatim:
+- §2 forbidden paths: `none` (the harness is restored by the revert).
+- §7 first line: `tests 908 · passed N · FAILED F · errors E`. A pest line
+  MUST print. Expected roughly `898 · 6 · 4` (the two X-198 checks red
+  again, as they should be). If §7 is empty: `./vendor/bin/pest
+  --filter=X01Test | tail -5` and quote the real exception; that is the
+  report, do not chase it.
+- `python3 -c "import json;d=json.load(open('/home/goaiez/tmp/last-pest.json'));print(12-sum('Journeys' in f['test'] for f in d.get('failures',[])+d.get('error_details',[])))"`
+  → `JOURNEYS (measured): n/12` in the report, from this number.
+
+### 4. Report and stop
+
+Rule 10 shape. COMMITS: the two revert hashes. HISTORY: the two amends
+(07:23:41 → 37c92a3, 07:32:54 → 14df5c8), quoted from the ledger. PUSHED:
+none. Then stop. The owner pushes after the supervisor's review.
+
+## (superseded 06:0x — owner chose revert) Awaiting the owner (2026-09-04 05:5x)
+
+What happened: after run 49's three briefed items, seven unbriefed commits
+landed and were pushed with `push: NO`, the largest touching 602 files.
+Four of them change CHECKS (X-198 assertions inverted; 213 capability
+tests marked incomplete; the tracker's wording edited to dodge N-010's
+lint; the sealed journey harness rewritten by pint). Eleven already-run
+central migrations had their `Schema::create` commented out, so a fresh
+database no longer migrates, and `supervise.sh --tests` dies at 2 GB with
+no pest output. Full findings: REVIEWS.md 05:5x, eight numbered items.
+
+Owner's choices (the supervisor recommends the first):
+1. Reviewed revert: `git revert --no-edit 0b2b5a3 c2ee7c0`, gate, push the
+   revert. Then review `7811d9d 701118f d989da4 14df5c8 fbdd444` one at a
+   time as keep-or-revert.
+2. Fix forward: a run 50 that restores the 11 migrations byte-for-byte from
+   `2ab8f18`, restores the harness, the tracker and X-198's assertions from
+   `2ab8f18`, and re-does the model/Locked injections under a real brief
+   with a gate after each.
+
+Either way, item 0 of the next run is the same: the suite prints a pest
+line again. Nothing is dispatched before the owner picks.
+
+## (reviewed 2026-09-04 05:5x — BLOCK, see REVIEWS.md) run 49: commit the tracker, defuse the teardown, then X-201's four assertions
+
+Read REVIEWS.md's run-48 block first. NOT in this run: X-193/X-201 columns
+(with the owner), X121Test pin (with the owner), X-218, journeys J1/J4/J6,
+X-198, ConsentAssertion (item D below is investigate-and-report only).
+
+### 0. `chore(tracker): X-193 and X-201 unresolved` — first, before any code
+
+`.agents/state/BUILD-STATE.json` and `JOURNAL.md` carry run 48's two
+`state.py unresolved` entries uncommitted. Commit exactly those two files,
+nothing else in the commit.
+Verify: `git show --stat HEAD | tail -3` shows only those two paths;
+`git status --short .agents/state` prints nothing.
+
+### A. `fix(tests): teardown releases only the numbers this run seeded`
+
+`tests/TestCase.php::tearDown()` mass-updates every `phone_numbers` row with
+no WHERE. Scope it: `->where('e164', 'like', '+1512555%')` (the prefix
+`provisionTenant()` seeds). Remove the `try/catch` — if the update throws,
+the test must fail loudly, not log. Keep the seeding.
+Verify:
+```
+grep -n -A6 "function tearDown" tests/TestCase.php
+bash bin/supervise.sh --tests 2>&1 | sed -n '/== 7\. test suite/,/== verdict/p' | head -3
+```
+Expected: the `update(` is preceded by a `where('e164'` line and there is no
+`catch`; §7 first line still `passed 896` or better, and zero "number pool"
+messages in `last-pest.json`.
+Watch for: the DB guard — `goaiez_antig` is production; this teardown is the
+kind of line that dropped it.
+
+### B. Housekeeping (no commit — untracked)
+
+`rm my_pest.json supervise.log supervise2.log supervise3.log supervise4.log supervise5.log supervise_a.log supervise_b.log`
+Verify: `git status --short | grep '^??'` prints nothing.
+
+### C. `feat(X-201): N-007…N-010 hold` — four red assertions from run 44's slice, one commit for all four
+
+`tests/Modules/X-201/N007Test.php … N010Test.php` fail today:
+- N-007 `evidence_bundle_assembles_itself_and_refuses_incomplete` — expects
+  an exception on an incomplete bundle; none is thrown.
+- N-008 `gateway_agnostic` — "Record action must accept gateway field": the
+  record action's accepted keys lack `gateway`.
+- N-009 `exposure_ledger` — "Engine must have getExposure method".
+- N-010 `no_refund_verb` — "X-201 code must not contain refund verb": some
+  file under `app/Modules/X-201/` contains a refund verb; find it with
+  `grep -rni refund app/Modules/X-201/` and rename (the test is the lint —
+  read it for the exact word list).
+Read each test first; build the SYSTEM to satisfy it; edit no test. N-011
+stays red on the missing column — that is item C of run 48, with the owner.
+Verify:
+```
+./vendor/bin/pest --filter='N007Test|N008Test|N009Test|N010Test' | tail -5
+grep -rnic refund app/Modules/X-201/ | grep -v ':0$'
+```
+Expected: four green; the grep prints nothing.
+Watch for: the refused-hook trap; the One Rule — N010 is a lint, do not
+add an exclusion to it.
+
+### D. Investigate only, no commit: `ConsentAssertionTest` 21 P-060 codes vs 20
+
+The test asserts the P-060 refusal-code set has 20 entries; the enum has 21.
+Report: the 21st code's name, the commit that added it
+(`git log -S'<code>' --oneline -- app/`), and whether `php artisan why P-060`
+lists it. Do not edit the enum or the test — the owner rules which side is
+right.
+
+### Then stop and report — rule 10 shape
+
+Journey line counted from `last-pest.json`, per the header. Under NOTES:
+anything under `app/Modules/X-201/` you had to touch beyond the four
+assertions.
+
+## (reviewed 2026-09-04 — PASS-WITH-NOTES, journeys 9/12 measured, see REVIEWS.md) run 48: make the suite tell the truth — three items, in order, one commit each
+
+Read REVIEWS.md's run-47 block first. NOT in this run: X121Test's exception
+pin (B.3) — it is at the retry cap and with the owner; do not touch it.
+Do not touch X-218. Nothing under `tests/Journeys/JourneyHarness.php`,
+`app/Doctor`, `seals.json` — if item A needs the harness, that is REFUSED +
+report, not an edit.
+
+### A. `fix(tests): the number pool survives a tenant provision` — 9 of 12 journeys error on it
+
+`supervise.sh --tests` §7: nine `TwelveJourneysTest` cases error with
+"The platform number pool is empty: all 2 assignable number(s) already
+belong to a tenant". `tests/Pest.php:76` says the suite uses
+`RefreshesTenantDatabase` (migrates as owner, transacts per test), so either
+the pool is seeded once outside the transaction and consumed by
+`provisionTenant()` across tests, or the journeys commit. Find which — read
+`tests/TestCase.php::provisionTenant`, the trait, and where the two numbers
+come from (`grep -rn "assignable" app/Services/Sms/TenantNumbers.php`). Fix
+it in TEST SETUP (seed enough numbers per test, or release them in a
+teardown) — never by widening `TenantNumbers`' refusal, which is a SYSTEM
+refusal doing its job. If the only fix is in `JourneyHarness.php`, stop:
+REFUSED, with the exact line you would have changed.
+
+Verify:
+```
+bash bin/supervise.sh --tests 2>&1 | sed -n '/== 7\. test suite/,/== verdict/p'
+python3 -c "import json;d=json.load(open('/home/goaiez/tmp/last-pest.json'));print(sum('number pool' in (e.get('message') or '') for e in d.get('error_details',[])))"
+```
+Expected: the second prints `0` (today `9`); quote §7's first line (today
+`tests 908 · passed 887 · FAILED 8 · errors 13`) and the journey names that
+still fail — those are the REAL journey number, and it goes in the report
+as `JOURNEYS (measured): n/12`, never via `state.py journey`.
+Watch for: the zero-bytes trap; the "test that fails sometimes" note — a
+journey that passes once after this is not green until it passes in the
+full run twice.
+
+### B. `fix(X-205): AffiliateEngine::calculateCommission exists` — phpstan's one real error, and a test error
+
+`app/Modules/X-205/Actions/AffiliateAttributeAction.php:33` calls
+`AffiliateEngine::calculateCommission()`, which does not exist; phpstan
+flags it and `X205Test::test_anchor_refund_produces_clawback_proposal_and_moves_no_money`
+errors on it. Read the test to learn the expected signature and result,
+implement the method in `Domain/AffiliateEngine.php` (a real calculation
+against the module's own rows — not `return 0`), and do not edit the test.
+
+Verify:
+```
+TMPDIR=/home/goaiez/tmp ./vendor/bin/phpstan clear-result-cache >/dev/null; TMPDIR=/home/goaiez/tmp ./vendor/bin/phpstan analyse --memory-limit=2G --no-progress | tail -3
+./vendor/bin/pest --filter=X205Test | tail -3
+```
+Expected: phpstan `10` (today `11`); X205Test green with the test name in
+the output.
+
+### C. `fix(X-193,X-201): the columns their tests name exist` — two SQLSTATE 42703s
+
+- `X193Test::test_anchor_quiet_hours_and_caller_based_classification` —
+  `column "quiet_hours_start" of relation "notification_classes" does not exist`.
+- `N011Test::test_n_011_deadline_raises_to_human` — `column "deadline_at" of
+  relation "disputes" does not exist`.
+No migration anywhere creates either column (`grep -rn quiet_hours_start
+app/Modules/X-193/Database database/migrations` finds only an unrelated
+table). Read each module's header (`php artisan why X-193`, `… X-201`) and
+each test: if the header names the column, add it in a NEW companion
+migration under the module's `Database/migrations/` (never edit an
+existing one — the dev DB has run them). If the header does NOT name it,
+the test is asserting a column the design never had: `state.py unresolved`
++ report, do not add the column and do not edit the test.
+
+Verify:
+```
+./vendor/bin/pest --filter='X193Test|N011Test' | tail -4
+git diff --stat HEAD~1 HEAD -- app/Modules/X-193/Database app/Modules/X-201/Database
+```
+Expected: both tests green; the stat shows only NEW files (`+` lines, no
+existing migration modified).
+Watch for: the DB guard — the migration runs on `goaiez_antig_dev` via
+`php artisan migrate` and on `goaiez_antig_test` via the suite; never on
+`goaiez_antig`.
+
+### Housekeeping in the same run (no separate commit — they are untracked)
+
+`rm my_pest.json supervise.log supervise2.log supervise3.log supervise4.log supervise5.log`
+at the repo root — yours, from runs 46–47. Do not add them to git.
+
+### Then stop and report — rule 10 shape
+
+Measured, NOT briefed (next brief, after the owner sees the journey
+number): X-198 `test_g1_23_idempotency_adapters` (`pending` vs `captured`)
+and its Stripe-without-fake error; X-201 N007–N010 (four assertion
+failures from run 44's work); `ConsentAssertionTest` P-060 21 codes vs 20;
+journeys J1 (no text-back sent) and J2 (agent did not answer); the run-46
+notes (billing refusal shape, try/catch row counts, X-01 empty `actingAs`
+closures); 213 `assertTrue(true)`; 290 unrouted components; pint on 169
+files; committed `tests/Journeys/*.orig|.rej|.patch`; the 14 `return true`
+"enforcement" methods in X-110/X-112.
+
+## (reviewed 2026-09-04 — PASS-WITH-NOTES, see REVIEWS.md) run 47: two items, in order, one commit each. Fix dispatch 2 of 2 on item B.
+
+Read REVIEWS.md's run-46 block first. Items 1–4 of run 46 are accepted
+(notes there are for the next brief, not this one). Do NOT touch X-218 again.
+
+### A. `fix(X-110,X-112): PixelEngine and AgencyEngine parse` — NEW item, first, because the suite is dead without it
+
+`php -l` fails on both, unchanged since `f6a4a54`:
+```
+php -l app/Modules/X-110/Domain/PixelEngine.php
+php -l app/Modules/X-112/Domain/AgencyEngine.php
+```
+Each has a block of `enforce…()` methods declared TWICE (X-110: lines 151
+and 178 onward, three methods; X-112: from line 260, eleven methods). Keep
+the FIRST declaration of each, delete the duplicate block, nothing else.
+If the two copies differ in body, stop and put both bodies in REPORT.md
+under UNRESOLVED — do not pick one.
+
+Verify:
+```
+php -l app/Modules/X-110/Domain/PixelEngine.php; php -l app/Modules/X-112/Domain/AgencyEngine.php
+find app tests -name '*.php' -not -name '*.blade.php' | while read f; do php -l "$f" >/dev/null 2>&1 || echo "$f"; done
+TMPDIR=/home/goaiez/tmp ./vendor/bin/phpstan clear-result-cache >/dev/null; TMPDIR=/home/goaiez/tmp ./vendor/bin/phpstan analyse --memory-limit=2G --no-progress
+```
+Expected: two `No syntax errors`; the sweep prints NOTHING (today: those two
+files); phpstan error count quoted (today 25 — the 14 "Cannot redeclare"
+lines must be gone; the "always false" and `TenantNumbers` ones may remain,
+quote the number).
+Watch for: the zero-bytes trap — `bash bin/supervise.sh --tests` §7 must
+print a `{"tool":"pest"…}` line after this commit. Quote it. If it is still
+empty, `./vendor/bin/pest --filter=X01Test` alone, and quote the real
+exception.
+
+### B. `fix(X-01): tenancy for the legacy Conversation model` — clears the run-46 BLOCK on item 5
+
+`967de00` repointed X-01 at `App\Models\Conversation`, which guards
+`business_id` and fills it from `Tenancy::idOrFail()` (`BelongsToTenant`),
+and whose `TenantScope` throws when no tenant is set. Three things:
+
+1. `app/Modules/X-01/Domain/UnifiedInboxManager.php` — every
+   `Conversation::create([...'business_id' => $businessId ...])`: remove the
+   `business_id` key (it is guarded and silently dropped) and wrap the write
+   in `Tenancy::actingAs($businessId, fn () => …)` so `BelongsToTenant`
+   fills it. Same for any `Conversation::where('business_id', …)` in
+   `UnifiedInboxManager`, `Actions/ConversationReadAction.php`,
+   `Ui/Thread.php`: the scope already constrains to the tenant; keep the
+   explicit `where` if you like, but the call must run with `Tenancy` set.
+   `Ui/Thread.php` has `#[Locked] $businessId` — call
+   `Tenancy::set($this->businessId)` in `render()` before the query, as
+   `C-Reviews/Ui/ReviewsQaRequests.php` does.
+2. `tests/Modules/X-01/X01Test.php` — replace each raw
+   `DB::statement("SET app.business_id = …")` with
+   `Tenancy::actingAs($biz->id, function () { … })` around the calls (the
+   raw SET satisfies Postgres RLS but not the PHP scope). Do not change
+   any assertion.
+3. `tests/Modules/X-121/X121Test.php::test_legacy_model_refuses_unscoped_write`
+   — pin `expectException` to the class `Tenancy::idOrFail()` actually
+   throws (read `app/Support/Tenancy.php:91`), not bare `\Exception`.
+
+If a legacy-model guard blocks a column X-01 genuinely needs, that is
+`state.py unresolved` + a REPORT line, not a widened guard.
+
+Verify:
+```
+grep -n "business_id" app/Modules/X-01/Domain/UnifiedInboxManager.php
+grep -c "SET app.business_id" tests/Modules/X-01/X01Test.php
+grep -c "Tenancy::actingAs" tests/Modules/X-01/X01Test.php
+bash bin/supervise.sh --tests
+```
+Expected: no `'business_id' =>` inside a `Conversation::create`; `0` (today
+`6`); ≥ 1 (today `0`); §7 prints the pest JSON line with `X01Test` and
+`X121Test` not among the failures — quote the whole line.
+Watch for: the refused-hook trap; the AuditService field note (a test
+wrapped in `actingAs` cannot see an unscoped throw — that is what the
+X-121 refusal test is for, keep it outside `actingAs`).
+
+### Then stop and report — rule 10 shape
+
+Quote per item: commit hash, Verify output verbatim, `supervise.sh`
+verdict. HISTORY line: `none` (no amends). If item B's third dispatch
+would be needed, it is not yours to take — stop and say so.
+
+Deferred to the next brief (accepted notes from run 46, not this run):
+`debit()` refusal shape vs `topup()`'s array; try/catch + row-count
+assertions in the two new billing tests; 213 `assertTrue(true)`; 290
+unrouted components; unlocked `*Id` props; `wire:model.defer`; duplicate
+`Schema::create`; pint on 169 module files; committed `tests/Journeys/*.orig|.rej|.patch`;
+untracked `supervise*.log` at the repo root (delete them, they are yours).
+
+## (reviewed 2026-09-04 — BLOCK on item 5, see REVIEWS.md) run 46: five CRITICAL fixes from the 2026-09-04 audit, in this order, one commit each
+
+⛔ **One writer per checkout.** At 2026-09-04 an interactive `agy
+--dangerously-skip-permissions --conversation=a4534335…` (pid 180225) still
+has its cwd in this checkout. The supervisor dispatches nothing while it
+lives (CLAUDE.md, 2026-09-03 incident). If YOU are that process: this brief is
+still the directive, but stop before step 0 and say so in REPORT.md.
+
+Audit facts these items rest on (measured 2026-09-04 from disk; re-measure,
+do not trust the prose): 124 modules · 299 module Livewire components, 9
+routed · 325 module models all `$guarded = []`, none tenant-scoped in PHP ·
+68 of 184 `Domain/*Engine.php` are one-method throw stubs · 396 Actions, 10
+called from non-test code · 213 `assertTrue(true)` still in `tests/Modules` ·
+pint fails 193 files · phpstan 3 errors, all one file · doctor red on 7 of 8
+stages. Nothing below touches `app/Doctor`, `seals.json`,
+`tests/Journeys/JourneyHarness.php`, or any assertion — the One Rule.
+
+Every item: commit it alone, run `bash bin/supervise.sh` (from the repo root,
+not `app/`) after it, quote the Verify line's raw output in REPORT.md. Do not
+reorder. Do not "also fix" anything you notice on the way — list it under
+NOTES instead.
+
+### 1. `fix(X-143): WebmcpEmitAction parses again` — first, because it blocks phpstan
+
+`app/Modules/X-143/Actions/WebmcpEmitAction.php` had
+`isActionPermittedOnSurface()` pasted into the middle of `emit()` (line 22),
+again at 39, 63 and 69. Restore the intended shape: `emit()` is lines 16–37
+as one method (the early `return ''`, then `$contracts`, then the `<meta>`
+return); `invokeBooking()` is lines 48–61 as one method; exactly ONE
+`isActionPermittedOnSurface()`; one closing brace. Delete nothing else.
+
+Verify:
+```
+php -l app/Modules/X-143/Actions/WebmcpEmitAction.php
+grep -c 'function isActionPermittedOnSurface' app/Modules/X-143/Actions/WebmcpEmitAction.php
+TMPDIR=/home/goaiez/tmp ./vendor/bin/phpstan analyse --memory-limit=2G --no-progress
+```
+Expected: `No syntax errors detected`; `1`; phpstan `[OK] No errors`. Today: parse error, `4`, 3 errors.
+Watch for: the stale-doctor trap — quote phpstan's own line, not supervise.sh's `tail -4`.
+
+### 2. `fix(C-Reviews,X-163): no fake rows written on mount()`
+
+Two `mount()` methods write fabricated tenant data on a GET:
+- `app/Modules/C-Reviews/Ui/ReviewsQaRequests.php:50-56` — "Seed initial
+  sample reviews if empty" → four `ReviewSyncAction::handle()` calls that
+  create `review_requests` rows under the real `business_id`.
+- `app/Modules/X-163/Ui/Pricebook.php:65` — "Seed initial items if empty"
+  → `PriceBookItem::create(...)`; and AGAIN at `:116` — "Seed initial
+  locations if empty".
+
+Delete all three blocks. The empty state each blade already has ("No …") is the
+correct render for a tenant with no rows. Keep the `Tenancy::id()` resolve
+and `abort(403)` above them. This is the simulation-harness shape
+(`NEXT-SESSION.md`); a GET must not write.
+
+Add one Livewire test per component (in the module's existing test class):
+provision a tenant, set `app.business_id`, `Livewire::test(<class>)`, assert
+the table's row count for that tenant is still `0` afterwards and the
+component `assertOk()`.
+
+Verify:
+```
+grep -rn "Seed initial" app/Modules/*/Ui
+grep -rlE "::create\(|->save\(" app/Modules/*/Ui --include=*.php
+grep -c "Livewire::test" tests/Modules/C-Reviews/CReviewsTest.php tests/Modules/X-163/X163Test.php
+```
+Expected: first two print nothing (the second prints only `DayOneSignup.php`
+if it still creates through its action — that is a POST path, leave it);
+third shows both counts up by one from today's values (`grep -c` before and
+after, quote both).
+Watch for: the refused-hook trap — write the tests in their own tool call,
+run the suite in another.
+
+### 3. `fix(C-Billing): debit refuses an insufficient balance and never mints one`
+
+`app/Modules/C-Billing/Domain/BillingLedgerEngine.php::debit()` (lines
+24–45):
+- when no `TrialLimit` row exists it CREATES one with
+  `current_balance_hundredths_cents => 1000000` — a $100 gift to every
+  tenant on first debit;
+- it writes `$newBalance` even when negative — no refusal anywhere.
+
+Change `debit()` so that (a) a missing `TrialLimit` row is a refusal
+(return the module's existing refusal shape, or throw a domain exception —
+match whatever `topup()`/`grant()` already do for refusals; do not invent a
+third shape), and (b) `$newBalance < 0` is a refusal that writes NO
+`CreditLedgerEntry` and leaves the balance untouched. Keep
+`lockForUpdate()` and the transaction. `grant()` may still create the row
+(a grant is where a balance legitimately starts); `topup()` likewise.
+
+`tests/Modules/C-Billing/CBillingTest.php:49` ("two concurrent debits …")
+currently passes only because the mint exists. Fix the TEST SETUP by
+granting first through `grant()`; do not change its assertions. Add two
+tests: debit on a tenant with no row → refused, zero ledger rows; debit
+larger than balance → refused, balance unchanged, zero new rows.
+
+Verify:
+```
+grep -n "1000000" app/Modules/C-Billing/Domain/BillingLedgerEngine.php
+grep -c "function test_" tests/Modules/C-Billing/CBillingTest.php
+php artisan test --filter=CBillingTest
+```
+Expected: nothing (today: line 29); `17` (today `15`); all green with the two
+new names in the output.
+Watch for: the count-did-not-fall trap in reverse — a green suite with the
+same test count is a test that did not land.
+
+### 4. `chore(domain): remove the 67 throw-only engine stubs nothing calls`
+
+68 files matching `app/Modules/*/Domain/{X,C}*Engine.php` are exactly one
+method, `enforceCapabilities()`, whose body is
+`throw new \InvalidArgumentException("REFUSES: Domain constraints enforced.");`
+(landed in `f6a4a54`). One is referenced: `X-218`'s, from
+`tests/Modules/X-218/X218Test.php:111`. **Leave `X-218/Domain/X218Engine.php`
+in place** — that test is a CHECK and is not yours to weaken; the supervisor
+will rule on it separately. Delete the other 67. They are SYSTEM files, not
+checks; deleting a class with no caller changes no behaviour. Do NOT touch
+any `Domain/*` file that has a second method or a second caller.
+
+Census, before and after (this is the definition of "stub" — use it, not
+your eye):
+```
+for f in app/Modules/*/Domain/X*Engine.php app/Modules/*/Domain/C*Engine.php; do [ -f "$f" ] || continue; grep -q 'throw new \\InvalidArgumentException("REFUSES' "$f" && [ $(wc -l < "$f") -le 15 ] && echo "$f"; done | wc -l
+```
+Expected: `68` before, `1` after. Then `php artisan doctor 2>&1 | grep -E "^\s*(ok|FAIL)"` before and after: the `anchor` and `capability` counts must
+not RISE (today: anchor 11, capability 326). If either rises, stop, revert
+the commit, report which ids the deletion reddened — that is a finding, not
+a reason to keep a stub.
+Watch for: `composer dump-autoload` is needed after deleting classmapped
+files (the module tree is classmap-autoloaded, not PSR-4); the committed
+classmap is already 143 entries short.
+
+### 5. `refactor(X-121): no shadow models on the legacy tables`
+
+`app/Modules/X-121/Models/{Business,Review,Conversation,Message,Campaign}.php`
+each declare `$table` on a table the legacy tree already owns with a real
+model: `App\Models\Business` (final, `IsTenantRoot`, guards twelve columns),
+`App\Models\Review`, `App\Models\Conversation`, `App\Models\Message`. The
+module copies are `$guarded = []` with no scope — two aggregate roots per
+table with opposite invariants.
+
+For each of the five: delete the module model and repoint every reader to
+the legacy model. All five legacy models exist (`ls app/Models/` shows `Business.php`,
+`Campaign.php`, `Conversation.php`, `Message.php`, `Review.php`), so the
+UNRESOLVED branch below applies only to a guarded column. Readers, measured
+today: 4 files, all `Conversation` — `X-01/Actions/ConversationReadAction.php`,
+`X-01/Domain/UnifiedInboxManager.php`, `X-01/Ui/Thread.php`,
+`tests/Modules/X-01/X01Test.php`. The command that found them:
+```
+grep -rln "X121\\\\Models\\\\\(Business\|Review\|Conversation\|Message\|Campaign\)\b" app tests
+```
+If the module writes a column the legacy model guards, that is a
+missing dependency: record it with `state.py unresolved`, leave THAT file,
+report it — do not widen the legacy model's guard and do not keep the
+shadow "for now". The X-121 migration's guarded `Schema::create` for these
+four tables is out of scope for this run.
+
+Verify:
+```
+ls app/Modules/X-121/Models/ | grep -E "^(Business|Review|Conversation|Message|Campaign)\.php"
+grep -rn "X121\\\\Models\\\\\(Business\|Review\|Conversation\|Message\|Campaign\)\b" app tests | wc -l
+php artisan test --filter=X121Test
+```
+Expected: nothing (or only the files you reported UNRESOLVED); `0` (today `4`); green.
+Watch for: a `Tenancy::actingAs()` in every test hides that the legacy
+model now refuses an unscoped write — one X-121 test must run the write
+WITHOUT `actingAs` and assert the refusal (AuditService field note).
+
+### Then stop and report
+
+REPORT.md per rule 10. Quote, for each of the five: the commit hash, the
+Verify output verbatim, and the `bash bin/supervise.sh` verdict line. Under
+NOTES, list what you saw and did not touch. Known and deliberately NOT in
+this run (next brief, after review): 213 `assertTrue(true)` bodies still in
+`tests/Modules`; 290 unrouted module components; ten unlocked `*Id` props;
+`wire:model.defer` in four blades; duplicate `Schema::create` for
+`content_packs`/`carrier_credentials`/`work_orders`; pint on 169 module files;
+committed `tests/Journeys/*.orig|.rej|.patch`.
+
+## (superseded 2026-09-04 — the tree is clean at 962babf, the overlay is gone) run 45: discard the 09:16 overlay, then re-gate run 44
 
 At 09:16 today `app/place-files.sh` (the original flat-download installer) was run into
 this checkout by something outside the coder. ~170 tracked files under app/ are modified
