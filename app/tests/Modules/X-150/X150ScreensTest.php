@@ -86,6 +86,15 @@ class X150ScreensTest extends TestCase
             ->assertSee('Cold');
     }
 
+    public function test_provider_cost_per_error_state(): void
+    {
+        Livewire::test(ProviderCostPer::class, ['businessId' => $this->businessId])
+            ->call('markCold', 999999)
+            ->assertSee('Action failed');
+
+        $this->assertSame(0, ProviderRoster::where('business_id', $this->businessId)->count());
+    }
+
     public function test_provider_cost_per_sample_state(): void
     {
         $count = ProviderRoster::where('business_id', $this->businessId)->count();

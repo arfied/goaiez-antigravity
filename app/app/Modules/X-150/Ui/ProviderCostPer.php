@@ -48,7 +48,7 @@ class ProviderCostPer extends Component
             app(ProviderColdAction::class)->handle($this->businessId, $id, false);
             $this->actionNotice = 'Provider marked cold';
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            $this->actionNotice = $e->getMessage();
         }
     }
 
@@ -62,7 +62,7 @@ class ProviderCostPer extends Component
             app(ProviderColdAction::class)->handle($this->businessId, $id, true);
             $this->actionNotice = 'Provider warmed up';
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            $this->actionNotice = $e->getMessage();
         }
     }
 
@@ -99,7 +99,7 @@ class ProviderCostPer extends Component
             ]);
         } else {
             $dbRoster = ProviderRoster::where('business_id', $this->businessId)->orderBy('tier_level')->get();
-            $roster = $dbRoster->map(function ($p) {
+            $roster = $dbRoster->map(function (ProviderRoster $p): object {
                 $attempts = ProviderAttempt::where('business_id', $this->businessId)
                     ->where('provider_id', $p->id)
                     ->count();
@@ -114,15 +114,15 @@ class ProviderCostPer extends Component
                     ->where('status', 'rejected_junk')
                     ->count();
 
-                $spend_cents = $attempts * $p->cost_per_lookup_cents;
+                $spend_cents = $attempts * (int) $p->cost_per_lookup_cents;
                 $cost_per_valid_cents = $valid > 0 ? intdiv($spend_cents, $valid) : null;
 
                 return (object) [
-                    'id' => $p->id,
-                    'provider_name' => $p->provider_name,
-                    'tier_level' => $p->tier_level,
-                    'cost_per_lookup_cents' => $p->cost_per_lookup_cents,
-                    'is_active' => $p->is_active,
+                    'id' => (int) $p->id,
+                    'provider_name' => (string) $p->provider_name,
+                    'tier_level' => (int) $p->tier_level,
+                    'cost_per_lookup_cents' => (int) $p->cost_per_lookup_cents,
+                    'is_active' => (bool) $p->is_active,
                     'attempts' => $attempts,
                     'valid' => $valid,
                     'junk' => $junk,
