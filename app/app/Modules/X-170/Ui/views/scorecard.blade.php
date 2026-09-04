@@ -1,5 +1,5 @@
-<x-surface.sample-state module="commission injection" screen="scorecard" />
 <div>
+    <x-surface.sample-state module="commission injection" screen="scorecard" />
     <div class="scorecard-view p-4">
         <h3 class="text-lg font-bold">Technician & Sales Scorecard</h3>
         @if($scorecards->isEmpty())

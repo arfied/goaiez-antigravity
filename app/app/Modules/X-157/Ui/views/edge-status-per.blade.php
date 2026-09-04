@@ -1,5 +1,5 @@
-<x-surface.sample-state module="Cloudflare zero-touch provisioning" screen="edge_status_per" />
 <div>
+    <x-surface.sample-state module="Cloudflare zero-touch provisioning" screen="edge_status_per" />
     <div class="edge-status-view p-4">
         <h3 class="text-lg font-bold">Cloudflare Edge & SSL Deployments</h3>
         @if($deployments->isEmpty())

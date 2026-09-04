@@ -1,5 +1,5 @@
-<x-surface.sample-state module="C-Agent" screen="thread" />
 <div>
+    <x-surface.sample-state module="C-Agent" screen="thread" />
     <div class="agent-thread-container p-4">
         <h3 class="text-lg font-bold">Agent Turns Thread</h3>
         @if($turns->isEmpty())

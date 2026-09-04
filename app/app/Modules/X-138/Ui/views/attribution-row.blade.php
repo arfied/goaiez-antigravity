@@ -1,5 +1,5 @@
-<x-surface.sample-state module="click- and keyword-level attribution" screen="attribution_row" />
 <div>
+    <x-surface.sample-state module="click- and keyword-level attribution" screen="attribution_row" />
     <div class="attr-row-view p-4">
         <h3 class="text-lg font-bold">Touch Attribution Journey</h3>
         @if($queries->isEmpty())

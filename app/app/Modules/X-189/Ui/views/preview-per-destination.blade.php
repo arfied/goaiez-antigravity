@@ -1,5 +1,5 @@
-<x-surface.sample-state module="client photo → generated variant → branded card. ⛔ **It never fails: a missing photo yields the branded fallback.**" screen="preview_per_destination" />
 <div>
+    <x-surface.sample-state module="client photo → generated variant → branded card. ⛔ **It never fails: a missing photo yields the branded fallback.**" screen="preview_per_destination" />
     <div class="preview-dest-view p-4">
         <h3 class="text-lg font-bold">Branded Media Previews</h3>
         @if($media->isEmpty())

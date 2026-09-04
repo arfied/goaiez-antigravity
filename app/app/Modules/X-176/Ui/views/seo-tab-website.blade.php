@@ -1,5 +1,5 @@
-<x-surface.sample-state module="explicit allow for AI crawlers *(GPTBot" screen="seo_tab_website" />
 <div>
+    <x-surface.sample-state module="explicit allow for AI crawlers *(GPTBot" screen="seo_tab_website" />
     <div class="seo-tab-view p-4">
         <h3 class="text-lg font-bold">SEO & Schema.org Status</h3>
         @if($schemas->isEmpty())

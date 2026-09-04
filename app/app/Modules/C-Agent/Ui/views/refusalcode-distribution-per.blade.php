@@ -1,5 +1,5 @@
-<x-surface.sample-state module="C-Agent" screen="refusalcode_distribution_per" />
 <div>
+    <x-surface.sample-state module="C-Agent" screen="refusalcode_distribution_per" />
     <div class="refusal-dist-container p-4">
         <h3 class="text-lg font-bold">Refusal Code Distribution</h3>
         @if($refusals->isEmpty())

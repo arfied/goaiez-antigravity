@@ -1,5 +1,5 @@
-<x-surface.sample-state module="one line of JS" screen="offline_form_inbox" />
 <div>
+    <x-surface.sample-state module="one line of JS" screen="offline_form_inbox" />
     <div class="offline-inbox-view p-4">
         <h3 class="text-lg font-bold">Offline & Capped Form Inbox</h3>
         @if($leads->isEmpty())

@@ -1,5 +1,5 @@
-<x-surface.sample-state module="**local-first with SQLite on the device — a basement has no signal**" screen="sync_failure_rate" />
 <div>
+    <x-surface.sample-state module="**local-first with SQLite on the device — a basement has no signal**" screen="sync_failure_rate" />
     <div class="sync-rate-view p-4">
         <h3 class="text-lg font-bold">Offline Device Sync Conflict Rate</h3>
         @if($conflicts->isEmpty())

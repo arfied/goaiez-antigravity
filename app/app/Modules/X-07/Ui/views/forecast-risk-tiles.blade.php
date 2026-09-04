@@ -1,5 +1,5 @@
-<x-surface.sample-state module="MRR prediction" screen="forecast_risk_tiles" />
 <div>
+    <x-surface.sample-state module="MRR prediction" screen="forecast_risk_tiles" />
     <div class="forecast-tiles-view p-4">
         <h3 class="text-lg font-bold">Revenue Forecast & Churn Risk Tiles</h3>
         @if($forecasts->isEmpty())

@@ -367,7 +367,12 @@ class SurfacesGenerateCommand extends Command
             $content = file_get_contents($viewFile);
             if (! str_contains($content, 'x-surface.sample-state')) {
                 $includeLine = "<x-surface.sample-state module=\"$title\" screen=\"$render\" />\n";
-                file_put_contents($viewFile, $includeLine.$content);
+                if (preg_match('/^(<[a-z0-9\-]+[^>]*>)\s*/i', $content, $matches)) {
+                    $content = preg_replace('/^(<[a-z0-9\-]+[^>]*>)\s*/i', "$1\n    $includeLine", $content);
+                    file_put_contents($viewFile, $content);
+                } else {
+                    file_put_contents($viewFile, "<div>\n    $includeLine" . $content . "\n</div>");
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
-<x-surface.sample-state module="C-Ai" screen="model_board" />
 <div>
+    <x-surface.sample-state module="C-Ai" screen="model_board" />
     <div class="model-board-container p-4">
         <h3 class="text-lg font-bold">AI Model Board & Invocation Engine</h3>
         @if($calls->isEmpty())

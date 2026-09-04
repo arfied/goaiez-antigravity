@@ -1,5 +1,5 @@
-<x-surface.sample-state module="services with prices" screen="pricebook" />
 <div class="max-w-6xl mx-auto space-y-6">
+    <x-surface.sample-state module="services with prices" screen="pricebook" />
     <!-- Header & Stats Overview -->
     <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl space-y-6">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">

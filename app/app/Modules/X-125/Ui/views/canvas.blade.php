@@ -1,5 +1,5 @@
-<x-surface.sample-state module="branching" screen="canvas" />
 <div>
+    <x-surface.sample-state module="branching" screen="canvas" />
     <div class="flow-canvas-view p-4">
         <h3 class="text-lg font-bold">Workflow Canvas</h3>
         @if($flows->isEmpty())

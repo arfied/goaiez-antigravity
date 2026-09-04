@@ -1,5 +1,5 @@
-<x-surface.sample-state module="actual vs expected per job" screen="margin_by_job" />
 <div>
+    <x-surface.sample-state module="actual vs expected per job" screen="margin_by_job" />
     <div class="margin-job-view p-4">
         <h3 class="text-lg font-bold">Job Margins & Costing</h3>
         @if($costs->isEmpty())

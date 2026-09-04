@@ -1,5 +1,5 @@
-<x-surface.sample-state module="the 54 checks across 5 layers" screen="score" />
 <div>
+    <x-surface.sample-state module="the 54 checks across 5 layers" screen="score" />
     <div class="score-view p-4">
         <h3 class="text-lg font-bold">Audit Performance Score Tile</h3>
     </div>

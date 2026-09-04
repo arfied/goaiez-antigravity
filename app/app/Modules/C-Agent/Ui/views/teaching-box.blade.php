@@ -1,5 +1,5 @@
-<x-surface.sample-state module="C-Agent" screen="teaching_box" />
 <div>
+    <x-surface.sample-state module="C-Agent" screen="teaching_box" />
     <div class="teaching-box-container p-4">
         <h3 class="text-lg font-bold">Agent Teaching Box</h3>
         @if($instructions->isEmpty())

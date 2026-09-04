@@ -1,5 +1,5 @@
-<x-surface.sample-state module="C-Reviews" screen="tickets" />
 <div>
+    <x-surface.sample-state module="C-Reviews" screen="tickets" />
     <div class="tickets-container p-4">
         <h3 class="text-lg font-bold">Low-Rating Triage Tickets</h3>
         @if($tickets->isEmpty())

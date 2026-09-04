@@ -1,5 +1,5 @@
-<x-surface.sample-state module="persistent chat on every page. **OPERATE** *("text everyone who called last week")*" screen="todays_recommendation_strip" />
 <div>
+    <x-surface.sample-state module="persistent chat on every page. **OPERATE** *("text everyone who called last week")*" screen="todays_recommendation_strip" />
     <div class="rec-strip-view p-4">
         <h3 class="text-lg font-bold">Today's Recommendations</h3>
         @if($recs->isEmpty())

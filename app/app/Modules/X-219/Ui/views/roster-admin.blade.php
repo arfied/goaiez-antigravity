@@ -1,5 +1,5 @@
-<x-surface.sample-state module="X-219" screen="roster_admin" />
 <div>
+    <x-surface.sample-state module="X-219" screen="roster_admin" />
     <div class="roster-admin-container p-4">
         <h3 class="text-lg font-bold">Model Roster Administration</h3>
         @if($models->isEmpty())

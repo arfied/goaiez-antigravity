@@ -1,5 +1,5 @@
-<x-surface.sample-state module="typed events, any module subscribes; **dead-letter queue at 10 consecutive failures + the tenant emailed**; exponential backoff 1" screen="dlq_request_inspector" />
 <div>
+    <x-surface.sample-state module="typed events, any module subscribes; **dead-letter queue at 10 consecutive failures + the tenant emailed**; exponential backoff 1" screen="dlq_request_inspector" />
     <div class="dlq-inspector p-4">
         <h3 class="text-lg font-bold">Dead Letter Queue Inspector</h3>
         @if($deadLetters->isEmpty())

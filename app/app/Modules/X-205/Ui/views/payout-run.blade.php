@@ -1,5 +1,5 @@
-<x-surface.sample-state module="**The referral and affiliate layer: every tenant gets an affiliate id; tiers, lifetime attribution, id merging, promo-code sync, a white-labelled portal, clawbacks and the W-9 collection.** ⛔⛔ **Every money row here is `MONEY` / `L1` FOREVER.**" screen="payout_run" />
 <div>
+    <x-surface.sample-state module="**The referral and affiliate layer: every tenant gets an affiliate id; tiers, lifetime attribution, id merging, promo-code sync, a white-labelled portal, clawbacks and the W-9 collection.** ⛔⛔ **Every money row here is `MONEY` / `L1` FOREVER.**" screen="payout_run" />
     <div class="payout-run-view p-4">
         <h3 class="text-lg font-bold">Affiliate Batch Payout Processing</h3>
     </div>

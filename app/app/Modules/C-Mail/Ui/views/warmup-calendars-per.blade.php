@@ -1,5 +1,5 @@
-<x-surface.sample-state module="C-Mail" screen="warmup_calendars_per" />
 <div>
+    <x-surface.sample-state module="C-Mail" screen="warmup_calendars_per" />
     <div class="warmup-view p-4">
         <h3 class="text-lg font-bold">Domain Warmup Calendars</h3>
         @if($calendars->isEmpty())

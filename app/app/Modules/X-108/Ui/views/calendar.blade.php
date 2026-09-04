@@ -1,5 +1,5 @@
-<x-surface.sample-state module="**two modes — APPOINTMENT and JOB — the profile picks (§29.3)**" screen="calendar" />
 <div>
+    <x-surface.sample-state module="**two modes — APPOINTMENT and JOB — the profile picks (§29.3)**" screen="calendar" />
     <div class="calendar-container p-4">
         <h3 class="text-lg font-bold">Appointment Calendar</h3>
         @if($appointments->isEmpty())

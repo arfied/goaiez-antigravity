@@ -1,5 +1,5 @@
-<x-surface.sample-state module="white-labelling" screen="staff" />
 <div>
+    <x-surface.sample-state module="white-labelling" screen="staff" />
     <div class="staff-view p-4">
         <h3 class="text-lg font-bold">Agency Staff Management</h3>
         @if($staff->isEmpty())

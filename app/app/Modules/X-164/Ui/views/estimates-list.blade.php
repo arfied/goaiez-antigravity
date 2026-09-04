@@ -1,5 +1,5 @@
-<x-surface.sample-state module="good/better/best presentation" screen="estimates_list" />
 <div>
+    <x-surface.sample-state module="good/better/best presentation" screen="estimates_list" />
     <div class="estimates-list-container p-4">
         <h3 class="text-lg font-bold">Estimates & Contracts</h3>
         @if($estimates->isEmpty())

@@ -1,5 +1,5 @@
-<x-surface.sample-state module="candidate set = the action registry, filtered by the gate" screen="proposals_appear_today" />
 <div>
+    <x-surface.sample-state module="candidate set = the action registry, filtered by the gate" screen="proposals_appear_today" />
     <div class="proposals-view p-4">
         <h3 class="text-lg font-bold">Action Proposals Today</h3>
         @if($proposals->isEmpty())
