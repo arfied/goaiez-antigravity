@@ -92,6 +92,7 @@ trait JourneyHarness
         }
 
         // Test the layout and route
+        config(['app.allow_public_signup' => true]);
         $this->get('/signup')->assertOk();
 
         // Test the component behavior
