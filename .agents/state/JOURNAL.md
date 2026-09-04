@@ -506,3 +506,7 @@
 - `2026-09-04T13:11:25` UNRESOLVED DailyPricingDigest missing email dispatch logic. X-163 - 
 - `2026-09-04T13:11:43` (R245) X-163 — Built ConfirmationScreen, rebuilt Pricebook, added DailyPricingDigest.
 - `2026-09-04T13:11:43` UNRESOLVED UI X-163 - Daily pricing digest missing email/SMS dispatch loop
+- `2026-09-04T13:28:19` (R245) X-163 — the daily digest lists SAMPLE refusals flagged on the item (§140.1); a NO_FACT refusal has no item and is not persisted this wave
+- `2026-09-04T13:28:19` (R245) X-163 — the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave
+- `2026-09-04T13:28:19` UNRESOLVED surface X-163 - GET→assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T13:28:19` note: X-163 — the three 2026-09-04T13:11 UNRESOLVED lines were written with stage and why transposed and name unmade decisions, not missing dependencies (rule 09); superseded by the two (R245) decisions and the surface line above. The 13:11:43 (R245) line records no decision.

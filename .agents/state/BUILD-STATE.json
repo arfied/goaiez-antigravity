@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T13:11:43",
+ "updated": "2026-09-04T13:28:19",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -812,6 +812,12 @@
      "stage": "UI",
      "why": "Daily pricing digest missing email/SMS dispatch loop",
      "at": "2026-09-04T13:11:43"
+    },
+    {
+     "module": "X-163",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T13:28:19"
     }
    ]
   },
@@ -1250,6 +1256,12 @@
    "stage": "UI",
    "why": "Daily pricing digest missing email/SMS dispatch loop",
    "at": "2026-09-04T13:11:43"
+  },
+  {
+   "module": "X-163",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T13:28:19"
   }
  ],
  "notes": [
@@ -1292,6 +1304,10 @@
   {
    "at": "2026-09-02T23:46:26",
    "note": "journey J3 \u2014 bookFromQuote records UNRESOLVED per owner ruling 8; X-121 exposes no create path and the raw work_orders insert is not accepted."
+  },
+  {
+   "at": "2026-09-04T13:28:19",
+   "note": "X-163 \u2014 the three 2026-09-04T13:11 UNRESOLVED lines were written with stage and why transposed and name unmade decisions, not missing dependencies (rule 09); superseded by the two (R245) decisions and the surface line above. The 13:11:43 (R245) line records no decision."
   }
  ],
  "decisions": [
@@ -1347,6 +1363,18 @@
    "module": "X-163",
    "chose": "Built ConfirmationScreen, rebuilt Pricebook, added DailyPricingDigest.",
    "at": "2026-09-04T13:11:43",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "the daily digest lists SAMPLE refusals flagged on the item (\u00a7140.1); a NO_FACT refusal has no item and is not persisted this wave",
+   "at": "2026-09-04T13:28:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave",
+   "at": "2026-09-04T13:28:19",
    "ruling": "R245"
   }
  ]
