@@ -186,4 +186,23 @@ class CAiTest extends TestCase
         $res = $this->complete->handle($biz->id, 'ttft test', simulatedTtftMs: 900);
         $this->assertGreaterThan(0, $res['call_id']);
     }
+
+    public function test_model_board_renders_seeded_call_and_handles_retry(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Board Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $call = \App\Modules\CAi\Models\AiCall::factory()->create([
+            'business_id' => $biz->id,
+            'model_served' => 'mock-gpt-4',
+            'ttft_ms' => 420,
+        ]);
+
+        \Livewire\Livewire::test(\App\Modules\CAi\Ui\ModelBoard::class, ["businessId" => $biz->id])
+            ->call('load')
+            ->assertSee('mock-gpt-4')
+            ->assertSee('420ms TTFT')
+            ->call('retry', $call->id)
+            ->assertHasNoErrors();
+    }
 }

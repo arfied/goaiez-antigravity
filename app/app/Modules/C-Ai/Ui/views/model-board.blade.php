@@ -1,17 +1,23 @@
-<div>
-    <div class="model-board-container p-4">
-        <h3 class="text-lg font-bold">AI Model Board & Invocation Engine</h3>
-        @if($calls->isEmpty())
-            <p class="text-gray-500">No model invocations recorded.</p>
-        @else
-            <ul class="divide-y divide-gray-200">
-                @foreach($calls as $call)
-                    <li class="py-2">
-                        <span class="font-mono text-sm font-semibold">{{ $call->model_served }}</span>
-                        <span class="text-xs text-gray-500">{{ $call->ttft_ms }}ms TTFT | {{ $call->cost_cents }}¢ cost</span>
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-    </div>
+<div wire:init="load">
+    @if($errorMessage)
+        <x-ui.error-panel heading="Could not load AI calls" retry="load">
+            {{ $errorMessage }}
+        </x-ui.error-panel>
+    @elseif(! $ready)
+        <x-ui.skeleton label="Loading AI models..." />
+    @elseif($calls->isEmpty())
+        <x-ui.empty-state heading="No model invocations recorded." icon="○">
+            When AI models are invoked, they will appear here.
+        </x-ui.empty-state>
+    @else
+        @foreach($calls as $call)
+            <div class="mb-4 flex items-center justify-between">
+                <div>
+                    <x-ui.status-pill state="ok" label="{{ $call->model_served ?? $call->model }}" />
+                    <span class="ml-2 text-ink-2">{{ $call->ttft_ms }}ms TTFT | {{ $call->cost_cents ?? ($call->cost_hundredths_cents / 100) }}¢ cost</span>
+                </div>
+                <x-ui.button wire:click="retry({{ $call->id }})" size="default" variant="secondary">Retry</x-ui.button>
+            </div>
+        @endforeach
+    @endif
 </div>

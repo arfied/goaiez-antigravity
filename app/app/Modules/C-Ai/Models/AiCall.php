@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Modules\CAi\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Database\Factories\AiCallFactory;
 
 class AiCall extends Model
 {
+    use HasFactory;
+
     protected $table = 'ai_calls';
 
     protected $guarded = [];
@@ -20,4 +24,9 @@ class AiCall extends Model
         'ttft_ms' => 'integer',
         'latency_ms' => 'integer',
     ];
+
+    protected static function newFactory()
+    {
+        return AiCallFactory::new();
+    }
 }
