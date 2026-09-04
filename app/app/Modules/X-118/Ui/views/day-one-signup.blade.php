@@ -81,6 +81,7 @@
                 <div class="flex justify-end">
                     <button 
                         type="submit" 
+                        wire:target="startSignup"
                         wire:loading.attr="disabled"
                         class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 font-semibold text-white text-sm shadow-lg shadow-indigo-600/30 transition flex items-center gap-2"
                     >
@@ -135,6 +136,7 @@
                     </button>
                     <button 
                         wire:click="triggerTestCall" 
+                        wire:target="triggerTestCall"
                         wire:loading.attr="disabled"
                         class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2"
                     >
