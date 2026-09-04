@@ -11,7 +11,7 @@ class McpTokenRegistry extends Component
 {
     public function mount(): void
     {
-        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+        
     }
 
     public function render()

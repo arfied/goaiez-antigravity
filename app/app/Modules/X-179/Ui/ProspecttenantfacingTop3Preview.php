@@ -20,7 +20,7 @@ class ProspecttenantfacingTop3Preview extends Component
 
     public function mount(int $prospectId)
     {
-        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+        
         $businessId = Tenancy::idOrFail();
 
         $exists = TemplateMatch::where('business_id', $businessId)
