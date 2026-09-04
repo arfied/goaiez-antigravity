@@ -25,7 +25,7 @@ class ProspecttenantfacingTop3Preview extends Component
             ->where('prospect_id', $prospectId)
             ->exists();
         if (! $exists) {
-            abort(404); // dd([
+            dd([
                 'resolved' => $businessId,
                 'prospect' => $prospectId,
                 'count' => TemplateMatch::where('business_id', $businessId)->count(),
