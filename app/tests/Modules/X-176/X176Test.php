@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X176;
 
+use App\Modules\X103\Models\Page;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X176\Actions\IndexRequestAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
+use App\Modules\X176\Actions\SeoRenderAction;
 use App\Modules\X176\Actions\SitemapPingAction;
 use App\Modules\X176\Events\IndexRequested;
 use App\Modules\X176\Events\SchemaPublished;
@@ -146,7 +148,7 @@ class X176Test extends TestCase
         $tenantB = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
 
         Tenancy::set((int) $tenantB->id);
-        $pageB = \App\Modules\X103\Models\Page::create([
+        $pageB = Page::create([
             'business_id' => $tenantB->id,
             'slug' => 'tenant-b-slug',
             'title' => 'Tenant B Title',
@@ -156,7 +158,7 @@ class X176Test extends TestCase
         // Deliberately run as Tenant B to bypass RLS hiding the row,
         // and prove that where('business_id', $tenantA->id) protects it.
         Tenancy::set((int) $tenantB->id);
-        $action = new \App\Modules\X176\Actions\SeoRenderAction();
+        $action = new SeoRenderAction;
         $res = $action->handle(
             businessId: $tenantA->id,
             pageId: $pageB->id,

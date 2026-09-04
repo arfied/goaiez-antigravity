@@ -12,10 +12,14 @@ use App\Modules\X157\Actions\EdgeRollbackAction;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
+use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X157\Ui\EdgeStatusPer;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X157Test extends TestCase
@@ -286,16 +290,16 @@ class X157Test extends TestCase
     public function test_edge_status_per_lists_deployments_with_zone_state(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
-        $zone = \App\Modules\X157\Models\EdgeZone::create([
+        $zone = EdgeZone::create([
             'business_id' => $biz->id,
             'domain_name' => 'acme-hvac.com',
             'zone_id' => 'z1',
             'has_valid_ssl' => true,
         ]);
 
-        $d = \App\Modules\X157\Models\Deployment::create([
+        $d = Deployment::create([
             'business_id' => $biz->id,
             'edge_zone_id' => $zone->id,
             'deploy_hash' => 'hash-12345',
@@ -303,22 +307,22 @@ class X157Test extends TestCase
         ]);
 
         $biz2 = TestCase::provisionTenant(['name' => 'Other Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz2->id);
-        $zone2 = \App\Modules\X157\Models\EdgeZone::create([
+        Tenancy::set((int) $biz2->id);
+        $zone2 = EdgeZone::create([
             'business_id' => $biz2->id,
             'domain_name' => 'other.com',
             'zone_id' => 'z2',
         ]);
-        \App\Modules\X157\Models\Deployment::create([
+        Deployment::create([
             'business_id' => $biz2->id,
             'edge_zone_id' => $zone2->id,
             'deploy_hash' => 'hash-other',
             'status' => 'deployed',
         ]);
 
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
-        \Livewire\Livewire::test(\App\Modules\X157\Ui\EdgeStatusPer::class, ['businessId' => $biz->id])
+        Livewire::test(EdgeStatusPer::class, ['businessId' => $biz->id])
             ->assertOk()
             ->assertSee('hash-12345')
             ->assertSee('acme-hvac.com')
@@ -328,23 +332,23 @@ class X157Test extends TestCase
     public function test_edge_status_per_rolls_back_a_deployment(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
-        $zone = \App\Modules\X157\Models\EdgeZone::create([
+        $zone = EdgeZone::create([
             'business_id' => $biz->id,
             'domain_name' => 'acme-hvac.com',
             'zone_id' => 'z1',
             'has_valid_ssl' => true,
         ]);
 
-        $d = \App\Modules\X157\Models\Deployment::create([
+        $d = Deployment::create([
             'business_id' => $biz->id,
             'edge_zone_id' => $zone->id,
             'deploy_hash' => 'hash-12345',
             'status' => 'deployed',
         ]);
 
-        \Livewire\Livewire::test(\App\Modules\X157\Ui\EdgeStatusPer::class, ['businessId' => $biz->id])
+        Livewire::test(EdgeStatusPer::class, ['businessId' => $biz->id])
             ->call('rollback', $d->id)
             ->assertOk();
 
@@ -352,4 +356,3 @@ class X157Test extends TestCase
         $this->assertEquals('rolled_back', $d->status);
     }
 }
-

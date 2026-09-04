@@ -142,4 +142,3 @@ class X103Test extends TestCase
         $this->assertEquals($page->id, $res['page_id']);
     }
 }
-
