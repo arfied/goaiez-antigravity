@@ -8,8 +8,7 @@
             <p class="text-ink-2 mb-8">Every pricing question today was answered</p>
             <x-ui.empty-state 
                 heading="All good"
-                action="View Pricebook"
-                target="openConfirmation"
+                {{-- action: href to the pricebook arrives with surfaces:generate --}}
                 icon="✓">
                 Every pricing question today was answered.
             </x-ui.empty-state>

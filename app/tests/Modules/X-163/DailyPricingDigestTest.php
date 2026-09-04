@@ -28,7 +28,8 @@ class DailyPricingDigestTest extends TestCase
         Livewire::actingAs($owner)
             ->test(DailyPricingDigest::class)
             ->assertOk()
-            ->assertSee('Every pricing question today was answered');
+            ->assertSee('Every pricing question today was answered')
+            ->assertDontSee('View Pricebook');
     }
 
     public function test_renders_refused_item(): void
