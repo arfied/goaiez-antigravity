@@ -140,10 +140,10 @@ class SurfacesGenerateCommand extends Command
                 }
 
                 $screensLine = $moduleScreens[$modId] ?? '';
-                $isTenant = str_contains(strtolower($screensLine), 'tenant:') && ! str_contains(strtolower($screensLine), 'tenant: none');
-                $isOperator = str_contains(strtolower($screensLine), 'operator:') && ! str_contains(strtolower($screensLine), 'operator: none');
-                $isAgency = str_contains(strtolower($screensLine), 'agency:') && ! str_contains(strtolower($screensLine), 'agency: none');
-                $isTech = str_contains(strtolower($screensLine), 'tech/mobile:') && ! str_contains(strtolower($screensLine), 'tech/mobile: none');
+                $isTenant = str_contains(strtolower($screensLine), 'tenant') && ! str_contains(strtolower($screensLine), 'tenant: none');
+                $isOperator = str_contains(strtolower($screensLine), 'operator') && ! str_contains(strtolower($screensLine), 'operator: none');
+                $isAgency = str_contains(strtolower($screensLine), 'agency') && ! str_contains(strtolower($screensLine), 'agency: none');
+                $isTech = str_contains(strtolower($screensLine), 'tech') && ! str_contains(strtolower($screensLine), 'tech: none');
 
                 $primarySurfaces = [];
                 if ($isTenant) {
@@ -194,31 +194,42 @@ class SurfacesGenerateCommand extends Command
                 $routeClasses[] = $classRef;
                 $classNameOnly = preg_replace('/^.*\\\\/', '', $classRef);
 
+                $routeParams = '';
+                $routeArgsArray = [];
+                if (class_exists($classRef) && method_exists($classRef, 'mount')) {
+                    $refMethod = new \ReflectionMethod($classRef, 'mount');
+                    foreach ($refMethod->getParameters() as $param) {
+                        if (! $param->isOptional()) {
+                            $pName = $param->getName();
+                            $routeParams .= '/{'.$pName.'}';
+                            $routeArgsArray[] = "'$pName' => \$$pName";
+                        }
+                    }
+                }
+
                 foreach ($primarySurfaces as $surf) {
                     if ($surf === 'operator') {
-                        $uri = "/admin/{$modSlug}/{$screenSlug}";
+                        $uri = "/admin/{$modSlug}/{$screenSlug}{$routeParams}";
                         if (isset($routeClashCheck[$uri])) {
                             $this->error("STOP: Route clash detected on $uri with a legacy route.");
 
                             return 1;
                         }
-                        $operatorRoutes[] = "    Route::get('/{$screenSlug}', {$classNameOnly}::class)->name('$alias.admin');";
+                        $operatorRoutes[] = "    Route::get('/{$screenSlug}{$routeParams}', {$classNameOnly}::class)->name('$alias.admin');";
                         $addedToRoutesFile = true;
                     } else {
-                        $uri = "/app/{$modSlug}/{$screenSlug}";
+                        $uri = "/app/{$modSlug}/{$screenSlug}{$routeParams}";
                         if (isset($routeClashCheck[$uri])) {
                             $this->error("STOP: Route clash detected on $uri with a legacy route.");
 
                             return 1;
                         }
-                        if (! $addedToRoutesFile) {
-                            $tenantRoutes[] = "    Route::get('/{$screenSlug}', {$classNameOnly}::class)->name('$alias');";
-                            $addedToRoutesFile = true;
-                        }
+                        $tenantRoutes[] = "    Route::get('/{$screenSlug}{$routeParams}', {$classNameOnly}::class)->name('$alias');";
+                        $addedToRoutesFile = true;
                     }
 
                     $navRoute = $surf === 'operator' ? "$alias.admin" : $alias;
-                    if (! $isDeferred) {
+                    if (! $isDeferred && empty($routeParams)) {
                         $allNavGroups[$surf][$navGroup][] = [
                             'label' => $humanName,
                             'route' => $navRoute,
@@ -227,7 +238,7 @@ class SurfacesGenerateCommand extends Command
                     }
                 }
 
-                $this->generatePageTest($modId, $class, $primarySurfaces, $alias, $uri);
+                $this->generatePageTest($modId, $class, $primarySurfaces, $alias, $uri, $routeArgsArray);
                 $this->updatePlaceholderTemplate($modId, $classRef, $render, $moduleTitles[$modId] ?? $modId);
 
                 $addedRoutes = true;
@@ -302,7 +313,7 @@ class SurfacesGenerateCommand extends Command
         file_put_contents($modDir.'/routes.generated.php', $content);
     }
 
-    private function generatePageTest(string $modId, string $class, array $primarySurfaces, string $alias, string $uri): void
+    private function generatePageTest(string $modId, string $class, array $primarySurfaces, string $alias, string $uri, array $routeArgsArray = []): void
     {
         $testDir = base_path("tests/Modules/$modId/Screens");
         if (! is_dir($testDir)) {
@@ -332,14 +343,35 @@ class SurfacesGenerateCommand extends Command
 
         $content .= "class {$className}ScreenTest extends TestCase\n{\n";
 
+        $provisioningStr = "";
+        $routeArgsStr = "";
+        if (!empty($routeArgsArray)) {
+            $routeArgsStr = ", [" . implode(", ", $routeArgsArray) . "]";
+            if ($modId === 'X-179') {
+                $provisioningStr .= "\n        \$action = new \\App\\Modules\\X179\\Actions\\ContentExtractAction();\n";
+                $provisioningStr .= "        \$action->extractContent(\$biz->id, 123, 'gbp', 'test');\n";
+                $provisioningStr .= "        \$matchAction = new \\App\\Modules\\X179\\Actions\\TemplateMatchAction();\n";
+                $provisioningStr .= "        \$matchAction->matchAndRender(\$biz->id, 123);\n";
+                $provisioningStr .= "        \$prospectId = 123;\n";
+            } else {
+                foreach ($routeArgsArray as $argStr) {
+                    if (preg_match('/\'(.*)\'\s*=>\s*\$(.*)/', $argStr, $m)) {
+                        $pName = $m[2];
+                        $provisioningStr .= "        \$$pName = 1;\n";
+                    }
+                }
+            }
+        }
+
         $testsCount = 0;
         if (in_array('tenant', $primarySurfaces) || in_array('agency', $primarySurfaces) || in_array('tech', $primarySurfaces) || empty($primarySurfaces)) {
             $content .= "    public function test_screen_renders_for_tenant(): void\n    {\n";
             $content .= "        \$owner = User::factory()->create(['role' => UserRole::Owner]);\n";
             $content .= "        \$biz = \$this->provisionTenant(['owner_user_id' => \$owner->id]);\n";
             $content .= "        \$this->actingAs(\$owner);\n";
-            $content .= "\n        \$this->get(route('$alias'))->assertOk();\n";
-            $content .= "\n        Livewire::test({$className}::class)->assertOk();\n";
+            $content .= $provisioningStr;
+            $content .= "\n        \$this->get(route('$alias'$routeArgsStr))->assertOk();\n";
+            $content .= "\n        Livewire::test({$className}::class$routeArgsStr)->assertOk();\n";
             $content .= "    }\n";
             $testsCount++;
         }
@@ -351,8 +383,10 @@ class SurfacesGenerateCommand extends Command
             $content .= "    public function test_screen_renders_for_admin(): void\n    {\n";
             $content .= "        \$user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);\n";
             $content .= "        \$this->actingAs(\$user);\n";
-            $content .= "\n        \$this->get(route('$alias.admin'))->assertOk();\n";
-            $content .= "\n        Livewire::test({$className}::class)->assertOk();\n";
+            $content .= "        \$biz = \$this->provisionTenant(['owner_user_id' => \$user->id]);\n"; // operator still needs biz for tenant.role or operations
+            $content .= $provisioningStr;
+            $content .= "\n        \$this->get(route('$alias.admin'$routeArgsStr))->assertOk();\n";
+            $content .= "\n        Livewire::test({$className}::class$routeArgsStr)->assertOk();\n";
             $content .= "    }\n";
         }
 
