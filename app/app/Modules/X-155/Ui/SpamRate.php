@@ -23,7 +23,7 @@ class SpamRate extends Component
 
         $total = (int) ($stats->total ?? 0);
         $spam = (int) ($stats->spam ?? 0);
-        
+
         $rate = $total > 0 ? round(($spam / $total) * 100, 1) : 0;
 
         return view('x-155::spam-rate', [

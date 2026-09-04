@@ -316,12 +316,12 @@ class X155Test extends TestCase
         Livewire::test(SubmissionsThread::class, ['businessId' => $bizA->id])
             ->assertOk()
             ->assertSee('Biz A Form 1')
-            ->assertSee('Person #' . $personA1->id)
+            ->assertSee('Person #'.$personA1->id)
             ->assertSee('VALID')
-            ->assertSee('Person #' . $personA2->id)
+            ->assertSee('Person #'.$personA2->id)
             ->assertSee('SPAM')
             ->assertDontSee('Biz B Form 1')
-            ->assertDontSee('Person #' . $personB->id);
+            ->assertDontSee('Person #'.$personB->id);
     }
 
     public function test_submissions_thread_shows_the_empty_state_for_a_business_with_no_submissions(): void
