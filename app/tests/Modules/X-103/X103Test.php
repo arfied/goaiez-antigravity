@@ -115,4 +115,31 @@ class X103Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_page_create_and_site_publish_resolve_from_container(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Container Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $pageAction = app(PageCreateAction::class);
+        $publishAction = app(SitePublishAction::class);
+
+        $page = $pageAction->handle($biz->id, 'builder-test', 'Builder Title', false);
+
+        $this->assertInstanceOf(Page::class, $page);
+        $this->assertEquals('builder-test', $page->slug);
+        $this->assertFalse($page->is_published);
+
+        $res = $publishAction->handle($biz->id, $page->id, ['block1' => 'content']);
+
+        $this->assertIsArray($res);
+        $this->assertArrayHasKey('status', $res);
+        $this->assertArrayHasKey('page_id', $res);
+        $this->assertArrayHasKey('version_id', $res);
+        $this->assertArrayHasKey('commit_id', $res);
+        $this->assertArrayHasKey('facts_invalidation_commit_id', $res);
+        $this->assertEquals('published', $res['status']);
+        $this->assertEquals($page->id, $res['page_id']);
+    }
 }
+
