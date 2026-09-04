@@ -13,9 +13,9 @@ use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X157\Models\Deployment;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 
 /**
@@ -310,16 +310,18 @@ trait JourneyHarness
             businessName: $tenant['name']
         );
 
-        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+        $response = $this->get("/sites/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
 
         $features = [
             'pixel' => str_contains($html, 'x110-pixel'),
             'chat' => str_contains($html, 'chat-widget-container'),
             'form_capture' => str_contains($html, 'form-capture-x155'),
             'dni' => str_contains($html, 'dni-pool-x137'),
-            'seo' => str_contains($html, 'seo-meta-x176'), // remains false as per brief
-            'schema' => str_contains($html, 'schema.org'),
-            'ssl' => str_contains($html, '<meta name="ssl" content="valid">'),
+            'seo' => str_contains($html, 'seo-meta-x176'),
+            'schema' => str_contains($html, 'application/ld+json'),
+            'ssl' => Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone->has_valid_ssl,
         ];
 
         return [
