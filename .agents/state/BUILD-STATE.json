@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T13:28:19",
+ "updated": "2026-09-04T15:28:58",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -773,10 +773,17 @@
    "unresolved": []
   },
   "X-162": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-162",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-162 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T14:35:12"
+    }
+   ]
   },
   "X-163": {
    "status": "UNRESOLVED",
@@ -828,10 +835,17 @@
    "unresolved": []
   },
   "X-165": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-165",
+     "stage": "surface",
+     "why": "",
+     "at": "2026-09-04T15:22:13"
+    }
+   ]
   },
   "X-166": {
    "status": "DONE",
@@ -858,16 +872,42 @@
    "unresolved": []
   },
   "X-171": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-171",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-171 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T14:42:35"
+    },
+    {
+     "module": "X-171",
+     "stage": "surface",
+     "why": "X-198 payment surface (track money)",
+     "at": "2026-09-04T14:42:35"
+    }
+   ]
   },
   "X-172": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-172",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-172 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T14:44:41"
+    },
+    {
+     "module": "X-172",
+     "stage": "surface",
+     "why": "X-164/X-199 render (tracks one/money)",
+     "at": "2026-09-04T14:44:41"
+    }
+   ]
   },
   "X-173": {
    "status": "DONE",
@@ -1146,10 +1186,17 @@
    "unresolved": []
   },
   "X-82": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 24,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-82",
+     "stage": "surface",
+     "why": "",
+     "at": "2026-09-04T15:28:49"
+    }
+   ]
   }
  },
  "journeys": {
@@ -1262,6 +1309,48 @@
    "stage": "surface",
    "why": "GET\u2192assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout",
    "at": "2026-09-04T13:28:19"
+  },
+  {
+   "module": "X-162",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-162 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T14:35:12"
+  },
+  {
+   "module": "X-171",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-171 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T14:42:35"
+  },
+  {
+   "module": "X-171",
+   "stage": "surface",
+   "why": "X-198 payment surface (track money)",
+   "at": "2026-09-04T14:42:35"
+  },
+  {
+   "module": "X-172",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-172 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T14:44:41"
+  },
+  {
+   "module": "X-172",
+   "stage": "surface",
+   "why": "X-164/X-199 render (tracks one/money)",
+   "at": "2026-09-04T14:44:41"
+  },
+  {
+   "module": "X-165",
+   "stage": "surface",
+   "why": "",
+   "at": "2026-09-04T15:22:13"
+  },
+  {
+   "module": "X-82",
+   "stage": "surface",
+   "why": "",
+   "at": "2026-09-04T15:28:49"
   }
  ],
  "notes": [
@@ -1375,6 +1464,48 @@
    "module": "X-163",
    "chose": "the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave",
    "at": "2026-09-04T13:28:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-162",
+   "chose": "(R245) Added is_sample flag migration to dispatch_assignments for SAMPLE row flag; fallback sentence 'There are no jobs assigned for today. Go to Jobs to schedule and dispatch a technician.'",
+   "at": "2026-09-04T14:35:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "(R245) Added is_sample flag to device_sync_queue and device_sync_conflicts; fallback sentence 'You have no jobs scheduled for today'; disabled pay button says 'payment arrives with the money track'.",
+   "at": "2026-09-04T14:42:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-172",
+   "chose": "(R245) Added is_sample flag to portal_links; the sentence 'This document is being prepared' replaces unrendered estimate/invoice models.",
+   "at": "2026-09-04T14:44:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-165",
+   "chose": "add is_sample to membership_plans and memberships (R245)",
+   "at": "2026-09-04T15:22:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-165",
+   "chose": "X-163 confirmation of a plan price is a later wave",
+   "at": "2026-09-04T15:22:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "gate on UserRole::SuperAdmin or UserRole::OpsAdmin",
+   "at": "2026-09-04T15:28:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "add is_sample to rates (R245)",
+   "at": "2026-09-04T15:28:58",
    "ruling": "R245"
   }
  ]

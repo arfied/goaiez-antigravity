@@ -510,3 +510,17 @@
 - `2026-09-04T13:28:19` (R245) X-163 — the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave
 - `2026-09-04T13:28:19` UNRESOLVED surface X-163 - GET→assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout
 - `2026-09-04T13:28:19` note: X-163 — the three 2026-09-04T13:11 UNRESOLVED lines were written with stage and why transposed and name unmade decisions, not missing dependencies (rule 09); superseded by the two (R245) decisions and the surface line above. The 13:11:43 (R245) line records no decision.
+- `2026-09-04T14:35:12` (R245) X-162 — (R245) Added is_sample flag migration to dispatch_assignments for SAMPLE row flag; fallback sentence 'There are no jobs assigned for today. Go to Jobs to schedule and dispatch a technician.'
+- `2026-09-04T14:35:12` UNRESOLVED surface X-162 - GET→assertOk for X-162 waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T14:42:35` (R245) X-171 — (R245) Added is_sample flag to device_sync_queue and device_sync_conflicts; fallback sentence 'You have no jobs scheduled for today'; disabled pay button says 'payment arrives with the money track'.
+- `2026-09-04T14:42:35` UNRESOLVED surface X-171 - GET→assertOk for X-171 waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T14:42:35` UNRESOLVED surface X-171 - X-198 payment surface (track money)
+- `2026-09-04T14:44:41` (R245) X-172 — (R245) Added is_sample flag to portal_links; the sentence 'This document is being prepared' replaces unrendered estimate/invoice models.
+- `2026-09-04T14:44:41` UNRESOLVED surface X-172 - GET→assertOk for X-172 waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T14:44:41` UNRESOLVED surface X-172 - X-164/X-199 render (tracks one/money)
+- `2026-09-04T15:22:13` UNRESOLVED surface X-165 - 
+- `2026-09-04T15:22:13` (R245) X-165 — add is_sample to membership_plans and memberships (R245)
+- `2026-09-04T15:22:13` (R245) X-165 — X-163 confirmation of a plan price is a later wave
+- `2026-09-04T15:28:49` UNRESOLVED surface X-82 - 
+- `2026-09-04T15:28:49` (R245) X-82 — gate on UserRole::SuperAdmin or UserRole::OpsAdmin
+- `2026-09-04T15:28:58` (R245) X-82 — add is_sample to rates (R245)
