@@ -127,10 +127,19 @@ class X103Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'widget', 'Widget', false);
-        $res = $this->publishAction->handle($biz->id, $page->id, []);
+        $res = $this->publishAction->handle($biz->id, $page->id, [
+            ['type' => 'chat'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni'],
+        ]);
 
         $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
         $this->assertIsArray($version->content_blocks);
+        $this->assertCount(3, $version->content_blocks);
+        
+        $types = array_column($version->content_blocks, 'type');
+        $this->assertEquals(['chat', 'form_capture', 'dni'], $types);
+
         $hasReviewWidget = false;
         foreach ($version->content_blocks as $block) {
             if (isset($block['type']) && in_array($block['type'], ['review_widget', 'review-widget'], true)) {
