@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X125\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FlowRun extends Model
 {
@@ -17,12 +18,12 @@ class FlowRun extends Model
         'is_manual_retry' => 'boolean',
     ];
 
-    public function flow()
+    public function flow(): BelongsTo
     {
         return $this->belongsTo(Flow::class, 'flow_id');
     }
 
-    public function flowVersion()
+    public function flowVersion(): BelongsTo
     {
         return $this->belongsTo(FlowVersion::class, 'flow_version_id');
     }
