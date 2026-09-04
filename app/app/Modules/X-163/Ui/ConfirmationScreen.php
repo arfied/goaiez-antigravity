@@ -8,8 +8,8 @@ use App\Enums\UserRole;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\PriceBookItem;
-use Livewire\Component;
 use App\Support\Tenancy;
+use Livewire\Component;
 
 class ConfirmationScreen extends Component
 {
@@ -25,7 +25,7 @@ class ConfirmationScreen extends Component
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
         $businessId = Tenancy::id();
-        abort_unless($businessId, 403);
+        abort_unless($businessId !== null && $businessId > 0, 403);
 
         $callout = CalloutFee::where('business_id', $businessId)->first();
         if ($callout) {

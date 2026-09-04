@@ -45,7 +45,7 @@ class Pricebook extends Component
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
         $businessId = Tenancy::id();
-        abort_unless($businessId, 403);
+        abort_unless($businessId !== null && $businessId > 0, 403);
 
         $fee = CalloutFee::where('business_id', $businessId)->first();
         if ($fee) {
