@@ -150,7 +150,7 @@ class X155Test extends TestCase
 
         $this->assertEquals('captured', $res['status']);
         $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15551234567')->count());
-        
+
         $person = Person::where('business_id', $biz->id)->where('phone', '+15551234567')->first();
         $this->assertEquals($res['person_id'], $person->id);
         $this->assertEquals('Alice', $person->first_name);
@@ -249,9 +249,9 @@ class X155Test extends TestCase
         );
 
         $this->assertTrue(Person::where('business_id', $biz->id)->where('phone', '+15557654321')->exists());
-        
+
         $person = Person::where('business_id', $biz->id)->where('phone', '+15557654321')->first();
-        
+
         $submission = FormSubmission::find($res['submission_id']);
         $this->assertEquals('google', $submission->payload['utm_source']);
         $this->assertEquals($person->id, $submission->person_id);
