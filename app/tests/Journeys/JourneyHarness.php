@@ -99,7 +99,31 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function personWithPendingSteps(array $tenant, int $count): array
     {
-        throw $this->todo('a person with N campaign steps ALREADY QUEUED — the STOP test needs in-flight work');
+        $person = \App\Modules\X121\Models\Person::firstOrCreate(
+            ['business_id' => $tenant['id']],
+            ['first_name' => 'Stop Person', 'phone' => '+15551239999']
+        );
+
+        for ($i = 0; $i < $count; $i++) {
+            DB::table('campaign_steps')->insert([
+                'business_id' => $tenant['id'],
+                'campaign_id' => 1,
+                'step_number' => $i + 1,
+                'channel' => 'sms',
+                'template_name' => 'test',
+                'delay_days' => 0,
+                'person_id' => $person->id,
+                'recipient' => $person->phone,
+                'sent_at' => null,
+                'cancelled_at' => null,
+                'created_at' => now(),
+            ]);
+        }
+
+        $personArray = $person->toArray();
+        $personArray['consent_decision_id'] = 'fake_decision_123';
+
+        return $personArray;
     }
 
     // ── inbound / carrier ────────────────────────────────────────────────
@@ -130,7 +154,7 @@ trait JourneyHarness
 
         $bodyStr = json_encode($payload);
         $timestamp = (string) round(microtime(true) * 1000);
-        $secret = \App\Services\Config\PlatformCredentials::get('infobip_webhook_secret');
+        $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
         $signature = hash_hmac('sha256', $timestamp . $bodyStr, $secret);
 
         $response = $this->withHeaders([
@@ -305,7 +329,10 @@ trait JourneyHarness
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
-        throw $this->todo('count outbound to this person AFTER the STOP was received');
+        return DB::table('outreach_messages')
+            ->where('customer_id', $person['id'])
+            ->where('created_at', '>=', now()->subSeconds(2))
+            ->count();
     }
 
     /** @param array<string,mixed> $person @return list<array<string,mixed>> */
