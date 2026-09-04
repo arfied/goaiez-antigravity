@@ -534,3 +534,4 @@
 - `2026-09-04T16:07:18` note: MONEY-19c: dead retry buttons out, X-211 refuses a zero amount, X-198 shows the account id and the Stripe Connect waiting state
 - `2026-09-04T16:30:58` note: MONEY-20: ageing-by-reason's Log payment submits a form; payment-plan builder — ar_plan_terms threshold row, a plan past it routes to a financing partner and stores nothing
 - `2026-09-04T16:36:18` (R245) X-211 — a plan past ar_plan_terms (max_installments/max_term_days, defaults 3/90, P-193 row) throws PlanPastThresholdException before any write; the builder shows the financing-partner waiting state (G1-61, G1-70, N-033). Test: PaymentplanBuilderScreenTest
+- `2026-09-04T16:53:17` note: Push 1569172..9879c1da landed

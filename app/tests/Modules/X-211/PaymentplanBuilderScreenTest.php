@@ -72,7 +72,7 @@ class PaymentplanBuilderScreenTest extends TestCase
             ->assertSeeHtml('wire:submit="offerPlan('.$inv1->id.')"')
             ->set('installments.'.$inv1->id, 12)
             ->call('offerPlan', $inv1->id)
-            ->assertSee('routes to a financing partner')
+            ->assertSee('12 monthly payments over 360 days is credit')
             ->assertSee('waits on a financing partner');
 
         $this->assertSame(0, PaymentPlan::where('business_id', $biz->id)->count());
