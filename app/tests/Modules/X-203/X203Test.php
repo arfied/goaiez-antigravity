@@ -35,6 +35,7 @@ class X203Test extends TestCase
     /**
      * TEST ANCHOR
      * a scheduled restore into an isolated environment, verified by row count and checksum — and a deliberately corrupted backup FAILS it loudly.
+     * [G13-07], [G21-03]
      */
     public function test_anchor_restore_verification_and_corrupted_backup_loud_failure(): void
     {
@@ -108,19 +109,5 @@ class X203Test extends TestCase
         $this->assertEquals('completed', $runRes->status);
     }
 
-    /**
-     * [G13-07] a restore that cannot prove itself is not a backup
-     */
-    public function test_g13_07_restore_proof(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
-     * [G21-03] the scripted response to a failure, with its own state
-     */
-    public function test_g21_03_runbook_response(): void
-    {
-        $this->assertTrue(true);
     }
 }

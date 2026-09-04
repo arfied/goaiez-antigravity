@@ -51,6 +51,7 @@ class X200Test extends TestCase
 
     /**
      * Testing abandonment ceiling <= 3.0%, uncertain AMD treated as human, and AI seat scored like human.
+     * [G2-09], [G2-26], [G2-35], [G2-37], [G3-04], [G5-09], [G5-40], [G9-01], [G9-38], [G10-03], [G11-25], [G13-02], [G16-11], [G16-15], [G18-01], [G18-02], [G18-03], [G18-06], [G18-08], [G18-13], [G18-15], [G18-16], [G18-19], [G18-25], [G21-13], [G15-29]
      */
     public function test_dialer_operations_and_regulatory_constraints(): void
     {
@@ -113,11 +114,4 @@ class X200Test extends TestCase
         $this->assertFalse($paused->is_running);
     }
 
-    /**
-     * [G2-09], [G2-26], [G2-35], [G2-37], [G3-04], [G5-09], [G5-40], [G9-01], [G9-38], [G10-03], [G11-25], [G13-02], [G16-11], [G16-15], [G18-01], [G18-02], [G18-03], [G18-06], [G18-08], [G18-13], [G18-15], [G18-16], [G18-19], [G18-25], [G21-13], [G15-29]
-     */
-    public function test_dialer_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 }
