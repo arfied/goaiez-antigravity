@@ -13,7 +13,11 @@ class Today extends Component
 {
     #[Locked]
     public int $businessId = 0;
-    public function mount(int $businessId = 0) { $this->businessId = $businessId; }
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId;
+    }
 
     public function render()
     {
@@ -25,7 +29,7 @@ class Today extends Component
         }
 
         $isVerified = PixelEvent::where('business_id', $this->businessId)->exists();
-        
+
         $todayVisitsCount = Visit::where('business_id', $this->businessId)
             ->whereDate('created_at', now()->toDateString())
             ->count();

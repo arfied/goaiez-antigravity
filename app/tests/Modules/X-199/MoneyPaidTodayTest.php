@@ -29,10 +29,8 @@ class MoneyPaidTodayTest extends TestCase
             'status' => 'paid',
             'due_date' => now()->toDateString(),
             'updated_at' => now(),
-            'created_at' => now()
+            'created_at' => now(),
         ]);
-
-        
 
         Livewire::test(MoneyPaidToday::class, ['businessId' => $biz->id])
             ->assertSee('$125.00')

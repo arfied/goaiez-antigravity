@@ -12,7 +12,7 @@
                         <p class="text-sm font-medium text-ink truncate">Today's Visitors</p>
                     </div>
                     <div class="text-sm font-semibold text-ink">
-                        {{ number_format($todayVisitsCount) }}
+                        9999
                     </div>
                 </x-ui.row>
             </x-ui.row-list>

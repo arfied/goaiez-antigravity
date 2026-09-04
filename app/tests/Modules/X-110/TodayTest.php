@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X110;
 
-use App\Models\Business;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
@@ -24,7 +23,7 @@ class TodayTest extends TestCase
         Tenancy::set((int) $biz->id);
 
         Livewire::test(Today::class, ['businessId' => $biz->id])
-            ->assertSee("Pixel not verified");
+            ->assertSee('Pixel not verified');
 
         $visit = Visit::create([
             'business_id' => $biz->id,

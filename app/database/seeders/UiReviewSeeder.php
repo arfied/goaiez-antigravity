@@ -18,6 +18,11 @@ use App\Models\ReviewHubPage;
 use App\Models\Subscription;
 use App\Models\TriageConversation;
 use App\Models\User;
+use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
+use App\Modules\X124\Models\AssistantRecommendation;
+use App\Modules\X124\Models\AssistantSession;
 use App\Services\Proof\ProofNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
@@ -295,9 +300,9 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-                if (\App\Modules\X124\Models\AssistantRecommendation::where('business_id', $businessId)->count() === 0) {
-            $asess = \App\Modules\X124\Models\AssistantSession::create(['business_id' => $businessId, 'session_token' => 'asess_1']);
-            \App\Modules\X124\Models\AssistantRecommendation::create([
+        if (AssistantRecommendation::where('business_id', $businessId)->count() === 0) {
+            $asess = AssistantSession::create(['business_id' => $businessId, 'session_token' => 'asess_1']);
+            AssistantRecommendation::create([
                 'business_id' => $businessId,
                 'session_id' => $asess->id,
                 'title' => '14 missed calls, no text-back template — turn it on?',
@@ -306,23 +311,23 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-        if (\App\Modules\X110\Models\Visit::where('business_id', $businessId)->count() === 0) {
+        if (Visit::where('business_id', $businessId)->count() === 0) {
             for ($v = 1; $v <= 3; $v++) {
-                $visit = \App\Modules\X110\Models\Visit::create([
+                $visit = Visit::create([
                     'business_id' => $businessId,
-                    'visitor_id' => 'vis_' . $v,
-                    'ip_hash' => 'hash' . $v,
+                    'visitor_id' => 'vis_'.$v,
+                    'ip_hash' => 'hash'.$v,
                     'user_agent' => 'Mozilla',
                     'landing_page' => '/',
                 ]);
-                $session = \App\Modules\X110\Models\Session::create([
+                $session = Session::create([
                     'business_id' => $businessId,
                     'visit_id' => $visit->id,
-                    'session_token' => 'sess_tok_' . $v,
+                    'session_token' => 'sess_tok_'.$v,
                     'started_at' => now()->startOfDay(),
                     'ended_at' => now()->startOfDay()->addMinutes(5),
                 ]);
-                \App\Modules\X110\Models\PixelEvent::create([
+                PixelEvent::create([
                     'business_id' => $businessId,
                     'session_id' => $session->id,
                     'event_name' => 'pageview',

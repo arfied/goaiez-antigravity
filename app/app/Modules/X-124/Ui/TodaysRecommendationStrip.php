@@ -14,17 +14,23 @@ class TodaysRecommendationStrip extends Component
 {
     #[Locked]
     public int $businessId = 0;
-    public function mount(int $businessId = 0) { $this->businessId = $businessId; }
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId;
+    }
 
     public array $previewData = [];
+
     public ?int $previewingId = null;
+
     public bool $previewIsConfirmed = false;
 
     public function preview(int $id): void
     {
         $rec = AssistantRecommendation::where('business_id', $this->businessId)->findOrFail($id);
-        
-        $previewAction = new AssistantPreviewAction();
+
+        $previewAction = new AssistantPreviewAction;
         $this->previewData = $previewAction->handle($this->businessId, $rec->action_key);
         $this->previewingId = $id;
         $this->previewIsConfirmed = false;
@@ -33,16 +39,17 @@ class TodaysRecommendationStrip extends Component
     public function execute(int $id): void
     {
         $rec = AssistantRecommendation::where('business_id', $this->businessId)->findOrFail($id);
-        
-        $executeAction = new AssistantExecuteAction();
+
+        $executeAction = new AssistantExecuteAction;
         $res = $executeAction->handle(
             businessId: $this->businessId,
             actionKey: $rec->action_key,
             isConfirmed: $this->previewIsConfirmed
         );
-        
+
         if (($res['status'] ?? '') === 'refused_confirmation_required') {
             $this->previewIsConfirmed = true;
+
             return;
         }
 

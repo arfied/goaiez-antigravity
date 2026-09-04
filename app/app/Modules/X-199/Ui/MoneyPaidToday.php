@@ -15,7 +15,11 @@ class MoneyPaidToday extends Component
 {
     #[Locked]
     public int $businessId = 0;
-    public function mount(int $businessId = 0) { $this->businessId = $businessId; }
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId;
+    }
 
     public function render()
     {
