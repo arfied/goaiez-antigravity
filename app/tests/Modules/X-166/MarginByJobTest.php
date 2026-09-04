@@ -100,7 +100,7 @@ class MarginByJobTest extends TestCase
         JobCost::where('job_id', 102)->update(['is_sample' => true]);
 
         Livewire::actingAs($user)->test(MarginByJob::class)
-            ->assertSee('Sample');
+            ->assertSee('<span>Sample</span>', false);
     }
 
     public function test_toggle_shows_breakdown(): void
