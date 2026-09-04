@@ -25,15 +25,24 @@ class SavedViewsList extends Component
 
     public function makeDefault(int $viewId): void
     {
-        app(SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
+        try {
+            app(SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
+        } catch (\Exception $e) {
+            $this->errorMessage = 'We could not update your default view.';
+        }
     }
 
     public function render()
     {
-        $action = app(ViewListAction::class);
-        $views = ($this->businessId > 0 && $this->ready)
-            ? $action->listViews($this->businessId)
-            : collect();
+        try {
+            $action = app(ViewListAction::class);
+            $views = ($this->businessId > 0 && $this->ready)
+                ? $action->listViews($this->businessId)
+                : collect();
+        } catch (\Exception $e) {
+            $this->errorMessage = 'We could not load your saved views.';
+            $views = collect();
+        }
 
         return view('x-194::saved-views-list', [
             'views' => $views,

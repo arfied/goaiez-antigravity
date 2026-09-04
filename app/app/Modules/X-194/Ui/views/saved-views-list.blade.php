@@ -6,7 +6,7 @@
     @elseif (! $ready)
         <x-ui.skeleton label="Loading views..." />
     @elseif ($views->isEmpty())
-        <x-ui.empty-state heading="No saved views found">
+        <x-ui.empty-state heading="You have not saved a view yet.">
             When you save a view, it will appear here.
         </x-ui.empty-state>
     @else
