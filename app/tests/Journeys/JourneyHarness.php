@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\OutreachChannel;
 use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Domain\SiteEngine;
@@ -14,11 +15,17 @@ use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
+use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X199\Models\Invoice;
+use App\Modules\X211\Models\ReceivableState;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
+use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
@@ -99,7 +106,7 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function personWithPendingSteps(array $tenant, int $count): array
     {
-        $person = \App\Modules\X121\Models\Person::firstOrCreate(
+        $person = Person::firstOrCreate(
             ['business_id' => $tenant['id']],
             ['first_name' => 'Stop Person', 'phone' => '+15551239999']
         );
@@ -137,7 +144,7 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function receiveInbound(array $tenant, string $from, string $body): void
     {
-        $messageId = 'msg_' . uniqid();
+        $messageId = 'msg_'.uniqid();
         $payload = [
             'results' => [
                 [
@@ -147,15 +154,15 @@ trait JourneyHarness
                     'text' => $body,
                     'cleanText' => $body,
                     'receivedAt' => now()->toIso8601String(),
-                    'smsCount' => 1
-                ]
-            ]
+                    'smsCount' => 1,
+                ],
+            ],
         ];
 
         $bodyStr = json_encode($payload);
         $timestamp = (string) round(microtime(true) * 1000);
-        $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
-        $signature = hash_hmac('sha256', $timestamp . $bodyStr, $secret);
+        $secret = PlatformCredentials::get('infobip_webhook_secret');
+        $signature = hash_hmac('sha256', $timestamp.$bodyStr, $secret);
 
         $response = $this->withHeaders([
             'X-Ib-Exchange-Req-Timestamp' => $timestamp,
@@ -165,7 +172,7 @@ trait JourneyHarness
         $response->assertStatus(200);
 
         $this->assertTrue(
-            \Illuminate\Support\Facades\DB::table('inbound_messages')->where('provider_message_id', $messageId)->exists(),
+            DB::table('inbound_messages')->where('provider_message_id', $messageId)->exists(),
             'Inbound message was not recorded in inbound_messages table'
         );
     }
@@ -329,14 +336,14 @@ trait JourneyHarness
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
-        $hash = \App\Support\Identifier::hash($person['phone'], \App\Enums\OutreachChannel::Sms);
+        $hash = Identifier::hash($person['phone'], OutreachChannel::Sms);
         $inbound = DB::table('inbound_messages')
             ->where('value_hash', $hash)
             ->where('keyword', strtolower($marker))
             ->orderBy('received_at', 'desc')
             ->first();
 
-        if (!$inbound) {
+        if (! $inbound) {
             throw new \RuntimeException("No inbound message found for {$person['phone']} with text {$marker}");
         }
 
@@ -404,53 +411,54 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function issueInvoice(array $tenant, int $amountMinor): array
     {
-        $person = \App\Modules\X121\Models\Person::firstOrCreate(
+        $person = Person::firstOrCreate(
             ['business_id' => $tenant['id']],
             ['first_name' => 'Test Customer']
         );
-        $engine = app(\App\Modules\X199\Domain\InvoiceEngine::class);
+        $engine = app(InvoiceEngine::class);
         $result = $engine->issueInvoice(
             $tenant['id'],
             $person->id,
             [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => $amountMinor]],
             'due_on_receipt'
         );
+
         return $result['invoice']->toArray();
     }
 
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        $engine = app(\App\Modules\X198\Domain\GatewayEngine::class);
+        $engine = app(GatewayEngine::class);
         $businessId = $invoice['business_id'];
         $amount = $invoice['total_cents'];
         $invoiceId = $invoice['id'];
-        
+
         $engine->connect($businessId, 'stripe', 'self');
 
-        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_' . uniqid(), 'USD', $invoiceId);
-        
-        \Illuminate\Support\Facades\Http::allowStrayRequests();
-        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_' . uniqid(), $invoiceId);
+        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_'.uniqid(), 'USD', $invoiceId);
+
+        Http::allowStrayRequests();
+        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_'.uniqid(), $invoiceId);
 
         return $payment->toArray();
     }
 
     private function invoiceStatus(array $invoice): string
     {
-        return (string) \App\Modules\X199\Models\Invoice::where('id', $invoice['id'])->value('status');
+        return (string) Invoice::where('id', $invoice['id'])->value('status');
     }
 
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        app(\App\Modules\X199\Domain\InvoiceEngine::class)->markOverdue($invoice['business_id'], $invoice['id']);
+        app(InvoiceEngine::class)->markOverdue($invoice['business_id'], $invoice['id']);
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        $state = \App\Modules\X211\Models\ReceivableState::where('business_id', $invoice['business_id'])
+        $state = ReceivableState::where('business_id', $invoice['business_id'])
             ->where('invoice_id', $invoice['id'])
             ->first();
 
