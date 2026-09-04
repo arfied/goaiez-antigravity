@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X176\Actions;
 
+use App\Models\Business;
 use App\Modules\X176\Events\SchemaPublished;
 use App\Modules\X176\Models\SchemaSnapshot;
 use Illuminate\Support\Facades\Event;
@@ -23,7 +24,7 @@ final class SchemaRenderAction
         ?array $productOffers = null
     ): array {
         if ($entityType === null) {
-            $vertical = \App\Models\Business::find($businessId)?->vertical;
+            $vertical = Business::find($businessId)?->vertical;
             /** (R245) */
             $map = [
                 'HVAC' => 'HVACBusiness',
@@ -59,7 +60,7 @@ final class SchemaRenderAction
         }
 
         $isValid = $this->validateSchema($jsonLd);
-        if (!$isValid) {
+        if (! $isValid) {
             return [
                 'status' => 'refused',
                 'refusal_code' => 'SCHEMA_INVALID',
@@ -99,7 +100,7 @@ final class SchemaRenderAction
         if (empty($schema['@type']) || empty($schema['name']) || empty($schema['url'])) {
             return false;
         }
-        if (!is_string($schema['@type']) || !is_string($schema['name']) || !is_string($schema['url'])) {
+        if (! is_string($schema['@type']) || ! is_string($schema['name']) || ! is_string($schema['url'])) {
             return false;
         }
         if (isset($schema['hasOfferCatalog'])) {
@@ -107,7 +108,7 @@ final class SchemaRenderAction
             if (($catalog['@type'] ?? '') !== 'OfferCatalog') {
                 return false;
             }
-            if (!isset($catalog['itemListElement']) || !is_array($catalog['itemListElement'])) {
+            if (! isset($catalog['itemListElement']) || ! is_array($catalog['itemListElement'])) {
                 return false;
             }
             foreach ($catalog['itemListElement'] as $item) {
@@ -116,6 +117,7 @@ final class SchemaRenderAction
                 }
             }
         }
+
         return true;
     }
 }

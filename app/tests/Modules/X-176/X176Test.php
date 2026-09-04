@@ -119,8 +119,8 @@ class X176Test extends TestCase
         $caps = require app_path('Modules/X-176/capabilities.php');
         $this->assertArrayHasKey('G8-14', $caps);
         // product schema from the pricebook (delegates to X-163/X-119, but we just assert the shape here)
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
         $res = $this->renderAction->handle(
             businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com', entityType: 'Plumber',
             productOffers: [['name' => 'Drain Clearing', 'price' => '99.00']]
@@ -192,10 +192,10 @@ class X176Test extends TestCase
     {
         $caps = require app_path('Modules/X-176/capabilities.php');
         $this->assertArrayHasKey('G12-03', $caps);
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         $biz->vertical = 'HVAC';
         $biz->save();
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
         $res = $this->renderAction->handle(
             businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
         );

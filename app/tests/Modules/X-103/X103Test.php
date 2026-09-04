@@ -136,7 +136,7 @@ class X103Test extends TestCase
         $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
         $this->assertIsArray($version->content_blocks);
         $this->assertCount(3, $version->content_blocks);
-        
+
         $types = array_column($version->content_blocks, 'type');
         $this->assertEquals(['chat', 'form_capture', 'dni'], $types);
 
