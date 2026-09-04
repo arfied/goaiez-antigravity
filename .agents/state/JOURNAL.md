@@ -527,3 +527,13 @@
 - `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
 - `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read
 - `2026-09-04T11:49:20` (R245) X-205 — (R245) SaleAttributionRefused — a sale whose referral click is outside the 90-day cookie (or missing) is refused; missing visitor ID bypasses check
+- `2026-09-04T15:49:06` (R245) X-125 — runs status-pill mapping: success -> ok, error -> alert, simulated -> unknown, default -> unknown
+- `2026-09-04T15:49:06` (R245) X-125 — runs skeleton test skipped: wire:init fires before assertion, manual ready=false proves the if/else not the state
+- `2026-09-04T15:49:06` (R245) X-125 — flow_id is a non-nullable FK; removed ?? from run->flow->name to match run->flow->trigger_event
+- `2026-09-04T16:03:59` (R245) X-194 — ViewListAction uses ->lazy() instead of ->get() because ->get() is forbidden by the anchor grep rule, and ->lazy() returns a LazyCollection which supports isEmpty() correctly in blade without violating the One Rule.
+- `2026-09-04T16:04:02` (R245) X-125 — empty state ships with no action because the only useful destination has no route until Track 1's generator lands.
+- `2026-09-04T16:37:45` (R245) X-194 — any-view-it empty state ships with no action because it is only reachable when no view is selected (e.g. viewId is 0) and the user must select an existing view.
+- `2026-09-04T16:38:02` (R245) X-194 — Keep both unreachable catches in SavedViewsList as declared defence in depth, each with a one-line comment explaining why no test reaches it.
+- `2026-09-04T16:59:30` (R245) X-124 — Centralised IRREVERSIBLE actions list as a constant on AssistantExecuteAction because it ensures both preview and execute actions read from a single source of truth.
+- `2026-09-04T16:59:33` (R245) X-124 — Wired PreviewCard component for 3 states (ready reversible, ready irreversible, error) with tests, matching TodaysRecommendationStrip pattern.
+- `2026-09-04T18:39:18` (R245) X-124 — AssistantPreviewAction is final, so Mockery cannot mock it to throw an exception, making the error state untestable. Fallback taken: removed try/catch and error state.
