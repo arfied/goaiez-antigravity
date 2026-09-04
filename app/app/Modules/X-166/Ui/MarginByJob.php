@@ -6,7 +6,7 @@ namespace App\Modules\X166\Ui;
 
 use App\Enums\UserRole;
 use App\Modules\X166\Models\JobCost;
-use Goaiez\Tenancy\Facades\Tenancy;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
