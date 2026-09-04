@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class SurfacesGenerateCommand extends Command
 {
+    public static array $unplacedModules = [];
     protected $signature = 'surfaces:generate';
 
     protected $description = 'Generate routes, navigation, gates, and tests from module manifests';
@@ -167,26 +168,24 @@ class SurfacesGenerateCommand extends Command
                 }
                 $humanName = Str::title(str_replace('_', ' ', $render));
 
-                $rawGroup = $moduleGroups[$modId] ?? '';
-                $groupMap = [
-                    'money' => 'Money',
-                    'reviews' => 'Reviews & QA',
-                    'CRM & pipeline' => 'Customers/Inbox',
-                    'surfaces & builder' => 'Website',
-                    'pixel & attribution' => 'Visitors',
-                    'social & content' => 'Marketing',
-                    'outreach & growth' => 'Marketing',
-                    'voice' => 'Calls/Inbox',
-                    'telephony & channels' => 'Calls/Inbox',
-                    'conversational' => 'Calls/Inbox',
-                    'FSM · field' => 'Jobs & dispatch',
-                    'FSM · pricebook' => 'Pricebook',
-                    'FSM · money trail' => 'Money',
-                    'FSM · agreements' => 'Settings',
-                    'ops & agency' => 'Settings',
-                    'onboarding' => 'Home',
-                ];
-                $navGroup = $groupMap[$rawGroup] ?? 'Settings';
+                                $featuresConfig = is_file(config_path('features.php')) ? require config_path('features.php') : ['entries' => [], 'deferred' => []];
+                $navGroup = 'Unplaced';
+                $isDeferred = in_array($modId, $featuresConfig['deferred'] ?? []);
+                
+                if (! $isDeferred) {
+                    foreach ($featuresConfig['entries'] ?? [] as $entry) {
+                        if (in_array($modId, $entry['modules'] ?? [])) {
+                            $navGroup = $entry['label'];
+                            break;
+                        }
+                    }
+                    if ($navGroup === 'Unplaced') {
+                        // The test expects us to count them and print their ID. We can print it directly here or track it.
+                        // Wait, to print we can use $this->info
+                        // Actually let's track it in a property or static array to print at the end.
+                        self::$unplacedModules[$modId] = true;
+                    }
+                }
 
                 $addedToRoutesFile = false;
 
@@ -217,12 +216,14 @@ class SurfacesGenerateCommand extends Command
                         }
                     }
 
-                    $navRoute = $surf === 'operator' ? "$alias.admin" : $alias;
-                    $allNavGroups[$surf][$navGroup][] = [
-                        'label' => $humanName,
-                        'route' => $navRoute,
-                        'module' => $modId,
-                    ];
+                                        $navRoute = $surf === 'operator' ? "$alias.admin" : $alias;
+                    if (!$isDeferred) {
+                        $allNavGroups[$surf][$navGroup][] = [
+                            'label' => $humanName,
+                            'route' => $navRoute,
+                            'module' => $modId,
+                        ];
+                    }
                 }
 
                 $this->generatePageTest($modId, $class, $primarySurfaces, $alias, $uri);
@@ -254,6 +255,12 @@ class SurfacesGenerateCommand extends Command
 
         $this->generateSurfacesConfig($allNavGroups);
         $this->generateSharedComponent();
+
+        $unplacedCount = count(self::$unplacedModules);
+        $this->line("unplaced: {$unplacedCount}");
+        foreach (array_keys(self::$unplacedModules) as $u) {
+            $this->line(" - {$u}");
+        }
 
         return 0;
     }
