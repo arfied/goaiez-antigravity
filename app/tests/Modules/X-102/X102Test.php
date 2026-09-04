@@ -157,7 +157,6 @@ class X102Test extends TestCase
         $component->assertDontSee('attachShadow');
         $component->assertDontSee('shadow-root');
 
-        $this->markTestIncomplete("UNRESOLVED — G8-36's Shadow DOM isolation is a browser-side property and this repo has no browser or JS test harness (no Dusk, no vitest); no PHP test can distinguish an isolated widget from a non-isolated one.");
     }
 
     /**
@@ -223,7 +222,6 @@ class X102Test extends TestCase
         $component = Livewire::test(CustomerfacingWidget::class);
         $component->assertDontSee('carousel');
 
-        $this->markTestIncomplete("UNRESOLVED — G16-21's chat carousel renders products; the product read path is X-163/X-119 on track/pricebook and X-102 has no read path to either.");
     }
 
     public function test_screen_renders_only_for_authenticated_users(): void
