@@ -27,6 +27,7 @@ class RolesScreenTest extends TestCase
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
         $this->get(route('x-112.roles.admin'))->assertOk();
 

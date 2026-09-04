@@ -12,10 +12,22 @@ use Tests\TestCase;
 
 class EntityHistoryViewerScreenTest extends TestCase
 {
+    public function test_screen_renders_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-121.entity-history-viewer'))->assertOk();
+
+        Livewire::test(EntityHistoryViewer::class)->assertOk();
+    }
+
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
         $this->get(route('x-121.entity-history-viewer.admin'))->assertOk();
 

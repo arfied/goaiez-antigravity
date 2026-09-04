@@ -27,6 +27,7 @@ class AlertReplyByScreenTest extends TestCase
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
         $this->get(route('x-153.alert-reply-by.admin'))->assertOk();
 

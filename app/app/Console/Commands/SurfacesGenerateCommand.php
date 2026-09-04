@@ -343,10 +343,10 @@ class SurfacesGenerateCommand extends Command
 
         $content .= "class {$className}ScreenTest extends TestCase\n{\n";
 
-        $provisioningStr = "";
-        $routeArgsStr = "";
-        if (!empty($routeArgsArray)) {
-            $routeArgsStr = ", [" . implode(", ", $routeArgsArray) . "]";
+        $provisioningStr = '';
+        $routeArgsStr = '';
+        if (! empty($routeArgsArray)) {
+            $routeArgsStr = ', ['.implode(', ', $routeArgsArray).']';
             if ($modId === 'X-179') {
                 $provisioningStr .= "\n        \$action = new \\App\\Modules\\X179\\Actions\\ContentExtractAction();\n";
                 $provisioningStr .= "        \$action->extractContent(\$biz->id, 123, 'gbp', 'test');\n";
@@ -412,12 +412,19 @@ class SurfacesGenerateCommand extends Command
         foreach (['tenant', 'operator', 'agency', 'tech'] as $surf) {
             $content .= "    '$surf' => [\n";
             $surfOrder = $navOrder[$surf] ?? [];
-            uksort($allNavGroups[$surf], function($a, $b) use ($surfOrder) {
+            uksort($allNavGroups[$surf], function ($a, $b) use ($surfOrder) {
                 $posA = array_search($a, $surfOrder, true);
                 $posB = array_search($b, $surfOrder, true);
-                if ($posA === false && $posB === false) return strcmp($a, $b);
-                if ($posA === false) return 1;
-                if ($posB === false) return -1;
+                if ($posA === false && $posB === false) {
+                    return strcmp($a, $b);
+                }
+                if ($posA === false) {
+                    return 1;
+                }
+                if ($posB === false) {
+                    return -1;
+                }
+
                 return $posA <=> $posB;
             });
 

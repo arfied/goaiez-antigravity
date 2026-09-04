@@ -6,6 +6,10 @@ use App\Modules\X151\Ui\FetchBoard;
 use App\Support\Admin\AdminAccess;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-151')->group(function () {
+    Route::get('/fetch-board', FetchBoard::class)->name('x-151.fetch-board');
+});
+
 Route::middleware(['web', 'auth', 'can:'.AdminAccess::GATE])->prefix('admin/x-151')->group(function () {
     Route::get('/fetch-board', FetchBoard::class)->name('x-151.fetch-board.admin');
 });

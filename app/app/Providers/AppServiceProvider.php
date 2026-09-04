@@ -21,6 +21,7 @@ use App\Contracts\Transcriber;
 use App\Contracts\VoiceProvider;
 use App\Enums\OauthProvider;
 use App\Enums\OutreachChannel;
+use App\Http\Middleware\TenantRole;
 use App\Livewire\Account\ReplyExamples as AccountReplyExamples;
 use App\Livewire\Account\ReviewRules as AccountReviewRules;
 use App\Services\ActivityService;
@@ -597,8 +598,8 @@ class AppServiceProvider extends ServiceProvider
         MeRateLimits::register();
         PixelRateLimits::register();
         ActuationRateLimits::register();
-        
-        \Livewire\Livewire::addPersistentMiddleware([\App\Http\Middleware\TenantRole::class]);
+
+        Livewire::addPersistentMiddleware([TenantRole::class]);
     }
 
     /**

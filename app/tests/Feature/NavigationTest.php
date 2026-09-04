@@ -15,14 +15,14 @@ class NavigationTest extends TestCase
 
         $surfaces = require __DIR__.'/../../config/surfaces.generated.php';
         $navJson = json_decode(file_get_contents(__DIR__.'/../../../.agents/supervisor/NAVIGATION.json'), true);
-        
+
         $expectedTenantKeys = [];
         foreach ($navJson['entries'] as $entry) {
             if ($entry['surface'] === 'tenant') {
                 $expectedTenantKeys[] = $entry['label'];
             }
         }
-        
+
         $actualTenantKeys = array_values(array_intersect(array_keys($surfaces['tenant']), $expectedTenantKeys));
         $this->assertSame($expectedTenantKeys, $actualTenantKeys);
     }

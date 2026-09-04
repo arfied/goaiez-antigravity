@@ -11,8 +11,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/x-112')->group(function () {
     Route::get('/agency-console', AgencyConsole::class)->name('x-112.agency-console');
+    Route::get('/agency-console', AgencyConsole::class)->name('x-112.agency-console');
+    Route::get('/staff', Staff::class)->name('x-112.staff');
     Route::get('/staff', Staff::class)->name('x-112.staff');
     Route::get('/roles', Roles::class)->name('x-112.roles');
+    Route::get('/roles', Roles::class)->name('x-112.roles');
+    Route::get('/impersonation-log', ImpersonationLogView::class)->name('x-112.impersonation-log');
     Route::get('/impersonation-log', ImpersonationLogView::class)->name('x-112.impersonation-log');
 });
 

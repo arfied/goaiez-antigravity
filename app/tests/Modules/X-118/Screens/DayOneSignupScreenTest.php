@@ -27,6 +27,7 @@ class DayOneSignupScreenTest extends TestCase
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
         $this->get(route('x-118.day-one-signup.admin'))->assertOk();
 
