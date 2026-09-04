@@ -7,6 +7,7 @@ namespace Tests\Modules\X82;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X82\Models\Rate;
+use App\Modules\X82\Models\RateVersion;
 use App\Modules\X82\Ui\RateRegistryView;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -28,7 +29,7 @@ class RateRegistryViewTest extends TestCase
         Livewire::actingAs($admin)
             ->test(RateRegistryView::class)
             ->assertOk()
-            ->assertSee('No rates defined. Add one above.');
+            ->assertSee('No rates in the registry. Seed the two packages.');
     }
 
     public function test_seeded_rows_displays_rate_and_sample_pill(): void
@@ -79,6 +80,54 @@ class RateRegistryViewTest extends TestCase
             'business_id' => $biz->id,
             'version_number' => 1,
             'amount_cents' => 9950,
+        ]);
+    }
+
+    public function test_inline_set_rate_writes_new_version_and_leaves_previous(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $admin->id]);
+        Tenancy::setUser($admin->id);
+
+        $rate = Rate::create([
+            'business_id' => $biz->id,
+            'rate_code' => 'INLINE_RATE',
+            'amount_cents' => 5000,
+            'currency' => 'USD',
+            'current_version' => 1,
+            'is_active' => true,
+        ]);
+
+        RateVersion::create([
+            'business_id' => $biz->id,
+            'rate_id' => $rate->id,
+            'version_number' => 1,
+            'amount_cents' => 5000,
+            'effective_from' => now()->subDay(),
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(RateRegistryView::class)
+            ->set("amountInput.{$rate->id}", '75.00')
+            ->call('setInlineRate', $rate->id);
+
+        $this->assertDatabaseHas('rates', [
+            'business_id' => $biz->id,
+            'rate_code' => 'INLINE_RATE',
+            'amount_cents' => 7500,
+            'current_version' => 2,
+        ]);
+
+        $this->assertDatabaseHas('rate_versions', [
+            'business_id' => $biz->id,
+            'version_number' => 1,
+            'amount_cents' => 5000,
+        ]);
+
+        $this->assertDatabaseHas('rate_versions', [
+            'business_id' => $biz->id,
+            'version_number' => 2,
+            'amount_cents' => 7500,
         ]);
     }
 

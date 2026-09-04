@@ -18,6 +18,8 @@ class RateRegistryView extends Component
 
     public string $newAmountDollars = '';
 
+    public array $amountInput = [];
+
     public function mount()
     {
         abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::SuperAdmin, UserRole::OpsAdmin)), 403);
@@ -42,10 +44,39 @@ class RateRegistryView extends Component
         $this->newAmountDollars = '';
     }
 
+    public function setInlineRate(int $rateId)
+    {
+        if (empty($this->amountInput[$rateId])) {
+            $this->addError('amountInput.'.$rateId, 'Enter the amount first.');
+
+            return;
+        }
+
+        $rate = Rate::find($rateId);
+        if (! $rate || $rate->business_id !== $this->businessId) {
+            return;
+        }
+
+        $cents = (int) (floatval($this->amountInput[$rateId]) * 100);
+
+        app(RateSetAction::class)->setRate(
+            $this->businessId,
+            $rate->rate_code,
+            $cents,
+            $rate->currency
+        );
+
+        $this->amountInput[$rateId] = '';
+    }
+
     public function render()
     {
-        $rates = Rate::where('business_id', $this->businessId)->get()->map(function ($rate) {
+        $rates = Rate::with('versions')->where('business_id', $this->businessId)->get()->map(function ($rate) {
             $rate->formatted_amount = '$'.number_format($rate->amount_cents / 100, 2);
+
+            $rate->versions->each(function ($version) {
+                $version->formatted_amount = '$'.number_format($version->amount_cents / 100, 2);
+            });
 
             return $rate;
         });

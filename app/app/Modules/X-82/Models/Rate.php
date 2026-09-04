@@ -17,4 +17,9 @@ class Rate extends Model
         'current_version' => 'integer',
         'is_active' => 'boolean',
     ];
+
+    public function versions()
+    {
+        return $this->hasMany(RateVersion::class, 'rate_id');
+    }
 }

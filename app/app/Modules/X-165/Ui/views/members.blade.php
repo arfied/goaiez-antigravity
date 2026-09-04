@@ -1,45 +1,47 @@
 <div>
-    <h1 class="text-2xl font-bold mb-4">Members</h1>
+    <h1 class="text-2xl font-bold mb-4 text-ink">Members</h1>
 
     @if($memberships->isEmpty())
         <x-ui.empty-state heading="No members">
             No members yet. Start one from a plan.
         </x-ui.empty-state>
     @else
-        <x-ui.table>
-            <x-slot:header>
-                <tr>
-                    <th class="px-4 py-2 text-left">Person ID</th>
-                    <th class="px-4 py-2 text-left">Plan Name</th>
-                    <th class="px-4 py-2 text-left">Status</th>
-                    <th class="px-4 py-2 text-left">Renews At</th>
-                    <th class="px-4 py-2 text-left">Reminder Sent</th>
-                    <th class="px-4 py-2 text-left">Sample</th>
-                    <th class="px-4 py-2 text-left">Actions</th>
-                </tr>
-            </x-slot:header>
-            <x-slot:body>
-                @foreach($memberships as $membership)
+        <div class="bg-paper rounded-xl border border-rule overflow-hidden mb-8">
+            <table class="w-full text-left text-sm text-ink">
+                <thead class="bg-surface border-b border-rule">
                     <tr>
-                        <td class="border px-4 py-2">{{ $membership->person_id }}</td>
-                        <td class="border px-4 py-2">{{ \App\Modules\X165\Models\MembershipPlan::find($membership->plan_id)?->name }}</td>
-                        <td class="border px-4 py-2">
-                            <x-ui.status-pill :state="$membership->status === 'active' ? 'ok' : 'attention'" :label="$membership->status" />
-                        </td>
-                        <td class="border px-4 py-2">{{ $membership->renews_at?->format('Y-m-d') }}</td>
-                        <td class="border px-4 py-2">{{ $membership->renewal_reminder_sent_at?->format('Y-m-d') ?? 'No' }}</td>
-                        <td class="border px-4 py-2">
-                            @if($membership->is_sample)
-                                <x-ui.status-pill state="attention" label="Sample" />
-                            @endif
-                        </td>
-                        <td class="border px-4 py-2">
-                            <button wire:click="renew({{ $membership->id }})" class="bg-blue-600 text-white px-2 py-1 rounded text-sm mb-1 w-full">Renew</button>
-                            <button wire:click="remind({{ $membership->id }})" class="bg-yellow-600 text-white px-2 py-1 rounded text-sm w-full">Send reminder</button>
-                        </td>
+                        <th class="px-6 py-4 font-medium">Person ID</th>
+                        <th class="px-6 py-4 font-medium">Plan Name</th>
+                        <th class="px-6 py-4 font-medium">Status</th>
+                        <th class="px-6 py-4 font-medium">Renews At</th>
+                        <th class="px-6 py-4 font-medium">Reminder Sent</th>
+                        <th class="px-6 py-4 font-medium">Sample</th>
+                        <th class="px-6 py-4 font-medium">Actions</th>
                     </tr>
-                @endforeach
-            </x-slot:body>
-        </x-ui.table>
+                </thead>
+                <tbody class="divide-y divide-rule">
+                    @foreach($memberships as $membership)
+                        <tr>
+                            <td class="px-6 py-4">{{ $membership->person_id }}</td>
+                            <td class="px-6 py-4">{{ $planNames[$membership->plan_id] ?? '' }}</td>
+                            <td class="px-6 py-4">
+                                <x-ui.status-pill :state="$membership->status === 'active' ? 'ok' : 'attention'" :label="$membership->status" />
+                            </td>
+                            <td class="px-6 py-4">{{ $membership->renews_at?->format('Y-m-d') }}</td>
+                            <td class="px-6 py-4">{{ $membership->renewal_reminder_sent_at?->format('Y-m-d') ?? 'No' }}</td>
+                            <td class="px-6 py-4">
+                                @if($membership->is_sample)
+                                    <x-ui.status-pill state="attention" label="Sample" />
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 flex gap-2">
+                                <x-ui.button size="default" wire:click="renew({{ $membership->id }})">Renew</x-ui.button>
+                                <x-ui.button size="default" wire:click="remind({{ $membership->id }})">Send reminder</x-ui.button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @endif
 </div>
