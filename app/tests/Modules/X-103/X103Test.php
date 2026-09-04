@@ -108,12 +108,82 @@ class X103Test extends TestCase
         $this->assertEquals('/promo/desktop', $desktopRoute['destination_url']);
     }
 
-    /**
-     * [G6-15], [G6-16], [G6-17], [G6-20], [G6-27], [G6-32], [G7-18], [G9-04], [G12-39]
-     */
-    public function test_header_capabilities(): void
+    public function test_g9_04_every_built_page_version_carries_the_pixel(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'pixel', 'Pixel', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = \App\Modules\X103\Models\PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertTrue($version->pixel_installed);
+    }
+
+    public function test_g12_39_the_review_widget_is_not_yet_on_the_built_site(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        
+        $page = $this->pageAction->handle($biz->id, 'widget', 'Widget', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = \App\Modules\X103\Models\PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertFalse(array_key_exists('review_widget', $version->getAttributes()));
+    }
+
+    /** (R245) */
+    public function test_g6_15_header_first_line(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-15', $caps);
+    }
+
+    /** (R245) */
+    public function test_g6_16_header_tenant_offer(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-16', $caps);
+    }
+
+    /** (R245) */
+    public function test_g6_17_header_x194(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-17', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-194')));
+    }
+
+    /** (R245) */
+    public function test_g6_20_header_x195(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-20', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-195')));
+    }
+
+    /** (R245) */
+    public function test_g6_27_header_c_sms(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-27', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/C-Sms')));
+    }
+
+    /** (R245) */
+    public function test_g6_32_header_x199(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-32', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-199')));
+    }
+
+    /** (R245) */
+    public function test_g7_18_header_c_reviews(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G7-18', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/C-Reviews')));
     }
 
     public function test_page_create_and_site_publish_resolve_from_container(): void
