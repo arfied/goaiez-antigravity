@@ -12,9 +12,11 @@ use App\Modules\X102\Events\ChatEscalated;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatSession;
+use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X121\Models\Person;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X102Test extends TestCase
@@ -151,7 +153,7 @@ class X102Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Shadow DOM', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $component = \Livewire\Livewire::test(\App\Modules\X102\Ui\CustomerfacingWidget::class);
+        $component = Livewire::test(CustomerfacingWidget::class);
         $component->assertDontSee('attachShadow');
         $component->assertDontSee('shadow-root');
 
@@ -182,7 +184,7 @@ class X102Test extends TestCase
      */
     public function test_g13_37_proactive_help(): void
     {
-        Event::fake([\App\Modules\X102\Events\ChatEscalated::class]);
+        Event::fake([ChatEscalated::class]);
         $biz = TestCase::provisionTenant(['name' => 'Proactive Help', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
@@ -207,7 +209,7 @@ class X102Test extends TestCase
         $this->assertEquals('escalated', $res4['status']);
         $this->assertEquals('four_rage_clicks_detected', $res4['reason']);
 
-        Event::assertDispatched(\App\Modules\X102\Events\ChatEscalated::class);
+        Event::assertDispatched(ChatEscalated::class);
     }
 
     /**
@@ -218,7 +220,7 @@ class X102Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Chat Carousel', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $component = \Livewire\Livewire::test(\App\Modules\X102\Ui\CustomerfacingWidget::class);
+        $component = Livewire::test(CustomerfacingWidget::class);
         $component->assertDontSee('carousel');
 
         $this->markTestIncomplete("UNRESOLVED — G16-21's chat carousel renders products; the product read path is X-163/X-119 on track/pricebook and X-102 has no read path to either.");
