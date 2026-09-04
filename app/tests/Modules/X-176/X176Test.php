@@ -139,4 +139,31 @@ class X176Test extends TestCase
         $this->assertStringContainsString('<title id="seo-meta-x176">SEO &amp; &quot;Co&quot;</title>', $htmlEscaped);
         $this->assertStringContainsString('<meta name="description" content="SEO &amp; &quot;Co&quot;">', $htmlEscaped);
     }
+
+    public function test_seo_never_reads_another_tenants_page(): void
+    {
+        $tenantA = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+        $tenantB = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
+
+        Tenancy::set((int) $tenantB->id);
+        $pageB = \App\Modules\X103\Models\Page::create([
+            'business_id' => $tenantB->id,
+            'slug' => 'tenant-b-slug',
+            'title' => 'Tenant B Title',
+            'is_published' => true,
+        ]);
+
+        Tenancy::set((int) $tenantA->id);
+        $action = new \App\Modules\X176\Actions\SeoRenderAction();
+        $res = $action->handle(
+            businessId: $tenantA->id,
+            pageId: $pageB->id,
+            businessName: 'Tenant A',
+            commitId: 'c1',
+            domainName: 'seo-a.com'
+        );
+
+        $this->assertEquals('Tenant A', $res['title']);
+        $this->assertEquals("https://seo-a.com/pages/{$pageB->id}", $res['canonical']);
+    }
 }
