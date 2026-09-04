@@ -80,8 +80,7 @@ class CReviewsScreensTest extends TestCase
         $ticket->update(['sla_due_at' => \Carbon\Carbon::now()->subHours(2)]);
 
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])
-            ->assertSee('1')
-            ->assertSee('Breached Tickets'); 
+            ->assertSeeHtml('<div class="text-3xl font-bold text-rose-500">1</div>');
     }
 
     public function test_tickets_screen(): void
