@@ -11,8 +11,11 @@ use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Events\FormSpamRejected;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
+use App\Modules\X155\Ui\Forms;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X155Test extends TestCase
@@ -183,8 +186,8 @@ class X155Test extends TestCase
     public function test_forms_lists_this_businesses_forms_with_counts(): void
     {
         $bizA = TestCase::provisionTenant(['name' => 'Forms Biz A', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $bizA->id);
-        
+        Tenancy::set((int) $bizA->id);
+
         $form1 = FormDefinition::create([
             'business_id' => $bizA->id,
             'form_name' => 'Biz A Form 1',
@@ -199,12 +202,12 @@ class X155Test extends TestCase
             'steps' => [['step' => 1], ['step' => 2]],
             'schema' => [],
         ]);
-        
+
         $personA = Person::create([
             'business_id' => $bizA->id,
             'first_name' => 'Test',
         ]);
-        
+
         FormSubmission::create([
             'business_id' => $bizA->id,
             'form_definition_id' => $form1->id,
@@ -222,7 +225,7 @@ class X155Test extends TestCase
         ]);
 
         $bizB = TestCase::provisionTenant(['name' => 'Forms Biz B', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $bizB->id);
+        Tenancy::set((int) $bizB->id);
         $formB = FormDefinition::create([
             'business_id' => $bizB->id,
             'form_name' => 'Biz B Form 1',
@@ -230,10 +233,10 @@ class X155Test extends TestCase
             'steps' => [['step' => 1]],
             'schema' => [],
         ]);
-        
-        \App\Support\Tenancy::set((int) $bizA->id);
 
-        \Livewire\Livewire::test(\App\Modules\X155\Ui\Forms::class, ['businessId' => $bizA->id])
+        Tenancy::set((int) $bizA->id);
+
+        Livewire::test(Forms::class, ['businessId' => $bizA->id])
             ->assertOk()
             ->assertSee('Biz A Form 1')
             ->assertSee('biz-a-1')
@@ -248,9 +251,9 @@ class X155Test extends TestCase
     public function test_forms_shows_the_empty_state_for_a_business_with_no_forms(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Biz', 'currency' => 'USD']);
-        \App\Support\Tenancy::set((int) $biz->id);
-        
-        \Livewire\Livewire::test(\App\Modules\X155\Ui\Forms::class, ['businessId' => $biz->id])
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(Forms::class, ['businessId' => $biz->id])
             ->assertOk()
             ->assertSee('No forms constructed yet.')
             ->assertDontSee('<ul', false);

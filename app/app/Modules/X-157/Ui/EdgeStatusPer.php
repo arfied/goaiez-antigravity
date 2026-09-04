@@ -6,6 +6,7 @@ namespace App\Modules\X157\Ui;
 
 use App\Modules\X157\Actions\EdgeRollbackAction;
 use App\Modules\X157\Models\Deployment;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -21,7 +22,7 @@ class EdgeStatusPer extends Component
         $this->errorMessage = null;
         try {
             app(EdgeRollbackAction::class)->handle($this->businessId, $deploymentId);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             $this->errorMessage = 'That deployment is not available for this business.';
         } catch (\Throwable $e) {
             $this->errorMessage = $e->getMessage();

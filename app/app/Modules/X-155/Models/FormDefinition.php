@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X155\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FormDefinition extends Model
 {
@@ -17,7 +18,7 @@ class FormDefinition extends Model
         'schema' => 'array',
     ];
 
-    public function submissions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function submissions(): HasMany
     {
         return $this->hasMany(FormSubmission::class);
     }

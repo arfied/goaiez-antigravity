@@ -18,11 +18,11 @@ class Forms extends Component
         $forms = ($this->businessId > 0)
             ? FormDefinition::withCount([
                 'submissions',
-                'submissions as spam_count' => fn ($q) => $q->where('is_spam', true)
+                'submissions as spam_count' => fn ($q) => $q->where('is_spam', true),
             ])
-            ->where('business_id', $this->businessId)
-            ->orderByDesc('id')
-            ->get()
+                ->where('business_id', $this->businessId)
+                ->orderByDesc('id')
+                ->get()
             : collect();
 
         return view('x-155::forms', [
