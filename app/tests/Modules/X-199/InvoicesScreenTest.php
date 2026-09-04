@@ -54,7 +54,9 @@ class InvoicesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Invoices::class)
             ->assertOk()
             ->assertSeeInOrder([$inv2->invoice_number, $inv1->invoice_number])
-            ->call('recordPayment', $inv2->id);
+            ->call('recordPayment', $inv2->id)
+            ->call('recordPayment', 999999)
+            ->assertSee("isn't in this account");
 
         $this->assertEquals('paid', Invoice::find($inv2->id)->status);
     }

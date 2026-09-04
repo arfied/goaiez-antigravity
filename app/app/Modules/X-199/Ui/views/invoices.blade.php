@@ -9,6 +9,12 @@
             <div wire:loading class="w-full text-center p-4">
                 <span class="text-gray-500 text-base">Loading...</span>
             </div>
+
+            @if($error)
+                <div role="alert" class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative text-base">
+                    {{ $error }}
+                </div>
+            @endif
             
             @if($invoices->isEmpty())
                 <div wire:loading.remove class="text-center p-8 bg-white rounded-lg border border-gray-200">
@@ -49,7 +55,7 @@
                                         @if($invoice->status === 'paid')
                                             <a href="{{ $invoice->pdf_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 p-2">Receipt</a>
                                         @elseif(in_array($invoice->status, ['issued', 'due', 'offline_recorded']))
-                                            <button wire:click="recordPayment({{ $invoice->id }})" class="text-indigo-600 hover:text-indigo-900 p-2">Record payment</button>
+                                            <button wire:loading.attr="disabled" wire:target="recordPayment({{ $invoice->id }})" wire:click="recordPayment({{ $invoice->id }})" class="text-indigo-600 hover:text-indigo-900 p-2">Record payment</button>
                                         @elseif($invoice->status === 'draft')
                                             <a href="{{ $invoice->pdf_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 p-2">Open PDF</a>
                                         @endif
