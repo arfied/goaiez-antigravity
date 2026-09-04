@@ -22,9 +22,11 @@ class MoneyPaidTodayTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Money Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
+        $customer = \Database\Factories\PersonFactory::new()->create(['business_id' => $biz->id]);
+
         Invoice::create([
             'business_id' => $biz->id,
-            'customer_id' => 1,
+            'customer_id' => $customer->id,
             'invoice_number' => 'INV-TEST-001',
             'total_cents' => 12500,
             'paid_cents' => 12500,
