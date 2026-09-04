@@ -197,8 +197,8 @@ class X194Test extends TestCase
             ->call('load')
             ->assertSee('Job View Alpha')
             ->assertSee('America/Denver')
-            ->assertSee('7')
-            ->assertSee('--');
+            ->assertSeeHtml('data-job-count="7"')
+            ->assertSeeHtml('data-estimate-tile="--"');
 
         // Test with real value
         Livewire::test(AnyViewIt::class, [
@@ -211,8 +211,8 @@ class X194Test extends TestCase
             ->call('load')
             ->assertSee('Job View Alpha')
             ->assertSee('America/New_York')
-            ->assertSee('3')
-            ->assertSee('$1,500.50');
+            ->assertSeeHtml('data-job-count="3"')
+            ->assertSeeHtml('data-estimate-tile="$1,500.50"');
     }
 
     public function test_any_view_it_empty_state(): void
@@ -220,17 +220,14 @@ class X194Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'View Empty Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        // Use a non-existent viewId so $viewData remains null if we catch ModelNotFoundException,
-        // Wait, ViewRenderAction uses findOrFail so it throws, and our try/catch sets errorMessage!
-        // So empty state ($viewData null AND no errorMessage) only happens if we don't pass businessId/viewId or if ready is false
-        // Wait, if ready is true but businessId is 0, it doesn't call action and viewData is null.
+        // The empty state is only reachable when businessId or viewId is 0, since invalid IDs throw.
         Livewire::test(AnyViewIt::class, [
             'businessId' => 0,
             'viewId' => 0,
         ])
             ->call('load')
-            ->assertSee('View not found')
-            ->assertSee('The requested view could not be found.');
+            ->assertSee('No view selected')
+            ->assertSee('Please select a view to see its details.');
     }
 
     public function test_any_view_it_error_state(): void
@@ -245,7 +242,7 @@ class X194Test extends TestCase
 
         $component->call('load')
             ->assertSee('We could not render your view.')
-            ->assertSee('We could not render your view.'); // The heading and the slot
+            ->assertSee('Please try again later or contact support if the issue persists.');
     }
 
     /**

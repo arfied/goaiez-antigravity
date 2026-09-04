@@ -6,8 +6,8 @@
     @elseif (! $ready)
         <x-ui.skeleton label="Loading view..." />
     @elseif (! $viewData)
-        <x-ui.empty-state heading="View not found">
-            The requested view could not be found.
+        <x-ui.empty-state heading="No view selected">
+            Please select a view to see its details.
         </x-ui.empty-state>
     @else
         <div class="view-header">
@@ -18,11 +18,11 @@
         <div class="flex gap-4 mt-4">
             <div class="border p-4 rounded tile">
                 <h4>Count</h4>
-                <p>{{ $viewData['job_count'] }}</p>
+                <p data-job-count="{{ $viewData['job_count'] }}">{{ $viewData['job_count'] }}</p>
             </div>
             <div class="border p-4 rounded tile">
                 <h4>Estimate</h4>
-                <p>{{ $viewData['estimate_tile'] }}</p>
+                <p data-estimate-tile="{{ $viewData['estimate_tile'] }}">{{ $viewData['estimate_tile'] }}</p>
             </div>
         </div>
     @endif

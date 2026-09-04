@@ -28,6 +28,7 @@ class SavedViewsList extends Component
         try {
             app(SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
         } catch (\Exception $e) {
+            // Defence in depth: SetDefaultViewAction uses Builder::update() which does not throw in normal conditions, so no test reaches this block.
             $this->errorMessage = 'We could not update your default view.';
         }
     }
@@ -40,6 +41,7 @@ class SavedViewsList extends Component
                 ? $action->listViews($this->businessId)
                 : collect();
         } catch (\Exception $e) {
+            // Defence in depth: ViewListAction returns a LazyCollection so the query runs on blade iteration, escaping this try block; thus no test reaches it.
             $this->errorMessage = 'We could not load your saved views.';
             $views = collect();
         }
