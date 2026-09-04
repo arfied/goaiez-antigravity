@@ -3,9 +3,9 @@
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-bold">QA Queue and SLA Due Watch</h3>
             <div class="flex items-center space-x-2">
-                <button wire:click="toggleSample" class="text-sm px-2 py-1 bg-gray-200 rounded">
+                <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
                     {{ $isSample ? 'Exit Sample' : 'Sample' }}
-                </button>
+                </x-ui.button>
             </div>
         </div>
 
@@ -22,10 +22,9 @@
         @endif
 
         @if($isEmpty)
-            <div class="text-gray-500 py-8 text-center border rounded">
-                <p>so what do I do?</p>
-                <p class="text-sm">Currently no tickets in the QA queue.</p>
-            </div>
+            <x-ui.empty-state heading="The QA queue is clear" action="Show a sample" target="toggleSample">
+                A ticket lands here when a review falls below the public threshold and leaves when it is resolved.
+            </x-ui.empty-state>
         @else
             <div class="space-y-4">
                 @foreach($tickets as $t)
@@ -33,18 +32,21 @@
                         <div>
                             <div class="font-bold">Ticket #{{ $t->id }}</div>
                             <div class="text-sm text-gray-700">{{ $t->subject }}</div>
-                            <div class="text-xs {{ $t->is_breached ? 'text-red-600 font-bold' : 'text-gray-500' }}">
-                                Due: {{ $t->sla_due_at ? $t->sla_due_at->diffForHumans() : 'N/A' }}
-                                @if($t->is_breached) (BREACHED) @endif
+                            <div class="mt-1">
+                                @if($t->is_breached)
+                                    <x-ui.status-pill state="alert" label="SLA breached" />
+                                @else
+                                    <x-ui.status-pill state="ok" label="Due: {{ $t->sla_due_at ? $t->sla_due_at->diffForHumans() : 'N/A' }}" />
+                                @endif
                             </div>
                         </div>
                         <div class="mt-4 md:mt-0 flex space-x-2">
                             @if($resolvingTicketId === $t->id)
                                 <input type="text" wire:model="resolutionNotes" class="border p-1 text-sm rounded" placeholder="Resolution notes...">
-                                <button wire:click="resolve({{ $t->id }}, resolutionNotes)" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Submit</button>
-                                <button wire:click="cancelResolve" class="text-gray-500 px-2 py-1 text-sm">Cancel</button>
+                                <x-ui.button wire:click="resolve({{ $t->id }}, $wire.resolutionNotes)" size="default" variant="primary">Submit</x-ui.button>
+                                <x-ui.button wire:click="cancelResolve" size="default" variant="quiet">Cancel</x-ui.button>
                             @else
-                                <button wire:click="startResolve({{ $t->id }})" class="bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold">Resolve</button>
+                                <x-ui.button wire:click="startResolve({{ $t->id }})" size="default" variant="primary">Resolve</x-ui.button>
                             @endif
                         </div>
                     </div>

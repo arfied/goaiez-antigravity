@@ -28,7 +28,7 @@ class X181ScreensTest extends TestCase
         Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $this->bizId])
             ->assertOk()
             ->assertSee('QA Queue and SLA Due Watch')
-            ->assertSee('Currently no tickets in the QA queue.');
+            ->assertSee('The QA queue is clear');
     }
 
     public function test_qa_queue_ordering_and_breach(): void
@@ -50,7 +50,7 @@ class X181ScreensTest extends TestCase
 
         Livewire::test(QaQueueSlaDueAt::class, ['businessId' => $this->bizId])
             ->assertSeeInOrder(['Ticket #'.$ticket2->id, 'Ticket #'.$ticket1->id])
-            ->assertSee('(BREACHED)');
+            ->assertSee('SLA breached');
     }
 
     public function test_qa_queue_resolve_action(): void

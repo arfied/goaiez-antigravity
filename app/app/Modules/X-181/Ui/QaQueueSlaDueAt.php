@@ -16,10 +16,13 @@ class QaQueueSlaDueAt extends Component
     public int $businessId = 0;
 
     public bool $isSample = false;
+
     public ?string $actionNotice = null;
+
     public string $noticeType = 'success';
 
     public ?int $resolvingTicketId = null;
+
     public string $resolutionNotes = '';
 
     public function mount(): void
@@ -36,7 +39,7 @@ class QaQueueSlaDueAt extends Component
 
     public function toggleSample(): void
     {
-        $this->isSample = !$this->isSample;
+        $this->isSample = ! $this->isSample;
         $this->resolvingTicketId = null;
         $this->resolutionNotes = '';
         $this->actionNotice = null;
@@ -70,33 +73,34 @@ class QaQueueSlaDueAt extends Component
             $this->resolutionNotes = '';
         } catch (\Exception $e) {
             $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: ' . $e->getMessage();
+            $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
     }
 
     public function render()
     {
         Tenancy::set($this->businessId);
-        
+
         $tickets = collect();
-        if (!$this->isSample) {
+        if (! $this->isSample) {
             $tickets = QaTicket::where('business_id', $this->businessId)
                 ->whereIn('status', ['open', 'in_progress'])
                 ->orderBy('sla_due_at', 'asc')
                 ->get()
                 ->map(function ($t) {
                     $t->is_breached = $t->sla_due_at && $t->sla_due_at <= now();
+
                     return $t;
                 });
         } else {
             $tickets = collect([
-                (object)[
+                (object) [
                     'id' => 999,
                     'subject' => 'Sample ticket',
                     'sla_due_at' => now()->subHours(1),
                     'is_breached' => true,
                 ],
-                (object)[
+                (object) [
                     'id' => 1000,
                     'subject' => 'Another sample ticket',
                     'sla_due_at' => now()->addHours(2),
@@ -105,7 +109,7 @@ class QaQueueSlaDueAt extends Component
             ]);
         }
 
-        $isEmpty = !$this->isSample && $tickets->isEmpty();
+        $isEmpty = ! $this->isSample && $tickets->isEmpty();
 
         return view('x-181::qa-queue-sladueat', [
             'tickets' => $tickets,
