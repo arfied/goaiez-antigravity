@@ -9,8 +9,8 @@ use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewRequest;
-use App\Modules\X181\Models\QaTicket;
 use App\Modules\X121\Models\Person;
+use App\Modules\X181\Models\QaTicket;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -21,18 +21,22 @@ class ReviewsQaRequests extends Component
     public int $businessId = 0;
 
     public string $filter = 'all';
+
     public string $promptTemplate = 'How did the repair go?';
+
     public string $platform = 'google';
 
     #[Locked]
     public ?int $selectedReviewId = null;
 
     public string $replyDraft = '';
+
     public bool $isSarcasticOrAmbiguous = false;
 
     public ?string $actionNotice = null;
+
     public string $noticeType = 'success';
-    
+
     public bool $isSample = false;
 
     public function mount(): void
@@ -46,10 +50,10 @@ class ReviewsQaRequests extends Component
         }
         Tenancy::set($this->businessId);
     }
-    
+
     public function toggleSample(): void
     {
-        $this->isSample = !$this->isSample;
+        $this->isSample = ! $this->isSample;
         $this->filter = 'all';
     }
 
@@ -57,37 +61,44 @@ class ReviewsQaRequests extends Component
     {
         Tenancy::set($this->businessId);
         $setting = QaSetting::where('business_id', $this->businessId)->first();
+
         return $setting ? (int) $setting->min_public_stars : 4;
     }
-    
+
     public function getTicketRecipient(): string
     {
         Tenancy::set($this->businessId);
         $setting = QaSetting::where('business_id', $this->businessId)->first();
-        if ($setting && !empty($setting->ticket_recipient_id)) {
+        if ($setting && ! empty($setting->ticket_recipient_id)) {
             $person = Person::find($setting->ticket_recipient_id);
+
             return $person ? $person->name : 'not set';
         }
+
         return 'not set';
     }
 
     public function sendRequest(): void
     {
-        if ($this->isSample) return;
+        if ($this->isSample) {
+            return;
+        }
         Tenancy::set($this->businessId);
-        
+
         $lower = strtolower($this->promptTemplate);
         if (str_contains($lower, '10% off') || str_contains($lower, 'discount for review') || str_contains($lower, 'gift card')) {
             $this->noticeType = 'error';
-            $this->actionNotice = "🚫 REFUSAL [INCENTIVE_GATING_BANNED]: Review incentives and review-gating discounts are strictly banned across all channels";
+            $this->actionNotice = '🚫 REFUSAL [INCENTIVE_GATING_BANNED]: Review incentives and review-gating discounts are strictly banned across all channels';
+
             return;
         }
         if (str_contains($lower, 'mention dave') || str_contains($lower, 'mention our tech') || str_contains($lower, 'mention your technician')) {
             $this->noticeType = 'error';
-            $this->actionNotice = "🚫 REFUSAL [STAFF_PROMPT_BANNED]: Staff-name prompts are banned; ask \"how did the repair go\" instead";
+            $this->actionNotice = '🚫 REFUSAL [STAFF_PROMPT_BANNED]: Staff-name prompts are banned; ask "how did the repair go" instead';
+
             return;
         }
-        
+
         $action = app(ReviewRequestAction::class);
         // We do not have a specific customer to send to in this global form, passing null will trigger CUSTOMER_UNKNOWN from the action.
         // Actually, the instruction says "sent request with no rating yet -> Resend ask". The form is for new requests.
@@ -103,29 +114,36 @@ class ReviewsQaRequests extends Component
             }
         } catch (\Exception $e) {
             $this->noticeType = 'error';
-            $this->actionNotice = "🚫 Error: " . $e->getMessage();
+            $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
     }
-    
+
     public function resendAsk(int $id): void
     {
-        if ($this->isSample) return;
+        if ($this->isSample) {
+            return;
+        }
         Tenancy::set($this->businessId);
         $req = ReviewRequest::where('business_id', $this->businessId)->find($id);
-        if (!$req) return;
-        
+        if (! $req) {
+            return;
+        }
+
         $action = app(ReviewRequestAction::class);
         $res = $action->handle($this->businessId, $req->customer_id, $this->promptTemplate, $req->platform);
         if ($res['status'] === 'refused') {
             $this->noticeType = 'error';
-            $this->actionNotice = "🚫 REFUSAL [{$res['refusal_code']}]: " . ($res['message'] ?? '');
+            $this->actionNotice = "🚫 REFUSAL [{$res['refusal_code']}]: ".($res['message'] ?? '');
         } else {
             $this->noticeType = 'success';
-            $this->actionNotice = "✅ Review request resent.";
+            $this->actionNotice = '✅ Review request resent.';
         }
     }
 
-    public function unselectReview(): void { $this->selectedReviewId = null; }
+    public function unselectReview(): void
+    {
+        $this->selectedReviewId = null;
+    }
 
     public function selectReview(int $id): void
     {
@@ -176,7 +194,9 @@ class ReviewsQaRequests extends Component
 
     public function escalateToQa(int $id): void
     {
-        if ($this->isSample) return;
+        if ($this->isSample) {
+            return;
+        }
         Tenancy::set($this->businessId);
         $action = app(QaTicketAction::class);
         $res = $action->handle($this->businessId, $id);
@@ -203,7 +223,7 @@ class ReviewsQaRequests extends Component
         if ($this->isSample) {
             $requests = collect();
         } else {
-            $requests = $query->get()->map(function($req) {
+            $requests = $query->get()->map(function ($req) {
                 $req->customer_name = null;
                 if ($req->customer_id) {
                     $person = Person::find($req->customer_id);
@@ -212,6 +232,7 @@ class ReviewsQaRequests extends Component
                     }
                 }
                 $req->ticket = QaTicket::where('review_request_id', $req->id)->first();
+
                 return $req;
             });
         }
@@ -221,7 +242,7 @@ class ReviewsQaRequests extends Component
         $internalCount = ReviewRequest::where('business_id', $this->businessId)->where('rating', '<', $threshold)->whereNotNull('rating')->count();
         $rawAvg = ReviewRequest::where('business_id', $this->businessId)->whereNotNull('rating')->avg('rating');
         $avgRating = $rawAvg !== null ? round((float) $rawAvg, 1) : '—';
-        
+
         $ticketRecipient = $this->getTicketRecipient();
 
         return view('c-reviews::reviews-qa-requests', [

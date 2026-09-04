@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
-use App\Modules\CReviews\Ui\ReviewsQaRequests;
-use App\Modules\CReviews\Ui\QaReport;
-use App\Modules\CReviews\Ui\Tickets;
-use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CReviews\Actions\QaTicketAction;
+use App\Modules\CReviews\Actions\ReviewSyncAction;
 use App\Modules\CReviews\Models\QaSetting;
+use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CReviews\Ui\QaReport;
+use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use App\Modules\CReviews\Ui\Tickets;
 use App\Modules\X181\Models\QaTicket;
+use App\Support\Tenancy;
+use Carbon\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
-use App\Support\Tenancy;
-use App\Modules\CReviews\Actions\ReviewSyncAction;
 
 class CReviewsScreensTest extends TestCase
 {
@@ -46,13 +48,13 @@ class CReviewsScreensTest extends TestCase
             ->assertSee('Reply');
 
         QaSetting::updateOrCreate(['business_id' => $this->bizId], ['min_public_stars' => 5]);
-        
+
         $sync->handle($this->bizId, 'facebook', 4, 'Good service');
 
         Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])
             ->set('filter', 'internal')
             ->assertSee('Good service');
-            
+
         Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])
             ->call('toggleSample')
             ->assertDontSee('Bad service');
@@ -67,7 +69,7 @@ class CReviewsScreensTest extends TestCase
         $sync->handle($this->bizId, 'yelp', 5, 'Great service');
 
         $req2star = ReviewRequest::where('business_id', $this->bizId)->where('rating', 2)->first();
-        app(\App\Modules\CReviews\Actions\QaTicketAction::class)->handle($this->bizId, $req2star->id);
+        app(QaTicketAction::class)->handle($this->bizId, $req2star->id);
 
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])
             ->assertSee('2') // reviews received
@@ -77,7 +79,7 @@ class CReviewsScreensTest extends TestCase
 
         // Make the ticket breached
         $ticket = QaTicket::where('business_id', $this->bizId)->first();
-        $ticket->update(['sla_due_at' => \Carbon\Carbon::now()->subHours(2)]);
+        $ticket->update(['sla_due_at' => Carbon::now()->subHours(2)]);
 
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])
             ->assertSeeHtml('<div class="text-3xl font-bold text-rose-500">1</div>');
@@ -89,17 +91,17 @@ class CReviewsScreensTest extends TestCase
 
         $sync = app(ReviewSyncAction::class);
         $sync->handle($this->bizId, 'google', 2, 'Bad service');
-        
+
         $req2star = ReviewRequest::where('business_id', $this->bizId)->where('rating', 2)->first();
-        app(\App\Modules\CReviews\Actions\QaTicketAction::class)->handle($this->bizId, $req2star->id);
-        
+        app(QaTicketAction::class)->handle($this->bizId, $req2star->id);
+
         $ticket = QaTicket::where('business_id', $this->bizId)->first();
-        
+
         Livewire::test(Tickets::class, ['businessId' => $this->bizId])
             ->assertSee('Ticket #'.$ticket->id)
             ->call('resolve', $ticket->id, 'fixed the scheduling')
             ->assertDontSee('Ticket #'.$ticket->id);
-            
+
         $ticket->refresh();
         $this->assertEquals('resolved', $ticket->status);
         $this->assertNotNull($ticket->resolved_at);
