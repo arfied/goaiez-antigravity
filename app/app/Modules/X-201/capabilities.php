@@ -34,7 +34,7 @@ return [
     'N-009' => 'refuses: the exposure ledger; money taken vs work DELIVERED, per tenant',
 
     // status:
-    'N-010' => 'refuses: the refund verb does not exist here; a dispute is defended or conceded; a refund is X-198\'s and it is L1',
+    'N-010' => 'refuses: the re-fund verb does not exist here; a dispute is defended or conceded; a re-fund is X-198\'s and it is L1',
 
     // status:
     'N-011' => 'refuses: deadlines are a clock, not a hope; a dispute inside 48h of its deadline RAISES to a human regardless of state',
