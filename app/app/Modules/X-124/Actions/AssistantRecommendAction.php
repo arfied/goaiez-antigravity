@@ -18,9 +18,9 @@ final class AssistantRecommendAction
             'action_key' => $actionKey,
             'status' => 'active',
         ]);
-        
+
         AssistantRecommended::dispatch($businessId, $rec->id);
-        
+
         return $rec;
     }
 }

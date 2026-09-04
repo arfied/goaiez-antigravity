@@ -6,6 +6,7 @@ namespace App\Modules\X124\Ui;
 
 use App\Modules\X124\Actions\AssistantActOnRecommendationAction;
 use App\Modules\X124\Models\AssistantRecommendation;
+use Exception;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -14,21 +15,40 @@ class TodaysRecommendationStrip extends Component
     #[Locked]
     public int $businessId = 0;
 
-    public function accept(int $id, AssistantActOnRecommendationAction $action)
+    public bool $ready = false;
+
+    public ?string $errorMessage = null;
+
+    public function load(): void
+    {
+        $this->ready = true;
+        $this->errorMessage = null;
+    }
+
+    public function accept(int $id, AssistantActOnRecommendationAction $action): void
     {
         $action->handle($this->businessId, $id, 'accepted');
     }
 
-    public function dismiss(int $id, AssistantActOnRecommendationAction $action)
+    public function dismiss(int $id, AssistantActOnRecommendationAction $action): void
     {
         $action->handle($this->businessId, $id, 'dismissed');
     }
 
     public function render()
     {
-        $recs = ($this->businessId > 0)
-            ? AssistantRecommendation::where('business_id', $this->businessId)->where('status', 'active')->get()
-            : collect();
+        if (! $this->ready) {
+            return view('x-124::todays-recommendation-strip', ['recs' => collect()]);
+        }
+
+        try {
+            $recs = ($this->businessId > 0)
+                ? AssistantRecommendation::where('business_id', $this->businessId)->where('status', 'active')->get()
+                : collect();
+        } catch (Exception $e) {
+            $this->errorMessage = 'Failed to load recommendations';
+            $recs = collect();
+        }
 
         return view('x-124::todays-recommendation-strip', [
             'recs' => $recs,

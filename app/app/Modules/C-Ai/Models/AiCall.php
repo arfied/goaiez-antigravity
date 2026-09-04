@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\CAi\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Database\Factories\AiCallFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class AiCall extends Model
 {

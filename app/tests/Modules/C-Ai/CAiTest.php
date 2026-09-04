@@ -13,9 +13,11 @@ use App\Modules\CAi\Events\AiCalled;
 use App\Modules\CAi\Events\AiFailedOver;
 use App\Modules\CAi\Models\AiCall;
 use App\Modules\CAi\Models\AiTask;
+use App\Modules\CAi\Ui\ModelBoard;
 use App\Modules\X121\Models\LedgerEntry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CAiTest extends TestCase
@@ -192,17 +194,32 @@ class CAiTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Board Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $call = \App\Modules\CAi\Models\AiCall::factory()->create([
+        $task = AiTask::create([
             'business_id' => $biz->id,
+            'task_name' => 'instant_response',
+            'max_ttft_ms' => 600,
+            'cost_limit_cents' => 500,
+        ]);
+
+        $call = AiCall::factory()->create([
+            'id' => $task->id,
+            'business_id' => $biz->id,
+            'task_id' => $task->id,
             'model_served' => 'mock-gpt-4',
             'ttft_ms' => 420,
         ]);
 
-        \Livewire\Livewire::test(\App\Modules\CAi\Ui\ModelBoard::class, ["businessId" => $biz->id])
+        $initialCount = AiCall::where('business_id', $biz->id)->count();
+
+        $component = Livewire::test(ModelBoard::class, ['businessId' => $biz->id])
             ->call('load')
             ->assertSee('mock-gpt-4')
             ->assertSee('420ms TTFT')
-            ->call('retry', $call->id)
-            ->assertHasNoErrors();
+            ->call('retry', $call->id);
+
+        $this->assertNull($component->get('errorMessage'));
+
+        $newCount = AiCall::where('business_id', $biz->id)->count();
+        $this->assertEquals($initialCount + 1, $newCount);
     }
 }

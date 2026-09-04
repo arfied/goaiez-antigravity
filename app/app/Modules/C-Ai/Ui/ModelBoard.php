@@ -16,6 +16,7 @@ class ModelBoard extends Component
     public int $businessId = 0;
 
     public bool $ready = false;
+
     public ?string $errorMessage = null;
 
     public function load()
@@ -30,7 +31,7 @@ class ModelBoard extends Component
             $call = AiCall::where('business_id', $this->businessId)->findOrFail($id);
             $action->handle(
                 businessId: $this->businessId,
-                prompt: 'Retry of task ' . $call->task,
+                prompt: 'Retry of task '.$call->task,
                 modelRequested: $call->model ?? 'default_primary',
                 taskId: $id
             );
@@ -49,11 +50,13 @@ class ModelBoard extends Component
 
         try {
             $calls = AiCall::where('business_id', $this->businessId)->orderBy('id', 'desc')->limit(20)->get();
+
             return view('c-ai::model-board', [
                 'calls' => $calls,
             ]);
         } catch (Exception $e) {
             $this->errorMessage = $e->getMessage();
+
             return view('c-ai::model-board', [
                 'calls' => collect(),
             ]);
