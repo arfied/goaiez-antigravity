@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X102\Ui;
 
-use App\Enums\UserRole;
 use App\Modules\X102\Models\ChatLead;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class OfflineFormInbox extends Component
 {
-    public function mount(): void
-    {
-        
-    }
+    public function mount(): void {}
 
     #[Locked]
     public int $businessId = 0;

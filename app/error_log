@@ -473,3 +473,4 @@ Stack trace:
 [04-Sep-2026 05:18:48 UTC] PHP Warning:  stream_filter_remove(): Unable to flush filter, not removing in /home/goaiez/agents/grs-antig/app/vendor/laravel/pao/src/Execution.php on line 81
 [04-Sep-2026 12:08:33 UTC] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 20480 bytes) in /home/goaiez/agents/grs-antig/app/storage/framework/cache/phpstan/cache/PHPStan/9e/c7/9ec7831b1264df95d8b1239400e38565b5d383e1832c0a70e3114c824d8e1d3b.php on line 5
 [04-Sep-2026 12:08:33 UTC] PHP Fatal error:  Allowed memory size of 134217728 bytes exhausted (tried to allocate 32768 bytes) in /home/goaiez/agents/grs-antig/app/vendor/laravel/framework/src/Illuminate/Auth/SessionGuard.php on line 865
+[04-Sep-2026 20:13:09 UTC] PHP Parse error:  Unmatched '}' in app/Modules/X-142/ModuleServiceProvider.php on line 36

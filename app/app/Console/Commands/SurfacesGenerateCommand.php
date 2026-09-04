@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class SurfacesGenerateCommand extends Command
 {
     public static array $unplacedModules = [];
+
     protected $signature = 'surfaces:generate';
 
     protected $description = 'Generate routes, navigation, gates, and tests from module manifests';
@@ -168,10 +169,10 @@ class SurfacesGenerateCommand extends Command
                 }
                 $humanName = Str::title(str_replace('_', ' ', $render));
 
-                                $featuresConfig = is_file(config_path('features.php')) ? require config_path('features.php') : ['entries' => [], 'deferred' => []];
+                $featuresConfig = is_file(config_path('features.php')) ? require config_path('features.php') : ['entries' => [], 'deferred' => []];
                 $navGroup = 'Unplaced';
                 $isDeferred = in_array($modId, $featuresConfig['deferred'] ?? []);
-                
+
                 if (! $isDeferred) {
                     foreach ($featuresConfig['entries'] ?? [] as $entry) {
                         if (in_array($modId, $entry['modules'] ?? [])) {
@@ -216,8 +217,8 @@ class SurfacesGenerateCommand extends Command
                         }
                     }
 
-                                        $navRoute = $surf === 'operator' ? "$alias.admin" : $alias;
-                    if (!$isDeferred) {
+                    $navRoute = $surf === 'operator' ? "$alias.admin" : $alias;
+                    if (! $isDeferred) {
                         $allNavGroups[$surf][$navGroup][] = [
                             'label' => $humanName,
                             'route' => $navRoute,

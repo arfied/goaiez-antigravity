@@ -2,7 +2,6 @@
 
 namespace App\Modules\X192\Ui;
 
-use App\Enums\UserRole;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -10,10 +9,7 @@ use Livewire\Component;
 #[Layout('components.account.layout')]
 class MembershipsList extends Component
 {
-    public function mount(): void
-    {
-        
-    }
+    public function mount(): void {}
 
     public function render()
     {

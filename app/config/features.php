@@ -205,7 +205,7 @@ return [
                 'C-Billing',
                 'X-127',
                 'X-222',
-                            'C-Ai',
+                'C-Ai',
                 'X-119',
                 'X-121',
                 'X-123',
@@ -218,7 +218,7 @@ return [
                 'X-161',
                 'X-219',
                 'X-220',
-],
+            ],
         ],
         [
             'label' => 'Operator console',
