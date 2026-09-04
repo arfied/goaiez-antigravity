@@ -17,6 +17,7 @@ use App\Modules\X155\Ui\SubmissionsThread;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -126,7 +127,52 @@ class X155Test extends TestCase
      */
     public function test_g2_20_direct_entity_write(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G2-20 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G2-20 Form',
+            'slug' => 'g2-20',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'phone' => '+15551234567',
+                'email' => 'alice@example.com',
+            ]
+        );
+
+        $this->assertEquals('captured', $res['status']);
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15551234567')->count());
+        
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15551234567')->first();
+        $this->assertEquals($res['person_id'], $person->id);
+        $this->assertEquals('Alice', $person->first_name);
+        $this->assertEquals('alice@example.com', $person->email);
+
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertEquals($person->id, $submission->person_id);
+        $this->assertNotNull($submission->person_id);
+
+        $res2 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'AliceUpdated',
+                'phone' => '+15551234567',
+                'email' => 'alice@example.com',
+            ]
+        );
+
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15551234567')->count());
+        $person2 = Person::where('business_id', $biz->id)->where('phone', '+15551234567')->first();
+        $this->assertEquals('AliceUpdated', $person2->first_name);
     }
 
     /**
@@ -174,7 +220,41 @@ class X155Test extends TestCase
      */
     public function test_g13_35_no_staging(): void
     {
-        $this->assertTrue(true);
+        $this->assertFalse(Schema::hasTable('form_staging'));
+        $this->assertFalse(Schema::hasTable('form_submission_staging'));
+        $this->assertFalse(Schema::hasTable('form_field_mappings'));
+        $this->assertFalse(Schema::hasTable('form_pending'));
+
+        $this->assertTrue(Schema::hasTable('form_definitions'));
+        $this->assertTrue(Schema::hasTable('form_submissions'));
+
+        $biz = TestCase::provisionTenant(['name' => 'G13-35 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G13-35 Form',
+            'slug' => 'g13-35',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15557654321',
+                'utm_source' => 'google',
+            ]
+        );
+
+        $this->assertTrue(Person::where('business_id', $biz->id)->where('phone', '+15557654321')->exists());
+        
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557654321')->first();
+        
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertEquals('google', $submission->payload['utm_source']);
+        $this->assertEquals($person->id, $submission->person_id);
     }
 
     /**
