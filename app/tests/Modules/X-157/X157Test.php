@@ -85,7 +85,27 @@ class X157Test extends TestCase
      */
     public function test_g6_06_header(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'fixture-zero-touch.com', true);
+        $this->assertEquals('cloudflare', $zone->provider);
+        $this->assertStringStartsWith('cf_zone_', $zone->zone_id);
+        $this->assertTrue($zone->has_valid_ssl);
+        $this->assertNotNull($zone->ssl_certificate_id);
+        $this->assertEquals('active', $zone->status);
+
+        $zone2 = $this->provisionAction->handle($biz->id, 'fixture-pending.com', false);
+        $this->assertEquals('pending_ssl', $zone2->status);
+        $this->assertNull($zone2->ssl_certificate_id);
+
+        $refusedDeploy = $this->deployAction->handle($biz->id, $zone2->id);
+        $this->assertEquals('refused', $refusedDeploy['status']);
+        $this->assertEquals('SSL_CERTIFICATE_REQUIRED', $refusedDeploy['refusal_code']);
+        $this->assertEquals(0, Deployment::where('business_id', $biz->id)->where('edge_zone_id', $zone2->id)->count());
+
+        $zone3 = $this->provisionAction->handle($biz->id, 'fixture-zero-touch.com', true);
+        $this->assertEquals(1, EdgeZone::where('business_id', $biz->id)->where('domain_name', 'fixture-zero-touch.com')->count());
     }
 
     /**
@@ -105,7 +125,48 @@ class X157Test extends TestCase
      */
     public function test_g13_31_r2_zero_egress(): void
     {
-        $this->assertTrue(true);
+        $this->assertFalse(array_key_exists('r2', config('filesystems.disks')));
+
+        \Illuminate\Support\Facades\Http::fake();
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [],
+            'pixel_installed' => false,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        Storage::disk('local')->assertExists("sites/{$deploy['deploy_hash']}.html");
+        \Illuminate\Support\Facades\Http::assertNothingSent();
+
+        $this->get("/sites/{$deploy['deploy_hash']}")->assertOk();
+        \Illuminate\Support\Facades\Http::assertNothingSent();
+
+        $this->assertFalse(class_exists('App\Modules\X157\Models\Asset'));
+        $this->assertTrue(class_exists(\App\Modules\X121\Models\Asset::class));
     }
 
     public function test_feature_flags_absent(): void
