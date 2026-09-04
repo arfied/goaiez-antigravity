@@ -84,7 +84,6 @@ class X176Test extends TestCase
         $this->assertEquals('pinged', $sitemapRes['status']);
     }
 
-    /**
     /** (R245) */
     public function test_g3_34_capabilities(): void
     {
@@ -127,6 +126,13 @@ class X176Test extends TestCase
         );
         $this->assertArrayHasKey('hasOfferCatalog', $res['json_ld']);
         $this->assertEquals('c123', $res['commit_id']);
+
+        $resFree = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com', entityType: 'Plumber',
+            productOffers: [['name' => 'Free Callout', 'price' => '0.00']]
+        );
+        $this->assertEquals('published', $resFree['status']);
+        $this->assertArrayHasKey('hasOfferCatalog', $resFree['json_ld']);
     }
 
     /** (R245) */
@@ -178,6 +184,35 @@ class X176Test extends TestCase
     {
         $caps = require app_path('Modules/X-176/capabilities.php');
         $this->assertArrayHasKey('G8-32', $caps);
+
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res1 = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
+        );
+        $this->assertEquals('published', $res1['status']);
+        $this->assertEquals('https://schema.org', $res1['json_ld']['@context'] ?? null);
+
+        $snapshot = SchemaSnapshot::where('business_id', $biz->id)->where('page_id', 101)->first();
+        $this->assertTrue($snapshot->is_valid_schema);
+
+        $res2 = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: '', commitId: 'c124', domainName: 'seo.com'
+        );
+        $this->assertEquals('refused', $res2['status']);
+        $this->assertEquals('SCHEMA_INVALID', $res2['refusal_code']);
+        $this->assertFalse(array_key_exists('json_ld', $res2));
+
+        $reflection = new \ReflectionClass($this->renderAction);
+        $method = $reflection->getMethod('validateSchema');
+        $method->setAccessible(true);
+        $this->assertFalse($method->invoke($this->renderAction, [
+            '@context' => 'http://bad.org',
+            '@type' => 'LocalBusiness',
+            'name' => 'SEO',
+            'url' => 'https://seo.com/pages/101',
+        ]));
     }
 
     /** (R245) */
@@ -193,13 +228,20 @@ class X176Test extends TestCase
         $caps = require app_path('Modules/X-176/capabilities.php');
         $this->assertArrayHasKey('G12-03', $caps);
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
-        $biz->vertical = 'HVAC';
+        $biz->vertical = 'hvac';
         $biz->save();
         Tenancy::set((int) $biz->id);
         $res = $this->renderAction->handle(
             businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
         );
         $this->assertEquals('HVACBusiness', $res['json_ld']['@type'] ?? null);
+
+        $biz->vertical = null;
+        $biz->save();
+        $res2 = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
+        );
+        $this->assertEquals('LocalBusiness', $res2['json_ld']['@type'] ?? null);
     }
 
     /** (R245) */
@@ -214,6 +256,36 @@ class X176Test extends TestCase
     {
         $caps = require app_path('Modules/X-176/capabilities.php');
         $this->assertArrayHasKey('G7-48', $caps);
+
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'seo.com', true);
+
+        $deployValid = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: 'Valid Name'
+        );
+        $htmlValid = Storage::disk('local')->get("sites/{$deployValid['deploy_hash']}.html");
+        $this->assertStringContainsString('application/ld+json', $htmlValid);
+
+        $deployRefused = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c124',
+            businessName: ''
+        );
+        $htmlRefused = Storage::disk('local')->get("sites/{$deployRefused['deploy_hash']}.html");
+        $this->assertStringNotContainsString('application/ld+json', $htmlRefused);
     }
 
     public function test_seo_block_present_and_absent(): void

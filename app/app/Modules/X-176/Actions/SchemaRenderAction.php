@@ -24,12 +24,16 @@ final class SchemaRenderAction
         ?array $productOffers = null
     ): array {
         if ($entityType === null) {
-            $vertical = Business::find($businessId)?->vertical;
+            $vertical = strtolower(trim((string) (Business::find($businessId)?->vertical ?? '')));
             /** (R245) */
             $map = [
-                'HVAC' => 'HVACBusiness',
-                'Plumbing' => 'Plumber',
-                'Electrical' => 'Electrician',
+                'hvac' => 'HVACBusiness',
+                'dental' => 'Dentist',
+                'salon' => 'BeautySalon',
+                'legal' => 'LegalService',
+                'auto' => 'AutoRepair',
+                'medical' => 'MedicalClinic',
+                'plumbing' => 'Plumber',
             ];
             $entityType = $map[$vertical] ?? 'LocalBusiness';
         }
@@ -73,7 +77,7 @@ final class SchemaRenderAction
                 'entity_type' => $entityType,
                 'json_ld' => $jsonLd,
                 'commit_id' => $commitId, // Shared commit ID with Fact (TEST ANCHOR)
-                'is_valid_schema' => true,
+                'is_valid_schema' => $isValid,
             ]
         );
 
@@ -112,7 +116,10 @@ final class SchemaRenderAction
                 return false;
             }
             foreach ($catalog['itemListElement'] as $item) {
-                if (empty($item['price']) || empty($item['priceCurrency'])) {
+                if (($item['@type'] ?? '') !== 'Offer' || ($item['itemOffered']['@type'] ?? '') !== 'Service') {
+                    return false;
+                }
+                if (! array_key_exists('price', $item) || $item['price'] === null || ! isset($item['priceCurrency'])) {
                     return false;
                 }
             }
