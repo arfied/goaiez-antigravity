@@ -172,7 +172,7 @@
                             <div class="mt-3 p-4 rounded-xl bg-slate-950 border border-purple-500/40 space-y-3">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-white">AI Response Generator</span>
-                                    <button wire:click="$set('selectedReviewId', null)" class="text-xs text-slate-400 hover:text-white">&times; Cancel</button>
+                                    <button wire:click="unselectReview()" class="text-xs text-slate-400 hover:text-white">&times; Cancel</button>
                                 </div>
                                 <textarea wire:model.defer="replyDraft" rows="3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
                                 
