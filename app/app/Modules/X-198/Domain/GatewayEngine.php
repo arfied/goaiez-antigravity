@@ -16,6 +16,37 @@ use Illuminate\Support\Facades\Event;
 
 final class GatewayEngine
 {
+    public function applyForSubMerchant(int $businessId): array
+    {
+        $connection = MerchantConnection::where('business_id', $businessId)->first();
+
+        if (!app()->bound(ProcessorAdapter::class)) {
+            return ['status' => 'refused', 'reason' => 'no_adapter_bound'];
+        }
+
+        if ($connection !== null && $connection->merchant_status === 'pending_kyc') {
+            return ['status' => 'refused', 'reason' => 'already_applied'];
+        }
+
+        $adapter = app(ProcessorAdapter::class);
+        $gatewayName = $adapter->applyForSubMerchant($businessId);
+
+        MerchantConnection::updateOrCreate(
+            ['business_id' => $businessId],
+            [
+                'gateway_name' => $gatewayName,
+                'merchant_account_id' => 'pending',
+                'is_connected' => false,
+                'merchant_status' => 'pending_kyc',
+                'merchant_relationship' => 'sub_merchant',
+            ]
+        );
+
+        Event::dispatch(new \App\Modules\X198\Events\MerchantApplied($businessId, $gatewayName));
+
+        return ['status' => 'applied'];
+    }
+
     /**
      * Connect merchant gateway account.
      */
