@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-03T05:41:18",
+ "updated": "2026-09-04T13:11:43",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -794,6 +794,24 @@
      "stage": "journey",
      "why": "J3 \u2014 tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path",
      "at": "2026-09-03T01:58:12"
+    },
+    {
+     "module": "X-163",
+     "stage": "ConfirmationScreen missing the [fill-me] refusal_code handling UI explicitly beyond Needs a Price.",
+     "why": "",
+     "at": "2026-09-04T13:11:25"
+    },
+    {
+     "module": "X-163",
+     "stage": "DailyPricingDigest missing email dispatch logic.",
+     "why": "",
+     "at": "2026-09-04T13:11:25"
+    },
+    {
+     "module": "X-163",
+     "stage": "UI",
+     "why": "Daily pricing digest missing email/SMS dispatch loop",
+     "at": "2026-09-04T13:11:43"
     }
    ]
   },
@@ -1214,6 +1232,24 @@
    "stage": "journey",
    "why": "J3 \u2014 tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path",
    "at": "2026-09-03T01:58:12"
+  },
+  {
+   "module": "X-163",
+   "stage": "ConfirmationScreen missing the [fill-me] refusal_code handling UI explicitly beyond Needs a Price.",
+   "why": "",
+   "at": "2026-09-04T13:11:25"
+  },
+  {
+   "module": "X-163",
+   "stage": "DailyPricingDigest missing email dispatch logic.",
+   "why": "",
+   "at": "2026-09-04T13:11:25"
+  },
+  {
+   "module": "X-163",
+   "stage": "UI",
+   "why": "Daily pricing digest missing email/SMS dispatch loop",
+   "at": "2026-09-04T13:11:43"
   }
  ],
  "notes": [
@@ -1305,6 +1341,12 @@
    "module": "C-Agent",
    "chose": "agent fact key schema: both price.<slug> and legacy service.oil_change.price stand to preserve compatibility with existing data",
    "at": "2026-09-03T05:41:18",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "Built ConfirmationScreen, rebuilt Pricebook, added DailyPricingDigest.",
+   "at": "2026-09-04T13:11:43",
    "ruling": "R245"
   }
  ]
