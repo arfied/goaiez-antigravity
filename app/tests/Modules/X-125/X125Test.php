@@ -183,7 +183,7 @@ class X125Test extends TestCase
 
         $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
             ->call('load')
-            ->assertSee('No runs found')
+            ->assertSee('This flow has not run yet.')
             ->assertSee('When a flow runs, its history and status will appear here.');
     }
 
@@ -206,15 +206,26 @@ class X125Test extends TestCase
         $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
             ->call('load');
 
-        // Status pill maps 'success' to 'ok', and 'error' to 'alert'. Since we don't have a way
-        // to assert the blade component's internal values easily, we check that both HTML chunks exist
-        // or just rely on the component mapping logic. The kit component prints words like "Ok" and "Alert".
-        // Let's assert See for the labels or the generated attributes. Wait, does x-ui.status-pill render "Ok" and "Alert"?
-        // The instructions say "asserting both pills' words." So let's see what the kit component outputs.
-        // The component defaults to 'Ok' if it was success->ok, 'Alert' if error->alert.
-        // Let's assume it prints "Ok" and "Alert" (capitalized).
+        // SignalState::label() is the word on the pill: ok → 'Running', alert → 'Needs action'.
 
         $component->assertSee('Running', false)
             ->assertSee('Needs action', false);
+    }
+
+    public function test_flow_run_status_signal_mapping(): void
+    {
+        $run = new \App\Modules\X125\Models\FlowRun();
+
+        $run->status = 'success';
+        $this->assertEquals(\App\Enums\SignalState::Ok, $run->statusSignal());
+
+        $run->status = 'error';
+        $this->assertEquals(\App\Enums\SignalState::Alert, $run->statusSignal());
+
+        $run->status = 'simulated';
+        $this->assertEquals(\App\Enums\SignalState::Unknown, $run->statusSignal());
+
+        $run->status = 'queued'; // unrecognized
+        $this->assertEquals(\App\Enums\SignalState::Unknown, $run->statusSignal());
     }
 }

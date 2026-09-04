@@ -6,7 +6,7 @@
     @elseif (! $ready)
         <x-ui.skeleton label="Loading runs..." />
     @elseif ($runs->isEmpty())
-        <x-ui.empty-state heading="No runs found">
+        <x-ui.empty-state heading="This flow has not run yet.">
             When a flow runs, its history and status will appear here.
         </x-ui.empty-state>
     @else
@@ -17,7 +17,7 @@
                     <div class="flex justify-between items-center">
                         <div>
                             <strong>{{ $run->flow->name }}</strong>
-                            <x-ui.status-pill :state="match($run->status) { 'success' => 'ok', 'error' => 'alert', 'simulated' => 'unknown', default => 'unknown' }" />
+                            <x-ui.status-pill :state="$run->statusSignal()" />
                         </div>
                         <x-ui.button wire:click="retry({{ $run->id }})">Retry</x-ui.button>
                     </div>

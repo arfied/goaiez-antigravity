@@ -27,4 +27,14 @@ class FlowRun extends Model
     {
         return $this->belongsTo(FlowVersion::class, 'flow_version_id');
     }
+
+    public function statusSignal(): \App\Enums\SignalState
+    {
+        return match ($this->status) {
+            'success' => \App\Enums\SignalState::Ok,
+            'error' => \App\Enums\SignalState::Alert,
+            'simulated' => \App\Enums\SignalState::Unknown,
+            default => \App\Enums\SignalState::Unknown,
+        };
+    }
 }
