@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Modules\X172;
 
 use App\Models\User;
+use App\Modules\X165\Actions\MembershipStartAction;
+use App\Modules\X165\Actions\PlanProposeAction;
 use App\Modules\X172\Models\PortalLink;
 use App\Modules\X172\Ui\CustomerfacingPortal;
 use Illuminate\Support\Facades\DB;
@@ -132,5 +134,37 @@ class CustomerfacingPortalTest extends TestCase
     {
         $out = shell_exec('grep -riE password '.app_path('Modules/X-172'));
         $this->assertEmpty($out, 'No handwritten password text should exist in X-172');
+    }
+
+    public function test_active_membership_displays_status(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $personId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Alice',
+            'last_name' => 'Member',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $plan = app(PlanProposeAction::class)->handle($biz->id, 'Gold Plan');
+        app(MembershipStartAction::class)->handle($biz->id, $plan->id, $personId);
+
+        $token = 'member_tok_'.uniqid();
+        $link = PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => 1,
+            'customer_id' => $personId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+        ]);
+
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
+            ->assertOk()
+            ->assertSee('active');
     }
 }

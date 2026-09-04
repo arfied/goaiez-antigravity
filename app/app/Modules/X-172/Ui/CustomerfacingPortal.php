@@ -83,7 +83,7 @@ class CustomerfacingPortal extends Component
         if ($link && $link->is_active) {
             if (class_exists(Membership::class) && $link->customer_id) {
                 $membership = Membership::where('business_id', $link->business_id)
-                    ->where('customer_id', $link->customer_id)
+                    ->where('person_id', $link->customer_id)
                     ->first();
                 if ($membership) {
                     $membershipStatus = $membership->status;
