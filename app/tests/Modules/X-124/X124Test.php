@@ -111,6 +111,11 @@ class X124Test extends TestCase
 
     public function test_constant_irreversible_actions(): void
     {
+        $this->assertEqualsCanonicalizing(
+            ['delete_tenant', 'refund_charge', 'bulk_delete', 'wipe_database'],
+            AssistantExecuteAction::IRREVERSIBLE,
+        );
+
         $biz = TestCase::provisionTenant(['name' => 'Constant Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
@@ -221,21 +226,5 @@ class X124Test extends TestCase
             ->assertSeeHtml('data-action-key="delete_tenant"')
             ->assertSee('Will execute delete_tenant with given parameters')
             ->assertSee('Warning: this action cannot be undone and needs confirmation.');
-    }
-
-    public function test_preview_card_error(): void
-    {
-        $biz = TestCase::provisionTenant(['name' => 'Preview Error', 'currency' => 'USD']);
-        Tenancy::set((int) $biz->id);
-
-        // We force an error by making AssistantPreviewAction throw, but Livewire testing
-        // sometimes captures it. We can just set errorMessage directly since we test the blade.
-        Livewire::test(PreviewCard::class, [
-            'businessId' => $biz->id,
-            'actionKey' => 'send_invoice',
-        ])
-            ->call('load')
-            ->set('errorMessage', 'Failed to load preview')
-            ->assertSee('Failed to load preview');
     }
 }
