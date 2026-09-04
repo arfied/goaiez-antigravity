@@ -24,7 +24,7 @@ final class SchemaRenderAction
         ?array $productOffers = null
     ): array {
         if ($entityType === null) {
-            $vertical = strtolower(trim((string) (Business::find($businessId)?->vertical ?? '')));
+            $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
             /** (R245) */
             $map = [
                 'hvac' => 'HVACBusiness',
