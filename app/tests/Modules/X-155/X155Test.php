@@ -105,8 +105,8 @@ class X155Test extends TestCase
             businessId: $biz->id,
             formDefinitionId: $form->id,
             payload: ['first_name' => 'Bot 2', 'phone' => '+15558888888'],
-            ipAddress: '10.0.0.99_bot',
-            userTimezone: 'bot_synthetic_zone'
+            ipAddress: '203.0.113.10',
+            userTimezone: 'Not/AZone'
         );
 
         $this->assertEquals('rejected', $tzSpamRes['status']);
@@ -182,7 +182,38 @@ class X155Test extends TestCase
      */
     public function test_g17_12_ip_timezone_signal(): void
     {
-        $this->assertTrue(true);
+        Event::fake([\App\Modules\X155\Events\FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'T']);
+        $form = \App\Modules\X155\Models\FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+
+        $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', 'Not/AZone');
+
+        $this->assertTrue($res['is_spam']);
+        $this->assertFalse($res['is_valid']);
+        $this->assertEquals('ip_timezone_mismatch', $res['reason']);
+        Event::assertDispatched(\App\Modules\X155\Events\FormSpamRejected::class);
+    }
+
+    public function test_g17_12_null_timezone_is_not_spam(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T']);
+        $form = \App\Modules\X155\Models\FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+
+        $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', null);
+
+        $this->assertFalse($res['is_spam']);
+        $this->assertTrue($res['is_valid']);
+    }
+
+    public function test_g17_12_valid_timezone_is_not_spam(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T']);
+        $form = \App\Modules\X155\Models\FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+
+        $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', 'America/Chicago');
+
+        $this->assertFalse($res['is_spam']);
+        $this->assertTrue($res['is_valid']);
     }
 
     public function test_forms_lists_this_businesses_forms_with_counts(): void
