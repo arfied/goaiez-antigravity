@@ -56,17 +56,15 @@ abstract class TestCase extends BaseTestCase
     protected function tearDown(): void
     {
         // Release numbers so journeys committing their transactions do not exhaust the pool
-        try {
-            \Illuminate\Support\Facades\DB::table('phone_numbers')->update([
+        \Illuminate\Support\Facades\DB::table('phone_numbers')
+            ->where('e164', 'like', '+1512555%')
+            ->update([
                 'business_id' => null,
                 'location_id' => null,
                 'role' => 'shared_pool',
                 'state' => 'provisioning',
                 'state_reason' => 'Released in teardown',
             ]);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Teardown error: ' . $e->getMessage());
-        }
 
         parent::tearDown();
     }
