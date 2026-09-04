@@ -28,8 +28,8 @@
                             @endif
                             
                             @if ($score)
-                                <x-ui.status-pill :state="$score->grade === 'A' ? 'ok' : 'attention'">
-                                    Score: {{ $score->score }} ({{ $score->grade }})
+                                <x-ui.status-pill :state="$score->grade === 'A' ? 'ok' : 'attention'" :label="'Score: ' . $score->lead_rating . ' (' . $score->grade . ')'">
+                                    Score: {{ $score->lead_rating }} ({{ $score->grade }})
                                 </x-ui.status-pill>
                             @endif
                         </div>

@@ -33,8 +33,8 @@
                                     </div>
                                     @if(isset($leadScores[$p->id]))
                                         <div class="mt-1">
-                                            <x-ui.status-pill :state="$leadScores[$p->id]->grade === 'A' ? 'ok' : 'attention'">
-                                                Score: {{ $leadScores[$p->id]->score }} ({{ $leadScores[$p->id]->grade }})
+                                            <x-ui.status-pill :state="$leadScores[$p->id]->grade === 'A' ? 'ok' : 'attention'" :label="'Score: ' . $leadScores[$p->id]->lead_rating . ' (' . $leadScores[$p->id]->grade . ')'">
+                                                Score: {{ $leadScores[$p->id]->lead_rating }} ({{ $leadScores[$p->id]->grade }})
                                             </x-ui.status-pill>
                                         </div>
                                     @endif
