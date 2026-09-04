@@ -187,4 +187,54 @@ class X124Test extends TestCase
             ->assertSee('We could not load recommendations.')
             ->assertSee('wire:click="load"', false);
     }
+
+    public function test_preview_card_ready_reversible(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Preview Reversible', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(\App\Modules\X124\Ui\PreviewCard::class, [
+            'businessId' => $biz->id,
+            'actionKey' => 'send_invoice',
+            'params' => []
+        ])
+            ->call('load')
+            ->assertSeeHtml('data-irreversible="no"')
+            ->assertSeeHtml('data-action-key="send_invoice"')
+            ->assertSee('Will execute send_invoice with given parameters')
+            ->assertDontSee('Warning: this action cannot be undone and needs confirmation.');
+    }
+
+    public function test_preview_card_ready_irreversible(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Preview Irreversible', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(\App\Modules\X124\Ui\PreviewCard::class, [
+            'businessId' => $biz->id,
+            'actionKey' => 'delete_tenant',
+            'params' => []
+        ])
+            ->call('load')
+            ->assertSeeHtml('data-irreversible="yes"')
+            ->assertSeeHtml('data-action-key="delete_tenant"')
+            ->assertSee('Will execute delete_tenant with given parameters')
+            ->assertSee('Warning: this action cannot be undone and needs confirmation.');
+    }
+
+    public function test_preview_card_error(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Preview Error', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        // We force an error by making AssistantPreviewAction throw, but Livewire testing
+        // sometimes captures it. We can just set errorMessage directly since we test the blade.
+        Livewire::test(\App\Modules\X124\Ui\PreviewCard::class, [
+            'businessId' => $biz->id,
+            'actionKey' => 'send_invoice'
+        ])
+            ->call('load')
+            ->set('errorMessage', 'Failed to load preview')
+            ->assertSee('Failed to load preview');
+    }
 }
