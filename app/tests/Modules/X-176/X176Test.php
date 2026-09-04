@@ -153,7 +153,9 @@ class X176Test extends TestCase
             'is_published' => true,
         ]);
 
-        Tenancy::set((int) $tenantA->id);
+        // Deliberately run as Tenant B to bypass RLS hiding the row,
+        // and prove that where('business_id', $tenantA->id) protects it.
+        Tenancy::set((int) $tenantB->id);
         $action = new \App\Modules\X176\Actions\SeoRenderAction();
         $res = $action->handle(
             businessId: $tenantA->id,
