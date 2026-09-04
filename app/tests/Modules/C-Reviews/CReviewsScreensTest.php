@@ -76,6 +76,23 @@ class CReviewsScreensTest extends TestCase
         $this->assertSame($ticketCount, QaTicket::where('business_id', $this->bizId)->count());
     }
 
+    public function test_reviews_qa_requests_sample_state(): void
+    {
+        $reqCount = ReviewRequest::where('business_id', $this->bizId)->count();
+        $ticketCount = QaTicket::where('business_id', $this->bizId)->count();
+
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])
+            ->call('toggleSample')
+            ->assertOk()
+            ->assertSee('Sample Customer A')
+            ->assertSee('Sample: waited two hours past the window')
+            ->assertSee('Escalate to QA')
+            ->assertSee('Reply');
+
+        $this->assertSame($reqCount, ReviewRequest::where('business_id', $this->bizId)->count());
+        $this->assertSame($ticketCount, QaTicket::where('business_id', $this->bizId)->count());
+    }
+
     public function test_qa_report_screen_sample_writes_nothing(): void
     {
         $reqCount = ReviewRequest::where('business_id', $this->bizId)->count();

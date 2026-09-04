@@ -219,7 +219,26 @@ class ReviewsQaRequests extends Component
         }
 
         if ($this->isSample) {
-            $requests = collect();
+            $requests = collect([
+                (object) [
+                    'id' => 9001,
+                    'platform' => 'google',
+                    'rating' => 5,
+                    'status' => 'published_public',
+                    'customer_name' => 'Sample Customer A',
+                    'review_text' => 'Sample: quick and friendly, fixed it the same day',
+                    'ticket' => null,
+                ],
+                (object) [
+                    'id' => 9002,
+                    'platform' => 'yelp',
+                    'rating' => 2,
+                    'status' => 'triaged_internal',
+                    'customer_name' => 'Sample Customer B',
+                    'review_text' => 'Sample: waited two hours past the window',
+                    'ticket' => null,
+                ],
+            ]);
         } else {
             $requests = $query->get()->map(function ($req) {
                 $req->customer_name = null;

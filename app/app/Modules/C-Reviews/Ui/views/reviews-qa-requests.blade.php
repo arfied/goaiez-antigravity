@@ -1,7 +1,5 @@
 <div class="max-w-6xl mx-auto space-y-4 pb-12 w-full p-4 relative" wire:loading.class="opacity-50 pointer-events-none">
-    <div wire:loading class="absolute inset-0 z-50 flex items-center justify-center">
-        <div class="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    <div wire:loading><x-ui.skeleton label="Checking your reviews…" /></div>
 
     <!-- Header & Action Notice -->
     <div class="flex items-center justify-between pb-2 border-b border-slate-800">
@@ -9,7 +7,7 @@
             <h1 class="text-lg font-bold text-white flex items-center gap-2">
                 Reviews & QA
                 @if($isSample)
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</span>
+                    <x-ui.status-pill state="attention" label="SAMPLE" />
                 @endif
             </h1>
             <p class="text-sm text-slate-400">Manage review requests, replies, and QA tickets.</p>
@@ -23,10 +21,11 @@
     </div>
 
     @if($actionNotice)
-        <div class="p-4 rounded-xl text-sm font-medium border shadow-lg {{ $noticeType === 'error' ? 'bg-rose-950/50 border-rose-900 text-rose-300' : ($noticeType === 'warning' ? 'bg-amber-950/50 border-amber-900 text-amber-300' : 'bg-emerald-950/50 border-emerald-900 text-emerald-300') }}">
-            {{ $actionNotice }}
-            <button wire:click="$set('actionNotice', null)" class="float-right text-current opacity-70 hover:opacity-100">&times;</button>
-        </div>
+        @if($noticeType === 'error')
+            <x-ui.error-panel heading="Error">{{ $actionNotice }}</x-ui.error-panel>
+        @else
+            <x-ui.attention-card :state="$noticeType === 'warning' ? 'attention' : 'ok'" heading="Notice">{{ $actionNotice }}</x-ui.attention-card>
+        @endif
     @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -57,12 +56,7 @@
                     ></textarea>
                 </div>
 
-                <button 
-                    wire:click="sendRequest" 
-                    class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg shadow-purple-600/30 transition flex items-center justify-center gap-2"
-                >
-                    Dispatch Request &rarr;
-                </button>
+                <x-ui.submit target="sendRequest" busy="Sending…">Send the ask</x-ui.submit>
             </div>
         </div>
 
@@ -71,27 +65,13 @@
             <!-- Filter Bar -->
             <div class="flex items-center justify-between gap-2 overflow-x-auto pb-1">
                 <div class="flex items-center gap-1.5">
-                    <button wire:click="$set('filter', 'all')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'all' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        All ({{ $totalCount }})
-                    </button>
-                    <button wire:click="$set('filter', 'public')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'public' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        Public Path ({{ $publicCount }})
-                    </button>
-                    <button wire:click="$set('filter', 'internal')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'internal' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        Internal QA ({{ $internalCount }})
-                    </button>
-                    <button wire:click="$set('filter', 'google')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'google' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        Google
-                    </button>
-                    <button wire:click="$set('filter', 'yelp')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'yelp' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        Yelp
-                    </button>
-                    <button wire:click="$set('filter', 'facebook')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'facebook' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        Facebook
-                    </button>
-                    <button wire:click="$set('filter', 'bbb')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'bbb' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        BBB
-                    </button>
+                    <x-ui.button size="default" :variant="$filter === 'all' ? 'primary' : 'quiet'" wire:click="$set('filter', 'all')">All ({{ $totalCount }})</x-ui.button>
+                    <x-ui.button size="default" :variant="$filter === 'public' ? 'primary' : 'quiet'" wire:click="$set('filter', 'public')">Public Path ({{ $publicCount }})</x-ui.button>
+                    <x-ui.button size="default" :variant="$filter === 'internal' ? 'primary' : 'quiet'" wire:click="$set('filter', 'internal')">Internal QA ({{ $internalCount }})</x-ui.button>
+                    <x-ui.button size="default" :variant="$filter === 'google' ? 'primary' : 'quiet'" wire:click="$set('filter', 'google')">Google</x-ui.button>
+                    <x-ui.button size="default" :variant="$filter === 'yelp' ? 'primary' : 'quiet'" wire:click="$set('filter', 'yelp')">Yelp</x-ui.button>
+                    <x-ui.button size="default" :variant="$filter === 'facebook' ? 'primary' : 'quiet'" wire:click="$set('filter', 'facebook')">Facebook</x-ui.button>
+                    <x-ui.button size="default" :variant="$filter === 'bbb' ? 'primary' : 'quiet'" wire:click="$set('filter', 'bbb')">BBB</x-ui.button>
                 </div>
                 <div class="text-xs text-slate-400 font-medium whitespace-nowrap">
                     Avg Rating: <span class="text-white">{{ $avgRating }}</span>
@@ -103,13 +83,11 @@
                 @forelse($requests as $r)
                     <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-4 space-y-3 hover:border-slate-700 transition relative">
                         @if($isSample)
-                            <div class="absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</div>
+                            <div class="absolute top-2 right-2"><x-ui.status-pill state="attention" label="SAMPLE" /></div>
                         @endif
                         <div class="flex items-start justify-between gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded text-[11px] font-bold font-mono uppercase {{ $r->platform === 'google' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-purple-500/20 text-purple-400 border border-purple-500/30' }}">
-                                    {{ $r->platform }}
-                                </span>
+                                <x-ui.status-pill state="unknown" :label="$r->platform" />
                                 @if($r->rating)
                                     <div class="text-amber-400 font-bold text-sm tracking-wider">
                                         {{ str_repeat('★', $r->rating) }}{{ str_repeat('☆', max(0, 5 - $r->rating)) }}
@@ -119,9 +97,18 @@
                                 @endif
                             </div>
                             
-                            <span class="text-[11px] px-2.5 py-0.5 rounded-full font-semibold {{ $r->status === 'published_public' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : ($r->status === 'triaged_internal' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-slate-800 text-slate-400') }}">
-                                {{ $r->status }}
-                            </span>
+                            @php
+                                $statusState = 'unknown';
+                                $statusLabel = $r->status;
+                                if ($r->status === 'published_public') {
+                                    $statusState = 'ok';
+                                    $statusLabel = 'Public';
+                                } elseif ($r->status === 'triaged_internal') {
+                                    $statusState = 'alert';
+                                    $statusLabel = 'Internal QA';
+                                }
+                            @endphp
+                            <x-ui.status-pill :state="$statusState" :label="$statusLabel" />
                         </div>
 
                         <div class="text-xs text-slate-400">
@@ -137,9 +124,7 @@
                             <span class="text-[10px] text-slate-500 font-mono">Review ID #{{ $r->id }}</span>
                             <div class="flex items-center gap-2">
                                 @if($r->status === 'sent' && !$r->rating)
-                                    <button wire:click="resendAsk({{ $r->id }})" class="px-2.5 py-1 rounded bg-slate-600/20 hover:bg-slate-600/30 text-slate-300 border border-slate-600/40 text-[11px] font-medium transition">
-                                        Resend ask
-                                    </button>
+                                    <x-ui.button wire:click="resendAsk({{ $r->id }})">Resend ask</x-ui.button>
                                 @endif
 
                                 @if($r->rating !== null && $r->rating < $threshold)
@@ -148,14 +133,10 @@
                                             Ticket #{{ $r->ticket->id }} &middot; {{ $r->ticket->status }} &middot; due {{ $r->ticket->sla_due_at ? $r->ticket->sla_due_at->diffForHumans() : 'N/A' }}
                                         </span>
                                     @else
-                                        <button wire:click="escalateToQa({{ $r->id }})" class="px-2.5 py-1 rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-600/40 text-[11px] font-medium transition">
-                                            Escalate to QA
-                                        </button>
+                                        <x-ui.button wire:click="escalateToQa({{ $r->id }})">Escalate to QA</x-ui.button>
                                     @endif
                                 @elseif($r->rating !== null && $r->rating >= $threshold)
-                                    <button wire:click="selectReview({{ $r->id }})" class="px-2.5 py-1 rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-600/40 text-[11px] font-medium transition">
-                                        Reply
-                                    </button>
+                                    <x-ui.button wire:click="selectReview({{ $r->id }})">Reply</x-ui.button>
                                 @endif
                             </div>
                         </div>
@@ -165,7 +146,7 @@
                             <div class="mt-3 p-4 rounded-xl bg-slate-950 border border-purple-500/40 space-y-3">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-white">AI Response Generator</span>
-                                    <button wire:click="unselectReview()" class="text-xs text-slate-400 hover:text-white">&times; Cancel</button>
+                                    <x-ui.button variant="quiet" wire:click="unselectReview()">Cancel</x-ui.button>
                                 </div>
                                 <div class="text-xs text-slate-400 italic bg-slate-900 p-2 rounded">
                                     "{{ $r->review_text }}"
@@ -177,29 +158,16 @@
                                         <input type="checkbox" wire:model="isSarcasticOrAmbiguous" class="rounded bg-slate-900 border-slate-700 text-purple-600" />
                                         Flag as Sarcastic / Ambiguous (Draft to Inbox)
                                     </label>
-                                    <button wire:click="publishReply" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition">
-                                        Execute Action &rarr;
-                                    </button>
+                                    <x-ui.submit target="publishReply" busy="Publishing…">Publish reply</x-ui.submit>
                                 </div>
                             </div>
                         @endif
                     </div>
                 @empty
-                    @if($isSample)
-                        <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</span>
-                            No sample reviews generated yet.
-                        </div>
-                    @elseif($totalCount === 0)
-                        <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
-                            No review requests yet. The first ask goes out when a job completes (autopilot), or send one now.
-                            <br><br>
-                            <button wire:click="toggleSample" class="text-purple-400 hover:underline">Show me what this looks like</button>
-                        </div>
+                    @if($totalCount === 0)
+                        <x-ui.empty-state heading="No review requests yet" action="Show a sample" target="toggleSample">The first ask goes out when a job completes, or send one now.</x-ui.empty-state>
                     @else
-                        <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
-                            No reviews found for this filter.
-                        </div>
+                        <x-ui.empty-state heading="Nothing under this filter">Every request is in another lane — pick another filter.</x-ui.empty-state>
                     @endif
                 @endforelse
             </div>
