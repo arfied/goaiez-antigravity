@@ -11,6 +11,7 @@ use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -116,7 +117,7 @@ class X103Test extends TestCase
         $page = $this->pageAction->handle($biz->id, 'pixel', 'Pixel', false);
         $res = $this->publishAction->handle($biz->id, $page->id, []);
 
-        $version = \App\Modules\X103\Models\PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
         $this->assertTrue($version->pixel_installed);
     }
 
@@ -124,11 +125,11 @@ class X103Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         $page = $this->pageAction->handle($biz->id, 'widget', 'Widget', false);
         $res = $this->publishAction->handle($biz->id, $page->id, []);
 
-        $version = \App\Modules\X103\Models\PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
         $this->assertFalse(array_key_exists('review_widget', $version->getAttributes()));
     }
 

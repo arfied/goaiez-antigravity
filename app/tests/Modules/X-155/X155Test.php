@@ -182,22 +182,22 @@ class X155Test extends TestCase
      */
     public function test_g17_12_ip_timezone_signal(): void
     {
-        Event::fake([\App\Modules\X155\Events\FormSpamRejected::class]);
+        Event::fake([FormSpamRejected::class]);
         $biz = TestCase::provisionTenant(['name' => 'T']);
-        $form = \App\Modules\X155\Models\FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+        $form = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
 
         $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', 'Not/AZone');
 
         $this->assertTrue($res['is_spam']);
         $this->assertFalse($res['is_valid']);
         $this->assertEquals('ip_timezone_mismatch', $res['reason']);
-        Event::assertDispatched(\App\Modules\X155\Events\FormSpamRejected::class);
+        Event::assertDispatched(FormSpamRejected::class);
     }
 
     public function test_g17_12_null_timezone_is_not_spam(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'T']);
-        $form = \App\Modules\X155\Models\FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+        $form = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
 
         $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', null);
 
@@ -208,7 +208,7 @@ class X155Test extends TestCase
     public function test_g17_12_valid_timezone_is_not_spam(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'T']);
-        $form = \App\Modules\X155\Models\FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
+        $form = FormDefinition::create(['business_id' => $biz->id, 'form_name' => 'F', 'slug' => 'f', 'steps' => [], 'schema' => []]);
 
         $res = $this->validateAction->handle($biz->id, $form->id, [], '203.0.113.10', 'America/Chicago');
 
