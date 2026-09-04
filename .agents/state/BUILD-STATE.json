@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-04T07:25:37",
+ "updated": "2026-09-04T11:20:06",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -544,10 +544,17 @@
    "unresolved": []
   },
   "X-121": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-121",
+     "stage": "C-Reviews",
+     "why": "completeJob: X-121 exposes no create path for work_orders (EntityWriteAction updates by id; X-171 actions create nothing but device-sync rows). A raw insert is what ad95b42 reverted. J10's completeJob stays todo() until X-121 exposes one (ruling 8, option b).",
+     "at": "2026-09-04T11:20:06"
+    }
+   ]
   },
   "X-122": {
    "status": "DONE",
@@ -1303,6 +1310,12 @@
    "stage": "X-121",
    "why": "X-121 exposes no job->person link and JobCompleted carries no person, so C-Reviews cannot trigger a review ask from a completed job",
    "at": "2026-09-02T17:06:38"
+  },
+  {
+   "module": "X-121",
+   "stage": "C-Reviews",
+   "why": "completeJob: X-121 exposes no create path for work_orders (EntityWriteAction updates by id; X-171 actions create nothing but device-sync rows). A raw insert is what ad95b42 reverted. J10's completeJob stays todo() until X-121 exposes one (ruling 8, option b).",
+   "at": "2026-09-04T11:20:06"
   }
  ],
  "decisions": [
@@ -1363,6 +1376,10 @@
   {
    "at": "2026-09-04T07:25:37",
    "note": "C-Reviews J10 sixty-dependency closed: origin/main 0583871 implements tenantWithLiveNumber, personWithPendingSteps, completeJob, reviewInvitesFor. Review-platform access still ungranted: real send stays UNRESOLVED (ruling 13)."
+  },
+  {
+   "at": "2026-09-04T11:20:06",
+   "note": "C-Reviews Second route-A merge: origin/main cd5a2f7. Mailbox untracked per main's .gitignore (7c0da08). G20-07/11/12/13 from main kept; one JobCompleted listener kept (ours). reviewInvitesFor implemented under ruling 1. REV-9's J10 green was on 0583871's harness, reverted by ad95b42; does not stand."
   }
  ]
 }
