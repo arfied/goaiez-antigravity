@@ -119,7 +119,11 @@ final class GatewayEngine
         }
 
         if ($connection->gateway_name === 'stripe') {
-            $response = Http::withToken(env('STRIPE_SECRET', ''))
+            if (!\App\Support\PlatformCredentials::has('stripe_secret')) {
+                throw new \InvalidArgumentException('Gateway connection carries no credential; request refused');
+            }
+
+            $response = Http::withToken(\App\Support\PlatformCredentials::get('stripe_secret'))
                 ->withHeaders($headers)
                 ->asForm()
                 ->post('https://api.stripe.com/v1/payment_intents', [

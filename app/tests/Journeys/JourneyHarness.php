@@ -391,10 +391,6 @@ trait JourneyHarness
 
         $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_' . uniqid());
         
-        \Illuminate\Support\Facades\DB::table('invoices')
-            ->where('id', $invoice['id'])
-            ->update(['payment_id' => $payment->id]);
-
         \Illuminate\Support\Facades\Http::allowStrayRequests();
         $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_' . uniqid());
 
