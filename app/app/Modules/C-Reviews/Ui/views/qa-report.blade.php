@@ -84,7 +84,7 @@
             <div class="mt-8 pt-6 border-t border-slate-800 space-y-4">
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-bold text-white uppercase tracking-wider">Drilldown Details</h3>
-                    <x-ui.button variant="quiet" wire:click="selectDrilldown('')">Close</x-ui.button>
+                    <x-ui.button size="default" variant="quiet" wire:click="selectDrilldown('')">Close</x-ui.button>
                 </div>
                 
                 <div class="space-y-2">
@@ -105,12 +105,12 @@
                             <div class="flex items-center gap-2">
                                 @if(!empty($row->is_request))
                                     @if(!$row->ticket && $row->rating !== null && $row->rating < $threshold)
-                                        <x-ui.button wire:click="escalateToQa({{ $row->id }})">Escalate to QA</x-ui.button>
+                                        <x-ui.button size="default" wire:click="escalateToQa({{ $row->id }})">Escalate to QA</x-ui.button>
                                     @endif
                                 @endif
                                 @if(!empty($row->is_ticket))
                                     @if($drilldown === 'breached_tickets' || $row->status === 'open')
-                                        <x-ui.button wire:click="resolveTicket({{ $row->id }})">Resolve</x-ui.button>
+                                        <x-ui.button size="default" wire:click="resolveTicket({{ $row->id }})">Resolve</x-ui.button>
                                     @endif
                                 @endif
                             </div>

@@ -79,7 +79,7 @@
                         <div class="mt-3 p-4 rounded-xl bg-slate-950 border border-emerald-500/40 space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-white">Resolve Ticket #{{ $t->id }}</span>
-                                <x-ui.button variant="quiet" wire:click="cancelResolve">Cancel</x-ui.button>
+                                <x-ui.button size="default" variant="quiet" wire:click="cancelResolve">Cancel</x-ui.button>
                             </div>
                             <textarea wire:model="resolutionNotes" rows="2" placeholder="Resolution notes..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"></textarea>
                             <div class="text-right">
@@ -88,7 +88,7 @@
                         </div>
                     @elseif($t->status !== 'resolved')
                         <div class="flex items-center justify-end pt-2 border-t border-slate-800/50">
-                            <x-ui.button wire:click="startResolve({{ $t->id }})">Resolve</x-ui.button>
+                            <x-ui.button size="default" wire:click="startResolve({{ $t->id }})">Resolve</x-ui.button>
                         </div>
                     @else
                         @if($t->resolution_notes)

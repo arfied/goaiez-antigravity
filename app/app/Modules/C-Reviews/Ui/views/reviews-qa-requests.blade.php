@@ -126,7 +126,7 @@
                             <span class="text-[10px] text-slate-500 font-mono">Review ID #{{ $r->id }}</span>
                             <div class="flex items-center gap-2">
                                 @if($r->status === 'sent' && !$r->rating)
-                                    <x-ui.button wire:click="resendAsk({{ $r->id }})">Resend ask</x-ui.button>
+                                    <x-ui.button size="default" wire:click="resendAsk({{ $r->id }})">Resend ask</x-ui.button>
                                 @endif
 
                                 @if($r->rating !== null && $r->rating < $threshold)
@@ -135,10 +135,10 @@
                                             Ticket #{{ $r->ticket->id }} &middot; {{ $r->ticket->status }} &middot; due {{ $r->ticket->sla_due_at ? $r->ticket->sla_due_at->diffForHumans() : 'N/A' }}
                                         </span>
                                     @else
-                                        <x-ui.button wire:click="escalateToQa({{ $r->id }})">Escalate to QA</x-ui.button>
+                                        <x-ui.button size="default" wire:click="escalateToQa({{ $r->id }})">Escalate to QA</x-ui.button>
                                     @endif
                                 @elseif($r->rating !== null && $r->rating >= $threshold)
-                                    <x-ui.button wire:click="selectReview({{ $r->id }})">Reply</x-ui.button>
+                                    <x-ui.button size="default" wire:click="selectReview({{ $r->id }})">Reply</x-ui.button>
                                 @endif
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                             <div class="mt-3 p-4 rounded-xl bg-slate-950 border border-purple-500/40 space-y-3">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-white">AI Response Generator</span>
-                                    <x-ui.button variant="quiet" wire:click="unselectReview()">Cancel</x-ui.button>
+                                    <x-ui.button size="default" variant="quiet" wire:click="unselectReview()">Cancel</x-ui.button>
                                 </div>
                                 <div class="text-xs text-slate-400 italic bg-slate-900 p-2 rounded">
                                     "{{ $r->review_text }}"
