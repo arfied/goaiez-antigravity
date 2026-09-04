@@ -12,6 +12,7 @@ use App\Modules\X155\Events\FormSpamRejected;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X155\Ui\Forms;
+use App\Modules\X155\Ui\SpamRate;
 use App\Modules\X155\Ui\SubmissionsThread;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -332,5 +333,82 @@ class X155Test extends TestCase
             ->assertOk()
             ->assertSee('No submissions recorded.')
             ->assertDontSee('<ul', false);
+    }
+
+    public function test_spam_rate_reports_the_share_of_spam_for_this_business(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A Rate']);
+        Tenancy::set((int) $bizA->id);
+
+        $formA = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 1',
+            'slug' => 'biz-a-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+
+        $person = Person::create(['business_id' => $bizA->id, 'first_name' => 'John']);
+
+        // 4 submissions, 1 spam -> 25%
+        for ($i = 0; $i < 3; $i++) {
+            FormSubmission::create([
+                'business_id' => $bizA->id,
+                'form_definition_id' => $formA->id,
+                'person_id' => $person->id,
+                'is_spam' => false,
+                'payload' => [],
+            ]);
+        }
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $formA->id,
+            'person_id' => $person->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        // Biz B gets 1 spam
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B Rate']);
+        Tenancy::set((int) $bizB->id);
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Biz B Form 1',
+            'slug' => 'biz-b-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+        $personB = Person::create(['business_id' => $bizB->id, 'first_name' => 'Bob']);
+        FormSubmission::create([
+            'business_id' => $bizB->id,
+            'form_definition_id' => $formB->id,
+            'person_id' => $personB->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        Tenancy::set((int) $bizA->id);
+        Livewire::test(SpamRate::class, ['businessId' => $bizA->id])
+            ->assertOk()
+            ->assertSee('Total: 4')
+            ->assertSee('Spam: 1')
+            ->assertSee('Rate: 25%')
+            ->assertDontSee('Total: 5')
+            ->assertDontSee('Spam: 2')
+            ->assertDontSee('40%');
+    }
+
+    public function test_spam_rate_shows_no_submissions_yet_for_an_empty_business(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Biz Rate']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(SpamRate::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('No submissions yet.')
+            ->assertDontSee('NAN')
+            ->assertDontSee('%');
     }
 }
