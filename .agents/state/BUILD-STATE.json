@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-03T14:02:19",
+ "updated": "2026-09-04T02:05:53",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -941,10 +941,17 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-193",
+     "stage": "tests",
+     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-194": {
    "status": "DONE",
@@ -989,10 +996,17 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-201",
+     "stage": "tests",
+     "why": "column deadline_at is missing from disputes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-202": {
    "status": "DONE",
@@ -1228,6 +1242,18 @@
    "stage": "contract",
    "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
    "at": "2026-09-03T14:01:55"
+  },
+  {
+   "module": "X-193",
+   "stage": "tests",
+   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "why": "column deadline_at is missing from disputes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
   }
  ],
  "decisions": [],

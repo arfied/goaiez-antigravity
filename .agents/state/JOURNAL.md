@@ -747,3 +747,5 @@
 - `2026-09-03T16:02:21` journey J11 -> green
 - `2026-09-03T16:06:19` journey J12 -> green
 - `2026-09-03T22:14:14` selftest: sound
+- `2026-09-04T02:05:53` UNRESOLVED tests X-193 - column quiet_hours_start is missing from notification_classes and not named in the brief
+- `2026-09-04T02:05:53` UNRESOLVED tests X-201 - column deadline_at is missing from disputes and not named in the brief
