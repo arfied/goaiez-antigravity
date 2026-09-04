@@ -152,7 +152,7 @@ class Tickets extends Component
                     'resolution_notes' => 'Sample: sent a senior technician, waived the call-out fee',
                 ],
             ]);
-            
+
             $tickets = $sampleData->filter(function ($t) {
                 if ($this->tab === 'open') {
                     return in_array($t->status, ['open', 'in_progress']);
