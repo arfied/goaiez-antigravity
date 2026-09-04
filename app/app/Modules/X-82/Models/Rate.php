@@ -18,7 +18,10 @@ class Rate extends Model
         'is_active' => 'boolean',
     ];
 
-    public function versions()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<RateVersion, $this>
+     */
+    public function versions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(RateVersion::class, 'rate_id');
     }
