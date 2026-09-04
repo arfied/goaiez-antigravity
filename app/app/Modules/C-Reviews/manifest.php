@@ -51,7 +51,11 @@ return [
         'review_replies',
         'qa_settings',
     ],
-    'reads_table' => [],
+    'reads_table' => [
+        'reviews',
+        'people',
+        'qa_tickets',
+    ],
 
     'renders' => [
         'reviews_qa_requests',
