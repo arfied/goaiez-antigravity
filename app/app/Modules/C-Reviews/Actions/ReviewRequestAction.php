@@ -69,6 +69,20 @@ final class ReviewRequestAction
             'csat_score' => $csatScore,
         ]);
 
+        if ($customerId !== null) {
+            $person = \App\Modules\X121\Models\Person::find($customerId);
+            if ($person !== null && !empty($person->phone)) {
+                Event::dispatch(new \App\Modules\CSms\Events\SendRequested(
+                    businessId: $businessId,
+                    compositionId: $req->id,
+                    recipientPhone: $person->phone,
+                    messageClass: 'marketing',
+                    body: $promptTemplate,
+                    segmentsCount: 1
+                ));
+            }
+        }
+
         Event::dispatch(new ReviewRequested(
             businessId: $businessId,
             reviewRequestId: $req->id,

@@ -295,7 +295,26 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_13_marketing_send_window(): void
     {
-        $this->assertTrue(true);
+        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
+        
+        $biz = $this->provisionTenant();
+        $person = \App\Modules\X121\Models\Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'phone' => '+15550001111',
+        ]);
+        
+        // Sent request
+        $this->requestAction->handle($biz->id, $person->id, 'How did the repair go? Please review us.');
+        
+        Event::assertDispatched(\App\Modules\CSms\Events\SendRequested::class, function ($e) {
+            return $e->messageClass === 'marketing';
+        });
+        
+        // Refused by incentive lint -> no send
+        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
+        $this->requestAction->handle($biz->id, $person->id, 'Leave a review for 10% off your next visit!');
+        Event::assertNotDispatched(\App\Modules\CSms\Events\SendRequested::class);
     }
 
     /**
