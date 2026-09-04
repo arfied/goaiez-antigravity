@@ -11,6 +11,7 @@ use Livewire\Component;
 class ConnectCard extends Component
 {
     public ?string $error = null;
+
     public ?string $status = null;
 
     public function applyForMerchant(MerchantApplyAction $action): void
@@ -19,8 +20,8 @@ class ConnectCard extends Component
         $result = $action->execute(Tenancy::idOrFail());
 
         if ($result['status'] === 'refused') {
-            $this->error = $result['reason'] === 'no_adapter_bound' 
-                ? 'No processor adapter bound.' 
+            $this->error = $result['reason'] === 'no_adapter_bound'
+                ? 'No processor adapter bound.'
                 : 'Merchant application already in progress.';
         } else {
             $this->status = 'applied';
@@ -30,6 +31,7 @@ class ConnectCard extends Component
     public function render()
     {
         abort_unless(auth()->check() && Tenancy::check(), 403);
+
         return view('x-198::connect-card');
     }
 }

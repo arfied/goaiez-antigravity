@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X198;
 
-require_once __DIR__ . "/../../../app/Modules/X-198/Domain/ProcessorAdapter.php";
-require_once __DIR__ . "/../../../app/Modules/X-198/Actions/MerchantApplyAction.php";
-require_once __DIR__ . "/../../../app/Modules/X-198/Events/MerchantApplied.php";
+require_once __DIR__.'/../../../app/Modules/X-198/Domain/ProcessorAdapter.php';
+require_once __DIR__.'/../../../app/Modules/X-198/Actions/MerchantApplyAction.php';
+require_once __DIR__.'/../../../app/Modules/X-198/Events/MerchantApplied.php';
 
 use App\Models\User;
 use App\Modules\X198\Domain\ProcessorAdapter;
@@ -24,9 +24,11 @@ class ConnectCardScreenTest extends TestCase
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
-        Livewire::actingAs($owner)->test(ConnectCard::class)
-            ->call('applyForMerchant')
-            ->assertSee('No processor adapter bound.');
+        $component = Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->call('applyForMerchant');
+
+        file_put_contents('/home/goaiez/tmp/test-output.html', $component->html());
+        $component->assertSee('No processor adapter bound.');
     }
 
     public function test_connect_card_applies_when_adapter_bound(): void
@@ -36,8 +38,10 @@ class ConnectCardScreenTest extends TestCase
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
-        $adapter = new class implements ProcessorAdapter {
-            public function applyForSubMerchant(int $businessId): string {
+        $adapter = new class implements ProcessorAdapter
+        {
+            public function applyForSubMerchant(int $businessId): string
+            {
                 return 'stripe';
             }
         };

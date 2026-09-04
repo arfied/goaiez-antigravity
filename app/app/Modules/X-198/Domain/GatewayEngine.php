@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X198\Domain;
 
+use App\Modules\X198\Events\MerchantApplied;
 use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
 use App\Modules\X198\Events\ReconciliationDiscrepancy;
@@ -20,7 +21,7 @@ final class GatewayEngine
     {
         $connection = MerchantConnection::where('business_id', $businessId)->first();
 
-        if (!app()->bound(ProcessorAdapter::class)) {
+        if (! app()->bound(ProcessorAdapter::class)) {
             return ['status' => 'refused', 'reason' => 'no_adapter_bound'];
         }
 
@@ -42,7 +43,7 @@ final class GatewayEngine
             ]
         );
 
-        Event::dispatch(new \App\Modules\X198\Events\MerchantApplied($businessId, $gatewayName));
+        Event::dispatch(new MerchantApplied($businessId, $gatewayName));
 
         return ['status' => 'applied'];
     }

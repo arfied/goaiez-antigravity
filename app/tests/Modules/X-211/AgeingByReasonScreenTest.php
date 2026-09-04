@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Modules\X211;
 
 use App\Models\User;
-use App\Modules\X199\Models\Invoice;
 use App\Modules\X121\Models\Person;
+use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Ui\AgeingByReason;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -79,7 +79,7 @@ class AgeingByReasonScreenTest extends TestCase
             ->set('referenceNumber', 'CHK-123')
             ->call('logPayment', $inv1->id)
             ->assertHasNoErrors();
-            
+
         $this->assertEquals(10000, $inv1->fresh()->paid_cents);
         $this->assertEquals('paid', $inv1->fresh()->status);
     }

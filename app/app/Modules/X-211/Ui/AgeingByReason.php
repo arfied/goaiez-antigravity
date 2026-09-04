@@ -19,6 +19,7 @@ class AgeingByReason extends Component
         $this->resetErrorBag();
         if (trim($this->referenceNumber) === '') {
             $this->addError('referenceNumber', 'Reference number is required.');
+
             return;
         }
 
@@ -67,8 +68,8 @@ class AgeingByReason extends Component
         }
 
         ksort($groups);
-        
-        if (!empty($noReason)) {
+
+        if (! empty($noReason)) {
             $groups['No reason recorded yet'] = $noReason;
         }
 

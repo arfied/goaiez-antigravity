@@ -7,6 +7,7 @@ namespace App\Modules\X120\Ui;
 use App\Modules\X120\Actions\CardRotateAction;
 use App\Modules\X120\Models\CardToken;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class CardScreen extends Component
@@ -31,7 +32,8 @@ class CardScreen extends Component
         $now = now();
 
         $expiringCards = $cards->filter(function ($card) use ($now) {
-            $expDate = \Carbon\Carbon::createFromDate($card->exp_year, $card->exp_month, 1)->endOfMonth();
+            $expDate = Carbon::createFromDate($card->exp_year, $card->exp_month, 1)->endOfMonth();
+
             return $expDate->isPast() || $expDate->diffInDays($now) <= 30;
         });
 
