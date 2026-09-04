@@ -51,6 +51,8 @@ return [
         'disputes',
         'dispute_evidence',
         'dispute_outcomes',
+        'dispute_audits',
+        'deadline_at',
     ],
     'reads_table' => [],
 
