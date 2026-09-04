@@ -129,10 +129,15 @@ class X176Test extends TestCase
 
         $resFree = $this->renderAction->handle(
             businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com', entityType: 'Plumber',
-            productOffers: [['name' => 'Free Callout', 'price' => '0.00']]
+            productOffers: [
+                ['name' => 'Free Callout', 'price' => '0.00'],
+                ['name' => 'Zero String', 'price' => '0'],
+                ['name' => 'Zero Integer', 'price' => 0],
+            ]
         );
         $this->assertEquals('published', $resFree['status']);
         $this->assertArrayHasKey('hasOfferCatalog', $resFree['json_ld']);
+        $this->assertCount(3, $resFree['json_ld']['hasOfferCatalog']['itemListElement']);
     }
 
     /** (R245) */
@@ -212,6 +217,10 @@ class X176Test extends TestCase
             '@type' => 'LocalBusiness',
             'name' => 'SEO',
             'url' => 'https://seo.com/pages/101',
+        ]));
+        $this->assertFalse($method->invoke($this->renderAction, [
+            '@context' => 'https://schema.org', '@type' => 'LocalBusiness', 'name' => 'SEO', 'url' => 'https://seo.com',
+            'hasOfferCatalog' => ['@type' => 'OfferCatalog', 'itemListElement' => [['@type' => 'Thing']]]
         ]));
     }
 
