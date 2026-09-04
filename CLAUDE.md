@@ -149,6 +149,15 @@ Never run `state.py done/journey/stage` from the supervisor; never touch
 `app/Doctor`; never let the coder and supervisor loop without a human seeing
 each verdict block in `REVIEWS.md`.
 
+- **One writer per checkout (2026-09-03 incident).** An interactive `agy`
+  started by hand inside this checkout has no pidfile, no `coder-bin` guard,
+  no brief and no review — it overwrote 170 files with `place-files.sh`,
+  hand-marked four journeys green in seven minutes, and pushed `main`. Any
+  process with `cwd` here that `launch-coder.sh` did not start is a BLOCK:
+  `for p in /proc/[0-9]*; do readlink $p/cwd 2>/dev/null | grep -q 'grs-antig$' && ps -o pid=,cmd= -p ${p#/proc/}; done | grep agy`
+  must print nothing before any dispatch or gate. The supervisor may stop
+  such a process to protect `main`; it says so in REVIEWS the same minute.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",

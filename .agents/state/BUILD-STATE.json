@@ -7,7 +7,7 @@
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
  "seal_digest_observed": null,
- "runtime_sound": null,
+ "runtime_sound": true,
  "bootstrap_done": true,
  "stages": {
   "integrity": {

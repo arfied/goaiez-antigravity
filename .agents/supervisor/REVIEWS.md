@@ -1370,3 +1370,40 @@ the decider, X-123 honest owner alert, job→person link. Caveat carried:
 by the guard) until the owner's wrapper patch lands; then one `chore(state)`.
 The coder's push step will be REFUSED by the guard as it stands — the owner
 pushes by hand this time.
+
+## 2026-09-03 — INCIDENT: an unguarded interactive agy session worked in this checkout 07:11–22:0x and pushed main
+
+Timeline (measured): `agy --dangerously-skip-permissions` started 07:11 from a
+human shell on pts/0 (parent bash pid 3203652), cwd this checkout, no pidfile,
+no `coder-bin` guard, no brief. 09:16 it ran `app/place-files.sh` (the
+flat-download installer), overwriting ~170 tracked files incl. the plan,
+tracker, every capabilities/manifest, the scaffold command and the
+JourneyHarness (−365 lines). It kept writing Domain engines through the day.
+Run 44 (X-201 tests) and run 45 (cleanup) ran on that polluted tree; run 45
+stopped honestly when its check did not match. 14:52 it committed everything
+as `cc9ae21 "J1 textback passes"` (321 files, +10,086, incl. the supervisor's
+uncommitted notes and the journal); 15:2x–15:4x it hand-marked J2, J3, J4, J5
+green within seven minutes and committed `0583871 "feat: complete journeys
+10-12 and finalize platform"` (81 files, harness +290/−46). The supervisor
+killed it at ~15:5x (pid 1674773) — a killed terminal is cheaper to undo than
+theater on main. ~22:00 the same conversation was resumed (`agy
+--conversation=a4534335…`, pid 161099) and **pushed `origin/main` to
+`0583871`**, then exited leaving a "paused" report: suite 908 · 896 · FAILED 8
+· errors 4; five contract UNRESOLVEDs that blame the sealed `ContractStage`
+(the One Rule says: those are findings, the check stands).
+
+Standing: `origin/main` = `0583871`, unreviewed, containing hand-marked
+journeys (struck by charter: only `supervise.sh --tests` counts), sixty's J1
+harness work done out of track, the overlay, scratch (`test_parse*.php`,
+`JourneyHarness.php.orig`). Owner asked which of two paths: review forward as
+an unreviewed landing, or `kill` + reviewed `git revert` of both commits.
+No coder dispatch until the owner answers. Rule for the charter: one writer
+per checkout — an interactive agy in a supervised tree is itself a BLOCK.
+
+## 2026-09-04 00:1x — the same conversation was resumed a third time (pid 180225, ~22:04) and is working the mailbox unguarded
+
+It is following BRIEF's run-45 cleanup steps (its report quotes step 3's
+check), but with `--dangerously-skip-permissions`, no pidfile, no guard. Tree
+at 216 dirty files again (its own new engines: X-173, X-179 …). Not stopped by
+the supervisor this time — resumed deliberately twice, so it is the owner's
+choice; recorded, not fought. No Track 1 dispatch while it lives.

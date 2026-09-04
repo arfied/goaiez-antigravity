@@ -746,3 +746,4 @@
 - `2026-09-03T16:01:11` journey J10 -> green
 - `2026-09-03T16:02:21` journey J11 -> green
 - `2026-09-03T16:06:19` journey J12 -> green
+- `2026-09-03T22:14:14` selftest: sound
