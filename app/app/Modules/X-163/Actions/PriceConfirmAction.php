@@ -14,6 +14,15 @@ final class PriceConfirmAction
     public function handle(int $businessId, int $itemId): array
     {
         $item = PriceBookItem::where('business_id', $businessId)->findOrFail($itemId);
+
+        if ($item->price_cents <= 0) {
+            return [
+                'item_id' => $item->id,
+                'is_confirmed' => false,
+                'refusal_code' => 'FILL_ME',
+            ];
+        }
+
         $item->update(['is_confirmed' => true, 'is_sample' => false]);
 
         Event::dispatch(new PriceConfirmed($businessId, $item->id));

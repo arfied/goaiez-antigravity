@@ -4,12 +4,122 @@ declare(strict_types=1);
 
 namespace App\Modules\X163\Ui;
 
+use App\Enums\UserRole;
+use App\Modules\X163\Actions\PriceConfirmAction;
+use App\Modules\X163\Models\CalloutFee;
+use App\Modules\X163\Models\PriceBookItem;
 use Livewire\Component;
+use App\Support\Tenancy;
 
 class ConfirmationScreen extends Component
 {
+    public float $calloutFeeDollars = 0.0;
+
+    public bool $calloutFeeDeducted = false;
+
+    public array $prices = [];
+
+    public array $refusals = [];
+
+    public function mount()
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+        $businessId = Tenancy::id();
+        abort_unless($businessId, 403);
+
+        $callout = CalloutFee::where('business_id', $businessId)->first();
+        if ($callout) {
+            $this->calloutFeeDollars = $callout->fee_cents / 100;
+            $this->calloutFeeDeducted = $callout->deducted_if_proceeding;
+        }
+
+        $items = PriceBookItem::where('business_id', $businessId)
+            ->where(function ($query) {
+                $query->where('is_sample', true)
+                    ->orWhere('is_confirmed', false);
+            })
+            ->get();
+
+        foreach ($items as $item) {
+            $this->prices[$item->id] = $item->price_cents / 100;
+        }
+    }
+
+    public function updatedCalloutFeeDollars($value)
+    {
+        $businessId = Tenancy::id();
+        CalloutFee::updateOrCreate(
+            ['business_id' => $businessId],
+            ['fee_cents' => (int) round((float) $value * 100)]
+        );
+    }
+
+    public function updatedCalloutFeeDeducted($value)
+    {
+        $businessId = Tenancy::id();
+        CalloutFee::updateOrCreate(
+            ['business_id' => $businessId],
+            ['deducted_if_proceeding' => (bool) $value]
+        );
+    }
+
+    public function updatePrice(int $itemId, $value)
+    {
+        $businessId = Tenancy::id();
+        PriceBookItem::where('business_id', $businessId)->where('id', $itemId)->update(['price_cents' => (int) round((float) $value * 100)]);
+    }
+
+    public function confirm(int $itemId)
+    {
+        $businessId = Tenancy::id();
+
+        if (isset($this->prices[$itemId])) {
+            $this->updatePrice($itemId, $this->prices[$itemId]);
+        }
+
+        $action = app(PriceConfirmAction::class);
+        $result = $action->handle($businessId, $itemId);
+
+        if (isset($result['refusal_code']) && $result['refusal_code'] === 'FILL_ME') {
+            $this->refusals[$itemId] = true;
+        } else {
+            unset($this->refusals[$itemId]);
+        }
+    }
+
+    public function deleteItem(int $itemId)
+    {
+        $businessId = Tenancy::id();
+        PriceBookItem::where('business_id', $businessId)->where('id', $itemId)->delete();
+        unset($this->prices[$itemId]);
+        unset($this->refusals[$itemId]);
+    }
+
+    public function openPricebook()
+    {
+        $this->dispatch('open-pricebook');
+    }
+
     public function render()
     {
-        return view('x-163::confirmation-screen');
+        $businessId = Tenancy::id();
+        $items = PriceBookItem::where('business_id', $businessId)
+            ->where(function ($query) {
+                $query->where('is_sample', true)
+                    ->orWhere('is_confirmed', false);
+            })
+            ->get();
+
+        $callout = CalloutFee::where('business_id', $businessId)->first();
+
+        $confirmedCount = PriceBookItem::where('business_id', $businessId)->where('is_confirmed', true)->count();
+        $isCalloutSet = $callout && $callout->fee_cents > 0;
+
+        return view('x-163::confirmation-screen', [
+            'items' => $items,
+            'isCalloutSet' => $isCalloutSet,
+            'confirmedCount' => $confirmedCount,
+            'calloutFee' => $callout,
+        ]);
     }
 }
