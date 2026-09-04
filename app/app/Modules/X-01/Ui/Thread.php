@@ -15,6 +15,10 @@ class Thread extends Component
 
     public function render()
     {
+        if ($this->businessId > 0) {
+            \App\Support\Tenancy::set($this->businessId);
+        }
+
         $conversations = ($this->businessId > 0)
             ? Conversation::where('business_id', $this->businessId)->get()
             : collect();

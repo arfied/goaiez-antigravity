@@ -10,6 +10,8 @@ final class ConversationReadAction
 {
     public function handle(int $businessId, int $conversationId): ?Conversation
     {
-        return Conversation::where('business_id', $businessId)->find($conversationId);
+        return \App\Support\Tenancy::actingAs($businessId, function () use ($businessId, $conversationId) {
+            return Conversation::where('business_id', $businessId)->find($conversationId);
+        });
     }
 }
