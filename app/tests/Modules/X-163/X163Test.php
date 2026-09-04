@@ -139,4 +139,14 @@ class X163Test extends TestCase
     {
         $this->assertTrue(true);
     }
+    public function test_no_fake_rows_written_on_mount(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        \Livewire\Livewire::test(\App\Modules\X163\Ui\Pricebook::class)
+            ->assertOk();
+
+        $this->assertEquals(0, \App\Modules\X163\Models\PriceBookItem::where('business_id', $biz->id)->count());
+    }
 }
