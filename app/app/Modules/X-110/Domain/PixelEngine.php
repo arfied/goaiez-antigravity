@@ -148,25 +148,7 @@ final class PixelEngine
         return $sample;
     }
 
-    public function enforceG1312ChatPageContext(): bool
-    {
-        // Physical enforcement stub
-        return true;
-    }
-
-    public function enforceG1327TenantTags(): bool
-    {
-        // Physical enforcement stub
-        return true;
-    }
-
-    public function enforceG1328RedirectHop(): bool
-    {
-        // Physical enforcement stub
-        return true;
-    }
-
-    public function enforceG902SingleDatabase(): bool
+public function enforceG902SingleDatabase(): bool
     {
         return true;
     }
