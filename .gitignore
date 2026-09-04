@@ -14,3 +14,8 @@ app/storage/app/evidence/
 
 __pycache__/
 *.pyc
+
+# the supervisor's mailbox is working-tree only — main ignores it, and a merge that
+# writes one track's copies over another's destroys the verdict record.
+.agents/supervisor/*
+!.agents/supervisor/launch-coder.sh
