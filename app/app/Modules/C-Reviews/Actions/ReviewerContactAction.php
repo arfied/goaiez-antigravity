@@ -28,7 +28,7 @@ final class ReviewerContactAction
         if ($consent === null) {
             return [
                 'status' => 'refused',
-                'refusal_code' => 'REVIEWER_NAME_IS_NOT_CONSENT',
+                'refusal_code' => 'NO_CONSENT_RECORD',
             ];
         }
 
