@@ -41,8 +41,6 @@ return [
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.
     'owns_table' => [
         'notification_classes',
-        'quiet_hours_start',
-        'quiet_hours_end',
     ],
     'reads_table' => [],
 
