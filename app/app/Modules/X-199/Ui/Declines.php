@@ -7,6 +7,7 @@ namespace App\Modules\X199\Ui;
 use App\Modules\X198\Actions\PaymentLinkAction;
 use App\Modules\X198\Models\Payment;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Component;
 
 class Declines extends Component
@@ -15,14 +16,22 @@ class Declines extends Component
 
     public array $hiddenRows = [];
 
+    public array $payLinks = [];
+
+    public ?string $error = null;
+
     public function sendPayLink(int $paymentId, PaymentLinkAction $action): void
     {
-        $payment = Payment::where('business_id', Tenancy::id())->findOrFail($paymentId);
-        $result = $action->handle(Tenancy::id(), $payment->amount_cents, 'Payment for declined transaction');
-
-        // Maybe we just hide the row after sending link? Or add a message.
-        // It says "records nothing new: it hides the row for this session" for Settle up later.
-        // For sendPayLink, maybe we don't hide, just do nothing visible except maybe a flash?
+        $this->error = null;
+        try {
+            $payment = Payment::where('business_id', Tenancy::idOrFail())->findOrFail($paymentId);
+            $result = $action->handle(Tenancy::idOrFail(), $payment->amount_cents, 'Payment for declined transaction');
+            $this->payLinks[$paymentId] = $result['payment_url'];
+        } catch (ModelNotFoundException) {
+            $this->error = "That attempt isn't in this account any more — reload the list.";
+        } catch (\Throwable $e) {
+            $this->error = 'The pay link was not made: '.$e->getMessage();
+        }
     }
 
     public function settleUpLater(int $paymentId): void

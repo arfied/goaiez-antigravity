@@ -66,11 +66,15 @@ class DeclinesScreenTest extends TestCase
             ->assertForbidden();
 
         Tenancy::setUser($owner->id);
+        $failed = Payment::where('business_id', $biz->id)->where('status', 'failed')->first();
+
         Livewire::actingAs($owner)->test(Declines::class)
             ->assertOk()
             ->assertSee('150.00')
             ->assertDontSee('250.00')
             ->assertDontSee('350.00')
-            ->assertSeeHtml("didn't authorise");
+            ->assertSeeHtml("didn't authorise")
+            ->call('sendPayLink', $failed->id)->assertSee('pay.goaiez.com/link/')
+            ->call('sendPayLink', 999999)->assertSee("isn't in this account");
     }
 }
