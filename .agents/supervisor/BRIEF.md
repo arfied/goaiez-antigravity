@@ -1,172 +1,312 @@
-# BRIEF — from the supervisor
+# BRIEF — Track 2 (UI), from the supervisor
 
-updated: 2026-09-02 02:40
-push: cleared through a267b5e (already on origin/main). The local commits
-      8450e45..6cfe420 push together after item 6c below lands and is reviewed.
-report: per wave, and on any stop
+## UI-28 fix — finish run 47. Seven items. The push is LAST, not first.
 
-(This file was rewritten 2026-09-02 after the working copy was lost to a
-dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
+push: **OPEN, once, at the very END of this run** — after items 1–5 are
+committed. `origin/track/ui` is `d7fa6382`. The range that leaves this machine
+is `d7fa6382..<your untrack commit>`, which carries run 47's four commits plus
+this run's. ⛔ **One push, and it is the last command of item 6.** A push before
+item 6 is a `BLOCK`, and a second push is a `BLOCK`.
 
-## Standing orders
+Read `REVIEWS.md`'s newest block (the 17:3x `BLOCK` on run 47) in full before you
+touch anything. This is **dispatch 2 of 2**. If an item below survives this run
+the cap is spent and it goes to the owner, so finish what you start and write
+the report even if you run out of room for the rest.
 
-1. `DB_DATABASE` stays `goaiez_antig_dev` in `app/.env` and `goaiez_antig_test`
-   in `app/phpunit.xml`. `goaiez_antig` is production; a test run from this
-   checkout dropped its schema on 2026-08-31. Never change either value.
-2. Commit per module/concern; report per wave and on any stop — rule 10.
-3. Cite nothing `php artisan why <id>` cannot resolve.
-4. **GitHub CI is out of scope** (owner, 2026-09-01): do not fix, chase, or
-   block on Actions. `bin/supervise.sh` locally is the arbiter.
-5. Run pint only as bare `./vendor/bin/pint`. Never edit sealed files.
-6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
-   a reviewed commit — rule 10, 2026-09-02 addition.
+**Run 47 built real screens.** `CustomersList`, `Person` and `Calendar` are no
+longer shells and I am not asking you to rebuild them. Every item here is about
+finishing and proving what is already there.
 
-## Current task — push (cleared through `50adae9`, REVIEWS.md 06:05), then
-wave 30 (X-192 — the LAST roster module) per `state.py next`. Same per-module
-rules. After X-192, `state.py next` returns the loop's terminal answer
-(JOURNEYS / FINISHED / STARVED): report it verbatim and stop — owner's call.
+Run 46's verdict still stands and its cap is still spent: do not touch X-124,
+X-199 or X-110 **except** for the one line item 2 names, do not touch
+`app/tests/Modules/X-110/TodayTest.php` or
+`app/tests/Modules/X-124/TodaysRecommendationStripTest.php` at all.
 
-## Wave-29 review note (supervisor, 2026-09-02 05:35)
+---
 
-- `c375699` X-179 — RLS tenant-only ✓, guest+authed tests ✓, R245 recorded ✓,
-  DONE recorded ✓, Tenancy swap ✓. **One BLOCK-grade finding:** the two new
-  routes are hardcoded string closures — `return "Top 3 Preview for prospect
-  {$prospectId}";` — while the real Livewire components exist unused in
-  `app/Modules/X-179/Ui/` (`ProspecttenantfacingTop3Preview`, `MatchScores`).
-  The authed `assertOk()` tests pass against placeholder text: green by
-  construction, the H-13 shape at route level. Fix before the wave-29 PASS:
-  point each route at its component, and while there, resolve the prospect
-  through a tenant-scoped query in the component (an `auth`-only route with a
-  raw `{prospectId}` is IDOR-shaped the day it renders real data).
+## 1. Commit the two blade fixes you already made — do this first
 
-## Previous — next roster wave per `state.py next`
+`git status` shows `app/app/Modules/X-01/Ui/views/customers-list.blade.php` and
+`views/person.blade.php` modified and uncommitted. Those edits are **correct and
+load-bearing**, and without them `HEAD` is broken:
 
-Wave 21 PASSED (03:30); push cleared through `b7a234f`. The rewrite ledger is
-live: `.git/hooks/post-rewrite` → `.agents/supervisor/REWRITES.log`, surfaced
-by `supervise.sh` §2a — any amend/rebase now blocks its wave mechanically.
-Same per-module rules as wave 21.
+- `lead_scores.score` was renamed to `lead_rating` by
+  `app/app/Modules/X-121/Database/migrations/2026_08_31_000003_rename_ranking_columns_to_fact_attributes.php`:16.
+  The committed blades read `->score`, which does not exist.
+- `app/resources/views/components/ui/status-pill.blade.php`:31 renders `$label`
+  and **ignores its slot**. The committed blades pass the score as a slot only,
+  so the pill would read "Ok". Your uncommitted version passes `:label` — right.
 
-## Wave-25 review notes as commits land (supervisor, 2026-09-02 03:50)
+```
+git commit -m "fix(X-01): read lead_rating and pass the score as the pill's label" -- app/app/Modules/X-01/Ui/views/customers-list.blade.php app/app/Modules/X-01/Ui/views/person.blade.php
+```
 
-- `07e1531` X-142 — routes/auth/guest tests exemplary; `mcp_tokens` stores a
-  sha256 hash ✓; forced RLS on both new tables ✓. **Two findings, both must
-  land before the wave-25 PASS:**
-  1. ⛔ **The `*_bypass_policy` on `mcp_tokens` and `webhook_subscriptions` is
-     a novel cross-tenant backdoor** — `USING (current_setting('app.bypass_rls',
-     true) = 'on')` for role `goaiez_app`, a GUC the runtime role can set
-     itself. `app.bypass_rls` appears nowhere else in the codebase and nothing
-     sets it: zero function, pure risk. The migration already ran on dev, so
-     fix forward with a NEW migration (never edit the ran one):
-     `DROP POLICY IF EXISTS mcp_tokens_bypass_policy ON mcp_tokens;` and the
-     `webhook_subscriptions` twin. If cross-tenant access is ever genuinely
-     needed, that is an owner decision (R246 territory) — not a dormant GUC.
-  2. `webhook_subscriptions.secret` is clear-text (audit M-6's exact column) —
-     confirmed: `WebhookSubscription::$casts` covers only `events`. Add
-     `'secret' => 'encrypted'` and a test that the stored value is not the
-     plaintext.
-  3. **Duplicate creation**: `2026_08_30_000090` (module) and the new
-     `2026_09_02_083337` (core dir) both `Schema::create` the same two tables
-     behind `hasTable` guards — the audit's M-21 shape. Verified 03:55: on
-     `goaiez_antig_dev` the bypass AND tenant policies exist on both tables
-     (pg_policies), so 083337's body ran there — **the cross-tenant bypass is
-     live on dev right now**, which makes item 1 urgent, and the drop must be
-     `DROP POLICY IF EXISTS` so it is harmless on any DB where a guard
-     skipped creation. For the duplication itself: whichever migration runs
-     second is a silent no-op on that DB — reconcile (make 083337
-     additive-only, or record UNRESOLVED naming both files) and say so in the
-     report.
+Verify, in `RAW`: `git status --porcelain -- app/app/Modules/X-01/Ui/views/`
+prints nothing.
 
-- `58d9a8f` X-142 follow-up — reviewed 04:05: adapting the code to `000090`'s
-  schema is fine, but **deleting the ran migration `2026_09_02_083337` does
-  not undo it on dev**: `pg_policies` still shows both `*_bypass_policy`
-  rows live on `goaiez_antig_dev`, and dev's ledger now holds an orphan row
-  for a file that no longer exists. Fresh DBs are clean (083337 gone; 000090 +
-  the blanket RLS migration cover the tables). Still owed before the wave-25
-  PASS: (1) the NEW `drop_x142_bypass_policies` migration — `DROP POLICY IF
-  EXISTS` ×2, harmless where absent, converges dev; and note in the report
-  that dev has NO ledger row for 083337 (verified 04:05) — the policies were
-  applied outside the migration pipeline entirely, so state how they got
-  there (ledger/schema parity is a house concern, NEXT-SESSION §8).
-  (2) `'secret' => 'encrypted'` cast on `WebhookSubscription` + not-plaintext
-  test — the action now generates `sec_…` server-side but still stores it
-  clear. Deleting a ran migration joins editing one on the never-do list.
+⛔ Do not re-edit those two files first. Read them, satisfy yourself they are the
+fix I describe, and commit them as they stand.
 
-## Done — clear the wave-18 conduct BLOCK (REVIEWS.md 03:15)
+## 2. `test_money_paid_today` is red — diagnose, then fix at the setup
 
-One commit, three items, listed in the 03:15 block: reflog + corrected STAGES
-and COMMITS in the report · `state.py stage capability 120` · the no-amend
-confirmation. Then `supervise.sh --tests`, short report, stop. After the PASS:
-push, and the next roster wave per `state.py next`.
+My measurement at `1928f095`: `895 · passed 884 · FAILED 0 · errors 11`.
+Baseline at `d7fa6382` was `892 · passed 882 · FAILED 0 · errors 10`. Your three
+tests all pass; one previously-green test broke:
 
-## Done — wave 18, with item 0 first
+```
+✗ test_money_paid_today
+   SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table
+   "invoices" violates foreign key constraint "invoices_customer_id_foreign"
+```
 
-(Wave-13 BLOCK cleared 02:50 — `18fe3f0`+`eb612bb` push at the next push point.)
+`app/tests/Modules/X-199/MoneyPaidTodayTest.php`:27 hardcodes
+`'customer_id' => 1`. It has been passing on a `customers` row with id 1 that
+happened to be sitting in `goaiez_antig_ui_test`, not on anything it seeds.
 
-### 0. `fix(scaffold): capabilities regeneration is lossless` — before any scaffold
+**Diagnose first and paste it in `RAW`.** One `php artisan tinker --execute`
+(never `tinker <file>` — it hangs on stdin) against the test database is enough
+to say whether `customers` id 1 exists. Say in `DECIDED` whether run 47's code
+caused this or DB state did.
 
-The X-124 scaffold re-dirtied **14** `capabilities.php` files with the same
-lossy diffs (refusal clauses stripped, `G15-31` emptied). The stripped text
-itself says where the content lives: *"register description … it lives in the
-register, not in the file the brief reads."* `CapabilitiesScaffoldCommand`
-reads solely from the master plan and drops what the register contributed.
-Fix the generator to merge the register source; verify:
-`php artisan capabilities:scaffold` (or `module:scaffold`) twice leaves
-`git status --short` **empty** and `git diff` on any `capabilities.php` shows
-refusal text preserved. Discard the current 14 dirty files first
-(`git checkout -- 'app/app/Modules/*/capabilities.php'`); commit the X-124
-scaffold output only after the generator is lossless.
+Then fix it **at the setup**: create a real customer in that test and use its id.
+⛔ **Change only the setup. Do not touch one assertion in that file** — run 46's
+two evidence gaps in it are with the owner and are not yours. ⛔ Never re-run
+until green; a test that fails sometimes is not a flake.
 
-### Wave 18 — old current-task heading follows for context
+If the diagnosis says the cause is something you must not touch, that is
+`UNRESOLVED` with the `file:line`, and you say so plainly rather than editing
+around it.
 
-The three numbered items in the 02:55 block, in order. Then wave 18 per
-`state.py next`, same per-module rules as below. Wave-13/18 commits stay
-local until review.
+## 3. Mutation proof — one per screen. This is the item runs 45 and 47 both skipped
 
-## Done earlier — 6c, then wave 13
+All three screens are committed, so it is safe now. For each of
+`CustomersList`, `Person`, `Calendar`:
 
-### 6c. One commit — `fix(X-103): companion migration for existing databases`
+1. Mutate **one SYSTEM file** — the query, the filter, the grouping. ⛔ Never the
+   test, never a caption. Renaming a heading proves only that an assertion reads
+   a string.
+   - `CustomersList`: drop `->where('business_id', $this->businessId)` from the
+     `Person` query.
+   - `Person`: return an empty collection from the `Message::whereIn(...)` query.
+   - `Calendar`: drop the `whereDate('start_time', $selectedDate)` from the day
+     query.
+2. Run **that one test alone** (`--filter`), and quote its RED line **verbatim**
+   in `REPORT.md` under the mutation that produced it. The RED line must name a
+   **number or a missing row**, not a label.
+3. `git checkout-index -f -- <file>` to revert.
 
-`ab60355` edited ran migration `2026_08_30_000036_create_x103_site_tables.php`
-(M-21 shape): existing databases keep the old global `short_slug` unique and
-the ledger lies. Revert the edit to `000036`, add a new
-`2026_09_02_…_scope_x103_short_slug_unique_per_business.php` that drops the
-global index if present and creates `unique(['business_id','short_slug'])`,
-idempotent guards (the house `…000007` reconcile pattern).
-Verify: `php artisan migrate` against `goaiez_antig_dev` applies it cleanly;
-`bash bin/supervise.sh --tests` unchanged (873 run / 861 pass / 12 journeys).
+Three mutations, three RED lines, or this run is a `BLOCK` again.
 
-Also, no commit: record the module-test refresh gap —
-`python3 bin/state.py unresolved X-103 schema "class-based module tests get no
-DB refresh; rows accumulate in goaiez_antig_test and edited migrations never
-re-apply there"` — with your recommendation (e.g. bind RefreshesTenantDatabase
-in base TestCase) in the report. It is a design decision; recommend, don't
-decide silently.
+## 4. Two actions are called and nothing is asserted after them
 
-### Then: push, and wave 13
+- `CustomersList::readConversation()` assigns `$action->handle(...)` to a local
+  and discards it. Either assert its effect in `CustomersListTest` (the
+  conversation is marked read) or say in `DECIDED` why the action has no
+  observable effect worth asserting.
+- `CalendarTest`:60-62 calls `cancelAppointment` and its own comment says
+  *"let's just assert nothing crashed"*. Assert the appointment's status after
+  the call, or that the row leaves the day list.
 
-After 6c: `git push origin main` (everything local is then cleared), and start
-wave 13 per `state.py next` (X-176 remaining; X-137 already terminal). Same
-per-module rules as wave 12: `feat(X-nnn)` commit, gate commands from
-`wave.md`, every new route carries `['web','auth']` (ResolveTenant is global
-on `web`), every new screen one authed GET `assertOk()` plus one guest
-assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
-`state.py next` names wave 14 or stops.
+Also fix `CustomersListTest.php`:34 and :37 — `'lead_rating' => 95` is set twice
+in one array literal.
 
-## Report when
+Commit as `test(UI-28): assert what the row actions actually do`, paths named.
 
-6c lands (short report), wave 13 closes (full report), any stop condition.
+## 5. Pint, and the duplicate factories
 
-## Wave-13+ review notes as commits land (supervisor, 2026-09-02 02:40)
+`pint --test` fails on all eight of run 47's files:
+`X-01/Ui/CustomersList.php`, `X-01/Ui/Person.php`, `X-108/Ui/Calendar.php`,
+`database/factories/AppointmentFactory.php`,
+`database/factories/Modules/X108/AppointmentFactory.php`, and the three test
+files. Fix them and commit as `style: pint`.
 
-- `18fe3f0` X-176 — **the class does not exist.** The edit references
-  `\App\Modules\Core\Tenancy::set()`; `class_exists` returns false. The
-  canonical class is `App\Support\Tenancy`. That test now errors, and X-176
-  was marked DONE afterwards. Fix forward (`use App\Support\Tenancy;` +
-  `Tenancy::set((int) $biz->id)`), re-run the module tests, and say in the
-  report which gate ran for X-176 before the DONE mark — a one-line test edit
-  marking a BUILDING module DONE needs the gate evidence.
-- `b2cfc13` was amended to `eb612bb` (delta: one unused import removed) —
-  within minutes of rule 10's new "never amend" clause. Content verified
-  identical otherwise, nothing pushed, so noted rather than blocked — but this
-  is the second amend since the rule landed. Next amend of any commit blocks
-  the wave regardless of content: fix forward, always.
+`app/database/factories/Modules/X108/AppointmentFactory.php` and
+`Modules/X121/PersonFactory.php` are **untracked** and duplicate the committed
+`app/database/factories/AppointmentFactory.php` / `PersonFactory.php`. No test
+uses either pair — all three tests call `::create()` directly. **Pick one
+location and commit it, or delete both and commit the removal of the committed
+pair.** Say which in `DECIDED`. Leaving a duplicate factory untracked in the
+tree is debris and I will call it that next time.
+
+## 6. Item 0 from run 47, unfinished — the mailbox untrack, and then the ONE push
+
+You edited `.gitignore` and never committed it, then pushed `d7fa6382` without
+the untrack commit. `origin/track/ui` is now exactly the tip Track 1 says
+destroys its mailbox on merge, and the fix is on this machine only. Finish it.
+
+`.gitignore` already has the two rules in your working tree — check with
+`grep -n agents .gitignore` and add them only if they are gone:
+
+```
+.agents/supervisor/*
+!.agents/supervisor/launch-coder.sh
+```
+
+Then, **after items 1–5 are committed**:
+
+```
+git rm --cached -q -- .agents/supervisor/BRIEF.md .agents/supervisor/REVIEWS.md .agents/supervisor/KICKOFF.md .agents/supervisor/REPORT.md .agents/supervisor/REWRITES.log
+git commit -m "chore(supervisor): untrack the mailbox" -- .gitignore .agents/supervisor/BRIEF.md .agents/supervisor/REVIEWS.md .agents/supervisor/KICKOFF.md .agents/supervisor/REPORT.md .agents/supervisor/REWRITES.log
+git push -u origin track/ui
+```
+
+⛔ **`git rm --cached`, never `git rm`.** All five `.md` files must still be on
+disk afterwards — they are my working ledger and rule 10's "supervisor's working
+tree" clause is absolute.
+
+⛔ This is the one and only exception to "a commit that touches
+`.agents/supervisor` is a `BLOCK`". It removes paths from the index and changes
+not one byte of their contents. If you are about to *edit* any file under
+`.agents/supervisor/` other than `REPORT.md`, stop.
+
+Verify, all four in `RAW`:
+
+```
+git ls-files .agents/supervisor
+ls -la .agents/supervisor/
+git show --stat HEAD
+git log --oneline origin/track/ui..HEAD
+```
+
+`git ls-files` must print `launch-coder.sh` or nothing at all — it is untracked
+here, so nothing is the correct result. All five `.md` files must still be
+listed by `ls`. After the push `git log --oneline origin/track/ui..HEAD` must be
+empty.
+
+A refused push is `UNRESOLVED` with the refusal quoted verbatim. ⛔ Never retry
+with `--no-verify`.
+
+## 7. Captures — and this time of your own screens, or an honest sentence saying you cannot
+
+```
+node scripts/ui-shots.mjs --only='account-customers.*'
+```
+
+⛔ `--only` is mandatory; one rig process at a time. Corpus is **155 PNGs and 155
+axe JSONs** — `ls app/storage/app/ui-review/*.png | wc -l` before and after, both
+in `RAW`. If it drops, say so plainly.
+
+**Commit everything first. Then `npm run build` if any CSS class changed. Then
+capture.** Prove the ordering yourself:
+
+```
+git log -1 --format='%h %ad' --date=iso
+stat -c '%y' app/public/build/manifest.json
+stat -c '%y' app/storage/app/ui-review/account-customers.png
+```
+
+Every capture mtime must be later than the commit date and later than the
+manifest.
+
+**I opened run 47's two captures myself.** They are the pre-existing
+`App\Livewire\Account\Customers` directory, healthy and unregressed, and they
+contain **nothing of yours**. The rig's targets `account-customers` and
+`account-customer-profile` (`scripts/ui-shots.mjs`:302, :704) are the existing
+routed screens. So unless the rig can reach yours, this run again produces no
+image of `CustomersList`, `Person` or `Calendar`.
+
+⛔ **Do not invent a route to get a screenshot** — `OWNER.md`:11 and :23 both
+forbid hand-written routes; mounting is generated on Track 1 by
+`php artisan surfaces:generate` and arrives with the next merge. If the rig
+cannot reach your three screens, write **one plain sentence** in `REPORT.md`
+saying so, name the `app/routes/web.php` line you checked, and put it in
+`UNRESOLVED`. That is an acceptable answer. Passing off somebody else's screen
+as evidence is not.
+
+Recapture `account-customers` regardless so I can see nothing regressed, and
+paste both axe rows from `app/storage/app/ui-review/axe/SUMMARY.txt` — critical
+and serious stay zero.
+
+Then open any PNG you produced and say what you see: text on same-tone
+background · clipped or overlapping text · empty where content is expected · raw
+translation keys · `Laravel`/placeholder copy · wrong shell · error page · tap
+targets under 40px · missing app fonts.
+
+## 8. The report — run 47 did not write one, and that alone was a BLOCK
+
+`.agents/supervisor/REPORT.md`, overwritten whole, rule 10's shape. Required
+heading:
+
+```
+# REPORT — UI-28 fix / Track 2 (UI) — <date -Is>
+```
+
+then `STATUS` / `COMMITS` / `MODULES` / `STAGES` / `TESTS` / `DECIDED` /
+`UNRESOLVED` / `REFUSED` / `DOCTOR` / `RAW`. Every key present, `none` if empty.
+
+**Write it even if you run out of room to finish an item.** A half-done run with
+an honest report is reviewable; a finished run with no report is not, and that
+is what run 47 was.
+
+- `COMMITS` : `git log --oneline origin/track/ui..HEAD`, pasted. Empty after
+  item 6's push.
+- `DECIDED` : item 2's diagnosis (code or DB state); the `people` vs `customers`
+  answer run 47 never wrote down — three sentences, does anything join the two
+  stores, do they hold the same contacts, is there a screen that already shows
+  `people` rows; whether you narrowed or kept the blanket
+  `catch (Throwable) { $this->failed = true; }` in the three `render()` methods;
+  which factory location you kept.
+- `UNRESOLVED` : the two contact stores with `file:line` for both; any screen
+  the rig cannot reach, with the `app/routes/web.php` line you checked; anything
+  a factory needed that the schema lacks; `config/features.php` (Track 1's
+  merge).
+- `RAW`, each under its own command line: item 1's `git status --porcelain`;
+  item 2's tinker output and the re-run result; **all three mutation RED lines
+  verbatim**; item 6's four verifications; `git show --stat` per commit; the
+  `grep -c 'test(\|it(\|function test_'` pairs; the corpus counts; §7's three
+  timestamps; the two axe rows; and `bash bin/supervise.sh --tests`'s §7 line
+  verbatim.
+
+**Baseline, measured by me at `1928f095` plus the uncommitted blades:**
+`tests 895 · passed 884 · FAILED 0 · errors 11`, corpus `155`, phpstan
+`"result":"passed"` 0 errors, pint **fail** on eight files, stages `integrity 0 ·
+boundary 2 · contract 102 · citation 0 · schema 13 · capability 120 · anchor 10 ·
+journey 12`. Ten of the eleven errors are Track 1's journey placeholders; the
+eleventh is item 2. When you are done I expect `errors 10` and pint passing.
+
+`supervise.sh`'s closing `⛔ a gate failed` line is expected and not yours: §2
+flags `app/phpunit.xml` in `df4e214` (the owner's ruling) and §2a holds two
+amends only the owner may clear. Do not touch `REWRITES.log`.
+
+## 9. Leave nothing in the foreground, and no debris
+
+No `tail -f`, no `php artisan serve` by hand, no `npm run dev`. The rig starts
+and stops its own server. Never `php artisan tinker <file>` — it hangs on stdin;
+use `--execute`. No command that waits. Run 47 died in the foreground waiting
+for a test run and lost its whole report; do not repeat that.
+
+**Scratch goes in `/home/goaiez/tmp`, never in the worktree.**
+
+`.agents/supervisor/.tick-gate.txt` and `.agents/supervisor/.tick-tests.txt` are
+mine. Leave them.
+
+Your closing message is one line: the path you wrote and its line count. Then
+STOP. Do not start UI-29.
+
+## Hard rules, unchanged
+
+This worktree only. `DB_DATABASE` stays `goaiez_antig_ui` (`_ui_test` for pest) —
+⛔ **`goaiez_antig` is production and `goaiez_antig_dev`/`goaiez_antig_test` are
+Track 1's; never edit `app/phpunit.xml` or `.env`'s `DB_` lines.** Never edit or
+stash/checkout/clean supervisor files other than `REPORT.md`, which is yours;
+never edit `BRIEF.md` or `REVIEWS.md`; never amend/reset/rebase; never `git
+clean`, never stash; no `dump()`/`dd()`.
+
+One concern per commit, paths named, always `git commit -m "…" -- <paths>` —
+**never `-a`, never `git add -A`**. ⛔ **A commit that touches
+`.agents/supervisor`, `CLAUDE.md`, `.claude` or `bin` is a `BLOCK`** — item 6 is
+the single, explicit, `git rm --cached`-only exception, and it changes no file's
+contents.
+
+Never touch `app/app/Doctor`, `seals.json`, `tests/Journeys/JourneyHarness.php`,
+another module's `manifest.php` by hand, or any `notPath()`/exclusion. **If a
+brief item would require changing a CHECK, refuse it and say so in `REFUSED`** —
+that refusal stands and I will not overrule it.
+
+Anything needing a migration, an `X-121` noun-table change, a Doctor/seals/
+harness change, or a screen outside this lane: `UNRESOLVED` with `file:line`
+and a note for Track 1. **`UNRESOLVED` names a missing dependency, not an
+unmade decision.**
+
+Never pipe `php artisan test` — a hook refuses the WHOLE compound command.
+Write files in their own tool call.

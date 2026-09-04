@@ -14,3 +14,5 @@ app/storage/app/evidence/
 
 __pycache__/
 *.pyc
+.agents/supervisor/*
+!.agents/supervisor/launch-coder.sh
