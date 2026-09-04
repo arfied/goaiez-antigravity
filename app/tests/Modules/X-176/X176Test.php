@@ -53,6 +53,7 @@ class X176Test extends TestCase
             pageId: 101,
             businessName: 'Apex HVAC & Plumbing',
             commitId: $sharedCommitId,
+            domainName: 'seo.com',
             entityType: 'Plumber',
             productOffers: [
                 ['name' => 'Drain Clearing', 'price' => '99.00'],
@@ -118,8 +119,24 @@ class X176Test extends TestCase
         $htmlNew = Storage::disk('local')->get("sites/{$deployNew['deploy_hash']}.html");
 
         $this->assertStringContainsString('id="seo-meta-x176"', $htmlNew);
-        $this->assertStringContainsString('<title id="seo-meta-x176">SEO Tenant | Page 101</title>', $htmlNew);
-        $this->assertStringContainsString('<meta name="description" content="Welcome to SEO Tenant.">', $htmlNew);
-        $this->assertStringContainsString('<link rel="canonical" href="https://example.com/pages/101">', $htmlNew);
+        $this->assertStringContainsString('<title id="seo-meta-x176">SEO Tenant</title>', $htmlNew);
+        $this->assertStringContainsString('<meta name="description" content="SEO Tenant">', $htmlNew);
+        $this->assertStringContainsString('<link rel="canonical" href="https://seo.com/pages/101">', $htmlNew);
+        $this->assertStringNotContainsString('example.com', $htmlNew);
+
+        // Test escaping
+        $deployEscaped = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: 'SEO & "Co"'
+        );
+        $htmlEscaped = Storage::disk('local')->get("sites/{$deployEscaped['deploy_hash']}.html");
+
+        $this->assertStringContainsString('<title id="seo-meta-x176">SEO &amp; &quot;Co&quot;</title>', $htmlEscaped);
+        $this->assertStringContainsString('<meta name="description" content="SEO &amp; &quot;Co&quot;">', $htmlEscaped);
     }
 }

@@ -18,6 +18,7 @@ final class SchemaRenderAction
         int $pageId,
         string $businessName,
         string $commitId,
+        string $domainName,
         ?string $entityType = 'LocalBusiness',
         ?array $productOffers = null
     ): array {
@@ -26,7 +27,7 @@ final class SchemaRenderAction
             '@context' => 'https://schema.org',
             '@type' => $entityType ?? 'LocalBusiness',
             'name' => $businessName,
-            'url' => "https://example.com/pages/{$pageId}",
+            'url' => "https://{$domainName}/pages/{$pageId}",
         ];
 
         if (! empty($productOffers)) {
