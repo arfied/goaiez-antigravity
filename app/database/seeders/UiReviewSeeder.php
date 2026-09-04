@@ -228,7 +228,6 @@ class UiReviewSeeder extends Seeder
                     Message::factory()->create([
                         'conversation_id' => $conv->id,
                         'created_at' => now()->subDays($days)->addMinutes($j * 5),
-                        'updated_at' => now()->subDays($days)->addMinutes($j * 5),
                     ]);
                 }
             }
