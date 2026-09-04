@@ -16,9 +16,12 @@ final class RecordPaymentOnCapture
 
     public function handle(PaymentCaptured $event): void
     {
+        if ($event->invoiceId === null) {
+            return;
+        }
+
         $invoice = Invoice::where('business_id', $event->businessId)
-            ->where('status', 'issued')
-            ->where('total_cents', $event->amountCents)
+            ->where('id', $event->invoiceId)
             ->first();
 
         if ($invoice !== null) {

@@ -424,21 +424,21 @@ trait JourneyHarness
         $engine = app(\App\Modules\X198\Domain\GatewayEngine::class);
         $businessId = $invoice['business_id'];
         $amount = $invoice['total_cents'];
+        $invoiceId = $invoice['id'];
         
         $engine->connect($businessId, 'stripe', 'self');
 
-        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_' . uniqid());
+        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_' . uniqid(), 'USD', $invoiceId);
         
         \Illuminate\Support\Facades\Http::allowStrayRequests();
-        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_' . uniqid());
+        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_' . uniqid(), $invoiceId);
 
         return $payment->toArray();
     }
 
-    /** @param array<string,mixed> $invoice */
     private function invoiceStatus(array $invoice): string
     {
-        return (string) \Illuminate\Support\Facades\DB::table('invoices')->where('id', $invoice['id'])->value('status');
+        return (string) \App\Modules\X199\Models\Invoice::where('id', $invoice['id'])->value('status');
     }
 
     /** @param array<string,mixed> $invoice */
