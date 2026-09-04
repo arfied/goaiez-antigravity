@@ -6,7 +6,6 @@ namespace Tests\Modules\CAgent\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\CAgent\Ui\GroundcheckScreen;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class GroundcheckScreenScreenTest extends TestCase
 
         $this->get(route('c-agent.groundcheck-screen'))->assertOk();
 
-        Livewire::test(GroundcheckScreen::class)->assertOk();
+        Livewire::test(\App\Modules\CAgent\Ui\GroundcheckScreen::class)->assertOk();
     }
 }

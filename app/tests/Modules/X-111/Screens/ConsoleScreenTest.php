@@ -6,7 +6,6 @@ namespace Tests\Modules\X111\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X111\Ui\Console;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ConsoleScreenTest extends TestCase
 
         $this->get(route('x-111.console'))->assertOk();
 
-        Livewire::test(Console::class)->assertOk();
+        Livewire::test(\App\Modules\X111\Ui\Console::class)->assertOk();
     }
 }

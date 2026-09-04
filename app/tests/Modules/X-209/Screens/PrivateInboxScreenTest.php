@@ -6,7 +6,6 @@ namespace Tests\Modules\X209\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X209\Ui\PrivateInbox;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class PrivateInboxScreenTest extends TestCase
 
         $this->get(route('x-209.private-inbox'))->assertOk();
 
-        Livewire::test(PrivateInbox::class)->assertOk();
+        Livewire::test(\App\Modules\X209\Ui\PrivateInbox::class)->assertOk();
     }
 }

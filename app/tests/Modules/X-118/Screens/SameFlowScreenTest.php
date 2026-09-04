@@ -6,7 +6,6 @@ namespace Tests\Modules\X118\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X118\Ui\SameFlow;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class SameFlowScreenTest extends TestCase
 
         $this->get(route('x-118.same-flow'))->assertOk();
 
-        Livewire::test(SameFlow::class)->assertOk();
+        Livewire::test(\App\Modules\X118\Ui\SameFlow::class)->assertOk();
     }
 }

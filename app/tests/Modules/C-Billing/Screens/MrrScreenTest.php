@@ -6,7 +6,6 @@ namespace Tests\Modules\CBilling\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\CBilling\Ui\Mrr;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class MrrScreenTest extends TestCase
 
         $this->get(route('c-billing.mrr'))->assertOk();
 
-        Livewire::test(Mrr::class)->assertOk();
+        Livewire::test(\App\Modules\CBilling\Ui\Mrr::class)->assertOk();
     }
 }

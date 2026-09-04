@@ -6,7 +6,6 @@ namespace Tests\Modules\X186\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X186\Ui\StopLog;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class StopLogScreenTest extends TestCase
 
         $this->get(route('x-186.stop-log'))->assertOk();
 
-        Livewire::test(StopLog::class)->assertOk();
+        Livewire::test(\App\Modules\X186\Ui\StopLog::class)->assertOk();
     }
 }

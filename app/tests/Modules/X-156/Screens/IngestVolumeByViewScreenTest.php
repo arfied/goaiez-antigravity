@@ -6,7 +6,6 @@ namespace Tests\Modules\X156\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X156\Ui\IngestVolumeByView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class IngestVolumeByViewScreenTest extends TestCase
 
         $this->get(route('x-156.ingest-volume-by'))->assertOk();
 
-        Livewire::test(IngestVolumeByView::class)->assertOk();
+        Livewire::test(\App\Modules\X156\Ui\IngestVolumeByView::class)->assertOk();
     }
 }

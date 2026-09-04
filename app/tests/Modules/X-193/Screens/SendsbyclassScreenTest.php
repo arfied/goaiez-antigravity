@@ -6,7 +6,6 @@ namespace Tests\Modules\X193\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X193\Ui\Sendsbyclass;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class SendsbyclassScreenTest extends TestCase
 
         $this->get(route('x-193.sendsbyclass'))->assertOk();
 
-        Livewire::test(Sendsbyclass::class)->assertOk();
+        Livewire::test(\App\Modules\X193\Ui\Sendsbyclass::class)->assertOk();
     }
 }

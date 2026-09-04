@@ -6,7 +6,6 @@ namespace Tests\Modules\X176\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X176\Ui\SeoTabWebsite;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class SeoTabWebsiteScreenTest extends TestCase
 
         $this->get(route('x-176.seo-tab-website'))->assertOk();
 
-        Livewire::test(SeoTabWebsite::class)->assertOk();
+        Livewire::test(\App\Modules\X176\Ui\SeoTabWebsite::class)->assertOk();
     }
 }

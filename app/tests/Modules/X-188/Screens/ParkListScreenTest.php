@@ -6,7 +6,6 @@ namespace Tests\Modules\X188\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X188\Ui\ParkList;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ParkListScreenTest extends TestCase
 
         $this->get(route('x-188.park-list'))->assertOk();
 
-        Livewire::test(ParkList::class)->assertOk();
+        Livewire::test(\App\Modules\X188\Ui\ParkList::class)->assertOk();
     }
 }

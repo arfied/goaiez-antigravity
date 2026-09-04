@@ -6,7 +6,6 @@ namespace Tests\Modules\X113\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X113\Ui\DocumentVault;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class DocumentVaultScreenTest extends TestCase
 
         $this->get(route('x-113.document-vault'))->assertOk();
 
-        Livewire::test(DocumentVault::class)->assertOk();
+        Livewire::test(\App\Modules\X113\Ui\DocumentVault::class)->assertOk();
     }
 }

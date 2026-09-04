@@ -6,7 +6,6 @@ namespace Tests\Modules\X207\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X207\Ui\RetirementReasons;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class RetirementReasonsScreenTest extends TestCase
 
         $this->get(route('x-207.retirement-reasons'))->assertOk();
 
-        Livewire::test(RetirementReasons::class)->assertOk();
+        Livewire::test(\App\Modules\X207\Ui\RetirementReasons::class)->assertOk();
     }
 }

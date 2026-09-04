@@ -6,7 +6,6 @@ namespace Tests\Modules\X179\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X179\Ui\ProspecttenantfacingTop3Preview;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ProspecttenantfacingTop3PreviewScreenTest extends TestCase
 
         $this->get(route('x-179.prospecttenantfacing-top3-preview'))->assertOk();
 
-        Livewire::test(ProspecttenantfacingTop3Preview::class)->assertOk();
+        Livewire::test(\App\Modules\X179\Ui\ProspecttenantfacingTop3Preview::class)->assertOk();
     }
 }

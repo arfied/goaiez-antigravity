@@ -6,7 +6,6 @@ namespace Tests\Modules\X122\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X122\Ui\ActionLog;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ActionLogScreenTest extends TestCase
 
         $this->get(route('x-122.action-log'))->assertOk();
 
-        Livewire::test(ActionLog::class)->assertOk();
+        Livewire::test(\App\Modules\X122\Ui\ActionLog::class)->assertOk();
     }
 }

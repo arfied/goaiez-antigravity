@@ -6,7 +6,6 @@ namespace Tests\Modules\X190\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X190\Ui\NetworkMap;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class NetworkMapScreenTest extends TestCase
 
         $this->get(route('x-190.network-map'))->assertOk();
 
-        Livewire::test(NetworkMap::class)->assertOk();
+        Livewire::test(\App\Modules\X190\Ui\NetworkMap::class)->assertOk();
     }
 }

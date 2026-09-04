@@ -6,7 +6,6 @@ namespace Tests\Modules\X197\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X197\Ui\MarginBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class MarginBoardScreenTest extends TestCase
 
         $this->get(route('x-197.margin-board'))->assertOk();
 
-        Livewire::test(MarginBoard::class)->assertOk();
+        Livewire::test(\App\Modules\X197\Ui\MarginBoard::class)->assertOk();
     }
 }

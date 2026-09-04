@@ -6,7 +6,6 @@ namespace Tests\Modules\X132\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X132\Ui\PersonTimelineView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class PersonTimelineViewScreenTest extends TestCase
 
         $this->get(route('x-132.person-timeline'))->assertOk();
 
-        Livewire::test(PersonTimelineView::class)->assertOk();
+        Livewire::test(\App\Modules\X132\Ui\PersonTimelineView::class)->assertOk();
     }
 }

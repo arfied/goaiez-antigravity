@@ -6,7 +6,6 @@ namespace Tests\Modules\X147\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X147\Ui\DegradeRatePer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class DegradeRatePerScreenTest extends TestCase
 
         $this->get(route('x-147.degrade-rate-per'))->assertOk();
 
-        Livewire::test(DegradeRatePer::class)->assertOk();
+        Livewire::test(\App\Modules\X147\Ui\DegradeRatePer::class)->assertOk();
     }
 }

@@ -6,7 +6,6 @@ namespace Tests\Modules\X212\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X212\Ui\DryrunPreview;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class DryrunPreviewScreenTest extends TestCase
 
         $this->get(route('x-212.dryrun-preview'))->assertOk();
 
-        Livewire::test(DryrunPreview::class)->assertOk();
+        Livewire::test(\App\Modules\X212\Ui\DryrunPreview::class)->assertOk();
     }
 }

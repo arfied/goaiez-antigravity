@@ -1,0 +1,17 @@
+--- app/app/Console/Commands/SurfacesGenerateCommand.php
++++ app/app/Console/Commands/SurfacesGenerateCommand.php
+@@ -244,11 +244,11 @@
+         $content = "<?php\n\ndeclare(strict_types=1);\n\nuse Illuminate\Support\Facades\Route;\n\n";
+         
+         if (!empty($tenantRoutes)) {
+-            $content .= "app('router')->aliasMiddleware('tenant.role', function (\$request, \$next) {\n";
++            $content .= "\$tenantRoleMiddleware = function (\$request, \$next) {\n";
+             $content .= "    abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);\n";
+             $content .= "    return \$next(\$request);\n";
+-            $content .= "});\n\n";
+-            $content .= "Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/$modSlug')->group(function () {\n";
++            $content .= "};\n\n";
++            $content .= "Route::middleware(['web', 'auth', \$tenantRoleMiddleware])->prefix('app/$modSlug')->group(function () {\n";
+             $content .= implode("\n", $tenantRoutes) . "\n";
+             $content .= "});\n\n";
+         }

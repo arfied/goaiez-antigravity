@@ -6,7 +6,6 @@ namespace Tests\Modules\X191\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X191\Ui\LinksEarned;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class LinksEarnedScreenTest extends TestCase
 
         $this->get(route('x-191.links-earned'))->assertOk();
 
-        Livewire::test(LinksEarned::class)->assertOk();
+        Livewire::test(\App\Modules\X191\Ui\LinksEarned::class)->assertOk();
     }
 }

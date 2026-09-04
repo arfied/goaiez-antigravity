@@ -6,7 +6,6 @@ namespace Tests\Modules\X203\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X203\Ui\RunbookRunner;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class RunbookRunnerScreenTest extends TestCase
 
         $this->get(route('x-203.runbook-runner'))->assertOk();
 
-        Livewire::test(RunbookRunner::class)->assertOk();
+        Livewire::test(\App\Modules\X203\Ui\RunbookRunner::class)->assertOk();
     }
 }

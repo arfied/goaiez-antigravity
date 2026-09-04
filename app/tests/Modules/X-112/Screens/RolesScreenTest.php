@@ -6,7 +6,6 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X112\Ui\Roles;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class RolesScreenTest extends TestCase
 
         $this->get(route('x-112.roles'))->assertOk();
 
-        Livewire::test(Roles::class)->assertOk();
+        Livewire::test(\App\Modules\X112\Ui\Roles::class)->assertOk();
     }
 }

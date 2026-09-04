@@ -6,7 +6,6 @@ namespace Tests\Modules\X150\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X150\Ui\ProviderCostPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ProviderCostPerScreenTest extends TestCase
 
         $this->get(route('x-150.provider-cost-per'))->assertOk();
 
-        Livewire::test(ProviderCostPer::class)->assertOk();
+        Livewire::test(\App\Modules\X150\Ui\ProviderCostPer::class)->assertOk();
     }
 }

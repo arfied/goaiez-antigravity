@@ -6,7 +6,6 @@ namespace Tests\Modules\X130\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X130\Ui\DemandTile;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class DemandTileScreenTest extends TestCase
 
         $this->get(route('x-130.demand-tile'))->assertOk();
 
-        Livewire::test(DemandTile::class)->assertOk();
+        Livewire::test(\App\Modules\X130\Ui\DemandTile::class)->assertOk();
     }
 }

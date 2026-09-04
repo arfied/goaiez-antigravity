@@ -6,7 +6,6 @@ namespace Tests\Modules\X119\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X119\Ui\PriceConfirmationScreen;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class PriceConfirmationScreenScreenTest extends TestCase
 
         $this->get(route('x-119.price-confirmation-screen'))->assertOk();
 
-        Livewire::test(PriceConfirmationScreen::class)->assertOk();
+        Livewire::test(\App\Modules\X119\Ui\PriceConfirmationScreen::class)->assertOk();
     }
 }

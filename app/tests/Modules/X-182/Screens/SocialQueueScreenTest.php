@@ -6,7 +6,6 @@ namespace Tests\Modules\X182\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X182\Ui\SocialQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class SocialQueueScreenTest extends TestCase
 
         $this->get(route('x-182.social-queue'))->assertOk();
 
-        Livewire::test(SocialQueue::class)->assertOk();
+        Livewire::test(\App\Modules\X182\Ui\SocialQueue::class)->assertOk();
     }
 }

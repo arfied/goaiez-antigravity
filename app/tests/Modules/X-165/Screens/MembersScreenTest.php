@@ -6,7 +6,6 @@ namespace Tests\Modules\X165\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X165\Ui\Members;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class MembersScreenTest extends TestCase
 
         $this->get(route('x-165.members'))->assertOk();
 
-        Livewire::test(Members::class)->assertOk();
+        Livewire::test(\App\Modules\X165\Ui\Members::class)->assertOk();
     }
 }

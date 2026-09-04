@@ -6,7 +6,6 @@ namespace Tests\Modules\X01\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X01\Ui\PaymentRisk;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class PaymentRiskScreenTest extends TestCase
 
         $this->get(route('x-01.payment-risk'))->assertOk();
 
-        Livewire::test(PaymentRisk::class)->assertOk();
+        Livewire::test(\App\Modules\X01\Ui\PaymentRisk::class)->assertOk();
     }
 }

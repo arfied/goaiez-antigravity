@@ -6,7 +6,6 @@ namespace Tests\Modules\X195\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X195\Ui\MarketplaceView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class MarketplaceViewScreenTest extends TestCase
 
         $this->get(route('x-195.marketplace'))->assertOk();
 
-        Livewire::test(MarketplaceView::class)->assertOk();
+        Livewire::test(\App\Modules\X195\Ui\MarketplaceView::class)->assertOk();
     }
 }

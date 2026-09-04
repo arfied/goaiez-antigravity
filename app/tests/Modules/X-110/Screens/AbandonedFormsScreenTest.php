@@ -6,7 +6,6 @@ namespace Tests\Modules\X110\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X110\Ui\AbandonedForms;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class AbandonedFormsScreenTest extends TestCase
 
         $this->get(route('x-110.abandoned-forms'))->assertOk();
 
-        Livewire::test(AbandonedForms::class)->assertOk();
+        Livewire::test(\App\Modules\X110\Ui\AbandonedForms::class)->assertOk();
     }
 }

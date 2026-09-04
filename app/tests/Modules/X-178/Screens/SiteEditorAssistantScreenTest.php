@@ -6,7 +6,6 @@ namespace Tests\Modules\X178\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X178\Ui\SiteEditorAssistant;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class SiteEditorAssistantScreenTest extends TestCase
 
         $this->get(route('x-178.site-editor-assistant'))->assertOk();
 
-        Livewire::test(SiteEditorAssistant::class)->assertOk();
+        Livewire::test(\App\Modules\X178\Ui\SiteEditorAssistant::class)->assertOk();
     }
 }

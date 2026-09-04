@@ -6,7 +6,6 @@ namespace Tests\Modules\X182\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X182\Ui\ConnectedAccounts;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class ConnectedAccountsScreenTest extends TestCase
 
         $this->get(route('x-182.connected-accounts'))->assertOk();
 
-        Livewire::test(ConnectedAccounts::class)->assertOk();
+        Livewire::test(\App\Modules\X182\Ui\ConnectedAccounts::class)->assertOk();
     }
 }

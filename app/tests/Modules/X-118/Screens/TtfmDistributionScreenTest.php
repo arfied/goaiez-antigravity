@@ -6,7 +6,6 @@ namespace Tests\Modules\X118\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X118\Ui\TtfmDistribution;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class TtfmDistributionScreenTest extends TestCase
 
         $this->get(route('x-118.ttfm-distribution'))->assertOk();
 
-        Livewire::test(TtfmDistribution::class)->assertOk();
+        Livewire::test(\App\Modules\X118\Ui\TtfmDistribution::class)->assertOk();
     }
 }

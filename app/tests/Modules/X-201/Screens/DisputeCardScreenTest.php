@@ -6,7 +6,6 @@ namespace Tests\Modules\X201\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X201\Ui\DisputeCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class DisputeCardScreenTest extends TestCase
 
         $this->get(route('x-201.dispute-card'))->assertOk();
 
-        Livewire::test(DisputeCard::class)->assertOk();
+        Livewire::test(\App\Modules\X201\Ui\DisputeCard::class)->assertOk();
     }
 }

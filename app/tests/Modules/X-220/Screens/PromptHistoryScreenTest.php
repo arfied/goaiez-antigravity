@@ -6,7 +6,6 @@ namespace Tests\Modules\X220\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X220\Ui\PromptHistory;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class PromptHistoryScreenTest extends TestCase
 
         $this->get(route('x-220.prompt-history'))->assertOk();
 
-        Livewire::test(PromptHistory::class)->assertOk();
+        Livewire::test(\App\Modules\X220\Ui\PromptHistory::class)->assertOk();
     }
 }

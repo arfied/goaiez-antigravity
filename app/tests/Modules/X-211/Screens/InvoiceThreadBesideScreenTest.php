@@ -6,7 +6,6 @@ namespace Tests\Modules\X211\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X211\Ui\InvoiceThreadBeside;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class InvoiceThreadBesideScreenTest extends TestCase
 
         $this->get(route('x-211.invoice-thread-beside'))->assertOk();
 
-        Livewire::test(InvoiceThreadBeside::class)->assertOk();
+        Livewire::test(\App\Modules\X211\Ui\InvoiceThreadBeside::class)->assertOk();
     }
 }

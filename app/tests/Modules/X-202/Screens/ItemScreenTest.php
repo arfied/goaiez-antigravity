@@ -6,7 +6,6 @@ namespace Tests\Modules\X202\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X202\Ui\Item;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class ItemScreenTest extends TestCase
 
         $this->get(route('x-202.item'))->assertOk();
 
-        Livewire::test(Item::class)->assertOk();
+        Livewire::test(\App\Modules\X202\Ui\Item::class)->assertOk();
     }
 }

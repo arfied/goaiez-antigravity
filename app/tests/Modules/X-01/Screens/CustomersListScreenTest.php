@@ -6,7 +6,6 @@ namespace Tests\Modules\X01\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X01\Ui\CustomersList;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class CustomersListScreenTest extends TestCase
 
         $this->get(route('x-01.customers-list'))->assertOk();
 
-        Livewire::test(CustomersList::class)->assertOk();
+        Livewire::test(\App\Modules\X01\Ui\CustomersList::class)->assertOk();
     }
 }

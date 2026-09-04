@@ -6,7 +6,6 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X112\Ui\ImpersonationLogView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ImpersonationLogViewScreenTest extends TestCase
 
         $this->get(route('x-112.impersonation-log'))->assertOk();
 
-        Livewire::test(ImpersonationLogView::class)->assertOk();
+        Livewire::test(\App\Modules\X112\Ui\ImpersonationLogView::class)->assertOk();
     }
 }

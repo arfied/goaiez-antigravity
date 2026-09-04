@@ -6,7 +6,6 @@ namespace Tests\Modules\CMail\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\CMail\Ui\ComplaintbounceBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class ComplaintbounceBoardScreenTest extends TestCase
 
         $this->get(route('c-mail.complaintbounce-board'))->assertOk();
 
-        Livewire::test(ComplaintbounceBoard::class)->assertOk();
+        Livewire::test(\App\Modules\CMail\Ui\ComplaintbounceBoard::class)->assertOk();
     }
 }

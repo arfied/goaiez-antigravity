@@ -6,7 +6,6 @@ namespace Tests\Modules\X163\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X163\Ui\DailyPricingDigest;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class DailyPricingDigestScreenTest extends TestCase
 
         $this->get(route('x-163.daily-pricing-digest'))->assertOk();
 
-        Livewire::test(DailyPricingDigest::class)->assertOk();
+        Livewire::test(\App\Modules\X163\Ui\DailyPricingDigest::class)->assertOk();
     }
 }

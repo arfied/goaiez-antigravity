@@ -6,7 +6,6 @@ namespace Tests\Modules\X162\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X162\Ui\Map;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class MapScreenTest extends TestCase
 
         $this->get(route('x-162.map'))->assertOk();
 
-        Livewire::test(Map::class)->assertOk();
+        Livewire::test(\App\Modules\X162\Ui\Map::class)->assertOk();
     }
 }

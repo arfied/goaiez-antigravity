@@ -6,7 +6,6 @@ namespace Tests\Modules\X127\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X127\Ui\TenantZeroConsole;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class TenantZeroConsoleScreenTest extends TestCase
 
         $this->get(route('x-127.tenant-zero-console'))->assertOk();
 
-        Livewire::test(TenantZeroConsole::class)->assertOk();
+        Livewire::test(\App\Modules\X127\Ui\TenantZeroConsole::class)->assertOk();
     }
 }

@@ -6,7 +6,6 @@ namespace Tests\Modules\X124\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X124\Ui\ChatDockEvery;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ChatDockEveryScreenTest extends TestCase
 
         $this->get(route('x-124.chat-dock-every'))->assertOk();
 
-        Livewire::test(ChatDockEvery::class)->assertOk();
+        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class)->assertOk();
     }
 }

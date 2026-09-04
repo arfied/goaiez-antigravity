@@ -6,7 +6,6 @@ namespace Tests\Modules\X117\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X117\Ui\CheckoutBlock;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class CheckoutBlockScreenTest extends TestCase
 
         $this->get(route('x-117.checkout-block'))->assertOk();
 
-        Livewire::test(CheckoutBlock::class)->assertOk();
+        Livewire::test(\App\Modules\X117\Ui\CheckoutBlock::class)->assertOk();
     }
 }

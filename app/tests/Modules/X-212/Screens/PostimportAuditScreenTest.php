@@ -6,7 +6,6 @@ namespace Tests\Modules\X212\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X212\Ui\PostimportAudit;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class PostimportAuditScreenTest extends TestCase
 
         $this->get(route('x-212.postimport-audit'))->assertOk();
 
-        Livewire::test(PostimportAudit::class)->assertOk();
+        Livewire::test(\App\Modules\X212\Ui\PostimportAudit::class)->assertOk();
     }
 }

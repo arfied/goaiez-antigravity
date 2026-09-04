@@ -6,7 +6,6 @@ namespace Tests\Modules\X157\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X157\Ui\EdgeStatusPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class EdgeStatusPerScreenTest extends TestCase
 
         $this->get(route('x-157.edge-status-per'))->assertOk();
 
-        Livewire::test(EdgeStatusPer::class)->assertOk();
+        Livewire::test(\App\Modules\X157\Ui\EdgeStatusPer::class)->assertOk();
     }
 }

@@ -6,7 +6,6 @@ namespace Tests\Modules\CAgent\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\CAgent\Ui\TeachingBox;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class TeachingBoxScreenTest extends TestCase
 
         $this->get(route('c-agent.teaching-box'))->assertOk();
 
-        Livewire::test(TeachingBox::class)->assertOk();
+        Livewire::test(\App\Modules\CAgent\Ui\TeachingBox::class)->assertOk();
     }
 }

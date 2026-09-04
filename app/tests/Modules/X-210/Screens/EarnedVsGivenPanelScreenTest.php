@@ -6,7 +6,6 @@ namespace Tests\Modules\X210\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X210\Ui\EarnedVsGivenPanel;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class EarnedVsGivenPanelScreenTest extends TestCase
 
         $this->get(route('x-210.earnedvsgiven-panel'))->assertOk();
 
-        Livewire::test(EarnedVsGivenPanel::class)->assertOk();
+        Livewire::test(\App\Modules\X210\Ui\EarnedVsGivenPanel::class)->assertOk();
     }
 }

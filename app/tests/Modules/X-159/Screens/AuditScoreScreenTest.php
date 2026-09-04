@@ -6,7 +6,6 @@ namespace Tests\Modules\X159\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X159\Ui\AuditScore;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class AuditScoreScreenTest extends TestCase
 
         $this->get(route('x-159.score'))->assertOk();
 
-        Livewire::test(AuditScore::class)->assertOk();
+        Livewire::test(\App\Modules\X159\Ui\AuditScore::class)->assertOk();
     }
 }

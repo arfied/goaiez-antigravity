@@ -6,7 +6,6 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X112\Ui\AgencyConsole;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class AgencyConsoleScreenTest extends TestCase
 
         $this->get(route('x-112.agency-console'))->assertOk();
 
-        Livewire::test(AgencyConsole::class)->assertOk();
+        Livewire::test(\App\Modules\X112\Ui\AgencyConsole::class)->assertOk();
     }
 }

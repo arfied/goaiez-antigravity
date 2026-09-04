@@ -6,7 +6,6 @@ namespace Tests\Modules\X170\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X170\Ui\Commissions;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class CommissionsScreenTest extends TestCase
 
         $this->get(route('x-170.commissions'))->assertOk();
 
-        Livewire::test(Commissions::class)->assertOk();
+        Livewire::test(\App\Modules\X170\Ui\Commissions::class)->assertOk();
     }
 }

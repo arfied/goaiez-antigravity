@@ -6,7 +6,6 @@ namespace Tests\Modules\X166\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X166\Ui\ByService;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class ByServiceScreenTest extends TestCase
 
         $this->get(route('x-166.by-service'))->assertOk();
 
-        Livewire::test(ByService::class)->assertOk();
+        Livewire::test(\App\Modules\X166\Ui\ByService::class)->assertOk();
     }
 }

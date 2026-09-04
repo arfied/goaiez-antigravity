@@ -6,7 +6,6 @@ namespace Tests\Modules\X158\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X158\Ui\ContentPlansVideo;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ContentPlansVideoScreenTest extends TestCase
 
         $this->get(route('x-158.content-plans-video'))->assertOk();
 
-        Livewire::test(ContentPlansVideo::class)->assertOk();
+        Livewire::test(\App\Modules\X158\Ui\ContentPlansVideo::class)->assertOk();
     }
 }

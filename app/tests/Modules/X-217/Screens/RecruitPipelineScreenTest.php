@@ -6,7 +6,6 @@ namespace Tests\Modules\X217\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X217\Ui\RecruitPipeline;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class RecruitPipelineScreenTest extends TestCase
 
         $this->get(route('x-217.recruit-pipeline'))->assertOk();
 
-        Livewire::test(RecruitPipeline::class)->assertOk();
+        Livewire::test(\App\Modules\X217\Ui\RecruitPipeline::class)->assertOk();
     }
 }

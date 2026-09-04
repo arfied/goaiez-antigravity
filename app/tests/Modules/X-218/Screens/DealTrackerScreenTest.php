@@ -6,7 +6,6 @@ namespace Tests\Modules\X218\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X218\Ui\DealTracker;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class DealTrackerScreenTest extends TestCase
 
         $this->get(route('x-218.deal-tracker'))->assertOk();
 
-        Livewire::test(DealTracker::class)->assertOk();
+        Livewire::test(\App\Modules\X218\Ui\DealTracker::class)->assertOk();
     }
 }

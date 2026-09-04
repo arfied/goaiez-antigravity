@@ -6,7 +6,6 @@ namespace Tests\Modules\X108\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X108\Ui\Waitlist;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class WaitlistScreenTest extends TestCase
 
         $this->get(route('x-108.waitlist'))->assertOk();
 
-        Livewire::test(Waitlist::class)->assertOk();
+        Livewire::test(\App\Modules\X108\Ui\Waitlist::class)->assertOk();
     }
 }

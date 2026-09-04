@@ -256,11 +256,16 @@ class SurfacesGenerateCommand extends Command
         $content = "<?php\n\ndeclare(strict_types=1);\n\nuse Illuminate\Support\Facades\Route;\n\n";
 
         if (! empty($tenantRoutes)) {
-            $content .= "app('router')->aliasMiddleware('tenant.role', function (\$request, \$next) {\n";
-            $content .= "    abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);\n";
-            $content .= "    return \$next(\$request);\n";
-            $content .= "});\n\n";
-            $content .= "Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/$modSlug')->group(function () {\n";
+            $content .= "if (! class_exists('TenantRoleMiddleware')) {\n";
+            $content .= "    class TenantRoleMiddleware\n";
+            $content .= "    {\n";
+            $content .= "        public function handle(\$request, \$next) {\n";
+            $content .= "            abort_unless(auth()->user()?->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);\n";
+            $content .= "            return \$next(\$request);\n";
+            $content .= "        }\n";
+            $content .= "    }\n";
+            $content .= "}\n\n";
+            $content .= "Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/$modSlug')->group(function () {\n";
             $content .= implode("\n", $tenantRoutes)."\n";
             $content .= "});\n\n";
         }

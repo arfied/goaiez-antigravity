@@ -6,7 +6,6 @@ namespace Tests\Modules\CWhatsapp\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\CWhatsapp\Ui\TemplateApprovalQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class TemplateApprovalQueueScreenTest extends TestCase
 
         $this->get(route('c-whatsapp.template-approval-queue'))->assertOk();
 
-        Livewire::test(TemplateApprovalQueue::class)->assertOk();
+        Livewire::test(\App\Modules\CWhatsapp\Ui\TemplateApprovalQueue::class)->assertOk();
     }
 }

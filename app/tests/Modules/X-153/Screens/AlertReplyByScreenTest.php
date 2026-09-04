@@ -6,7 +6,6 @@ namespace Tests\Modules\X153\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X153\Ui\AlertReplyBy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class AlertReplyByScreenTest extends TestCase
 
         $this->get(route('x-153.alert-reply-by'))->assertOk();
 
-        Livewire::test(AlertReplyBy::class)->assertOk();
+        Livewire::test(\App\Modules\X153\Ui\AlertReplyBy::class)->assertOk();
     }
 }

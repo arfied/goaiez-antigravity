@@ -6,7 +6,6 @@ namespace Tests\Modules\X119\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X119\Ui\FactFreshnessPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class FactFreshnessPerScreenTest extends TestCase
 
         $this->get(route('x-119.fact-freshness-per'))->assertOk();
 
-        Livewire::test(FactFreshnessPer::class)->assertOk();
+        Livewire::test(\App\Modules\X119\Ui\FactFreshnessPer::class)->assertOk();
     }
 }

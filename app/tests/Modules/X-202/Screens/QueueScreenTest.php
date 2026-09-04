@@ -6,7 +6,6 @@ namespace Tests\Modules\X202\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X202\Ui\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class QueueScreenTest extends TestCase
 
         $this->get(route('x-202.queue'))->assertOk();
 
-        Livewire::test(Queue::class)->assertOk();
+        Livewire::test(\App\Modules\X202\Ui\Queue::class)->assertOk();
     }
 }

@@ -6,7 +6,6 @@ namespace Tests\Modules\X124\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X124\Ui\AssistantunsupportedLog;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class AssistantunsupportedLogScreenTest extends TestCase
 
         $this->get(route('x-124.assistantunsupported-log'))->assertOk();
 
-        Livewire::test(AssistantunsupportedLog::class)->assertOk();
+        Livewire::test(\App\Modules\X124\Ui\AssistantunsupportedLog::class)->assertOk();
     }
 }

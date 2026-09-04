@@ -6,7 +6,6 @@ namespace Tests\Modules\X189\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X189\Ui\BrandCardEditor;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class BrandCardEditorScreenTest extends TestCase
 
         $this->get(route('x-189.brand-card-editor'))->assertOk();
 
-        Livewire::test(BrandCardEditor::class)->assertOk();
+        Livewire::test(\App\Modules\X189\Ui\BrandCardEditor::class)->assertOk();
     }
 }

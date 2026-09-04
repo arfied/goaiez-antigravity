@@ -6,7 +6,6 @@ namespace Tests\Modules\X172\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X172\Ui\CustomerfacingPortal;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class CustomerfacingPortalScreenTest extends TestCase
 
         $this->get(route('x-172.customerfacing-portal'))->assertOk();
 
-        Livewire::test(CustomerfacingPortal::class)->assertOk();
+        Livewire::test(\App\Modules\X172\Ui\CustomerfacingPortal::class)->assertOk();
     }
 }

@@ -6,7 +6,6 @@ namespace Tests\Modules\X08\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X08\Ui\ReasonPerRowView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class ReasonPerRowViewScreenTest extends TestCase
 
         $this->get(route('x-08.reason-per-row'))->assertOk();
 
-        Livewire::test(ReasonPerRowView::class)->assertOk();
+        Livewire::test(\App\Modules\X08\Ui\ReasonPerRowView::class)->assertOk();
     }
 }

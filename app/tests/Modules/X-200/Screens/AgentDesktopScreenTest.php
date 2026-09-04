@@ -6,7 +6,6 @@ namespace Tests\Modules\X200\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X200\Ui\AgentDesktop;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class AgentDesktopScreenTest extends TestCase
 
         $this->get(route('x-200.agent-desktop'))->assertOk();
 
-        Livewire::test(AgentDesktop::class)->assertOk();
+        Livewire::test(\App\Modules\X200\Ui\AgentDesktop::class)->assertOk();
     }
 }

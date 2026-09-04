@@ -6,7 +6,6 @@ namespace Tests\Modules\X205\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X205\Ui\EarningsView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class EarningsViewScreenTest extends TestCase
 
         $this->get(route('x-205.earnings'))->assertOk();
 
-        Livewire::test(EarningsView::class)->assertOk();
+        Livewire::test(\App\Modules\X205\Ui\EarningsView::class)->assertOk();
     }
 }

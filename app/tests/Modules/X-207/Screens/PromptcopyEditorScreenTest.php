@@ -6,7 +6,6 @@ namespace Tests\Modules\X207\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X207\Ui\PromptcopyEditor;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class PromptcopyEditorScreenTest extends TestCase
 
         $this->get(route('x-207.promptcopy-editor'))->assertOk();
 
-        Livewire::test(PromptcopyEditor::class)->assertOk();
+        Livewire::test(\App\Modules\X207\Ui\PromptcopyEditor::class)->assertOk();
     }
 }

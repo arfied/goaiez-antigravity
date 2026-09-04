@@ -6,7 +6,6 @@ namespace Tests\Modules\X160\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X160\Ui\ExtractionErrorRate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ExtractionErrorRateScreenTest extends TestCase
 
         $this->get(route('x-160.extraction-error-rate'))->assertOk();
 
-        Livewire::test(ExtractionErrorRate::class)->assertOk();
+        Livewire::test(\App\Modules\X160\Ui\ExtractionErrorRate::class)->assertOk();
     }
 }

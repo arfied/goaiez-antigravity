@@ -6,7 +6,6 @@ namespace Tests\Modules\X215\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X215\Ui\SignaturePad;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class SignaturePadScreenTest extends TestCase
 
         $this->get(route('x-215.signature-pad'))->assertOk();
 
-        Livewire::test(SignaturePad::class)->assertOk();
+        Livewire::test(\App\Modules\X215\Ui\SignaturePad::class)->assertOk();
     }
 }

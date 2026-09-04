@@ -6,7 +6,6 @@ namespace Tests\Modules\X130\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X130\Ui\CoverageByTrade;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class CoverageByTradeScreenTest extends TestCase
 
         $this->get(route('x-130.coverage-by-trade'))->assertOk();
 
-        Livewire::test(CoverageByTrade::class)->assertOk();
+        Livewire::test(\App\Modules\X130\Ui\CoverageByTrade::class)->assertOk();
     }
 }

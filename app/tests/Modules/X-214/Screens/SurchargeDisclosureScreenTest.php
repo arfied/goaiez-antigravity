@@ -6,7 +6,6 @@ namespace Tests\Modules\X214\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X214\Ui\SurchargeDisclosure;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class SurchargeDisclosureScreenTest extends TestCase
 
         $this->get(route('x-214.surcharge-disclosure'))->assertOk();
 
-        Livewire::test(SurchargeDisclosure::class)->assertOk();
+        Livewire::test(\App\Modules\X214\Ui\SurchargeDisclosure::class)->assertOk();
     }
 }

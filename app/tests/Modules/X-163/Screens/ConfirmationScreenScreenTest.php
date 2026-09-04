@@ -6,7 +6,6 @@ namespace Tests\Modules\X163\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X163\Ui\ConfirmationScreen;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class ConfirmationScreenScreenTest extends TestCase
 
         $this->get(route('x-163.confirmation-screen'))->assertOk();
 
-        Livewire::test(ConfirmationScreen::class)->assertOk();
+        Livewire::test(\App\Modules\X163\Ui\ConfirmationScreen::class)->assertOk();
     }
 }

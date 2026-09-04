@@ -6,7 +6,6 @@ namespace Tests\Modules\X66\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X66\Ui\Calls;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class CallsScreenTest extends TestCase
 
         $this->get(route('x-66.calls'))->assertOk();
 
-        Livewire::test(Calls::class)->assertOk();
+        Livewire::test(\App\Modules\X66\Ui\Calls::class)->assertOk();
     }
 }

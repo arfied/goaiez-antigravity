@@ -6,7 +6,6 @@ namespace Tests\Modules\X168\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X168\Ui\ApprovalsView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class ApprovalsViewScreenTest extends TestCase
 
         $this->get(route('x-168.approvals'))->assertOk();
 
-        Livewire::test(ApprovalsView::class)->assertOk();
+        Livewire::test(\App\Modules\X168\Ui\ApprovalsView::class)->assertOk();
     }
 }

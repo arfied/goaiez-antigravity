@@ -6,7 +6,6 @@ namespace Tests\Modules\X120\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X120\Ui\CardScreen;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -20,6 +19,6 @@ class CardScreenScreenTest extends TestCase
 
         $this->get(route('x-120.card-screen'))->assertOk();
 
-        Livewire::test(CardScreen::class)->assertOk();
+        Livewire::test(\App\Modules\X120\Ui\CardScreen::class)->assertOk();
     }
 }

@@ -6,7 +6,6 @@ namespace Tests\Modules\X118\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X118\Ui\Groundcheck;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class GroundcheckScreenTest extends TestCase
 
         $this->get(route('x-118.groundcheck'))->assertOk();
 
-        Livewire::test(Groundcheck::class)->assertOk();
+        Livewire::test(\App\Modules\X118\Ui\Groundcheck::class)->assertOk();
     }
 }

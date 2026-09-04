@@ -6,7 +6,6 @@ namespace Tests\Modules\X145\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X145\Ui\ProposalsAppearToday;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class ProposalsAppearTodayScreenTest extends TestCase
 
         $this->get(route('x-145.proposals-appear-today'))->assertOk();
 
-        Livewire::test(ProposalsAppearToday::class)->assertOk();
+        Livewire::test(\App\Modules\X145\Ui\ProposalsAppearToday::class)->assertOk();
     }
 }

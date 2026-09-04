@@ -6,7 +6,6 @@ namespace Tests\Modules\X173\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Modules\X173\Ui\SyncErrorRateView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +18,6 @@ class SyncErrorRateViewScreenTest extends TestCase
 
         $this->get(route('x-173.sync-error-rate'))->assertOk();
 
-        Livewire::test(SyncErrorRateView::class)->assertOk();
+        Livewire::test(\App\Modules\X173\Ui\SyncErrorRateView::class)->assertOk();
     }
 }
