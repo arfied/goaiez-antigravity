@@ -1,83 +1,50 @@
-<div class="max-w-6xl mx-auto space-y-6">
-    <!-- Header & Stats Overview -->
-    <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl space-y-6">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                        Module C-Reviews · P-110 Compliant Engine
-                    </span>
-                    <span class="text-xs text-slate-400">Tenant Business ID: <strong class="text-white">#{{ $businessId }}</strong></span>
-                </div>
-                <h1 class="text-2xl font-bold text-white mt-1">Reputation Engine & Review Hub</h1>
-                <p class="text-xs text-slate-400">Autonomous review ingestion, strict non-incentivized request linting, 4-5★ auto-replies, and 1-3★ QA ticket protection.</p>
-            </div>
+<div class="max-w-6xl mx-auto space-y-4 pb-12 w-full p-4 relative" wire:loading.class="opacity-50 pointer-events-none">
+    <div wire:loading class="absolute inset-0 z-50 flex items-center justify-center">
+        <div class="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
 
-            <!-- Quick Add Simulation Review -->
-            <div class="flex items-center gap-2">
-                <button wire:click="addSampleReview('google', 5, 'Fastest dispatch in town! Arrived in under 30 mins and fixed the pipe.')" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-medium transition">
-                    + Ingest 5★ (Google)
-                </button>
-                <button wire:click="addSampleReview('yelp', 2, 'Good technical work, but scheduling was delayed by an hour.')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-medium transition">
-                    + Ingest 2★ (Yelp)
-                </button>
-            </div>
+    <!-- Header & Action Notice -->
+    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <div>
+            <h1 class="text-lg font-bold text-white flex items-center gap-2">
+                Reviews & QA
+                @if($isSample)
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</span>
+                @endif
+            </h1>
+            <p class="text-sm text-slate-400">Manage review requests, replies, and QA tickets.</p>
         </div>
-
-        @if($actionNotice)
-            <div class="p-3.5 rounded-xl text-xs flex items-center justify-between {{ $noticeType === 'error' ? 'bg-rose-500/10 border border-rose-500/30 text-rose-300' : ($noticeType === 'warning' ? 'bg-amber-500/10 border border-amber-500/30 text-amber-300' : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300') }}">
-                <span class="font-medium">{{ $actionNotice }}</span>
-                <button wire:click="$set('actionNotice', null)" class="text-slate-400 hover:text-white font-bold ml-3">&times;</button>
-            </div>
-        @endif
-
-        <!-- Metrics Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <div class="text-xs text-slate-400">Total Ingested</div>
-                <div class="text-2xl font-bold text-white font-mono mt-1">{{ $totalCount }}</div>
-                <div class="text-[11px] text-purple-400 mt-1">Multi-Channel Sync</div>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <div class="text-xs text-slate-400">Average Rating</div>
-                <div class="text-2xl font-bold text-amber-400 font-mono mt-1">{{ $avgRating }} ★</div>
-                <div class="text-[11px] text-slate-400 mt-1">Google & Yelp Aggregated</div>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <div class="text-xs text-slate-400">5-Star Reviews</div>
-                <div class="text-2xl font-bold text-emerald-400 font-mono mt-1">{{ $fiveStarCount }}</div>
-                <div class="text-[11px] text-emerald-400 mt-1">Auto-Replied</div>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800">
-                <div class="text-xs text-slate-400">Triaged QA Tickets</div>
-                <div class="text-2xl font-bold text-rose-400 font-mono mt-1">{{ $qaCount }}</div>
-                <div class="text-[11px] text-rose-400 mt-1">24h SLA Active</div>
+        <div class="flex items-center gap-4 text-sm text-slate-400">
+            <div class="flex flex-col text-right">
+                <span>Public Threshold: <strong class="text-white">{{ $threshold }}★</strong></span>
+                <span>QA Tickets to: <strong class="text-white">{{ $ticketRecipient }}</strong></span>
             </div>
         </div>
     </div>
 
-    <!-- Review Dispatch Form (P-110 Lint Enforced) & Ingestion Table -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Send Review Request -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm space-y-4">
-            <h2 class="text-base font-bold text-white flex items-center gap-2">
-                <svg class="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                Send Review Request
-            </h2>
-            <p class="text-xs text-slate-400 leading-relaxed">
-                Linted for §37.3 compliance: <strong>no staff mentions ("mention Dave")</strong> and <strong>no incentive gating ("10% off for review")</strong>.
-            </p>
+    @if($actionNotice)
+        <div class="p-4 rounded-xl text-sm font-medium border shadow-lg {{ $noticeType === 'error' ? 'bg-rose-950/50 border-rose-900 text-rose-300' : ($noticeType === 'warning' ? 'bg-amber-950/50 border-amber-900 text-amber-300' : 'bg-emerald-950/50 border-emerald-900 text-emerald-300') }}">
+            {{ $actionNotice }}
+            <button wire:click="$set('actionNotice', null)" class="float-right text-current opacity-70 hover:opacity-100">&times;</button>
+        </div>
+    @endif
 
-            <div class="space-y-3">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Composer Panel -->
+        <div class="lg:col-span-1 space-y-4">
+            <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4 shadow-xl">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                    <h2 class="text-sm font-bold text-white">Send New Ask</h2>
+                </div>
+
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Target Platform</label>
-                    <select wire:model="platform" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
-                        <option value="google">Google Business Profile</option>
+                    <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Platform</label>
+                    <select wire:model="platform" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
+                        <option value="google">Google</option>
                         <option value="yelp">Yelp</option>
-                        <option value="facebook">Facebook Reviews</option>
-                        <option value="bbb">Better Business Bureau</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="bbb">BBB</option>
                     </select>
                 </div>
 
@@ -90,16 +57,6 @@
                     ></textarea>
                 </div>
 
-                <div class="flex items-center gap-2 pt-1">
-                    <button wire:click="$set('promptTemplate', 'Please leave a review and mention Dave for 10% off!')" class="text-[10px] text-rose-400 hover:underline">
-                        Test Banned Prompt
-                    </button>
-                    <span class="text-slate-600">·</span>
-                    <button wire:click="$set('promptTemplate', 'How did the repair go? We would love your feedback.')" class="text-[10px] text-emerald-400 hover:underline">
-                        Valid Compliant Prompt
-                    </button>
-                </div>
-
                 <button 
                     wire:click="sendRequest" 
                     class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg shadow-purple-600/30 transition flex items-center justify-center gap-2"
@@ -109,7 +66,7 @@
             </div>
         </div>
 
-        <!-- Ingested Reviews List & AI Reply Panel -->
+        <!-- Ingested Reviews List & AI Response Panel -->
         <div class="lg:col-span-2 space-y-4">
             <!-- Filter Bar -->
             <div class="flex items-center justify-between gap-2 overflow-x-auto pb-1">
@@ -117,35 +74,58 @@
                     <button wire:click="$set('filter', 'all')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'all' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
                         All ({{ $totalCount }})
                     </button>
-                    <button wire:click="$set('filter', '5star')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === '5star' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        5-Star Only
+                    <button wire:click="$set('filter', 'public')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'public' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
+                        Public Path ({{ $publicCount }})
                     </button>
-                    <button wire:click="$set('filter', '1to3star')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === '1to3star' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
-                        1-3★ QA Escalations
+                    <button wire:click="$set('filter', 'internal')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'internal' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
+                        Internal QA ({{ $internalCount }})
                     </button>
                     <button wire:click="$set('filter', 'google')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'google' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
                         Google
                     </button>
+                    <button wire:click="$set('filter', 'yelp')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'yelp' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
+                        Yelp
+                    </button>
+                    <button wire:click="$set('filter', 'facebook')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'facebook' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
+                        Facebook
+                    </button>
+                    <button wire:click="$set('filter', 'bbb')" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $filter === 'bbb' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-400 hover:bg-slate-800' }}">
+                        BBB
+                    </button>
+                </div>
+                <div class="text-xs text-slate-400 font-medium whitespace-nowrap">
+                    Avg Rating: <span class="text-white">{{ $avgRating }}</span>
                 </div>
             </div>
 
             <!-- Reviews Feed -->
             <div class="space-y-3">
                 @forelse($requests as $r)
-                    <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-4 space-y-3 hover:border-slate-700 transition">
+                    <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-4 space-y-3 hover:border-slate-700 transition relative">
+                        @if($isSample)
+                            <div class="absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</div>
+                        @endif
                         <div class="flex items-start justify-between gap-2">
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded text-[11px] font-bold font-mono uppercase {{ $r->platform === 'google' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30' }}">
+                                <span class="px-2 py-0.5 rounded text-[11px] font-bold font-mono uppercase {{ $r->platform === 'google' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-purple-500/20 text-purple-400 border border-purple-500/30' }}">
                                     {{ $r->platform }}
                                 </span>
-                                <div class="text-amber-400 font-bold text-sm tracking-wider">
-                                    {{ str_repeat('★', $r->rating ?? 5) }}{{ str_repeat('☆', max(0, 5 - ($r->rating ?? 5))) }}
-                                </div>
+                                @if($r->rating)
+                                    <div class="text-amber-400 font-bold text-sm tracking-wider">
+                                        {{ str_repeat('★', $r->rating) }}{{ str_repeat('☆', max(0, 5 - $r->rating)) }}
+                                    </div>
+                                @else
+                                    <div class="text-slate-500 font-bold text-sm">No rating yet</div>
+                                @endif
                             </div>
                             
                             <span class="text-[11px] px-2.5 py-0.5 rounded-full font-semibold {{ $r->status === 'published_public' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : ($r->status === 'triaged_internal' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-slate-800 text-slate-400') }}">
                                 {{ $r->status }}
                             </span>
+                        </div>
+
+                        <div class="text-xs text-slate-400">
+                            Customer: <strong class="text-slate-200">{{ $r->customer_name ?? 'Unknown' }}</strong>
                         </div>
 
                         <p class="text-xs text-slate-200 leading-relaxed">
@@ -156,14 +136,27 @@
                         <div class="flex items-center justify-between pt-2 border-t border-slate-800/80">
                             <span class="text-[10px] text-slate-500 font-mono">Review ID #{{ $r->id }}</span>
                             <div class="flex items-center gap-2">
-                                @if($r->rating && $r->rating <= 3)
-                                    <button wire:click="escalateToQa({{ $r->id }})" class="px-2.5 py-1 rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-600/40 text-[11px] font-medium transition">
-                                        Escalate QA SLA
+                                @if($r->status === 'sent' && !$r->rating)
+                                    <button wire:click="resendAsk({{ $r->id }})" class="px-2.5 py-1 rounded bg-slate-600/20 hover:bg-slate-600/30 text-slate-300 border border-slate-600/40 text-[11px] font-medium transition">
+                                        Resend ask
                                     </button>
                                 @endif
-                                <button wire:click="selectReview({{ $r->id }})" class="px-2.5 py-1 rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-600/40 text-[11px] font-medium transition">
-                                    Draft AI Response
-                                </button>
+
+                                @if($r->rating !== null && $r->rating < $threshold)
+                                    @if($r->ticket)
+                                        <a href="/tickets/{{ $r->ticket->id }}" class="px-2.5 py-1 rounded bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-600/40 text-[11px] font-medium transition inline-block">
+                                            Open ticket
+                                        </a>
+                                    @else
+                                        <button wire:click="escalateToQa({{ $r->id }})" class="px-2.5 py-1 rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-600/40 text-[11px] font-medium transition">
+                                            Escalate to QA
+                                        </button>
+                                    @endif
+                                @elseif($r->rating !== null && $r->rating >= $threshold)
+                                    <button wire:click="selectReview({{ $r->id }})" class="px-2.5 py-1 rounded bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-600/40 text-[11px] font-medium transition">
+                                        Reply
+                                    </button>
+                                @endif
                             </div>
                         </div>
 
@@ -174,7 +167,10 @@
                                     <span class="text-xs font-bold text-white">AI Response Generator</span>
                                     <button wire:click="unselectReview()" class="text-xs text-slate-400 hover:text-white">&times; Cancel</button>
                                 </div>
-                                <textarea wire:model="replyDraft" rows="3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
+                                <div class="text-xs text-slate-400 italic bg-slate-900 p-2 rounded">
+                                    "{{ $r->review_text }}"
+                                </div>
+                                <textarea wire:model="replyDraft" rows="3" placeholder="Draft reply..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
                                 
                                 <div class="flex items-center justify-between">
                                     <label class="flex items-center gap-2 text-xs text-slate-400">
@@ -189,12 +185,24 @@
                         @endif
                     </div>
                 @empty
-                    <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
-                        No reviews found for this filter.
-                    </div>
+                    @if($isSample)
+                        <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">SAMPLE</span>
+                            No sample reviews generated yet.
+                        </div>
+                    @elseif($totalCount === 0)
+                        <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
+                            No review requests yet. The first ask goes out when a job completes (autopilot), or send one now.
+                            <br><br>
+                            <button wire:click="toggleSample" class="text-purple-400 hover:underline">Show me what this looks like</button>
+                        </div>
+                    @else
+                        <div class="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
+                            No reviews found for this filter.
+                        </div>
+                    @endif
                 @endforelse
             </div>
         </div>
     </div>
 </div>
-
