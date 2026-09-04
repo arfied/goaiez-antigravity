@@ -12,8 +12,7 @@ final class CancelPendingStepsOnSuppression
 {
     public function __construct(
         private readonly SequenceStopAction $sequenceStopAction
-    ) {
-    }
+    ) {}
 
     public function handle(SuppressionAdded $event): void
     {
