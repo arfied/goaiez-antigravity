@@ -157,7 +157,7 @@ abstract class TestCase extends BaseTestCase
         static $numberSeed = 1000;
         app(\App\Services\Sms\TenantNumbers::class)->addToPool('+1512555' . $numberSeed++);
 
-        $owner = User::first() ?? User::factory()->create();
+        $owner = isset($attributes["owner_user_id"]) ? User::find($attributes["owner_user_id"]) : User::factory()->create();
         $name = $attributes['name'] ?? 'Test Business';
         $biz = app(TenantProvisioner::class)->provision($owner);
 
