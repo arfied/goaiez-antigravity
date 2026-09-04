@@ -179,9 +179,63 @@ class CReviewsTest extends TestCase
     /**
      * [G20-04] named in the header; a reviewer's name is a signal (P-068)
      */
-    public function test_g20_04_reviewer_name_signal(): void
+    public function test_g20_04_reviewer_name_signal_refused_without_consent(): void
     {
-        $this->assertTrue(true);
+        $biz = self::provisionTenant(['name' => 'Reviewer Contact Test Biz']);
+        
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'customer_name' => 'John Doe',
+        ]);
+        
+        $action = new \App\Modules\CReviews\Actions\ReviewerContactAction();
+        $res = $action->handle($biz->id, $req->id);
+        
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('REVIEWER_NAME_IS_NOT_CONSENT', $res['refusal_code']);
+    }
+
+    public function test_g20_04_reviewer_name_signal_allowed_with_consent(): void
+    {
+        $biz = self::provisionTenant(['name' => 'Reviewer Contact Test Biz 2']);
+        
+        $person = \App\Modules\X121\Models\Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'phone' => '+15125559999',
+        ]);
+        
+        // Satisfy the legacy foreign key
+        \Illuminate\Support\Facades\DB::table('customers')->insert([
+            'id' => $person->id,
+            'business_id' => $biz->id,
+            'created_at' => now(),
+        ]);
+        
+        \App\Models\ConsentRecord::create([
+            'business_id' => $biz->id,
+            'customer_id' => $person->id,
+            'channel' => 'sms',
+            'state' => 'opted_in',
+            'captured_by' => 'platform',
+            'capture_surface' => 'feedback_page',
+            'disclosure_version' => '1.0',
+            'proof_hash' => 'dummy',
+            'terms_version' => '1.0',
+        ]);
+        
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create([
+            'business_id' => $biz->id,
+            'platform' => 'google',
+            'customer_name' => 'John Doe',
+            'customer_id' => $person->id,
+        ]);
+        
+        $action = new \App\Modules\CReviews\Actions\ReviewerContactAction();
+        $res = $action->handle($biz->id, $req->id);
+        
+        $this->assertEquals('sent', $res['status']);
     }
 
     /**
