@@ -164,4 +164,51 @@ class CReviewsScreensTest extends TestCase
         $this->assertEquals('resolved', $ticket->status);
         $this->assertNotNull($ticket->resolved_at);
     }
+
+    public function test_loss_alerts_mount_and_empty(): void
+    {
+        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class, ["businessId" => $this->bizId])
+            ->assertOk()
+            ->assertSee("Customer Loss and Churn Risk Alerts");
+    }
+    
+    public function test_loss_alerts_breached_ticket(): void
+    {
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create(["business_id" => $this->bizId, "rating" => 2]);
+        $ticket = \App\Modules\X181\Models\QaTicket::create(["business_id" => $this->bizId, "subject" => "test", "arrived_at" => now(), "status" => "open", "sla_due_at" => now()->subHours(2), "review_request_id" => $req->id]);
+        
+        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class, ["businessId" => $this->bizId])
+            ->assertSee("SLA breached")
+            ->assertSee("Ticket #".$ticket->id);
+    }
+    
+    public function test_loss_alerts_low_rating_unresolved(): void
+    {
+        \App\Modules\CReviews\Models\QaSetting::updateOrCreate(["business_id" => $this->bizId], ["min_public_stars" => 4]);
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create(["business_id" => $this->bizId, "rating" => 3]);
+        
+        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class, ["businessId" => $this->bizId])
+            ->assertSee("Rating 3 <= 4")
+            ->assertSee("Review #".$req->id);
+    }
+    
+    public function test_loss_alerts_resolved_on_time_does_not_appear(): void
+    {
+        $ticket = \App\Modules\X181\Models\QaTicket::create(["business_id" => $this->bizId, "subject" => "test", "arrived_at" => now(), "status" => "resolved", "sla_due_at" => now()->addHours(2)]);
+        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class, ["businessId" => $this->bizId])
+            ->assertDontSee("Ticket #".$ticket->id);
+    }
+    
+    public function test_loss_alerts_action_writes_alert(): void
+    {
+        $req = \App\Modules\CReviews\Models\ReviewRequest::create(["business_id" => $this->bizId, "rating" => 2]);
+        $ticket = \App\Modules\X181\Models\QaTicket::create(["business_id" => $this->bizId, "subject" => "test", "arrived_at" => now(), "status" => "open", "sla_due_at" => now()->subHours(2), "review_request_id" => $req->id]);
+        
+        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class, ["businessId" => $this->bizId])
+            ->call("resolveAndAlert", $ticket->id, "fixed it");
+            
+        $ticket->refresh();
+        $this->assertEquals("resolved", $ticket->status);
+        $this->assertSame(1, \App\Modules\X153\Models\Alert::where("business_id", $this->bizId)->count());
+    }
 }
