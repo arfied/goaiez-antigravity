@@ -1,10 +1,14 @@
 <div wire:init="load">
     @if ($errorMessage)
-        <x-ui.error-panel :message="$errorMessage" retry="load" />
+        <x-ui.error-panel heading="We could not load your flow runs." retry="load">
+            {{ $errorMessage }}
+        </x-ui.error-panel>
     @elseif (! $ready)
         <x-ui.skeleton label="Loading runs..." />
     @elseif ($runs->isEmpty())
-        <x-ui.empty-state title="No runs found" description="There are no flow runs yet." />
+        <x-ui.empty-state heading="No runs found">
+            When a flow runs, its history and status will appear here.
+        </x-ui.empty-state>
     @else
         <h3>Flow Execution Runs</h3>
         <div class="space-y-4 mt-4">
@@ -12,8 +16,8 @@
                 <div class="border p-4 rounded" wire:key="run-{{ $run->id }}">
                     <div class="flex justify-between items-center">
                         <div>
-                            <strong>{{ $run->flow->name ?? 'Unknown Flow' }}</strong>
-                            <x-ui.status-pill :status="$run->status" />
+                            <strong>{{ $run->flow->name }}</strong>
+                            <x-ui.status-pill :state="match($run->status) { 'success' => 'ok', 'error' => 'alert', 'simulated' => 'unknown', default => 'unknown' }" />
                         </div>
                         <x-ui.button wire:click="retry({{ $run->id }})">Retry</x-ui.button>
                     </div>

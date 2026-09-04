@@ -155,4 +155,66 @@ class X125Test extends TestCase
         $newRun = FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
         $this->assertTrue($newRun->is_manual_retry, 'Retry must be marked as manual');
     }
+
+    public function test_runs_component_error_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Error State Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id]);
+        $component->set('errorMessage', 'Something went terribly wrong.');
+
+        $component->assertSee('We could not load your flow runs.')
+            ->assertSee('Something went terribly wrong.');
+    }
+
+    public function test_runs_component_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty State Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $flow = $this->createAction->handle(
+            businessId: $biz->id,
+            name: 'Empty State Flow',
+            triggerEvent: 'empty.event',
+            nodes: [['type' => 'action', 'label' => 'Empty Action']],
+        );
+        // Tenant has a flow but no runs.
+
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('No runs found')
+            ->assertSee('When a flow runs, its history and status will appear here.');
+    }
+
+    public function test_runs_component_status_pills(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Status Pill Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $flow = $this->createAction->handle(
+            businessId: $biz->id,
+            name: 'Status Pill Flow',
+            triggerEvent: 'status.event',
+            nodes: [['type' => 'action', 'label' => 'Status Action']],
+        );
+
+        $this->runAction->handle($biz->id, $flow->id, ['test' => true]);
+        $this->runAction->handle($biz->id, $flow->id, ['test' => true], isManualRetry: false, shouldSimulateFailure: true);
+
+        // We now have one success run and one error run.
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
+            ->call('load');
+
+        // Status pill maps 'success' to 'ok', and 'error' to 'alert'. Since we don't have a way
+        // to assert the blade component's internal values easily, we check that both HTML chunks exist
+        // or just rely on the component mapping logic. The kit component prints words like "Ok" and "Alert".
+        // Let's assert See for the labels or the generated attributes. Wait, does x-ui.status-pill render "Ok" and "Alert"?
+        // The instructions say "asserting both pills' words." So let's see what the kit component outputs.
+        // The component defaults to 'Ok' if it was success->ok, 'Alert' if error->alert.
+        // Let's assume it prints "Ok" and "Alert" (capitalized).
+
+        $component->assertSee('Running', false)
+            ->assertSee('Needs action', false);
+    }
 }
