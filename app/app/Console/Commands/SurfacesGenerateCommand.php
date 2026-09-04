@@ -457,18 +457,5 @@ class SurfacesGenerateCommand extends Command
 
     private function updatePlaceholderTemplate(string $modId, string $classRef, string $render, string $title): void
     {
-        $viewFile = app_path("Modules/$modId/Ui/views/".str_replace('_', '-', $render).'.blade.php');
-        if (file_exists($viewFile)) {
-            $content = file_get_contents($viewFile);
-            if (! str_contains($content, 'x-surface.sample-state')) {
-                $includeLine = "<x-surface.sample-state module=\"$title\" screen=\"$render\" />\n";
-                if (preg_match('/^(<[a-z0-9\-]+[^>]*>)\s*/i', $content, $matches)) {
-                    $content = preg_replace('/^(<[a-z0-9\-]+[^>]*>)\s*/i', "$1\n    $includeLine", $content);
-                    file_put_contents($viewFile, $content);
-                } else {
-                    file_put_contents($viewFile, "<div>\n    $includeLine".$content."\n</div>");
-                }
-            }
-        }
     }
 }
