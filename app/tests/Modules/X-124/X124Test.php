@@ -99,4 +99,35 @@ class X124Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_todays_recommendation_strip_renders_active_and_emits_events(): void
+    {
+        Event::fake([
+            \App\Modules\X124\Events\AssistantRecommended::class,
+            \App\Modules\X124\Events\AssistantActed::class,
+        ]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Strip Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = \App\Modules\X124\Models\AssistantSession::create(["business_id" => $biz->id, "session_token" => "sess_test", "user_id" => null, "context" => "[]"]);
+        $recommendAction = app(\App\Modules\X124\Actions\AssistantRecommendAction::class);
+        $rec = $recommendAction->handle($biz->id, $session->id, 'Enable Two-Factor Auth', 'enable_2fa');
+
+        Event::assertDispatched(\App\Modules\X124\Events\AssistantRecommended::class);
+
+        $component = \Livewire\Livewire::test(\App\Modules\X124\Ui\TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->assertSee('Enable Two-Factor Auth')
+            ->call('accept', $rec->id)
+            ->assertHasNoErrors();
+
+        Event::assertDispatched(\App\Modules\X124\Events\AssistantActed::class, function ($event) use ($rec) {
+            return $event->recommendationId === $rec->id && $event->action === 'accepted';
+        });
+
+        $this->assertEquals('accepted', $rec->refresh()->status);
+        
+        \Livewire\Livewire::test(\App\Modules\X124\Ui\TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->assertDontSee('Enable Two-Factor Auth');
+    }
 }
