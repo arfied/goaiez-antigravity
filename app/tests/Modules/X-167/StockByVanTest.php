@@ -116,15 +116,15 @@ class StockByVanTest extends TestCase
             'location_id' => $van->id,
             'sku' => 'PIPE-LOW',
             'barcode' => '1234',
-            'name' => 'Low Pipe',
+            'name' => 'Short Pipe',
             'quantity' => 2.0,
             'unit' => 'm',
             'reorder_point' => 3.0,
         ]);
 
         Livewire::actingAs($user)->test(StockByVan::class)
-            ->assertSee('Low Pipe')
-            ->assertSee('Low');
+            ->assertSee('Short Pipe')
+            ->assertSee('<span>Low</span>', false);
     }
 
     public function test_propose_restock_creates_po(): void
