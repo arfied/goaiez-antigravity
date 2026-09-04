@@ -10,6 +10,7 @@ use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X176\Actions\SchemaRenderAction;
+use App\Modules\X176\Actions\SeoRenderAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
@@ -113,6 +114,20 @@ final class EdgeDeployAction
             }
 
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $seoResult = app(SeoRenderAction::class)->handle(
+                    $businessId,
+                    $pageId,
+                    $businessName,
+                    $commitId
+                );
+                $html = str_replace(
+                    '</head>',
+                    "<title id=\"seo-meta-x176\">{$seoResult['title']}</title>\n".
+                    "<meta name=\"description\" content=\"{$seoResult['description']}\">\n".
+                    "<link rel=\"canonical\" href=\"{$seoResult['canonical']}\">\n</head>",
+                    $html
+                );
+
                 $schemaResult = app(SchemaRenderAction::class)->handle(
                     $businessId,
                     $pageId,

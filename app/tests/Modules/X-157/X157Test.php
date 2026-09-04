@@ -206,4 +206,57 @@ class X157Test extends TestCase
         $files = Storage::disk('local')->files('sites');
         $this->assertEmpty($files);
     }
+
+    public function test_route_served_body_equals_stored_artifact(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = Deployment::create([
+            'business_id' => $biz->id,
+            'edge_zone_id' => $zone->id,
+            'deploy_hash' => 'test_hash_1',
+            'status' => 'deployed',
+            'measured_ttfb_ms' => 100,
+            'speed_budget_ms' => 1500,
+        ]);
+
+        Storage::disk('local')->put('sites/test_hash_1.html', 'BODY_CONTENT');
+
+        $response = $this->get('/sites/test_hash_1');
+        $response->assertStatus(200);
+        $this->assertEquals('BODY_CONTENT', $response->getContent());
+    }
+
+    public function test_route_unknown_hash_returns_404(): void
+    {
+        $response = $this->get('/sites/unknown_hash_999');
+        $response->assertStatus(404);
+    }
+
+    public function test_route_deployment_whose_zone_lost_ssl_returns_404(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', false);
+
+        $deploy = Deployment::create([
+            'business_id' => $biz->id,
+            'edge_zone_id' => $zone->id,
+            'deploy_hash' => 'test_hash_no_ssl',
+            'status' => 'deployed',
+            'measured_ttfb_ms' => 100,
+            'speed_budget_ms' => 1500,
+        ]);
+
+        Storage::disk('local')->put('sites/test_hash_no_ssl.html', 'BODY_CONTENT');
+
+        $response = $this->get('/sites/test_hash_no_ssl');
+        $response->assertStatus(404);
+    }
 }
