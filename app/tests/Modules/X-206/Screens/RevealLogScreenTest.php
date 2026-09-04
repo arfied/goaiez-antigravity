@@ -6,6 +6,7 @@ namespace Tests\Modules\X206\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X206\Ui\RevealLog;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class RevealLogScreenTest extends TestCase
 
         $this->get(route('x-206.reveal-log'))->assertOk();
 
-        Livewire::test(\App\Modules\X206\Ui\RevealLog::class)->assertOk();
+        Livewire::test(RevealLog::class)->assertOk();
     }
 }

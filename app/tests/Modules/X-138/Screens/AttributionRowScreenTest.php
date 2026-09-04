@@ -6,6 +6,7 @@ namespace Tests\Modules\X138\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X138\Ui\AttributionRow;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class AttributionRowScreenTest extends TestCase
 
         $this->get(route('x-138.attribution-row'))->assertOk();
 
-        Livewire::test(\App\Modules\X138\Ui\AttributionRow::class)->assertOk();
+        Livewire::test(AttributionRow::class)->assertOk();
     }
 }

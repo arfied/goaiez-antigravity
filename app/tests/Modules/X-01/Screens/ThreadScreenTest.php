@@ -6,6 +6,7 @@ namespace Tests\Modules\X01\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X01\Ui\Thread;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ThreadScreenTest extends TestCase
 
         $this->get(route('x-01.thread'))->assertOk();
 
-        Livewire::test(\App\Modules\X01\Ui\Thread::class)->assertOk();
+        Livewire::test(Thread::class)->assertOk();
     }
 }

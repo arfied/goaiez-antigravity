@@ -6,6 +6,7 @@ namespace Tests\Modules\X102\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X102\Ui\Thread;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ThreadScreenTest extends TestCase
 
         $this->get(route('x-102.thread'))->assertOk();
 
-        Livewire::test(\App\Modules\X102\Ui\Thread::class)->assertOk();
+        Livewire::test(Thread::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class ThreadScreenTest extends TestCase
 
         $this->get(route('x-102.thread.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X102\Ui\Thread::class)->assertOk();
+        Livewire::test(Thread::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X104\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X104\Ui\PluginSettingsPage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class PluginSettingsPageScreenTest extends TestCase
 
         $this->get(route('x-104.plugin-settings-page'))->assertOk();
 
-        Livewire::test(\App\Modules\X104\Ui\PluginSettingsPage::class)->assertOk();
+        Livewire::test(PluginSettingsPage::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class PluginSettingsPageScreenTest extends TestCase
 
         $this->get(route('x-104.plugin-settings-page.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X104\Ui\PluginSettingsPage::class)->assertOk();
+        Livewire::test(PluginSettingsPage::class)->assertOk();
     }
 }

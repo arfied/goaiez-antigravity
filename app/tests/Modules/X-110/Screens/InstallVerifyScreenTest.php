@@ -6,6 +6,7 @@ namespace Tests\Modules\X110\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X110\Ui\InstallVerify;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class InstallVerifyScreenTest extends TestCase
 
         $this->get(route('x-110.install-verify'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\InstallVerify::class)->assertOk();
+        Livewire::test(InstallVerify::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class InstallVerifyScreenTest extends TestCase
 
         $this->get(route('x-110.install-verify.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\InstallVerify::class)->assertOk();
+        Livewire::test(InstallVerify::class)->assertOk();
     }
 }

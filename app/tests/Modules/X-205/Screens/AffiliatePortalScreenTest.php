@@ -6,6 +6,7 @@ namespace Tests\Modules\X205\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X205\Ui\AffiliatePortal;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class AffiliatePortalScreenTest extends TestCase
 
         $this->get(route('x-205.portal'))->assertOk();
 
-        Livewire::test(\App\Modules\X205\Ui\AffiliatePortal::class)->assertOk();
+        Livewire::test(AffiliatePortal::class)->assertOk();
     }
 }

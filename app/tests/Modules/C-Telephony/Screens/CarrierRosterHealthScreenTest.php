@@ -6,6 +6,7 @@ namespace Tests\Modules\CTelephony\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CTelephony\Ui\CarrierRosterHealth;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class CarrierRosterHealthScreenTest extends TestCase
 
         $this->get(route('c-telephony.carrier-roster-health'))->assertOk();
 
-        Livewire::test(\App\Modules\CTelephony\Ui\CarrierRosterHealth::class)->assertOk();
+        Livewire::test(CarrierRosterHealth::class)->assertOk();
     }
 }

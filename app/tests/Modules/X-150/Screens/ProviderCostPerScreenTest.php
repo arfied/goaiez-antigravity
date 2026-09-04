@@ -6,12 +6,12 @@ namespace Tests\Modules\X150\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X150\Ui\ProviderCostPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class ProviderCostPerScreenTest extends TestCase
 {
-
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
@@ -19,6 +19,6 @@ class ProviderCostPerScreenTest extends TestCase
 
         $this->get(route('x-150.provider-cost-per.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X150\Ui\ProviderCostPer::class)->assertOk();
+        Livewire::test(ProviderCostPer::class)->assertOk();
     }
 }

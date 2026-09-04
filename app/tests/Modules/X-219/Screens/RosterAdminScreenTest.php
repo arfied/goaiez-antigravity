@@ -6,6 +6,7 @@ namespace Tests\Modules\X219\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X219\Ui\RosterAdmin;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class RosterAdminScreenTest extends TestCase
 
         $this->get(route('x-219.roster-admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X219\Ui\RosterAdmin::class)->assertOk();
+        Livewire::test(RosterAdmin::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X218\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X218\Ui\DeliverableProof;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class DeliverableProofScreenTest extends TestCase
 
         $this->get(route('x-218.deliverable-proof'))->assertOk();
 
-        Livewire::test(\App\Modules\X218\Ui\DeliverableProof::class)->assertOk();
+        Livewire::test(DeliverableProof::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X16\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X16\Ui\GeogridMap;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class GeogridMapScreenTest extends TestCase
 
         $this->get(route('x-16.geogrid-map'))->assertOk();
 
-        Livewire::test(\App\Modules\X16\Ui\GeogridMap::class)->assertOk();
+        Livewire::test(GeogridMap::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class GeogridMapScreenTest extends TestCase
 
         $this->get(route('x-16.geogrid-map.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X16\Ui\GeogridMap::class)->assertOk();
+        Livewire::test(GeogridMap::class)->assertOk();
     }
 }

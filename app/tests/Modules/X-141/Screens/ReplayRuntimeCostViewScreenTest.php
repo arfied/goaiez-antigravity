@@ -6,6 +6,7 @@ namespace Tests\Modules\X141\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X141\Ui\ReplayRuntimeCostView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ReplayRuntimeCostViewScreenTest extends TestCase
 
         $this->get(route('x-141.replay-runtime-cost'))->assertOk();
 
-        Livewire::test(\App\Modules\X141\Ui\ReplayRuntimeCostView::class)->assertOk();
+        Livewire::test(ReplayRuntimeCostView::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class ReplayRuntimeCostViewScreenTest extends TestCase
 
         $this->get(route('x-141.replay-runtime-cost.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X141\Ui\ReplayRuntimeCostView::class)->assertOk();
+        Livewire::test(ReplayRuntimeCostView::class)->assertOk();
     }
 }

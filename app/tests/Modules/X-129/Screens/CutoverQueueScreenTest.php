@@ -6,6 +6,7 @@ namespace Tests\Modules\X129\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X129\Ui\CutoverQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class CutoverQueueScreenTest extends TestCase
 
         $this->get(route('x-129.cutover-queue'))->assertOk();
 
-        Livewire::test(\App\Modules\X129\Ui\CutoverQueue::class)->assertOk();
+        Livewire::test(CutoverQueue::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class CutoverQueueScreenTest extends TestCase
 
         $this->get(route('x-129.cutover-queue.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X129\Ui\CutoverQueue::class)->assertOk();
+        Livewire::test(CutoverQueue::class)->assertOk();
     }
 }

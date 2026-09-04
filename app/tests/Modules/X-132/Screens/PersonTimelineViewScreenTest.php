@@ -6,6 +6,7 @@ namespace Tests\Modules\X132\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X132\Ui\PersonTimelineView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class PersonTimelineViewScreenTest extends TestCase
 
         $this->get(route('x-132.person-timeline'))->assertOk();
 
-        Livewire::test(\App\Modules\X132\Ui\PersonTimelineView::class)->assertOk();
+        Livewire::test(PersonTimelineView::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class PersonTimelineViewScreenTest extends TestCase
 
         $this->get(route('x-132.person-timeline.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X132\Ui\PersonTimelineView::class)->assertOk();
+        Livewire::test(PersonTimelineView::class)->assertOk();
     }
 }

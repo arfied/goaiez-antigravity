@@ -6,6 +6,7 @@ namespace Tests\Modules\X125\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X125\Ui\Runs;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class RunsScreenTest extends TestCase
 
         $this->get(route('x-125.runs'))->assertOk();
 
-        Livewire::test(\App\Modules\X125\Ui\Runs::class)->assertOk();
+        Livewire::test(Runs::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class RunsScreenTest extends TestCase
 
         $this->get(route('x-125.runs.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X125\Ui\Runs::class)->assertOk();
+        Livewire::test(Runs::class)->assertOk();
     }
 }

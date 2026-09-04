@@ -6,6 +6,7 @@ namespace Tests\Modules\X167\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X167\Ui\StockByVan;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class StockByVanScreenTest extends TestCase
 
         $this->get(route('x-167.stock-by-van'))->assertOk();
 
-        Livewire::test(\App\Modules\X167\Ui\StockByVan::class)->assertOk();
+        Livewire::test(StockByVan::class)->assertOk();
     }
 }

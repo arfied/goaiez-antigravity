@@ -6,6 +6,7 @@ namespace Tests\Modules\X137\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X137\Ui\DniPoolUtilisation;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class DniPoolUtilisationScreenTest extends TestCase
 
         $this->get(route('x-137.dni-pool-utilisation'))->assertOk();
 
-        Livewire::test(\App\Modules\X137\Ui\DniPoolUtilisation::class)->assertOk();
+        Livewire::test(DniPoolUtilisation::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class DniPoolUtilisationScreenTest extends TestCase
 
         $this->get(route('x-137.dni-pool-utilisation.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X137\Ui\DniPoolUtilisation::class)->assertOk();
+        Livewire::test(DniPoolUtilisation::class)->assertOk();
     }
 }

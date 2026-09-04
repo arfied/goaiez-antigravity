@@ -6,6 +6,7 @@ namespace Tests\Modules\X190\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X190\Ui\PoolDepthPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class PoolDepthPerScreenTest extends TestCase
 
         $this->get(route('x-190.pool-depth-per'))->assertOk();
 
-        Livewire::test(\App\Modules\X190\Ui\PoolDepthPer::class)->assertOk();
+        Livewire::test(PoolDepthPer::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class PoolDepthPerScreenTest extends TestCase
 
         $this->get(route('x-190.pool-depth-per.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X190\Ui\PoolDepthPer::class)->assertOk();
+        Livewire::test(PoolDepthPer::class)->assertOk();
     }
 }

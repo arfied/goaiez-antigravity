@@ -6,6 +6,7 @@ namespace Tests\Modules\X188\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X188\Ui\PernumberComplaintBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class PernumberComplaintBoardScreenTest extends TestCase
 
         $this->get(route('x-188.pernumber-complaint-board'))->assertOk();
 
-        Livewire::test(\App\Modules\X188\Ui\PernumberComplaintBoard::class)->assertOk();
+        Livewire::test(PernumberComplaintBoard::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class PernumberComplaintBoardScreenTest extends TestCase
 
         $this->get(route('x-188.pernumber-complaint-board.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X188\Ui\PernumberComplaintBoard::class)->assertOk();
+        Livewire::test(PernumberComplaintBoard::class)->assertOk();
     }
 }

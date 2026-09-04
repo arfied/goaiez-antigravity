@@ -6,6 +6,7 @@ namespace Tests\Modules\X215\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X215\Ui\DocumentStatus;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class DocumentStatusScreenTest extends TestCase
 
         $this->get(route('x-215.document-status'))->assertOk();
 
-        Livewire::test(\App\Modules\X215\Ui\DocumentStatus::class)->assertOk();
+        Livewire::test(DocumentStatus::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X211\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X211\Ui\CollectionsPackagePreview;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class CollectionsPackagePreviewScreenTest extends TestCase
 
         $this->get(route('x-211.collections-package-preview'))->assertOk();
 
-        Livewire::test(\App\Modules\X211\Ui\CollectionsPackagePreview::class)->assertOk();
+        Livewire::test(CollectionsPackagePreview::class)->assertOk();
     }
 }

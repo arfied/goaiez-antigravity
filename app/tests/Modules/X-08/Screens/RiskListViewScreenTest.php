@@ -6,6 +6,7 @@ namespace Tests\Modules\X08\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X08\Ui\RiskListView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class RiskListViewScreenTest extends TestCase
 
         $this->get(route('x-08.risk-list'))->assertOk();
 
-        Livewire::test(\App\Modules\X08\Ui\RiskListView::class)->assertOk();
+        Livewire::test(RiskListView::class)->assertOk();
     }
 }

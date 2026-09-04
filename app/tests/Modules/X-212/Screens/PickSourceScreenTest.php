@@ -6,6 +6,7 @@ namespace Tests\Modules\X212\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X212\Ui\PickSource;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class PickSourceScreenTest extends TestCase
 
         $this->get(route('x-212.pick-source'))->assertOk();
 
-        Livewire::test(\App\Modules\X212\Ui\PickSource::class)->assertOk();
+        Livewire::test(PickSource::class)->assertOk();
     }
 }

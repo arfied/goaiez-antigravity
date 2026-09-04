@@ -6,6 +6,7 @@ namespace Tests\Modules\X155\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X155\Ui\SpamRate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class SpamRateScreenTest extends TestCase
 
         $this->get(route('x-155.spam-rate'))->assertOk();
 
-        Livewire::test(\App\Modules\X155\Ui\SpamRate::class)->assertOk();
+        Livewire::test(SpamRate::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class SpamRateScreenTest extends TestCase
 
         $this->get(route('x-155.spam-rate.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X155\Ui\SpamRate::class)->assertOk();
+        Livewire::test(SpamRate::class)->assertOk();
     }
 }

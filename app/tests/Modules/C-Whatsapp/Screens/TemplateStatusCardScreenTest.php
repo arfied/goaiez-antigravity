@@ -6,6 +6,7 @@ namespace Tests\Modules\CWhatsapp\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CWhatsapp\Ui\TemplateStatusCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class TemplateStatusCardScreenTest extends TestCase
 
         $this->get(route('c-whatsapp.template-status-card'))->assertOk();
 
-        Livewire::test(\App\Modules\CWhatsapp\Ui\TemplateStatusCard::class)->assertOk();
+        Livewire::test(TemplateStatusCard::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\CSms\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CSms\Ui\PernumberComplaintMonitoring;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class PernumberComplaintMonitoringScreenTest extends TestCase
 
         $this->get(route('c-sms.pernumber-complaint-monitoring'))->assertOk();
 
-        Livewire::test(\App\Modules\CSms\Ui\PernumberComplaintMonitoring::class)->assertOk();
+        Livewire::test(PernumberComplaintMonitoring::class)->assertOk();
     }
 }

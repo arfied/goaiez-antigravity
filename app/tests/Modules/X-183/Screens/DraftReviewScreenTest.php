@@ -6,6 +6,7 @@ namespace Tests\Modules\X183\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X183\Ui\DraftReview;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class DraftReviewScreenTest extends TestCase
 
         $this->get(route('x-183.draft-review'))->assertOk();
 
-        Livewire::test(\App\Modules\X183\Ui\DraftReview::class)->assertOk();
+        Livewire::test(DraftReview::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class DraftReviewScreenTest extends TestCase
 
         $this->get(route('x-183.draft-review.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X183\Ui\DraftReview::class)->assertOk();
+        Livewire::test(DraftReview::class)->assertOk();
     }
 }

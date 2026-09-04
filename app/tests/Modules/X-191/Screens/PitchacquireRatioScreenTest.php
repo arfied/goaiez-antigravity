@@ -6,6 +6,7 @@ namespace Tests\Modules\X191\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X191\Ui\PitchacquireRatio;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class PitchacquireRatioScreenTest extends TestCase
 
         $this->get(route('x-191.pitchacquire-ratio'))->assertOk();
 
-        Livewire::test(\App\Modules\X191\Ui\PitchacquireRatio::class)->assertOk();
+        Livewire::test(PitchacquireRatio::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class PitchacquireRatioScreenTest extends TestCase
 
         $this->get(route('x-191.pitchacquire-ratio.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X191\Ui\PitchacquireRatio::class)->assertOk();
+        Livewire::test(PitchacquireRatio::class)->assertOk();
     }
 }

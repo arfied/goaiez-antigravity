@@ -6,6 +6,7 @@ namespace Tests\Modules\X212\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X212\Ui\ReconciliationReport;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ReconciliationReportScreenTest extends TestCase
 
         $this->get(route('x-212.reconciliation-report'))->assertOk();
 
-        Livewire::test(\App\Modules\X212\Ui\ReconciliationReport::class)->assertOk();
+        Livewire::test(ReconciliationReport::class)->assertOk();
     }
 }

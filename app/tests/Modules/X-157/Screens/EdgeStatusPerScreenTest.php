@@ -6,12 +6,12 @@ namespace Tests\Modules\X157\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X157\Ui\EdgeStatusPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class EdgeStatusPerScreenTest extends TestCase
 {
-
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
@@ -19,6 +19,6 @@ class EdgeStatusPerScreenTest extends TestCase
 
         $this->get(route('x-157.edge-status-per.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X157\Ui\EdgeStatusPer::class)->assertOk();
+        Livewire::test(EdgeStatusPer::class)->assertOk();
     }
 }

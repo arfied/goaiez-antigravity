@@ -6,6 +6,7 @@ namespace Tests\Modules\X66\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X66\Ui\CustomerfacingCallItself;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class CustomerfacingCallItselfScreenTest extends TestCase
 
         $this->get(route('x-66.customerfacing-call-itself'))->assertOk();
 
-        Livewire::test(\App\Modules\X66\Ui\CustomerfacingCallItself::class)->assertOk();
+        Livewire::test(CustomerfacingCallItself::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class CustomerfacingCallItselfScreenTest extends TestCase
 
         $this->get(route('x-66.customerfacing-call-itself.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X66\Ui\CustomerfacingCallItself::class)->assertOk();
+        Livewire::test(CustomerfacingCallItself::class)->assertOk();
     }
 }

@@ -90,6 +90,7 @@ class SurfacesGenerateCommand extends Command
             $modClassNamespace = str_replace('-', '', $modId);
             $tenantRoutes = [];
             $operatorRoutes = [];
+            $routeClasses = [];
             $addedRoutes = false;
 
             foreach ($renders as $render) {
@@ -190,6 +191,8 @@ class SurfacesGenerateCommand extends Command
                 $addedToRoutesFile = false;
 
                 $classRef = $class[0] === '\\' ? $class : "\\App\\Modules\\{$modClassNamespace}\\Ui\\".$class;
+                $routeClasses[] = $classRef;
+                $classNameOnly = preg_replace('/^.*\\\\/', '', $classRef);
 
                 foreach ($primarySurfaces as $surf) {
                     if ($surf === 'operator') {
@@ -199,7 +202,7 @@ class SurfacesGenerateCommand extends Command
 
                             return 1;
                         }
-                        $operatorRoutes[] = "    Route::get('/{$screenSlug}', $classRef::class)->name('$alias.admin');";
+                        $operatorRoutes[] = "    Route::get('/{$screenSlug}', {$classNameOnly}::class)->name('$alias.admin');";
                         $addedToRoutesFile = true;
                     } else {
                         $uri = "/app/{$modSlug}/{$screenSlug}";
@@ -209,7 +212,7 @@ class SurfacesGenerateCommand extends Command
                             return 1;
                         }
                         if (! $addedToRoutesFile) {
-                            $tenantRoutes[] = "    Route::get('/{$screenSlug}', $classRef::class)->name('$alias');";
+                            $tenantRoutes[] = "    Route::get('/{$screenSlug}', {$classNameOnly}::class)->name('$alias');";
                             $addedToRoutesFile = true;
                         }
                     }
@@ -228,7 +231,7 @@ class SurfacesGenerateCommand extends Command
             }
 
             if ($addedRoutes) {
-                $this->generateRoutesFile($modDir, $modSlug, $tenantRoutes, $operatorRoutes);
+                $this->generateRoutesFile($modDir, $modSlug, $tenantRoutes, $operatorRoutes, $routeClasses);
 
                 if (! str_contains($spContent, 'routes.generated.php')) {
                     $newSpContent = preg_replace(
@@ -254,20 +257,37 @@ class SurfacesGenerateCommand extends Command
         return 0;
     }
 
-    private function generateRoutesFile(string $modDir, string $modSlug, array $tenantRoutes, array $operatorRoutes): void
+    private function generateRoutesFile(string $modDir, string $modSlug, array $tenantRoutes, array $operatorRoutes, array $routeClasses): void
     {
-        $content = "<?php\n\ndeclare(strict_types=1);\n\nuse Illuminate\Support\Facades\Route;\n\n";
+        $content = "<?php\n\ndeclare(strict_types=1);\n\n";
+
+        $imports = ['Illuminate\Support\Facades\Route'];
+        if (! empty($operatorRoutes)) {
+            $imports[] = 'App\Support\Admin\AdminAccess';
+        }
+        foreach ($routeClasses as $class) {
+            $imports[] = ltrim($class, '\\');
+        }
+        $imports = array_unique($imports);
+        sort($imports);
+        foreach ($imports as $import) {
+            $content .= "use {$import};\n";
+        }
+        $content .= "\n";
 
         if (! empty($tenantRoutes)) {
             $content .= "Route::middleware(['web', 'auth', 'tenant.role'])->prefix('app/$modSlug')->group(function () {\n";
             $content .= implode("\n", $tenantRoutes)."\n";
-            $content .= "});\n\n";
+            $content .= "});\n";
+            if (! empty($operatorRoutes)) {
+                $content .= "\n";
+            }
         }
 
         if (! empty($operatorRoutes)) {
-            $content .= "Route::middleware(['web', 'auth', 'can:' . \App\Support\Admin\AdminAccess::GATE])->prefix('admin/$modSlug')->group(function () {\n";
+            $content .= "Route::middleware(['web', 'auth', 'can:'.AdminAccess::GATE])->prefix('admin/$modSlug')->group(function () {\n";
             $content .= implode("\n", $operatorRoutes)."\n";
-            $content .= "});\n\n";
+            $content .= "});\n";
         }
 
         file_put_contents($modDir.'/routes.generated.php', $content);
@@ -283,34 +303,47 @@ class SurfacesGenerateCommand extends Command
         $className = preg_replace('/^.*\\\\/', '', $class);
         $testFile = $testDir."/{$className}ScreenTest.php";
 
+        $fqcn = str_starts_with($class, '\\') ? $class : '\\App\\Modules\\'.str_replace('-', '', $modId)."\\Ui\\$class";
+        $fqcnNoSlash = ltrim($fqcn, '\\');
+
         $imports = [
-            "use App\Enums\UserRole;",
-            "use App\Models\User;",
-            "use Livewire\Livewire;",
-            "use Tests\TestCase;",
+            $fqcnNoSlash,
+            "App\Enums\UserRole",
+            "App\Models\User",
+            "Livewire\Livewire",
+            "Tests\TestCase",
         ];
-        $content = "<?php\n\ndeclare(strict_types=1);\n\nnamespace Tests\Modules\\".str_replace('-', '', $modId)."\Screens;\n\n".implode("\n", $imports)."\n\n";
+        sort($imports);
+        $importsStr = '';
+        foreach ($imports as $import) {
+            $importsStr .= "use {$import};\n";
+        }
+
+        $content = "<?php\n\ndeclare(strict_types=1);\n\nnamespace Tests\Modules\\".str_replace('-', '', $modId)."\Screens;\n\n{$importsStr}\n";
 
         $content .= "class {$className}ScreenTest extends TestCase\n{\n";
 
-        $fqcn = str_starts_with($class, '\\') ? $class : '\\App\\Modules\\'.str_replace('-', '', $modId)."\\Ui\\$class";
-
+        $testsCount = 0;
         if (in_array('tenant', $primarySurfaces) || in_array('agency', $primarySurfaces) || in_array('tech', $primarySurfaces) || empty($primarySurfaces)) {
             $content .= "    public function test_screen_renders_for_tenant(): void\n    {\n";
             $content .= "        \$owner = User::factory()->create(['role' => UserRole::Owner]);\n";
             $content .= "        \$biz = \$this->provisionTenant(['owner_user_id' => \$owner->id]);\n";
             $content .= "        \$this->actingAs(\$owner);\n";
             $content .= "\n        \$this->get(route('$alias'))->assertOk();\n";
-            $content .= "\n        Livewire::test($fqcn::class)->assertOk();\n";
+            $content .= "\n        Livewire::test({$className}::class)->assertOk();\n";
             $content .= "    }\n";
+            $testsCount++;
         }
 
         if (in_array('operator', $primarySurfaces)) {
-            $content .= "\n    public function test_screen_renders_for_admin(): void\n    {\n";
+            if ($testsCount > 0) {
+                $content .= "\n";
+            }
+            $content .= "    public function test_screen_renders_for_admin(): void\n    {\n";
             $content .= "        \$user = User::factory()->create(['role' => UserRole::SuperAdmin]);\n";
             $content .= "        \$this->actingAs(\$user);\n";
             $content .= "\n        \$this->get(route('$alias.admin'))->assertOk();\n";
-            $content .= "\n        Livewire::test($fqcn::class)->assertOk();\n";
+            $content .= "\n        Livewire::test({$className}::class)->assertOk();\n";
             $content .= "    }\n";
         }
 
@@ -362,7 +395,7 @@ class SurfacesGenerateCommand extends Command
                     $content = preg_replace('/^(<[a-z0-9\-]+[^>]*>)\s*/i', "$1\n    $includeLine", $content);
                     file_put_contents($viewFile, $content);
                 } else {
-                    file_put_contents($viewFile, "<div>\n    $includeLine" . $content . "\n</div>");
+                    file_put_contents($viewFile, "<div>\n    $includeLine".$content."\n</div>");
                 }
             }
         }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X139\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X139\Ui\AdaccountConnectCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class AdaccountConnectCardScreenTest extends TestCase
 
         $this->get(route('x-139.adaccount-connect-card'))->assertOk();
 
-        Livewire::test(\App\Modules\X139\Ui\AdaccountConnectCard::class)->assertOk();
+        Livewire::test(AdaccountConnectCard::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class AdaccountConnectCardScreenTest extends TestCase
 
         $this->get(route('x-139.adaccount-connect-card.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X139\Ui\AdaccountConnectCard::class)->assertOk();
+        Livewire::test(AdaccountConnectCard::class)->assertOk();
     }
 }

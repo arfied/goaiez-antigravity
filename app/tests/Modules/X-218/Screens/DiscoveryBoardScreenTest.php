@@ -6,6 +6,7 @@ namespace Tests\Modules\X218\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X218\Ui\DiscoveryBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class DiscoveryBoardScreenTest extends TestCase
 
         $this->get(route('x-218.discovery-board'))->assertOk();
 
-        Livewire::test(\App\Modules\X218\Ui\DiscoveryBoard::class)->assertOk();
+        Livewire::test(DiscoveryBoard::class)->assertOk();
     }
 }

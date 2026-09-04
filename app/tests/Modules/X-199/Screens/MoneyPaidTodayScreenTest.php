@@ -6,6 +6,7 @@ namespace Tests\Modules\X199\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X199\Ui\MoneyPaidToday;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class MoneyPaidTodayScreenTest extends TestCase
 
         $this->get(route('x-199.money-paid-today'))->assertOk();
 
-        Livewire::test(\App\Modules\X199\Ui\MoneyPaidToday::class)->assertOk();
+        Livewire::test(MoneyPaidToday::class)->assertOk();
     }
 }

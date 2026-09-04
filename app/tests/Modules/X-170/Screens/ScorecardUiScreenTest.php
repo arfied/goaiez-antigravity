@@ -6,6 +6,7 @@ namespace Tests\Modules\X170\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X170\Ui\ScorecardUi;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ScorecardUiScreenTest extends TestCase
 
         $this->get(route('x-170.scorecard'))->assertOk();
 
-        Livewire::test(\App\Modules\X170\Ui\ScorecardUi::class)->assertOk();
+        Livewire::test(ScorecardUi::class)->assertOk();
     }
 }

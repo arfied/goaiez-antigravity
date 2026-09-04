@@ -6,6 +6,7 @@ namespace Tests\Modules\X208\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X208\Ui\SendRecord;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class SendRecordScreenTest extends TestCase
 
         $this->get(route('x-208.send-record'))->assertOk();
 
-        Livewire::test(\App\Modules\X208\Ui\SendRecord::class)->assertOk();
+        Livewire::test(SendRecord::class)->assertOk();
     }
 }

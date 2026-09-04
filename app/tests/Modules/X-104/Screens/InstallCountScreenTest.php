@@ -6,6 +6,7 @@ namespace Tests\Modules\X104\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X104\Ui\InstallCount;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class InstallCountScreenTest extends TestCase
 
         $this->get(route('x-104.install-count'))->assertOk();
 
-        Livewire::test(\App\Modules\X104\Ui\InstallCount::class)->assertOk();
+        Livewire::test(InstallCount::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class InstallCountScreenTest extends TestCase
 
         $this->get(route('x-104.install-count.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X104\Ui\InstallCount::class)->assertOk();
+        Livewire::test(InstallCount::class)->assertOk();
     }
 }

@@ -6,12 +6,12 @@ namespace Tests\Modules\X109\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X109\Ui\SubmissionLog;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class SubmissionLogScreenTest extends TestCase
 {
-
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
@@ -19,6 +19,6 @@ class SubmissionLogScreenTest extends TestCase
 
         $this->get(route('x-109.submission-log.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X109\Ui\SubmissionLog::class)->assertOk();
+        Livewire::test(SubmissionLog::class)->assertOk();
     }
 }

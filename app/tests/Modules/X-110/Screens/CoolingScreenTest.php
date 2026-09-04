@@ -6,6 +6,7 @@ namespace Tests\Modules\X110\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X110\Ui\Cooling;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class CoolingScreenTest extends TestCase
 
         $this->get(route('x-110.cooling'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\Cooling::class)->assertOk();
+        Livewire::test(Cooling::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class CoolingScreenTest extends TestCase
 
         $this->get(route('x-110.cooling.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\Cooling::class)->assertOk();
+        Livewire::test(Cooling::class)->assertOk();
     }
 }

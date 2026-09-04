@@ -6,6 +6,7 @@ namespace Tests\Modules\X140\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X140\Ui\ProposedPagesView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ProposedPagesViewScreenTest extends TestCase
 
         $this->get(route('x-140.proposed-pages'))->assertOk();
 
-        Livewire::test(\App\Modules\X140\Ui\ProposedPagesView::class)->assertOk();
+        Livewire::test(ProposedPagesView::class)->assertOk();
     }
 }

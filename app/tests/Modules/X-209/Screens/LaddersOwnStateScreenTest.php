@@ -6,6 +6,7 @@ namespace Tests\Modules\X209\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X209\Ui\LaddersOwnState;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class LaddersOwnStateScreenTest extends TestCase
 
         $this->get(route('x-209.ladders-own-state'))->assertOk();
 
-        Livewire::test(\App\Modules\X209\Ui\LaddersOwnState::class)->assertOk();
+        Livewire::test(LaddersOwnState::class)->assertOk();
     }
 }

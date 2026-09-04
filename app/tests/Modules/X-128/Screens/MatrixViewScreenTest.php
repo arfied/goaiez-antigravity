@@ -6,12 +6,12 @@ namespace Tests\Modules\X128\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X128\Ui\MatrixView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class MatrixViewScreenTest extends TestCase
 {
-
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
@@ -19,6 +19,6 @@ class MatrixViewScreenTest extends TestCase
 
         $this->get(route('x-128.matrix-view.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X128\Ui\MatrixView::class)->assertOk();
+        Livewire::test(MatrixView::class)->assertOk();
     }
 }

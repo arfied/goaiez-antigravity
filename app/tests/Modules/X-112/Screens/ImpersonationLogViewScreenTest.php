@@ -6,6 +6,7 @@ namespace Tests\Modules\X112\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X112\Ui\ImpersonationLogView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ImpersonationLogViewScreenTest extends TestCase
 
         $this->get(route('x-112.impersonation-log'))->assertOk();
 
-        Livewire::test(\App\Modules\X112\Ui\ImpersonationLogView::class)->assertOk();
+        Livewire::test(ImpersonationLogView::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class ImpersonationLogViewScreenTest extends TestCase
 
         $this->get(route('x-112.impersonation-log.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X112\Ui\ImpersonationLogView::class)->assertOk();
+        Livewire::test(ImpersonationLogView::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X217\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X217\Ui\OfferComposer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class OfferComposerScreenTest extends TestCase
 
         $this->get(route('x-217.offer-composer'))->assertOk();
 
-        Livewire::test(\App\Modules\X217\Ui\OfferComposer::class)->assertOk();
+        Livewire::test(OfferComposer::class)->assertOk();
     }
 }

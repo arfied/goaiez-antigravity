@@ -6,6 +6,7 @@ namespace Tests\Modules\X01\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X01\Ui\Person;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class PersonScreenTest extends TestCase
 
         $this->get(route('x-01.person'))->assertOk();
 
-        Livewire::test(\App\Modules\X01\Ui\Person::class)->assertOk();
+        Livewire::test(Person::class)->assertOk();
     }
 }

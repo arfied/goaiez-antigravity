@@ -6,6 +6,7 @@ namespace Tests\Modules\X177\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X177\Ui\GbpCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class GbpCardScreenTest extends TestCase
 
         $this->get(route('x-177.gbp-card'))->assertOk();
 
-        Livewire::test(\App\Modules\X177\Ui\GbpCard::class)->assertOk();
+        Livewire::test(GbpCard::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class GbpCardScreenTest extends TestCase
 
         $this->get(route('x-177.gbp-card.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X177\Ui\GbpCard::class)->assertOk();
+        Livewire::test(GbpCard::class)->assertOk();
     }
 }

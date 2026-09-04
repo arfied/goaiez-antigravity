@@ -6,6 +6,7 @@ namespace Tests\Modules\X219\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X219\Ui\AssignmentMatrix;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class AssignmentMatrixScreenTest extends TestCase
 
         $this->get(route('x-219.assignment-matrix'))->assertOk();
 
-        Livewire::test(\App\Modules\X219\Ui\AssignmentMatrix::class)->assertOk();
+        Livewire::test(AssignmentMatrix::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X110\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X110\Ui\AbandonedForms;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class AbandonedFormsScreenTest extends TestCase
 
         $this->get(route('x-110.abandoned-forms'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\AbandonedForms::class)->assertOk();
+        Livewire::test(AbandonedForms::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class AbandonedFormsScreenTest extends TestCase
 
         $this->get(route('x-110.abandoned-forms.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\AbandonedForms::class)->assertOk();
+        Livewire::test(AbandonedForms::class)->assertOk();
     }
 }

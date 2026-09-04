@@ -6,6 +6,7 @@ namespace Tests\Modules\X138\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X138\Ui\RoiDashboard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class RoiDashboardScreenTest extends TestCase
 
         $this->get(route('x-138.roi-dashboard'))->assertOk();
 
-        Livewire::test(\App\Modules\X138\Ui\RoiDashboard::class)->assertOk();
+        Livewire::test(RoiDashboard::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X158\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X158\Ui\ProspectfacingVideoDemo;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ProspectfacingVideoDemoScreenTest extends TestCase
 
         $this->get(route('x-158.prospectfacing-video-demo'))->assertOk();
 
-        Livewire::test(\App\Modules\X158\Ui\ProspectfacingVideoDemo::class)->assertOk();
+        Livewire::test(ProspectfacingVideoDemo::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class ProspectfacingVideoDemoScreenTest extends TestCase
 
         $this->get(route('x-158.prospectfacing-video-demo.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X158\Ui\ProspectfacingVideoDemo::class)->assertOk();
+        Livewire::test(ProspectfacingVideoDemo::class)->assertOk();
     }
 }

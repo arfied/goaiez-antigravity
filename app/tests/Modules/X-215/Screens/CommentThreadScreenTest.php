@@ -6,6 +6,7 @@ namespace Tests\Modules\X215\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X215\Ui\CommentThread;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class CommentThreadScreenTest extends TestCase
 
         $this->get(route('x-215.comment-thread'))->assertOk();
 
-        Livewire::test(\App\Modules\X215\Ui\CommentThread::class)->assertOk();
+        Livewire::test(CommentThread::class)->assertOk();
     }
 }

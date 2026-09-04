@@ -6,6 +6,7 @@ namespace Tests\Modules\X173\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X173\Ui\ConflictsListView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ConflictsListViewScreenTest extends TestCase
 
         $this->get(route('x-173.conflicts-list'))->assertOk();
 
-        Livewire::test(\App\Modules\X173\Ui\ConflictsListView::class)->assertOk();
+        Livewire::test(ConflictsListView::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class ConflictsListViewScreenTest extends TestCase
 
         $this->get(route('x-173.conflicts-list.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X173\Ui\ConflictsListView::class)->assertOk();
+        Livewire::test(ConflictsListView::class)->assertOk();
     }
 }

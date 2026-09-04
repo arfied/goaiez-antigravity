@@ -6,6 +6,7 @@ namespace Tests\Modules\X158\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X158\Ui\RenderQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class RenderQueueScreenTest extends TestCase
 
         $this->get(route('x-158.render-queue'))->assertOk();
 
-        Livewire::test(\App\Modules\X158\Ui\RenderQueue::class)->assertOk();
+        Livewire::test(RenderQueue::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class RenderQueueScreenTest extends TestCase
 
         $this->get(route('x-158.render-queue.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X158\Ui\RenderQueue::class)->assertOk();
+        Livewire::test(RenderQueue::class)->assertOk();
     }
 }

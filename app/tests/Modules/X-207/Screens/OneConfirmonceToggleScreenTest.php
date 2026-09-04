@@ -6,6 +6,7 @@ namespace Tests\Modules\X207\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X207\Ui\OneConfirmonceToggle;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class OneConfirmonceToggleScreenTest extends TestCase
 
         $this->get(route('x-207.one-confirmonce-toggle'))->assertOk();
 
-        Livewire::test(\App\Modules\X207\Ui\OneConfirmonceToggle::class)->assertOk();
+        Livewire::test(OneConfirmonceToggle::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class OneConfirmonceToggleScreenTest extends TestCase
 
         $this->get(route('x-207.one-confirmonce-toggle.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X207\Ui\OneConfirmonceToggle::class)->assertOk();
+        Livewire::test(OneConfirmonceToggle::class)->assertOk();
     }
 }

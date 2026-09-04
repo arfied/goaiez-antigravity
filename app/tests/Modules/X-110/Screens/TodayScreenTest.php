@@ -6,6 +6,7 @@ namespace Tests\Modules\X110\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X110\Ui\Today;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class TodayScreenTest extends TestCase
 
         $this->get(route('x-110.today'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\Today::class)->assertOk();
+        Livewire::test(Today::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class TodayScreenTest extends TestCase
 
         $this->get(route('x-110.today.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\Today::class)->assertOk();
+        Livewire::test(Today::class)->assertOk();
     }
 }

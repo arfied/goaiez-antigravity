@@ -6,6 +6,7 @@ namespace Tests\Modules\X188\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X188\Ui\YourNumberCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class YourNumberCardScreenTest extends TestCase
 
         $this->get(route('x-188.your-number-card'))->assertOk();
 
-        Livewire::test(\App\Modules\X188\Ui\YourNumberCard::class)->assertOk();
+        Livewire::test(YourNumberCard::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class YourNumberCardScreenTest extends TestCase
 
         $this->get(route('x-188.your-number-card.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X188\Ui\YourNumberCard::class)->assertOk();
+        Livewire::test(YourNumberCard::class)->assertOk();
     }
 }

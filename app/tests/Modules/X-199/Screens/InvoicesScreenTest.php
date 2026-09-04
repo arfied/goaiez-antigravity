@@ -6,6 +6,7 @@ namespace Tests\Modules\X199\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X199\Ui\Invoices;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class InvoicesScreenTest extends TestCase
 
         $this->get(route('x-199.invoices'))->assertOk();
 
-        Livewire::test(\App\Modules\X199\Ui\Invoices::class)->assertOk();
+        Livewire::test(Invoices::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\CReviews\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CReviews\Ui\LossAlerts;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class LossAlertsScreenTest extends TestCase
 
         $this->get(route('c-reviews.loss-alerts'))->assertOk();
 
-        Livewire::test(\App\Modules\CReviews\Ui\LossAlerts::class)->assertOk();
+        Livewire::test(LossAlerts::class)->assertOk();
     }
 }

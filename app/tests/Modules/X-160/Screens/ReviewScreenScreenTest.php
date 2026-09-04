@@ -6,6 +6,7 @@ namespace Tests\Modules\X160\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X160\Ui\ReviewScreen;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ReviewScreenScreenTest extends TestCase
 
         $this->get(route('x-160.review-screen'))->assertOk();
 
-        Livewire::test(\App\Modules\X160\Ui\ReviewScreen::class)->assertOk();
+        Livewire::test(ReviewScreen::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class ReviewScreenScreenTest extends TestCase
 
         $this->get(route('x-160.review-screen.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X160\Ui\ReviewScreen::class)->assertOk();
+        Livewire::test(ReviewScreen::class)->assertOk();
     }
 }

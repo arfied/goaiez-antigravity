@@ -6,6 +6,7 @@ namespace Tests\Modules\X118\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X118\Ui\DayOneSignup;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class DayOneSignupScreenTest extends TestCase
 
         $this->get(route('x-118.day-one-signup'))->assertOk();
 
-        Livewire::test(\App\Modules\X118\Ui\DayOneSignup::class)->assertOk();
+        Livewire::test(DayOneSignup::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class DayOneSignupScreenTest extends TestCase
 
         $this->get(route('x-118.day-one-signup.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X118\Ui\DayOneSignup::class)->assertOk();
+        Livewire::test(DayOneSignup::class)->assertOk();
     }
 }

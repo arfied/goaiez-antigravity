@@ -6,6 +6,7 @@ namespace Tests\Modules\X181\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X181\Ui\Ticket;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class TicketScreenTest extends TestCase
 
         $this->get(route('x-181.ticket'))->assertOk();
 
-        Livewire::test(\App\Modules\X181\Ui\Ticket::class)->assertOk();
+        Livewire::test(Ticket::class)->assertOk();
     }
 }

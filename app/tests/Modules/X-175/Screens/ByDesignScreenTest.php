@@ -6,6 +6,7 @@ namespace Tests\Modules\X175\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X175\Ui\ByDesign;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class ByDesignScreenTest extends TestCase
 
         $this->get(route('x-175.by-design'))->assertOk();
 
-        Livewire::test(\App\Modules\X175\Ui\ByDesign::class)->assertOk();
+        Livewire::test(ByDesign::class)->assertOk();
     }
 }

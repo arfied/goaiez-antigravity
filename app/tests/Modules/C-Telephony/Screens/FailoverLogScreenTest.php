@@ -6,6 +6,7 @@ namespace Tests\Modules\CTelephony\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CTelephony\Ui\FailoverLog;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class FailoverLogScreenTest extends TestCase
 
         $this->get(route('c-telephony.failover-log'))->assertOk();
 
-        Livewire::test(\App\Modules\CTelephony\Ui\FailoverLog::class)->assertOk();
+        Livewire::test(FailoverLog::class)->assertOk();
     }
 }

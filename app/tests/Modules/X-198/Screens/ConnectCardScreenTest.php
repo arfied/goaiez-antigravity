@@ -6,6 +6,7 @@ namespace Tests\Modules\X198\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X198\Ui\ConnectCard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ConnectCardScreenTest extends TestCase
 
         $this->get(route('x-198.connect-card'))->assertOk();
 
-        Livewire::test(\App\Modules\X198\Ui\ConnectCard::class)->assertOk();
+        Livewire::test(ConnectCard::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class ConnectCardScreenTest extends TestCase
 
         $this->get(route('x-198.connect-card.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X198\Ui\ConnectCard::class)->assertOk();
+        Livewire::test(ConnectCard::class)->assertOk();
     }
 }

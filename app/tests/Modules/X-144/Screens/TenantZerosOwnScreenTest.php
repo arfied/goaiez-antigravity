@@ -6,6 +6,7 @@ namespace Tests\Modules\X144\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X144\Ui\TenantZerosOwn;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class TenantZerosOwnScreenTest extends TestCase
 
         $this->get(route('x-144.tenant-zeros-own'))->assertOk();
 
-        Livewire::test(\App\Modules\X144\Ui\TenantZerosOwn::class)->assertOk();
+        Livewire::test(TenantZerosOwn::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class TenantZerosOwnScreenTest extends TestCase
 
         $this->get(route('x-144.tenant-zeros-own.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X144\Ui\TenantZerosOwn::class)->assertOk();
+        Livewire::test(TenantZerosOwn::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X181\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X181\Ui\QaQueueSlaDueAt;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class QaQueueSlaDueAtScreenTest extends TestCase
 
         $this->get(route('x-181.qa-queue-sladueat'))->assertOk();
 
-        Livewire::test(\App\Modules\X181\Ui\QaQueueSlaDueAt::class)->assertOk();
+        Livewire::test(QaQueueSlaDueAt::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X130\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X130\Ui\PublicIndexPages;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class PublicIndexPagesScreenTest extends TestCase
 
         $this->get(route('x-130.public-index-pages'))->assertOk();
 
-        Livewire::test(\App\Modules\X130\Ui\PublicIndexPages::class)->assertOk();
+        Livewire::test(PublicIndexPages::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class PublicIndexPagesScreenTest extends TestCase
 
         $this->get(route('x-130.public-index-pages.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X130\Ui\PublicIndexPages::class)->assertOk();
+        Livewire::test(PublicIndexPages::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X144\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X144\Ui\QuestionList;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class QuestionListScreenTest extends TestCase
 
         $this->get(route('x-144.question-list'))->assertOk();
 
-        Livewire::test(\App\Modules\X144\Ui\QuestionList::class)->assertOk();
+        Livewire::test(QuestionList::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class QuestionListScreenTest extends TestCase
 
         $this->get(route('x-144.question-list.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X144\Ui\QuestionList::class)->assertOk();
+        Livewire::test(QuestionList::class)->assertOk();
     }
 }

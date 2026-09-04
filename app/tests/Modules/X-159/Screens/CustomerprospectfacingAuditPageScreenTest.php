@@ -6,6 +6,7 @@ namespace Tests\Modules\X159\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X159\Ui\CustomerprospectfacingAuditPage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class CustomerprospectfacingAuditPageScreenTest extends TestCase
 
         $this->get(route('x-159.customerprospectfacing-audit-page'))->assertOk();
 
-        Livewire::test(\App\Modules\X159\Ui\CustomerprospectfacingAuditPage::class)->assertOk();
+        Livewire::test(CustomerprospectfacingAuditPage::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class CustomerprospectfacingAuditPageScreenTest extends TestCase
 
         $this->get(route('x-159.customerprospectfacing-audit-page.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X159\Ui\CustomerprospectfacingAuditPage::class)->assertOk();
+        Livewire::test(CustomerprospectfacingAuditPage::class)->assertOk();
     }
 }

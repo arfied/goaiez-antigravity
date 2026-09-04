@@ -6,6 +6,7 @@ namespace Tests\Modules\X10\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X10\Ui\UnassignedCount;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class UnassignedCountScreenTest extends TestCase
 
         $this->get(route('x-10.unassigned-count'))->assertOk();
 
-        Livewire::test(\App\Modules\X10\Ui\UnassignedCount::class)->assertOk();
+        Livewire::test(UnassignedCount::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class UnassignedCountScreenTest extends TestCase
 
         $this->get(route('x-10.unassigned-count.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X10\Ui\UnassignedCount::class)->assertOk();
+        Livewire::test(UnassignedCount::class)->assertOk();
     }
 }

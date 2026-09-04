@@ -6,6 +6,7 @@ namespace Tests\Modules\X110\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X110\Ui\TagVersionPer;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class TagVersionPerScreenTest extends TestCase
 
         $this->get(route('x-110.tag-version-per'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\TagVersionPer::class)->assertOk();
+        Livewire::test(TagVersionPer::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class TagVersionPerScreenTest extends TestCase
 
         $this->get(route('x-110.tag-version-per.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X110\Ui\TagVersionPer::class)->assertOk();
+        Livewire::test(TagVersionPer::class)->assertOk();
     }
 }

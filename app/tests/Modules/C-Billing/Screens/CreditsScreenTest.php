@@ -6,6 +6,7 @@ namespace Tests\Modules\CBilling\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\CBilling\Ui\Credits;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class CreditsScreenTest extends TestCase
 
         $this->get(route('c-billing.credits'))->assertOk();
 
-        Livewire::test(\App\Modules\CBilling\Ui\Credits::class)->assertOk();
+        Livewire::test(Credits::class)->assertOk();
     }
 }

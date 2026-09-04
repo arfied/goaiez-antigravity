@@ -6,6 +6,7 @@ namespace Tests\Modules\X114\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X114\Ui\MediaLibraryView;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class MediaLibraryViewScreenTest extends TestCase
 
         $this->get(route('x-114.media-library'))->assertOk();
 
-        Livewire::test(\App\Modules\X114\Ui\MediaLibraryView::class)->assertOk();
+        Livewire::test(MediaLibraryView::class)->assertOk();
     }
 }

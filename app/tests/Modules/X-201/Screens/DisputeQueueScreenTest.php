@@ -6,6 +6,7 @@ namespace Tests\Modules\X201\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X201\Ui\DisputeQueue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class DisputeQueueScreenTest extends TestCase
 
         $this->get(route('x-201.dispute-queue'))->assertOk();
 
-        Livewire::test(\App\Modules\X201\Ui\DisputeQueue::class)->assertOk();
+        Livewire::test(DisputeQueue::class)->assertOk();
     }
 
     public function test_screen_renders_for_admin(): void
@@ -29,6 +30,6 @@ class DisputeQueueScreenTest extends TestCase
 
         $this->get(route('x-201.dispute-queue.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X201\Ui\DisputeQueue::class)->assertOk();
+        Livewire::test(DisputeQueue::class)->assertOk();
     }
 }

@@ -6,6 +6,7 @@ namespace Tests\Modules\X108\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X108\Ui\Calendar;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -19,6 +20,6 @@ class CalendarScreenTest extends TestCase
 
         $this->get(route('x-108.calendar'))->assertOk();
 
-        Livewire::test(\App\Modules\X108\Ui\Calendar::class)->assertOk();
+        Livewire::test(Calendar::class)->assertOk();
     }
 }

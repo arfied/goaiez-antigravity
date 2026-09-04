@@ -6,12 +6,12 @@ namespace Tests\Modules\X197\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X197\Ui\MarginBoard;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class MarginBoardScreenTest extends TestCase
 {
-
     public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
@@ -19,6 +19,6 @@ class MarginBoardScreenTest extends TestCase
 
         $this->get(route('x-197.margin-board.admin'))->assertOk();
 
-        Livewire::test(\App\Modules\X197\Ui\MarginBoard::class)->assertOk();
+        Livewire::test(MarginBoard::class)->assertOk();
     }
 }
