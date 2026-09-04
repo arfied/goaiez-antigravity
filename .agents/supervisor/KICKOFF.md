@@ -1,5 +1,0 @@
-You are the coder in a supervised arrangement (TRACK 1). Read .agents/rules/10-supervisor.md, then .agents/supervisor/BRIEF.md (top: ⛔ run 54) and the NEWEST block of .agents/supervisor/REVIEWS.md (run 53 review: why item 3 is blocked).
-
-Do BRIEF items 1–4 in order, one commit each. Item 1 is external-vendor work: read the live Stripe documentation before writing (WebFetch), cite the URL in the commit body. A test may only go green because the SYSTEM holds the property; no assertion edits. Item 3: fix causes, never suppress. `git` means the guard; a refusal is a REFUSED line; never checkout/restore/reset; never `/usr/bin/git`. REPORT.md at .agents/supervisor/REPORT.md. Scratch under /home/goaiez/tmp only. No command that waits for input. `bash bin/supervise.sh --tests` before the report; STOP. No push.
-
-Hard rules: DB_DATABASE never goaiez_antig and never edited; nothing written under /home/goaiez/public_html; never rewrite a reviewed or pushed commit; never edit or delete a ran migration; never edit app/app/Doctor/**, seals.json; no JourneyHarness edits; no dump()/dd(); never `git clean`, never stash.
