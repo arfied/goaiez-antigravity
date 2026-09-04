@@ -113,12 +113,14 @@ final class GatewayEngine
 
         $gatewayChargeId = null;
 
+        $headers = ['Idempotency-Key' => $idempotencyKey];
+        if ($connection->merchant_account_id !== 'self') {
+            $headers['Stripe-Account'] = $connection->merchant_account_id;
+        }
+
         if ($connection->gateway_name === 'stripe') {
-            $response = Http::withToken(config('services.stripe.secret', ''))
-                ->withHeaders([
-                    'Stripe-Account' => $connection->merchant_account_id,
-                    'Idempotency-Key' => $idempotencyKey,
-                ])
+            $response = Http::withToken(env('STRIPE_SECRET', ''))
+                ->withHeaders($headers)
                 ->asForm()
                 ->post('https://api.stripe.com/v1/payment_intents', [
                     'amount' => $amountCents,
@@ -126,7 +128,12 @@ final class GatewayEngine
                     'payment_method_data[type]' => 'card',
                     'payment_method_data[card][token]' => $paymentToken,
                     'confirm' => 'true',
+                    'return_url' => 'https://example.com/return',
                 ]);
+
+            if (!$response->successful()) {
+                throw new \RuntimeException('Stripe Error: ' . $response->body());
+            }
 
             $gatewayChargeId = $response->json('id');
         }

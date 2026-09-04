@@ -24,6 +24,11 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-199');
 
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Modules\X198\Events\PaymentCaptured::class,
+            \App\Modules\X199\Listeners\RecordPaymentOnCapture::class
+        );
+
         if (class_exists(Livewire::class)) {
             Livewire::component('x-199.money-paid-today', MoneyPaidToday::class);
             Livewire::component('x-199.unpaid', Unpaid::class);

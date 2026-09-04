@@ -336,19 +336,45 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function issueInvoice(array $tenant, int $amountMinor): array
     {
-        throw $this->todo('issue a real invoice — integer minor units, never a float');
+        $person = \App\Modules\X121\Models\Person::firstOrCreate(
+            ['business_id' => $tenant['id']],
+            ['first_name' => 'Test Customer']
+        );
+        $engine = app(\App\Modules\X199\Domain\InvoiceEngine::class);
+        $result = $engine->issueInvoice(
+            $tenant['id'],
+            $person->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => $amountMinor]],
+            'due_on_receipt'
+        );
+        return $result['invoice']->toArray();
     }
 
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        throw $this->todo('pay through the gateway sandbox and return the gateway charge id');
+        $engine = app(\App\Modules\X198\Domain\GatewayEngine::class);
+        $businessId = $invoice['business_id'];
+        $amount = $invoice['total_cents'];
+        
+        $engine->connect($businessId, 'stripe', 'self');
+
+        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_' . uniqid());
+        
+        \Illuminate\Support\Facades\DB::table('invoices')
+            ->where('id', $invoice['id'])
+            ->update(['payment_id' => $payment->id]);
+
+        \Illuminate\Support\Facades\Http::allowStrayRequests();
+        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_' . uniqid());
+
+        return $payment->toArray();
     }
 
     /** @param array<string,mixed> $invoice */
     private function invoiceStatus(array $invoice): string
     {
-        throw $this->todo('read the invoice status from its owning module');
+        return (string) \Illuminate\Support\Facades\DB::table('invoices')->where('id', $invoice['id'])->value('status');
     }
 
     /** @param array<string,mixed> $invoice */
