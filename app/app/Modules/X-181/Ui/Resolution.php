@@ -4,12 +4,81 @@ declare(strict_types=1);
 
 namespace App\Modules\X181\Ui;
 
+use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X181\Actions\QaTicketReopenAction;
+use App\Modules\X181\Models\QaTicket;
+use App\Support\Tenancy;
+use Exception;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Resolution extends Component
 {
+    #[Locked]
+    public int $businessId;
+
+    public bool $isSample = false;
+
+    public ?string $actionNotice = null;
+
+    public function toggleSample(): void
+    {
+        $this->isSample = ! $this->isSample;
+    }
+
+    public function reopen(int $ticketId): void
+    {
+        try {
+            $this->actionNotice = null;
+            app(QaTicketReopenAction::class)->handle($this->businessId, $ticketId);
+        } catch (Exception $e) {
+            $this->actionNotice = $e->getMessage();
+        }
+    }
+
     public function render()
     {
-        return view('x-181::resolution');
+        Tenancy::set($this->businessId);
+
+        $tickets = collect();
+
+        if ($this->isSample) {
+            $tickets = collect([
+                (object) [
+                    'id' => 9991,
+                    'subject' => 'Sample resolved on time',
+                    'resolved_at' => now()->subHours(2),
+                    'sla_due_at' => now()->subHours(1),
+                    'resolution_notes' => 'Fixed immediately',
+                    'review' => (object) ['csat_score' => 8],
+                ],
+                (object) [
+                    'id' => 9992,
+                    'subject' => 'Sample resolved late',
+                    'resolved_at' => now()->subHours(1),
+                    'sla_due_at' => now()->subHours(3),
+                    'resolution_notes' => 'Fixed later',
+                    'review' => null,
+                ],
+            ]);
+        } else {
+            $tickets = QaTicket::where('business_id', $this->businessId)
+                ->whereIn('status', ['resolved', 'closed'])
+                ->orderBy('resolved_at', 'desc')
+                ->get()
+                ->map(function ($ticket) {
+                    if ($ticket->review_request_id) {
+                        $ticket->review = ReviewRequest::find($ticket->review_request_id);
+                    } else {
+                        $ticket->review = null;
+                    }
+
+                    return $ticket;
+                });
+        }
+
+        return view('x-181::resolution', [
+            'tickets' => $tickets,
+        ]);
     }
 }

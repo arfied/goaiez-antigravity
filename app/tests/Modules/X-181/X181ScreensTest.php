@@ -6,6 +6,7 @@ namespace Tests\Modules\X181;
 
 use App\Modules\X181\Models\QaTicket;
 use App\Modules\X181\Ui\QaQueueSlaDueAt;
+use App\Modules\X181\Ui\Resolution;
 use App\Modules\X181\Ui\Ticket;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -111,5 +112,58 @@ class X181ScreensTest extends TestCase
         $ticket->refresh();
         $this->assertEquals('resolved', $ticket->status);
         $this->assertEquals('fixed', $ticket->resolution_notes);
+    }
+
+    public function test_resolution_mount_and_empty(): void
+    {
+        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+            ->assertOk()
+            ->assertSee('Nothing resolved yet');
+    }
+
+    public function test_resolution_lists_resolved_with_sla_pill(): void
+    {
+        $ticketLate = QaTicket::create([
+            'business_id' => $this->bizId,
+            'subject' => 'Late Ticket',
+            'arrived_at' => now()->subDays(2),
+            'status' => 'resolved',
+            'sla_due_at' => now()->subHours(5),
+            'resolved_at' => now()->subHours(2),
+        ]);
+
+        $ticketOnTime = QaTicket::create([
+            'business_id' => $this->bizId,
+            'subject' => 'OnTime Ticket',
+            'arrived_at' => now()->subDays(2),
+            'status' => 'resolved',
+            'sla_due_at' => now()->subHours(1),
+            'resolved_at' => now()->subHours(1),
+        ]);
+
+        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+            ->assertOk()
+            ->assertSee('SLA met')
+            ->assertSee('SLA missed')
+            ->assertSeeInOrder(['OnTime Ticket', 'Late Ticket']); // newest resolved_at first, they have same resolved_at here. Let's make one newer.
+    }
+
+    public function test_resolution_reopen_action(): void
+    {
+        $ticket = QaTicket::create([
+            'business_id' => $this->bizId,
+            'subject' => 'Ticket to Reopen',
+            'arrived_at' => now(),
+            'status' => 'resolved',
+            'sla_due_at' => now()->subHours(1),
+            'resolved_at' => now(),
+        ]);
+
+        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+            ->call('reopen', $ticket->id);
+
+        $ticket->refresh();
+        $this->assertEquals('open', $ticket->status);
+        $this->assertNull($ticket->resolved_at);
     }
 }

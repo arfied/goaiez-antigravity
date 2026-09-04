@@ -767,3 +767,4 @@
 - `2026-09-04T13:11:21` (R245) C-Reviews — (R245) C-Reviews screens — threshold read from qa_settings in the UI; resolved via X-181 QaTicketResolveAction as no native C-Reviews ticket resolve path exists; SAMPLE implemented as an opt-in rendered state.
 - `2026-09-04T14:29:46` (R245) C-Reviews — loss alert = an open QaTicket past sla_due_at, or a review_requests row with rating <= qa_settings.min_public_stars and no resolved ticket, or a resolved request with a low csat_score (< 3)
 - `2026-09-04T14:48:31` note: C-Reviews loss-alert CSAT rule is csat_score < 7, the same threshold QaReport uses; the 2026-09-04T14:29:46 decided line's '< 3' misstated it
+- `2026-09-04T15:09:31` (R245) X-181 — Resolution screen reopen = status open, resolved_at null, notes kept, SLA restarted 24h from reopen; emits nothing (manifest declares ticket.created and ticket.resolved only)

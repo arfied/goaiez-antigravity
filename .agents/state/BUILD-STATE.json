@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-04T14:29:46",
+ "updated": "2026-09-04T15:09:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1365,6 +1365,12 @@
    "module": "C-Reviews",
    "chose": "loss alert = an open QaTicket past sla_due_at, or a review_requests row with rating <= qa_settings.min_public_stars and no resolved ticket, or a resolved request with a low csat_score (< 3)",
    "at": "2026-09-04T14:29:46",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-181",
+   "chose": "Resolution screen reopen = status open, resolved_at null, notes kept, SLA restarted 24h from reopen; emits nothing (manifest declares ticket.created and ticket.resolved only)",
+   "at": "2026-09-04T15:09:31",
    "ruling": "R245"
   }
  ],
