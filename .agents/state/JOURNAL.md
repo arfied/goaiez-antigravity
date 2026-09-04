@@ -524,3 +524,9 @@
 - `2026-09-04T15:28:49` UNRESOLVED surface X-82 - 
 - `2026-09-04T15:28:49` (R245) X-82 — gate on UserRole::SuperAdmin or UserRole::OpsAdmin
 - `2026-09-04T15:28:58` (R245) X-82 — add is_sample to rates (R245)
+- `2026-09-04T16:07:44` (R245) X-168 — timesheets.person_id is the technician's users.id, the id X-171 passes as the tech; names resolve from users in one query (R245)
+- `2026-09-04T16:07:44` (R245) X-168 — add is_sample to timesheets (R245)
+- `2026-09-04T16:07:44` UNRESOLVED surface X-168 - GET→assertOk for X-168 timesheets, own_hours and approvals waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T16:13:51` (R245) X-168 — a week whose period_end has passed is closed and waits for approval; the close is the rule, not a status write (R235) (R245)
+- `2026-09-04T16:15:01` UNRESOLVED surface X-165 - GET→assertOk for X-165 plans and members waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T16:15:01` UNRESOLVED surface X-82 - GET→assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout

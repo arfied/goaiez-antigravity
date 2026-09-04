@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T15:28:58",
+ "updated": "2026-09-04T16:15:01",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -844,6 +844,12 @@
      "stage": "surface",
      "why": "",
      "at": "2026-09-04T15:22:13"
+    },
+    {
+     "module": "X-165",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-165 plans and members waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T16:15:01"
     }
    ]
   },
@@ -860,10 +866,17 @@
    "unresolved": []
   },
   "X-168": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-168",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-168 timesheets, own_hours and approvals waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T16:07:44"
+    }
+   ]
   },
   "X-170": {
    "status": "DONE",
@@ -1195,6 +1208,12 @@
      "stage": "surface",
      "why": "",
      "at": "2026-09-04T15:28:49"
+    },
+    {
+     "module": "X-82",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T16:15:01"
     }
    ]
   }
@@ -1351,6 +1370,24 @@
    "stage": "surface",
    "why": "",
    "at": "2026-09-04T15:28:49"
+  },
+  {
+   "module": "X-168",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-168 timesheets, own_hours and approvals waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T16:07:44"
+  },
+  {
+   "module": "X-165",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-165 plans and members waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T16:15:01"
+  },
+  {
+   "module": "X-82",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T16:15:01"
   }
  ],
  "notes": [
@@ -1506,6 +1543,24 @@
    "module": "X-82",
    "chose": "add is_sample to rates (R245)",
    "at": "2026-09-04T15:28:58",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-168",
+   "chose": "timesheets.person_id is the technician's users.id, the id X-171 passes as the tech; names resolve from users in one query (R245)",
+   "at": "2026-09-04T16:07:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-168",
+   "chose": "add is_sample to timesheets (R245)",
+   "at": "2026-09-04T16:07:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-168",
+   "chose": "a week whose period_end has passed is closed and waits for approval; the close is the rule, not a status write (R235) (R245)",
+   "at": "2026-09-04T16:13:51",
    "ruling": "R245"
   }
  ]
