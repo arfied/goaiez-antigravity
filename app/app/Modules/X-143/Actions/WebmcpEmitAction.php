@@ -18,12 +18,7 @@ final class WebmcpEmitAction
         // 1. With flag dark: published page contains ZERO modelContext markup (TEST ANCHOR)
         if (! $isWebmcpLive) {
             return '';
-        
-    public function isActionPermittedOnSurface(array $declaredSurfaces, string $requestedSurface): bool
-    {
-        return in_array($requestedSurface, $declaredSurfaces, true);
-    }
-}
+        }
 
         // 2. With flag live: outputs modelContext markup
         $contracts = [
@@ -35,12 +30,7 @@ final class WebmcpEmitAction
         ];
 
         return '<meta name="modelContext" content="'.htmlspecialchars(json_encode($contracts), ENT_QUOTES, 'UTF-8').'">';
-    
-    public function isActionPermittedOnSurface(array $declaredSurfaces, string $requestedSurface): bool
-    {
-        return in_array($requestedSurface, $declaredSurfaces, true);
     }
-}
 
     /**
      * Invokes booking contract by browser agent, creating same Job row with actor_type: webmcp (TEST ANCHOR).
@@ -59,12 +49,7 @@ final class WebmcpEmitAction
         Event::dispatch(new WebmcpInvoked($businessId, 'book_appointment', $job->id, 'webmcp'));
 
         return $job;
-    
-    public function isActionPermittedOnSurface(array $declaredSurfaces, string $requestedSurface): bool
-    {
-        return in_array($requestedSurface, $declaredSurfaces, true);
     }
-}
 
     public function isActionPermittedOnSurface(array $declaredSurfaces, string $requestedSurface): bool
     {
