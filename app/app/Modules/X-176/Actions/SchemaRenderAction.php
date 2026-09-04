@@ -19,13 +19,24 @@ final class SchemaRenderAction
         string $businessName,
         string $commitId,
         string $domainName,
-        ?string $entityType = 'LocalBusiness',
+        ?string $entityType = null,
         ?array $productOffers = null
     ): array {
+        if ($entityType === null) {
+            $vertical = \App\Models\Business::find($businessId)?->vertical;
+            /** (R245) */
+            $map = [
+                'HVAC' => 'HVACBusiness',
+                'Plumbing' => 'Plumber',
+                'Electrical' => 'Electrician',
+            ];
+            $entityType = $map[$vertical] ?? 'LocalBusiness';
+        }
+
         // Build valid schema.org structure (G8-32)
         $jsonLd = [
             '@context' => 'https://schema.org',
-            '@type' => $entityType ?? 'LocalBusiness',
+            '@type' => $entityType,
             'name' => $businessName,
             'url' => "https://{$domainName}/pages/{$pageId}",
         ];
@@ -41,9 +52,17 @@ final class SchemaRenderAction
                         '@type' => 'Service',
                         'name' => $p['name'],
                     ],
-                    'price' => $p['price'],
+                    'price' => $p['price'] ?? null,
                     'priceCurrency' => 'USD',
                 ], $productOffers),
+            ];
+        }
+
+        $isValid = $this->validateSchema($jsonLd);
+        if (!$isValid) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'SCHEMA_INVALID',
             ];
         }
 
@@ -70,5 +89,33 @@ final class SchemaRenderAction
             'commit_id' => $commitId,
             'json_ld' => $jsonLd,
         ];
+    }
+
+    private function validateSchema(array $schema): bool
+    {
+        if (($schema['@context'] ?? '') !== 'https://schema.org') {
+            return false;
+        }
+        if (empty($schema['@type']) || empty($schema['name']) || empty($schema['url'])) {
+            return false;
+        }
+        if (!is_string($schema['@type']) || !is_string($schema['name']) || !is_string($schema['url'])) {
+            return false;
+        }
+        if (isset($schema['hasOfferCatalog'])) {
+            $catalog = $schema['hasOfferCatalog'];
+            if (($catalog['@type'] ?? '') !== 'OfferCatalog') {
+                return false;
+            }
+            if (!isset($catalog['itemListElement']) || !is_array($catalog['itemListElement'])) {
+                return false;
+            }
+            foreach ($catalog['itemListElement'] as $item) {
+                if (empty($item['price']) || empty($item['priceCurrency'])) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
