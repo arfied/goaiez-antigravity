@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-03T01:20:26",
+ "updated": "2026-09-04T11:49:20",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1239,6 +1239,12 @@
    "module": "X-171",
    "chose": "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) \u2014 declared in the plan row and regenerated manifest, not a raw undeclared read",
    "at": "2026-09-03T01:20:26",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-205",
+   "chose": "(R245) SaleAttributionRefused \u2014 a sale whose referral click is outside the 90-day cookie (or missing) is refused; missing visitor ID bypasses check",
+   "at": "2026-09-04T11:49:20",
    "ruling": "R245"
   }
  ]

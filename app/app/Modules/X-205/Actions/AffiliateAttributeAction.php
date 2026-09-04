@@ -32,6 +32,17 @@ final class AffiliateAttributeAction
             ->where('affiliate_code', $affiliateCode)
             ->firstOrFail();
 
+        if ($visitorId !== '') {
+            $click = \App\Modules\X205\Models\ReferralClick::where('business_id', $businessId)
+                ->where('visitor_id', $visitorId)
+                ->where('affiliate_id', $affiliate->id)
+                ->first();
+
+            if (! $click || ! $this->engine->isWithinAttributionWindow($click->created_at, now())) {
+                throw new \App\Modules\X205\Domain\SaleAttributionRefused('Sale outside 90-day cookie or missing click');
+            }
+        }
+
         // G7-41: Tiers
         // Calculate referral count (existing attributions)
         $referralCount = AffiliateAttribution::where('business_id', $businessId)

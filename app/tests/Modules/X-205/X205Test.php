@@ -94,9 +94,48 @@ class X205Test extends TestCase
     /**
      * [G13-20]
      */
-    public function test_affiliate_capabilities(): void
+    public function test_g13_20_sale_outside_the_90_day_cookie_is_refused_and_lifetime_balance_is_a_running_sum(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G13-20 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $affiliate = Affiliate::create([
+            'business_id' => $biz->id,
+            'affiliate_code' => 'AFF-G13',
+            'partner_name' => 'Cookie Partner',
+            'commission_rate_bps' => 1000, // 10%
+            'lifetime_earnings_cents' => 0,
+            'current_balance_cents' => 0,
+        ]);
+
+        $this->engine->recordClick($biz->id, 'vis-fresh', 'AFF-G13');
+
+        $staleClick = $this->engine->recordClick($biz->id, 'vis-stale', 'AFF-G13');
+        $staleClick->created_at = now()->subDays(91);
+        $staleClick->save();
+
+        $this->attributeAction->attributeSale($biz->id, 'AFF-G13', 'ORD-F1', 10000, 'vis-fresh');
+        $this->attributeAction->attributeSale($biz->id, 'AFF-G13', 'ORD-F2', 20000, 'vis-fresh');
+
+        $affiliate->refresh();
+        $this->assertEquals(3000, $affiliate->lifetime_earnings_cents);
+        $this->assertEquals(3000, $affiliate->current_balance_cents);
+
+        try {
+            $this->attributeAction->attributeSale($biz->id, 'AFF-G13', 'ORD-S1', 15000, 'vis-stale');
+            $this->fail('Expected SaleAttributionRefused exception');
+        } catch (\App\Modules\X205\Domain\SaleAttributionRefused $e) {
+            $this->assertEquals('Sale outside 90-day cookie or missing click', $e->getMessage());
+        }
+
+        $this->assertDatabaseMissing('affiliate_attributions', [
+            'business_id' => $biz->id,
+            'order_id' => 'ORD-S1',
+        ]);
+
+        $affiliate->refresh();
+        $this->assertEquals(3000, $affiliate->lifetime_earnings_cents);
+        $this->assertEquals(3000, $affiliate->current_balance_cents);
     }
 
     /**
@@ -193,6 +232,10 @@ class X205Test extends TestCase
 
         $payout = $this->payoutAction->requestPayout($biz->id, $attribution->affiliate_id, 1000);
         $this->assertEquals('requested', $payout->status, 'proposes, never freezes');
+
+        // The fraud is the stolen card, not a missing click: G13-20 refuses a
+        // sale with no referral click, so the fraud scenario records one first.
+        $this->engine->recordClick($biz->id, 'vis-555', 'AFF-G7-23');
 
         // Stolen card fraud
         $attribution2 = $this->attributeAction->attributeSale(
