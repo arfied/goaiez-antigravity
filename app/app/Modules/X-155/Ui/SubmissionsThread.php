@@ -16,7 +16,10 @@ class SubmissionsThread extends Component
     public function render()
     {
         $submissions = ($this->businessId > 0)
-            ? FormSubmission::where('business_id', $this->businessId)->get()
+            ? FormSubmission::where('business_id', $this->businessId)
+                ->with('formDefinition')
+                ->latest()
+                ->get()
             : collect();
 
         return view('x-155::submissions-thread', [

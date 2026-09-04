@@ -12,6 +12,7 @@ use App\Modules\X155\Events\FormSpamRejected;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X155\Ui\Forms;
+use App\Modules\X155\Ui\SubmissionsThread;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -256,6 +257,80 @@ class X155Test extends TestCase
         Livewire::test(Forms::class, ['businessId' => $biz->id])
             ->assertOk()
             ->assertSee('No forms constructed yet.')
+            ->assertDontSee('<ul', false);
+    }
+
+    public function test_submissions_thread_lists_this_businesses_submissions(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A']);
+        Tenancy::set((int) $bizA->id);
+
+        $formA = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 1',
+            'slug' => 'biz-a-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+
+        $personA1 = Person::create(['business_id' => $bizA->id, 'first_name' => 'John']);
+        $personA2 = Person::create(['business_id' => $bizA->id, 'first_name' => 'Jane']);
+
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $formA->id,
+            'person_id' => $personA1->id,
+            'is_spam' => false,
+            'payload' => [],
+        ]);
+
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $formA->id,
+            'person_id' => $personA2->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B']);
+        Tenancy::set((int) $bizB->id);
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Biz B Form 1',
+            'slug' => 'biz-b-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+        $personB = Person::create(['business_id' => $bizB->id, 'first_name' => 'Bob']);
+        FormSubmission::create([
+            'business_id' => $bizB->id,
+            'form_definition_id' => $formB->id,
+            'person_id' => $personB->id,
+            'is_spam' => false,
+            'payload' => [],
+        ]);
+
+        Tenancy::set((int) $bizA->id);
+        Livewire::test(SubmissionsThread::class, ['businessId' => $bizA->id])
+            ->assertOk()
+            ->assertSee('Biz A Form 1')
+            ->assertSee('Person #' . $personA1->id)
+            ->assertSee('VALID')
+            ->assertSee('Person #' . $personA2->id)
+            ->assertSee('SPAM')
+            ->assertDontSee('Biz B Form 1')
+            ->assertDontSee('Person #' . $personB->id);
+    }
+
+    public function test_submissions_thread_shows_the_empty_state_for_a_business_with_no_submissions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Biz']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(SubmissionsThread::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('No submissions recorded.')
             ->assertDontSee('<ul', false);
     }
 }
