@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Domain;
 
+use App\Modules\X121\Models\Conversation;
+use App\Modules\X121\Models\Message;
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Models\InvoiceLine;
 use App\Modules\X211\Events\ArEscalatedToHuman;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArPackaged;
 use App\Modules\X211\Events\ArPlanAccepted;
+use App\Modules\X211\Models\ArCollectionsPackage;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\OfflinePayment;
@@ -152,13 +156,55 @@ final class ArEngine
     }
 
     /**
-     * Package defaulted account into collections evidence bundle.
+     * Package a defaulted account into the collections evidence bundle.
+     *
+     * G1-65: the bundle is BUILT here; transmission to an agency is a human
+     * action (the principal is recorded on the row). R211: a resolution attempt
+     * — a reason, a plan or a payment — is recorded FIRST, or nothing is packaged.
      */
-    public function packageForCollections(int $businessId, int $invoiceId): array
+    public function packageForCollections(int $businessId, int $invoiceId, ?int $packagedByUserId = null): array
     {
-        return DB::transaction(function () use ($businessId, $invoiceId) {
+        return DB::transaction(function () use ($businessId, $invoiceId, $packagedByUserId) {
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+
+            $attempted = ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
+                || PaymentPlan::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
+                || OfflinePayment::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists();
+
+            if (! $attempted) {
+                throw new NoResolutionAttemptException(
+                    "Record a resolution attempt first — a reason, a plan or a payment — before {$invoice->invoice_number} goes to collections. Nothing was packaged."
+                );
+            }
+
+            $conversationIds = $invoice->customer_id
+                ? Conversation::where('business_id', $businessId)->where('person_id', $invoice->customer_id)->pluck('id')
+                : collect();
+
+            $contents = [
+                'invoice_number' => $invoice->invoice_number,
+                'total_cents' => (int) $invoice->total_cents,
+                'paid_cents' => (int) $invoice->paid_cents,
+                'balance_cents' => (int) ($invoice->total_cents - $invoice->paid_cents),
+                'due_date' => $invoice->due_date->toDateString(),
+                'lines' => InvoiceLine::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
+                    ->get(['description', 'quantity', 'subtotal_cents'])->toArray(),
+                'payments' => OfflinePayment::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
+                    ->get(['amount_cents', 'payment_method', 'reference_number', 'created_at'])->toArray(),
+                'actions' => ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
+                    ->get(['action', 'reason', 'created_at'])->toArray(),
+                'messages_count' => Message::where('business_id', $businessId)->whereIn('conversation_id', $conversationIds)->count(),
+            ];
+
             $bundleUrl = "https://cdn.goaiez.com/collections/bundle_{$invoice->invoice_number}.zip";
+
+            $package = ArCollectionsPackage::create([
+                'business_id' => $businessId,
+                'invoice_id' => $invoiceId,
+                'packaged_by_user_id' => $packagedByUserId,
+                'contents' => $contents,
+                'bundle_url' => $bundleUrl,
+            ]);
 
             $state = ReceivableState::firstOrCreate(
                 ['business_id' => $businessId, 'invoice_id' => $invoiceId],
@@ -172,6 +218,8 @@ final class ArEngine
                 'invoice_id' => $invoiceId,
                 'status' => 'packaged_collections',
                 'bundle_url' => $bundleUrl,
+                'package_id' => $package->id,
+                'packaged_by_user_id' => $packagedByUserId,
             ];
         });
     }
