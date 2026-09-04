@@ -392,7 +392,7 @@ class X157Test extends TestCase
             ->call('rollback', $deploymentB->id)
             ->assertOk()
             ->assertDontSee('App\Modules\X157\Models\Deployment')
-            ->assertDontSee((string) $deploymentB->id);
+            ->assertSee('That deployment is not available for this business.');
 
         $this->assertEquals('deployed', $deploymentB->refresh()->status);
     }
