@@ -406,13 +406,20 @@ trait JourneyHarness
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        throw $this->todo('advance the invoice past its due date so invoice.overdue fires');
+        app(\App\Modules\X199\Domain\InvoiceEngine::class)->markOverdue($invoice['business_id'], $invoice['id']);
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        throw $this->todo('the most recent dunning action, with its recorded reason');
+        $state = \App\Modules\X211\Models\ReceivableState::where('business_id', $invoice['business_id'])
+            ->where('invoice_id', $invoice['id'])
+            ->first();
+
+        return [
+            'action' => $state->last_action ?? null,
+            'reason' => $state->last_reason ?? null,
+        ];
     }
 
     // ── agency isolation ─────────────────────────────────────────────────

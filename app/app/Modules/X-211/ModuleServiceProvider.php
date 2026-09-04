@@ -23,6 +23,11 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-211');
 
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Modules\X199\Events\InvoiceOverdue::class,
+            \App\Modules\X211\Listeners\ChaseOverdueInvoice::class
+        );
+
         if (class_exists(Livewire::class)) {
             Livewire::component('x-211.ageing-by-reason', AgeingByReason::class);
             Livewire::component('x-211.invoice-thread-beside', InvoiceThreadBeside::class);

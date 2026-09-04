@@ -155,4 +155,25 @@ final class InvoiceEngine
         });
     }
 
+    public function markOverdue(int $businessId, int $invoiceId): void
+    {
+        DB::transaction(function () use ($businessId, $invoiceId) {
+            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            
+            if ($invoice->status !== 'issued') {
+                return;
+            }
+
+            $invoice->update(['status' => 'overdue']);
+            
+            // Calculate days overdue based on due_date (just 1 if it's forced by harness)
+            $daysOverdue = max(1, now()->diffInDays($invoice->due_date));
+
+            Event::dispatch(new \App\Modules\X199\Events\InvoiceOverdue(
+                businessId: $businessId,
+                invoiceId: $invoice->id,
+                daysOverdue: $daysOverdue
+            ));
+        });
+    }
 }
