@@ -7,6 +7,7 @@ namespace Tests\Modules\CBilling;
 use App\Models\User;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\Meter;
+use App\Modules\CBilling\Models\TrialLimit;
 use App\Modules\CBilling\Ui\Credits;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -88,30 +89,29 @@ class CreditsScreenTest extends TestCase
             ->call('explain', 999999)
             ->assertSee("isn't in this account");
     }
-    
-    
+
     public function test_credits_topup_refuses_at_the_daily_ceiling(): void
     {
         $biz = self::provisionTenant();
-        $owner = \App\Models\User::findOrFail($biz->owner_user_id);
+        $owner = User::findOrFail($biz->owner_user_id);
 
-        \App\Support\Tenancy::set($biz->id);
-        \App\Support\Tenancy::setUser($owner->id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
 
-        \App\Modules\CBilling\Models\TrialLimit::create([
+        TrialLimit::create([
             'business_id' => $biz->id,
             'daily_topup_ceiling_cents' => 5000,
             'topups_today_cents' => 0,
             'current_balance_hundredths_cents' => 0,
         ]);
 
-        $lw = \Livewire\Livewire::actingAs($owner)->test(\App\Modules\CBilling\Ui\Credits::class)
+        $lw = Livewire::actingAs($owner)->test(Credits::class)
             ->call('topup')
             ->assertSee('Topped up');
-            
-        $entry = \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)
+
+        $entry = CreditLedgerEntry::where('business_id', $biz->id)
             ->where('entry_type', 'topup')->first();
-            
+
         $lw->call('explain', $entry->id)
             ->assertSee('Automatic balance top-up')
             ->call('topup')
@@ -120,10 +120,9 @@ class CreditsScreenTest extends TestCase
 
         $this->assertEquals(
             1,
-            \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)
+            CreditLedgerEntry::where('business_id', $biz->id)
                 ->where('entry_type', 'topup')
                 ->count()
         );
     }
 }
-
