@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-194')->group(function () {
-    Route::get('/x-194/any-view-it', \App\Modules\X194\Ui\AnyViewIt::class)->name('x-194.any-view-it');
-    Route::get('/x-194/saved-views-list', \App\Modules\X194\Ui\SavedViewsList::class)->name('x-194.saved-views-list');
+    Route::get('/any-view-it', \App\Modules\X194\Ui\AnyViewIt::class)->name('x-194.any-view-it');
+    Route::get('/saved-views-list', \App\Modules\X194\Ui\SavedViewsList::class)->name('x-194.saved-views-list');
 });
 

@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-214')->group(function () {
-    Route::get('/x-214/surcharge-line', \App\Modules\X214\Ui\SurchargeLine::class)->name('x-214.surcharge-line');
-    Route::get('/x-214/surcharge-disclosure', \App\Modules\X214\Ui\SurchargeDisclosure::class)->name('x-214.surcharge-disclosure');
+    Route::get('/surcharge-line', \App\Modules\X214\Ui\SurchargeLine::class)->name('x-214.surcharge-line');
+    Route::get('/surcharge-disclosure', \App\Modules\X214\Ui\SurchargeDisclosure::class)->name('x-214.surcharge-disclosure');
 });
 

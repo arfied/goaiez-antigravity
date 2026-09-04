@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-154')->group(function () {
-    Route::get('/x-154/readback-screen', \App\Modules\X154\Ui\ReadbackScreen::class)->name('x-154.readback-screen');
+    Route::get('/readback-screen', \App\Modules\X154\Ui\ReadbackScreen::class)->name('x-154.readback-screen');
 });
 

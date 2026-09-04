@@ -11,12 +11,23 @@ use Tests\TestCase;
 
 class ResolutionRateConfidenceViewScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+    public function test_screen_renders_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-132.resolution-rate-confidence'))->assertOk();
+
+        Livewire::test(\App\Modules\X132\Ui\ResolutionRateConfidenceView::class)->assertOk();
+    }
+
+    public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
-        $this->get(route('x-132.resolution-rate-confidence'))->assertOk();
+        $this->get(route('x-132.resolution-rate-confidence.admin'))->assertOk();
 
         Livewire::test(\App\Modules\X132\Ui\ResolutionRateConfidenceView::class)->assertOk();
     }

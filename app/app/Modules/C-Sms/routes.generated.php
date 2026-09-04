@@ -15,9 +15,9 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/c-sms')->group(function () {
-    Route::get('/c-sms/thread', \App\Modules\CSms\Ui\Thread::class)->name('c-sms.thread');
-    Route::get('/c-sms/composer-segment-warning', \App\Modules\CSms\Ui\ComposerSegmentWarning::class)->name('c-sms.composer-segment-warning');
-    Route::get('/c-sms/donottext-list', \App\Modules\CSms\Ui\DonottextList::class)->name('c-sms.donottext-list');
-    Route::get('/c-sms/pernumber-complaint-monitoring', \App\Modules\CSms\Ui\PernumberComplaintMonitoring::class)->name('c-sms.pernumber-complaint-monitoring');
+    Route::get('/thread', \App\Modules\CSms\Ui\Thread::class)->name('c-sms.thread');
+    Route::get('/composer-segment-warning', \App\Modules\CSms\Ui\ComposerSegmentWarning::class)->name('c-sms.composer-segment-warning');
+    Route::get('/donottext-list', \App\Modules\CSms\Ui\DonottextList::class)->name('c-sms.donottext-list');
+    Route::get('/pernumber-complaint-monitoring', \App\Modules\CSms\Ui\PernumberComplaintMonitoring::class)->name('c-sms.pernumber-complaint-monitoring');
 });
 

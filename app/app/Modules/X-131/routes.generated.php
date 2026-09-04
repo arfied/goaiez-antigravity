@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-131')->group(function () {
-    Route::get('/x-131/interest-tags', \App\Modules\X131\Ui\InterestTagsView::class)->name('x-131.interest-tags');
+    Route::get('/interest-tags', \App\Modules\X131\Ui\InterestTagsView::class)->name('x-131.interest-tags');
 });
 

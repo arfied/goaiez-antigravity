@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-114')->group(function () {
-    Route::get('/x-114/brand-kit', \App\Modules\X114\Ui\BrandKitView::class)->name('x-114.brand-kit');
-    Route::get('/x-114/media-library', \App\Modules\X114\Ui\MediaLibraryView::class)->name('x-114.media-library');
+    Route::get('/brand-kit', \App\Modules\X114\Ui\BrandKitView::class)->name('x-114.brand-kit');
+    Route::get('/media-library', \App\Modules\X114\Ui\MediaLibraryView::class)->name('x-114.media-library');
 });
 

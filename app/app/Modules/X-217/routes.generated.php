@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-217')->group(function () {
-    Route::get('/x-217/recruitpipeline', \App\Modules\X217\Ui\RecruitPipeline::class)->name('x-217.recruit-pipeline');
-    Route::get('/x-217/offercomposer', \App\Modules\X217\Ui\OfferComposer::class)->name('x-217.offer-composer');
+    Route::get('/recruitpipeline', \App\Modules\X217\Ui\RecruitPipeline::class)->name('x-217.recruit-pipeline');
+    Route::get('/offercomposer', \App\Modules\X217\Ui\OfferComposer::class)->name('x-217.offer-composer');
 });
 

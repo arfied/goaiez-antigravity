@@ -11,12 +11,23 @@ use Tests\TestCase;
 
 class ClaimexpiryRateScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+    public function test_screen_renders_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-153.claimexpiry-rate'))->assertOk();
+
+        Livewire::test(\App\Modules\X153\Ui\ClaimexpiryRate::class)->assertOk();
+    }
+
+    public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
-        $this->get(route('x-153.claimexpiry-rate'))->assertOk();
+        $this->get(route('x-153.claimexpiry-rate.admin'))->assertOk();
 
         Livewire::test(\App\Modules\X153\Ui\ClaimexpiryRate::class)->assertOk();
     }

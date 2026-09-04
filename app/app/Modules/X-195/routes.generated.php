@@ -15,12 +15,12 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-195')->group(function () {
-    Route::get('/x-195/marketplace', \App\Modules\X195\Ui\MarketplaceView::class)->name('x-195.marketplace');
-    Route::get('/x-195/manifest-review-queue', \App\Modules\X195\Ui\ManifestReviewQueueView::class)->name('x-195.manifest-review-queue');
+    Route::get('/marketplace', \App\Modules\X195\Ui\MarketplaceView::class)->name('x-195.marketplace');
+    Route::get('/manifest-review-queue', \App\Modules\X195\Ui\ManifestReviewQueueView::class)->name('x-195.manifest-review-queue');
 });
 
 Route::middleware(['web', 'auth', 'can:' . \App\Support\Admin\AdminAccess::GATE])->prefix('admin/x-195')->group(function () {
-    Route::get('/x-195/marketplace', \App\Modules\X195\Ui\MarketplaceView::class)->name('x-195.marketplace');
-    Route::get('/x-195/manifest-review-queue', \App\Modules\X195\Ui\ManifestReviewQueueView::class)->name('x-195.manifest-review-queue');
+    Route::get('/marketplace', \App\Modules\X195\Ui\MarketplaceView::class)->name('x-195.marketplace.admin');
+    Route::get('/manifest-review-queue', \App\Modules\X195\Ui\ManifestReviewQueueView::class)->name('x-195.manifest-review-queue.admin');
 });
 

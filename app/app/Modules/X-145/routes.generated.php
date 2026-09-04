@@ -15,10 +15,10 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-145')->group(function () {
-    Route::get('/x-145/proposals-appear-today', \App\Modules\X145\Ui\ProposalsAppearToday::class)->name('x-145.proposals-appear-today');
+    Route::get('/proposals-appear-today', \App\Modules\X145\Ui\ProposalsAppearToday::class)->name('x-145.proposals-appear-today');
 });
 
 Route::middleware(['web', 'auth', 'can:' . \App\Support\Admin\AdminAccess::GATE])->prefix('admin/x-145')->group(function () {
-    Route::get('/x-145/proposals-appear-today', \App\Modules\X145\Ui\ProposalsAppearToday::class)->name('x-145.proposals-appear-today');
+    Route::get('/proposals-appear-today', \App\Modules\X145\Ui\ProposalsAppearToday::class)->name('x-145.proposals-appear-today.admin');
 });
 

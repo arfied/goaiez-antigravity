@@ -15,14 +15,14 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-159')->group(function () {
-    Route::get('/x-159/customerprospectfacing-audit-page', \App\Modules\X159\Ui\CustomerprospectfacingAuditPage::class)->name('x-159.customerprospectfacing-audit-page');
-    Route::get('/x-159/score', \App\Modules\X159\Ui\AuditScore::class)->name('x-159.score');
-    Route::get('/x-159/audit-queue', \App\Modules\X159\Ui\AuditQueue::class)->name('x-159.audit-queue');
+    Route::get('/customerprospectfacing-audit-page', \App\Modules\X159\Ui\CustomerprospectfacingAuditPage::class)->name('x-159.customerprospectfacing-audit-page');
+    Route::get('/score', \App\Modules\X159\Ui\AuditScore::class)->name('x-159.score');
+    Route::get('/audit-queue', \App\Modules\X159\Ui\AuditQueue::class)->name('x-159.audit-queue');
 });
 
 Route::middleware(['web', 'auth', 'can:' . \App\Support\Admin\AdminAccess::GATE])->prefix('admin/x-159')->group(function () {
-    Route::get('/x-159/customerprospectfacing-audit-page', \App\Modules\X159\Ui\CustomerprospectfacingAuditPage::class)->name('x-159.customerprospectfacing-audit-page');
-    Route::get('/x-159/score', \App\Modules\X159\Ui\AuditScore::class)->name('x-159.score');
-    Route::get('/x-159/audit-queue', \App\Modules\X159\Ui\AuditQueue::class)->name('x-159.audit-queue');
+    Route::get('/customerprospectfacing-audit-page', \App\Modules\X159\Ui\CustomerprospectfacingAuditPage::class)->name('x-159.customerprospectfacing-audit-page.admin');
+    Route::get('/score', \App\Modules\X159\Ui\AuditScore::class)->name('x-159.score.admin');
+    Route::get('/audit-queue', \App\Modules\X159\Ui\AuditQueue::class)->name('x-159.audit-queue.admin');
 });
 

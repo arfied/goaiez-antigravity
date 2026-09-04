@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-175')->group(function () {
-    Route::get('/x-175/stafffacing-assistant-panel', \App\Modules\X175\Ui\StafffacingAssistantPanel::class)->name('x-175.stafffacing-assistant-panel');
-    Route::get('/x-175/customerfacing-none', \App\Modules\X175\Ui\CustomerfacingNone::class)->name('x-175.customerfacing-none');
-    Route::get('/x-175/by-design', \App\Modules\X175\Ui\ByDesign::class)->name('x-175.by-design');
+    Route::get('/stafffacing-assistant-panel', \App\Modules\X175\Ui\StafffacingAssistantPanel::class)->name('x-175.stafffacing-assistant-panel');
+    Route::get('/customerfacing-none', \App\Modules\X175\Ui\CustomerfacingNone::class)->name('x-175.customerfacing-none');
+    Route::get('/by-design', \App\Modules\X175\Ui\ByDesign::class)->name('x-175.by-design');
 });
 

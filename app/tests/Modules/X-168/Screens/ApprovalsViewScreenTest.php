@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class ApprovalsViewScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+    public function test_screen_renders_for_tenant(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);

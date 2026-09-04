@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-140')->group(function () {
-    Route::get('/x-140/proposed-pages', \App\Modules\X140\Ui\ProposedPagesView::class)->name('x-140.proposed-pages');
+    Route::get('/proposed-pages', \App\Modules\X140\Ui\ProposedPagesView::class)->name('x-140.proposed-pages');
 });
 

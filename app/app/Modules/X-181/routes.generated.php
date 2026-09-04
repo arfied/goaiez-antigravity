@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-181')->group(function () {
-    Route::get('/x-181/qa-queue-sladueat', \App\Modules\X181\Ui\QaQueueSlaDueAt::class)->name('x-181.qa-queue-sladueat');
-    Route::get('/x-181/ticket', \App\Modules\X181\Ui\Ticket::class)->name('x-181.ticket');
-    Route::get('/x-181/resolution', \App\Modules\X181\Ui\Resolution::class)->name('x-181.resolution');
+    Route::get('/qa-queue-sladueat', \App\Modules\X181\Ui\QaQueueSlaDueAt::class)->name('x-181.qa-queue-sladueat');
+    Route::get('/ticket', \App\Modules\X181\Ui\Ticket::class)->name('x-181.ticket');
+    Route::get('/resolution', \App\Modules\X181\Ui\Resolution::class)->name('x-181.resolution');
 });
 

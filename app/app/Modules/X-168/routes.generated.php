@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-168')->group(function () {
-    Route::get('/x-168/timesheets', \App\Modules\X168\Ui\TimesheetsView::class)->name('x-168.timesheets');
-    Route::get('/x-168/approvals', \App\Modules\X168\Ui\ApprovalsView::class)->name('x-168.approvals');
-    Route::get('/x-168/own-hours', \App\Modules\X168\Ui\OwnHoursView::class)->name('x-168.own-hours');
+    Route::get('/timesheets', \App\Modules\X168\Ui\TimesheetsView::class)->name('x-168.timesheets');
+    Route::get('/approvals', \App\Modules\X168\Ui\ApprovalsView::class)->name('x-168.approvals');
+    Route::get('/own-hours', \App\Modules\X168\Ui\OwnHoursView::class)->name('x-168.own-hours');
 });
 

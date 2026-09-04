@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-203')->group(function () {
-    Route::get('/x-203/dr-dashboard', \App\Modules\X203\Ui\DrDashboard::class)->name('x-203.dr-dashboard');
-    Route::get('/x-203/restorationtest-log', \App\Modules\X203\Ui\RestorationtestLog::class)->name('x-203.restorationtest-log');
-    Route::get('/x-203/runbook-runner', \App\Modules\X203\Ui\RunbookRunner::class)->name('x-203.runbook-runner');
+    Route::get('/dr-dashboard', \App\Modules\X203\Ui\DrDashboard::class)->name('x-203.dr-dashboard');
+    Route::get('/restorationtest-log', \App\Modules\X203\Ui\RestorationtestLog::class)->name('x-203.restorationtest-log');
+    Route::get('/runbook-runner', \App\Modules\X203\Ui\RunbookRunner::class)->name('x-203.runbook-runner');
 });
 

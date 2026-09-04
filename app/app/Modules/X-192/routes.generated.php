@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-192')->group(function () {
-    Route::get('/x-192/memberships-list', \App\Modules\X192\Ui\MembershipsList::class)->name('x-192.memberships-list');
+    Route::get('/memberships-list', \App\Modules\X192\Ui\MembershipsList::class)->name('x-192.memberships-list');
 });
 

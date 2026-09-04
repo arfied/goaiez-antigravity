@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-182')->group(function () {
-    Route::get('/x-182/connected-accounts', \App\Modules\X182\Ui\ConnectedAccounts::class)->name('x-182.connected-accounts');
-    Route::get('/x-182/social-queue', \App\Modules\X182\Ui\SocialQueue::class)->name('x-182.social-queue');
+    Route::get('/connected-accounts', \App\Modules\X182\Ui\ConnectedAccounts::class)->name('x-182.connected-accounts');
+    Route::get('/social-queue', \App\Modules\X182\Ui\SocialQueue::class)->name('x-182.social-queue');
 });
 

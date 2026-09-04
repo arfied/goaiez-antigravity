@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/c-whatsapp')->group(function () {
-    Route::get('/c-whatsapp/thread', \App\Modules\CWhatsapp\Ui\Thread::class)->name('c-whatsapp.thread');
-    Route::get('/c-whatsapp/template-status-card', \App\Modules\CWhatsapp\Ui\TemplateStatusCard::class)->name('c-whatsapp.template-status-card');
-    Route::get('/c-whatsapp/template-approval-queue', \App\Modules\CWhatsapp\Ui\TemplateApprovalQueue::class)->name('c-whatsapp.template-approval-queue');
+    Route::get('/thread', \App\Modules\CWhatsapp\Ui\Thread::class)->name('c-whatsapp.thread');
+    Route::get('/template-status-card', \App\Modules\CWhatsapp\Ui\TemplateStatusCard::class)->name('c-whatsapp.template-status-card');
+    Route::get('/template-approval-queue', \App\Modules\CWhatsapp\Ui\TemplateApprovalQueue::class)->name('c-whatsapp.template-approval-queue');
 });
 

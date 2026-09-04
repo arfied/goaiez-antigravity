@@ -11,12 +11,13 @@ use Tests\TestCase;
 
 class MarginBoardScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+
+    public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
-        $this->get(route('x-197.margin-board'))->assertOk();
+        $this->get(route('x-197.margin-board.admin'))->assertOk();
 
         Livewire::test(\App\Modules\X197\Ui\MarginBoard::class)->assertOk();
     }

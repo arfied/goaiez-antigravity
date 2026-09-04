@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-120')->group(function () {
-    Route::get('/x-120/card-screen', \App\Modules\X120\Ui\CardScreen::class)->name('x-120.card-screen');
+    Route::get('/card-screen', \App\Modules\X120\Ui\CardScreen::class)->name('x-120.card-screen');
 });
 

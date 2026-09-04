@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-170')->group(function () {
-    Route::get('/x-170/commissions', \App\Modules\X170\Ui\Commissions::class)->name('x-170.commissions');
-    Route::get('/x-170/scorecard', \App\Modules\X170\Ui\ScorecardUi::class)->name('x-170.scorecard');
+    Route::get('/commissions', \App\Modules\X170\Ui\Commissions::class)->name('x-170.commissions');
+    Route::get('/scorecard', \App\Modules\X170\Ui\ScorecardUi::class)->name('x-170.scorecard');
 });
 

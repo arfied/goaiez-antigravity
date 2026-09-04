@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/c-ai')->group(function () {
-    Route::get('/c-ai/model-board', \App\Modules\CAi\Ui\ModelBoard::class)->name('c-ai.model-board');
+    Route::get('/model-board', \App\Modules\CAi\Ui\ModelBoard::class)->name('c-ai.model-board');
 });
 

@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-184')->group(function () {
-    Route::get('/x-184/content-week', \App\Modules\X184\Ui\ContentWeek::class)->name('x-184.content-week');
-    Route::get('/x-184/calendar', \App\Modules\X184\Ui\CalendarView::class)->name('x-184.calendar');
+    Route::get('/content-week', \App\Modules\X184\Ui\ContentWeek::class)->name('x-184.content-week');
+    Route::get('/calendar', \App\Modules\X184\Ui\CalendarView::class)->name('x-184.calendar');
 });
 

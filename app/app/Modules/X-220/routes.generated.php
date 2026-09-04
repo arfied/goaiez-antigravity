@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-220')->group(function () {
-    Route::get('/x-220/prompt-history', \App\Modules\X220\Ui\PromptHistory::class)->name('x-220.prompt-history');
-    Route::get('/x-220/eval-report', \App\Modules\X220\Ui\EvalReport::class)->name('x-220.eval-report');
+    Route::get('/prompt-history', \App\Modules\X220\Ui\PromptHistory::class)->name('x-220.prompt-history');
+    Route::get('/eval-report', \App\Modules\X220\Ui\EvalReport::class)->name('x-220.eval-report');
 });
 

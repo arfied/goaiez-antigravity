@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-180')->group(function () {
-    Route::get('/x-180/pack-browser', \App\Modules\X180\Ui\PackBrowser::class)->name('x-180.pack-browser');
+    Route::get('/pack-browser', \App\Modules\X180\Ui\PackBrowser::class)->name('x-180.pack-browser');
 });
 

@@ -15,12 +15,12 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-201')->group(function () {
-    Route::get('/x-201/dispute-card', \App\Modules\X201\Ui\DisputeCard::class)->name('x-201.dispute-card');
-    Route::get('/x-201/dispute-queue', \App\Modules\X201\Ui\DisputeQueue::class)->name('x-201.dispute-queue');
+    Route::get('/dispute-card', \App\Modules\X201\Ui\DisputeCard::class)->name('x-201.dispute-card');
+    Route::get('/dispute-queue', \App\Modules\X201\Ui\DisputeQueue::class)->name('x-201.dispute-queue');
 });
 
 Route::middleware(['web', 'auth', 'can:' . \App\Support\Admin\AdminAccess::GATE])->prefix('admin/x-201')->group(function () {
-    Route::get('/x-201/dispute-card', \App\Modules\X201\Ui\DisputeCard::class)->name('x-201.dispute-card');
-    Route::get('/x-201/dispute-queue', \App\Modules\X201\Ui\DisputeQueue::class)->name('x-201.dispute-queue');
+    Route::get('/dispute-card', \App\Modules\X201\Ui\DisputeCard::class)->name('x-201.dispute-card.admin');
+    Route::get('/dispute-queue', \App\Modules\X201\Ui\DisputeQueue::class)->name('x-201.dispute-queue.admin');
 });
 

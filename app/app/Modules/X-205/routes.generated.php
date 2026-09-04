@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-205')->group(function () {
-    Route::get('/x-205/portal', \App\Modules\X205\Ui\AffiliatePortal::class)->name('x-205.portal');
-    Route::get('/x-205/earnings', \App\Modules\X205\Ui\EarningsView::class)->name('x-205.earnings');
-    Route::get('/x-205/payout-run', \App\Modules\X205\Ui\PayoutRunView::class)->name('x-205.payout-run');
+    Route::get('/portal', \App\Modules\X205\Ui\AffiliatePortal::class)->name('x-205.portal');
+    Route::get('/earnings', \App\Modules\X205\Ui\EarningsView::class)->name('x-205.earnings');
+    Route::get('/payout-run', \App\Modules\X205\Ui\PayoutRunView::class)->name('x-205.payout-run');
 });
 

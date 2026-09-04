@@ -11,12 +11,13 @@ use Tests\TestCase;
 
 class ConsoleScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+
+    public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
-        $this->get(route('x-111.console'))->assertOk();
+        $this->get(route('x-111.console.admin'))->assertOk();
 
         Livewire::test(\App\Modules\X111\Ui\Console::class)->assertOk();
     }

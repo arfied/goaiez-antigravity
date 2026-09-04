@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-172')->group(function () {
-    Route::get('/x-172/customerfacing-portal', \App\Modules\X172\Ui\CustomerfacingPortal::class)->name('x-172.customerfacing-portal');
+    Route::get('/customerfacing-portal', \App\Modules\X172\Ui\CustomerfacingPortal::class)->name('x-172.customerfacing-portal');
 });
 

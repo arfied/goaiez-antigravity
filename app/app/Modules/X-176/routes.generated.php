@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-176')->group(function () {
-    Route::get('/x-176/seo-tab-website', \App\Modules\X176\Ui\SeoTabWebsite::class)->name('x-176.seo-tab-website');
+    Route::get('/seo-tab-website', \App\Modules\X176\Ui\SeoTabWebsite::class)->name('x-176.seo-tab-website');
 });
 

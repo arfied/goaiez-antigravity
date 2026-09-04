@@ -11,12 +11,23 @@ use Tests\TestCase;
 
 class RoutingRulesScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+    public function test_screen_renders_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-10.routing-rules'))->assertOk();
+
+        Livewire::test(\App\Modules\X10\Ui\RoutingRules::class)->assertOk();
+    }
+
+    public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
-        $this->get(route('x-10.routing-rules'))->assertOk();
+        $this->get(route('x-10.routing-rules.admin'))->assertOk();
 
         Livewire::test(\App\Modules\X10\Ui\RoutingRules::class)->assertOk();
     }

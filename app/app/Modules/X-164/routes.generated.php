@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-164')->group(function () {
-    Route::get('/x-164/estimates-list', \App\Modules\X164\Ui\EstimatesList::class)->name('x-164.estimates-list');
+    Route::get('/estimates-list', \App\Modules\X164\Ui\EstimatesList::class)->name('x-164.estimates-list');
 });
 

@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-162')->group(function () {
-    Route::get('/x-162/dispatch-board', \App\Modules\X162\Ui\DispatchBoard::class)->name('x-162.dispatch-board');
-    Route::get('/x-162/map', \App\Modules\X162\Ui\Map::class)->name('x-162.map');
+    Route::get('/dispatch-board', \App\Modules\X162\Ui\DispatchBoard::class)->name('x-162.dispatch-board');
+    Route::get('/map', \App\Modules\X162\Ui\Map::class)->name('x-162.map');
 });
 

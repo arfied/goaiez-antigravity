@@ -11,12 +11,23 @@ use Tests\TestCase;
 
 class AuditQueueScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+    public function test_screen_renders_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('x-159.audit-queue'))->assertOk();
+
+        Livewire::test(\App\Modules\X159\Ui\AuditQueue::class)->assertOk();
+    }
+
+    public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
-        $this->get(route('x-159.audit-queue'))->assertOk();
+        $this->get(route('x-159.audit-queue.admin'))->assertOk();
 
         Livewire::test(\App\Modules\X159\Ui\AuditQueue::class)->assertOk();
     }

@@ -15,11 +15,11 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-212')->group(function () {
-    Route::get('/x-212/pick-source', \App\Modules\X212\Ui\PickSource::class)->name('x-212.pick-source');
-    Route::get('/x-212/unmatchedfield-map', \App\Modules\X212\Ui\UnmatchedfieldMap::class)->name('x-212.unmatchedfield-map');
-    Route::get('/x-212/dryrun-preview', \App\Modules\X212\Ui\DryrunPreview::class)->name('x-212.dryrun-preview');
-    Route::get('/x-212/reconciliation-report', \App\Modules\X212\Ui\ReconciliationReport::class)->name('x-212.reconciliation-report');
-    Route::get('/x-212/commit', \App\Modules\X212\Ui\Commit::class)->name('x-212.commit');
-    Route::get('/x-212/postimport-audit', \App\Modules\X212\Ui\PostimportAudit::class)->name('x-212.postimport-audit');
+    Route::get('/pick-source', \App\Modules\X212\Ui\PickSource::class)->name('x-212.pick-source');
+    Route::get('/unmatchedfield-map', \App\Modules\X212\Ui\UnmatchedfieldMap::class)->name('x-212.unmatchedfield-map');
+    Route::get('/dryrun-preview', \App\Modules\X212\Ui\DryrunPreview::class)->name('x-212.dryrun-preview');
+    Route::get('/reconciliation-report', \App\Modules\X212\Ui\ReconciliationReport::class)->name('x-212.reconciliation-report');
+    Route::get('/commit', \App\Modules\X212\Ui\Commit::class)->name('x-212.commit');
+    Route::get('/postimport-audit', \App\Modules\X212\Ui\PostimportAudit::class)->name('x-212.postimport-audit');
 });
 

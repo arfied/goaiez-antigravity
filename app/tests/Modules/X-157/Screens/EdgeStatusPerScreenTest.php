@@ -11,12 +11,13 @@ use Tests\TestCase;
 
 class EdgeStatusPerScreenTest extends TestCase
 {
-    public function test_screen_renders(): void
+
+    public function test_screen_renders_for_admin(): void
     {
         $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
-        $this->get(route('x-157.edge-status-per'))->assertOk();
+        $this->get(route('x-157.edge-status-per.admin'))->assertOk();
 
         Livewire::test(\App\Modules\X157\Ui\EdgeStatusPer::class)->assertOk();
     }

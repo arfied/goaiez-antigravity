@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-117')->group(function () {
-    Route::get('/x-117/cart-block', \App\Modules\X117\Ui\CartBlock::class)->name('x-117.cart-block');
-    Route::get('/x-117/checkout-block', \App\Modules\X117\Ui\CheckoutBlock::class)->name('x-117.checkout-block');
+    Route::get('/cart-block', \App\Modules\X117\Ui\CartBlock::class)->name('x-117.cart-block');
+    Route::get('/checkout-block', \App\Modules\X117\Ui\CheckoutBlock::class)->name('x-117.checkout-block');
 });
 

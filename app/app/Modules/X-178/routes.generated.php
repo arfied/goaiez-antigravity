@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-178')->group(function () {
-    Route::get('/x-178/site-editor-assistant', \App\Modules\X178\Ui\SiteEditorAssistant::class)->name('x-178.site-editor-assistant');
+    Route::get('/site-editor-assistant', \App\Modules\X178\Ui\SiteEditorAssistant::class)->name('x-178.site-editor-assistant');
 });
 

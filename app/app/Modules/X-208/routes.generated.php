@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-208')->group(function () {
-    Route::get('/x-208/piece-preview', \App\Modules\X208\Ui\PiecePreview::class)->name('x-208.piece-preview');
-    Route::get('/x-208/cost', \App\Modules\X208\Ui\Cost::class)->name('x-208.cost');
-    Route::get('/x-208/send-record', \App\Modules\X208\Ui\SendRecord::class)->name('x-208.send-record');
+    Route::get('/piece-preview', \App\Modules\X208\Ui\PiecePreview::class)->name('x-208.piece-preview');
+    Route::get('/cost', \App\Modules\X208\Ui\Cost::class)->name('x-208.cost');
+    Route::get('/send-record', \App\Modules\X208\Ui\SendRecord::class)->name('x-208.send-record');
 });
 

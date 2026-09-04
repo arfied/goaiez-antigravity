@@ -15,7 +15,7 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-127')->group(function () {
-    Route::get('/x-127/tenantzeroconsole', \App\Modules\X127\Ui\TenantZeroConsole::class)->name('x-127.tenant-zero-console');
-    Route::get('/x-127/metricproofpanel', \App\Modules\X127\Ui\MetricProofPanel::class)->name('x-127.metric-proof-panel');
+    Route::get('/tenantzeroconsole', \App\Modules\X127\Ui\TenantZeroConsole::class)->name('x-127.tenant-zero-console');
+    Route::get('/metricproofpanel', \App\Modules\X127\Ui\MetricProofPanel::class)->name('x-127.metric-proof-panel');
 });
 

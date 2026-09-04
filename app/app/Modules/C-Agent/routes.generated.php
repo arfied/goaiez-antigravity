@@ -15,9 +15,9 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/c-agent')->group(function () {
-    Route::get('/c-agent/thread', \App\Modules\CAgent\Ui\Thread::class)->name('c-agent.thread');
-    Route::get('/c-agent/groundcheck-screen', \App\Modules\CAgent\Ui\GroundcheckScreen::class)->name('c-agent.groundcheck-screen');
-    Route::get('/c-agent/teaching-box', \App\Modules\CAgent\Ui\TeachingBox::class)->name('c-agent.teaching-box');
-    Route::get('/c-agent/refusalcode-distribution-per', \App\Modules\CAgent\Ui\RefusalcodeDistributionPer::class)->name('c-agent.refusalcode-distribution-per');
+    Route::get('/thread', \App\Modules\CAgent\Ui\Thread::class)->name('c-agent.thread');
+    Route::get('/groundcheck-screen', \App\Modules\CAgent\Ui\GroundcheckScreen::class)->name('c-agent.groundcheck-screen');
+    Route::get('/teaching-box', \App\Modules\CAgent\Ui\TeachingBox::class)->name('c-agent.teaching-box');
+    Route::get('/refusalcode-distribution-per', \App\Modules\CAgent\Ui\RefusalcodeDistributionPer::class)->name('c-agent.refusalcode-distribution-per');
 });
 

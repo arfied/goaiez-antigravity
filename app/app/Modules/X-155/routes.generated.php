@@ -15,14 +15,14 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-155')->group(function () {
-    Route::get('/x-155/forms', \App\Modules\X155\Ui\Forms::class)->name('x-155.forms');
-    Route::get('/x-155/submissions-thread', \App\Modules\X155\Ui\SubmissionsThread::class)->name('x-155.submissions-thread');
-    Route::get('/x-155/spam-rate', \App\Modules\X155\Ui\SpamRate::class)->name('x-155.spam-rate');
+    Route::get('/forms', \App\Modules\X155\Ui\Forms::class)->name('x-155.forms');
+    Route::get('/submissions-thread', \App\Modules\X155\Ui\SubmissionsThread::class)->name('x-155.submissions-thread');
+    Route::get('/spam-rate', \App\Modules\X155\Ui\SpamRate::class)->name('x-155.spam-rate');
 });
 
 Route::middleware(['web', 'auth', 'can:' . \App\Support\Admin\AdminAccess::GATE])->prefix('admin/x-155')->group(function () {
-    Route::get('/x-155/forms', \App\Modules\X155\Ui\Forms::class)->name('x-155.forms');
-    Route::get('/x-155/submissions-thread', \App\Modules\X155\Ui\SubmissionsThread::class)->name('x-155.submissions-thread');
-    Route::get('/x-155/spam-rate', \App\Modules\X155\Ui\SpamRate::class)->name('x-155.spam-rate');
+    Route::get('/forms', \App\Modules\X155\Ui\Forms::class)->name('x-155.forms.admin');
+    Route::get('/submissions-thread', \App\Modules\X155\Ui\SubmissionsThread::class)->name('x-155.submissions-thread.admin');
+    Route::get('/spam-rate', \App\Modules\X155\Ui\SpamRate::class)->name('x-155.spam-rate.admin');
 });
 

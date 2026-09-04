@@ -15,9 +15,9 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/c-mail')->group(function () {
-    Route::get('/c-mail/dns-card', \App\Modules\CMail\Ui\DnsCard::class)->name('c-mail.dns-card');
-    Route::get('/c-mail/sequence-view', \App\Modules\CMail\Ui\SequenceView::class)->name('c-mail.sequence-view');
-    Route::get('/c-mail/warmup-calendars-per', \App\Modules\CMail\Ui\WarmupCalendarsPer::class)->name('c-mail.warmup-calendars-per');
-    Route::get('/c-mail/complaintbounce-board', \App\Modules\CMail\Ui\ComplaintbounceBoard::class)->name('c-mail.complaintbounce-board');
+    Route::get('/dns-card', \App\Modules\CMail\Ui\DnsCard::class)->name('c-mail.dns-card');
+    Route::get('/sequence-view', \App\Modules\CMail\Ui\SequenceView::class)->name('c-mail.sequence-view');
+    Route::get('/warmup-calendars-per', \App\Modules\CMail\Ui\WarmupCalendarsPer::class)->name('c-mail.warmup-calendars-per');
+    Route::get('/complaintbounce-board', \App\Modules\CMail\Ui\ComplaintbounceBoard::class)->name('c-mail.complaintbounce-board');
 });
 

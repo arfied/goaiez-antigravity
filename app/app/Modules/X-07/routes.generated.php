@@ -15,6 +15,6 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-07')->group(function () {
-    Route::get('/x-07/forecast-risk-tiles', \App\Modules\X07\Ui\ForecastRiskTiles::class)->name('x-07.forecast-risk-tiles');
+    Route::get('/forecast-risk-tiles', \App\Modules\X07\Ui\ForecastRiskTiles::class)->name('x-07.forecast-risk-tiles');
 });
 

@@ -15,8 +15,8 @@ if (! class_exists('TenantRoleMiddleware')) {
 }
 
 Route::middleware(['web', 'auth', TenantRoleMiddleware::class])->prefix('app/x-218')->group(function () {
-    Route::get('/x-218/discoveryboard', \App\Modules\X218\Ui\DiscoveryBoard::class)->name('x-218.discovery-board');
-    Route::get('/x-218/dealtracker', \App\Modules\X218\Ui\DealTracker::class)->name('x-218.deal-tracker');
-    Route::get('/x-218/deliverableproof', \App\Modules\X218\Ui\DeliverableProof::class)->name('x-218.deliverable-proof');
+    Route::get('/discoveryboard', \App\Modules\X218\Ui\DiscoveryBoard::class)->name('x-218.discovery-board');
+    Route::get('/dealtracker', \App\Modules\X218\Ui\DealTracker::class)->name('x-218.deal-tracker');
+    Route::get('/deliverableproof', \App\Modules\X218\Ui\DeliverableProof::class)->name('x-218.deliverable-proof');
 });
 
