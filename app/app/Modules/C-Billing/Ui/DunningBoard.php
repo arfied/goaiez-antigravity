@@ -21,7 +21,7 @@ class DunningBoard extends Component
             $state = DunningState::where('business_id', Tenancy::idOrFail())->findOrFail($stateId);
             $action->handle(Tenancy::idOrFail(), $state->day_in_cycle + 1);
         } catch (ModelNotFoundException) {
-            $this->error = "isn't in this account"; // wait, brief says "isn't in this account"
+            $this->error = "That case isn't in this account any more.";
         } catch (\Throwable $e) {
             $this->error = 'Failed to advance dunning: '.$e->getMessage();
         }
