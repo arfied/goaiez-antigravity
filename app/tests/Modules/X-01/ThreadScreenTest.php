@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X01;
 
 use App\Models\Customer;
+use App\Models\User;
 use App\Modules\X01\Ui\Thread;
 use App\Modules\X121\Models\Conversation;
 use App\Support\Tenancy;
@@ -17,7 +18,7 @@ class ThreadScreenTest extends TestCase
     public function test_thread_screen_renders_states(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Thread Tenant', 'currency' => 'USD']);
-        $user = \App\Models\User::factory()->create();
+        $user = User::factory()->create();
         Tenancy::actingAs($biz->id, function () use ($biz, $user) {
             Tenancy::setUser($user->id);
             // Default and empty state
