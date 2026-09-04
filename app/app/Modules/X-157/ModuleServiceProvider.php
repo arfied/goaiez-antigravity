@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X157;
 
 use App\Modules\X157\Models\Deployment;
-use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -31,11 +30,8 @@ final class ModuleServiceProvider extends ServiceProvider
         Route::get('/sites/{deploy_hash}', function (string $deployHash) {
             $deployment = Deployment::where('deploy_hash', $deployHash)->firstOrFail();
 
-            $zone = EdgeZone::where('id', $deployment->edge_zone_id)->firstOrFail();
-
-            if (! $zone->has_valid_ssl) {
-                abort(404);
-            }
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
             $html = Storage::disk('local')->get("sites/{$deployHash}.html");
 

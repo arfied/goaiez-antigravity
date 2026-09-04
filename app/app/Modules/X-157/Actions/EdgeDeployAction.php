@@ -118,13 +118,19 @@ final class EdgeDeployAction
                     $businessId,
                     $pageId,
                     $businessName,
-                    $commitId
+                    $commitId,
+                    $zone->domain_name
                 );
+
+                $escapedTitle = e($seoResult['title']);
+                $escapedDesc = e($seoResult['description']);
+                $escapedCanonical = e($seoResult['canonical']);
+
                 $html = str_replace(
                     '</head>',
-                    "<title id=\"seo-meta-x176\">{$seoResult['title']}</title>\n".
-                    "<meta name=\"description\" content=\"{$seoResult['description']}\">\n".
-                    "<link rel=\"canonical\" href=\"{$seoResult['canonical']}\">\n</head>",
+                    "<title id=\"seo-meta-x176\">{$escapedTitle}</title>\n".
+                    "<meta name=\"description\" content=\"{$escapedDesc}\">\n".
+                    "<link rel=\"canonical\" href=\"{$escapedCanonical}\">\n</head>",
                     $html
                 );
 
@@ -132,7 +138,8 @@ final class EdgeDeployAction
                     $businessId,
                     $pageId,
                     $businessName,
-                    $commitId
+                    $commitId,
+                    $zone->domain_name
                 );
 
                 if (isset($schemaResult['json_ld'])) {

@@ -259,4 +259,27 @@ class X157Test extends TestCase
         $response = $this->get('/sites/test_hash_no_ssl');
         $response->assertStatus(404);
     }
+
+    public function test_deployment_exposes_its_edge_zone_and_ssl_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = Deployment::create([
+            'business_id' => $biz->id,
+            'edge_zone_id' => $zone->id,
+            'deploy_hash' => 'test_hash_ssl_read',
+            'status' => 'deployed',
+            'measured_ttfb_ms' => 100,
+            'speed_budget_ms' => 1500,
+        ]);
+
+        $this->assertTrue(Deployment::where('deploy_hash', 'test_hash_ssl_read')->first()->edgeZone->has_valid_ssl);
+
+        $zone->update(['has_valid_ssl' => false]);
+
+        $this->assertFalse(Deployment::where('deploy_hash', 'test_hash_ssl_read')->first()->edgeZone->has_valid_ssl);
+    }
 }
