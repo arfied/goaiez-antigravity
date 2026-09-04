@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Modules\X138\Screens;
 
-use Tests\TestCase;
-use Livewire\Livewire;
-use App\Models\User;
 use App\Enums\UserRole;
+use App\Models\User;
+use Livewire\Livewire;
+use Tests\TestCase;
 
 class AttributionRowScreenTest extends TestCase
 {

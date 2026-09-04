@@ -117,7 +117,8 @@ class SurfacesGenerateCommand extends Command
                         }
 
                         $renderHyphen = str_replace('_', '-', $render);
-                        if (str_contains($matchAlias, $renderHyphen) || str_contains(str_replace('-', '_', $matchAlias), $render)) {
+                        $renderKebab = Str::kebab($render);
+                        if (str_contains($matchAlias, $renderHyphen) || str_contains(str_replace('-', '_', $matchAlias), $render) || str_contains($matchAlias, $renderKebab)) {
                             $alias = $matchAlias;
                             $class = $matchClass;
                             break;
@@ -237,7 +238,7 @@ class SurfacesGenerateCommand extends Command
 
     private function generateRoutesFile(string $modDir, string $modSlug, array $tenantRoutes, array $operatorRoutes): void
     {
-        $content = "<?php\n\nuse Illuminate\Support\Facades\Route;\n\n";
+        $content = "<?php\n\ndeclare(strict_types=1);\n\nuse Illuminate\Support\Facades\Route;\n\n";
         
         if (!empty($tenantRoutes)) {
             $content .= "app('router')->aliasMiddleware('tenant.role', function (\$request, \$next) {\n";
@@ -270,11 +271,13 @@ class SurfacesGenerateCommand extends Command
         
         $isOperator = in_array('operator', $primarySurfaces);
         
-        $content = "<?php\n\nnamespace Tests\Modules\\" . str_replace('-', '', $modId) . "\Screens;\n\n";
-        $content .= "use Tests\TestCase;\n";
-        $content .= "use Livewire\Livewire;\n";
-        $content .= "use App\Models\User;\n";
-        $content .= "use App\Enums\UserRole;\n\n";
+        $imports = [
+            "use App\Enums\UserRole;",
+            "use App\Models\User;",
+            "use Livewire\Livewire;",
+            "use Tests\TestCase;"
+        ];
+        $content = "<?php\n\ndeclare(strict_types=1);\n\nnamespace Tests\Modules\\" . str_replace('-', '', $modId) . "\Screens;\n\n" . implode("\n", $imports) . "\n\n";
         
         $content .= "class {$className}ScreenTest extends TestCase\n{\n";
         $content .= "    public function test_screen_renders(): void\n    {\n";
@@ -302,7 +305,7 @@ class SurfacesGenerateCommand extends Command
 
     private function generateSurfacesConfig(array $allNavGroups): void
     {
-        $content = "<?php\n\nreturn [\n";
+        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn [\n";
         foreach (['tenant', 'operator', 'agency', 'tech'] as $surf) {
             $content .= "    '$surf' => [\n";
             foreach ($allNavGroups[$surf] as $group => $entries) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'tenant' => [
         'Settings' => [
@@ -24,6 +26,8 @@ return [
             ['label' => 'Price Confirmation Screen', 'route' => 'x-119.price-confirmation-screen', 'module' => 'X-119'],
             ['label' => 'Teaching Box', 'route' => 'x-119.teaching-box', 'module' => 'X-119'],
             ['label' => 'Fact Freshness Per', 'route' => 'x-119.fact-freshness-per', 'module' => 'X-119'],
+            ['label' => 'Tenantzeroconsole', 'route' => 'x-127.tenant-zero-console', 'module' => 'X-127'],
+            ['label' => 'Metricproofpanel', 'route' => 'x-127.metric-proof-panel', 'module' => 'X-127'],
             ['label' => 'Demand Tile', 'route' => 'x-130.demand-tile', 'module' => 'X-130'],
             ['label' => 'Public Index Pages', 'route' => 'x-130.public-index-pages', 'module' => 'X-130'],
             ['label' => 'Coverage By Trade', 'route' => 'x-130.coverage-by-trade', 'module' => 'X-130'],
@@ -115,6 +119,11 @@ return [
             ['label' => 'Document Status', 'route' => 'x-215.document-status', 'module' => 'X-215'],
             ['label' => 'Signature Pad', 'route' => 'x-215.signature-pad', 'module' => 'X-215'],
             ['label' => 'Comment Thread', 'route' => 'x-215.comment-thread', 'module' => 'X-215'],
+            ['label' => 'Recruitpipeline', 'route' => 'x-217.recruit-pipeline', 'module' => 'X-217'],
+            ['label' => 'Offercomposer', 'route' => 'x-217.offer-composer', 'module' => 'X-217'],
+            ['label' => 'Discoveryboard', 'route' => 'x-218.discovery-board', 'module' => 'X-218'],
+            ['label' => 'Dealtracker', 'route' => 'x-218.deal-tracker', 'module' => 'X-218'],
+            ['label' => 'Deliverableproof', 'route' => 'x-218.deliverable-proof', 'module' => 'X-218'],
             ['label' => 'Roster Admin', 'route' => 'x-219.roster-admin', 'module' => 'X-219'],
             ['label' => 'Assignment Matrix', 'route' => 'x-219.assignment-matrix', 'module' => 'X-219'],
             ['label' => 'Prompt History', 'route' => 'x-220.prompt-history', 'module' => 'X-220'],
