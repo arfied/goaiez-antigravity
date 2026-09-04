@@ -3,7 +3,7 @@
  "started": "2026-09-03T09:33:12",
  "updated": "2026-09-04T08:05:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
- "roster": 124,
+ "roster": 127,
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
  "seal_digest_observed": null,
@@ -59,7 +59,9 @@
    "track": "spine",
    "status": "DONE",
    "modules": [
-    "X-128"
+    "X-128",
+    "X-222",
+    "X-223"
    ]
   },
   "3": {
@@ -68,7 +70,8 @@
    "modules": [
     "C-Ai",
     "X-219",
-    "X-220"
+    "X-220",
+    "X-221"
    ]
   },
   "4": {
@@ -1160,6 +1163,24 @@
    "status": "DONE",
    "wave": 24,
    "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-221": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-222": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "PROTECT",
+   "unresolved": []
+  },
+  "X-223": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "GROW",
    "unresolved": []
   }
  },
