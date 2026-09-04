@@ -118,7 +118,9 @@ class CReviewsScreensTest extends TestCase
 
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])
             ->assertSee('2') // reviews received
-            ->assertSee('1'); // internal, public, ticket
+            ->assertSeeHtml('<div wire:click="selectDrilldown(\'internal_qa\')" data-tile="internal_qa"')
+            ->assertSeeHtml('Triaged Internal</div>
+                <div class="text-3xl font-bold text-white">1</div>'); // internal
     }
 
     public function test_qa_report_screen_breached(): void

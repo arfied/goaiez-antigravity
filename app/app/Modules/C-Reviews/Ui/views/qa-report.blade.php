@@ -53,7 +53,7 @@
                 <div class="text-3xl font-bold text-white">{{ $publicPath }}</div>
             </div>
             
-            <div wire:click="selectDrilldown('internal_qa')" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'internal_qa' ? 'ring-2 ring-purple-500' : '' }}">
+            <div wire:click="selectDrilldown('internal_qa')" data-tile="internal_qa" class="p-5 rounded-2xl bg-slate-900 border border-slate-800 cursor-pointer hover:border-purple-500 transition group {{ $drilldown === 'internal_qa' ? 'ring-2 ring-purple-500' : '' }}">
                 <div class="text-xs font-medium text-rose-500/80 mb-1 group-hover:text-rose-400 transition">Triaged Internal</div>
                 <div class="text-3xl font-bold text-white">{{ $internalQa }}</div>
             </div>
