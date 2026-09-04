@@ -1,27 +1,30 @@
-# BRIEF — Track reviews (`track/reviews`) — REV-9, **route A: merge `origin/main`, one listener, J10 on the gate**
+# BRIEF — Track reviews (`track/reviews`) — REV-11, **merge `origin/main` `cd5a2f7`, untrack the mailbox, `reviewInvitesFor` real**
 
-updated: 2026-09-04T12:20Z
+updated: 2026-09-04T16:22Z
 push: ⛔ **CLOSED for this run.** Commit; do not push. The push gate opens in
-REV-10 after the supervisor's PASS on your REPORT.
+REV-12 after the supervisor's PASS on your REPORT.
 
-Owner's go: `OWNER.md` (12:17Z). The HOLD is over. Read `OWNER.md` before this.
+`OWNER.md` (12:17Z) still stands: go, build automatically. This is the second
+route-A merge; `main` moved 25 commits past the one you merged in run 11.
 
-## What changed while we were parked (verified from the tree, not from notes)
+## What changed on `main` (verified from the tree, 16:0x–16:15Z)
 
-- `origin/main` = `79a8b43` (2026-09-04 06:02). `HEAD` = `e340d98`, **76 behind,
-  13 ahead**.
-- `work_orders.person_id` (`ac89b6a`) and `JobCompleted.personId` (`b9701c4`)
-  are on `main` and already ancestors of `HEAD`. `JobStateAction` reads the
-  column onto the event. **The X-121 `UNRESOLVED` is stale.**
-- `origin/main`'s `JourneyHarness` implements **every** method J10 calls
-  (`0583871`). After the merge, J10 reaches our code.
-- `0583871` also dropped a second `JobCompleted` listener into **our** module:
-  `C-Reviews/Listeners/RequestReviewOnJobCompleted.php`, registered in
-  `ModuleServiceProvider::boot()` with a hand-rolled 30-day query. Ours,
-  `AskForReviewOnJobCompleted`, delegates cadence to `ReviewRequestAction`
-  (tested in `c98a078`). **Ours survives; main's goes.** Ruling 5.
+- `origin/main` = `cd5a2f7`. `HEAD` = `f9f349f`, **25 behind, 17 ahead**.
+- `ad95b42` **reverted `JourneyHarness.php` and `TwelveJourneysTest.php`** to
+  before `0583871` — the helpers that run 11 inherited hand-wrote rows and were
+  judged fake. On `main` J10's `personWithPendingSteps`, `reviewInvitesFor`,
+  `completeJob` throw `todo()` again. `tenantWithLiveNumber` is real.
+- `7c0da08` **untracked the supervisor mailbox** and `.gitignore` now ignores
+  `.agents/supervisor/*` except `launch-coder.sh` (owner ruling 2026-09-04).
+- Four commits built **G20-07/11/12/13 inside C-Reviews**: `ReviewRequestAction`
+  gained `?int $csatScore, ?int $jobAgeDays`, a `LOW_CSAT_TRIAGE` refusal that
+  opens a `QaTicketAction` ticket, and a `CSms\Events\SendRequested` dispatch
+  (marketing class) after a request is created; two migrations
+  (`add_sla_hours_to_qa_settings`, `add_csat_score_to_review_requests`);
+  `CReviewsTest.php` gained `test_g20_11_and_g20_12_triage_mechanism_and_gating`.
+  `main` still registers its own `RequestReviewOnJobCompleted`.
 
-## The wave — in this order, one commit per numbered step where noted
+## The wave — in this order
 
 ### 1. Fetch and measure (no commit)
 
@@ -31,98 +34,116 @@ git rev-parse --short origin/main
 git rev-list --left-right --count origin/main...HEAD
 grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php
 ```
-Paste all four outputs in REPORT `RAW`. Expected `79a8b43`, `76 13`, `20`. If
-`origin/main` has moved past `79a8b43`, proceed anyway and say so — the seam
-below was measured against `79a8b43`, so re-check each conflict rather than
-assume it.
+Expected `cd5a2f7`, `25 17`, `21`. If `main` moved again, proceed and say so.
 
-### 2. Commit the supervisor's working notes — the ONE authorised touch (commit)
+### 2. Commit the supervisor's notes so the merge can start (commit)
 
-The merge cannot start over dirty tracked files, and `main` also carries these
-paths. You write **nothing** into them; you commit them as they are:
+The one authorised touch. You write nothing into them:
 
 ```
-git add .agents/supervisor/launch-coder.sh .agents/supervisor/OWNER.md .agents/supervisor/TICK-ADDENDUM.md
-git commit -m "chore(supervisor): track/reviews notes as of REV-9" -- .agents/supervisor/BRIEF.md .agents/supervisor/KICKOFF.md .agents/supervisor/REPORT.md .agents/supervisor/REVIEWS.md .agents/supervisor/launch-coder.sh .agents/supervisor/OWNER.md .agents/supervisor/TICK-ADDENDUM.md CLAUDE.md bin/supervise.sh .claude/settings.json
+git commit -m "chore(supervisor): track/reviews notes as of REV-11" -- .agents/supervisor/BRIEF.md .agents/supervisor/KICKOFF.md .agents/supervisor/REPORT.md .agents/supervisor/REVIEWS.md .agents/supervisor/REWRITES.log .agents/supervisor/OWNER.md .agents/supervisor/TICK-ADDENDUM.md
 ```
-⛔ Do not `git add` the `tick*-gate.txt` / `rev*-gate.txt` / `*.out` /
-`*-block.md` files. Do not `-a`, do not `add -A`, do not stash, reset or
-checkout anything.
+⛔ Not `app/phpunit.xml` (the owner's pin — leave it modified and uncommitted),
+not the `tick*`/`rev*` files, not `-a`, not `add -A`.
 
 ### 3. Merge `origin/main` (commit — the merge commit)
 
 ```
 git merge --no-ff origin/main
 ```
-Ten conflicts are expected (`git merge-tree` dry run, 12:16Z). Resolve **each**
-exactly so, `git add <path>` after each, then `git commit` with no `-a` (a merge
-commit takes no pathspec; the staged resolutions are the commit):
+Nine conflicts expected (`git merge-tree`, 16:15Z). Resolve each, `git add`
+(or `git rm`) each, then `git commit` with no `-a`:
 
 | path | resolution |
 | :--- | :--- |
-| `.agents/supervisor/{BRIEF,KICKOFF,REPORT,REVIEWS}.md`, `.agents/supervisor/launch-coder.sh`, `CLAUDE.md` | **ours** — `git checkout --ours -- <path>`. This track's supervisor files stay this track's. |
-| `.agents/state/JOURNAL.md` | **both sides, every line, in timestamp order**, markers removed. No line edited, none dropped. |
-| `.agents/state/BUILD-STATE.json` | Start from **theirs** (`main`'s), then carry in this track's own entries so nothing of ours is lost: `C-Reviews` and `X-181` status/decisions/notes, and our three `unresolved` lines. Validate: `python3 -m json.tool .agents/state/BUILD-STATE.json > /dev/null` and `python3 bin/state.py status` shows C-Reviews `DONE`, our UNRESOLVED lines present, and `main`'s stage counts. This is the one place a merge may touch the file by hand; say so in REPORT. |
-| `app/app/Modules/C-Reviews/ModuleServiceProvider.php` | **ours** — keep the `AskForReviewOnJobCompleted` registration; drop `main`'s `Event::listen(... RequestReviewOnJobCompleted::class)` block and its `use`. Then `git rm app/app/Modules/C-Reviews/Listeners/RequestReviewOnJobCompleted.php`. |
-| `app/tests/Modules/C-Reviews/CReviewsTest.php` | **both** — our 20 plus `main`'s `test_no_fake_rows_written_on_mount`. Count after: **21**. |
+| `.agents/supervisor/{BRIEF,KICKOFF,REPORT,REVIEWS}.md`, `.agents/supervisor/REWRITES.log` — *modify/delete* | **untrack, keep on disk:** `git rm --cached -- <path>` for each. Also `git rm --cached -- .agents/supervisor/OWNER.md .agents/supervisor/TICK-ADDENDUM.md` so nothing but `launch-coder.sh` stays tracked, matching `main`'s `.gitignore`. Verify every file is still on disk afterwards: `ls .agents/supervisor/*.md`. |
+| `C-Reviews/Actions/ReviewRequestAction.php` — *content* | **both.** Ours: `CUSTOMER_UNKNOWN`, `TWO_PASS_CAP_REACHED`, `CADENCE_WINDOW_ACTIVE` refusals and the `'google'` platform default. Theirs: the two new params, `LOW_CSAT_TRIAGE`, the `SendRequested` dispatch. Order: null-customer refusal first, then the CSAT triage, then cap, then cadence, then create + dispatch. Every refusal code from both sides survives. |
+| `C-Reviews/Listeners/RequestReviewOnJobCompleted.php` — *modify/delete* | **delete:** `git rm -- <path>`. Ours (`AskForReviewOnJobCompleted`) is the one listener (R245, journal `07:25:37`). |
+| `C-Reviews/ModuleServiceProvider.php` — *content* | **ours** — registers `AskForReviewOnJobCompleted` only. Keep `main`'s other `boot()` additions if any outside the `listen` block. |
+| `tests/Modules/C-Reviews/CReviewsTest.php` — *content* | **both, by name.** Union of test names is **22** (`main`'s `test_g20_11_and_g20_12_triage_mechanism_and_gating` plus our 21). No name from either side is dropped. |
 
-`app/app/Modules/C-Reviews/Ui/ReviewsQaRequests.php` auto-merges to `main`'s
-version (no seeded fake rows on mount). Leave it.
+`Ui/ReviewsQaRequests.php`, the blade, `QaTicketAction.php`, `manifest.php` and
+the two migrations auto-merge to `main`'s. `.agents/state/*` auto-merges;
+confirm with `python3 -m json.tool .agents/state/BUILD-STATE.json > /dev/null`.
 
-After the commit: `grep -rn "RequestReviewOnJobCompleted" app/` must print
-**nothing**, and `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php`
-must print **21**.
+After the commit:
+```
+grep -rn "RequestReviewOnJobCompleted" app/            # nothing
+grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php   # 22
+git ls-files .agents/supervisor/                        # launch-coder.sh only
+```
 
-### 4. Migrate both of this track's databases (no commit)
+### 4. `reviewInvitesFor` — real, under ruling 1 (commit)
+
+In `app/tests/Journeys/JourneyHarness.php`, replace **only** the body of
+`reviewInvitesFor(array $person): array` — J10's own `todo()`. It returns every
+`review_requests` row for that person, as arrays, oldest first:
+
+```php
+return \App\Modules\CReviews\Models\ReviewRequest::query()
+    ->where('customer_id', $person['id'])
+    ->orderBy('id')
+    ->get()
+    ->map(fn ($r) => $r->toArray())
+    ->all();
+```
+Adjust the model namespace to what `app/app/Modules/C-Reviews/Models/` actually
+declares. ⛔ **Do not touch `completeJob`, `personWithPendingSteps`, or any other
+line of that file.** `git diff --stat` on it must show one hunk.
+
+```
+git commit -m "test(J10): reviewInvitesFor reads review_requests for the person (ruling 1)" -- app/tests/Journeys/JourneyHarness.php
+```
+
+### 5. Migrate both databases (no commit)
 
 ```
 php artisan migrate --force
 DB_DATABASE=goaiez_antig_reviews_test php artisan migrate --force
 ```
-`.env` is `goaiez_antig_reviews`. **Never** `goaiez_antig`, `goaiez_antig_dev`,
-`goaiez_antig_test`. Never `migrate:fresh`. Never edit `phpunit.xml`.
+`main` added two C-Reviews migrations. Never `goaiez_antig`, `goaiez_antig_dev`,
+`goaiez_antig_test`; never `migrate:fresh`.
 
-### 5. Record the decisions (commit: `.agents/state/**` only)
+### 6. Record (commit: `.agents/state/**` only)
 
 ```
-python3 bin/state.py decided C-Reviews "One JobCompleted listener: AskForReviewOnJobCompleted; cadence lives in ReviewRequestAction. main's RequestReviewOnJobCompleted (0583871) removed on merge. Owner go 2026-09-04T12:17Z, OWNER.md."
-python3 bin/state.py note C-Reviews "X-121 UNRESOLVED (2026-09-02T17:06) closed: work_orders.person_id ac89b6a and JobCompleted.personId b9701c4 are on main; JobStateAction reads the column onto the event."
-python3 bin/state.py note C-Reviews "J10 sixty-dependency closed: origin/main 0583871 implements tenantWithLiveNumber, personWithPendingSteps, completeJob, reviewInvitesFor. Review-platform access still ungranted: real send stays UNRESOLVED (ruling 13)."
-git commit -m "chore(state): C-Reviews one-listener decision; X-121 and sixty dependencies closed" -- .agents/state/JOURNAL.md .agents/state/BUILD-STATE.json
+python3 bin/state.py unresolved X-121 C-Reviews "completeJob: X-121 exposes no create path for work_orders (EntityWriteAction updates by id; X-171 actions create nothing but device-sync rows). A raw insert is what ad95b42 reverted. J10's completeJob stays todo() until X-121 exposes one (ruling 8, option b)."
+python3 bin/state.py note C-Reviews "Second route-A merge: origin/main cd5a2f7. Mailbox untracked per main's .gitignore (7c0da08). G20-07/11/12/13 from main kept; one JobCompleted listener kept (ours). reviewInvitesFor implemented under ruling 1. REV-9's J10 green was on 0583871's harness, reverted by ad95b42; does not stand."
+git commit -m "chore(state): completeJob UNRESOLVED on X-121 create path; second main merge recorded" -- .agents/state/JOURNAL.md .agents/state/BUILD-STATE.json
 ```
-If `state.py` has a verb that closes an `unresolved` entry, use it in place of
-the first `note` and say which. If it does not, the note is the record; do not
-hand-edit the list.
 
-### 6. The gate
+### 7. Housekeeping (no commit)
+
+Delete the untracked scratch at the repo root: `BUILD-STATE.ours.json`,
+`fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`,
+`grants_reviews_test.out`. Then, from `app/`:
+`./vendor/bin/pint tests/Modules/C-Reviews/CReviewsTest.php` and commit it alone:
+`git commit -m "style(C-Reviews): pint CReviewsTest" -- app/tests/Modules/C-Reviews/CReviewsTest.php`.
+Pint nothing else — the other pint/phpstan reds are `main`'s (ruling 5).
+
+### 8. The gate
 
 ```
 bash bin/supervise.sh --tests
 ```
-Paste the raw `§7` line into REPORT `RAW`, and state explicitly whether
-`a_completed_job_asks_for_a_review_once_inside_the_cadence` appears in the
-failure/error list. Expected: **it does not appear** — J10 green on the gate.
+Paste the raw §7 line and the full failure/error list into REPORT `RAW`.
+**Expected: J10 is in the error list, throwing at `personWithPendingSteps`
+(sixty's, ruling 6).** That is the honest state; do not make it green. If
+anything in `C-Reviews` is red, fix there only, one commit, re-run, report both.
 
-- If J10 fails **inside `app/app/Modules/C-Reviews/**`**: fix there, one commit,
-  re-run the gate, report both runs. That is the only fix in scope.
-- If J10 fails in `JourneyHarness.php`, `TwelveJourneysTest.php`, another
-  module, or the DB: **stop**, `python3 bin/state.py unresolved J10 C-Reviews "<the raw line, and the path it names>"`,
-  commit that, report. ⛔ Ruling 1: not one line of the harness is ours to
-  edit now — every method J10 calls is implemented.
+### 9. REPORT.md — rule 10 shape
 
-### 7. REPORT.md — rule 10 shape
-
-Must carry: the four measurements from step 1; the merge commit sha and the
-resolution actually taken per file; the two grep results after step 3; the
-migrate output tails; the `state.py` lines as journaled; the raw `§7` line;
-the doctor build stamp; `git log --oneline origin/main..HEAD | wc -l`.
-`UNRESOLVED:` lists the vendor grant only (plus anything step 6 added).
-`REFUSED:` anything above you would not do, with the rule.
+Carry: step 1's four lines; the merge sha and the resolution actually taken per
+file; the three checks after step 3; the one-hunk `git diff --stat` for step 4;
+migrate tails; the journal lines; the raw §7 line and list; the doctor stamp;
+`git log --oneline origin/main..HEAD | wc -l`. `UNRESOLVED`: the review-platform
+grant; `completeJob` on X-121's create path; `personWithPendingSteps` on
+track/sixty. `REFUSED`: anything above you would not do, with the rule.
 
 ## Never, this run
 
-Push · rebase · amend · `--force` · `git add -A` / `-a` · stash · reset ·
-checkout of any supervisor file except the `--ours` resolutions in step 3 ·
-`JourneyHarness.php` · `TwelveJourneysTest.php` · `app/app/Doctor/**` ·
-`seals.json` · `phpunit.xml` · any `DB_` line · `state.py done|journey|stage` ·
-any database not named in step 4 · `migrate:fresh` on anything.
+Push · rebase · amend · `--force` · `add -A` / `-a` · stash · reset ·
+`app/phpunit.xml` (leave it modified, uncommitted) · any harness line but
+`reviewInvitesFor`'s body · `TwelveJourneysTest.php` · `app/app/Doctor/**` ·
+seals · `state.py done|journey|stage` · any database not in step 5 ·
+`migrate:fresh`.

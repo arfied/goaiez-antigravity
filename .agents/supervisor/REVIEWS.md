@@ -22364,3 +22364,907 @@ every seam is measured.
 **Dispatch:** `launch-coder.sh` → run **11** (pid 2243084, log `/home/goaiez/tmp/agy-grs-antig-reviews-run11.log`), snapshot `sup-snap-grs-antig-reviews-20260904-072040`. First dispatch on this wave; cap 2.
 
 **Gate at dispatch** (07:1x local): `tests 886 · passed 876 · FAILED 0 · errors 10`, all ten `todo()` throws; J10 among them at `tenantWithLiveNumber`. pint passed, phpstan 0, seals match, doctor `20260829-0647` = `runtime_build`.
+
+## REV-9 verdict — 2026-09-04T12:41Z — **PASS-WITH-NOTES** — run 11: merge landed, one listener, J10 green on the gate
+
+**Checked, not taken from the report:**
+- Commits `92ab496` (supervisor notes, the one authorised touch — content unchanged) → `781d218` (merge of `79a8b43`) → `36d3114` (state) → `f9f349f` (+2 lines: the brace the merge dropped in `CReviewsTest.php`). No rewrite: ledger empty. Tree clean under `app/`, `.agents/state`, `bin`.
+- `git diff --stat origin/main..HEAD -- app`: **five files, all `C-Reviews`** — `ReviewRequestAction` +36, `AskForReviewOnJobCompleted` +22, `RequestReviewOnJobCompleted` −33, `ModuleServiceProvider` ±10, `CReviewsTest` +131. Nothing under Doctor, Journeys, `phpunit.xml`, seals or manifests differs from `main`. `grep -rn RequestReviewOnJobCompleted app/` → nothing.
+- Tests in `CReviewsTest.php`: 20 → **21** (`main`'s `test_no_fake_rows_written_on_mount` kept). Journal sorted by timestamp (`sort -c` silent), 764 lines; the (R245) one-listener line is in `JOURNAL.md`; `BUILD-STATE.json` valid, its `stages` block byte-identical in shape to `origin/main`'s (the `?` counts are `main`'s own, not a merge artefact).
+- **My gate**, `.../scratchpad/rev9-gate.txt`: §2 forbidden `none` · §2a empty · seals match · doctor `20260829-0647` = `runtime_build` · phpstan 0 · §7 **`tests 930 · passed 918 · FAILED 4 · errors 8`** — identical to the report.
+- **`a_completed_job_asks_for_a_review_once_inside_the_cadence` is absent from the failure and error lists.** First time J10 has been green on this track's gate, and it was never hand-marked here.
+
+**NOTES (none a BLOCK):**
+1. **All twelve reds are `main`'s, none in C-Reviews:** J1 and J3 (`FAILURE` — harness real, behaviour unbuilt, other tracks), `test_g1_23_idempotency_adapters` (X-198, the `79a8b43` revert), `test_n_001_refusal_without_p060_code_fails` (the `bbddbae` revert), seven `test_capabilities`/`test_header_capabilities` errors (`X137Engine`, `TemplateEngine`, `PackEngine`, `SocialEngine`, `GateEngine`… not found — `main`'s generated capability tests naming classes that do not exist), and the X-198 pci anchor. Recorded; not fixed here (ruling 5).
+2. **pint `fail` on `app/Console/Commands/CheckDeadlinesCommand.php`** — X-201, `d989da4`, byte-identical to `origin/main`. `main` is pint-red on its own file. Track 1's.
+3. `state.py` has no verb that closes an `unresolved` entry, so the stale `J10` and `X-121` lines still print in `state.py status` beside the notes that close them. Not hand-edited, correctly. **For Track 1 (owner of `state.py`): a `resolved <tag> <module>` verb.**
+4. `MODULES 121→120 done, 3→4 unresolved` and `JOURNEYS 12/12 green` are `main`'s BUILD-STATE carried in by the merge; the journey figure is the hand-mark trap and is not this track's claim. This track's claim is one line: J10 absent from §7.
+
+`push:` **OPENS in REV-10.** Dispatch count on this wave: 1 of 2.
+
+## REV-10 verdict — 2026-09-04T12:52Z — **PASS** — run 12: `f9f349f` pushed to `origin track/reviews`
+
+- Reflog `refs/remotes/origin/track/reviews`: one `update by push`, `e340d98 → f9f349f`. No force. `origin/main` untouched at `79a8b43`. `COMMITS: 0`, tree clean under `app/` and `.agents/state`. `git status -sb` shows no `[ahead N]`.
+- The branch is now **17 commits ahead of `origin/main`, 0 behind**, reviewed at this sha. **Track 1 owns the merge** (`CLAUDE.md` §TRACK 6).
+- Leftover, untracked, at the repo root from run 11's BUILD-STATE merge: `BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`. Not committed, not harmful; the next build run deletes them (housekeeping line in the HOLD brief). No dispatch for that alone.
+
+**Track 6 state after this wave:** J10 green on this track's gate (`tests 930 · passed 918 · FAILED 4 · errors 8`, J10 absent — all reds `main`'s). One `JobCompleted` listener. `UNRESOLVED` for this track: the review-platform grant only (ruling 13 — the real send is evidenced outside the suite when granted).
+
+**`TICK-ADDENDUM.md` expires with this block.** The interactive session releases dispatch; the tick resumes its normal cases under the same cap. `BRIEF.md`/`KICKOFF.md` are a HOLD naming the three triggers that end it.
+
+### OWNER ACTION — 2026-09-04T12:52Z (carried, none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`). Seams vs `79a8b43` are the ten of `tick219-block.md`; this side resolved them in `781d218`.
+2. **Track 1:** `main` is pint-red on its own `app/Console/Commands/CheckDeadlinesCommand.php` (X-201) and carries seven `test_capabilities` errors naming Domain classes that do not exist, plus the two 06:02 reverts' tests. This track records them; it cannot fix them.
+3. **Track 1 (`state.py` owner):** an `unresolved`-closing verb. Two stale lines (`J10`, `X-121`) print beside the notes that close them.
+4. **Owner:** the review-platform grant. When it lands, one build wave here evidences the real send per ruling 13.
+
+## REV-tick224 — 2026-09-04T12:44Z — HOLD (no report, no dispatch) — first tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; §6 corrected — pint 153 files and phpstan 10 are `main`'s, carried in by `781d218`
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `/proc/2299467` absent; `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block (`07:38:17`). Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest verdict is REV-10 **PASS**; `BRIEF.md` (`07:38:29`) is that session's HOLD and is newer than the block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Measured this tick:
+
+```
+origin/main            79a8b43   2026-09-04 06:02:45 -0500   (unchanged since tick 219; NOT an ancestor-of: track/reviews)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD (REV-10 push; unchanged)
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500   (unchanged)
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500   (unchanged)
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500   (unchanged)
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500   (unchanged)
+```
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` yet records the merge of `track/reviews` (OWNER ACTION 1 of REV-10).
+
+Branch: `git status --porcelain --untracked-files=all -- app .agents/state bin` → empty. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED`, `unresolved_modules` `X-186 X-190 X-193 X-201` (all `main`'s, carried by the merge — REV-9 note 4). Root scratch from run 11 still untracked: `BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, plus `grants_reviews.out`, `grants_reviews_test.out` (housekeeping line in `BRIEF.md`; no dispatch for that alone). `REVIEWS.md` was 22399 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick224-gate.txt`, 140 lines. DB guard `goaiez_antig_reviews` / `goaiez_antig_test`; §1 `behind 0, ahead 17`; §2 forbidden **none** (the five supervisor working-note lines); §2a rewrite ledger empty; §2b parse; §2c debris none; SELFTEST sound; `✓ seals every sealed file matches seals.json`; doctor `20260829-0647` = `runtime_build`; `integrity 0ms clean`. STAGES `? … capability 372 …`, MODULES `120/0/0/4`, JOURNEYS `12/12 green`, `R245 6` — all `main`'s BUILD-STATE as merged (REV-9 note 4; the journey figure is the hand-mark trap, not this track's claim).
+
+**§6 — this tick's one correction.** The gate verdict is **`⛔ a gate failed above`**: `{"tool":"pint","result":"fail"}` on **153 files** and `{"tool":"phpstan","result":"failed","errors":10}`. Tick 223 (at `e340d98`, pre-merge) read `pint passed · phpstan 0`; REV-9's verdict carried "phpstan 0" and named one pint file. The measured post-merge truth is the line above. Attribution, verified:
+- `git diff --stat origin/main..HEAD -- app` is the five C-Reviews files of REV-9 and nothing else, so **151 of the 153 pint files and all six phpstan files (`X-198 GatewayEngine:142`, `X-199 InvoiceEngine:161`, `X-200 DialerEngine:14`, `X-202 ApprovalDeskEngine:170`, `X-203 X203Engine:15`, `Services/Sms/TenantNumbers.php` ×5) are byte-identical to `origin/main`.** Among them `tests/Journeys/JourneyHarness.php` and `TwelveJourneysTest.php` — sealed for this track; not ours to format.
+- The two C-Reviews entries: `Ui/ReviewsQaRequests.php` is byte-identical to `main` (its last touch is `main`'s `2d6a993`). `tests/Modules/C-Reviews/CReviewsTest.php` — `git diff e340d98..HEAD` on it is **exactly** `main`'s `test_no_fake_rows_written_on_mount` (`2d6a993`, inline `\DB::`, `\Livewire\Livewire::test(\App\…\ReviewsQaRequests::class)`, `\App\…\ReviewRequest::where`), which is `fully_qualified_strict_types` + `ordered_imports` verbatim. The import block is unchanged from the pint-clean `e340d98` copy. `composer.lock`, `pint.json`, `phpstan.neon` did not move between `e340d98` and `HEAD`.
+- So the §6 red **rose with the merge and is `main`'s** (ruling 5: record, do not fix). Not a BLOCK: the count rose with a report line (REV-9 note 2) and the reason is now written. One housekeeping line added to `BRIEF.md`: the next build wave may run `pint` on `CReviewsTest.php` alone — that file already differs from `main`, so formatting it opens no new seam; the other 152 stay untouched here.
+- Scratch left for the record: `.agents/supervisor/tick224-CReviewsTest-{main,head,e340}.php` (untracked, supervisor-owned).
+
+`BRIEF.md` stays the REV-10 HOLD with the one housekeeping line added; `KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T12:44Z (carried from REV-10; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is **pint-red on 153 files and phpstan-red on 10 errors** (six files), measured here at `79a8b43` + the C-Reviews diff; REV-10's item 2 named one pint file and understated it. All 153 and all 10 are `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+
+## REV-tick225 — 2026-09-04T12:52Z — HOLD (no report, no dispatch) — second tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; gate identical to tick 224
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `/proc/2299467` absent; `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and than tick 224's (`07:45:03`). Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**, but the newest block is tick 224's HOLD; `BRIEF.md` (`07:45:14`) is the REV-10 HOLD plus tick 224's housekeeping line and is newer than the verdict block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Measured this tick (all unchanged from tick 224):
+
+```
+origin/main            79a8b43   2026-09-04 06:02:45 -0500   (NOT an ancestor-of: track/reviews)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` records the merge of `track/reviews` yet.
+
+Branch: `git status --porcelain --untracked-files=all -- app .agents/state bin` → empty. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED`, `unresolved_modules` `X-186 X-190 X-193 X-201` (`main`'s, REV-9 note 4). Root scratch from run 11 still untracked (housekeeping line in `BRIEF.md`; no dispatch for that alone). `REVIEWS.md` was 22441 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick225-gate.txt`, 140 lines, exit 1. `diff tick224-gate.txt tick225-gate.txt` is **three lines**, all supervisor-owned: uncommitted path count `295 → 299` (tick 224's gate file and its three `CReviewsTest` scratch copies), `BRIEF.md` `44 → 55` lines, `REVIEWS.md` `22399 → 22441` lines. Everything else byte-identical: DB guard `goaiez_antig_reviews` / `goaiez_antig_test`; §1 `behind 0, ahead 17`; §2 forbidden **none** (five supervisor working-note lines); §2a ledger empty; §2b all parse; §2c none; SELFTEST sound; `✓ seals every sealed file matches seals.json`; doctor `20260829-0647` = `runtime_build`; `integrity 0ms clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark, not this track's claim). §6 `⛔ a gate failed above`: pint **153 files**, phpstan **10** — the attribution stands as written in tick 224 (151 pint files and all six phpstan files byte-identical to `origin/main`; `ReviewsQaRequests.php` identical to `main`; `CReviewsTest.php`'s two fixers are `main`'s `2d6a993` test). Ruling 5: recorded, not fixed. Not a BLOCK: the count did not rise this tick.
+
+`BRIEF.md` and `KICKOFF.md` untouched — the directive did not change and a rewrite saying the same thing is noise. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T12:52Z (carried from REV-10 and tick 224; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+
+## REV-tick226 — 2026-09-04T13:00Z — HOLD (no report, no dispatch) — third tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; gate identical to ticks 224 and 225
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `/proc/2299467` absent; `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and than tick 225's (`07:51:47`). Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 225's HOLD; `BRIEF.md` (`07:45:14`) is the REV-10 HOLD plus tick 224's housekeeping line and is newer than the verdict block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Measured this tick (all unchanged from ticks 224 and 225):
+
+```
+origin/main            79a8b43   2026-09-04 06:02:45 -0500   (NOT an ancestor-of: track/reviews)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` records the merge of `track/reviews` yet.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists only the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`say: every module is DONE or UNRESOLVED and every journey is green`), the journey figure being `main`'s hand mark (REV-9 note 4). `REVIEWS.md` was 22477 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick226-gate.txt`, 140 lines, exit 1. `diff tick225-gate.txt tick226-gate.txt` is **two lines**, both supervisor-owned: uncommitted path count `299 → 300` (tick 225's gate file), `REVIEWS.md` `22441 → 22477` lines. Everything else byte-identical: DB guard `goaiez_antig_reviews` / `goaiez_antig_test`; §1 `behind 0, ahead 17`; §2 forbidden **none**; §2a ledger empty; SELFTEST sound; `✓ seals every sealed file matches seals.json`; doctor `20260829-0647` = `runtime_build`; `integrity 0ms clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 `⛔ a gate failed above`: pint **153 files**, phpstan **10** (`GatewayEngine:142`, `InvoiceEngine:161`, `DialerEngine:14`, `ApprovalDeskEngine:170`, `X203Engine:15`, `TenantNumbers.php` ×5) — the attribution of tick 224 stands (151 pint files and all six phpstan files byte-identical to `origin/main`; `CReviewsTest.php`'s two fixers are `main`'s `2d6a993` test). Ruling 5: recorded, not fixed. Not a BLOCK: the count did not rise this tick.
+
+Note for the record: this checkout's `CLAUDE.md` has no `§TRACK` heading (earlier blocks cite "`CLAUDE.md` §TRACK 6"); the track's directive lives in `BRIEF.md`'s three triggers, which is what this tick applied.
+
+`BRIEF.md` and `KICKOFF.md` untouched — the directive did not change and a rewrite saying the same thing is noise. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T13:00Z (carried from REV-10, ticks 224 and 225; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+
+## REV-tick227 — 2026-09-04T13:10Z — HOLD (no report, no dispatch) — fourth tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; gate identical to ticks 224–226
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `/proc/2299467` absent; `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and than tick 226's (`08:01:36`). Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 226's HOLD; `BRIEF.md` (`07:45:14`) is the REV-10 HOLD plus tick 224's housekeeping line and is newer than the verdict block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Measured this tick (all unchanged from ticks 224–226):
+
+```
+origin/main            79a8b43   2026-09-04 06:02:45 -0500   (NOT an ancestor-of: track/reviews)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` records the merge of `track/reviews` yet.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists only the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`unresolved_modules` begins `X-186`, `X-190`, as before), the journey figure being `main`'s hand mark (REV-9 note 4). `REVIEWS.md` was 22515 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick227-gate.txt`, 140 lines, exit 1. `diff tick226-gate.txt tick227-gate.txt` is **two lines**, both supervisor-owned: uncommitted path count `300 → 301` (tick 226's gate file), `REVIEWS.md` `22477 → 22515` lines. Everything else byte-identical: DB guard `goaiez_antig_reviews` / `goaiez_antig_test`; §1 `behind 0, ahead 17`; §2 forbidden **none**; §2a ledger empty; SELFTEST sound; `✓ seals every sealed file matches seals.json`; doctor `20260829-0647` = `runtime_build`; `integrity 0ms clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 `⛔ a gate failed above`: pint **153 files**, phpstan **10** (`GatewayEngine:142`, `InvoiceEngine:161`, `DialerEngine:14`, `ApprovalDeskEngine:170`, `X203Engine:15`, `TenantNumbers.php` ×5) — the attribution of tick 224 stands (151 pint files and all six phpstan files byte-identical to `origin/main`; `CReviewsTest.php`'s two fixers are `main`'s `2d6a993` test). Ruling 5: recorded, not fixed. Not a BLOCK: the count did not rise this tick.
+
+`BRIEF.md` and `KICKOFF.md` untouched — the directive did not change and a rewrite saying the same thing is noise. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T13:10Z (carried from REV-10, ticks 224–226; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+
+## REV-tick228 — 2026-09-04T13:20Z — HOLD (no report, no dispatch) — fifth tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; gate identical to ticks 224–227
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `/proc/2299467` absent; `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and than tick 227's (`08:11:26`). Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 227's HOLD; `BRIEF.md` (`07:45:14`) is the REV-10 HOLD plus tick 224's housekeeping line and is newer than the verdict block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Measured this tick (all unchanged from ticks 224–227):
+
+```
+origin/main            79a8b43   2026-09-04 06:02:45 -0500   (NOT an ancestor-of: track/reviews)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` records the merge of `track/reviews` yet.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists only the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`unresolved_modules` begins `X-186`, `X-190`, as before), the journey figure being `main`'s hand mark (REV-9 note 4). `REVIEWS.md` was 22551 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick228-gate.txt`, 140 lines, exit 1. `diff tick227-gate.txt tick228-gate.txt` is **two lines**, both supervisor-owned: uncommitted path count `301 → 302` (tick 227's gate file), `REVIEWS.md` `22515 → 22551` lines. Everything else byte-identical: DB guard `goaiez_antig_reviews` / `goaiez_antig_test`; §1 `behind 0, ahead 17`; §2 forbidden **none**; §2a ledger empty; SELFTEST sound; `✓ seals every sealed file matches seals.json`; doctor `20260829-0647` = `runtime_build`; `integrity 0ms clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 `⛔ a gate failed above`: pint **153 files**, phpstan **10** (`GatewayEngine:142`, `InvoiceEngine:161`, `DialerEngine:14`, `ApprovalDeskEngine:170`, `X203Engine:15`, `TenantNumbers.php` ×5) — the attribution of tick 224 stands (151 pint files and all six phpstan files byte-identical to `origin/main`; `CReviewsTest.php`'s two fixers are `main`'s `2d6a993` test). Ruling 5: recorded, not fixed. Not a BLOCK: the count did not rise this tick.
+
+`BRIEF.md` and `KICKOFF.md` untouched — the directive did not change and a rewrite saying the same thing is noise. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T13:20Z (carried from REV-10, ticks 224–227; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+
+## 2026-09-04 09:2x — per-track test database (owner instruction, applied by the Track 1 supervisor)
+
+Owner: "Give each team its own test sandbox." All eight tracks pinned `goaiez_antig_test`. This track's `app/phpunit.xml` now pins `goaiez_antig_reviews_test` (owner goaiez_owner, UTF8/C.UTF-8, `vector` extension present, goaiez_app grants + default privileges applied — verified 09:1x). `bin/supervise.sh` writes `/home/goaiez/tmp/last-pest-$(basename "$PWD").json` (site's item 8). The `phpunit.xml` diff is this note's doing, not a coder's — not a BLOCK. First `--tests` run will `migrate:fresh` the new database. `goaiez_antig` (production) untouched.
+
+## REV-tick229 — 2026-09-04T13:35Z — HOLD (no report, no dispatch) — sixth tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; one new gate line, `⛔ app/phpunit.xml`, explained by the owner's per-track sandbox note above
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `/proc/2299467` absent; `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and than every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is the Track 1 supervisor's sandbox note (`08:21:23` local); `BRIEF.md` (`07:45:14`) is newer than the verdict block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Measured this tick (branch positions unchanged from ticks 224–228):
+
+```
+origin/main            79a8b43   2026-09-04 06:02:45 -0500   (NOT an ancestor-of: track/reviews)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` records the merge of `track/reviews` yet.
+
+**New since tick 228 — the per-track test database.** The block above this one (headed `2026-09-04 09:2x`, written by the Track 1 supervisor on the owner's instruction; the file's mtime is `08:21:23 −0500`, so the `09:2x` is that note's own clock, recorded here once) changed `app/phpunit.xml`. `git diff -- app/phpunit.xml` is **one line**: `DB_DATABASE` `goaiez_antig_test → goaiez_antig_reviews_test`; nothing else in the file moved. `git diff --stat -- bin/ CLAUDE.md .claude/ .agents/rules/` is empty — `bin/supervise.sh`'s `last-pest-$(basename "$ROOT").json` line is already committed in `92ab496`, not a working-tree change. The CLAUDE.md trap says a `phpunit.xml` diff is a `BLOCK` until explained; it is explained, by a supervisor, and the diff matches the explanation. **Not a BLOCK.** Two consequences, recorded:
+
+1. `supervise.sh` §2 now prints `⛔ app/phpunit.xml` under forbidden paths every tick and exits 1 on it, on top of the pint/phpstan reds. Diff of `tick228-gate.txt` → `tick229-gate.txt` (141 lines, exit 1): §0 `app/phpunit.xml DB_DATABASE=goaiez_antig_reviews_test`; §1 gains ` M app/phpunit.xml`; §2 `none → ⛔ app/phpunit.xml`; uncommitted path count `302 → 304` (tick 228's gate file plus `phpunit.xml`); `REVIEWS.md` `22551 → 22591` lines. Everything else byte-identical: §2a ledger empty; SELFTEST sound; `✓ seals every sealed file matches seals.json`; doctor `20260829-0647` = `runtime_build`; `integrity 0ms clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark); pint **153 files**, phpstan **10** (same six files; ruling 5 — recorded, not fixed). The count did not rise on any stage.
+2. **Who lands the one-line diff is not this track's call.** The coder's `Never` list forbids `phpunit.xml` and any `DB_` line (BRIEF, CLAUDE.md trap), and this supervisor never commits. It stays uncommitted and flagged until Track 1 or the owner says how eight per-track pins reach eight branches without a `phpunit.xml` conflict on every merge (a gitignored `phpunit.xml` over a tracked `.dist`, as the wt repos do, is the obvious shape — not decided here). OWNER ACTION item 5 below.
+
+**`--tests` not run this tick, deliberately.** `bin/supervise.sh` §7 already exports `DB_DATABASE=goaiez_antig_reviews_test` over whatever `phpunit.xml` pins (owner ruling 3, comment at line 128), so REV-9's measured §7 (`tests 930 · passed 918 · FAILED 4 · errors 8`, J10 absent) **already ran against this sandbox**; the new pin changes only what a bare `pest` from the coder would hit, and the coder is not running. Nothing new to measure; the "first `--tests` run will `migrate:fresh`" line in the note above is already behind this track. The next §7 is BRIEF trigger 1, on the merge.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (above) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing else under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`unresolved_modules` `X-186`, `X-190`, `X-193`, `X-201`, as before), the journey figure being `main`'s hand mark (REV-9 note 4). `REVIEWS.md` was 22591 lines before this block.
+
+`BRIEF.md`: one line added under Housekeeping — the coder must leave the `phpunit.xml` diff exactly as it is (neither revert nor commit) — because a launched coder would otherwise read `⛔ app/phpunit.xml` in §2 as its own mess to clean. Directive otherwise unchanged; `KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T13:35Z (carried from REV-10, ticks 224–228, plus item 5; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner (new):** say how the per-track `app/phpunit.xml` pin lands. It is a one-line uncommitted diff on every track that no coder may touch and no supervisor may commit; `supervise.sh` §2 flags it as forbidden every tick. Either a gitignored `phpunit.xml` over a tracked `phpunit.xml.dist`, or one commit per track by whoever owns the file. Until then it stays as it is here.
+
+## REV-tick230 — 2026-09-04T13:45Z — HOLD (no report, no dispatch) — seventh tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; gate identical to tick 229 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin` (silent, nothing new): `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and than every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 229's HOLD; `BRIEF.md` (`08:33:16` local, tick 229's `phpunit.xml` line) is newer than the verdict block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Measured this tick (branch positions unchanged from ticks 224–229):
+
+```
+origin/main            79a8b43   2026-09-04 06:02:45 -0500   (NOT an ancestor-of: track/reviews)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` records the merge of `track/reviews` yet.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin, one line `goaiez_antig_test → goaiez_antig_reviews_test`, tick 229 — left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing else under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`unresolved_modules` `X-186`, `X-190`, `X-193`, `X-201`, as before), the journey figure being `main`'s hand mark (REV-9 note 4). `REVIEWS.md` was 22633 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick230-gate.txt`, 141 lines, exit 1. `diff tick229-gate.txt tick230-gate.txt` is **three lines**, all supervisor-owned: uncommitted path count `304 → 305` (tick 229's gate file), `BRIEF.md` `55 → 62` lines (tick 229's `phpunit.xml` line), `REVIEWS.md` `22591 → 22633` lines. Everything else byte-identical: §0 `app/.env goaiez_antig_reviews` / `app/phpunit.xml goaiez_antig_reviews_test`; §1 `behind 0, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; `✓ seals every sealed file matches seals.json`; doctor `20260829-0647` = `runtime_build`; `integrity 0ms clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 `⛔ a gate failed above`: pint **153 files**, phpstan **10** (`GatewayEngine:142`, `InvoiceEngine:161`, `DialerEngine:14`, `ApprovalDeskEngine:170`, `X203Engine:15`, `TenantNumbers.php` ×5) — the attribution of tick 224 stands (151 pint files and all six phpstan files byte-identical to `origin/main`; `CReviewsTest.php`'s two fixers are `main`'s `2d6a993` test). Ruling 5: recorded, not fixed. Not a BLOCK: the count did not rise this tick. `--tests` not run, for tick 229's reason: §7 already measured against `goaiez_antig_reviews_test`, nothing has changed, and the next §7 is BRIEF trigger 1.
+
+`BRIEF.md` and `KICKOFF.md` untouched — the directive did not change and a rewrite saying the same thing is noise. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T13:45Z (carried from REV-10, ticks 224–229; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** say how the per-track `app/phpunit.xml` pin lands (gitignored `phpunit.xml` over a tracked `phpunit.xml.dist`, or one commit per track by the file's owner). Until then the one-line diff stays uncommitted and `supervise.sh` §2 flags it every tick.
+
+## REV-tick231 — 2026-09-04T13:50Z — HOLD (no report, no dispatch) — eighth tick after REV-10: `origin/main` still `79a8b43`, `track/reviews` not merged; gate identical to tick 230 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin` (silent, nothing new): `origin/main` = `79a8b43` (06:02:45 −0500, unchanged since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`0 17`**. None of `BRIEF.md`'s three triggers fired. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 230's HOLD; `BRIEF.md` (`08:33:16` local, tick 229) is newer than the verdict block; the backlog is the three triggers, none met. HOLD; no dispatch.
+
+Track 1's ledger on `main`: `git log -1 origin/main -- .agents/supervisor/REVIEWS.md` → still `962babf` (`00:25:29 −0500`). Nothing on `main` records the merge of `track/reviews` yet.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin, tick 229 — left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing else under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`unresolved_modules` `X-186`, `X-190`, `X-193`, `X-201`, as before). `REVIEWS.md` was 22670 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick231-gate.txt`, 141 lines. `diff tick230-gate.txt tick231-gate.txt` is **two lines**, both supervisor-owned: uncommitted path count `305 → 306` (tick 230's gate file), `REVIEWS.md` `22633 → 22670` lines. Everything else byte-identical to tick 230: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 0, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands, all `main`'s own lines (ruling 5: recorded, not fixed). Not a BLOCK: the count did not rise. `--tests` not run, for tick 229's reason: §7 already measured against `goaiez_antig_reviews_test`, nothing has changed, and the next §7 is BRIEF trigger 1.
+
+`BRIEF.md` and `KICKOFF.md` untouched — the directive did not change. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T13:50Z (carried from REV-10, ticks 224–230; none blocks this track)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) — unchanged, still not an ancestor of `main`.
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** say how the per-track `app/phpunit.xml` pin lands (gitignored `phpunit.xml` over a tracked `phpunit.xml.dist`, or one commit per track by the file's owner). Until then the one-line diff stays uncommitted and `supervise.sh` §2 flags it every tick.
+
+## REV-tick232 — 2026-09-04T14:04Z — HOLD (no report, no dispatch) — **BRIEF trigger 2 fired**: `origin/main` moved `79a8b43 → cd5a2f7` (25 commits); `track/reviews` not merged; main reverted the journey harness to 17 `todo()` throws (three are J10's) and built G20 items inside C-Reviews
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` expired at REV-10; normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (`2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`; first move since tick 219); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. BRIEF trigger 2 (“`origin/main` moves past `79a8b43` before the merge”) fired; its text is “nothing to do here; do **not** merge `main` in again unbriefed”, and this tick does not brief a second merge — the reason is in §C below (the merge is not mechanical: it collides with the owner's mailbox ruling and with a coder-commit BLOCK). HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `/proc/2299467` absent; `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report, `COMMITS 0`) is older than the REV-10 block and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 231's HOLD; `BRIEF.md` (`08:33:16` local, tick 229) is newer than the verdict block; the backlog is the three triggers. Trigger 2 fired and its own text says do nothing; triggers 1 and 3 unmet. HOLD; no dispatch. `BRIEF.md` refreshed (facts only — see the end of this block).
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; was 79a8b43 since tick 219)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+`git log --oneline 79a8b43..origin/main` — 25 commits, all `Antigravity Autopilot` (Track 1's coder), 190 files, `+1274 −5549`. The ones that touch this track's seams, oldest first: `fabee94 style: pint` (07:04), `7c0da08 chore: untrack the supervisor mailbox` (07:07), `a7fdadf chore(journeys): drop the committed scratch files` (07:18), `b6eb5f3 test(C-Reviews): G20-11/G20-12` (07:51), `4aea64d test(C-Reviews): G20-07 — day 60, under 7 → triage (P-113)` (07:53), `2ce20a2 feat(C-Reviews): G20-07 — the day-60 CSAT triage` (08:02), `810009c test(C-Reviews): G20-13 — the review ask is a marketing-class send that waits for the window` (08:04), `ad95b42 revert(journeys): harness and test back to 9ae4120 — the rewrite faked the model and hand-wrote invoices` (08:31), `cd5a2f7 chore: drop tracked scratch files` (08:53). `git diff --stat 79a8b43 origin/main -- .agents/state` is **empty**: none of the four C-Reviews commits journaled a decision or moved `BUILD-STATE.json`. Track 1's ledger is no longer observable from `main` — `7c0da08` deleted `BRIEF.md`/`KICKOFF.md`/`REPORT.md`/`REVIEWS.md`/`REWRITES.log` from the tree (3483 lines) and `.gitignore` gained `.agents/supervisor/*` with `!launch-coder.sh`, commented “per-track supervisor mailbox — never merged, never shared (owner ruling 2026-09-04)”.
+
+**§A — main built inside C-Reviews, this track's module (ruling 5).** Since the base, `main` changed `Actions/QaTicketAction.php` (+33), `Actions/ReviewRequestAction.php` (+38: two new parameters `?int $csatScore`, `?int $jobAgeDays`; a `LOW_CSAT_TRIAGE` refusal that creates a `triaged_internal` row and a QA ticket when `csat < 7 && jobAgeDays >= 60`; a `CSms\Events\SendRequested` dispatch with `messageClass: 'marketing'` when the person has a phone), two new migrations (`2026_09_04_000000_add_sla_hours_to_qa_settings`, `2026_09_04_000001_add_csat_score_to_review_requests`), `ModuleServiceProvider.php` (imports tidied; **still registers `RequestReviewOnJobCompleted`**, main's listener), `Listeners/RequestReviewOnJobCompleted.php` (one whitespace line), `Ui/ReviewsQaRequests.php`, the blade, `manifest.php` (+1), and `CReviewsTest.php` (+85: `test_g20_07_day_60_triage` rewritten to 24 lines, `test_g20_11` and `test_g20_12` **merged into one** `test_g20_11_and_g20_12_triage_mechanism_and_gating`, `test_g20_13_marketing_send_window` rewritten). `git grep -c "public function test" origin/main -- …CReviewsTest.php` → **16**; HEAD → **21** (HEAD keeps `g20_11` and `g20_12` separate and adds the four cadence tests). Nothing on `main` records why Track 1's coder took C-Reviews; the interactive session's ruling 5 (C-Reviews is this track's) stands until the owner says otherwise. Recorded, not contested here — OWNER ACTION 6.
+
+**§B — the conflict map for Track 1's merge of `track/reviews` (both sides changed since `79a8b43`; `git merge-tree` is not on this supervisor's allowlist, so this is the name-intersection, not a dry run):**
+
+| path | ours (`f9f349f`) | theirs (`cd5a2f7`) | resolution this track asks for |
+| :--- | :--- | :--- | :--- |
+| `C-Reviews/ModuleServiceProvider.php` | registers `AskForReviewOnJobCompleted` (R245, journal `07:25:37`) | registers `RequestReviewOnJobCompleted` | **ours** — one listener, the journaled decision |
+| `C-Reviews/Listeners/RequestReviewOnJobCompleted.php` | **deleted** (781d218) | modified (whitespace) | **delete** — modify/delete conflict; keep it deleted |
+| `C-Reviews/Actions/ReviewRequestAction.php` | `CUSTOMER_UNKNOWN`, `TWO_PASS_CAP_REACHED`, `CADENCE_WINDOW_ACTIVE` refusals after the prompt lints | `LOW_CSAT_TRIAGE` refusal + marketing `SendRequested` after the prompt lints; two new optional params | **both** — the hunks are adjacent, not overlapping: keep ours (cadence) first, then main's CSAT branch, then main's `SendRequested`; the signature takes main's two trailing optional params |
+| `tests/Modules/C-Reviews/CReviewsTest.php` | 21 tests (ours: four cadence tests; `g20_11`/`g20_12` separate) | 16 tests (`g20_07`/`g20_13` rewritten, `g20_11`+`g20_12` merged) | **both** — take main's rewritten `g20_07`/`g20_11_and_12`/`g20_13` bodies, keep our four cadence tests and `no_fake_rows_written_on_mount`; expect **20** `public function test` after (21 − 1 merged) and grep every name from both sides — a merged-wrong test is green by construction |
+| `.agents/supervisor/{BRIEF,KICKOFF,REPORT,REVIEWS,REWRITES.log}` | modified (`92ab496`) | **deleted + ignored** (`7c0da08`, owner ruling) | **delete from the tree** — the owner's ruling; the files stay on each track's disk, ignored |
+| `app/tests/Journeys/JourneyHarness.php`, `TwelveJourneysTest.php`, `*.orig/.patch/.rej` | unchanged since base (carry `79a8b43`'s rewrite) | reverted to `9ae4120` + scratch dropped | clean, takes main's revert — **see §C** |
+| `.agents/state/*`, `CLAUDE.md`, `bin/supervise.sh`, `.claude/settings.json` | modified | unchanged | clean, takes ours |
+| `.gitignore` | unchanged | `+4` (mailbox ignore) | clean, takes main's |
+
+**§C — the harness revert re-stubs J10, and a second merge here is not mechanical.** `ad95b42` puts `JourneyHarness.php` back to `9ae4120`'s version, and `git merge-base --is-ancestor 0583871 9ae4120` → **`9ae4120` predates `0583871`** — the commit `OWNER.md` cited as implementing J10's helpers. `git grep -n 'todo(' origin/main -- app/tests/Journeys/JourneyHarness.php` → **17 throws**, among them line 102 `personWithPendingSteps` (“a person with N campaign steps ALREADY QUEUED”), line 284 `reviewInvitesFor` (“every review invite sent to this person — the cadence test counts them”), line 420 `completeJob` (“complete a real job so job.completed fires”). The same grep on `HEAD` → **0 throws** (only the `todo()` definition, line 881). So `OWNER.md`'s “none of J10's `todo()` throws survive the merge” was true of `0583871` and is **false of `cd5a2f7`**: J10 was green on this track's gate (REV-9) against a harness `main` has since reverted for faking the model. **On the merged `main`, J10 throws at the first helper.** That is BRIEF trigger 1's second clause (“if J10 is red on the merged `main`, that is a new wave”), but the wave is not this track's to build alone: `tests/Journeys/JourneyHarness.php` is a CHECK (One Rule; the coder's `Never` list), and its helpers being implemented honestly is the harness owner's work — OWNER ACTION 7. `TwelveJourneysTest.php`'s diff `HEAD..origin/main` touches only J1 (the `+12622164033 → +15550123` number and the debug logging); J10's test body is unchanged.
+
+Why this tick does not brief a second `origin/main → track/reviews` merge, despite the owner's “if `main` moves again … merge again” (OWNER.md 13(b), written before the push): the merge would delete five tracked `.agents/supervisor/*` files that are **modified and uncommitted** in this working tree (`BRIEF.md`, `KICKOFF.md`, `REPORT.md`, `REVIEWS.md`, `TICK-ADDENDUM.md`), so `git merge` refuses to start (“local changes would be overwritten”) unless they are committed or displaced first — committing them is a coder commit under `.agents/supervisor/` (a BLOCK by the tick rule), displacing them is forbidden by rule 10's “the supervisor's working tree” heading, and this supervisor never commits. Run 11 got past the same shape only because `92ab496` committed the mailbox, which the tick rule has since closed. The merge in Track 1's direction has no such problem: their working tree already ignores the mailbox, and the five conflicts resolve by deletion (§B). So the merge stays Track 1's, with §B as the resolution this track asks for.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin, tick 229 — left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing else under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`unresolved_modules` `X-186`, `X-190`, `X-193`, `X-201`, as before). `REVIEWS.md` was 22695 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick232-gate.txt`, 141 lines, exit 1. `diff tick231-gate.txt tick232-gate.txt` is **three lines**: uncommitted path count `306 → 307` (tick 231's gate file), §1 `behind 0, ahead 17 → behind 25, ahead 17` (the fetch), `REVIEWS.md` `22670 → 22695` lines. Everything else byte-identical to tick 231: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed; the next §7 that means anything is against the merged `main` (trigger 1), and §C already predicts its J10 line.
+
+`BRIEF.md` refreshed — header facts only (`origin/main` `cd5a2f7`, 25 behind; trigger 2 fired and what it means; the harness-revert note so a coder launched by mistake does not read J10's REV-9 green as current on `main`). The directive is unchanged: HOLD, no build, no merge. `KICKOFF.md` untouched — every line in it is still true. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T14:04Z (1–5 carried from REV-10 and ticks 224–231; 6–7 new; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`). It now conflicts in four C-Reviews files and five mailbox files; §B above is the per-file resolution this track asks for. The one non-negotiable is the listener: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded here; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin. `7c0da08`'s `.gitignore` ruling covers the mailbox, not `phpunit.xml`; the one-line diff stays uncommitted and flagged here until the same shape (ignored `phpunit.xml` over a tracked `.dist`) or a per-track commit is ruled.
+6. **Owner (new):** Track 1's coder built G20-07, G20-11/12 and G20-13 inside C-Reviews on `main` between 07:51 and 08:04 −0500, with no `.agents/state` change and while ruling 5 gives C-Reviews to this track. Say whether ruling 5 still stands. If it does, C-Reviews changes land through `track/reviews`; if it does not, this track's remaining C-Reviews work (the real send, ruling 13) needs a new owner.
+7. **Track 1 / owner (new):** `ad95b42` reverted `JourneyHarness.php` to before `0583871`, so J10's three helpers (`personWithPendingSteps`, `completeJob`, `reviewInvitesFor`) throw `todo()` again on `main` — 17 throws in all. J10 will be red on the merged `main` regardless of how item 1 is resolved. The harness is a CHECK this track may not edit; whoever owns it implements the helpers against the real model (the revert message says the rewrite faked it). Until then the review-platform `UNRESOLVED` (ruling 13) has a second dependency in front of it.
+
+## REV-tick233 — 2026-09-04T14:10Z — HOLD (no report, no dispatch) — ninth tick after REV-10, first after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 232 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 already fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 232's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true, and the tick rule says do not rewrite it to say the same thing.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (the per-file conflict map for Track 1's merge) and §C (the `ad95b42` harness revert re-stubs J10's three helpers — 17 `todo()` throws on `main`, 0 on `HEAD`; a second `origin/main → track/reviews` merge here would have to displace or commit the supervisor's uncommitted mailbox, and both routes are a BLOCK) all stand unchanged: `origin/main` has not moved and nothing on this branch changed. Not re-derived here.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (one line, the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing else under `app/`, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (`unresolved_modules` `X-186`, `X-190`, `X-193`, `X-201`, as before). `REVIEWS.md` was 22753 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick233-gate.txt`, 141 lines, exit 1. `diff tick232-gate.txt tick233-gate.txt` is **three lines**, all mailbox bookkeeping: uncommitted path count `307 → 308` (tick 232's gate file), `BRIEF.md` `62 → 73` lines (tick 232's refresh), `REVIEWS.md` `22695 → 22753` lines. Everything else byte-identical to tick 232: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`; the next §7 that means anything is against the merged `main` (trigger 1).
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T14:10Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick234 — 2026-09-04T14:20Z — HOLD (no report, no dispatch) — tenth tick after REV-10, second after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 233 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 233's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved either. Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 22792 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick234-gate.txt`, 141 lines, exit 1. `diff tick233-gate.txt tick234-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `308 → 309` (tick 233's gate file), `REVIEWS.md` `22753 → 22792` lines. Everything else byte-identical to tick 233: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T14:20Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick235 — 2026-09-04T14:30Z — HOLD (no report, no dispatch) — eleventh tick after REV-10, third after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 234 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` = `2299467` (run 12); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 234's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved either; `git for-each-ref refs/remotes/origin` lists exactly these seven refs. Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 22831 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick235-gate.txt`, 141 lines, exit 1. `diff tick234-gate.txt tick235-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `309 → 310` (tick 234's gate file), `REVIEWS.md` `22792 → 22831` lines. Everything else byte-identical to tick 234: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T14:30Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick236 — 2026-09-04T14:40Z — HOLD (no report, no dispatch) — twelfth tick after REV-10, fourth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 235 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 235's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved either; `git for-each-ref refs/remotes/origin` lists exactly these seven refs. Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 22870 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick236-gate.txt`, 141 lines, exit 1. `diff tick235-gate.txt tick236-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `310 → 311` (tick 235's gate file), `REVIEWS.md` `22831 → 22870` lines. Everything else byte-identical to tick 235: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T14:40Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick237 — 2026-09-04T14:50Z — HOLD (no report, no dispatch) — thirteenth tick after REV-10, fifth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 236 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 236's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved either; `git for-each-ref refs/remotes/origin` lists exactly these seven refs. Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 22909 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick237-gate.txt`, 141 lines, exit 1. `diff tick236-gate.txt tick237-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `311 → 312` (tick 236's gate file), `REVIEWS.md` `22870 → 22909` lines. Everything else byte-identical to tick 236: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T14:50Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick238 — 2026-09-04T15:00Z — HOLD (no report, no dispatch) — fourteenth tick after REV-10, sixth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 237 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 237's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved either; `git for-each-ref refs/remotes/origin` lists exactly these seven refs. Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 22948 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick238-gate.txt`, 141 lines, exit 1. `diff tick237-gate.txt tick238-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `312 → 313` (tick 237's gate file), `REVIEWS.md` `22909 → 22948` lines. Everything else byte-identical to tick 237: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T15:00Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick239 — 2026-09-04T15:10Z — HOLD (no report, no dispatch) — fifteenth tick after REV-10, seventh after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 238 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 238's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved either; `git for-each-ref refs/remotes/origin` lists exactly these seven refs. Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 22987 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick239-gate.txt`, 141 lines, exit 1. `diff tick238-gate.txt tick239-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `313 → 314` (tick 238's gate file), `REVIEWS.md` `22948 → 22987` lines. Everything else byte-identical to tick 238: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T15:10Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick240 — 2026-09-04T15:20Z — HOLD (no report, no dispatch) — sixteenth tick after REV-10, eighth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 239 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local, pid 2299467); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 239's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved; `git for-each-ref refs/remotes/origin` lists these seven refs plus the `origin/HEAD` symref (→ `main`, `cd5a2f7`). Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 23026 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick240-gate.txt`, 141 lines, exit 1. `diff tick239-gate.txt tick240-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `314 → 315` (tick 239's gate file), `REVIEWS.md` `22987 → 23026` lines. Everything else byte-identical to tick 239: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T15:20Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick241 — 2026-09-04T15:30Z — HOLD (no report, no dispatch) — seventeenth tick after REV-10, ninth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 240 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local, pid 2299467); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 240's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved; `git for-each-ref refs/remotes/origin` lists these seven refs plus the `origin/HEAD` symref (→ `main`, `cd5a2f7`). Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 23065 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick241-gate.txt`, 141 lines, exit 1. `diff tick240-gate.txt tick241-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `315 → 316` (tick 240's gate file), `REVIEWS.md` `23026 → 23065` lines. Everything else byte-identical to tick 240: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T15:30Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick242 — 2026-09-04T15:40Z — HOLD (no report, no dispatch) — eighteenth tick after REV-10, tenth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 241 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local, pid 2299467); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 241's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved; `git for-each-ref refs/remotes/origin` lists these seven refs plus the `origin/HEAD` symref (→ `main`, `cd5a2f7`). Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 23104 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick242-gate.txt`, 141 lines, exit 1. `diff tick241-gate.txt tick242-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `316 → 317` (tick 241's gate file), `REVIEWS.md` `23065 → 23104` lines. Everything else byte-identical to tick 241: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T15:40Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick243 — 2026-09-04T15:50Z — HOLD (no report, no dispatch) — nineteenth tick after REV-10, eleventh after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 242 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local, pid 2299467); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 242's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved; `git for-each-ref refs/remotes/origin` lists these seven refs plus the `origin/HEAD` symref (→ `main`, `cd5a2f7`). Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; one-line diff; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 23143 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick243-gate.txt`, 141 lines, exit 1. `diff tick242-gate.txt tick243-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `317 → 318` (tick 242's gate file), `REVIEWS.md` `23104 → 23143` lines. Everything else byte-identical to tick 242: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T15:50Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick244 — 2026-09-04T16:00Z — HOLD (no report, no dispatch) — twentieth tick after REV-10, twelfth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 243 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local, pid 2299467); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 243's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved; `git for-each-ref refs/remotes/origin` lists these seven refs plus the `origin/HEAD` symref (→ `main`, `cd5a2f7`). Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; one-line diff; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 23182 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick244-gate.txt`, 141 lines, exit 1. `diff tick243-gate.txt tick244-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `318 → 319` (tick 243's gate file), `REVIEWS.md` `23143 → 23182` lines. Everything else byte-identical to tick 243: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T16:00Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-tick245 — 2026-09-04T16:10Z — HOLD (no report, no dispatch) — twenty-first tick after REV-10, thirteenth after trigger 2: `origin/main` still `cd5a2f7`, `track/reviews` not merged; gate identical to tick 244 on every measured line
+
+**Verdict: no new verdict.** `TICK-ADDENDUM.md` is expired (REV-10); normal cases apply. `git fetch --no-write-fetch-head --prune origin`: `origin/main` = **`cd5a2f7`** (unchanged since tick 232; `2026-09-04 08:53:45 −0500`, `chore: drop tracked scratch files`); `origin/track/reviews` = `HEAD` = `f9f349f`; `git merge-base --is-ancestor origin/track/reviews origin/main` → **NOT-MERGED**; `git rev-list --left-right --count origin/main...HEAD` = **`25 17`**. No trigger fired this tick: trigger 1 (merge) unmet, trigger 2 fired at tick 232 and `main` has not moved since, trigger 3 (grant) has no new `OWNER.md`. HOLD stands; no dispatch.
+
+- (a) `coder.pid` (run 12, `07:35:44` local, pid 2299467); `launch-coder.sh --status` → **CODER DEAD**. Does not fire.
+- (b) `REPORT.md` (`07:36:57` local, run 12's push report) predates REV-10 and every tick block since. Consumed. Does not fire.
+- (c) `REPORT.md` exists. Does not fire.
+- (d) `OWNER.md` (`07:19:30` local) predates REV-9, which quoted it. Consumed. Does not fire.
+- (e) newest *verdict* is REV-10 **PASS**; the newest block is tick 244's HOLD; `BRIEF.md` (`09:06:10` local, tick 232) is newer than the verdict block; the backlog is the three triggers and none is met. HOLD; no dispatch. `BRIEF.md` **not** rewritten — every fact in it (tick 232 header) is still true.
+
+Measured this tick:
+
+```
+origin/main            cd5a2f7   2026-09-04 08:53:45 -0500   (NOT an ancestor-of: track/reviews; unchanged since tick 232)
+origin/track/reviews   f9f349f   2026-09-04 07:27:14 -0500   = HEAD   behind 25 · ahead 17
+origin/track/money     8b62492   2026-09-03 08:36:00 -0500
+origin/track/pricebook 323328c   2026-09-03 08:37:56 -0500
+origin/track/sixty     416fd23   2026-09-02 15:30:31 -0500
+origin/track/stages    92f8fe2   2026-09-03 03:57:24 -0500
+origin/track/ui        cb99aab   2026-09-03 13:07:36 -0500
+```
+
+No other track branch moved; `git for-each-ref refs/remotes/origin` lists these seven refs plus the `origin/HEAD` symref (→ `main`, `cd5a2f7`). Tick 232's §A (main built G20-07/11/12/13 inside C-Reviews), §B (per-file conflict map for Track 1's merge) and §C (`ad95b42` harness revert re-stubs J10's three helpers; a second `origin/main → track/reviews` merge here is a BLOCK either way) stand unchanged. Not re-derived.
+
+Branch: `git status --short` outside `.agents/supervisor/` lists ` M app/phpunit.xml` (the owner's per-track sandbox pin — tick 229; one-line diff; left as it is) and the five untracked root scratch files from run 11 (`BUILD-STATE.ours.json`, `fix_build_state.py`, `generate_report.sh`, `grants_reviews.out`, `grants_reviews_test.out` — housekeeping line in `BRIEF.md`; no dispatch for that alone); nothing under `app/` code, `.agents/state`, `bin`. `grep -c "public function test" app/tests/Modules/C-Reviews/CReviewsTest.php` → **21**. `python3 bin/state.py next` → `FINISHED` (as before). `REVIEWS.md` was 23221 lines before this block.
+
+`bash bin/supervise.sh` → `.agents/supervisor/tick245-gate.txt`, 141 lines, exit 1. `diff tick244-gate.txt tick245-gate.txt` is **two lines**, both mailbox bookkeeping: uncommitted path count `319 → 320` (tick 244's gate file), `REVIEWS.md` `23182 → 23221` lines. Everything else byte-identical to tick 244: §0 `goaiez_antig_reviews` / `goaiez_antig_reviews_test`; §1 `behind 25, ahead 17`; §2 `⛔ app/phpunit.xml` (explained, tick 229 — not a BLOCK); §2a ledger empty; SELFTEST sound; seals match; doctor `20260829-0647` = `runtime_build`; `integrity clean`; STAGES `capability 372`, MODULES `120/0/0/4`, JOURNEYS `12/12 green` (hand mark). §6 pint **153 files**, phpstan **10** — tick 224's attribution stands (ruling 5: recorded, not fixed). Not a BLOCK: no count rose. `--tests` not run: nothing on this branch changed since REV-10's measured `930 · 918 · FAILED 4 · errors 8`.
+
+`KICKOFF.md` untouched. Any brief this track writes next carries: named paths only, `git commit -m "…" -- <paths>`, never `-a`, never `git add -A`; a coder commit touching `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` is a BLOCK.
+
+### OWNER ACTION — 2026-09-04T16:10Z (carried unchanged from tick 232; none blocks this track's HOLD)
+1. **Track 1:** merge `origin/track/reviews` (`f9f349f`) into `main` (`cd5a2f7`); tick 232 §B is the per-file resolution this track asks for. Non-negotiable: `AskForReviewOnJobCompleted` stays, `RequestReviewOnJobCompleted` stays deleted (R245, journaled `2026-09-04T07:25:37`).
+2. **Track 1:** `main` is pint-red on 153 files and phpstan-red on 10 errors (six files); all `main`'s own lines. Recorded; not fixed here.
+3. **Track 1 (`state.py` owner):** the `unresolved`-closing verb — unchanged.
+4. **Owner:** the review-platform grant — unchanged.
+5. **Track 1 / owner:** the per-track `app/phpunit.xml` pin — one-line diff stays uncommitted and flagged until the shape is ruled.
+6. **Owner:** does ruling 5 (C-Reviews is this track's) still stand after Track 1's coder built G20-07/11/12/13 inside C-Reviews on `main` (07:51–08:04 −0500, no `.agents/state` change)?
+7. **Track 1 / owner:** `ad95b42` reverted `JourneyHarness.php` to before `0583871`; J10's three helpers throw `todo()` again on `main`. J10 will be red on the merged `main` regardless of item 1. The harness is a CHECK this track may not edit; its owner implements the helpers against the real model.
+
+## REV-11 — 2026-09-04T16:20Z — DISPATCH (run 13) — second merge of `origin/main` (`cd5a2f7`), mailbox untracked per owner ruling, `reviewInvitesFor` real, `completeJob` UNRESOLVED
+
+**Correction to REV-9, on this track:** REV-9's "J10 green on the gate" was measured on `0583871`'s harness. Track 1 reverted that harness at `ad95b42` (08:31 −0500) as faked — hand-written rows behind the helpers. **The green does not stand.** On `main`'s harness J10 throws at `personWithPendingSteps` (sixty's, ruling 6), and `completeJob` throws too. A green measured on a harness that was later judged fake is the count-did-not-fall trap wearing a different coat; recorded here so the next reader does not carry it.
+
+**Tick 232 said not to merge; this block overrules it, with reasons.** (1) The mailbox modify/delete conflicts resolve by `git rm --cached` — the files stay on disk and `main`'s `.gitignore` (`7c0da08`, owner ruling 2026-09-04) already ignores `.agents/supervisor/*` except `launch-coder.sh`. That is the owner's ruling applied, not a way "past" a BLOCK. (2) Every C-Reviews conflict is in this track's module (ruling 5): ours to resolve, and resolving it here makes Track 1's merge of `track/reviews` mechanical instead of a four-file judgement call inside a module it does not own. (3) `main` did not touch `phpunit.xml`, `.agents/state`, `CLAUDE.md`, `bin/`, `.claude/` since `79a8b43`, so the dirty pin does not block the merge and state merges clean. Dry run: `git merge-tree --write-tree origin/main HEAD` → nine paths, listed in `BRIEF.md`.
+
+**Harness, under ruling 1:** `reviewInvitesFor` is J10's own `todo()` and is a read of `review_requests` by `customer_id` — real, written this run. `completeJob` is J10's own too, but X-121 exposes **no create path** for `work_orders` (`EntityWriteAction::handle(string $table, int $id, …)` updates an existing id; `X-171/Actions` create nothing but device-sync rows) and a raw insert is exactly what `ad95b42` reverted. It stays `todo()` and is recorded `UNRESOLVED — X-121 exposes no create path` (ruling 8, option b, the pricebook shape). `personWithPendingSteps` is sixty's; untouched.
+
+**Expected gate after this run:** J10 **in the error list** at `personWithPendingSteps`. That is the honest number. Dispatch 1 of 2 on this wave; `push:` CLOSED until PASS.
