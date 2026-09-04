@@ -333,4 +333,13 @@ class X121Test extends TestCase
 
         $this->assertNull($job->person_id);
     }
+
+    public function test_legacy_model_refuses_unscoped_write(): void
+    {
+        $this->expectException(\Exception::class);
+        \App\Models\Conversation::create([
+            'channel' => 'sms',
+            'status' => 'open'
+        ]);
+    }
 }

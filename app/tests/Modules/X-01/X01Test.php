@@ -13,7 +13,7 @@ use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
