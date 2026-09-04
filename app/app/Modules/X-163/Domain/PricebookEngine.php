@@ -12,6 +12,7 @@ use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Models\PriceBookVersion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Carbon\Carbon;
 
 final class PricebookEngine
 {
@@ -41,6 +42,8 @@ final class PricebookEngine
 
         // SAMPLE check: SAMPLE prices must NEVER be returned to any customer channel (TEST ANCHOR)
         if ($item->is_sample && in_array($channel, ['customer', 'sms', 'voice', 'chat', 'web'], true)) {
+            $item->increment('refusal_count', 1, ['refusal_flagged_at' => Carbon::now()]);
+            
             Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'SAMPLE_STATE_REFUSED'));
 
             return [

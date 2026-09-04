@@ -19,5 +19,7 @@ class PriceBookItem extends Model
         'is_sample' => 'boolean',
         'is_confirmed' => 'boolean',
         'tax_rate_pct' => 'float',
+        'refusal_flagged_at' => 'datetime',
+        'refusal_count' => 'integer',
     ];
 }
