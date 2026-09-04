@@ -113,7 +113,37 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function receiveInbound(array $tenant, string $from, string $body): void
     {
-        throw $this->todo('deliver a real inbound message through the carrier webhook');
+        $messageId = 'msg_' . uniqid();
+        $payload = [
+            'results' => [
+                [
+                    'messageId' => $messageId,
+                    'from' => $from,
+                    'to' => env('INFOBIP_SENDER', '+19015922708'),
+                    'text' => $body,
+                    'cleanText' => $body,
+                    'receivedAt' => now()->toIso8601String(),
+                    'smsCount' => 1
+                ]
+            ]
+        ];
+
+        $bodyStr = json_encode($payload);
+        $timestamp = (string) round(microtime(true) * 1000);
+        $secret = \App\Services\Config\PlatformCredentials::get('infobip_webhook_secret');
+        $signature = hash_hmac('sha256', $timestamp . $bodyStr, $secret);
+
+        $response = $this->withHeaders([
+            'X-Ib-Exchange-Req-Timestamp' => $timestamp,
+            'X-Ib-Exchange-Req-Signature' => $signature,
+        ])->postJson('/webhooks/infobip/inbound', $payload);
+
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            \Illuminate\Support\Facades\DB::table('inbound_messages')->where('provider_message_id', $messageId)->exists(),
+            'Inbound message was not recorded in inbound_messages table'
+        );
     }
 
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
