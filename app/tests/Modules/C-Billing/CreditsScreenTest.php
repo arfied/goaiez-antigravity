@@ -1,0 +1,91 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\CBilling;
+
+use App\Models\User;
+use App\Modules\CBilling\Models\CreditLedgerEntry;
+use App\Modules\CBilling\Models\Meter;
+use App\Modules\CBilling\Ui\Credits;
+use App\Support\Tenancy;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+class CreditsScreenTest extends TestCase
+{
+    public function test_credits_screen(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        $otherBiz = self::provisionTenant();
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $types = ['sms', 'voice', 'ai', 'email', 'lead'];
+        foreach ($types as $i => $type) {
+            Meter::create([
+                'business_id' => $biz->id,
+                'meter_type' => $type,
+                'units_used' => 100 + $i,
+                'cost_hundredths_cents' => 50000 + ($i * 1000),
+            ]);
+        }
+
+        $entryA1 = CreditLedgerEntry::create([
+            'business_id' => $biz->id,
+            'entry_type' => 'grant',
+            'amount_hundredths_cents' => 500000,
+            'balance_after_hundredths_cents' => 500000,
+            'reference_id' => 'ref-123', 'description' => 'Initial grant',
+            'created_at' => now()->subDay(),
+        ]);
+
+        $entryA2 = CreditLedgerEntry::create([
+            'business_id' => $biz->id,
+            'entry_type' => 'debit',
+            'amount_hundredths_cents' => -10000,
+            'balance_after_hundredths_cents' => 490000,
+            'reference_id' => 'ref-123', 'description' => 'Used AI tokens',
+            'created_at' => now(),
+        ]);
+
+        Tenancy::set($otherBiz->id);
+        Meter::create([
+            'business_id' => $otherBiz->id,
+            'meter_type' => 'sms',
+            'units_used' => 999,
+            'cost_hundredths_cents' => 999000,
+        ]);
+
+        $entryB = CreditLedgerEntry::create([
+            'business_id' => $otherBiz->id,
+            'entry_type' => 'grant',
+            'amount_hundredths_cents' => 8880000,
+            'balance_after_hundredths_cents' => 8880000,
+            'reference_id' => 'ref-123', 'description' => 'Other biz grant',
+            'created_at' => now(),
+        ]);
+
+        Tenancy::set($biz->id);
+        Tenancy::forgetUser();
+        Livewire::test(Credits::class)
+            ->assertForbidden();
+
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(Credits::class)
+            ->assertOk()
+            ->assertSee('49.0000') // AI balance
+            ->assertSee('100') // sms units
+            ->assertSee('5.0000') // sms cost
+            ->assertDontSee('888.0000') // entry B
+            ->assertDontSee('999') // sms units B
+            ->call('explain', $entryA2->id)
+            ->assertSee('Used AI tokens')
+            ->call('explain', 999999)
+            ->assertSee("isn't in this account");
+    }
+}

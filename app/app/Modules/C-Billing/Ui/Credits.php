@@ -4,23 +4,69 @@ declare(strict_types=1);
 
 namespace App\Modules\CBilling\Ui;
 
+use App\Modules\CBilling\Actions\LedgerExplainAction;
+use App\Modules\CBilling\Actions\TopupChargeAction;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
-use Livewire\Attributes\Locked;
+use App\Modules\CBilling\Models\Meter;
+use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Component;
 
 class Credits extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
+    public ?int $explainedEntryId = null;
+
+    public ?array $explanation = null;
+
+    public ?string $error = null;
+
+    public ?string $success = null;
+
+    public function explain(int $entryId, LedgerExplainAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+        try {
+            $this->explanation = $action->handle(Tenancy::idOrFail(), $entryId);
+            $this->explainedEntryId = $entryId;
+        } catch (ModelNotFoundException) {
+            $this->error = "That entry isn't in this account any more.";
+            $this->explainedEntryId = null;
+            $this->explanation = null;
+        } catch (\Throwable $e) {
+            $this->error = 'Error explaining entry: '.$e->getMessage();
+            $this->explainedEntryId = null;
+            $this->explanation = null;
+        }
+    }
+
+    public function topup(TopupChargeAction $action): void
+    {
+        $this->error = null;
+        $this->success = null;
+        try {
+            $action->handle(Tenancy::idOrFail(), 5000);
+            $this->success = 'Successfully topped up.';
+        } catch (\Throwable $e) {
+            $this->error = 'Error topping up: '.$e->getMessage();
+        }
+    }
 
     public function render()
     {
-        $entries = ($this->businessId > 0)
-            ? CreditLedgerEntry::where('business_id', $this->businessId)->orderBy('id', 'desc')->get()
-            : collect();
+        abort_unless(auth()->check() && Tenancy::check(), 403);
+
+        $meters = Meter::where('business_id', Tenancy::id())->get()->keyBy('meter_type');
+        $entries = CreditLedgerEntry::where('business_id', Tenancy::id())
+            ->orderByDesc('id')
+            ->get();
+        $latestEntry = $entries->first();
+        $aiBalance = $latestEntry ? $latestEntry->balance_after_hundredths_cents : 0;
 
         return view('c-billing::credits', [
+            'meters' => $meters,
             'entries' => $entries,
+            'aiBalance' => $aiBalance,
         ]);
     }
 }
