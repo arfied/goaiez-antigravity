@@ -69,7 +69,8 @@ class CardScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(CardScreen::class)
             ->call('makeDefault', 999999)
-            ->assertSee('Card not found in this account');
+            ->assertSee('Card not found in this account')
+            ->assertSee('Try again');
     }
 
     public function test_add_card_shows_waiting_state(): void

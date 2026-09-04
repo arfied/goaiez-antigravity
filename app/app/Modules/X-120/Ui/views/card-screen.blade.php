@@ -2,7 +2,7 @@
     <h1 class="text-xl font-semibold mb-4">Payment Methods</h1>
 
     @if($error)
-        <x-ui.error-panel heading="Error" retry="">
+        <x-ui.error-panel heading="We couldn't update your cards">
             {{ $error }}
         </x-ui.error-panel>
     @endif
