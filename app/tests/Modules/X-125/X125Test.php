@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X125;
 
+use App\Enums\SignalState;
 use App\Modules\X125\Actions\FlowCreateAction;
 use App\Modules\X125\Actions\FlowExplainAction;
 use App\Modules\X125\Actions\FlowRunAction;
@@ -214,18 +215,18 @@ class X125Test extends TestCase
 
     public function test_flow_run_status_signal_mapping(): void
     {
-        $run = new \App\Modules\X125\Models\FlowRun();
+        $run = new FlowRun;
 
         $run->status = 'success';
-        $this->assertEquals(\App\Enums\SignalState::Ok, $run->statusSignal());
+        $this->assertEquals(SignalState::Ok, $run->statusSignal());
 
         $run->status = 'error';
-        $this->assertEquals(\App\Enums\SignalState::Alert, $run->statusSignal());
+        $this->assertEquals(SignalState::Alert, $run->statusSignal());
 
         $run->status = 'simulated';
-        $this->assertEquals(\App\Enums\SignalState::Unknown, $run->statusSignal());
+        $this->assertEquals(SignalState::Unknown, $run->statusSignal());
 
         $run->status = 'queued'; // unrecognized
-        $this->assertEquals(\App\Enums\SignalState::Unknown, $run->statusSignal());
+        $this->assertEquals(SignalState::Unknown, $run->statusSignal());
     }
 }

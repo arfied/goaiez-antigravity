@@ -13,8 +13,10 @@ use App\Modules\X194\Events\ViewRendered;
 use App\Modules\X194\Events\ViewSaved;
 use App\Modules\X194\Models\SavedView;
 use App\Modules\X194\Models\ViewSchedule;
+use App\Modules\X194\Ui\SavedViewsList;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X194Test extends TestCase
@@ -136,7 +138,7 @@ class X194Test extends TestCase
             columnsConfig: []
         );
 
-        $component = \Livewire\Livewire::test(\App\Modules\X194\Ui\SavedViewsList::class, ['businessId' => $biz->id])
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
             ->call('load')
             ->assertSee('View Alpha')
             ->assertSee('View Beta');
@@ -152,7 +154,7 @@ class X194Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Empty UI Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \Livewire\Livewire::test(\App\Modules\X194\Ui\SavedViewsList::class, ['businessId' => $biz->id])
+        Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
             ->call('load')
             ->assertSee('No saved views found')
             ->assertSee('When you save a view, it will appear here.');
@@ -163,7 +165,7 @@ class X194Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Error UI Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $component = \Livewire\Livewire::test(\App\Modules\X194\Ui\SavedViewsList::class, ['businessId' => $biz->id]);
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id]);
         $component->set('errorMessage', 'Terrible error occurred.');
 
         $component->assertSee('We could not load your saved views.')

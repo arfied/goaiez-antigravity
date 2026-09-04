@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X194\Ui;
 
-use App\Modules\X194\Models\SavedView;
+use App\Modules\X194\Actions\SetDefaultViewAction;
+use App\Modules\X194\Actions\ViewListAction;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -24,12 +25,12 @@ class SavedViewsList extends Component
 
     public function makeDefault(int $viewId): void
     {
-        app(\App\Modules\X194\Actions\SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
+        app(SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
     }
 
     public function render()
     {
-        $action = app(\App\Modules\X194\Actions\ViewListAction::class);
+        $action = app(ViewListAction::class);
         $views = ($this->businessId > 0 && $this->ready)
             ? $action->listViews($this->businessId)
             : collect();

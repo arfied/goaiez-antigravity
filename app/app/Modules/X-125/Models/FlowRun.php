@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X125\Models;
 
+use App\Enums\SignalState;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -28,13 +29,13 @@ class FlowRun extends Model
         return $this->belongsTo(FlowVersion::class, 'flow_version_id');
     }
 
-    public function statusSignal(): \App\Enums\SignalState
+    public function statusSignal(): SignalState
     {
         return match ($this->status) {
-            'success' => \App\Enums\SignalState::Ok,
-            'error' => \App\Enums\SignalState::Alert,
-            'simulated' => \App\Enums\SignalState::Unknown,
-            default => \App\Enums\SignalState::Unknown,
+            'success' => SignalState::Ok,
+            'error' => SignalState::Alert,
+            'simulated' => SignalState::Unknown,
+            default => SignalState::Unknown,
         };
     }
 }
