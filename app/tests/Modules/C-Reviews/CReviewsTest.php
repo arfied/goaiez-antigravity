@@ -243,12 +243,39 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_05_reopen_ticket_on_one_star(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'One Star Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        $biz = self::provisionTenant(['name' => 'One Star Biz', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
 
         $r = $this->syncAction->handle($biz->id, 'google', 1, 'Terrible experience');
-        $ticket = $this->ticketAction->handle($biz->id, $r->id);
-        $this->assertEquals('open_sla_24h', $ticket['ticket_status']);
+        $ticketRes = $this->ticketAction->handle($biz->id, $r->id);
+        
+        $ticketId = \App\Modules\X181\Models\QaTicket::where('review_request_id', $r->id)->first()->id;
+
+        $this->ticketAction->resolve($biz->id, $ticketId);
+        
+        $ticket = \App\Modules\X181\Models\QaTicket::find($ticketId);
+        $this->assertNotNull($ticket->csat_requested_at);
+        $this->assertEquals('resolved', $ticket->status);
+        
+        $this->ticketAction->receiveCsat($biz->id, $ticketId, 1);
+        $ticket->refresh();
+        
+        $this->assertEquals('open', $ticket->status);
+        $this->assertNotNull($ticket->reopened_at);
+        $this->assertEquals(1, $ticket->csat_score);
+        
+        // test 5 leaves it resolved
+        $r2 = $this->syncAction->handle($biz->id, 'google', 1, 'Bad again');
+        $this->ticketAction->handle($biz->id, $r2->id);
+        $ticketId2 = \App\Modules\X181\Models\QaTicket::where('review_request_id', $r2->id)->first()->id;
+        
+        $this->ticketAction->resolve($biz->id, $ticketId2);
+        $this->ticketAction->receiveCsat($biz->id, $ticketId2, 5);
+        $ticket2 = \App\Modules\X181\Models\QaTicket::find($ticketId2);
+        
+        $this->assertEquals('resolved', $ticket2->status);
+        $this->assertNull($ticket2->reopened_at);
+        $this->assertEquals(5, $ticket2->csat_score);
     }
 
     /**

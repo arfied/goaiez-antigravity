@@ -38,4 +38,29 @@ final class QaTicketAction
             ];
         });
     }
+
+    public function resolve(int $businessId, int $ticketId): void
+    {
+        $ticket = QaTicket::where('business_id', $businessId)->findOrFail($ticketId);
+        $ticket->update([
+            'status' => 'resolved',
+            'resolved_at' => now(),
+            'csat_requested_at' => now(),
+        ]);
+    }
+
+    public function receiveCsat(int $businessId, int $ticketId, int $score): void
+    {
+        $ticket = QaTicket::where('business_id', $businessId)->findOrFail($ticketId);
+        
+        $updates = ['csat_score' => $score];
+        
+        // TEST ANCHOR: receiving a CSAT of 1 on a resolved ticket sets it back to open and marks reopened_at
+        if ($score === 1 && $ticket->status === 'resolved') {
+            $updates['status'] = 'open';
+            $updates['reopened_at'] = now();
+        }
+        
+        $ticket->update($updates);
+    }
 }
