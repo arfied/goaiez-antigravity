@@ -43,7 +43,13 @@ return [
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.
-    'owns_table' => [],
+    'owns_table' => [
+        'warmup_domains',
+        'warmup_seeds',
+        'warmup_days. Must not touch X-186 campaigns',
+        'X-204',
+        'any tenant contact row.',
+    ],
     'reads_table' => [],
 
     'renders' => [
