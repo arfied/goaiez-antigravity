@@ -116,11 +116,57 @@ class X194Test extends TestCase
         $this->assertNotEmpty($pdfRes['pdf_payload']);
     }
 
-    /**
-     * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
-     */
-    public function test_reporting_capabilities(): void
+    public function test_saved_views_list_component(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'UI Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view1 = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'View Alpha',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+        $view2 = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'View Beta',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $component = \Livewire\Livewire::test(\App\Modules\X194\Ui\SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('View Alpha')
+            ->assertSee('View Beta');
+
+        $component->call('makeDefault', $view2->id);
+
+        $this->assertFalse(SavedView::find($view1->id)->is_default);
+        $this->assertTrue(SavedView::find($view2->id)->is_default);
+    }
+
+    public function test_saved_views_list_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty UI Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        \Livewire\Livewire::test(\App\Modules\X194\Ui\SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('No saved views found')
+            ->assertSee('When you save a view, it will appear here.');
+    }
+
+    public function test_saved_views_list_error_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Error UI Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $component = \Livewire\Livewire::test(\App\Modules\X194\Ui\SavedViewsList::class, ['businessId' => $biz->id]);
+        $component->set('errorMessage', 'Terrible error occurred.');
+
+        $component->assertSee('We could not load your saved views.')
+            ->assertSee('Terrible error occurred.');
     }
 }

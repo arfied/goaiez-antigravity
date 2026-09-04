@@ -13,10 +13,25 @@ class SavedViewsList extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public string $errorMessage = '';
+
+    public bool $ready = false;
+
+    public function load(): void
+    {
+        $this->ready = true;
+    }
+
+    public function makeDefault(int $viewId): void
+    {
+        app(\App\Modules\X194\Actions\SetDefaultViewAction::class)->setDefault($this->businessId, $viewId);
+    }
+
     public function render()
     {
-        $views = ($this->businessId > 0)
-            ? SavedView::all()->where('business_id', $this->businessId)
+        $action = app(\App\Modules\X194\Actions\ViewListAction::class);
+        $views = ($this->businessId > 0 && $this->ready)
+            ? $action->listViews($this->businessId)
             : collect();
 
         return view('x-194::saved-views-list', [
