@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Services\Voice;
 
 use App\Contracts\VoiceProvider;
+use App\Enums\CapturedBy;
+use App\Enums\CaptureSurface;
+use App\Enums\ConsentType;
 use App\Enums\OutreachChannel;
 use App\Enums\VoiceEventType;
 use App\Enums\VoiceIngestOutcome;
@@ -444,20 +447,20 @@ final class VoiceCalls
 
             if ($customer === null) {
                 // TODO(Q-045): An inbound call establishes express consent, captured by the tenant, allowing a transactional missed-call text-back.
-                $customer = \App\Models\Customer::create([
+                $customer = Customer::create([
                     'business_id' => $businessId,
-                    'phone' => \App\Support\Identifier::normalise($facts->from, \App\Enums\OutreachChannel::Sms) ?? $facts->from,
+                    'phone' => Identifier::normalise($facts->from, OutreachChannel::Sms) ?? $facts->from,
                 ]);
 
-                \Illuminate\Support\Facades\DB::table('consent_records')->insert([
+                DB::table('consent_records')->insert([
                     'business_id' => $businessId,
                     'customer_id' => $customer->id,
-                    'channel' => \App\Enums\OutreachChannel::Sms->value,
-                    'consent_type' => \App\Enums\ConsentType::Express->value,
-                    'captured_by' => \App\Enums\CapturedBy::Tenant->value,
-                    'capture_surface' => \App\Enums\CaptureSurface::Call->value,
+                    'channel' => OutreachChannel::Sms->value,
+                    'consent_type' => ConsentType::Express->value,
+                    'captured_by' => CapturedBy::Tenant->value,
+                    'capture_surface' => CaptureSurface::Call->value,
                     'disclosure_version' => '1.0',
-                    
+
                     'created_at' => now(),
                 ]);
             }

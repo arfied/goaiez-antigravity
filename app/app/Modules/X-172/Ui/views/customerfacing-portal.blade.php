@@ -120,7 +120,7 @@
                             </label>
                             <input 
                                 type="text" 
-                                wire:model.defer="signatureTyped" 
+                                wire:model="signatureTyped" 
                                 placeholder="e.g. Sarah Jenkins" 
                                 class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-serif italic text-base placeholder-slate-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                             />
@@ -253,7 +253,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Your Feedback</label>
                             <textarea 
-                                wire:model.defer="feedbackComment" 
+                                wire:model="feedbackComment" 
                                 rows="3" 
                                 placeholder="Share details about your service experience..." 
                                 class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-indigo-500"

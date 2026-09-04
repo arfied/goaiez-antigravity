@@ -111,59 +111,59 @@ final class IngestVoiceEventJob implements ShouldQueue
 
         try {
 
-        $outcome = match ($this->event) {
-            VoiceWebhookEvent::RecordingReady => $calls->attachRecording($this->providerCallId),
-            VoiceWebhookEvent::CallEnded => $calls->record($this->providerCallId),
-        };
+            $outcome = match ($this->event) {
+                VoiceWebhookEvent::RecordingReady => $calls->attachRecording($this->providerCallId),
+                VoiceWebhookEvent::CallEnded => $calls->record($this->providerCallId),
+            };
 
-        if ($outcome === VoiceIngestOutcome::AwaitingCall) {
-            // ⛔ **RELEASED, WHICH IS WHAT MAKES THE BACKOFF LADDER REAL**
-            // (4518). A recording notification overtaking its own call event is
-            // the ordinary out-of-order delivery this path was always described
-            // as handling — and it was ending the job successfully, so no
-            // voicemail row was created and the owner was never told. On the
-            // last attempt `release()` stops retrying and the log line below is
-            // what somebody reads.
-            if ($this->attempts() < $this->tries) {
-                $this->release($this->backoff()[$this->attempts() - 1] ?? 900);
+            if ($outcome === VoiceIngestOutcome::AwaitingCall) {
+                // ⛔ **RELEASED, WHICH IS WHAT MAKES THE BACKOFF LADDER REAL**
+                // (4518). A recording notification overtaking its own call event is
+                // the ordinary out-of-order delivery this path was always described
+                // as handling — and it was ending the job successfully, so no
+                // voicemail row was created and the owner was never told. On the
+                // last attempt `release()` stops retrying and the log line below is
+                // what somebody reads.
+                if ($this->attempts() < $this->tries) {
+                    $this->release($this->backoff()[$this->attempts() - 1] ?? 900);
+
+                    return;
+                }
+
+                Log::warning('A recording arrived and its call never did.', [
+                    'provider_call_id' => $this->providerCallId,
+                    'attempts' => $this->attempts(),
+                ]);
 
                 return;
             }
 
-            Log::warning('A recording arrived and its call never did.', [
-                'provider_call_id' => $this->providerCallId,
-                'attempts' => $this->attempts(),
-            ]);
+            if ($outcome === VoiceIngestOutcome::ProviderUnavailable) {
+                // ⚠️ **A LOG LINE AND NO THROW.** Throwing would exhaust the ladder
+                // and land the job in `failed_jobs` — which on this path is a record
+                // no crypto-shred reaches and no tenant predicate covers (3148), for
+                // a condition that is simply *"voice is not activated yet"*. The
+                // carrier's own retry is the recovery, and T176 §7 item 3 is the
+                // fix.
+                //
+                // ⚠️ **THIS SAID "A DURABLE RECORD NOTHING PRUNES" AND THAT STOPPED
+                // BEING TRUE ON 2026-08-23** (8610-8639): `jobs:prune-failed` bounds
+                // it at thirty days. **The refusal to throw is unchanged**, and its
+                // real argument was never the retention — this payload is a vendor
+                // call handle and an enum, so what a row here would waste is an
+                // operator's attention on a switch nobody has turned on yet.
+                //
+                // ⚠️ **NO NUMBER, ON EITHER SIDE.** The vendor's call handle is
+                // opaque; the caller's mobile is not, and it is what this whole path
+                // is careful about.
+                Log::info('A voice event could not be read back from the provider.', [
+                    'provider_call_id' => $this->providerCallId,
+                    'event' => $this->event->value,
+                ]);
+            }
 
-            return;
-        }
-
-        if ($outcome === VoiceIngestOutcome::ProviderUnavailable) {
-            // ⚠️ **A LOG LINE AND NO THROW.** Throwing would exhaust the ladder
-            // and land the job in `failed_jobs` — which on this path is a record
-            // no crypto-shred reaches and no tenant predicate covers (3148), for
-            // a condition that is simply *"voice is not activated yet"*. The
-            // carrier's own retry is the recovery, and T176 §7 item 3 is the
-            // fix.
-            //
-            // ⚠️ **THIS SAID "A DURABLE RECORD NOTHING PRUNES" AND THAT STOPPED
-            // BEING TRUE ON 2026-08-23** (8610-8639): `jobs:prune-failed` bounds
-            // it at thirty days. **The refusal to throw is unchanged**, and its
-            // real argument was never the retention — this payload is a vendor
-            // call handle and an enum, so what a row here would waste is an
-            // operator's attention on a switch nobody has turned on yet.
-            //
-            // ⚠️ **NO NUMBER, ON EITHER SIDE.** The vendor's call handle is
-            // opaque; the caller's mobile is not, and it is what this whole path
-            // is careful about.
-            Log::info('A voice event could not be read back from the provider.', [
-                'provider_call_id' => $this->providerCallId,
-                'event' => $this->event->value,
-            ]);
-        }
-        
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error("EXCEPTION IN JOB: " . $e->getMessage() . " " . $e->getTraceAsString());
+            Log::error('EXCEPTION IN JOB: '.$e->getMessage().' '.$e->getTraceAsString());
         }
     }
 }

@@ -124,9 +124,14 @@ class CBillingTest extends TestCase
         $res1 = $this->topupAction->handle($biz->id, 6000); // $60
         $this->assertEquals('charged', $res1['status']);
 
-        $res2 = $this->topupAction->handle($biz->id, 5000); // +$50 = $110 > $100 ceiling
-        $this->assertEquals('refused', $res2['status']);
-        $this->assertEquals('DAILY_TOPUP_CEILING_EXCEEDED', $res2['refusal_code']);
+        $beforeCount = \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)->count();
+        try {
+            $this->topupAction->handle($biz->id, 5000); // +$50 = $110 > $100 ceiling
+            $this->fail('Expected exception');
+        } catch (\DomainException $e) {
+            $this->assertEquals('REFUSAL: Daily top-up ceiling exceeded', $e->getMessage());
+        }
+        $this->assertEquals($beforeCount, \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)->count());
     }
 
     /**
@@ -239,10 +244,14 @@ class CBillingTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'No Ledger Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('REFUSAL: Ledger not found');
-
-        $this->debitAction->handle($biz->id, 5000, 'ref_1', 'Debit 1');
+        $beforeCount = \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)->count();
+        try {
+            $this->debitAction->handle($biz->id, 5000, 'ref_1', 'Debit 1');
+            $this->fail('Expected exception');
+        } catch (\DomainException $e) {
+            $this->assertEquals('REFUSAL: Ledger not found', $e->getMessage());
+        }
+        $this->assertEquals($beforeCount, \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)->count());
     }
 
     public function test_debit_refuses_insufficient_balance(): void
@@ -252,9 +261,13 @@ class CBillingTest extends TestCase
 
         $this->grantAction->handle($biz->id, 10000, 'setup', 'Setup grant'); // .00
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage('REFUSAL: Insufficient balance');
-
-        $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1');
+        $beforeCount = \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)->count();
+        try {
+            $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1');
+            $this->fail('Expected exception');
+        } catch (\DomainException $e) {
+            $this->assertEquals('REFUSAL: Insufficient balance', $e->getMessage());
+        }
+        $this->assertEquals($beforeCount, \App\Modules\CBilling\Models\CreditLedgerEntry::where('business_id', $biz->id)->count());
     }
 }

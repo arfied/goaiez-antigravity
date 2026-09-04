@@ -39,6 +39,7 @@ return [
         'review.received',
         'reply.published',
         'win.first',
+        'send.requested',
     ],
     'consumes' => [
         'capability.decided',

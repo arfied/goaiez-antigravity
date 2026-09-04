@@ -24,6 +24,7 @@ class ReviewsQaRequests extends Component
 
     public string $platform = 'google';
 
+    #[Locked]
     public ?int $selectedReviewId = null;
 
     public string $replyDraft = '';
@@ -47,7 +48,6 @@ class ReviewsQaRequests extends Component
         }
         Tenancy::set($this->businessId);
 
-
     }
 
     public function sendRequest(): void
@@ -64,6 +64,8 @@ class ReviewsQaRequests extends Component
             $this->actionNotice = "✅ Review request dispatched via {$this->platform} (P-110 compliant, zero-incentive rule).";
         }
     }
+
+    public function unselectReview(): void { $this->selectedReviewId = null; }
 
     public function selectReview(int $id): void
     {

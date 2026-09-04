@@ -14,10 +14,12 @@ use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\X171\Events\JobCompleted;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CReviewsTest extends TestCase
@@ -220,7 +222,23 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_07_day_60_triage(): void
     {
-        $this->assertTrue(true);
+        $biz = $this->provisionTenant();
+        
+        // Score 6 -> refused + ticket
+        $resRefused = $this->requestAction->handle($biz->id, null, 'Please review', 'google', 6, 60);
+        $this->assertEquals('refused', $resRefused['status']);
+        $this->assertEquals('LOW_CSAT_TRIAGE', $resRefused['refusal_code']);
+        
+        $req = ReviewRequest::latest()->first();
+        $this->assertEquals('triaged_internal', $req->status);
+        $this->assertEquals(6, $req->csat_score);
+        
+        $ticket = \App\Modules\X181\Models\QaTicket::where('review_request_id', $req->id)->first();
+        $this->assertNotNull($ticket);
+        
+        // Score 8 -> sent
+        $resSent = $this->requestAction->handle($biz->id, null, 'Please review', 'google', 8, 60);
+        $this->assertEquals('sent', $resSent['status']);
     }
 
     /**
@@ -267,16 +285,53 @@ class CReviewsTest extends TestCase
     }
 
     /**
+     * [G20-11] = Triage Mechanism
+     * [G20-12] = Review Gating; one spec, under P-110
+     */
+    public function test_g20_11_and_g20_12_triage_mechanism_and_gating(): void
+    {
+        $biz = $this->provisionTenant();
+        \App\Modules\CReviews\Models\QaSetting::create(['business_id' => $biz->id, 'sla_hours' => 24]);
+        
+        // 3-star review
+        $req3 = $this->syncAction->handle($biz->id, 'google', 3, 'Bad');
+        $replyResult = $this->replyAction->handle($biz->id, $req3->id, 'Sorry');
+        
+        if ($replyResult['status'] === 'triaged_internal') {
+            $this->ticketAction->handle($biz->id, $req3->id);
+        }
+        
+        $req3->refresh();
+        $this->assertEquals(0, ReviewReply::where('review_request_id', $req3->id)->where('is_public', true)->count());
+        $this->assertEquals('triaged_internal', $req3->status);
+        
+        $ticket = \App\Modules\X181\Models\QaTicket::where('review_request_id', $req3->id)->first();
+        $this->assertNotNull($ticket);
+        $this->assertNotNull($ticket->sla_due_at);
+        
+        // 5-star review
+        $req5 = $this->syncAction->handle($biz->id, 'google', 5, 'Good');
+        $replyResult5 = $this->replyAction->handle($biz->id, $req5->id, 'Thanks');
+        
+        $req5->refresh();
+        $this->assertNotEquals('triaged_internal', $req5->status);
+        $this->assertNotEquals('triaged_internal', $replyResult5['status']);
+    }
+
+    /**
      * [G20-13] CADENCE_WINDOW_ACTIVE (test_g20_13_marketing_send_window)
      */
     public function test_g20_13_marketing_send_window(): void
     {
+        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
+
         $biz = TestCase::provisionTenant(['name' => 'Cadence Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $customerId = DB::table('people')->insertGetId([
             'business_id' => $biz->id,
             'first_name' => 'Test Customer',
+            'phone' => '+15550001111',
         ]);
 
         // 1. null customerId is refused
@@ -288,10 +343,16 @@ class CReviewsTest extends TestCase
         $res1 = $this->requestAction->handle($biz->id, $customerId, 'How did it go?', 'google');
         $this->assertEquals('sent', $res1['status']);
 
+        Event::assertDispatched(\App\Modules\CSms\Events\SendRequested::class, function ($e) {
+            return $e->messageClass === 'marketing';
+        });
+
         // 3. Second request inside the window on a different platform (yelp) is refused
+        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
         $res2 = $this->requestAction->handle($biz->id, $customerId, 'How did it go again?', 'yelp');
         $this->assertEquals('refused', $res2['status']);
         $this->assertEquals('CADENCE_WINDOW_ACTIVE', $res2['refusal_code']);
+        Event::assertNotDispatched(\App\Modules\CSms\Events\SendRequested::class);
 
         // 4. A request outside the window is sent
         ReviewRequest::where('id', $res1['review_request_id'])
@@ -304,9 +365,11 @@ class CReviewsTest extends TestCase
         ReviewRequest::where('id', $res3['review_request_id'])
             ->update(['created_at' => Carbon::now()->subDays(31)]); // outside window again
 
+        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
         $res4 = $this->requestAction->handle($biz->id, $customerId, 'How did it go a third time?', 'facebook');
         $this->assertEquals('refused', $res4['status']);
         $this->assertEquals('TWO_PASS_CAP_REACHED', $res4['refusal_code']);
+        Event::assertNotDispatched(\App\Modules\CSms\Events\SendRequested::class);
     }
 
     /**
@@ -403,15 +466,14 @@ class CReviewsTest extends TestCase
 
         $this->assertEquals('sent', $result['status']);
     }
-
     public function test_no_fake_rows_written_on_mount(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\ReviewsQaRequests::class)
+        Livewire::test(ReviewsQaRequests::class)
             ->assertOk();
 
-        $this->assertEquals(0, \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, ReviewRequest::where('business_id', $biz->id)->count());
     }
 }

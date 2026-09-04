@@ -20,7 +20,9 @@ final class ReviewRequestAction
         int $businessId,
         ?int $customerId,
         string $promptTemplate,
-        string $platform = 'google'
+        string $platform = 'google',
+        ?int $csatScore = null,
+        ?int $jobAgeDays = null
     ): array {
         $lower = strtolower($promptTemplate);
 
@@ -47,6 +49,25 @@ final class ReviewRequestAction
                 'status' => 'refused',
                 'refusal_code' => 'CUSTOMER_UNKNOWN',
                 'message' => 'Review requests require a known customer',
+            ];
+        }
+
+        if ($csatScore !== null && $csatScore < 7 && ($jobAgeDays ?? 0) >= 60) {
+            $req = ReviewRequest::create([
+                'business_id' => $businessId,
+                'customer_id' => $customerId,
+                'platform' => $platform,
+                'status' => 'triaged_internal',
+                'gbp_suspended' => false,
+                'csat_score' => $csatScore,
+            ]);
+
+            app(QaTicketAction::class)->handle($businessId, $req->id);
+
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'LOW_CSAT_TRIAGE',
+                'review_request_id' => $req->id,
             ];
         }
 
@@ -81,7 +102,22 @@ final class ReviewRequestAction
             'platform' => $platform,
             'status' => 'sent',
             'gbp_suspended' => false,
+            'csat_score' => $csatScore,
         ]);
+
+        if ($customerId !== null) {
+            $person = \App\Modules\X121\Models\Person::find($customerId);
+            if ($person !== null && !empty($person->phone)) {
+                Event::dispatch(new \App\Modules\CSms\Events\SendRequested(
+                    businessId: $businessId,
+                    compositionId: $req->id,
+                    recipientPhone: $person->phone,
+                    messageClass: 'marketing',
+                    body: $promptTemplate,
+                    segmentsCount: 1
+                ));
+            }
+        }
 
         Event::dispatch(new ReviewRequested(
             businessId: $businessId,

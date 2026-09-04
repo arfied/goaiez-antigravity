@@ -13,6 +13,7 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 
 final class GatewayEngine
 {
@@ -54,39 +55,87 @@ final class GatewayEngine
                 throw new \InvalidArgumentException('Gateway connection is absent; payment capture refused before external request');
             }
 
-            // Contact gateway
-            if ($connection->gateway_name === 'stripe') {
-                // Here we'd use Stripe SDK. For tests, we fake Http.
-                $response = \Illuminate\Support\Facades\Http::asForm()->post('https://api.stripe.com/v1/charges', [
-                    'amount' => $amountCents,
-                    'currency' => strtolower($currency),
-                    'source' => $paymentToken,
-                ])->json();
-                $chargeId = $response['id'] ?? 'ch_fake_' . uniqid();
-            } else {
-                $chargeId = 'ch_' . uniqid();
+            if (empty($connection->merchant_account_id)) {
+                throw new \InvalidArgumentException('Gateway connection carries no credential; payment capture refused before external request');
             }
 
             $payment = Payment::create([
                 'business_id' => $businessId,
                 'merchant_connection_id' => $connection->id,
-                'gateway_charge_id' => $chargeId,
+                'gateway_charge_id' => null,
                 'amount_cents' => $amountCents,
                 'currency' => $currency,
                 'payment_token' => $paymentToken,
                 'idempotency_key' => $idempotencyKey,
+                'status' => 'pending',
+            ]);
+
+            return $payment;
+        });
+    }
+
+    public function confirmCapture(int $businessId, int $paymentId, string $gatewayChargeId): Payment
+    {
+        return DB::transaction(function () use ($businessId, $paymentId, $gatewayChargeId) {
+            if (empty($gatewayChargeId)) {
+                throw new \InvalidArgumentException('Gateway charge ID cannot be empty');
+            }
+
+            $payment = Payment::where('business_id', $businessId)->findOrFail($paymentId);
+
+            if ($payment->status !== 'pending') {
+                throw new \InvalidArgumentException('Only pending payments can be captured');
+            }
+
+            $payment->update([
                 'status' => 'captured',
+                'gateway_charge_id' => $gatewayChargeId,
             ]);
 
             Event::dispatch(new PaymentCaptured(
                 businessId: $businessId,
                 paymentId: $payment->id,
-                gatewayChargeId: $payment->gateway_charge_id,
-                amountCents: $amountCents
+                gatewayChargeId: $gatewayChargeId,
+                amountCents: $payment->amount_cents
             ));
 
             return $payment;
         });
+    }
+
+    public function requestCharge(int $businessId, int $paymentId, int $amountCents, string $currency, string $paymentToken, string $idempotencyKey): Payment
+    {
+        $connection = MerchantConnection::where('business_id', $businessId)->first();
+
+        if ($connection === null || ! $connection->is_connected || empty($connection->merchant_account_id)) {
+            throw new \InvalidArgumentException('Gateway connection carries no credential; request refused');
+        }
+
+        $gatewayChargeId = null;
+
+        if ($connection->gateway_name === 'stripe') {
+            $response = Http::withToken(config('services.stripe.secret', ''))
+                ->withHeaders([
+                    'Stripe-Account' => $connection->merchant_account_id,
+                    'Idempotency-Key' => $idempotencyKey,
+                ])
+                ->asForm()
+                ->post('https://api.stripe.com/v1/payment_intents', [
+                    'amount' => $amountCents,
+                    'currency' => strtolower($currency),
+                    'payment_method_data[type]' => 'card',
+                    'payment_method_data[card][token]' => $paymentToken,
+                    'confirm' => 'true',
+                ]);
+
+            $gatewayChargeId = $response->json('id');
+        }
+
+        if (empty($gatewayChargeId)) {
+            throw new \RuntimeException('Gateway did not return a charge ID');
+        }
+
+        return $this->confirmCapture($businessId, $paymentId, (string) $gatewayChargeId);
     }
 
     /**
@@ -134,11 +183,5 @@ final class GatewayEngine
                 'status' => $status,
             ];
         });
-    }
-
-    public function enforceRealConstraints(): void
-    {
-        // Real constraints built as requested
-        if (false) throw new \InvalidArgumentException('Constraint failed');
     }
 }

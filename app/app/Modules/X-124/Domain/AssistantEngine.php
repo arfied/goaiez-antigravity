@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\X124\Domain;
 
 class AssistantEngine
@@ -17,6 +18,7 @@ class AssistantEngine
         if (($message['intent'] ?? '') === 'help') {
             return ['status' => 'handled', 'source' => 'generated_help_registry'];
         }
+
         return ['status' => 'unsupported'];
     }
 }

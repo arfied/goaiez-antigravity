@@ -59,32 +59,13 @@ final class TwelveJourneysTest extends TestCase
 
         $tenant = $this->tenantWithLiveNumber();
         $started = microtime(true);
-        \App\Support\Tenancy::actingAs($tenant['id'], function() {
-            app(\App\Services\Billing\CreditLedger::class)->record(
-                \App\Enums\CreditProduct::Sms,
-                \App\Enums\CreditKind::Adjust,
-                100,
-                'system',
-                'test top up'
-            );
-        });
 
         // The caller hangs up. Nothing about this is synchronous — the webhook
         // returns immediately and the work is queued, which is exactly why a
         // sync-driver run would prove nothing.
-        $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+12622164033');
+        $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+15550123');
 
-        \App\Support\Tenancy::actingAs($tenant['id'], function() {
-            $customer = \App\Models\Customer::where('phone', '+12622164033')->first();
-            \Illuminate\Support\Facades\Log::info("Customer after webhook: " . json_encode($customer));
-            if ($customer) {
-                $consent = \App\Models\ConsentRecord::where('customer_id', $customer->id)->first();
-                \Illuminate\Support\Facades\Log::info("Consent after webhook: " . json_encode($consent));
-                if (!$consent) { \Illuminate\Support\Facades\Log::error("NO CONSENT RECORD!"); }
-            }
-        });
-
-        $message = $this->waitForOutbound($tenant, to: '+12622164033', timeoutSeconds: 90);
+        $message = $this->waitForOutbound($tenant, to: '+15550123', timeoutSeconds: 90);
         $elapsedMs = (int) ((microtime(true) - $started) * 1000);
 
         $this->assertNotNull($message, 'No text-back was sent.');
@@ -100,7 +81,7 @@ final class TwelveJourneysTest extends TestCase
         //    has STOPped is the one message that must never send, and the missed
         //    call is precisely when a system is most tempted to skip the check.
         $this->assertTrue(
-            $this->consentWasCheckedFor('+12622164033'),
+            $this->consentWasCheckedFor('+15550123'),
             'The text-back sent without passing ConsentService::decide().'
         );
 

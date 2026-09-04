@@ -164,9 +164,4 @@ final class ApprovalDeskEngine
         ];
     }
 
-    public function enforceRealConstraints(): void
-    {
-        // Real constraints built as requested
-        if (false) throw new \InvalidArgumentException('Constraint failed');
-    }
 }
