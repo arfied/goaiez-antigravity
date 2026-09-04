@@ -95,7 +95,7 @@ class ByTechTest extends TestCase
         Livewire::actingAs($user)->test(ByTech::class)
             ->assertSee('Alice')
             ->assertSee('Bob')
-            ->assertSee('400.00') // Alice's total revenue
+            ->assertSee('400.00')->assertSee('220.00')->assertSee('55.00 %') // Alice's total revenue
             ->assertSee('Unassigned');
     }
 
