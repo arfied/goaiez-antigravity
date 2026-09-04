@@ -1,30 +1,50 @@
 <div>
-    <h1 class="text-xl font-semibold mb-4">Ageing By Reason</h1>
+    <h1>Overdue, by reason</h1>
 
-    @foreach($groups as $reason => $invoices)
-        <div class="mb-8">
-            <h2 class="text-lg font-medium mb-2">{{ $reason }}</h2>
-            <ul class="space-y-4">
-                @foreach($invoices as $invoice)
-                    <li class="border rounded p-4 shadow bg-white">
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <span class="font-semibold">{{ $invoice->invoice_number }}</span>
-                                <span class="text-gray-500 text-sm ml-2">Due: {{ $invoice->due_date }}</span>
+    @if($error)
+        <x-ui.error-panel heading="We couldn't log that payment" retry="">
+            {{ $error }}
+        </x-ui.error-panel>
+    @endif
+
+    @if($success)
+        <p>{{ $success }}</p>
+    @endif
+
+    <div wire:loading>
+        <x-ui.skeleton label="Checking what is overdue…" />
+    </div>
+
+    @if(empty($groups))
+        <x-ui.empty-state heading="Nothing is overdue.">Every issued invoice is inside its terms.</x-ui.empty-state>
+    @else
+        @foreach($groups as $reason => $invoices)
+            <div class="mb-8">
+                <h2>{{ $reason }}</h2>
+                <ul class="space-y-4">
+                    @foreach($invoices as $inv)
+                        <li class="border rounded p-4 shadow bg-white">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="font-semibold">{{ $inv->invoice_number }}</span>
+                                    <span class="text-gray-500 text-sm ml-2">Due {{ $inv->due_date->toDateString() }}</span>
+                                </div>
+                                <div class="tabular-nums">
+                                    {{ number_format($inv->balance_cents / 100, 2) }}
+                                </div>
                             </div>
-                            <div class="tabular-nums">
-                                {{ number_format(($invoice->total_cents - $invoice->paid_cents) / 100, 2) }}
+                            
+                            <x-ui.status-pill :state="$inv->days_overdue > 60 ? 'alert' : 'attention'" label="{{ $inv->days_overdue }} days overdue" />
+                            
+                            <div class="flex items-center gap-2 mt-4">
+                                <input type="text" wire:model="reference.{{ $inv->id }}" placeholder="Cheque or transfer reference" class="border rounded px-2 py-1 flex-1">
+                                <input type="number" wire:model="amountCents.{{ $inv->id }}" placeholder="Amount in cents" class="border rounded px-2 py-1 w-32">
+                                <x-ui.submit target="logPayment({{ $inv->id }})" busy="Logging…">Log payment</x-ui.submit>
                             </div>
-                        </div>
-                        
-                        <div class="flex items-center gap-2">
-                            <input type="text" wire:model.defer="referenceNumber" placeholder="Reference Number" class="border rounded px-2 py-1 flex-1">
-                            <x-ui.button wire:click="logPayment({{ $invoice->id }})">Log Payment</x-ui.button>
-                        </div>
-                        @error('referenceNumber') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-    @endforeach
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endforeach
+    @endif
 </div>
