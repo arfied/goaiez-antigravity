@@ -9,6 +9,7 @@ use App\Modules\X205\Actions\AffiliateAttributeAction;
 use App\Modules\X205\Actions\AffiliatePayoutRequestAction;
 use App\Modules\X205\Actions\AffiliateProposeClawbackAction;
 use App\Modules\X205\Domain\AffiliateEngine;
+use App\Modules\X205\Domain\SaleAttributionRefused;
 use App\Modules\X205\Events\ApprovalRequested;
 use App\Modules\X205\Listeners\ProposeClawbackOnDisputeLost;
 use App\Modules\X205\Models\Affiliate;
@@ -124,7 +125,7 @@ class X205Test extends TestCase
         try {
             $this->attributeAction->attributeSale($biz->id, 'AFF-G13', 'ORD-S1', 15000, 'vis-stale');
             $this->fail('Expected SaleAttributionRefused exception');
-        } catch (\App\Modules\X205\Domain\SaleAttributionRefused $e) {
+        } catch (SaleAttributionRefused $e) {
             $this->assertEquals('Sale outside 90-day cookie or missing click', $e->getMessage());
         }
 

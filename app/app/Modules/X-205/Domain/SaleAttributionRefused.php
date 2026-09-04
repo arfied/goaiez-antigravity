@@ -6,6 +6,4 @@ namespace App\Modules\X205\Domain;
 
 use Exception;
 
-final class SaleAttributionRefused extends Exception
-{
-}
+final class SaleAttributionRefused extends Exception {}

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\X205\Actions;
 
 use App\Modules\X205\Domain\AffiliateEngine;
+use App\Modules\X205\Domain\SaleAttributionRefused;
 use App\Modules\X205\Models\Affiliate;
 use App\Modules\X205\Models\AffiliateAttribution;
+use App\Modules\X205\Models\ReferralClick;
 
 final class AffiliateAttributeAction
 {
@@ -33,13 +35,13 @@ final class AffiliateAttributeAction
             ->firstOrFail();
 
         if ($visitorId !== '') {
-            $click = \App\Modules\X205\Models\ReferralClick::where('business_id', $businessId)
+            $click = ReferralClick::where('business_id', $businessId)
                 ->where('visitor_id', $visitorId)
                 ->where('affiliate_id', $affiliate->id)
                 ->first();
 
             if (! $click || ! $this->engine->isWithinAttributionWindow($click->created_at, now())) {
-                throw new \App\Modules\X205\Domain\SaleAttributionRefused('Sale outside 90-day cookie or missing click');
+                throw new SaleAttributionRefused('Sale outside 90-day cookie or missing click');
             }
         }
 
