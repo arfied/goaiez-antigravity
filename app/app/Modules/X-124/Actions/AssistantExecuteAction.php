@@ -6,6 +6,8 @@ namespace App\Modules\X124\Actions;
 
 final class AssistantExecuteAction
 {
+    public const IRREVERSIBLE = ['delete_tenant', 'refund_charge', 'bulk_delete', 'wipe_database'];
+
     /**
      * Executes action. Irreversible action never executes without explicit confirmation (TEST ANCHOR).
      */
@@ -15,10 +17,8 @@ final class AssistantExecuteAction
         array $params = [],
         bool $isConfirmed = false
     ): array {
-        $irreversibleActions = ['delete_tenant', 'refund_charge', 'bulk_delete', 'wipe_database'];
-
         // 1. Irreversible safety check (TEST ANCHOR)
-        if (in_array($actionKey, $irreversibleActions, true) && ! $isConfirmed) {
+        if (in_array($actionKey, self::IRREVERSIBLE, true) && ! $isConfirmed) {
             return [
                 'status' => 'refused_confirmation_required',
                 'refusal_code' => 'IRREVERSIBLE_ACTION_EXPLICIT_CONFIRMATION_REQUIRED',
