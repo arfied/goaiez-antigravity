@@ -34,7 +34,7 @@ class CReviewsScreensTest extends TestCase
 
     public function test_reviews_qa_requests_screen(): void
     {
-        Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])->assertOk();
+        Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])->assertOk()->assertSeeHtml('wire:submit="sendRequest"');
         $this->assertSame(0, ReviewRequest::where('business_id', $this->bizId)->count());
         $this->assertSame(0, QaTicket::where('business_id', $this->bizId)->count());
     }
@@ -52,7 +52,8 @@ class CReviewsScreensTest extends TestCase
             ->assertDontSee('Reply')
             ->set('filter', 'public')
             ->assertSee('Great service')
-            ->assertSee('Reply');
+            ->assertSee('Reply')
+            ->call('selectReview', ReviewRequest::where('business_id', $this->bizId)->where('platform', 'yelp')->value('id'))->assertSeeHtml('wire:submit="publishReply"');
     }
 
     public function test_reviews_qa_requests_screen_threshold_and_sample(): void

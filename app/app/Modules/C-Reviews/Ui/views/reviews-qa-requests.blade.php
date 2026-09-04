@@ -37,26 +37,28 @@
                     <h2 class="text-sm font-bold text-white">Send New Ask</h2>
                 </div>
 
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Platform</label>
-                    <select wire:model="platform" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
-                        <option value="google">Google</option>
-                        <option value="yelp">Yelp</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="bbb">BBB</option>
-                    </select>
-                </div>
+                <form wire:submit="sendRequest" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Platform</label>
+                        <select wire:model="platform" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
+                            <option value="google">Google</option>
+                            <option value="yelp">Yelp</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="bbb">BBB</option>
+                        </select>
+                    </div>
 
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Prompt Template</label>
-                    <textarea 
-                        wire:model="promptTemplate" 
-                        rows="3" 
-                        class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                    ></textarea>
-                </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Prompt Template</label>
+                        <textarea 
+                            wire:model="promptTemplate" 
+                            rows="3" 
+                            class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                        ></textarea>
+                    </div>
 
-                <x-ui.submit target="sendRequest" busy="Sending…">Send the ask</x-ui.submit>
+                    <x-ui.submit target="sendRequest" busy="Sending…">Send the ask</x-ui.submit>
+                </form>
             </div>
         </div>
 
@@ -151,15 +153,17 @@
                                 <div class="text-xs text-slate-400 italic bg-slate-900 p-2 rounded">
                                     "{{ $r->review_text }}"
                                 </div>
-                                <textarea wire:model="replyDraft" rows="3" placeholder="Draft reply..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
-                                
-                                <div class="flex items-center justify-between">
-                                    <label class="flex items-center gap-2 text-xs text-slate-400">
-                                        <input type="checkbox" wire:model="isSarcasticOrAmbiguous" class="rounded bg-slate-900 border-slate-700 text-purple-600" />
-                                        Flag as Sarcastic / Ambiguous (Draft to Inbox)
-                                    </label>
-                                    <x-ui.submit target="publishReply" busy="Publishing…">Publish reply</x-ui.submit>
-                                </div>
+                                <form wire:submit="publishReply" class="space-y-3">
+                                    <textarea wire:model="replyDraft" rows="3" placeholder="Draft reply..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <label class="flex items-center gap-2 text-xs text-slate-400">
+                                            <input type="checkbox" wire:model="isSarcasticOrAmbiguous" class="rounded bg-slate-900 border-slate-700 text-purple-600" />
+                                            Flag as Sarcastic / Ambiguous (Draft to Inbox)
+                                        </label>
+                                        <x-ui.submit target="publishReply" busy="Publishing…">Publish reply</x-ui.submit>
+                                    </div>
+                                </form>
                             </div>
                         @endif
                     </div>
