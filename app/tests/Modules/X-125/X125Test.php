@@ -10,9 +10,12 @@ use App\Modules\X125\Actions\FlowRunAction;
 use App\Modules\X125\Actions\FlowSimulateAction;
 use App\Modules\X125\Events\FlowChanged;
 use App\Modules\X125\Models\Flow;
+use App\Modules\X125\Models\FlowRun;
 use App\Modules\X125\Models\FlowVersion;
+use App\Modules\X125\Ui\Runs;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X125Test extends TestCase
@@ -133,23 +136,23 @@ class X125Test extends TestCase
             nodes: [['type' => 'action', 'label' => 'Test Action']],
         );
 
-        $initialRunsCount = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->count();
+        $initialRunsCount = FlowRun::where('business_id', $biz->id)->count();
 
         $this->runAction->handle($biz->id, $flow->id, ['test' => true]);
 
-        $component = \Livewire\Livewire::test(\App\Modules\X125\Ui\Runs::class, ['businessId' => $biz->id])
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
             ->call('load')
             ->assertSee('Test Flow Runs')
             ->assertSee("When 'test.event' event occurs")
             ->assertSee('Test Action');
 
-        $latestRun = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $latestRun = FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
         $component->call('retry', $latestRun->id);
 
-        $newCount = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->count();
+        $newCount = FlowRun::where('business_id', $biz->id)->count();
         $this->assertEquals($initialRunsCount + 2, $newCount);
 
-        $newRun = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $newRun = FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
         $this->assertTrue($newRun->is_manual_retry, 'Retry must be marked as manual');
     }
 }

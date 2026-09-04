@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X125\Ui;
 
+use App\Modules\X125\Actions\FlowRunAction;
+use App\Modules\X125\Models\FlowRun;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Runs extends Component
 {
-    #[\Livewire\Attributes\Locked]
+    #[Locked]
     public int $businessId = 0;
 
     public bool $ready = false;
@@ -21,10 +24,10 @@ class Runs extends Component
         $this->errorMessage = null;
     }
 
-    public function retry(int $id, \App\Modules\X125\Actions\FlowRunAction $action)
+    public function retry(int $id, FlowRunAction $action)
     {
         try {
-            $run = \App\Modules\X125\Models\FlowRun::where('business_id', $this->businessId)->findOrFail($id);
+            $run = FlowRun::where('business_id', $this->businessId)->findOrFail($id);
             $action->handle(
                 businessId: $this->businessId,
                 flowId: $run->flow_id,
@@ -46,7 +49,7 @@ class Runs extends Component
 
         try {
             // Eager load flow and flowVersion
-            $runs = \App\Modules\X125\Models\FlowRun::with(['flow', 'flowVersion'])
+            $runs = FlowRun::with(['flow', 'flowVersion'])
                 ->where('business_id', $this->businessId)
                 ->orderBy('id', 'desc')
                 ->get();
@@ -56,6 +59,7 @@ class Runs extends Component
             ]);
         } catch (\Exception $e) {
             $this->errorMessage = $e->getMessage();
+
             return view('x-125::runs', [
                 'runs' => collect(),
             ]);
