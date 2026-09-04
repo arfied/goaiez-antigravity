@@ -210,7 +210,23 @@ class CReviewsTest extends TestCase
      */
     public function test_g20_07_day_60_triage(): void
     {
-        $this->assertTrue(true);
+        $biz = $this->provisionTenant();
+        
+        // Score 6 -> refused + ticket
+        $resRefused = $this->requestAction->handle($biz->id, null, 'Please review', 'google', 6, 60);
+        $this->assertEquals('refused', $resRefused['status']);
+        $this->assertEquals('LOW_CSAT_TRIAGE', $resRefused['refusal_code']);
+        
+        $req = ReviewRequest::latest()->first();
+        $this->assertEquals('triaged_internal', $req->status);
+        $this->assertEquals(6, $req->csat_score);
+        
+        $ticket = \App\Modules\X181\Models\QaTicket::where('review_request_id', $req->id)->first();
+        $this->assertNotNull($ticket);
+        
+        // Score 8 -> sent
+        $resSent = $this->requestAction->handle($biz->id, null, 'Please review', 'google', 8, 60);
+        $this->assertEquals('sent', $resSent['status']);
     }
 
     /**
