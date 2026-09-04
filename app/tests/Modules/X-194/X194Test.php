@@ -172,6 +172,81 @@ class X194Test extends TestCase
             ->assertSee('Terrible error occurred.');
     }
 
+    public function test_any_view_it_component(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Render Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Job View Alpha',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        // Test with null value
+        Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => $view->id,
+            'locationTimezone' => 'America/Denver',
+            'jobValue' => null,
+            'jobCount' => 7
+        ])
+            ->call('load')
+            ->assertSee('Job View Alpha')
+            ->assertSee('America/Denver')
+            ->assertSee('7')
+            ->assertSee('--');
+
+        // Test with real value
+        Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => $view->id,
+            'locationTimezone' => 'America/New_York',
+            'jobValue' => 1500.50,
+            'jobCount' => 3
+        ])
+            ->call('load')
+            ->assertSee('Job View Alpha')
+            ->assertSee('America/New_York')
+            ->assertSee('3')
+            ->assertSee('$1,500.50');
+    }
+
+    public function test_any_view_it_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Empty Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // Use a non-existent viewId so $viewData remains null if we catch ModelNotFoundException,
+        // Wait, ViewRenderAction uses findOrFail so it throws, and our try/catch sets errorMessage!
+        // So empty state ($viewData null AND no errorMessage) only happens if we don't pass businessId/viewId or if ready is false
+        // Wait, if ready is true but businessId is 0, it doesn't call action and viewData is null.
+        Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+            'businessId' => 0,
+            'viewId' => 0,
+        ])
+            ->call('load')
+            ->assertSee('View not found')
+            ->assertSee('The requested view could not be found.');
+    }
+
+    public function test_any_view_it_error_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Error Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $component = Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => 9999, // Non-existent view will throw ModelNotFoundException
+        ]);
+        
+        $component->call('load')
+            ->assertSee('We could not render your view.')
+            ->assertSee('We could not render your view.'); // The heading and the slot
+    }
+
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      */
