@@ -182,4 +182,24 @@ class X181ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('Action failed');
     }
+
+    public function test_ticket_sample_state(): void
+    {
+        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => 0])
+            ->call('toggleSample')
+            ->assertOk()
+            ->assertSee('Sample poor rating')
+            ->assertSee('SLA breached')
+            ->assertSee('Rating: 2');
+    }
+
+    public function test_resolution_sample_state(): void
+    {
+        Livewire::test(Resolution::class, ['businessId' => $this->bizId])
+            ->call('toggleSample')
+            ->assertOk()
+            ->assertSee('SLA met')
+            ->assertSee('SLA missed')
+            ->assertSee('CSAT 8/10');
+    }
 }
