@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X124\Ui;
 
-use Livewire\Component;
-use Livewire\Attributes\Locked;
 use App\Modules\X124\Actions\AssistantPreviewAction;
 use Exception;
+use Livewire\Attributes\Locked;
+use Livewire\Component;
 
 class PreviewCard extends Component
 {
-
     #[Locked]
     public int $businessId = 0;
 

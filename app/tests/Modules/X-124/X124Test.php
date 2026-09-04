@@ -15,6 +15,7 @@ use App\Modules\X124\Events\AssistantRecommended;
 use App\Modules\X124\Events\AssistantRequest;
 use App\Modules\X124\Models\AssistantSession;
 use App\Modules\X124\Models\AssistantUnsupported;
+use App\Modules\X124\Ui\PreviewCard;
 use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
@@ -193,10 +194,10 @@ class X124Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Preview Reversible', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        Livewire::test(\App\Modules\X124\Ui\PreviewCard::class, [
+        Livewire::test(PreviewCard::class, [
             'businessId' => $biz->id,
             'actionKey' => 'send_invoice',
-            'params' => []
+            'params' => [],
         ])
             ->call('load')
             ->assertSeeHtml('data-irreversible="no"')
@@ -210,10 +211,10 @@ class X124Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Preview Irreversible', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        Livewire::test(\App\Modules\X124\Ui\PreviewCard::class, [
+        Livewire::test(PreviewCard::class, [
             'businessId' => $biz->id,
             'actionKey' => 'delete_tenant',
-            'params' => []
+            'params' => [],
         ])
             ->call('load')
             ->assertSeeHtml('data-irreversible="yes"')
@@ -229,9 +230,9 @@ class X124Test extends TestCase
 
         // We force an error by making AssistantPreviewAction throw, but Livewire testing
         // sometimes captures it. We can just set errorMessage directly since we test the blade.
-        Livewire::test(\App\Modules\X124\Ui\PreviewCard::class, [
+        Livewire::test(PreviewCard::class, [
             'businessId' => $biz->id,
-            'actionKey' => 'send_invoice'
+            'actionKey' => 'send_invoice',
         ])
             ->call('load')
             ->set('errorMessage', 'Failed to load preview')
