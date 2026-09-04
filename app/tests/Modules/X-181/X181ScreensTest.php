@@ -6,6 +6,7 @@ namespace Tests\Modules\X181;
 
 use App\Modules\X181\Models\QaTicket;
 use App\Modules\X181\Ui\QaQueueSlaDueAt;
+use App\Modules\X181\Ui\Ticket;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -68,5 +69,47 @@ class X181ScreensTest extends TestCase
 
         $ticket->refresh();
         $this->assertEquals('resolved', $ticket->status);
+    }
+
+    public function test_ticket_mount_and_empty(): void
+    {
+        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => 0])
+            ->assertOk()
+            ->assertSee('Pick a ticket');
+    }
+
+    public function test_ticket_shows_seeded_ticket_and_breach(): void
+    {
+        $ticket = QaTicket::create([
+            'business_id' => $this->bizId,
+            'subject' => 'The Seeded Ticket',
+            'arrived_at' => now(),
+            'status' => 'open',
+            'sla_due_at' => now()->subHours(2),
+        ]);
+
+        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => $ticket->id])
+            ->assertOk()
+            ->assertSee('The Seeded Ticket')
+            ->assertSee('SLA breached');
+    }
+
+    public function test_ticket_resolve_action(): void
+    {
+        $ticket = QaTicket::create([
+            'business_id' => $this->bizId,
+            'subject' => 'Ticket to Resolve',
+            'arrived_at' => now(),
+            'status' => 'open',
+            'sla_due_at' => now()->addHours(1),
+        ]);
+
+        Livewire::test(Ticket::class, ['businessId' => $this->bizId, 'ticketId' => $ticket->id])
+            ->set('resolutionNotes', 'fixed')
+            ->call('resolve', 'fixed');
+
+        $ticket->refresh();
+        $this->assertEquals('resolved', $ticket->status);
+        $this->assertEquals('fixed', $ticket->resolution_notes);
     }
 }
