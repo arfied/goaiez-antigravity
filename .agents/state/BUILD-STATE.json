@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T15:22:06",
+ "updated": "2026-09-04T16:36:18",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1350,6 +1350,12 @@
    "module": "X-198",
    "chose": "P-197's state machine added to merchant_connections",
    "at": "2026-09-04T15:13:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "a plan past ar_plan_terms (max_installments/max_term_days, defaults 3/90, P-193 row) throws PlanPastThresholdException before any write; the builder shows the financing-partner waiting state (G1-61, G1-70, N-033). Test: PaymentplanBuilderScreenTest",
+   "at": "2026-09-04T16:36:18",
    "ruling": "R245"
   }
  ]

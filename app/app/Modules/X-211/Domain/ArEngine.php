@@ -8,6 +8,7 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArPackaged;
 use App\Modules\X211\Events\ArPlanAccepted;
+use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\OfflinePayment;
 use App\Modules\X211\Models\PaymentPlan;
 use App\Modules\X211\Models\ReceivableState;
@@ -53,6 +54,27 @@ final class ArEngine
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $installmentsCount, $frequency) {
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+
+            if ($installmentsCount < 2) {
+                throw new \InvalidArgumentException('A plan is at least two payments.');
+            }
+
+            $daysPer = ['weekly' => 7, 'biweekly' => 14, 'monthly' => 30][$frequency] ?? null;
+            if ($daysPer === null) {
+                throw new \InvalidArgumentException("Unknown frequency {$frequency}.");
+            }
+
+            // G1-61 / G1-70 / N-033: past the threshold this is credit, not a schedule — it routes to a
+            // financing partner and we never hold the paper. The throw is before the first write.
+            $terms = ArPlanTerm::firstOrCreate(['business_id' => $businessId]);
+            $termDays = $installmentsCount * $daysPer;
+            if ($installmentsCount > $terms->max_installments || $termDays > $terms->max_term_days) {
+                throw new PlanPastThresholdException(sprintf(
+                    '%d %s payments over %d days is credit, not a schedule: past %d payments or %d days this routes to a financing partner. Nothing was stored.',
+                    $installmentsCount, $frequency, $termDays, $terms->max_installments, $terms->max_term_days
+                ));
+            }
+
             $remaining = $invoice->total_cents - $invoice->paid_cents;
             $installmentAmount = (int) ceil($remaining / $installmentsCount);
 
