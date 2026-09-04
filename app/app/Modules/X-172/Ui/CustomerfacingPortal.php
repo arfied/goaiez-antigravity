@@ -81,22 +81,35 @@ class CustomerfacingPortal extends Component
         $membershipStatus = null;
 
         if ($link && $link->is_active) {
-            // Check membership status from X-165 (if exists)
-            // Just simulate checking the db for simplicity. The instructions say "Membership status: X-165 row if present, else the row is absent (not a placeholder)."
-            if (class_exists(Membership::class)) {
-                // we don't have it, so do nothing.
+            if (class_exists(Membership::class) && $link->customer_id) {
+                $membership = Membership::where('business_id', $link->business_id)
+                    ->where('customer_id', $link->customer_id)
+                    ->first();
+                if ($membership) {
+                    $membershipStatus = $membership->status;
+                }
             }
 
             if ($link->resource_type === 'job') {
-                $wo = DB::table('work_orders')->where('id', $link->resource_id)->first();
+                $wo = DB::table('work_orders')
+                    ->where('business_id', $link->business_id)
+                    ->where('id', $link->resource_id)
+                    ->first();
                 if ($wo) {
                     $resourceTitle = $wo->title;
                 }
 
-                $assignment = DB::table('dispatch_assignments')->where('job_id', $link->resource_id)->first();
+                $assignment = DB::table('dispatch_assignments')
+                    ->where('business_id', $link->business_id)
+                    ->where('job_id', $link->resource_id)
+                    ->first();
                 if ($assignment && $assignment->status === 'en_route') {
                     $isJobEnRoute = true;
-                    $eta = DB::table('eta_predictions')->where('job_id', $link->resource_id)->orderByDesc('id')->first();
+                    $eta = DB::table('eta_predictions')
+                        ->where('business_id', $link->business_id)
+                        ->where('job_id', $link->resource_id)
+                        ->orderByDesc('id')
+                        ->first();
                     if ($eta) {
                         $jobEtaMinutes = $eta->eta_minutes;
                     }

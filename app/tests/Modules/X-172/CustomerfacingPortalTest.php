@@ -49,17 +49,18 @@ class CustomerfacingPortalTest extends TestCase
             'updated_at' => now(),
         ]);
 
+        $token = 'valid_job_tok_'.uniqid();
         $link = PortalLink::create([
             'business_id' => $biz->id,
             'resource_type' => 'job',
             'resource_id' => $jobId,
-            'token' => 'valid_job_tok_1788551073',
+            'token' => $token,
             'expires_at' => now()->addHours(24),
             'is_active' => true,
             'is_sample' => true,
         ]);
 
-        Livewire::test(CustomerfacingPortal::class, ['token' => 'valid_job_tok_1788551073'])
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
             ->assertOk()
             ->assertSee('Fix Sink')
             ->assertSee('15 minutes out')
@@ -76,16 +77,17 @@ class CustomerfacingPortalTest extends TestCase
         $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $token = 'approve_tok_'.uniqid();
         $link = PortalLink::create([
             'business_id' => $biz->id,
             'resource_type' => 'job',
             'resource_id' => 1,
-            'token' => 'approve_tok_1788551073',
+            'token' => $token,
             'expires_at' => now()->addHours(24),
             'is_active' => true,
         ]);
 
-        Livewire::test(CustomerfacingPortal::class, ['token' => 'approve_tok_1788551073'])
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
             ->call('approve');
 
         $this->assertDatabaseHas('portal_views', [
@@ -99,16 +101,17 @@ class CustomerfacingPortalTest extends TestCase
         $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $token = 'expired_tok_'.uniqid();
         $oldLink = PortalLink::create([
             'business_id' => $biz->id,
             'resource_type' => 'job',
             'resource_id' => 1,
-            'token' => 'expired_tok_1788551073',
+            'token' => $token,
             'expires_at' => now()->subHours(1),
             'is_active' => true,
         ]);
 
-        Livewire::test(CustomerfacingPortal::class, ['token' => 'expired_tok_1788551073'])
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])
             ->assertOk()
             ->assertSee('A fresh link was sent');
 
