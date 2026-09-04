@@ -84,4 +84,24 @@ class ConfirmationScreenTest extends TestCase
             ->test(ConfirmationScreen::class)
             ->assertSee('Nothing left to confirm');
     }
+
+    public function test_callout_fee_is_saved_in_cents(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)
+            ->test(ConfirmationScreen::class)
+            ->set('calloutFeeDollars', 85);
+
+        $this->assertDatabaseHas('callout_fees', [
+            'business_id' => $biz->id,
+            'callout_fee_cents' => 8500,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(ConfirmationScreen::class)
+            ->assertSee('callout fee: set');
+    }
 }

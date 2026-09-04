@@ -29,7 +29,7 @@ class ConfirmationScreen extends Component
 
         $callout = CalloutFee::where('business_id', $businessId)->first();
         if ($callout) {
-            $this->calloutFeeDollars = $callout->fee_cents / 100;
+            $this->calloutFeeDollars = $callout->callout_fee_cents / 100;
             $this->calloutFeeDeducted = $callout->deducted_if_proceeding;
         }
 
@@ -50,7 +50,7 @@ class ConfirmationScreen extends Component
         $businessId = Tenancy::id();
         CalloutFee::updateOrCreate(
             ['business_id' => $businessId],
-            ['fee_cents' => (int) round((float) $value * 100)]
+            ['callout_fee_cents' => (int) round((float) $value * 100)]
         );
     }
 
@@ -113,7 +113,7 @@ class ConfirmationScreen extends Component
         $callout = CalloutFee::where('business_id', $businessId)->first();
 
         $confirmedCount = PriceBookItem::where('business_id', $businessId)->where('is_confirmed', true)->count();
-        $isCalloutSet = $callout && $callout->fee_cents > 0;
+        $isCalloutSet = $callout && $callout->callout_fee_cents > 0;
 
         return view('x-163::confirmation-screen', [
             'items' => $items,
