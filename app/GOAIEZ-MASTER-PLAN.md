@@ -39267,3 +39267,186 @@ full minutes.** ⭐ **MMS = 1 credit.** ⭐ **AI credit $50.** ⭐ **1 SMS = 1 S
 ⭐⭐⭐ 730 IN SCOPE. Zero questions open.**
 ⭐ **Agency sees everything** *(cost, markup, margin, impersonation — always
 logged)*. ⛔ **Their client sees the agency's price only.**
+## 257 ⭐⭐⭐ THE FEATURE RE-CUT — THREE MODULES MINTED · FOURTEEN DEFERRED · EVERY UNOWNED CAPABILITY ASSIGNED *(owner rulings 2026-09-04 · appended by the coder on the supervisor's brief, run 68)*
+
+> **LIVE.** The owner ruled on 2026-09-04: no screen is deleted; every capability has an owner; the product is organised by FEATURE (the navigation in `config/features.php`), not by module. Three modules are minted below in the §169.1 shape. Fourteen modules are DEFERRED — headers, capabilities, screens and tests kept, hidden from navigation, no lane builds them until the core ships. The three-week clock starts Monday 8 September 2026.
+
+## 257.1 ⭐⭐ X-221 `AdsAdvisor` — THE FULL HEADER *(minted 2026-09-04 · G14 · SQ-12 · W3)*
+
+`@module X-221` `@intent GROW`
+
+**WHAT** ⭐⭐ **The ads advisor: plans campaigns, writes ad copy and creative variants, analyses performance reports and coaches optimisation through the omni chat — and NEVER touches a live campaign.** Reports arrive three ways, all read-only: (1) upload/export of a Google, Bing or Meta report file; (2) the GA4 Data API with the tenant's own service-account credential (campaign traffic by UTM, no approval programme); (3) a Google Ads report scheduled by the tenant into a Google Sheet, read through the Sheets API; Meta Insights through a Business Manager system-user token on the tenant's own ad account. Nothing is deployed, paused, bid or synced on any ad network by this module — the owner's ruling; the Google Ads and Meta Marketing write APIs are not integrated.
+**WIZARD** *(tenant-facing)* connect a report source *(upload · GA4 property · a Sheet · a Meta ad account)* · name the goal *(calls · forms · bookings)* · the budget the tenant actually spends. **inferred:** the trades and service areas from X-16/X-130. **confirmed once:** the goal.
+**AUTOPILOT** *(advisory posture — `ships: advice · ceiling: a written plan`)* a weekly findings note *(wasted spend · dayparting · audience decay · negative-keyword and negative-audience lists exported as CSV for the tenant to upload)* · every finding cites the report row it came from · **no action toward any ad network, ever.**
+**SWARM** **SQ-12 · W3.** Owns `app/Modules/X-221/**`, tables `ad_report_imports · ad_findings · ad_plans`. **Must not touch** X-186 sends, X-110 pixel writes, any vendor write endpoint.
+**SCREENS** tenant: **findings this week** · report sources · campaign plan · exported lists. operator: none.
+**DECLARATIONS** `@renders findings_this_week · report_sources · campaign_plan · exported_lists`
+`@provides ads.import_report · ads.analyse · ads.plan · ads.export_list` · `@agent_reachable ads.analyse · ads.plan` · `@emits ads.finding.recorded · ads.plan.written` · `@consumes pixel.event (X-110) · signal.detected (X-136)`
+**NEEDS / HAS** needs: a report source connected · has: findings by week · plans by campaign
+**TEST ANCHOR** *`grep -rE 'googleads|graph.facebook.com/.*/(adsets|campaigns|ads)' app/Modules/X-221/` returns nothing but the read-only insights path; a finding with no `report_row_ref` fails to save; `Http::fake` is absent from `tests/Modules/X-221/`.*
+
+## 257.2 ⭐⭐ X-222 `LegalDesk` — THE FULL HEADER *(minted 2026-09-04 · G10 · SQ-0 · W2)*
+
+`@module X-222` `@intent PROTECT`
+
+**WHAT** ⭐⭐ **The legal and privacy engine: DMCA takedown requests, privacy requests (access · erasure · portability — extending the legacy data-requests desk), policy pages per tenant, retention rules.** Reads X-204's consent state; **writes nothing to any send path.** Every request has a statutory clock and the desk shows the clock, never a status word alone.
+**WIZARD** *(tenant-facing)* the tenant's legal entity, contact for notices, jurisdictions served. **inferred:** retention defaults per noun from the plan. **confirmed once:** the policy pages' publish state.
+**AUTOPILOT** *(operator posture — `ships: n/a · ceiling: n/a`)* a privacy request opens a ticket with its deadline · a takedown request pulls the asset from public surfaces within the statutory window and records the action · retention runs as a scheduled job that **proposes** deletions through the approval desk (X-202) and never deletes on its own.
+**SWARM** **SQ-0 · W2.** Owns `app/Modules/X-222/**`, tables `legal_requests · policy_pages · retention_rules`. **Must not touch** X-204 decisions, any sender, X-121 history rows.
+**SCREENS** tenant: **requests with their clocks** · policy pages · retention rules. operator: **requests across tenants, oldest clock first.**
+**DECLARATIONS** `@renders legal_requests · policy_pages · retention_rules · requests_by_clock`
+`@provides legal.request.open · legal.takedown · legal.policy.publish · legal.retention.propose` · `@agent_reachable legal.policy.publish` · `@emits legal.request.opened · legal.takedown.executed · legal.retention.proposed` · `@consumes consent.decided (X-204)`
+**NEEDS / HAS** needs: a legal contact on the tenant · has: open requests by clock
+**TEST ANCHOR** *a request saved without a `deadline_at` fails; a retention run in a test never issues a DELETE — it emits `legal.retention.proposed` and X-202 holds it; a takedown removes the asset from every `@renders` public surface, asserted by a real GET returning 404.*
+
+## 257.3 ⭐⭐ X-223 `WarmupEngine` — THE FULL HEADER *(minted 2026-09-04 · G11 · SQ-1 · W2)*
+
+`@module X-223` `@intent GROW`
+
+**WHAT** ⭐⭐ **The email warm-up engine the tracker already names: a seed audience of platform-owned mailboxes, auto-reply simulation, important-tagging, and cross-platform sync of the warm-up state per sending domain.** Sits beside C-Mail (the transport) and **never sends outside its seed list.** A domain's warm-up state is data C-Mail reads before it accepts a bulk send.
+**WIZARD** *(tenant-facing)* the sending domain · the daily ramp the tenant accepts. **inferred:** the ramp schedule from the domain's age. **confirmed once:** the ramp.
+**AUTOPILOT** *(`ships: seed mail only · ceiling: the ramp`)* sends to seeds on the ramp · replies and tags from the seed side · records bounce and placement per day · **halts the ramp on a bounce spike and tells the tenant.**
+**SWARM** **SQ-1 · W2.** Owns `app/Modules/X-223/**`, tables `warmup_domains · warmup_seeds · warmup_days`. **Must not touch** X-186 campaigns, X-204, any tenant contact row.
+**SCREENS** tenant: **warm-up per domain** *(day · sent · placed · bounced)*. operator: seed pool health.
+**DECLARATIONS** `@renders warmup_per_domain · seed_pool_health`
+`@provides warmup.start · warmup.state · warmup.halt` · `@agent_reachable warmup.state` · `@emits warmup.day.recorded · warmup.halted` · `@consumes mail.delivered · mail.bounced (C-Mail)`
+**NEEDS / HAS** needs: a verified sending domain · has: warm-up state per domain
+**TEST ANCHOR** *a warm-up send whose recipient is not in `warmup_seeds` is refused before C-Mail is reached, asserted; C-Mail refuses a bulk send on a domain whose warm-up state is below the ramp — the refusal carries a P-060 code.*
+
+## 257.4 ⛔ DEFERRED MODULES *(owner ruling 2026-09-04 — kept, hidden, unbuilt until the core ships)*
+
+| Module | What it is | Ruling |
+| :--- | :--- | :--- |
+| `X-200` | human-seat call center | DEFERRED |
+| `X-158` | video engine | DEFERRED |
+| `X-159` | site-audit video | DEFERRED |
+| `X-114` | media studio | DEFERRED |
+| `X-144` | AI visibility tracker | DEFERRED |
+| `X-197` | self-hosted voice | DEFERRED |
+| `X-147` | RCS | DEFERRED |
+| `X-143` | WebMCP | DEFERRED |
+| `X-141` | what-if replay | DEFERRED |
+| `X-145` | decisioning studio | DEFERRED |
+| `X-213` | vision QA | DEFERRED |
+| `X-208` | direct mail | DEFERRED |
+| `X-215` | document signing | DEFERRED |
+| `X-214` | surcharging | DEFERRED |
+
+Deferred also: the e-commerce logistics rows *(3PL · FBA · drop-shipping · FIFO/LIFO · pick path · pick-and-pack · split fulfilment · weight/box)* and the search-infra rows in §257.5 — **cart, checkout, storefront (X-117) and inventory (X-167) stay IN.** Kept by the same ruling despite their size: `X-104` WordPressPlugin and `X-196` ChromeExtension.
+
+## 257.5 ⭐ EVERY UNOWNED CAPABILITY, ASSIGNED *(the Parent column in the tracker follows this table)*
+
+| # | Capability | Goes to | Why |
+| :--- | :--- | :--- | :--- |
+| **G1-06** | Auto-Recharge | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-07** | Auto-Reply Simulation | X-223 | auto-reply simulation (warm-up) |
+| **G1-09** | Automated Dunning Ladders | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-17** | Countdown Dunning | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-21** | Dynamic Tax Calculations | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-27** | Important Tagging | X-223 | important tagging (warm-up) |
+| **G1-37** | Multi-Stripe Account Support | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-44** | Proration Handling | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-48** | Smart Dunning Pauses | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-50** | SMS Dunning | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-53** | Subscription Overrides | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-54** | Tax Jurisdiction Mapping | — | killed by owner law (§45A dunning timeline etc.) |
+| **G3-37** | Localized Spintax Pages | X-140 | localized programmatic pages — ConversationToContent |
+| **G3-40** | Omnipresence | X-185 | omnipresence = GrowthLoop cadence across channels |
+| **G3-45** | Real-Time Interception | X-136 | real-time interception = a signal that informs |
+| **G3-49** | Scraper Ad Audience Sync | X-221 | scraper audience → CSV export for ad platforms |
+| **G3-55** | Spintax Generation | X-186 | spintax renders per SEND in the email/campaign engine (boss 2026-09-04: "spin text is for the email engine"), never on pages |
+| **G4-04** | Auto-Scaling | X-203 | auto-scaling = resiliency desk |
+| **G4-27** | Offline Mode | X-171 | offline mode = tech mobile is offline-first |
+| **G7-17** | Custom Blacklists | X-204 | custom blacklists = consent suppression lists |
+| **G7-20** | Event Hijacking | X-136 | event hijacking = local event signals |
+| **G7-36** | Refresh Automation | X-151 | refresh automation = fetch engine schedules |
+| **G9-06** | Anomaly Detection | X-111 | anomaly detection = operator alerts |
+| **G9-39** | Volume Decay | X-07 | volume decay = forecaster |
+| **G9-40** | Win-Rate Correlation | X-07 | win-rate correlation = forecaster |
+| **G10-06** | Automated DMCA Takedown | X-222 | DMCA takedown |
+| **G10-23** | Legal & Privacy Engine | X-222 | legal & privacy engine |
+| **G11-08** | Cross-Platform Sync | X-223 | cross-platform warm-up sync |
+| **G11-30** | Seed Audience | X-223 | seed audience |
+| **G13-09** | Conversion Zone Tracking | X-110 | conversion zone tracking = pixel |
+| **G13-13** | Dwell Time Filtering | X-110 | dwell-time filtering = pixel |
+| **G13-32** | Session Replay | X-110 | session replay = pixel (X-141 is what-if replay, different) |
+| **G14-01** | Ad Blindness Prevention | X-221 | ad-blindness rotation plan |
+| **G14-02** | Ad Comment Moderation | — | ad comment moderation — SUPERSEDED |
+| **G14-03** | Addressable Geo-Fencing | X-221 | addressable geo-fence plan |
+| **G14-04** | Audience Decay Detection | X-221 | audience decay detection from reports |
+| **G14-05** | Audience Rotation | X-221 | audience rotation plan |
+| **G14-06** | Automated Pausing | — | requires live platform control — stays SUPERSEDED |
+| **G14-07** | Automated Rules Engine | — | automated rules on the network — SUPERSEDED |
+| **G14-08** | Automated Split Testing | X-221 | split-test PLAN (not execution) |
+| **G14-09** | Budget Detection | X-221 | budget detection from reports |
+| **G14-10** | Budget Shifting | X-221 | budget-shift recommendation |
+| **G14-11** | Click Farm Prevention | X-221 | click-farm signals from reports |
+| **G14-12** | Competitor Blocking | X-221 | competitor-blocking advice |
+| **G14-13** | Conversion-Based Routing | — | conversion-based routing on the network — SUPERSEDED |
+| **G14-14** | Copy Generation | X-221 | copy generation — advisory |
+| **G14-15** | Copy vs. Creative Analysis | X-221 | copy vs creative analysis from imported reports |
+| **G14-16** | CRM Audience Sync | X-221 | CRM audience lists exported for upload |
+| **G14-17** | Cross-Sell Retargeting | X-221 | cross-sell retargeting plan |
+| **G14-18** | CTR Tracking | X-221 | CTR tracking from imported reports |
+| **G14-19** | Dayparting Analysis | X-221 | dayparting analysis from reports |
+| **G14-20** | Device Bid Adjustments | — | device bid adjustments — SUPERSEDED |
+| **G14-21** | Dynamic Retargeting | X-221 | dynamic retargeting plan |
+| **G14-22** | Impression Share Maximization | — | impression-share maximisation — SUPERSEDED |
+| **G14-23** | Instant Deployment | — | instant deployment — SUPERSEDED |
+| **G14-24** | Localized Ad Variations | X-221 | localized ad variations |
+| **G14-25** | LTV-Based Bidding | — | LTV-based bidding — SUPERSEDED |
+| **G14-26** | Meta/Facebook Ads Sync | — | Meta/Facebook Ads API sync — SUPERSEDED |
+| **G14-27** | Multi-Tier Generation | X-221 | multi-tier generation |
+| **G14-28** | Negative Lookalikes | X-221 | negative lookalike lists, exported as CSV |
+| **G14-29** | One-Click Campaigns | — | one-click campaigns on the network — SUPERSEDED |
+| **G14-30** | Price Testing | X-221 | price-test plan |
+| **G14-31** | Revival Testing | X-221 | revival-test plan |
+| **G14-32** | Sequential Retargeting | X-221 | sequential retargeting plan |
+| **G14-33** | Switch-and-Save Campaigns | X-221 | switch-and-save campaign plan |
+| **G14-34** | Visual Pin Drop | X-221 | visual pin-drop geo plan |
+| **G14-35** | Wasted Spend Prevention | X-221 | wasted-spend findings, as advice |
+| **G14-36** | Weather Overlays | X-221 | weather overlay advice |
+| **G14-37** | Weather-Triggered Bids | X-221 | weather-trigger advice |
+| **G14-38** | Win-Back Lookalikes | X-221 | win-back lookalike lists exported |
+| **G15-01** | "Just in Time" Webinars | X-158 | JIT webinars = video engine |
+| **G15-07** | Multi-State Taxation | X-199 | multi-state taxation = invoicing tax |
+| **G16-18** | Photo EXIF Injection | X-189 | photo EXIF injection = image overlay |
+| **G16-26** | Video View Retargeting | X-221 | video-view retargeting list export |
+| **G17-14** | Historical Re-targeting | X-221 | historical retargeting list export |
+| **G17-22** | Polygon Drawing | X-16 | polygon drawing = service-area on the maps harvester |
+| **G18-05** | Feature Gating & FOMO | X-210 | feature gating & FOMO = promotion engine |
+| **G18-25** | Whisper Mode | X-66 | whisper mode = voice agent |
+| **G19-03** | Carrier Route Detection | C-Telephony | carrier route detection |
+| **G21-01** | Live Chat Injection | X-102 | live chat injection = web chat |
+| **G1-80** | Stripe Metered Billing Sync and authorize.net | C-Billing | Stripe/Authorize.Net metered billing sync |
+| **G2-78** | Knockout Questions | X-109 | knockout questions = form outreach |
+| **G3-67** | Hiring Manager Extraction | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G4-53** | GraphQL Optimization | X-122 | GraphQL optimisation = action registry API |
+| **G4-56** | Time Travel | X-161 | time travel = demo sandbox |
+| **G6-36** | 3PL Integration | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-37** | Amazon FBA Sync | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-41** | Drop-Shipping Workflows | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-42** | FIFO/LIFO Tracking | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-44** | Pick Path Optimization | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-45** | Pick-and-Pack Validation | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-50** | Split Fulfillment | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-52** | Weight/Box Math | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G8-41** | Auto-Destruction | X-161 | auto-destruction = demo sandbox |
+| **G8-42** | ElasticSearch Indexing | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G9-41** | ClickHouse Warehouse | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G12-40** | One-Click Job Board Syndication | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G15-12** | 9-Box Grid Matrix | — | HR — shelved by the boss |
+| **G15-14** | AI Resume Parsing | — | HR — shelved by the boss |
+| **G15-16** | Benefits Enrollment | — | HR — shelved by the boss |
+| **G15-17** | Bereavement/Jury Duty | — | HR — shelved by the boss |
+| **G15-18** | Compensation Modeling | — | HR — shelved by the boss |
+| **G15-19** | Diversity Tracking - EEO | — | HR — shelved by the boss |
+| **G15-20** | Exit Interview Funnel | — | HR — shelved by the boss |
+| **G15-23** | Garnishment Handling | — | HR — shelved by the boss |
+| **G15-24** | Mandatory PTO Suggestion | — | HR — shelved by the boss |
+| **G15-27** | Offer Letter Generation | — | HR — shelved by the boss |
+| **G15-30** | PIP Enforcer | — | HR — shelved by the boss |
+| **G15-33** | Unlimited PTO Tracking | — | HR — shelved by the boss |
+| **G15-34** | W-2 Pre-Flight | — | HR — shelved by the boss |
+| **G17-30** | Candidate Nurture Drips | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G18-29** | Will-Call/Pickup Routing | X-117 | will-call / pickup routing = commerce fulfilment |
