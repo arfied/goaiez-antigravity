@@ -3,9 +3,9 @@
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-bold">Customer Loss and Churn Risk Alerts</h3>
             <div class="flex items-center space-x-2">
-                <button wire:click="toggleSample" class="text-sm px-2 py-1 bg-gray-200 rounded">
+                <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
                     {{ $isSample ? 'Exit Sample' : 'Sample' }}
-                </button>
+                </x-ui.button>
             </div>
         </div>
 
@@ -22,10 +22,9 @@
         @endif
 
         @if($isEmpty)
-            <div class="text-gray-500 py-8 text-center border rounded">
-                <p>so what do I do?</p>
-                <p class="text-sm">Currently no high-risk customers or SLA breaches.</p>
-            </div>
+            <x-ui.empty-state heading="No customers at risk right now" action="Show a sample" target="toggleSample">
+                A row appears here when a ticket passes its SLA, a review falls at or below the public threshold with no ticket resolved, or a resolved request gets a CSAT under 7.
+            </x-ui.empty-state>
         @else
             <div class="space-y-4">
                 @foreach($alerts as $alert)
@@ -43,13 +42,13 @@
                             @if($alert->alert_type === 'ticket')
                                 @if($resolvingTicketId === $alert->id)
                                     <input type="text" wire:model="resolutionNotes" class="border p-1 text-sm rounded" placeholder="Resolution notes...">
-                                    <button wire:click="resolveAndAlert({{ $alert->id }}, resolutionNotes)" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Submit</button>
-                                    <button wire:click="cancelResolve" class="text-gray-500 px-2 py-1 text-sm">Cancel</button>
+                                    <x-ui.button wire:click="resolveAndAlert({{ $alert->id }}, $wire.resolutionNotes)" size="default" variant="primary">Submit</x-ui.button>
+                                    <x-ui.button wire:click="cancelResolve" size="default" variant="quiet">Cancel</x-ui.button>
                                 @else
-                                    <button wire:click="startResolve({{ $alert->id }})" class="bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold">Resolve and Alert</button>
+                                    <x-ui.button wire:click="startResolve({{ $alert->id }})" size="default" variant="primary">Resolve and Alert</x-ui.button>
                                 @endif
                             @else
-                                <button wire:click="alertTeam({{ $alert->id }})" class="bg-orange-500 text-white px-3 py-1 rounded text-sm font-semibold">Alert Team</button>
+                                <x-ui.button wire:click="alertTeam({{ $alert->id }})" size="default" variant="primary">Alert Team</x-ui.button>
                             @endif
                         </div>
                     </div>

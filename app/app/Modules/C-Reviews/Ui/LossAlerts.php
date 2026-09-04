@@ -19,10 +19,13 @@ class LossAlerts extends Component
     public int $businessId = 0;
 
     public bool $isSample = false;
+
     public ?string $actionNotice = null;
+
     public string $noticeType = 'success';
 
     public ?int $resolvingTicketId = null;
+
     public string $resolutionNotes = '';
 
     public function mount(): void
@@ -39,7 +42,7 @@ class LossAlerts extends Component
 
     public function toggleSample(): void
     {
-        $this->isSample = !$this->isSample;
+        $this->isSample = ! $this->isSample;
         $this->resolvingTicketId = null;
         $this->resolutionNotes = '';
         $this->actionNotice = null;
@@ -81,7 +84,7 @@ class LossAlerts extends Component
             $this->resolutionNotes = '';
         } catch (\Exception $e) {
             $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: ' . $e->getMessage();
+            $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
     }
 
@@ -103,16 +106,16 @@ class LossAlerts extends Component
             $this->actionNotice = '✅ Team alerted.';
         } catch (\Exception $e) {
             $this->noticeType = 'error';
-            $this->actionNotice = '🚫 Error: ' . $e->getMessage();
+            $this->actionNotice = '🚫 Error: '.$e->getMessage();
         }
     }
 
     public function render()
     {
         Tenancy::set($this->businessId);
-        
+
         $alerts = collect();
-        if (!$this->isSample) {
+        if (! $this->isSample) {
             $settings = QaSetting::where('business_id', $this->businessId)->first();
             $minStars = $settings ? $settings->min_public_stars : 4;
 
@@ -124,8 +127,9 @@ class LossAlerts extends Component
                 ->get()
                 ->map(function ($t) {
                     $t->alert_type = 'ticket';
-                    $t->alert_reason = 'SLA breached (' . $t->sla_due_at->diffForHumans() . ')';
+                    $t->alert_reason = 'SLA breached ('.$t->sla_due_at->diffForHumans().')';
                     $t->risk_level = 3;
+
                     return $t;
                 });
 
@@ -143,9 +147,10 @@ class LossAlerts extends Component
                     $r->alert_type = 'review';
                     $r->alert_reason = "Rating {$r->rating} <= {$minStars} and no resolved ticket";
                     $r->risk_level = 2;
+
                     return $r;
                 });
-            
+
             $lowCsatRequests = ReviewRequest::where('business_id', $this->businessId)
                 ->where('status', 'resolved')
                 ->whereNotNull('csat_score')
@@ -155,6 +160,7 @@ class LossAlerts extends Component
                     $r->alert_type = 'review';
                     $r->alert_reason = "Resolved request with low CSAT score ({$r->csat_score})";
                     $r->risk_level = 1;
+
                     return $r;
                 });
 
@@ -163,7 +169,7 @@ class LossAlerts extends Component
                 ->values();
         } else {
             $alerts = collect([
-                (object)[
+                (object) [
                     'id' => 999,
                     'alert_type' => 'ticket',
                     'alert_reason' => 'SLA breached (2 hours ago)',
@@ -172,7 +178,7 @@ class LossAlerts extends Component
             ]);
         }
 
-        $isEmpty = !$this->isSample && $alerts->isEmpty();
+        $isEmpty = ! $this->isSample && $alerts->isEmpty();
 
         return view('c-reviews::loss-alerts', [
             'alerts' => $alerts,
