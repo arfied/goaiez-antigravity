@@ -135,7 +135,33 @@ class CReviewsTest extends TestCase
      */
     public function test_g18_14_csat_on_resolve(): void
     {
-        $this->assertTrue(true);
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'CSAT Biz', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $person = \App\Modules\X121\Models\Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
+
+        $ticket = \App\Modules\X181\Models\QaTicket::create([
+            'business_id' => $biz->id,
+            'person_id' => $person->id,
+            'subject' => 'Triage',
+            'description' => 'Test',
+            'status' => 'open',
+            'arrived_at' => now(),
+            'sla_due_at' => now()->addHours(48),
+        ]);
+
+        \Illuminate\Support\Facades\Event::fake([\App\Modules\CReviews\Events\CsatRequested::class]);
+
+        $action = new \App\Modules\CReviews\Actions\QaTicketAction();
+        $action->resolve($biz->id, $ticket->id);
+
+        \Illuminate\Support\Facades\Event::assertDispatched(\App\Modules\CReviews\Events\CsatRequested::class, function ($e) use ($biz, $ticket) {
+            return $e->businessId === $biz->id && $e->ticketId === $ticket->id && $e->personId === $ticket->person_id;
+        });
+
+        $action->resolve($biz->id, $ticket->id);
+
+        \Illuminate\Support\Facades\Event::assertDispatched(\App\Modules\CReviews\Events\CsatRequested::class, 1);
     }
 
     /**

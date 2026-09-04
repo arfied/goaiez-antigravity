@@ -42,11 +42,20 @@ final class QaTicketAction
     public function resolve(int $businessId, int $ticketId): void
     {
         $ticket = QaTicket::where('business_id', $businessId)->findOrFail($ticketId);
-        $ticket->update([
-            'status' => 'resolved',
-            'resolved_at' => now(),
-            'csat_requested_at' => now(),
-        ]);
+        
+        if ($ticket->status !== 'resolved') {
+            $ticket->update([
+                'status' => 'resolved',
+                'resolved_at' => now(),
+                'csat_requested_at' => now(),
+            ]);
+            
+            \App\Modules\CReviews\Events\CsatRequested::dispatch(
+                $businessId,
+                $ticket->id,
+                $ticket->person_id
+            );
+        }
     }
 
     public function receiveCsat(int $businessId, int $ticketId, int $score): void

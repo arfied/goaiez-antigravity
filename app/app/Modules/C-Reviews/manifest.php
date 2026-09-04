@@ -40,6 +40,7 @@ return [
         'reply.published',
         'win.first',
         'send.requested',
+        'csat.requested',
     ],
     'consumes' => [
         'capability.decided',
