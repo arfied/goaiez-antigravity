@@ -12,6 +12,19 @@ class NavigationTest extends TestCase
     {
         $features = require __DIR__.'/../../config/features.php';
         $this->assertCount(18, $features['entries']);
+
+        $surfaces = require __DIR__.'/../../config/surfaces.generated.php';
+        $navJson = json_decode(file_get_contents(__DIR__.'/../../../.agents/supervisor/NAVIGATION.json'), true);
+        
+        $expectedTenantKeys = [];
+        foreach ($navJson['entries'] as $entry) {
+            if ($entry['surface'] === 'tenant') {
+                $expectedTenantKeys[] = $entry['label'];
+            }
+        }
+        
+        $actualTenantKeys = array_values(array_intersect(array_keys($surfaces['tenant']), $expectedTenantKeys));
+        $this->assertSame($expectedTenantKeys, $actualTenantKeys);
     }
 
     public function test_no_deferred_in_navigation(): void

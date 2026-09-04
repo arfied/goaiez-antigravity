@@ -397,9 +397,30 @@ class SurfacesGenerateCommand extends Command
 
     private function generateSurfacesConfig(array $allNavGroups): void
     {
+        $navJsonPath = base_path('.agents/supervisor/NAVIGATION.json');
+        $navOrder = [];
+        if (file_exists($navJsonPath)) {
+            $navJson = json_decode(file_get_contents($navJsonPath), true);
+            foreach ($navJson['entries'] ?? [] as $entry) {
+                if (isset($entry['surface'], $entry['label'])) {
+                    $navOrder[$entry['surface'] === 'other' ? 'operator' : $entry['surface']][] = $entry['label'];
+                }
+            }
+        }
+
         $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn [\n";
         foreach (['tenant', 'operator', 'agency', 'tech'] as $surf) {
             $content .= "    '$surf' => [\n";
+            $surfOrder = $navOrder[$surf] ?? [];
+            uksort($allNavGroups[$surf], function($a, $b) use ($surfOrder) {
+                $posA = array_search($a, $surfOrder, true);
+                $posB = array_search($b, $surfOrder, true);
+                if ($posA === false && $posB === false) return strcmp($a, $b);
+                if ($posA === false) return 1;
+                if ($posB === false) return -1;
+                return $posA <=> $posB;
+            });
+
             foreach ($allNavGroups[$surf] as $group => $entries) {
                 if (empty($entries)) {
                     continue;

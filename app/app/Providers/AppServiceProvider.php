@@ -597,6 +597,8 @@ class AppServiceProvider extends ServiceProvider
         MeRateLimits::register();
         PixelRateLimits::register();
         ActuationRateLimits::register();
+        
+        \Livewire\Livewire::addPersistentMiddleware([\App\Http\Middleware\TenantRole::class]);
     }
 
     /**
