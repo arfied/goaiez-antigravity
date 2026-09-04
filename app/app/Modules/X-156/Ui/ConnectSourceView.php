@@ -10,6 +10,7 @@ use App\Modules\X156\Models\IngestRejection;
 use App\Modules\X156\Models\IngestRun;
 use App\Modules\X156\Models\IngestSource;
 use App\Support\Tenancy;
+use Illuminate\Support\Carbon;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -137,7 +138,7 @@ class ConnectSourceView extends Component
                     'source_type' => (string) $s->source_type,
                     'is_active' => (bool) $s->is_active,
                     'last_run_records' => $lastRun ? (int) $lastRun->records_ingested : null,
-                    'last_run_time' => $lastRun ? \Illuminate\Support\Carbon::parse($lastRun->created_at) : null,
+                    'last_run_time' => $lastRun ? Carbon::parse($lastRun->created_at) : null,
                     'rejections_count' => $rejections,
                 ];
             });
