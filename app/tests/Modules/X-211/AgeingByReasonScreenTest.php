@@ -84,6 +84,7 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertSee('Customer promised to pay')
             ->assertSee('INV-A1')
             ->assertSee('10 days overdue')
+            ->assertSeeHtml('wire:submit="logPayment('.$inv1->id.')"')
             ->assertSee('No reason recorded yet')
             ->assertSee('INV-A2')
             ->assertDontSee('INV-A3')

@@ -532,3 +532,4 @@
 - `2026-09-04T15:22:06` UNRESOLVED capability X-211 - engine lacks the term/threshold refusals — N-033, G1-61, G1-71
 - `2026-09-04T15:54:33` note: MONEY-19b: fix run for the 15:50 BLOCK — X-198 apply is the state machine only; X-211 logs through its action
 - `2026-09-04T16:07:18` note: MONEY-19c: dead retry buttons out, X-211 refuses a zero amount, X-198 shows the account id and the Stripe Connect waiting state
+- `2026-09-04T16:30:58` note: MONEY-20: ageing-by-reason's Log payment submits a form; payment-plan builder — ar_plan_terms threshold row, a plan past it routes to a financing partner and stores nothing
