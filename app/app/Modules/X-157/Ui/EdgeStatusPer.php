@@ -21,6 +21,8 @@ class EdgeStatusPer extends Component
         $this->errorMessage = null;
         try {
             app(EdgeRollbackAction::class)->handle($this->businessId, $deploymentId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $this->errorMessage = 'That deployment is not available for this business.';
         } catch (\Throwable $e) {
             $this->errorMessage = $e->getMessage();
         }

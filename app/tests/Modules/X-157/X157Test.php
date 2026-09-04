@@ -355,4 +355,45 @@ class X157Test extends TestCase
         $d->refresh();
         $this->assertEquals('rolled_back', $d->status);
     }
+
+    public function test_edge_status_per_refuses_another_tenants_deployment(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
+        Tenancy::set((int) $bizA->id);
+        $zoneA = EdgeZone::create([
+            'business_id' => $bizA->id,
+            'domain_name' => 'a.com',
+            'zone_id' => 'z_a',
+            'has_valid_ssl' => true,
+        ]);
+        $deploymentA = Deployment::create([
+            'business_id' => $bizA->id,
+            'edge_zone_id' => $zoneA->id,
+            'deploy_hash' => 'hash-a',
+            'status' => 'deployed',
+        ]);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD']);
+        Tenancy::set((int) $bizB->id);
+        $zoneB = EdgeZone::create([
+            'business_id' => $bizB->id,
+            'domain_name' => 'b.com',
+            'zone_id' => 'z_b',
+            'has_valid_ssl' => true,
+        ]);
+        $deploymentB = Deployment::create([
+            'business_id' => $bizB->id,
+            'edge_zone_id' => $zoneB->id,
+            'deploy_hash' => 'hash-b',
+            'status' => 'deployed',
+        ]);
+
+        Livewire::test(EdgeStatusPer::class, ['businessId' => $bizA->id])
+            ->call('rollback', $deploymentB->id)
+            ->assertOk()
+            ->assertDontSee('App\Modules\X157\Models\Deployment')
+            ->assertDontSee((string) $deploymentB->id);
+
+        $this->assertEquals('deployed', $deploymentB->refresh()->status);
+    }
 }
