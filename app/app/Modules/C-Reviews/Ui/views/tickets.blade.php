@@ -32,7 +32,6 @@
         <div class="p-12 rounded-2xl border border-dashed border-slate-800 text-center space-y-4">
             <p class="text-slate-400">No open tickets — every recent review met the threshold.</p>
             <div class="flex items-center justify-center gap-4">
-                <span class="text-sm font-semibold text-slate-400">View QA Report &rarr;</span>
                 <button wire:click="toggleSample" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition">Show Sample Data</button>
             </div>
         </div>

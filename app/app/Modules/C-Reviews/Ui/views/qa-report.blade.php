@@ -32,7 +32,6 @@
         <div class="p-12 rounded-2xl border border-dashed border-slate-800 text-center space-y-4">
             <p class="text-slate-400">Nothing to report yet — the first review request goes out when a job completes.</p>
             <div class="flex items-center justify-center gap-4">
-                <span class="text-sm font-semibold text-slate-400">Go to Requests &rarr;</span>
                 <button wire:click="toggleSample" class="text-sm font-semibold text-amber-400 hover:text-amber-300 transition">Show Sample Data</button>
             </div>
         </div>
