@@ -179,4 +179,80 @@ class X155Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_forms_lists_this_businesses_forms_with_counts(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Forms Biz A', 'currency' => 'USD']);
+        \App\Support\Tenancy::set((int) $bizA->id);
+        
+        $form1 = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 1',
+            'slug' => 'biz-a-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+        $form2 = FormDefinition::create([
+            'business_id' => $bizA->id,
+            'form_name' => 'Biz A Form 2',
+            'slug' => 'biz-a-2',
+            'steps' => [['step' => 1], ['step' => 2]],
+            'schema' => [],
+        ]);
+        
+        $personA = Person::create([
+            'business_id' => $bizA->id,
+            'first_name' => 'Test',
+        ]);
+        
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $form1->id,
+            'person_id' => $personA->id,
+            'is_spam' => false,
+            'payload' => [],
+        ]);
+        FormSubmission::create([
+            'business_id' => $bizA->id,
+            'form_definition_id' => $form1->id,
+            'person_id' => $personA->id,
+            'is_spam' => true,
+            'spam_reason' => 'honeypot',
+            'payload' => [],
+        ]);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Forms Biz B', 'currency' => 'USD']);
+        \App\Support\Tenancy::set((int) $bizB->id);
+        $formB = FormDefinition::create([
+            'business_id' => $bizB->id,
+            'form_name' => 'Biz B Form 1',
+            'slug' => 'biz-b-1',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+        
+        \App\Support\Tenancy::set((int) $bizA->id);
+
+        \Livewire\Livewire::test(\App\Modules\X155\Ui\Forms::class, ['businessId' => $bizA->id])
+            ->assertOk()
+            ->assertSee('Biz A Form 1')
+            ->assertSee('biz-a-1')
+            ->assertSee('2 submissions')
+            ->assertSee('1 spam')
+            ->assertSee('1 step(s)')
+            ->assertSee('Biz A Form 2')
+            ->assertSee('2 step(s)')
+            ->assertDontSee('Biz B Form 1');
+    }
+
+    public function test_forms_shows_the_empty_state_for_a_business_with_no_forms(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Biz', 'currency' => 'USD']);
+        \App\Support\Tenancy::set((int) $biz->id);
+        
+        \Livewire\Livewire::test(\App\Modules\X155\Ui\Forms::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('No forms constructed yet.')
+            ->assertDontSee('<ul', false);
+    }
 }

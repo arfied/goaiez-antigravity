@@ -16,4 +16,9 @@ class FormDefinition extends Model
         'steps' => 'array',
         'schema' => 'array',
     ];
+
+    public function submissions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(FormSubmission::class);
+    }
 }

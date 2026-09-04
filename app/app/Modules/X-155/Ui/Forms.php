@@ -16,7 +16,13 @@ class Forms extends Component
     public function render()
     {
         $forms = ($this->businessId > 0)
-            ? FormDefinition::where('business_id', $this->businessId)->get()
+            ? FormDefinition::withCount([
+                'submissions',
+                'submissions as spam_count' => fn ($q) => $q->where('is_spam', true)
+            ])
+            ->where('business_id', $this->businessId)
+            ->orderByDesc('id')
+            ->get()
             : collect();
 
         return view('x-155::forms', [
