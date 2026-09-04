@@ -329,9 +329,19 @@ trait JourneyHarness
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
+        $inbound = DB::table('inbound_messages')
+            ->where('from_number', $person['phone_number'])
+            ->where('text', $marker)
+            ->orderBy('received_at', 'desc')
+            ->first();
+
+        if (!$inbound) {
+            throw new \RuntimeException("No inbound message found for {$person['phone_number']} with text {$marker}");
+        }
+
         return DB::table('outreach_messages')
             ->where('customer_id', $person['id'])
-            ->where('created_at', '>=', now()->subSeconds(2))
+            ->where('created_at', '>', $inbound->received_at)
             ->count();
     }
 
