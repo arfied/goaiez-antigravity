@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X176;
 
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X176\Actions\IndexRequestAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SitemapPingAction;
@@ -12,6 +14,7 @@ use App\Modules\X176\Events\SchemaPublished;
 use App\Modules\X176\Models\SchemaSnapshot;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class X176Test extends TestCase
@@ -84,5 +87,39 @@ class X176Test extends TestCase
     public function test_header_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_seo_block_present_and_absent(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'seo.com', true);
+
+        $deployLegacy = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500
+        );
+        $htmlLegacy = Storage::disk('local')->get("sites/{$deployLegacy['deploy_hash']}.html");
+        $this->assertStringNotContainsString('id="seo-meta-x176"', $htmlLegacy);
+
+        $deployNew = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: 'SEO Tenant'
+        );
+        $htmlNew = Storage::disk('local')->get("sites/{$deployNew['deploy_hash']}.html");
+
+        $this->assertStringContainsString('id="seo-meta-x176"', $htmlNew);
+        $this->assertStringContainsString('<title id="seo-meta-x176">SEO Tenant | Page 101</title>', $htmlNew);
+        $this->assertStringContainsString('<meta name="description" content="Welcome to SEO Tenant.">', $htmlNew);
+        $this->assertStringContainsString('<link rel="canonical" href="https://example.com/pages/101">', $htmlNew);
     }
 }
