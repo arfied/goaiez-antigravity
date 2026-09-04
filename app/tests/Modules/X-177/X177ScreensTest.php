@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X177;
 
+use App\Modules\X177\Actions\GbpPostAction;
 use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
 use App\Modules\X177\Models\GbpStateLog;
 use App\Modules\X177\Ui\GbpCard;
+use App\Modules\X177\Ui\SuspensionriskEventsFleetwide;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -75,5 +77,46 @@ class X177ScreensTest extends TestCase
             ->call('pollState', $conn->id);
 
         $this->assertEquals(1, GbpStateLog::where('connection_id', $conn->id)->count());
+    }
+
+    public function test_suspension_risk_mount_and_empty(): void
+    {
+        Livewire::test(SuspensionriskEventsFleetwide::class, ['businessId' => $this->bizId])
+            ->assertOk()
+            ->assertSee('No suspension risks on record');
+    }
+
+    public function test_suspension_risk_lists_flagged_post(): void
+    {
+        $conn = GbpConnection::create([
+            'business_id' => $this->bizId,
+            'account_ref' => '123',
+            'external_label' => 'Main St Store',
+            'profile_status' => 'active',
+        ]);
+
+        app(GbpPostAction::class)->post($this->bizId, $conn->id, 'Guaranteed ranking #1 today');
+
+        Livewire::test(SuspensionriskEventsFleetwide::class, ['businessId' => $this->bizId])
+            ->assertOk()
+            ->assertSee('Risk flagged')
+            ->assertSee('Guaranteed ranking #1 today');
+    }
+
+    public function test_suspension_risk_poll_action(): void
+    {
+        $conn = GbpConnection::create([
+            'business_id' => $this->bizId,
+            'account_ref' => '123',
+            'external_label' => 'Main St Store',
+            'profile_status' => 'active',
+        ]);
+
+        $initialLogCount = GbpStateLog::count();
+
+        Livewire::test(SuspensionriskEventsFleetwide::class, ['businessId' => $this->bizId])
+            ->call('pollState', $conn->id);
+
+        $this->assertEquals($initialLogCount + 1, GbpStateLog::count());
     }
 }
