@@ -33,7 +33,12 @@ class CReviewsScreensTest extends TestCase
     public function test_reviews_qa_requests_screen(): void
     {
         Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])->assertOk();
+        $this->assertSame(0, ReviewRequest::where('business_id', $this->bizId)->count());
+        $this->assertSame(0, QaTicket::where('business_id', $this->bizId)->count());
+    }
 
+    public function test_reviews_qa_requests_screen_filters(): void
+    {
         $sync = app(ReviewSyncAction::class);
         $sync->handle($this->bizId, 'google', 2, 'Bad service');
         $sync->handle($this->bizId, 'yelp', 5, 'Great service');
@@ -46,24 +51,64 @@ class CReviewsScreensTest extends TestCase
             ->set('filter', 'public')
             ->assertSee('Great service')
             ->assertSee('Reply');
+    }
 
+    public function test_reviews_qa_requests_screen_threshold_and_sample(): void
+    {
+        $sync = app(ReviewSyncAction::class);
         QaSetting::updateOrCreate(['business_id' => $this->bizId], ['min_public_stars' => 5]);
-
         $sync->handle($this->bizId, 'facebook', 4, 'Good service');
 
         Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])
             ->set('filter', 'internal')
             ->assertSee('Good service');
 
+        $reqCount = ReviewRequest::where('business_id', $this->bizId)->count();
+        $ticketCount = QaTicket::where('business_id', $this->bizId)->count();
+
         Livewire::test(ReviewsQaRequests::class, ['businessId' => $this->bizId])
             ->call('toggleSample')
             ->assertDontSee('Bad service');
+
+        $this->assertSame($reqCount, ReviewRequest::where('business_id', $this->bizId)->count());
+        $this->assertSame($ticketCount, QaTicket::where('business_id', $this->bizId)->count());
     }
 
-    public function test_qa_report_screen(): void
+    public function test_qa_report_screen_sample_writes_nothing(): void
+    {
+        $reqCount = ReviewRequest::where('business_id', $this->bizId)->count();
+        $ticketCount = QaTicket::where('business_id', $this->bizId)->count();
+
+        Livewire::test(QaReport::class, ['businessId' => $this->bizId])
+            ->call('toggleSample')
+            ->assertSee('SAMPLE');
+
+        $this->assertSame($reqCount, ReviewRequest::where('business_id', $this->bizId)->count());
+        $this->assertSame($ticketCount, QaTicket::where('business_id', $this->bizId)->count());
+    }
+
+    public function test_tickets_screen_sample_writes_nothing(): void
+    {
+        $reqCount = ReviewRequest::where('business_id', $this->bizId)->count();
+        $ticketCount = QaTicket::where('business_id', $this->bizId)->count();
+
+        Livewire::test(Tickets::class, ['businessId' => $this->bizId])
+            ->call('toggleSample')
+            ->assertSee('SAMPLE');
+
+        $this->assertSame($reqCount, ReviewRequest::where('business_id', $this->bizId)->count());
+        $this->assertSame($ticketCount, QaTicket::where('business_id', $this->bizId)->count());
+    }
+
+    public function test_qa_report_screen_mount(): void
     {
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])->assertOk()->assertSee('Nothing to report yet');
+        $this->assertSame(0, ReviewRequest::where('business_id', $this->bizId)->count());
+        $this->assertSame(0, QaTicket::where('business_id', $this->bizId)->count());
+    }
 
+    public function test_qa_report_screen_counts(): void
+    {
         $sync = app(ReviewSyncAction::class);
         $sync->handle($this->bizId, 'google', 2, 'Bad service');
         $sync->handle($this->bizId, 'yelp', 5, 'Great service');
@@ -73,11 +118,16 @@ class CReviewsScreensTest extends TestCase
 
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])
             ->assertSee('2') // reviews received
-            ->assertSee('1') // internal
-            ->assertSee('1') // public
-            ->assertSee('1'); // open ticket within SLA
+            ->assertSee('1'); // internal, public, ticket
+    }
 
-        // Make the ticket breached
+    public function test_qa_report_screen_breached(): void
+    {
+        $sync = app(ReviewSyncAction::class);
+        $sync->handle($this->bizId, 'google', 2, 'Bad service');
+        $req2star = ReviewRequest::where('business_id', $this->bizId)->where('rating', 2)->first();
+        app(QaTicketAction::class)->handle($this->bizId, $req2star->id);
+
         $ticket = QaTicket::where('business_id', $this->bizId)->first();
         $ticket->update(['sla_due_at' => Carbon::now()->subHours(2)]);
 
@@ -85,10 +135,15 @@ class CReviewsScreensTest extends TestCase
             ->assertSeeHtml('<div class="text-3xl font-bold text-rose-500">1</div>');
     }
 
-    public function test_tickets_screen(): void
+    public function test_tickets_screen_mount(): void
     {
         Livewire::test(Tickets::class, ['businessId' => $this->bizId])->assertOk()->assertSee('No open tickets');
+        $this->assertSame(0, ReviewRequest::where('business_id', $this->bizId)->count());
+        $this->assertSame(0, QaTicket::where('business_id', $this->bizId)->count());
+    }
 
+    public function test_tickets_screen_resolve(): void
+    {
         $sync = app(ReviewSyncAction::class);
         $sync->handle($this->bizId, 'google', 2, 'Bad service');
 
