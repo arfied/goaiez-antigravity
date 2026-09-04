@@ -108,6 +108,27 @@ class X124Test extends TestCase
         $this->assertTrue(true);
     }
 
+    public function test_constant_irreversible_actions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Constant Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        foreach (AssistantExecuteAction::IRREVERSIBLE as $actionKey) {
+            $preview = $this->previewAction->handle($biz->id, $actionKey);
+            $this->assertTrue($preview['is_irreversible']);
+
+            $exec = $this->executeAction->handle($biz->id, $actionKey, [], false);
+            $this->assertEquals('refused_confirmation_required', $exec['status']);
+        }
+
+        $ordinaryKey = 'send_invoice';
+        $previewOrd = $this->previewAction->handle($biz->id, $ordinaryKey);
+        $this->assertFalse($previewOrd['is_irreversible']);
+
+        $execOrd = $this->executeAction->handle($biz->id, $ordinaryKey, [], false);
+        $this->assertEquals('executed', $execOrd['status']);
+    }
+
     public function test_todays_recommendation_strip_renders_active_and_emits_events(): void
     {
         Event::fake([
