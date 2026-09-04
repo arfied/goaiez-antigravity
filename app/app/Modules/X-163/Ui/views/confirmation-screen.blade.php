@@ -6,7 +6,7 @@
             <h1 class="text-2xl font-semibold text-ink mb-2">Price Confirmation</h1>
             <p class="text-ink-2">
                 callout fee: {{ $isCalloutSet ? 'set' : 'not set' }} &middot; 
-                confirmed prices: {{ $confirmedCount }}
+                {{ $unconfirmedCount }} left to review
             </p>
         </div>
 

@@ -112,13 +112,13 @@ class ConfirmationScreen extends Component
 
         $callout = CalloutFee::where('business_id', $businessId)->first();
 
-        $confirmedCount = PriceBookItem::where('business_id', $businessId)->where('is_confirmed', true)->count();
+        $unconfirmedCount = PriceBookItem::where('business_id', $businessId)->where('is_confirmed', false)->count();
         $isCalloutSet = $callout && $callout->callout_fee_cents > 0;
 
         return view('x-163::confirmation-screen', [
             'items' => $items,
             'isCalloutSet' => $isCalloutSet,
-            'confirmedCount' => $confirmedCount,
+            'unconfirmedCount' => $unconfirmedCount,
             'calloutFee' => $callout,
         ]);
     }
