@@ -63,8 +63,8 @@ class TodaysRecommendationStripTest extends TestCase
     {
         $biz = \Tests\TestCase::provisionTenant(['name' => 'Home Tenant']);
         \App\Support\Tenancy::set((int) $biz->id);
-        $this->seed(\App\Database\Seeders\UiReviewSeeder::class);
-        $owner = \App\Models\User::first();
+        $this->seed(\Database\Seeders\UiReviewSeeder::class);
+        $owner = \App\Models\User::where('email', 'owner2@business.com')->first();
 
         $this->actingAs($owner)->get('/home')
             ->assertOk()
