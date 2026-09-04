@@ -202,7 +202,6 @@ class CAiTest extends TestCase
         ]);
 
         $call = AiCall::factory()->create([
-            'id' => $task->id,
             'business_id' => $biz->id,
             'task_id' => $task->id,
             'model_served' => 'mock-gpt-4',

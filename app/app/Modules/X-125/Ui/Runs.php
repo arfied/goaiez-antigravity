@@ -8,8 +8,57 @@ use Livewire\Component;
 
 class Runs extends Component
 {
+    #[\Livewire\Attributes\Locked]
+    public int $businessId = 0;
+
+    public bool $ready = false;
+
+    public ?string $errorMessage = null;
+
+    public function load()
+    {
+        $this->ready = true;
+        $this->errorMessage = null;
+    }
+
+    public function retry(int $id, \App\Modules\X125\Actions\FlowRunAction $action)
+    {
+        try {
+            $run = \App\Modules\X125\Models\FlowRun::where('business_id', $this->businessId)->findOrFail($id);
+            $action->handle(
+                businessId: $this->businessId,
+                flowId: $run->flow_id,
+                triggerPayload: $run->trigger_payload ?? [],
+                isManualRetry: true
+            );
+        } catch (\Exception $e) {
+            $this->errorMessage = $e->getMessage();
+        }
+    }
+
     public function render()
     {
-        return view('x-125::runs');
+        if (! $this->ready) {
+            return view('x-125::runs', [
+                'runs' => collect(),
+            ]);
+        }
+
+        try {
+            // Eager load flow and flowVersion
+            $runs = \App\Modules\X125\Models\FlowRun::with(['flow', 'flowVersion'])
+                ->where('business_id', $this->businessId)
+                ->orderBy('id', 'desc')
+                ->get();
+
+            return view('x-125::runs', [
+                'runs' => $runs,
+            ]);
+        } catch (\Exception $e) {
+            $this->errorMessage = $e->getMessage();
+            return view('x-125::runs', [
+                'runs' => collect(),
+            ]);
+        }
     }
 }

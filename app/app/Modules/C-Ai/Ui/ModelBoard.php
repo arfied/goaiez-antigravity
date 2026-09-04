@@ -31,9 +31,9 @@ class ModelBoard extends Component
             $call = AiCall::where('business_id', $this->businessId)->findOrFail($id);
             $action->handle(
                 businessId: $this->businessId,
-                prompt: 'Retry of task '.$call->task,
-                modelRequested: $call->model ?? 'default_primary',
-                taskId: $id
+                prompt: 'Retry of task '.$call->task_id,
+                modelRequested: $call->model_requested ?? 'default_primary',
+                taskId: $call->task_id
             );
         } catch (Exception $e) {
             $this->errorMessage = $e->getMessage();

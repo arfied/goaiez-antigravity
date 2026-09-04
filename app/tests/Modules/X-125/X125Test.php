@@ -120,4 +120,36 @@ class X125Test extends TestCase
         $this->assertEquals('simulated', $simRes['status']);
         $this->assertEquals(2, $simRes['steps_executed']);
     }
+
+    public function test_runs_component_renders_and_handles_retry(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Runs Component Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $flow = $this->createAction->handle(
+            businessId: $biz->id,
+            name: 'Test Flow Runs',
+            triggerEvent: 'test.event',
+            nodes: [['type' => 'action', 'label' => 'Test Action']],
+        );
+
+        $initialRunsCount = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->count();
+
+        $this->runAction->handle($biz->id, $flow->id, ['test' => true]);
+
+        $component = \Livewire\Livewire::test(\App\Modules\X125\Ui\Runs::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('Test Flow Runs')
+            ->assertSee("When 'test.event' event occurs")
+            ->assertSee('Test Action');
+
+        $latestRun = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $component->call('retry', $latestRun->id);
+
+        $newCount = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->count();
+        $this->assertEquals($initialRunsCount + 2, $newCount);
+
+        $newRun = \App\Modules\X125\Models\FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $this->assertTrue($newRun->is_manual_retry, 'Retry must be marked as manual');
+    }
 }

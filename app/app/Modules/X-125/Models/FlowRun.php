@@ -16,4 +16,14 @@ class FlowRun extends Model
         'trigger_payload' => 'array',
         'is_manual_retry' => 'boolean',
     ];
+
+    public function flow()
+    {
+        return $this->belongsTo(Flow::class, 'flow_id');
+    }
+
+    public function flowVersion()
+    {
+        return $this->belongsTo(FlowVersion::class, 'flow_version_id');
+    }
 }
