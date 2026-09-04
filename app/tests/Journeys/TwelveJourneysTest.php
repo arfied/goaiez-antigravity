@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
-use App\Enums\CreditKind;
-use App\Enums\CreditProduct;
-use App\Models\ConsentRecord;
-use App\Models\Customer;
-use App\Services\Billing\CreditLedger;
-use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -66,34 +59,13 @@ final class TwelveJourneysTest extends TestCase
 
         $tenant = $this->tenantWithLiveNumber();
         $started = microtime(true);
-        Tenancy::actingAs($tenant['id'], function () {
-            app(CreditLedger::class)->record(
-                CreditProduct::Sms,
-                CreditKind::Adjust,
-                100,
-                'system',
-                'test top up'
-            );
-        });
 
         // The caller hangs up. Nothing about this is synchronous — the webhook
         // returns immediately and the work is queued, which is exactly why a
         // sync-driver run would prove nothing.
-        $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+12622164033');
+        $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+15550123');
 
-        Tenancy::actingAs($tenant['id'], function () {
-            $customer = Customer::where('phone', '+12622164033')->first();
-            Log::info('Customer after webhook: '.json_encode($customer));
-            if ($customer) {
-                $consent = ConsentRecord::where('customer_id', $customer->id)->first();
-                Log::info('Consent after webhook: '.json_encode($consent));
-                if (! $consent) {
-                    Log::error('NO CONSENT RECORD!');
-                }
-            }
-        });
-
-        $message = $this->waitForOutbound($tenant, to: '+12622164033', timeoutSeconds: 90);
+        $message = $this->waitForOutbound($tenant, to: '+15550123', timeoutSeconds: 90);
         $elapsedMs = (int) ((microtime(true) - $started) * 1000);
 
         $this->assertNotNull($message, 'No text-back was sent.');
@@ -109,7 +81,7 @@ final class TwelveJourneysTest extends TestCase
         //    has STOPped is the one message that must never send, and the missed
         //    call is precisely when a system is most tempted to skip the check.
         $this->assertTrue(
-            $this->consentWasCheckedFor('+12622164033'),
+            $this->consentWasCheckedFor('+15550123'),
             'The text-back sent without passing ConsentService::decide().'
         );
 
