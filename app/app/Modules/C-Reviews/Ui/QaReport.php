@@ -78,8 +78,7 @@ class QaReport extends Component
             return;
         }
         Tenancy::set($this->businessId);
-        // We will call the resolve action (Item 4's path) - we can just redirect to tickets screen or resolve here
-        // The instruction says "Item 4's path". Let's use X-181 action.
+
         $action = app(QaTicketResolveAction::class);
         $action->handle($this->businessId, $ticketId, 'Resolved via QA Report drilldown');
 
@@ -104,18 +103,27 @@ class QaReport extends Component
         $drilldownRows = [];
 
         if (! $this->isSample) {
-            $reqsQuery = ReviewRequest::where('business_id', $this->businessId)->where('created_at', '>=', $since);
-            $requestsSent = (clone $reqsQuery)->count();
-            $reviewsReceived = (clone $reqsQuery)->whereNotNull('rating')->count();
-
             $threshold = 4;
             $setting = QaSetting::where('business_id', $this->businessId)->first();
             if ($setting) {
                 $threshold = (int) $setting->min_public_stars;
             }
 
+            $internalPredicate = function ($q) use ($threshold) {
+                $q->whereNotNull('rating')->where(function ($q) use ($threshold) {
+                    $q->where('rating', '<', $threshold)
+                      ->orWhere(function ($q) {
+                          $q->whereNotNull('csat_score')->where('csat_score', '<', 7);
+                      });
+                });
+            };
+
+            $reqsQuery = ReviewRequest::where('business_id', $this->businessId)->where('created_at', '>=', $since);
+            $requestsSent = (clone $reqsQuery)->count();
+            $reviewsReceived = (clone $reqsQuery)->whereNotNull('rating')->count();
+
             $publicPath = (clone $reqsQuery)->whereNotNull('rating')->where('rating', '>=', $threshold)->count();
-            $internalQa = (clone $reqsQuery)->where('status', 'triaged_internal')->count();
+            $internalQa = (clone $reqsQuery)->where($internalPredicate)->count();
 
             $repliesQuery = ReviewReply::where('business_id', $this->businessId)->where('created_at', '>=', $since);
             $repliesPublished = (clone $repliesQuery)->where('status', 'published')->count();
@@ -135,7 +143,7 @@ class QaReport extends Component
                 $drilldownRows = (clone $reqsQuery)->whereNotNull('rating')->where('rating', '>=', $threshold)->get();
             }
             if ($this->drilldown === 'internal_qa') {
-                $drilldownRows = (clone $reqsQuery)->where('status', 'triaged_internal')->get();
+                $drilldownRows = (clone $reqsQuery)->where($internalPredicate)->get();
             }
             if ($this->drilldown === 'replies_published') {
                 $drilldownRows = (clone $repliesQuery)->where('status', 'published')->get();
@@ -179,6 +187,8 @@ class QaReport extends Component
 
         $isEmpty = ! $this->isSample && $requestsSent === 0 && $reviewsReceived === 0 && $internalQa === 0 && $repliesPublished === 0 && $openTicketsSla === 0 && $breachedTickets === 0;
 
+        $threshold = $threshold ?? 4;
+
         return view('c-reviews::qa-report', [
             'requestsSent' => $requestsSent,
             'reviewsReceived' => $reviewsReceived,
@@ -190,6 +200,7 @@ class QaReport extends Component
             'breachedTickets' => $breachedTickets,
             'isEmpty' => $isEmpty,
             'drilldownRows' => $drilldownRows,
+            'threshold' => $threshold,
         ]);
     }
 }

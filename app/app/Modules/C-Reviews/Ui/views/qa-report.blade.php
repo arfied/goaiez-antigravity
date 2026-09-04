@@ -108,7 +108,7 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 @if(!empty($row->is_request))
-                                    @if(!$row->ticket && $row->rating && $row->rating <= 3)
+                                    @if(!$row->ticket && $row->rating !== null && $row->rating < $threshold)
                                         <button wire:click="escalateToQa({{ $row->id }})" class="px-2 py-1 rounded bg-rose-600/20 text-rose-300 text-[10px] font-medium hover:bg-rose-600/30">Escalate to QA</button>
                                     @endif
                                     <a href="/reviews-qa-requests" class="px-2 py-1 rounded bg-slate-800 text-slate-300 text-[10px] font-medium hover:bg-slate-700">Open</a>
