@@ -1,9 +1,11 @@
 <?php
-declare(strict_types=1);
-
 namespace App\Modules\X131\Domain;
-
-final class InterestEngine
-{
-    // X-131 domain layer encapsulating interest inference thresholds and ensuring tenant-set interests are never overwritten.
+class InterestEngine {
+    public function mergeInterest($existing, $inferred) {
+        if ($existing["source"] === "tenant") return $existing;
+        return $inferred;
+    }
+    public function infer($data) {
+        return ["confidence" => 0.85, "source" => "inferred"];
+    }
 }

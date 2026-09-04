@@ -5,5 +5,16 @@ namespace App\Modules\X179\Domain;
 
 final class TemplateEngine
 {
-    // X-179 domain layer ensuring extracted content maps cleanly without AI paraphrase and gating Path B previews properly.
+    public function enforceHeaderNaming(string $header): bool
+    {
+        return !empty($header);
+    }
+
+    public function extractTechStackToOpener(string $techStack): string
+    {
+        if (empty($techStack)) {
+            return "Welcome!";
+        }
+        return "Welcome! We see you use " . $techStack . ".";
+    }
 }

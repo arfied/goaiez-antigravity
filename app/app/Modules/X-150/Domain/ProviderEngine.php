@@ -3,7 +3,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X150\Domain;
 
+use InvalidArgumentException;
+
 final class ProviderEngine
 {
-    // X-150 domain layer handling data provider cost/shape routing safely.
+    public function enforceN150Capabilities(bool $hasCapabilities): void
+    {
+        if (!$hasCapabilities) {
+            throw new InvalidArgumentException('Missing N-150 capabilities');
+        }
+    }
 }

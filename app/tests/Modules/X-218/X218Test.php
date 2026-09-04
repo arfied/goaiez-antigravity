@@ -104,8 +104,14 @@ class X218Test extends TestCase
     /**
      * [N-218-01], [N-218-02], [N-218-03]
      */
-    public function test_influencer_capabilities(): void
+    public function test_capabilities(): void
     {
-        $this->assertTrue(true);
+        $engine = new \App\Modules\X218\Domain\X218Engine();
+        try {
+            $engine->enforceCapabilities();
+            $this->fail("Should enforce constraints");
+        } catch (\InvalidArgumentException $e) {
+            $this->assertStringContainsString("REFUSES", $e->getMessage());
+        }
     }
 }
