@@ -52,10 +52,7 @@ class CBillingTest extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Initial balance $100.00 = 1,000,000 hundredths of a cent
-        TrialLimit::create([
-            'business_id' => $biz->id,
-            'current_balance_hundredths_cents' => 1000000,
-        ]);
+        $this->grantAction->handle($biz->id, 1000000, 'setup', 'Setup grant');
 
         // 1. Two concurrent debits produce two rows and a correct final balance
         $entry1 = $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1 ($1.50)');
@@ -235,5 +232,29 @@ class CBillingTest extends TestCase
     public function test_g19_17_auto_topup(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_debit_refuses_no_ledger_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Ledger Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSAL: Ledger not found');
+
+        $this->debitAction->handle($biz->id, 5000, 'ref_1', 'Debit 1');
+    }
+
+    public function test_debit_refuses_insufficient_balance(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Insufficient Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->grantAction->handle($biz->id, 10000, 'setup', 'Setup grant'); // .00
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSAL: Insufficient balance');
+
+        $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1');
     }
 }

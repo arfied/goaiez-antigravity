@@ -1,0 +1,10 @@
+--- app/app/Services/Voice/InfobipVoiceProvider.php
++++ app/app/Services/Voice/InfobipVoiceProvider.php
+@@ -194,6 +194,7 @@
+         }
+ 
+         if ($response->failed()) {
++            \Illuminate\Support\Facades\Log::error("Infobip GET $url failed: " . $response->status() . " body: " . $response->body());
+             VendorLog::failure('infobip_voice', 'GET', $url, 'http_'.$response->status());
+ 
+             return null;

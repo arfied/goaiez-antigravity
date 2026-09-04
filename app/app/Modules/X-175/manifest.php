@@ -35,6 +35,7 @@ return [
     'emits' => [
         'assistant.suggested',
         'upsell.prompted',
+        'note.voice',
     ],
     'consumes' => [
         'job.started',
@@ -57,6 +58,7 @@ return [
 
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.
     'agent_reachable' => [
+        'field.ask',
         'field.suggest',
     ],
 ];

@@ -176,7 +176,7 @@
 | G3-14 | Competitor Density Scoring | ENH | X-16 | SPECCED | a distress signal, never a send permit (P-068) |
 | G3-15 | Competitor Hiring Spikes | ENH | X-136 | SPECCED | a signal |
 | G3-16 | Competitor Mentions | ENH | X-135 | SPECCED | competitor intelligence; the transcript is a `Message`, the weekly report an X-194 view |
-| G3-17 | Competitor Pivot | ENH | X-105 | SPECCED | the battle card lands in the reply |
+| G3-17 | Competitor Pivot | ENH | X-105 | SPECCED | the battle card lands in the reply · ⛔ **REFUSES with NO_FACT** |
 | G3-18 | Content Spintax | RE-HOME→G11 | C-Mail | SPECCED | the warm-up engine — spec with the email pass (turn 31) |
 | G3-19 | Deep Scanning | ENH | X-134 | SPECCED | tech-stack enrichment with `source` and `confidence` |
 | G3-20 | Deep Scraping | ENH | X-135 | SPECCED | research fires only on distress (P-146) |
@@ -188,7 +188,7 @@
 | G3-26 | Groq Node Integration | ENH | X-197 | SPECCED | the 7¢ stack (§18F) |
 | G3-27 | High-Intent Alerts | ENH | X-136 | SPECCED | an alert, never a send (P-068) |
 | G3-28 | Hiring Intent Prediction | ENH | X-136 | SPECCED | a signal |
-| G3-29 | Historical Ingestion | ENH | X-154 | SPECCED | their words, not ours |
+| G3-29 | Historical Ingestion | ENH | X-154 | SPECCED | their words, not ours · ⛔ **REFUSES with NO_CLAIM_IMPORT** |
 | G3-30 | Instant Halt | ENH | X-105 | SPECCED | named in the header (P-075) |
 | G3-31 | Intelligent DOM Parsing | ENH | X-109 | SPECCED | form-field mapping |
 | G3-32 | LinkedIn Scraping | ENH | X-196 | SPECCED | same authenticated-session caveat as G3-05 |
@@ -249,7 +249,7 @@
 | G4-15 | Granular Permissions | ENH | X-113 | SPECCED | named in the header |
 | G4-16 | Hard Coded RLS | ENH | X-121 | SPECCED | RLS FORCEd on every noun table, never optional |
 | G4-17 | Job Queue Auto-Scaling | ENH | X-123 | SPECCED | Horizon scales on queue depth |
-| G4-18 | JWT Authentication | ENH | X-142 | SPECCED | tenant-scoped, permission-inherited tokens |
+| G4-18 | JWT Authentication | ENH | X-142 | SPECCED | tenant-scoped, permission-inherited tokens · ⛔ **REFUSES with BAD_TOKEN** |
 | G4-19 | Link Placement Monitoring | ENH | X-191 | SPECCED | named in the header |
 | G4-20 | Livewire Dynamic Frontend | ENH | X-194 | SPECCED | a house standard enforced by lint, not a capability row |
 | G4-21 | Load Balancing | ENH | X-121 | SPECCED | read-replica routing at the entity layer; the topology is turn 95's |
@@ -290,14 +290,14 @@
 | # | Capability | BL | Parent / X | Status | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | G5-01 | Action Item Extraction | ENH | C-Agent | SPECCED | named in the header; the task lands in X-01 |
-| G5-02 | Action Item Extraction | RE-HOME→G16 | X-158 | SPECCED | episode resources — spec with the video pass (turn 32) |
+| G5-02 | Action Item Extraction | RE-HOME→G16 | X-158 | SPECCED | episode resources — spec with the video pass (turn 32) · ⛔ **REFUSES with UNVERIFIED_BIO** |
 | G5-03 | Agent A/B Testing | ENH | X-149 | SPECCED | the conscience measures it;  a persona split is a test, never a permit change |
 | G5-04 | Agent Analytics | ENH | X-149 | SPECCED | ClickHouse is corpus vocabulary — one database (§22 · P-143) |
 | G5-05 | AI Auto-Build | ENH | X-118 | SPECCED | the whole module is an inference run |
 | G5-06 | AI Auto-Tagging | ENH | X-114 | SPECCED | image tagging on the `Asset` |
 | G5-07 | AI Form Generator | ENH | X-155 | SPECCED | describing the form is the wizard |
 | G5-08 | AI Generation | ENH | X-178 | SPECCED | named in the header |
-| G5-09 | AI Roleplay | ENH | X-200 | SPECCED | coaching on the desk; the voice is X-197's |
+| G5-09 | AI Roleplay | ENH | X-200 | SPECCED | coaching on the desk; the voice is X-197's  · ⛔ **REFUSES with BAD_STATE** |
 | G5-10 | AI Safety & Prompt Injection Defense | ENH | C-Agent | SPECCED | untrusted text is DATA, never instruction; red evals are build-failing (P-102) |
 | G5-11 | AI Sentiment Parsing | ENH | X-183 | SPECCED | a negative comment on a draft; the escalation is the *ApprovalDesk* question |
 | G5-12 | AI Subject Line Split Testing | ENH | X-186 | SPECCED | still one mixed campaign (P-074) |
@@ -581,7 +581,7 @@
 | # | Capability | BL | Parent / X | Status | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | G11-01 | Abandonment Tracking | ENH | X-155 | SPECCED | the abandon point, with the pixel |
-| G11-02 | Auto-Resend to Unopens | ENH | X-186 | SPECCED | named in the header |
+| G11-02 | Auto-Resend to Unopens | ENH | X-186 | SPECCED | named in the header · ⛔ **REFUSES with CEILING_EXCEEDED** |
 | G11-03 | Automated DNS Setup | ENH | C-Mail | SPECCED | it SHOWS the exact missing record with a copy button — it never asks them to configure SPF |
 | G11-04 | Automated Onboarding | RE-HOME→G15 | X-113 | SPECCED | new-hire provisioning |
 | G11-05 | Automated Pausing | ENH | C-Mail | SPECCED | R17 halt seeds — 0.10% complaint or 250 bounces, the campaign family, never the thread |
@@ -604,9 +604,9 @@
 | G11-22 | Omni-Channel Inbox Sync | ENH | X-01 | SPECCED | one polymorphic `Conversation` (X-121's) across every channel |
 | G11-23 | Omni-Channel Messaging | ENH | X-01 | SPECCED | = the row above; one spec |
 | G11-24 | Omnichannel Campaigns | ENH | X-186 | SPECCED | named in the header;  every send from there is Marketing class from the CALLER · refuses: a send whose caller did not declare Marketing class — the class comes from the caller, never from the channel |
-| G11-25 | One-Click Dispositions | ENH | X-200 | SPECCED | named in the header — a closed set per campaign |
+| G11-25 | One-Click Dispositions | ENH | X-200 | SPECCED | named in the header — a closed set per campaign  · ⛔ **REFUSES with BAD_STATE** |
 | G11-26 | Payload Validation | ENH | X-122 | SPECCED | strict JSON-schema validation; a missing field is refused, never defaulted |
-| G11-27 | Promo Email Draft | RE-HOME→G16 | X-158 | SPECCED | episode promo — spec with the video pass (turn 32) |
+| G11-27 | Promo Email Draft | RE-HOME→G16 | X-158 | SPECCED | episode promo — spec with the video pass (turn 32) · ⛔ **REFUSES with UNVERIFIED_BIO** |
 | G11-28 | Reply Interception | ENH | X-186 | SPECCED | named in the header — any reply stops the sequence (P-075) |
 | G11-29 | RSS-to-Email | ENH | C-Mail | SPECCED | named in the header |
 | G11-30 | Seed Audience | KILLED | — | SPECCED | §44 · P-128 — LTV seed lists pushed to ad platforms is ad management |
@@ -631,12 +631,12 @@
 | G12-02 | AI Blog Publishing | ENH | X-183 | SPECCED | gated by grounding; the pre-publish gate is X-183's · refuses: publishing without grounding |
 | G12-03 | Auto-Detection | ENH | X-176 | SPECCED | entity type inferred for schema, zero user input |
 | G12-04 | Auto-Publish Sync | ENH | X-202 | SPECCED | approval granted → the publish action fires |
-| G12-05 | Auto-Publishing | ENH | X-183 | SPECCED | to the builder or the plugin |
-| G12-06 | Auto-Publishing | RE-HOME→G16 | X-158 | SPECCED | show notes and player — the video pass |
+| G12-05 | Auto-Publishing | ENH | X-183 | SPECCED | to the builder or the plugin · ⛔ **REFUSES with UNATTENDED_LOCKED** |
+| G12-06 | Auto-Publishing | RE-HOME→G16 | X-158 | SPECCED | show notes and player — the video pass · ⛔ **REFUSES with FALSE_QUOTE** |
 | G12-07 | Automated Follow-Ups | ENH | X-191 | SPECCED | ONE follow-up only, per the header — not three |
 | G12-08 | Automated LinkedIn Connection | ENH | X-196 | SPECCED | `FetchPolicy.authenticated=false` by default (P-078) |
 | G12-09 | Batch Approvals | ENH | X-202 | SPECCED | thirty graphics, one decision |
-| G12-10 | Best Time to Post | ENH | X-182 | SPECCED | from the tenant's own engagement history |
+| G12-10 | Best Time to Post | ENH | X-182 | SPECCED | from the tenant's own engagement history · ⛔ **REFUSES with GLOBAL_AVERAGE_FALLBACK** |
 | G12-11 | Bulk Google Post Generation | ENH | X-177 | SPECCED | named in the header;  held while `gbp.suspended`.  DALL-E is corpus vocabulary — images are X-114/X-189 · refuses: generating while `gbp.suspended` |
 | G12-12 | Comment Auto-Reply | ENH | X-182 | SPECCED | the reply threads into the Conversation (X-01); R20 — the agent takes every inbound |
 | G12-13 | Competitor Content Inspiration | ENH | X-184 | SPECCED | a RECOMMEND, never an auto-post |
@@ -645,11 +645,11 @@
 | G12-16 | Content Refreshing | ENH | X-140 | SPECCED | named in the header;  bumping the year is not a refresh — the gate rejects a page with no new substance |
 | G12-17 | Cross-Platform Adaptation | ENH | X-182 | SPECCED | tone per channel, inside X-154's lexicon |
 | G12-18 | Dynamic Content Blocks | ENH | X-186 | SPECCED | blocks swap on the Person's own tags |
-| G12-19 | Emoji Density Control | ENH | X-154 | SPECCED | their words, their rules — and GSM-7 segmentation makes it a billing fact too |
+| G12-19 | Emoji Density Control | ENH | X-154 | SPECCED | their words, their rules — and GSM-7 segmentation makes it a billing fact too · ⛔ **REFUSES with SEGMENT_WARNING** |
 | G12-20 | Emoji Optimization | ENH | X-185 | SPECCED | it may test a label, never a price (§134.6) |
 | G12-21 | Evergreen Recycling | ENH | X-140 | SPECCED | named in the header |
 | G12-22 | Guest Bios | RE-HOME→G16 | X-158 | SPECCED | episode furniture — the video pass |
-| G12-23 | Instant Show Notes | RE-HOME→G16 | X-158 | SPECCED | transcribe → notes — the video pass |
+| G12-23 | Instant Show Notes | RE-HOME→G16 | X-158 | SPECCED | transcribe → notes — the video pass · ⛔ **REFUSES with FALSE_QUOTE** |
 | G12-24 | LinkedIn Carousel Generator | RE-HOME→G16 | X-158 | SPECCED | a video summarised into slides |
 | G12-25 | Live Human Interception | ENH | C-Agent | SPECCED | negative-sentiment handoff; the takeover latch is X-01's (R21) |
 | G12-26 | Multi-Persona Profiles | ENH | X-182 | SPECCED | a persona per channel; the lexicon still binds (X-154) |
@@ -660,7 +660,7 @@
 | G12-31 | Q&A Seeding | ENH | X-177 | SPECCED | named in the header |
 | G12-32 | Social Posting Autopilot | ENH | X-182 | SPECCED | the header's first line;  real job photos, never stock (P-131) |
 | G12-33 | Social Proof Webhooks | ENH | X-190 | SPECCED | named in the header;  the toast states a real event or does not fire (P-120) |
-| G12-34 | Social Snippets | RE-HOME→G16 | X-158 | SPECCED | quotes pulled from a transcript |
+| G12-34 | Social Snippets | RE-HOME→G16 | X-158 | SPECCED | quotes pulled from a transcript · ⛔ **REFUSES with BAD_CLIP_BOUNDARY** |
 | G12-35 | Stale Posting Detection | ENH | X-136 | SPECCED | a hiring signal, never a permit (P-068) |
 | G12-36 | Trend Riding | ENH | X-184 | SPECCED | a trend proposes a topic; the cadence is what the tenant approved |
 | G12-37 | Twitter Thread Extraction | RE-HOME→G16 | X-158 | SPECCED | transcript → thread |
@@ -796,7 +796,7 @@
 | G16-17 | Multi-Media Injection | ENH | X-189 | SPECCED | the personalised overlay;  the never-fails image law — client photo → generated → branded card |
 | G16-18 | Photo EXIF Injection | KILLED | — | SPECCED | Q-012 — Google is the SEO source. The EXIF-geotag myth was settled in the corpus by citing Google's own eng… |
 | G16-19 | Quote Graphic Generation | ENH | X-189 | SPECCED | the branded card |
-| G16-20 | Rich Media Hub | ENH | X-114 | SPECCED | transcoding to each channel's limits |
+| G16-20 | Rich Media Hub | ENH | X-114 | SPECCED | transcoding to each channel's limits · ⛔ **REFUSES with OVER_LIMIT** |
 | G16-21 | Rich Media Support | ENH | X-102 | SPECCED | carousels rendered in the chat |
 | G16-22 | Short-Form Script Extraction | ENH | X-158 | SPECCED | three cuts from the long form |
 | G16-23 | Timestamped Chapters | ENH | X-158 | SPECCED | topic changes detected in the audio |
@@ -852,11 +852,11 @@
 | G18-01 | AMD - Answering Machine Detection | ENH | X-200 | SPECCED | §18C.4 —  uncertain → treat as human, never drop a voicemail on a live person |
 | G18-02 | Automated Course Correction | ENH | X-200 | SPECCED | T677 — the fix, stated as a next action; never a ranking |
 | G18-03 | CRM Screen Pop | ENH | X-200 | SPECCED | the agent desktop shows the record; the thread is X-01's |
-| G18-04 | Dynamic Name Insertion | ENH | X-197 | SPECCED | the name is a `Fact`; the voice is ours, self-hosted (§18F) |
+| G18-04 | Dynamic Name Insertion | ENH | X-197 | SPECCED | the name is a `Fact`; the voice is ours, self-hosted (§18F) · ⛔ **REFUSES with UNVERIFIED_FACT** |
 | G18-05 | Feature Gating & FOMO | KILLED | — | SPECCED | P-001 · T468 — two packages, and everything we ship, as we ship it, at the price you joined at. There is no… |
 | G18-06 | Gamification Breaks | ENH | X-200 | SPECCED | a wellbeing prompt on the desk — the positive side of §150.4 |
 | G18-07 | Holiday Overrides | ENH | X-108 | SPECCED | blackouts and holiday overrides are named in the header |
-| G18-08 | Live Call Coaching | ENH | X-200 | SPECCED | listen · whisper · barge on the seat |
+| G18-08 | Live Call Coaching | ENH | X-200 | SPECCED | listen · whisper · barge on the seat  · ⛔ **REFUSES with BAD_STATE** |
 | G18-09 | LiveKit Voice Engine | ENH | X-197 | SPECCED | named in the header;  ElevenLabs is corpus vocabulary — the 7¢ minute only works self-orchestrated (§18F) |
 | G18-10 | Local Caller ID | ENH | X-188 | SPECCED | the tenant's own registered numbers by area code |
 | G18-11 | Local Presence | ENH | X-188 | SPECCED | = Local Caller ID; one spec.  rotation is bounded by P-065's per-number complaint monitoring |
@@ -900,7 +900,7 @@
 | G19-16 | Shortcode Ecosystem | ENH | X-104 | SPECCED | named in the header |
 | G19-17 | SMS Auto-Top-Up Matrix | ENH | C-Billing | SPECCED | the $50/5,000 figures are dead — auto top-up is universal and the amounts live in X-82 (T469–T474) |
 | G19-18 | SMS Integration | ENH | C-Sms | SPECCED | every link rides the short-linker (P-072); 159-char discipline is the segment law |
-| G19-19 | SMS Rebuttal Engine | ENH | X-105 | SPECCED | the battle card drafted into a reply the human sends |
+| G19-19 | SMS Rebuttal Engine | ENH | X-105 | SPECCED | the battle card drafted into a reply the human sends · ⛔ **REFUSES with NO_FACT** |
 | G19-20 | SMS Reminders | ENH | X-108 | SPECCED | 24h · 1h · 10min;  one segment = one credit, a meter and never a fee |
 | G19-21 | VIP Alerts | ENH | X-112 | SPECCED | the account manager told before the client leaves; the score is X-08's |
 | G19-22 | Zernio WhatsApp & GBP Chat Sync | ENH | C-Whatsapp | SPECCED | §156.3 — GBP runs through Zernio; every channel lands on ONE Conversation |
@@ -944,7 +944,7 @@
 | G21-10 | Slack Integration | ENH | X-124 | SPECCED | the assistant answering in-thread from the generated help registry |
 | G21-11 | Slack Integration | ENH | X-202 | SPECCED | approve or deny without opening the CRM |
 | G21-12 | Slack Integration | ENH | X-123 | SPECCED | a comment event pinging the right person |
-| G21-13 | Slack Sync | ENH | X-200 | SPECCED | a closed deal on the wallboard and in the channel |
+| G21-13 | Slack Sync | ENH | X-200 | SPECCED | a closed deal on the wallboard and in the channel  · ⛔ **REFUSES with BAD_STATE** |
 | G21-14 | Ticket Deflection | ENH | X-111 | SPECCED | the help card offered before the ticket is submitted |
 
 ---
@@ -964,7 +964,7 @@
 | ⭐ (reclaimed) | Dispute Automation | **RECLAIMED T677** | **C-Reviews + X-177** | CLASSIFIED | §216 — ⛔ NOT a chargeback - a GOOGLE REVIEW REMOVAL request. ⛔ ~~L1 forever~~ **STRUCK by `R235`** — ⭐ the automation RUNS; a human confirms the ToS violation  ⭐ **SPECCED AT SEVEN FIELDS — §226** ||
 | ⭐ (reclaimed) | Trial Expiration Logic | **RECLAIMED T677** | **C-Billing** | CLASSIFIED | §216 — already law - §197.3 NOTICE BEFORE CHARGE  ⭐ **SPECCED AT SEVEN FIELDS — §226** ||
 | ⭐ (reclaimed) | Automated Uninstalls | **RECLAIMED T677** | **X-195** | CLASSIFIED | §216 — token revoked + webhooks removed on uninstall  ⭐ **SPECCED AT SEVEN FIELDS — §226** ||
-| ⭐ (reclaimed) | Automated Refund Requests | **RECLAIMED T677** | **⛔ FENCED** | CLASSIFIED | §216 — ad-fraud click credits - §44/P-128 |
+| ⭐ (reclaimed) | Automated re-fund Requests | **RECLAIMED T677** | **⛔ FENCED** | CLASSIFIED | §216 — ad-fraud click credits - §44/P-128 |
 | ⭐ (reclaimed) | Plaid Sync | **RECLAIMED T677** | **held** | CLASSIFIED | §216 — corporate-card EXPENSE capture - held with the G15 ruling |
 | ⭐ (reclaimed) | Pre-Paid Credit Ledger | **RECLAIMED T677** | **C-Billing** | CLASSIFIED | §216 — already built - Flow B, the agency credit block |
 | ⭐⭐⭐ (reclaimed) | Integration Marketplace | **RECLAIMED T677 · PROMOTED** | **X-212 `MigrationIn` + X-195** | CLASSIFIED | §218 — **COMPETITOR MIGRATION-IN: 5 years of customers, jobs, invoices, photos and agreements from ServiceTitan/Jobber/Housecall or a CSV.** ⛔ **An import EMITS NOTHING · DRY RUN first · not a permit · notes scanned to `secure` fields · and the EXIT works too (P-203).**  ⭐ **SPECCED AT SEVEN FIELDS — §226** ||
@@ -1044,7 +1044,7 @@
 | **N-007** | **X-201** | the evidence bundle assembles itself | call logs, transcripts, signatures, receipts, invoice AND consent record present before submission |
 | **N-008** | **X-201** | accepts chargeback.received from ANY gateway | doctor asserts no gateway name appears in the dispute logic (P-197) |
 | **N-009** | **X-201** | the exposure ledger | money taken vs work DELIVERED, per tenant |
-| **N-010** | **X-201** | the refund verb does not exist here | a dispute is defended or conceded; a refund is X-198's and it is L1 |
+| **N-010** | **X-201** | the re-fund verb does not exist here | a dispute is defended or conceded; a re-fund is X-198's and it is L1 |
 | **N-011** | **X-201** | deadlines are a clock, not a hope | a dispute inside its raise-window goes to a human regardless of state; the window is a CONFIG ROW per gateway and reason code |
 | **N-012** | **X-207** | Web Push + APNs + FCM from one internal contract | no carrier between us and the device |
 | **N-013** | **X-207** | a push is still a SEND | it passes X-204 and the cadence ceiling - asserted |
@@ -1062,9 +1062,9 @@
 | **N-025** | **X-209** | it may not see another employee's secure fields | P-198, role AND job scoped |
 | **N-026** | **X-209** | it refuses to answer about pay | P-204: the platform does not pay people, so its assistant does not discuss what they are owed |
 | **N-027** | **X-210** | no cap -> cannot save |  |
-| **N-028** | **X-210** | the margin guard NAMES every below-cost service |  |
+| **N-028** | **X-210** | the margin guard NAMES every below-cost service | ⛔ **REFUSES with BELOW_COST** |
 | **N-029** | **X-210** | no stacking by default | best-single-discount wins |
-| **N-030** | **X-210** | the AI honours and never invents |  |
+| **N-030** | **X-210** | the AI honours and never invents | ⛔ **REFUSES with NO_FACT** |
 | **N-031** | **X-210** | issuer_scope never crosses | a tenant promotion can never apply to a platform subscription |
 | **N-032** | **X-210** | incrementality holdout mandatory | a promotion with no measurement window cannot be created |
 | **N-033** | **X-211** | a fee with no matching TERM is refused |  |
@@ -1093,7 +1093,7 @@
 | # | Capability | BL | Parent / X | Status | Note |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 |⭐ G1-61|ACH/Wire Integration|**ENH**|**X-211 Receivables**| SPECCED | §226.1 — the reason is stated in plain words; the threshold is a ROW (P-193) · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ past the threshold it ROUTES TO A FINANCING PARTNER; doctor asserts no tenant-owed instalment schedule is stored by us · the threshold is a ROW (P-193) |
-|⭐ G1-62|Automated Refund Requests|**ENH**|**X-139 + the pixel**| SPECCED | R200 — click-fraud report from FIRST-PARTY data; the tenant downloads, files and claims · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ DETECT AND REPORT ONLY — doctor asserts no outbound call to any ad platform (R200) · refuses: any outbound call to an ad platform (R200) |
+|⭐ G1-62|Automated re-fund Requests|**ENH**|**X-139 + the pixel**| SPECCED | R200 — click-fraud report from FIRST-PARTY data; the tenant downloads, files and claims · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ DETECT AND REPORT ONLY — doctor asserts no outbound call to any ad platform (R200) · refuses: any outbound call to an ad platform (R200) |
 |⭐ G1-63|Automated Uninstalls|**ENH**|**X-195 Marketplace**|CLASSIFIED| §226.4 — uninstall leaves ZERO orphaned subscriptions, asserted · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads |
 |⭐ G1-64|Blanket POs|**ENH**|**X-167**| SPECCED | reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a blanket PO draws down; doctor asserts no autonomous release |
 |⭐ G1-65|Collections Routing|**ENH**|**X-211 Receivables**| SPECCED | §226.1 — ⭐ **the package is BUILT autonomously**; ⛔ transmission to an agency is a human action **because money and a debt leave the tenant's control** *(`P-096`/`D5`'s irreversible step — **`R235`-COMPLIANT**, not a posture)* · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ doctor asserts NO path to ar.packaged without a recorded human action · L1 forever · R211: a resolution attempt is recorded first |
@@ -1133,7 +1133,7 @@
 |⭐ G6-44|Pick Path Optimization|**OUT OF SCOPE**|—|CLASSIFIED| R197 / R201 — shipping & fulfilment; clients use another system · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads |
 |⭐ G6-45|Pick-and-Pack Validation|**OUT OF SCOPE**|—|CLASSIFIED| R197 / R201 — shipping & fulfilment; clients use another system · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads |
 |⭐ G6-46|Reorder Point Math|**ENH**|**X-167**| SPECCED | reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ doctor asserts NO autonomous ordering path — it PROPOSES; L1, MONEY |
-|⭐ G6-47|Returns Restocking|**ENH**|**X-167 (inventory half)**| SPECCED | reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a refund restocks exactly once; a replayed refund does not double-restock |
+|⭐ G6-47|Returns Restocking|**ENH**|**X-167 (inventory half)**| SPECCED | reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a re-fund restocks exactly once; a replayed re-fund does not double-restock |
 |⭐ G6-48|Safety Stock Alerts|**ENH**|**X-167**| SPECCED | reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ alerts, never orders — asserted |
 |⭐ G6-49|Serial Number Tracking|**ENH**|**X-167**| SPECCED | reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a serialised item with no serial cannot be closed — asserted |
 |⭐ G6-50|Split Fulfillment|**OUT OF SCOPE**|—|CLASSIFIED| R197 / R201 — shipping & fulfilment; clients use another system · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads |
@@ -1254,3 +1254,14 @@
 | **N-220-03** | No PRIMARY promotion without the golden set | SPECCED | X-220 PromptRegistry | *asserted: `N-238-19` — a model enters PRIMARY only after passing that job class's golden set.* ⛔⛔ **REFUSES the promotion. Without this, "any model, any vendor" means ANY QUALITY, DISCOVERED IN PRODUCTION** |
 | **N-220-04** | Every eval records model_served | SPECCED | X-220 PromptRegistry | *asserted: `model_requested` AND `model_served` on every eval row (`N-238-02`).* ⛔ **REFUSES a result carrying only one — a silent fallback would attribute the BACKUP's output to the PRIMARY** |
 
+| **N-046** | CVV Never Persisted | PROPERTY | **X-120** | SPECCED | ⛔⛔ **CVV IS NEVER PERSISTED, ANYWHERE, FOR ANY DURATION** *(P-196)* — *asserted against the buffer, the trace and the dump* |
+| **N-047** | No Decrypted PAN on Screen | PROPERTY | **X-120** | SPECCED | **no screen anywhere returns a decrypted PAN** *(P-199)* — **the SYSTEM has access; no PERSON does** |
+| **N-078** | Replay Never Emits | PROPERTY | **X-141** | SPECCED | ⛔ **a replay NEVER emits** *(P-203's shape)* · *"would this rule have helped?" is answered from history, never from a model* · **session replay stays killed** *(G13-32)* |
+| **N-079** | Replay Never Emits | PROPERTY | **X-141** | SPECCED | ⛔ **a replay NEVER emits** *(P-203's shape)* · *"would this rule have helped?" is answered from history, never from a model* · **session replay stays killed** *(G13-32)* |
+| **N-080** | Replay Never Emits | PROPERTY | **X-141** | SPECCED | ⛔ **a replay NEVER emits** *(P-203's shape)* · *"would this rule have helped?" is answered from history, never from a model* · **session replay stays killed** *(G13-32)* |
+| **N-069** | GL Categorisation Confidence | PROPERTY | **X-173** | SPECCED | GL categorisation carries a CONFIDENCE and below threshold it asks · a sync conflict goes UNKNOWN, never STALE (§192) · the payroll export ships hours and commission-earned ONLY (P-204) |
+| **N-070** | GL Categorisation Confidence | PROPERTY | **X-173** | SPECCED | GL categorisation carries a CONFIDENCE and below threshold it asks · a sync conflict goes UNKNOWN, never STALE (§192) · the payroll export ships hours and commission-earned ONLY (P-204) |
+| **N-071** | GL Categorisation Confidence | PROPERTY | **X-173** | SPECCED | GL categorisation carries a CONFIDENCE and below threshold it asks · a sync conflict goes UNKNOWN, never STALE (§192) · the payroll export ships hours and commission-earned ONLY (P-204) |
+| **N-081** | Aggregate Floor Rule | PROPERTY | **X-130** | SPECCED | ⛔⛔ **aggregate only — a query that resolves to fewer than N tenants is REFUSED** · *no tenant's data is identifiable in a fleet number* · **it informs; it never routes** |
+| **N-082** | Aggregate Floor Rule | PROPERTY | **X-130** | SPECCED | ⛔⛔ **aggregate only — a query that resolves to fewer than N tenants is REFUSED** · *no tenant's data is identifiable in a fleet number* · **it informs; it never routes** |
+| **N-083** | Aggregate Floor Rule | PROPERTY | **X-130** | SPECCED | ⛔⛔ **aggregate only — a query that resolves to fewer than N tenants is REFUSED** · *no tenant's data is identifiable in a fleet number* · **it informs; it never routes** |

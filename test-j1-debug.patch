@@ -1,0 +1,17 @@
+--- app/tests/Journeys/TwelveJourneysTest.php
++++ app/tests/Journeys/TwelveJourneysTest.php
+@@ -52,6 +52,14 @@
+ 
+         $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+12622164033');
+ 
++        $customer = \App\Models\Customer::where('phone', '+12622164033')->first();
++        \Illuminate\Support\Facades\Log::info("Customer after webhook: " . json_encode($customer));
++        if ($customer) {
++            $consent = \App\Models\ConsentRecord::where('customer_id', $customer->id)->first();
++            \Illuminate\Support\Facades\Log::info("Consent after webhook: " . json_encode($consent));
++            if (!$consent) { \Illuminate\Support\Facades\Log::error("NO CONSENT RECORD!"); }
++        }
++
+         $message = $this->waitForOutbound($tenant, to: '+12622164033', timeoutSeconds: 90);
+ 
+         expect($message)->not->toBeNull('No text-back was sent.')

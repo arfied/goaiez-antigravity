@@ -10,7 +10,7 @@ use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -66,10 +66,12 @@ final class UnifiedInboxManager
             }
 
             // Find or create Conversation for this Person
-            $conversation = Conversation::firstOrCreate(
-                ['business_id' => $businessId, 'person_id' => $person->id],
-                ['channel' => $channel, 'status' => 'open']
-            );
+            $conversation = \App\Support\Tenancy::actingAs($businessId, function () use ($person, $channel) {
+                return Conversation::firstOrCreate(
+                    ['person_id' => $person->id],
+                    ['channel' => $channel, 'status' => 'open']
+                );
+            });
 
             Event::dispatch(new ConversationUpdated(
                 businessId: $businessId,

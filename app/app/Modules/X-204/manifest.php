@@ -38,8 +38,8 @@ return [
     'emits' => [
         'consent.decided',
         'permit.granted',
-        'suppression.added',
         'attestation.recorded',
+        'suppression.added',
     ],
     'consumes' => [
         'capability.decided',

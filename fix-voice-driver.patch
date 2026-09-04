@@ -1,0 +1,10 @@
+--- app/tests/Journeys/JourneyHarness.php
++++ app/tests/Journeys/JourneyHarness.php
+@@ -107,6 +107,7 @@
+ 
+     private function postCarrierWebhook(array $tenant, string $event, string $from): void
+     {
++        config(['services.voice.driver' => 'infobip']);
+         \App\Models\PlatformCredential::updateOrCreate(['key' => 'infobip_api_key', 'environment' => \App\Enums\CredentialEnvironment::Live], ['value' => 'test_key', 'rotated_at' => now(), 'rotated_by' => 'system']);
+         config(['services.infobip.base_url' => 'https://api.infobip.com']);
+         \Illuminate\Support\Facades\DB::table('platform_settings')->updateOrInsert(['key' => 'voice.enabled'], ['value' => 'true']);

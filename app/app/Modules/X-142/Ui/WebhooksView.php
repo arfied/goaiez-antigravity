@@ -8,6 +8,10 @@ use Livewire\Component;
 
 class WebhooksView extends Component
 {
+    public function mount(): void {
+        abort_unless(auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
+    }
+
     public function render()
     {
         return view('x-142::webhooks');

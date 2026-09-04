@@ -40,6 +40,7 @@ return [
         'gbp.suspension_risk',
         'gbp.suspended',
         'gbp.reinstated',
+        'zernio.webhook',
     ],
     'consumes' => [
         'job.completed',

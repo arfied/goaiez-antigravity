@@ -50,4 +50,9 @@ final class WebmcpEmitAction
 
         return $job;
     }
+
+    public function isActionPermittedOnSurface(array $declaredSurfaces, string $requestedSurface): bool
+    {
+        return in_array($requestedSurface, $declaredSurfaces, true);
+    }
 }

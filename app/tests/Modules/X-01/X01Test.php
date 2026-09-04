@@ -13,7 +13,7 @@ use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -55,7 +55,7 @@ class X01Test extends TestCase
         Event::fake([ContactCreated::class, TakeoverStarted::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Inbox Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
 
         // 1. Text and email from the same person render in one thread with one Person ID
         $smsRes = $this->manager->ingestMessage(
@@ -99,6 +99,7 @@ class X01Test extends TestCase
         $this->assertContains('email', $inboxComponent->channels);
         $this->assertContains('voice', $inboxComponent->channels);
         $this->assertContains('chat', $inboxComponent->channels);
+        });
     }
 
     /**
@@ -107,14 +108,15 @@ class X01Test extends TestCase
     public function test_g1_45_read_through_action(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Render Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
 
         $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
-        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+        $c = Conversation::create(['person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
 
         $read = $this->readConv->handle($biz->id, $c->id);
         $this->assertNotNull($read);
         $this->assertEquals($c->id, $read->id);
+        });
     }
 
     /**
@@ -131,10 +133,11 @@ class X01Test extends TestCase
     public function test_g2_18_one_person_aggregate(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Aggregate Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
 
         $p = $this->createContact->handle($biz->id, 'Single Aggregate Person', '+15125550177');
         $this->assertEquals('Single Aggregate Person', $p->first_name);
+        });
     }
 
     /**
@@ -159,13 +162,14 @@ class X01Test extends TestCase
     public function test_g2_32_lead_scoring(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Score Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
 
         $p = $this->createContact->handle($biz->id, 'Scored Lead', '+15125550166');
         $score = $this->manager->scoreLead($biz->id, $p->id, 85, 'A');
 
         $this->assertEquals(85, $score->lead_rating);
         $this->assertEquals('A', $score->grade);
+        });
     }
 
     /**
@@ -182,12 +186,13 @@ class X01Test extends TestCase
     public function test_g2_38_grade_and_confidence(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Confidence Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
 
         $p = $this->createContact->handle($biz->id, 'Graded Lead', '+15125550155');
         $score = $this->manager->scoreLead($biz->id, $p->id, 92, 'A');
 
         $this->assertGreaterThan(0.9, $score->confidence);
+        });
     }
 
     /**
@@ -236,12 +241,13 @@ class X01Test extends TestCase
     public function test_g11_22_polymorphic_conversation(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Poly Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
 
         $p = $this->createContact->handle($biz->id, 'Poly User', '+15125550144');
-        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'voice', 'status' => 'open']);
+        $c = Conversation::create(['person_id' => $p->id, 'channel' => 'voice', 'status' => 'open']);
 
         $this->assertEquals('voice', $c->channel);
+        });
     }
 
     /**

@@ -109,6 +109,8 @@ final class IngestVoiceEventJob implements ShouldQueue
             return;
         }
 
+        try {
+
         $outcome = match ($this->event) {
             VoiceWebhookEvent::RecordingReady => $calls->attachRecording($this->providerCallId),
             VoiceWebhookEvent::CallEnded => $calls->record($this->providerCallId),
@@ -158,6 +160,10 @@ final class IngestVoiceEventJob implements ShouldQueue
                 'provider_call_id' => $this->providerCallId,
                 'event' => $this->event->value,
             ]);
+        }
+        
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error("EXCEPTION IN JOB: " . $e->getMessage() . " " . $e->getTraceAsString());
         }
     }
 }

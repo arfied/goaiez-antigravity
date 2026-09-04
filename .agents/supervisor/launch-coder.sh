@@ -7,7 +7,7 @@
 #
 # Refuses to start if a coder is already running (never two in one tree).
 set -euo pipefail
-cd "$(dirname "$0")/../.." || exit 1
+cd "$(dirname "$(readlink -f "$0")")/../.." || exit 1
 
 PIDFILE=".agents/supervisor/coder.pid"
 
@@ -34,7 +34,8 @@ fi
 SNAP="/home/goaiez/tmp/sup-snap-$(basename "$PWD")-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$SNAP/.agents/supervisor" "$SNAP/.claude" "$SNAP/bin"
 cp .agents/supervisor/*.md "$SNAP/.agents/supervisor/" 2>/dev/null
-cp .claude/settings.json "$SNAP/.claude/" 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
+cp .claude/settings.json "$SNAP/.claude/"
+mkdir -p "$SNAP/.agents/state" && cp .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md "$SNAP/.agents/state/" 2>/dev/null || true 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
 echo "snapshot: $SNAP"
 
 n=1

@@ -10,6 +10,10 @@ use Livewire\Component;
 
 class OfflineFormInbox extends Component
 {
+    public function mount(): void {
+        abort_unless(auth()->check() && auth()->user()->hasRole(\App\Enums\UserRole::Owner, \App\Enums\UserRole::Manager), 403);
+    }
+
     #[Locked]
     public int $businessId = 0;
 

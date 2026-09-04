@@ -402,5 +402,14 @@ class CReviewsTest extends TestCase
         $result = $action->handle($biz->id, $customerId, 'How did the repair go? Please leave us a review!', 'google');
 
         $this->assertEquals('sent', $result['status']);
+    public function test_no_fake_rows_written_on_mount(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\ReviewsQaRequests::class)
+            ->assertOk();
+
+        $this->assertEquals(0, \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)->count());
     }
 }

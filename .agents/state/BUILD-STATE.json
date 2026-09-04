@@ -1,45 +1,45 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
- "started": "2026-08-30T02:05:15",
- "updated": "2026-09-03T02:05:03",
- "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
+ "started": "2026-09-03T09:33:12",
+ "updated": "2026-09-04T02:05:53",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
- "seal_digest_observed": "f1e73d9fc181eb1c",
+ "seal_digest_observed": null,
  "runtime_sound": true,
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 2,
+   "violations": null,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 102,
+   "violations": null,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 13,
+   "violations": null,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 120,
+   "violations": 372,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 10,
+   "violations": null,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 12,
+   "violations": null,
    "fails": "WAVE"
   }
  },
@@ -381,7 +381,7 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 8,
    "intent": "GROW",
    "unresolved": [
@@ -454,17 +454,10 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-103",
-     "stage": "schema",
-     "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-     "at": "2026-09-02T02:30:15"
-    }
-   ]
+   "unresolved": []
   },
   "X-104": {
    "status": "DONE",
@@ -551,17 +544,10 @@
    "unresolved": []
   },
   "X-121": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-121",
-     "stage": "schema",
-     "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-     "at": "2026-09-02T02:39:43"
-    }
-   ]
+   "unresolved": []
   },
   "X-122": {
    "status": "DONE",
@@ -924,10 +910,17 @@
    "unresolved": []
   },
   "X-186": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-186",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T13:47:25"
+    }
+   ]
   },
   "X-188": {
    "status": "DONE",
@@ -942,10 +935,17 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-190",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:48:24"
+    }
+   ]
   },
   "X-191": {
    "status": "DONE",
@@ -960,10 +960,17 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-193",
+     "stage": "tests",
+     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-194": {
    "status": "DONE",
@@ -1008,10 +1015,17 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-201",
+     "stage": "tests",
+     "why": "column deadline_at is missing from disputes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-202": {
    "status": "DONE",
@@ -1035,7 +1049,14 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-205",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:56:38"
+    }
+   ]
   },
   "X-206": {
    "status": "DONE",
@@ -1101,13 +1122,27 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-217",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:00:33"
+    }
+   ]
   },
   "X-218": {
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-218",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:01:55"
+    }
+   ]
   },
   "X-219": {
    "status": "DONE",
@@ -1136,67 +1171,109 @@
  },
  "journeys": {
   "J1": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a missed call becomes a consented text back",
    "green_after_wave": 5
   },
   "J2": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "two fields at signup put a live agent on a real number",
    "green_after_wave": 6
   },
   "J3": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a quote comes from the pricebook or does not come at all",
    "green_after_wave": 7
   },
   "J4": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "STOP halts every pending step for that person",
    "green_after_wave": 5
   },
   "J5": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a migration of five hundred jobs sends nothing",
    "green_after_wave": 14
   },
   "J6": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "cancel is one tap with nothing in between",
    "green_after_wave": 11
   },
   "J7": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an agency client never sees cost or margin",
    "green_after_wave": 11
   },
   "J8": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a deliberately corrupted backup fails the restore",
    "green_after_wave": 14
   },
   "J9": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an invoice reaches a real charge id",
    "green_after_wave": 10
   },
   "J10": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a completed job asks for a review once inside the cadence",
    "green_after_wave": 8
   },
   "J11": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a published site carries all seven",
    "green_after_wave": 13
   },
   "J12": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an overdue invoice is chased by reason, resolution first",
    "green_after_wave": 9
   }
  },
  "unresolved": [
+  {
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
+  },
+  {
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
+  },
+  {
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
+  },
+  {
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
+  },
+  {
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
+  },
+  {
+   "module": "X-193",
+   "stage": "tests",
+   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "why": "column deadline_at is missing from disputes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
+  },
   {
    "module": "X-103",
    "stage": "schema",
@@ -1228,39 +1305,7 @@
    "at": "2026-09-02T17:06:38"
   }
  ],
- "notes": [
-  {
-   "at": "2026-08-29T14:37:58",
-   "note": "bootstrap-done"
-  },
-  {
-   "at": "2026-09-03T02:05:23",
-   "note": "X-121 job->person landed on origin/main (ac89b6a work_orders.person_id, b9701c4 JobCompleted carries the person); C-Reviews now asks for a review from a real completed job"
-  },
-  {
-   "at": "2026-09-03T02:30:05",
-   "note": "correction to the 2026-09-03T02:05:03 replay decision: importJobs is safe because JourneyHarness:309 writes rows directly and never calls JobStateAction, not because of Job::withoutEvents \u2014 withoutEvents suppresses model events, not the explicit Event::dispatch at JobStateAction:33. The decision itself is unchanged: no new guard."
-  }
- ],
  "decisions": [
-  {
-   "module": "X-211",
-   "chose": "R245: Built AR recovery engine with late fee capping (max 10% or 0), structured installment payment plan contracts, ACH enforcement, offline reconciliation, and collections packaging with evidence bundle.",
-   "at": "2026-08-29T15:20:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-140",
-   "chose": "@agent_reachable widened with topic.identify \u2014 read-shaped, per the plan's derivation rule; owner may overrule",
-   "at": "2026-09-02T04:13:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-179",
-   "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
-   "at": "2026-09-02T04:38:50",
-   "ruling": "R245"
-  },
   {
    "module": "C-Reviews",
    "chose": "(R245) ReviewRequestAction CADENCE_WINDOW_DAYS is 30, null customer bypasses rate limit",
@@ -1290,6 +1335,20 @@
    "chose": "no new guard for replay: the 30-day CADENCE_WINDOW_ACTIVE guard plus the two-pass cap already bound the damage of ReplayOfflineSyncAction, and history import is safe via withoutEvents",
    "at": "2026-09-03T02:05:03",
    "ruling": "R245"
+  }
+ ],
+ "notes": [
+  {
+   "at": "2026-09-03T09:34:34",
+   "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-03T02:05:23",
+   "note": "X-121 job->person landed on origin/main (ac89b6a work_orders.person_id, b9701c4 JobCompleted carries the person); C-Reviews now asks for a review from a real completed job"
+  },
+  {
+   "at": "2026-09-03T02:30:05",
+   "note": "correction to the 2026-09-03T02:05:03 replay decision: importJobs is safe because JourneyHarness:309 writes rows directly and never calls JobStateAction, not because of Job::withoutEvents \u2014 withoutEvents suppresses model events, not the explicit Event::dispatch at JobStateAction:33. The decision itself is unchanged: no new guard."
   }
  ]
 }

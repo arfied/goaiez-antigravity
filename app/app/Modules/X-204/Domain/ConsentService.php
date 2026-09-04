@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X204\Domain;
 
+use App\Enums\SendRefusalReason;
 use App\Modules\X204\Events\AttestationRecorded;
 use App\Modules\X204\Events\ConsentDecided;
 use App\Modules\X204\Events\PermitGranted;
@@ -41,7 +42,7 @@ final class ConsentService
                     'recipient_phone' => $recipientPhone,
                     'channel' => $channel,
                     'permit_status' => 'refused',
-                    'refusal_reason' => 'SUPPRESSED: '.$suppressed->reason,
+                    'refusal_reason' => in_array($suppressed->reason, array_column(SendRefusalReason::cases(), 'value')) ? $suppressed->reason : 'opted_out',
                 ]);
 
                 Event::dispatch(new ConsentDecided(
@@ -65,7 +66,7 @@ final class ConsentService
                     'recipient_phone' => $recipientPhone,
                     'channel' => $channel,
                     'permit_status' => 'refused',
-                    'refusal_reason' => 'UNKNOWN_STATE: '.$state,
+                    'refusal_reason' => 'state_unknown',
                 ]);
 
                 Event::dispatch(new ConsentDecided(
@@ -155,5 +156,15 @@ final class ConsentService
         ));
 
         return $attestation;
+    }
+
+    public function getSendCountInWindow(int $businessId, string $recipientPhone, string $channel, int $hours): int
+    {
+        return SendPermit::where('business_id', $businessId)
+            ->where('recipient_phone', $recipientPhone)
+            ->where('channel', $channel)
+            ->where('permit_status', 'granted')
+            ->where('created_at', '>=', now()->subHours($hours))
+            ->count();
     }
 }

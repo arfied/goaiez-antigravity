@@ -1,0 +1,9 @@
+--- app/app/Listeners/Voice/TextBackMissedCaller.php
++++ app/app/Listeners/Voice/TextBackMissedCaller.php
+@@ -45,6 +45,7 @@
+ {
+     public function handle(CallMissed $event): void
+     {
++        \Illuminate\Support\Facades\Log::info("TextBackMissedCaller handle() called for call " . $event->call->id);
+         // ⛔ **THE SAME GATE AS THE SENDER'S, AND IT IS HERE BECAUSE OF WHAT THE
+         // SENDER'S VERSION COSTS WHEN IT FIRES** (3192). `MissedCallTextBack`

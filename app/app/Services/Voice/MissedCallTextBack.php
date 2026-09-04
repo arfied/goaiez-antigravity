@@ -323,7 +323,7 @@ final class MissedCallTextBack
             );
         }
 
-        return $outcome;
+        \Illuminate\Support\Facades\Log::error("TextBack outcome: " . json_encode($outcome)); return $outcome;
     }
 
     /**

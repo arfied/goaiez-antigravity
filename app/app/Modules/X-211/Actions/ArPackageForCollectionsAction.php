@@ -10,8 +10,8 @@ final class ArPackageForCollectionsAction
 {
     public function __construct(private readonly ArEngine $engine) {}
 
-    public function handle(int $businessId, int $invoiceId): array
+    public function handle(int $businessId, int $invoiceId, bool $isHumanAction = true): array
     {
-        return $this->engine->packageForCollections($businessId, $invoiceId);
+        return $this->engine->packageForCollections($businessId, $invoiceId, $isHumanAction);
     }
 }
