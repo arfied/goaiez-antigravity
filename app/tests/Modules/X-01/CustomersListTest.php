@@ -31,7 +31,6 @@ class CustomersListTest extends TestCase
         ]);
 
         LeadScore::create([
-            'lead_rating' => 95,
             'business_id' => $biz->id,
             'person_id' => $person->id,
             'lead_rating' => 95,

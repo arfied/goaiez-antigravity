@@ -59,8 +59,8 @@ class CalendarTest extends TestCase
             ->assertSee('Security Blanket Check')
             ->call('cancelAppointment', $apt->id);
             
-        // Appointment is cancelled in engine, let's just assert nothing crashed
-        
+        // Appointment is cancelled in engine
+        $this->assertEquals('cancelled', $apt->fresh()->status);
         // Empty state
         Appointment::where('business_id', $biz->id)->delete();
         Livewire::test(Calendar::class, ['businessId' => $biz->id])
