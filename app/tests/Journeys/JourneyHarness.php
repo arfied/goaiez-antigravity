@@ -281,7 +281,12 @@ trait JourneyHarness
     /** @param array<string,mixed> $person @return list<array<string,mixed>> */
     private function reviewInvitesFor(array $person): array
     {
-        throw $this->todo('every review invite sent to this person — the cadence test counts them');
+        return \App\Modules\CReviews\Models\ReviewRequest::query()
+            ->where('customer_id', $person['id'])
+            ->orderBy('id')
+            ->get()
+            ->map(fn ($r) => $r->toArray())
+            ->all();
     }
 
     // ── migration ────────────────────────────────────────────────────────
