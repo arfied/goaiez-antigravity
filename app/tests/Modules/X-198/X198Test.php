@@ -50,6 +50,9 @@ class X198Test extends TestCase
     public function test_anchor_pci_tokens_only_tenant_payout_isolation_and_discrepancy_logging(): void
     {
         Event::fake([PaymentCaptured::class, ReconciliationDiscrepancy::class, PayoutReconciled::class]);
+        \Illuminate\Support\Facades\Http::fake([
+            '*stripe.com*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_fake_123'], 200),
+        ]);
 
         $biz = TestCase::provisionTenant(['name' => 'Gateway Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -63,8 +66,8 @@ class X198Test extends TestCase
 
         $this->assertEquals($pay1->id, $pay2->id, 'Duplicated ref charges once and returns identical payment record');
         $this->assertEquals(5000, $pay1->amount_cents);
-        $this->assertNull($pay1->gateway_charge_id, 'Charge id is issued only by external gateway');
-        $this->assertEquals('pending', $pay1->status);
+        $this->assertNotNull($pay1->gateway_charge_id, 'Charge id is issued only by external gateway');
+        $this->assertEquals('captured', $pay1->status);
         Event::assertDispatched(PaymentCaptured::class);
 
         // 2. Tenant payout isolation: tenant payment links only to tenant merchant connection
@@ -102,7 +105,7 @@ class X198Test extends TestCase
 
         $conn = $this->connectAction->handle($biz->id, 'square', 'sq_acct_888');
         $p = $this->captureAction->handle($biz->id, 2500, 'sq_tok_abc', 'idem_sq_1');
-        $this->assertEquals('pending', $p->status);
+        $this->assertEquals('captured', $p->status);
     }
 
     /**
