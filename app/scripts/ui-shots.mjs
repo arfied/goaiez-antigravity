@@ -7,9 +7,9 @@ import http from 'http';
 import net from 'net';
 
 
-const summaryLines = [];
 let onlyRegex = null;
 const onlyArg = process.argv.find(arg => arg.startsWith('--only='));
+const freshArg = process.argv.includes('--fresh');
 if (onlyArg) {
     onlyRegex = new RegExp(onlyArg.split('=')[1]);
 }
@@ -42,8 +42,6 @@ async function runAxe(page, name, outputDir) {
             counts[v.impact]++;
         }
     });
-    const summaryLine = `${name}  critical ${counts.critical}  serious ${counts.serious}  moderate ${counts.moderate}  minor ${counts.minor}`;
-    summaryLines.push(summaryLine);
 }
 
 function getFreePort() {
@@ -99,12 +97,72 @@ function waitForServer(url) {
         const page = await context.newPage();
         
         const outputDir = path.resolve('storage/app/ui-review');
-        if (!onlyRegex) {
-            if (fs.existsSync(outputDir)) {
-                fs.rmSync(outputDir, { recursive: true, force: true });
-            }
+        if (!fs.existsSync(outputDir)) {
             fs.mkdirSync(outputDir, { recursive: true });
-        } else if (fs.existsSync(outputDir)) {
+        }
+
+        const lockPath = path.join(outputDir, '.rig.lock');
+        try {
+            const fd = fs.openSync(lockPath, 'wx');
+            fs.writeSync(fd, JSON.stringify({ pid: process.pid, started: new Date().toISOString() }));
+            fs.closeSync(fd);
+        } catch (e) {
+            if (e.code === 'EEXIST') {
+                let lockContent;
+                try {
+                    lockContent = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+                } catch (err) {
+                    lockContent = { pid: -1, started: 'unknown' };
+                }
+                let holderAlive = false;
+                try {
+                    process.kill(lockContent.pid, 0);
+                    holderAlive = true;
+                } catch (err) {
+                    if (err.code === 'EPERM') {
+                        holderAlive = true;
+                    }
+                }
+                if (holderAlive) {
+                    console.error(`REFUSED: a rig run is already active (pid ${lockContent.pid}, started ${lockContent.started})`);
+                    process.exit(1);
+                } else {
+                    console.log(`stale lock from pid ${lockContent.pid}, taking it over`);
+                    fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, started: new Date().toISOString() }));
+                }
+            } else {
+                throw e;
+            }
+        }
+
+        const cleanupLock = () => {
+            if (fs.existsSync(lockPath)) {
+                try {
+                    const lockContent = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+                    if (lockContent.pid === process.pid) {
+                        fs.unlinkSync(lockPath);
+                    }
+                } catch (err) {}
+            }
+        };
+        process.on('exit', cleanupLock);
+
+        if (freshArg) {
+            const prevDir = outputDir + '.prev';
+            if (fs.existsSync(prevDir)) {
+                fs.renameSync(prevDir, prevDir + '.' + Date.now());
+            }
+            fs.renameSync(outputDir, prevDir);
+            fs.mkdirSync(outputDir, { recursive: true });
+            fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, started: new Date().toISOString() }));
+        }
+
+        let fileCountBefore = 0;
+        if (fs.existsSync(outputDir)) {
+            fileCountBefore = fs.readdirSync(outputDir).filter(f => f.endsWith('.png')).length;
+        }
+
+        if (onlyRegex && fs.existsSync(outputDir)) {
             const files = fs.readdirSync(outputDir);
             for (const file of files) {
                 if (file.endsWith('.png') || file.endsWith('.html')) {
@@ -126,8 +184,6 @@ function waitForServer(url) {
                     }
                 }
             }
-        } else {
-            fs.mkdirSync(outputDir, { recursive: true });
         }
         
         // Unauthenticated screens
@@ -730,7 +786,29 @@ function waitForServer(url) {
         await lightBrowser.close();
 
 
-        fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
+        const axeDir = path.join(outputDir, 'axe');
+        if (fs.existsSync(axeDir)) {
+            const axeFiles = fs.readdirSync(axeDir).filter(f => f.endsWith('.json'));
+            const newSummaryLines = [];
+            for (const file of axeFiles) {
+                const name = file.replace(/\.json$/, "");
+                const content = JSON.parse(fs.readFileSync(path.join(axeDir, file), 'utf8'));
+                const counts = { critical: 0, serious: 0, moderate: 0, minor: 0 };
+                content.forEach(v => {
+                    if (counts[v.impact] !== undefined) {
+                        counts[v.impact]++;
+                    }
+                });
+                newSummaryLines.push(`${name}  critical ${counts.critical}  serious ${counts.serious}  moderate ${counts.moderate}  minor ${counts.minor}`);
+            }
+            newSummaryLines.sort();
+            fs.writeFileSync(path.join(axeDir, 'SUMMARY.txt'), newSummaryLines.join('\n') + '\n');
+        }
+
+        if (!freshArg) {
+            const fileCountAfter = fs.readdirSync(outputDir).filter(f => f.endsWith('.png')).length;
+            console.log(`File count before: ${fileCountBefore}, after: ${fileCountAfter}`);
+        }
     } finally {
         console.log("Stopping server...");
         serverProcess.kill();
