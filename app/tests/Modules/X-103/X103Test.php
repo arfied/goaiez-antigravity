@@ -130,7 +130,15 @@ class X103Test extends TestCase
         $res = $this->publishAction->handle($biz->id, $page->id, []);
 
         $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
-        $this->assertFalse(array_key_exists('review_widget', $version->getAttributes()));
+        $this->assertIsArray($version->content_blocks);
+        $hasReviewWidget = false;
+        foreach ($version->content_blocks as $block) {
+            if (isset($block['type']) && in_array($block['type'], ['review_widget', 'review-widget'], true)) {
+                $hasReviewWidget = true;
+                break;
+            }
+        }
+        $this->assertFalse($hasReviewWidget);
     }
 
     /** (R245) */
