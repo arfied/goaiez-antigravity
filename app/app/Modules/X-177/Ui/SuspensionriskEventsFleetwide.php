@@ -9,6 +9,7 @@ use App\Modules\X177\Models\GbpConnection;
 use App\Modules\X177\Models\GbpPost;
 use App\Modules\X177\Models\GbpStateLog;
 use App\Support\Tenancy;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -74,7 +75,7 @@ class SuspensionriskEventsFleetwide extends Component
                         'status' => (string) $post->status,
                         'label' => (string) ($conn ? ($conn->external_label ?? $conn->location_id) : 'Unknown'),
                         'content' => Str::limit((string) $post->content, 80),
-                        'created_at' => \Illuminate\Support\Carbon::parse($post->created_at),
+                        'created_at' => Carbon::parse($post->created_at),
                         'connection_id' => (int) $post->connection_id,
                     ];
                 });
@@ -92,7 +93,7 @@ class SuspensionriskEventsFleetwide extends Component
                         'status' => 'suspended',
                         'label' => (string) ($conn ? ($conn->external_label ?? $conn->location_id) : 'Unknown'),
                         'content' => "$old → $new",
-                        'created_at' => \Illuminate\Support\Carbon::parse($log->created_at),
+                        'created_at' => Carbon::parse($log->created_at),
                         'connection_id' => (int) $log->connection_id,
                     ];
                 });
