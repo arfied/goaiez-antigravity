@@ -2,7 +2,7 @@
     <h1>Overdue, by reason</h1>
 
     @if($error)
-        <x-ui.error-panel heading="We couldn't log that payment" retry="">
+        <x-ui.error-panel heading="We couldn't log that payment">
             {{ $error }}
         </x-ui.error-panel>
     @endif

@@ -33,9 +33,15 @@ class AgeingByReason extends Component
             return;
         }
 
+        $amount = (int) ($this->amountCents[$invoiceId] ?? 0);
+        if ($amount <= 0) {
+            $this->error = 'Enter the amount that was paid.';
+
+            return;
+        }
+
         try {
             $ref = $this->reference[$invoiceId];
-            $amount = (int) ($this->amountCents[$invoiceId] ?? 0);
 
             Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
 

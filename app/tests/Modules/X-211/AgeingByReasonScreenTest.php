@@ -79,7 +79,7 @@ class AgeingByReasonScreenTest extends TestCase
             'reason' => 'Customer promised to pay',
         ]);
 
-        Livewire::actingAs($owner)->test(AgeingByReason::class)
+        $screen = Livewire::actingAs($owner)->test(AgeingByReason::class)
             ->assertOk()
             ->assertSee('Customer promised to pay')
             ->assertSee('INV-A1')
@@ -91,7 +91,12 @@ class AgeingByReasonScreenTest extends TestCase
             ->call('logPayment', $inv1->id)
             ->assertSee('reference number or a photo')
             ->set('reference.'.$inv1->id, 'CHK-123')
-            ->set('amountCents.'.$inv1->id, 10000)
+            ->call('logPayment', $inv1->id)
+            ->assertSee('Enter the amount that was paid');
+
+        $this->assertSame(0, OfflinePayment::where('business_id', $biz->id)->count());
+
+        $screen->set('amountCents.'.$inv1->id, 10000)
             ->call('logPayment', $inv1->id)
             ->assertSee('Payment logged')
             ->assertDontSee('INV-A1');
