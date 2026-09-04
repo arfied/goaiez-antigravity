@@ -769,3 +769,4 @@
 - `2026-09-04T14:48:31` note: C-Reviews loss-alert CSAT rule is csat_score < 7, the same threshold QaReport uses; the 2026-09-04T14:29:46 decided line's '< 3' misstated it
 - `2026-09-04T15:09:31` (R245) X-181 — Resolution screen reopen = status open, resolved_at null, notes kept, SLA restarted 24h from reopen; emits nothing (manifest declares ticket.created and ticket.resolved only)
 - `2026-09-04T15:13:42` (R245) X-177 — Suspension-risk events screen reads the current tenant under RLS; a cross-tenant fleet view needs a platform-scoped read that does not exist (same shape as the businesses-policy refusal); listed UNRESOLVED, not faked
+- `2026-09-04T16:42:57` (R245) X-150 — Provider cost screen: operator marks a provider cold/warm through ProviderColdAction; writes is_active only, emits nothing (manifest declares no roster event); the autopilot's own cold-marking is unchanged
