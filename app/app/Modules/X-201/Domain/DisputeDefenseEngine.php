@@ -68,15 +68,15 @@ final class DisputeDefenseEngine
     public function submit(int $businessId, int $disputeId): Dispute
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
-        
+
         $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
-        
+
         if ($dispute->reason === 'fraudulent') {
             $required = ['call_log', 'transcript', 'delivery_receipt', 'consent_record'];
             $missing = array_diff($required, $types);
-            
-            if (!empty($missing)) {
-                throw new \Exception('missing: ' . implode(', ', $missing));
+
+            if (! empty($missing)) {
+                throw new \Exception('missing: '.implode(', ', $missing));
             }
         }
 
@@ -90,7 +90,7 @@ final class DisputeDefenseEngine
      */
     public function recordOutcome(int $businessId, int $disputeId, string $outcome, ?string $lostReason = null): array
     {
-        if (!in_array($outcome, ['won', 'lost', 'defended', 'conceded'])) {
+        if (! in_array($outcome, ['won', 'lost', 'defended', 'conceded'])) {
             throw new \Exception('Invalid outcome');
         }
 

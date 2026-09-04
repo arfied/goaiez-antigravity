@@ -34,7 +34,7 @@ final class SiteEngine
                         break;
                     }
                 }
-                if (!$found) {
+                if (! $found) {
                     $contentBlocks[] = ['type' => $type];
                 }
             }

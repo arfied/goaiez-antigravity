@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews;
 
+use App\Modules\CReviews\Listeners\RequestReviewOnJobCompleted;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\QaReport;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\CReviews\Ui\Tickets;
+use App\Modules\X171\Events\JobCompleted;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -20,9 +23,9 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Event::listen(
-            \App\Modules\X171\Events\JobCompleted::class,
-            \App\Modules\CReviews\Listeners\RequestReviewOnJobCompleted::class
+        Event::listen(
+            JobCompleted::class,
+            RequestReviewOnJobCompleted::class
         );
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'c-reviews');

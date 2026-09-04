@@ -180,13 +180,11 @@ final class AgencyEngine
         return true;
     }
 
-
     public function enforceG409SubtenantScope(): bool
     {
         // Physical enforcement stub
         return true;
     }
-
 
     public function enforceG422ClientZeroPasswordResults(): bool
     {
@@ -194,13 +192,11 @@ final class AgencyEngine
         return true;
     }
 
-
     public function enforceHeaderCapabilities(): bool
     {
         // Physical enforcement stub
         return true;
     }
-
 
     public function enforceG713TaskVisibility(): bool
     {
@@ -208,13 +204,11 @@ final class AgencyEngine
         return true;
     }
 
-
     public function enforceG719LoomOnDashboard(): bool
     {
         // Physical enforcement stub
         return true;
     }
-
 
     public function enforceG730GrossMargin(): bool
     {
@@ -222,13 +216,11 @@ final class AgencyEngine
         return true;
     }
 
-
     public function enforceG731Rates(): bool
     {
         // Physical enforcement stub
         return true;
     }
-
 
     public function enforceG932ClientHealth(): bool
     {
@@ -236,13 +228,11 @@ final class AgencyEngine
         return true;
     }
 
-
     public function enforceG1610AgencyAnnouncements(): bool
     {
         // Physical enforcement stub
         return true;
     }
-
 
     public function enforceG1921AccountManagerNotification(): bool
     {
@@ -250,11 +240,8 @@ final class AgencyEngine
         return true;
     }
 
-
     public function enforceG243ClientSeesAgencyPriceOnly(): bool
     {
         return true;
     }
-
-
 }

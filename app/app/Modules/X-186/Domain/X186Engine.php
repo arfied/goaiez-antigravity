@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\X186\Domain;
@@ -22,7 +23,7 @@ final class X186Engine
 
     public function validateScrubbing(bool $isScrubbed): void
     {
-        if (!$isScrubbed) {
+        if (! $isScrubbed) {
             throw new \DomainException('REFUSES: to send without scrubbing against a fresh suppression list [G10-25]');
         }
     }

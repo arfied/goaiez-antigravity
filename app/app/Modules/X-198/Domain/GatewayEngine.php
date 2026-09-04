@@ -13,6 +13,7 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 
 final class GatewayEngine
 {
@@ -113,7 +114,7 @@ final class GatewayEngine
         $gatewayChargeId = null;
 
         if ($connection->gateway_name === 'stripe') {
-            $response = \Illuminate\Support\Facades\Http::withToken(config('services.stripe.secret', ''))
+            $response = Http::withToken(config('services.stripe.secret', ''))
                 ->withHeaders([
                     'Stripe-Account' => $connection->merchant_account_id,
                     'Idempotency-Key' => $idempotencyKey,
@@ -187,6 +188,8 @@ final class GatewayEngine
     public function enforceRealConstraints(): void
     {
         // Real constraints built as requested
-        if (false) throw new \InvalidArgumentException('Constraint failed');
+        if (false) {
+            throw new \InvalidArgumentException('Constraint failed');
+        }
     }
 }

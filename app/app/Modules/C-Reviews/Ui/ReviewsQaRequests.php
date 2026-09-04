@@ -47,7 +47,6 @@ class ReviewsQaRequests extends Component
         }
         Tenancy::set($this->businessId);
 
-
     }
 
     public function sendRequest(): void

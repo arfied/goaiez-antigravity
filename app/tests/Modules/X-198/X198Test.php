@@ -17,6 +17,7 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X198Test extends TestCase
@@ -34,8 +35,8 @@ class X198Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        \Illuminate\Support\Facades\Http::fake([
-            'api.stripe.com/*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_fake_123'], 200),
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_fake_123'], 200),
         ]);
         $this->engine = new GatewayEngine;
         $this->connectAction = new MerchantConnectAction($this->engine);

@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class CheckDeadlinesCommand extends Command
 {
     protected $signature = 'disputes:check-deadlines';
+
     protected $description = 'Raise disputes to human if deadline is within 48 hours';
 
     public function handle()
@@ -28,7 +29,7 @@ class CheckDeadlinesCommand extends Command
                 ->where('action', 'raised_to_human')
                 ->exists();
 
-            if (!$exists) {
+            if (! $exists) {
                 DB::table('dispute_audits')->insert([
                     'business_id' => $dispute->business_id,
                     'dispute_id' => $dispute->id,
@@ -36,7 +37,7 @@ class CheckDeadlinesCommand extends Command
                     'created_at' => $now,
                     'updated_at' => $now,
                 ]);
-                
+
                 DB::table('disputes')->where('id', $dispute->id)->update(['status' => 'raised']);
             }
         }

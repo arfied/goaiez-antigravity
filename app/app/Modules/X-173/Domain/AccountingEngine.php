@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Modules\X173\Domain;
@@ -19,7 +20,7 @@ final class AccountingEngine
     {
         return [
             'hours' => $hours,
-            'commission' => $commission
+            'commission' => $commission,
         ];
     }
 

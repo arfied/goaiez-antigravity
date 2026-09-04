@@ -14,14 +14,17 @@ use Tests\TestCase;
 class N007Test extends TestCase
 {
     private DisputeDefenseEngine $engine;
+
     private DisputeRecordAction $recordAction;
+
     private DisputeCompileAction $compileAction;
+
     private DisputeSubmitAction $submitAction;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->engine = new DisputeDefenseEngine();
+        $this->engine = new DisputeDefenseEngine;
         $this->recordAction = new DisputeRecordAction($this->engine);
         $this->compileAction = new DisputeCompileAction($this->engine);
         $this->submitAction = new DisputeSubmitAction($this->engine);
@@ -45,7 +48,7 @@ class N007Test extends TestCase
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('missing');
-        
+
         $this->submitAction->handle($biz->id, $dispute->id);
     }
 }

@@ -154,13 +154,11 @@ final class PixelEngine
         return true;
     }
 
-
     public function enforceG1327TenantTags(): bool
     {
         // Physical enforcement stub
         return true;
     }
-
 
     public function enforceG1328RedirectHop(): bool
     {
@@ -168,11 +166,8 @@ final class PixelEngine
         return true;
     }
 
-
     public function enforceG902SingleDatabase(): bool
     {
         return true;
     }
-
-
 }

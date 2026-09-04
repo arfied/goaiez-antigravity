@@ -13,8 +13,11 @@ use App\Modules\CReviews\Events\ReplyPublished;
 use App\Modules\CReviews\Events\ReviewReceived;
 use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewReply;
+use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CReviewsTest extends TestCase
@@ -283,14 +286,15 @@ class CReviewsTest extends TestCase
     {
         $this->assertTrue(true);
     }
+
     public function test_no_fake_rows_written_on_mount(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \Livewire\Livewire::test(\App\Modules\CReviews\Ui\ReviewsQaRequests::class)
+        Livewire::test(ReviewsQaRequests::class)
             ->assertOk();
 
-        $this->assertEquals(0, \App\Modules\CReviews\Models\ReviewRequest::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, ReviewRequest::where('business_id', $biz->id)->count());
     }
 }
