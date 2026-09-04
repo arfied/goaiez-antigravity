@@ -13,6 +13,7 @@ use App\Modules\X194\Events\ViewRendered;
 use App\Modules\X194\Events\ViewSaved;
 use App\Modules\X194\Models\SavedView;
 use App\Modules\X194\Models\ViewSchedule;
+use App\Modules\X194\Ui\AnyViewIt;
 use App\Modules\X194\Ui\SavedViewsList;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -186,12 +187,12 @@ class X194Test extends TestCase
         );
 
         // Test with null value
-        Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+        Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
             'viewId' => $view->id,
             'locationTimezone' => 'America/Denver',
             'jobValue' => null,
-            'jobCount' => 7
+            'jobCount' => 7,
         ])
             ->call('load')
             ->assertSee('Job View Alpha')
@@ -200,12 +201,12 @@ class X194Test extends TestCase
             ->assertSee('--');
 
         // Test with real value
-        Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+        Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
             'viewId' => $view->id,
             'locationTimezone' => 'America/New_York',
             'jobValue' => 1500.50,
-            'jobCount' => 3
+            'jobCount' => 3,
         ])
             ->call('load')
             ->assertSee('Job View Alpha')
@@ -223,7 +224,7 @@ class X194Test extends TestCase
         // Wait, ViewRenderAction uses findOrFail so it throws, and our try/catch sets errorMessage!
         // So empty state ($viewData null AND no errorMessage) only happens if we don't pass businessId/viewId or if ready is false
         // Wait, if ready is true but businessId is 0, it doesn't call action and viewData is null.
-        Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+        Livewire::test(AnyViewIt::class, [
             'businessId' => 0,
             'viewId' => 0,
         ])
@@ -237,11 +238,11 @@ class X194Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'View Error Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $component = Livewire::test(\App\Modules\X194\Ui\AnyViewIt::class, [
+        $component = Livewire::test(AnyViewIt::class, [
             'businessId' => $biz->id,
             'viewId' => 9999, // Non-existent view will throw ModelNotFoundException
         ]);
-        
+
         $component->call('load')
             ->assertSee('We could not render your view.')
             ->assertSee('We could not render your view.'); // The heading and the slot
