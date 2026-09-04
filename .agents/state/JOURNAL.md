@@ -759,3 +759,6 @@
 - `2026-09-03T22:14:14` selftest: sound
 - `2026-09-04T02:05:53` UNRESOLVED tests X-193 - column quiet_hours_start is missing from notification_classes and not named in the brief
 - `2026-09-04T02:05:53` UNRESOLVED tests X-201 - column deadline_at is missing from disputes and not named in the brief
+- `2026-09-04T07:25:37` (R245) C-Reviews — One JobCompleted listener: AskForReviewOnJobCompleted; cadence lives in ReviewRequestAction. main's RequestReviewOnJobCompleted (0583871) removed on merge. Owner go 2026-09-04T12:17Z, OWNER.md.
+- `2026-09-04T07:25:37` note: C-Reviews X-121 UNRESOLVED (2026-09-02T17:06) closed: work_orders.person_id ac89b6a and JobCompleted.personId b9701c4 are on main; JobStateAction reads the column onto the event.
+- `2026-09-04T07:25:37` note: C-Reviews J10 sixty-dependency closed: origin/main 0583871 implements tenantWithLiveNumber, personWithPendingSteps, completeJob, reviewInvitesFor. Review-platform access still ungranted: real send stays UNRESOLVED (ruling 13).
