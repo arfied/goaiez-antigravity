@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T16:15:01",
+ "updated": "2026-09-04T16:26:13",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -854,10 +854,17 @@
    ]
   },
   "X-166": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-166",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-166 margin_by_job, by_tech and by_service waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T16:26:13"
+    }
+   ]
   },
   "X-167": {
    "status": "DONE",
@@ -1388,6 +1395,12 @@
    "stage": "surface",
    "why": "GET\u2192assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout",
    "at": "2026-09-04T16:15:01"
+  },
+  {
+   "module": "X-166",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-166 margin_by_job, by_tech and by_service waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T16:26:13"
   }
  ],
  "notes": [
@@ -1561,6 +1574,24 @@
    "module": "X-168",
    "chose": "a week whose period_end has passed is closed and waits for approval; the close is the rule, not a status write (R235) (R245)",
    "at": "2026-09-04T16:13:51",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-166",
+   "chose": "add is_sample to job_costs (R245)",
+   "at": "2026-09-04T16:26:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-166",
+   "chose": "job_costs.tech_id is the technician's users.id, the id X-168 records as person_id; names resolve from users in one query (R245)",
+   "at": "2026-09-04T16:26:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-166",
+   "chose": "the margin pill turns attention below 20.0 %, the threshold JobCostAction already alerts on; one number, two readers (R245)",
+   "at": "2026-09-04T16:26:13",
    "ruling": "R245"
   }
  ]

@@ -530,3 +530,7 @@
 - `2026-09-04T16:13:51` (R245) X-168 — a week whose period_end has passed is closed and waits for approval; the close is the rule, not a status write (R235) (R245)
 - `2026-09-04T16:15:01` UNRESOLVED surface X-165 - GET→assertOk for X-165 plans and members waits on Track 1 surfaces:generate (run 67); no route in this checkout
 - `2026-09-04T16:15:01` UNRESOLVED surface X-82 - GET→assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T16:26:06` (R245) X-166 — add is_sample to job_costs (R245)
+- `2026-09-04T16:26:13` (R245) X-166 — job_costs.tech_id is the technician's users.id, the id X-168 records as person_id; names resolve from users in one query (R245)
+- `2026-09-04T16:26:13` (R245) X-166 — the margin pill turns attention below 20.0 %, the threshold JobCostAction already alerts on; one number, two readers (R245)
+- `2026-09-04T16:26:13` UNRESOLVED surface X-166 - GET→assertOk for X-166 margin_by_job, by_tech and by_service waits on Track 1 surfaces:generate (run 67); no route in this checkout
