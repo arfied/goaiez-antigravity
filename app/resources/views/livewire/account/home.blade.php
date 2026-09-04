@@ -16,7 +16,7 @@
     <!-- Today: what needs you -->
     @livewire('x-124.todays-recommendation-strip', ['businessId' => \App\Support\Tenancy::id()])
     @livewire('x-110.today', ['businessId' => \App\Support\Tenancy::id()])
-    @livewire('x-110.today', ['businessId' => \App\Support\Tenancy::id()])
+    @livewire('x-199.money-paid-today', ['businessId' => \App\Support\Tenancy::id()])
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
