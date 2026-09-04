@@ -16,6 +16,12 @@ class MoneyPaidToday extends Component
     #[Locked]
     public int $businessId = 0;
 
+    #[\Livewire\Attributes\Locked]
+    public bool $isSample = false;
+
+    #[\Livewire\Attributes\Locked]
+    public ?string $loadError = null;
+
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId;
