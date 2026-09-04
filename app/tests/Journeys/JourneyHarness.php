@@ -329,14 +329,15 @@ trait JourneyHarness
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
+        $hash = \App\Support\Identifier::hash($person['phone'], \App\Enums\OutreachChannel::Sms);
         $inbound = DB::table('inbound_messages')
-            ->where('from_number', $person['phone_number'])
-            ->where('text', $marker)
+            ->where('value_hash', $hash)
+            ->where('keyword', strtolower($marker))
             ->orderBy('received_at', 'desc')
             ->first();
 
         if (!$inbound) {
-            throw new \RuntimeException("No inbound message found for {$person['phone_number']} with text {$marker}");
+            throw new \RuntimeException("No inbound message found for {$person['phone']} with text {$marker}");
         }
 
         return DB::table('outreach_messages')
