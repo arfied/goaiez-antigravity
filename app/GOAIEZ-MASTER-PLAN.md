@@ -548,7 +548,7 @@ because the plan is where every owner ruling has landed.
 ### D · SENDING
 | ID | Law | Source · supersedes |
 | :--- | :--- | :--- |
-| **P-060** | **R70 — the sending law: `SendRefusalReason`'s 20 cases are the ENTIRE set; a gate not named there does not exist; `platformFloorRefusal()` fails closed** | R70 |
+| **P-060** | **R70 — the sending law: `SendRefusalReason`'s 20 cases are the ENTIRE set; a gate not named there does not exist; `platformFloorRefusal()` fails closed** | R70 | — 2026-09-04 amendment: 21 cases since e737094 (MessageTooLong); the law stands, the count moved.
 | **P-061** | **Transactional is blocked by nothing but STOP; responses run 24/7 (R23); the missed-call text-back fires on the RING (R80)** | R70 · R23 · R80 |
 | **P-062** | **Four notification classes — marketing · transactional · conversational · account — decided from the CALLER, never the content (X-193); `account` bypasses everything; account/billing mail cannot be switched off** | §125.8 · §17.1 |
 | **P-063** | **Quiet hours apply to MARKETING class only** — the window is data *(the federal floor per R70; state overlays as data — the plan builds the switch, not the rule, Law 122)*; web chat, missed-call, client alerts and internal alerts never wait | §137 · R70 · §102.1 · §126.5 |
