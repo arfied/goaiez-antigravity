@@ -137,10 +137,8 @@ class CReviewsScreensTest extends TestCase
         app(QaTicketAction::class)->handle($this->bizId, $req2star->id);
 
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])
-            ->assertSee('3') // reviews received
-            ->assertSeeHtml('<div wire:click="selectDrilldown(\'internal_qa\')" data-tile="internal_qa"')
-            ->assertSeeHtml('Triaged Internal</div>
-                <div class="text-3xl font-bold text-white">2</div>'); // internal
+            ->assertSeeHtml('data-tile="internal_qa" data-value="2"')
+            ->assertSeeHtml('data-tile="reviews_received" data-value="3"');
     }
 
     public function test_qa_report_screen_breached(): void
@@ -154,7 +152,16 @@ class CReviewsScreensTest extends TestCase
         $ticket->update(['sla_due_at' => Carbon::now()->subHours(2)]);
 
         Livewire::test(QaReport::class, ['businessId' => $this->bizId])
-            ->assertSeeHtml('<div class="text-3xl font-bold text-rose-500">1</div>');
+            ->assertSeeHtml('data-tile="breached_tickets" data-value="1"');
+    }
+
+    public function test_qa_report_sample_state(): void
+    {
+        Livewire::test(QaReport::class, ['businessId' => $this->bizId])
+            ->call('toggleSample')
+            ->assertOk()
+            ->assertSeeHtml('data-tile="breached_tickets" data-value="1"')
+            ->assertSeeHtml('data-tile="open_tickets_sla" data-value="3"');
     }
 
     public function test_tickets_screen_mount(): void
