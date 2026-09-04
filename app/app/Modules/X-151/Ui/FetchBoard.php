@@ -111,7 +111,7 @@ class FetchBoard extends Component
         }
 
         if ($this->tab === 'queued') {
-            $fetches = $this->isSample ? $fetches->filter(fn($f) => in_array($f->status, ['queued', 'queued_ceiling_held'])) : $fetches->whereIn('status', ['queued', 'queued_ceiling_held']);
+            $fetches = $this->isSample ? $fetches->filter(fn ($f) => in_array($f->status, ['queued', 'queued_ceiling_held'])) : $fetches->whereIn('status', ['queued', 'queued_ceiling_held']);
         } elseif ($this->tab === 'blocked') {
             $fetches = $this->isSample ? $fetches->where('status', 'skipped_captcha') : $fetches->where('status', 'skipped_captcha');
         } elseif ($this->tab === 'stale') {

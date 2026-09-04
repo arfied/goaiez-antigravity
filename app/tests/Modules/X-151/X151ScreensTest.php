@@ -14,7 +14,6 @@ use Tests\TestCase;
 
 class X151ScreensTest extends TestCase
 {
-
     protected int $businessId;
 
     protected function setUp(): void

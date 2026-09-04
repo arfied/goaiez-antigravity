@@ -58,7 +58,7 @@ class X156ScreensTest extends TestCase
     public function test_connect_source_last_run_and_pause(): void
     {
         $source = app(IngestConnectAction::class)->connect($this->businessId, 'hubspot', 'HubSpot CRM');
-        
+
         app(IngestUploadAction::class)->upload(
             $this->businessId,
             $source->id,

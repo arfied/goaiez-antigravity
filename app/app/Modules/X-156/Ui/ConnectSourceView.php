@@ -23,6 +23,7 @@ class ConnectSourceView extends Component
     public ?string $actionNotice = null;
 
     public string $sourceType = 'hubspot';
+
     public string $sourceName = '';
 
     public function mount(): void
@@ -58,7 +59,7 @@ class ConnectSourceView extends Component
 
         try {
             app(IngestConnectAction::class)->connect($this->businessId, $this->sourceType, $this->sourceName);
-            $this->actionNotice = 'Connected ' . $this->sourceName;
+            $this->actionNotice = 'Connected '.$this->sourceName;
             $this->sourceName = '';
         } catch (\Exception $e) {
             $this->actionNotice = $e->getMessage();
@@ -125,7 +126,7 @@ class ConnectSourceView extends Component
                     ->where('source_id', $s->id)
                     ->latest('id')
                     ->first();
-                
+
                 $rejections = IngestRejection::where('business_id', $this->businessId)
                     ->where('source_id', $s->id)
                     ->count();

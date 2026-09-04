@@ -15,6 +15,7 @@ use Tests\TestCase;
 class X150ScreensTest extends TestCase
 {
     protected int $businessId;
+
     private ProviderFetchAction $fetchAction;
 
     protected function setUp(): void
@@ -25,7 +26,7 @@ class X150ScreensTest extends TestCase
 
         ProviderAttempt::where('business_id', $this->businessId)->delete();
         ProviderRoster::where('business_id', $this->businessId)->delete();
-        
+
         $this->fetchAction = new ProviderFetchAction;
     }
 
