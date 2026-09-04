@@ -7,8 +7,8 @@ namespace Tests\Modules\X163;
 use App\Models\User;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\ConfirmationScreen;
-use Livewire\Livewire;
 use App\Support\Tenancy;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ConfirmationScreenTest extends TestCase
