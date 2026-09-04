@@ -9,9 +9,8 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\Invoices;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use App\Support\Tenancy;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class InvoicesScreenTest extends TestCase
@@ -20,7 +19,7 @@ class InvoicesScreenTest extends TestCase
     {
         $biz = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);
-        
+
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
@@ -33,17 +32,17 @@ class InvoicesScreenTest extends TestCase
         $engine = app(InvoiceEngine::class);
 
         $res1 = $engine->issueInvoice($biz->id, $customer->id, [
-            ['description' => 'Item 1', 'quantity' => 1, 'unit_price_cents' => 10000]
+            ['description' => 'Item 1', 'quantity' => 1, 'unit_price_cents' => 10000],
         ]);
         $inv1 = $res1['invoice'];
-        
+
         // Ensure they have different created_at
         $inv1->update(['created_at' => now()->subHour()]);
 
         $engine->recordPayment($biz->id, $inv1->id, 10000);
 
         $res2 = $engine->issueInvoice($biz->id, $customer->id, [
-            ['description' => 'Item 2', 'quantity' => 2, 'unit_price_cents' => 5000]
+            ['description' => 'Item 2', 'quantity' => 2, 'unit_price_cents' => 5000],
         ]);
         $inv2 = $res2['invoice'];
 

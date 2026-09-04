@@ -7,18 +7,17 @@ namespace Tests\Modules\X199;
 use App\Models\User;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X199\Ui\Declines;
-use Livewire\Livewire;
 use App\Support\Tenancy;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class DeclinesScreenTest extends TestCase
 {
-
     public function test_declines_screen(): void
     {
         $biz = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);
-        
+
         $otherBiz = self::provisionTenant();
 
         Tenancy::set($biz->id);

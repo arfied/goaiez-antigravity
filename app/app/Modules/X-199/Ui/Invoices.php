@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X199\Ui;
 
+use App\Modules\X121\Models\Person;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
@@ -35,7 +36,7 @@ class Invoices extends Component
         $invoices = Invoice::where('business_id', Tenancy::idOrFail())
             ->orderByDesc('created_at')
             ->get();
-            
+
         $invoiceIds = $invoices->pluck('id')->toArray();
         $lines = InvoiceLine::where('business_id', Tenancy::idOrFail())
             ->whereIn('invoice_id', $invoiceIds)
@@ -43,9 +44,9 @@ class Invoices extends Component
             ->groupBy('invoice_id');
 
         foreach ($invoices as $invoice) {
-            $person = \App\Modules\X121\Models\Person::where('business_id', Tenancy::idOrFail())
+            $person = Person::where('business_id', Tenancy::idOrFail())
                 ->find($invoice->customer_id);
-            $invoice->customer_name = $person ? trim($person->first_name . ' ' . $person->last_name) : 'Unknown';
+            $invoice->customer_name = $person ? trim($person->first_name.' '.$person->last_name) : 'Unknown';
             $invoice->lines = $lines->get($invoice->id, collect());
         }
 

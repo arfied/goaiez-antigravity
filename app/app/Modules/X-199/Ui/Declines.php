@@ -6,8 +6,8 @@ namespace App\Modules\X199\Ui;
 
 use App\Modules\X198\Actions\PaymentLinkAction;
 use App\Modules\X198\Models\Payment;
-use Livewire\Component;
 use App\Support\Tenancy;
+use Livewire\Component;
 
 class Declines extends Component
 {
