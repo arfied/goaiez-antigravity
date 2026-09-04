@@ -14,7 +14,7 @@ class ManualQueueScreenTest extends TestCase
 {
     public function test_screen_renders_for_admin(): void
     {
-        $user = User::factory()->create(['role' => UserRole::SuperAdmin]);
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
 
         $this->get(route('x-109.manual-queue.admin'))->assertOk();

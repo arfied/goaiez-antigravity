@@ -217,9 +217,10 @@ class SurfacesGenerateCommand extends Command
                         }
                     }
 
+                    $navRoute = $surf === 'operator' ? "$alias.admin" : $alias;
                     $allNavGroups[$surf][$navGroup][] = [
                         'label' => $humanName,
-                        'route' => $alias,
+                        'route' => $navRoute,
                         'module' => $modId,
                     ];
                 }
@@ -340,7 +341,7 @@ class SurfacesGenerateCommand extends Command
                 $content .= "\n";
             }
             $content .= "    public function test_screen_renders_for_admin(): void\n    {\n";
-            $content .= "        \$user = User::factory()->create(['role' => UserRole::SuperAdmin]);\n";
+            $content .= "        \$user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);\n";
             $content .= "        \$this->actingAs(\$user);\n";
             $content .= "\n        \$this->get(route('$alias.admin'))->assertOk();\n";
             $content .= "\n        Livewire::test({$className}::class)->assertOk();\n";

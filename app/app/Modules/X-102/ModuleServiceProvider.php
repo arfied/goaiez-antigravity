@@ -8,7 +8,6 @@ use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X102\Ui\OfflineFormInbox;
 use App\Modules\X102\Ui\RageclickRate;
 use App\Modules\X102\Ui\Thread;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 

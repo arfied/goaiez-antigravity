@@ -7,7 +7,6 @@ namespace App\Modules\X142;
 use App\Modules\X142\Ui\ConnectYourAi;
 use App\Modules\X142\Ui\McpTokenRegistry;
 use App\Modules\X142\Ui\WebhooksView;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 

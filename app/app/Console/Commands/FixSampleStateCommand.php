@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 class FixSampleStateCommand extends Command
 {
     protected $signature = 'surfaces:fix-sample-state';
+
     protected $description = 'Move sample-state banner inside the root element';
 
     public function handle()
@@ -19,6 +20,7 @@ class FixSampleStateCommand extends Command
                 file_put_contents($file, $content);
             }
         }
+
         return 0;
     }
 }

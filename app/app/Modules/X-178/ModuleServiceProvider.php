@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X178;
 
 use App\Modules\X178\Ui\SiteEditorAssistant;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
