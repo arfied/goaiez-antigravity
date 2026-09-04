@@ -110,6 +110,4 @@ class X198Test extends TestCase
         $p = $this->captureAction->handle($biz->id, 2500, 'sq_tok_abc', 'idem_sq_1');
         $this->assertEquals('pending', $p->status);
     }
-
-    }
 }

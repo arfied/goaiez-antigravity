@@ -221,6 +221,4 @@ class X202Test extends TestCase
         $item = $this->enqueueAction->handle($biz->id, 'sms_blast', 'Flash Sale SMS', ['count' => 100]);
         $this->assertNotEmpty($item['magic_url']);
     }
-
-    }
 }

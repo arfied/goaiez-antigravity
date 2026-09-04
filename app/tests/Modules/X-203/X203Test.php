@@ -108,6 +108,4 @@ class X203Test extends TestCase
         $runRes = $this->runbookAction->handle($biz->id, $runbook->id);
         $this->assertEquals('completed', $runRes->status);
     }
-
-    }
 }
