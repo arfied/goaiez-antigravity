@@ -283,10 +283,8 @@ class SurfacesGenerateCommand extends Command
             $content .= "        \$user = User::factory()->create(['role' => UserRole::SuperAdmin]);\n";
             $content .= "        \$this->actingAs(\$user);\n";
         } else {
-            $content .= "        \$biz = \$this->provisionTenant();\n";
-            $content .= "        \$owner = User::where('business_id', \$biz->id)->first();\n";
-            $content .= "        \$owner->role = UserRole::Owner;\n";
-            $content .= "        \$owner->save();\n";
+            $content .= "        \$owner = User::factory()->create(['role' => UserRole::Owner]);\n";
+            $content .= "        \$biz = \$this->provisionTenant(['owner_user_id' => \$owner->id]);\n";
             $content .= "        \$this->actingAs(\$owner);\n";
         }
         

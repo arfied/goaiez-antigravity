@@ -11,10 +11,8 @@ class DocumentVaultScreenTest extends TestCase
 {
     public function test_screen_renders(): void
     {
-        $biz = $this->provisionTenant();
-        $owner = User::where('business_id', $biz->id)->first();
-        $owner->role = UserRole::Owner;
-        $owner->save();
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
         $this->get(route('x-113.document-vault'))->assertOk();
