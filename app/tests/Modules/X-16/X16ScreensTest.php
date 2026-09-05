@@ -98,4 +98,101 @@ class X16ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('Seeded Grid');
     }
+
+    public function test_servicearea_polygon_mount_and_empty(): void
+    {
+        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->assertOk()
+            ->assertSee('No polygons defined yet');
+    }
+
+    public function test_servicearea_polygon_sample_state(): void
+    {
+        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->call('toggleSample')
+            ->assertSee('Downtown Area')
+            ->assertSee('North Side')
+            ->set('name', 'New Sample')
+            ->set('pointsText', "1.1,2.2\n3.3,4.4\n5.5,6.6")
+            ->call('define')
+            ->call('toggle', 1);
+
+        $this->assertSame(0, \App\Modules\X16\Models\ServicePolygon::where('business_id', $this->businessId)->count());
+    }
+
+    public function test_servicearea_polygon_define_success(): void
+    {
+        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->set('name', 'South Side')
+            ->set('pointsText', "41.8, -87.6\n41.9, -87.6\n41.9, -87.5\n41.8, -87.5")
+            ->call('define')
+            ->assertSee('South Side');
+
+        $this->assertSame(1, \App\Modules\X16\Models\ServicePolygon::where('business_id', $this->businessId)->count());
+    }
+
+    public function test_servicearea_polygon_define_empty_name(): void
+    {
+        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->set('name', '')
+            ->set('pointsText', "41.8, -87.6\n41.9, -87.6\n41.9, -87.5")
+            ->call('define')
+            ->assertSee('Name cannot be empty');
+    }
+
+    public function test_servicearea_polygon_define_not_enough_points(): void
+    {
+        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->set('name', 'Two points')
+            ->set('pointsText', "41.8, -87.6\n41.9, -87.6")
+            ->call('define')
+            ->assertSee('Polygon requires at least 3 points.');
+    }
+
+    /**
+     * [G17-22] fence-refusal test
+     */
+    public function test_servicearea_polygon_define_fence_refusal(): void
+    {
+        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->set('name', 'Tiny Box')
+            ->set('pointsText', "41.8001, -87.6001\n41.8001, -87.6002\n41.8002, -87.6002\n41.8002, -87.6001")
+            ->call('define')
+            ->assertSee('a fence around one building is geo-fenced ad targeting');
+    }
+
+    public function test_servicearea_polygon_toggle_status(): void
+    {
+        $polygon = \App\Modules\X16\Models\ServicePolygon::create([
+            'business_id' => $this->businessId,
+            'polygon_name' => 'Toggle Box',
+            'coordinates' => [[41.8, -87.6], [41.9, -87.6], [41.9, -87.5]],
+            'is_active' => true,
+        ]);
+
+        Livewire::test(\App\Modules\X16\Ui\ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->assertSee('Toggle Box')
+            ->call('toggle', $polygon->id);
+
+        $this->assertFalse($polygon->fresh()->is_active);
+    }
+
+    public function test_servicearea_polygon_get_shows_seeded_polygon(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        \App\Modules\X16\Models\ServicePolygon::create([
+            'business_id' => $biz->id,
+            'polygon_name' => 'Seeded Polygon',
+            'coordinates' => [[41.8, -87.6], [41.9, -87.6], [41.9, -87.5]],
+            'is_active' => true,
+        ]);
+
+        $this->get(route('x-16.servicearea-polygon'))
+            ->assertOk()
+            ->assertSee('Seeded Polygon');
+    }
 }
