@@ -31,7 +31,10 @@
       "Bash(./vendor/bin/pint --test:*)",
       "Bash(git push origin:*)",
       "Bash(git commit:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(ps -p:*)",
+      "Bash(ps -o:*)",
+      "Bash(kill -0:*)"
     ],
     "deny": [
       "NotebookEdit",
