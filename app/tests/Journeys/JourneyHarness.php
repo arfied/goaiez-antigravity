@@ -13,9 +13,11 @@ use App\Modules\X103\Models\PageVersion;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X118\Ui\ProspectSignup;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
+use App\Modules\X162\Models\DispatchAssignment;
 use App\Modules\X171\Actions\JobStateAction;
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Domain\InvoiceEngine;
@@ -27,7 +29,6 @@ use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Symfony\Component\Process\Process;
@@ -582,14 +583,14 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @param array<string,mixed> $person */
     private function completeJob(array $tenant, array $person): void
     {
-        $roleId = \Illuminate\Support\Facades\DB::table('roles')->insertGetId([
+        $roleId = DB::table('roles')->insertGetId([
             'business_id' => $tenant['id'],
             'name' => 'technician',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        $tech = (new \App\Modules\X113\Actions\StaffInviteAction)->handle(
+        $tech = (new StaffInviteAction)->handle(
             $tenant['id'],
             'tech'.uniqid().'@example.com',
             'Tech',
@@ -604,7 +605,7 @@ trait JourneyHarness
             'status' => 'committed',
         ]);
 
-        \App\Modules\X162\Models\DispatchAssignment::create([
+        DispatchAssignment::create([
             'business_id' => $tenant['id'],
             'job_id' => $job->id,
             'tech_id' => $tech->id,
