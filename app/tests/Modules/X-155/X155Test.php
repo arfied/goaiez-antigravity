@@ -363,6 +363,14 @@ class X155Test extends TestCase
         $this->assertEquals(['first_name'], array_column($aged['fields'], 'name'));
         $this->assertEquals(['under_18_gate'], array_column($aged['refused'], 'reason'));
 
+        // a legitimate ask is not a regulated one because it contains 'age'
+        $msg = $gen->handle('their name and a message about the job');
+        $this->assertEquals([], $msg['refused']);
+        $this->assertEquals(['first_name', 'message'], array_column($msg['fields'], 'name'));
+
+        $still = $gen->handle('their name and their age');
+        $this->assertEquals(['under_18_gate'], array_column($still['refused'], 'reason'));
+
         Http::assertNothingSent();
 
         $biz = TestCase::provisionTenant(['name' => 'G5-07 Tenant']);

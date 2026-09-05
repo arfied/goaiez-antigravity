@@ -18,17 +18,26 @@ final class FormGenerateAction
             ['needles' => ['age', 'date of birth', 'birthday', 'how old'], 'reason' => 'under_18_gate'],
         ];
 
+        $hasNeedle = fn (string $haystack, string $needle): bool => (bool) preg_match(
+            '/(?<![a-z])'.preg_quote($needle, '/').'(?![a-z])/', $haystack
+        );
+
         foreach ($refusalGroups as $group) {
+            $groupMatched = false;
             foreach ($group['needles'] as $needle) {
-                if (str_contains($lowercased, $needle)) {
-                    $refused[] = ['ask' => $needle, 'reason' => $group['reason']];
+                if ($hasNeedle($lowercased, $needle)) {
+                    if (!$groupMatched) {
+                        $refused[] = ['ask' => $needle, 'reason' => $group['reason']];
+                        $groupMatched = true;
+                    }
                     $matchedNeedles[] = $needle;
-                    break;
                 }
             }
         }
 
-        $lowercased = str_replace($matchedNeedles, '', $lowercased);
+        foreach ($matchedNeedles as $needle) {
+            $lowercased = preg_replace('/(?<![a-z])'.preg_quote($needle, '/').'(?![a-z])/', '', $lowercased);
+        }
 
         $fields = [];
         $map = [
@@ -42,7 +51,7 @@ final class FormGenerateAction
 
         foreach ($map as $entry) {
             foreach ($entry['needles'] as $needle) {
-                if (str_contains($lowercased, $needle)) {
+                if ($hasNeedle($lowercased, $needle)) {
                     $fields[] = $entry['field'];
                     break;
                 }
