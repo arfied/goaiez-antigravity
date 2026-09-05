@@ -49,9 +49,9 @@ final class ArEngine
 
             // G1-71: a fee with no matching TERM in the agreement is refused — the term is the tenant's
             // ar_plan_terms row (P-193: a ROW, never a literal), null means the agreement names no late fee.
-            // The throw is before the first write.
-            $terms = ArPlanTerm::firstOrCreate(['business_id' => $businessId]);
-            if ($terms->late_fee_percent === null) {
+            // The row is READ here, never created: a refusal writes nothing (M29-C).
+            $terms = ArPlanTerm::where('business_id', $businessId)->first();
+            if ($terms === null || $terms->late_fee_percent === null) {
                 throw new FeeWithoutTermException(sprintf(
                     'No late-fee term in the agreement for %s: a fee with no matching term is refused. Nothing was applied.',
                     $invoice->invoice_number

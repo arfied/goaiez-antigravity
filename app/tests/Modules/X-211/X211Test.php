@@ -131,6 +131,7 @@ class X211Test extends TestCase
         }
 
         $this->assertSame(0, ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count(), 'a refused fee created the terms row');
         Event::assertNotDispatched(ArFeeApplied::class);
 
         // The term is a row: write one with no cap and the same call applies 5 % of the total, not the old $50 literal.
