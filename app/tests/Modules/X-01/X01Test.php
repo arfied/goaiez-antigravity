@@ -288,7 +288,34 @@ class X01Test extends TestCase
      */
     public function test_g11_23_omnichannel_spec(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Omni Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $smsRes = $this->manager->ingestMessage($biz->id, 'sms', '+15125550177', 'Omni Person', 'sms msg');
+        
+        $person = Person::where('business_id', $biz->id)->find($smsRes['person_id']);
+        $person->update(['email' => 'omni@example.com']);
+
+        $voiceRes = $this->manager->ingestMessage($biz->id, 'voice', '+15125550177', 'Omni Person', 'voice msg');
+        $chatRes = $this->manager->ingestMessage($biz->id, 'chat', '+15125550177', 'Omni Person', 'chat msg');
+        $emailRes = $this->manager->ingestMessage($biz->id, 'email', 'omni@example.com', 'Omni Person', 'email msg');
+
+        $this->assertEquals($smsRes['person_id'], $voiceRes['person_id'], 'voice channel broken');
+        $this->assertEquals($smsRes['person_id'], $chatRes['person_id'], 'chat channel broken');
+        $this->assertEquals($smsRes['person_id'], $emailRes['person_id'], 'email channel broken');
+
+        $this->assertEquals($smsRes['conversation_id'], $voiceRes['conversation_id']);
+        $this->assertEquals($smsRes['conversation_id'], $chatRes['conversation_id']);
+        $this->assertEquals($smsRes['conversation_id'], $emailRes['conversation_id']);
+
+        $count = Conversation::where('business_id', $biz->id)->where('person_id', $smsRes['person_id'])->count();
+        $this->assertEquals(1, $count);
+
+        $conv = Conversation::find($smsRes['conversation_id']);
+        $this->assertInstanceOf(\App\Models\Conversation::class, $conv);
+
+        // The channel is frozen at the first message's channel ('sms')
+        $this->assertEquals('sms', $conv->channel);
     }
 
     /**
