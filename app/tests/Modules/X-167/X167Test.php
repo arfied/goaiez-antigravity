@@ -141,6 +141,57 @@ class X167Test extends TestCase
         $this->assertTrue($approvedSend['sent']);
 
         Event::assertDispatched(PoSent::class);
+
+        $po->refresh();
+        $this->assertEquals('sent', $po->status);
+        $this->assertEquals('act_approv_9981', $po->approved_action_id);
+    }
+
+    public function test_reorder_trigger_and_clamp(): void
+    {
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $van = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Service Van 04',
+            'type' => 'van',
+        ]);
+
+        $spool = StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $van->id,
+            'sku' => 'COPPER-10M-SPOOL-2',
+            'barcode' => '784920192832',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 10.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        // Consume below reorder_point (3.0)
+        $this->adjustAction->handle(
+            businessId: $biz->id,
+            stockItemId: $spool->id,
+            quantityDelta: 8.0,
+            isCancellation: false
+        );
+
+        Event::assertDispatched(StockLow::class);
+        Event::assertDispatched(ReorderTriggered::class);
+
+        // Consume more than on hand
+        $this->adjustAction->handle(
+            businessId: $biz->id,
+            stockItemId: $spool->id,
+            quantityDelta: 5.0,
+            isCancellation: false
+        );
+
+        $spool->refresh();
+        $this->assertEquals(0.0, (float) $spool->quantity);
     }
 
     /**
