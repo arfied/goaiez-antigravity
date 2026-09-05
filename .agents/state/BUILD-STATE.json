@@ -1705,6 +1705,10 @@
   {
    "at": "2026-09-05T10:30:04",
    "note": "X-01 Real offenders found by the sweep (g2_76 grep): outreach_messages (app/database/migrations/2026_07_30_081926_create_outreach_messages_table.php), triage_conversations (app/database/migrations/2026_08_13_161545_create_triage_conversations_table.php), inbound_messages (app/database/migrations/2026_08_09_043337_create_inbound_messages_table.php), and support_messages (app/database/migrations/2026_08_13_200424_create_support_messages_table.php)."
+  },
+  {
+   "at": "2026-09-05T11:03:33",
+   "note": "CORRECTION to the 2026-09-05T10:30 G2-76 violator note (REVIEWS.md tick 348 note 1): triage_conversations is created by app/database/migrations/2026_07_30_081928_create_triage_conversations_table.php, and support_messages by app/database/migrations/2026_08_12_065625_create_support_desk_tables.php. The two filenames recorded earlier do not exist. outreach_messages (2026_07_30_081926) and inbound_messages (2026_08_09_043337) were recorded correctly."
   }
  ]
 }
