@@ -80,12 +80,15 @@ class CreditsScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertOk()
             ->assertSee('49.0000') // AI balance
+            ->assertSeeInOrder(['AI Credits Balance', '49.0000', 'Ledger'])
+            ->assertSee('-1.0000')
             ->assertSee('100') // sms units
             ->assertSee('5.0000') // sms cost
             ->assertDontSee('888.0000') // entry B
             ->assertDontSee('999') // sms units B
             ->call('explain', $entryA2->id)
             ->assertSee('Used AI tokens')
+            ->assertSee('Explanation')
             ->call('explain', 999999)
             ->assertSee("isn't in this account");
     }
