@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T02:07:23",
+ "updated": "2026-09-05T02:19:30",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1550,6 +1550,12 @@
    "module": "X-108",
    "chose": "waitlist backfill scopes candidates to the cancelled appointment's date using preferred_date; this is a distinct question from slot availability (S-39/S-40). Member priority now ranks within the matched day rather than globally.",
    "at": "2026-09-05T02:07:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "The booking door refuses a window the availability door already excludes, using the same half-open predicate. This is a fourth, separate question: S-39 decided blackout semantics for availability_rules, S-40 adopted interval overlap for appointments/slot_locks in the availability door, and S-41 decided which waitlisted person gets a freed slot. The rejected strict reading (equality with the four canonical slots) was discarded because three existing call sites book non-slot windows. None of the earlier three decisions is reopened or overturned.",
+   "at": "2026-09-05T02:19:30",
    "ruling": "R245"
   }
  ]
