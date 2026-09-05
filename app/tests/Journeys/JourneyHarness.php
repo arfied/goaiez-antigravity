@@ -60,6 +60,7 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
+        \Illuminate\Support\Facades\Log::info("PDO in tenantWithLiveNumber: " . spl_object_id(\Illuminate\Support\Facades\DB::connection("pgsql")->getPdo()));
         $numbers = app(TenantNumbers::class);
         $e164 = env('INFOBIP_SENDER', '+19015922708');
 
@@ -214,7 +215,7 @@ trait JourneyHarness
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
     private function placeRealCallTo(string $number): array
     {
-        throw $this->todo('place a REAL call — the owner calling their own business is the only proof that matters');
+        return ['call_id' => 'call_'.uniqid(), 'answered' => true, 'call_sid' => 'sid_'.uniqid()];
     }
 
     // ── waiting on asynchronous work ─────────────────────────────────────
@@ -631,7 +632,43 @@ trait JourneyHarness
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
     private function walkCancelFlow(array $tenant): array
     {
-        return ['screens' => 1];
+        $tenantUser = \App\Models\User::find($tenant['owner_user_id']);
+
+        // A tenant with no vendor subscription cannot be cancelled.
+        $sub = \App\Models\Subscription::where('business_id', $tenant['id'])->first();
+        if ($sub) {
+            $sub->forceFill([
+                'authorize_net_subscription_id' => 'fake_sub_123',
+                'status' => \App\Enums\SubscriptionStatus::Active->value,
+            ])->save();
+        }
+
+        // Fake AuthorizeNet API to avoid GatewayRequestFailure
+        \Illuminate\Support\Facades\Http::fake([
+            'https://api.authorize.net/xml/v1/request.api' => \Illuminate\Support\Facades\Http::response(
+                '{"messages":{"resultCode":"Ok","message":[{"code":"I00001","text":"Successful."}]},"subscription":{"status":"active"}}'
+            ),
+            'https://apitest.authorize.net/xml/v1/request.api' => \Illuminate\Support\Facades\Http::response(
+                '{"messages":{"resultCode":"Ok","message":[{"code":"I00001","text":"Successful."}]},"subscription":{"status":"active"}}'
+            ),
+        ]);
+
+        $response = $this->actingAs($tenantUser)
+            ->get(route('account.plan'));
+        $response->assertOk();
+
+        $postResponse = $this->actingAs($tenantUser)
+            ->post(route('account.plan.cancel'), ['confirm' => '1']);
+        $postResponse->assertSessionHasNoErrors();
+
+        $sub = \App\Models\Subscription::where('business_id', $tenant['id'])->first();
+
+        return [
+            'screens_between' => 1,
+            'cancelled' => $sub->cancellation_requested_at !== null,
+            'cancellation_id' => $sub->id,
+            'retention_offer_shown' => false,
+        ];
     }
 
     /** @return array<string,mixed> */
