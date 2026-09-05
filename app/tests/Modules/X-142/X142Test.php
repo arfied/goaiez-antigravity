@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X142;
 
 use App\Models\User;
+use App\Enums\UserRole;
 use App\Modules\X142\Actions\McpInvokeAction;
 use App\Modules\X142\Actions\McpTokenAction;
 use App\Modules\X142\Actions\WebhookSubscribeAction;
@@ -204,6 +205,7 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Token Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        $owner = User::factory()->create(['role' => UserRole::Owner]); $this->actingAs($owner);
 
         Livewire::test(McpTokenRegistry::class)
             ->assertSee('No tokens yet.')
@@ -214,6 +216,7 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'List Token Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        $owner = User::factory()->create(['role' => UserRole::Owner]); $this->actingAs($owner);
 
         $token = $this->tokenAction->issue(
             businessId: $biz->id,
@@ -233,6 +236,7 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Revoked Token Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        $owner = User::factory()->create(['role' => UserRole::Owner]); $this->actingAs($owner);
 
         $token = $this->tokenAction->issue(
             businessId: $biz->id,
@@ -251,6 +255,7 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Webhooks Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        $owner = User::factory()->create(['role' => UserRole::Owner]); $this->actingAs($owner);
 
         Livewire::test(WebhooksView::class)
             ->assertSee('No webhooks yet.')
@@ -261,6 +266,7 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'List Webhooks Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        $owner = User::factory()->create(['role' => UserRole::Owner]); $this->actingAs($owner);
 
         $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/list', 'event.test.*');
 
