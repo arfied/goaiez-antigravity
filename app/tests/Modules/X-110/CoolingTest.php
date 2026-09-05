@@ -60,9 +60,16 @@ class CoolingTest extends TestCase
             'created_at' => now()->subDays(10),
         ]);
 
-        Livewire::test(Cooling::class, ['businessId' => $biz->id])
-            ->assertSeeInOrder(['v-hot', 'v-cool'])
+        $component = Livewire::test(Cooling::class, ['businessId' => $biz->id]);
+        $component->assertSeeInOrder(['v-hot', 'v-cool'])
             ->assertSee('opener-v-hot', false);
+            
+        $html = $component->html();
+        $posHot = strpos($html, '>v-hot<');
+        $posCool = strpos($html, '>v-cool<');
+        $this->assertNotFalse($posHot, 'v-hot not found');
+        $this->assertNotFalse($posCool, 'v-cool not found');
+        $this->assertLessThan($posCool, $posHot, 'v-hot should appear before v-cool');
     }
 
     public function test_cooling_empty_and_derivation(): void
