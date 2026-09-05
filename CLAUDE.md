@@ -215,6 +215,23 @@ Watch for: <the trap that applies, by name>
   `app/vendor/composer/autoload_classmap.php`'s mtime against the merge commit's before
   treating it as a code defect. At tick 158 the map was stamped 09:27 and the merge landed
   13:55, so four tests errored across two waves on a class nobody had broken.
+  ⚠️ **`grep` calls `autoload_classmap.php` binary, and then says nothing.** Verifying that
+  fix, `grep -c` on that file printed **no line at all** — not `0` — and `grep -o` matched
+  nothing, including a control string this column could see in the file with the `Read`
+  tool. Read literally, that output says the classmap holds no module classes and the fix
+  never landed; it had. **Always `grep -a` on `app/vendor/composer/autoload_*.php`.**
+  Measured at tick 159. This is the `.agents/plan/` shape with the tool, not the path, as
+  the liar: a silence is not evidence until you have proved the tool speaks.
+- ⚠️ **Two pest runs from *this* checkout collide, and §7 will not refuse them.** §7's guard
+  walks *other* checkouts pinning `goaiez_antig_sixty_test`, so a second pest launched from
+  here is invisible to it and both runs migrate and truncate the one database under each
+  other. The symptoms are plausible and wrong: alphabetised fixtures, bare `QueryException`s,
+  500s on screens that pass everywhere else, and **zero-byte pest logs** — the same collision
+  seen from the other side, not the memory trap. At tick 159 wave 68 produced five pest runs
+  in seven minutes, two of them overlapping, and two complete runs of one tree that disagreed
+  `passed 1664 · failed 11` against `passed 1703 · errors 4`. **A test number is only a
+  number if nothing else was running**: check `scratch/*.log` mtimes against each run's own
+  `duration_ms` before quoting one.
 - **§1b is a key-set check, not a row check.** It catches a ledger truncated to a
   subset of a parent's top-level keys — the wave-65 incident — and nothing finer. A
   merge resolution can keep all 17 keys and still drop rows, so before concluding a
