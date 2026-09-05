@@ -1424,6 +1424,10 @@
   {
    "at": "2026-09-05T09:07:07",
    "note": "X-193 \u2014 the 'quiet_hours_start is missing' UNRESOLVED (tests stage) is superseded: migration 2026_09_04_072838 arrived with the b445d2f1 take and adds quiet_hours_start + quiet_hours_end; NotificationClassifyAction reads both. The G10-31/G10-38 stubs are now buildable."
+  },
+  {
+   "at": "2026-09-05T09:08:07",
+   "note": "X-193 \u2014 NotificationClassifyAction infers classification and respects_quiet_hours from a str_contains() ladder over caller_type inside firstOrCreate's defaults (Actions/NotificationClassifyAction.php:28-41). Two consequences: a caller named 'chatty_promo' classifies operational because it contains 'chat', and the defaults are frozen at first write so no later policy change reaches an existing notification_classes row. Recorded, not fixed \u2014 a rewrite is a behaviour change outside S-67."
   }
  ]
 }
