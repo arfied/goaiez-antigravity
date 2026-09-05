@@ -501,6 +501,31 @@ class CReviewsTest extends TestCase
         $this->assertEquals(1, $count);
     }
 
+    public function test_review_requested_carries_marketing_class_once_inside_the_cadence(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerId = DB::table('people')->insertGetId([
+            'business_id' => $biz->id,
+            'first_name' => 'Test Customer',
+        ]);
+
+        Event::fake([ReviewRequested::class]);
+
+        Event::dispatch(
+            new JobCompleted($biz->id, 104, 200, $customerId)
+        );
+        Event::dispatch(
+            new JobCompleted($biz->id, 104, 200, $customerId)
+        );
+
+        Event::assertDispatched(ReviewRequested::class, 1);
+        Event::assertDispatched(ReviewRequested::class, fn (ReviewRequested $e) => $e->messageClass === 'marketing' && $e->businessId === $biz->id);
+
+        $this->assertEquals(1, ReviewRequest::where('business_id', $biz->id)->where('customer_id', $customerId)->count());
+    }
+
     public function test_job_completed_with_null_person_id_creates_no_request(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Review Biz', 'currency' => 'USD']);

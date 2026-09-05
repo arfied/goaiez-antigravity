@@ -15,6 +15,8 @@ final class ReviewRequestAction
 {
     private const CADENCE_WINDOW_DAYS = 30;
 
+    private const MESSAGE_CLASS = 'marketing';
+
     /**
      * Send review request with prompt and incentive lints (TEST ANCHOR, G19-10, G20-03).
      */
@@ -113,7 +115,7 @@ final class ReviewRequestAction
                 businessId: $businessId,
                 compositionId: $req->id,
                 recipientPhone: $person->phone,
-                messageClass: 'marketing',
+                messageClass: self::MESSAGE_CLASS,
                 body: $promptTemplate,
                 segmentsCount: 1
             ));
@@ -122,7 +124,8 @@ final class ReviewRequestAction
         Event::dispatch(new ReviewRequested(
             businessId: $businessId,
             reviewRequestId: $req->id,
-            platform: $platform
+            platform: $platform,
+            messageClass: self::MESSAGE_CLASS,
         ));
 
         return [
