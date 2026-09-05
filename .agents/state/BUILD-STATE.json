@@ -1866,6 +1866,10 @@
   {
    "at": "2026-09-05T13:26:39",
    "note": "G1-15 and G1-39 were filed UNRESOLVED at 2026-09-05T13:11:29 and 13:11:33 on the reason 'no token/card surface exists in X-117'; that reason is wrong. CheckoutEngine.php:63-69 holds the FRESH_AUTH_REQUIRED refusal arm, checkout() takes a required string $freshAuthToken, orders.auth_token exists at migration 2026_08_30_000029:48, and X117Test.php:92 test_g1_15_fresh_authorization_event_required asserts the refusal and passes. The -w in grep -rnwiE 'token|card|vault' cannot match auth_token or freshAuthToken, which is why the filing was made. Both ids are TESTED, not unresolved."
+  },
+  {
+   "at": "2026-09-05T13:45:55",
+   "note": "G1-73, G1-75, G1-81 and G1-82 were filed UNRESOLVED at 2026-09-05T13:27:15 with the words 'returns nothing'; each of those four greps returns exactly one line, its own capabilities.php entry (capabilities.php:46, :49, :52, :55). The filings stand \u2014 the only match in every case is the capability text, so no system exists behind any of the four \u2014 but the honest phrasing is the one used for G7-10 and G17-31, 'returns only the capability text'. Recorded so the ledger is not read as a stronger negative than the grep supports."
   }
  ]
 }
