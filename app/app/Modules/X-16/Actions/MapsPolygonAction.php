@@ -32,7 +32,8 @@ final class MapsPolygonAction
     }
 
     /**
-     * [G17-22]
+     * [G17-22] §44 · P-128 — a fence around one building is geo-fenced ad targeting;
+     * define refuses a bounding box under 0.002° on both axes.
      */
     public function define(int $businessId, string $name, array $points): ServicePolygon
     {

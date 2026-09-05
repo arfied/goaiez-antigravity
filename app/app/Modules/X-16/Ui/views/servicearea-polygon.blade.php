@@ -17,7 +17,7 @@
     @endif
 
     <div class="mb-6 p-4 border rounded-md">
-        <h3 class="text-lg font-medium mb-3">Define New Polygon</h3>
+        <h3 class="text-lg font-medium mb-3">Define a service area</h3>
         <form wire:submit="define" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700">Name</label>
@@ -47,14 +47,14 @@
                             @if($polygon->is_active)
                                 <x-ui.status-pill state="ok" label="Active" class="ml-2" />
                             @else
-                                <x-ui.status-pill state="unknown" label="Inactive" class="ml-2" />
+                                <x-ui.status-pill state="attention" label="Inactive" class="ml-2" />
                             @endif
                         </div>
                         <div class="text-sm text-gray-500 mt-1">
                             {{ count($polygon->coordinates) }} points
                         </div>
                         <div class="text-xs text-gray-400 mt-1">
-                            Spans {{ max(array_column($polygon->coordinates, 0)) - min(array_column($polygon->coordinates, 0)) }}° lat, {{ max(array_column($polygon->coordinates, 1)) - min(array_column($polygon->coordinates, 1)) }}° lng
+                            {{ $this->spans($polygon->coordinates) }}
                         </div>
                     </div>
                     <x-ui.button wire:click="toggle({{ $polygon->id }})" size="sm" variant="secondary">

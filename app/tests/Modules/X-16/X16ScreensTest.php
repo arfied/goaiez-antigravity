@@ -116,12 +116,13 @@ class X16ScreensTest extends TestCase
     {
         Livewire::test(ServiceareaPolygon::class, ['businessId' => $this->businessId])
             ->call('toggleSample')
-            ->assertSee('Downtown Area')
-            ->assertSee('North Side')
+            ->assertSee('Downtown service area')
+            ->assertSee('North side')
+            ->assertSee('Spans 41.8000…41.9000 lat · -87.7000…-87.6000 lng')
             ->set('name', 'New Sample')
             ->set('pointsText', "1.1,2.2\n3.3,4.4\n5.5,6.6")
             ->call('define')
-            ->call('toggle', 1);
+            ->call('toggle', 9991);
 
         $this->assertSame(0, ServicePolygon::where('business_id', $this->businessId)->count());
     }
@@ -132,7 +133,11 @@ class X16ScreensTest extends TestCase
             ->set('name', 'South Side')
             ->set('pointsText', "41.8, -87.6\n41.9, -87.6\n41.9, -87.5\n41.8, -87.5")
             ->call('define')
-            ->assertSee('South Side');
+            ->assertSee('South Side')
+            ->assertSee('4 points')
+            ->assertSee('Active')
+            ->assertSee('Spans 41.8000…41.9000 lat · -87.6000…-87.5000 lng')
+            ->assertDontSee('Action failed');
 
         $this->assertSame(1, ServicePolygon::where('business_id', $this->businessId)->count());
     }
@@ -143,6 +148,7 @@ class X16ScreensTest extends TestCase
             ->set('name', '')
             ->set('pointsText', "41.8, -87.6\n41.9, -87.6\n41.9, -87.5")
             ->call('define')
+            ->assertHasErrors('name')
             ->assertSee('Name cannot be empty');
     }
 
@@ -152,7 +158,11 @@ class X16ScreensTest extends TestCase
             ->set('name', 'Two points')
             ->set('pointsText', "41.8, -87.6\n41.9, -87.6")
             ->call('define')
-            ->assertSee('a service area needs at least three points');
+            ->assertSee('a service area needs at least three points')
+            ->assertSee('Not a service area')
+            ->assertDontSee('Action failed');
+
+        $this->assertSame(0, ServicePolygon::where('business_id', $this->businessId)->count());
     }
 
     /**
@@ -164,7 +174,11 @@ class X16ScreensTest extends TestCase
             ->set('name', 'Tiny Box')
             ->set('pointsText', "41.8001, -87.6001\n41.8001, -87.6002\n41.8002, -87.6002\n41.8002, -87.6001")
             ->call('define')
-            ->assertSee('a fence around one building is geo-fenced ad targeting');
+            ->assertSee('a fence around one building is geo-fenced ad targeting')
+            ->assertSee('Not a service area')
+            ->assertDontSee('Action failed');
+
+        $this->assertSame(0, ServicePolygon::where('business_id', $this->businessId)->count());
     }
 
     public function test_servicearea_polygon_toggle_status(): void
@@ -178,7 +192,9 @@ class X16ScreensTest extends TestCase
 
         Livewire::test(ServiceareaPolygon::class, ['businessId' => $this->businessId])
             ->assertSee('Toggle Box')
-            ->call('toggle', $polygon->id);
+            ->call('toggle', $polygon->id)
+            ->assertSee('Inactive')
+            ->assertDontSee('Action failed');
 
         $this->assertFalse($polygon->fresh()->is_active);
     }
@@ -187,7 +203,8 @@ class X16ScreensTest extends TestCase
     {
         Livewire::test(ServiceareaPolygon::class, ['businessId' => $this->businessId])
             ->call('toggle', 999999)
-            ->assertSee('Action failed');
+            ->assertSee('Action failed')
+            ->assertDontSee('No query results');
     }
 
     public function test_servicearea_polygon_define_malformed_line(): void

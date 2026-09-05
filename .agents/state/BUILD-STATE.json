@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T03:14:57",
+ "updated": "2026-09-05T03:28:22",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1449,6 +1449,12 @@
    "module": "X-16",
    "chose": "Geo-grid screen: grids are created and regenerated through MapsGeogridAction::generateGrid (25 points, rank null); a scan needs the tenant's own Places key (\u00a7474) which no module stores yet, so an unscanned grid renders 'Waiting on a Places key' as its finished vendor-gated state and a scan is never faked; holding grids debits nothing (TEST ANCHOR)",
    "at": "2026-09-05T03:14:57",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-16",
+   "chose": "Service-area screen: polygons are defined and (de)activated through MapsPolygonAction::define/setActive (the module's only polygon write path); define refuses fewer than three points and refuses a fence whose bounding box is under 0.002 degrees on both axes \u2014 a fence around one building is geo-fenced ad targeting (G17-22, \u00a744 \u00b7 P-128) \u2014 and a refusal renders as 'Not a service area', never as a failure; setActive fails loudly on an unknown id; rows are never deleted; no map tiles \u2014 the polygon is typed as lat,lng lines",
+   "at": "2026-09-05T03:28:22",
    "ruling": "R245"
   }
  ],

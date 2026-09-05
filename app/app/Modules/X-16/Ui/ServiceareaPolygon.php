@@ -36,6 +36,20 @@ class ServiceareaPolygon extends Component
 
     public bool $actionFailed = false;
 
+    public function spans(array $coordinates): string
+    {
+        $lats = array_column($coordinates, 0);
+        $lngs = array_column($coordinates, 1);
+
+        return sprintf(
+            'Spans %s…%s lat · %s…%s lng',
+            number_format((float) min($lats), 4),
+            number_format((float) max($lats), 4),
+            number_format((float) min($lngs), 4),
+            number_format((float) max($lngs), 4),
+        );
+    }
+
     public function toggleSample(): void
     {
         $this->isSample = ! $this->isSample;
@@ -101,8 +115,8 @@ class ServiceareaPolygon extends Component
     {
         if ($this->isSample) {
             $polygons = collect([
-                (object) ['id' => 1, 'polygon_name' => 'Downtown Area', 'is_active' => true, 'coordinates' => [[41.8781, -87.6298], [41.9782, -87.6299], [41.8783, -87.5297]]],
-                (object) ['id' => 2, 'polygon_name' => 'North Side', 'is_active' => false, 'coordinates' => [[41.9781, -87.6298], [42.0782, -87.6299], [41.9783, -87.5297]]],
+                (object) ['id' => 9991, 'polygon_name' => 'Downtown service area', 'is_active' => true, 'coordinates' => [[41.80, -87.70], [41.90, -87.70], [41.90, -87.60], [41.80, -87.60]]],
+                (object) ['id' => 9992, 'polygon_name' => 'North side', 'is_active' => false, 'coordinates' => [[41.95, -87.75], [42.05, -87.75], [42.05, -87.65], [41.95, -87.65]]],
             ]);
         } else {
             $polygons = ($this->businessId > 0)
