@@ -210,4 +210,28 @@ class X200Test extends TestCase
             'the disposition row must not be written before the ids are validated'
         );
     }
+
+    public function test_a_paused_campaign_does_not_dial(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Event::fake([CallRequested::class]);
+
+        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+
+        $this->pauseAction->pauseCampaign($biz->id, $camp->id);
+
+        try {
+            $this->dialAction->dialNext($biz->id, $camp->id, $seat->id, '+12145550188');
+            $this->fail('dialNext dialed a paused campaign');
+        } catch (InvalidArgumentException $e) {
+            $this->assertStringContainsString('campaign is paused', $e->getMessage());
+        }
+
+        Event::assertNotDispatched(CallRequested::class);
+
+        $seat->refresh();
+        $this->assertSame('idle', $seat->state, 'a refused dial must not leave the seat in dialing');
+    }
 }
