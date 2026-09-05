@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X01;
 
+use App\Models\Conversation;
+use App\Models\Message;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Person;
-use App\Modules\X121\Models\Conversation;
-use App\Modules\X121\Models\Message;
 use App\Modules\X121\Models\Person as PersonModel;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

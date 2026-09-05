@@ -66,7 +66,7 @@
                                                 {{ $channel }}
                                             </span>
                                             <span class="text-sm font-medium {{ $message->direction === 'outbound' ? 'text-ok' : 'text-attention' }}">
-                                                {{ ucfirst($message->direction) }}
+                                                {{ ucfirst($message->direction->value) }}
                                             </span>
                                         </div>
                                         <span class="text-xs text-ink-3">{{ $message->created_at?->diffForHumans() }}</span>

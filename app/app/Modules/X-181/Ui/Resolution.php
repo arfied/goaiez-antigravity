@@ -15,7 +15,19 @@ use Livewire\Component;
 class Resolution extends Component
 {
     #[Locked]
-    public int $businessId;
+    public int $businessId = 0;
+
+    public function mount(): void
+    {
+        if ($this->businessId === 0) {
+            $tenantId = Tenancy::id() ?: 0;
+            if ($tenantId <= 0) {
+                abort(403, 'Tenant context is required');
+            }
+            $this->businessId = (int) $tenantId;
+        }
+        Tenancy::set($this->businessId);
+    }
 
     public bool $isSample = false;
 

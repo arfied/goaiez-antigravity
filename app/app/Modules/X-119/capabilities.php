@@ -28,5 +28,5 @@ return [
     'G5-25' => 'the grounding law; retrieval is X-148\'s.  Pinecone is corpus vocabulary',
 
     // status: SPECCED
-    'G13-38' => 'a volunteered detail becomes a Fact with its source',
+    'G13-38' => 'a volunteered detail becomes a Fact with its source · refuses: an inference',
 ];

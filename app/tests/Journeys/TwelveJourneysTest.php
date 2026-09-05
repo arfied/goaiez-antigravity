@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Journeys;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -47,6 +48,12 @@ final class TwelveJourneysTest extends TestCase
     //   transport. Returning plausible fixtures instead would make all twelve
     //   journeys pass while touching nothing.
     use JourneyHarness;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::allowStrayRequests();
+    }
 
     // ═══════════════════════════════════════════════════════════════════
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS

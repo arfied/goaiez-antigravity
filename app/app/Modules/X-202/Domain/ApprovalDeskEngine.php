@@ -8,6 +8,7 @@ use App\Modules\X202\Events\ApprovalDecided;
 use App\Modules\X202\Events\ApprovalEscalated;
 use App\Modules\X202\Events\ApprovalExpired;
 use App\Modules\X202\Events\ApprovalRaised;
+use App\Modules\X202\Models\ApprovalChain;
 use App\Modules\X202\Models\ApprovalItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -76,6 +77,23 @@ final class ApprovalDeskEngine
         return DB::transaction(function () use ($businessId, $approvalItemId, $decision, $userId, $comment) {
             $item = ApprovalItem::where('business_id', $businessId)->findOrFail($approvalItemId);
 
+            $chain = $item->approval_chain_id !== null
+                ? ApprovalChain::where('business_id', $businessId)->find($item->approval_chain_id)
+                : null;
+            $stepsCount = $chain->steps_count ?? 1;
+
+            // A sequential chain advances one desk per approval; only the last step decides,
+            // and ApprovalDecided fires only on the step that sets a terminal status (R245).
+            if ($decision === 'approved' && $item->current_step < $stepsCount) {
+                $item->update(['current_step' => $item->current_step + 1]);
+
+                return [
+                    'approval_item_id' => $item->id,
+                    'status' => 'pending',
+                    'current_step' => $item->current_step,
+                ];
+            }
+
             $item->update([
                 'status' => $decision,
                 'decided_by_user_id' => $userId,
@@ -92,6 +110,7 @@ final class ApprovalDeskEngine
             return [
                 'approval_item_id' => $item->id,
                 'status' => $decision,
+                'current_step' => $item->current_step,
                 'decided_at' => $item->decided_at->toIso8601String(),
             ];
         });

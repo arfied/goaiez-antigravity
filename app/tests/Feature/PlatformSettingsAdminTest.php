@@ -174,16 +174,12 @@ test('the screen shows every declared key, its default, and whether it moved', f
         ->assertSee('Default');
 });
 
-test('the screen names the figures nobody may invent', function (): void {
-    // ⚠️ The one panel on this screen that exists to stop somebody helping. An
-    // operator who cannot see that the Limited price is deliberately unset will
-    // reasonably conclude it is missing.
+test('the screen says out loud when nothing is waiting on a decision', function (): void {
     Livewire::actingAs($this->admin)
         ->test(SettingsScreen::class)
-        ->assertSee('plan.limited.price.monthly_cents')
-        ->assertSee('plan.base.cost_cap.monthly_additional_location_cents')
-        ->assertSee('Decision 157')
-        ->assertSee('Decision 153');
+        ->assertSee('Nothing is waiting on a decision')
+        ->assertDontSee('plan.limited')
+        ->assertDontSee('Decision 157');
 });
 
 test('the screen shows the plan prices and offers no way to edit one', function (): void {

@@ -10,18 +10,6 @@ set -euo pipefail
 cd "$(dirname "$(readlink -f "$0")")/../.." || exit 1
 
 PIDFILE=".agents/supervisor/coder.pid"
-
-# --status: liveness only, never launches. The unattended supervisor tick needs
-# step (a) of its contract and cannot run `kill -0` under its own allow list.
-if [ "${1:-}" = "--status" ]; then
-  if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-    echo "CODER ALIVE pid=$(cat "$PIDFILE")"
-  else
-    echo "CODER DEAD"
-  fi
-  exit 0
-fi
-
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
   exit 1
