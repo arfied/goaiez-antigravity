@@ -28,7 +28,10 @@
       "Bash(php artisan why:*)",
       "Bash(php -l:*)",
       "Bash(./vendor/bin/phpstan:*)",
-      "Bash(./vendor/bin/pint --test:*)"
+      "Bash(./vendor/bin/pint --test:*)",
+      "Bash(git push origin:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)"
     ],
     "deny": [
       "NotebookEdit",
@@ -54,9 +57,6 @@
       "Read(**/.env.*)",
       "Bash(sudo:*)",
       "Bash(rm:*)",
-      "Bash(git push:*)",
-      "Bash(git commit:*)",
-      "Bash(git add:*)",
       "Bash(git switch:*)",
       "Bash(git checkout:*)",
       "Bash(git restore:*)",
