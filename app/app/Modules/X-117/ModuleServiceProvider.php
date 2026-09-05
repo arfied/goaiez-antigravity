@@ -21,6 +21,13 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-117');
 
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\EvidenceCheckoutCommand::class,
+                Console\RuntimeProofCommand::class,
+            ]);
+        }
+
         if (class_exists(Livewire::class)) {
             Livewire::component('x-117.cart-block', CartBlock::class);
             Livewire::component('x-117.checkout-block', CheckoutBlock::class);
