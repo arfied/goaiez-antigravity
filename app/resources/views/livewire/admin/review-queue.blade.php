@@ -67,7 +67,7 @@
                 type="submit"
                 wire:loading.attr="disabled"
                 wire:target="resolve"
-                class="min-h-11 rounded-[--radius-control] bg-ink px-4 text-base font-medium text-surface"
+                class="min-h-11 rounded-[--radius-control] bg-ink px-4 text-base font-medium text-paper"
             >
                 <span wire:loading.remove wire:target="resolve">Show this location's reviews</span>
                 <span wire:loading wire:target="resolve">Opening…</span>

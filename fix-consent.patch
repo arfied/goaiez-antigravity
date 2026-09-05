@@ -1,0 +1,10 @@
+--- app/app/Services/Voice/VoiceCalls.php
++++ app/app/Services/Voice/VoiceCalls.php
+@@ -457,6 +457,8 @@
+                     'consent_type' => \App\Enums\ConsentType::Express->value,
+                     'captured_by' => \App\Enums\CapturedBy::Tenant->value,
++                    'capture_surface' => \App\Enums\CaptureSurface::Call->value,
++                    'disclosure_version' => '1.0',
+                     'basis' => 'Inbound call',
+                 ]);
+             }

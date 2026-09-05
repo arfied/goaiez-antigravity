@@ -238,7 +238,7 @@
 
     @if ($gscConnectionState === null)
         {{-- No locations at all — see the empty state above for the same reasoning. --}}
-        <x-ui.empty-state icon="⌖">
+        <x-ui.empty-state icon="◇">
             There is nowhere to connect Search Console to yet. Your first location is
             set up with your account — if this is still here tomorrow, tell us and we
             will sort it out.
@@ -393,7 +393,7 @@
                         query rather than an invitation, and it cannot see that
                         correlation. Same sentence as the empty state above.
                     --}}
-                    <x-ui.empty-state icon="⌖">
+                    <x-ui.empty-state icon="◇">
                         There is nowhere to connect Search Console to yet. Your first
                         location is set up with your account — if this is still here
                         tomorrow, tell us and we will sort it out.

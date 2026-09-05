@@ -22,9 +22,6 @@ final class NotificationClassifyAction
         $time = $sendTime ?? Carbon::now();
         $hour = (int) $time->format('H'); // 00 - 23
 
-        // Quiet hours window: 21:00 to 08:00
-        $isQuietHours = ($hour >= 21 || $hour < 8);
-
         // Fetch or infer classification based STRICTLY on callerType (G10-38, P-062)
         $notifClass = NotificationClass::firstOrCreate(
             ['business_id' => $businessId, 'caller_type' => $callerType],
@@ -38,8 +35,17 @@ final class NotificationClassifyAction
                     str_contains($callerType, 'dunning') || str_contains($callerType, 'account') || str_contains($callerType, 'missed_call') || str_contains($callerType, 'chat') || str_contains($callerType, 'alert') => false,
                     default => true,
                 },
+                'quiet_hours_start' => 21,
+                'quiet_hours_end' => 8,
             ]
         );
+
+        $isQuietHours = false;
+        if ($notifClass->quiet_hours_start > $notifClass->quiet_hours_end) {
+            $isQuietHours = ($hour >= $notifClass->quiet_hours_start || $hour < $notifClass->quiet_hours_end);
+        } else {
+            $isQuietHours = ($hour >= $notifClass->quiet_hours_start && $hour < $notifClass->quiet_hours_end);
+        }
 
         $classification = $notifClass->classification;
         $deliveryDecision = 'send_immediately';
@@ -48,7 +54,7 @@ final class NotificationClassifyAction
         // Marketing-class text during quiet hours holds until the window (TEST ANCHOR, G10-31)
         if ($notifClass->respects_quiet_hours && $isQuietHours) {
             $deliveryDecision = 'hold_until_window';
-            $heldUntil = $time->copy()->hour(8)->minute(0)->second(0)->toIso8601String();
+            $heldUntil = $time->copy()->hour($notifClass->quiet_hours_end)->minute(0)->second(0)->toIso8601String();
         }
 
         Event::dispatch(new NotificationClassified(

@@ -24,7 +24,7 @@ class X123Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->publisher = new EventPublishAction;
+        $this->publisher = app(EventPublishAction::class);
     }
 
     /**

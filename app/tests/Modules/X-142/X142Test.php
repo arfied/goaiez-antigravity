@@ -125,16 +125,16 @@ class X142Test extends TestCase
         Livewire::test(WebhooksView::class)->assertOk();
         Livewire::test(McpTokenRegistry::class)->assertOk();
 
-        $this->get('/x-142/connect-your-ai')->assertOk();
-        $this->get('/x-142/webhooks')->assertOk();
-        $this->get('/x-142/mcp-token-registry')->assertOk();
+        $this->get(route('x-142.connect-your-ai'))->assertOk();
+        $this->get(route('x-142.webhooks'))->assertOk();
+        $this->get(route('x-142.mcp-token-registry'))->assertOk();
     }
 
     public function test_guest_redirects(): void
     {
-        $this->get('/x-142/connect-your-ai')->assertRedirect('/login');
-        $this->get('/x-142/webhooks')->assertRedirect('/login');
-        $this->get('/x-142/mcp-token-registry')->assertRedirect('/login');
+        $this->get(route('x-142.connect-your-ai'))->assertRedirect('/login');
+        $this->get(route('x-142.webhooks'))->assertRedirect('/login');
+        $this->get(route('x-142.mcp-token-registry'))->assertRedirect('/login');
     }
 
     public function test_webhook_secret_is_encrypted_at_rest(): void

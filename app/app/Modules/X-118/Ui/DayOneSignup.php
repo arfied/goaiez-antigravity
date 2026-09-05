@@ -7,9 +7,11 @@ namespace App\Modules\X118\Ui;
 use App\Modules\X118\Actions\OnboardingStartAction;
 use App\Modules\X118\Actions\OnboardingTestCallAction;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.layouts.agency')]
 class DayOneSignup extends Component
 {
     public int $askedFieldsCount = 2;
@@ -65,7 +67,7 @@ class DayOneSignup extends Component
             $this->askedFieldsCount = (int) $res['asked_fields_count'];
             $this->step = 2;
         } catch (\Throwable $e) {
-            $this->errorMessage = 'Failed to provision tenant: '.$e->getMessage();
+            $this->errorMessage = 'Failed to provision tenant: ';
         }
     }
 
@@ -85,17 +87,9 @@ class DayOneSignup extends Component
             $this->callStatus = 'connected';
             $this->step = 3;
 
-            $this->callTranscript = [
-                ['speaker' => 'System', 'time' => '00:01', 'text' => "Placing direct test call to {$this->provisionedNumber}..."],
-                ['speaker' => 'AI Agent', 'time' => '00:02', 'text' => "Thank you for calling {$this->businessName}! My name is Ava, your autonomous assistant. How can I help you today?"],
-                ['speaker' => 'Caller (Simulated)', 'time' => '00:06', 'text' => 'Hi Ava, I have a leaking pipe under my kitchen sink and need someone out today.'],
-                ['speaker' => 'AI Agent', 'time' => '00:10', 'text' => 'I understand. I have an emergency dispatch slot available between 2:00 PM and 4:00 PM today. May I confirm your service address?'],
-                ['speaker' => 'Caller (Simulated)', 'time' => '00:14', 'text' => 'Yes, 742 Evergreen Terrace.'],
-                ['speaker' => 'AI Agent', 'time' => '00:17', 'text' => 'Perfect! You are booked for today 2:00 PM. A confirmation SMS with tracking has been sent. Have a great day!'],
-                ['speaker' => 'System', 'time' => '00:20', 'text' => 'First-Win verified! Job #1042 created and synced to live dispatch calendar.'],
-            ];
+            $this->callTranscript = $res['transcript'] ?? [];
         } catch (\Throwable $e) {
-            $this->errorMessage = 'Failed to place test call: '.$e->getMessage();
+            $this->errorMessage = 'Failed to place test call. Please try again.';
         }
     }
 

@@ -35,6 +35,11 @@ return [
     ],
     'emits' => [
         'inventory.updated',
+        'cart.checkout',
+        'deposit.captured',
+        'order.paid',
+        'order.cancelled',
+        'shipping.requested',
     ],
     'consumes' => [
         'capability.decided',

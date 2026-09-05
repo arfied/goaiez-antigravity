@@ -17,6 +17,7 @@ use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X198Test extends TestCase
@@ -34,6 +35,9 @@ class X198Test extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_fake_123'], 200),
+        ]);
         $this->engine = new GatewayEngine;
         $this->connectAction = new MerchantConnectAction($this->engine);
         $this->captureAction = new PaymentCaptureAction($this->engine);
@@ -60,6 +64,7 @@ class X198Test extends TestCase
         $idempotencyKey = 'idem_unique_tx_999';
         $pay1 = $this->captureAction->handle($biz->id, 5000, 'tok_visa_tokenized', $idempotencyKey);
         $pay2 = $this->captureAction->handle($biz->id, 5000, 'tok_visa_tokenized', $idempotencyKey);
+        $this->engine->confirmCapture($biz->id, $pay1->id, 'ch_real_123');
 
         $this->assertEquals($pay1->id, $pay2->id, 'Duplicated ref charges once and returns identical payment record');
         $this->assertEquals(5000, $pay1->amount_cents);

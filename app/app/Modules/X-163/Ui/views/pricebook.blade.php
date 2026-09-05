@@ -1,4 +1,5 @@
 <div class="max-w-6xl mx-auto space-y-6">
+    <x-surface.sample-state module="services with prices" screen="pricebook" />
     <!-- Header & Stats Overview -->
     <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl space-y-6">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
@@ -47,7 +48,7 @@
                         <input 
                             type="number" 
                             step="5" 
-                            wire:model.defer="calloutFeeDollars" 
+                            wire:model="calloutFeeDollars" 
                             class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:border-amber-500 font-mono"
                         />
                     </div>
@@ -55,7 +56,7 @@
                         <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
                             <input 
                                 type="checkbox" 
-                                wire:model.defer="deductedIfProceeding" 
+                                wire:model="deductedIfProceeding" 
                                 class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-400"
                             />
                             <span>Deduct fee from repair invoice</span>
@@ -66,7 +67,7 @@
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">AI Verbal Explanation (Quoted to Callers)</label>
                     <textarea 
-                        wire:model.defer="calloutExplanation" 
+                        wire:model="calloutExplanation" 
                         rows="2" 
                         class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-amber-500"
                     ></textarea>
@@ -124,7 +125,7 @@
                         <label class="block text-[11px] text-slate-400 mb-1">Service / Task Name</label>
                         <input 
                             type="text" 
-                            wire:model.defer="newServiceName" 
+                            wire:model="newServiceName" 
                             placeholder="e.g. 50-Gallon Water Heater Replacement" 
                             class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-600 focus:border-amber-500"
                         />
@@ -134,7 +135,7 @@
                         <input 
                             type="number" 
                             step="5" 
-                            wire:model.defer="newPriceDollars" 
+                            wire:model="newPriceDollars" 
                             class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white font-mono focus:border-amber-500"
                         />
                     </div>
@@ -144,7 +145,7 @@
                     <label class="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
                         <input 
                             type="checkbox" 
-                            wire:model.defer="newIsSample" 
+                            wire:model="newIsSample" 
                             class="rounded bg-slate-950 border-slate-800 text-amber-500"
                         />
                         <span>Mark as Draft / Sample (Requires confirmation before AI customer quoting)</span>
@@ -231,14 +232,14 @@
                         <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Customer Query</label>
                         <input 
                             type="text" 
-                            wire:model.defer="testQuery" 
+                            wire:model="testQuery" 
                             class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-indigo-500"
                         />
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Channel Persona</label>
-                        <select wire:model.defer="testChannel" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
+                        <select wire:model="testChannel" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
                             <option value="customer">Customer Facing (Sample Guardrails Active)</option>
                             <option value="admin">Internal Admin (Unrestricted)</option>
                         </select>

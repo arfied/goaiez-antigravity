@@ -1,5 +1,6 @@
 <div>
-    <div class="flex flex-col h-full bg-paper rounded-[--radius-card] border border-rule shadow-[--shadow-card]">
+    <x-surface.sample-state module="**one Conversation per Person, every channel** — SMS, email, voice transcripts, web chat, WhatsApp in ONE timeline; contact de-duplication; record and screen pop; CRM logging and injection; field-level history; tagging and auto-categorisation; custom fields; bulk actions and exports *(moved here from X-121)*; conversational global search; lead transparency and hidden scoring; lead caps; ghost-risk; the preference centre. ⛔ **P18: `app/Livewire/Account/Inbox.php` exists but its scope was never verified — if it is a mail reader wearing the name, this is a build, not a wiring job, and it is replaced.**" screen="thread" />
+    <div class="flex flex-col h-full bg-paper rounded-[--radius-card] border border-rule shadow-[--shadow-card] mt-4">
         <div class="px-4 py-4 border-b border-rule flex justify-between items-center bg-card rounded-t-[--radius-card]">
             <h3 class="font-display font-semibold text-ink text-lg flex items-center gap-2">
                 Conversation
@@ -14,11 +15,20 @@
                     {{ $errorMessage }}
                 </x-ui.error-panel>
             </div>
-        @elseif($messages->isEmpty())
+        @elseif($customer && $messages->isEmpty())
             <div class="p-4">
                 <x-ui.empty-state heading="No messages yet" icon="○">
                     This person hasn't sent any messages.
                 </x-ui.empty-state>
+            </div>
+        @elseif(!$customer)
+            <div class="inbox-thread p-4">
+                <h3 class="text-lg font-bold">Omnichannel Conversation Thread</h3>
+                @if($conversations->isEmpty())
+                    <p class="text-gray-500">No conversations recorded.</p>
+                @else
+                    <p class="text-gray-500">Select a conversation. {{ $conversations->count() }} found.</p>
+                @endif
             </div>
         @else
             <div class="flex-1 overflow-y-auto p-4 space-y-4">

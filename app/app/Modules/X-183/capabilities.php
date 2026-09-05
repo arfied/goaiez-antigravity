@@ -46,7 +46,7 @@ return [
     'G9-22' => 'hard numbers pulled from the client\'s own words (R36 — real data only)',
 
     // status: SPECCED
-    'G12-02' => 'gated by grounding; the pre-publish gate is X-183\'s',
+    'G12-02' => 'gated by grounding; the pre-publish gate is X-183\'s · refuses: publishing without grounding',
 
     // status: SPECCED
     'G12-05' => 'to the builder or the plugin',
@@ -55,7 +55,7 @@ return [
     'G12-29' => 'named in the header — cannibalisation · SAMPLE prices never rendered · nothing contradicts the pricebook',
 
     // status: SPECCED
-    'G13-29' => 'the gate cites or rejects',
+    'G13-29' => 'the gate cites or rejects · refuses: accepting without citation',
 
     // status: SPECCED
     'G16-03' => 'long-form structure through the gate',

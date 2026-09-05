@@ -38,6 +38,10 @@ return [
         'invoice.issued',
         'invoice.paid',
         'invoice.due',
+        'invoice.overdue',
+        'limit.exceeded',
+        'overflow.charged',
+        'overflow.reversed',
     ],
     'consumes' => [
         'job.completed',

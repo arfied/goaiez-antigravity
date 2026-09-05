@@ -24,13 +24,14 @@ final class BillingLedgerEngine
         return DB::transaction(function () use ($businessId, $amountHundredthsCents, $referenceId, $description) {
             $limit = TrialLimit::where('business_id', $businessId)->lockForUpdate()->first();
             if ($limit === null) {
-                $limit = TrialLimit::create([
-                    'business_id' => $businessId,
-                    'current_balance_hundredths_cents' => 1000000, // $100.00
-                ]);
+                throw new \DomainException('REFUSAL: Ledger not found');
             }
 
             $newBalance = $limit->current_balance_hundredths_cents - $amountHundredthsCents;
+            if ($newBalance < 0) {
+                throw new \DomainException('REFUSAL: Insufficient balance');
+            }
+
             $limit->update(['current_balance_hundredths_cents' => $newBalance]);
 
             return CreditLedgerEntry::create([
@@ -96,11 +97,7 @@ final class BillingLedgerEngine
             }
 
             if (($limit->topups_today_cents + $amountCents) > $limit->daily_topup_ceiling_cents) {
-                return [
-                    'status' => 'refused',
-                    'refusal_code' => 'DAILY_TOPUP_CEILING_EXCEEDED',
-                    'message' => 'Daily top-up ceiling of $'.number_format($limit->daily_topup_ceiling_cents / 100, 2).' reached',
-                ];
+                throw new \DomainException('REFUSAL: Daily top-up ceiling exceeded');
             }
 
             $limit->topups_today_cents += $amountCents;

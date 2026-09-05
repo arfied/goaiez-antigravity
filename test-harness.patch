@@ -1,0 +1,12 @@
+--- app/tests/Journeys/JourneyHarness.php
++++ app/tests/Journeys/JourneyHarness.php
+@@ -107,6 +107,8 @@
+ 
+     private function postCarrierWebhook(array $tenant, string $event, string $from): void
+     {
++        \App\Models\PlatformSetting::updateOrCreate(['key' => 'voice.enabled'], ['value' => true, 'type' => 'boolean']);
++        app(\App\Services\Voice\RecordingAnnouncement::class)->attest('test');
++
+         $callId = (string) \Illuminate\Support\Str::uuid();
+         $payload = ['callId' => $callId, 'type' => 'CALL_FINISHED'];
+         $content = json_encode($payload, JSON_UNESCAPED_SLASHES);

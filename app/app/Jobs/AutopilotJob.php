@@ -728,6 +728,7 @@ abstract class AutopilotJob implements ShouldQueue
         }
 
         $run = $this->claimRun();
+        Log::warning('claimRun returned '.($run ? 'yes' : 'null'));
 
         if ($run === null) {
             // The key was already claimed. Not an error — the answer to "has
@@ -750,6 +751,7 @@ abstract class AutopilotJob implements ShouldQueue
 
             $this->recordActivity();
         } catch (Throwable $e) {
+            Log::error('Exception in AutopilotJob: '.$e->getMessage(), ['exception' => $e]);
             $run->update([
                 'status' => AutomationRunStatus::Failed,
                 // ⛔ **THE CLASS, NEVER THE MESSAGE** — {@see self::failed()}'s

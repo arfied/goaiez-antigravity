@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X179\Ui;
 
+use App\Enums\UserRole;
 use App\Modules\X179\Models\TemplateMatch;
 use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
@@ -14,16 +15,20 @@ class ProspecttenantfacingTop3Preview extends Component
     #[Locked]
     public int $businessId = 0;
 
+    #[Locked]
     public int $prospectId = 0;
 
     public function mount(int $prospectId)
     {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin), 403);
+
         $businessId = Tenancy::idOrFail();
 
         $exists = TemplateMatch::where('business_id', $businessId)
             ->where('prospect_id', $prospectId)
             ->exists();
         if (! $exists) {
+            abort(404);
         }
 
         $this->businessId = (int) $businessId;

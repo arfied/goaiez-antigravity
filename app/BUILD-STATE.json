@@ -1,0 +1,14 @@
+{
+    "X-221": {
+        "status": "BUILDING",
+        "scaffold": true
+    },
+    "X-222": {
+        "status": "BUILDING",
+        "scaffold": true
+    },
+    "X-223": {
+        "status": "BUILDING",
+        "scaffold": true
+    }
+}

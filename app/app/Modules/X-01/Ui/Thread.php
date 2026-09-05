@@ -10,11 +10,15 @@ use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X121\Models\Conversation;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Thread extends Component
 {
-    public Customer $customer;
+    #[Locked]
+    public int $businessId = 0;
+
+    public ?Customer $customer = null;
 
     public ?string $draftReply = null;
 
@@ -24,7 +28,7 @@ class Thread extends Component
 
     public ?string $errorMessage = null;
 
-    public function mount(Customer $customer)
+    public function mount(?Customer $customer = null)
     {
         $this->customer = $customer;
     }
@@ -47,6 +51,10 @@ class Thread extends Component
 
     public function sendReply(UnifiedInboxManager $manager)
     {
+        if (! $this->customer) {
+            return;
+        }
+
         $this->validate([
             'replyText' => 'required|string|min:1',
         ]);
@@ -91,17 +99,29 @@ class Thread extends Component
 
     public function render()
     {
-        $conversationIds = Conversation::where('customer_id', $this->customer->id)->pluck('id');
+        if ($this->businessId > 0) {
+            Tenancy::set($this->businessId);
+        }
 
-        $messages = DB::table('messages')
-            ->join('conversations', 'messages.conversation_id', '=', 'conversations.id')
-            ->whereIn('messages.conversation_id', $conversationIds)
-            ->select('messages.*', 'conversations.channel')
-            ->orderBy('messages.created_at', 'asc')
-            ->get();
+        $conversations = ($this->businessId > 0 || Tenancy::isSet())
+            ? Conversation::where('business_id', Tenancy::idOrFail())->get()
+            : collect();
+
+        $messages = collect();
+        if ($this->customer) {
+            $conversationIds = Conversation::where('customer_id', $this->customer->id)->pluck('id');
+
+            $messages = DB::table('messages')
+                ->join('conversations', 'messages.conversation_id', '=', 'conversations.id')
+                ->whereIn('messages.conversation_id', $conversationIds)
+                ->select('messages.*', 'conversations.channel')
+                ->orderBy('messages.created_at', 'asc')
+                ->get();
+        }
 
         return view('x-01::thread', [
             'messages' => $messages,
+            'conversations' => $conversations,
         ]);
     }
 }

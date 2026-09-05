@@ -1,4 +1,5 @@
 <div class="flex flex-col gap-6 w-full max-w-3xl mx-auto p-4 md:p-6">
+    <x-surface.sample-state module="the front-desk agent on a live call: voice RAG with in-stream hesitation and objection detection" screen="calls" />
     <section>
         @if ($errorMessage)
             <x-ui.error-panel heading="Number Unavailable" retry="$refresh">

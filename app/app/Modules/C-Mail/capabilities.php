@@ -28,10 +28,10 @@ return [
     'G3-18' => 'the warm-up engine — spec with the email pass (turn 31)',
 
     // status: SPECCED
-    'G4-08' => 'deliverability first, then everything else',
+    'G4-08' => 'deliverability first, then everything else · refuses: any action that compromises deliverability — deliverability comes first',
 
     // status: SPECCED
-    'G7-40' => 'DMARC XML failure → alert; named in the header',
+    'G7-40' => 'DMARC XML failure → alert; named in the header · refuses: to suppress a DMARC XML failure alert',
 
     // status: SPECCED
     'G9-21' => 'primary-vs-spam placement per network',
@@ -52,7 +52,7 @@ return [
     'G11-09' => 'a test send scored before the campaign',
 
     // status: SPECCED
-    'G11-10' => 'bounce and spam-trap check before a cold send',
+    'G11-10' => 'bounce and spam-trap check before a cold send · refuses: a cold send without a bounce and spam-trap check',
 
     // status: SPECCED
     'G11-11' => 'named in the header',
@@ -73,17 +73,17 @@ return [
     'G11-18' => '= the row above; one spec',
 
     // status: SPECCED
-    'G11-20' => 'the header\'s first line;  SES-primary (R16), DPA before first send',
+    'G11-20' => 'the header\'s first line;  SES-primary (R16), DPA before first send · refuses: to send before a DPA is in place',
 
     // status: SPECCED
     'G11-29' => 'named in the header',
 
     // status: SPECCED
-    'G11-37' => 'named in the header.  the legitimate mechanism is the warm-up calendar and seed-list diversity — a seeded network clicking Not Spam is the F-15 question in email form',
+    'G11-37' => 'named in the header.  the legitimate mechanism is the warm-up calendar and seed-list diversity — a seeded network clicking Not Spam is the F-15 question in email form · refuses: any illegitimate warm-up mechanism outside the calendar and seed-list diversity',
 
     // status: SPECCED
     'G11-38' => 'named in the header',
 
     // status: SPECCED
-    'G15-31' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ no warm-up event reaches a tenant-facing metric · every quantity is a RANGE plus jitter — a constant is the signature',
+    'G15-31' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ no warm-up event reaches a tenant-facing metric · every quantity is a RANGE plus jitter — a constant is the signature · refuses: a constant quantity — a warm-up volume with no jitter is the signature of automation, and no warm-up event reaches a tenant-facing metric',
 ];

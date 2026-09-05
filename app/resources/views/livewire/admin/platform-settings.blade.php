@@ -29,11 +29,11 @@
         <section class="rounded-[--radius-panel] border border-rule bg-card p-5">
             <h2 class="font-display text-lg font-semibold text-ink">{{ $group }}</h2>
 
-            <ul class="mt-4 space-y-5">
+            <ul class="mt-4 space-y-5 max-h-[600px] overflow-y-auto pr-2">
                 @foreach ($rows as $row)
                     <li wire:key="setting-{{ $row['key'] }}" class="border-t border-rule pt-5 first:border-0 first:pt-0">
                         <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                            <p class="font-mono text-sm text-ink">{{ $row['key'] }}</p>
+                            <p class="font-mono text-sm text-ink break-all">{{ $row['key'] }}</p>
 
                             {{--
                                 Seed vs current, which is the whole point of
@@ -47,7 +47,7 @@
                             @else
                                 <span class="text-sm text-ink-2">
                                     Changed — the default is
-                                    <span class="tabular-nums">{{ var_export($row['seed'], true) }}</span>
+                                    <span class="tabular-nums break-all">{{ var_export($row['seed'], true) }}</span>
                                 </span>
                             @endif
                         </div>
@@ -74,7 +74,7 @@
                                 @endif
                             </p>
                         @else
-                            <p class="mt-1 font-display text-lg font-semibold tabular-nums text-ink">
+                            <p class="mt-1 font-display text-lg font-semibold tabular-nums text-ink break-all">
                                 {{ $row['current'] === null ? 'Not set' : var_export($row['current'], true) }}
                             </p>
                         @endif
@@ -483,7 +483,7 @@
             --}}
             @forelse ($withheld as $path => $reason)
                 <li wire:key="withheld-{{ $path }}">
-                    <p class="font-mono text-sm text-ink">{{ $path }}</p>
+                    <p class="font-mono text-sm text-ink break-all">{{ $path }}</p>
                     <p class="mt-1 text-base text-ink-2">{{ $reason }}</p>
                 </li>
             @empty

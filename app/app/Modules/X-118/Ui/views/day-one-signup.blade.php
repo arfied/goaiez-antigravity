@@ -1,4 +1,5 @@
 <div class="max-w-4xl mx-auto space-y-6">
+    <x-surface.sample-state module="⭐⭐⭐ **IT IS THE WIZARD, and it asks for two things: a business name and a phone number. The AI FINDS GBP" screen="day_one_signup" />
     <!-- Header & Progress Steps -->
     <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
@@ -45,7 +46,7 @@
                         </label>
                         <input 
                             type="text" 
-                            wire:model.defer="businessName" 
+                            wire:model="businessName" 
                             placeholder="e.g. Austin Master Plumbing" 
                             class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition"
                         />
@@ -58,7 +59,7 @@
                         </label>
                         <input 
                             type="text" 
-                            wire:model.defer="contactPhone" 
+                            wire:model="contactPhone" 
                             placeholder="e.g. +1 512 555 0199" 
                             class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-white placeholder-slate-500 text-sm transition"
                         />
@@ -81,6 +82,7 @@
                 <div class="flex justify-end">
                     <button 
                         type="submit" 
+                        wire:target="startSignup"
                         wire:loading.attr="disabled"
                         class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 font-semibold text-white text-sm shadow-lg shadow-indigo-600/30 transition flex items-center gap-2"
                     >
@@ -135,6 +137,7 @@
                     </button>
                     <button 
                         wire:click="triggerTestCall" 
+                        wire:target="triggerTestCall"
                         wire:loading.attr="disabled"
                         class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2"
                     >

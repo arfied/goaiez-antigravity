@@ -1,0 +1,9 @@
+--- app/app/Services/Voice/InfobipVoiceProvider.php
++++ app/app/Services/Voice/InfobipVoiceProvider.php
+@@ -107,6 +107,7 @@
+      */
+     private function get(string $endpoint): ?array
+     {
++        \Illuminate\Support\Facades\Log::info("InfobipVoiceProvider fetching URL: " . $this->baseUrl . $endpoint);
+         try {
+             $started = microtime(true);

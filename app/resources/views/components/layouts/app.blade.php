@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,25 +46,22 @@
                 </a>
 
                 <!-- Navigation Tabs -->
-                <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
-                    <a href="/" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('/') && !request()->is('architecture*')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Home
-                    </a>
-                    <a href="/onboarding" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('onboarding*')) ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Voice (X-118)
-                    </a>
-                    <a href="/pricebook" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('pricebook*')) ? 'bg-amber-600/30 text-amber-300 border border-amber-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Pricebook (X-163)
-                    </a>
-                    <a href="/reviews" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('reviews*')) ? 'bg-purple-600/30 text-purple-300 border border-purple-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Reviews (C-Reviews)
-                    </a>
-                    <a href="/portal" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('portal*')) ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/40' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Portal (X-172)
-                    </a>
-                    <a href="/architecture" class="px-3 py-1.5 rounded-lg {{ (request() && request()->is('architecture*')) ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-900' }} transition">
-                        Architecture
-                    </a>
+                                <nav class="hidden md:flex items-center gap-1 text-xs font-medium">
+                    @foreach (config('surfaces.generated.tenant', []) as $group => $items)
+                        <div class="relative group/dropdown">
+                            <button class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition flex items-center gap-1">
+                                {{ $group }}
+                                <svg class="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                            <div class="absolute left-0 top-full mt-1 hidden group-hover/dropdown:block w-48 bg-slate-900 border border-slate-800 rounded-lg shadow-xl overflow-hidden py-1 z-50">
+                                @foreach ($items as $item)
+                                    <a href="{{ route($item['route']) }}" class="block px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 {{ request()->routeIs($item['route']) ? 'bg-slate-800 text-white font-medium' : '' }}">
+                                        {{ $item['label'] }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
                 </nav>
             </div>
 

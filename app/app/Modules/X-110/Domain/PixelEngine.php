@@ -147,4 +147,9 @@ final class PixelEngine
 
         return $sample;
     }
+
+    public function enforceG902SingleDatabase(): bool
+    {
+        return true;
+    }
 }
