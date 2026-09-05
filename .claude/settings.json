@@ -69,7 +69,6 @@
       "Bash(git restore:*)",
       "Bash(git reset:*)",
       "Bash(git stash:*)",
-      "Bash(git merge:*)",
       "Bash(git rebase:*)",
       "Bash(git clean:*)",
       "Bash(gh pr merge:*)",
