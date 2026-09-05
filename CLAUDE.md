@@ -152,6 +152,19 @@ Watch for: <the trap that applies, by name>
   green on 2026-08-29/30 before any harness that could pass existed, and the
   on-disk `evidence/journeys/*.json` came from a forbidden simulation harness.
   Only `supervise.sh --tests` output counts as the journey number.
+- ⚠️ **The `journey` stage counts untracked files, so a merge can never move it.**
+  `JourneyStage.php:40` reads `storage_path("app/evidence/journeys/{slug}.json")`,
+  and `app/storage/**` is gitignored — the evidence is written by a **local pest
+  run** and by nothing else. So a report attributing a journey drop to a merge is
+  wrong by construction: check the file's mtime against the last
+  `supervise.sh --tests`, not against the merge. Measured at tick 157, when wave
+  66 credited `9e2bc5bd` (13:55) with a fall that `quote-to-booking.json` (13:03,
+  tick 150's `--tests`) had already caused. Two corollaries: the number is a
+  property of *this working copy* and would spring back on a fresh clone or a
+  cleared `storage/`; and doctor does not judge `artifact_id` for every journey
+  (`JourneyStage.php:69`), so a green journey can still sit on an internal id —
+  `quote-to-booking` passes on `"artifact_id": "15"` while its `UNRESOLVED` row
+  still names absent Anthropic and Infobip credentials.
 - **`state.py` owns `BUILD-STATE.json`.** A hand edit there is a `BLOCK`; so is
   a `JOURNAL.md` line with no matching commit.
 - **`BUILDING` is not progress.** On 2026-08-31 13:04:41 twelve modules flipped
