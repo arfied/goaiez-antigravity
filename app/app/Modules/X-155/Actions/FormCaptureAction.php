@@ -87,6 +87,9 @@ final class FormCaptureAction
 
             // Direct entity writing (G2-20, G13-35): forms write straight to Person entity, no intermediate buffer
             $phone = $payload['phone'] ?? null;
+            if (is_string($phone) && trim($phone) === '') {
+                $phone = null;
+            }
 
             // A submission that carries no phone gets its own contact, never a shared one (R245, 2026-09-05).
             $person = $phone === null
