@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="click- and keyword-level attribution" screen="attribution_row" />
     
     @if ($queries->isEmpty() && $snapshots->isEmpty())
         <x-ui.empty-state icon="💰" heading="No attribution data yet" action="View tracked pages" href="#">
