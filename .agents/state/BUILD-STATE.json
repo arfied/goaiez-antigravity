@@ -1547,6 +1547,10 @@
   {
    "at": "2026-09-05T16:31:37",
    "note": "WITHDRAWN wave-67 note: The modules X-221, X-222, X-223 are out of scope - the modules are in build-plan.json (waves 2/3, state: not started), in roster_list, scaffolded on disk, absent from every waves[].modules, and called 'next free' by two rules files. The .agents/plan/ grep was over a path that does not exist."
+  },
+  {
+   "at": "2026-09-05T16:31:57",
+   "note": "Item 2 finding: The agent and webhook are not stubbed; JourneyHarness.php:346 posts a real webhook to /webhooks/infobip/inbound and JourneyHarness.php:354 reads the actual application's response from the agent_turns table."
   }
  ]
 }
