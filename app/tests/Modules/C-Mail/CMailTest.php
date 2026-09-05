@@ -10,6 +10,7 @@ use App\Modules\CMail\Actions\EmailUnsubscribeAction;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Models\MailEvent;
+use App\Modules\CMail\Models\WarmupCalendar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -117,7 +118,55 @@ class CMailTest extends TestCase
      */
     public function test_warmup_engine(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Warmup Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'warmup.apex-air.com');
+        $calendar = $this->warmupAction->handle($biz->id, $domain->id, 2, 100);
+
+        // the warm-up state is a row of its own, per (business, domain)
+        $this->assertSame(2, $calendar->current_day);
+        $this->assertSame(100, $calendar->daily_allowance);
+        $this->assertSame(0, $calendar->sent_today);
+        $this->assertFalse($calendar->is_warmed);
+
+        $first = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'first@acme.com',
+            subject: 'Spring tune-up',
+            sendType: 'marketing',
+            requestedCount: 60
+        );
+        $this->assertSame(60, $first['sent_count']);
+        $this->assertSame(0, $first['queued_count']);
+
+        $second = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'second@acme.com',
+            subject: 'Spring tune-up',
+            sendType: 'marketing',
+            requestedCount: 60
+        );
+        $this->assertSame(40, $second['sent_count'], 'the second send gets what is left of the day-2 allowance');
+        $this->assertSame(20, $second['queued_count']);
+
+        $this->assertSame(100, WarmupCalendar::where('business_id', $biz->id)
+            ->where('mail_domain_id', $domain->id)
+            ->firstOrFail()->sent_today);
+
+        $uncapped = $this->dnsAction->handle($biz->id, 'nocalendar.apex-air.com');
+        $res = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $uncapped->id,
+            recipientEmail: 'bulk@acme.com',
+            subject: 'Spring tune-up',
+            sendType: 'marketing',
+            requestedCount: 5000
+        );
+        $this->assertSame(5000, $res['sent_count'], 'with no calendar row there is no allowance to spend');
+        $this->assertSame(0, $res['queued_count']);
     }
 
     /**
