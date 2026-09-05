@@ -1,6 +1,6 @@
 <div wire:init="load">
     @if($errorMessage)
-        <x-ui.error-panel heading="We could not load recommendations." retry="load" />
+        <x-ui.error-panel heading="We could not load recommendations." retry="load">{{ $errorMessage }}</x-ui.error-panel>
     @elseif($recs->isNotEmpty())
         <div class="mb-4">
             <h3 class="font-display text-lg font-bold mb-4">Today's Recommendations</h3>

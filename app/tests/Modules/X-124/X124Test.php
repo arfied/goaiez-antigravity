@@ -183,7 +183,7 @@ class X124Test extends TestCase
         $actAction->handle($biz->id, $rec->id, 'invalid_status');
     }
 
-    public function test_todays_recommendation_strip_handles_error_state(): void
+    public function test_todays_recommendation_strip_blade_renders_the_error_panel(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Strip Biz Error', 'currency' => 'USD']);
 
@@ -226,5 +226,42 @@ class X124Test extends TestCase
             ->assertSeeHtml('data-action-key="delete_tenant"')
             ->assertSee('Will execute delete_tenant with given parameters')
             ->assertSee('Warning: this action cannot be undone and needs confirmation.');
+    }
+
+    public function test_chat_dock_renders_default_state(): void
+    {
+        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class)
+            ->assertSee('Copilot Assistant Chat Dock')
+            ->assertSee('Ask me anything about your business.');
+    }
+
+    public function test_chat_dock_renders_answered_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class, ['businessId' => $biz->id])
+            ->set('utterance', 'show invoices')
+            ->call('ask')
+            ->assertSee('show invoices')
+            ->assertSeeHtml('data-status="answered"');
+    }
+
+    public function test_chat_dock_renders_unsupported_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz Unsupported', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class, ['businessId' => $biz->id])
+            ->set('utterance', 'Fly me to Mars')
+            ->call('ask')
+            ->assertSee('Fly me to Mars')
+            ->assertSee('I can\'t do that yet')
+            ->assertSeeHtml('data-status="unsupported"');
+        
+        $this->assertDatabaseHas('assistant_unsupported', [
+            'business_id' => $biz->id,
+            'utterance' => 'Fly me to Mars',
+        ]);
     }
 }
