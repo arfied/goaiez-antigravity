@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T04:40:09",
+ "updated": "2026-09-05T04:58:35",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1479,6 +1479,12 @@
    "module": "X-155",
    "chose": "A capture never overwrites a known contact with a value the submitter did not give. The upsert applied its whole value list on update as well as on create, so a form that does not ask for a name or an email rewrote a known contact name to the literal placeholder Visitor and set the stored email to null. Forms are tenant defined and the validator enforces only each step required list, so a phone and message callback form is ordinary here and every submission from a returning customer degraded the contact record. Only the fields the payload actually carried are written now, and the placeholder name belongs to the create path alone because first name is nullable and a stored null must not silently become Visitor on someone else submission. Rejected: keeping updateOrCreate and passing the placeholder through, because the second argument is applied on update and no value list can express leave this column as it is. Rejected: filling the missing values from the last submission of the same person, because a capture would then invent an answer the submitter did not give, which is the fabrication this change exists to remove.",
    "at": "2026-09-05T04:40:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "A submission judged spam never writes to a contact the business already has. The spam branch upserted the Person with updateOrCreate, whose second argument applies on update as well as on create, so an attacker supplied name and email landed on a known contact row. The honeypot is tested before any step logic, so a returning customer whose password manager fills the hidden field, or whose browser reports a timezone outside the identifier list, reaches that branch with an ordinary submission and has the record degraded. Filtering the payload down to the fields it carried is the wrong guard here, because on this branch every field in the payload is the one the system has just judged untrustworthy, so the guard is on the write itself. A spam submission may still create a contact when no row matches that phone, because every submission row references a person id and the module anchor depends on it, but it never updates one. Rejected: refusing to attach a person id at all, because a null person id on a submission row is a schema change this wave has no mandate for. Rejected: reusing the SITE-52 shape unchanged, because writing only the fields the payload carried still lets a bot name overwrite a real one.",
+   "at": "2026-09-05T04:58:35",
    "ruling": "R245"
   }
  ]
