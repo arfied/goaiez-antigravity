@@ -13,7 +13,7 @@
 <span class="font-semibold">Invoice #{{ $d->invoice_id }}</span>
 <span class="tabular-nums">{{ number_format($d->chargeback_amount_cents / 100, 2) }}</span>
 <span class="text-sm text-ink-2">{{ $d->reason }}</span>
-<x-ui.status-pill :state="$d->status === 'won' ? 'ok' : ($d->status === 'lost' ? 'alert' : 'attention')" label="{{ $d->status }}" />
+<x-ui.status-pill :state="$d->status === 'won' ? 'ok' : ($d->status === 'lost' ? 'alert' : 'attention')" :label="$d->status" />
 <p class="text-sm">{{ $d->evidence_count }} evidence items</p>
 @if($d->evidence_items->isNotEmpty())
 <ul class="text-sm">

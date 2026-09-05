@@ -30,7 +30,7 @@
                 <li class="border rounded p-4 shadow bg-white">
                     <div class="flex justify-between items-center">
                         <span class="font-semibold">{{ $package->contents['invoice_number'] ?? ('#'.$package->invoice_id) }}</span>
-                        <x-ui.status-pill :state="$package->transmitted_at ? 'ok' : 'attention'" label="{{ $package->transmitted_at ? 'sent to '.$package->partner : 'waiting on a collections partner' }}" />
+                        <x-ui.status-pill :state="$package->transmitted_at ? 'ok' : 'attention'" :label="$package->transmitted_at ? 'sent to '.$package->partner : 'waiting on a collections partner'" />
                     </div>
                     <p class="text-sm text-ink-2 mt-2">{{ number_format(($package->contents['balance_cents'] ?? 0) / 100, 2) }} owed · {{ count($package->contents['lines'] ?? []) }} lines · {{ count($package->contents['payments'] ?? []) }} payments · {{ count($package->contents['actions'] ?? []) }} actions · {{ $package->contents['messages_count'] ?? 0 }} messages · packaged {{ $package->created_at->diffForHumans() }}</p>
                 </li>
@@ -53,8 +53,8 @@
                         <div class="tabular-nums">{{ number_format($inv->balance_cents / 100, 2) }} owed</div>
                     </div>
                     <div class="flex flex-wrap items-center gap-2 mb-3">
-                        <x-ui.status-pill :state="$inv->days_overdue > 60 ? 'alert' : 'attention'" label="{{ $inv->days_overdue }} days overdue" />
-                        <x-ui.status-pill :state="$inv->attempts > 0 ? 'ok' : 'attention'" label="{{ $inv->attempts > 0 ? $inv->attempts.' resolution attempts on record' : 'no resolution attempt yet' }}" />
+                        <x-ui.status-pill :state="$inv->days_overdue > 60 ? 'alert' : 'attention'" :label="$inv->days_overdue.' days overdue'" />
+                        <x-ui.status-pill :state="$inv->attempts > 0 ? 'ok' : 'attention'" :label="$inv->attempts > 0 ? $inv->attempts.' resolution attempts on record' : 'no resolution attempt yet'" />
                     </div>
                     <form wire:submit="package({{ $inv->id }})">
                         <x-ui.submit target="package({{ $inv->id }})" busy="Packaging…">Package for collections</x-ui.submit>

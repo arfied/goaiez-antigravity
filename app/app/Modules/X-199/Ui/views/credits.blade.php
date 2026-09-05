@@ -29,7 +29,7 @@
                             <span class="text-sm text-ink-2 ml-2">{{ $term->label }}</span>
                         </div>
                         @if($term->headroom_cents > 0)
-                            <x-ui.status-pill state="ok" label="{{ number_format($term->headroom_cents / 100, 2) }} headroom" />
+                            <x-ui.status-pill state="ok" :label="number_format($term->headroom_cents / 100, 2).' headroom'" />
                         @else
                             <x-ui.status-pill state="attention" label="over the limit" />
                         @endif

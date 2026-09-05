@@ -42,7 +42,7 @@
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ $invoice->invoice_number }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->customer_name }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <x-ui.status-pill :state="$invoice->status === 'paid' ? 'ok' : ($invoice->status === 'draft' ? 'unknown' : 'attention')" label="{{ $invoice->status }}" />
+                                        <x-ui.status-pill :state="$invoice->status === 'paid' ? 'ok' : ($invoice->status === 'draft' ? 'unknown' : 'attention')" :label="$invoice->status" />
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->due_date }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right tabular-nums">

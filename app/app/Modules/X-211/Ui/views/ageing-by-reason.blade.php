@@ -34,7 +34,7 @@
                                 </div>
                             </div>
                             
-                            <x-ui.status-pill :state="$inv->days_overdue > 60 ? 'alert' : 'attention'" label="{{ $inv->days_overdue }} days overdue" />
+                            <x-ui.status-pill :state="$inv->days_overdue > 60 ? 'alert' : 'attention'" :label="$inv->days_overdue.' days overdue'" />
                             
                             <form wire:submit="logPayment({{ $inv->id }})" class="flex items-center gap-2 mt-4">
                                 <input type="text" wire:model="reference.{{ $inv->id }}" placeholder="Cheque or transfer reference" class="border rounded px-2 py-1 flex-1">

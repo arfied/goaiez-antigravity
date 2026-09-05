@@ -30,7 +30,7 @@
                 <li class="flex items-center justify-between p-2 border rounded">
                     <span class="font-semibold">{{ $numbers[$plan->invoice_id] ?? ('#'.$plan->invoice_id) }}</span>
                     <span class="tabular-nums">{{ $plan->installments_count }} × {{ number_format($plan->installment_amount_cents / 100, 2) }} {{ $plan->frequency }}</span>
-                    <x-ui.status-pill :state="$plan->status === 'accepted' ? 'ok' : 'attention'" label="{{ $plan->status }}" />
+                    <x-ui.status-pill :state="$plan->status === 'accepted' ? 'ok' : 'attention'" :label="$plan->status" />
                 </li>
             @endforeach
         </ul>

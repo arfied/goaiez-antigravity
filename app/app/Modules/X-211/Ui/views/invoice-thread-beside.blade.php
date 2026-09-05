@@ -38,7 +38,7 @@
             <section class="border rounded p-4 shadow bg-white">
                 <div class="flex justify-between items-center mb-2">
                     <span class="font-semibold">{{ $invoice->invoice_number }}</span>
-                    <x-ui.status-pill :state="$invoice->days_overdue > 0 ? 'attention' : 'ok'" label="{{ $invoice->days_overdue > 0 ? $invoice->days_overdue.' days overdue' : 'not yet due' }}" />
+                    <x-ui.status-pill :state="$invoice->days_overdue > 0 ? 'attention' : 'ok'" :label="$invoice->days_overdue > 0 ? $invoice->days_overdue.' days overdue' : 'not yet due'" />
                 </div>
                 <p class="text-sm text-ink-2">Due {{ $invoice->due_date->toDateString() }} · {{ number_format($invoice->balance_cents / 100, 2) }} owed of {{ number_format($invoice->total_cents / 100, 2) }}</p>
                 @if($customer)
@@ -59,7 +59,7 @@
                     <ul class="space-y-2">
                         @foreach($messages as $message)
                             <li class="text-sm">
-                                <x-ui.status-pill :state="$message->direction === 'inbound' ? 'attention' : 'ok'" label="{{ $message->direction === 'inbound' ? 'they said' : 'we said' }}" />
+                                <x-ui.status-pill :state="$message->direction === 'inbound' ? 'attention' : 'ok'" :label="$message->direction === 'inbound' ? 'they said' : 'we said'" />
                                 <span class="ml-2">{{ $message->body }}</span>
                                 <span class="block text-ink-3">{{ $message->created_at->diffForHumans() }}</span>
                             </li>

@@ -21,7 +21,7 @@
                     <span>{{ $c->transaction_ref }}</span>,
                     <span>{{ round($c->confidence_rate * 100) }}%</span>,
                     <span>{{ $c->assigned_category }}</span>,
-                    <x-ui.status-pill :state="$c->status === 'open' ? 'attention' : 'ok'" label="{{ $c->status }}" />,
+                    <x-ui.status-pill :state="$c->status === 'open' ? 'attention' : 'ok'" :label="$c->status" />,
                     <span>run {{ $c->sync_run_id }}</span>
                     
                     @if($c->status === 'open')

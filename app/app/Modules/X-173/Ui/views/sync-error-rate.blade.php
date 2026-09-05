@@ -24,7 +24,7 @@
                     @elseif($run->conflicts_count === 0)
                         <x-ui.status-pill state="ok" label="0% conflicts" />
                     @else
-                        <x-ui.status-pill state="attention" label="{{ round($rate * 100) }}% conflicts" />
+                        <x-ui.status-pill state="attention" :label="round($rate * 100).'% conflicts'" />
                     @endif
                     
                     <x-ui.button size="default" wire:click="show({{ $run->id }})">Show its conflicts</x-ui.button>

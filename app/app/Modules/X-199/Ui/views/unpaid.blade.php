@@ -65,7 +65,7 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->due_date ? $invoice->due_date->format('M j, Y') : 'N/A' }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         @if($invoice->days_overdue > 0)
-                                            <x-ui.status-pill state="alert" label="{{ $invoice->days_overdue }} days overdue" />
+                                            <x-ui.status-pill state="alert" :label="$invoice->days_overdue.' days overdue'" />
                                         @else
                                             <x-ui.status-pill state="ok" label="Not overdue" />
                                         @endif

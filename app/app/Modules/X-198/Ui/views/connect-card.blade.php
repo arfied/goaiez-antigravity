@@ -20,7 +20,7 @@
                     <li class="flex items-center justify-between p-2 border rounded">
                         <span>{{ $conn->gateway_name }}</span>
                         <p class="text-sm text-ink-2">Money lands in <span class="tabular-nums">{{ $conn->merchant_account_id }}</span></p>
-                        <x-ui.status-pill :state="$conn->merchant_status === 'pending_kyc' ? 'attention' : 'ok'" label="{{ str_replace('_', ' ', $conn->merchant_status ?? 'external_gateway') }}" />
+                        <x-ui.status-pill :state="$conn->merchant_status === 'pending_kyc' ? 'attention' : 'ok'" :label="str_replace('_', ' ', $conn->merchant_status ?? 'external_gateway')" />
                         
                         @if(($conn->merchant_status ?? 'external_gateway') === 'external_gateway')
                             <x-ui.button wire:click="applyForMerchant({{ $conn->id }})" wire:loading.attr="disabled">

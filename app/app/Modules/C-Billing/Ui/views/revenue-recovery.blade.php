@@ -27,7 +27,7 @@
                 <li class="border rounded p-4 shadow bg-white">
                     <div class="flex flex-wrap justify-between items-center gap-2">
                         <span class="font-semibold">Day {{ $state->day_in_cycle }} of 21</span>
-                        <x-ui.status-pill :state="$state->day_in_cycle >= 21 ? 'attention' : 'ok'" label="{{ $state->status }}" />
+                        <x-ui.status-pill :state="$state->day_in_cycle >= 21 ? 'attention' : 'ok'" :label="$state->status" />
                     </div>
                     <p class="text-sm text-ink-2 mt-1">{{ $state->stays_on }}</p>
                     <dl class="mt-2 grid grid-cols-2 gap-2 text-sm tabular-nums">

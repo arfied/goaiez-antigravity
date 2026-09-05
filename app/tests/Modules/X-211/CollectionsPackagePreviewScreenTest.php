@@ -108,11 +108,14 @@ class CollectionsPackagePreviewScreenTest extends TestCase
         $this->assertSame('packaged_collections', ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv2->id)->value('status'));
         Event::assertDispatchedTimes(ArPackaged::class, 1);
 
+        $package->forceFill(['partner' => "O'Brien & Sons", 'transmitted_at' => now()])->save();
+
         $this->assertSame(0, ArCollectionsPackage::where('business_id', $bizB->id)->count());
 
         Livewire::actingAs($owner)->test(CollectionsPackagePreview::class)
             ->assertSee('Packaged')
             ->assertSee('INV-A1')
+            ->assertSee("sent to O'Brien & Sons")
             ->call('package', 999999)
             ->assertSee("isn't in this account");
     }

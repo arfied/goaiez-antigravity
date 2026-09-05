@@ -24,7 +24,7 @@
                 <li>
                     <span>{{ $conn->provider }}</span>,
                     <span>{{ $conn->realm_id }}</span>,
-                    <x-ui.status-pill :state="$conn->is_active ? 'ok' : 'attention'" label="{{ $conn->is_active ? 'active' : 'inactive' }}" />
+                    <x-ui.status-pill :state="$conn->is_active ? 'ok' : 'attention'" :label="$conn->is_active ? 'active' : 'inactive'" />
                     
                     @php
                         $connMappings = $mappings->get($conn->id, collect());

@@ -15,7 +15,7 @@
 <span class="font-semibold">{{ $s->name }}</span>
 <span class="tabular-nums">{{ number_format($s->unit_price_cents / 100, 2) }}</span>
 <span class="text-sm text-ink-2">{{ $s->fulfilment_type }}</span>
-<x-ui.status-pill :state="$s->inventory_quantity > 0 ? 'ok' : 'attention'" label="{{ $s->inventory_quantity > 0 ? $s->inventory_quantity.' in stock' : 'sold out' }}" />
+<x-ui.status-pill :state="$s->inventory_quantity > 0 ? 'ok' : 'attention'" :label="$s->inventory_quantity > 0 ? $s->inventory_quantity.' in stock' : 'sold out'" />
 @if($s->inventory_quantity > 0)
 <x-ui.button size="default" wire:click="add({{ $s->id }})" wire:loading.attr="disabled" wire:target="add({{ $s->id }})">Add</x-ui.button>
 @endif
