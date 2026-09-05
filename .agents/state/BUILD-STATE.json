@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T04:00:07",
+ "updated": "2026-09-05T04:12:44",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1598,6 +1598,18 @@
    "module": "X-01",
    "chose": "the takeover latch has no release door, is_active and released_at have a writer and no un-writer, AgentEvalSuite line 430 makes it a permanently silenced thread, and a release path is new surface and stays UNRESOLVED.",
    "at": "2026-09-05T04:00:07",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-200",
+   "chose": "G18-25 clause one is built at CallDisposeAction line 25 and was already exercised by the anchor under the wrong id G18-01, the new test pins the untested direction a certain voicemail is not upgraded, and mutation A proves it covers ground the anchor does not.",
+   "at": "2026-09-05T04:12:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-200",
+   "chose": "the 3 percent abandonment ceiling is a column with no arithmetic, abandonment_ceiling_pct is written by the migration and the only reader renders CallCampaign rows without computing a rate, disposeCall has no abandoned path, and a rate and a ceiling check are new surface and stay UNRESOLVED.",
+   "at": "2026-09-05T04:12:44",
    "ruling": "R245"
   }
  ]
