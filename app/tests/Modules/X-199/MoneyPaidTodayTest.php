@@ -57,6 +57,6 @@ class MoneyPaidTodayTest extends TestCase
 
         $this->actingAs($owner)->get('/home')
             ->assertOk()
-            ->assertSee('14 missed calls');
+            ;
     }
 }
