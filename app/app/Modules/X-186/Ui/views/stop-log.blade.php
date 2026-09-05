@@ -7,7 +7,7 @@
         @endif
 
         @if ($lastStoppedPersonId !== null)
-            <x-ui.attention-card>
+            <x-ui.attention-card state="ok">
                 @if ($lastStoppedCount === 0)
                     Nothing else was running
                 @else
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <x-ui.button wire:click="stopRemaining({{ $run->person_id }})" size="sm">
+                                    <x-ui.button wire:click="stopRemaining({{ $run->person_id }})" size="default">
                                         Stop their remaining sequences
                                     </x-ui.button>
                                 </div>
