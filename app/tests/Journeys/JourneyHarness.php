@@ -23,8 +23,11 @@ use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Models\ReceivableState;
+use App\Services\Billing\AuthorizeNetApi;
+use App\Services\Billing\AuthorizeNetGateway;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
+use App\Support\CardholderName;
 use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
@@ -655,11 +658,11 @@ trait JourneyHarness
         $clientKey = PlatformCredentials::get('authorize_net_public_client_key');
 
         if (! $clientKey) {
-            throw new \RuntimeException("UNRESOLVED — authorize_net_public_client_key is missing");
+            throw new \RuntimeException('UNRESOLVED — authorize_net_public_client_key is missing');
         }
 
         $business = Business::find($tenant['id']);
-        
+
         $req = [
             'securePaymentContainerRequest' => [
                 'merchantAuthentication' => [
@@ -672,9 +675,9 @@ trait JourneyHarness
                     'token' => [
                         'cardNumber' => '4111111111111111',
                         'expirationDate' => '2033-12',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         $res = Http::post('https://apitest.authorize.net/xml/v1/request.api', $req);
         $json = json_decode(trim($res->body(), "\xEF\xBB\xBF"), true);
@@ -689,13 +692,13 @@ trait JourneyHarness
         $business->save();
         $this->actingAs($user);
 
-        $gateway = app(\App\Services\Billing\AuthorizeNetGateway::class);
-        $cardholder = \App\Support\CardholderName::fromInput('Test', 'User');
-        
+        $gateway = app(AuthorizeNetGateway::class);
+        $cardholder = CardholderName::fromInput('Test', 'User');
+
         try {
             $sub = $gateway->subscribe($business, 'test@example.com', $opaqueDataValue, $cardholder);
         } catch (\Exception $e) {
-            throw new \RuntimeException("UNRESOLVED — Sandbox refused subscription: " . $e->getMessage());
+            throw new \RuntimeException('UNRESOLVED — Sandbox refused subscription: '.$e->getMessage());
         }
 
         $cancellationId = $sub->authorize_net_subscription_id;
@@ -704,11 +707,11 @@ trait JourneyHarness
 
         $this->post(route('account.plan.cancel'), ['confirm' => 'yes']);
 
-        $api = app(\App\Services\Billing\AuthorizeNetApi::class);
+        $api = app(AuthorizeNetApi::class);
         try {
             $status = $api->subscriptionStatus($business->id, $cancellationId);
         } catch (\Exception $e) {
-            throw new \RuntimeException("UNRESOLVED — Sandbox refused status read: " . $e->getMessage());
+            throw new \RuntimeException('UNRESOLVED — Sandbox refused status read: '.$e->getMessage());
         }
 
         return [

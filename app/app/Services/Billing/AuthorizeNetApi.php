@@ -486,7 +486,8 @@ final class AuthorizeNetApi
             'customerPaymentProfileId' => $customerPaymentProfileId,
         ];
 
-        sleep(10); $body = $this->send('ARBCreateSubscriptionRequest', [
+        sleep(10);
+        $body = $this->send('ARBCreateSubscriptionRequest', [
             'subscription' => $subscription,
         ], $businessId);
 
