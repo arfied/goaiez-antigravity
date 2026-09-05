@@ -588,3 +588,4 @@
 - `2026-09-05T04:12:44` (R245) X-200 — the 3 percent abandonment ceiling is a column with no arithmetic, abandonment_ceiling_pct is written by the migration and the only reader renders CallCampaign rows without computing a rate, disposeCall has no abandoned path, and a rate and a ceiling check are new surface and stay UNRESOLVED.
 - `2026-09-05T04:30:12` (R245) X-200 — disposeCall was the only door in X-200 that did not validate the campaign and seat ids it was handed, dialNext and logout and scoreCall all use findOrFail on the same ids, the row was written before the seat lookup so a foreign seat left the real seat in dialing forever and told nobody, and the fix adopts the module existing findOrFail idiom rather than a named refusal class because three sibling doors already read that way.
 - `2026-09-05T04:50:19` (R245) X-200 — dialNext refuses a paused campaign
+- `2026-09-05T05:09:58` (R245) X-215 — sign action refuses requests that are not pending

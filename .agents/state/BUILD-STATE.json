@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T04:50:19",
+ "updated": "2026-09-05T05:09:58",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1622,6 +1622,12 @@
    "module": "X-200",
    "chose": "dialNext refuses a paused campaign",
    "at": "2026-09-05T04:50:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-215",
+   "chose": "sign action refuses requests that are not pending",
+   "at": "2026-09-05T05:09:58",
    "ruling": "R245"
   }
  ]
