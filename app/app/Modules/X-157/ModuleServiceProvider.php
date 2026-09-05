@@ -38,6 +38,7 @@ final class ModuleServiceProvider extends ServiceProvider
             abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
             $html = Storage::disk('local')->get("sites/{$deployHash}.html");
+            abort_if($html === null, 404);
 
             return response($html, 200)->header('Content-Type', 'text/html');
         })->whereNumber('business');
