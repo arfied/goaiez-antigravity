@@ -15,10 +15,12 @@ set -euo pipefail
 cd "$(dirname "$(readlink -f "$0")")/../.." || exit 1
 
 CODER=agy
+ALLOW_MERGE=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --coder) CODER="${2:-}"; shift 2;;
-    *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude)"; exit 1;;
+    --allow-merge) ALLOW_MERGE=1; shift;;   # opens the shared coder guard's merge gate (GOAIEZ_MERGE_OK=1) for THIS run only; the guard added it 2026-09-05 13:27
+    *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --allow-merge)"; exit 1;;
   esac
 done
 case "$CODER" in agy|claude) ;; *) echo "REFUSED: --coder must be agy or claude"; exit 1;; esac
@@ -52,15 +54,15 @@ if [ "$CODER" = claude ]; then
   # which denies app/**) out of the coder's permissions; the guard and the seal
   # are what bind it, not that file. Bounded by `timeout 8h` like agy's
   # --print-timeout.
-  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER log=$LOG"
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi
