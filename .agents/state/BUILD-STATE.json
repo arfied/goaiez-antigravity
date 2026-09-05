@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T12:29:26",
+ "updated": "2026-09-05T12:47:07",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -832,6 +832,12 @@
      "stage": "capability",
      "why": "G4-27 belongs to track sixty or money",
      "at": "2026-09-05T12:29:26"
+    },
+    {
+     "module": "X-171",
+     "stage": "capability",
+     "why": "G4-27's \u2464 carries the KILLED G4-27's P-095/R25 auto-top-up prose instead of X-171's offline-mode statement (GOAIEZ-MASTER-PLAN.md:39359 reads 'offline mode = tech mobile is offline-first'); ruling 18 misattribution, tracker range-row fixes are Track 1's",
+     "at": "2026-09-05T12:47:07"
     }
    ]
   },
@@ -851,6 +857,12 @@
      "stage": "X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate)",
      "why": "",
      "at": "2026-09-05T12:07:11"
+    },
+    {
+     "module": "X-172",
+     "stage": "capability",
+     "why": "G10-24's \u2464 names no refusal; the clause must be authored by someone not building X-172 (P-210, capabilities.php header line 10) \u2014 tracker row GOAIEZ-TRACKER-CAPABILITIES.md:559 is Track 1's to restate",
+     "at": "2026-09-05T12:47:03"
     }
    ]
   },
@@ -1350,6 +1362,18 @@
    "stage": "capability",
    "why": "G4-27 belongs to track sixty or money",
    "at": "2026-09-05T12:29:26"
+  },
+  {
+   "module": "X-172",
+   "stage": "capability",
+   "why": "G10-24's \u2464 names no refusal; the clause must be authored by someone not building X-172 (P-210, capabilities.php header line 10) \u2014 tracker row GOAIEZ-TRACKER-CAPABILITIES.md:559 is Track 1's to restate",
+   "at": "2026-09-05T12:47:03"
+  },
+  {
+   "module": "X-171",
+   "stage": "capability",
+   "why": "G4-27's \u2464 carries the KILLED G4-27's P-095/R25 auto-top-up prose instead of X-171's offline-mode statement (GOAIEZ-MASTER-PLAN.md:39359 reads 'offline mode = tech mobile is offline-first'); ruling 18 misattribution, tracker range-row fixes are Track 1's",
+   "at": "2026-09-05T12:47:07"
   }
  ],
  "decisions": [
@@ -1405,6 +1429,12 @@
    "module": "C-Agent",
    "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
    "at": "2026-09-05T10:15:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-172",
+   "chose": "a redline is SURFACED with a diff, never accepted through the portal; PortalActionHandler refuses actionType redline_accepted (test_g10_24_refusal_redline_never_accepted)",
+   "at": "2026-09-05T12:47:03",
    "ruling": "R245"
   }
  ],

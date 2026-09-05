@@ -765,3 +765,6 @@
 - `2026-09-05T10:15:15` (R245) C-Agent — one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)
 - `2026-09-05T12:07:11` UNRESOLVED X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate) X-172 - 
 - `2026-09-05T12:29:26` UNRESOLVED capability X-171 - G4-27 belongs to track sixty or money
+- `2026-09-05T12:47:03` UNRESOLVED capability X-172 - G10-24's ⑤ names no refusal; the clause must be authored by someone not building X-172 (P-210, capabilities.php header line 10) — tracker row GOAIEZ-TRACKER-CAPABILITIES.md:559 is Track 1's to restate
+- `2026-09-05T12:47:03` (R245) X-172 — a redline is SURFACED with a diff, never accepted through the portal; PortalActionHandler refuses actionType redline_accepted (test_g10_24_refusal_redline_never_accepted)
+- `2026-09-05T12:47:07` UNRESOLVED capability X-171 - G4-27's ⑤ carries the KILLED G4-27's P-095/R25 auto-top-up prose instead of X-171's offline-mode statement (GOAIEZ-MASTER-PLAN.md:39359 reads 'offline mode = tech mobile is offline-first'); ruling 18 misattribution, tracker range-row fixes are Track 1's
