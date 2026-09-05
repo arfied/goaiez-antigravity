@@ -37,6 +37,7 @@
 
     {{-- The form posts to a session-backed web route, so the token is required. --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="Leave a review for {{ $businessName }}">
 
     {{--
         Never indexed. A feedback form has no search value, and a crawler that

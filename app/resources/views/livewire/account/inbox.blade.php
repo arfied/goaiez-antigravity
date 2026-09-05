@@ -93,7 +93,7 @@
                                 </button>
                                 <p class="text-sm text-ink-2">{{ $item->updated_at?->diffForHumans() }}</p>
                             </div>
-                            <p class="mt-1 text-base text-ink" data-thread-state="{{ $item->id }}">
+                            <p class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule" data-thread-state="{{ $item->id }}">
                                 {{ $item->agent_status->ownerLabel() }}
                             </p>
                         </li>
@@ -107,7 +107,7 @@
                 <h2 class="font-display text-lg font-semibold text-ink">
                     {{ $thread->customer?->name ?? 'This contact was removed' }}
                 </h2>
-                <p class="text-base text-ink" data-thread-state>{{ $state->status->ownerLabel() }}</p>
+                <p class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-paper text-ink-2 border border-rule" data-thread-state>{{ $state->status->ownerLabel() }}</p>
             </div>
 
             {{--
@@ -175,7 +175,7 @@
                             {{ $entry->sender_type->label() }}
                             <span class="font-normal">· {{ $entry->created_at?->diffForHumans() }}</span>
                         </p>
-                        <p class="mt-1 whitespace-pre-line text-base text-ink">{{ $entry->body }}</p>
+                        <p class="mt-1 whitespace-pre-line break-words text-base text-ink">{{ $entry->body }}</p>
                     </li>
                 @empty
                     {{--
