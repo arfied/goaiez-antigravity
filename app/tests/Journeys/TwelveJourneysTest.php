@@ -64,6 +64,7 @@ final class TwelveJourneysTest extends TestCase
         // returns immediately and the work is queued, which is exactly why a
         // sync-driver run would prove nothing.
         $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+15550123');
+        $this->drainQueueOnce();
 
         $message = $this->waitForOutbound($tenant, to: '+15550123', timeoutSeconds: 90);
         $elapsedMs = (int) ((microtime(true) - $started) * 1000);
