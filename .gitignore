@@ -20,3 +20,4 @@ __pycache__/
 # writes one track's copies over another's destroys the verdict record.
 .agents/supervisor/*
 !.agents/supervisor/launch-coder.sh
+scratch/
