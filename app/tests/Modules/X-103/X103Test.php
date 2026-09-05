@@ -152,7 +152,13 @@ class X103Test extends TestCase
         $this->assertTrue($version->chat_installed);
         $this->assertTrue($version->form_capture_installed);
         $this->assertTrue($version->dni_installed);
-        $this->assertSame([], $version->content_blocks);
+        $this->assertSame([
+            ['type' => 'chat_widget'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni_script'],
+            ['type' => 'seo_tags'],
+            ['type' => 'schema_markup'],
+        ], $version->content_blocks);
     }
 
     /**
@@ -209,7 +215,14 @@ class X103Test extends TestCase
         $res = $this->publishAction->handle($biz->id, $page->id, $blocks);
 
         $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
-        $this->assertEquals($blocks, $version->content_blocks);
+        $this->assertEquals($blocks, array_slice($version->content_blocks, 0, count($blocks)));
+        $this->assertEquals([
+            ['type' => 'chat_widget'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni_script'],
+            ['type' => 'seo_tags'],
+            ['type' => 'schema_markup'],
+        ], array_slice($version->content_blocks, count($blocks)));
     }
 
     /** (R245) */
