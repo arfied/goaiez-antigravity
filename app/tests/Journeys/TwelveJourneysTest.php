@@ -1,3 +1,4 @@
+<?php
 
 
 declare(strict_types=1);
@@ -70,8 +71,8 @@ final class TwelveJourneysTest extends TestCase
 
     private function subscribedTenant(array $tenant): array
     {
-        $loginId = \App\Services\PlatformCredentials::get('authorize_net_api_login_id');
-        $clientKey = \App\Services\PlatformCredentials::get('authorize_net_public_client_key');
+        $loginId = \App\Support\PlatformCredentials::get('authorize_net_api_login_id');
+        $clientKey = \App\Support\PlatformCredentials::get('authorize_net_public_client_key');
 
         if (! $clientKey) {
             throw new \RuntimeException('UNRESOLVED — authorize_net_public_client_key is missing');
@@ -99,9 +100,11 @@ final class TwelveJourneysTest extends TestCase
             ],
         ];
 
-        $json = app(\App\Services\Billing\Gateway\AuthorizeNetStub::class)->post('https://api.authorize.net/xml/v1/request.api', $req);
-        if ($json['messages']['resultCode'] !== 'Ok') {
-            throw new \RuntimeException('UNRESOLVED — Sandbox refused tokenize: '.$json['messages']['message'][0]['text']);
+        $res = \Illuminate\Support\Facades\Http::post('https://apitest.authorize.net/xml/v1/request.api', $req);
+        $json = json_decode(trim($res->body(), "\xEF\xBB\xBF"), true);
+        if (($json['messages']['resultCode'] ?? '') !== 'Ok') {
+            $msg = $json['messages']['message'][0]['text'] ?? 'Unknown refusal';
+            throw new \RuntimeException("UNRESOLVED — Sandbox refused nonce creation: {$msg}");
         }
         $opaqueDataValue = $json['opaqueData']['dataValue'];
 
@@ -115,11 +118,11 @@ final class TwelveJourneysTest extends TestCase
         $this->actingAs($user);
 
         $gateway = app(\App\Services\Billing\AuthorizeNetGateway::class);
-        $subs = app(\App\Services\Billing\Subscriptions::class);
+        $cardholder = \App\Support\CardholderName::fromInput('Test', 'User');
 
         try {
-            $sub = $subs->create($business, \App\Enums\Plan::Base, $opaqueDataValue);
-        } catch (\App\Exceptions\PaymentFailedException $e) {
+            $sub = $gateway->subscribe($business, 'test@example.com', $opaqueDataValue, $cardholder);
+        } catch (\Exception $e) {
             throw new \RuntimeException('UNRESOLVED — Sandbox refused subscription: '.$e->getMessage());
         }
 
