@@ -70,6 +70,21 @@ class AbandonedFormsTest extends TestCase
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->assertDontSee('vis_999');
+
+        $event3 = PixelEvent::create([
+            'business_id' => $biz->id,
+            'session_id' => $session->id,
+            'event_name' => 'page.viewed',
+            'payload' => [
+                'form_id' => 'wrong_form',
+                'abandoned_field' => 'wrong_field'
+            ],
+            'created_at' => now()
+        ]);
+        
+        Livewire::actingAs($user)
+            ->test(AbandonedForms::class, ['businessId' => $biz->id])
+            ->assertDontSee('wrong_form');
     }
 
     public function test_recovery_affordance_does_not_dispatch_send()
