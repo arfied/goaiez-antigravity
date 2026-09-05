@@ -1,26 +1,21 @@
 <div>
     <div class="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
         <div class="mb-8">
-            <h1 class="text-xl font-semibold leading-6 text-gray-900">Dunning Board</h1>
-            <p class="mt-2 text-sm text-gray-700">Dunning Timeline</p>
+            <h1 class="text-xl font-semibold leading-6 text-ink">Dunning Board</h1>
+            <p class="mt-2 text-sm text-ink-2">Dunning Timeline</p>
         </div>
 
-        <div wire:loading class="w-full text-center p-4">
-            <span class="text-gray-500 text-sm">Loading...</span>
+        <div wire:loading>
+            <x-ui.skeleton label="Reading the dunning cycle…" lines="3" />
         </div>
 
         @if($error)
-            <div role="alert" class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative text-sm">
-                {{ $error }}
-            </div>
+            <x-ui.error-panel heading="We couldn't advance that case">{{ $error }}</x-ui.error-panel>
         @endif
 
         <div wire:loading.remove class="mt-8 flow-root">
             @if($states->isEmpty())
-                <div class="text-center p-8 bg-white rounded-lg border border-gray-200">
-                    <h3 class="text-sm font-medium text-gray-900">No account is in dunning — nothing to chase.</h3>
-                    <p class="mt-1 text-sm text-gray-500">Declines live on the Money screen.</p>
-                </div>
+                <x-ui.empty-state heading="No account is in dunning — nothing to chase.">Declines live on the Money screen.</x-ui.empty-state>
             @else
                 <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
                     <table class="min-w-full divide-y divide-gray-300">
@@ -44,10 +39,10 @@
                                         {{ $state->next_step_words }}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        {{ $state->status }}
+                                        <x-ui.status-pill :state="$state->status === 'active' ? 'attention' : 'unknown'" :label="$state->status" />
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                        <button wire:click="advance({{ $state->id }})" wire:loading.attr="disabled" class="text-indigo-600 hover:text-indigo-900 px-3 py-2 border border-gray-300 rounded-md text-sm shadow-sm bg-white font-medium">Advance</button>
+                                        <x-ui.button size="default" variant="secondary" wire:click="advance({{ $state->id }})" wire:loading.attr="disabled" wire:target="advance({{ $state->id }})">Advance</x-ui.button>
                                     </td>
                                 </tr>
                             @endforeach

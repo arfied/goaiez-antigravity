@@ -55,6 +55,7 @@ class DunningBoardScreenTest extends TestCase
             ->assertSee('day 7 human')
             ->assertDontSee('Day 10')
             ->assertDontSee('day 21 pause')
+            ->assertSee('active')
             ->call('advance', $stateA->id);
 
         $stateA->refresh();
@@ -62,6 +63,7 @@ class DunningBoardScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(DunningBoard::class)
             ->assertSee('Day 7')
+            ->assertSee('day 21 pause with the phone answering')
             ->call('advance', 999999)
             ->assertSee("isn't in this account");
     }
