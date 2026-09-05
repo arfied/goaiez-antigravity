@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T09:57:09",
+ "updated": "2026-09-05T10:14:06",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -587,6 +587,18 @@
      "stage": "capability",
      "why": "G2-58 \u2014 no booking-questions column in migration 2026_08_30_000021 and no action reads one; the booking page is Track 2's (ruling 5)",
      "at": "2026-09-05T08:29:31"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G2-49: NoShowDetected exists as a class. However, the event class exists with no dispatcher, nothing sets an appointment to a no-show state, and the marketing-defer arm the spec asks to assert in the same test has no reminder to follow \u2014 G19-20, its partner in the one spec at plan:31675, is already UNRESOLVED for that reason.",
+     "at": "2026-09-05T10:13:52"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G15-08: The out-of-office half is built and asserted: SchedulingEngine.php:167-169 throws SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule') on the booking door, and test_g2_13_out_of_office (X108Test.php:211) asserts both the availability door and that refusal message. Nothing is missing there. The \"X-10 skips an unavailable assignee\" half has no reader \u2014 `grep -rn \"X-108\\|Appointment\\|availability\\|assignee\" app/app/Modules/X-10 --include=*.php` returned nothing (exit code 1). The two-way sync half needs staff_calendar_links (X-209) and X-206's credential, neither of which this track owns or can create; `grep -rn \"staff_calendar_links\" app/app app/database --include=*.php` returned only X-209 migration/model/manifest lines.",
+     "at": "2026-09-05T10:14:06"
     }
    ]
   },
@@ -1567,6 +1579,18 @@
    "stage": "capability",
    "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast. Events/ConversationUpdated.php is a 'final class ConversationUpdated' with no interface \u2014 it does not implement ShouldBroadcast, so nothing leaves the process.",
    "at": "2026-09-05T09:57:09"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G2-49: NoShowDetected exists as a class. However, the event class exists with no dispatcher, nothing sets an appointment to a no-show state, and the marketing-defer arm the spec asks to assert in the same test has no reminder to follow \u2014 G19-20, its partner in the one spec at plan:31675, is already UNRESOLVED for that reason.",
+   "at": "2026-09-05T10:13:52"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G15-08: The out-of-office half is built and asserted: SchedulingEngine.php:167-169 throws SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule') on the booking door, and test_g2_13_out_of_office (X108Test.php:211) asserts both the availability door and that refusal message. Nothing is missing there. The \"X-10 skips an unavailable assignee\" half has no reader \u2014 `grep -rn \"X-108\\|Appointment\\|availability\\|assignee\" app/app/Modules/X-10 --include=*.php` returned nothing (exit code 1). The two-way sync half needs staff_calendar_links (X-209) and X-206's credential, neither of which this track owns or can create; `grep -rn \"staff_calendar_links\" app/app app/database --include=*.php` returned only X-209 migration/model/manifest lines.",
+   "at": "2026-09-05T10:14:06"
   }
  ],
  "decisions": [
@@ -1637,6 +1661,18 @@
   {
    "at": "2026-09-05T09:56:22",
    "note": "X-01 \u2014 G11-40 pins the header's first line (GOAIEZ-MASTER-PLAN.md:26556), which names FIVE channels including WhatsApp, against AccountInbox::$channels = ['sms','email','voice','chat'] (Ui/Account/Inbox.php:11), which names four. WhatsApp already threads correctly because UnifiedInboxManager::ingestMessage validates the $channel argument not at all \u2014 no enum, no list, no guard \u2014 so any string threads and freezes into conversations.channel at first write. The consequence is the other way round from the gap: a typo'd channel ('smss') is accepted silently and becomes the conversation's channel forever. Recorded, not fixed \u2014 adding validation or a fifth list entry is a behaviour change outside S-70, and the list lives in a Track 2 file (ruling 5)."
+  },
+  {
+   "at": "2026-09-05T10:14:11",
+   "note": "X-108 The merged view has three inputs; the spec names five. The spec says \"calendar + travel + blackout + capacity, merged before the offer\" and asks for the refusal `availability_unknown` \"asserted by making the calendar sync fail mid-request\". `getAvailableSlots` merges capacity, locks and blackouts; there is no travel time and no calendar sync in this module, so there is nothing that can fail mid-request and the `availability_unknown` refusal cannot be asserted from this track at all (unassertable, not unwritten)."
+  },
+  {
+   "at": "2026-09-05T10:14:15",
+   "note": "X-108 G2-10's other half is parked, not deferred. The plan marks it RE-HOME\u2192G15 and F-14 classifies the seven staff-surveillance-shaped lines \u2014 G2-10 among them \u2014 as \"classified and parked for the owner at turn 32\". This wave asserts the calendar half only and deliberately asserts nothing about the hiring half in either direction."
+  },
+  {
+   "at": "2026-09-05T10:14:20",
+   "note": "X-01 the seven X-01 capability refusals recorded at 2026-09-05T09:57:00 are a duplicate first pass of the same seven at 09:57:09; the 09:57:00 G19-15 entry lost the identifiers `Events/ConversationUpdated.php`, `final class ConversationUpdated` and `ShouldBroadcast` to shell command substitution (backticks inside double quotes); the 09:57:09 pass is the correct record for all seven."
   }
  ]
 }
