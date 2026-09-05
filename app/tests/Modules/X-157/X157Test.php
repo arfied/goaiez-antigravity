@@ -693,6 +693,46 @@ class X157Test extends TestCase
     }
 
     /** (R245) */
+    public function test_the_published_schema_url_and_canonical_name_the_same_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertSame(1, preg_match('/<link rel="canonical" href="([^"]+)"/', $html, $c));
+        $this->assertSame(1, preg_match('#<script type="application/ld\+json">\s*(\{.*?\})\s*</script>#s', $html, $j));
+        $ld = json_decode($j[1], true, 512, JSON_THROW_ON_ERROR);
+        $this->assertIsArray($ld);
+        $this->assertSame($c[1], $ld['url']);
+        $this->assertStringNotContainsString("/pages/{$page->id}", $ld['url']);
+    }
+
+    /** (R245) */
     public function test_route_deployment_whose_artifact_is_missing_returns_404(): void
     {
         Storage::fake('local');
