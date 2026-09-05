@@ -800,3 +800,4 @@
 - `2026-09-05T14:44:01` stage journey = 6
 - `2026-09-05T16:09:13` note: Item 1 finding: The modules X-221, X-222, X-223 are out of scope (grep of .agents/plan/ and docs/ returns nothing) and their NOT_STARTED is a stale mark. bin/state.py next answers FINISHED because it filters on wave membership (iterating over p['waves'] and checking w['modules']), and these three modules are absent from all waves' module lists.
 - `2026-09-05T16:14:39` note: WITHDRAWN wave-67 journey C-Agent quote-to-booking - journey PASSES; artifact_id is an internal work_orders id, JourneyHarness.php:390. A finding, not a missing dependency
+- `2026-09-05T16:31:37` note: WITHDRAWN wave-67 note: The modules X-221, X-222, X-223 are out of scope - the modules are in build-plan.json (waves 2/3, state: not started), in roster_list, scaffolded on disk, absent from every waves[].modules, and called 'next free' by two rules files. The .agents/plan/ grep was over a path that does not exist.
