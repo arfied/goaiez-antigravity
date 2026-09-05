@@ -30,6 +30,12 @@
       "Bash(./vendor/bin/phpstan:*)",
       "Bash(./vendor/bin/pint --test:*)",
       "Bash(bash .agents/supervisor/launch-coder.sh:*)",
+      "Bash(git push origin:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [
+      "NotebookEdit",
       "Edit(app/**)",
       "Write(app/**)",
       "Edit(source/**)",
@@ -52,9 +58,6 @@
       "Read(**/.env.*)",
       "Bash(sudo:*)",
       "Bash(rm:*)",
-      "Bash(git push:*)",
-      "Bash(git commit:*)",
-      "Bash(git add:*)",
       "Bash(git switch:*)",
       "Bash(git checkout:*)",
       "Bash(git restore:*)",
@@ -82,9 +85,6 @@
       "Bash(./vendor/bin/pint --repair:*)",
       "Bash(./vendor/bin/pint --dirty:*)",
       "Bash(runtime/goaiez-runtime.sh:*)"
-    ],
-    "deny": [
-      "NotebookEdit"
     ]
   }
 }
