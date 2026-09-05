@@ -136,6 +136,15 @@ if [ $want_tests -eq 1 ]; then
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
+  elif [ -z "$out" ]; then
+    # 2026-09-05 07:2x: a gate printed a blank §7 and an empty last-pest.json.
+    # Zero bytes is never a result: rc 137/143 = killed from outside (a
+    # `pkill -f pest` in another session); 255 = PHP died before the formatter
+    # (memory, Vite manifest — narrow with --filter); 0 with no output = the
+    # formatter never ran.
+    echo "  ✗ pest printed ZERO BYTES (rc=$rc) — no test ran to completion; not a number, a silence. Re-run; if it repeats, --filter one file to surface the exception"
+    out='{"tool":"pest","result":"silent","rc":'"$rc"'}'
+    fail=1
   fi
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
   [ $rc -ne 0 ] && fail=1
