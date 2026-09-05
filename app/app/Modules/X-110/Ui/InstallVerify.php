@@ -37,7 +37,7 @@ class InstallVerify extends Component
     {
         $location = Location::where('business_id', $this->businessId)->first();
         $domain = $location && $location->website_url ? parse_url($location->website_url, PHP_URL_HOST) : null;
-        
+
         $isEmpty = false;
         if (! $domain) {
             $isEmpty = true;

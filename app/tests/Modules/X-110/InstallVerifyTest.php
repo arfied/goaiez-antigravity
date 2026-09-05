@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X110;
 
+use App\Models\Location;
 use App\Models\User;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
 use App\Modules\X110\Ui\InstallVerify;
+use App\Services\Tenant\LocationWebsite;
 use App\Support\Tenancy;
 use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -24,11 +26,11 @@ class InstallVerifyTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Install Verify Tenant']);
         Tenancy::set((int) $biz->id);
 
-        $loc = \App\Models\Location::where('business_id', $biz->id)->first();
-        if (!$loc) {
-            $loc = \App\Models\Location::create(['business_id' => $biz->id, 'name' => 'HQ']);
+        $loc = Location::where('business_id', $biz->id)->first();
+        if (! $loc) {
+            $loc = Location::create(['business_id' => $biz->id, 'name' => 'HQ']);
         }
-        app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:1', true);
+        app(LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:1', true);
 
         Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
             ->assertSee('Tag Installation', false)
@@ -56,12 +58,12 @@ class InstallVerifyTest extends TestCase
     {
         $this->seed(UiReviewSeeder::class);
         $owner = User::where('email', 'owner2@business.com')->firstOrFail();
-        
+
         $this->actingAs($owner)->get('/account/tracking');
-        
-        $loc = \App\Models\Location::where('business_id', Tenancy::id())->first();
+
+        $loc = Location::where('business_id', Tenancy::id())->first();
         if ($loc) {
-            app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:' . $owner->id, true);
+            app(LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:'.$owner->id, true);
         }
 
         $this->actingAs($owner)->get('/account/tracking')

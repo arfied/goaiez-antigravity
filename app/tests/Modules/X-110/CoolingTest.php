@@ -63,7 +63,7 @@ class CoolingTest extends TestCase
         $component = Livewire::test(Cooling::class, ['businessId' => $biz->id]);
         $component->assertSeeInOrder(['v-hot', 'v-cool'])
             ->assertSee('opener-v-hot', false);
-            
+
         $html = $component->html();
         $posHot = strpos($html, '>v-hot<');
         $posCool = strpos($html, '>v-cool<');
@@ -106,6 +106,6 @@ class CoolingTest extends TestCase
 
         Livewire::test(Cooling::class, ['businessId' => $biz->id])
             ->assertSee("quit the lead at 'phone'")
-            ->assertSee("Quiet ");
+            ->assertSee('Quiet ');
     }
 }
