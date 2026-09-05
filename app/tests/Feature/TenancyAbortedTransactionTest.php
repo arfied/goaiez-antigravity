@@ -26,7 +26,7 @@ test('tenancy actingAs does not roll back the transaction on 25P02', function ()
     expect($thrown)->toBeNull();
 
     $levelAfter = DB::transactionLevel();
-    expect($levelAfter)->toBe($levelBefore);
+    expect($levelAfter)->toBe($levelBefore, 'transactionLevel mismatch');
 
     // Clear the aborted state for Pest's teardown hooks
     DB::rollBack();
