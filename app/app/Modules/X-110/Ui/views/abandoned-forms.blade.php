@@ -1,5 +1,4 @@
 <div>
-    <x-surface.sample-state module="the 14 KB smart pixel" screen="abandoned_forms" />
     
     <div wire:loading.delay>
         <x-ui.skeleton label="Loading abandoned forms..." />
