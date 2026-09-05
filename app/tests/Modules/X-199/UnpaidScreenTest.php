@@ -6,11 +6,13 @@ namespace Tests\Modules\X199;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
+use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\Unpaid;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -93,5 +95,40 @@ class UnpaidScreenTest extends TestCase
             ->call('showPaid')
             ->assertSee($inv1->invoice_number)
             ->assertDontSee($inv2->invoice_number);
+    }
+
+    public function test_unpaid_shows_charged_overflow_pill(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Ada', 'last_name' => 'Lovelace']);
+
+        MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+        ]);
+
+        app(TermsSetAction::class)->handle($biz->id, $customer->id, 'net_30', 50000, 'tok_visa');
+
+        app(InvoiceEngine::class)->issueInvoice(
+            $biz->id,
+            $customer->id,
+            [['description' => 'Fence, 40 metres', 'quantity' => 1, 'unit_price_cents' => 60000]],
+            'net_30'
+        );
+
+        Livewire::actingAs($owner)->test(Unpaid::class)
+            ->assertOk()
+            ->assertSee('covered by the card on file; service never stopped');
     }
 }
