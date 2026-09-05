@@ -323,7 +323,29 @@ class X01Test extends TestCase
      */
     public function test_g11_40_header_line(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Header Line Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $smsRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550188',
+            senderName: 'Fifth Channel User',
+            body: 'First sms'
+        );
+
+        $waRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550188',
+            senderName: 'Fifth Channel User',
+            body: 'Second whatsapp'
+        );
+
+        $this->assertEquals($smsRes['person_id'], $waRes['person_id']);
+        $this->assertEquals($smsRes['conversation_id'], $waRes['conversation_id'], 'WhatsApp is the header\'s fifth channel and must land in the same timeline');
+        $this->assertEquals(1, Conversation::where('business_id', $biz->id)->where('person_id', $smsRes['person_id'])->count());
+        $this->assertEquals('whatsapp', $waRes['channel']);
     }
 
     /**
