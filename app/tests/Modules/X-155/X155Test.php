@@ -989,4 +989,74 @@ class X155Test extends TestCase
         $this->assertSame('Bob', Person::findOrFail($resB['person_id'])->first_name);
         $this->assertSame($resC['person_id'], $resD['person_id'], 'two submissions on the same phone must resolve to one contact');
     }
+
+    public function test_a_blank_phone_submission_gets_its_own_contact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Phone Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+        ]);
+        Event::fake([FormCaptured::class]);
+
+        $resA = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana',
+                'email' => 'dana@example.com',
+                'phone' => '',
+            ]
+        );
+
+        $resB = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Erin',
+                'email' => 'erin@example.com',
+                'phone' => '',
+            ]
+        );
+
+        $resC = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Gail',
+                'phone' => '   ',
+            ]
+        );
+
+        $resD = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Frank',
+                'phone' => '+15557770001',
+            ]
+        );
+
+        $resE = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Frank Updated',
+                'phone' => '+15557770001',
+            ]
+        );
+
+        $this->assertNotSame($resA['person_id'], $resB['person_id'], 'two blank phone submissions were funnelled into one contact');
+        $this->assertSame('Dana', Person::findOrFail($resA['person_id'])->first_name, 'the first submitters name was overwritten by the second');
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '')->count(), 'the empty string was stored as a phone number');
+        $this->assertNull(Person::findOrFail($resC['person_id'])->phone, 'a whitespace only phone was stored as a phone number');
+        $this->assertNotNull($resA['person_id']);
+        $this->assertSame('Erin', Person::findOrFail($resB['person_id'])->first_name);
+        $this->assertSame($resD['person_id'], $resE['person_id'], 'two submissions on the same phone must resolve to one contact');
+    }
 }
