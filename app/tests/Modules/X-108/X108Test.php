@@ -156,7 +156,11 @@ class X108Test extends TestCase
         ]);
         $blacked = $this->engine->getAvailableSlots($biz->id, $date, true);
         $this->assertSame(3, $blacked['slots_count'], 'the 09:00 slot falls inside the blackout window');
-        $this->assertStringContainsString('11:00 AM', $blacked['offered_slots'][0]['formatted_window'], '11:00 is the exclusive end of the blackout and survives it');
+        $this->assertSame(
+            ['11:00 AM - 1:00 PM', '2:00 PM - 4:00 PM', '4:00 PM - 6:00 PM'],
+            array_column($blacked['offered_slots'], 'formatted_window'),
+            '09:00 is inside [09:00, 11:00) and gone; 11:00 is the exclusive end and survives'
+        );
 
         AvailabilityRule::create([
             'business_id' => $biz->id,
