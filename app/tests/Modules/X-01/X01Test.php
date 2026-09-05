@@ -250,7 +250,14 @@ class X01Test extends TestCase
      */
     public function test_g2_76_unified_inbox_header(): void
     {
-        $this->assertTrue(true);
+        $tables = array_column(
+            DB::select("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'"),
+            'tablename'
+        );
+
+        $violators = preg_grep('/_(messages|conversations|threads|contacts)$/i', $tables);
+
+        $this->assertEmpty($violators, 'No table outside the twelve nouns may hold a message, thread, or contact. Found violators: '.implode(', ', $violators));
     }
 
     /**
