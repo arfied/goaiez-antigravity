@@ -80,6 +80,14 @@ class X132Test extends TestCase
      */
     public function test_identity_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->assertNull(config('services.clearbit'));
+
+        $composer = json_decode(file_get_contents(base_path('composer.json')), true);
+        $this->assertArrayNotHasKey('clearbit/clearbit', $composer['require'] ?? []);
+
+        $engine = new \App\Modules\X132\Domain\IdentityEngine();
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('[G13-18]');
+        $engine->validateClearbitReveal();
     }
 }
