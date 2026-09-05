@@ -136,6 +136,46 @@ Watch for: <the trap that applies, by name>
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
 
+## Track 2 backlog
+
+The tick contract and `TICK-ADDENDUM.md` both say "the first unstarted wave from
+CLAUDE.md's Track 2 backlog". It was lost from this file in the 2026-09-05 11:4x
+tree displacement; restored here from `OWNER.md:26–30` (the owner's own words) and
+the wave numbering fixed at `REVIEWS.md` 2026-09-04 14:5x.
+
+**Owner's lanes.** Today — home, what needs you: X-124 · X-199 · X-110 · X-118.
+Customers: X-01 (CRM half) · X-10 · X-108 · X-07/X-08 · X-132 · X-131 · X-164.
+Marketing: X-186 · X-125 · X-207 · X-180 · X-182 · X-183 · X-184 · X-185 · X-189 ·
+X-210 · X-190 (+ X-221, X-223 from main). Visitors & Attribution — live visitors,
+COOLING, abandoned forms, install & verify, attribution row, reports: **X-110 ·
+X-138 · X-139**.
+
+**Week 1 (8–12 Sep)** — the first screens, each with a real page test, one commit
+each, in this order:
+
+| wave | screens | state |
+| :--- | :--- | :--- |
+| UI-27 | Today | closed |
+| UI-28 | customers list · person · appointments | closed |
+| UI-29 | content week · broadcast composer · do-not-text list | closed |
+| UI-30 | COOLING · install & verify · live visitors | closed |
+| **UI-36** | **abandoned forms (X-110) · attribution row (X-138)** | **the last Week 1 wave — in flight** |
+
+UI-31 was the number originally reserved for that last wave; UI-31…UI-35 were spent
+on the merge, the displaced tree and the report-shape blocks, so the wave carries
+UI-36's number and nothing was skipped.
+
+**Week 2 (15–19 Sep)** — every remaining capability and shell screen in these
+modules, proven. **Week 3 (22–26 Sep)** — the stand-alone deliverable, then final
+merge. When Week 1 closes, the next tick's backlog item is Week 2, scoped one wave
+at a time; it is not a single wave.
+
+⛔ **Taking `origin/main` is never a coder item on this track.** The coder guard
+refuses it by design — the merge stages `JourneyHarness.php`, a CHECK. The
+supervisor takes main with the owner's `GIT_GUARD_BYPASS=1`, resolves supervisor
+files **ours**, and forces `app/phpunit.xml` back to `goaiez_antig_ui_test` before
+the close.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
