@@ -34,7 +34,8 @@
       "Bash(git add:*)",
       "Bash(ps -p:*)",
       "Bash(ps -o:*)",
-      "Bash(kill -0:*)"
+      "Bash(kill -0:*)",
+      "Bash(bash .agents/supervisor/launch-coder.sh:*)"
     ],
     "deny": [
       "NotebookEdit",
