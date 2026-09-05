@@ -33,6 +33,7 @@ final class ModuleServiceProvider extends ServiceProvider
             DB::statement("SELECT set_config('app.business_id', ?, false)", [(string) $business]);
 
             $deployment = Deployment::where('business_id', $business)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
 
             $zone = $deployment->edgeZone;
             abort_if($zone === null || ! $zone->has_valid_ssl, 404);
