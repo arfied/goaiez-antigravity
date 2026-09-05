@@ -11,6 +11,7 @@ final class EmailHaltSeedAction
 {
     /** R17 halt seeds — G11-05. Both are inclusive at the boundary; see JOURNAL. */
     public const COMPLAINT_RATE_SEED = 0.0010;   // 0.10%
+
     public const BOUNCE_COUNT_SEED = 250;
 
     public function handle(int $businessId, int $mailDomainId): MailDomain
@@ -33,7 +34,7 @@ final class EmailHaltSeedAction
             ->count();
 
         $rate = $sent > 0 ? $complaints / $sent : 0.0;
-        
+
         $domain->complaint_rate = $rate;
 
         if ($rate >= self::COMPLAINT_RATE_SEED || $bounces >= self::BOUNCE_COUNT_SEED) {
