@@ -62,10 +62,38 @@ sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/superv
 touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
 pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
 hits=$(printf '%s\n' "$touched" | grep -E "$pat" || true)
+
+# ⛔ A PATH THAT *ARRIVED* IN A MERGE IS NOT A PATH THAT WAS *TOUCHED*.
+# `git diff HEAD~1 HEAD` on a merge commit diffs against the FIRST parent (ours),
+# so every file main brought reads as changed — JourneyHarness.php included, on
+# every single merge. That false positive cost this track waves 60 and 61 (it is
+# the same defect as the coder guard's, escalated as OWNER 59) before the merge
+# was verified by hand and committed at tick 148. The honest test is against the
+# MERGE parent: if the file is byte-identical to HEAD^2 it came from there
+# untouched, and no assertion, refusal or seal moved.
+merged_in=""
+if [ -n "$(git rev-parse -q --verify HEAD^2 2>/dev/null)" ] && [ -n "$hits" ]; then
+  kept=""
+  for h in $hits; do
+    if git diff --quiet HEAD^2 HEAD -- "$h" 2>/dev/null; then
+      merged_in="$merged_in$h
+"
+    else
+      kept="$kept$h
+"
+    fi
+  done
+  hits=$(printf '%s' "$kept" | grep -v '^$' || true)
+fi
+[ -n "$merged_in" ] && printf '%s' "$merged_in" | grep -v '^$' \
+  | sed 's|^|  ✓ arrived unchanged from the merge parent (identical to HEAD^2, not touched): |'
+
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits" | sed 's/^/  ⛔ /'
   echo "  (manifest/capabilities are legal only via regeneration; supervisor files are legal only from the supervisor)"
   fail=1
+elif [ -n "$merged_in" ]; then
+  echo "  none touched"
 else
   echo "  none"
 fi
