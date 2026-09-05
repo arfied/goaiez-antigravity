@@ -1247,10 +1247,10 @@ class X157Test extends TestCase
 
         $deployment = Deployment::where('business_id', $biz->id)->where('edge_zone_id', $zone->id)->firstOrFail();
         $this->assertSame('deployed', $deployment->status);
-        
+
         $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
         $this->assertSame(200, $response->getStatusCode());
-        
+
         $html = (string) $response->getContent();
         $this->assertSame(1, preg_match('#<script type="application/ld\+json">\s*(\{.*?\})\s*</script>#s', $html, $j));
         $ld = json_decode($j[1], true, 512, JSON_THROW_ON_ERROR);
