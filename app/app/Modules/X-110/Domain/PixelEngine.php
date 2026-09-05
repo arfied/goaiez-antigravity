@@ -111,6 +111,43 @@ final class PixelEngine
     }
 
     /**
+     * Where visitors stop filling one form, counted per field (X-155 G11-01).
+     *
+     * The join key is form_definitions.slug: the published page knows a form's
+     * slug and has no row id to send, so payload.form_id carries the slug.
+     *
+     * @return array{form_id: string, total: int, points: array<int, array{field: string, count: int}>}
+     */
+    public function abandonPointsForForm(int $businessId, string $formId): array
+    {
+        $rows = PixelEvent::where('business_id', $businessId)
+            ->where('event_name', 'form.abandoned')
+            ->where('payload->form_id', $formId)
+            ->get();
+
+        $counts = [];
+
+        foreach ($rows as $row) {
+            $field = (string) ($row->payload['abandoned_field'] ?? 'unknown_field');
+            $counts[$field] = ($counts[$field] ?? 0) + 1;
+        }
+
+        arsort($counts);
+
+        $points = [];
+
+        foreach ($counts as $field => $count) {
+            $points[] = ['field' => $field, 'count' => $count];
+        }
+
+        return [
+            'form_id' => $formId,
+            'total' => $rows->count(),
+            'points' => $points,
+        ];
+    }
+
+    /**
      * Record rage clicks (G13-30).
      */
     public function recordRageClick(int $businessId, int $sessionId, string $elementSelector, int $clicksCount): PixelEvent
