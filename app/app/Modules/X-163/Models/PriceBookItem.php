@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X163\Models;
 
+use App\Concerns\BelongsToTenant;
+use App\Contracts\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 
-class PriceBookItem extends Model
+class PriceBookItem extends Model implements TenantScoped
 {
+    use BelongsToTenant;
+
     protected $table = 'price_book_items';
 
     protected $guarded = [];
@@ -21,5 +25,6 @@ class PriceBookItem extends Model
         'tax_rate_pct' => 'float',
         'refusal_flagged_at' => 'datetime',
         'refusal_count' => 'integer',
+        'confirmed_at' => 'immutable_datetime',
     ];
 }
