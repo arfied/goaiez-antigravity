@@ -18,6 +18,11 @@ use App\Models\ReviewHubPage;
 use App\Models\Subscription;
 use App\Models\TriageConversation;
 use App\Models\User;
+use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
+use App\Modules\X124\Models\AssistantRecommendation;
+use App\Modules\X124\Models\AssistantSession;
 use App\Services\Proof\ProofNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
@@ -223,7 +228,6 @@ class UiReviewSeeder extends Seeder
                     Message::factory()->create([
                         'conversation_id' => $conv->id,
                         'created_at' => now()->subDays($days)->addMinutes($j * 5),
-                        'updated_at' => now()->subDays($days)->addMinutes($j * 5),
                     ]);
                 }
             }
@@ -247,11 +251,11 @@ class UiReviewSeeder extends Seeder
             }
         }
 
-        if (Review::where('is_platform', false)->count() < 4) {
+        if (Review::where('location_id', $location->id)->where('status', 'pending')->count() < 4) {
             // 4 reviews (one unhappy)
             for ($i = 0; $i < 3; $i++) {
                 $days = rand(1, 30);
-                Review::factory()->fromGoogle()->create([
+                Review::factory()->create([
                     'location_id' => $location->id,
                     'rating' => 5,
                     'created_at' => now()->subDays($days),
@@ -259,7 +263,7 @@ class UiReviewSeeder extends Seeder
                 ]);
             }
             $days = rand(1, 30);
-            Review::factory()->fromGoogle()->create([
+            Review::factory()->create([
                 'location_id' => $location->id,
                 'rating' => 1,
                 'created_at' => now()->subDays($days),
@@ -295,11 +299,41 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-        if (! DB::table('invoices')->where('business_id', $businessId)->exists()) {
-            DB::table('invoices')->insert([
-                ['business_id' => $businessId, 'invoice_number' => 'INV-001', 'total_cents' => 10000, 'paid_cents' => 10000, 'status' => 'paid', 'due_date' => now()->subDays(10), 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'invoice_number' => 'INV-002', 'total_cents' => 5000, 'paid_cents' => 0, 'status' => 'overdue', 'due_date' => now()->subDays(5), 'created_at' => now(), 'updated_at' => now()],
+        if (AssistantRecommendation::where('business_id', $businessId)->count() === 0) {
+            $asess = AssistantSession::create(['business_id' => $businessId, 'session_token' => 'asess_1']);
+            AssistantRecommendation::create([
+                'business_id' => $businessId,
+                'session_id' => $asess->id,
+                'title' => '14 missed calls, no text-back template — turn it on?',
+                'action_key' => 'enable_text_back',
+                'status' => 'active',
             ]);
+        }
+
+        if (Visit::where('business_id', $businessId)->count() === 0) {
+            for ($v = 1; $v <= 3; $v++) {
+                $visit = Visit::create([
+                    'business_id' => $businessId,
+                    'visitor_id' => 'vis_'.$v,
+                    'ip_hash' => 'hash'.$v,
+                    'user_agent' => 'Mozilla',
+                    'landing_page' => '/',
+                ]);
+                $session = Session::create([
+                    'business_id' => $businessId,
+                    'visit_id' => $visit->id,
+                    'session_token' => 'sess_tok_'.$v,
+                    'started_at' => now()->startOfDay(),
+                    'ended_at' => now()->startOfDay()->addMinutes(5),
+                ]);
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $session->id,
+                    'event_name' => 'pageview',
+                    'payload' => ['url' => '/'],
+                    'created_at' => now(),
+                ]);
+            }
         }
 
         app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());

@@ -147,4 +147,15 @@ class X118Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_signup_closed_by_default(): void
+    {
+        $this->get('/signup')->assertStatus(404);
+    }
+
+    public function test_signup_open_when_flag_on(): void
+    {
+        config(['app.allow_public_signup' => true]);
+        $this->get('/signup')->assertStatus(200);
+    }
 }

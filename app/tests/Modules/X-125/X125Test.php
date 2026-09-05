@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X125;
 
+use App\Enums\SignalState;
 use App\Modules\X125\Actions\FlowCreateAction;
 use App\Modules\X125\Actions\FlowExplainAction;
 use App\Modules\X125\Actions\FlowRunAction;
 use App\Modules\X125\Actions\FlowSimulateAction;
 use App\Modules\X125\Events\FlowChanged;
 use App\Modules\X125\Models\Flow;
+use App\Modules\X125\Models\FlowRun;
 use App\Modules\X125\Models\FlowVersion;
+use App\Modules\X125\Ui\Runs;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X125Test extends TestCase
@@ -119,5 +123,110 @@ class X125Test extends TestCase
         $simRes = $this->simulateAction->handle($biz->id, $flow->id, ['new_stage' => 'Closed Won']);
         $this->assertEquals('simulated', $simRes['status']);
         $this->assertEquals(2, $simRes['steps_executed']);
+    }
+
+    public function test_runs_component_renders_and_handles_retry(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Runs Component Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $flow = $this->createAction->handle(
+            businessId: $biz->id,
+            name: 'Test Flow Runs',
+            triggerEvent: 'test.event',
+            nodes: [['type' => 'action', 'label' => 'Test Action']],
+        );
+
+        $initialRunsCount = FlowRun::where('business_id', $biz->id)->count();
+
+        $this->runAction->handle($biz->id, $flow->id, ['test' => true]);
+
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('Test Flow Runs')
+            ->assertSee("When 'test.event' event occurs")
+            ->assertSee('Test Action');
+
+        $latestRun = FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $component->call('retry', $latestRun->id);
+
+        $newCount = FlowRun::where('business_id', $biz->id)->count();
+        $this->assertEquals($initialRunsCount + 2, $newCount);
+
+        $newRun = FlowRun::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $this->assertTrue($newRun->is_manual_retry, 'Retry must be marked as manual');
+    }
+
+    public function test_runs_component_error_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Error State Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id]);
+        $component->set('errorMessage', 'Something went terribly wrong.');
+
+        $component->assertSee('We could not load your flow runs.')
+            ->assertSee('Something went terribly wrong.');
+    }
+
+    public function test_runs_component_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty State Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $flow = $this->createAction->handle(
+            businessId: $biz->id,
+            name: 'Empty State Flow',
+            triggerEvent: 'empty.event',
+            nodes: [['type' => 'action', 'label' => 'Empty Action']],
+        );
+        // Tenant has a flow but no runs.
+
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('This flow has not run yet.')
+            ->assertSee('When a flow runs, its history and status will appear here.');
+    }
+
+    public function test_runs_component_status_pills(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Status Pill Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $flow = $this->createAction->handle(
+            businessId: $biz->id,
+            name: 'Status Pill Flow',
+            triggerEvent: 'status.event',
+            nodes: [['type' => 'action', 'label' => 'Status Action']],
+        );
+
+        $this->runAction->handle($biz->id, $flow->id, ['test' => true]);
+        $this->runAction->handle($biz->id, $flow->id, ['test' => true], isManualRetry: false, shouldSimulateFailure: true);
+
+        // We now have one success run and one error run.
+        $component = Livewire::test(Runs::class, ['businessId' => $biz->id])
+            ->call('load');
+
+        // SignalState::label() is the word on the pill: ok → 'Running', alert → 'Needs action'.
+
+        $component->assertSee('Running', false)
+            ->assertSee('Needs action', false);
+    }
+
+    public function test_flow_run_status_signal_mapping(): void
+    {
+        $run = new FlowRun;
+
+        $run->status = 'success';
+        $this->assertEquals(SignalState::Ok, $run->statusSignal());
+
+        $run->status = 'error';
+        $this->assertEquals(SignalState::Alert, $run->statusSignal());
+
+        $run->status = 'simulated';
+        $this->assertEquals(SignalState::Unknown, $run->statusSignal());
+
+        $run->status = 'queued'; // unrecognized
+        $this->assertEquals(SignalState::Unknown, $run->statusSignal());
     }
 }

@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="C-Sms" screen="thread" />
     <div class="thread-container p-4">
         <h3 class="text-lg font-bold">SMS Conversation Thread</h3>
         @if($messages->isEmpty())

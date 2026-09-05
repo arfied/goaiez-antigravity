@@ -7,9 +7,11 @@ namespace App\Modules\X118\Ui;
 use App\Modules\X118\Actions\OnboardingStartAction;
 use App\Modules\X118\Actions\OnboardingTestCallAction;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.layouts.agency')]
 class DayOneSignup extends Component
 {
     public int $askedFieldsCount = 2;

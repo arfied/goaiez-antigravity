@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="receives `chargeback.received` from X-198 for **any gateway**" screen="dispute_card" />
     <div class="dispute-card-view p-4">
         <h3 class="text-lg font-bold">Dispute & Chargeback Defense Cards</h3>
         @if($disputes->isEmpty())

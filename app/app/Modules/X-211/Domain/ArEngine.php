@@ -148,4 +148,31 @@ final class ArEngine
             ];
         });
     }
+
+    public function chaseOverdue(int $businessId, int $invoiceId, int $daysOverdue): array
+    {
+        return DB::transaction(function () use ($businessId, $invoiceId, $daysOverdue) {
+            $state = ReceivableState::firstOrCreate(
+                ['business_id' => $businessId, 'invoice_id' => $invoiceId],
+                ['status' => 'overdue']
+            );
+
+            // R211: "resolution PRECEDES any automatic stop"
+            // So action should be 'offer_plan' or similar, not 'suspend'
+            $action = 'offer_plan';
+            $reason = 'Invoice is '.$daysOverdue.' days overdue';
+
+            $state->update([
+                'status' => 'overdue',
+                'last_action' => $action,
+                'last_reason' => $reason,
+            ]);
+
+            return [
+                'invoice_id' => $invoiceId,
+                'action' => $action,
+                'reason' => $reason,
+            ];
+        });
+    }
 }

@@ -765,10 +765,10 @@
                     button posts to `default-livewire.update`, so only a named route
                     can be exempted at the width of this promise. See the component.
                 --}}
-                <form method="POST" action="{{ route('account.plan.cancel') }}" class="mt-5 space-y-4">
+                <form x-data="{ confirmed: false }" method="POST" action="{{ route('account.plan.cancel') }}" class="mt-5 space-y-4">
                     @csrf
 
-                    <label class="flex items-start gap-3">
+                    <label class="flex items-center min-h-[40px] gap-3">
                         {{--
                             ⛔ UNCHECKED. `29` §2's rule for a consent box is a rule
                             about every box this application renders: a pre-ticked
@@ -780,7 +780,8 @@
                             type="checkbox"
                             name="confirm"
                             value="1"
-                            class="mt-1 size-5 rounded border-rule-strong text-ink"
+                            x-model="confirmed"
+                            class="size-5 rounded border-rule-strong text-ink"
                         />
                         <span class="text-base text-ink">I want to end this plan.</span>
                     </label>
@@ -789,7 +790,7 @@
                         <p class="text-base text-alert" role="alert">{{ $message }}</p>
                     @enderror
 
-                    <x-ui.button type="submit" variant="secondary" size="default">
+                    <x-ui.button type="submit" variant="secondary" size="default" x-bind:disabled="!confirmed">
                         End my plan
                     </x-ui.button>
                 </form>

@@ -40,6 +40,7 @@ return [
         'reply.published',
         'win.first',
         'send.requested',
+        'csat.requested',
     ],
     'consumes' => [
         'capability.decided',
@@ -51,7 +52,11 @@ return [
         'review_replies',
         'qa_settings',
     ],
-    'reads_table' => [],
+    'reads_table' => [
+        'reviews',
+        'people',
+        'qa_tickets',
+    ],
 
     'renders' => [
         'reviews_qa_requests',

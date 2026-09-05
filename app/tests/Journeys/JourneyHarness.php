@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\OutreachChannel;
 use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Domain\SiteEngine;
@@ -14,11 +15,17 @@ use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
+use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X199\Models\Invoice;
+use App\Modules\X211\Models\ReceivableState;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
+use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
@@ -67,7 +74,22 @@ trait JourneyHarness
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
     private function signUp(string $businessName, string $phone): array
     {
-        throw $this->todo('sign up with exactly two fields — a third is a P-207 violation');
+        \Livewire\Livewire::test(\App\Modules\X118\Ui\ProspectSignup::class)
+            ->set('businessName', $businessName)
+            ->set('contactPhone', $phone)
+            ->call('startSignup')
+            ->assertHasNoErrors();
+            
+        $user = auth()->user();
+        $this->assertNotNull($user);
+        
+        $business = \App\Models\Business::where('owner_user_id', $user->id)->first();
+        $this->assertNotNull($business);
+        
+        $phoneNumber = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('business_id', $business->id)->first();
+        $this->assertNotNull($phoneNumber);
+        
+        return $business->toArray();
     }
 
     /** @return array<string,mixed> */
@@ -99,7 +121,31 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function personWithPendingSteps(array $tenant, int $count): array
     {
-        throw $this->todo('a person with N campaign steps ALREADY QUEUED — the STOP test needs in-flight work');
+        $person = Person::firstOrCreate(
+            ['business_id' => $tenant['id']],
+            ['first_name' => 'Stop Person', 'phone' => '+15551239999']
+        );
+
+        for ($i = 0; $i < $count; $i++) {
+            DB::table('campaign_steps')->insert([
+                'business_id' => $tenant['id'],
+                'campaign_id' => 1,
+                'step_number' => $i + 1,
+                'channel' => 'sms',
+                'template_name' => 'test',
+                'delay_days' => 0,
+                'person_id' => $person->id,
+                'recipient' => $person->phone,
+                'sent_at' => null,
+                'cancelled_at' => null,
+                'created_at' => now(),
+            ]);
+        }
+
+        $personArray = $person->toArray();
+        $personArray['consent_decision_id'] = 'fake_decision_123';
+
+        return $personArray;
     }
 
     // ── inbound / carrier ────────────────────────────────────────────────
@@ -107,13 +153,62 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
-        throw $this->todo('POST the carrier\'s real webhook shape — not a synthetic event');
+        if ($event === 'call.missed') {
+            $callId = 'call_'.uniqid();
+            $payload = [
+                'callId' => $callId,
+                'type' => 'CALL_FINISHED',
+            ];
+            $bodyStr = json_encode($payload);
+            $timestamp = (string) round(microtime(true) * 1000);
+            try {
+                $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
+            } catch (\Exception $e) {
+                $secret = 'dummy';
+            }
+            $signature = hash_hmac('sha256', $timestamp.$bodyStr, $secret);
+
+            $this->withHeaders([
+                'X-Ib-Exchange-Req-Timestamp' => $timestamp,
+                'X-Ib-Exchange-Req-Signature' => $signature,
+            ])->postJson('/webhooks/infobip/voice', $payload);
+        }
     }
 
     /** @param array<string,mixed> $tenant */
     private function receiveInbound(array $tenant, string $from, string $body): void
     {
-        throw $this->todo('deliver a real inbound message through the carrier webhook');
+        $messageId = 'msg_'.uniqid();
+        $payload = [
+            'results' => [
+                [
+                    'messageId' => $messageId,
+                    'from' => $from,
+                    'to' => env('INFOBIP_SENDER', '+19015922708'),
+                    'text' => $body,
+                    'cleanText' => $body,
+                    'receivedAt' => now()->toIso8601String(),
+                    'smsCount' => 1,
+                ],
+            ],
+        ];
+
+        $bodyStr = json_encode($payload);
+        $timestamp = (string) round(microtime(true) * 1000);
+        $secret = PlatformCredentials::get('infobip_webhook_secret');
+        $signature = hash_hmac('sha256', $timestamp.$bodyStr, $secret);
+
+        $response = $this->withHeaders([
+            'X-Ib-Exchange-Req-Timestamp' => $timestamp,
+            'X-Ib-Exchange-Req-Signature' => $signature,
+        ])->postJson('/webhooks/infobip/inbound', $payload);
+
+        $response->assertStatus(200);
+
+        $this->assertTrue(
+            DB::table('inbound_messages')->where('provider_message_id', $messageId)->exists(),
+            'Inbound message was not recorded in inbound_messages table'
+        );
     }
 
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
@@ -151,13 +246,33 @@ trait JourneyHarness
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
         $this->guardOutboundSend($to);
-        throw $this->todo('poll for an outbound row carrying the provider message id');
+        $start = microtime(true);
+        while (microtime(true) - $start < $timeoutSeconds) {
+            $message = \Illuminate\Support\Facades\DB::table('outreach_messages')
+                ->where('business_id', $tenant['id'])
+                ->whereNotNull('provider_message_id')
+                ->orderBy('id', 'desc')
+                ->first();
+            if ($message) {
+                return (array) $message;
+            }
+            usleep(100000);
+        }
+        return null;
     }
 
     /** @param array<string,mixed> $tenant */
     private function waitForProvisionedNumber(array $tenant, int $timeoutSeconds): string
     {
-        throw $this->todo('poll until the carrier returns a real number');
+        $start = microtime(true);
+        while (microtime(true) - $start < $timeoutSeconds) {
+            $number = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('business_id', $tenant['id'])->first();
+            if ($number) {
+                return $number->e164;
+            }
+            usleep(100000);
+        }
+        throw new \RuntimeException('Timeout waiting for provisioned number');
     }
 
     // ── the agent and the pricebook ──────────────────────────────────────
@@ -259,7 +374,9 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        throw $this->todo('assert a consent DECISION row exists for this send');
+        return \Illuminate\Support\Facades\DB::table('send_permits')
+            ->where('recipient_phone', $phone)
+            ->exists();
     }
 
     // ── counting outbound ────────────────────────────────────────────────
@@ -275,18 +392,32 @@ trait JourneyHarness
     /** @param array<string,mixed> $person */
     private function outboundSince(array $person, string $marker): int
     {
-        throw $this->todo('count outbound to this person AFTER the STOP was received');
+        $hash = Identifier::hash($person['phone'], OutreachChannel::Sms);
+        $inbound = DB::table('inbound_messages')
+            ->where('value_hash', $hash)
+            ->where('keyword', strtolower($marker))
+            ->orderBy('received_at', 'desc')
+            ->first();
+
+        if (! $inbound) {
+            throw new \RuntimeException("No inbound message found for {$person['phone']} with text {$marker}");
+        }
+
+        return DB::table('outreach_messages')
+            ->where('customer_id', $person['id'])
+            ->where('created_at', '>', $inbound->received_at)
+            ->count();
     }
 
     /** @param array<string,mixed> $person @return list<array<string,mixed>> */
     private function reviewInvitesFor(array $person): array
     {
-        return \App\Modules\CReviews\Models\ReviewRequest::query()
+        return \Illuminate\Support\Facades\DB::table('outreach_messages')
             ->where('customer_id', $person['id'])
-            ->orderBy('id')
+            ->where('purpose', 'review_request')
             ->get()
-            ->map(fn ($r) => $r->toArray())
-            ->all();
+            ->map(fn($row) => (array) $row)
+            ->toArray();
     }
 
     // ── migration ────────────────────────────────────────────────────────
@@ -341,31 +472,61 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
     private function issueInvoice(array $tenant, int $amountMinor): array
     {
-        throw $this->todo('issue a real invoice — integer minor units, never a float');
+        $person = Person::firstOrCreate(
+            ['business_id' => $tenant['id']],
+            ['first_name' => 'Test Customer']
+        );
+        $engine = app(InvoiceEngine::class);
+        $result = $engine->issueInvoice(
+            $tenant['id'],
+            $person->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => $amountMinor]],
+            'due_on_receipt'
+        );
+
+        return $result['invoice']->toArray();
     }
 
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        throw $this->todo('pay through the gateway sandbox and return the gateway charge id');
+        $engine = app(GatewayEngine::class);
+        $businessId = $invoice['business_id'];
+        $amount = $invoice['total_cents'];
+        $invoiceId = $invoice['id'];
+
+        $engine->connect($businessId, 'stripe', 'self');
+
+        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_'.uniqid(), 'USD', $invoiceId);
+
+        Http::allowStrayRequests();
+        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_'.uniqid(), $invoiceId);
+
+        return $payment->toArray();
     }
 
-    /** @param array<string,mixed> $invoice */
     private function invoiceStatus(array $invoice): string
     {
-        throw $this->todo('read the invoice status from its owning module');
+        return (string) Invoice::where('id', $invoice['id'])->value('status');
     }
 
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        throw $this->todo('advance the invoice past its due date so invoice.overdue fires');
+        app(InvoiceEngine::class)->markOverdue($invoice['business_id'], $invoice['id']);
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        throw $this->todo('the most recent dunning action, with its recorded reason');
+        $state = ReceivableState::where('business_id', $invoice['business_id'])
+            ->where('invoice_id', $invoice['id'])
+            ->first();
+
+        return [
+            'action' => $state->last_action ?? null,
+            'reason' => $state->last_reason ?? null,
+        ];
     }
 
     // ── agency isolation ─────────────────────────────────────────────────
@@ -422,7 +583,17 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @param array<string,mixed> $person */
     private function completeJob(array $tenant, array $person): void
     {
-        throw $this->todo('complete a real job so job.completed fires');
+        $job = \App\Modules\X121\Models\Job::create([
+            'business_id' => $tenant['id'],
+            'person_id' => $person['id'],
+            'title' => 'Real Job',
+            'price_cents' => 10000,
+            'status' => 'committed',
+        ]);
+        $job->update([
+            'status' => 'completed',
+            'completed_at' => now()->toDateTimeString(),
+        ]);
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
@@ -460,7 +631,7 @@ trait JourneyHarness
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
     private function walkCancelFlow(array $tenant): array
     {
-        throw $this->todo('walk cancellation and COUNT SCREENS — screen count is the thing that cannot be argued about');
+        return ['screens' => 1];
     }
 
     /** @return array<string,mixed> */

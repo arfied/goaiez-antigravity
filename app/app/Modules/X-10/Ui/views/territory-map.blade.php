@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="skill-based" screen="territory_map" />
     <div class="territory-map-view p-4">
         <h3 class="text-lg font-bold">Territory & Geocode Map</h3>
         @if($territories->isEmpty())

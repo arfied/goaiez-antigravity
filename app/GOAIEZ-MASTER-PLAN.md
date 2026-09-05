@@ -25259,7 +25259,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **WHAT** `Business · Person · Conversation · Message · Job · Review · Campaign · Asset · LedgerEntry · Fact · Site · Number` — one table each, RLS FORCEd, **field-level history** ("John changed Status from Warm to Closed at 14:02"), version restore, Redis on high-read tables, global update propagation, one polymorphic `Conversation` across sms · whatsapp · web_chat · voice · email. ⛔ *No module may create a private table for a noun on this list.* (R245) people.consent_state string NOT NULL default 'UNPERMITTED'
 **WIZARD** *(operator-side — §118.1: the tenant never sees it)* **inferred at install:** RLS FORCEd on every noun table *(not a choice)* · cache tier from the plan's traffic band · the twelve nouns from W2's pinned list. **confirmed once by the operator:** history retention window *(default 24 months, `platform_settings`)*. **tenant-facing: none.**
 **AUTOPILOT** *(operator posture)* Redis invalidates **inline on write** *(same transaction — never a queue that can lag)* · RLS is FORCEd on every noun table and never optional · history rows are append-only · restore is an action with a `compensable` reversal class · thresholds *(cache TTLs · history retention)* live in `platform_settings`
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EntityGraph/**` · `database/migrations/*_spine_entity_*` · the `Fact` model with `source_page` + `source_version` · **must not touch** any other module's migration · **W2 Entity lands every schema change** — a squad opens a request, the warden lands it · runtime proof = insert a `Person` from two channels and show ONE `Conversation` row joining them
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EntityGraph/**` · `database/migrations/*_spine_entity_*` · the `Fact` model with `source_page` + `source_version` · **must not touch** any other module's migration · **W2 Entity lands every schema change** — a squad opens a request, the warden lands it · runtime proof = insert a `Person` from two channels and show ONE `Conversation` row joining them
 **SCREENS** none tenant-facing · operator: **entity history viewer** *(who changed what, when — X-111 renders it from `@renders entity_history_viewer · when_x111_renders` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides`)*
 
@@ -25276,7 +25276,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **WHAT** each module publishes actions *(id · label · typed params · returns · permission · **reversal class: reversible · compensable · terminal** · plain-English `preview`)*. Every invocation immutably logged *(timestamp · IP + MaxMind geo · user · actor_type)*, strict JSON-schema validation *(a missing field is refused, never defaulted)*, HMAC-SHA256 on every outbound webhook, gateway idempotency via a `refId` hash. **~2,900 actions, 30 verbs; the FORMAT is specced here, the instances are generated per module.**
 **WIZARD** *(operator-side)* **inferred:** the manifest schema version · the 30 verbs · the three reversal classes · MaxMind key from config. **confirmed once:** *(trigger: at deploy — operator only)* who receives the audit-trail export *(default: the operator on call)*. **tenant-facing: none** — *a tenant's own actions appear in their activity log, which X-111 renders; nothing to set up.*
 **AUTOPILOT** *(operator posture)* manifests load on boot — ⛔ **an unregistered action cannot run**; a manifest that fails schema validation fails the build, not the request · naming convention lint · dependency locking · the audit trail exports to PDF on demand *(who approved what, when)*
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/ActionRegistry/**` · the manifest schema · the `ActionInvocation` model · **W1 Manifest approves every module's manifest before that module writes code** *(Law 1)* · **W6 Contract** owns action signatures — a signature change is a warden request · runtime proof = one manifest registered, one invocation logged with `actor_type`, one refusal logged with its reason string
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/ActionRegistry/**` · the manifest schema · the `ActionInvocation` model · **W1 Manifest approves every module's manifest before that module writes code** *(Law 1)* · **W6 Contract** owns action signatures — a signature change is a warden request · runtime proof = one manifest registered, one invocation logged with `actor_type`, one refusal logged with its reason string
 **SCREENS** none tenant-facing · operator: **the action log** *(searchable; refusals first — the most valuable rows on the page)*
 **DECLARATIONS** `@renders action_log` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides action.invoke · action.preview · action.reverse · manifest.register · audit.export` · `@emits action.invoked · action.refused · action.reversed` · `@consumes capability.decided` *(X-126)* · `@owns_table action_manifests · action_invocations · action_reversals`
@@ -25293,7 +25293,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **WHAT** typed events, any module subscribes; **dead-letter queue at 10 consecutive failures + the tenant emailed**; exponential backoff 1 · 5 · 30 min; leaky-bucket throttling *(⛔ queue the spike, never drop it)*; Horizon auto-scales on queue depth; webhook brokering with a request inspector and "Test Webhook"; Zapier/Make native apps ride the same catalogue.
 **WIZARD** *(operator-side)* **inferred:** DLQ threshold 10 · backoff 1/5/30 min · Horizon scale trigger from the plan's tier *(default 5,000 queued)* · the DLQ notification address = the tenant owner's verified email *(never asked)*. **confirmed once:** nothing. **tenant-facing: none** — ⚠️ *the webhook SUBSCRIPTION screen belongs to X-142, not the bus.*
 **AUTOPILOT** *(operator posture)* self-scaling · self-retrying · self-quarantining · ⭐⭐ **THE LAW: invalidation is INLINE, same transaction; notification is async** — *a lagging queue lets the agent quote last month's price on a live call* · DLQ threshold, backoff ladder, scale trigger *(default 5,000 queued)* all in `platform_settings`
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EventBus/**` · the event base class *(⛔ **public events carry primitives or DTOs only — never an internal model**, §95.2.1)* · Horizon config · the DLQ table · **must not touch** any subscriber · runtime proof = publish one event, show its `event_log` row, its subscriber's invocation, and one forced failure landing in the DLQ with the email sent
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EventBus/**` · the event base class *(⛔ **public events carry primitives or DTOs only — never an internal model**, §95.2.1)* · Horizon config · the DLQ table · **must not touch** any subscriber · runtime proof = publish one event, show its `event_log` row, its subscriber's invocation, and one forced failure landing in the DLQ with the email sent
 **SCREENS** none tenant-facing · operator: **the DLQ + request inspector** *(replay a dead-lettered event = an action, `compensable`)*
 **DECLARATIONS** `@renders dlq_request_inspector` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides event.publish · event.replay · webhook.test` · `@agent_reachable none` · `@emits event.published · event.failed · event.dead_lettered` · `@consumes `*` · consent.decided` ⭐⭐ *(2026-08-27 — **the WILDCARD, declared.** `X-123` is the EventBus: it consumes every event by nature. Was the prose "everything — it is the transport", which parses EMPTY. ⛔ **The wildcard is legal for the four SPINE modules only, NAMED not patterned** — `X-123` `X-125` `X-207` `X-156`.)* · `@owns_table event_log · event_subscriptions · dead_letters` · `@reads_table businesses · users`
@@ -25310,7 +25310,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **WHAT** evaluates on every action: **no `Fact` → no skill** *(the agent never invents a price, a time or a link because this refuses first)* · per-plan rate ceilings and hard limits *(one runaway tenant cannot bankrupt the shared provider account)* · resource throttling · policy enforcement · agency config inheritance cascading to sub-tenants. ⛔ **RC-1c: for any send to a customer the gate DEFERS to `ConsentService` (1,708 lines) — two systems deciding whether a message may send is a compliance breach. The gate handles grounding; consent handles permission.**
 **WIZARD** *(operator-side)* **inferred:** every per-plan ceiling from the rate registry *(Law 126 — never typed here)* · the agency→sub-tenant inheritance chain from the account tree. **confirmed once:** nothing. **tenant-facing: none** — *the tenant meets the gate only as a plain-English refusal in the assistant.*
 **AUTOPILOT** *(operator posture)* ⛔ **fails CLOSED** · every refusal carries a plain-English reason the assistant can read aloud *(EXPLAIN mode)* · ceilings per plan are data · **R25 applies above the gate: a ceiling reached raises an alert and degrades to the working path; the gate never silences the phone**
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/CapabilityGate/**` · **must not touch** `ConsentService`, `SendPermit`, `SendRefusalReason` *(R70: the 20 cases are the entire set)* · runtime proof = one refusal for a missing `Fact` with its reason string; one customer send that shows the gate calling `ConsentService` and NOT deciding itself
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/CapabilityGate/**` · **must not touch** `ConsentService`, `SendPermit`, `SendRefusalReason` *(R70: the 20 cases are the entire set)* · runtime proof = one refusal for a missing `Fact` with its reason string; one customer send that shows the gate calling `ConsentService` and NOT deciding itself
 **SCREENS** none tenant-facing *(the assistant surfaces refusals as "I'm refusing to quote your callout fee — two taps and I can")* · operator: **refusal analytics** *(the agent's refusal rate is the early-warning metric)*
 **DECLARATIONS** `@renders refusal_analytics` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides capability.check` · `@emits capability.decided · capability.refused` · `@consumes fact.invalidated · consent.decided` · `@owns_table capability_policies · capability_decisions`
@@ -25330,7 +25330,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **WIZARD** *(operator-side)* **inferred:** everything — it reads annotations. **confirmed once:** nothing. **tenant-facing: none.**
 **AUTOPILOT** *(operator posture)* runs at build and at the wave gate — ⛔ **not at runtime**; the matrix is regenerated, never edited; **zero orphans is the wave-gate condition**
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/IntegrationMatrix/**` · the `goaiez:matrix` and `deploy:check` commands · the annotation parser *(§95)* · **must not touch** any module it measures · runtime proof = a deliberately orphaned event in a scratch module fails the build with the module and line named
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/IntegrationMatrix/**` · the `goaiez:matrix` and `deploy:check` commands · the annotation parser *(§95)* · **must not touch** any module it measures · runtime proof = a deliberately orphaned event in a scratch module fails the build with the module and line named
 **SCREENS** none tenant-facing · operator: **the matrix view** *(the seams, with owner · direction · invalidation rule; §118.7's six seams pinned)*
 **DECLARATIONS** `@provides matrix.generate · deploy.check` · `@emits seam.violated · orphan.detected` · `@consumes` the annotation graph · `@owns_table integration_matrix` *(generated, rebuilt on every run)*
 **NEEDS / HAS** needs: zero orphans on the last run · has: the last matrix result
@@ -25781,7 +25781,7 @@ tenant asks → X-124 decides the MODE
 **WHAT** self-hosted STT/TTS/LLM on LiveKit · Groq-node integration · **cost routing between managed and self-hosted** · **model warm-pooling — the feature, not an optimisation** *(a cold self-hosted model is 3 s, not 200 ms)*. ⭐⭐⭐ Voice sells at 7¢/min full minutes; managed ≈ 4–5¢, self-hosted 1–2¢ at volume: **at 5¢ the product earns 29%, at 2¢ it earns 71% — the difference is this module** *(§18F: 7¢ only works self-orchestrated)*.
 **WIZARD** *(operator-side)* **inferred:** the pool size from concurrent-call history · the GPU host from config. **confirmed once:** nothing. **tenant-facing: none.**
 **AUTOPILOT** *(operator posture)* routes to self-hosted when the pool is warm and latency is in budget; **falls back to managed instantly when it is not**; the pool pre-warms on the tenant's call-volume curve; `voice.selfhosted_degraded` alerts the operator, never the tenant
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Voice/SelfHosted/**` · the warm-pool controller · the route selector · **must not touch** X-66's dialogue logic or the telephony adapters · runtime proof = one call routed self-hosted with its stage trace and its cost row; one cold-pool call that fell back to managed with no audible gap
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Voice/SelfHosted/**` · the warm-pool controller · the route selector · **must not touch** X-66's dialogue logic or the telephony adapters · runtime proof = one call routed self-hosted with its stage trace and its cost row; one cold-pool call that fell back to managed with no audible gap
 **SCREENS** none tenant-facing · operator: **the margin board** *(minutes by route · $/min measured · pool warmth)*
 **DECLARATIONS** `@renders margin_board` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides voice.route` · `@emits voice.route_selected · voice.selfhosted_degraded` · `@consumes call.requested · carrier.selected` · `@owns_table voice_routes · voice_pool_state · voice_cost_samples`
@@ -26997,7 +26997,7 @@ tenant asks → X-124 decides the MODE
  `ships: L2 · ceiling: L2`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent GROW` under `§227.2`** — ⛔ ⛔ ~~**PROPOSES ONLY, ALWAYS, ON DAY ONE**~~ *(STRUCK by `R235` — it ACTS from minute one)* — earned up the ladder, never set; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Modules/Reputation/Reviews/**` + the existing `Reviews/` namespace annotated in place *(the triage split verified present in legacy — kept, not rebuilt)* · the reply composer *(compose-time gated)* · **must not touch** X-111's ticketing *(it creates tickets through the action)* · runtime proof = one 5★ → public link sent; one 2★ → ticket with `sla_due_at`, zero public reply; one ambiguous review → an inbox draft, unpublished
 **SCREENS** tenant: **Reviews & QA — requests · the QA report · tickets · loss alerts** *(§58)* · customer-facing: the review request and the public link · operator: none
 **DECLARATIONS** `@renders reviews_qa_requests · qa_report · tickets · loss_alerts` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides review.request · review.reply · review.sync · qa.ticket` · `@emits review.requested · review.received · reply.published · win.first · send.requested` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · job.completed · payment.captured · ticket.resolved · gbp.suspended` · `@owns_table review_requests · review_replies · qa_settings · ⛔ **P-163 FIX 2026-08-27: reviews moved to `@reads_table` — X-121 owns the canonical nouns**
+`@provides review.request · review.reply · review.sync · qa.ticket` · `@emits review.requested · review.received · reply.published · win.first · send.requested · csat.requested` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · job.completed · payment.captured · ticket.resolved · gbp.suspended` · `@owns_table review_requests · review_replies · qa_settings · ⛔ **P-163 FIX 2026-08-27: reviews moved to `@reads_table reviews · people · qa_tickets` — X-121 owns the canonical nouns**
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs: ≥1 connected review profile · a ticket recipient · has: connections + the two confirmations
@@ -28844,7 +28844,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 **WHAT** ⭐⭐ **The single decider of whether a message may be sent to a person on a channel. Every sender asks; no sender decides.** Returns GRANT or **exactly one of P-060's twenty refusal reasons — a refusal without a code fails the build**, and `platformFloorRefusal()` fails closed, so an unknown state refuses. Owns the **permit** *(immutable, provenance-carrying — lifts are recorded, never deleted)*, the **suppression list**, the **`ImportAttestation`**, and the **compliance-register slots**. **The three lanes:** a campaign declares its lane and this module reads it — Lane 1 transactional *(nothing blocks but STOP)* · Lane 2 marketing-to-phones *(basis + window + 10DLC)* · Lane 3 cold B2B email *(CAN-SPAM shape)*. ⛔ **It does not send, compose, schedule, or hold campaign logic — a policy engine that starts sending is the thing that would block the spine (§168.4).** ⛔ **The registers (DNC · litigator · reassigned-number) are PROVIDER SLOTS, DEFAULT OFF, on the tenant's own credentials; NOT ENABLED is indistinguishable from never existing (P-066).** ⛔ **An import is not consent — every contact path routes through `ImportAttestation` exactly as a CSV does, and the tenant's attestation IS the consent record (P-069).**
 **WIZARD** *(operator-side — §118.1: the tenant never sees it)* **inferred at install:** the twenty refusal codes from P-060's closed set · the three lanes from each campaign's manifest · the quiet-hours window as data *(P-063 — marketing class only)*. **confirmed once by the operator:** which register providers exist as slots *(every one DEFAULT OFF)*. **tenant-facing: none** — what the tenant sees is the do-not-text list, which is X-01's screen rendering this module's suppressions.
 **AUTOPILOT** *(operator posture)* STOP suppresses **on receipt, before the next send, always** · suppression is checked **fresh as of each send**, never at campaign build · a permit is immutable and carries its provenance · **a register that is OFF is never consulted and never delays a send** · every decision writes an `ActionInvocation`.
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** **SQ-0 · WAVE 0, with the spine.** Owns `app/Modules/Spine/Consent/**`. **`@visibility public` = `ConsentService::decide()` ONLY** — every register adapter, lane evaluator and suppression matcher is `internal`. **Must not touch** any sender, `C-Sms`/`C-Mail`/`X-186` code, or X-193's classes *(it reads them)*. **Safe-update path: additive only — a new refusal code is a new closed-enum member plus its test; a code is never renumbered, and the set of twenty changes only on the owner's word (P-060).** Skills: Postgres RLS + FORCE · closed-enum modelling · Pest contract tests · ≤12 a seat. **Runtime proof =** one real send refused with its code in the trace and **nothing on the wire**; one `STOP` received and the very next queued send to that person refused with its code; one contact write with no attestation refused **at the write**.
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** **SQ-0 · WAVE 0, with the spine.** Owns `app/Modules/Spine/Consent/**`. **`@visibility public` = `ConsentService::decide()` ONLY** — every register adapter, lane evaluator and suppression matcher is `internal`. **Must not touch** any sender, `C-Sms`/`C-Mail`/`X-186` code, or X-193's classes *(it reads them)*. **Safe-update path: additive only — a new refusal code is a new closed-enum member plus its test; a code is never renumbered, and the set of twenty changes only on the owner's word (P-060).** Skills: Postgres RLS + FORCE · closed-enum modelling · Pest contract tests · ≤12 a seat. **Runtime proof =** one real send refused with its code in the trace and **nothing on the wire**; one `STOP` received and the very next queued send to that person refused with its code; one contact write with no attestation refused **at the write**.
 **SCREENS** operator: **refusals by reason today** *(the twenty, as a bar — the fastest read of what the platform is actually blocking)* · register slot states. tenant: none of its own.
 **DECLARATIONS** `@renders refusals_by_reason · register_slot_states` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides consent.decide · consent.suppress · consent.lift · attestation.record · register.check` · `@agent_reachable none` · `@emits consent.decided · permit.granted · attestation.recorded · suppression.added` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · message.received` *(STOP)* · `contact.created · campaign.scheduled` · `@owns_table send_permits · suppressions · import_attestations · compliance_registers`
@@ -35525,7 +35525,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 | **`N-007`** | the evidence bundle assembles itself | ⭐⭐ **call logs, transcripts, signatures, delivery receipts, the invoice AND the consent record — asserted present before submission** |
 | **`N-008`** | it accepts `chargeback.received` from **any** gateway | ⛔ **`doctor` asserts no gateway name appears in the dispute logic** *(P-197)* |
 | **`N-009`** | the exposure ledger | **money taken vs work DELIVERED**, per tenant |
-| **`N-010`** | ⛔ **the refund verb does not exist here** | *a dispute is defended or conceded; a refund is `X-198`'s and it is `L1`* |
+| **`N-010`** | ⛔ **the verb does not exist here** | *a dispute is defended or conceded; money back is X-198's and it is L1* |
 | **`N-011`** | deadlines are a clock, not a hope | ⛔ **a dispute inside 48h of its deadline RAISES to a human regardless of state** |
 
 ### ⭐ `X-207 PushEngine` — **the one owned channel** · 5 rows
@@ -39267,3 +39267,186 @@ full minutes.** ⭐ **MMS = 1 credit.** ⭐ **AI credit $50.** ⭐ **1 SMS = 1 S
 ⭐⭐⭐ 730 IN SCOPE. Zero questions open.**
 ⭐ **Agency sees everything** *(cost, markup, margin, impersonation — always
 logged)*. ⛔ **Their client sees the agency's price only.**
+## 257 ⭐⭐⭐ THE FEATURE RE-CUT — THREE MODULES MINTED · FOURTEEN DEFERRED · EVERY UNOWNED CAPABILITY ASSIGNED *(owner rulings 2026-09-04 · appended by the coder on the supervisor's brief, run 68)*
+
+> **LIVE.** The owner ruled on 2026-09-04: no screen is deleted; every capability has an owner; the product is organised by FEATURE (the navigation in `config/features.php`), not by module. Three modules are minted below in the §169.1 shape. Fourteen modules are DEFERRED — headers, capabilities, screens and tests kept, hidden from navigation, no lane builds them until the core ships. The three-week clock starts Monday 8 September 2026.
+
+## 257.1 ⭐⭐ X-221 `AdsAdvisor` — THE FULL HEADER *(minted 2026-09-04 · G14 · SQ-12 · W3)*
+
+`@module X-221` `@intent GROW`
+
+**WHAT** ⭐⭐ **The ads advisor: plans campaigns, writes ad copy and creative variants, analyses performance reports and coaches optimisation through the omni chat — and NEVER touches a live campaign.** Reports arrive three ways, all read-only: (1) upload/export of a Google, Bing or Meta report file; (2) the GA4 Data API with the tenant's own service-account credential (campaign traffic by UTM, no approval programme); (3) a Google Ads report scheduled by the tenant into a Google Sheet, read through the Sheets API; Meta Insights through a Business Manager system-user token on the tenant's own ad account. Nothing is deployed, paused, bid or synced on any ad network by this module — the owner's ruling; the Google Ads and Meta Marketing write APIs are not integrated.
+**WIZARD** *(tenant-facing)* connect a report source *(upload · GA4 property · a Sheet · a Meta ad account)* · name the goal *(calls · forms · bookings)* · the budget the tenant actually spends. **inferred:** the trades and service areas from X-16/X-130. **confirmed once:** the goal.
+**AUTOPILOT** *(advisory posture — `ships: advice` · `@ceiling a written plan`)* a weekly findings note *(wasted spend · dayparting · audience decay · negative-keyword and negative-audience lists exported as CSV for the tenant to upload)* · every finding cites the report row it came from · **no action toward any ad network, ever.**
+**SWARM** **SQ-12 · W3.** Owns `app/Modules/X-221/**`, `@owns_table ad_report_imports · ad_findings · ad_plans`. **Must not touch** X-186 sends, X-110 pixel writes, any vendor write endpoint.
+**SCREENS** tenant: **findings this week** · report sources · campaign plan · exported lists. operator: none.
+**DECLARATIONS** `@renders findings_this_week · report_sources · campaign_plan · exported_lists`
+`@provides ads.import_report · ads.analyse · ads.plan · ads.export_list` · `@agent_reachable ads.analyse · ads.plan` · `@emits ads.finding.recorded · ads.plan.written` · `@consumes pixel.event (X-110) · signal.detected (X-136)`
+**NEEDS / HAS** needs: a report source connected · has: findings by week · plans by campaign
+**TEST ANCHOR** *`grep -rE 'googleads|graph.facebook.com/.*/(adsets|campaigns|ads)' app/Modules/X-221/` returns nothing but the read-only insights path; a finding with no `report_row_ref` fails to save; `Http::fake` is absent from `tests/Modules/X-221/`.*
+
+## 257.2 ⭐⭐ X-222 `LegalDesk` — THE FULL HEADER *(minted 2026-09-04 · G10 · SQ-0 · W2)*
+
+`@module X-222` `@intent PROTECT`
+
+**WHAT** ⭐⭐ **The legal and privacy engine: DMCA takedown requests, privacy requests (access · erasure · portability — extending the legacy data-requests desk), policy pages per tenant, retention rules.** Reads X-204's consent state; **writes nothing to any send path.** Every request has a statutory clock and the desk shows the clock, never a status word alone.
+**WIZARD** *(tenant-facing)* the tenant's legal entity, contact for notices, jurisdictions served. **inferred:** retention defaults per noun from the plan. **confirmed once:** the policy pages' publish state.
+**AUTOPILOT** *(operator posture — `ships: n/a` · `@ceiling n/a`)* a privacy request opens a ticket with its deadline · a takedown request pulls the asset from public surfaces within the statutory window and records the action · retention runs as a scheduled job that **proposes** deletions through the approval desk (X-202) and never deletes on its own.
+**SWARM** **SQ-0 · W2.** Owns `app/Modules/X-222/**`, `@owns_table legal_requests · policy_pages · retention_rules`. **Must not touch** X-204 decisions, any sender, X-121 history rows.
+**SCREENS** tenant: **requests with their clocks** · policy pages · retention rules. operator: **requests across tenants, oldest clock first.**
+**DECLARATIONS** `@renders legal_requests · policy_pages · retention_rules · requests_by_clock`
+`@provides legal.request.open · legal.takedown · legal.policy.publish · legal.retention.propose` · `@agent_reachable legal.policy.publish` · `@emits legal.request.opened · legal.takedown.executed · legal.retention.proposed` · `@consumes consent.decided (X-204)`
+**NEEDS / HAS** needs: a legal contact on the tenant · has: open requests by clock
+**TEST ANCHOR** *a request saved without a `deadline_at` fails; a retention run in a test never issues a DELETE — it emits `legal.retention.proposed` and X-202 holds it; a takedown removes the asset from every `@renders` public surface, asserted by a real GET returning 404.*
+
+## 257.3 ⭐⭐ X-223 `WarmupEngine` — THE FULL HEADER *(minted 2026-09-04 · G11 · SQ-1 · W2)*
+
+`@module X-223` `@intent GROW`
+
+**WHAT** ⭐⭐ **The email warm-up engine the tracker already names: a seed audience of platform-owned mailboxes, auto-reply simulation, important-tagging, and cross-platform sync of the warm-up state per sending domain.** Sits beside C-Mail (the transport) and **never sends outside its seed list.** A domain's warm-up state is data C-Mail reads before it accepts a bulk send.
+**WIZARD** *(tenant-facing)* the sending domain · the daily ramp the tenant accepts. **inferred:** the ramp schedule from the domain's age. **confirmed once:** the ramp.
+**AUTOPILOT** *(`ships: seed mail only` · `@ceiling the ramp`)* sends to seeds on the ramp · replies and tags from the seed side · records bounce and placement per day · **halts the ramp on a bounce spike and tells the tenant.**
+**SWARM** **SQ-1 · W2.** Owns `app/Modules/X-223/**`, `@owns_table warmup_domains · warmup_seeds · warmup_days`. **Must not touch** X-186 campaigns, X-204, any tenant contact row.
+**SCREENS** tenant: **warm-up per domain** *(day · sent · placed · bounced)*. operator: seed pool health.
+**DECLARATIONS** `@renders warmup_per_domain · seed_pool_health`
+`@provides warmup.start · warmup.state · warmup.halt` · `@agent_reachable warmup.state` · `@emits warmup.day.recorded · warmup.halted` · `@consumes mail.delivered · mail.bounced (C-Mail)`
+**NEEDS / HAS** needs: a verified sending domain · has: warm-up state per domain
+**TEST ANCHOR** *a warm-up send whose recipient is not in `warmup_seeds` is refused before C-Mail is reached, asserted; C-Mail refuses a bulk send on a domain whose warm-up state is below the ramp — the refusal carries a P-060 code.*
+
+## 257.4 ⛔ DEFERRED MODULES *(owner ruling 2026-09-04 — kept, hidden, unbuilt until the core ships)*
+
+| Module | What it is | Ruling |
+| :--- | :--- | :--- |
+| `X-200` | human-seat call center | DEFERRED |
+| `X-158` | video engine | DEFERRED |
+| `X-159` | site-audit video | DEFERRED |
+| `X-114` | media studio | DEFERRED |
+| `X-144` | AI visibility tracker | DEFERRED |
+| `X-197` | self-hosted voice | DEFERRED |
+| `X-147` | RCS | DEFERRED |
+| `X-143` | WebMCP | DEFERRED |
+| `X-141` | what-if replay | DEFERRED |
+| `X-145` | decisioning studio | DEFERRED |
+| `X-213` | vision QA | DEFERRED |
+| `X-208` | direct mail | DEFERRED |
+| `X-215` | document signing | DEFERRED |
+| `X-214` | surcharging | DEFERRED |
+
+Deferred also: the e-commerce logistics rows *(3PL · FBA · drop-shipping · FIFO/LIFO · pick path · pick-and-pack · split fulfilment · weight/box)* and the search-infra rows in §257.5 — **cart, checkout, storefront (X-117) and inventory (X-167) stay IN.** Kept by the same ruling despite their size: `X-104` WordPressPlugin and `X-196` ChromeExtension.
+
+## 257.5 ⭐ EVERY UNOWNED CAPABILITY, ASSIGNED *(the Parent column in the tracker follows this table)*
+
+| # | Capability | Goes to | Why |
+| :--- | :--- | :--- | :--- |
+| **G1-06** | Auto-Recharge | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-07** | Auto-Reply Simulation | X-223 | auto-reply simulation (warm-up) |
+| **G1-09** | Automated Dunning Ladders | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-17** | Countdown Dunning | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-21** | Dynamic Tax Calculations | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-27** | Important Tagging | X-223 | important tagging (warm-up) |
+| **G1-37** | Multi-Stripe Account Support | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-44** | Proration Handling | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-48** | Smart Dunning Pauses | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-50** | SMS Dunning | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-53** | Subscription Overrides | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-54** | Tax Jurisdiction Mapping | — | killed by owner law (§45A dunning timeline etc.) |
+| **G3-37** | Localized Spintax Pages | X-140 | localized programmatic pages — ConversationToContent |
+| **G3-40** | Omnipresence | X-185 | omnipresence = GrowthLoop cadence across channels |
+| **G3-45** | Real-Time Interception | X-136 | real-time interception = a signal that informs |
+| **G3-49** | Scraper Ad Audience Sync | X-221 | scraper audience → CSV export for ad platforms |
+| **G3-55** | Spintax Generation | X-186 | spintax renders per SEND in the email/campaign engine (boss 2026-09-04: "spin text is for the email engine"), never on pages |
+| **G4-04** | Auto-Scaling | X-203 | auto-scaling = resiliency desk |
+| **G4-27** | Offline Mode | X-171 | offline mode = tech mobile is offline-first |
+| **G7-17** | Custom Blacklists | X-204 | custom blacklists = consent suppression lists |
+| **G7-20** | Event Hijacking | X-136 | event hijacking = local event signals |
+| **G7-36** | Refresh Automation | X-151 | refresh automation = fetch engine schedules |
+| **G9-06** | Anomaly Detection | X-111 | anomaly detection = operator alerts |
+| **G9-39** | Volume Decay | X-07 | volume decay = forecaster |
+| **G9-40** | Win-Rate Correlation | X-07 | win-rate correlation = forecaster |
+| **G10-06** | Automated DMCA Takedown | X-222 | DMCA takedown |
+| **G10-23** | Legal & Privacy Engine | X-222 | legal & privacy engine |
+| **G11-08** | Cross-Platform Sync | X-223 | cross-platform warm-up sync |
+| **G11-30** | Seed Audience | X-223 | seed audience |
+| **G13-09** | Conversion Zone Tracking | X-110 | conversion zone tracking = pixel |
+| **G13-13** | Dwell Time Filtering | X-110 | dwell-time filtering = pixel |
+| **G13-32** | Session Replay | X-110 | session replay = pixel (X-141 is what-if replay, different) |
+| **G14-01** | Ad Blindness Prevention | X-221 | ad-blindness rotation plan |
+| **G14-02** | Ad Comment Moderation | — | ad comment moderation — SUPERSEDED |
+| **G14-03** | Addressable Geo-Fencing | X-221 | addressable geo-fence plan |
+| **G14-04** | Audience Decay Detection | X-221 | audience decay detection from reports |
+| **G14-05** | Audience Rotation | X-221 | audience rotation plan |
+| **G14-06** | Automated Pausing | — | requires live platform control — stays SUPERSEDED |
+| **G14-07** | Automated Rules Engine | — | automated rules on the network — SUPERSEDED |
+| **G14-08** | Automated Split Testing | X-221 | split-test PLAN (not execution) |
+| **G14-09** | Budget Detection | X-221 | budget detection from reports |
+| **G14-10** | Budget Shifting | X-221 | budget-shift recommendation |
+| **G14-11** | Click Farm Prevention | X-221 | click-farm signals from reports |
+| **G14-12** | Competitor Blocking | X-221 | competitor-blocking advice |
+| **G14-13** | Conversion-Based Routing | — | conversion-based routing on the network — SUPERSEDED |
+| **G14-14** | Copy Generation | X-221 | copy generation — advisory |
+| **G14-15** | Copy vs. Creative Analysis | X-221 | copy vs creative analysis from imported reports |
+| **G14-16** | CRM Audience Sync | X-221 | CRM audience lists exported for upload |
+| **G14-17** | Cross-Sell Retargeting | X-221 | cross-sell retargeting plan |
+| **G14-18** | CTR Tracking | X-221 | CTR tracking from imported reports |
+| **G14-19** | Dayparting Analysis | X-221 | dayparting analysis from reports |
+| **G14-20** | Device Bid Adjustments | — | device bid adjustments — SUPERSEDED |
+| **G14-21** | Dynamic Retargeting | X-221 | dynamic retargeting plan |
+| **G14-22** | Impression Share Maximization | — | impression-share maximisation — SUPERSEDED |
+| **G14-23** | Instant Deployment | — | instant deployment — SUPERSEDED |
+| **G14-24** | Localized Ad Variations | X-221 | localized ad variations |
+| **G14-25** | LTV-Based Bidding | — | LTV-based bidding — SUPERSEDED |
+| **G14-26** | Meta/Facebook Ads Sync | — | Meta/Facebook Ads API sync — SUPERSEDED |
+| **G14-27** | Multi-Tier Generation | X-221 | multi-tier generation |
+| **G14-28** | Negative Lookalikes | X-221 | negative lookalike lists, exported as CSV |
+| **G14-29** | One-Click Campaigns | — | one-click campaigns on the network — SUPERSEDED |
+| **G14-30** | Price Testing | X-221 | price-test plan |
+| **G14-31** | Revival Testing | X-221 | revival-test plan |
+| **G14-32** | Sequential Retargeting | X-221 | sequential retargeting plan |
+| **G14-33** | Switch-and-Save Campaigns | X-221 | switch-and-save campaign plan |
+| **G14-34** | Visual Pin Drop | X-221 | visual pin-drop geo plan |
+| **G14-35** | Wasted Spend Prevention | X-221 | wasted-spend findings, as advice |
+| **G14-36** | Weather Overlays | X-221 | weather overlay advice |
+| **G14-37** | Weather-Triggered Bids | X-221 | weather-trigger advice |
+| **G14-38** | Win-Back Lookalikes | X-221 | win-back lookalike lists exported |
+| **G15-01** | "Just in Time" Webinars | X-158 | JIT webinars = video engine |
+| **G15-07** | Multi-State Taxation | X-199 | multi-state taxation = invoicing tax |
+| **G16-18** | Photo EXIF Injection | X-189 | photo EXIF injection = image overlay |
+| **G16-26** | Video View Retargeting | X-221 | video-view retargeting list export |
+| **G17-14** | Historical Re-targeting | X-221 | historical retargeting list export |
+| **G17-22** | Polygon Drawing | X-16 | polygon drawing = service-area on the maps harvester |
+| **G18-05** | Feature Gating & FOMO | X-210 | feature gating & FOMO = promotion engine |
+| **G18-25** | Whisper Mode | X-66 | whisper mode = voice agent |
+| **G19-03** | Carrier Route Detection | C-Telephony | carrier route detection |
+| **G21-01** | Live Chat Injection | X-102 | live chat injection = web chat |
+| **G1-80** | Stripe Metered Billing Sync and authorize.net | C-Billing | Stripe/Authorize.Net metered billing sync |
+| **G2-78** | Knockout Questions | X-109 | knockout questions = form outreach |
+| **G3-67** | Hiring Manager Extraction | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G4-53** | GraphQL Optimization | X-122 | GraphQL optimisation = action registry API |
+| **G4-56** | Time Travel | X-161 | time travel = demo sandbox |
+| **G6-36** | 3PL Integration | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-37** | Amazon FBA Sync | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-41** | Drop-Shipping Workflows | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-42** | FIFO/LIFO Tracking | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-44** | Pick Path Optimization | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-45** | Pick-and-Pack Validation | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-50** | Split Fulfillment | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-52** | Weight/Box Math | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G8-41** | Auto-Destruction | X-161 | auto-destruction = demo sandbox |
+| **G8-42** | ElasticSearch Indexing | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G9-41** | ClickHouse Warehouse | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G12-40** | One-Click Job Board Syndication | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G15-12** | 9-Box Grid Matrix | — | HR — shelved by the boss |
+| **G15-14** | AI Resume Parsing | — | HR — shelved by the boss |
+| **G15-16** | Benefits Enrollment | — | HR — shelved by the boss |
+| **G15-17** | Bereavement/Jury Duty | — | HR — shelved by the boss |
+| **G15-18** | Compensation Modeling | — | HR — shelved by the boss |
+| **G15-19** | Diversity Tracking - EEO | — | HR — shelved by the boss |
+| **G15-20** | Exit Interview Funnel | — | HR — shelved by the boss |
+| **G15-23** | Garnishment Handling | — | HR — shelved by the boss |
+| **G15-24** | Mandatory PTO Suggestion | — | HR — shelved by the boss |
+| **G15-27** | Offer Letter Generation | — | HR — shelved by the boss |
+| **G15-30** | PIP Enforcer | — | HR — shelved by the boss |
+| **G15-33** | Unlimited PTO Tracking | — | HR — shelved by the boss |
+| **G15-34** | W-2 Pre-Flight | — | HR — shelved by the boss |
+| **G17-30** | Candidate Nurture Drips | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G18-29** | Will-Call/Pickup Routing | X-117 | will-call / pickup routing = commerce fulfilment |

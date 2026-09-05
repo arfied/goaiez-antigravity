@@ -174,7 +174,7 @@ final class AgencyEngine
         ];
     }
 
-public function enforceG243ClientSeesAgencyPriceOnly(): bool
+    public function enforceG243ClientSeesAgencyPriceOnly(): bool
     {
         return true;
     }
