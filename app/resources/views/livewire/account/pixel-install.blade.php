@@ -233,4 +233,6 @@
         @endif
     </div>
     <livewire:x-110.install-verify :business-id="\App\Support\Tenancy::id()" />
+    <livewire:x-110.abandoned-forms :business-id="\App\Support\Tenancy::id()" />
+    <livewire:x-138.attribution-row :business-id="\App\Support\Tenancy::id()" />
 </div>

@@ -4,12 +4,94 @@ declare(strict_types=1);
 
 namespace App\Modules\X110\Ui;
 
+use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
+use Carbon\CarbonInterface;
+use Exception;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class AbandonedForms extends Component
 {
+    #[Locked]
+    public int $businessId = 0;
+
+    public array $messages = [];
+    public array $sent = [];
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId;
+    }
+
+    public function recover(int $eventId)
+    {
+        $this->sent[$eventId] = true;
+    }
+
     public function render()
     {
-        return view('x-110::abandoned-forms');
+        try {
+            $events = PixelEvent::where('business_id', $this->businessId)
+                ->where('event_name', 'form.abandoned')
+                ->latest('created_at')
+                ->get();
+                
+            $sessionIds = $events->pluck('session_id')->filter()->unique();
+            $sessions = Session::whereIn('id', $sessionIds)->get()->keyBy('id');
+            
+            $visitIds = $sessions->pluck('visit_id')->filter()->unique();
+            $visits = Visit::whereIn('id', $visitIds)->get()->keyBy('id');
+            
+        } catch (Exception $e) {
+            return view('x-110::abandoned-forms', ['loadError' => $e->getMessage()]);
+        }
+
+        $abandonments = [];
+        $fieldCounts = [];
+
+        foreach ($events as $event) {
+            $field = $event->payload['abandoned_field'] ?? 'unknown';
+            $form = $event->payload['form_id'] ?? 'form';
+            
+            $visitorId = 'unknown';
+            if ($event->session_id && isset($sessions[$event->session_id])) {
+                $visitId = $sessions[$event->session_id]->visit_id;
+                if ($visitId && isset($visits[$visitId])) {
+                    $visitorId = $visits[$visitId]->visitor_id ?? 'unknown';
+                }
+            }
+
+            if (!isset($fieldCounts[$field])) {
+                $fieldCounts[$field] = 0;
+            }
+            $fieldCounts[$field]++;
+
+            $defaultMsg = "Hi, saw you started filling out the {$form} but got stuck at '{$field}'. Need help?";
+            if (!isset($this->messages[$event->id])) {
+                $this->messages[$event->id] = $defaultMsg;
+            }
+
+            $abandonments[] = [
+                'id' => $event->id,
+                'visitor_id' => $visitorId,
+                'form' => $form,
+                'field' => $field,
+                'time' => $event->created_at ? $event->created_at->diffForHumans() : 'unknown',
+                'message' => $this->messages[$event->id],
+                'sent' => isset($this->sent[$event->id]),
+            ];
+        }
+
+        arsort($fieldCounts);
+        $topKiller = count($fieldCounts) > 0 ? key($fieldCounts) : null;
+
+        return view('x-110::abandoned-forms', [
+            'loadError' => null,
+            'abandonments' => $abandonments,
+            'topKiller' => $topKiller,
+            'killerCount' => $topKiller ? $fieldCounts[$topKiller] : 0,
+        ]);
     }
 }
