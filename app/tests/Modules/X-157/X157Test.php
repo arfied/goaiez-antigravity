@@ -1597,4 +1597,89 @@ class X157Test extends TestCase
         );
         $this->get("/sites/{$biz->id}/{$aRow->deploy_hash}")->assertStatus(200);
     }
+    
+    /** (R245) */
+    public function test_the_published_form_posts_to_an_address_that_captures(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $form = \App\Modules\X155\Models\FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Contact',
+            'slug' => 'contact',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $pageResp = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $pageResp->assertStatus(200);
+
+        $html = (string) $pageResp->getContent();
+        $this->assertMatchesRegularExpression(
+            '/<form class="form-capture-x155"[^>]*action="[^"]+"/',
+            $html,
+            'the published form names no address'
+        );
+
+        preg_match('/<form class="form-capture-x155"[^>]*action="([^"]+)"/', $html, $m);
+        $this->assertSame(
+            "/sites/{$biz->id}/{$deploy['deploy_hash']}/forms/{$form->id}",
+            $m[1],
+            'the published form posts to the wrong address'
+        );
+
+        $post = $this->post($m[1], [
+            'first_name' => 'Rae',
+            'phone' => '+15559990001',
+            'email' => 'rae@example.com',
+        ]);
+        $post->assertStatus(201);
+
+        $person = \App\Modules\X121\Models\Person::where('business_id', $biz->id)->where('phone', '+15559990001')->first();
+        $this->assertNotNull($person, 'the published form captured no contact');
+
+        $this->assertSame('Rae', $person->first_name);
+
+        $this->assertSame(1, \App\Modules\X155\Models\FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count());
+
+        $deployment = Deployment::where('deploy_hash', $deploy['deploy_hash'])->firstOrFail();
+        app(EdgeRollbackAction::class)->handle($biz->id, $deployment->id);
+
+        $this->post($m[1], [
+            'first_name' => 'Sam',
+            'phone' => '+15559990002',
+        ])->assertStatus(404);
+
+        $this->assertSame(1, \App\Modules\X155\Models\FormSubmission::where('business_id', $biz->id)
+            ->where('form_definition_id', $form->id)->count(),
+            'a rolled back site still accepted a submission');
+    }
 }
