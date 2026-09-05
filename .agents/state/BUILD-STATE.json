@@ -1406,6 +1406,10 @@
   {
    "at": "2026-09-03T09:34:34",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-05T12:14:55",
+   "note": "J10: owner ruling 2026-09-05 \u2014 the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production"
   }
  ]
 }
