@@ -557,3 +557,6 @@
 - `2026-09-04T20:19:21` (R245) X-142 — (R245) X-142 — ConnectYourAi lists only tokens where is_revoked is false; that scope is what distinguishes it from McpTokenRegistry, which lists every token ever issued
 - `2026-09-04T20:37:59` (R245) C-Mail — G3-18 and G11-16 are proven by the day's spend carrying across sends via warmup_calendars.sent_today and by an uncapped send on a domain with no calendar row; the schedule ladder is data the send path never reads
 - `2026-09-04T20:37:59` (R245) C-Mail — G11-37's refusal has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called
+- `2026-09-04T20:50:45` (R245) C-Mail — EmailUnsubscribeAction writes the preference through X204\Domain\ConsentService::suppress with channel email, mirroring C-Sms's SmsComposer; the mail_events row stays as the event log, not the preference store
+- `2026-09-04T20:50:45` (R245) C-Mail — EmailSendAction passes ConsentService::decide only for marketing sends, so a conversational or transactional send is never gated; that scoping is how an unsubscribed recipient still receives the invoice, which is G1-43's refusal clause
+- `2026-09-04T20:50:45` (R245) C-Mail — G1-43's category-confirmation half has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called
