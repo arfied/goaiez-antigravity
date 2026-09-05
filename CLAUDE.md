@@ -169,9 +169,28 @@ Watch for: <the trap that applies, by name>
   it with `|| true` and gates only `integrity` and `journey`. A red
   `capability`/`contract`/`citation` count is the measured truth, not a
   blocker; the blocker is a count that *rose* without a report line saying why.
+- ⚠️ **`supervise.sh` §4's `All stages clean` means one stage, not eight.** §4 runs
+  `doctor:selftest` and `doctor --stage=integrity` only, so that line is doctor's
+  summary of an integrity-only run and is green on a tree with hundreds of open
+  violations. **Never read a stage count from §4** — §3 prints the real eight from
+  `BUILD-STATE.json`, and `--full-doctor` (§5) re-measures them. Tick 152 blamed this
+  line on the truncated ledger; it prints identically on a healthy 17-key one
+  (measured 2026-09-05, tick 153). The truncation's real tell was §3 —
+  `KeyError: 'stages'` and an `{"action": "BOOTSTRAP"}` answer.
+- **§1b is a key-set check, not a row check.** It catches a ledger truncated to a
+  subset of a parent's top-level keys — the wave-65 incident — and nothing finer. A
+  merge resolution can keep all 17 keys and still drop rows, so before concluding a
+  merge, `comm` the `"module":` and `"at":` values of both parents against the
+  result. §1b's `MERGE_HEAD` line disappears once the merge commits; that is correct,
+  not a weakened gate.
 - **The supervisor can be wrong; the seal cannot.** If the coder's `REPORT.md`
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
+- **This column can commit `.claude/settings.json` but cannot edit it.** The allow
+  list grants `Bash(git add:*)`/`Bash(git commit:*)` over the path and no
+  `Edit`/`Write` on it, which matches the owner's-file rule above. Do not plan a fix
+  to it in a `REVIEWS.md` item — it is an `OWNER ACTION` every time. `git checkout
+  HEAD -- <path>` is denied too, so a bad copy ships until the owner touches it.
 
 ## Style
 
