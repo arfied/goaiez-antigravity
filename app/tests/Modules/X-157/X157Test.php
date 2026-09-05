@@ -757,7 +757,7 @@ class X157Test extends TestCase
             commitId: $site['commit_id'],
             businessName: $biz->name
         );
-        
+
         $this->assertNotEquals($first['deploy_hash'], $second['deploy_hash']);
         $bRow = Deployment::where('deploy_hash', $second['deploy_hash'])->firstOrFail();
 

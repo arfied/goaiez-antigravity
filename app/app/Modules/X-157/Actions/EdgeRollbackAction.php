@@ -13,7 +13,7 @@ final class EdgeRollbackAction
     public function handle(int $businessId, int $deploymentId, string $reason = 'manual_rollback'): array
     {
         $deployment = Deployment::where('business_id', $businessId)->findOrFail($deploymentId);
-        
+
         $wasLive = $deployment->status === 'deployed';
 
         $deployment->update([
