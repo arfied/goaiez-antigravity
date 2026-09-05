@@ -1448,4 +1448,44 @@ class X157Test extends TestCase
         );
         $this->assertSame('deployed', Deployment::where('business_id', $biz->id)->sole()->status);
     }
+
+    public function test_the_listener_publishes_all_seven_on_a_real_request(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'chat'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni'],
+        ]);
+
+        $this->assertSame('published', $site['status']);
+
+        $deployment = Deployment::where('business_id', $biz->id)
+            ->where('status', 'deployed')
+            ->sole();
+
+        $this->assertSame($zone->id, $deployment->edge_zone_id, 'the listener did not deploy to the provisioned zone');
+
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertStringContainsString('x110-pixel', $html, 'the listener deploy is missing the pixel');
+        $this->assertStringContainsString('chat-widget-container', $html, 'the listener deploy is missing the chat marker');
+        $this->assertStringContainsString('form-capture-x155', $html, 'the listener deploy is missing the form marker');
+        $this->assertStringContainsString('dni-pool-x137', $html, 'the listener deploy is missing the DNI marker');
+        $this->assertStringContainsString('seo-meta-x176', $html, 'the listener deploy is missing the SEO title');
+        $this->assertStringContainsString('rel="canonical"', $html, 'the listener deploy is missing the canonical link');
+        $this->assertStringContainsString('application/ld+json', $html, 'the listener deploy is missing the schema block');
+    }
 }
