@@ -136,6 +136,30 @@ trait JourneyHarness
             ['first_name' => 'Stop Person', 'phone' => '+15551239999']
         );
 
+        $locationId = DB::table('locations')->where('business_id', $tenant['id'])->value('id');
+        DB::table('locations')->where('id', $locationId)->update(['timezone' => 'America/New_York']);
+        DB::table('customers')->insert([
+            'id' => $person->id,
+            'business_id' => $tenant['id'],
+            'location_id' => $locationId,
+            'phone' => '+15551239999',
+            'name' => 'Stop Person',
+            'region_code' => 'TX',
+            'created_at' => now(),
+        ]);
+        $customerId = $person->id;
+
+        DB::table('consent_records')->insert([
+            'business_id' => $tenant['id'],
+            'customer_id' => $customerId,
+            'channel' => 'sms',
+            'consent_type' => 'express',
+            'captured_by' => 'tenant',
+            'capture_surface' => 'manual',
+            'disclosure_version' => '1.0',
+            'created_at' => now(),
+        ]);
+
         for ($i = 0; $i < $count; $i++) {
             DB::table('campaign_steps')->insert([
                 'business_id' => $tenant['id'],

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Journeys;
 
 use App\Enums\CreditProduct;
-use App\Exceptions\TrialGrantRefused;
 use App\Models\Business;
 use App\Services\Billing\CreditLedger;
-use App\Services\Billing\TrialEligibility;
+use App\Enums\CreditKind;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
@@ -67,14 +67,14 @@ final class TwelveJourneysTest extends TestCase
     private function fundedTenant(): array
     {
         $tenant = $this->tenantWithLiveNumber();
-        $bizModel = Business::find($tenant['id']);
-        try {
-            app(TrialEligibility::class)->authorize($bizModel);
-        } catch (TrialGrantRefused $e) {
-            throw $e;
-        }
-        app(CreditLedger::class)->resetMonthly(CreditProduct::Sms, 500, 'harness');
+        $allowance = (int) app(DefaultsRegistry::class)->entitlement(\App\Enums\Plan::Base, 'credits.monthly_grant.sms');
+        dump('Funding tenant with allowance: ' . $allowance);
+        
+        \App\Support\Tenancy::set($tenant['id']);
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, $allowance, 'journey fixture (owner ruling 2026-09-05)');
 
+        loadEveryRequiredRegister(\App\Enums\OutreachChannel::Sms);
+        
         return $tenant;
     }
 
@@ -381,6 +381,8 @@ final class TwelveJourneysTest extends TestCase
         $this->drainQueue();
 
         $invites = $this->reviewInvitesFor($person);
+        $allMsgs = DB::table('outreach_messages')->get()->toArray();
+        dump('ALL MESSAGES:', $allMsgs, 'Person ID:', $person['id']);
         $this->assertCount(1, $invites, 'A completed job must ask ONCE — not zero, not twice.');
 
         // ⭐ Completing a second job must NOT produce a second invite inside the
