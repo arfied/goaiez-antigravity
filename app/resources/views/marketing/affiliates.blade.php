@@ -1,9 +1,7 @@
 {{--
     The affiliate programme (CC-2 §2.9).
 
-    ⛔ EVERY RATE ON THIS PAGE IS WITHHELD AND THE DEAL BLOCK THEREFORE DOES NOT
-    RENDER (P-009). Asking the registry for one raises, and the
-    controller renders nothing rather than a number nobody chose.
+    ✅ EVERY RATE ON THIS PAGE IS SEEDED AND THE DEAL BLOCK RENDERS (P-009, R245).
 
     ⚠️ THE FOUR FIGURES ARE ONE BLOCK. A commission rate with no payout floor is as
     unfinished a promise as no rate at all, so the block appears when all four are

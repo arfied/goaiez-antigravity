@@ -208,7 +208,7 @@ enum SendRefusalReason: string
     case ConsentTooWeakForState = 'consent_too_weak_for_state';
 
     /**
-     * This tenant's sending is paused — T137 `SL-08`'s per-tenant kill switch.
+     * This tenant's sending is paused — T137 `SL-8`'s per-tenant kill switch.
      *
      * ⚠️ **NOTHING ABOUT THE RECIPIENT.** Every other case on this enum is a
      * fact about the person being messaged; these last three are facts about
@@ -224,7 +224,7 @@ enum SendRefusalReason: string
     /**
      * All sending on the platform is halted.
      *
-     * `SL-08`'s global halt. Checked before the per-tenant pause so that an
+     * `SL-8`'s global halt. Checked before the per-tenant pause so that an
      * operator stopping everything does not have to reason about ten thousand
      * tenant rows, and so the refusal an operator sees names the switch they
      * actually threw.

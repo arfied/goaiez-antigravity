@@ -1,8 +1,7 @@
 {{--
     The agency programme (CC-2 §2.10).
 
-    ⛔ THE WHOLESALE RATE IS WITHHELD, SO THE DEAL SENTENCE DOES NOT RENDER
-    (P-008).
+    ✅ THE WHOLESALE RATES ARE SEEDED, SO THE DEAL SENTENCE RENDERS (P-008).
 
     ⚠️ THE HONESTY BLOCK IS THE POINT OF THE PAGE, not a caveat at the bottom of it.
     `29` §13 and the versioned-site rule agree: we do not sell futures, so this page

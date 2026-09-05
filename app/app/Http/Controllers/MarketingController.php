@@ -297,7 +297,7 @@ final class MarketingController extends Controller
     /**
      * The affiliate programme (CC-2 §2.9, P-009).
      *
-     * ⚠️ **EVERY RATE ON THIS PAGE IS WITHHELD AND THE PAGE SHIPS ANYWAY**.
+     * ✅ **EVERY RATE ON THIS PAGE IS SEEDED AND THE DEAL BLOCK RENDERS (P-009, R245)**.
      * The deal block renders only when all four figures are set, because a
      * commission with a rate and no payout floor is as unfinished a promise as one
      * with neither.

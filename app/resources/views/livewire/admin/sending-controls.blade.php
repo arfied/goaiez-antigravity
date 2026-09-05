@@ -1,5 +1,5 @@
 {{--
-    The kill switches — T137 `SL-08`, and the surface decision 2478 recorded as
+    The kill switches — T137 `SL-8`, and the surface decision 2478 recorded as
     owed.
 
     THREE STOP-STATES SIT ON THIS PAGE AND ONLY TWO ARE THROWN FROM IT. The

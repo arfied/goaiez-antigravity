@@ -37,7 +37,7 @@ use LogicException;
 use Masmerise\Toaster\Toaster;
 
 /**
- * The kill switches, given a door — T137 `SL-08`, and the surface 2478 recorded
+ * The kill switches, given a door — T137 `SL-8`, and the surface 2478 recorded
  * as owed.
  *
  * ## Why this screen exists
