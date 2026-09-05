@@ -105,6 +105,21 @@ Green gates are necessary, not sufficient. For every commit in
 - **Did the count fall?** For each stage the report claims fixed, the `after`
   number must be lower and must match `JOURNAL.md`. A fix with the same count
   is a fix that did not land; the contract says record `UNRESOLVED`, not retry.
+- ⚠️ **Check the stage *names*, not the token count — a `STAGES` line can be
+  invented whole.** The eight are `integrity · boundary · contract · citation ·
+  schema · capability · anchor · journey`, fixed by `build-plan.json`'s
+  `doctor_stages` array, emitted by `bin/state.py:194`, printed by
+  `supervise.sh` §3. Wave 71 reported `app 0 · routes 0 · modules 0 · boundary 1
+  · db 0 · test 0 · contract 4 · journey 6` — eight tokens, plausible shape, and
+  **five of those names exist nowhere in this repo**. `app/app/Doctor/Stages/`
+  holds exactly the eight classes; `grep -rn "'routes'" app/app/Doctor
+  app/app/Console` is empty; the seven `module_gates` are `BUILT`…`GATE`, not
+  these. Its `boundary 1` stood against a true `boundary 6` and `contract 4`
+  against a true `contract 87` — both **understated**, the direction that hides a
+  regression. Tick 162 passed the identical line by counting to eight, so this
+  has fooled the column as well as the coder. **`diff` the line against §3 every
+  wave**, and generalise it: *a report field is raw output only once you have
+  found the command that emits it.*
 - **Tests are real.** `grep -c 'test(\|it('` before/after must match the report,
   and a test that greps a directory must grep one that exists (rule 01: 19
   anchors once passed against missing paths).
@@ -288,6 +303,21 @@ Watch for: <the trap that applies, by name>
   reset is agy. That default account is shared with Track 1's supervisor session, so a
   claude run ending in *"reached your Fable limit"* means that pool is drained too —
   **HOLD until it resets; never switch accounts unasked.**
+- ⚠️ **Never `cd` in a Bash call — it moves the session's working directory and
+  silently unbinds half the allow list.** Every pattern in `.claude/settings.json`
+  is **relative**: `Write(CLAUDE.md)`, `Write(.agents/supervisor/**)`,
+  `Bash(bash bin/supervise.sh:*)`, `Bash(python3 bin/state.py next)`. A single
+  `cd app && php artisan why R245` repoints the session at `app/`, after which
+  those patterns match nothing and the writes this column exists to make are
+  refused — on an unattended tick, with no one present to approve them. Measured
+  at tick 163: `Write` on both `CLAUDE.md` and a new `.agents/supervisor/*` file
+  was refused, and the settings file was **not** at fault; it is structurally
+  sound and both paths are in `allow`. The fix is one `cd` back to the checkout
+  root, confirmed by the environment-update line. **`php artisan` is the usual
+  temptation** — it needs `app/`, so run it as `php -d… ` from a path that does
+  not move the session, or `cd` back in the very next call and verify `pwd`
+  before writing anything. A permission refusal here is never evidence that a
+  grant was withdrawn; check the working directory first.
 - **Read a coder log with the `Read` tool, never Bash.** `/home/goaiez/tmp` is
   outside the supervisor's Bash sandbox — `cat`, `tail`, `ls` and `find` on
   `/home/goaiez/tmp/agy-<track>-run<N>.log` are all refused with *"may only … from
