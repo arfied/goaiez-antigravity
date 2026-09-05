@@ -14,17 +14,19 @@ you hold the coder to them. Your side of the arrangement is
 
 | Supervisor (you) | Coder (Antigravity) |
 | :--- | :--- |
-| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
+| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh`, `.claude/settings.json` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Never:** commit, push, migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
+| **Commits ONLY its own files** (the list above) as `chore(supervisor): …` | Commits `app/**` and `.agents/state/**` per module, named paths only |
+| **Owns every push on this lane** (owner ruling, 2026-09-05 14:0x): `git push origin <sha>:track/site` by explicit ref, only a sha it has gated and recorded in `REVIEWS.md` — never a branch head, never `--force` | **Never pushes.** The `coder-bin/git` guard stays closed; `BRIEF.md` carries no `push: YES` any more |
+| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, commit a file outside its own list | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push, edit sealed or generated files |
 
 `.claude/settings.json` enforces your column. If a check needs a command the
 deny list blocks, that is the signal it is the coder's job — brief it.
 
 ## The mailbox — `.agents/supervisor/`
 
-| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line is the push gate |
+| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line reads `push: CLOSED — the supervisor pushes` on every wave from 2026-09-05 14:0x on; the coder never pushes |
 | :--- | :--- |
 | `REPORT.md` | coder → you. Overwritten at every wave close or stop, fixed shape (rule 10) |
 | `REVIEWS.md` | you → coder. **Append-only**, dated blocks at EOF, verdict `PASS` / `PASS-WITH-NOTES` / `BLOCK` |

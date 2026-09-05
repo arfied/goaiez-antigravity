@@ -105,21 +105,28 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
-  out=$(DB_DATABASE=goaiez_antig_site_test ./vendor/bin/pest 2>&1); rc=$?
+  # Owner relay 2026-09-05 08:0x: pest under a wall clock, and never a silent §7.
+  # Runs 67 and 68 died in pest's long tail and printed nothing at all, which read
+  # as "the gate did not run" — indistinguishable from a killed agent.
+  out=$(timeout 1800 env DB_DATABASE=goaiez_antig_site_test ./vendor/bin/pest 2>&1); rc=$?
   # OWNER ACTION 8 (answered 2026-09-04): per-track path. $ROOT, not $PWD — we cd'd into $APP above.
   printf '%s' "$out" | tail -1 > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
   [ $rc -ne 0 ] && fail=1
+  [ $rc -eq 124 ] && echo "  ⛔ TIMEOUT: pest exceeded 1800s (rc 124) — anything below is partial"
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
 print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
-for f in (d.get("failures") or [])[:5]:
+for f in (d.get("failures") or [])[:12]:
     print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
-for e in (d.get("error_details") or [])[:5]:
+for e in (d.get("error_details") or [])[:12]:
     print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
 n=len(d.get("error_details") or [])
-if n>5: print("   … %d more" % (n-5))'
+if n>12: print("   … %d more" % (n-12))'
+  elif [ -z "$out" ]; then
+    echo "  ⛔ ZERO BYTES: pest wrote nothing (rc $rc). Not a passing suite —"
+    echo "     memory limit, a killed run, or a collided DB. Narrow with --filter."
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi
