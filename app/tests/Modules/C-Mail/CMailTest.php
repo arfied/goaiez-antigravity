@@ -28,10 +28,11 @@ class CMailTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->sendAction = new EmailSendAction;
+        $consentService = app(\App\Modules\X204\Domain\ConsentService::class);
+        $this->sendAction = new EmailSendAction($consentService);
         $this->dnsAction = new EmailDnsCheckAction;
         $this->warmupAction = new EmailWarmupAction;
-        $this->unsubscribeAction = new EmailUnsubscribeAction;
+        $this->unsubscribeAction = new EmailUnsubscribeAction($consentService);
     }
 
     /**
@@ -110,7 +111,42 @@ class CMailTest extends TestCase
      */
     public function test_g1_43_categories(): void
     {
-        $this->assertTrue(true);
+        \Illuminate\Support\Facades\Event::fake([\App\Modules\CMail\Events\EmailSent::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Mail Categories', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'mail.categories.com');
+        
+        $this->unsubscribeAction->handle($biz->id, $domain->id, 'user@example.com');
+        
+        $suppression = \App\Modules\X204\Models\Suppression::where('business_id', $biz->id)
+            ->where('recipient_phone', 'user@example.com')
+            ->where('channel', 'email')
+            ->first();
+        
+        $this->assertNotNull($suppression);
+        $this->assertEquals('unsubscribed_marketing', $suppression->reason);
+        
+        $marketingSend = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'user@example.com',
+            subject: 'Marketing',
+            sendType: 'marketing',
+            requestedCount: 1
+        );
+        $this->assertEquals('refused_suppressed', $marketingSend['status']);
+        
+        $invoiceSend = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'user@example.com',
+            subject: 'Invoice',
+            sendType: 'conversational',
+            requestedCount: 1
+        );
+        $this->assertEquals('processed', $invoiceSend['status'], 'unsubscribing from marketing does not stop the invoice');
     }
 
     /**
