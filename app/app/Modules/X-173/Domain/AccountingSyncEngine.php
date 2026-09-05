@@ -110,4 +110,17 @@ final class AccountingSyncEngine
 
 
 
+
+
+    public function errorRate(int $businessId, int $syncRunId): ?float
+    {
+        $run = \App\Modules\X173\Models\SyncRun::where('business_id', $businessId)->findOrFail($syncRunId);
+        $total = $run->records_synced + $run->conflicts_count;
+        
+        if ($total === 0) {
+            return null;
+        }
+        
+        return $run->conflicts_count / $total;
+    }
 }
