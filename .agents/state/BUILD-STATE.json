@@ -1709,6 +1709,10 @@
   {
    "at": "2026-09-05T11:03:33",
    "note": "CORRECTION to the 2026-09-05T10:30 G2-76 violator note (REVIEWS.md tick 348 note 1): triage_conversations is created by app/database/migrations/2026_07_30_081928_create_triage_conversations_table.php, and support_messages by app/database/migrations/2026_08_12_065625_create_support_desk_tables.php. The two filenames recorded earlier do not exist. outreach_messages (2026_07_30_081926) and inbound_messages (2026_08_09_043337) were recorded correctly."
+  },
+  {
+   "at": "2026-09-05T11:07:32",
+   "note": "S-73 stage analysis: the capability stage counts \"names no refusal\" from app/app/Doctor/Stages/CapabilityStage.php:99; recording UNRESOLVED does not lower it; the stage this track can actually move is citation 94 (and boundary/contract/schema) because they are fixable by system changes in owned modules."
   }
  ]
 }
