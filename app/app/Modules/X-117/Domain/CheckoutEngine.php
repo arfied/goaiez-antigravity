@@ -9,6 +9,7 @@ use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
@@ -131,5 +132,73 @@ final class CheckoutEngine
                 'status' => 'cancelled',
             ];
         });
+    }
+
+    /**
+     * Adds to the session's cart. Stock is decremented at PAID, never at CART
+     * (§147.2): this reads inventory and writes only the cart row. The clock
+     * on a live cart never moves (G16-05); an expired or absent cart starts a new one.
+     */
+    public function addToCart(int $businessId, string $sessionToken, int $sellableId, int $quantity = 1): Cart
+    {
+        $sellable = Sellable::where('business_id', $businessId)->findOrFail($sellableId);
+        $cart = Cart::where('business_id', $businessId)->where('session_token', $sessionToken)->first();
+        $live = $cart !== null && $cart->expires_at->isFuture();
+        $items = $live ? $cart->items : [];
+
+        $inCart = 0;
+        foreach ($items as $item) {
+            if ((int) $item['sellable_id'] === $sellable->id) {
+                $inCart += (int) ($item['quantity'] ?? 1);
+            }
+        }
+
+        if ($sellable->inventory_quantity < $inCart + $quantity) {
+            throw new SoldOutException(sprintf(
+                '%s is sold out: %d in stock, %d already in this cart.',
+                $sellable->name,
+                $sellable->inventory_quantity,
+                $inCart
+            ));
+        }
+
+        $found = false;
+        foreach ($items as &$item) {
+            if ((int) $item['sellable_id'] === $sellable->id) {
+                $item['quantity'] = $inCart + $quantity;
+                $found = true;
+            }
+        }
+        unset($item);
+        if (! $found) {
+            $items[] = ['sellable_id' => $sellable->id, 'quantity' => $quantity];
+        }
+
+        return $this->writeCart($businessId, $sessionToken, $items, $live ? $cart->expires_at : now()->addMinutes(15));
+    }
+
+    public function removeFromCart(int $businessId, string $sessionToken, int $sellableId): Cart
+    {
+        $cart = Cart::where('business_id', $businessId)->where('session_token', $sessionToken)->firstOrFail();
+        $items = array_values(array_filter($cart->items, fn (array $item): bool => (int) $item['sellable_id'] !== $sellableId));
+
+        return $this->writeCart($businessId, $sessionToken, $items, $cart->expires_at);
+    }
+
+    /**
+     * @param  array<int,array{sellable_id:int,quantity:int}>  $items
+     */
+    private function writeCart(int $businessId, string $sessionToken, array $items, CarbonInterface $expiresAt): Cart
+    {
+        $totalCents = 0;
+        foreach ($items as $item) {
+            $sellable = Sellable::where('business_id', $businessId)->findOrFail($item['sellable_id']);
+            $totalCents += ((int) ($item['quantity'] ?? 1)) * $sellable->unit_price_cents;
+        }
+
+        return Cart::updateOrCreate(
+            ['business_id' => $businessId, 'session_token' => $sessionToken],
+            ['items' => $items, 'total_cents' => $totalCents, 'expires_at' => $expiresAt]
+        );
     }
 }
