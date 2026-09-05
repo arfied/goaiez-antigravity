@@ -44,8 +44,10 @@ final class InvoiceEngine
             }
 
             $termsDaysMap = [
-                'net_30' => 30,
+                'due_on_receipt' => 0,
                 'net_15' => 15,
+                'net_30' => 30,
+                'net_60' => 60,
             ];
             $dueDays = $termsDaysMap[$termsType] ?? 0;
 

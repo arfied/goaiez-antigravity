@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T17:03:17",
+ "updated": "2026-09-04T20:23:11",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1311,6 +1311,10 @@
   {
    "at": "2026-09-04T16:53:17",
    "note": "Push 1569172..9879c1da landed"
+  },
+  {
+   "at": "2026-09-04T20:20:01",
+   "note": "Pushed 9879c1da..496e081d as step 0"
   }
  ],
  "decisions": [
@@ -1372,6 +1376,12 @@
    "module": "X-211",
    "chose": "collections is a human action: ar_collections_packages row (RLS) records packaged_by_user_id and the evidence bundle; it is built only after a recorded resolution attempt (R211 \u2014 a reason, a plan or a payment, NoResolutionAttemptException before any write); transmission is a finished waiting state until a partner is named (G1-65, N-033). Test: CollectionsPackagePreviewScreenTest",
    "at": "2026-09-04T17:03:17",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "terms are a closed set (due_on_receipt, net_15, net_30, net_60) and a limit is never negative: TermsSetAction refuses with InvalidTermsException before any write, and a null card token means keep, never blank \u2014 the overflow rule charges that card (\u00a746A, G1-33). Test: CreditsScreenTest",
+   "at": "2026-09-04T20:23:11",
    "ruling": "R245"
   }
  ]
