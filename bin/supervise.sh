@@ -30,6 +30,24 @@ for db in "$env_db" "$xml_db"; do
 done
 [ -z "$env_db" ] && echo "  ⚠ .env has no DB_DATABASE — anything reading config would use the framework default"
 
+# ⛔ This track's OWN test database. `app/phpunit.xml` is a per-track file and
+# never merges in either direction (owner ruling, 2026-09-04). A merge of
+# origin/main put `goaiez_antig_test` — TRACK 1's — back on this checkout on
+# 2026-09-05, and a suite run from here wiped Track 1's schema under their gate
+# at 07:1x (32 spurious "relation phone_numbers does not exist" errors). The
+# same check stands alone in .agents/supervisor/pin-check.sh, which is gitignored
+# and therefore survives a merge that overwrites this file.
+OWN_TEST_DB="goaiez_antig_sixty_test"
+if [ "$xml_db" != "$OWN_TEST_DB" ]; then
+  echo "  ⛔ app/phpunit.xml pins '${xml_db:-<unset>}', not this track's '$OWN_TEST_DB'"
+  echo "     restore: git show cd30f19c:app/phpunit.xml > app/phpunit.xml"
+  if [ $want_tests -eq 1 ]; then
+    echo "     REFUSING --tests: a run on another track's database is false here and destructive there."
+    want_tests=0
+  fi
+  fail=1
+fi
+
 bar "1. working tree"
 git status --short | head -40
 echo "  $(git status --short | wc -l) uncommitted path(s)"
@@ -99,7 +117,40 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
-  out=$(./vendor/bin/pest 2>&1); rc=$?
+  # Refuse while another pest runs on THIS database from any checkout whose
+  # phpunit.xml pins it (adopted from Track 1's 9b65e1e5; the incident is the
+  # one recorded in §0 above).
+  shared=""
+  for co in /home/goaiez/agents/grs-antig*; do
+    grep -q "DB_DATABASE\" value=\"$xml_db\"" "$co/app/phpunit.xml" 2>/dev/null && shared="$shared $co"
+  done
+  clash=0
+  for p in $(pgrep -x php); do
+    if tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q "bin/pes""t"; then
+      c=$(readlink /proc/$p/cwd 2>/dev/null)
+      for co in $shared; do case "$c" in "$co"/*) clash=$((clash+1)); echo "  ✗ pest pid $p running on $xml_db from $c";; esac; done
+    fi
+  done
+  if [ $clash -gt 0 ]; then
+    echo "  ✗ REFUSED: $clash other pest process(es) on $xml_db (checkouts pinning it:$shared) — a gate now would be false"
+    fail=1; want_tests=0
+  fi
+fi
+if [ $want_tests -eq 1 ]; then
+  # timeout: a hung suite is a red line, never a 26-minute wait (owner ruling
+  # relayed 2026-09-05 08:0x).
+  out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  if [ $rc -eq 124 ]; then
+    echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
+    out="$out"$'\n''{"tool":"pest","result":"timeout"}'
+  elif [ -z "$out" ]; then
+    # Zero bytes is never a result: rc 137/143 = killed from outside; 255 = PHP
+    # died before the formatter existed (memory, or a missing Vite manifest —
+    # narrow with --filter); 0 with no output = the formatter never ran.
+    echo "  ✗ pest printed ZERO BYTES (rc=$rc) — no test ran to completion; not a number, a silence. Re-run; if it repeats, --filter one file to surface the exception"
+    out='{"tool":"pest","result":"silent","rc":'"$rc"'}'
+    fail=1
+  fi
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '

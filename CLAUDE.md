@@ -17,10 +17,34 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Never:** commit, push, migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
+| Commits **only its own three files** and pushes **only a gated sha** — see below | Commits everything else, with named paths |
+| **Never:** migrate, touch a database, edit `app/**`, edit `.claude/settings.json`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
 
-`.claude/settings.json` enforces your column. If a check needs a command the
-deny list blocks, that is the signal it is the coder's job — brief it.
+### ⛔ The supervisor's commit and push rights (owner, relayed 2026-09-05 08:0x)
+
+`.claude/settings.json` was changed in this checkout on 2026-09-05 (`86fb1b85`) to
+allow this column `git commit`, `git add` and `git push origin`. The grant is
+narrow and this table, not the permissions file, is its scope:
+
+- **Commit only these three paths**, and only as `chore(supervisor): …` —
+  `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`. The mailbox
+  (`.agents/supervisor/**`) stays **uncommitted and gitignored**; committing it is
+  what wrote a supervisor's ledger over Track 1's twice. Always `-- <paths>`,
+  never `-a`, never `git add -A`.
+- **Merge step 0 — committing supervisor notes — is therefore the supervisor's,
+  not the coder's.** The coder guard refuses those paths (Track 1 run 67) and a
+  coder commit touching `CLAUDE.md`, `bin`, `.claude` or `.agents/supervisor` is
+  still a `BLOCK` on the wave.
+- **Push only a sha this column has gated and recorded in `REVIEWS.md`**, by
+  explicit ref: `git push origin <sha>:track/sixty`. **Never a branch head, never
+  `--force`**, never a sha newer than the one the recorded verdict names.
+- The other 50 deny entries stand. A permission grant is not an instruction: when
+  `settings.json` loosens and this table does not, **this table governs**.
+
+`.claude/settings.json` enforces your column and is the **owner's** file — read it,
+never edit it, and never take main's copy (it currently has its whole deny list
+inside `allow`). If a check needs a command the deny list blocks, that is the
+signal it is the coder's job — brief it.
 
 ## The mailbox — `.agents/supervisor/`
 
