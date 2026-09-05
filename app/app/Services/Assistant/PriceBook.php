@@ -19,8 +19,7 @@ use InvalidArgumentException;
  * What a business charges, and the one line it is always said with — T176 P5.
  *
  * ⛔ **THE ONLY READER AND WRITER OF `price_book_items`, AND OF THE DISCLAIMER ON
- * `assistant_briefs`, HELD THERE BY A LINT**
- * (`tests/Feature/Architecture/PricesTest.php`), on 624/1223's reasoning and
+ * `assistant_briefs`**, on 624/1223's reasoning and
  * with a sharper motive than either. Two things live here that cannot live
  * anywhere else:
  *
@@ -108,7 +107,7 @@ final class PriceBook
 
         $entries = [];
 
-        foreach ($this->query()->where('is_confirmed', true)->orderBy('service_name')->get() as $item) {
+        foreach ($this->query()->where('is_confirmed', true)->where('is_sample', false)->orderBy('service_name')->get() as $item) {
             $entry = $this->toEntry($item);
 
             $entries[$entry->slug] = $entry;
