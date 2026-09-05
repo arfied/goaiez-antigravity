@@ -86,7 +86,7 @@ final class SchedulingEngine
         foreach ($blackouts as $rule) {
             $start = Carbon::parse($rule->start_time);
             $startMinutes = $start->hour * 60 + $start->minute;
-            
+
             $end = Carbon::parse($rule->end_time);
             $endMinutes = $end->hour * 60 + $end->minute;
 
