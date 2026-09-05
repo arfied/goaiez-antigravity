@@ -12,8 +12,11 @@ use Illuminate\Support\Str;
 
 final class ChatStartAction
 {
-    public function __construct(private PixelEngine $pixelEngine)
+    private PixelEngine $pixelEngine;
+
+    public function __construct(?PixelEngine $pixelEngine = null)
     {
+        $this->pixelEngine = $pixelEngine ?? app(PixelEngine::class);
     }
 
     public function handle(int $businessId, ?string $visitorIp = null, bool $isAiCapped = false, ?string $pixelSessionToken = null): ChatSession
