@@ -223,7 +223,7 @@ it('fetches list to reuse the existing subscription ID if E00012 is returned wit
                     'subscriptionDetails' => [
                         [
                             'id' => 'sub_found_in_list',
-                            'name' => 'GO AI EZ — Base, monthly', // Must match the plan name in subscribe!
+                            'name' => 'GO AI EZ — Everything, monthly', // Must match the plan name in subscribe!
                             'status' => 'active',
                             'customerProfileId' => 'prof_existing',
                             'customerPaymentProfileId' => 'pay_existing',
