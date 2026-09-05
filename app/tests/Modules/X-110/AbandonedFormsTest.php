@@ -96,7 +96,7 @@ class AbandonedFormsTest extends TestCase
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->call('recover', $event->id)
-            ->assertSee('Message sent');
+            ->assertSee('Send pending');
 
         Event::assertNotDispatched('send.requested');
     }
