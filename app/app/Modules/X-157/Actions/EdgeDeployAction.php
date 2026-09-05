@@ -74,6 +74,12 @@ final class EdgeDeployAction
                 ];
             }
 
+            Deployment::where('business_id', $businessId)
+                ->where('edge_zone_id', $zone->id)
+                ->where('status', 'deployed')
+                ->where('id', '!=', $deployment->id)
+                ->update(['status' => 'superseded']);
+
             $deployment->update([
                 'status' => 'deployed',
                 'deployed_at' => now(),
