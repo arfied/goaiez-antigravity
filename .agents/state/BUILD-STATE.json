@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T14:38:01",
+ "updated": "2026-09-05T14:58:53",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -475,6 +475,12 @@
      "stage": "AdvanceOutreachStageAction does not exist, so the board does not offer a control to advance a stage",
      "why": "",
      "at": "2026-09-05T14:38:01"
+    },
+    {
+     "module": "X-105",
+     "stage": "anchor",
+     "why": "AdvanceOutreachStageAction does not exist, so the board offers no control to advance a stage; halt and demo-request are the only two writes the module's actions expose",
+     "at": "2026-09-05T14:58:53"
     }
    ]
   },
@@ -1329,6 +1335,12 @@
    "stage": "AdvanceOutreachStageAction does not exist, so the board does not offer a control to advance a stage",
    "why": "",
    "at": "2026-09-05T14:38:01"
+  },
+  {
+   "module": "X-105",
+   "stage": "anchor",
+   "why": "AdvanceOutreachStageAction does not exist, so the board offers no control to advance a stage; halt and demo-request are the only two writes the module's actions expose",
+   "at": "2026-09-05T14:58:53"
   }
  ],
  "decisions": [
