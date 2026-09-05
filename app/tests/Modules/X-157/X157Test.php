@@ -654,6 +654,45 @@ class X157Test extends TestCase
     }
 
     /** (R245) */
+    public function test_the_published_pixel_tag_names_a_url_this_platform_serves(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        preg_match('/<script\s+id="x110-pixel"\s+src="([^"]+)"/', $html, $matches);
+        $src = $matches[1];
+
+        $this->get($src)->assertOk();
+        $this->assertSame(404, $this->get('/pixel.js')->getStatusCode());
+    }
+
+    /** (R245) */
     public function test_route_deployment_whose_artifact_is_missing_returns_404(): void
     {
         Storage::fake('local');
