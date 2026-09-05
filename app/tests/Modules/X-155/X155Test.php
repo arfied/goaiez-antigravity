@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
+use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
 
 class X155Test extends TestCase
@@ -244,7 +245,55 @@ class X155Test extends TestCase
      */
     public function test_g2_39_header(): void
     {
-        $this->assertTrue(true);
+        // 2a: no X-155 CODE file contains staging or pending_leads
+        $path = app_path('Modules/X-155');
+        $files = Finder::create()
+            ->files()
+            ->in(array_filter([
+                $path.'/Actions',
+                $path.'/Models',
+                $path.'/Domain',
+                $path.'/Database',
+                $path.'/Events',
+            ], 'is_dir'))
+            ->append([new \SplFileInfo($path.'/ModuleServiceProvider.php')])
+            ->notName('capabilities.php')
+            ->name('*.php');
+
+        $scannedCount = 0;
+        foreach ($files as $file) {
+            $fileContent = file_get_contents($file->getRealPath());
+            $this->assertStringNotContainsString('staging', $fileContent, "File {$file->getFilename()} contains 'staging'");
+            $this->assertStringNotContainsString('pending_leads', $fileContent, "File {$file->getFilename()} contains 'pending_leads'");
+            $scannedCount++;
+        }
+        $this->assertGreaterThan(0, $scannedCount);
+
+        // 2b: Form submission references a Person OF THE SAME BUSINESS
+        $biz = TestCase::provisionTenant(['name' => 'Anchor Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Anchor Form',
+            'slug' => 'anchor-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['first_name' => 'Anchor', 'phone' => '+15551112222'],
+            ipAddress: '127.0.0.1',
+            userTimezone: 'America/Chicago'
+        );
+
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($submission);
+        $this->assertNotNull($submission->person_id);
+        $person = Person::find($submission->person_id);
+        $this->assertEquals($biz->id, $person->business_id);
     }
 
     /**
