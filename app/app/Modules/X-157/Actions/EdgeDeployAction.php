@@ -74,24 +74,6 @@ final class EdgeDeployAction
                 ];
             }
 
-            Deployment::where('business_id', $businessId)
-                ->where('edge_zone_id', $zone->id)
-                ->where('status', 'deployed')
-                ->where('id', '!=', $deployment->id)
-                ->update(['status' => 'superseded']);
-
-            $deployment->update([
-                'status' => 'deployed',
-                'deployed_at' => now(),
-            ]);
-
-            Event::dispatch(new DeployCompleted(
-                businessId: $businessId,
-                deploymentId: $deployment->id,
-                domainName: $zone->domain_name,
-                deployHash: $deployHash
-            ));
-
             // Compile HTML artifact to local storage
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
@@ -161,6 +143,29 @@ final class EdgeDeployAction
             $html .= '</body></html>';
 
             Storage::disk('local')->put("sites/{$deployHash}.html", $html);
+
+            // Nothing outside this action learns of a deploy until the artifact it
+            // announces is on disk (R245, 2026-09-05): the supersede, the status flip and
+            // DeployCompleted all follow the write, because ModuleServiceProvider's route
+            // serves a `deployed` row by reading that exact file.
+            Deployment::where('business_id', $businessId)
+                ->where('edge_zone_id', $zone->id)
+                ->where('status', 'deployed')
+                ->where('id', '!=', $deployment->id)
+                ->update(['status' => 'superseded']);
+
+            $deployment->update([
+                'status' => 'deployed',
+                'deployed_at' => now(),
+            ]);
+
+            Event::dispatch(new DeployCompleted(
+                businessId: $businessId,
+                deploymentId: $deployment->id,
+                domainName: $zone->domain_name,
+                deployHash: $deployHash
+            ));
+
 
             return [
                 'status' => 'deployed',
