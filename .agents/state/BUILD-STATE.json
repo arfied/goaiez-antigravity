@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T08:16:08",
+ "updated": "2026-09-05T08:29:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -469,10 +469,29 @@
    "unresolved": []
   },
   "X-108": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 7,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G19-20 \u2014 no reminder system exists; grep -rn 'AppointmentReminded' app/app app/tests returns only the class declaration, so there is no 24h/1h/10min ladder, no scheduler and no credit meter to assert on",
+     "at": "2026-09-05T08:29:23"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G1-12 \u2014 X-108 has no payment surface; grep -rn 'iframe|card|token' app/app/Modules/X-108 returns only the capability text and one blade class attribute. The card/iframe boundary is X-120's and belongs to track money (ruling 5)",
+     "at": "2026-09-05T08:29:26"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G2-58 \u2014 no booking-questions column in migration 2026_08_30_000021 and no action reads one; the booking page is Track 2's (ruling 5)",
+     "at": "2026-09-05T08:29:31"
+    }
+   ]
   },
   "X-109": {
    "status": "DONE",
@@ -1337,6 +1356,24 @@
    "stage": "capability",
    "why": "G12-04 \u2014 ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)",
    "at": "2026-09-05T08:16:08"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G19-20 \u2014 no reminder system exists; grep -rn 'AppointmentReminded' app/app app/tests returns only the class declaration, so there is no 24h/1h/10min ladder, no scheduler and no credit meter to assert on",
+   "at": "2026-09-05T08:29:23"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G1-12 \u2014 X-108 has no payment surface; grep -rn 'iframe|card|token' app/app/Modules/X-108 returns only the capability text and one blade class attribute. The card/iframe boundary is X-120's and belongs to track money (ruling 5)",
+   "at": "2026-09-05T08:29:26"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G2-58 \u2014 no booking-questions column in migration 2026_08_30_000021 and no action reads one; the booking page is Track 2's (ruling 5)",
+   "at": "2026-09-05T08:29:31"
   }
  ],
  "decisions": [
