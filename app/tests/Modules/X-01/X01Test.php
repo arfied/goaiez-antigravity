@@ -17,7 +17,7 @@ use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
