@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T23:29:36",
+ "updated": "2026-09-04T23:56:16",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1365,6 +1365,12 @@
    "module": "X-102",
    "chose": "the chat's AI cap is a fact about the tenant's meter, not an argument the caller supplies: handle()'s $isAiCapped is nullable and null asks AiSpend::allows(). An explicit true/false still wins, because callers on the offline-form path have already resolved it. Rejected: drop the parameter and always ask the meter \u2014 refused, that is two reads of one question on a path that has already answered it.",
    "at": "2026-09-04T23:29:36",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "When a deployed artifact is missing from storage, the published route returns 404, not 503. A 404 aligns with the neighbouring precondition failure (missing zone/SSL) and avoids leaking storage state to strangers. 503 with Retry-After was rejected because no system retries a deploy automatically, making the Retry-After header a false promise.",
+   "at": "2026-09-04T23:56:16",
    "ruling": "R245"
   }
  ]
