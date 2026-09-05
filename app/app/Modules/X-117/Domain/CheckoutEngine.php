@@ -146,7 +146,7 @@ final class CheckoutEngine
                 return [
                     'status' => 'refused',
                     'refusal_code' => 'FRESH_AUTH_REQUIRED',
-                    'message' => 'Every charge needs a fresh authorisation event',
+                    'message' => 'This charge needs a fresh authorisation: tap Authorise first. Nothing was charged.',
                 ];
             }
 
@@ -154,16 +154,17 @@ final class CheckoutEngine
                 return [
                     'status' => 'refused',
                     'refusal_code' => 'AUTH_USED',
-                    'message' => 'Every charge needs a fresh authorisation',
+                    'message' => 'This charge needs a fresh authorisation: an authorisation pays once and this one already has. Tap Authorise again. Nothing was charged.',
                 ];
             }
 
             $cart = Cart::where('business_id', $businessId)->where('session_token', $sessionToken)->first();
 
-            if (! $cart || ! $cart->expires_at->isFuture()) {
+            if (! $cart || ! $cart->expires_at->isFuture() || empty($cart->items)) {
                 return [
                     'status' => 'refused',
-                    'message' => 'Cart is not live',
+                    'refusal_code' => 'CART_EXPIRED',
+                    'message' => 'There is nothing to pay for: the cart is empty or its 15 minutes ran out. Nothing was charged.',
                 ];
             }
 
@@ -178,7 +179,7 @@ final class CheckoutEngine
                 if ($sellable->inventory_quantity < $item['quantity']) {
                     return [
                         'status' => 'sold_out',
-                        'message' => 'Item is sold out',
+                        'message' => sprintf('%s is sold out: %d in stock, %d in this cart. Nothing was charged and nothing moved.', $sellable->name, $sellable->inventory_quantity, $item['quantity']),
                     ];
                 }
 
@@ -203,7 +204,7 @@ final class CheckoutEngine
             foreach ($sellables as $line) {
                 $sellable = $line['model'];
                 $quantity = $line['quantity'];
-                
+
                 $sellable->decrement('inventory_quantity', $quantity);
 
                 OrderLine::create([
@@ -232,6 +233,7 @@ final class CheckoutEngine
             ];
         });
     }
+
     public function addToCart(int $businessId, string $sessionToken, int $sellableId, int $quantity = 1): Cart
     {
         $sellable = Sellable::where('business_id', $businessId)->findOrFail($sellableId);
