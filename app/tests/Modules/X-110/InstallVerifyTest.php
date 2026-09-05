@@ -24,11 +24,11 @@ class InstallVerifyTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Install Verify Tenant']);
         Tenancy::set((int) $biz->id);
 
-        \App\Models\Location::create([
+        $loc = \App\Models\Location::create([
             'business_id' => $biz->id,
             'name' => 'HQ',
-            'website_url' => 'https://example.com',
         ]);
+        app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:1', true);
 
         Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
             ->assertSee('Tag Installation', false)
@@ -55,7 +55,14 @@ class InstallVerifyTest extends TestCase
     public function test_account_tracking_renders_install_verify(): void
     {
         $this->seed(UiReviewSeeder::class);
-        $owner = User::where('email', 'owner2@business.com')->first();
+        $owner = User::where('email', 'owner2@business.com')->firstOrFail();
+        
+        Tenancy::actingAsUser($owner->id, function() use ($owner) {
+            $businessId = Tenancy::id();
+            $loc = \App\Models\Location::where('business_id', $businessId)->first();
+            app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:' . $owner->id, true);
+        });
+
         $this->actingAs($owner)->get('/account/tracking')
             ->assertOk()
             ->assertSee('Tag Installation', false);
