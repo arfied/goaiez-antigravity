@@ -7,9 +7,11 @@ namespace Tests\Modules\X215;
 use App\Modules\X215\Actions\DocCommentAction;
 use App\Modules\X215\Actions\DocSendForSignatureAction;
 use App\Modules\X215\Actions\DocSignAction;
+use App\Modules\X215\Actions\DocVoidAction;
 use App\Modules\X215\Events\DocCommented;
 use App\Modules\X215\Events\DocSent;
 use App\Modules\X215\Events\DocSigned;
+use App\Modules\X215\Events\DocVoided;
 use App\Modules\X215\Models\DocumentComment;
 use App\Modules\X215\Models\SignableDocument;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +26,15 @@ class X215Test extends TestCase
 
     private DocCommentAction $commentAction;
 
+    private DocVoidAction $voidAction;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->sendAction = new DocSendForSignatureAction;
         $this->signAction = new DocSignAction;
         $this->commentAction = new DocCommentAction;
+        $this->voidAction = new DocVoidAction;
     }
 
     /**
@@ -116,6 +121,45 @@ class X215Test extends TestCase
         $this->assertEquals('Please change warranty to 10 years.', $commentRow->comment_text);
 
         Event::assertDispatched(DocCommented::class);
+    }
+
+    public function test_a_voided_document_cannot_be_signed(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([DocSent::class, DocVoided::class, DocSigned::class]);
+
+        $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";
+
+        $sentResult = $this->sendAction->handle(
+            businessId: $biz->id,
+            title: 'HVAC Master Agreement',
+            contentBody: $originalBody,
+            signerEmail: 'homeowner@example.com',
+            signerName: 'Jane Homeowner'
+        );
+
+        $doc = $sentResult['document'];
+        $request = $sentResult['signature_request'];
+
+        $this->voidAction->handle($biz->id, $doc->id, 'Voided due to cancellation');
+
+        $res = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_jane_hw',
+            currentRenderedContent: $originalBody
+        );
+
+        $this->assertSame('refused', $res['status']);
+        $this->assertSame('SIGNATURE_REQUEST_NOT_PENDING', $res['refusal_code']);
+        $this->assertFalse($res['signed']);
+        Event::assertNotDispatched(DocSigned::class);
+        $request->refresh();
+        $this->assertSame('voided', $request->status, 'a refused signature must not flip the request to signed');
+        $doc->refresh();
+        $this->assertSame('voided', $doc->status, 'a refused signature must not revive a voided document');
     }
 
     /**
