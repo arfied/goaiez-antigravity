@@ -1488,4 +1488,52 @@ class X157Test extends TestCase
         $this->assertStringContainsString('rel="canonical"', $html, 'the listener deploy is missing the canonical link');
         $this->assertStringContainsString('application/ld+json', $html, 'the listener deploy is missing the schema block');
     }
+    public function test_a_second_pages_publish_leaves_the_first_page_live(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $home = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $about = Page::create(['business_id' => $biz->id, 'title' => 'About', 'slug' => 'about']);
+
+        app(SitePublishAction::class)->handle($biz->id, $home->id, [['type' => 'chat']]);
+
+        $homeDeploy = Deployment::where('business_id', $biz->id)->where('status', 'deployed')->sole();
+        $homeHash = $homeDeploy->deploy_hash;
+
+        $this->assertSame(
+            (int) $home->id,
+            (int) $homeDeploy->page_id,
+            'the deployment does not record which page it rendered'
+        );
+
+        app(SitePublishAction::class)->handle($biz->id, $about->id, [['type' => 'chat']]);
+
+        $aboutDeploy = Deployment::where('business_id', $biz->id)->orderByDesc('id')->first();
+        $this->assertNotSame($homeHash, $aboutDeploy->deploy_hash);
+
+        $homeResponse = $this->get("/sites/{$biz->id}/{$homeHash}");
+        $homeResponse->assertStatus(200);
+        $this->assertStringContainsString(
+            '<title id="seo-meta-x176">Home</title>',
+            (string) $homeResponse->getContent(),
+            'publishing a second page took the first page down'
+        );
+
+        $aboutResponse = $this->get("/sites/{$biz->id}/{$aboutDeploy->deploy_hash}");
+        $aboutResponse->assertStatus(200);
+        $this->assertStringContainsString(
+            '<title id="seo-meta-x176">About</title>',
+            (string) $aboutResponse->getContent(),
+            'the second page did not serve its own artifact'
+        );
+
+        $this->assertSame(
+            2,
+            Deployment::where('business_id', $biz->id)->where('status', 'deployed')->count(),
+            'two published pages must leave two live deployments'
+        );
+    }
 }
