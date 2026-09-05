@@ -27,6 +27,7 @@ class ReconciliationDiscrepanciesScreenTest extends TestCase
         app(PayoutReconcileAction::class)->handle($bizB->id, $payoutB->id, 1000, 900);
 
         $owner = User::findOrFail($biz->owner_user_id);
+        $owner->forceFill(['name' => "Mariano O'Connell"])->save();
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 

@@ -15,7 +15,7 @@
 @if($run->reviewed_label === null)
 <x-ui.status-pill state="attention" label="unreviewed" />
 @else
-<x-ui.status-pill state="ok" label="{{ $run->reviewed_label }}" />
+<x-ui.status-pill state="ok" :label="$run->reviewed_label" />
 @endif
 <dl class="mt-2 grid grid-cols-2 gap-2 text-sm tabular-nums">
 <div><dt>Expected</dt><dd>{{ number_format($run->expected_cents / 100, 2) }}</dd></div>
