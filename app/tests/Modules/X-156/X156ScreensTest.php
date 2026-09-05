@@ -8,11 +8,13 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X156\Actions\IngestConnectAction;
 use App\Modules\X156\Actions\IngestUploadAction;
+use App\Modules\X156\Actions\IngestWebhookAction;
 use App\Modules\X156\Models\IngestRejection;
 use App\Modules\X156\Models\IngestRun;
 use App\Modules\X156\Models\IngestSource;
 use App\Modules\X156\Ui\ConnectSourceView;
 use App\Modules\X156\Ui\IngestVolumeByView;
+use App\Modules\X156\Ui\RejectedrowsListView;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -163,5 +165,72 @@ class X156ScreensTest extends TestCase
         $this->get(route('x-156.ingest-volume-by'))
             ->assertOk()
             ->assertSee('Seeded Volume Source');
+    }
+
+    public function test_rejectedrows_list_mount_and_empty(): void
+    {
+        Livewire::test(RejectedrowsListView::class, ['businessId' => $this->businessId])
+            ->assertOk()
+            ->assertSee('No rejected rows');
+    }
+
+    public function test_rejectedrows_list_shows_reasons(): void
+    {
+        $source = app(IngestConnectAction::class)->connect($this->businessId, 'hubspot', 'HubSpot CRM');
+        app(IngestUploadAction::class)->upload($this->businessId, $source->id, [['a' => 1]], null);
+        app(IngestWebhookAction::class)->handle($this->businessId, $source->id, '{}', 'sha256=bad');
+
+        Livewire::test(RejectedrowsListView::class, ['businessId' => $this->businessId])
+            ->assertOk()
+            ->assertSee('Every contact write carries an attestation_id or is refused (P-069)')
+            ->assertSee('HMAC signature verification failed')
+            ->assertSee('Unverified')
+            ->assertSee('Signature verified')
+            ->assertSee('HubSpot CRM');
+    }
+
+    public function test_rejectedrows_list_pause_source(): void
+    {
+        $source = app(IngestConnectAction::class)->connect($this->businessId, 'hubspot', 'HubSpot CRM');
+        app(IngestUploadAction::class)->upload($this->businessId, $source->id, [['a' => 1]], null);
+
+        Livewire::test(RejectedrowsListView::class, ['businessId' => $this->businessId])
+            ->call('pause', $source->id)
+            ->assertSee('Paused');
+
+        $source->refresh();
+        $this->assertFalse($source->is_active);
+    }
+
+    public function test_rejectedrows_list_error_state(): void
+    {
+        Livewire::test(RejectedrowsListView::class, ['businessId' => $this->businessId])
+            ->call('pause', 999999)
+            ->assertSee('Action failed');
+    }
+
+    public function test_rejectedrows_list_sample_state(): void
+    {
+        Livewire::test(RejectedrowsListView::class, ['businessId' => $this->businessId])
+            ->call('toggleSample')
+            ->assertSee('Every contact write carries an attestation_id or is refused (P-069)')
+            ->call('pause', 9501);
+
+        $this->assertSame(0, IngestRejection::where('business_id', $this->businessId)->count());
+    }
+
+    public function test_rejectedrows_list_get_shows_seeded_reason(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        $source = app(IngestConnectAction::class)->connect($biz->id, 'hubspot', 'Seeded Volume Source');
+        app(IngestUploadAction::class)->upload($biz->id, $source->id, [['a' => 1]], null);
+
+        $this->get(route('x-156.rejectedrows-list'))
+            ->assertOk()
+            ->assertSee('attestation_id');
     }
 }
