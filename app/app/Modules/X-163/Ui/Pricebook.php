@@ -103,6 +103,7 @@ class Pricebook extends Component
             'tax_rate_pct' => (float) $this->newTaxRatePct,
             'is_sample' => $this->newIsSample,
             'is_confirmed' => ! $this->newIsSample,
+            'confirmed_at' => $this->newIsSample ? null : now(),
         ]);
 
         $this->inlinePrices[$item->id] = $item->price_cents / 100;

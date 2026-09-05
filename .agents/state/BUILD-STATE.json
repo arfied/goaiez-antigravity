@@ -1465,6 +1465,24 @@
    "ruling": "R245"
   },
   {
+   "module": "C-Billing",
+   "chose": "a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)",
+   "at": "2026-09-05T09:47:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)",
+   "at": "2026-09-05T10:13:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
+   "at": "2026-09-05T10:15:15",
+   "ruling": "R245"
+  },
+  {
    "module": "X-163",
    "chose": "<R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.",
    "at": "2026-09-05T10:55:37",

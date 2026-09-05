@@ -760,6 +760,7 @@
 - `2026-09-05T08:12:23` (R245) C-Agent — agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured — owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands
 - `2026-09-05T08:35:16` (R245) X-82 — RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)
 - `2026-09-05T08:35:23` UNRESOLVED tests X-172 - generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
+- `2026-09-05T09:47:06` (R245) C-Billing — a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)
 - `2026-09-05T09:50:50` stage integrity = 0
 - `2026-09-05T09:51:01` stage boundary = 3
 - `2026-09-05T09:51:01` stage contract = 87
@@ -782,4 +783,6 @@
 - `2026-09-05T10:10:03` note: WITHDRAWN wave-57 journey C-Billing dunning-by-reason - journey PASSES; artifact_id is an internal ReceivableState id, JourneyHarness.php:520. A finding, not a missing dependency
 - `2026-09-05T10:10:03` X-103 -> DONE
 - `2026-09-05T10:10:03` note: wave-57 recorded missed-call-textback UNRESOLVED twice, 09:54:32 and 09:56:02 - one row, not two
+- `2026-09-05T10:13:56` (R245) C-Agent — the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)
+- `2026-09-05T10:15:15` (R245) C-Agent — one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)
 - `2026-09-05T10:55:37` (R245) X-163 — <R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.
