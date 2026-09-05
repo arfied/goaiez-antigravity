@@ -782,3 +782,4 @@
 - `2026-09-05T10:10:03` note: WITHDRAWN wave-57 journey C-Billing dunning-by-reason - journey PASSES; artifact_id is an internal ReceivableState id, JourneyHarness.php:520. A finding, not a missing dependency
 - `2026-09-05T10:10:03` X-103 -> DONE
 - `2026-09-05T10:10:03` note: wave-57 recorded missed-call-textback UNRESOLVED twice, 09:54:32 and 09:56:02 - one row, not two
+- `2026-09-05T10:55:37` (R245) X-163 — <R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.

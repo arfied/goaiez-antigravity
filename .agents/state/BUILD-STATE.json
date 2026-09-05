@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T10:10:03",
+ "updated": "2026-09-05T10:55:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1462,6 +1462,12 @@
    "module": "X-82",
    "chose": "RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)",
    "at": "2026-09-05T08:35:16",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "<R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.",
+   "at": "2026-09-05T10:55:37",
    "ruling": "R245"
   }
  ],
