@@ -555,3 +555,5 @@
 - `2026-09-04T20:19:11` (R245) X-142 — (R245) X-142 — McpTokenAction::issue writes the permissions array directly; the model's array cast does the encoding
 - `2026-09-04T20:19:15` (R245) X-142 — (R245) X-142 — G4-02 is proven by revoke refusing a token id under a business id that does not own it; a second tenant cannot prove it because mcp_tokens is FORCE RLS
 - `2026-09-04T20:19:21` (R245) X-142 — (R245) X-142 — ConnectYourAi lists only tokens where is_revoked is false; that scope is what distinguishes it from McpTokenRegistry, which lists every token ever issued
+- `2026-09-04T20:37:59` (R245) C-Mail — G3-18 and G11-16 are proven by the day's spend carrying across sends via warmup_calendars.sent_today and by an uncapped send on a domain with no calendar row; the schedule ladder is data the send path never reads
+- `2026-09-04T20:37:59` (R245) C-Mail — G11-37's refusal has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called

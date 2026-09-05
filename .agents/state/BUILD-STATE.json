@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T20:19:21",
+ "updated": "2026-09-04T20:37:59",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1424,6 +1424,18 @@
    "module": "X-142",
    "chose": "(R245) X-142 \u2014 ConnectYourAi lists only tokens where is_revoked is false; that scope is what distinguishes it from McpTokenRegistry, which lists every token ever issued",
    "at": "2026-09-04T20:19:21",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "G3-18 and G11-16 are proven by the day's spend carrying across sends via warmup_calendars.sent_today and by an uncapped send on a domain with no calendar row; the schedule ladder is data the send path never reads",
+   "at": "2026-09-04T20:37:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "G11-37's refusal has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called",
+   "at": "2026-09-04T20:37:59",
    "ruling": "R245"
   }
  ]
