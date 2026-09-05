@@ -499,7 +499,6 @@ trait JourneyHarness
 
         $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_'.uniqid(), 'USD', $invoiceId);
 
-        Http::allowStrayRequests();
         $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_'.uniqid(), $invoiceId);
 
         return $payment->toArray();

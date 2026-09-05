@@ -48,6 +48,12 @@ final class TwelveJourneysTest extends TestCase
     //   journeys pass while touching nothing.
     use JourneyHarness;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        \Illuminate\Support\Facades\Http::allowStrayRequests();
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS
     // ═══════════════════════════════════════════════════════════════════
