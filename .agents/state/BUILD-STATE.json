@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T07:49:10",
+ "updated": "2026-09-05T08:30:46",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1593,6 +1593,12 @@
    "module": "X-103",
    "chose": "the publish appends the required site-law blocks (main, f7089803); the caller's blocks stay the prefix and the tests assert prefix + required remainder, not equality",
    "at": "2026-09-05T07:49:10",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "Flipped default site-law boolean columns to false in migration. Corrected block type emission checks (chat -> chat_widget, dni -> dni_script). Derived rather than asserted block type flags in SiteEngine. Rejected alternative: weakening test_feature_flags_absent and editing the 2026_09_02_000000 migration in place.",
+   "at": "2026-09-05T08:30:46",
    "ruling": "R245"
   }
  ],
