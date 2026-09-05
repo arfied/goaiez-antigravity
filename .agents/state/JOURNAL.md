@@ -758,3 +758,5 @@
 - `2026-09-05T07:37:41` (R245) C-Agent — Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)
 - `2026-09-05T07:46:15` C-Agent -> DONE
 - `2026-09-05T08:12:23` (R245) C-Agent — agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured — owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands
+- `2026-09-05T08:35:16` (R245) X-82 — RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)
+- `2026-09-05T08:35:23` UNRESOLVED tests X-172 - generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook

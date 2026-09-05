@@ -24,7 +24,7 @@ class RateRegistryView extends Component
 
     public function mount()
     {
-        abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::SuperAdmin, UserRole::OpsAdmin)), 403);
+        abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin, UserRole::OpsAdmin)), 403);
         $this->businessId = Tenancy::id();
     }
 
