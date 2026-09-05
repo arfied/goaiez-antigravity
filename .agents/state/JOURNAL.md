@@ -789,3 +789,4 @@
 - `2026-09-05T10:55:53` (R245) C-Sms — C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)
 - `2026-09-05T11:22:12` UNRESOLVED capability C-Sms - TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant
 - `2026-09-05T13:13:29` (R245) X-163 — X-163 owns the price_book_items table; PriceBook is a reader, not the sole owner.
+- `2026-09-05T14:41:06` note: re-serialise BUILD-STATE.json at indent=1

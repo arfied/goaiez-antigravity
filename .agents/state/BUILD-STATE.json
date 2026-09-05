@@ -1,1536 +1,1540 @@
 {
-  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
-  "started": "2026-09-03T09:33:12",
-  "updated": "2026-09-05T13:13:29",
-  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
-  "roster": 127,
-  "runtime_build": "20260829-0647",
-  "seal_digest": "f1e73d9fc181eb1c",
-  "seal_digest_observed": null,
-  "runtime_sound": true,
-  "bootstrap_done": true,
-  "stages": {
-    "integrity": {
-      "violations": 0,
-      "fails": "COMMIT"
-    },
-    "boundary": {
-      "violations": 3,
-      "fails": "COMMIT"
-    },
-    "contract": {
-      "violations": 87,
-      "fails": "COMMIT"
-    },
-    "citation": {
-      "violations": 94,
-      "fails": "COMMIT"
-    },
-    "schema": {
-      "violations": 15,
-      "fails": "MERGE"
-    },
-    "capability": {
-      "violations": 399,
-      "fails": "MERGE"
-    },
-    "anchor": {
-      "violations": 137,
-      "fails": "WAVE"
-    },
-    "journey": {
-      "violations": 7,
-      "fails": "WAVE"
-    }
+ "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
+ "started": "2026-09-03T09:33:12",
+ "updated": "2026-09-05T13:13:29",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
+ "roster": 127,
+ "runtime_build": "20260829-0647",
+ "seal_digest": "f1e73d9fc181eb1c",
+ "seal_digest_observed": null,
+ "runtime_sound": true,
+ "bootstrap_done": true,
+ "stages": {
+  "integrity": {
+   "violations": 0,
+   "fails": "COMMIT"
   },
-  "waves": {
-    "1": {
-      "track": "spine",
-      "status": "DONE",
-      "modules": [
-        "X-121",
-        "X-123",
-        "X-122",
-        "X-126",
-        "X-119"
-      ]
-    },
-    "2": {
-      "track": "spine",
-      "status": "DONE",
-      "modules": [
-        "X-128",
-        "X-222",
-        "X-223"
-      ]
-    },
-    "3": {
-      "track": "ai-core",
-      "status": "DONE",
-      "modules": [
-        "C-Ai",
-        "X-219",
-        "X-220",
-        "X-221"
-      ]
-    },
-    "4": {
-      "track": "consent",
-      "status": "DONE",
-      "modules": [
-        "X-204",
-        "X-206"
-      ]
-    },
-    "5": {
-      "track": "J1-J2-J4 the sixty seconds",
-      "status": "DONE",
-      "modules": [
-        "C-Telephony",
-        "C-Sms",
-        "C-Agent",
-        "X-66",
-        "X-188"
-      ]
-    },
-    "6": {
-      "track": "J1-J2-J4 the sixty seconds",
-      "status": "DONE",
-      "modules": [
-        "X-153",
-        "X-01",
-        "X-118"
-      ]
-    },
-    "7": {
-      "track": "J3 the pricebook",
-      "status": "DONE",
-      "modules": [
-        "X-163",
-        "X-164",
-        "X-108"
-      ]
-    },
-    "8": {
-      "track": "J10 reviews",
-      "status": "DONE",
-      "modules": [
-        "C-Reviews",
-        "X-181",
-        "X-110"
-      ]
-    },
-    "9": {
-      "track": "J9-J12 money",
-      "status": "DONE",
-      "modules": [
-        "C-Billing",
-        "X-199",
-        "X-211",
-        "X-202"
-      ]
-    },
-    "10": {
-      "track": "J9-J12 money",
-      "status": "DONE",
-      "modules": [
-        "X-117",
-        "X-198"
-      ]
-    },
-    "11": {
-      "track": "J6-J7 portal",
-      "status": "DONE",
-      "modules": [
-        "X-172",
-        "X-112",
-        "X-166"
-      ]
-    },
-    "12": {
-      "track": "J11 the site",
-      "status": "DONE",
-      "modules": [
-        "X-157",
-        "X-178",
-        "X-103",
-        "X-102",
-        "X-155"
-      ]
-    },
-    "13": {
-      "track": "J11 the site",
-      "status": "DONE",
-      "modules": [
-        "X-137",
-        "X-176"
-      ]
-    },
-    "14": {
-      "track": "J5-J8 safety",
-      "status": "DONE",
-      "modules": [
-        "X-212",
-        "X-203"
-      ]
-    },
-    "15": {
-      "track": "channels",
-      "status": "DONE",
-      "modules": [
-        "C-Mail",
-        "C-Whatsapp",
-        "X-147",
-        "X-207",
-        "X-193"
-      ]
-    },
-    "16": {
-      "track": "channels",
-      "status": "DONE",
-      "modules": [
-        "X-208"
-      ]
-    },
-    "17": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-125",
-        "X-127",
-        "X-149",
-        "X-170",
-        "X-201"
-      ]
-    },
-    "18": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-10",
-        "X-113",
-        "X-124",
-        "X-143",
-        "X-151"
-      ]
-    },
-    "19": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-162",
-        "X-165",
-        "X-171",
-        "X-189",
-        "X-214"
-      ]
-    },
-    "20": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-215",
-        "X-07",
-        "X-104",
-        "X-111",
-        "X-129"
-      ]
-    },
-    "21": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-138",
-        "X-139",
-        "X-145",
-        "X-148",
-        "X-150"
-      ]
-    },
-    "22": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-16",
-        "X-160",
-        "X-167",
-        "X-168",
-        "X-175"
-      ]
-    },
-    "23": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-177",
-        "X-180",
-        "X-194",
-        "X-195",
-        "X-197"
-      ]
-    },
-    "24": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-209",
-        "X-82",
-        "X-08",
-        "X-120",
-        "X-136"
-      ]
-    },
-    "25": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-141",
-        "X-142",
-        "X-156",
-        "X-173",
-        "X-213"
-      ]
-    },
-    "26": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-105",
-        "X-109",
-        "X-114",
-        "X-116",
-        "X-130"
-      ]
-    },
-    "27": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-131",
-        "X-132",
-        "X-134",
-        "X-135",
-        "X-140"
-      ]
-    },
-    "28": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-144",
-        "X-154",
-        "X-158",
-        "X-159",
-        "X-161"
-      ]
-    },
-    "29": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-179",
-        "X-182",
-        "X-183",
-        "X-184",
-        "X-185"
-      ]
-    },
-    "30": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-186",
-        "X-190",
-        "X-191",
-        "X-192",
-        "X-196"
-      ]
-    },
-    "31": {
-      "track": "roster",
-      "status": "DONE",
-      "modules": [
-        "X-200",
-        "X-205",
-        "X-210",
-        "X-217",
-        "X-218"
-      ]
-    }
+  "boundary": {
+   "violations": 3,
+   "fails": "COMMIT"
   },
-  "modules": {
-    "C-Agent": {
-      "status": "UNRESOLVED",
-      "wave": 5,
-      "intent": "SERVE",
-      "unresolved": [
-        {
-          "module": "C-Agent",
-          "stage": "journey",
-          "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
-          "at": "2026-09-05T09:56:06"
-        },
-        {
-          "module": "C-Agent",
-          "stage": "journey",
-          "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
-          "at": "2026-09-05T09:56:06"
-        }
-      ]
-    },
-    "C-Ai": {
-      "status": "DONE",
-      "wave": 3,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "C-Billing": {
-      "status": "UNRESOLVED",
-      "wave": 9,
-      "intent": "INFORM",
-      "unresolved": [
-        {
-          "module": "C-Billing",
-          "stage": "journey",
-          "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
-          "at": "2026-09-05T09:56:06"
-        },
-        {
-          "module": "C-Billing",
-          "stage": "journey",
-          "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
-          "at": "2026-09-05T09:56:06"
-        }
-      ]
-    },
-    "C-Mail": {
-      "status": "DONE",
-      "wave": 15,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "C-Reviews": {
-      "status": "UNRESOLVED",
-      "wave": 8,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "C-Reviews",
-          "stage": "tests",
-          "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
-          "at": "2026-09-04T07:55:55"
-        },
-        {
-          "module": "C-Reviews",
-          "stage": "contract",
-          "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-          "at": "2026-09-04T08:05:31"
-        },
-        {
-          "module": "C-Reviews",
-          "stage": "journey",
-          "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
-          "at": "2026-09-05T09:56:06"
-        }
-      ]
-    },
-    "C-Sms": {
-      "status": "DONE",
-      "wave": 5,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "C-Telephony": {
-      "status": "UNRESOLVED",
-      "wave": 5,
-      "intent": "RECOVER",
-      "unresolved": [
-        {
-          "module": "C-Telephony",
-          "stage": "journey",
-          "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-          "at": "2026-09-05T09:54:32"
-        },
-        {
-          "module": "C-Telephony",
-          "stage": "journey",
-          "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-          "at": "2026-09-05T09:56:02"
-        }
-      ]
-    },
-    "C-Whatsapp": {
-      "status": "DONE",
-      "wave": 15,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-01": {
-      "status": "DONE",
-      "wave": 6,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-07": {
-      "status": "DONE",
-      "wave": 20,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-08": {
-      "status": "DONE",
-      "wave": 24,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-10": {
-      "status": "DONE",
-      "wave": 18,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-102": {
-      "status": "DONE",
-      "wave": 12,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-103": {
-      "status": "DONE",
-      "wave": 12,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "X-103",
-          "stage": "journey",
-          "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
-          "at": "2026-09-05T09:56:06"
-        }
-      ]
-    },
-    "X-104": {
-      "status": "DONE",
-      "wave": 20,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-105": {
-      "status": "DONE",
-      "wave": 26,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-108": {
-      "status": "DONE",
-      "wave": 7,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-109": {
-      "status": "DONE",
-      "wave": 26,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-110": {
-      "status": "DONE",
-      "wave": 8,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-111": {
-      "status": "DONE",
-      "wave": 20,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-112": {
-      "status": "DONE",
-      "wave": 11,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-113": {
-      "status": "DONE",
-      "wave": 18,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-114": {
-      "status": "DONE",
-      "wave": 26,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-116": {
-      "status": "DONE",
-      "wave": 26,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-117": {
-      "status": "DONE",
-      "wave": 10,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-118": {
-      "status": "DONE",
-      "wave": 6,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-119": {
-      "status": "DONE",
-      "wave": 1,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-120": {
-      "status": "DONE",
-      "wave": 24,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-121": {
-      "status": "DONE",
-      "wave": 1,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-122": {
-      "status": "DONE",
-      "wave": 1,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-123": {
-      "status": "DONE",
-      "wave": 1,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-124": {
-      "status": "DONE",
-      "wave": 18,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-125": {
-      "status": "DONE",
-      "wave": 17,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-126": {
-      "status": "DONE",
-      "wave": 1,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-127": {
-      "status": "DONE",
-      "wave": 17,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-128": {
-      "status": "DONE",
-      "wave": 2,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-129": {
-      "status": "DONE",
-      "wave": 20,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-130": {
-      "status": "DONE",
-      "wave": 26,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-131": {
-      "status": "DONE",
-      "wave": 27,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-132": {
-      "status": "DONE",
-      "wave": 27,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-134": {
-      "status": "DONE",
-      "wave": 27,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-135": {
-      "status": "DONE",
-      "wave": 27,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-136": {
-      "status": "DONE",
-      "wave": 24,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-137": {
-      "status": "DONE",
-      "wave": 13,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-138": {
-      "status": "DONE",
-      "wave": 21,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-139": {
-      "status": "DONE",
-      "wave": 21,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-140": {
-      "status": "DONE",
-      "wave": 27,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-141": {
-      "status": "DONE",
-      "wave": 25,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-142": {
-      "status": "DONE",
-      "wave": 25,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-143": {
-      "status": "DONE",
-      "wave": 18,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-144": {
-      "status": "DONE",
-      "wave": 28,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-145": {
-      "status": "DONE",
-      "wave": 21,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-147": {
-      "status": "DONE",
-      "wave": 15,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-148": {
-      "status": "DONE",
-      "wave": 21,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-149": {
-      "status": "DONE",
-      "wave": 17,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-150": {
-      "status": "DONE",
-      "wave": 21,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-151": {
-      "status": "DONE",
-      "wave": 18,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-153": {
-      "status": "DONE",
-      "wave": 6,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-154": {
-      "status": "DONE",
-      "wave": 28,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-155": {
-      "status": "DONE",
-      "wave": 12,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-156": {
-      "status": "DONE",
-      "wave": 25,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-157": {
-      "status": "DONE",
-      "wave": 12,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-158": {
-      "status": "DONE",
-      "wave": 28,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-159": {
-      "status": "DONE",
-      "wave": 28,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-16": {
-      "status": "DONE",
-      "wave": 22,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-160": {
-      "status": "DONE",
-      "wave": 22,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-161": {
-      "status": "DONE",
-      "wave": 28,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-162": {
-      "status": "DONE",
-      "wave": 19,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-163": {
-      "status": "DONE",
-      "wave": 7,
-      "intent": "NONE",
-      "unresolved": []
-    },
-    "X-164": {
-      "status": "DONE",
-      "wave": 7,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-165": {
-      "status": "DONE",
-      "wave": 19,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-166": {
-      "status": "DONE",
-      "wave": 11,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-167": {
-      "status": "DONE",
-      "wave": 22,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-168": {
-      "status": "DONE",
-      "wave": 22,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-170": {
-      "status": "DONE",
-      "wave": 17,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-171": {
-      "status": "DONE",
-      "wave": 19,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-172": {
-      "status": "UNRESOLVED",
-      "wave": 11,
-      "intent": "INFORM",
-      "unresolved": [
-        {
-          "module": "X-172",
-          "stage": "tests",
-          "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-          "at": "2026-09-05T08:35:23"
-        }
-      ]
-    },
-    "X-173": {
-      "status": "DONE",
-      "wave": 25,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-175": {
-      "status": "DONE",
-      "wave": 22,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-176": {
-      "status": "DONE",
-      "wave": 13,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-177": {
-      "status": "DONE",
-      "wave": 23,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-178": {
-      "status": "DONE",
-      "wave": 12,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-179": {
-      "status": "DONE",
-      "wave": 29,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-180": {
-      "status": "DONE",
-      "wave": 23,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-181": {
-      "status": "DONE",
-      "wave": 8,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-182": {
-      "status": "DONE",
-      "wave": 29,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-183": {
-      "status": "DONE",
-      "wave": 29,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-184": {
-      "status": "DONE",
-      "wave": 29,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-185": {
-      "status": "DONE",
-      "wave": 29,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-186": {
-      "status": "UNRESOLVED",
-      "wave": 30,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "X-186",
-          "stage": "contract",
-          "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-          "at": "2026-09-03T13:47:25"
-        },
-        {
-          "module": "X-186",
-          "stage": "capability",
-          "why": "no action enrols a person into a campaign",
-          "at": "2026-09-04T22:41:56"
-        }
-      ]
-    },
-    "X-188": {
-      "status": "DONE",
-      "wave": 5,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-189": {
-      "status": "DONE",
-      "wave": 19,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-190": {
-      "status": "UNRESOLVED",
-      "wave": 30,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "X-190",
-          "stage": "contract",
-          "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-          "at": "2026-09-03T13:48:24"
-        }
-      ]
-    },
-    "X-191": {
-      "status": "DONE",
-      "wave": 30,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-192": {
-      "status": "DONE",
-      "wave": 30,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-193": {
-      "status": "UNRESOLVED",
-      "wave": 15,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "X-193",
-          "stage": "tests",
-          "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-          "at": "2026-09-04T02:05:53"
-        }
-      ]
-    },
-    "X-194": {
-      "status": "DONE",
-      "wave": 23,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-195": {
-      "status": "DONE",
-      "wave": 23,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-196": {
-      "status": "DONE",
-      "wave": 30,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-197": {
-      "status": "DONE",
-      "wave": 23,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-198": {
-      "status": "DONE",
-      "wave": 10,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-199": {
-      "status": "DONE",
-      "wave": 9,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-200": {
-      "status": "DONE",
-      "wave": 31,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-201": {
-      "status": "UNRESOLVED",
-      "wave": 17,
-      "intent": "RECOVER",
-      "unresolved": [
-        {
-          "module": "X-201",
-          "stage": "tests",
-          "why": "column deadline_at is missing from disputes and not named in the brief",
-          "at": "2026-09-04T02:05:53"
-        }
-      ]
-    },
-    "X-202": {
-      "status": "DONE",
-      "wave": 9,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-203": {
-      "status": "DONE",
-      "wave": 14,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-204": {
-      "status": "DONE",
-      "wave": 4,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-205": {
-      "status": "DONE",
-      "wave": 31,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "X-205",
-          "stage": "contract",
-          "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-          "at": "2026-09-03T13:56:38"
-        }
-      ]
-    },
-    "X-206": {
-      "status": "DONE",
-      "wave": 4,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-207": {
-      "status": "DONE",
-      "wave": 15,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-208": {
-      "status": "DONE",
-      "wave": 16,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-209": {
-      "status": "DONE",
-      "wave": 24,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-210": {
-      "status": "DONE",
-      "wave": 31,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-211": {
-      "status": "DONE",
-      "wave": 9,
-      "intent": "RECOVER",
-      "unresolved": []
-    },
-    "X-212": {
-      "status": "DONE",
-      "wave": 14,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-213": {
-      "status": "DONE",
-      "wave": 25,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-214": {
-      "status": "DONE",
-      "wave": 19,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-215": {
-      "status": "DONE",
-      "wave": 20,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-217": {
-      "status": "DONE",
-      "wave": 31,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "X-217",
-          "stage": "contract",
-          "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-          "at": "2026-09-03T14:00:33"
-        }
-      ]
-    },
-    "X-218": {
-      "status": "DONE",
-      "wave": 31,
-      "intent": "GROW",
-      "unresolved": [
-        {
-          "module": "X-218",
-          "stage": "contract",
-          "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-          "at": "2026-09-03T14:01:55"
-        }
-      ]
-    },
-    "X-219": {
-      "status": "DONE",
-      "wave": 3,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-220": {
-      "status": "DONE",
-      "wave": 3,
-      "intent": "OBSERVE",
-      "unresolved": []
-    },
-    "X-66": {
-      "status": "DONE",
-      "wave": 5,
-      "intent": "SERVE",
-      "unresolved": []
-    },
-    "X-82": {
-      "status": "DONE",
-      "wave": 24,
-      "intent": "INFORM",
-      "unresolved": []
-    },
-    "X-221": {
-      "status": "NOT_STARTED",
-      "wave": 3,
-      "intent": "GROW",
-      "unresolved": []
-    },
-    "X-222": {
-      "status": "NOT_STARTED",
-      "wave": 2,
-      "intent": "PROTECT",
-      "unresolved": []
-    },
-    "X-223": {
-      "status": "NOT_STARTED",
-      "wave": 2,
-      "intent": "GROW",
-      "unresolved": []
-    }
+  "contract": {
+   "violations": 87,
+   "fails": "COMMIT"
   },
-  "journeys": {
-    "J1": {
-      "status": "GREEN",
-      "title": "a missed call becomes a consented text back",
-      "green_after_wave": 5
-    },
-    "J2": {
-      "status": "GREEN",
-      "title": "two fields at signup put a live agent on a real number",
-      "green_after_wave": 6
-    },
-    "J3": {
-      "status": "GREEN",
-      "title": "a quote comes from the pricebook or does not come at all",
-      "green_after_wave": 7
-    },
-    "J4": {
-      "status": "GREEN",
-      "title": "STOP halts every pending step for that person",
-      "green_after_wave": 5
-    },
-    "J5": {
-      "status": "GREEN",
-      "title": "a migration of five hundred jobs sends nothing",
-      "green_after_wave": 14
-    },
-    "J6": {
-      "status": "GREEN",
-      "title": "cancel is one tap with nothing in between",
-      "green_after_wave": 11
-    },
-    "J7": {
-      "status": "GREEN",
-      "title": "an agency client never sees cost or margin",
-      "green_after_wave": 11
-    },
-    "J8": {
-      "status": "GREEN",
-      "title": "a deliberately corrupted backup fails the restore",
-      "green_after_wave": 14
-    },
-    "J9": {
-      "status": "GREEN",
-      "title": "an invoice reaches a real charge id",
-      "green_after_wave": 10
-    },
-    "J10": {
-      "status": "GREEN",
-      "title": "a completed job asks for a review once inside the cadence",
-      "green_after_wave": 8
-    },
-    "J11": {
-      "status": "GREEN",
-      "title": "a published site carries all seven",
-      "green_after_wave": 13
-    },
-    "J12": {
-      "status": "GREEN",
-      "title": "an overdue invoice is chased by reason, resolution first",
-      "green_after_wave": 9
-    }
+  "citation": {
+   "violations": 94,
+   "fails": "COMMIT"
   },
-  "unresolved": [
+  "schema": {
+   "violations": 15,
+   "fails": "MERGE"
+  },
+  "capability": {
+   "violations": 399,
+   "fails": "MERGE"
+  },
+  "anchor": {
+   "violations": 137,
+   "fails": "WAVE"
+  },
+  "journey": {
+   "violations": 7,
+   "fails": "WAVE"
+  }
+ },
+ "waves": {
+  "1": {
+   "track": "spine",
+   "status": "DONE",
+   "modules": [
+    "X-121",
+    "X-123",
+    "X-122",
+    "X-126",
+    "X-119"
+   ]
+  },
+  "2": {
+   "track": "spine",
+   "status": "DONE",
+   "modules": [
+    "X-128",
+    "X-222",
+    "X-223"
+   ]
+  },
+  "3": {
+   "track": "ai-core",
+   "status": "DONE",
+   "modules": [
+    "C-Ai",
+    "X-219",
+    "X-220",
+    "X-221"
+   ]
+  },
+  "4": {
+   "track": "consent",
+   "status": "DONE",
+   "modules": [
+    "X-204",
+    "X-206"
+   ]
+  },
+  "5": {
+   "track": "J1-J2-J4 the sixty seconds",
+   "status": "DONE",
+   "modules": [
+    "C-Telephony",
+    "C-Sms",
+    "C-Agent",
+    "X-66",
+    "X-188"
+   ]
+  },
+  "6": {
+   "track": "J1-J2-J4 the sixty seconds",
+   "status": "DONE",
+   "modules": [
+    "X-153",
+    "X-01",
+    "X-118"
+   ]
+  },
+  "7": {
+   "track": "J3 the pricebook",
+   "status": "DONE",
+   "modules": [
+    "X-163",
+    "X-164",
+    "X-108"
+   ]
+  },
+  "8": {
+   "track": "J10 reviews",
+   "status": "DONE",
+   "modules": [
+    "C-Reviews",
+    "X-181",
+    "X-110"
+   ]
+  },
+  "9": {
+   "track": "J9-J12 money",
+   "status": "DONE",
+   "modules": [
+    "C-Billing",
+    "X-199",
+    "X-211",
+    "X-202"
+   ]
+  },
+  "10": {
+   "track": "J9-J12 money",
+   "status": "DONE",
+   "modules": [
+    "X-117",
+    "X-198"
+   ]
+  },
+  "11": {
+   "track": "J6-J7 portal",
+   "status": "DONE",
+   "modules": [
+    "X-172",
+    "X-112",
+    "X-166"
+   ]
+  },
+  "12": {
+   "track": "J11 the site",
+   "status": "DONE",
+   "modules": [
+    "X-157",
+    "X-178",
+    "X-103",
+    "X-102",
+    "X-155"
+   ]
+  },
+  "13": {
+   "track": "J11 the site",
+   "status": "DONE",
+   "modules": [
+    "X-137",
+    "X-176"
+   ]
+  },
+  "14": {
+   "track": "J5-J8 safety",
+   "status": "DONE",
+   "modules": [
+    "X-212",
+    "X-203"
+   ]
+  },
+  "15": {
+   "track": "channels",
+   "status": "DONE",
+   "modules": [
+    "C-Mail",
+    "C-Whatsapp",
+    "X-147",
+    "X-207",
+    "X-193"
+   ]
+  },
+  "16": {
+   "track": "channels",
+   "status": "DONE",
+   "modules": [
+    "X-208"
+   ]
+  },
+  "17": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-125",
+    "X-127",
+    "X-149",
+    "X-170",
+    "X-201"
+   ]
+  },
+  "18": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-10",
+    "X-113",
+    "X-124",
+    "X-143",
+    "X-151"
+   ]
+  },
+  "19": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-162",
+    "X-165",
+    "X-171",
+    "X-189",
+    "X-214"
+   ]
+  },
+  "20": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-215",
+    "X-07",
+    "X-104",
+    "X-111",
+    "X-129"
+   ]
+  },
+  "21": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-138",
+    "X-139",
+    "X-145",
+    "X-148",
+    "X-150"
+   ]
+  },
+  "22": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-16",
+    "X-160",
+    "X-167",
+    "X-168",
+    "X-175"
+   ]
+  },
+  "23": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-177",
+    "X-180",
+    "X-194",
+    "X-195",
+    "X-197"
+   ]
+  },
+  "24": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-209",
+    "X-82",
+    "X-08",
+    "X-120",
+    "X-136"
+   ]
+  },
+  "25": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-141",
+    "X-142",
+    "X-156",
+    "X-173",
+    "X-213"
+   ]
+  },
+  "26": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-105",
+    "X-109",
+    "X-114",
+    "X-116",
+    "X-130"
+   ]
+  },
+  "27": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-131",
+    "X-132",
+    "X-134",
+    "X-135",
+    "X-140"
+   ]
+  },
+  "28": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-144",
+    "X-154",
+    "X-158",
+    "X-159",
+    "X-161"
+   ]
+  },
+  "29": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-179",
+    "X-182",
+    "X-183",
+    "X-184",
+    "X-185"
+   ]
+  },
+  "30": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-186",
+    "X-190",
+    "X-191",
+    "X-192",
+    "X-196"
+   ]
+  },
+  "31": {
+   "track": "roster",
+   "status": "DONE",
+   "modules": [
+    "X-200",
+    "X-205",
+    "X-210",
+    "X-217",
+    "X-218"
+   ]
+  }
+ },
+ "modules": {
+  "C-Agent": {
+   "status": "UNRESOLVED",
+   "wave": 5,
+   "intent": "SERVE",
+   "unresolved": [
     {
-      "module": "X-186",
-      "stage": "contract",
-      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-      "at": "2026-09-03T13:47:25"
+     "module": "C-Agent",
+     "stage": "journey",
+     "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
+     "at": "2026-09-05T09:56:06"
     },
     {
-      "module": "X-190",
-      "stage": "contract",
-      "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-      "at": "2026-09-03T13:48:24"
-    },
-    {
-      "module": "X-205",
-      "stage": "contract",
-      "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
-      "at": "2026-09-03T13:56:38"
-    },
-    {
-      "module": "X-217",
-      "stage": "contract",
-      "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-      "at": "2026-09-03T14:00:33"
-    },
-    {
-      "module": "X-218",
-      "stage": "contract",
-      "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-      "at": "2026-09-03T14:01:55"
-    },
-    {
-      "module": "X-193",
-      "stage": "tests",
-      "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
-      "at": "2026-09-04T02:05:53"
-    },
-    {
-      "module": "X-201",
-      "stage": "tests",
-      "why": "column deadline_at is missing from disputes and not named in the brief",
-      "at": "2026-09-04T02:05:53"
-    },
-    {
-      "module": "C-Reviews",
-      "stage": "tests",
-      "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
-      "at": "2026-09-04T07:55:55"
-    },
-    {
-      "module": "C-Reviews",
-      "stage": "contract",
-      "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
-      "at": "2026-09-04T08:05:31"
-    },
-    {
-      "module": "X-186",
-      "stage": "capability",
-      "why": "no action enrols a person into a campaign",
-      "at": "2026-09-04T22:41:56"
-    },
-    {
-      "module": "X-172",
-      "stage": "tests",
-      "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-      "at": "2026-09-05T08:35:23"
-    },
-    {
-      "module": "C-Telephony",
-      "stage": "journey",
-      "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-      "at": "2026-09-05T09:54:32"
-    },
-    {
-      "module": "C-Telephony",
-      "stage": "journey",
-      "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
-      "at": "2026-09-05T09:56:02"
-    },
-    {
-      "module": "C-Agent",
-      "stage": "journey",
-      "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
-      "at": "2026-09-05T09:56:06"
-    },
-    {
-      "module": "C-Agent",
-      "stage": "journey",
-      "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
-      "at": "2026-09-05T09:56:06"
-    },
-    {
-      "module": "C-Reviews",
-      "stage": "journey",
-      "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
-      "at": "2026-09-05T09:56:06"
-    },
-    {
-      "module": "X-103",
-      "stage": "journey",
-      "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
-      "at": "2026-09-05T09:56:06"
-    },
-    {
-      "module": "C-Billing",
-      "stage": "journey",
-      "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
-      "at": "2026-09-05T09:56:06"
-    },
-    {
-      "module": "C-Billing",
-      "stage": "journey",
-      "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
-      "at": "2026-09-05T09:56:06"
-    },
-    {
-      "module": "C-Sms",
-      "stage": "capability",
-      "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
-      "at": "2026-09-05T11:22:12"
+     "module": "C-Agent",
+     "stage": "journey",
+     "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
+     "at": "2026-09-05T09:56:06"
     }
-  ],
-  "decisions": [
+   ]
+  },
+  "C-Ai": {
+   "status": "DONE",
+   "wave": 3,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "C-Billing": {
+   "status": "UNRESOLVED",
+   "wave": 9,
+   "intent": "INFORM",
+   "unresolved": [
     {
-      "module": "X-205",
-      "chose": "affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded",
-      "at": "2026-09-05T03:56:25",
-      "ruling": "R245"
+     "module": "C-Billing",
+     "stage": "journey",
+     "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
+     "at": "2026-09-05T09:56:06"
     },
     {
-      "module": "X-82",
-      "chose": "agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader",
-      "at": "2026-09-05T03:56:25",
-      "ruling": "R245"
-    },
-    {
-      "module": "X-82",
-      "chose": "plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader",
-      "at": "2026-09-05T03:56:25",
-      "ruling": "R245"
-    },
-    {
-      "module": "C-Agent",
-      "chose": "Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)",
-      "at": "2026-09-05T07:37:41",
-      "ruling": "R245"
-    },
-    {
-      "module": "C-Agent",
-      "chose": "agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured \u2014 owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands",
-      "at": "2026-09-05T08:12:23",
-      "ruling": "R245"
-    },
-    {
-      "module": "X-82",
-      "chose": "RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)",
-      "at": "2026-09-05T08:35:16",
-      "ruling": "R245"
-    },
-    {
-      "module": "C-Billing",
-      "chose": "a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)",
-      "at": "2026-09-05T09:47:06",
-      "ruling": "R245"
-    },
-    {
-      "module": "C-Agent",
-      "chose": "the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)",
-      "at": "2026-09-05T10:13:56",
-      "ruling": "R245"
-    },
-    {
-      "module": "C-Agent",
-      "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
-      "at": "2026-09-05T10:15:15",
-      "ruling": "R245"
-    },
-    {
-      "module": "X-163",
-      "chose": "<R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.",
-      "at": "2026-09-05T10:55:37",
-      "ruling": "R245"
-    },
-    {
-      "module": "C-Sms",
-      "chose": "C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)",
-      "at": "2026-09-05T10:55:53",
-      "ruling": "R245"
-    },
-    {
-      "module": "X-163",
-      "chose": "X-163 owns the price_book_items table; PriceBook is a reader, not the sole owner.",
-      "at": "2026-09-05T13:13:29",
-      "ruling": "R245"
+     "module": "C-Billing",
+     "stage": "journey",
+     "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
+     "at": "2026-09-05T09:56:06"
     }
-  ],
-  "notes": [
+   ]
+  },
+  "C-Mail": {
+   "status": "DONE",
+   "wave": 15,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "C-Reviews": {
+   "status": "UNRESOLVED",
+   "wave": 8,
+   "intent": "GROW",
+   "unresolved": [
     {
-      "at": "2026-09-03T09:34:34",
-      "note": "bootstrap-done"
+     "module": "C-Reviews",
+     "stage": "tests",
+     "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+     "at": "2026-09-04T07:55:55"
     },
     {
-      "at": "2026-09-05T10:10:03",
-      "note": "WITHDRAWN wave-57 journey C-Agent quote-to-booking - not a credential; askAgent is local and the failure is assertSame NO_FACT at TwelveJourneysTest.php:149"
+     "module": "C-Reviews",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-04T08:05:31"
     },
     {
-      "at": "2026-09-05T10:10:03",
-      "note": "WITHDRAWN wave-57 journey C-Reviews review-invite - not a credential; reviewInvitesFor is a DB::table read on outreach_messages, JourneyHarness.php:414"
-    },
-    {
-      "at": "2026-09-05T10:10:03",
-      "note": "WITHDRAWN wave-57 journey X-103 site-publish - not a credential; publishSite calls the local SiteEngine, JourneyHarness.php:619, and Vercel appears nowhere in the tree"
-    },
-    {
-      "at": "2026-09-05T10:10:03",
-      "note": "WITHDRAWN wave-57 journey C-Billing dunning-by-reason - journey PASSES; artifact_id is an internal ReceivableState id, JourneyHarness.php:520. A finding, not a missing dependency"
-    },
-    {
-      "at": "2026-09-05T10:10:03",
-      "note": "wave-57 recorded missed-call-textback UNRESOLVED twice, 09:54:32 and 09:56:02 - one row, not two"
+     "module": "C-Reviews",
+     "stage": "journey",
+     "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
+     "at": "2026-09-05T09:56:06"
     }
-  ]
+   ]
+  },
+  "C-Sms": {
+   "status": "DONE",
+   "wave": 5,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "C-Telephony": {
+   "status": "UNRESOLVED",
+   "wave": 5,
+   "intent": "RECOVER",
+   "unresolved": [
+    {
+     "module": "C-Telephony",
+     "stage": "journey",
+     "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+     "at": "2026-09-05T09:54:32"
+    },
+    {
+     "module": "C-Telephony",
+     "stage": "journey",
+     "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+     "at": "2026-09-05T09:56:02"
+    }
+   ]
+  },
+  "C-Whatsapp": {
+   "status": "DONE",
+   "wave": 15,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-01": {
+   "status": "DONE",
+   "wave": 6,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-07": {
+   "status": "DONE",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-08": {
+   "status": "DONE",
+   "wave": 24,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-10": {
+   "status": "DONE",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-102": {
+   "status": "DONE",
+   "wave": 12,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-103": {
+   "status": "DONE",
+   "wave": 12,
+   "intent": "GROW",
+   "unresolved": [
+    {
+     "module": "X-103",
+     "stage": "journey",
+     "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
+     "at": "2026-09-05T09:56:06"
+    }
+   ]
+  },
+  "X-104": {
+   "status": "DONE",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-105": {
+   "status": "DONE",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-108": {
+   "status": "DONE",
+   "wave": 7,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-109": {
+   "status": "DONE",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-110": {
+   "status": "DONE",
+   "wave": 8,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-111": {
+   "status": "DONE",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-112": {
+   "status": "DONE",
+   "wave": 11,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-113": {
+   "status": "DONE",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-114": {
+   "status": "DONE",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-116": {
+   "status": "DONE",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-117": {
+   "status": "DONE",
+   "wave": 10,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-118": {
+   "status": "DONE",
+   "wave": 6,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-119": {
+   "status": "DONE",
+   "wave": 1,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-120": {
+   "status": "DONE",
+   "wave": 24,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-121": {
+   "status": "DONE",
+   "wave": 1,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-122": {
+   "status": "DONE",
+   "wave": 1,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-123": {
+   "status": "DONE",
+   "wave": 1,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-124": {
+   "status": "DONE",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-125": {
+   "status": "DONE",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-126": {
+   "status": "DONE",
+   "wave": 1,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-127": {
+   "status": "DONE",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-128": {
+   "status": "DONE",
+   "wave": 2,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-129": {
+   "status": "DONE",
+   "wave": 20,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-130": {
+   "status": "DONE",
+   "wave": 26,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-131": {
+   "status": "DONE",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-132": {
+   "status": "DONE",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-134": {
+   "status": "DONE",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-135": {
+   "status": "DONE",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-136": {
+   "status": "DONE",
+   "wave": 24,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-137": {
+   "status": "DONE",
+   "wave": 13,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-138": {
+   "status": "DONE",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-139": {
+   "status": "DONE",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-140": {
+   "status": "DONE",
+   "wave": 27,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-141": {
+   "status": "DONE",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-142": {
+   "status": "DONE",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-143": {
+   "status": "DONE",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-144": {
+   "status": "DONE",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-145": {
+   "status": "DONE",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-147": {
+   "status": "DONE",
+   "wave": 15,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-148": {
+   "status": "DONE",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-149": {
+   "status": "DONE",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-150": {
+   "status": "DONE",
+   "wave": 21,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-151": {
+   "status": "DONE",
+   "wave": 18,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-153": {
+   "status": "DONE",
+   "wave": 6,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-154": {
+   "status": "DONE",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-155": {
+   "status": "DONE",
+   "wave": 12,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-156": {
+   "status": "DONE",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-157": {
+   "status": "DONE",
+   "wave": 12,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-158": {
+   "status": "DONE",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-159": {
+   "status": "DONE",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-16": {
+   "status": "DONE",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-160": {
+   "status": "DONE",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-161": {
+   "status": "DONE",
+   "wave": 28,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-162": {
+   "status": "DONE",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-163": {
+   "status": "DONE",
+   "wave": 7,
+   "intent": "NONE",
+   "unresolved": []
+  },
+  "X-164": {
+   "status": "DONE",
+   "wave": 7,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-165": {
+   "status": "DONE",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-166": {
+   "status": "DONE",
+   "wave": 11,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-167": {
+   "status": "DONE",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-168": {
+   "status": "DONE",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-170": {
+   "status": "DONE",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-171": {
+   "status": "DONE",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-172": {
+   "status": "UNRESOLVED",
+   "wave": 11,
+   "intent": "INFORM",
+   "unresolved": [
+    {
+     "module": "X-172",
+     "stage": "tests",
+     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+     "at": "2026-09-05T08:35:23"
+    }
+   ]
+  },
+  "X-173": {
+   "status": "DONE",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-175": {
+   "status": "DONE",
+   "wave": 22,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-176": {
+   "status": "DONE",
+   "wave": 13,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-177": {
+   "status": "DONE",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-178": {
+   "status": "DONE",
+   "wave": 12,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-179": {
+   "status": "DONE",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-180": {
+   "status": "DONE",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-181": {
+   "status": "DONE",
+   "wave": 8,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-182": {
+   "status": "DONE",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-183": {
+   "status": "DONE",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-184": {
+   "status": "DONE",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-185": {
+   "status": "DONE",
+   "wave": 29,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-186": {
+   "status": "UNRESOLVED",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": [
+    {
+     "module": "X-186",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T13:47:25"
+    },
+    {
+     "module": "X-186",
+     "stage": "capability",
+     "why": "no action enrols a person into a campaign",
+     "at": "2026-09-04T22:41:56"
+    }
+   ]
+  },
+  "X-188": {
+   "status": "DONE",
+   "wave": 5,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-189": {
+   "status": "DONE",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-190": {
+   "status": "UNRESOLVED",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": [
+    {
+     "module": "X-190",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:48:24"
+    }
+   ]
+  },
+  "X-191": {
+   "status": "DONE",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-192": {
+   "status": "DONE",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-193": {
+   "status": "UNRESOLVED",
+   "wave": 15,
+   "intent": "GROW",
+   "unresolved": [
+    {
+     "module": "X-193",
+     "stage": "tests",
+     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
+  },
+  "X-194": {
+   "status": "DONE",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-195": {
+   "status": "DONE",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-196": {
+   "status": "DONE",
+   "wave": 30,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-197": {
+   "status": "DONE",
+   "wave": 23,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-198": {
+   "status": "DONE",
+   "wave": 10,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-199": {
+   "status": "DONE",
+   "wave": 9,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-200": {
+   "status": "DONE",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-201": {
+   "status": "UNRESOLVED",
+   "wave": 17,
+   "intent": "RECOVER",
+   "unresolved": [
+    {
+     "module": "X-201",
+     "stage": "tests",
+     "why": "column deadline_at is missing from disputes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
+  },
+  "X-202": {
+   "status": "DONE",
+   "wave": 9,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-203": {
+   "status": "DONE",
+   "wave": 14,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-204": {
+   "status": "DONE",
+   "wave": 4,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-205": {
+   "status": "DONE",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": [
+    {
+     "module": "X-205",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:56:38"
+    }
+   ]
+  },
+  "X-206": {
+   "status": "DONE",
+   "wave": 4,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-207": {
+   "status": "DONE",
+   "wave": 15,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-208": {
+   "status": "DONE",
+   "wave": 16,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-209": {
+   "status": "DONE",
+   "wave": 24,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-210": {
+   "status": "DONE",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-211": {
+   "status": "DONE",
+   "wave": 9,
+   "intent": "RECOVER",
+   "unresolved": []
+  },
+  "X-212": {
+   "status": "DONE",
+   "wave": 14,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-213": {
+   "status": "DONE",
+   "wave": 25,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-214": {
+   "status": "DONE",
+   "wave": 19,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-215": {
+   "status": "DONE",
+   "wave": 20,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-217": {
+   "status": "DONE",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": [
+    {
+     "module": "X-217",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:00:33"
+    }
+   ]
+  },
+  "X-218": {
+   "status": "DONE",
+   "wave": 31,
+   "intent": "GROW",
+   "unresolved": [
+    {
+     "module": "X-218",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:01:55"
+    }
+   ]
+  },
+  "X-219": {
+   "status": "DONE",
+   "wave": 3,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-220": {
+   "status": "DONE",
+   "wave": 3,
+   "intent": "OBSERVE",
+   "unresolved": []
+  },
+  "X-66": {
+   "status": "DONE",
+   "wave": 5,
+   "intent": "SERVE",
+   "unresolved": []
+  },
+  "X-82": {
+   "status": "DONE",
+   "wave": 24,
+   "intent": "INFORM",
+   "unresolved": []
+  },
+  "X-221": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-222": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "PROTECT",
+   "unresolved": []
+  },
+  "X-223": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "GROW",
+   "unresolved": []
+  }
+ },
+ "journeys": {
+  "J1": {
+   "status": "GREEN",
+   "title": "a missed call becomes a consented text back",
+   "green_after_wave": 5
+  },
+  "J2": {
+   "status": "GREEN",
+   "title": "two fields at signup put a live agent on a real number",
+   "green_after_wave": 6
+  },
+  "J3": {
+   "status": "GREEN",
+   "title": "a quote comes from the pricebook or does not come at all",
+   "green_after_wave": 7
+  },
+  "J4": {
+   "status": "GREEN",
+   "title": "STOP halts every pending step for that person",
+   "green_after_wave": 5
+  },
+  "J5": {
+   "status": "GREEN",
+   "title": "a migration of five hundred jobs sends nothing",
+   "green_after_wave": 14
+  },
+  "J6": {
+   "status": "GREEN",
+   "title": "cancel is one tap with nothing in between",
+   "green_after_wave": 11
+  },
+  "J7": {
+   "status": "GREEN",
+   "title": "an agency client never sees cost or margin",
+   "green_after_wave": 11
+  },
+  "J8": {
+   "status": "GREEN",
+   "title": "a deliberately corrupted backup fails the restore",
+   "green_after_wave": 14
+  },
+  "J9": {
+   "status": "GREEN",
+   "title": "an invoice reaches a real charge id",
+   "green_after_wave": 10
+  },
+  "J10": {
+   "status": "GREEN",
+   "title": "a completed job asks for a review once inside the cadence",
+   "green_after_wave": 8
+  },
+  "J11": {
+   "status": "GREEN",
+   "title": "a published site carries all seven",
+   "green_after_wave": 13
+  },
+  "J12": {
+   "status": "GREEN",
+   "title": "an overdue invoice is chased by reason, resolution first",
+   "green_after_wave": 9
+  }
+ },
+ "unresolved": [
+  {
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
+  },
+  {
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
+  },
+  {
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
+  },
+  {
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
+  },
+  {
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
+  },
+  {
+   "module": "X-193",
+   "stage": "tests",
+   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "why": "column deadline_at is missing from disputes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "tests",
+   "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+   "at": "2026-09-04T07:55:55"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-04T08:05:31"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "why": "no action enrols a person into a campaign",
+   "at": "2026-09-04T22:41:56"
+  },
+  {
+   "module": "X-172",
+   "stage": "tests",
+   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "at": "2026-09-05T08:35:23"
+  },
+  {
+   "module": "C-Telephony",
+   "stage": "journey",
+   "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+   "at": "2026-09-05T09:54:32"
+  },
+  {
+   "module": "C-Telephony",
+   "stage": "journey",
+   "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+   "at": "2026-09-05T09:56:02"
+  },
+  {
+   "module": "C-Agent",
+   "stage": "journey",
+   "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Agent",
+   "stage": "journey",
+   "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "journey",
+   "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "X-103",
+   "stage": "journey",
+   "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "journey",
+   "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "journey",
+   "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Sms",
+   "stage": "capability",
+   "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+   "at": "2026-09-05T11:22:12"
+  }
+ ],
+ "decisions": [
+  {
+   "module": "X-205",
+   "chose": "affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded",
+   "at": "2026-09-05T03:56:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader",
+   "at": "2026-09-05T03:56:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader",
+   "at": "2026-09-05T03:56:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)",
+   "at": "2026-09-05T07:37:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured \u2014 owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands",
+   "at": "2026-09-05T08:12:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)",
+   "at": "2026-09-05T08:35:16",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)",
+   "at": "2026-09-05T09:47:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)",
+   "at": "2026-09-05T10:13:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
+   "at": "2026-09-05T10:15:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "<R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.",
+   "at": "2026-09-05T10:55:37",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Sms",
+   "chose": "C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)",
+   "at": "2026-09-05T10:55:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "X-163 owns the price_book_items table; PriceBook is a reader, not the sole owner.",
+   "at": "2026-09-05T13:13:29",
+   "ruling": "R245"
+  }
+ ],
+ "notes": [
+  {
+   "at": "2026-09-03T09:34:34",
+   "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey C-Agent quote-to-booking - not a credential; askAgent is local and the failure is assertSame NO_FACT at TwelveJourneysTest.php:149"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey C-Reviews review-invite - not a credential; reviewInvitesFor is a DB::table read on outreach_messages, JourneyHarness.php:414"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey X-103 site-publish - not a credential; publishSite calls the local SiteEngine, JourneyHarness.php:619, and Vercel appears nowhere in the tree"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey C-Billing dunning-by-reason - journey PASSES; artifact_id is an internal ReceivableState id, JourneyHarness.php:520. A finding, not a missing dependency"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "wave-57 recorded missed-call-textback UNRESOLVED twice, 09:54:32 and 09:56:02 - one row, not two"
+  },
+  {
+   "at": "2026-09-05T14:41:06",
+   "note": "re-serialise BUILD-STATE.json at indent=1"
+  }
+ ]
 }
