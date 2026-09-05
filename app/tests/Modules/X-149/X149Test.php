@@ -8,7 +8,9 @@ use App\Modules\X149\Actions\EvalGateAction;
 use App\Modules\X149\Actions\EvalRunAction;
 use App\Modules\X149\Actions\TrackQualitySeriesAction;
 use App\Modules\X149\Events\PromptChanged;
+use App\Modules\X149\Models\EvalRun;
 use App\Modules\X149\Models\EvalSet;
+use App\Modules\X149\Models\QualitySeries;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -108,17 +110,17 @@ class X149Test extends TestCase
         $drivers = collect(config('database.connections'))->pluck('driver')->all();
         $this->assertNotContains('clickhouse', $drivers);
 
-        $this->assertNull((new \App\Modules\X149\Models\EvalRun)->getConnectionName());
-        $this->assertNull((new \App\Modules\X149\Models\EvalSet)->getConnectionName());
-        $this->assertNull((new \App\Modules\X149\Models\QualitySeries)->getConnectionName());
+        $this->assertNull((new EvalRun)->getConnectionName());
+        $this->assertNull((new EvalSet)->getConnectionName());
+        $this->assertNull((new QualitySeries)->getConnectionName());
 
         $biz = self::provisionTenant();
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $action = new \App\Modules\X149\Actions\TrackQualitySeriesAction;
+        $action = new TrackQualitySeriesAction;
         $series = $action->record($biz->id, 0.1, 0.2);
 
-        $row = \Illuminate\Support\Facades\DB::connection(config('database.default'))
+        $row = DB::connection(config('database.default'))
             ->table('quality_series')
             ->where('id', $series->id)
             ->first();

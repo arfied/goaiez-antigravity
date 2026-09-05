@@ -14,7 +14,9 @@ use App\Modules\X123\Models\EventLog;
 use App\Modules\X123\Models\EventSubscription;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Horizon\Horizon;
 use Tests\TestCase;
 
 class X123Test extends TestCase
@@ -242,16 +244,16 @@ class X123Test extends TestCase
         $drivers = collect(config('queue.connections'))->pluck('driver')->all();
         $this->assertNotContains('rabbitmq', $drivers);
 
-        $this->assertTrue(class_exists(\Laravel\Horizon\Horizon::class));
+        $this->assertTrue(class_exists(Horizon::class));
 
-        \Illuminate\Support\Facades\Http::fake();
+        Http::fake();
         $biz = self::provisionTenant();
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $action = new \App\Modules\X123\Actions\EventPublishAction;
+        $action = new EventPublishAction;
         $action->handle($biz->id, 'test.event', ['key' => 'value']);
 
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
     }
 
     /**
