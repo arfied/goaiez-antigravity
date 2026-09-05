@@ -352,7 +352,7 @@ class X108Test extends TestCase
             isMember: false
         );
 
-        $apt = $this->book->handle($biz->id, 'Furnace Repair', $wantedDate . ' 10:00:00', $wantedDate . ' 11:00:00');
+        $apt = $this->book->handle($biz->id, 'Furnace Repair', $wantedDate.' 10:00:00', $wantedDate.' 11:00:00');
         $cancelRes = $this->cancel->handle($biz->id, $apt->id);
 
         $this->assertTrue($cancelRes['backfill_offered']);
