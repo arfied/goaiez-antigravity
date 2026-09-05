@@ -1743,6 +1743,10 @@
   {
    "at": "2026-09-05T11:07:32",
    "note": "S-73 stage analysis: the capability stage counts \"names no refusal\" from app/app/Doctor/Stages/CapabilityStage.php:99; recording UNRESOLVED does not lower it; the stage this track can actually move is citation 94 (and boundary/contract/schema) because they are fixable by system changes in owned modules."
+  },
+  {
+   "at": "2026-09-05T13:10:24",
+   "note": "G11-41 the two 09:57 rows are a duplicate of each other, they answer the VIP/LTV half, S-79's 0c66b6c1 answers the plain sort-order half at X01Test.php:372 against app/app/Modules/X-01/Ui/CustomersList.php:47, and the id is now half-tested and half-unresolved"
   }
  ]
 }
