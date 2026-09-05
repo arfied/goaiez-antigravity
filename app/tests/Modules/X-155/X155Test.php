@@ -8,6 +8,7 @@ use App\Modules\X110\Actions\PixelEventsAction;
 use App\Modules\X110\Domain\PixelEngine;
 use App\Modules\X121\Models\Person;
 use App\Modules\X155\Actions\FormAbandonPointAction;
+use App\Modules\X155\Actions\FormAdaptiveStepsAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X155\Actions\FormValidateAction;
 use App\Modules\X155\Events\FormCaptured;
@@ -346,7 +347,35 @@ class X155Test extends TestCase
      */
     public function test_g5_30_adaptive_questions(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G5-30 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Service Request',
+            'slug' => 'service-request',
+            'steps' => [
+                ['step' => 1, 'required' => ['service_type']],
+                ['step' => 2, 'show_if' => ['service_type' => 'commercial'], 'required' => ['company_name']],
+                ['step' => 3, 'show_if' => ['service_type' => 'residential'], 'required' => ['home_size']],
+            ],
+            'schema' => [],
+        ]);
+
+        $applicable = (new FormAdaptiveStepsAction)->handle($form, ['service_type' => 'residential']);
+        $this->assertEquals([1, 3], array_column($applicable, 'step'));
+
+        $result = $this->validateAction->handle($biz->id, $form->id, ['service_type' => 'residential']);
+        $this->assertFalse($result['is_valid']);
+        $this->assertEquals('incomplete_step', $result['reason']);
+        $this->assertEquals(3, $result['step']);
+        $this->assertEquals(['home_size'], $result['missing']);
+
+        $result = $this->validateAction->handle($biz->id, $form->id, ['service_type' => 'residential', 'home_size' => '2000']);
+        $this->assertTrue($result['is_valid']);
+
+        $result = $this->validateAction->handle($biz->id, $form->id, ['service_type' => 'commercial', 'company_name' => 'Acme HVAC']);
+        $this->assertTrue($result['is_valid']);
     }
 
     /**
