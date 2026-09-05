@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T11:06:38",
+ "updated": "2026-09-05T11:39:10",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -870,10 +870,17 @@
    "unresolved": []
   },
   "X-176": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 13,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-15: the header claims Event schema from X-108's calendar, but grep -rn 'X-176' app/app/Modules/X-108 is empty and X-108's models are booking-internal (Appointment, AvailabilityRule, Resource, SlotLock, Waitlist) \u2014 X-108 exposes no published-calendar surface for X-176 to render Event schema from",
+     "at": "2026-09-05T11:38:34"
+    }
+   ]
   },
   "X-177": {
    "status": "DONE",
@@ -1298,6 +1305,12 @@
    "stage": "capability",
    "why": "G6-20: the header names X-195's manifest rule, but grep -rn 'X-103' app/app/Modules/X-195 is empty \u2014 X-195 exposes no X-103 surface to assert against from this track",
    "at": "2026-09-05T11:06:38"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-15: the header claims Event schema from X-108's calendar, but grep -rn 'X-176' app/app/Modules/X-108 is empty and X-108's models are booking-internal (Appointment, AvailabilityRule, Resource, SlotLock, Waitlist) \u2014 X-108 exposes no published-calendar surface for X-176 to render Event schema from",
+   "at": "2026-09-05T11:38:34"
   }
  ],
  "decisions": [
@@ -1635,6 +1648,12 @@
    "module": "X-157",
    "chose": "pixel_script is the sixth required block type. content_blocks is the authority for the pixel exactly as it is for chat, form and DNI; the pixel_installed column is a derived summary, written by SiteEngine::publish() and never read by the emitter. (Ruling 40)",
    "at": "2026-09-05T10:45:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "G16-25: a VideoObject is injected on publish through an optional $videos parameter on SchemaRenderAction, mirroring G8-14's productOffers; an incomplete VideoObject fails validateSchema and the whole render refuses with SCHEMA_INVALID rather than emitting partial schema (G7-48). Rejected alternative: emitting the video block unvalidated, which would put invalid JSON-LD on a published page.",
+   "at": "2026-09-05T11:39:10",
    "ruling": "R245"
   }
  ],
