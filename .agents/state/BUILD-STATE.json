@@ -1551,6 +1551,10 @@
   {
    "at": "2026-09-05T16:31:57",
    "note": "Item 2 finding: The agent and webhook are not stubbed; JourneyHarness.php:346 posts a real webhook to /webhooks/infobip/inbound and JourneyHarness.php:354 reads the actual application's response from the agent_turns table."
+  },
+  {
+   "at": "2026-09-05T17:02:35",
+   "note": "CORRECTION to 2026-09-05T16:31:57 note: The finding stands, only the line numbers were wrong. The two wrong numbers were 346 and 354. The two right ones are 347 and 358."
   }
  ]
 }
