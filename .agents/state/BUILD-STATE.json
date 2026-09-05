@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T02:41:46",
+ "updated": "2026-09-05T03:04:07",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1562,6 +1562,12 @@
    "module": "X-108",
    "chose": "the booking door now refuses a blacked-out window on the same predicate as the availability door; the known limit is that isBlackedOut() reads the start hour only, so a booking starting before a blackout and running into it is not refused \u2014 matching X108Test.php:231-244, which pins that behaviour for the availability door; the rejected alternative is a finer overlap-based blackout check, refused because it would make the two doors disagree in the opposite direction and is new semantics rather than precision; the slot-lock arm stays UNRESOLVED and S-39's, S-40's, S-41's and S-42's decisions are untouched",
    "at": "2026-09-05T02:41:46",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "offer-not-door: the VIP filter narrows $offeredSlots (offer policy) while settled arms continue out of $availableSlots (capacity). A non-member booking 09:00 is evidence, not a bug. Rejected symmetry with S-42/S-43 because VIP is offer policy, not capacity. Consequence: non-member can book the window withheld from them. This closes the door-disagreement series. The slot-lock arm stays UNRESOLVED. S-39, S-40, S-41, S-42, S-43 are untouched.",
+   "at": "2026-09-05T03:04:07",
    "ruling": "R245"
   }
  ]
