@@ -139,6 +139,99 @@ final class CheckoutEngine
      * (§147.2): this reads inventory and writes only the cart row. The clock
      * on a live cart never moves (G16-05); an expired or absent cart starts a new one.
      */
+    public function checkoutCart(int $businessId, string $sessionToken, string $freshAuthToken, ?int $customerId = null): array
+    {
+        return DB::transaction(function () use ($businessId, $sessionToken, $freshAuthToken, $customerId) {
+            if (empty($freshAuthToken) || str_starts_with($freshAuthToken, 'expired_')) {
+                return [
+                    'status' => 'refused',
+                    'refusal_code' => 'FRESH_AUTH_REQUIRED',
+                    'message' => 'Every charge needs a fresh authorisation event',
+                ];
+            }
+
+            if (Order::where('business_id', $businessId)->where('auth_token', $freshAuthToken)->exists()) {
+                return [
+                    'status' => 'refused',
+                    'refusal_code' => 'AUTH_USED',
+                    'message' => 'Every charge needs a fresh authorisation',
+                ];
+            }
+
+            $cart = Cart::where('business_id', $businessId)->where('session_token', $sessionToken)->first();
+
+            if (! $cart || ! $cart->expires_at->isFuture()) {
+                return [
+                    'status' => 'refused',
+                    'message' => 'Cart is not live',
+                ];
+            }
+
+            $sellables = [];
+            $totalCents = 0;
+            foreach ($cart->items as $item) {
+                $sellable = Sellable::where('business_id', $businessId)
+                    ->where('id', $item['sellable_id'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($sellable->inventory_quantity < $item['quantity']) {
+                    return [
+                        'status' => 'sold_out',
+                        'message' => 'Item is sold out',
+                    ];
+                }
+
+                $sellables[] = [
+                    'model' => $sellable,
+                    'quantity' => $item['quantity'],
+                    'unit_price_cents' => $sellable->unit_price_cents,
+                    'subtotal_cents' => $sellable->unit_price_cents * $item['quantity'],
+                ];
+                $totalCents += $sellable->unit_price_cents * $item['quantity'];
+            }
+
+            $order = Order::create([
+                'business_id' => $businessId,
+                'customer_id' => $customerId,
+                'order_number' => 'ORD-'.strtoupper(Str::random(6)),
+                'status' => 'paid',
+                'total_cents' => $totalCents,
+                'auth_token' => $freshAuthToken,
+            ]);
+
+            foreach ($sellables as $line) {
+                $sellable = $line['model'];
+                $quantity = $line['quantity'];
+                
+                $sellable->decrement('inventory_quantity', $quantity);
+
+                OrderLine::create([
+                    'business_id' => $businessId,
+                    'order_id' => $order->id,
+                    'sellable_id' => $sellable->id,
+                    'quantity' => $quantity,
+                    'unit_price_cents' => $line['unit_price_cents'],
+                    'subtotal_cents' => $line['subtotal_cents'],
+                ]);
+
+                Event::dispatch(new InventoryUpdated(
+                    businessId: $businessId,
+                    sellableId: $sellable->id,
+                    newQuantity: $sellable->inventory_quantity
+                ));
+            }
+
+            $cart->delete();
+
+            return [
+                'status' => 'paid',
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'total_cents' => $totalCents,
+            ];
+        });
+    }
     public function addToCart(int $businessId, string $sessionToken, int $sellableId, int $quantity = 1): Cart
     {
         $sellable = Sellable::where('business_id', $businessId)->findOrFail($sellableId);
