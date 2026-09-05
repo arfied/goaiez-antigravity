@@ -40,9 +40,27 @@
                                 </p>
                             </div>
                             <div class="w-full sm:w-auto mt-2 sm:mt-0">
-                                <x-ui.button variant="secondary" size="default" type="button" class="w-full sm:w-auto">View Events</x-ui.button>
+                                <x-ui.button variant="secondary" size="default" type="button" class="w-full sm:w-auto" wire:click="openEvents('{{ $session->visitor_id }}')">
+                                    {{ $openVisitor === $session->visitor_id ? 'Hide Events' : 'View Events' }}
+                                </x-ui.button>
                             </div>
                         </x-ui.row>
+                        @if($openVisitor === $session->visitor_id)
+                            <div class="px-4 py-3 bg-card border-t border-rule text-sm">
+                                @if($openVisitorEvents && $openVisitorEvents->isNotEmpty())
+                                    <ul class="space-y-2">
+                                        @foreach($openVisitorEvents as $event)
+                                            <li class="flex justify-between items-center text-ink-2">
+                                                <span class="font-mono text-xs text-ink">{{ $event->event_name }}</span>
+                                                <span>{{ $event->created_at->diffForHumans() }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <p class="text-ink-2">No recent events.</p>
+                                @endif
+                            </div>
+                        @endif
                     @endforeach
                 </x-ui.row-list>
             </div>

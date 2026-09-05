@@ -75,10 +75,10 @@
                     <x-ui.row>
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">5. Snippet</p>
-                            <code class="block text-xs bg-card p-2 mt-1">{{ $install['script_tag'] }}</code>
+                            <code id="install-snippet" class="block text-xs bg-card p-2 mt-1">{{ $install['script_tag'] }}</code>
                         </div>
                         <div>
-                            <x-ui.button variant="secondary" size="default" type="button">Copy</x-ui.button>
+                            <x-ui.button variant="secondary" size="default" type="button" x-on:click="navigator.clipboard.writeText(document.getElementById('install-snippet').innerText)">Copy</x-ui.button>
                         </div>
                     </x-ui.row>
 

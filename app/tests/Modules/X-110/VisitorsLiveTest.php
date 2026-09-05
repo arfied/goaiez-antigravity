@@ -57,16 +57,27 @@ class VisitorsLiveTest extends TestCase
             'utm_source' => 'google',
         ]);
 
-        Session::create([
+        $session = Session::create([
             'business_id' => $biz->id,
             'visit_id' => $visit->id,
             'session_token' => 'tok',
             'started_at' => now()->subMinutes(5),
         ]);
 
+        PixelEvent::create([
+            'business_id' => $biz->id,
+            'event_name' => 'page_view',
+            'session_id' => $session->id,
+            'payload' => [],
+            'created_at' => now()->subMinutes(5),
+        ]);
+
         Livewire::test(VisitorsLive::class, ['businessId' => $biz->id])
             ->assertSee('v-123')
             ->assertSee('https://example.com/pricing')
-            ->assertSee('google');
+            ->assertSee('google')
+            ->assertDontSee('page_view')
+            ->call('openEvents', 'v-123')
+            ->assertSee('page_view');
     }
 }

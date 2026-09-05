@@ -22,6 +22,17 @@ class VisitorsLive extends Component
         $this->businessId = $businessId;
     }
 
+    public ?string $openVisitor = null;
+
+    public function openEvents(string $visitorId): void
+    {
+        if ($this->openVisitor === $visitorId) {
+            $this->openVisitor = null;
+        } else {
+            $this->openVisitor = $visitorId;
+        }
+    }
+
     public function render()
     {
         try {
@@ -33,6 +44,18 @@ class VisitorsLive extends Component
                 ->get();
 
             $installVerified = PixelEvent::where('business_id', $this->businessId)->exists();
+
+            $openVisitorEvents = null;
+            if ($this->openVisitor) {
+                $openVisitorEvents = PixelEvent::where('pixel_events.business_id', $this->businessId)
+                    ->join('visitor_sessions', 'visitor_sessions.id', '=', 'pixel_events.session_id')
+                    ->join('visits', 'visits.id', '=', 'visitor_sessions.visit_id')
+                    ->where('visits.visitor_id', $this->openVisitor)
+                    ->orderByDesc('pixel_events.created_at')
+                    ->limit(5)
+                    ->select('pixel_events.event_name', 'pixel_events.created_at')
+                    ->get();
+            }
         } catch (\Exception $e) {
             return view('x-110::visitors-live', ['loadError' => $e->getMessage()]);
         }
@@ -40,6 +63,7 @@ class VisitorsLive extends Component
         return view('x-110::visitors-live', [
             'sessions' => $sessions,
             'installVerified' => $installVerified,
+            'openVisitorEvents' => $openVisitorEvents,
             'loadError' => null,
         ]);
     }
