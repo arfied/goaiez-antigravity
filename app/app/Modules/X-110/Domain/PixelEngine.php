@@ -191,7 +191,13 @@ final class PixelEngine
             ->where('session_token', $sessionToken)
             ->first();
 
-        if (! $session || ! $session->visit) {
+        if (! $session) {
+            return null;
+        }
+
+        $visit = Visit::find($session->visit_id);
+
+        if (! $visit) {
             return null;
         }
 
@@ -199,8 +205,6 @@ final class PixelEngine
             ->where('event_name', 'page_view')
             ->orderByDesc('id')
             ->first();
-
-        $visit = $session->visit;
 
         return [
             'landing_page' => $visit->landing_page,

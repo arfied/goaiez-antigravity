@@ -173,6 +173,7 @@ class X110Test extends TestCase
         $this->assertEquals($v['session_token'], $session->pixel_session_token);
         $this->assertEquals('/hvac-repair', $session->page_context['current_page']);
 
+        $this->eventAction->handle($biz->id, $v['session_id'], 'page_view', ['url' => '/hvac-repair']);
         $this->eventAction->handle($biz->id, $v['session_id'], 'page_view', ['url' => '/hvac-repair/pricing']);
 
         $chatRefresh->handle($session);
