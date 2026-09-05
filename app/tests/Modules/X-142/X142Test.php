@@ -231,4 +231,41 @@ class X142Test extends TestCase
             ->assertSee($sub->target_url)
             ->assertDontSee($sub->secret);
     }
+    public function test_connect_your_ai_empty_when_all_tokens_are_revoked(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Connect AI Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Revoked Claude Desktop',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+        $this->tokenAction->revoke($biz->id, $token->id);
+
+        Livewire::test(ConnectYourAi::class)
+            ->assertSee('No connections yet.')
+            ->assertSee('Connect an AI to get started.')
+            ->assertDontSee($token->token_name);
+    }
+
+    public function test_connect_your_ai_connected(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Connected AI Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Active Claude Desktop',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+
+        Livewire::test(ConnectYourAi::class)
+            ->assertSeeHtml('data-connected="yes"')
+            ->assertSee($token->token_name)
+            ->assertSee($token->role_scope)
+            ->assertDontSee($token->token_hash);
+    }
 }
