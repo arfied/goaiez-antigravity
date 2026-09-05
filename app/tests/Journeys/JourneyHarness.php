@@ -591,10 +591,14 @@ trait JourneyHarness
             'price_cents' => 10000,
             'status' => 'committed',
         ]);
-        $job->update([
-            'status' => 'completed',
-            'completed_at' => now()->toDateTimeString(),
+        
+        \Illuminate\Support\Facades\Http::fake([
+            'https://api.openai.com/v1/embeddings' => \Illuminate\Support\Facades\Http::response(['data' => [['embedding' => array_fill(0, 1536, 0.0)]]]),
+            'https://api.openai.com/v1/chat/completions' => \Illuminate\Support\Facades\Http::response(['choices' => [['message' => ['content' => 'Review invite']]]]),
         ]);
+
+        $action = new \App\Modules\X171\Actions\JobStateAction();
+        $action->updateState($tenant['id'], $job->id, 1, 'completed');
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
