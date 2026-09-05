@@ -10,6 +10,7 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
 use App\Modules\X211\Events\ArEscalatedToHuman;
 use App\Modules\X211\Events\ArFeeApplied;
+use App\Modules\X211\Events\ArLateFeeTermSet;
 use App\Modules\X211\Events\ArPackaged;
 use App\Modules\X211\Events\ArPlanAccepted;
 use App\Modules\X211\Models\ArCollectionsPackage;
@@ -79,6 +80,31 @@ final class ArEngine
                 'applied_fee_cents' => $finalFee,
                 'total_late_fee_cents' => $state->late_fee_cents,
             ];
+        });
+    }
+
+    /**
+     * Write the agreement's late-fee term — the percent and the cap are the tenant's row (P-193); a fee is
+     * applied only inside it (G1-71). The cap is optional; the percent is not.
+     */
+    public function setLateFeeTerm(int $businessId, int $percent, ?int $capCents): ArPlanTerm
+    {
+        if ($percent < 1 || $percent > 100) {
+            throw new \InvalidArgumentException('A late fee is 1 to 100 percent of the invoice.');
+        }
+        if ($capCents !== null && $capCents < 1) {
+            throw new \InvalidArgumentException('The cap is an amount in cents, or none.');
+        }
+
+        return DB::transaction(function () use ($businessId, $percent, $capCents) {
+            $terms = ArPlanTerm::updateOrCreate(
+                ['business_id' => $businessId],
+                ['late_fee_percent' => $percent, 'late_fee_cap_cents' => $capCents]
+            );
+
+            Event::dispatch(new ArLateFeeTermSet($businessId, $percent, $capCents));
+
+            return $terms;
         });
     }
 

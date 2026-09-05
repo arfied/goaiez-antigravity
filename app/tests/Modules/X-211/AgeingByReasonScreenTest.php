@@ -7,10 +7,15 @@ namespace Tests\Modules\X211;
 use App\Models\User;
 use App\Modules\X121\Models\Person;
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X211\Events\ArFeeApplied;
+use App\Modules\X211\Events\ArLateFeeTermSet;
 use App\Modules\X211\Models\ArDunningAction;
+use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\OfflinePayment;
+use App\Modules\X211\Models\ReceivableState;
 use App\Modules\X211\Ui\AgeingByReason;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -112,5 +117,78 @@ class AgeingByReasonScreenTest extends TestCase
             ->assertSee("isn't in this account");
 
         $this->assertSame(1, OfflinePayment::where('business_id', $biz->id)->where('reference_number', 'CHK-123')->count());
+    }
+
+    /**
+     * G1-71 — the ageing screen is the fee door: a fee with no matching term is refused on the page, the term is written on the page (P-193), and a fee inside the term lands on the receivable
+     */
+    public function test_a_late_fee_is_refused_without_a_term_and_applied_inside_it(): void
+    {
+        Event::fake([ArFeeApplied::class, ArLateFeeTermSet::class]);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Late', 'last_name' => 'Payer']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-F1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(20),
+        ]);
+
+        $screen = Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->assertSee('no late-fee term in the agreement')
+            ->assertSee('INV-F1')
+            ->assertSeeHtml('wire:submit="applyLateFee('.$inv->id.')"')
+            ->call('applyLateFee', $inv->id)
+            ->assertSee('Enter the late fee in cents')
+            ->set('feeCents.'.$inv->id, 2500)
+            ->call('applyLateFee', $inv->id)
+            ->assertSee('No late-fee term in the agreement')
+            ->assertSee('a fee with no matching term is refused')
+            ->assertDontSee('late fee 25.00');
+
+        $this->assertSame(0, ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv->id)->count());
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
+        Event::assertNotDispatched(ArFeeApplied::class);
+
+        $screen->set('term.percent', 150)
+            ->call('saveTerm')
+            ->assertSee('between 1 and 100');
+
+        $this->assertSame(0, ArPlanTerm::where('business_id', $biz->id)->count());
+        Event::assertNotDispatched(ArLateFeeTermSet::class);
+
+        $screen->set('term.percent', 10)
+            ->set('term.cap', 2000)
+            ->call('saveTerm')
+            ->assertSee('Late-fee term saved: 10% of the invoice, capped at 20.00')
+            ->assertSee('10% of the invoice, capped at 20.00')
+            ->assertDontSee('no late-fee term in the agreement');
+
+        $terms = ArPlanTerm::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame(10, $terms->late_fee_percent);
+        $this->assertSame(2000, $terms->late_fee_cap_cents);
+        Event::assertDispatchedTimes(ArLateFeeTermSet::class, 1);
+
+        $screen->set('feeCents.'.$inv->id, 2500)
+            ->call('applyLateFee', $inv->id)
+            ->assertSee('Late fee of 10.00 applied to INV-F1')
+            ->assertSee('late fee 10.00');
+
+        $state = ReceivableState::where('business_id', $biz->id)->where('invoice_id', $inv->id)->firstOrFail();
+        $this->assertSame(1000, $state->late_fee_cents);
+        $this->assertSame('overdue', $state->status);
+        Event::assertDispatchedTimes(ArFeeApplied::class, 1);
+
+        Tenancy::forgetUser();
+        Livewire::test(AgeingByReason::class)->assertForbidden();
     }
 }

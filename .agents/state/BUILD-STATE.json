@@ -1347,6 +1347,10 @@
   {
    "at": "2026-09-05T06:13:29",
    "note": "MONEY-30: push 4235b454..db1f90c2 landed (db1f90c2 on origin/track/money) \u2014 G1-71 refused on a null term with the term a row, the :label sweep at 21 sites; now the refusal creates nothing, and the fee door and the term door on the ageing screen"
+  },
+  {
+   "at": "2026-09-05T06:31:35",
+   "note": "MONEY-30: the term is saved from the ageing screen and applied from the ageing screen, so a refused late fee can be fixed and retried in one place"
   }
  ],
  "decisions": [
