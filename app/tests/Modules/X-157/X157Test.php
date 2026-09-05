@@ -1375,4 +1375,77 @@ class X157Test extends TestCase
             chmod($sitesDir, 0700);
         }
     }
+
+    public function test_a_deploy_missing_its_seo_half_is_not_announced(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']],
+            'pixel_installed' => true,
+        ]);
+
+        $announced = false;
+
+        Event::listen(DeployCompleted::class, function () use (&$announced): void {
+            $announced = true;
+        });
+
+        $good = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $this->assertSame('deployed', $good['status'], 'the control deploy did not succeed — this test proves nothing');
+        $this->assertTrue($announced, 'the control deploy was not announced — this test proves nothing');
+
+        $goodHtml = Storage::disk('local')->get("sites/{$good['deploy_hash']}.html");
+        $this->assertStringContainsString('seo-meta-x176', $goodHtml);
+        $this->assertStringContainsString('application/ld+json', $goodHtml);
+        $this->assertStringContainsString('chat-widget-container', $goodHtml);
+
+        $announced = false;
+
+        try {
+            $this->deployAction->handle(
+                businessId: $biz->id,
+                edgeZoneId: $zone->id,
+                measuredTtfbMs: 120,
+                speedBudgetMs: 1500,
+                pageId: $page->id,
+                commitId: $commitId,
+                businessName: null
+            );
+        } catch (\RuntimeException) {
+            // the refusal; the four assertions below are the claim, not the exception
+        }
+
+        $this->assertFalse($announced, 'DeployCompleted fired for a site published without its SEO half');
+        $this->assertSame(1, Deployment::where('business_id', $biz->id)->count());
+        $this->assertSame(
+            ["sites/{$good['deploy_hash']}.html"],
+            Storage::disk('local')->files('sites'),
+            'a second artifact was written for a deploy carrying four of the seven elements'
+        );
+        $this->assertSame('deployed', Deployment::where('business_id', $biz->id)->sole()->status);
+    }
 }
