@@ -129,9 +129,3 @@ final class PricebookEngine
         });
     }
 
-    public function test_n_062_assertion(): bool
-    {
-        // Real constraint logic for test_n_062_assertion
-        return true;
-    }
-}

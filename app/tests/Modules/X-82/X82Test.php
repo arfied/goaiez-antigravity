@@ -117,4 +117,9 @@ class X82Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_engine_class_exists(): void
+    {
+        $this->assertTrue(class_exists(\App\Modules\X82\Domain\X82Engine::class));
+    }
 }
