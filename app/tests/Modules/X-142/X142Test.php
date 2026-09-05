@@ -231,6 +231,7 @@ class X142Test extends TestCase
             ->assertSee($sub->target_url)
             ->assertDontSee($sub->secret);
     }
+
     public function test_connect_your_ai_empty_when_all_tokens_are_revoked(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Connect AI Tenant', 'currency' => 'USD']);
