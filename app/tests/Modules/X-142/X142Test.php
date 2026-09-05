@@ -11,10 +11,12 @@ use App\Modules\X142\Actions\WebhookSubscribeAction;
 use App\Modules\X142\Events\McpInvoked;
 use App\Modules\X142\Events\TokenIssued;
 use App\Modules\X142\Events\TokenRevoked;
+use App\Modules\X142\Models\McpToken;
 use App\Modules\X142\Ui\ConnectYourAi;
 use App\Modules\X142\Ui\McpTokenRegistry;
 use App\Modules\X142\Ui\WebhooksView;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -119,7 +121,7 @@ class X142Test extends TestCase
             permissions: ['job.create', 'job.eta_notify']
         );
 
-        $this->assertSame(['job.create', 'job.eta_notify'], \App\Modules\X142\Models\McpToken::findOrFail($token->id)->permissions);
+        $this->assertSame(['job.create', 'job.eta_notify'], McpToken::findOrFail($token->id)->permissions);
     }
 
     /**
@@ -137,18 +139,18 @@ class X142Test extends TestCase
             permissions: ['job.create', 'job.eta_notify']
         );
 
-        $dbToken = \App\Modules\X142\Models\McpToken::findOrFail($token->id);
+        $dbToken = McpToken::findOrFail($token->id);
         $this->assertEquals('staff', $dbToken->role_scope);
         $this->assertSame(['job.create', 'job.eta_notify'], $dbToken->permissions);
 
         try {
             $this->tokenAction->revoke($biz->id + 100000, $token->id);
             $this->fail('revoke accepted a token id under a business id that does not own it');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             // the where('business_id') guard refused it
         }
 
-        $this->assertFalse((bool) \App\Modules\X142\Models\McpToken::findOrFail($token->id)->is_revoked);
+        $this->assertFalse((bool) McpToken::findOrFail($token->id)->is_revoked);
     }
 
     public function test_components_render(): void
