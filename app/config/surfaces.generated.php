@@ -95,7 +95,6 @@ return [
             ['label' => 'Timesheets', 'route' => 'x-168.timesheets', 'module' => 'X-168'],
             ['label' => 'Approvals', 'route' => 'x-168.approvals', 'module' => 'X-168'],
             ['label' => 'Own Hours', 'route' => 'x-168.own-hours', 'module' => 'X-168'],
-            ['label' => 'Customerfacing Portal', 'route' => 'x-172.customerfacing-portal', 'module' => 'X-172'],
             ['label' => 'Stafffacing Assistant Panel', 'route' => 'x-175.stafffacing-assistant-panel', 'module' => 'X-175'],
             ['label' => 'Customerfacing None', 'route' => 'x-175.customerfacing-none', 'module' => 'X-175'],
             ['label' => 'By Design', 'route' => 'x-175.by-design', 'module' => 'X-175'],

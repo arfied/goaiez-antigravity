@@ -17,9 +17,10 @@ class CustomerfacingPortalScreenTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
+        $token = 1;
 
-        $this->get(route('x-172.customerfacing-portal'))->assertOk();
+        $this->get(route('x-172.customerfacing-portal', ['token' => $token]))->assertOk();
 
-        Livewire::test(CustomerfacingPortal::class)->assertOk();
+        Livewire::test(CustomerfacingPortal::class, ['token' => $token])->assertOk();
     }
 }
