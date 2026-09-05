@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T05:59:24",
+ "updated": "2026-09-05T06:34:00",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1509,6 +1509,12 @@
    "module": "X-155",
    "chose": "a blank or whitespace payload value survives both the null coalescing operator and an array filter whose predicate is not null, so it overwrote a stored name or email on the accepted branch and displaced the visitor placeholder on both branches. one helper rather than a guard per field because the same claim applies to four value sites in two branches and the phone guard already written for it. the helper is typed mixed because the payload array is untyped and a string type would turn a non string value into a type error. rejected alternatives: empty(), and a validator rejection of a blank field.",
    "at": "2026-09-05T05:59:24",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "The published page emitted a form marker with no action and no method, so a visitor could not submit it and the capture action had no caller anywhere in the application. The route lives in X-157 because the deploy hash namespace, the deployment lookup and the two refusals are X-157s, and X-155 owns only what happens to the payload. A business with no form definition keeps the plain marker because there is no form, so there is no address, and writing one would name a row that does not exist. A rolled back deployment refuses the post because the read path already refuses it and a site that is not serving must not be accepting. Rejected alternatives: registering the route in X-155 (which duplicates both guards and makes X-155 import X-157s Deployment model), and emitting a placeholder form id when the business has no form definition.",
+   "at": "2026-09-05T06:34:00",
    "ruling": "R245"
   }
  ]
