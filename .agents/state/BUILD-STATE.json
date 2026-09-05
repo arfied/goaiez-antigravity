@@ -1400,6 +1400,12 @@
    "chose": "a non-terminal approval persists its comment, appended and timestamped; status stays pending and decided_at stays null (R245)",
    "at": "2026-09-05T07:59:40",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)",
+   "at": "2026-09-05T07:37:41",
+   "ruling": "R245"
   }
  ],
  "notes": [
