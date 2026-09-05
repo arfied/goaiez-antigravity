@@ -202,14 +202,19 @@ class X01Test extends TestCase
         $floor = $this->manager->scoreLead($biz->id, $p->id, 0);
         $this->assertSame('F', $floor->grade, 'a zero rating grades F, it does not default to A');
 
+        $other = $this->createContact->handle($biz->id, 'Never Scored', '+15125550157');
         $before = LeadScore::where('business_id', $biz->id)->count();
+
         try {
-            $this->manager->scoreLead($biz->id, $p->id, 101);
+            $this->manager->scoreLead($biz->id, $other->id, 101);
             $this->fail('a rating above 100 must be refused');
         } catch (LeadRatingOutOfRangeRefused $e) {
             $this->assertSame('LEAD_RATING_OUT_OF_RANGE', LeadRatingOutOfRangeRefused::REFUSAL_CODE);
         }
-        $this->assertSame($before, LeadScore::where('business_id', $biz->id)->count(), 'a refused rating writes no row');
+
+        $this->assertSame($before, LeadScore::where('business_id', $biz->id)->count(), 'a refused rating creates no row');
+        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('person_id', $other->id)->count(), 'the refused person has no lead_score at all');
+        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('lead_rating', 101)->count(), 'no row anywhere carries the refused rating');
     }
 
     /**
