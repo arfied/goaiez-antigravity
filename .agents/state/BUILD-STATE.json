@@ -1359,6 +1359,18 @@
   {
    "at": "2026-09-05T12:03:53",
    "note": "MONEY-32: push db1f90c2..761178a4 landed (761178a4 on origin/track/money) \u2014 the ageing screen's 403 asserted before the guard, the 06:31:52 decision line committed"
+  },
+  {
+   "at": "2026-09-05T12:47:45",
+   "note": "X-201 anchor UNRESOLVED \u2014 no runtime proof: Stripe refuses server-side raw-card tokenisation on this account. POST /v1/tokens with card 4000 0000 0000 0259 answers invalid_request_error: 'Sending credit card numbers directly to the Stripe API is generally unsafe. We suggest you use test tokens that map to the test card you are using... To enable testing raw card data APIs, see https://support.stripe.com/questions/enabling-access-to-raw-card-data-apis.' It is an ACCOUNT SETTING, not a code path: the dispute door cannot be reached from this track until the owner enables raw card data APIs or Track 2 ships Stripe.js. Measured MONEY-33, 2026-09-05."
+  },
+  {
+   "at": "2026-09-05T12:47:45",
+   "note": "X-120 anchor UNRESOLVED \u2014 no runtime proof: Stripe refuses server-side raw-card tokenisation on this account. POST /v1/tokens with card 4000 0000 0000 0259 answers invalid_request_error: 'Sending credit card numbers directly to the Stripe API is generally unsafe. We suggest you use test tokens that map to the test card you are using... To enable testing raw card data APIs, see https://support.stripe.com/questions/enabling-access-to-raw-card-data-apis.' It is an ACCOUNT SETTING, not a code path: the dispute door cannot be reached from this track until the owner enables raw card data APIs or Track 2 ships Stripe.js. Measured MONEY-33, 2026-09-05."
+  },
+  {
+   "at": "2026-09-05T12:47:45",
+   "note": "X-173 anchor UNRESOLVED \u2014 needs a QuickBooks or Xero credential that does not exist in this checkout."
   }
  ],
  "decisions": [
