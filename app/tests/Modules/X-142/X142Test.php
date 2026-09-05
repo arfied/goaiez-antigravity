@@ -285,6 +285,8 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Connect AI Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
 
         $token = $this->tokenAction->issue(
             businessId: $biz->id,
@@ -304,6 +306,8 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Connected AI Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
 
         $token = $this->tokenAction->issue(
             businessId: $biz->id,
