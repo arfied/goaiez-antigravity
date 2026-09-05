@@ -401,7 +401,13 @@ class X205Test extends TestCase
         ]);
 
         DB::statement("SET app.business_id = '{$bizA->id}'");
-        $results = Affiliate::where('business_id', $bizA->id)->where('affiliate_code', 'SHARED-CODE')->get();
-        $this->assertCount(1, $results);
+        $resultsA = Affiliate::where('business_id', $bizA->id)->where('affiliate_code', 'SHARED-CODE')->get();
+        $this->assertCount(1, $resultsA);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $resultsB = Affiliate::where('business_id', $bizB->id)->where('affiliate_code', 'SHARED-CODE')->get();
+        $this->assertCount(1, $resultsB);
+
+        $this->assertNotEquals($resultsA->first()->id, $resultsB->first()->id);
     }
 }
