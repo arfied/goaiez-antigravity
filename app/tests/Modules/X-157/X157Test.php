@@ -1488,6 +1488,7 @@ class X157Test extends TestCase
         $this->assertStringContainsString('rel="canonical"', $html, 'the listener deploy is missing the canonical link');
         $this->assertStringContainsString('application/ld+json', $html, 'the listener deploy is missing the schema block');
     }
+
     public function test_a_second_pages_publish_leaves_the_first_page_live(): void
     {
         Storage::fake('local');
