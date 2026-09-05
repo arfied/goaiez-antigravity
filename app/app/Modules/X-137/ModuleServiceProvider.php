@@ -25,5 +25,17 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-137.attribution-row', AttributionRow::class);
             Livewire::component('x-137.dni-pool-utilisation', DniPoolUtilisation::class);
         }
+
+        \Illuminate\Support\Facades\Route::get('/l/{business}/{code}', function (string $business, string $code, \Illuminate\Http\Request $request) {
+            $business = (int) $business;
+            \Illuminate\Support\Facades\DB::statement("SELECT set_config('app.business_id', ?, false)", [(string) $business]);
+
+            return app(\App\Modules\X137\Actions\LinkRedirectAction::class)->handle(
+                $business, 
+                $code, 
+                $request->ip(), 
+                $request->userAgent()
+            );
+        })->whereNumber('business');
     }
 }
