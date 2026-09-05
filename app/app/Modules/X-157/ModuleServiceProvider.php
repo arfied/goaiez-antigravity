@@ -6,7 +6,7 @@ namespace App\Modules\X157;
 
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Ui\EdgeStatusPer;
-use Illuminate\Support\Facades\DB;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
@@ -30,7 +30,7 @@ final class ModuleServiceProvider extends ServiceProvider
 
         Route::get('/sites/{business}/{deploy_hash}', function (string $business, string $deployHash) {
             $business = (int) $business;
-            DB::statement("SELECT set_config('app.business_id', ?, false)", [(string) $business]);
+            Tenancy::set($business);
 
             $deployment = Deployment::where('business_id', $business)->where('deploy_hash', $deployHash)->firstOrFail();
             abort_if($deployment->status !== 'deployed', 404);
