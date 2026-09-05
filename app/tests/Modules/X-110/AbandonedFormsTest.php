@@ -98,6 +98,8 @@ class AbandonedFormsTest extends TestCase
             ->call('recover', $event->id)
             ->assertSee('Send pending');
 
-        Event::assertNotDispatched('send.requested');
+        Event::assertNotDispatched(\App\Modules\CSms\Events\SendRequested::class);
+        Event::assertNotDispatched(\App\Modules\X127\Events\SendRequested::class);
+        Event::assertNotDispatched(\App\Modules\X186\Events\SendRequested::class);
     }
 }
