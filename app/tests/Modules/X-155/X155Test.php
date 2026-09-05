@@ -119,7 +119,65 @@ class X155Test extends TestCase
      */
     public function test_g2_17_multi_step_logic(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G2-17 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G2-17 Form',
+            'slug' => 'g2-17',
+            'steps' => [
+                ['step' => 1, 'fields' => ['first_name', 'phone'], 'required' => ['phone']],
+                ['step' => 2, 'fields' => ['service_address', 'unit_count'], 'required' => ['service_address']],
+            ],
+            'schema' => [],
+        ]);
+
+        // (a) the refusal
+        $res1 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['first_name' => 'Dana', 'phone' => '+15551110001']
+        );
+
+        $this->assertEquals('rejected', $res1['status']);
+        $this->assertEquals('incomplete_step', $res1['reason']);
+        $this->assertEquals(2, $res1['step']);
+        $this->assertEquals(['service_address'], $res1['missing']);
+
+        $this->assertEquals(0, FormSubmission::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15551110001')->count());
+
+        // (b) the pass
+        $res2 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['first_name' => 'Dana', 'phone' => '+15551110001', 'service_address' => '123 Main St']
+        );
+
+        $this->assertEquals('captured', $res2['status']);
+        
+        $submission = FormSubmission::find($res2['submission_id']);
+        $this->assertNotNull($submission->person_id);
+
+        // (c) the zero
+        $form2 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G2-17 Form Zero',
+            'slug' => 'g2-17-zero',
+            'steps' => [
+                ['step' => 1, 'fields' => ['phone', 'unit_count'], 'required' => ['unit_count']],
+            ],
+            'schema' => [],
+        ]);
+
+        $res3 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form2->id,
+            payload: ['phone' => '+15551110002', 'unit_count' => '0']
+        );
+
+        $this->assertEquals('captured', $res3['status']);
     }
 
     /**
