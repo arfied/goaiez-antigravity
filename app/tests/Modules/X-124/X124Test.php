@@ -15,6 +15,7 @@ use App\Modules\X124\Events\AssistantRecommended;
 use App\Modules\X124\Events\AssistantRequest;
 use App\Modules\X124\Models\AssistantSession;
 use App\Modules\X124\Models\AssistantUnsupported;
+use App\Modules\X124\Ui\ChatDockEvery;
 use App\Modules\X124\Ui\PreviewCard;
 use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use App\Support\Tenancy;
@@ -230,7 +231,7 @@ class X124Test extends TestCase
 
     public function test_chat_dock_renders_default_state(): void
     {
-        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class)
+        Livewire::test(ChatDockEvery::class)
             ->assertSee('Copilot Assistant Chat Dock')
             ->assertSee('Ask me anything about your business.');
     }
@@ -240,7 +241,7 @@ class X124Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class, ['businessId' => $biz->id])
+        Livewire::test(ChatDockEvery::class, ['businessId' => $biz->id])
             ->set('utterance', 'show invoices')
             ->call('ask')
             ->assertSee('show invoices')
@@ -252,13 +253,13 @@ class X124Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz Unsupported', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        Livewire::test(\App\Modules\X124\Ui\ChatDockEvery::class, ['businessId' => $biz->id])
+        Livewire::test(ChatDockEvery::class, ['businessId' => $biz->id])
             ->set('utterance', 'Fly me to Mars')
             ->call('ask')
             ->assertSee('Fly me to Mars')
             ->assertSee('I can\'t do that yet')
             ->assertSeeHtml('data-status="unsupported"');
-        
+
         $this->assertDatabaseHas('assistant_unsupported', [
             'business_id' => $biz->id,
             'utterance' => 'Fly me to Mars',
