@@ -121,7 +121,8 @@ class X156ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('HubSpot CRM')
             ->assertSee('5 records')
-            ->assertSee('2 runs');
+            ->assertSee('2 runs')
+            ->assertSee('5 records across 2 runs');
     }
 
     public function test_ingest_volume_by_pause(): void

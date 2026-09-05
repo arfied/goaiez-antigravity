@@ -15,7 +15,7 @@
             <x-ui.empty-state heading="No ingest runs yet" />
         @else
             <div class="mb-4">
-                <x-ui.gauge :value="$tenantTotalRecords" :max="$tenantTotalRecords" label="{{ $tenantTotalRecords }} records across {{ $tenantTotalRuns }} runs" />
+                <p class="text-sm font-medium text-gray-700">{{ $tenantTotalRecords }} records across {{ $tenantTotalRuns }} runs</p>
             </div>
 
             <div class="space-y-4" wire:loading.class="opacity-50">
