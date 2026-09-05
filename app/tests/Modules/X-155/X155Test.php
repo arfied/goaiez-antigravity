@@ -156,7 +156,7 @@ class X155Test extends TestCase
         );
 
         $this->assertEquals('captured', $res2['status']);
-        
+
         $submission = FormSubmission::find($res2['submission_id']);
         $this->assertNotNull($submission->person_id);
 
