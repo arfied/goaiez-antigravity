@@ -278,6 +278,7 @@ class X202Test extends TestCase
 
     /**
      * [G21-07] two buttons, no login
+     * UNRESOLVED — no route consumes magic_url
      */
     public function test_g21_07_no_login_two_buttons(): void
     {
