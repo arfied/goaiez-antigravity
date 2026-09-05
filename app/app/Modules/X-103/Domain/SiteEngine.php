@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X103\Domain;
 
 use App\Modules\X103\Events\ApprovalRequested;
+use App\Modules\X103\Events\PagePublished;
+use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Funnel;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
@@ -38,8 +40,11 @@ final class SiteEngine
                 'current_version_id' => $version->id,
             ]);
 
-            Event::dispatch(new \App\Modules\X103\Events\PagePublished($businessId, $page->id, $commitId));
-            Event::dispatch(new \App\Modules\X103\Events\SitePublished($businessId, $page->id, $commitId));
+            require_once __DIR__.'/../Events/PagePublished.php';
+            require_once __DIR__.'/../Events/SitePublished.php';
+
+            Event::dispatch(new PagePublished($businessId, $page->id, $commitId));
+            Event::dispatch(new SitePublished($businessId, $page->id, $commitId));
 
             return [
                 'status' => 'published',
