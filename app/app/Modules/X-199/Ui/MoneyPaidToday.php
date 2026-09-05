@@ -24,7 +24,7 @@ class MoneyPaidToday extends Component
         try {
             $invoice = Invoice::where('business_id', Tenancy::idOrFail())
                 ->where('status', 'paid')
-                ->where('updated_at', '>=', now()->startOfDay())
+                ->where('paid_at', '>=', now()->startOfDay())
                 ->findOrFail($invoiceId);
 
             $this->explainedInvoiceId = $invoice->id;
@@ -44,8 +44,8 @@ class MoneyPaidToday extends Component
 
         $invoices = Invoice::where('business_id', Tenancy::id())
             ->where('status', 'paid')
-            ->where('updated_at', '>=', now()->startOfDay())
-            ->orderByDesc('updated_at')
+            ->where('paid_at', '>=', now()->startOfDay())
+            ->orderByDesc('paid_at')
             ->get();
 
         $totalCents = $invoices->sum('total_cents');

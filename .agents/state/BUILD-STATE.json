@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T01:30:36",
+ "updated": "2026-09-05T02:04:48",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1327,6 +1327,10 @@
   {
    "at": "2026-09-05T01:30:20",
    "note": "MONEY-25: push ed3051fd..568d4daa landed (568d4daa on origin/track/money); X-117 checkout-block \u2014 the fresh-authorisation door, stock off at paid, one authorisation pays once; X-173 conflicts-list \u2014 a person names the account, uncategorised or blank is not a resolution, never auto-closed; X-173 connection-mapping \u2014 one category maps to one account per connection, the OAuth door is a finished waiting state; X-173 sync-error-rate \u2014 conflicts over every line seen, nothing seen is unknown not 0%. Recorded in MONEY-25b: run 34 journaled nothing (M25-A)"
+  },
+  {
+   "at": "2026-09-05T02:01:40",
+   "note": "MONEY-26: push 568d4daa..350021d1 landed (350021d1 on origin/track/money) \u2014 MONEY-25's four screens finished on the kit, the four decisions recorded; now the remap proof and X-199 paid_at"
   }
  ],
  "decisions": [
@@ -1466,6 +1470,12 @@
    "module": "X-173",
    "chose": "X-173 \u2014 the sync error rate counts every line the run saw: AccountingSyncEngine::rateOf is conflicts over records_synced + conflicts_count and null \u2014 'nothing to sync', never a healthy 0% \u2014 when nothing was seen; errorRate(businessId, runId) reads a run and delegates to it; the overall line is rateOf over the tenant's sums (\u00a730.5 a failed line is a dead letter not a silent gap; the tracker's UNKNOWN-not-STALE invariant); a run's conflicts open under its row in-page because routing is Track 1's. Test: SyncErrorRateScreenTest",
    "at": "2026-09-05T01:30:36",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "X-199 \u2014 paid today is the recorded payment time: invoices.paid_at (nullable, indexed) is stamped by InvoiceEngine::recordPayment in the same write that sets status paid, and MoneyPaidToday reads and orders by it \u2014 an old paid invoice edited today is not paid today, and a paid row with null paid_at predates the column and is not counted; the screen reads, it never writes (\u00a758.4). Test: MoneyPaidTodayScreenTest",
+   "at": "2026-09-05T02:04:48",
    "ruling": "R245"
   }
  ]

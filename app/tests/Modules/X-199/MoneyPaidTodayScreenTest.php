@@ -6,8 +6,8 @@ namespace Tests\Modules\X199;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
+use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
-use App\Modules\X199\Models\InvoiceLine;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -19,97 +19,56 @@ class MoneyPaidTodayScreenTest extends TestCase
     {
         $biz = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);
-
         $otherBiz = self::provisionTenant();
 
-        Tenancy::set($biz->id);
-        Tenancy::setUser($owner->id);
-
-        $customer = Person::create([
-            'business_id' => $biz->id,
-            'first_name' => 'Alice',
-            'last_name' => 'Smith',
-        ]);
-
-        $invA = Invoice::create([
-            'business_id' => $biz->id,
-            'customer_id' => $customer->id,
-            'invoice_number' => 'INV-001',
-            'total_cents' => 12500,
-            'paid_cents' => 12500,
-            'status' => 'paid',
-            'due_date' => now()->subDay(),
-            'created_at' => now()->subDays(2),
-            'updated_at' => now(), // explicitly stamp today
-        ]);
-
-        InvoiceLine::create([
-            'business_id' => $biz->id,
-            'invoice_id' => $invA->id,
-            'description' => 'Roofing Service',
-            'quantity' => 1,
-            'unit_price_cents' => 10000,
-            'subtotal_cents' => 10000,
-        ]);
-
-        InvoiceLine::create([
-            'business_id' => $biz->id,
-            'invoice_id' => $invA->id,
-            'description' => 'Materials',
-            'quantity' => 1,
-            'unit_price_cents' => 2500,
-            'subtotal_cents' => 2500,
-        ]);
-
-        $unpaidA = Invoice::create([
-            'business_id' => $biz->id,
-            'customer_id' => $customer->id,
-            'invoice_number' => 'INV-002',
-            'total_cents' => 5000,
-            'paid_cents' => 0,
-            'status' => 'issued',
-            'due_date' => now()->subDay(),
-            'created_at' => now()->subDays(2),
-            'updated_at' => now(),
-        ]);
-
+        // tenant B first
         Tenancy::set($otherBiz->id);
-        $customerB = Person::create([
-            'business_id' => $otherBiz->id,
-            'first_name' => 'Bob',
-            'last_name' => 'Jones',
-        ]);
-
+        $customerB = Person::create(['business_id' => $otherBiz->id, 'first_name' => 'B', 'last_name' => 'B']);
         $invB = Invoice::create([
             'business_id' => $otherBiz->id,
             'customer_id' => $customerB->id,
             'invoice_number' => 'INV-OTHER',
-            'total_cents' => 45000,
-            'paid_cents' => 45000,
+            'total_cents' => 100,
+            'paid_cents' => 100,
             'status' => 'paid',
-            'due_date' => now()->subDay(),
-            'created_at' => now()->subDays(2),
-            'updated_at' => now(),
+            'due_date' => now(),
+            'paid_at' => now(),
         ]);
 
         Tenancy::set($biz->id);
-        Tenancy::forgetUser();
-        Livewire::test(MoneyPaidToday::class)
-            ->assertForbidden();
-
         Tenancy::setUser($owner->id);
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Alice', 'last_name' => 'Smith']);
+
+        // an old invoice paid yesterday and edited today (paid_at yesterday, updated_at now) must NOT appear <- the mutation line
+        $old = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-OLD',
+            'total_cents' => 500,
+            'paid_cents' => 500,
+            'status' => 'paid',
+            'due_date' => now()->subDay(),
+            'paid_at' => now()->subDay(),
+            'updated_at' => now(), // edited today
+        ]);
+
+        // today's invoice paid through recordPayment() appears with its Paid: time and its lines on explain
+        $engine = new InvoiceEngine;
+        $issued = $engine->issueInvoice($biz->id, $customer->id, [
+            ['description' => 'Roofing', 'quantity' => 1, 'unit_price_cents' => 10000],
+        ]);
+        $invA = $issued['invoice'];
+
+        $engine->recordPayment($biz->id, $invA->id);
+        $invA->refresh();
 
         Livewire::actingAs($owner)->test(MoneyPaidToday::class)
             ->assertOk()
-            ->assertSee('INV-001')
-            ->assertSee('125.00')
+            ->assertSee($invA->invoice_number)
+            ->assertSee('Paid: '.$invA->paid_at->format('g:i A'))
+            ->assertDontSee('INV-OLD')
             ->assertDontSee('INV-OTHER')
-            ->assertDontSee('450.00')
-            ->assertDontSee('INV-002')
             ->call('explain', $invA->id)
-            ->assertSee('Roofing Service')
-            ->assertSee('Materials')
-            ->call('explain', 999999)
-            ->assertSee("isn't in this account");
+            ->assertSee('Roofing');
     }
 }

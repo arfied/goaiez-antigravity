@@ -120,6 +120,7 @@ final class InvoiceEngine
             $invoice->update([
                 'paid_cents' => $invoice->paid_cents + $payAmount,
                 'status' => 'paid',
+                'paid_at' => now(),
             ]);
 
             // If there were overflow charges for this invoice, reverse them (TEST ANCHOR)
