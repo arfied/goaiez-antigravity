@@ -53,7 +53,7 @@
                             @if($recentEvents->count() > 0)
                                 <p class="text-sm text-ink-2">
                                     We see you. {{ $recentEvents->count() }} {{ \Illuminate\Support\Str::plural('event', $recentEvents->count()) }} in the last 60 seconds.
-                                    <button type="button" wire:click="$toggle('showEvents')" class="text-ink underline ml-1 hover:text-brand">
+                                    <button type="button" wire:click="toggleEvents" class="text-ink underline ml-1 hover:text-brand">
                                         {{ $showEvents ? 'Hide' : 'View' }}
                                     </button>
                                 </p>

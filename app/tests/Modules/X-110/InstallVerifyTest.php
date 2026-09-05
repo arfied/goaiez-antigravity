@@ -50,7 +50,7 @@ class InstallVerifyTest extends TestCase
         Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
             ->assertSee('1 event in the last 60 seconds')
             ->assertDontSee('page_view')
-            ->set('showEvents', true)
+            ->call('toggleEvents')
             ->assertSee('page_view');
     }
 

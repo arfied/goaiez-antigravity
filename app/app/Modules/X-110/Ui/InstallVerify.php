@@ -28,6 +28,11 @@ class InstallVerify extends Component
 
     public bool $showEvents = false;
 
+    public function toggleEvents(): void
+    {
+        $this->showEvents = ! $this->showEvents;
+    }
+
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId;
