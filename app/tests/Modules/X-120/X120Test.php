@@ -104,4 +104,21 @@ class X120Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_card_present_action_derives_brand(): void
+    {
+        $action = new \App\Modules\X120\Actions\CardPresentAction();
+        
+        $visa = $action->handle('4242424242424242', 12, 2030, 'Test User');
+        $this->assertEquals('visa', $visa['brand']);
+
+        $mastercard = $action->handle('5555555555554444', 12, 2030, 'Test User');
+        $this->assertEquals('mastercard', $mastercard['brand']);
+
+        $amex = $action->handle('378282246310005', 12, 2030, 'Test User');
+        $this->assertEquals('amex', $amex['brand']);
+
+        $discover = $action->handle('6011111111111117', 12, 2030, 'Test User');
+        $this->assertEquals('card', $discover['brand']);
+    }
 }

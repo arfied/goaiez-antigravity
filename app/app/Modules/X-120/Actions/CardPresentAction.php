@@ -40,7 +40,7 @@ final class CardPresentAction
             '4' => 'visa',
             '5' => 'mastercard',
             '3' => 'amex',
-            default => 'card',
+            '0', '1', '2', '6', '7', '8', '9' => 'card',
         };
 
         return [
