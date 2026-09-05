@@ -67,4 +67,14 @@ class ConsoleTest extends TestCase
             ->call('resolveTicket', $ticket->id)
             ->assertDontSee('Resolve this ticket');
     }
+
+    public function test_renders_error_panel(): void
+    {
+        $business = Business::factory()->create();
+        Tenancy::set((int) $business->id);
+
+        Livewire::test(Console::class)
+            ->set('errorMessage', 'Simulated console failure')
+            ->assertSee('Simulated console failure');
+    }
 }

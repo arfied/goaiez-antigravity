@@ -17,6 +17,8 @@ class Console extends Component
     #[Locked]
     public int $businessId = 0;
 
+    public ?string $errorMessage = null;
+
     public function mount(): void
     {
         $this->businessId = Tenancy::idOrFail();
@@ -36,15 +38,21 @@ class Console extends Component
 
     public function render()
     {
-        $alerts = OperatorAlert::where('business_id', $this->businessId)
-            ->where('status', 'open')
-            ->orderBy('id', 'desc')
-            ->get();
+        try {
+            $alerts = OperatorAlert::where('business_id', $this->businessId)
+                ->where('status', 'open')
+                ->orderBy('id', 'desc')
+                ->get();
 
-        $tickets = TenantTicket::where('business_id', $this->businessId)
-            ->where('status', 'open')
-            ->orderBy('id', 'desc')
-            ->get();
+            $tickets = TenantTicket::where('business_id', $this->businessId)
+                ->where('status', 'open')
+                ->orderBy('id', 'desc')
+                ->get();
+        } catch (\Exception $e) {
+            $this->errorMessage = 'Failed to load console data';
+            $alerts = collect();
+            $tickets = collect();
+        }
 
         return view('x-111::console', [
             'alerts' => $alerts,

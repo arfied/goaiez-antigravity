@@ -8,7 +8,10 @@
             <x-ui.skeleton label="Loading console..." />
         </div>
 
-        <div class="mt-4">
+        @if($errorMessage)
+            <x-ui.error-panel heading="We could not load the console.">{{ $errorMessage }}</x-ui.error-panel>
+        @else
+            <div class="mt-4">
             <h4 class="font-semibold mb-2">Operator Alerts</h4>
             @if($alerts->isEmpty())
                 <x-ui.empty-state heading="No alerts" description="No active operator alerts." />
@@ -47,5 +50,6 @@
                 </ul>
             @endif
         </div>
+        @endif
     </div>
 </div>
