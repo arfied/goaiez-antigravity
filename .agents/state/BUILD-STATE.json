@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T13:13:29",
+ "updated": "2026-09-05T17:09:22",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1505,6 +1505,12 @@
    "chose": "X-163 owns the price_book_items table; PriceBook is a reader, not the sole owner.",
    "at": "2026-09-05T13:13:29",
    "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "ssl_installed belongs on PageVersion via SiteEngine::publish, mirroring pixel_installed",
+   "at": "2026-09-05T17:09:22",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1555,6 +1561,10 @@
   {
    "at": "2026-09-05T17:02:35",
    "note": "CORRECTION to 2026-09-05T16:31:57 note: The finding stands, only the line numbers were wrong. The two wrong numbers were 346 and 354. The two right ones are 347 and 358."
+  },
+  {
+   "at": "2026-09-05T17:12:44",
+   "note": "Item 4 diagnosis: X-204 is right for the fixture's intent (a fresh customer), but legacy correctly reads the leaked database state. 1. The legacy engine becomes OptedOut because TwelveJourneysTest.php:198 (in a previous test) sends a STOP, which calls InboundMessages.php:1037 to write a platform-scoped OptOut. Because JourneyHarness.php:136 hardcodes '+15551239999', this platform-wide refusal bleeds into the later test across tenants. 2. X-204 grants the permit at app/Modules/X-204/Domain/ConsentService.php:65 because it checks tenant-scoped suppressions (which are empty for the new tenant) and SendRequestedListener.php:33 blindly passes 'transactional' to it. This is a fixture artifact caused by test state bleed on a shared phone number, not a production disagreement."
   }
  ]
 }
