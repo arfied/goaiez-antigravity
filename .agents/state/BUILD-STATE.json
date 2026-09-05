@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T23:10:49",
+ "updated": "2026-09-04T23:29:34",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1490,6 +1490,18 @@
    "module": "X-01",
    "chose": "G2-38: a lead_rating outside 0..100 is refused with LEAD_RATING_OUT_OF_RANGE before updateOrCreate rather than clamped, so a refused rating leaves no row; the confidence half of P-147 is NOT in this wave because lead_scores has no source column and no migration is written here",
    "at": "2026-09-04T23:10:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "G2-12: SchedulingEngine::getAvailableSlots reads availability_rules and treats is_blackout=true rows as SUBTRACTIVE overlays on the standard [9,11,14,16] ladder, matched on Carbon dayOfWeekIso (1=Monday..7=Sunday, the migration's own convention) over a half-open [start_time, end_time) hour window; the rejected alternative was making is_blackout=false rows the authoritative positive availability window, which would return zero slots for every tenant alive today because no tenant has a single row, reddening five live assertions in X108Test",
+   "at": "2026-09-04T23:29:30",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "G2-12: a blackout applies to the whole business and resource_id is ignored, and the holiday-override half of G2-12/G18-07 is NOT built because availability_rules has day_of_week and no date column, so a one-off dated holiday has nowhere to be stored; no migration is written in this wave",
+   "at": "2026-09-04T23:29:34",
    "ruling": "R245"
   }
  ]
