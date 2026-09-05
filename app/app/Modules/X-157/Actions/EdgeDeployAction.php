@@ -101,7 +101,8 @@ final class EdgeDeployAction
                 $version = PageVersion::where('commit_id', $commitId)->first();
                 if ($version) {
                     if ($version->pixel_installed) {
-                        $html .= "<script id=\"x110-pixel\" src=\"/pixel.js\"></script>\n";
+                        $pixelSrc = route('pixel.bundle.pointer', absolute: false);
+                        $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\"></script>\n";
                     }
                     $blockTypes = is_array($version->content_blocks)
                         ? array_column($version->content_blocks, 'type')
