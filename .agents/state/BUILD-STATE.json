@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T03:04:07",
+ "updated": "2026-09-05T03:20:06",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1568,6 +1568,12 @@
    "module": "X-108",
    "chose": "offer-not-door: the VIP filter narrows $offeredSlots (offer policy) while settled arms continue out of $availableSlots (capacity). A non-member booking 09:00 is evidence, not a bug. Rejected symmetry with S-42/S-43 because VIP is offer policy, not capacity. Consequence: non-member can book the window withheld from them. This closes the door-disagreement series. The slot-lock arm stays UNRESOLVED. S-39, S-40, S-41, S-42, S-43 are untouched.",
    "at": "2026-09-05T03:04:07",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-125",
+   "chose": "Use a backed enum cast for FlowRun status and exhaustive match to fix boundary violation. Rejected: match (true), array lookup (teach checker to be noise), reusing AutomationRunStatus (different table's lifecycle). Consequence: a flow_runs row with a status outside the three cases now throws when the Runs screen renders its pill, where it used to show a grey Unknown pill.",
+   "at": "2026-09-05T03:20:06",
    "ruling": "R245"
   }
  ]
