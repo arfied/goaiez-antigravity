@@ -1335,6 +1335,10 @@
   {
    "at": "2026-09-05T02:40:17",
    "note": "MONEY-27: push 350021d1..e93d89b7 landed (e93d89b7 on origin/track/money) \u2014 paid today finished: the 403, the refusal path and the error panel asserted; now the X-198 backfill that unblocks the dev migrate and the three zero-kit X-199 screens"
+  },
+  {
+   "at": "2026-09-05T03:02:31",
+   "note": "MONEY-28: push e93d89b7..e6607e9f landed (e6607e9f on origin/track/money) \u2014 X-199 declines, invoices, unpaid on the kit; now the X-198 backfill under NO FORCE, the unpaid proof, the discrepancies apostrophe, and C-Billing credits and dunning-board on the kit"
   }
  ],
  "decisions": [
