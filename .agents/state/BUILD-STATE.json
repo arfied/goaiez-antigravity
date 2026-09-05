@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T21:32:13",
+ "updated": "2026-09-04T22:17:53",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1347,6 +1347,18 @@
    "module": "X-137",
    "chose": "There is one public redirect endpoint in this application and it is ShortLinkController. A module does not add a second door onto a table the platform already serves; it tests the door that exists. A capability about the redirect is proved against GET /{token}, where the hop actually happens. Rejected: keep /l/{business}/{code} and add the four missing refusals to it \u2014 refused, that is a second implementation of an endpoint whose whole value is that its refusals are uniform, and two of them will drift. Rejected: point LinkRedirectAction at ShortLinkClicks::record() so at least the click lands in the table with readers \u2014 refused, that service is a chokepoint with a lint behind it and X-137 is not a caller it was written for; the caller belongs behind the service, which is what using the existing controller means.",
    "at": "2026-09-04T21:32:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "The test proves the widget is absent from the built site, rather than proving the plugin path which belongs to X-104.",
+   "at": "2026-09-04T21:55:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "module:scaffold's header harvest stops at the first `\u00b7` that follows the closing backtick of a declaration span, so X-103's @emits list was truncated to `approval.requested` \u2014 the four remaining names sat outside the backticks, behind a \u2b50\u2b50\u2b50 footnote wedged inside the list. The closing backtick moved to after `optimiser.proposed` and the footnote after it; same five emits, same four consumes, nothing added or removed. The manifest then regenerated with all five. Patching ModuleScaffoldCommand::parseHeaders() to skip footnote spans was rejected \u2014 refused, that is the generator half and app/app/Console/Commands/ModuleScaffoldCommand.php is not this track's file; and the plan's own 2026-08-27 note on this same line already rules that prose inside a declaration span is the defect, so the document is what was wrong.",
+   "at": "2026-09-04T22:17:53",
    "ruling": "R245"
   }
  ]
