@@ -790,3 +790,4 @@
 - `2026-09-05T14:37:55` (R245) X-105 — what the board reads; that halt and demo-request are its only writes and both go through the module actions; that an id is pre-scoped so a foreign id never reaches the action; that advancing a stage is refused for want of an action
 - `2026-09-05T14:38:01` UNRESOLVED AdvanceOutreachStageAction does not exist, so the board does not offer a control to advance a stage X-105 - 
 - `2026-09-05T14:58:53` UNRESOLVED anchor X-105 - AdvanceOutreachStageAction does not exist, so the board offers no control to advance a stage; halt and demo-request are the only two writes the module's actions expose
+- `2026-09-05T15:32:08` (R245) X-196 — Built the ExtensionPopup screen using existing UI components like empty-state, row-list, and row, supporting both empty and active states with scan and inject actions.
