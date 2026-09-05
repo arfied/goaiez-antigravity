@@ -2,7 +2,12 @@
 
 namespace Tests\Modules\X209;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use App\Modules\X209\Actions\FixerCommandAction;
+use App\Modules\CSms\Events\SendRequested;
 
 class StaffDeskTest extends TestCase
 {
@@ -17,6 +22,21 @@ class StaffDeskTest extends TestCase
      */
     public function test_capabilities_are_enforced_for_staff_desk()
     {
-        $this->assertTrue(true);
+        Event::fake([SendRequested::class]);
+        Http::fake();
+
+        $biz = TestCase::provisionTenant(['name' => 'Fixer Staff Desk', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = (new FixerCommandAction)->processStaffSms(
+            businessId: $biz->id,
+            staffPersonId: 505,
+            smsBody: 'running 20 late, tell Smith',
+            jobId: 8812,
+        );
+
+        Http::assertNothingSent();
+        Event::assertNotDispatched(SendRequested::class);
+        $this->assertStringStartsWith('msg_fixer_', $res['outbound_message_id']);
     }
 }
