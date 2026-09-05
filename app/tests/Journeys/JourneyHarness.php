@@ -352,14 +352,11 @@ trait JourneyHarness
 
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        DB::table('price_book_items')->updateOrInsert(
+        $item = \App\Modules\X163\Models\PriceBookItem::updateOrCreate(
             ['business_id' => $tenant['id'], 'service_name' => $sku],
-            ['price_cents' => $amountMinor, 'tax_rate_pct' => 0, 'is_sample' => false]
+            ['price_cents' => $amountMinor, 'tax_rate_pct' => 0, 'is_sample' => true, 'is_confirmed' => false]
         );
-        DB::table('facts')->updateOrInsert(
-            ['business_id' => $tenant['id'], 'key' => "service.{$sku}.price"],
-            ['value' => '$'.number_format($amountMinor / 100, 2), 'is_valid' => true]
-        );
+        app(\App\Modules\X163\Actions\PriceConfirmAction::class)->handle($tenant['id'], $item->id);
     }
 
     private function bookFromQuote(array $tenant, array $quote): array
