@@ -1435,6 +1435,10 @@
   {
    "at": "2026-09-05T12:14:55",
    "note": "J10: owner ruling 2026-09-05 \u2014 the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production"
+  },
+  {
+   "at": "2026-09-05T17:33:50",
+   "note": "X-172 generated screen test renders through Fixtures::token() (run 101)"
   }
  ]
 }

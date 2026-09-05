@@ -769,3 +769,4 @@
 - `2026-09-05T13:46:19` (R245) X-121 — JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)
 - `2026-09-05T16:22:13` (R245) C-Billing — a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)
 - `2026-09-05T17:11:31` UNRESOLVED tests X-01 - four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold
+- `2026-09-05T17:33:50` note: X-172 generated screen test renders through Fixtures::token() (run 101)
