@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X155;
 
+use App\Modules\X110\Actions\PixelEventsAction;
+use App\Modules\X110\Domain\PixelEngine;
 use App\Modules\X121\Models\Person;
+use App\Modules\X155\Actions\FormAbandonPointAction;
+use App\Modules\X155\Actions\FormAdaptiveStepsAction;
 use App\Modules\X155\Actions\FormCaptureAction;
+use App\Modules\X155\Actions\FormGenerateAction;
 use App\Modules\X155\Actions\FormValidateAction;
 use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Events\FormSpamRejected;
@@ -17,7 +22,10 @@ use App\Modules\X155\Ui\SubmissionsThread;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
+use Symfony\Component\Finder\Finder;
 use Tests\TestCase;
 
 class X155Test extends TestCase
@@ -118,7 +126,65 @@ class X155Test extends TestCase
      */
     public function test_g2_17_multi_step_logic(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G2-17 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G2-17 Form',
+            'slug' => 'g2-17',
+            'steps' => [
+                ['step' => 1, 'fields' => ['first_name', 'phone'], 'required' => ['phone']],
+                ['step' => 2, 'fields' => ['service_address', 'unit_count'], 'required' => ['service_address']],
+            ],
+            'schema' => [],
+        ]);
+
+        // (a) the refusal
+        $res1 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['first_name' => 'Dana', 'phone' => '+15551110001']
+        );
+
+        $this->assertEquals('rejected', $res1['status']);
+        $this->assertEquals('incomplete_step', $res1['reason']);
+        $this->assertEquals(2, $res1['step']);
+        $this->assertEquals(['service_address'], $res1['missing']);
+
+        $this->assertEquals(0, FormSubmission::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15551110001')->count());
+
+        // (b) the pass
+        $res2 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['first_name' => 'Dana', 'phone' => '+15551110001', 'service_address' => '123 Main St']
+        );
+
+        $this->assertEquals('captured', $res2['status']);
+
+        $submission = FormSubmission::find($res2['submission_id']);
+        $this->assertNotNull($submission->person_id);
+
+        // (c) the zero
+        $form2 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G2-17 Form Zero',
+            'slug' => 'g2-17-zero',
+            'steps' => [
+                ['step' => 1, 'fields' => ['phone', 'unit_count'], 'required' => ['unit_count']],
+            ],
+            'schema' => [],
+        ]);
+
+        $res3 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form2->id,
+            payload: ['phone' => '+15551110002', 'unit_count' => '0']
+        );
+
+        $this->assertEquals('captured', $res3['status']);
     }
 
     /**
@@ -126,7 +192,52 @@ class X155Test extends TestCase
      */
     public function test_g2_20_direct_entity_write(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G2-20 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G2-20 Form',
+            'slug' => 'g2-20',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'phone' => '+15551234567',
+                'email' => 'alice@example.com',
+            ]
+        );
+
+        $this->assertEquals('captured', $res['status']);
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15551234567')->count());
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15551234567')->first();
+        $this->assertEquals($res['person_id'], $person->id);
+        $this->assertEquals('Alice', $person->first_name);
+        $this->assertEquals('alice@example.com', $person->email);
+
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertEquals($person->id, $submission->person_id);
+        $this->assertNotNull($submission->person_id);
+
+        $res2 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'AliceUpdated',
+                'phone' => '+15551234567',
+                'email' => 'alice@example.com',
+            ]
+        );
+
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15551234567')->count());
+        $person2 = Person::where('business_id', $biz->id)->where('phone', '+15551234567')->first();
+        $this->assertEquals('AliceUpdated', $person2->first_name);
     }
 
     /**
@@ -134,7 +245,58 @@ class X155Test extends TestCase
      */
     public function test_g2_39_header(): void
     {
-        $this->assertTrue(true);
+        // 2a: no X-155 CODE file contains staging or pending_leads
+        $path = app_path('Modules/X-155');
+        $files = Finder::create()
+            ->files()
+            ->in(array_filter([
+                $path.'/Actions',
+                $path.'/Models',
+                $path.'/Domain',
+                $path.'/Database',
+                $path.'/Events',
+                $path.'/Ui',
+            ], 'is_dir'))
+            ->append([new \SplFileInfo($path.'/ModuleServiceProvider.php')])
+            // G13-35's prose contains 'staging' while asserting there is no staging table.
+            ->notName('capabilities.php')
+            ->name('*.php');
+
+        $scannedCount = 0;
+        foreach ($files as $file) {
+            $fileContent = file_get_contents($file->getRealPath());
+            $this->assertStringNotContainsString('staging', $fileContent, "File {$file->getFilename()} contains 'staging'");
+            $this->assertStringNotContainsString('pending_leads', $fileContent, "File {$file->getFilename()} contains 'pending_leads'");
+            $scannedCount++;
+        }
+        $this->assertGreaterThan(0, $scannedCount);
+
+        // 2b: Form submission references a Person OF THE SAME BUSINESS
+        $biz = TestCase::provisionTenant(['name' => 'Anchor Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Anchor Form',
+            'slug' => 'anchor-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: ['first_name' => 'Anchor', 'phone' => '+15551112222'],
+            ipAddress: '127.0.0.1',
+            userTimezone: 'America/Chicago'
+        );
+
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($submission);
+        // clause 2 is enforced at 2026_08_30_000038:32 (person_id NOT NULL FK); ruling 47
+        $this->assertNotNull($submission->person_id);
+        $person = Person::find($submission->person_id);
+        $this->assertEquals($biz->id, $person->business_id);
     }
 
     /**
@@ -142,7 +304,88 @@ class X155Test extends TestCase
      */
     public function test_g3_64_bot_filtering(): void
     {
-        $this->assertTrue(true);
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'G3-64 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G3-64 Form',
+            'slug' => 'g3-64',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        // (a) the honeypot is stored and flagged
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bot',
+                'phone' => '+15552220001',
+                'issue_description' => 'AC blowing warm air',
+                'website_url' => 'http://spam.ru',
+            ],
+            ipAddress: '194.55.22.1'
+        );
+
+        $this->assertEquals('rejected', $res['status']);
+        $this->assertEquals('honeypot_triggered', $res['reason']);
+
+        $row = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($row);
+        $this->assertTrue($row->is_spam);
+        $this->assertEquals('honeypot_triggered', $row->spam_reason);
+        $this->assertEquals('AC blowing warm air', $row->payload['issue_description']);
+
+        Event::assertDispatched(FormSpamRejected::class);
+        Event::assertNotDispatched(FormCaptured::class);
+
+        // (b) the timezone signal is stored too
+        $res2 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bot 2',
+                'phone' => '+15552220002',
+                'issue_description' => 'no heat',
+            ],
+            ipAddress: '203.0.113.10',
+            userTimezone: 'Not/AZone'
+        );
+
+        $this->assertEquals('rejected', $res2['status']);
+        $this->assertEquals('ip_timezone_mismatch', $res2['reason']);
+
+        $row2 = FormSubmission::find($res2['submission_id']);
+        $this->assertNotNull($row2);
+        $this->assertTrue($row2->is_spam);
+        $this->assertEquals('ip_timezone_mismatch', $row2->spam_reason);
+
+        // (c) the ⛔⛔ — a real customer is not swept up
+        $res3 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana',
+                'phone' => '+15552220003',
+                'issue_description' => 'thermostat replacement',
+                'website_url' => '',
+            ],
+            ipAddress: '24.18.99.12',
+            userTimezone: 'America/Chicago'
+        );
+
+        $this->assertEquals('captured', $res3['status']);
+
+        $row3 = FormSubmission::find($res3['submission_id']);
+        $this->assertNotNull($row3);
+        $this->assertFalse($row3->is_spam);
+        $this->assertNull($row3->spam_reason);
+
+        $this->assertEquals(2, FormSubmission::where('business_id', $biz->id)->where('is_spam', true)->count());
+        $this->assertEquals(1, FormSubmission::where('business_id', $biz->id)->where('is_spam', false)->count());
     }
 
     /**
@@ -150,7 +393,77 @@ class X155Test extends TestCase
      */
     public function test_g5_07_wizard(): void
     {
-        $this->assertTrue(true);
+        Http::fake();
+
+        $gen = new FormGenerateAction;
+
+        // ④ the field set, from ③ the description
+        $plain = $gen->handle('I need their name, phone and email, and a preferred date');
+        $this->assertEquals(
+            ['first_name', 'phone', 'email', 'preferred_date'],
+            array_column($plain['fields'], 'name')
+        );
+        $this->assertEquals([], $plain['refused']);
+
+        // ⑤ a regulated ask never becomes a field
+        $regulated = $gen->handle('their name and their social security number');
+        $this->assertEquals(['first_name'], array_column($regulated['fields'], 'name'));
+        $this->assertEquals(['regulated_ask'], array_column($regulated['refused'], 'reason'));
+
+        // ⑤ and the platform never asks for the age it rejects on
+        $aged = $gen->handle('their name and how old they are');
+        $this->assertEquals(['first_name'], array_column($aged['fields'], 'name'));
+        $this->assertEquals(['under_18_gate'], array_column($aged['refused'], 'reason'));
+
+        // a legitimate ask is not a regulated one because it contains 'age'
+        $msg = $gen->handle('their name and a message about the job');
+        $this->assertEquals([], $msg['refused']);
+        $this->assertEquals(['first_name', 'message'], array_column($msg['fields'], 'name'));
+
+        $still = $gen->handle('their name and their age');
+        $this->assertEquals(['under_18_gate'], array_column($still['refused'], 'reason'));
+
+        Http::assertNothingSent();
+
+        $biz = TestCase::provisionTenant(['name' => 'G5-07 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Quote Request',
+            'slug' => 'quote-request',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $minor = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Kid',
+            'phone' => '+15550001111',
+            'age' => 15,
+        ]);
+
+        $this->assertEquals('rejected', $minor['status']);
+        $this->assertEquals('under_18', $minor['reason']);
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15550001111')->count());
+        $this->assertEquals(0, FormSubmission::where('business_id', $biz->id)->count());
+
+        // a date of birth carries the same signal
+        $dob = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Kid',
+            'phone' => '+15550002222',
+            'date_of_birth' => now()->subYears(15)->toDateString(),
+        ]);
+        $this->assertEquals('under_18', $dob['reason']);
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15550002222')->count());
+
+        // and an adult still gets through — the gate is not a blanket refusal
+        $adult = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Grown',
+            'phone' => '+15550003333',
+            'age' => 40,
+        ]);
+        $this->assertEquals('captured', $adult['status']);
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15550003333')->count());
     }
 
     /**
@@ -158,7 +471,58 @@ class X155Test extends TestCase
      */
     public function test_g5_30_adaptive_questions(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G5-30 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Service Request',
+            'slug' => 'service-request',
+            'steps' => [
+                ['step' => 1, 'required' => ['service_type']],
+                ['step' => 2, 'show_if' => ['service_type' => 'commercial'], 'required' => ['company_name']],
+                ['step' => 3, 'show_if' => ['service_type' => 'residential'], 'required' => ['home_size']],
+            ],
+            'schema' => [],
+        ]);
+
+        $applicable = (new FormAdaptiveStepsAction)->handle($form, ['service_type' => 'residential']);
+        $this->assertEquals([1, 3], array_column($applicable, 'step'));
+
+        $result = $this->validateAction->handle($biz->id, $form->id, ['service_type' => 'residential']);
+        $this->assertFalse($result['is_valid']);
+        $this->assertEquals('incomplete_step', $result['reason']);
+        $this->assertEquals(3, $result['step']);
+        $this->assertEquals(['home_size'], $result['missing']);
+
+        $result = $this->validateAction->handle($biz->id, $form->id, ['service_type' => 'residential', 'home_size' => '2000']);
+        $this->assertTrue($result['is_valid']);
+
+        $result = $this->validateAction->handle($biz->id, $form->id, ['service_type' => 'commercial', 'company_name' => 'Acme HVAC']);
+        $this->assertTrue($result['is_valid']);
+
+        $numeric = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Table Booking',
+            'slug' => 'table-booking',
+            'steps' => [
+                ['step' => 1, 'required' => ['party_size']],
+                ['step' => 2, 'show_if' => ['party_size' => 4], 'required' => ['high_chairs']],
+            ],
+            'schema' => [],
+        ]);
+
+        $applicable = (new FormAdaptiveStepsAction)->handle($numeric, ['party_size' => '4']);
+        $this->assertEquals([1, 2], array_column($applicable, 'step'));
+
+        $result = $this->validateAction->handle($biz->id, $numeric->id, ['party_size' => '4']);
+        $this->assertFalse($result['is_valid']);
+        $this->assertEquals('incomplete_step', $result['reason']);
+        $this->assertEquals(2, $result['step']);
+        $this->assertEquals(['high_chairs'], $result['missing']);
+
+        $applicable = (new FormAdaptiveStepsAction)->handle($numeric, ['party_size' => '2']);
+        $this->assertEquals([1], array_column($applicable, 'step'));
     }
 
     /**
@@ -166,7 +530,41 @@ class X155Test extends TestCase
      */
     public function test_g11_01_abandon_pixel(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G11-01 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Quote Request',
+            'slug' => 'quote-request',
+            'steps' => [['step' => 1], ['step' => 2]],
+            'schema' => [],
+        ]);
+
+        $form2 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Newsletter',
+            'slug' => 'newsletter',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+
+        $engine = new PixelEngine;
+        $events = new PixelEventsAction($engine);
+        $visit = $engine->recordVisit($biz->id, 'vis_g11_01');
+
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'quote-request', 'abandoned_field' => 'phone', 'field_index' => 2]);
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'quote-request', 'abandoned_field' => 'phone', 'field_index' => 2]);
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'quote-request', 'abandoned_field' => 'email', 'field_index' => 3]);
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'newsletter', 'abandoned_field' => 'email', 'field_index' => 1]);
+        $events->handle($biz->id, $visit['session_id'], 'form.submitted', ['form_id' => 'quote-request']);
+
+        $report = (new FormAbandonPointAction($engine))->handle($biz->id, $form->id);
+
+        $this->assertEquals('quote-request', $report['slug']);
+        $this->assertEquals(3, $report['total']);
+        $this->assertEquals('phone', $report['top_field']);
+        $this->assertEquals([['field' => 'phone', 'count' => 2], ['field' => 'email', 'count' => 1]], $report['points']);
     }
 
     /**
@@ -174,7 +572,41 @@ class X155Test extends TestCase
      */
     public function test_g13_35_no_staging(): void
     {
-        $this->assertTrue(true);
+        $this->assertFalse(Schema::hasTable('form_staging'));
+        $this->assertFalse(Schema::hasTable('form_submission_staging'));
+        $this->assertFalse(Schema::hasTable('form_field_mappings'));
+        $this->assertFalse(Schema::hasTable('form_pending'));
+
+        $this->assertTrue(Schema::hasTable('form_definitions'));
+        $this->assertTrue(Schema::hasTable('form_submissions'));
+
+        $biz = TestCase::provisionTenant(['name' => 'G13-35 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G13-35 Form',
+            'slug' => 'g13-35',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15557654321',
+                'utm_source' => 'google',
+            ]
+        );
+
+        $this->assertTrue(Person::where('business_id', $biz->id)->where('phone', '+15557654321')->exists());
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557654321')->first();
+
+        $submission = FormSubmission::find($res['submission_id']);
+        $this->assertEquals('google', $submission->payload['utm_source']);
+        $this->assertEquals($person->id, $submission->person_id);
     }
 
     /**
@@ -441,5 +873,333 @@ class X155Test extends TestCase
             ->assertSee('No submissions yet.')
             ->assertDontSee('NAN')
             ->assertDontSee('%');
+    }
+
+    public function test_a_short_form_keeps_the_name_and_email_the_business_already_has(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Short Form Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Short Form',
+            'slug' => 'short',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'email' => 'alice@example.com',
+                'phone' => '+15551234567',
+            ]
+        );
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15551234567',
+                'message' => 'Call me back',
+            ]
+        );
+
+        $alice = Person::where('business_id', $biz->id)->where('phone', '+15551234567')->firstOrFail();
+        $this->assertEquals('Alice', $alice->first_name, 'a phone only submission renamed a known contact to the placeholder');
+        $this->assertEquals('alice@example.com', $alice->email);
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15550009999',
+                'message' => 'New number',
+            ]
+        );
+
+        $visitor = Person::where('business_id', $biz->id)->where('phone', '+15550009999')->firstOrFail();
+        $this->assertEquals('Visitor', $visitor->first_name, 'a first submission with no name must still record the visitor placeholder');
+        $this->assertNull($visitor->email);
+    }
+
+    public function test_a_spam_submission_never_rewrites_a_known_contact(): void
+    {
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Spam Guard Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'email' => 'alice@example.com',
+                'phone' => '+15551110001',
+            ]
+        );
+
+        $spam = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bot Spammer',
+                'email' => 'bot@spam.ru',
+                'phone' => '+15551110001',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $this->assertEquals('rejected', $spam['status']);
+        $this->assertEquals('honeypot_triggered', $spam['reason']);
+
+        $alice = Person::where('business_id', $biz->id)->where('phone', '+15551110001')->firstOrFail();
+        $this->assertEquals('Alice', $alice->first_name, 'a spam submission rewrote a known contact with the bot payload');
+        $this->assertEquals('alice@example.com', $alice->email);
+        $this->assertEquals($alice->id, FormSubmission::find($spam['submission_id'])->person_id, 'a spam submission must still reference the contact it matched');
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15551110001')->count());
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15551110002',
+                'issue_description' => 'Help me',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $unknown = Person::where('business_id', $biz->id)->where('phone', '+15551110002')->firstOrFail();
+        $this->assertEquals('Visitor', $unknown->first_name, 'a spam submission from an unknown number must still record the visitor placeholder');
+    }
+
+    public function test_a_phone_less_submission_gets_its_own_contact(): void
+    {
+        Event::fake([FormCaptured::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Spam Guard Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $resA = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'email' => 'alice@example.com',
+            ]
+        );
+
+        $resB = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bob',
+                'email' => 'bob@example.com',
+            ]
+        );
+
+        $resC = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Carol',
+                'phone' => '+15556660001',
+            ]
+        );
+
+        $resD = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Carol Updated',
+                'phone' => '+15556660001',
+            ]
+        );
+
+        $this->assertNotSame($resA['person_id'], $resB['person_id'], 'two phone less submissions were funnelled into one contact');
+        $this->assertSame('Alice', Person::findOrFail($resA['person_id'])->first_name, 'the first submitters name was overwritten by the second');
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '+15550000000')->count(), 'the reserved fallback number was written to a contact row');
+        $this->assertNotNull($resA['person_id']);
+        $this->assertSame('Bob', Person::findOrFail($resB['person_id'])->first_name);
+        $this->assertSame($resC['person_id'], $resD['person_id'], 'two submissions on the same phone must resolve to one contact');
+    }
+
+    public function test_a_blank_phone_submission_gets_its_own_contact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Phone Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+        ]);
+        Event::fake([FormCaptured::class]);
+
+        $resA = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana',
+                'email' => 'dana@example.com',
+                'phone' => '',
+            ]
+        );
+
+        $resB = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Erin',
+                'email' => 'erin@example.com',
+                'phone' => '',
+            ]
+        );
+
+        $resC = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Gail',
+                'phone' => '   ',
+            ]
+        );
+
+        $resD = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Frank',
+                'phone' => '+15557770001',
+            ]
+        );
+
+        $resE = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Frank Updated',
+                'phone' => '+15557770001',
+            ]
+        );
+
+        $this->assertNotSame($resA['person_id'], $resB['person_id'], 'two blank phone submissions were funnelled into one contact');
+        $this->assertSame('Dana', Person::findOrFail($resA['person_id'])->first_name, 'the first submitters name was overwritten by the second');
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '')->count(), 'the empty string was stored as a phone number');
+        $this->assertNull(Person::findOrFail($resC['person_id'])->phone, 'a whitespace only phone was stored as a phone number');
+        $this->assertNotNull($resA['person_id']);
+        $this->assertSame('Erin', Person::findOrFail($resB['person_id'])->first_name);
+        $this->assertSame($resD['person_id'], $resE['person_id'], 'two submissions on the same phone must resolve to one contact');
+    }
+
+    public function test_a_blank_payload_value_is_not_a_value_the_visitor_gave(): void
+    {
+        Event::fake([FormCaptured::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Blank Value Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $resA = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana',
+                'phone' => '+15557770001',
+                'email' => 'dana@example.com',
+            ]
+        );
+
+        $resB = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => '',
+                'phone' => '+15557770001',
+            ]
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557770001')->firstOrFail();
+        $this->assertSame('Dana', $person->first_name, 'a submission with a blank name erased the stored name');
+
+        $resC = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15557770001',
+                'email' => '',
+            ]
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557770001')->firstOrFail();
+        $this->assertSame('dana@example.com', $person->email, 'a submission with a blank email erased the stored email');
+
+        $resD = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana Updated',
+                'phone' => '+15557770001',
+                'email' => 'dana.new@example.com',
+            ]
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557770001')->firstOrFail();
+        $this->assertSame('Dana Updated', $person->first_name, 'a visitor must be able to correct their own name');
+        $this->assertSame('dana.new@example.com', $person->email, 'a visitor must be able to correct their own email');
+
+        $resE = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => '   ',
+                'phone' => '+15557770002',
+            ]
+        );
+
+        $second = Person::where('business_id', $biz->id)->where('phone', '+15557770002')->firstOrFail();
+        $this->assertSame('Visitor', $second->first_name, 'a new contact whose name is whitespace must get the visitor placeholder');
+
+        $resF = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => '',
+                'phone' => '+15557770003',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $spam = Person::where('business_id', $biz->id)->where('phone', '+15557770003')->firstOrFail();
+        $this->assertSame('Visitor', $spam->first_name, 'a spam submission with a blank name must still record the visitor placeholder');
+
+        $this->assertSame($resA['person_id'], $resD['person_id'], 'four submissions on one phone must resolve to one contact');
+        $this->assertNotNull($resA['person_id']);
     }
 }

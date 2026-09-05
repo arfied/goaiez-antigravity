@@ -21,7 +21,8 @@ final class SchemaRenderAction
         string $commitId,
         string $domainName,
         ?string $entityType = null,
-        ?array $productOffers = null
+        ?array $productOffers = null,
+        ?array $videos = null
     ): array {
         if ($entityType === null) {
             $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
@@ -38,12 +39,15 @@ final class SchemaRenderAction
             $entityType = $map[$vertical] ?? 'LocalBusiness';
         }
 
+        $canonical = app(SeoRenderAction::class)
+            ->handle($businessId, $pageId, $businessName, $commitId, $domainName)['canonical'];
+
         // Build valid schema.org structure (G8-32)
         $jsonLd = [
             '@context' => 'https://schema.org',
             '@type' => $entityType,
             'name' => $businessName,
-            'url' => "https://{$domainName}/pages/{$pageId}",
+            'url' => $canonical,
         ];
 
         if (! empty($productOffers)) {
@@ -61,6 +65,16 @@ final class SchemaRenderAction
                     'priceCurrency' => 'USD',
                 ], $productOffers),
             ];
+        }
+
+        if (! empty($videos)) {
+            // VideoObject injected on publish (TEST ANCHOR, G16-25)
+            $jsonLd['video'] = array_map(fn ($v) => [
+                '@type' => 'VideoObject',
+                'name' => $v['name'] ?? null,
+                'contentUrl' => $v['contentUrl'] ?? null,
+                'uploadDate' => $v['uploadDate'] ?? null,
+            ], $videos);
         }
 
         $isValid = $this->validateSchema($jsonLd);
@@ -121,6 +135,22 @@ final class SchemaRenderAction
                 }
                 if (! array_key_exists('price', $item) || $item['price'] === null || ! isset($item['priceCurrency'])) {
                     return false;
+                }
+            }
+        }
+
+        if (isset($schema['video'])) {
+            if (! is_array($schema['video'])) {
+                return false;
+            }
+            foreach ($schema['video'] as $item) {
+                if (($item['@type'] ?? '') !== 'VideoObject') {
+                    return false;
+                }
+                foreach (['name', 'contentUrl', 'uploadDate'] as $k) {
+                    if (! isset($item[$k]) || ! is_string($item[$k]) || $item[$k] === '') {
+                        return false;
+                    }
                 }
             }
         }
