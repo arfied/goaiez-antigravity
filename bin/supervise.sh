@@ -110,6 +110,27 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
+  # Refuse while another pest runs on THIS database from any checkout whose
+  # phpunit.xml pins it (2026-09-05 07:1x: the sixty checkout wiped the schema
+  # under a Track 1 gate — 32 spurious "relation does not exist" errors).
+  shared=""
+  for co in /home/goaiez/agents/grs-antig*; do
+    grep -q "DB_DATABASE\" value=\"$xml_db\"" "$co/app/phpunit.xml" 2>/dev/null && shared="$shared $co"
+  done
+  clash=0
+  for p in $(pgrep -x php); do
+    if tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q "bin/pes""t"; then
+      c=$(readlink /proc/$p/cwd 2>/dev/null)
+      for co in $shared; do case "$c" in "$co"/*) clash=$((clash+1)); echo "  ✗ pest pid $p running on $xml_db from $c";; esac; done
+    fi
+  done
+  if [ $clash -gt 0 ]; then
+    echo "  ✗ REFUSED: $clash other pest process(es) on $xml_db (checkouts pinning it:$shared) — a gate now would be false"
+    echo '{"tool":"pest","result":"refused-shared-db"}' > /home/goaiez/tmp/last-pest.json
+    fail=1; want_tests=0
+  fi
+fi
+if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
   out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
   if [ $rc -eq 124 ]; then
