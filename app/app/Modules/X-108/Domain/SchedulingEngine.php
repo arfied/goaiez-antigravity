@@ -182,6 +182,7 @@ final class SchedulingEngine
             $waitlistEntry = Waitlist::where('business_id', $businessId)
                 ->where('service_name', $apt->service_name)
                 ->where('status', 'pending')
+                ->whereDate('preferred_date', Carbon::parse($apt->start_time)->toDateString())
                 ->orderBy('is_member', 'desc')
                 ->orderBy('id', 'asc')
                 ->first();

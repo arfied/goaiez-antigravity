@@ -331,20 +331,33 @@ class X108Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Cancel Backfill Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $this->waitlist->handle(
+        $wantedDate = now()->addDays(2)->format('Y-m-d');
+        $otherDate = now()->addDays(9)->format('Y-m-d');
+
+        $wrongEntry = $this->waitlist->handle(
+            businessId: $biz->id,
+            customerName: 'Alice Member',
+            customerPhone: '+15125550001',
+            serviceName: 'Furnace Repair',
+            preferredDate: $otherDate,
+            isMember: true
+        );
+
+        $rightEntry = $this->waitlist->handle(
             businessId: $biz->id,
             customerName: 'Bob Waiter',
             customerPhone: '+15125550999',
             serviceName: 'Furnace Repair',
-            preferredDate: now()->addDay()->format('Y-m-d'),
-            isMember: true
+            preferredDate: $wantedDate,
+            isMember: false
         );
 
-        $apt = $this->book->handle($biz->id, 'Furnace Repair', now()->addDay()->toIso8601String(), now()->addDay()->addHour()->toIso8601String());
+        $apt = $this->book->handle($biz->id, 'Furnace Repair', $wantedDate . ' 10:00:00', $wantedDate . ' 11:00:00');
         $cancelRes = $this->cancel->handle($biz->id, $apt->id);
 
         $this->assertTrue($cancelRes['backfill_offered']);
-        $this->assertNotNull($cancelRes['waitlist_id']);
+        $this->assertSame($rightEntry->id, $cancelRes['waitlist_id']);
+        $this->assertSame('pending', $wrongEntry->fresh()->status);
     }
 
     /**
