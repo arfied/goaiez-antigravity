@@ -38,7 +38,7 @@ final class EmailWarmupAction
             }
         } else {
             foreach ($schedule as $day => $entry) {
-                if (!is_array($entry) || !isset($entry['min'], $entry['max']) || $entry['min'] >= $entry['max']) {
+                if (! is_array($entry) || ! isset($entry['min'], $entry['max']) || $entry['min'] >= $entry['max']) {
                     throw ConstantWarmupQuantityRefused::forDay((string) $day);
                 }
             }
