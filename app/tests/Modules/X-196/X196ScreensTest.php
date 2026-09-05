@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Modules\X196\Models\ExtensionInjection;
 use App\Modules\X196\Models\ExtensionSession;
 use App\Modules\X196\Ui\ExtensionPopup;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -51,7 +52,7 @@ class X196ScreensTest extends TestCase
         $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        \App\Support\Tenancy::set($biz->id);
+        Tenancy::set($biz->id);
 
         $session = ExtensionSession::forceCreate([
             'business_id' => $biz->id,

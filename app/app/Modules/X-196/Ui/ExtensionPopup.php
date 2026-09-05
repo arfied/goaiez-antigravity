@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X196\Ui;
 
+use App\Modules\X196\Actions\ExtensionInjectAction;
+use App\Modules\X196\Actions\ExtensionScanAction;
 use App\Modules\X196\Models\ExtensionSession;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -15,18 +18,18 @@ class ExtensionPopup extends Component
 
     public function mount(): void
     {
-        $this->businessId = \App\Support\Tenancy::id() ?? 0;
+        $this->businessId = Tenancy::id() ?? 0;
         if ($this->businessId <= 0) {
             abort(403, 'Tenant context is required');
         }
     }
 
-    public function scanPage(int $sessionId, string $pageUrl, string $pageDomContent, \App\Modules\X196\Actions\ExtensionScanAction $action): void
+    public function scanPage(int $sessionId, string $pageUrl, string $pageDomContent, ExtensionScanAction $action): void
     {
         $action->scanPage($this->businessId, $sessionId, $pageUrl, $pageDomContent);
     }
 
-    public function injectProspect(int $sessionId, string $sourceUrl, string $attestationId, array $prospectPayload, \App\Modules\X196\Actions\ExtensionInjectAction $action): void
+    public function injectProspect(int $sessionId, string $sourceUrl, string $attestationId, array $prospectPayload, ExtensionInjectAction $action): void
     {
         $action->injectProspect($this->businessId, $sessionId, $sourceUrl, $attestationId, $prospectPayload);
     }
