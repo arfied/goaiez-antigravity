@@ -21,7 +21,7 @@ class X109ScreensTest extends TestCase
         CaptchaQuota::forceCreate([
             'business_id' => $otherBiz->id,
             'campaign_id' => 10,
-            'prospect_identifier' => '100',
+            'prospect_identifier' => 'OTHER-TENANT-SENTINEL',
             'status' => 'submitted',
             'available_quota' => 10,
         ]);
@@ -33,7 +33,7 @@ class X109ScreensTest extends TestCase
         Livewire::test(SubmissionLog::class, ['businessId' => $biz->id])
             ->assertOk()
             ->assertSee('No submissions yet')
-            ->assertDontSee((string) $otherBiz->id);
+            ->assertDontSee('OTHER-TENANT-SENTINEL');
 
         $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($admin)->get(route('x-109.submission-log.admin', ['business' => $biz->id]))
@@ -68,7 +68,7 @@ class X109ScreensTest extends TestCase
         CaptchaQuota::forceCreate([
             'business_id' => $otherBiz->id,
             'campaign_id' => 10,
-            'prospect_identifier' => '100',
+            'prospect_identifier' => 'OTHER-TENANT-SENTINEL',
             'status' => 'queued_manual',
             'available_quota' => 0,
         ]);
@@ -80,7 +80,7 @@ class X109ScreensTest extends TestCase
         Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
             ->assertOk()
             ->assertSee('Queue is empty')
-            ->assertDontSee((string) $otherBiz->id);
+            ->assertDontSee('OTHER-TENANT-SENTINEL');
 
         $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($admin)->get(route('x-109.manual-queue.admin', ['business' => $biz->id]))
@@ -211,7 +211,7 @@ class X109ScreensTest extends TestCase
         $otherBizQueueRow = CaptchaQuota::forceCreate([
             'business_id' => $otherBiz->id,
             'campaign_id' => 991,
-            'prospect_identifier' => '992',
+            'prospect_identifier' => 'OTHER-TENANT-SENTINEL',
             'status' => 'queued_manual',
             'available_quota' => 0,
         ]);
@@ -222,12 +222,14 @@ class X109ScreensTest extends TestCase
 
         Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
             ->call('resubmit', $otherBizQueueRow->id)
+            ->assertSet('actionFailed', true)
             ->assertDontSee('Prospect form already submitted')
             ->assertDontSee('Zero quota'); // shouldn't show messages meant for valid actions
 
         Tenancy::set($otherBiz->id);
         // Shouldn't be processed or deleted
         $this->assertNotNull(CaptchaQuota::find($otherBizQueueRow->id));
+        $this->assertTrue(CaptchaQuota::where('id', $otherBizQueueRow->id)->where('status', 'queued_manual')->exists());
     }
 
     public function test_submission_log_excludes_quota_balance_row(): void
