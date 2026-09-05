@@ -472,3 +472,43 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `origin/track/money` behind a sha already recorded PASS in `REVIEWS.md`, it
     pushes that sha before doing anything else, even with a coder alive: a push
     stages nothing and touches no file in the tree.
+27. **The `merge=ours` driver does not reopen the merge (Track 1 relaying the
+    owner, `OWNER.md` 15:2x; applied by the 13:2x tick).** Track 1 is adding
+    `.gitattributes` on `main` marking the per-track files (`app/phpunit.xml`,
+    `CLAUDE.md`, `bin/supervise.sh`, `.claude/settings.json`,
+    `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh`,
+    `.agents/state/*`) `merge=ours`, and every lane is asked to run
+    `git config merge.ours.driver true`. **`git config` is not in the
+    supervisor's allowlist** — it is briefed to the coder (MONEY-36 item 2), and
+    it writes untracked `.git/config`, so there is nothing to commit. ⚠️ Track 1's
+    own caveat is the decisive half: **a merge driver runs only when BOTH sides
+    changed the file.** Ruling 25 measured `app/phpunit.xml` and
+    `.agents/rules/10-supervisor.md` as **main-only** changes against money, so
+    git would take `main`'s copy silently and no driver would fire. The
+    attribute is a second belt, not a replacement, and the restore step
+    (`git diff --name-only HEAD MERGE_HEAD -- <per-track paths>`, then
+    `git show HEAD:<path> > <path> && git add <path>`) stays mandatory in any
+    merge brief. **Rulings 18, 22, 23 and 25 stand unchanged; the go/no-go is
+    still OWNER ACTION 21 and the re-cut (16/20) remains this track's first
+    preference.** A tick never reads the driver's arrival as a lift.
+28. **`BUILD-STATE.json`'s `STAGES` line is not a live count, on any stage
+    (measured 13:2x).** `supervise.sh` §3 prints the stamp written by the last
+    `state.py stage` run. Against `php artisan doctor` this tick it was wrong on
+    five of eight stages and wrong by two orders of magnitude on two of them:
+    boundary 2/**3**, citation **0**/**130**, capability **352**/**349**, anchor
+    **10**/**132**, journey 9/**7**. Four consecutive briefs quoted it and were
+    contradicted by the coder's own measurement (M28-A, M29-A, M33, M34-D).
+    **No brief quotes §3's `STAGES` line.** Live numbers come from
+    `php artisan doctor`, filtered to the lane's ids, and nowhere else.
+29. **A track may not edit `GOAIEZ-MASTER-PLAN.md` until OWNER ACTION 25 is
+    answered.** The plan is the source of record `module:scaffold` harvests, and
+    its markup is load-bearing: a stray backtick in X-199's `@emits` line
+    (`:26670`) truncates four events out of the generated manifest, which is why
+    `X-211 consumes 'invoice.overdue'` and `X-120 consumes 'limit.exceeded'`
+    both report "nothing emits it". `ModuleScaffoldCommand`'s own header records
+    two earlier instances of the same field-parser truncation
+    (`@agent_reachable`, `ceiling:`); this is the third. ⛔ The fix is never to
+    add the declaration to a `manifest.php` — that file is generated, and an
+    annotation asserted to make a check pass is §298's exact prohibition. Build
+    the emitter first; the declaration follows once the owner rules on who may
+    edit a module's header block.
