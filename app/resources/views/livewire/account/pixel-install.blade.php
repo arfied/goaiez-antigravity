@@ -232,4 +232,5 @@
             @endif
         @endif
     </div>
+    <livewire:x-110.install-verify :business-id="\App\Support\Tenancy::id()" />
 </div>
