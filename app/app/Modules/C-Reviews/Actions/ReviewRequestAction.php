@@ -8,10 +8,15 @@ use App\Modules\CReviews\Events\ReviewRequested;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X121\Models\Person;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class ReviewRequestAction
 {
+    private const CADENCE_WINDOW_DAYS = 30;
+
+    private const MESSAGE_CLASS = 'marketing';
+
     /**
      * Send review request with prompt and incentive lints (TEST ANCHOR, G19-10, G20-03).
      */
@@ -43,6 +48,14 @@ final class ReviewRequestAction
             ];
         }
 
+        if ($customerId === null) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'CUSTOMER_UNKNOWN',
+                'message' => 'Review requests require a known customer',
+            ];
+        }
+
         if ($csatScore !== null && $csatScore < 7 && ($jobAgeDays ?? 0) >= 60) {
             $req = ReviewRequest::create([
                 'business_id' => $businessId,
@@ -62,6 +75,31 @@ final class ReviewRequestAction
             ];
         }
 
+        $lifetimeRequests = ReviewRequest::where('business_id', $businessId)
+            ->where('customer_id', $customerId)
+            ->count();
+
+        if ($lifetimeRequests >= 2) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'TWO_PASS_CAP_REACHED',
+                'message' => 'The two-pass lifetime cap was reached for this customer globally',
+            ];
+        }
+
+        $recentRequest = ReviewRequest::where('business_id', $businessId)
+            ->where('customer_id', $customerId)
+            ->where('created_at', '>=', Carbon::now()->subDays(self::CADENCE_WINDOW_DAYS))
+            ->exists();
+
+        if ($recentRequest) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'CADENCE_WINDOW_ACTIVE',
+                'message' => 'A review request was already sent to this customer within the cadence window',
+            ];
+        }
+
         $req = ReviewRequest::create([
             'business_id' => $businessId,
             'customer_id' => $customerId,
@@ -71,24 +109,23 @@ final class ReviewRequestAction
             'csat_score' => $csatScore,
         ]);
 
-        if ($customerId !== null) {
-            $person = Person::find($customerId);
-            if ($person !== null && ! empty($person->phone)) {
-                Event::dispatch(new SendRequested(
-                    businessId: $businessId,
-                    compositionId: $req->id,
-                    recipientPhone: $person->phone,
-                    messageClass: 'marketing',
-                    body: $promptTemplate,
-                    segmentsCount: 1
-                ));
-            }
+        $person = Person::find($customerId);
+        if ($person !== null && ! empty($person->phone)) {
+            Event::dispatch(new SendRequested(
+                businessId: $businessId,
+                compositionId: $req->id,
+                recipientPhone: $person->phone,
+                messageClass: self::MESSAGE_CLASS,
+                body: $promptTemplate,
+                segmentsCount: 1
+            ));
         }
 
         Event::dispatch(new ReviewRequested(
             businessId: $businessId,
             reviewRequestId: $req->id,
-            platform: $platform
+            platform: $platform,
+            messageClass: self::MESSAGE_CLASS,
         ));
 
         return [

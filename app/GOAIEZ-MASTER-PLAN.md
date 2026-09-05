@@ -28117,7 +28117,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G13-35 | UTM Harvesting | ENH | X-155 | hidden fields write straight to the entities, no staging table |
 | G13-36 | View Tracking | ENH | X-199 | invoice opened → the alert names an action |
 | G13-37 | Widget Rage-Click Detection | ENH | X-102 | the widget offers help instead of watching them fail |
-| G13-38 | Zero-Party Data Collection | ENH | X-119 | a volunteered detail becomes a `Fact` with its source |
+| G13-38 | Zero-Party Data Collection | ENH | X-119 | a volunteered detail becomes a `Fact` with its source · refuses: an inference |
 
 **G13 COUNT:** 38 = **36 enhancement** + 0 re-homed + 2 killed + **0 unmapped** · ⭐ **ratio 95%**
 

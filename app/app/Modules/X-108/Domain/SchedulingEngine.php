@@ -7,9 +7,11 @@ namespace App\Modules\X108\Domain;
 use App\Modules\X108\Events\AppointmentBooked;
 use App\Modules\X108\Events\SlotLocked;
 use App\Modules\X108\Models\Appointment;
+use App\Modules\X108\Models\AvailabilityRule;
 use App\Modules\X108\Models\SlotLock;
 use App\Modules\X108\Models\Waitlist;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -25,34 +27,54 @@ final class SchedulingEngine
         // Standard potential slots: 09:00, 11:00, 14:00, 16:00
         $allSlotHours = [9, 11, 14, 16];
 
-        // Check booked appointments and active slot locks
-        $bookedHours = Appointment::where('business_id', $businessId)
+        $bookedIntervals = Appointment::where('business_id', $businessId)
             ->whereDate('start_time', $baseDate->toDateString())
             ->where('status', '!=', 'cancelled')
-            ->pluck('start_time')
-            ->map(fn ($t) => Carbon::parse($t)->hour)
-            ->toArray();
+            ->get(['start_time', 'end_time']);
 
-        $lockedHours = SlotLock::where('business_id', $businessId)
+        $lockedIntervals = SlotLock::where('business_id', $businessId)
+            ->whereDate('slot_start', $baseDate->toDateString())
             ->where('expires_at', '>', now())
-            ->pluck('slot_start')
-            ->map(fn ($t) => Carbon::parse($t)->hour)
-            ->toArray();
+            ->get(['slot_start', 'slot_end']);
 
-        $unavailable = array_merge($bookedHours, $lockedHours);
+        $blackouts = AvailabilityRule::where('business_id', $businessId)
+            ->where('is_blackout', true)
+            ->where('day_of_week', $baseDate->dayOfWeekIso)
+            ->get();
 
         $availableSlots = [];
         foreach ($allSlotHours as $hour) {
-            if (! in_array($hour, $unavailable, true)) {
-                $start = $baseDate->copy()->setHour($hour)->setMinute(0);
-                $end = $start->copy()->addHours(2);
-                $availableSlots[] = [
-                    'start_time' => $start->toIso8601String(),
-                    'end_time' => $end->toIso8601String(),
-                    'formatted_window' => $start->format('g:i A').' - '.$end->format('g:i A'),
-                    'is_vip_reserved' => ($hour === 9), // 09:00 AM reserved for members
-                ];
+            $start = $baseDate->copy()->setHour($hour)->setMinute(0);
+            $end = $start->copy()->addHours(2);
+
+            $overlaps = false;
+            foreach ($bookedIntervals as $booked) {
+                $rowStart = Carbon::parse($booked->start_time);
+                $rowEnd = Carbon::parse($booked->end_time);
+                if ($start < $rowEnd && $rowStart < $end) {
+                    $overlaps = true;
+                    break;
+                }
             }
+            foreach ($lockedIntervals as $locked) {
+                $rowStart = Carbon::parse($locked->slot_start);
+                $rowEnd = Carbon::parse($locked->slot_end);
+                if ($start < $rowEnd && $rowStart < $end) {
+                    $overlaps = true;
+                    break;
+                }
+            }
+
+            if ($overlaps || $this->isBlackedOut($hour, $blackouts)) {
+                continue;
+            }
+
+            $availableSlots[] = [
+                'start_time' => $start->toIso8601String(),
+                'end_time' => $end->toIso8601String(),
+                'formatted_window' => $start->format('g:i A').' - '.$end->format('g:i A'),
+                'is_vip_reserved' => ($hour === 9), // 09:00 AM reserved for members
+            ];
         }
 
         // VIP Member Priority Rule (TEST ANCHOR):
@@ -69,6 +91,24 @@ final class SchedulingEngine
             'offered_slots' => $offeredSlots,
             'slots_count' => count($offeredSlots),
         ];
+    }
+
+    private function isBlackedOut(int $hour, Collection $blackouts): bool
+    {
+        $slotStartMinutes = $hour * 60;
+        foreach ($blackouts as $rule) {
+            $start = Carbon::parse($rule->start_time);
+            $startMinutes = $start->hour * 60 + $start->minute;
+
+            $end = Carbon::parse($rule->end_time);
+            $endMinutes = $end->hour * 60 + $end->minute;
+
+            if ($slotStartMinutes >= $startMinutes && $slotStartMinutes < $endMinutes) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -106,6 +146,28 @@ final class SchedulingEngine
         ?int $customerId = null
     ): Appointment {
         return DB::transaction(function () use ($businessId, $serviceName, $startTime, $endTime, $isMember, $customerId) {
+            $start = Carbon::parse($startTime);
+            $end = Carbon::parse($endTime);
+
+            $conflict = Appointment::where('business_id', $businessId)
+                ->where('status', '!=', 'cancelled')
+                ->where('start_time', '<', $end)
+                ->where('end_time', '>', $start)
+                ->exists();
+
+            if ($conflict) {
+                throw new SlotUnavailableRefused('the scheduler has not confirmed this window: it overlaps a booked appointment');
+            }
+
+            $blackouts = AvailabilityRule::where('business_id', $businessId)
+                ->where('is_blackout', true)
+                ->where('day_of_week', $start->dayOfWeekIso)
+                ->get();
+
+            if ($this->isBlackedOut($start->hour, $blackouts)) {
+                throw new SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule');
+            }
+
             $apt = Appointment::create([
                 'business_id' => $businessId,
                 'customer_id' => $customerId,
@@ -142,6 +204,7 @@ final class SchedulingEngine
             $waitlistEntry = Waitlist::where('business_id', $businessId)
                 ->where('service_name', $apt->service_name)
                 ->where('status', 'pending')
+                ->whereDate('preferred_date', Carbon::parse($apt->start_time)->toDateString())
                 ->orderBy('is_member', 'desc')
                 ->orderBy('id', 'asc')
                 ->first();
