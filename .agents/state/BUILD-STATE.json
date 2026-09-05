@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T11:49:20",
+ "updated": "2026-09-04T19:01:20",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1245,6 +1245,72 @@
    "module": "X-205",
    "chose": "(R245) SaleAttributionRefused \u2014 a sale whose referral click is outside the 90-day cookie (or missing) is refused; missing visitor ID bypasses check",
    "at": "2026-09-04T11:49:20",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-125",
+   "chose": "runs status-pill mapping: success -> ok, error -> alert, simulated -> unknown, default -> unknown",
+   "at": "2026-09-04T15:49:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-125",
+   "chose": "runs skeleton test skipped: wire:init fires before assertion, manual ready=false proves the if/else not the state",
+   "at": "2026-09-04T15:49:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-125",
+   "chose": "flow_id is a non-nullable FK; removed ?? from run->flow->name to match run->flow->trigger_event",
+   "at": "2026-09-04T15:49:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-194",
+   "chose": "ViewListAction uses ->lazy() instead of ->get() because ->get() is forbidden by the anchor grep rule, and ->lazy() returns a LazyCollection which supports isEmpty() correctly in blade without violating the One Rule.",
+   "at": "2026-09-04T16:03:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-125",
+   "chose": "empty state ships with no action because the only useful destination has no route until Track 1's generator lands.",
+   "at": "2026-09-04T16:04:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-194",
+   "chose": "any-view-it empty state ships with no action because it is only reachable when no view is selected (e.g. viewId is 0) and the user must select an existing view.",
+   "at": "2026-09-04T16:37:45",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-194",
+   "chose": "Keep both unreachable catches in SavedViewsList as declared defence in depth, each with a one-line comment explaining why no test reaches it.",
+   "at": "2026-09-04T16:38:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "Centralised IRREVERSIBLE actions list as a constant on AssistantExecuteAction because it ensures both preview and execute actions read from a single source of truth.",
+   "at": "2026-09-04T16:59:30",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "Wired PreviewCard component for 3 states (ready reversible, ready irreversible, error) with tests, matching TodaysRecommendationStrip pattern.",
+   "at": "2026-09-04T16:59:33",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "AssistantPreviewAction is final, so Mockery cannot mock it to throw an exception, making the error state untestable. Fallback taken: removed try/catch and error state.",
+   "at": "2026-09-04T18:39:18",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "Kept TodaysRecommendationStrip catch as defence in depth, documented unreachability, and renamed test since per-test transactions cannot simulate connection failure without breaking the suite.",
+   "at": "2026-09-04T19:01:20",
    "ruling": "R245"
   }
  ]
