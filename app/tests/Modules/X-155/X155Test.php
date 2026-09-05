@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X155;
 
+use App\Modules\X110\Actions\PixelEventsAction;
+use App\Modules\X110\Domain\PixelEngine;
 use App\Modules\X121\Models\Person;
+use App\Modules\X155\Actions\FormAbandonPointAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X155\Actions\FormValidateAction;
 use App\Modules\X155\Events\FormCaptured;
@@ -351,7 +354,41 @@ class X155Test extends TestCase
      */
     public function test_g11_01_abandon_pixel(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G11-01 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Quote Request',
+            'slug' => 'quote-request',
+            'steps' => [['step' => 1], ['step' => 2]],
+            'schema' => [],
+        ]);
+
+        $form2 = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Newsletter',
+            'slug' => 'newsletter',
+            'steps' => [['step' => 1]],
+            'schema' => [],
+        ]);
+
+        $engine = new PixelEngine;
+        $events = new PixelEventsAction($engine);
+        $visit = $engine->recordVisit($biz->id, 'vis_g11_01');
+
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'quote-request', 'abandoned_field' => 'phone', 'field_index' => 2]);
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'quote-request', 'abandoned_field' => 'phone', 'field_index' => 2]);
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'quote-request', 'abandoned_field' => 'email', 'field_index' => 3]);
+        $events->handle($biz->id, $visit['session_id'], 'form.abandoned', ['form_id' => 'newsletter', 'abandoned_field' => 'email', 'field_index' => 1]);
+        $events->handle($biz->id, $visit['session_id'], 'form.submitted', ['form_id' => 'quote-request']);
+
+        $report = (new FormAbandonPointAction($engine))->handle($biz->id, $form->id);
+
+        $this->assertEquals('quote-request', $report['slug']);
+        $this->assertEquals(3, $report['total']);
+        $this->assertEquals('phone', $report['top_field']);
+        $this->assertEquals([['field' => 'phone', 'count' => 2], ['field' => 'email', 'count' => 1]], $report['points']);
     }
 
     /**
