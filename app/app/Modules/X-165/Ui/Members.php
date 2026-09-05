@@ -10,11 +10,13 @@ use App\Modules\X165\Actions\RenewalReminderAction;
 use App\Modules\X165\Models\Membership;
 use App\Modules\X165\Models\MembershipPlan;
 use App\Support\Tenancy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Members extends Component
 {
-    public int $businessId = 0;
+    #[Locked]
+    public int $businessId;
 
     public function mount()
     {

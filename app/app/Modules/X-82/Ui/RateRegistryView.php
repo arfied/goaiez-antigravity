@@ -8,11 +8,13 @@ use App\Enums\UserRole;
 use App\Modules\X82\Actions\RateSetAction;
 use App\Modules\X82\Models\Rate;
 use App\Support\Tenancy;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class RateRegistryView extends Component
 {
-    public int $businessId = 0;
+    #[Locked]
+    public int $businessId;
 
     public string $newRateCode = '';
 
