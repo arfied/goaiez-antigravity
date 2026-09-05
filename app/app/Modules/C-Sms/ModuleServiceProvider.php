@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\CSms;
 
+use App\Modules\CSms\Events\SendRequested;
+use App\Modules\CSms\Listeners\SendRequestedListener;
 use App\Modules\CSms\Ui\ComposerSegmentWarning;
 use App\Modules\CSms\Ui\DonottextList;
 use App\Modules\CSms\Ui\PernumberComplaintMonitoring;
 use App\Modules\CSms\Ui\Thread;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
-use Illuminate\Support\Facades\Event;
-use App\Modules\CSms\Events\SendRequested;
-use App\Modules\CSms\Listeners\SendRequestedListener;
 
 final class ModuleServiceProvider extends ServiceProvider
 {

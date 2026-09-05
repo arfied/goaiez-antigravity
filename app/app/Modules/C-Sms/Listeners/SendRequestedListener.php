@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\CSms\Listeners;
 
+use App\Modules\CSms\Actions\SmsSendAction;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X204\Actions\ConsentDecideAction;
-use App\Modules\CSms\Actions\SmsSendAction;
 
 final class SendRequestedListener
 {
