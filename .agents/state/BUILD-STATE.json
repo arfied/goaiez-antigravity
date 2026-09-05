@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T17:11:31",
+ "updated": "2026-09-05T18:22:27",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -465,10 +465,17 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-103",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same shape as send.requested), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-05T18:22:27"
+    }
+   ]
   },
   "X-104": {
    "status": "DONE",
@@ -741,10 +748,17 @@
    "unresolved": []
   },
   "X-155": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-155",
+     "stage": "capability",
+     "why": "The scaffold command reads the master plan first and G13-05 appears on line 28087 without the refusal before line 31363, so the thin row wins and the tracker note is ignored.",
+     "at": "2026-09-05T18:22:23"
+    }
+   ]
   },
   "X-156": {
    "status": "DONE",
@@ -1351,6 +1365,18 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
+  },
+  {
+   "module": "X-155",
+   "stage": "capability",
+   "why": "The scaffold command reads the master plan first and G13-05 appears on line 28087 without the refusal before line 31363, so the thin row wins and the tracker note is ignored.",
+   "at": "2026-09-05T18:22:23"
+  },
+  {
+   "module": "X-103",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same shape as send.requested), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-05T18:22:27"
   }
  ],
  "decisions": [
