@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T05:18:53",
+ "updated": "2026-09-05T05:28:58",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1491,6 +1491,12 @@
    "module": "X-155",
    "chose": "the defect was the shared fallback key funnelling every phone less submission in a business onto one contact row on the reserved 555 number. the fix uses a separate Person rather than a refusal or a null person id because the schema requires a person id and phone less submissions are valid. the spam branch keeps the fallback because a fresh contact per phone less spam submission would let a bot mint unbounded junk rows. rejected alternatives: refusing a phone less submission, null person id.",
    "at": "2026-09-05T05:18:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "The null coalescing operator fires only on null or an absent key, so a blank or whitespace phone still keyed the contact lookup and funnelled every blank submission in a business onto one row. The guard normalises to null rather than rejecting the value or widening the ternary because a blank phone is valid input by design and the ternary condition is strict. The spam branch keeps its fallback because a shared contact row for blank-phone spam is the wanted behaviour; a fresh contact per blank-phone spam submission lets one bot mint unbounded junk rows. Rejected alternatives: empty(), and a validator rejection of a blank phone.",
+   "at": "2026-09-05T05:28:58",
    "ruling": "R245"
   }
  ]
