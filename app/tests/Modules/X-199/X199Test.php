@@ -60,6 +60,16 @@ class X199Test extends TestCase
             'phone' => '+15125550399',
         ]);
 
+        \App\Modules\X198\Models\MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+        \Illuminate\Support\Facades\Http::fake([
+            'api.stripe.com/*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_mock_123'], 200),
+        ]);
+
         // Set net-30 credit limit to $1,000.00 (100,000 cents)
         $this->termsAction->handle(
             businessId: $biz->id,

@@ -28,10 +28,26 @@ class UnpaidScreenTest extends TestCase
             'first_name' => 'Jane',
             'last_name' => 'Doe',
         ]);
+        \App\Modules\X198\Models\MerchantConnection::create([
+            'business_id' => $otherBiz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test_other',
+            'is_connected' => true,
+        ]);
+        \Illuminate\Support\Facades\Http::fake([
+            'api.stripe.com/*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_mock_123'], 200),
+        ]);
         $invOther = app(InvoiceEngine::class)->issueInvoice($otherBiz->id, $otherCustomer->id, [['description' => 'Other tenant thing', 'quantity' => 1, 'unit_price_cents' => 77700]])['invoice'];
 
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
+        
+        \App\Modules\X198\Models\MerchantConnection::create([
+            'business_id' => $biz->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
 
         $customer = Person::create([
             'business_id' => $biz->id,

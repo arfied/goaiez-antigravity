@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\X199\Domain;
 
+use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Events\InvoiceIssued;
 use App\Modules\X199\Events\InvoicePaid;
+use App\Modules\X199\Events\LimitExceeded;
+use App\Modules\X199\Events\OverflowCharged;
+use App\Modules\X199\Events\OverflowReversed;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
@@ -39,7 +43,7 @@ final class InvoiceEngine
                     'terms_type' => $termsType,
                     'credit_limit_cents' => 500000, // $5,000 credit limit
                     'current_outstanding_cents' => 0,
-                    'card_on_file_token' => 'pm_card_vault_'.Str::random(12),
+                    'card_on_file_token' => 'tok_visa',
                 ]);
             }
 
@@ -78,7 +82,23 @@ final class InvoiceEngine
 
             // Check if account is over credit limit (TEST ANCHOR)
             if ($newOutstanding > $terms->credit_limit_cents) {
+                Event::dispatch(new LimitExceeded(
+                    businessId: $businessId,
+                    customerId: $customerId,
+                    limitCents: $terms->credit_limit_cents,
+                    outstandingCents: $newOutstanding
+                ));
+
                 $overflowAmount = $newOutstanding - $terms->credit_limit_cents;
+                $cardToken = $terms->card_on_file_token ?? 'tok_visa';
+
+                $gatewayEngine = app(GatewayEngine::class);
+                $payment = $gatewayEngine->capture(
+                    businessId: $businessId,
+                    amountCents: $overflowAmount,
+                    paymentToken: $cardToken,
+                    idempotencyKey: 'overflow_'.Str::random(12)
+                );
 
                 $overflowCharge = OverflowCharge::create([
                     'business_id' => $businessId,
@@ -86,9 +106,17 @@ final class InvoiceEngine
                     'invoice_id' => $invoice->id,
                     'charge_type' => 'overflow_charged',
                     'amount_cents' => $overflowAmount,
-                    'card_token' => $terms->card_on_file_token ?? 'pm_fallback_token',
-                    'reference_id' => 'ch_overflow_'.Str::random(12),
+                    'card_token' => $cardToken,
+                    'reference_id' => $payment->gateway_charge_id ?? 'ch_fallback_'.Str::random(12),
                 ]);
+
+                Event::dispatch(new OverflowCharged(
+                    businessId: $businessId,
+                    customerId: $customerId,
+                    invoiceId: $invoice->id,
+                    amountCents: $overflowAmount,
+                    gatewayChargeId: $overflowCharge->reference_id
+                ));
             }
 
             $terms->update(['current_outstanding_cents' => $newOutstanding]);
@@ -141,6 +169,13 @@ final class InvoiceEngine
                     'reference_id' => 're_overflow_'.Str::random(12),
                 ]);
                 $reversedCharges[] = $reversed;
+
+                Event::dispatch(new OverflowReversed(
+                    businessId: $businessId,
+                    customerId: $invoice->customer_id,
+                    invoiceId: $invoice->id,
+                    amountCents: $c->amount_cents
+                ));
             }
 
             Event::dispatch(new InvoicePaid(
