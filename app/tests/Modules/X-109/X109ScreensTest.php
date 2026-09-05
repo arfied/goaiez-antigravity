@@ -36,7 +36,8 @@ class X109ScreensTest extends TestCase
             ->assertDontSee('OTHER-TENANT-SENTINEL');
 
         $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
-        $this->actingAs($admin)->get(route('x-109.submission-log.admin', ['business' => $biz->id]))
+        TestCase::provisionTenant(['owner_user_id' => $admin->id]);
+        $this->actingAs($admin)->get(route('x-109.submission-log.admin'))
             ->assertOk()
             ->assertSee('No submissions yet');
     }
@@ -83,7 +84,8 @@ class X109ScreensTest extends TestCase
             ->assertDontSee('OTHER-TENANT-SENTINEL');
 
         $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
-        $this->actingAs($admin)->get(route('x-109.manual-queue.admin', ['business' => $biz->id]))
+        TestCase::provisionTenant(['owner_user_id' => $admin->id]);
+        $this->actingAs($admin)->get(route('x-109.manual-queue.admin'))
             ->assertOk()
             ->assertSee('Queue is empty');
     }
