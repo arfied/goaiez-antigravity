@@ -3,6 +3,7 @@
 return [
     'entries' => [
         [
+            'surface' => 'tenant',
             'label' => 'Today',
             'blurb' => 'Home — what needs you',
             'modules' => [
@@ -13,6 +14,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Inbox',
             'blurb' => 'one thread per person, every channel; the AI front desk works inside it (staff desk, omni chat)',
             'modules' => [
@@ -29,6 +31,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Calls & Voice',
             'blurb' => 'the voice agent, missed-call text-back, recordings, the pool number state',
             'modules' => [
@@ -41,6 +44,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Customers',
             'blurb' => 'contacts, pipeline, routing, calendar & appointments, agreements & e-sign, churn',
             'modules' => [
@@ -56,6 +60,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Jobs & Field',
             'blurb' => 'dispatch board, jobs, technician app, timesheets, job costing, inventory, customer portal',
             'modules' => [
@@ -69,6 +74,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Pricebook',
             'blurb' => 'the one screen four modules read; price confirmation; memberships',
             'modules' => [
@@ -78,6 +84,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Money',
             'blurb' => 'invoices, payments & cart/checkout, card vault, merchant account application, disputes, receivables, credits, taxes',
             'modules' => [
@@ -93,6 +100,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Reviews',
             'blurb' => 'requests, triage, QA report, tickets, loss alerts, GBP guardian',
             'modules' => [
@@ -102,6 +110,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Marketing',
             'blurb' => 'broadcasts & sequences, social & content week, video, promotions, referrals, ads advisor',
             'modules' => [
@@ -127,6 +136,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Website',
             'blurb' => 'builder, pages, templates, AI designer, forms, hosting/SSL, migration, WordPress plugin, storefront',
             'modules' => [
@@ -144,6 +154,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Visibility',
             'blurb' => 'SEO & AEO, GBP, citations, backlinks, AI visibility',
             'modules' => [
@@ -156,6 +167,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Prospecting',
             'blurb' => 'scraping, enrichment, research, signals, the Chrome extension, outreach ladder',
             'modules' => [
@@ -172,6 +184,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Visitors & Attribution',
             'blurb' => 'live visitors, COOLING, abandoned forms, install & verify, attribution row, replay, reports',
             'modules' => [
@@ -182,6 +195,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Automations & Assistant',
             'blurb' => 'the canvas, runs, safe mode; the omni assistant configures anything; integrations, MCP, Zapier',
             'modules' => [
@@ -193,6 +207,7 @@ return [
             ],
         ],
         [
+            'surface' => 'tenant',
             'label' => 'Settings',
             'blurb' => 'agent, numbers, hours & notification rules, consent & compliance, staff & roles, billing plan, credential vault, legal desk, white-label',
             'modules' => [
@@ -221,6 +236,7 @@ return [
             ],
         ],
         [
+            'surface' => 'other',
             'label' => 'Operator console',
             'blurb' => 'alerts (action, never a fact), approvals, resiliency, fixer, vision QA, tenant zero, support tickets, data requests, reconciliation & dispute queues',
             'modules' => [
@@ -235,6 +251,7 @@ return [
             ],
         ],
         [
+            'surface' => 'other',
             'label' => 'Agency console',
             'blurb' => 'clients, agency billing (three modes), staff roles, marketplace, white-label branding, affiliate program',
             'modules' => [
@@ -248,6 +265,7 @@ return [
             ],
         ],
         [
+            'surface' => 'other',
             'label' => 'Technician mobile',
             'blurb' => 'offline-first job app, field assistant',
             'modules' => [

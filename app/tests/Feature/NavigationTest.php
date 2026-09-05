@@ -69,4 +69,21 @@ class NavigationTest extends TestCase
             $this->assertArrayNotHasKey('Unplaced', $surfaces[$surf]);
         }
     }
+
+    public function test_no_other_surface_group_in_tenant_navigation(): void
+    {
+        $features = require __DIR__.'/../../config/features.php';
+        $surfaces = require __DIR__.'/../../config/surfaces.generated.php';
+
+        $otherGroups = [];
+        foreach ($features['entries'] as $entry) {
+            if (($entry['surface'] ?? 'tenant') === 'other') {
+                $otherGroups[] = $entry['label'];
+            }
+        }
+
+        foreach ($otherGroups as $group) {
+            $this->assertArrayNotHasKey($group, $surfaces['tenant'], "Group '{$group}' marked as 'other' should not be in 'tenant' surface.");
+        }
+    }
 }

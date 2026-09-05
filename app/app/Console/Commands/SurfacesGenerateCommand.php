@@ -17,6 +17,12 @@ class SurfacesGenerateCommand extends Command
 
     public function handle(): int
     {
+        if (!is_file(config_path('features.php'))) {
+            $this->error('STOP: config/features.php is missing.');
+            return 1;
+        }
+        $featuresConfig = require config_path('features.php');
+
         $modulesDir = app_path('Modules');
         $trackerFile = base_path('GOAIEZ-TRACKER-MODULES.md');
         $planFile = base_path('GOAIEZ-MASTER-PLAN.md');
@@ -169,14 +175,15 @@ class SurfacesGenerateCommand extends Command
                 }
                 $humanName = Str::title(str_replace('_', ' ', $render));
 
-                $featuresConfig = is_file(config_path('features.php')) ? require config_path('features.php') : ['entries' => [], 'deferred' => []];
-                $navGroup = 'Unplaced';
+                                $navGroup = 'Unplaced';
+                $navGroupSurface = 'tenant';
                 $isDeferred = in_array($modId, $featuresConfig['deferred'] ?? []);
 
                 if (! $isDeferred) {
                     foreach ($featuresConfig['entries'] ?? [] as $entry) {
                         if (in_array($modId, $entry['modules'] ?? [])) {
                             $navGroup = $entry['label'];
+                            $navGroupSurface = $entry['surface'] ?? 'tenant';
                             break;
                         }
                     }
@@ -230,6 +237,9 @@ class SurfacesGenerateCommand extends Command
 
                     $navRoute = $surf === 'operator' ? "$alias.admin" : $alias;
                     if (! $isDeferred && empty($routeParams)) {
+                        if ($surf === 'tenant' && $navGroupSurface === 'other') {
+                            continue;
+                        }
                         $allNavGroups[$surf][$navGroup][] = [
                             'label' => $humanName,
                             'route' => $navRoute,
@@ -401,14 +411,20 @@ class SurfacesGenerateCommand extends Command
 
     private function generateSurfacesConfig(array $allNavGroups): void
     {
-        $featuresConfig = is_file(config_path('features.php')) ? require config_path('features.php') : ['entries' => []];
-        $navOrder = [];
-        foreach ($featuresConfig['entries'] ?? [] as $entry) {
-            $navOrder[] = $entry['label'];
+        if (!is_file(config_path('features.php'))) {
+            throw new \RuntimeException('config/features.php is missing');
         }
+        $featuresConfig = require config_path('features.php');
 
         $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn [\n";
         foreach (['tenant', 'operator', 'agency', 'tech'] as $surf) {
+            $mappedSurface = $surf === 'tenant' ? 'tenant' : 'other';
+            $navOrder = [];
+            foreach ($featuresConfig['entries'] ?? [] as $entry) {
+                if (($entry['surface'] ?? 'tenant') === $mappedSurface) {
+                    $navOrder[] = $entry['label'];
+                }
+            }
             $content .= "    '$surf' => [\n";
             uksort($allNavGroups[$surf], function ($a, $b) use ($navOrder) {
                 $posA = array_search($a, $navOrder, true);
