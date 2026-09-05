@@ -41,15 +41,18 @@ final class SiteEngine
                 }
             }
 
+            $blockTypes = array_column($contentBlocks, 'type');
             $version = PageVersion::create([
                 'business_id' => $businessId,
                 'page_id' => $page->id,
                 'commit_id' => $commitId,
                 'content_blocks' => $contentBlocks,
                 'pixel_installed' => true, // G9-04 full-stack site law
-                'chat_installed' => true,         // G9-04 full-stack site law
-                'form_capture_installed' => true, // G9-04 full-stack site law
-                'dni_installed' => true,          // G9-04 full-stack site law
+                'chat_installed' => in_array('chat_widget', $blockTypes, true),
+                'form_capture_installed' => in_array('form_capture', $blockTypes, true),
+                'dni_installed' => in_array('dni_script', $blockTypes, true),
+                'seo_tags_installed' => in_array('seo_tags', $blockTypes, true),
+                'schema_installed' => in_array('schema_markup', $blockTypes, true),
                 'ssl_enabled' => true,
             ]);
 

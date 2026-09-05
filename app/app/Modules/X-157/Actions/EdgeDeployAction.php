@@ -108,9 +108,9 @@ final class EdgeDeployAction
                         ? array_column($version->content_blocks, 'type')
                         : [];
 
-                    $hasChat = $version->chat_installed || in_array('chat', $blockTypes, true);
+                    $hasChat = $version->chat_installed || in_array('chat_widget', $blockTypes, true);
                     $hasForm = $version->form_capture_installed || in_array('form_capture', $blockTypes, true);
-                    $hasDni = $version->dni_installed || in_array('dni', $blockTypes, true);
+                    $hasDni = $version->dni_installed || in_array('dni_script', $blockTypes, true);
 
                     if ($hasChat) {
                         $html .= "<div class=\"chat-widget-container\"></div>\n";
