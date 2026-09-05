@@ -459,8 +459,8 @@ final class PriceBook
             $item->price_cents,
             $item->price_max_cents,
             'USD',
-            PriceListItemSource::Owner,
-            $item->created_at,
+            PriceListItemSource::Manual,
+            \Carbon\CarbonImmutable::now(),
         );
     }
 }
