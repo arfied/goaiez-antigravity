@@ -6,6 +6,7 @@ namespace Tests\Modules\X132;
 
 use App\Modules\X132\Actions\PersonMergeAction;
 use App\Modules\X132\Actions\PersonResolveAction;
+use App\Modules\X132\Domain\IdentityEngine;
 use App\Modules\X132\Events\PersonMerged;
 use App\Modules\X132\Events\PersonResolved;
 use App\Modules\X132\Models\PersonLink;
@@ -85,7 +86,7 @@ class X132Test extends TestCase
         $composer = json_decode(file_get_contents(base_path('composer.json')), true);
         $this->assertArrayNotHasKey('clearbit/clearbit', $composer['require'] ?? []);
 
-        $engine = new \App\Modules\X132\Domain\IdentityEngine();
+        $engine = new IdentityEngine;
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('[G13-18]');
         $engine->validateClearbitReveal();
