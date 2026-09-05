@@ -1767,4 +1767,103 @@ class X157Test extends TestCase
             ->where('form_definition_id', $form->id)->count(),
             'a rolled back site still accepted a submission');
     }
+
+    /** (R245) */
+    public function test_a_video_block_becomes_videoobject_in_the_served_page_schema(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+                [
+                    'type' => 'video_embed',
+                    'name' => 'Drain Clearing Explained',
+                    'contentUrl' => 'https://video.example.com/drain.mp4',
+                    'uploadDate' => '2026-09-01',
+                ],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $body = (string) $response->getContent();
+
+        $this->assertSame(
+            1,
+            preg_match('#<script type="application/ld\+json">\s*(.*?)\s*</script>#s', $body, $m),
+            'the served page carries no JSON-LD block at all'
+        );
+        $ld = json_decode($m[1], true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame('VideoObject', $ld['video'][0]['@type'] ?? null);
+        $this->assertSame('Drain Clearing Explained', $ld['video'][0]['name'] ?? null);
+        $this->assertSame('https://video.example.com/drain.mp4', $ld['video'][0]['contentUrl'] ?? null);
+        $this->assertSame('2026-09-01', $ld['video'][0]['uploadDate'] ?? null);
+    }
+
+    public function test_a_malformed_video_block_takes_the_whole_schema_off_the_served_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+                [
+                    'type' => 'video_embed',
+                    'name' => 'Broken',
+                    'uploadDate' => '2026-09-01',
+                ],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $body = (string) $response->getContent();
+
+        $this->assertStringNotContainsString('application/ld+json', $body);
+        $this->assertStringContainsString('dni-pool-x137', $body);
+    }
 }

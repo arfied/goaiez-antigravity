@@ -93,6 +93,7 @@ final class EdgeDeployAction
             }
 
             // Compile HTML artifact to local storage
+            $videos = [];
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
             $html .= "</head><body>\n";
@@ -112,6 +113,17 @@ final class EdgeDeployAction
                     $hasChat = in_array('chat_widget', $blockTypes, true);
                     $hasForm = in_array('form_capture', $blockTypes, true);
                     $hasDni = in_array('dni_script', $blockTypes, true);
+
+                    foreach ($version->content_blocks as $block) {
+                        if (($block['type'] ?? '') === 'video_embed') {
+                            // VideoObject injected on publish (TEST ANCHOR, G16-25, ruling 41)
+                            $videos[] = [
+                                'name' => $block['name'] ?? null,
+                                'contentUrl' => $block['contentUrl'] ?? null,
+                                'uploadDate' => $block['uploadDate'] ?? null,
+                            ];
+                        }
+                    }
 
                     if ($hasChat) {
                         $html .= "<div class=\"chat-widget-container\"></div>\n";
@@ -155,7 +167,8 @@ final class EdgeDeployAction
                     $pageId,
                     $businessName,
                     $commitId,
-                    $zone->domain_name
+                    $zone->domain_name,
+                    videos: $videos ?: null
                 );
 
                 if (isset($schemaResult['json_ld'])) {
