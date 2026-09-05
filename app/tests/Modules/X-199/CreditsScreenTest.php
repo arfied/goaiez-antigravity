@@ -6,11 +6,13 @@ namespace Tests\Modules\X199;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
+use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Ui\Credits;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -31,16 +33,6 @@ class CreditsScreenTest extends TestCase
 
         $ada = Person::create(['business_id' => $biz->id, 'first_name' => 'Ada', 'last_name' => 'Lovelace']);
         $term = app(TermsSetAction::class)->handle($biz->id, $ada->id, 'net_30', 50000, 'pm_card_abc');
-
-        \App\Modules\X198\Models\MerchantConnection::create([
-            'business_id' => $biz->id,
-            'gateway_name' => 'stripe',
-            'merchant_account_id' => 'acct_test',
-            'is_connected' => true,
-        ]);
-        \Illuminate\Support\Facades\Http::fake([
-            'api.stripe.com/*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_mock_123'], 200),
-        ]);
 
         $issued = app(InvoiceEngine::class)->issueInvoice(
             $biz->id,

@@ -2,8 +2,10 @@
 
 use App\Models\Business;
 use App\Modules\X121\Models\Person;
+use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Models\MerchantConnection;
+use App\Modules\X198\Models\Payment;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Events\LimitExceeded;
 use App\Modules\X199\Events\OverflowCharged;
@@ -12,7 +14,7 @@ use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Symfony\Component\Process\Process;
 
 test('it issues invoice in integer minor units', function () {
@@ -57,12 +59,12 @@ test('the overflow rule — card absorbs limit overflow and payment reverses it'
         ]);
 
         // Fake the gateway at HTTP client because StripeGatewayClient and GatewayEngine are marked final
-        \Illuminate\Support\Facades\Http::fake([
-            'api.stripe.com/*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_mock_123'], 200),
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
         ]);
 
         $engine = app(InvoiceEngine::class);
-        
+
         // Issue $1,500 invoice -> outstanding becomes $5,500, overflow is $500.
         $result = $engine->issueInvoice(
             $business->id,
@@ -72,13 +74,13 @@ test('the overflow rule — card absorbs limit overflow and payment reverses it'
         );
 
         $invoice = $result['invoice'];
-        
+
         expect($result['is_over_limit'])->toBeTrue();
-        
+
         Event::assertDispatched(LimitExceeded::class, function ($e) use ($business) {
             return $e->businessId === $business->id && $e->outstandingCents === 550000;
         });
-        
+
         Event::assertDispatched(OverflowCharged::class, function ($e) use ($invoice) {
             return $e->invoiceId === $invoice->id && $e->amountCents === 50000;
         });
@@ -90,10 +92,10 @@ test('the overflow rule — card absorbs limit overflow and payment reverses it'
 
         // Pay the invoice -> reverses the charge for the same amount
         $engine->recordPayment($business->id, $invoice->id);
-        
+
         $reversals = OverflowCharge::where('invoice_id', $invoice->id)->where('charge_type', 'overflow_reversed')->get();
         expect($reversals)->toHaveCount(1);
-        
+
         $reversal = $reversals->first();
         expect($reversal->amount_cents)->toBe(50000);
         expect($reversal->amount_cents)->toBe($charge->amount_cents); // Assert it's the exact same amount
@@ -109,10 +111,127 @@ test('no installments are allowed by schema', function () {
     $process = new Process(['grep', '-ri', 'installment', base_path('app/Modules/X-199/')]);
     $process->run();
     $output = $process->getOutput();
-    
+
     // It should be empty (no output)
     expect(trim($output))->toBe('');
-    
+
     // Also assert the module directory actually exists so the grep is honest
     expect(is_dir(base_path('app/Modules/X-199/')))->toBeTrue();
+});
+
+test('the no-gateway case', function () {
+    Event::fake([LimitExceeded::class, OverflowCharged::class, OverflowReversed::class]);
+
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        $terms = CreditTerm::create([
+            'business_id' => $business->id,
+            'customer_id' => $customer->id,
+            'terms_type' => 'net_30',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 400000,
+            'card_on_file_token' => 'tok_visa',
+        ]);
+
+        $engine = app(InvoiceEngine::class);
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Big Service', 'quantity' => 1, 'unit_price_cents' => 150000]],
+            'net_30'
+        );
+
+        expect($result['invoice']->status)->toBe('issued');
+        expect($result['is_over_limit'])->toBeTrue();
+
+        Event::assertDispatched(LimitExceeded::class);
+        Event::assertNotDispatched(OverflowCharged::class);
+
+        $charge = OverflowCharge::where('invoice_id', $result['invoice']->id)->where('charge_type', 'overflow_charged')->first();
+        expect($charge)->not->toBeNull();
+        expect($charge->status)->toBe('refused');
+    });
+});
+
+test('the no-card case', function () {
+    Event::fake([LimitExceeded::class, OverflowCharged::class, OverflowReversed::class]);
+
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        MerchantConnection::create([
+            'business_id' => $business->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        $terms = CreditTerm::create([
+            'business_id' => $business->id,
+            'customer_id' => $customer->id,
+            'terms_type' => 'net_30',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 400000,
+            'card_on_file_token' => null,
+        ]);
+
+        $engine = app(InvoiceEngine::class);
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Big Service', 'quantity' => 1, 'unit_price_cents' => 150000]],
+            'net_30'
+        );
+
+        expect($result['invoice']->status)->toBe('issued');
+        expect($result['is_over_limit'])->toBeTrue();
+
+        Event::assertDispatched(LimitExceeded::class);
+        Event::assertNotDispatched(OverflowCharged::class);
+
+        $charge = OverflowCharge::where('invoice_id', $result['invoice']->id)->where('charge_type', 'overflow_charged')->first();
+        expect($charge)->not->toBeNull();
+        expect($charge->status)->toBe('refused');
+    });
+});
+
+test('the idempotency case: one Payment for two attempts at the same charge', function () {
+    $business = Business::factory()->create();
+
+    Tenancy::actingAs((int) $business->id, function () use ($business) {
+        MerchantConnection::create([
+            'business_id' => $business->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+        ]);
+
+        $gatewayEngine = app(GatewayEngine::class);
+        $idempotencyKey = 'overflow_99_50000';
+
+        $payment1 = $gatewayEngine->capture(
+            businessId: $business->id,
+            amountCents: 50000,
+            paymentToken: 'tok_visa',
+            idempotencyKey: $idempotencyKey
+        );
+
+        $payment2 = $gatewayEngine->capture(
+            businessId: $business->id,
+            amountCents: 50000,
+            paymentToken: 'tok_visa',
+            idempotencyKey: $idempotencyKey
+        );
+
+        expect($payment1->id)->toBe($payment2->id);
+        $count = Payment::where('business_id', $business->id)->count();
+        expect($count)->toBe(1);
+    });
 });

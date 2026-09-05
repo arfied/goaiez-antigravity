@@ -43,7 +43,7 @@ final class InvoiceEngine
                     'terms_type' => $termsType,
                     'credit_limit_cents' => 500000, // $5,000 credit limit
                     'current_outstanding_cents' => 0,
-                    'card_on_file_token' => 'tok_visa',
+                    'card_on_file_token' => null,
                 ]);
             }
 
@@ -90,15 +90,26 @@ final class InvoiceEngine
                 ));
 
                 $overflowAmount = $newOutstanding - $terms->credit_limit_cents;
-                $cardToken = $terms->card_on_file_token ?? 'tok_visa';
+                $cardToken = $terms->card_on_file_token;
 
-                $gatewayEngine = app(GatewayEngine::class);
-                $payment = $gatewayEngine->capture(
-                    businessId: $businessId,
-                    amountCents: $overflowAmount,
-                    paymentToken: $cardToken,
-                    idempotencyKey: 'overflow_'.Str::random(12)
-                );
+                $status = 'refused';
+                $gatewayChargeId = null;
+
+                if ($cardToken !== null) {
+                    try {
+                        $gatewayEngine = app(GatewayEngine::class);
+                        $payment = $gatewayEngine->capture(
+                            businessId: $businessId,
+                            amountCents: $overflowAmount,
+                            paymentToken: $cardToken,
+                            idempotencyKey: 'overflow_'.$invoice->id.'_'.$overflowAmount
+                        );
+                        $gatewayChargeId = $payment->gateway_charge_id;
+                        $status = 'charged';
+                    } catch (\Exception $e) {
+                        $status = 'refused';
+                    }
+                }
 
                 $overflowCharge = OverflowCharge::create([
                     'business_id' => $businessId,
@@ -107,16 +118,19 @@ final class InvoiceEngine
                     'charge_type' => 'overflow_charged',
                     'amount_cents' => $overflowAmount,
                     'card_token' => $cardToken,
-                    'reference_id' => $payment->gateway_charge_id ?? 'ch_fallback_'.Str::random(12),
+                    'reference_id' => $gatewayChargeId,
+                    'status' => $status,
                 ]);
 
-                Event::dispatch(new OverflowCharged(
-                    businessId: $businessId,
-                    customerId: $customerId,
-                    invoiceId: $invoice->id,
-                    amountCents: $overflowAmount,
-                    gatewayChargeId: $overflowCharge->reference_id
-                ));
+                if ($status === 'charged') {
+                    Event::dispatch(new OverflowCharged(
+                        businessId: $businessId,
+                        customerId: $customerId,
+                        invoiceId: $invoice->id,
+                        amountCents: $overflowAmount,
+                        gatewayChargeId: $overflowCharge->reference_id
+                    ));
+                }
             }
 
             $terms->update(['current_outstanding_cents' => $newOutstanding]);

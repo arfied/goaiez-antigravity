@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X199;
 
 use App\Modules\X121\Models\Person;
+use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X199\Actions\InvoiceDraftAction;
 use App\Modules\X199\Actions\InvoiceIssueAction;
 use App\Modules\X199\Actions\InvoiceRecordOfflineAction;
@@ -15,6 +16,7 @@ use App\Modules\X199\Events\InvoicePaid;
 use App\Modules\X199\Models\Invoice;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
@@ -60,18 +62,9 @@ class X199Test extends TestCase
             'phone' => '+15125550399',
         ]);
 
-        \App\Modules\X198\Models\MerchantConnection::create([
-            'business_id' => $biz->id,
-            'gateway_name' => 'stripe',
-            'merchant_account_id' => 'acct_test',
-            'is_connected' => true,
-        ]);
-        \Illuminate\Support\Facades\Http::fake([
-            'api.stripe.com/*' => \Illuminate\Support\Facades\Http::response(['id' => 'ch_mock_123'], 200),
-        ]);
-
         // Set net-30 credit limit to $1,000.00 (100,000 cents)
-        $this->termsAction->handle(
+        $termsAction = new TermsSetAction;
+        $termsAction->handle(
             businessId: $biz->id,
             customerId: $customer->id,
             termsType: 'net_30',
