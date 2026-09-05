@@ -86,9 +86,12 @@ final class FormCaptureAction
             $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
             // Direct entity writing (G2-20, G13-35): forms write straight to Person entity, no intermediate buffer
-            $phone = $payload['phone'] ?? '+15550000000';
+            $phone = $payload['phone'] ?? null;
 
-            $person = Person::firstOrNew(['business_id' => $businessId, 'phone' => $phone]);
+            // A submission that carries no phone gets its own contact, never a shared one (R245, 2026-09-05).
+            $person = $phone === null
+                ? new Person(['business_id' => $businessId])
+                : Person::firstOrNew(['business_id' => $businessId, 'phone' => $phone]);
             // Only write the fields the payload actually carried (R245, 2026-09-05).
             $person->fill(array_filter([
                 'first_name' => $payload['first_name'] ?? ($payload['name'] ?? null),
