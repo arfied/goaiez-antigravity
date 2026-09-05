@@ -114,6 +114,19 @@ Watch for: <the trap that applies, by name>
   commits, never `BUILDING`.
 - **Uncommitted work is invisible to review.** Do not review a dirty tree;
   brief a commit first. The coder commits per module (rule 10).
+- **A merge walks past the coder guard.** The guard checks paths on
+  `git commit`; a merge writes files without one, so `app/phpunit.xml`,
+  `seals.json`, `app/app/Doctor/**` or the mailbox can move with nothing
+  refusing — run 39 came through with git reporting **no conflict at all**.
+  Owner-approved 2026-09-05 13:2x, `coder-bin/git` refuses
+  `merge`/`pull`/`cherry-pick`/`revert` unless `GOAIEZ_MERGE_OK=1`. **Only
+  `launch-coder.sh --allow-merge` sets it** — never `BRIEF.md`, which is
+  rewritten every tick. So: a merge item is dispatched with
+  `bash .agents/supervisor/launch-coder.sh --allow-merge`, named in the
+  `REVIEWS.md` block; every other run launches bare. A
+  `REFUSED by coder guard: git merge …` under `REFUSED` means the supervisor
+  left the gate shut — relaunch with the flag, it is not a coder fault. Live
+  since 2026-09-05 13:4x, both halves syntax-checked by the owner.
 - **`app/CLAUDE.md` and `app/AGENTS.md` are Laravel Boost boilerplate**, not
   the contract. The contract is the root `AGENTS.md`. Do not cite the `app/`
   copies.

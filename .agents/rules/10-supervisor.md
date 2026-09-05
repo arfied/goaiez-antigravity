@@ -65,6 +65,22 @@ RAW       : <doctor output for anything not fixed>
   every run, `BRIEF.md`'s `push:` line reads `CLOSED`, and `REPORT.md` records
   `PUSHED : none — push CLOSED`. A run that pushes anyway is a `BLOCK` on the
   wave even if the range is right.
+- ⛔ **The coder merges only on an opened gate — owner-approved 2026-09-05
+  13:2x.** A merge writes files with no `git commit`, so the guard's never-list
+  check never sees it: a merge from `origin/main` can move `app/phpunit.xml`,
+  `seals.json`, `app/app/Doctor/**`, `CLAUDE.md` or the mailbox and nothing
+  refuses. Run 39 is the near miss — our side had not touched `phpunit.xml`
+  since the base, so git reported **no conflict at all**, and only a
+  hand-written brief step caught it. `coder-bin/git` therefore refuses
+  `merge`/`pull`/`cherry-pick`/`revert` unless `GOAIEZ_MERGE_OK=1`, and only
+  `launch-coder.sh` sets it, from **`--allow-merge` at dispatch** — never from
+  `BRIEF.md`, for the same reason the push gate is not derived from it (the
+  supervisor rewrites that file every tick). **Supervisor: when the brief's item
+  is a merge, dispatch with `bash .agents/supervisor/launch-coder.sh
+  --allow-merge` and say so in the `REVIEWS.md` block; otherwise launch bare.**
+  A `REFUSED by coder guard: git merge …` in a report means the gate was left
+  shut — that is the supervisor's miss, not the coder's, and the fix is to
+  relaunch with the flag.
 - ⛔⛔ **The coder guard is never bypassed.** `git` in a coder run is
   `/home/goaiez/agents/coder-bin/git`. Calling `/usr/bin/git`, `command git`,
   `env PATH=… git`, or any other route around it is a BLOCK on the wave even

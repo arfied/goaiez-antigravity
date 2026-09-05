@@ -22,6 +22,11 @@ if [ "${1:-}" = "--status" ]; then
   exit 0
 fi
 
+# --allow-merge: opens the merge gate for THIS launch only (see the gate below).
+# Pass it when, and only when, the brief's item is a merge from origin/main.
+ALLOW_MERGE=0
+if [ "${1:-}" = "--allow-merge" ]; then ALLOW_MERGE=1; shift; fi
+
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
   exit 1
@@ -54,7 +59,19 @@ LOG="/home/goaiez/tmp/agy-${TRACK}-run${n}.log"
 PUSH_OK=0
 echo "push gate: closed (owner ruling 2026-09-05 14:0x — the coder never pushes)"
 
-nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+# Merge gate — owner-approved 2026-09-05 13:2x. A merge writes never-list files
+# (app/phpunit.xml, seals.json, app/app/Doctor/**, CLAUDE.md, the mailbox) with
+# no `git commit`, so coder-bin/git's commit guard never sees it; the run-39
+# merge is the near miss (git reported no conflict at all). The wrapper refuses
+# merge/pull/cherry-pick/revert unless GOAIEZ_MERGE_OK=1 and only this launcher
+# may set it. Closed unless the supervisor launches with --allow-merge, which is
+# an explicit act at dispatch: it is deliberately NOT derived from BRIEF.md, for
+# the same reason the push gate is not (that file is rewritten every tick).
+MERGE_OK=0
+if [ "${ALLOW_MERGE:-0}" = 1 ]; then MERGE_OK=1; fi
+if [ "$MERGE_OK" = 1 ]; then echo "merge gate: OPEN (--allow-merge)"; else echo "merge gate: closed"; fi
+
+nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 echo $! > "$PIDFILE"
 
 sleep 2
