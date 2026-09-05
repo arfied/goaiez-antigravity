@@ -105,6 +105,25 @@ class X149Test extends TestCase
      */
     public function test_g5_04_single_database(): void
     {
-        $this->assertTrue(true);
+        $drivers = collect(config('database.connections'))->pluck('driver')->all();
+        $this->assertNotContains('clickhouse', $drivers);
+
+        $this->assertNull((new \App\Modules\X149\Models\EvalRun)->getConnectionName());
+        $this->assertNull((new \App\Modules\X149\Models\EvalSet)->getConnectionName());
+        $this->assertNull((new \App\Modules\X149\Models\QualitySeries)->getConnectionName());
+
+        $biz = self::provisionTenant();
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $action = new \App\Modules\X149\Actions\TrackQualitySeriesAction;
+        $series = $action->record($biz->id, 0.1, 0.2);
+
+        $row = \Illuminate\Support\Facades\DB::connection(config('database.default'))
+            ->table('quality_series')
+            ->where('id', $series->id)
+            ->first();
+
+        $this->assertNotNull($row);
+        $this->assertEquals($biz->id, $row->business_id);
     }
 }
