@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T03:17:01",
+ "updated": "2026-09-05T03:30:02",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1449,6 +1449,12 @@
    "module": "X-157",
    "chose": "A deploy whose artifact could not be written is refused by throwing, so the transaction rolls the Deployment row back and the listener's catch keeps the page published. The local disk sets 'throw' => false, so put() returns false and the discarded return let a row commit as 'deployed' with no artifact. Rejected: returning a 'failed' status array, because the only caller (ModuleServiceProvider) discards the return value and the row would commit stuck at 'deploying'. Rejected: committing the row as 'failed', because SITE-44 already fixed a failed deploy's shape as no row at all, and two representations of one event is what makes a status surface lie.",
    "at": "2026-09-05T03:17:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "",
+   "at": "2026-09-05T03:30:02",
    "ruling": "R245"
   }
  ]
