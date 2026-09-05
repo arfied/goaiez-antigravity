@@ -39,6 +39,11 @@ return [
     'emits' => [
         'flow.changed',
         'rule.changed',
+        'flow.triggered',
+        'flow.completed',
+        'flow.branched',
+        'flow.paused',
+        'rule.fired',
     ],
     'consumes' => [
         '*',

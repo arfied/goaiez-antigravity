@@ -38,6 +38,12 @@ return [
     'emits' => [
         'ledger.period_closed',
         'refund.issued',
+        'credit.debited',
+        'credit.exhausted',
+        'topup.charged',
+        'dunning.advanced',
+        'tenant.suspended',
+        'subscription.renewed',
     ],
     'consumes' => [
         'payment.captured',

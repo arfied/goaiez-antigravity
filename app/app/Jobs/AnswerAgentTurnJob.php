@@ -16,6 +16,8 @@ use App\Livewire\Account\Inbox;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
+use App\Modules\CAgent\Models\AgentRefusal;
+use App\Modules\CAgent\Models\AgentTurn;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentGrounding;
 use App\Services\Agent\AgentReplyDraft;
@@ -31,6 +33,7 @@ use App\Services\Consent\SendPermit;
 use App\Services\Conversations\InboundThreading;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Takes one agent turn on a thread — T176 §2, patch P4.
@@ -48,6 +51,7 @@ use App\Services\Messaging\Outbound\SendKey;
  * counted **after the draft exists and before the send**, and the ordering is the
  * contract's rather than a convenience:
  *
+        \Illuminate\Support\Facades\Log::warning("Recording turn for conversation " . $conversation->id);
  *  - **Before the send**, because {@see AgentThreadStates::recordTurn()} is
  *    *"called when the turn is taken, not when it succeeds"* — a reply that
  *    failed to send still consumed a turn's worth of loop, and counting only
@@ -296,6 +300,7 @@ final class AnswerAgentTurnJob extends AutopilotJob
         $threads = app(AgentThreadStates::class);
         $state = $threads->stateFor($conversation);
 
+        Log::warning('Agent turn state for conversation '.$conversation->id.' is '.$state->status->value.' turns used '.$state->turnsUsed.' cap '.$state->turnCap);
         if (! $state->mayTakeTurn()) {
             // Rails 3 and 4. ⚠️ **ASKED HERE AND AGAIN INSIDE `AgentGrounding`,
             // ON PURPOSE** — 398's shape is an outer guard that refuses first,
@@ -328,7 +333,10 @@ final class AnswerAgentTurnJob extends AutopilotJob
             ? app(ReviewAskBridge::class)->offerFor($conversation)
             : null;
 
-        $draft = app(AgentComposer::class)->write(
+        $composer = app(AgentComposer::class);
+
+        Log::warning('Writing draft for conversation '.$conversation->id);
+        $draft = $composer->write(
             customerMessage: $message,
             // ⛔ **THE THREAD ITSELF, BECAUSE R14 MINTS A SHORT LINK PER SEND**
             // (4271). The composer needs it to key the booking token to this
@@ -358,6 +366,24 @@ final class AnswerAgentTurnJob extends AutopilotJob
 
         $outcome = $this->send($conversation, $draft);
 
+        if ($draft->fallbackReason !== null) {
+            AgentRefusal::create([
+                'business_id' => $conversation->business_id,
+                'refusal_code' => $draft->fallbackReason,
+                'reason' => 'Draft refused with fallback: '.$draft->fallbackReason,
+                'user_input' => $message,
+            ]);
+        }
+
+        AgentTurn::create([
+            'business_id' => $conversation->business_id,
+            'conversation_id' => $conversation->id,
+            'turn_number' => $after->turnsUsed,
+            'user_message' => $message,
+            'agent_reply' => $draft->body,
+            'status' => 'answered',
+            'refusal_code' => $draft->fallbackReason,
+        ]);
         // ⛔ **THE ASK IS SPENT AFTER THE SEND AND ONLY IF THE MESSAGE ACTUALLY
         // CARRIED THE LINK (P12).** Three conditions, and every one of them has
         // its own test: the send left, the body reproduced the URL, and there was

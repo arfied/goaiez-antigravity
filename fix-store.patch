@@ -1,0 +1,11 @@
+--- app/app/Services/Config/CredentialStore.php
++++ app/app/Services/Config/CredentialStore.php
+@@ -73,6 +73,7 @@
+         }
+ 
+         $stored = PlatformCredential::query()->find($key);
++        \Illuminate\Support\Facades\Log::info("CredentialStore resolve($key) found: " . json_encode($stored));
+ 
+         if ($stored !== null) {
+             $value = $this->readable($stored);
++            \Illuminate\Support\Facades\Log::info("CredentialStore readable($key): " . json_encode($value));

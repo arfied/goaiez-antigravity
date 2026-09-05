@@ -41,6 +41,7 @@ return [
         'send.requested',
     ],
     'consumes' => [
+        'suppression.added',
         'capability.decided',
     ],
 

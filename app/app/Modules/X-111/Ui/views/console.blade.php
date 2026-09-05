@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="health dashboard" screen="console" />
     <div class="ops-console-view p-4">
         <h3 class="text-lg font-bold">Operator Control Center Console</h3>
         <div class="mt-4">

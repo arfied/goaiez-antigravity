@@ -21,14 +21,14 @@ declare(strict_types=1);
  * carries no refusal, and a ⑤ that only restates the ① protects nothing.
  */
 return [
+    // status: SPECCED
+    'G18-05' => 'P-001 · T468 — two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for',
+
     // status:
     'N-027' => 'no cap → cannot save · margin guard NAMES every below-cost service · no stacking by default · the AI honours and never invents · issuer_scope never crosses · incrementality holdout mandatory',
 
     // status:
-    'N-028' => '',
-
-    // status:
-    'N-030' => '',
+    'N-032' => 'no cap → cannot save · margin guard NAMES every below-cost service · no stacking by default · the AI honours and never invents · issuer_scope never crosses · incrementality holdout mandatory',
 
     // status: SPECCED
     'G1-66' => '§226.2 — a promotion with no cap CANNOT BE SAVED · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a promotion with NO CAP cannot be saved — asserted',
@@ -46,5 +46,5 @@ return [
     'G7-47' => '§226.2 — a cohort rate is a ROW; an existing tenant\'s rate never changes without a NOTIFIED action · transcribed from the plan 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ a cohort rate is a ROW; an existing rate never changes without a NOTIFIED action — asserted',
 
     // status: SPECCED
-    'G15-21' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34 overrides: cancel stays ONE TAP; the save-offer renders beside it',
+    'G15-21' => 'reclaimed 2026-08-27 · ⛔ register description STRIPPED (P-206) — it lives in the register, not in the file the brief reads · ⑤ R34 overrides: cancel stays ONE TAP; the save-offer renders beside it · refuses: anything but one tap to cancel',
 ];

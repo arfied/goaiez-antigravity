@@ -36952,14 +36952,14 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 @module **X-219 AiRouter**
 **WHAT** The roster and the assignment. Every model from every vendor — including self-hosted — is a ROW, and every module names its own PRIMARY, BACKUP and COMPLEX model per job class. ⛔ **No module ever names a vendor.**
-`@intent OBSERVE` · `@provides model.resolve · model.assign · provider.health · roster.list` · `@emits model.resolved · model.fallback · provider.degraded · roster.changed` · `@consumes capability.decided · job.dispatched` · `@owns_table ai_providers · ai_models · ai_module_assignments` · `@reads_table ai_calls` · `@renders roster_admin · assignment_matrix` · `@agent_reachable roster.list`
+`@intent OBSERVE` · `@provides model.resolve · model.assign · provider.health · roster.list` · `@emits model.resolved · model.fallback · provider.degraded · roster.changed` · `@consumes capability.decided · job.dispatched` · `@owns_table ai_providers · ai_models · ai_module_assignments` · `@reads_table ai_calls` · `@renders roster_admin · assignment_matrix` · `@agent_reachable roster.list · model.resolve · model.assign · provider.health`
 `ships: L3 · ceiling: L3` ⭐ *(`R235` — ships ON. Resolution is a lookup; it decides nothing a human would want to approve.)*
 **NEEDS / HAS** needs: `C-Ai` for the call · has: `R237`'s three slots · ⛔ **BACKUP must be a DIFFERENT PROVIDER (`N-237-03`)** — *a vendor outage takes every model it serves.*
 **TEST ANCHOR** an assignment whose PRIMARY and BACKUP share a provider **FAILS the build**; a self-hosted row with no vendor key **RESOLVES**.
 
 @module **X-220 PromptRegistry**
 **WHAT** A prompt is a ROW with a version, and its golden set is versioned with it. ⛔ **A prompt edited in code is an experiment nobody can reproduce and a regression nobody can bisect.**
-`@intent OBSERVE` · `@provides prompt.resolve · prompt.freeze · eval.run · eval.compare` · `@emits prompt.frozen · eval.completed · eval.regressed` · `@consumes capability.decided · model.resolved` · `@owns_table ai_prompts · golden_sets` · `@reads_table ai_calls · ai_models` · `@renders prompt_history · eval_report` · `@agent_reachable prompt.resolve`
+`@intent OBSERVE` · `@provides prompt.resolve · prompt.freeze · eval.run · eval.compare` · `@emits prompt.frozen · eval.completed · eval.regressed` · `@consumes capability.decided · model.resolved` · `@owns_table ai_prompts · golden_sets` · `@reads_table ai_calls · ai_models` · `@renders prompt_history · eval_report` · `@agent_reachable prompt.resolve · prompt.freeze · eval.run · eval.compare`
 `ships: L3 · ceiling: L3` ⭐ *(`R235` — ships ON.)*
 **NEEDS / HAS** needs: `X-219` for the model under test · has: `N-238-19` — ⛔⛔ **a model may not enter a PRIMARY slot without passing that job class's golden set.** ⭐ *That single rule is what makes `R237`'s open roster safe: otherwise "any model, any vendor" means **"any quality, discovered in production."***
 **TEST ANCHOR** a frozen prompt **CANNOT be edited** — a change is a new version; an eval run records `model_served`, not `model_requested` *(`N-238-02`)*.
@@ -37653,7 +37653,8 @@ mkdir -p app/Modules/X126 && mv app/Modules/X-126/Gate app/Modules/X126/Gate
 ## 264J.3 `X-218` `InfluencerEngine` — **the one true gap in the sweep · BOTH audiences**
 @module **X-218** `InfluencerEngine`
 @intent GROW
-`ships: L2 · ceiling: L2`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)*
+`· @agent_reachable influencer.outreach · influencer.deal · influencer.deliverable
+`@agent_reachable influencer.outreach · influencer.deal · influencer.deliverable` · ships: L2 · ceiling: L2`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)*
 @provides `influencer.discover` · `influencer.outreach` · `influencer.deal` · `influencer.deliverable`
 
 @agent_reachable `influencer.discover` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*

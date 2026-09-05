@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X125\Models;
 
+use App\Enums\SignalState;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FlowRun extends Model
 {
@@ -16,4 +18,24 @@ class FlowRun extends Model
         'trigger_payload' => 'array',
         'is_manual_retry' => 'boolean',
     ];
+
+    public function flow(): BelongsTo
+    {
+        return $this->belongsTo(Flow::class, 'flow_id');
+    }
+
+    public function flowVersion(): BelongsTo
+    {
+        return $this->belongsTo(FlowVersion::class, 'flow_version_id');
+    }
+
+    public function statusSignal(): SignalState
+    {
+        return match ($this->status) {
+            'success' => SignalState::Ok,
+            'error' => SignalState::Alert,
+            'simulated' => SignalState::Unknown,
+            default => SignalState::Unknown,
+        };
+    }
 }

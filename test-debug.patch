@@ -1,0 +1,10 @@
+--- app/app/Services/Voice/VoiceCalls.php
++++ app/app/Services/Voice/VoiceCalls.php
+@@ -145,6 +145,7 @@
+     {
+         $facts = $this->provider->call($providerCallId);
+ 
+         if (! $facts instanceof VoiceCallFacts) {
++            \Illuminate\Support\Facades\Log::error("VoiceCallFacts not returned for $providerCallId");
+             return VoiceIngestOutcome::ProviderUnavailable;
+         }

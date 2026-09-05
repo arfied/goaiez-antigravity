@@ -486,6 +486,275 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
+- `2026-09-02T05:38:33` journey J8 -> green
+- `2026-09-02T05:38:33` journey J7 -> green
+- `2026-09-02T05:38:33` stage journey = 10
+- `2026-09-02T05:53:55` journey J8 -> green
+- `2026-09-02T05:53:55` journey J7 -> green
+- `2026-09-02T05:54:05` stage journey = 10
+- `2026-09-02T09:32:31` journey J5 -> green
+- `2026-09-02T09:32:31` stage journey = 5
+- `2026-09-02T10:06:30` journey J11 -> green
+- `2026-09-02T10:10:53` journey J11 -> red
+- `2026-09-02T10:10:53` journey J3 -> red
+- `2026-09-02T10:11:06` stage journey = 9
+- `2026-09-02T10:12:36` UNRESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-02T10:19:45` journey J11 -> green
+- `2026-09-02T10:19:56` stage journey = 8
+- `2026-09-02T10:24:52` journey J11 -> red
+- `2026-09-02T10:24:59` stage journey = 9
+- `2026-09-02T10:28:55` UNRESOLVED journey X-126 - Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)
+- `2026-09-02T23:58:57` stage capability = 391
+- `2026-09-03T01:03:21` stage capability = 352
+- `2026-09-03T01:03:24` stage contract = 100
+- `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read
+- `2026-09-03T01:48:06` (R245) X-204 — (R245) §239.1 rows attribute to their nearest enclosing heading module when the table lacks a parent column, never by prose
+- `2026-09-03T07:54:31` stage capability = 372
+- `2026-09-03T07:59:46` (R245) X-186 — (R245) X-186 sets cancelled_at on pending campaign_steps when suppression.added is emitted by X-204 — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) X-121 — (R245) Added people.consent_state string NOT NULL default 'UNPERMITTED' — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) X-123 — (R245) X-123 dead-letter mail is an operator alert to the Business owner (P-060 governs customer sends); reads businesses+users for the owner address — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) C-Telephony — (R245) CarrierRouter consults ConsentService::decide before any carrier; class from the caller — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) C-Whatsapp — (R245) WhatsappEngine consults ConsentService::decide before the driver; class from the caller — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` note: P-060 discrepancy: SendRefusalReason enum has 21 cases, but P-060 says 20 — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` stage capability = 372
+- `2026-09-03T09:00:10` selftest: sound
+- `2026-09-03T09:06:35` UNRESOLVED contract X-145 - consumes outcome.recorded nothing emits it
+- `2026-09-03T09:06:35` UNRESOLVED contract C-Mail - consumes campaign.scheduled nothing emits it
+- `2026-09-03T09:06:35` UNRESOLVED contract C-Whatsapp - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-153 - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract C-Agent - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-185 - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-137 - consumes message.sent nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract C-Ai - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-148 - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-119 - consumes entity.updated nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-119 - consumes site.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-160 - consumes upload.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-16 - consumes refresh.due nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-136 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-129 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-156 - consumes any.event nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-110 - consumes page.loaded nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-155 - consumes page.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-157 - consumes page.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-195 - consumes page.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-198 - consumes cart.checkout nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-198 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-199 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract C-Billing - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-82 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-120 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-127 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-163 - consumes agent.refused nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-167 - consumes order.paid nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-167 - consumes order.cancelled nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-175 - consumes note.voice nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-177 - consumes zernio.webhook nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-185 - consumes entity.state_changed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-82 - consumes country.detected nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-120 - consumes limit.exceeded nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-111 - consumes help.human_requested nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-112 - consumes credit.debited nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-195 - consumes rule.fired nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-211 - consumes invoice.overdue nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-217 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-218 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:16:54` stage anchor = 10
+- `2026-09-03T09:17:22` UNRESOLVED contract X-145 - consumes outcome.recorded nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Mail - consumes campaign.scheduled nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Whatsapp - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-153 - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Agent - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-185 - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-137 - consumes message.sent nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Ai - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-148 - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-119 - consumes entity.updated nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-119 - consumes site.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-160 - consumes upload.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-16 - consumes refresh.due nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-136 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-129 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-156 - consumes any.event nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-110 - consumes page.loaded nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-155 - consumes page.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-157 - consumes page.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-195 - consumes page.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-198 - consumes cart.checkout nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-198 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-199 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Billing - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-82 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-120 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-127 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-163 - consumes agent.refused nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-167 - consumes order.paid nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-167 - consumes order.cancelled nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-175 - consumes note.voice nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-177 - consumes zernio.webhook nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-185 - consumes entity.state_changed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-82 - consumes country.detected nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-120 - consumes limit.exceeded nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-111 - consumes help.human_requested nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-112 - consumes credit.debited nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-195 - consumes rule.fired nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-211 - consumes invoice.overdue nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-217 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:17:23` UNRESOLVED contract X-218 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:18:48` UNRESOLVED contract X-190 - one event, one emitter
+- `2026-09-03T09:33:12` state initialised
+- `2026-09-03T09:34:34` note: bootstrap-done
+- `2026-09-03T09:43:25` X-121 -> DONE
+- `2026-09-03T10:06:31` X-123 -> DONE
+- `2026-09-03T10:08:24` X-122 -> DONE
+- `2026-09-03T10:11:29` X-126 -> DONE
+- `2026-09-03T10:20:14` X-119 -> DONE
+- `2026-09-03T10:21:47` X-128 -> DONE
+- `2026-09-03T10:23:27` C-Ai -> DONE
+- `2026-09-03T10:24:57` X-219 -> DONE
+- `2026-09-03T10:26:32` X-220 -> DONE
+- `2026-09-03T10:29:00` X-204 -> DONE
+- `2026-09-03T10:30:31` X-206 -> DONE
+- `2026-09-03T10:31:56` C-Telephony -> DONE
+- `2026-09-03T10:33:20` C-Sms -> DONE
+- `2026-09-03T10:34:52` C-Agent -> DONE
+- `2026-09-03T10:36:47` X-66 -> DONE
+- `2026-09-03T10:38:05` X-188 -> DONE
+- `2026-09-03T10:39:35` X-153 -> DONE
+- `2026-09-03T10:42:13` X-01 -> DONE
+- `2026-09-03T10:44:59` X-118 -> DONE
+- `2026-09-03T10:50:58` X-163 -> DONE
+- `2026-09-03T10:56:33` X-164 -> DONE
+- `2026-09-03T11:01:39` X-108 -> DONE
+- `2026-09-03T11:04:23` C-Reviews -> DONE
+- `2026-09-03T11:06:31` X-181 -> DONE
+- `2026-09-03T11:09:46` X-110 -> DONE
+- `2026-09-03T11:12:59` C-Billing -> DONE
+- `2026-09-03T11:14:54` X-199 -> DONE
+- `2026-09-03T11:17:48` X-211 -> DONE
+- `2026-09-03T11:19:51` X-202 -> DONE
+- `2026-09-03T11:21:33` X-117 -> DONE
+- `2026-09-03T11:23:22` X-198 -> DONE
+- `2026-09-03T11:24:35` X-172 -> DONE
+- `2026-09-03T11:26:00` X-112 -> DONE
+- `2026-09-03T11:27:51` X-166 -> DONE
+- `2026-09-03T11:28:58` X-157 -> DONE
+- `2026-09-03T11:30:03` X-178 -> DONE
+- `2026-09-03T11:31:56` X-103 -> DONE
+- `2026-09-03T11:33:17` X-102 -> DONE
+- `2026-09-03T11:34:37` X-155 -> DONE
+- `2026-09-03T11:35:52` X-137 -> DONE
+- `2026-09-03T11:37:43` X-176 -> DONE
+- `2026-09-03T11:39:06` X-212 -> DONE
+- `2026-09-03T11:40:20` X-203 -> DONE
+- `2026-09-03T11:42:25` C-Mail -> DONE
+- `2026-09-03T11:43:47` C-Whatsapp -> DONE
+- `2026-09-03T11:44:57` X-147 -> DONE
+- `2026-09-03T11:46:56` X-207 -> DONE
+- `2026-09-03T11:48:54` X-193 -> DONE
+- `2026-09-03T11:50:16` X-208 -> DONE
+- `2026-09-03T11:51:22` X-125 -> DONE
+- `2026-09-03T11:52:50` X-127 -> DONE
+- `2026-09-03T11:54:07` X-149 -> DONE
+- `2026-09-03T11:56:28` X-170 -> DONE
+- `2026-09-03T11:57:53` X-201 -> DONE
+- `2026-09-03T11:59:10` X-10 -> DONE
+- `2026-09-03T12:00:24` X-113 -> DONE
+- `2026-09-03T12:01:49` X-124 -> DONE
+- `2026-09-03T12:03:15` X-143 -> DONE
+- `2026-09-03T12:05:26` X-151 -> DONE
+- `2026-09-03T12:07:09` X-162 -> DONE
+- `2026-09-03T12:09:45` X-165 -> DONE
+- `2026-09-03T12:11:00` X-171 -> DONE
+- `2026-09-03T12:13:08` X-189 -> DONE
+- `2026-09-03T12:14:21` X-214 -> DONE
+- `2026-09-03T12:15:40` X-215 -> DONE
+- `2026-09-03T12:19:38` X-07 -> DONE
+- `2026-09-03T12:22:00` X-104 -> DONE
+- `2026-09-03T12:25:17` X-111 -> DONE
+- `2026-09-03T12:26:55` X-129 -> DONE
+- `2026-09-03T12:28:17` stage capability = 372
+- `2026-09-03T12:28:45` X-138 -> DONE
+- `2026-09-03T12:29:58` X-139 -> DONE
+- `2026-09-03T12:31:39` X-145 -> DONE
+- `2026-09-03T12:33:55` X-148 -> DONE
+- `2026-09-03T12:35:19` X-150 -> DONE
+- `2026-09-03T12:37:53` X-16 -> DONE
+- `2026-09-03T12:40:00` X-160 -> DONE
+- `2026-09-03T12:41:48` X-167 -> DONE
+- `2026-09-03T12:44:49` X-168 -> DONE
+- `2026-09-03T12:46:30` X-175 -> DONE
+- `2026-09-03T12:48:02` X-177 -> DONE
+- `2026-09-03T12:49:07` X-180 -> DONE
+- `2026-09-03T12:50:34` X-194 -> DONE
+- `2026-09-03T12:52:46` X-195 -> DONE
+- `2026-09-03T12:56:34` X-197 -> DONE
+- `2026-09-03T12:58:31` X-209 -> DONE
+- `2026-09-03T13:02:10` X-82 -> DONE
+- `2026-09-03T13:03:19` X-08 -> DONE
+- `2026-09-03T13:05:12` X-120 -> DONE
+- `2026-09-03T13:06:57` X-136 -> DONE
+- `2026-09-03T13:08:19` X-141 -> DONE
+- `2026-09-03T13:09:49` X-142 -> DONE
+- `2026-09-03T13:12:03` X-156 -> DONE
+- `2026-09-03T13:13:26` X-173 -> DONE
+- `2026-09-03T13:14:33` X-213 -> DONE
+- `2026-09-03T13:15:56` X-105 -> DONE
+- `2026-09-03T13:17:09` X-109 -> DONE
+- `2026-09-03T13:18:24` X-114 -> DONE
+- `2026-09-03T13:19:44` X-116 -> DONE
+- `2026-09-03T13:21:11` X-130 -> DONE
+- `2026-09-03T13:23:09` X-131 -> DONE
+- `2026-09-03T13:24:37` X-132 -> DONE
+- `2026-09-03T13:26:08` X-134 -> DONE
+- `2026-09-03T13:27:29` X-135 -> DONE
+- `2026-09-03T13:28:44` X-140 -> DONE
+- `2026-09-03T13:29:57` X-144 -> DONE
+- `2026-09-03T13:31:25` X-154 -> DONE
+- `2026-09-03T13:32:59` X-158 -> DONE
+- `2026-09-03T13:34:53` X-159 -> DONE
+- `2026-09-03T13:36:35` X-161 -> DONE
+- `2026-09-03T13:37:48` X-179 -> DONE
+- `2026-09-03T13:39:13` X-182 -> DONE
+- `2026-09-03T13:40:35` X-183 -> DONE
+- `2026-09-03T13:41:49` X-184 -> DONE
+- `2026-09-03T13:44:46` X-185 -> DONE
+- `2026-09-03T13:47:25` UNRESOLVED contract X-186 - send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-03T13:48:24` UNRESOLVED contract X-190 - approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.
+- `2026-09-03T13:49:52` X-191 -> DONE
+- `2026-09-03T13:51:24` X-192 -> DONE
+- `2026-09-03T13:52:44` X-196 -> DONE
+- `2026-09-03T13:55:07` X-200 -> DONE
+- `2026-09-03T13:56:38` UNRESOLVED contract X-205 - approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.
+- `2026-09-03T13:57:06` X-205 -> DONE
+- `2026-09-03T13:58:56` X-210 -> DONE
+- `2026-09-03T14:00:33` UNRESOLVED contract X-217 - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-03T14:00:54` X-217 -> DONE
+- `2026-09-03T14:01:55` UNRESOLVED contract X-218 - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-03T14:02:19` X-218 -> DONE
+- `2026-09-03T14:52:42` journey J1 -> green
+- `2026-09-03T14:55:18` journey J2 -> unresolved
+- `2026-09-03T15:21:53` journey J2 -> green
+- `2026-09-03T15:33:56` journey J3 -> green
+- `2026-09-03T15:38:40` journey J4 -> green
+- `2026-09-03T15:39:25` journey J5 -> green
+- `2026-09-03T15:46:31` journey J6 -> green
+- `2026-09-03T15:47:01` journey J7 -> green
+- `2026-09-03T15:47:30` journey J8 -> green
+- `2026-09-03T15:54:49` journey J9 -> green
+- `2026-09-03T16:01:11` journey J10 -> green
+- `2026-09-03T16:02:21` journey J11 -> green
+- `2026-09-03T16:06:19` journey J12 -> green
+- `2026-09-03T22:14:14` selftest: sound
+- `2026-09-04T02:05:53` UNRESOLVED tests X-193 - column quiet_hours_start is missing from notification_classes and not named in the brief
+- `2026-09-04T02:05:53` UNRESOLVED tests X-201 - column deadline_at is missing from disputes and not named in the brief
+- `2026-09-04T07:55:55` UNRESOLVED tests C-Reviews - ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change
+- `2026-09-04T08:05:31` UNRESOLVED contract C-Reviews - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-04T22:41:56` UNRESOLVED capability X-186 - no action enrols a person into a campaign
+- `2026-09-05T03:56:25` (R245) X-205 — affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded
+- `2026-09-05T03:56:25` (R245) X-82 — agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader
+- `2026-09-05T03:56:25` (R245) X-82 — plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader
 - `2026-09-04T15:40:11` (R245) X-103 — — G6-15/16/17/20/27/32 and G7-18 are declarations of another module's work; X-103's test asserts the delegation exists, never the rendering, because rendering it here would be a cross-module boundary
 - `2026-09-04T16:26:57` (R245) X-176 — infer entityType from businesses.vertical with LocalBusiness fallback
 - `2026-09-04T16:57:00` (R245) X-176 — the vertical map is keyed on the lowercase values BusinessFactory, DayOneSignup and BenchmarkVertical write; the stored column is lowercased and trimmed before lookup, and an unmapped or null vertical falls back to LocalBusiness

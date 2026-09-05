@@ -7,6 +7,7 @@ namespace Tests\Modules\X137;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X137\Actions\LinkQrAction;
 use App\Modules\X137\Actions\LinkShortAction;
+use App\Modules\X137\Domain\X137Engine;
 use App\Modules\X137\Events\CallAttributed;
 use App\Modules\X137\Events\VisitJoinedToCall;
 use App\Modules\X137\Models\CallToken;
@@ -32,10 +33,6 @@ class X137Test extends TestCase
         $this->qrAction = new LinkQrAction;
     }
 
-    /**
-     * TEST ANCHOR
-     * a call within the token TTL joins the visit, one after it does not and is logged as unattributed
-     */
     public function test_anchor_call_attribution_ttl_and_visit_join(): void
     {
         Event::fake([CallAttributed::class, VisitJoinedToCall::class]);
@@ -43,7 +40,6 @@ class X137Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'DNI Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        // 1. Visitor allocated DNI token with 30 min TTL
         $token = $this->attributeAction->allocateToken(
             businessId: $biz->id,
             visitorSessionToken: 'sess_abc123',
@@ -54,7 +50,6 @@ class X137Test extends TestCase
 
         $this->assertEquals('active', $token->status);
 
-        // 2. Inbound call within TTL joins the visit session
         $joinRes = $this->attributeAction->attributeCall($biz->id, 501, '+15551112222');
         $this->assertEquals('attributed', $joinRes['status']);
         $this->assertEquals('sess_abc123', $joinRes['visitor_session_token']);
@@ -63,7 +58,6 @@ class X137Test extends TestCase
         Event::assertDispatched(CallAttributed::class);
         Event::assertDispatched(VisitJoinedToCall::class);
 
-        // 3. Call after TTL expiration is logged as unattributed
         $expiredToken = CallToken::create([
             'business_id' => $biz->id,
             'visitor_session_token' => 'sess_expired999',
@@ -81,9 +75,6 @@ class X137Test extends TestCase
         $this->assertEquals('expired_unattributed', $tokenFresh->status);
     }
 
-    /**
-     * Short linker & QR generation (G13-24)
-     */
     public function test_short_link_and_qr(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'QR Tenant', 'currency' => 'USD']);
@@ -193,5 +184,20 @@ class X137Test extends TestCase
 
         Event::assertDispatched(CallAttributed::class, fn ($e) => $e->whisperText === $token->whisper_text);
         Http::assertNothingSent();
+    }
+
+    public function test_header_capabilities(): void
+    {
+        $engine = new X137Engine;
+        $methods = ['enforceG3_11', 'enforceG8_13', 'enforceG13_19', 'enforceG13_24', 'enforceG18_17', 'enforceG18_24'];
+
+        foreach ($methods as $method) {
+            try {
+                $engine->$method();
+                $this->fail("Should throw for $method");
+            } catch (\DomainException $e) {
+                $this->assertStringContainsString('[G', $e->getMessage());
+            }
+        }
     }
 }

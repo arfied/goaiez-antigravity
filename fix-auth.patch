@@ -1,0 +1,10 @@
+--- app/tests/Journeys/JourneyHarness.php
++++ app/tests/Journeys/JourneyHarness.php
+@@ -107,6 +107,7 @@
+ 
+     private function postCarrierWebhook(array $tenant, string $event, string $from): void
+     {
++        \App\Support\PlatformCredentials::put('infobip_api_key', 'test_key');
+         \Illuminate\Support\Facades\DB::table('platform_settings')->updateOrInsert(['key' => 'voice.enabled'], ['value' => 'true']);
+         app(\App\Services\Voice\RecordingAnnouncement::class)->attest(new \App\Services\Voice\RecordingAnnouncementAttestation('v1', 'system', 'clip-1', ['host' => 'test']));
+         $callId = (string) \Illuminate\Support\Str::uuid();

@@ -262,6 +262,7 @@ final class Tenancy
             if (SqlState::of($e) !== '25P02') {
                 throw $e;
             }
+            DB::connection('pgsql')->rollBack();
         }
     }
 }

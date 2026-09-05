@@ -1192,6 +1192,66 @@
  },
  "unresolved": [
   {
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
+  },
+  {
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
+  },
+  {
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
+  },
+  {
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
+  },
+  {
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
+  },
+  {
+   "module": "X-193",
+   "stage": "tests",
+   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "why": "column deadline_at is missing from disputes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "tests",
+   "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+   "at": "2026-09-04T07:55:55"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-04T08:05:31"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "why": "no action enrols a person into a campaign",
+   "at": "2026-09-04T22:41:56"
+  },
+  {
    "module": "X-103",
    "stage": "schema",
    "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
@@ -1216,13 +1276,25 @@
    "at": "2026-09-04T21:15:07"
   }
  ],
- "notes": [
-  {
-   "at": "2026-08-29T14:37:58",
-   "note": "bootstrap-done"
-  }
- ],
  "decisions": [
+  {
+   "module": "X-205",
+   "chose": "affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded",
+   "at": "2026-09-05T03:56:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader",
+   "at": "2026-09-05T03:56:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader",
+   "at": "2026-09-05T03:56:25",
+   "ruling": "R245"
+  },
   {
    "module": "X-211",
    "chose": "R245: Built AR recovery engine with late fee capping (max 10% or 0), structured installment payment plan contracts, ACH enforcement, offline reconciliation, and collections packaging with evidence bundle.",
@@ -1516,6 +1588,16 @@
    "chose": "The published page emitted a form marker with no action and no method, so a visitor could not submit it and the capture action had no caller anywhere in the application. The route lives in X-157 because the deploy hash namespace, the deployment lookup and the two refusals are X-157s, and X-155 owns only what happens to the payload. A business with no form definition keeps the plain marker because there is no form, so there is no address, and writing one would name a row that does not exist. A rolled back deployment refuses the post because the read path already refuses it and a site that is not serving must not be accepting. Rejected alternatives: registering the route in X-155 (which duplicates both guards and makes X-155 import X-157s Deployment model), and emitting a placeholder form id when the business has no form definition.",
    "at": "2026-09-05T06:34:00",
    "ruling": "R245"
+  }
+ ],
+ "notes": [
+  {
+   "at": "2026-09-03T09:34:34",
+   "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-08-29T14:37:58",
+   "note": "bootstrap-done"
   }
  ]
 }

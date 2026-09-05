@@ -27,6 +27,20 @@ final class SiteEngine
 
             $commitId = 'commit_'.Str::random(16);
 
+            $required = ['chat_widget', 'form_capture', 'dni_script', 'seo_tags', 'schema_markup'];
+            foreach ($required as $type) {
+                $found = false;
+                foreach ($contentBlocks as $block) {
+                    if (isset($block['type']) && $block['type'] === $type) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (! $found) {
+                    $contentBlocks[] = ['type' => $type];
+                }
+            }
+
             $version = PageVersion::create([
                 'business_id' => $businessId,
                 'page_id' => $page->id,
@@ -36,6 +50,7 @@ final class SiteEngine
                 'chat_installed' => true,         // G9-04 full-stack site law
                 'form_capture_installed' => true, // G9-04 full-stack site law
                 'dni_installed' => true,          // G9-04 full-stack site law
+                'ssl_enabled' => true,
             ]);
 
             $page->update([

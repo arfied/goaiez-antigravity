@@ -1,0 +1,8 @@
+--- app/app/Services/Voice/VoiceCalls.php
++++ app/app/Services/Voice/VoiceCalls.php
+@@ -430,6 +430,7 @@
+ 
+             $outcome = $facts->outcome();
++            \Illuminate\Support\Facades\Log::info("outcome: " . $outcome->value);
+ 
+             // ⛔ **AN UNSETTLED READ NEVER OVERWRITES A SETTLED ROW, AND THE ROW

@@ -40,7 +40,7 @@ return [
     'G2-13' => 'out-of-office is named in the header',
 
     // status: SPECCED
-    'G2-45' => 'the agent offers only a window the scheduler confirmed',
+    'G2-45' => 'the agent offers only a window the scheduler confirmed · refuses: a window the scheduler has not confirmed',
 
     // status: SPECCED
     'G2-49' => 'named in the header',
@@ -58,7 +58,7 @@ return [
     'G18-07' => 'blackouts and holiday overrides are named in the header',
 
     // status: SPECCED
-    'G18-27' => 'a booking generates its own conference link',
+    'G18-27' => 'a booking generates its own conference link · refuses: generating a conference link without a booking',
 
     // status: SPECCED
     'G19-01' => 'named in the header — a cancellation fills itself',

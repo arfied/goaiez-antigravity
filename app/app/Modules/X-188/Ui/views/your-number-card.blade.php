@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="assigns a GO AI EZ number at signup" screen="your_number_card" />
     <div class="your-number-card p-4">
         <h3 class="text-lg font-bold">Your Live Business Number</h3>
         @if(!$assignment)

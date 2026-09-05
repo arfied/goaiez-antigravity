@@ -30,13 +30,14 @@
 --}}
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {{-- The form posts to a session-backed web route, so the token is required. --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="Leave a review for {{ $businessName }}">
 
     {{--
         Never indexed. A feedback form has no search value, and a crawler that

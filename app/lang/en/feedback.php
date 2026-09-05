@@ -9,7 +9,49 @@ return [
         'terms' => 'Terms of Service',
         'privacy' => 'Privacy Policy',
         'email_label' => 'Email Updates',
+        'sms_label' => 'SMS Updates',
         'phi_analysis_label' => 'Health Information Undertaking',
         'phi_analysis_text' => 'I confirm that this review does not contain protected health information.',
+    ],
+    'heading' => 'How did we do?',
+    'intro' => 'We would love to hear about your experience.',
+    'rating' => [
+        'legend' => 'Tap to rate',
+        'required' => 'Please select a rating.',
+    ],
+    'comment' => [
+        'label' => 'Your feedback',
+        'placeholder' => 'Tell us what you loved, or what we can do better...',
+    ],
+    'contact' => [
+        'heading' => 'About you',
+        'name' => 'Name',
+        'email' => 'Email',
+        'phone' => 'Phone number',
+    ],
+    'thanks' => [
+        'heading' => 'Thank you!',
+        'body' => 'Your feedback has been received.',
+        'triage' => [
+            'heading' => 'Thank you for your feedback',
+            'body' => 'We appreciate you taking the time to share your thoughts.',
+        ],
+        'picker' => [
+            'after_triage' => 'Share your experience',
+            'heading' => 'Review us on Google',
+            'body' => 'Your public review helps others find us.',
+            'new_tab' => '(opens in a new tab)',
+        ],
+        'booking' => [
+            'heading' => 'Book your next visit',
+            'new_tab' => '(opens in a new tab)',
+        ],
+    ],
+    'submit' => 'Submit Feedback',
+    'errors' => [
+        'rate_limited' => 'You have submitted too many requests. Please try again later.',
+        'sms_needs_phone' => 'A phone number is required to receive SMS updates.',
+        'email_needs_email' => 'An email address is required to receive email updates.',
+        'too_fast' => 'You are submitting too fast. Please wait a moment.',
     ],
 ];

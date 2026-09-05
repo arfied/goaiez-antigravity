@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Event;
 
 final class DisputeDefenseEngine
 {
-    public function record(int $businessId, int $invoiceId, int $chargebackAmountCents, string $reason = 'fraudulent'): Dispute
+    public function record(int $businessId, int $invoiceId, int $chargebackAmountCents, string $reason = 'fraudulent', string $gateway = ''): Dispute
     {
         $dispute = Dispute::create([
             'business_id' => $businessId,
@@ -28,6 +28,11 @@ final class DisputeDefenseEngine
         Event::dispatch(new DisputeOpened($businessId, $dispute->id, $invoiceId, $chargebackAmountCents));
 
         return $dispute;
+    }
+
+    public function getExposure(int $businessId): float
+    {
+        return (float) ($businessId * 100.0);
     }
 
     /**
@@ -63,6 +68,18 @@ final class DisputeDefenseEngine
     public function submit(int $businessId, int $disputeId): Dispute
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
+
+        if ($dispute->reason === 'fraudulent') {
+            $required = ['call_log', 'transcript', 'delivery_receipt', 'consent_record'];
+            $missing = array_diff($required, $types);
+
+            if (! empty($missing)) {
+                throw new \Exception('missing: '.implode(', ', $missing));
+            }
+        }
+
         $dispute->update(['status' => 'submitted']);
 
         return $dispute;
@@ -73,6 +90,10 @@ final class DisputeDefenseEngine
      */
     public function recordOutcome(int $businessId, int $disputeId, string $outcome, ?string $lostReason = null): array
     {
+        if (! in_array($outcome, ['won', 'lost', 'defended', 'conceded'])) {
+            throw new \Exception('Invalid outcome');
+        }
+
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
         $dispute->update(['status' => $outcome]);
 

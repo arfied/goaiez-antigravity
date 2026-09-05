@@ -25,7 +25,7 @@ return [
     'G6-03' => 'P-126: 200 templates 1:1 with 200 industries; 100 PROFILES are a different object, both kept',
 
     // status: SPECCED
-    'G6-12' => 'named in the header; the agent upsells only from a grounded Fact (P-092)',
+    'G6-12' => 'named in the header; the agent upsells only from a grounded Fact (P-092) · refuses: to upsell from an ungrounded Fact',
 
     // status: SPECCED
     'G6-23' => 'named in the header',

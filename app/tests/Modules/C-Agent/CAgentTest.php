@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CAgent;
 
+use App\Models\Conversation;
 use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\CAgent\Actions\AgentClassifyAction;
 use App\Modules\CAgent\Actions\AgentDraftAction;
@@ -12,8 +13,13 @@ use App\Modules\CAgent\Actions\AgentTeachAction;
 use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentRefusal;
+use App\Services\Agent\AgentComposer;
+use App\Services\Agent\AgentSkills;
+use App\Support\Tenancy;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class CAgentTest extends TestCase
@@ -280,5 +286,45 @@ class CAgentTest extends TestCase
         $res = $this->answer->handle($biz->id, 'I received terrible service and want to speak to a human!');
         $this->assertEquals('handoff', $res['status']);
         $this->assertEquals('NEGATIVE_SENTIMENT_HANDOFF', $res['refusal_code']);
+    }
+
+    public function test_no_fact_refusal_for_unpriced_service_in_real_pipeline(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Real Pipeline NO FACT', 'currency' => 'USD']);
+
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            Config::set('credentials.anthropic_api_key', 'fake-key');
+            Config::set('credentials.openai_api_key', 'fake-key');
+
+            $conversation = Conversation::factory()->create(['business_id' => $biz->id]);
+            $skills = app(AgentSkills::class)->forThread($conversation);
+
+            Http::fake([
+                'api.anthropic.com/*' => Http::response([
+                    'id' => 'msg_eval',
+                    'type' => 'message',
+                    'stop_reason' => 'end_turn',
+                    'content' => [['type' => 'text', 'text' => 'It will cost $150.']],
+                    'usage' => ['input_tokens' => 10, 'output_tokens' => 10],
+                ]),
+                'api.openai.com/*' => Http::response([
+                    'id' => 'msg_eval',
+                    'choices' => [
+                        ['message' => ['content' => 'It will cost $150.']],
+                    ],
+                ]),
+            ]);
+
+            $composer = app(AgentComposer::class);
+            $draft = $composer->write(
+                customerMessage: 'How much for an unpriced service?',
+                conversation: $conversation,
+                skills: $skills,
+                snippets: [],
+                isFirstAgentTurn: true,
+            );
+
+            $this->assertEquals('NO_FACT', $draft->fallbackReason);
+        });
     }
 }

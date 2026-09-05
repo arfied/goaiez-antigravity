@@ -25,4 +25,6 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/composer.phar
+/error_log
 /pest.json

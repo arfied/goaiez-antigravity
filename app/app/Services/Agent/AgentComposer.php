@@ -278,10 +278,13 @@ final class AgentComposer
         // output came from nowhere — R13's *"never invents a price"* in its
         // purest form. `allowedFigures()` returns `[]` for them, and every
         // currency-shaped figure is then off-list by construction.
-        if ($this->refusals->quotesOffList($body, $this->allowedFigures($skills))) {
+        $allowedFigures = $this->allowedFigures($skills);
+        if ($this->refusals->quotesOffList($body, $allowedFigures)) {
+            $reason = empty($allowedFigures) ? 'NO_FACT' : 'off_list_price';
+
             return AgentReplyDraft::refused(
-                $this->withDisclosure($this->refusals->replacementFor($businessName, 'off_list_price'), $businessName, $isFirstAgentTurn),
-                'off_list_price',
+                $this->withDisclosure($this->refusals->replacementFor($businessName, $reason), $businessName, $isFirstAgentTurn),
+                $reason,
             );
         }
 
