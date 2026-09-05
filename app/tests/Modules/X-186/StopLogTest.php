@@ -42,6 +42,16 @@ class StopLogTest extends TestCase
             'is_active' => false,
         ]);
 
+        $suppressedRun = CampaignRun::create([
+            'business_id' => $biz->id,
+            'campaign_id' => 'SUPPRESSED-CAMPAIGN',
+            'person_id' => $person->id,
+            'is_suppressed' => true,
+            'suppression_reason' => 'Open RECOVER',
+            'stopped_reason' => null,
+            'is_active' => true,
+        ]);
+
         $runningRun = CampaignRun::create([
             'business_id' => $biz->id,
             'campaign_id' => 'STILL-RUNNING-CAMPAIGN',
@@ -52,6 +62,8 @@ class StopLogTest extends TestCase
         Livewire::test(StopLog::class, ['businessId' => $biz->id])
             ->assertSee('John Doe')
             ->assertSee('STOPPED-CAMPAIGN')
+            ->assertSee('SUPPRESSED-CAMPAIGN')
+            ->assertSee('Open RECOVER')
             ->assertDontSee('FOREIGN-RUN')
             ->assertDontSee('STILL-RUNNING-CAMPAIGN')
             ->call('stopRemaining', $person->id)

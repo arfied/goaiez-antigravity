@@ -35,8 +35,18 @@ class ContentWeekTest extends TestCase
             'plan_id' => $plan->id,
             'channel' => 'Facebook',
             'topic_theme' => 'Holiday Special',
-            'source_event' => 'Christmas Promotion',
+            'source_event' => 'transcript.captured',
             'scheduled_date' => now()->addDays(2)->toDateString(),
+            'is_scheduled' => false,
+        ]);
+
+        $item2 = PlanItem::create([
+            'business_id' => $biz->id,
+            'plan_id' => $plan->id,
+            'channel' => 'Instagram',
+            'topic_theme' => 'Winter Updates',
+            'source_event' => 'season.turned',
+            'scheduled_date' => now()->addDays(3)->toDateString(),
             'is_scheduled' => false,
         ]);
 
@@ -52,7 +62,8 @@ class ContentWeekTest extends TestCase
 
         Livewire::test(ContentWeek::class, ['businessId' => $biz->id])
             ->assertSee('VALID TENANT WEEK')
-            ->assertSee('Christmas Promotion')
+            ->assertSee('transcript.captured')
+            ->assertSee('season.turned')
             ->assertDontSee('FOREIGN TENANT WEEK')
             ->call('approveCadence', $plan->id)
             ->assertSee('Approved')
@@ -61,5 +72,11 @@ class ContentWeekTest extends TestCase
 
         $this->assertTrue($plan->fresh()->is_cadence_approved);
         $this->assertTrue($item->fresh()->is_scheduled);
+
+        $plan->items()->delete();
+        $plan->delete();
+
+        Livewire::test(ContentWeek::class, ['businessId' => $biz->id])
+            ->assertSee('No content week planned yet');
     }
 }

@@ -39,7 +39,7 @@
                                 </div>
                             </div>
                             
-                            <div class="pl-4 border-l-2 border-slate-200">
+                            <div class="pl-4 border-l-2 border-rule">
                                 <x-ui.row-list>
                                     @foreach($plan->items as $item)
                                         <x-ui.row>

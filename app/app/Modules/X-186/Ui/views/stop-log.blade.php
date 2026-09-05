@@ -7,9 +7,13 @@
         @endif
 
         @if ($lastStoppedPersonId !== null)
-            <div class="bg-green-50 border border-green-200 text-green-800 rounded p-3">
-                Stopped {{ $lastStoppedCount }} remaining sequence(s) for the selected person.
-            </div>
+            <x-ui.attention-card>
+                @if ($lastStoppedCount === 0)
+                    Nothing else was running
+                @else
+                    Stopped {{ $lastStoppedCount }} remaining {{ $lastStoppedCount === 1 ? 'sequence' : 'sequences' }}
+                @endif
+            </x-ui.attention-card>
         @endif
 
         <div wire:loading.delay wire:target="stopRemaining">
@@ -40,9 +44,9 @@
                                     </div>
                                     <div class="text-sm text-ink-2">
                                         @if($run->is_suppressed)
-                                            <span class="text-orange-600">Suppressed: {{ $run->suppression_reason }}</span>
+                                            <x-ui.status-pill state="attention" label="Suppressed: {{ $run->suppression_reason }}" />
                                         @elseif($run->stopped_reason)
-                                            <span class="text-red-600">Stopped: {{ $run->stopped_reason }}</span>
+                                            <x-ui.status-pill state="attention" label="Stopped: {{ $run->stopped_reason }}" />
                                         @endif
                                     </div>
                                 </div>
