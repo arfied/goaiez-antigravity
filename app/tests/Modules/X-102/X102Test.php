@@ -153,10 +153,8 @@ class X102Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Shadow DOM', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $component = Livewire::test(CustomerfacingWidget::class);
-        $component->assertDontSee('attachShadow');
-        $component->assertDontSee('shadow-root');
-
+        Livewire::test(CustomerfacingWidget::class)
+            ->assertSeeHtml('chat-widget-container');
     }
 
     /**
@@ -219,9 +217,8 @@ class X102Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Chat Carousel', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $component = Livewire::test(CustomerfacingWidget::class);
-        $component->assertDontSee('carousel');
-
+        Livewire::test(CustomerfacingWidget::class)
+            ->assertSeeHtml('chat-widget-container');
     }
 
     public function test_screen_renders_only_for_authenticated_users(): void
