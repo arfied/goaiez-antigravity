@@ -514,4 +514,54 @@ class X157Test extends TestCase
         DB::statement("SELECT set_config('app.business_id', '', true)");
         $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(200);
     }
+
+    /** (R245) */
+    public function test_the_published_route_carries_all_seven_elements(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertStringContainsString('x110-pixel', $html);
+        $this->assertStringContainsString('chat-widget-container', $html);
+        $this->assertStringContainsString('form-capture-x155', $html);
+        $this->assertStringContainsString('dni-pool-x137', $html);
+        $this->assertStringContainsString('seo-meta-x176', $html);
+        $this->assertStringContainsString('application/ld+json', $html);
+
+        $zoneRow = Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone;
+        $zoneRow->update(['has_valid_ssl' => false]);
+        $withoutSsl = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $withoutSsl->assertStatus(404);
+        $zoneRow->update(['has_valid_ssl' => true]);
+    }
 }
