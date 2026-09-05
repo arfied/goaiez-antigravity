@@ -1059,4 +1059,95 @@ class X155Test extends TestCase
         $this->assertSame('Erin', Person::findOrFail($resB['person_id'])->first_name);
         $this->assertSame($resD['person_id'], $resE['person_id'], 'two submissions on the same phone must resolve to one contact');
     }
+
+    public function test_a_blank_payload_value_is_not_a_value_the_visitor_gave(): void
+    {
+        Event::fake([FormCaptured::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Blank Value Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $resA = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana',
+                'phone' => '+15557770001',
+                'email' => 'dana@example.com',
+            ]
+        );
+
+        $resB = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => '',
+                'phone' => '+15557770001',
+            ]
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557770001')->firstOrFail();
+        $this->assertSame('Dana', $person->first_name, 'a submission with a blank name erased the stored name');
+
+        $resC = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15557770001',
+                'email' => '',
+            ]
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557770001')->firstOrFail();
+        $this->assertSame('dana@example.com', $person->email, 'a submission with a blank email erased the stored email');
+
+        $resD = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana Updated',
+                'phone' => '+15557770001',
+                'email' => 'dana.new@example.com',
+            ]
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15557770001')->firstOrFail();
+        $this->assertSame('Dana Updated', $person->first_name, 'a visitor must be able to correct their own name');
+        $this->assertSame('dana.new@example.com', $person->email, 'a visitor must be able to correct their own email');
+
+        $resE = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => '   ',
+                'phone' => '+15557770002',
+            ]
+        );
+
+        $second = Person::where('business_id', $biz->id)->where('phone', '+15557770002')->firstOrFail();
+        $this->assertSame('Visitor', $second->first_name, 'a new contact whose name is whitespace must get the visitor placeholder');
+
+        $resF = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => '',
+                'phone' => '+15557770003',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $spam = Person::where('business_id', $biz->id)->where('phone', '+15557770003')->firstOrFail();
+        $this->assertSame('Visitor', $spam->first_name, 'a spam submission with a blank name must still record the visitor placeholder');
+
+        $this->assertSame($resA['person_id'], $resD['person_id'], 'four submissions on one phone must resolve to one contact');
+        $this->assertNotNull($resA['person_id']);
+    }
 }
