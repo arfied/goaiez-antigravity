@@ -30,4 +30,37 @@ final class AccountingSyncEngine
             'is_low_confidence' => false,
         ];
     }
+
+
+    public function resolveConflict(int $businessId, int $conflictId, string $resolutionAccount): array
+    {
+        if (strtolower(trim($resolutionAccount)) === 'uncategorised') {
+            return [
+                'status' => 'refused',
+                'message' => 'uncategorised is not a resolution',
+            ];
+        }
+
+        $conflict = \App\Modules\X173\Models\AccountingSyncConflict::where('business_id', $businessId)->findOrFail($conflictId);
+
+        if ($conflict->status === 'resolved') {
+            return [
+                'status' => 'refused',
+                'message' => 'a resolved row is not overwritten',
+            ];
+        }
+
+        $conflict->update([
+            'assigned_category' => $resolutionAccount,
+            'status' => 'resolved',
+            'flagged_for_review' => false,
+        ]);
+
+        return [
+            'status' => 'resolved',
+            'conflict_id' => $conflict->id,
+            'assigned_category' => $conflict->assigned_category,
+            'message' => 'resolved',
+        ];
+    }
 }

@@ -4,20 +4,27 @@ declare(strict_types=1);
 
 namespace App\Modules\X173\Ui;
 
+use App\Modules\X173\Actions\ConflictResolveAction;
 use App\Modules\X173\Models\AccountingSyncConflict;
-use Livewire\Attributes\Locked;
+use App\Support\Tenancy;
 use Livewire\Component;
 
 class ConflictsListView extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
+    public array $resolutions = [];
+    public array $messages = [];
+
+    public function resolve(int $conflictId, ConflictResolveAction $action)
+    {
+        $resolution = $this->resolutions[$conflictId] ?? '';
+        $result = $action->handle(Tenancy::idOrFail(), $conflictId, $resolution);
+
+        $this->messages[$conflictId] = $result['message'] ?? $result['status'];
+    }
 
     public function render()
     {
-        $conflicts = ($this->businessId > 0)
-            ? AccountingSyncConflict::where('business_id', $this->businessId)->get()
-            : collect();
+        $conflicts = AccountingSyncConflict::where('business_id', Tenancy::idOrFail())->get();
 
         return view('x-173::conflicts-list', [
             'conflicts' => $conflicts,
