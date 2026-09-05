@@ -2,12 +2,12 @@
 
 namespace Tests\Modules\X209;
 
-use Tests\TestCase;
+use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X209\Actions\FixerCommandAction;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
-use App\Modules\X209\Actions\FixerCommandAction;
-use App\Modules\CSms\Events\SendRequested;
+use Tests\TestCase;
 
 class StaffDeskTest extends TestCase
 {
