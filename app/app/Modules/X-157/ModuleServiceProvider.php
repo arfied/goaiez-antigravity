@@ -27,8 +27,11 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-157.edge-status-per', EdgeStatusPer::class);
         }
 
-        Route::get('/sites/{deploy_hash}', function (string $deployHash) {
-            $deployment = Deployment::where('deploy_hash', $deployHash)->firstOrFail();
+        Route::get('/sites/{business}/{deploy_hash}', function (string $business, string $deployHash) {
+            $business = (int) $business;
+            \Illuminate\Support\Facades\DB::statement("SELECT set_config('app.business_id', ?, false)", [(string) $business]);
+
+            $deployment = Deployment::where('business_id', $business)->where('deploy_hash', $deployHash)->firstOrFail();
 
             $zone = $deployment->edgeZone;
             abort_if($zone === null || ! $zone->has_valid_ssl, 404);
@@ -36,6 +39,6 @@ final class ModuleServiceProvider extends ServiceProvider
             $html = Storage::disk('local')->get("sites/{$deployHash}.html");
 
             return response($html, 200)->header('Content-Type', 'text/html');
-        });
+        })->whereNumber('business');
     }
 }

@@ -310,7 +310,7 @@ trait JourneyHarness
             businessName: $tenant['name']
         );
 
-        $response = $this->get("/sites/{$deploy['deploy_hash']}");
+        $response = $this->get("/sites/{$tenant['id']}/{$deploy['deploy_hash']}");
         $response->assertStatus(200);
         $html = (string) $response->getContent();
 

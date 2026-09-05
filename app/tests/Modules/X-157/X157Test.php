@@ -26,6 +26,8 @@ use Tests\TestCase;
 
 class X157Test extends TestCase
 {
+    use \Tests\Concerns\RefreshesTenantDatabase;
+
     private EdgeProvisionAction $provisionAction;
 
     private EdgeDeployAction $deployAction;
@@ -164,7 +166,7 @@ class X157Test extends TestCase
         Storage::disk('local')->assertExists("sites/{$deploy['deploy_hash']}.html");
         Http::assertNothingSent();
 
-        $this->get("/sites/{$deploy['deploy_hash']}")->assertOk();
+        $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertOk();
         Http::assertNothingSent();
 
         $this->assertFalse(class_exists('App\Modules\X157\Models\Asset'));
@@ -293,14 +295,14 @@ class X157Test extends TestCase
 
         Storage::disk('local')->put('sites/test_hash_1.html', 'BODY_CONTENT');
 
-        $response = $this->get('/sites/test_hash_1');
+        $response = $this->get("/sites/{$biz->id}/test_hash_1");
         $response->assertStatus(200);
         $this->assertEquals('BODY_CONTENT', $response->getContent());
     }
 
     public function test_route_unknown_hash_returns_404(): void
     {
-        $response = $this->get('/sites/unknown_hash_999');
+        $response = $this->get('/sites/999/unknown_hash_999');
         $response->assertStatus(404);
     }
 
@@ -323,7 +325,7 @@ class X157Test extends TestCase
 
         Storage::disk('local')->put('sites/test_hash_no_ssl.html', 'BODY_CONTENT');
 
-        $response = $this->get('/sites/test_hash_no_ssl');
+        $response = $this->get("/sites/{$biz->id}/test_hash_no_ssl");
         $response->assertStatus(404);
     }
 
@@ -458,5 +460,41 @@ class X157Test extends TestCase
             ->assertSee('That deployment is not available for this business.');
 
         $this->assertEquals('deployed', $deploymentB->refresh()->status);
+    }
+
+    public function test_route_cleared_tenant_returns_404(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(\App\Modules\X103\Actions\SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        DB::statement("SELECT set_config('app.business_id', '', true)");
+        $wrongBizId = $biz->id + 1;
+        $this->get("/sites/{$wrongBizId}/{$deploy['deploy_hash']}")->assertStatus(404);
     }
 }
