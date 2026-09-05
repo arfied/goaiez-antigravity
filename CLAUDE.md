@@ -14,13 +14,34 @@ you hold the coder to them. Your side of the arrangement is
 
 | Supervisor (you) | Coder (Antigravity) |
 | :--- | :--- |
-| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
+| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh`, `.claude/settings.json`. **Runs ALL git for this lane** (owner ruling 2026-09-05 14:0x): commits its own files as `chore(supervisor): …`, and pushes every gated tip by explicit ref `git push origin <sha>:track/stages` — never a branch head, never `--force` | Edits `app/**`, works `bin/state.py next`, commits. **Never pushes** — its guard stays closed |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
 | **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
 
 `.claude/settings.json` enforces your column. If a check needs a command the
 deny list blocks, that is the signal it is the coder's job — brief it.
+
+## ⛔ Checkout confinement — the first block of EVERY `KICKOFF.md`
+
+Twice on 2026-09-05 (12:0x and 13:3x) this track's coder ran `./vendor/bin/pest`
+with its working directory inside `/home/goaiez/agents/grs-antig/app` — **Track
+1's checkout, against Track 1's `goaiez_antig_test` database, while Track 1's own
+gate was running.** Track 1 killed three of its processes. The coder's own
+S-79 report shows the consequence on our side: `Tests: rc 143 (Zero Bytes)`, and
+143 is 128+15, a `SIGTERM` — that zero-byte pest was Track 1 killing it, not a
+memory wall. While this recurs, **every gate on both tracks is unreliable**.
+
+The following paragraph is copied verbatim into the top of every `KICKOFF.md`,
+before any item. A Track 1 path anywhere in a report is a **BLOCK**:
+
+> **This checkout only.** You work in `/home/goaiez/agents/grs-antig-stages` and
+> nowhere else. Never read, write, build, migrate, test or commit under any other
+> `/home/goaiez/agents/grs-antig*` directory. Never search the filesystem for a
+> `BRIEF.md`, `OWNER.md` or `KICKOFF.md` outside this checkout. Before any
+> `pest`, `artisan`, `npm` or `composer` command, run `pwd` and confirm it prints
+> a path under `/home/goaiez/agents/grs-antig-stages`; if it does not, `cd` there
+> first. Paste that `pwd` output in your report.
 
 **Commit and push rights — owner, 2026-09-05 08:0x (OWNER.md, relayed by Track 1;
 committed here as `f7cd6d5b`).** `.claude/settings.json` now allows the supervisor
