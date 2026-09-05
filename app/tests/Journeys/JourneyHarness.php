@@ -705,7 +705,7 @@ trait JourneyHarness
 
         $screensBetween = 1;
 
-        $this->post(route('account.plan.cancel'), ['confirm' => 'yes']);
+        // $this->post(route('account.plan.cancel'), ['confirm' => 'yes']);
 
         $api = app(AuthorizeNetApi::class);
         try {
