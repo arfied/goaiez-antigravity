@@ -133,7 +133,7 @@ class X193Test extends TestCase
 
         $this->assertEquals('send_immediately', $res['delivery_decision']);
         $this->assertNull($res['held_until']);
-        
+
         $count = DB::table('notification_classes')
             ->where('business_id', $biz->id)
             ->where('caller_type', 'marketing_blast')
