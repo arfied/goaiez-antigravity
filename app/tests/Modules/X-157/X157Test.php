@@ -733,6 +733,44 @@ class X157Test extends TestCase
     }
 
     /** (R245) */
+    public function test_a_tenant_name_cannot_close_an_element_in_the_published_document(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Acme </script><script>alert(1)</script> HVAC', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertSame(substr_count($html, '<script'), substr_count($html, '</script>'));
+        $this->assertSame(1, preg_match('#<script type="application/ld\+json">\s*(\{.*?\})\s*</script>#s', $html, $j));
+        $ld = json_decode($j[1], true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame($biz->name, $ld['name']);
+    }
+
+    /** (R245) */
     public function test_route_deployment_whose_artifact_is_missing_returns_404(): void
     {
         Storage::fake('local');
