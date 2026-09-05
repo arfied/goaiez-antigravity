@@ -1,9 +1,17 @@
-You are the coder in a supervised arrangement. Read AGENTS.md, then .agents/rules/10-supervisor.md, then .agents/supervisor/BRIEF.md and the NEWEST block of .agents/supervisor/REVIEWS.md (06:05 — wave 29 PASSED, push cleared through 50adae9).
+You are the coder (Antigravity) in /home/goaiez/agents/grs-antig-pricebook, branch track/pricebook (Track 4, pricebook lane).
 
-State of play: origin/main = cba37f6; local commits c375699..50adae9 are cleared. Do this in order:
+Read, in this order: .agents/supervisor/BRIEF.md (PB-23 — it is the whole task), AGENTS.md, .agents/rules/*.
 
-1. `git push origin main`.
-2. Wave 30 per `state.py next` — X-192, the LAST roster module. Full standing rules: feat(X-nnn) commit; ['web','auth'] on any new route and the route serves a real component (never a placeholder closure); authed GET asserting the component rendered (assertSeeLivewire) plus a guest-redirect test; route parameters resolved through tenant-scoped queries; Tenancy::set() never raw SET; secrets encrypted/hashed; tenant tables forced-RLS tenant-only; migrations forward-only; any @agent_reachable widening gets a state.py decided record; DONE recorded in state.py before the report claims it; STAGES from a post-change doctor run; TESTS via `grep -c 'function test'`; pint followups as new commits; findings in your own diff go in your own report.
-3. After X-192, run `python3 bin/state.py next` once more. It will return JOURNEYS, FINISHED, or STARVED: do NOT act on it — write REPORT.md with the action and say field verbatim, run `bash bin/supervise.sh --tests`, include the suite line, and STOP. The terminal state is the owner's decision.
+PB-23 is a MERGE TAKE and nothing else. Track 1 already merged this branch into main; you are bringing origin/main (54ead493, 791 commits) back into track/pricebook. Follow BRIEF.md step by step, in order, and do not improvise around it.
 
-Hard rules: DB_DATABASE never goaiez_antig and never edited in app/.env or app/phpunit.xml; migrations run against goaiez_antig_dev only; nothing written under /home/goaiez/public_html; never edit or stash/checkout/clean supervisor files (including REWRITES.log and the post-rewrite hook); never git commit --amend / reset / rebase; never edit or delete a ran migration; never edit app/app/Doctor/**, seals.json, the three excluded Doctor commands, or JourneyHarness.php except by whitespace; bare ./vendor/bin/pint only; one concern per commit; no scratch committed; a CHECK is never changed to quiet it — REFUSED instead.
+The three rules that decide this run:
+
+1. YOU DO NOT COMMIT ON THIS RUN. Not the merge, not anything. The coder guard refuses a commit whose index carries CLAUDE.md, .claude/, bin/supervise.sh, app/phpunit.xml or .agents/supervisor/ — and this merge commit's index carries all of them. You resolve, you `git add`, you stop. The supervisor makes the merge commit itself.
+
+2. If the conflict list from `git merge origin/main` is not exactly the one BRIEF.md step 4 predicts — in particular if ANY path under app/** conflicts — run `git merge --abort`, write REPORT.md with the verbatim list, and stop. Do not resolve an app/** conflict by judgement on this run.
+
+3. If any command is refused by the guard, that refusal stands. Never reach for /usr/bin/git, `command git`, PATH= on a git command, or -c core.hooksPath. Write the refusal verbatim in REPORT.md and stop. `git merge --abort` is allowed and is the recovery for anything unexpected.
+
+Three things must survive this merge, and each has an explicit step in the brief with a verify line: app/phpunit.xml keeps `goaiez_antig_pricebook_test` (main's copy pins Track 1's database and it lands silently — step 7); the five mailbox files stay ON DISK while leaving the index (`git rm --cached`, step 6 — REVIEWS.md is this track's review ledger); .agents/supervisor/launch-coder.sh ends as our copy with `grep -c GOAIEZ_PUSH_OK` = 5 (step 8), and it must be moved aside BEFORE the merge (step 2) or git refuses to start.
+
+Finish by writing .agents/supervisor/REPORT.md in the shape BRIEF.md gives, then stop. No gate, no tests, no state.py, no push.

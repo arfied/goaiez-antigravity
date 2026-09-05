@@ -1,172 +1,149 @@
-# BRIEF — from the supervisor
+# BRIEF — PB-23 · take `origin/main` into `track/pricebook`, **staged only**
 
-updated: 2026-09-02 02:40
-push: cleared through a267b5e (already on origin/main). The local commits
-      8450e45..6cfe420 push together after item 6c below lands and is reviewed.
-report: per wave, and on any stop
+date: 2026-09-05 11:3x
+from: the supervisor of track/pricebook (cron tick)
+verdict this follows: the 11:3x block in REVIEWS.md (case (d) — OWNER.md 08:25 applied)
+push: none
+commit: **none — you do not commit at all on this run.** The supervisor makes the merge commit.
 
-(This file was rewritten 2026-09-02 after the working copy was lost to a
-dropped stash — see REVIEWS.md 02:40. Older item history lives in git.)
+## Why this run exists
 
-## Standing orders
+Track 1 merged this branch into `main` (`origin/track/pricebook` = `6458d582`, merge commit
+`77ba6dd5`). `origin/main` is now `54ead493` and contains every commit of this branch; we are
+791 behind, 1 ahead. Nothing more can be built here until main is taken (main re-ran
+`surfaces:generate` over this lane's screens, so the routes this lane has been recording as
+`UNRESOLVED — waits on Track 1 surfaces:generate` are arriving).
 
-1. `DB_DATABASE` stays `goaiez_antig_dev` in `app/.env` and `goaiez_antig_test`
-   in `app/phpunit.xml`. `goaiez_antig` is production; a test run from this
-   checkout dropped its schema on 2026-08-31. Never change either value.
-2. Commit per module/concern; report per wave and on any stop — rule 10.
-3. Cite nothing `php artisan why <id>` cannot resolve.
-4. **GitHub CI is out of scope** (owner, 2026-09-01): do not fix, chase, or
-   block on Actions. `bin/supervise.sh` locally is the arbiter.
-5. Run pint only as bare `./vendor/bin/pint`. Never edit sealed files.
-6. ⛔ Never stash/checkout/clean the supervisor's files; never amend or rebase
-   a reviewed commit — rule 10, 2026-09-02 addition.
+**Our side is unchanged since `6458d582` except per-track files, so no `app/**` path can
+conflict.** The conflicts are exactly the files main also moved that are ours by rule
+("per-track files never merge in either direction"), and every one resolves **ours, whole**.
 
-## Current task — push (cleared through `50adae9`, REVIEWS.md 06:05), then
-wave 30 (X-192 — the LAST roster module) per `state.py next`. Same per-module
-rules. After X-192, `state.py next` returns the loop's terminal answer
-(JOURNEYS / FINISHED / STARVED): report it verbatim and stop — owner's call.
+## The two-actor rule for this merge — read it before you type anything
 
-## Wave-29 review note (supervisor, 2026-09-02 05:35)
+- `git merge` is on the supervisor's deny list, so **you** start the merge.
+- The coder guard refuses any `git commit` whose index carries `CLAUDE.md`, `.claude/`,
+  `bin/supervise.sh`, `app/phpunit.xml` or `.agents/supervisor/` — and a merge commit's index
+  carries all of them. So **you never commit on this run**; you resolve, stage, and stop.
+  The supervisor commits with `git commit --no-edit` at its next tick.
+- Reaching `/usr/bin/git`, `command git`, `PATH=` on a git command or `-c core.hooksPath` to
+  get past that is hard rule ④ / ruling 22 — a BLOCK before the diff is read. If something
+  refuses, that is the answer; write it in REPORT.md and stop.
+- `git merge --abort` is allowed by the guard and is the recovery for anything unexpected.
 
-- `c375699` X-179 — RLS tenant-only ✓, guest+authed tests ✓, R245 recorded ✓,
-  DONE recorded ✓, Tenancy swap ✓. **One BLOCK-grade finding:** the two new
-  routes are hardcoded string closures — `return "Top 3 Preview for prospect
-  {$prospectId}";` — while the real Livewire components exist unused in
-  `app/Modules/X-179/Ui/` (`ProspecttenantfacingTop3Preview`, `MatchScores`).
-  The authed `assertOk()` tests pass against placeholder text: green by
-  construction, the H-13 shape at route level. Fix before the wave-29 PASS:
-  point each route at its component, and while there, resolve the prospect
-  through a tenant-scoped query in the component (an `auth`-only route with a
-  raw `{prospectId}` is IDOR-shaped the day it renders real data).
+## Steps
 
-## Previous — next roster wave per `state.py next`
+**1. Fetch.**
 
-Wave 21 PASSED (03:30); push cleared through `b7a234f`. The rewrite ledger is
-live: `.git/hooks/post-rewrite` → `.agents/supervisor/REWRITES.log`, surfaced
-by `supervise.sh` §2a — any amend/rebase now blocks its wave mechanically.
-Same per-module rules as wave 21.
+```
+git fetch --no-write-fetch-head origin main
+git log -1 --format='%h %ci %s' origin/main
+```
 
-## Wave-25 review notes as commits land (supervisor, 2026-09-02 03:50)
+**2. Move our launcher out of the way** — main tracks `.agents/supervisor/launch-coder.sh`,
+it is untracked here, and git refuses to overwrite an untracked file (the merge would not even
+start):
 
-- `07e1531` X-142 — routes/auth/guest tests exemplary; `mcp_tokens` stores a
-  sha256 hash ✓; forced RLS on both new tables ✓. **Two findings, both must
-  land before the wave-25 PASS:**
-  1. ⛔ **The `*_bypass_policy` on `mcp_tokens` and `webhook_subscriptions` is
-     a novel cross-tenant backdoor** — `USING (current_setting('app.bypass_rls',
-     true) = 'on')` for role `goaiez_app`, a GUC the runtime role can set
-     itself. `app.bypass_rls` appears nowhere else in the codebase and nothing
-     sets it: zero function, pure risk. The migration already ran on dev, so
-     fix forward with a NEW migration (never edit the ran one):
-     `DROP POLICY IF EXISTS mcp_tokens_bypass_policy ON mcp_tokens;` and the
-     `webhook_subscriptions` twin. If cross-tenant access is ever genuinely
-     needed, that is an owner decision (R246 territory) — not a dormant GUC.
-  2. `webhook_subscriptions.secret` is clear-text (audit M-6's exact column) —
-     confirmed: `WebhookSubscription::$casts` covers only `events`. Add
-     `'secret' => 'encrypted'` and a test that the stored value is not the
-     plaintext.
-  3. **Duplicate creation**: `2026_08_30_000090` (module) and the new
-     `2026_09_02_083337` (core dir) both `Schema::create` the same two tables
-     behind `hasTable` guards — the audit's M-21 shape. Verified 03:55: on
-     `goaiez_antig_dev` the bypass AND tenant policies exist on both tables
-     (pg_policies), so 083337's body ran there — **the cross-tenant bypass is
-     live on dev right now**, which makes item 1 urgent, and the drop must be
-     `DROP POLICY IF EXISTS` so it is harmless on any DB where a guard
-     skipped creation. For the duplication itself: whichever migration runs
-     second is a silent no-op on that DB — reconcile (make 083337
-     additive-only, or record UNRESOLVED naming both files) and say so in the
-     report.
+```
+cp .agents/supervisor/launch-coder.sh /home/goaiez/tmp/launch-coder.pricebook.ours
+mv .agents/supervisor/launch-coder.sh .agents/supervisor/launch-coder.ours.bak
+```
 
-- `58d9a8f` X-142 follow-up — reviewed 04:05: adapting the code to `000090`'s
-  schema is fine, but **deleting the ran migration `2026_09_02_083337` does
-  not undo it on dev**: `pg_policies` still shows both `*_bypass_policy`
-  rows live on `goaiez_antig_dev`, and dev's ledger now holds an orphan row
-  for a file that no longer exists. Fresh DBs are clean (083337 gone; 000090 +
-  the blanket RLS migration cover the tables). Still owed before the wave-25
-  PASS: (1) the NEW `drop_x142_bypass_policies` migration — `DROP POLICY IF
-  EXISTS` ×2, harmless where absent, converges dev; and note in the report
-  that dev has NO ledger row for 083337 (verified 04:05) — the policies were
-  applied outside the migration pipeline entirely, so state how they got
-  there (ledger/schema parity is a house concern, NEXT-SESSION §8).
-  (2) `'secret' => 'encrypted'` cast on `WebhookSubscription` + not-plaintext
-  test — the action now generates `sec_…` server-side but still stores it
-  clear. Deleting a ran migration joins editing one on the never-do list.
+**3. Merge.**
 
-## Done — clear the wave-18 conduct BLOCK (REVIEWS.md 03:15)
+```
+git merge origin/main
+```
 
-One commit, three items, listed in the 03:15 block: reflog + corrected STAGES
-and COMMITS in the report · `state.py stage capability 120` · the no-amend
-confirmation. Then `supervise.sh --tests`, short report, stop. After the PASS:
-push, and the next roster wave per `state.py next`.
+**4. Read the conflict list before resolving anything.** Expected, exactly:
 
-## Done — wave 18, with item 0 first
+- `both modified:` `CLAUDE.md` · `bin/supervise.sh` · `.claude/settings.json`
+- `deleted by them:` `.agents/supervisor/BRIEF.md` · `KICKOFF.md` · `REPORT.md` · `REVIEWS.md` ·
+  `REWRITES.log`
 
-(Wave-13 BLOCK cleared 02:50 — `18fe3f0`+`eb612bb` push at the next push point.)
+If **any** path under `app/**` appears in the conflict list, or the list differs from the above
+in any other way: `git merge --abort`, write REPORT.md with the verbatim list, and stop. That is
+a finding, not something to resolve by judgement.
 
-### 0. `fix(scaffold): capabilities regeneration is lossless` — before any scaffold
+**5. Resolve — ours, whole, for the three both-modified files** (`HEAD` is our pre-merge tip):
 
-The X-124 scaffold re-dirtied **14** `capabilities.php` files with the same
-lossy diffs (refusal clauses stripped, `G15-31` emptied). The stripped text
-itself says where the content lives: *"register description … it lives in the
-register, not in the file the brief reads."* `CapabilitiesScaffoldCommand`
-reads solely from the master plan and drops what the register contributed.
-Fix the generator to merge the register source; verify:
-`php artisan capabilities:scaffold` (or `module:scaffold`) twice leaves
-`git status --short` **empty** and `git diff` on any `capabilities.php` shows
-refusal text preserved. Discard the current 14 dirty files first
-(`git checkout -- 'app/app/Modules/*/capabilities.php'`); commit the X-124
-scaffold output only after the generator is lossless.
+```
+git show HEAD:CLAUDE.md > CLAUDE.md
+git show HEAD:bin/supervise.sh > bin/supervise.sh
+git show HEAD:.claude/settings.json > .claude/settings.json
+git add CLAUDE.md bin/supervise.sh .claude/settings.json
+```
 
-### Wave 18 — old current-task heading follows for context
+**6. Resolve the mailbox as deleted, keeping the files on disk** — main gitignores them and
+`REVIEWS.md` is this track's review ledger; losing it is unrecoverable in practice:
 
-The three numbered items in the 02:55 block, in order. Then wave 18 per
-`state.py next`, same per-module rules as below. Wave-13/18 commits stay
-local until review.
+```
+git rm --cached -q -- .agents/supervisor/BRIEF.md .agents/supervisor/KICKOFF.md .agents/supervisor/REPORT.md .agents/supervisor/REVIEWS.md .agents/supervisor/REWRITES.log
+ls -la .agents/supervisor/
+```
 
-## Done earlier — 6c, then wave 13
+`--cached` is not optional: the files must still be on disk afterwards. Verify that in the `ls`.
 
-### 6c. One commit — `fix(X-103): companion migration for existing databases`
+**7. The silent one — restore our test-database pin.** `app/phpunit.xml` does **not** conflict
+(our side never touched it since the merge base), so main's `goaiez_antig_test` — Track 1's
+database — lands without a word. This is the hazard Track 1 named at 07:4x:
 
-`ab60355` edited ran migration `2026_08_30_000036_create_x103_site_tables.php`
-(M-21 shape): existing databases keep the old global `short_slug` unique and
-the ledger lies. Revert the edit to `000036`, add a new
-`2026_09_02_…_scope_x103_short_slug_unique_per_business.php` that drops the
-global index if present and creates `unique(['business_id','short_slug'])`,
-idempotent guards (the house `…000007` reconcile pattern).
-Verify: `php artisan migrate` against `goaiez_antig_dev` applies it cleanly;
-`bash bin/supervise.sh --tests` unchanged (873 run / 861 pass / 12 journeys).
+```
+git show HEAD:app/phpunit.xml > app/phpunit.xml
+git add app/phpunit.xml
+grep DB_DATABASE app/phpunit.xml
+```
 
-Also, no commit: record the module-test refresh gap —
-`python3 bin/state.py unresolved X-103 schema "class-based module tests get no
-DB refresh; rows accumulate in goaiez_antig_test and edited migrations never
-re-apply there"` — with your recommendation (e.g. bind RefreshesTenantDatabase
-in base TestCase) in the report. It is a design decision; recommend, don't
-decide silently.
+Verify: the grep prints `value="goaiez_antig_pricebook_test"`.
 
-### Then: push, and wave 13
+**8. Restore our launcher** (main's copy lacks the `GOAIEZ_PUSH_OK` export the coder guard's
+`push` rule reads):
 
-After 6c: `git push origin main` (everything local is then cleared), and start
-wave 13 per `state.py next` (X-176 remaining; X-137 already terminal). Same
-per-module rules as wave 12: `feat(X-nnn)` commit, gate commands from
-`wave.md`, every new route carries `['web','auth']` (ResolveTenant is global
-on `web`), every new screen one authed GET `assertOk()` plus one guest
-assertion, `Tenancy::set()` never raw SET. Report (rule-10 shape) when
-`state.py next` names wave 14 or stops.
+```
+cp /home/goaiez/tmp/launch-coder.pricebook.ours .agents/supervisor/launch-coder.sh
+chmod +x .agents/supervisor/launch-coder.sh
+git add .agents/supervisor/launch-coder.sh
+grep -c GOAIEZ_PUSH_OK .agents/supervisor/launch-coder.sh
+```
 
-## Report when
+Verify: the count is `5`.
 
-6c lands (short report), wave 13 closes (full report), any stop condition.
+**9. Prove nothing is left unresolved.**
 
-## Wave-13+ review notes as commits land (supervisor, 2026-09-02 02:40)
+```
+git status --short
+```
 
-- `18fe3f0` X-176 — **the class does not exist.** The edit references
-  `\App\Modules\Core\Tenancy::set()`; `class_exists` returns false. The
-  canonical class is `App\Support\Tenancy`. That test now errors, and X-176
-  was marked DONE afterwards. Fix forward (`use App\Support\Tenancy;` +
-  `Tenancy::set((int) $biz->id)`), re-run the module tests, and say in the
-  report which gate ran for X-176 before the DONE mark — a one-line test edit
-  marking a BUILDING module DONE needs the gate evidence.
-- `b2cfc13` was amended to `eb612bb` (delta: one unused import removed) —
-  within minutes of rule 10's new "never amend" clause. Content verified
-  identical otherwise, nothing pushed, so noted rather than blocked — but this
-  is the second amend since the rule landed. Next amend of any commit blocks
-  the wave regardless of content: fix forward, always.
+Verify: no line begins with `U`, `AA`, `DU` or `UD`. Then:
+
+```
+composer dump-autoload -d app
+```
+
+**10. STOP. Do not commit, do not gate, do not run `state.py`, do not push.** Write REPORT.md:
+
+```
+# REPORT — PB-23 (run <N>) — MERGE STAGED, awaiting the supervisor's commit
+STATE     : merge in progress, index resolved, nothing committed
+MERGE     : origin/main <sha> into track/pricebook <our sha>
+CONFLICTS : <the verbatim list from step 4>
+RESOLVED  : <what you did per path, one line each>
+VERIFY    : phpunit.xml pin = <grep output>
+            launcher GOAIEZ_PUSH_OK count = <n>
+            mailbox on disk = <the five names from the ls>
+            git status --short (first 40 lines):
+            <paste>
+REFUSED   : <anything the guard refused, verbatim — or `none`>
+UNRESOLVED: <anything you could not resolve without judgement>
+```
+
+## Standing lines
+
+- Every pest run, if one is ever needed, carries `DB_DATABASE=goaiez_antig_pricebook_test`
+  (ruling 3). None is needed on this run.
+- `vendor/bin/phpstan analyse --memory-limit=1G`, never `composer stan`.
+- Never name `.gitignore`, `.agents/supervisor/` or `CLAUDE.md` in a commit — and on this run
+  you make no commit at all.
+- A commit that touches `.agents/supervisor`, `CLAUDE.md`, `.claude` or `bin` is a BLOCK; so is
+  any commit on this run.
+- Commits on later runs use named paths — `git commit -m "…" -- <paths>`, never `-a`, never
+  `add -A`.
