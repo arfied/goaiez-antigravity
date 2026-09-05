@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T12:48:18",
+ "updated": "2026-09-05T13:11:33",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -669,10 +669,35 @@
    "unresolved": []
   },
   "X-117": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 10,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G6-02 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists. The card-vault surface belongs to X-120 (track money).",
+     "at": "2026-09-05T13:11:29"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G7-10 \u2014 no bundle system exists in X-117; grep -rnwi 'bundle' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists.",
+     "at": "2026-09-05T13:11:29"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-15 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
+     "at": "2026-09-05T13:11:29"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-39 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
+     "at": "2026-09-05T13:11:33"
+    }
+   ]
   },
   "X-118": {
    "status": "DONE",
@@ -1639,6 +1664,30 @@
    "stage": "capability",
    "why": "G19-15 \u2014 no polling or broadcasting system exists; grep -rn 'wire:poll\\|broadcast\\|Echo\\|dispatch(' app/app/Modules/X-01 returns only internal events and component dispatches, so no honest assertion exists",
    "at": "2026-09-05T12:48:18"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G6-02 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists. The card-vault surface belongs to X-120 (track money).",
+   "at": "2026-09-05T13:11:29"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G7-10 \u2014 no bundle system exists in X-117; grep -rnwi 'bundle' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists.",
+   "at": "2026-09-05T13:11:29"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-15 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
+   "at": "2026-09-05T13:11:29"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-39 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
+   "at": "2026-09-05T13:11:33"
   }
  ],
  "decisions": [
