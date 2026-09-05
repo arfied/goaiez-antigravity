@@ -3,14 +3,22 @@
 # Supervisor's coder dispatcher. Launches ONE Antigravity run on the current
 # KICKOFF.md, detached, logging to /home/goaiez/tmp/agy-run<N>.log.
 #
-#   bash .agents/supervisor/launch-coder.sh          # auto-numbers the run
-#   bash .agents/supervisor/launch-coder.sh --check  # liveness only, no launch
+#   bash .agents/supervisor/launch-coder.sh                 # auto-numbers the run
+#   bash .agents/supervisor/launch-coder.sh --check         # liveness only, no launch
+#   bash .agents/supervisor/launch-coder.sh --coder claude   # quota fallback
 #
 # Refuses to start if a coder is already running (never two in one tree).
+#
+# --coder (owner ruling 30, OWNER.md 17:1x). Antigravity is the default and the
+# first launch after a quota reset is always agy. `--coder claude` is passed BY
+# HAND OF TICK, only after a redispatch has died a second time on "Individual
+# quota reached", and the tick writes `coder=claude` into the REVIEWS block that
+# records the LAUNCHED line. It is never automatic.
 set -euo pipefail
 cd "$(dirname "$0")/../.." || exit 1
 
 PIDFILE=".agents/supervisor/coder.pid"
+CODER="agy"
 
 # --check: report liveness and exit without launching anything. Used by the
 # unattended supervisor tick, whose allowlist has no ps/pgrep/kill.
@@ -21,6 +29,19 @@ if [ "${1:-}" = "--check" ]; then
     echo "CODER DEAD"
   fi
   exit 0
+fi
+
+# --coder agy|claude. Anything else is refused rather than defaulted: a typo that
+# silently launched the wrong coder would be indistinguishable from a deliberate
+# fallback in the log, and ruling 30 requires the choice to be recorded.
+if [ "${1:-}" = "--coder" ]; then
+  case "${2:-}" in
+    agy|claude) CODER="$2" ;;
+    *) echo "REFUSED: --coder takes 'agy' or 'claude', got '${2:-}'"; exit 1 ;;
+  esac
+  shift 2
+elif [ -n "${1:-}" ]; then
+  echo "REFUSED: unknown argument '$1' (expected --check or --coder agy|claude)"; exit 1
 fi
 
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
@@ -56,16 +77,30 @@ echo "snapshot: $SNAP"
 TRACK=$(basename "$PWD")
 LOGDIR=".agents/supervisor/logs"
 mkdir -p "$LOGDIR"
+# One run counter for both coders, and it steps over a name either coder may have
+# taken, in either location — a claude run must never reuse an agy run's number.
 n=1
-while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] || [ -e "$LOGDIR/agy-run${n}.log" ]; do n=$((n+1)); done
-LOG="$LOGDIR/agy-run${n}.log"
+while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] \
+   || [ -e "/home/goaiez/tmp/claude-${TRACK}-run${n}.log" ] \
+   || [ -e "$LOGDIR/agy-run${n}.log" ] \
+   || [ -e "$LOGDIR/claude-run${n}.log" ]; do n=$((n+1)); done
+# Ruling 30(b) names the log /home/goaiez/tmp/claude-<track>-runN.log. It lives in
+# the checkout here for the same reason the agy log does (MONEY-36, 0b925de6): an
+# unattended tick's sandbox cannot read /home/goaiez/tmp, and a fallback run that
+# dies without a REPORT is exactly when the log must be readable. The coder is
+# still named in the filename, which is the property the ruling is after.
+LOG="$LOGDIR/${CODER}-run${n}.log"
 
-nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+if [ "$CODER" = "claude" ]; then
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+else
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+fi
 echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) log=$LOG"
+  echo "LAUNCHED run $n coder=$CODER (pid $(cat "$PIDFILE")) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi

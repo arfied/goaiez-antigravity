@@ -536,3 +536,34 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     annotation asserted to make a check pass is §298's exact prohibition. Build
     the emitter first; the declaration follows once the owner rules on who may
     edit a module's header block.
+30. **A quota death is a WAIT, not a dispatch; Claude Code is the second-try
+    fallback (owner via Track 1, `OWNER.md` 17:1x; applied by the 14:2x tick).**
+    One Antigravity account serves all eight tracks and drains whenever every
+    lane is busy. A launch whose log ends in `Individual quota reached … Resets
+    in Nm` **counts against nothing** — the tree is unchanged and the brief still
+    stands. So: read the reset minute from the newest run log, **hold until it**,
+    write one HOLD line in `REVIEWS.md`, and redispatch the unchanged brief. Do
+    not spin: a launch inside the window produces another two-line log and
+    teaches nothing. ⚠️ This supersedes the MONEY-37 addendum's step 2, which had
+    the tick launch immediately and record the quota log afterwards. **If the
+    redispatch dies on quota again**, the same `KICKOFF.md` goes to Claude Code
+    on the default account (no `CLAUDE_CONFIG_DIR`) via
+    `bash .agents/supervisor/launch-coder.sh --coder claude` — added to this
+    track's own launcher at 14:2x, never copied from Track 1's. Three properties
+    the owner fixed: the argument defaults to `agy` and **refuses** anything that
+    is not `agy`/`claude`; the log names the coder and the `LAUNCHED` line prints
+    `coder=claude`; and the claude branch runs under
+    `--setting-sources user`, which keeps the *supervisor's*
+    `.claude/settings.json` (it denies `app/**`) out of the coder's permissions —
+    `coder-bin/git` and the seal bind a claude coder exactly as they bind agy.
+    **Never automatic:** a tick passes `--coder claude` by hand and writes
+    `coder=claude` in the REVIEWS block carrying the `LAUNCHED` line; the first
+    launch after any reset is agy again. If a claude run ends in "reached your
+    Fable limit" that pool is drained too — HOLD, and never switch accounts on
+    your own. ⚠️ One deviation from the ruling's letter, recorded: the log stays
+    at `.agents/supervisor/logs/claude-run<N>.log` rather than
+    `/home/goaiez/tmp/claude-<track>-run<N>.log`, for MONEY-36's reason
+    (`0b925de6`) — a tick's sandbox cannot read `/home/goaiez/tmp`, and a
+    fallback run that dies without a `REPORT.md` is precisely when the log has to
+    be readable. The run counter steps over both coders' names in both locations,
+    so a claude run never reuses an agy run's number.
