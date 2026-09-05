@@ -1226,4 +1226,54 @@ class X157Test extends TestCase
             ->assertStatus(200)
             ->assertSee('dni-pool-x137', false);
     }
+
+    public function test_publishing_a_page_deploys_it_to_the_businesses_active_zone(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni'],
+        ]);
+
+        $deployment = Deployment::where('business_id', $biz->id)->where('edge_zone_id', $zone->id)->firstOrFail();
+        $this->assertSame('deployed', $deployment->status);
+        
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $this->assertSame(200, $response->getStatusCode());
+        
+        $html = (string) $response->getContent();
+        $this->assertSame(1, preg_match('#<script type="application/ld\+json">\s*(\{.*?\})\s*</script>#s', $html, $j));
+        $ld = json_decode($j[1], true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame($biz->name, $ld['name']);
+    }
+
+    public function test_publishing_without_an_edge_zone_publishes_and_deploys_nothing(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)->handle($biz->id, $page->id, [
+            ['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni'],
+        ]);
+
+        $this->assertTrue($page->fresh()->is_published);
+        $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
+    }
 }
