@@ -25,12 +25,46 @@ final class FormCaptureAction
         $validation = $this->validator->handle($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone);
 
         if (! $validation['is_valid']) {
-            return [
-                'status' => 'rejected',
-                'reason' => $validation['reason'],
-                'step' => $validation['step'] ?? null,
-                'missing' => $validation['missing'] ?? [],
-            ];
+            // G3-64 / G13-05: a SPAM rejection is stored and flagged, never discarded
+            // (GOAIEZ-MASTER-PLAN.md:31363). An incomplete step is not spam and is not stored.
+            if ($validation['is_spam'] !== true) {
+                return [
+                    'status' => 'rejected',
+                    'reason' => $validation['reason'],
+                    'step' => $validation['step'] ?? null,
+                    'missing' => $validation['missing'] ?? [],
+                ];
+            }
+
+            return DB::transaction(function () use ($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone, $validation) {
+                $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
+
+                $person = Person::updateOrCreate(
+                    ['business_id' => $businessId, 'phone' => $payload['phone'] ?? '+15550000000'],
+                    [
+                        'first_name' => $payload['first_name'] ?? ($payload['name'] ?? 'Visitor'),
+                        'email' => $payload['email'] ?? null,
+                    ]
+                );
+
+                $submission = FormSubmission::create([
+                    'business_id' => $businessId,
+                    'form_definition_id' => $form->id,
+                    'person_id' => $person->id,
+                    'payload' => $payload,
+                    'ip_address' => $ipAddress,
+                    'user_timezone' => $userTimezone,
+                    'is_spam' => true,
+                    'spam_reason' => $validation['reason'],
+                ]);
+
+                return [
+                    'status' => 'rejected',
+                    'reason' => $validation['reason'],
+                    'submission_id' => $submission->id,
+                    'person_id' => $person->id,
+                ];
+            });
         }
 
         return DB::transaction(function () use ($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone) {
