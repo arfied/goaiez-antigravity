@@ -488,9 +488,49 @@ final class AuthorizeNetApi
 
         $body = $this->send('ARBCreateSubscriptionRequest', [
             'subscription' => $subscription,
-        ], $businessId);
+        ], $businessId, null, ['E00012']);
 
         $id = $this->stringAt($body, 'subscriptionId');
+
+        $messages = is_array($body['messages'] ?? null) ? $body['messages'] : [];
+        $resultCode = $messages['resultCode'] ?? null;
+        if ($resultCode === 'Error') {
+            // E00012 was allowed by assertOk, meaning this request returned a duplicate error.
+            if ($id !== null) {
+                return $id;
+            }
+
+            // Otherwise, we have to look it up
+            $listBody = $this->send('ARBGetSubscriptionListRequest', [
+                'searchType' => 'subscriptionActive',
+                'sorting' => [
+                    'orderBy' => 'id',
+                    'orderDescending' => 'true',
+                ],
+                'paging' => [
+                    'limit' => '1000',
+                    'offset' => '1',
+                ],
+            ], $businessId);
+
+            $details = is_array($listBody['subscriptionDetails'] ?? null) ? $listBody['subscriptionDetails'] : [];
+
+            foreach ($details as $detail) {
+                if (is_array($detail)
+                    && $this->stringAt($detail, 'customerProfileId') === $customerProfileId
+                    && $this->stringAt($detail, 'customerPaymentProfileId') === $customerPaymentProfileId
+                    && str_starts_with((string) $this->stringAt($detail, 'name'), $subscription['name'])
+                    && in_array($this->stringAt($detail, 'status'), ['active', 'suspended'], true)
+                ) {
+                    $existingId = $this->stringAt($detail, 'id');
+                    if ($existingId !== null) {
+                        return $existingId;
+                    }
+                }
+            }
+
+            throw AuthorizeNetRequestFailed::fromResult(['E00012']);
+        }
 
         if ($id === null) {
             throw AuthorizeNetRequestFailed::unreadable();

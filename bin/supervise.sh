@@ -13,10 +13,6 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
-# Track 4 (pricebook): dev DB goaiez_antig_pricebook, tests goaiez_antig_pricebook_test.
-# ⛔ app/phpunit.xml still pins Track 1's goaiez_antig_test and is on the never-list.
-#    §7 below EXPORTS goaiez_antig_pricebook_test over that pin. Any pest run made by
-#    hand must carry the same prefix, or it writes into Track 1's test database.
 want_tests=0; want_doctor=0
 for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
@@ -47,7 +43,7 @@ sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/superv
 [ -n "$sup_edits" ] && printf '%s\n' "$sup_edits" | sed 's/^/  ℹ supervisor working notes (uncommitted — leave them alone): /'
 touched=$(printf '%s\n%s' "$touched" "$(git diff --name-only HEAD | grep -vE '^(\.agents/supervisor/|CLAUDE\.md$|bin/supervise\.sh$)')" | sort -u | grep -v '^$')
 pat='^app/app/Doctor/|seals\.json$|tests/Journeys/JourneyHarness\.php$|^app/Modules/[^/]+/(manifest|capabilities)\.php$|(^|/)\.env(\.|$)|^app/phpunit\.xml$|^source/|^runtime/|^bin/state\.py$|^\.agents/supervisor/(BRIEF|REVIEWS)\.md$'
-hits=$(printf '%s\n' "$touched" | grep -E "$pat" || true)
+hits=$(printf '%s\n' "$touched" | grep -E "$pat" | grep -v '\.env\.example$' || true)
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits" | sed 's/^/  ⛔ /'
   echo "  (manifest/capabilities are legal only via regeneration; supervisor files are legal only from the supervisor)"
@@ -57,11 +53,17 @@ else
 fi
 
 bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
-hook=$(git -C "$ROOT" rev-parse --git-path hooks/post-rewrite 2>/dev/null); [ "${hook#/}" = "$hook" ] && hook="$ROOT/$hook"
-if [ ! -x "$hook" ]; then
+if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
   echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
-  tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
+  SEEN="/home/goaiez/tmp/rewrites-seen-$(basename "$ROOT")"
+  cur=$(md5sum "$ROOT/.agents/supervisor/REWRITES.log" | cut -d' ' -f1)
+  if [ -f "$SEEN" ] && [ "$(cat "$SEEN")" = "$cur" ]; then
+    echo "  ledger unchanged since last review ($(grep -c '^==' "$ROOT/.agents/supervisor/REWRITES.log") historical entries, already quoted)"
+  else
+    tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ NEW: /'; fail=1
+    echo "$cur" > "$SEEN"
+  fi
 else
   echo "  empty — no history rewrites since the ledger began"
 fi
@@ -106,41 +108,51 @@ bar "6. style + static analysis"
 ./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
 ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
 
-TEST_DB=goaiez_antig_pricebook_test
 if [ $want_tests -eq 1 ]; then
-  bar "7. test suite  (phpunit.xml pins $xml_db — §7 EXPORTS $TEST_DB over it)"
-  # (owner 2026-09-05 08:0x, after Track 1 9b65e1e5) refuse while another checkout whose
-  # phpunit.xml pins OUR test database has pest live — two runs share one database and
-  # the second one's migrate:fresh drops the first one's schema mid-run.
-  busy=0
-  for pid in $(pgrep -f 'vendor/bin/pest' 2>/dev/null); do
-    cw=$(readlink -f "/proc/$pid/cwd" 2>/dev/null) || continue
-    [ -n "$cw" ] || continue
-    for px in "$cw/phpunit.xml" "$cw/app/phpunit.xml"; do
-      [ -f "$px" ] || continue
-      if grep -q "value=\"$TEST_DB\"" "$px" 2>/dev/null; then
-        echo "  ⛔ pest is already live in $cw (pid $pid), pinned to $TEST_DB — refusing to run"
-        busy=1
-      fi
-    done
+  bar "7. test suite  (phpunit.xml → $xml_db)"
+  # Refuse while another pest runs on THIS database from any checkout whose
+  # phpunit.xml pins it (2026-09-05 07:1x: the sixty checkout wiped the schema
+  # under a Track 1 gate — 32 spurious "relation does not exist" errors).
+  shared=""
+  for co in /home/goaiez/agents/grs-antig*; do
+    grep -q "DB_DATABASE\" value=\"$xml_db\"" "$co/app/phpunit.xml" 2>/dev/null && shared="$shared $co"
   done
-  if [ $busy -eq 1 ]; then
-    echo "  rerun when idle; this is not a code finding"
+  clash=0
+  for p in $(pgrep -x php); do
+    if tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q "bin/pes""t"; then
+      c=$(readlink /proc/$p/cwd 2>/dev/null)
+      for co in $shared; do case "$c" in "$co"/*) clash=$((clash+1)); echo "  ✗ pest pid $p running on $xml_db from $c";; esac; done
+    fi
+  done
+  if [ $clash -gt 0 ]; then
+    echo "  ✗ REFUSED: $clash other pest process(es) on $xml_db (checkouts pinning it:$shared) — a gate now would be false"
+    echo '{"tool":"pest","result":"refused-shared-db"}' > /home/goaiez/tmp/last-pest.json
+    fail=1; want_tests=0
+  fi
+fi
+if [ $want_tests -eq 1 ]; then
+  # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
+  out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  if [ $rc -eq 124 ]; then
+    echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
+    out="$out"$'\n''{"tool":"pest","result":"timeout"}'
+  elif [ -z "$out" ]; then
+    # 2026-09-05 07:2x: a gate printed a blank §7 and an empty last-pest.json.
+    # Zero bytes is never a result: rc 137/143 = killed from outside (a
+    # `pkill -f pest` in another session); 255 = PHP died before the formatter
+    # (memory, Vite manifest — narrow with --filter); 0 with no output = the
+    # formatter never ran.
+    echo "  ✗ pest printed ZERO BYTES (rc=$rc) — no test ran to completion; not a number, a silence. Re-run; if it repeats, --filter one file to surface the exception"
+    out='{"tool":"pest","result":"silent","rc":'"$rc"'}'
     fail=1
-  else
-  out=$(DB_DATABASE=$TEST_DB timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
-  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
+  fi
+  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
   [ $rc -ne 0 ] && fail=1
-  [ $rc -eq 124 ] && echo "  ⛔ TIMEOUT — pest passed 1800s and was killed (rc 124). The number below, if any, is partial."
-  if [ -z "$out" ]; then
-    echo "  ⛔ ZERO BYTES — pest printed nothing (rc $rc). Narrow it with --filter before debugging any code:"
-    echo "     memory (phpunit.xml.dist pins 512M), a missing Vite manifest (npm run build), or a dead database."
-    fail=1
-  elif printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
+  if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
-print("  tests %s · passed %s · FAILED %s · errors %s · result %s · rc '"$rc"'" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
+print("  tests %s · passed %s · FAILED %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed",0),d.get("errors"),d.get("result")))
 for f in (d.get("failures") or [])[:5]:
     print("   ✗ FAILURE %s" % f.get("test","?").split("::")[-1])
 for e in (d.get("error_details") or [])[:5]:
@@ -148,9 +160,7 @@ for e in (d.get("error_details") or [])[:5]:
 n=len(d.get("error_details") or [])
 if n>5: print("   … %d more" % (n-5))'
   else
-    echo "  (pest printed no JSON summary line — rc $rc; raw tail:)"
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
-  fi
   fi
 fi
 

@@ -11,7 +11,7 @@ final class ProviderEngine
     public function enforceN150Capabilities(bool $hasCapabilities): void
     {
         if (! $hasCapabilities) {
-            throw new InvalidArgumentException('Missing N-150 capabilities');
+            throw new InvalidArgumentException('Missing junk-value rejection and tier bounding capabilities');
         }
     }
 }

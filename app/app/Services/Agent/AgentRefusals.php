@@ -151,6 +151,12 @@ final class AgentRefusals
             'paid in full',
         ],
 
+        // Model fallbacks when a fact (like a price) is missing.
+        'NO_FACT' => [
+            'can look at pricing',
+            'will confirm and come back',
+        ],
+
         // Legal and medical advice.
         'advice' => [
             'you are entitled to',

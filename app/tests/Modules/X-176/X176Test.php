@@ -147,6 +147,15 @@ class X176Test extends TestCase
         $this->assertArrayHasKey('G8-15', $caps);
         // Delegates to X-108
         $this->assertTrue(is_dir(app_path('Modules/X-108')));
+
+        $biz = TestCase::provisionTenant(['name' => 'Calendar Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'Calendar', commitId: 'e1', domainName: 'calendar.com'
+        );
+        $this->assertSame('published', $res['status']);
+        $this->assertArrayNotHasKey('event', $res['json_ld']);
     }
 
     /** (R245) */
@@ -258,6 +267,24 @@ class X176Test extends TestCase
     {
         $caps = require app_path('Modules/X-176/capabilities.php');
         $this->assertArrayHasKey('G16-25', $caps);
+
+        $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'Video', commitId: 'v1', domainName: 'video.com',
+            videos: [['name' => 'Drain Clearing Explained', 'contentUrl' => 'https://video.com/drain.mp4', 'uploadDate' => '2026-09-01']]
+        );
+        $this->assertSame('published', $res['status']);
+        $this->assertSame('VideoObject', $res['json_ld']['video'][0]['@type'] ?? null);
+        $this->assertSame('https://video.com/drain.mp4', $res['json_ld']['video'][0]['contentUrl'] ?? null);
+
+        $bad = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 102, businessName: 'Video', commitId: 'v2', domainName: 'video.com',
+            videos: [['name' => 'Broken', 'uploadDate' => '2026-09-01']]
+        );
+        $this->assertSame('refused', $bad['status']);
+        $this->assertSame('SCHEMA_INVALID', $bad['refusal_code']);
     }
 
     /** (R245) */

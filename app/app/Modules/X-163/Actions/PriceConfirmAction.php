@@ -23,7 +23,11 @@ final class PriceConfirmAction
             ];
         }
 
-        $item->update(['is_confirmed' => true, 'is_sample' => false]);
+        $item->update([
+            'is_confirmed' => true,
+            'is_sample' => false,
+            'confirmed_at' => $item->confirmed_at ?? now(),
+        ]);
 
         Event::dispatch(new PriceConfirmed($businessId, $item->id));
         Event::dispatch(new PricebookUpdated($businessId, $item->id, $item->service_name, $item->price_cents));

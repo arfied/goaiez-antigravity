@@ -763,8 +763,9 @@
 - `2026-09-05T09:47:06` (R245) C-Billing — a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)
 - `2026-09-05T10:13:56` (R245) C-Agent — the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)
 - `2026-09-05T10:15:15` (R245) C-Agent — one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)
-- `2026-09-05T12:07:11` UNRESOLVED X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate) X-172 - 
-- `2026-09-05T12:29:26` UNRESOLVED capability X-171 - G4-27 belongs to track sixty or money
-- `2026-09-05T12:47:03` UNRESOLVED capability X-172 - G10-24's ⑤ names no refusal; the clause must be authored by someone not building X-172 (P-210, capabilities.php header line 10) — tracker row GOAIEZ-TRACKER-CAPABILITIES.md:559 is Track 1's to restate
-- `2026-09-05T12:47:03` (R245) X-172 — a redline is SURFACED with a diff, never accepted through the portal; PortalActionHandler refuses actionType redline_accepted (test_g10_24_refusal_redline_never_accepted)
-- `2026-09-05T12:47:07` UNRESOLVED capability X-171 - G4-27's ⑤ carries the KILLED G4-27's P-095/R25 auto-top-up prose instead of X-171's offline-mode statement (GOAIEZ-MASTER-PLAN.md:39359 reads 'offline mode = tech mobile is offline-first'); ruling 18 misattribution, tracker range-row fixes are Track 1's
+- `2026-09-05T10:55:53` (R245) C-Sms — C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)
+- `2026-09-05T11:22:12` UNRESOLVED capability C-Sms - TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant
+- `2026-09-05T12:14:55` note: J10: owner ruling 2026-09-05 — the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production
+- `2026-09-05T13:46:19` (R245) X-121 — JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)
+- `2026-09-05T16:22:13` (R245) C-Billing — a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)
+- `2026-09-05T17:11:31` UNRESOLVED tests X-01 - four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold

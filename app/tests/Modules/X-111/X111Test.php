@@ -12,6 +12,10 @@ use App\Modules\X111\Actions\OpsTicketAction;
 use App\Modules\X111\Domain\OpsEngine;
 use App\Modules\X111\Events\AlertOperator;
 use App\Modules\X111\Events\TicketOpened;
+use App\Modules\X111\Models\IpBan;
+use App\Modules\X111\Models\ManualQueue;
+use App\Modules\X111\Models\OperatorAlert;
+use App\Modules\X111\Models\TenantTicket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -91,6 +95,33 @@ class X111Test extends TestCase
         $this->assertEquals('198.51.100.42', $ban->ip_address);
         $this->assertNotNull($ban->expires_at);
         $this->assertTrue($ban->expires_at->isFuture());
+    }
+
+    /**
+     * [G4-14] the operator's; the tenant's conversational search is X-01's. ElasticSearch is corpus vocabulary — one database (§22)
+     */
+    public function test_g4_14_elasticsearch_vocabulary(): void
+    {
+        $drivers = array_column(config('database.connections'), 'driver');
+        $this->assertNotContains('elasticsearch', $drivers);
+
+        $this->assertNull((new IpBan)->getConnectionName());
+        $this->assertNull((new ManualQueue)->getConnectionName());
+        $this->assertNull((new OperatorAlert)->getConnectionName());
+        $this->assertNull((new TenantTicket)->getConnectionName());
+
+        $biz = TestCase::provisionTenant(['name' => 'Elastic Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'critical', 'Check elasticsearch');
+
+        $row = DB::connection(config('database.default'))
+            ->table((new OperatorAlert)->getTable())
+            ->where('id', $alert->id)
+            ->first();
+
+        $this->assertNotNull($row);
+        $this->assertEquals($biz->id, $row->business_id);
     }
 
     /**

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T12:47:07",
+ "updated": "2026-09-05T17:11:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -403,10 +403,17 @@
    ]
   },
   "C-Sms": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Sms",
+     "stage": "capability",
+     "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+     "at": "2026-09-05T11:22:12"
+    }
+   ]
   },
   "C-Telephony": {
    "status": "DONE",
@@ -421,10 +428,17 @@
    "unresolved": []
   },
   "X-01": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 6,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-01",
+     "stage": "tests",
+     "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+     "at": "2026-09-05T17:11:31"
+    }
+   ]
   },
   "X-07": {
    "status": "DONE",
@@ -823,23 +837,10 @@
    "unresolved": []
   },
   "X-171": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-171",
-     "stage": "capability",
-     "why": "G4-27 belongs to track sixty or money",
-     "at": "2026-09-05T12:29:26"
-    },
-    {
-     "module": "X-171",
-     "stage": "capability",
-     "why": "G4-27's \u2464 carries the KILLED G4-27's P-095/R25 auto-top-up prose instead of X-171's offline-mode statement (GOAIEZ-MASTER-PLAN.md:39359 reads 'offline mode = tech mobile is offline-first'); ruling 18 misattribution, tracker range-row fixes are Track 1's",
-     "at": "2026-09-05T12:47:07"
-    }
-   ]
+   "unresolved": []
   },
   "X-172": {
    "status": "UNRESOLVED",
@@ -851,18 +852,6 @@
      "stage": "tests",
      "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
      "at": "2026-09-05T08:35:23"
-    },
-    {
-     "module": "X-172",
-     "stage": "X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate)",
-     "why": "",
-     "at": "2026-09-05T12:07:11"
-    },
-    {
-     "module": "X-172",
-     "stage": "capability",
-     "why": "G10-24's \u2464 names no refusal; the clause must be authored by someone not building X-172 (P-210, capabilities.php header line 10) \u2014 tracker row GOAIEZ-TRACKER-CAPABILITIES.md:559 is Track 1's to restate",
-     "at": "2026-09-05T12:47:03"
     }
    ]
   },
@@ -1352,28 +1341,16 @@
    "at": "2026-09-05T08:35:23"
   },
   {
-   "module": "X-172",
-   "stage": "X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate)",
-   "why": "",
-   "at": "2026-09-05T12:07:11"
+   "module": "C-Sms",
+   "stage": "capability",
+   "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+   "at": "2026-09-05T11:22:12"
   },
   {
-   "module": "X-171",
-   "stage": "capability",
-   "why": "G4-27 belongs to track sixty or money",
-   "at": "2026-09-05T12:29:26"
-  },
-  {
-   "module": "X-172",
-   "stage": "capability",
-   "why": "G10-24's \u2464 names no refusal; the clause must be authored by someone not building X-172 (P-210, capabilities.php header line 10) \u2014 tracker row GOAIEZ-TRACKER-CAPABILITIES.md:559 is Track 1's to restate",
-   "at": "2026-09-05T12:47:03"
-  },
-  {
-   "module": "X-171",
-   "stage": "capability",
-   "why": "G4-27's \u2464 carries the KILLED G4-27's P-095/R25 auto-top-up prose instead of X-171's offline-mode statement (GOAIEZ-MASTER-PLAN.md:39359 reads 'offline mode = tech mobile is offline-first'); ruling 18 misattribution, tracker range-row fixes are Track 1's",
-   "at": "2026-09-05T12:47:07"
+   "module": "X-01",
+   "stage": "tests",
+   "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+   "at": "2026-09-05T17:11:31"
   }
  ],
  "decisions": [
@@ -1432,9 +1409,21 @@
    "ruling": "R245"
   },
   {
-   "module": "X-172",
-   "chose": "a redline is SURFACED with a diff, never accepted through the portal; PortalActionHandler refuses actionType redline_accepted (test_g10_24_refusal_redline_never_accepted)",
-   "at": "2026-09-05T12:47:03",
+   "module": "C-Sms",
+   "chose": "C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)",
+   "at": "2026-09-05T10:55:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-121",
+   "chose": "JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)",
+   "at": "2026-09-05T13:46:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
+   "at": "2026-09-05T16:22:13",
    "ruling": "R245"
   }
  ],
@@ -1442,6 +1431,10 @@
   {
    "at": "2026-09-03T09:34:34",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-05T12:14:55",
+   "note": "J10: owner ruling 2026-09-05 \u2014 the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production"
   }
  ]
 }

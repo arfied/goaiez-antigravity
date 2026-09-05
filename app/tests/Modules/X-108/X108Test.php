@@ -151,7 +151,40 @@ class X108Test extends TestCase
      */
     public function test_g2_10_calendar_spec(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Merged View Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $date = '2026-09-09';                        // fixed: the fixture must not drift with the clock
+        $dow = Carbon::parse($date)->dayOfWeekIso;   // the migration's own convention (S-39's decision)
+
+        $clean = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(4, $clean['slots_count'], 'the unmerged ladder is four');
+
+        // (a) capacity — a booked appointment over 11:00-13:00
+        $this->book->handle($biz->id, 'Consultation', $date.' 11:00:00', $date.' 13:00:00');
+
+        // (b) a live hold — a slot lock over 14:00-16:00
+        $this->engine->lockSlot($biz->id, $date.' 14:00:00', $date.' 16:00:00', 'sess-merged-view');
+
+        // (c) out of office — a blackout over [16:00, 18:00)
+        AvailabilityRule::create([
+            'business_id' => $biz->id,
+            'day_of_week' => $dow,
+            'start_time' => '16:00',
+            'end_time' => '18:00',
+            'is_blackout' => true,
+        ]);
+
+        $merged = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(1, $merged['slots_count'], 'one view: appointment, lock and blackout all subtract before the offer');
+        $this->assertSame(
+            ['9:00 AM - 11:00 AM'],
+            array_column($merged['offered_slots'], 'formatted_window'),
+            '09:00 is the only window no input touched'
+        );
+
+        $nonMember = $this->engine->getAvailableSlots($biz->id, $date, false);
+        $this->assertSame(0, $nonMember['slots_count'], 'the single surviving window is VIP-reserved, so a non-member is offered nothing');
     }
 
     /**
@@ -315,7 +348,32 @@ class X108Test extends TestCase
      */
     public function test_g17_27_localised_slots(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Localised Slots', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $date = now()->addDays(3)->format('Y-m-d');
+        $res = $this->avail->handle($biz->id, $date, isMember: true);
+
+        $this->assertNotEmpty($res['offered_slots']);
+
+        foreach ($res['offered_slots'] as $slot) {
+            // an explicit offset is the only form a browser can localise without guessing
+            $this->assertMatchesRegularExpression(
+                '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/',
+                $slot['start_time'],
+                'start_time must carry an explicit UTC offset'
+            );
+            $this->assertMatchesRegularExpression(
+                '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/',
+                $slot['end_time'],
+                'end_time must carry an explicit UTC offset'
+            );
+            $this->assertSame(
+                $slot['start_time'],
+                Carbon::parse($slot['start_time'])->toIso8601String(),
+                'the string round-trips through Carbon unchanged, so it is unambiguous'
+            );
+        }
     }
 
     /**
@@ -323,7 +381,32 @@ class X108Test extends TestCase
      */
     public function test_g18_07_holiday_overrides(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Holiday Override', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $holiday = now()->addDays(4)->startOfDay();
+        $sameWeekdayNextWeek = $holiday->copy()->addDays(7);
+
+        AvailabilityRule::create([
+            'business_id' => $biz->id,
+            'day_of_week' => $holiday->dayOfWeekIso,
+            'start_time' => '14:00',
+            'end_time' => '16:00',
+            'is_blackout' => true,
+        ]);
+
+        // the day it was meant for
+        $onTheDay = $this->engine->getAvailableSlots($biz->id, $holiday->format('Y-m-d'), true);
+        $this->assertNotContains('2:00 PM - 4:00 PM', array_column($onTheDay['offered_slots'], 'formatted_window'));
+
+        // and every following week, because the rule is keyed on the weekday and not the date
+        $nextWeek = $this->engine->getAvailableSlots($biz->id, $sameWeekdayNextWeek->format('Y-m-d'), true);
+        $this->assertNotContains(
+            '2:00 PM - 4:00 PM',
+            array_column($nextWeek['offered_slots'], 'formatted_window'),
+            'a one-day holiday is not expressible: the rule recurs on the weekday'
+        );
+        $this->assertSame($onTheDay['slots_count'], $nextWeek['slots_count']);
     }
 
     /**
