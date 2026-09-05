@@ -28,3 +28,8 @@ Thumbs.db
 /composer.phar
 /error_log
 /pest.json
+doctor_*.txt
+pint_output.json
+stan.json
+composer.phar
+error_log

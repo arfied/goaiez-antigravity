@@ -12,7 +12,7 @@ final class AssistantPreviewAction
             'status' => 'preview_ready',
             'action_key' => $actionKey,
             'projected_changes' => "Will execute {$actionKey} with given parameters",
-            'is_irreversible' => in_array($actionKey, ['delete_tenant', 'refund_charge', 'bulk_delete']),
+            'is_irreversible' => in_array($actionKey, AssistantExecuteAction::IRREVERSIBLE, true),
         ];
     }
 }

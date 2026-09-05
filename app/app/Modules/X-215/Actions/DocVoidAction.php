@@ -14,6 +14,14 @@ final class DocVoidAction
     public function handle(int $businessId, int $documentId): array
     {
         $doc = SignableDocument::where('business_id', $businessId)->findOrFail($documentId);
+        if ($doc->status === 'signed') {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'DOCUMENT_ALREADY_SIGNED',
+                'message' => 'A document that has been signed cannot be voided',
+                'voided' => false,
+            ];
+        }
         $doc->update(['status' => 'voided']);
 
         SignatureRequest::where('business_id', $businessId)

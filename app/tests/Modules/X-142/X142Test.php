@@ -11,15 +11,22 @@ use App\Modules\X142\Actions\WebhookSubscribeAction;
 use App\Modules\X142\Events\McpInvoked;
 use App\Modules\X142\Events\TokenIssued;
 use App\Modules\X142\Events\TokenRevoked;
+use App\Modules\X142\Models\McpToken;
 use App\Modules\X142\Ui\ConnectYourAi;
 use App\Modules\X142\Ui\McpTokenRegistry;
 use App\Modules\X142\Ui\WebhooksView;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/**
+ * (R245) empty state wording uses standard x-ui.empty-state pattern with no action button
+ * (R245) renders event_filter column, events cast is ignored as dead
+ * (R245) is_active cast to boolean added to WebhookSubscription model
+ */
 class X142Test extends TestCase
 {
     private McpTokenAction $tokenAction;
@@ -102,12 +109,48 @@ class X142Test extends TestCase
         $this->assertNotNull($sub->id);
     }
 
+    public function test_mcp_token_permissions_read_back_as_an_array(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Perms Array Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test Perms',
+            roleScope: 'staff',
+            permissions: ['job.create', 'job.eta_notify']
+        );
+
+        $this->assertSame(['job.create', 'job.eta_notify'], McpToken::findOrFail($token->id)->permissions);
+    }
+
     /**
      * [G4-02], [G4-18]
      */
     public function test_mcp_capabilities(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Capabilities Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test Capabilities',
+            roleScope: 'staff',
+            permissions: ['job.create', 'job.eta_notify']
+        );
+
+        $dbToken = McpToken::findOrFail($token->id);
+        $this->assertEquals('staff', $dbToken->role_scope);
+        $this->assertSame(['job.create', 'job.eta_notify'], $dbToken->permissions);
+
+        try {
+            $this->tokenAction->revoke($biz->id + 100000, $token->id);
+            $this->fail('revoke accepted a token id under a business id that does not own it');
+        } catch (ModelNotFoundException $e) {
+            // the where('business_id') guard refused it
+        }
+
+        $this->assertFalse((bool) McpToken::findOrFail($token->id)->is_revoked);
     }
 
     public function test_components_render(): void
@@ -155,5 +198,113 @@ class X142Test extends TestCase
         $this->assertNotNull($rawSecret);
         $this->assertNotEquals($sub->secret, $rawSecret);
         $this->assertStringNotContainsString('sec_', $rawSecret); // the encrypted payload should not contain the raw prefix in plain text
+    }
+
+    public function test_mcp_token_registry_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Token Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(McpTokenRegistry::class)
+            ->assertSee('No tokens yet.')
+            ->assertSee('Tokens give external systems access to your account.');
+    }
+
+    public function test_mcp_token_registry_list(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'List Token Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test List Token',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+
+        Livewire::test(McpTokenRegistry::class)
+            ->assertSeeHtml('data-revoked="no"')
+            ->assertSee($token->token_name)
+            ->assertSee($token->role_scope)
+            ->assertDontSee($token->token_hash);
+    }
+
+    public function test_mcp_token_registry_revoked(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Revoked Token Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test Revoked Token',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+        $this->tokenAction->revoke($biz->id, $token->id);
+
+        Livewire::test(McpTokenRegistry::class)
+            ->assertSeeHtml('data-revoked="yes"')
+            ->assertSee($token->token_name);
+    }
+
+    public function test_webhooks_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Webhooks Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(WebhooksView::class)
+            ->assertSee('No webhooks yet.')
+            ->assertSee('Webhooks push events to your system.');
+    }
+
+    public function test_webhooks_list(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'List Webhooks Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/list', 'event.test.*');
+
+        Livewire::test(WebhooksView::class)
+            ->assertSeeHtml('data-active="yes"')
+            ->assertSee($sub->target_url)
+            ->assertDontSee($sub->secret);
+    }
+
+    public function test_connect_your_ai_empty_when_all_tokens_are_revoked(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Connect AI Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Revoked Claude Desktop',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+        $this->tokenAction->revoke($biz->id, $token->id);
+
+        Livewire::test(ConnectYourAi::class)
+            ->assertSee('No connections yet.')
+            ->assertSee('Connect an AI to get started.')
+            ->assertDontSee($token->token_name);
+    }
+
+    public function test_connect_your_ai_connected(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Connected AI Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Active Claude Desktop',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+
+        Livewire::test(ConnectYourAi::class)
+            ->assertSeeHtml('data-connected="yes"')
+            ->assertSee($token->token_name)
+            ->assertSee($token->role_scope)
+            ->assertDontSee($token->token_hash);
     }
 }

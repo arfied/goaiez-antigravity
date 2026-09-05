@@ -15,6 +15,8 @@ use App\Modules\X124\Events\AssistantRecommended;
 use App\Modules\X124\Events\AssistantRequest;
 use App\Modules\X124\Models\AssistantSession;
 use App\Modules\X124\Models\AssistantUnsupported;
+use App\Modules\X124\Ui\ChatDockEvery;
+use App\Modules\X124\Ui\PreviewCard;
 use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
@@ -108,6 +110,32 @@ class X124Test extends TestCase
         $this->assertTrue(true);
     }
 
+    public function test_constant_irreversible_actions(): void
+    {
+        $this->assertEqualsCanonicalizing(
+            ['delete_tenant', 'refund_charge', 'bulk_delete', 'wipe_database'],
+            AssistantExecuteAction::IRREVERSIBLE,
+        );
+
+        $biz = TestCase::provisionTenant(['name' => 'Constant Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        foreach (AssistantExecuteAction::IRREVERSIBLE as $actionKey) {
+            $preview = $this->previewAction->handle($biz->id, $actionKey);
+            $this->assertTrue($preview['is_irreversible']);
+
+            $exec = $this->executeAction->handle($biz->id, $actionKey, [], false);
+            $this->assertEquals('refused_confirmation_required', $exec['status']);
+        }
+
+        $ordinaryKey = 'send_invoice';
+        $previewOrd = $this->previewAction->handle($biz->id, $ordinaryKey);
+        $this->assertFalse($previewOrd['is_irreversible']);
+
+        $execOrd = $this->executeAction->handle($biz->id, $ordinaryKey, [], false);
+        $this->assertEquals('executed', $execOrd['status']);
+    }
+
     public function test_todays_recommendation_strip_renders_active_and_emits_events(): void
     {
         Event::fake([
@@ -156,14 +184,86 @@ class X124Test extends TestCase
         $actAction->handle($biz->id, $rec->id, 'invalid_status');
     }
 
-    public function test_todays_recommendation_strip_handles_error_state(): void
+    public function test_todays_recommendation_strip_blade_renders_the_error_panel(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Strip Biz Error', 'currency' => 'USD']);
 
         Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
             ->call('load')
-            ->set('errorMessage', 'Failed')
+            ->set('errorMessage', 'Failed to load recommendations')
             ->assertSee('We could not load recommendations.')
+            ->assertSee('Failed to load recommendations')
             ->assertSee('wire:click="load"', false);
+    }
+
+    public function test_preview_card_ready_reversible(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Preview Reversible', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(PreviewCard::class, [
+            'businessId' => $biz->id,
+            'actionKey' => 'send_invoice',
+            'params' => [],
+        ])
+            ->call('load')
+            ->assertSeeHtml('data-irreversible="no"')
+            ->assertSeeHtml('data-action-key="send_invoice"')
+            ->assertSee('Will execute send_invoice with given parameters')
+            ->assertDontSee('Warning: this action cannot be undone and needs confirmation.');
+    }
+
+    public function test_preview_card_ready_irreversible(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Preview Irreversible', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(PreviewCard::class, [
+            'businessId' => $biz->id,
+            'actionKey' => 'delete_tenant',
+            'params' => [],
+        ])
+            ->call('load')
+            ->assertSeeHtml('data-irreversible="yes"')
+            ->assertSeeHtml('data-action-key="delete_tenant"')
+            ->assertSee('Will execute delete_tenant with given parameters')
+            ->assertSee('Warning: this action cannot be undone and needs confirmation.');
+    }
+
+    public function test_chat_dock_renders_default_state(): void
+    {
+        Livewire::test(ChatDockEvery::class)
+            ->assertSee('Copilot Assistant Chat Dock')
+            ->assertSee('Ask me anything about your business.');
+    }
+
+    public function test_chat_dock_renders_answered_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(ChatDockEvery::class, ['businessId' => $biz->id])
+            ->set('utterance', 'show invoices')
+            ->call('ask')
+            ->assertSee('show invoices')
+            ->assertSeeHtml('data-status="answered"');
+    }
+
+    public function test_chat_dock_renders_unsupported_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz Unsupported', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(ChatDockEvery::class, ['businessId' => $biz->id])
+            ->set('utterance', 'Fly me to Mars')
+            ->call('ask')
+            ->assertSee('Fly me to Mars')
+            ->assertSee('I can\'t do that yet')
+            ->assertSeeHtml('data-status="unsupported"');
+
+        $this->assertDatabaseHas('assistant_unsupported', [
+            'business_id' => $biz->id,
+            'utterance' => 'Fly me to Mars',
+        ]);
     }
 }
