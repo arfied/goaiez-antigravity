@@ -56,8 +56,10 @@ final class FormCaptureAction
                 // A submission judged spam never rewrites a contact the business already has (R245, 2026-09-05).
                 if (! $person->exists) {
                     $person->fill([
-                        'first_name' => $payload['first_name'] ?? ($payload['name'] ?? 'Visitor'),
-                        'email' => $payload['email'] ?? null,
+                        'first_name' => $this->given($payload['first_name'] ?? null)
+                            ?? $this->given($payload['name'] ?? null)
+                            ?? 'Visitor',
+                        'email' => $this->given($payload['email'] ?? null),
                     ]);
                     $person->save();
                 }
@@ -86,10 +88,7 @@ final class FormCaptureAction
             $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
             // Direct entity writing (G2-20, G13-35): forms write straight to Person entity, no intermediate buffer
-            $phone = $payload['phone'] ?? null;
-            if (is_string($phone) && trim($phone) === '') {
-                $phone = null;
-            }
+            $phone = $this->given($payload['phone'] ?? null);
 
             // A submission that carries no phone gets its own contact, never a shared one (R245, 2026-09-05).
             $person = $phone === null
@@ -97,8 +96,8 @@ final class FormCaptureAction
                 : Person::firstOrNew(['business_id' => $businessId, 'phone' => $phone]);
             // Only write the fields the payload actually carried (R245, 2026-09-05).
             $person->fill(array_filter([
-                'first_name' => $payload['first_name'] ?? ($payload['name'] ?? null),
-                'email' => $payload['email'] ?? null,
+                'first_name' => $this->given($payload['first_name'] ?? ($payload['name'] ?? null)),
+                'email' => $this->given($payload['email'] ?? null),
             ], fn ($v) => $v !== null));
 
             if (! $person->exists) {
@@ -152,5 +151,13 @@ final class FormCaptureAction
         }
 
         return false;
+    }
+
+    /**
+     * A payload value that is blank or whitespace was not given (R245, 2026-09-05).
+     */
+    private function given(mixed $value): mixed
+    {
+        return is_string($value) && trim($value) === '' ? null : $value;
     }
 }
