@@ -8,8 +8,6 @@ use App\Modules\X173\Domain\AccountingSyncEngine;
 
 final class AccountingMapAction
 {
-    
-
     public function mapAccount(
         int $businessId,
         int $connectionId,

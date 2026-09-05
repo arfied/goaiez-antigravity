@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X173\Domain;
 
+use App\Modules\X173\Models\AccountingConnection;
+use App\Modules\X173\Models\AccountingSyncConflict;
+use App\Modules\X173\Models\AccountMapping;
+use App\Modules\X173\Models\SyncRun;
+
 final class AccountingSyncEngine
 {
     private const CONFIDENCE_THRESHOLD = 0.85;
@@ -31,22 +36,23 @@ final class AccountingSyncEngine
         ];
     }
 
-
     public function resolveConflict(int $businessId, int $conflictId, string $resolutionAccount): array
     {
-        if (strtolower(trim($resolutionAccount)) === 'uncategorised') {
+        $conflict = AccountingSyncConflict::where('business_id', $businessId)->findOrFail($conflictId);
+        $ref = $conflict->transaction_ref;
+
+        $resolutionAccount = trim($resolutionAccount);
+        if ($resolutionAccount === '' || strtolower($resolutionAccount) === 'uncategorised') {
             return [
                 'status' => 'refused',
-                'message' => 'uncategorised is not a resolution',
+                'message' => sprintf('Posting %s to uncategorised is not a resolution; name the account this line belongs to. Nothing changed.', $ref),
             ];
         }
-
-        $conflict = \App\Modules\X173\Models\AccountingSyncConflict::where('business_id', $businessId)->findOrFail($conflictId);
 
         if ($conflict->status === 'resolved') {
             return [
                 'status' => 'refused',
-                'message' => 'a resolved row is not overwritten',
+                'message' => sprintf('%s was already resolved to %s by a person; a resolution is not overwritten silently.', $conflict->transaction_ref, $conflict->assigned_category),
             ];
         }
 
@@ -60,10 +66,9 @@ final class AccountingSyncEngine
             'status' => 'resolved',
             'conflict_id' => $conflict->id,
             'assigned_category' => $conflict->assigned_category,
-            'message' => 'resolved',
+            'message' => sprintf('%s now posts to %s.', $conflict->transaction_ref, $resolutionAccount),
         ];
     }
-
 
     public function mapAccount(int $businessId, int $connectionId, string $internalCategory, string $remoteGlAccountId, string $remoteGlAccountName): array
     {
@@ -74,20 +79,20 @@ final class AccountingSyncEngine
         if (empty($internalCategory) || empty($remoteGlAccountId) || empty($remoteGlAccountName)) {
             return [
                 'status' => 'refused',
-                'message' => 'blank parts refused',
+                'message' => 'A mapping needs the category, the ledger account id and its name; nothing was saved.',
             ];
         }
 
-        $connection = \App\Modules\X173\Models\AccountingConnection::where('business_id', $businessId)->findOrFail($connectionId);
-        
+        $connection = AccountingConnection::where('business_id', $businessId)->findOrFail($connectionId);
+
         if (! $connection->is_active) {
             return [
                 'status' => 'refused',
-                'message' => 'inactive connection refused',
+                'message' => 'That ledger connection is not active; reconnect it before mapping. Nothing was saved.',
             ];
         }
 
-        $mapping = \App\Modules\X173\Models\AccountMapping::updateOrCreate(
+        $mapping = AccountMapping::updateOrCreate(
             [
                 'business_id' => $businessId,
                 'connection_id' => $connectionId,
@@ -102,25 +107,21 @@ final class AccountingSyncEngine
         return [
             'status' => 'mapped',
             'mapping_id' => $mapping->id,
+            'message' => sprintf('%s now posts to %s · %s.', $internalCategory, $remoteGlAccountId, $remoteGlAccountName),
         ];
     }
 
+    public function rateOf(int $recordsSynced, int $conflictsCount): ?float
+    {
+        $seen = $recordsSynced + $conflictsCount;
 
-
-
-
-
-
+        return $seen === 0 ? null : $conflictsCount / $seen;
+    }
 
     public function errorRate(int $businessId, int $syncRunId): ?float
     {
-        $run = \App\Modules\X173\Models\SyncRun::where('business_id', $businessId)->findOrFail($syncRunId);
-        $total = $run->records_synced + $run->conflicts_count;
-        
-        if ($total === 0) {
-            return null;
-        }
-        
-        return $run->conflicts_count / $total;
+        $run = SyncRun::where('business_id', $businessId)->findOrFail($syncRunId);
+
+        return $this->rateOf($run->records_synced, $run->conflicts_count);
     }
 }

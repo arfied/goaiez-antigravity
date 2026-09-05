@@ -1,20 +1,39 @@
 <div>
-    <div class="conflicts-list-view p-4">
-        <h3 class="text-lg font-bold">Uncategorised / Review Queue Conflicts</h3>
-        
-        @foreach($conflicts as $conflict)
-            <div class="mt-4 border p-4">
-                <div>Ref: {{ $conflict->transaction_ref }}</div>
-                <div>Status: {{ $conflict->status }}</div>
-                @if(isset($messages[$conflict->id]))
-                    <div class="text-sm text-red-500">{{ $messages[$conflict->id] }}</div>
-                @endif
-                
-                <div class="flex gap-2 mt-2">
-                    <input type="text" wire:model="resolutions.{{ $conflict->id }}" placeholder="Category" class="border rounded px-2">
-                    <button wire:click="resolve({{ $conflict->id }})" class="bg-blue-500 text-white px-4 py-1 rounded">Resolve</button>
-                </div>
-            </div>
-        @endforeach
-    </div>
+    <h1>Sync conflicts</h1>
+    <p>A line the sync could not place with confidence waits here for a person. It is never closed by the sync (§141.5): two systems disagreeing about money is a human decision.</p>
+
+    @if($error)
+        <x-ui.error-panel heading="We couldn't resolve that">{{ $error }}</x-ui.error-panel>
+    @endif
+    
+    @if($success)
+        <p>{{ $success }}</p>
+    @endif
+
+    <div wire:loading><x-ui.skeleton label="Reading the conflicts…" /></div>
+
+    @if(count($conflicts) === 0)
+        <x-ui.empty-state heading="No conflicts.">Every synced line had a confident account.</x-ui.empty-state>
+    @else
+        <ul>
+            @foreach($conflicts as $c)
+                <li>
+                    <span>{{ $c->transaction_ref }}</span>,
+                    <span>{{ round($c->confidence_rate * 100) }}%</span>,
+                    <span>{{ $c->assigned_category }}</span>,
+                    <x-ui.status-pill :state="$c->status === 'open' ? 'attention' : 'ok'" label="{{ $c->status }}" />,
+                    <span>run {{ $c->sync_run_id }}</span>
+                    
+                    @if($c->status === 'open')
+                        <form wire:submit="resolve({{ $c->id }})">
+                            <input type="text" wire:model="resolutions.{{ $c->id }}" placeholder="The account this line belongs to">
+                            <x-ui.submit target="resolve({{ $c->id }})" busy="Posting…">Post to this account</x-ui.submit>
+                        </form>
+                    @else
+                        <p>Resolved by a person — {{ $c->assigned_category }}</p>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    @endif
 </div>
