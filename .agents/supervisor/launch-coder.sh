@@ -5,6 +5,16 @@
 #
 #   bash .agents/supervisor/launch-coder.sh                  # Antigravity (default)
 #   bash .agents/supervisor/launch-coder.sh --coder claude   # Claude Code fallback
+#   bash .agents/supervisor/launch-coder.sh --allow-merge    # opens the guard's merge gate
+#
+# --allow-merge exports GOAIEZ_MERGE_OK=1, which is the ONLY thing that lets
+# coder-bin/git run `merge|pull|cherry-pick|revert` (guard line 36). Added
+# 2026-09-05 16:2x after PB-27 was refused for want of it: the guard gained the
+# merge gate on Track 1's side, this per-track launcher never did, and per-track
+# files never merge in either direction (ruling 26), so it had to be added here
+# by hand. Deliberately NOT read from BRIEF.md — the tick rewrites that file
+# every ten minutes, which is the door the push ruling closed. Off by default:
+# only a tick that has measured the merge surface passes the flag.
 #
 # Antigravity is the default coder and stays so. The claude branch exists for
 # ONE case, set by the owner 2026-09-05 17:1x (OWNER.md): an agy launch that
@@ -20,14 +30,19 @@ set -euo pipefail
 cd "$(dirname "$0")/../.." || exit 1
 
 CODER="agy"
+ALLOW_MERGE=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --coder)
       CODER="${2:-}"
       shift 2
       ;;
+    --allow-merge)
+      ALLOW_MERGE=1
+      shift
+      ;;
     *)
-      echo "REFUSED: unknown argument '$1' (only --coder agy|claude)"; exit 1
+      echo "REFUSED: unknown argument '$1' (only --coder agy|claude, --allow-merge)"; exit 1
       ;;
   esac
 done
@@ -53,6 +68,11 @@ GOAIEZ_PUSH_OK=0
 if grep -qiE '^push:[[:space:]]*\**[[:space:]]*yes' .agents/supervisor/BRIEF.md; then GOAIEZ_PUSH_OK=1; fi
 export GOAIEZ_PUSH_OK
 echo "push gate: GOAIEZ_PUSH_OK=$GOAIEZ_PUSH_OK (from BRIEF.md's push: line)"
+
+# The merge gate. Set ONLY by --allow-merge on this command line, never from a file.
+GOAIEZ_MERGE_OK=$ALLOW_MERGE
+export GOAIEZ_MERGE_OK
+echo "merge gate: GOAIEZ_MERGE_OK=$GOAIEZ_MERGE_OK (from --allow-merge)"
 
 # One run number per track, free under BOTH prefixes, so "run N" in REVIEWS.md
 # names one run whichever coder served it.
