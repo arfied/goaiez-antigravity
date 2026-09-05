@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T11:57:37",
+ "updated": "2026-09-05T12:09:45",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1660,6 +1660,12 @@
    "module": "X-157",
    "chose": "Ruling 41 \u2014 a video on a published page is a content_blocks entry of type video_embed carrying name, contentUrl and uploadDate spelled exactly as schema.org spells the VideoObject properties; EdgeDeployAction collects them and passes them to SchemaRenderAction, which injects the VideoObject or refuses the whole schema (G7-48). No new column: content_blocks stays the single authority (rulings 38, 40). Rejected alternative: a videos column on page_versions, which would be a second authority the emitter and the engine could disagree about.",
    "at": "2026-09-05T11:57:37",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "J11's seven elements are asserted on the body of GET /sites/{business}/{deploy_hash} and on nothing else (ruling 16), rejected alternative = reading page_versions.content_blocks, which proves what the engine stored and not what was served.",
+   "at": "2026-09-05T12:09:45",
    "ruling": "R245"
   }
  ],
