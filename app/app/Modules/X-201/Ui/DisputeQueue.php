@@ -79,7 +79,7 @@ class DisputeQueue extends Component
         } catch (ModelNotFoundException) {
             $this->error = "That dispute isn't in this account any more.";
         } catch (\Throwable $e) {
-            $this->error = 'We could not outcome that dispute: '.$e->getMessage();
+            $this->error = 'We could not record that outcome: '.$e->getMessage();
         }
     }
 

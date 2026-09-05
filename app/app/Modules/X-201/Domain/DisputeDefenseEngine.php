@@ -37,6 +37,13 @@ final class DisputeDefenseEngine
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
 
+        if (in_array($dispute->status, ['submitted', 'won', 'lost'], true)) {
+            throw new DisputeAlreadySubmittedException(sprintf(
+                'Invoice #%d is already submitted: a submitted bundle is sealed and nothing is added to it.',
+                $dispute->invoice_id
+            ));
+        }
+
         $savedItems = [];
         foreach ($evidenceItems as $item) {
             $saved = DisputeEvidence::create([

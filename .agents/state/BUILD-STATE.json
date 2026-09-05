@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T20:59:03",
+ "updated": "2026-09-04T21:46:53",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1319,6 +1319,10 @@
   {
    "at": "2026-09-04T20:45:00",
    "note": "MONEY-23: push 496e081d..657ba583; X-198 reconciliation-discrepancies \u2014 only discrepancy runs, reviewed never corrected; X-198 same-account \u2014 where money lands per connection, payouts pull is a waiting state, a detached payment attaches once; X-201 dispute-queue \u2014 compile with a note, submit refuses an uncompiled dispute, won/lost recorded"
+  },
+  {
+   "at": "2026-09-04T21:43:44",
+   "note": "MONEY-24: push 657ba583..ed3051fd; X-201 dispute-card \u2014 the compiled bundle with one note field, a submitted defence is sealed, approval submits; X-120 the card door \u2014 number, expiry and name, never the security code, nothing stored until Stripe returns a token; X-117 cart-block \u2014 the catalogue and the cart with a true countdown, stock comes off at paid never at cart"
   }
  ],
  "decisions": [
@@ -1416,6 +1420,12 @@
    "module": "X-201",
    "chose": "X-201 \u2014 a dispute is never submitted empty: DisputeDefenseEngine::submit refuses unless the bundle is compiled (DisputeNotCompiledException), the queue compiles the invoice line plus the tenant's note, the outcome is a closed set (won/lost) through DisputeOutcomeAction and a loss records the clawback; evidence from telephony and signature capture and the deadline from the gateway's webhook are finished waiting states (G1-08, X-201 anchor). Test: DisputeQueueScreenTest",
    "at": "2026-09-04T20:59:03",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "X-201 \u2014 the tenant's card: the bundle compiles itself and the tenant adds what only they know \u2014 DisputeNoteAction compiles the invoice line with the first note and the note alone after; DisputeDefenseEngine::compile refuses a submitted, won or lost dispute (DisputeAlreadySubmittedException) because a submitted bundle is sealed; approval submits through DisputeSubmitAction; there is no refund verb on the card (N-010) and the deadline is a finished waiting state on the gateway's chargeback webhook (N-011, \u00a7156.3). Test: DisputeCardScreenTest",
+   "at": "2026-09-04T21:46:53",
    "ruling": "R245"
   }
  ]
