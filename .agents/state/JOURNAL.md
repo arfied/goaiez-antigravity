@@ -809,3 +809,4 @@
 - `2026-09-05T17:35:51` (R245) X-103 — drop ssl_installed from PageVersion because true SSL establishment requires EdgeZone from X-157 deploy path, which itself lacks credentials; routing to UNRESOLVED missing dependency rather than mocking.
 - `2026-09-05T17:48:23` (R245) X-103 — drop constant-true ssl_enabled column from page_versions because it has zero readers and was a duplicate of ssl_installed
 - `2026-09-05T17:50:38` stage journey = 6
+- `2026-09-05T18:10:57` (R245) X-103 — drop 5 unused boolean columns from page_versions because they have zero readers/writers

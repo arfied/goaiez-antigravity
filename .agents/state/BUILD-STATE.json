@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T17:48:23",
+ "updated": "2026-09-05T18:10:57",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1522,6 +1522,12 @@
    "module": "X-103",
    "chose": "drop constant-true ssl_enabled column from page_versions because it has zero readers and was a duplicate of ssl_installed",
    "at": "2026-09-05T17:48:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "drop 5 unused boolean columns from page_versions because they have zero readers/writers",
+   "at": "2026-09-05T18:10:57",
    "ruling": "R245"
   }
  ],
