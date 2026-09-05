@@ -187,7 +187,10 @@ class X110Test extends TestCase
         $this->assertNull($sessionNoToken->page_context);
 
         $otherBiz = TestCase::provisionTenant(['name' => 'Other Biz']);
-        $badContext = $this->engine->pageContextForSession($otherBiz->id, $v['session_token']);
+        DB::statement("SET app.business_id = '{$otherBiz->id}'");
+        $otherVisit = $this->engine->recordVisit($otherBiz->id, 'vis_other_1');
+
+        $badContext = $this->engine->pageContextForSession($biz->id, $otherVisit['session_token']);
         $this->assertNull($badContext);
     }
 
