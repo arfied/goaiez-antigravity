@@ -53,7 +53,7 @@ else
 fi
 
 bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
-if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
+if [ ! -x "$(git -C "$ROOT" rev-parse --git-path hooks)/post-rewrite" ]; then
   echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
   tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
