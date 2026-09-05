@@ -703,9 +703,15 @@ trait JourneyHarness
 
         $cancellationId = $sub->authorize_net_subscription_id;
 
-        $this->get('/account/plan')->assertOk(); // The plan screen renders
+        $page = $this->get('/account/plan');
+        $page->assertOk(); // The plan screen renders
+
+        // Brief 92: find the real retention-offer component or record that none exists.
+        // None exists in the view; asserting assertDontSee.
+        $page->assertDontSee('retention-offer-component');
+
         $screensBetween = 1; // It is one screen.
-        $retentionOfferShown = false; // No retention offer is shown in the view.
+        $retentionOfferShown = false; // Recorded as false because none exists.
 
         $response = $this->post(route('account.plan.cancel'), ['confirm' => '1']);
         $response->assertRedirect();
