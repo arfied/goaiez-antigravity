@@ -5,25 +5,22 @@ declare(strict_types=1);
 namespace App\Modules\CSms\Actions;
 
 use App\Contracts\MessageSender;
-use App\Enums\CapturedBy;
-use App\Enums\ConsentType;
-use App\Enums\CreditKind;
-use App\Enums\CreditProduct;
 use App\Enums\OutreachChannel;
 use App\Enums\OutreachPurpose;
 use App\Enums\ReviewInviteKind;
-use App\Models\ConsentRecord;
 use App\Models\Customer;
-use App\Modules\X121\Models\Person;
-use App\Services\Billing\CreditLedger;
-use App\Services\Consent\SendPermit;
+use App\Modules\CSms\Domain\SmsComposer;
+use App\Services\Consent\ConsentService;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
 use Illuminate\Support\Facades\DB;
 
 final class SmsSendAction
 {
-    public function __construct(private readonly MessageSender $sender) {}
+    public function __construct(
+        private readonly MessageSender $sender,
+        private readonly SmsComposer $composer
+    ) {}
 
     public function handle(
         int $businessId,
@@ -33,33 +30,39 @@ final class SmsSendAction
         string $recipientLocalTime = '12:00',
         int $permitId = 0
     ): array {
-        $person = Person::where('business_id', $businessId)->where('phone', $recipientPhone)->first();
-        $personId = $person ? $person->id : 1;
-
-        $customer = Customer::find($personId);
-        if (! $customer) {
-            $customer = new Customer;
-            $customer->forceFill([
-                'id' => $personId,
-                'business_id' => $businessId,
-                'phone' => $recipientPhone,
-                'name' => 'Unknown',
-            ])->save();
+        if ($permitId === 0) {
+            return $this->composer->send($businessId, $recipientPhone, $body, $messageClass, $recipientLocalTime);
         }
 
-        $record = new ConsentRecord;
-        $record->forceFill([
-            'id' => $permitId ?: 1,
-            'business_id' => $businessId,
-            'customer_id' => $personId,
-            'channel' => OutreachChannel::Sms,
-            'captured_by' => CapturedBy::Platform,
-            'consent_type' => ConsentType::ExpressWritten,
-        ]);
+        $customer = Customer::where('business_id', $businessId)->where('phone', $recipientPhone)->first();
 
-        $permit = SendPermit::grant($record, $recipientPhone);
+        if (! $customer) {
+            return [
+                'status' => 'refused',
+                'reason' => 'CUSTOMER_UNKNOWN',
+            ];
+        }
+
+        $purposeEnum = match ($messageClass) {
+            'marketing' => OutreachPurpose::Marketing,
+            default => OutreachPurpose::Transactional,
+        };
+
+        $decision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
+
+        if (! $decision->isGranted()) {
+            if ($permitId > 0) {
+                $reasonName = $decision->reason->name ?? 'Unknown';
+                throw new \Exception("UNRESOLVED C-Sms design \"two consent engines disagree: X-204 granted, legacy refused (".$reasonName.")\"");
+            }
+            return [
+                'status' => 'refused',
+                'reason' => $decision->reason->value ?? $decision->reason->name,
+            ];
+        }
+
+        $permit = $decision->permit;
         $key = SendKey::for($permit, 'csms:'.uniqid());
-        $purposeEnum = OutreachPurpose::Transactional;
 
         $message = OutboundMessage::for(
             permit: $permit,
@@ -68,14 +71,6 @@ final class SmsSendAction
             purpose: $purposeEnum,
         );
 
-        if (app()->environment('testing')) {
-            app(CreditLedger::class)->record(
-                CreditProduct::Sms,
-                CreditKind::Grant,
-                100,
-                'test'
-            );
-        }
         $outcome = $this->sender->send($message);
 
         if ($outcome->status->value === 'accepted' && $outcome->providerMessageId) {

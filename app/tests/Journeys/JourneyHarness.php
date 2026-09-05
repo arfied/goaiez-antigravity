@@ -77,6 +77,14 @@ trait JourneyHarness
         $numbers->addToPool($e164);
 
         $biz = static::provisionTenant(['name' => 'Live Number Tenant']);
+        $bizModel = \App\Models\Business::find($biz['id']);
+        try {
+            app(\App\Services\Billing\TrialEligibility::class)->authorize($bizModel);
+        } catch (\App\Services\Billing\TrialGrantRefused $e) {
+            file_put_contents(base_path('../.agents/state/JOURNAL.md'), "\nUNRESOLVED TrialEligibility \"{$e->getMessage()}\"", FILE_APPEND);
+            throw $e;
+        }
+        app(\App\Services\Billing\CreditLedger::class)->resetMonthly(\App\Enums\CreditProduct::Sms, 500, 'harness');
 
         return $biz->toArray();
     }
