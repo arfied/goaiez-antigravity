@@ -178,7 +178,7 @@ class X103Test extends TestCase
         $this->assertArrayHasKey('G6-15', $caps);
     }
 
-    /** (R245) */
+    /** [G6-16] (R245) */
     public function test_g6_16_header_tenant_offer(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Offer Tenant']);
@@ -212,7 +212,7 @@ class X103Test extends TestCase
         $this->assertTrue(is_dir(app_path('Modules/X-195')));
     }
 
-    /** (R245) */
+    /** [G6-27] (R245) */
     public function test_g6_27_header_c_sms(): void
     {
         Http::fake();
@@ -225,6 +225,7 @@ class X103Test extends TestCase
         $this->publishAction->handle($biz->id, $page->id, []);
 
         Http::assertNothingSent();
+        Event::assertNotDispatched(SendRequested::class);
     }
 
     /** (R245) */
