@@ -13,6 +13,8 @@ use App\Modules\X200\Actions\QaScoreAction;
 use App\Modules\X200\Actions\SeatLoginAction;
 use App\Modules\X200\Actions\SeatLogoutAction;
 use App\Modules\X200\Events\CallRequested;
+use App\Modules\X200\Models\CallDisposition;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -141,5 +143,71 @@ class X200Test extends TestCase
 
         $this->assertEquals('voicemail', $disp->disposition);
         $this->assertFalse($disp->is_uncertain_human);
+    }
+
+    public function test_dispose_refuses_a_campaign_from_another_business(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Second Contact Center Tenant', 'currency' => 'USD']);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $foreignCamp = $this->startAction->startCampaign($bizB->id, 'Other Tenant Campaign', 2.50);
+        $foreignSeat = $this->loginAction->login($bizB->id, 'Agent Mallory', isAi: false);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $camp = $this->startAction->startCampaign($bizA->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $seat = $this->loginAction->login($bizA->id, 'Agent John', isAi: false);
+
+        try {
+            $this->disposeAction->disposeCall(
+                businessId: $bizA->id,
+                campaignId: $foreignCamp->id,
+                seatId: $seat->id,
+                phone: '+12145550188',
+                disposition: 'answered'
+            );
+            $this->fail('disposeCall accepted a campaign id belonging to another business');
+        } catch (ModelNotFoundException) {
+            // expected
+        }
+
+        $this->assertSame(
+            0,
+            CallDisposition::where('business_id', $bizA->id)->count(),
+            'the disposition row must not be written before the ids are validated'
+        );
+    }
+
+    public function test_dispose_refuses_a_seat_from_another_business(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Second Contact Center Tenant', 'currency' => 'USD']);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $foreignCamp = $this->startAction->startCampaign($bizB->id, 'Other Tenant Campaign', 2.50);
+        $foreignSeat = $this->loginAction->login($bizB->id, 'Agent Mallory', isAi: false);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $camp = $this->startAction->startCampaign($bizA->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $seat = $this->loginAction->login($bizA->id, 'Agent John', isAi: false);
+
+        try {
+            $this->disposeAction->disposeCall(
+                businessId: $bizA->id,
+                campaignId: $camp->id,
+                seatId: $foreignSeat->id,
+                phone: '+12145550188',
+                disposition: 'answered'
+            );
+            $this->fail('disposeCall accepted a seat id belonging to another business');
+        } catch (ModelNotFoundException) {
+            // expected
+        }
+
+        $this->assertSame(
+            0,
+            CallDisposition::where('business_id', $bizA->id)->count(),
+            'the disposition row must not be written before the ids are validated'
+        );
     }
 }
