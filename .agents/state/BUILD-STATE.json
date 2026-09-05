@@ -1416,6 +1416,10 @@
   {
    "at": "2026-09-05T08:17:09",
    "note": "app/app/Modules/X-209/Domain/X209Engine.php + DeskEngine.php have zero callers; X209Engine's seven methods return hard-coded refusal strings restating the capability text (P-210 closed loop), DeskEngine is an empty class. Recorded under ruling 47, not built."
+  },
+  {
+   "at": "2026-09-05T08:53:57",
+   "note": "X-108 G17-27 \u2014 offered slots carry an ISO-8601 start_time/end_time with an explicit offset (tested), but the same payload ships formatted_window, a server-rendered 'g:i A' wall clock in the app timezone (SchedulingEngine.php:75, asserted at X108Test.php:63-69,113,193). A customer in another timezone reads the server's clock. Dropping the field or moving the render to the client is Track 2's under ruling 5."
   }
  ]
 }
