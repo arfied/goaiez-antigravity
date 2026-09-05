@@ -377,4 +377,31 @@ class X205Test extends TestCase
 
         $this->assertEmpty($found, 'No computeTaxPosition() or stored rate exists in the module: '.implode(', ', $found));
     }
+
+    /**
+     * (R245) Affiliate code is composite unique with business_id
+     */
+    public function test_s13_affiliate_code_is_composite_unique_with_business_id(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Tenant A']);
+        $bizB = TestCase::provisionTenant(['name' => 'Tenant B']);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        Affiliate::create([
+            'business_id' => $bizA->id,
+            'affiliate_code' => 'SHARED-CODE',
+            'partner_name' => 'Partner A',
+        ]);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        Affiliate::create([
+            'business_id' => $bizB->id,
+            'affiliate_code' => 'SHARED-CODE',
+            'partner_name' => 'Partner B',
+        ]);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $results = Affiliate::where('business_id', $bizA->id)->where('affiliate_code', 'SHARED-CODE')->get();
+        $this->assertCount(1, $results);
+    }
 }
