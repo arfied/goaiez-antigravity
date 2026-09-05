@@ -497,9 +497,15 @@ final class AuthorizeNetGateway
     {
         $name = self::PRODUCT_NAME.' — '.Plan::Base->label().', '.strtolower($selection->term->label());
 
-        return $selection->additionalLocations === 0
+        $name = $selection->additionalLocations === 0
             ? $name
             : $name.', '.($selection->additionalLocations + 1).' locations';
+
+        if (config('services.authorizenet.environment') !== 'production') {
+            $name .= ' (run 97)';
+        }
+
+        return $name;
     }
 
     /*
