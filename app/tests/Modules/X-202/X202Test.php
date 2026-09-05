@@ -12,6 +12,7 @@ use App\Modules\X202\Events\ApprovalDecided;
 use App\Modules\X202\Events\ApprovalEscalated;
 use App\Modules\X202\Events\ApprovalExpired;
 use App\Modules\X202\Events\ApprovalRaised;
+use App\Modules\X202\Models\ApprovalChain;
 use App\Modules\X202\Models\ApprovalItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -168,7 +169,47 @@ class X202Test extends TestCase
      */
     public function test_g10_34_multistage_sequential_approval(): void
     {
-        $this->assertTrue(true);
+        Event::fake([ApprovalRaised::class, ApprovalDecided::class, ApprovalExpired::class, ApprovalEscalated::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Chain Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $solo = $this->engine->enqueue($biz->id, 'creative', 'One-hop asset', ['asset_id' => 1]);
+        $soloDec = $this->decideAction->handle($biz->id, $solo['approval_item_id'], 'approved');
+        $this->assertSame('approved', $soloDec['status'], 'an item with no chain still decides in a single hop');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 1);
+
+        $chain = ApprovalChain::create([
+            'business_id' => $biz->id,
+            'name' => 'Three-desk sequential',
+            'steps_count' => 3,
+            'chain_config' => ['steps' => ['designer', 'manager', 'owner']],
+        ]);
+
+        $chained = $this->engine->enqueue($biz->id, 'creative', 'Chained asset', ['asset_id' => 2]);
+        ApprovalItem::where('id', $chained['approval_item_id'])->update(['approval_chain_id' => $chain->id]);
+
+        $step1 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved');
+        $this->assertSame('pending', $step1['status'], 'step 1 of 3 does not decide the item');
+        $this->assertSame(2, $step1['current_step'], 'an approval at step 1 advances the chain to step 2');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 1);
+
+        $step2 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved');
+        $this->assertSame('pending', $step2['status'], 'step 2 of 3 does not decide it either');
+        $this->assertSame(3, $step2['current_step'], 'an approval at step 2 advances the chain to step 3');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 1);
+
+        $step3 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved');
+        $this->assertSame('approved', $step3['status'], 'the last step of the chain is the one that approves');
+        $this->assertSame('approved', ApprovalItem::find($chained['approval_item_id'])->status, 'the terminal status reaches the row');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 2);
+
+        $rej = $this->engine->enqueue($biz->id, 'creative', 'Rejected at step 1', ['asset_id' => 3]);
+        ApprovalItem::where('id', $rej['approval_item_id'])->update(['approval_chain_id' => $chain->id]);
+        $rejDec = $this->decideAction->handle($biz->id, $rej['approval_item_id'], 'rejected', null, 'Off-brand');
+        $this->assertSame('rejected', $rejDec['status'], 'a rejection ends the chain at the step it arrives on');
+        $this->assertSame(1, ApprovalItem::find($rej['approval_item_id'])->current_step, 'a rejection does not advance the chain');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 3);
     }
 
     /**
