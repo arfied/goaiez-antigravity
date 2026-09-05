@@ -831,4 +831,154 @@ class X157Test extends TestCase
         $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
         $this->assertEquals('rolled_back', $aRow->refresh()->status);
     }
+
+    public function test_rollback_of_a_superseded_deployment_does_not_promote_an_older_one(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $first = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $aRow = Deployment::where('deploy_hash', $first['deploy_hash'])->firstOrFail();
+
+        $second = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $bRow = Deployment::where('deploy_hash', $second['deploy_hash'])->firstOrFail();
+
+        $third = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $cRow = Deployment::where('deploy_hash', $third['deploy_hash'])->firstOrFail();
+
+        $this->assertCount(3, array_unique([$first['deploy_hash'], $second['deploy_hash'], $third['deploy_hash']]));
+
+        $this->assertEquals('superseded', $aRow->refresh()->status);
+        $this->assertEquals('superseded', $bRow->refresh()->status);
+        $this->assertEquals('deployed', $cRow->refresh()->status);
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $bRow->id);
+
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
+        $this->assertEquals('superseded', $aRow->refresh()->status);
+
+        $this->get("/sites/{$biz->id}/{$third['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+        $this->assertEquals('deployed', $cRow->refresh()->status);
+
+        $this->get("/sites/{$biz->id}/{$second['deploy_hash']}")->assertStatus(404);
+        $this->assertEquals('rolled_back', $bRow->refresh()->status);
+    }
+
+    public function test_a_zone_has_exactly_one_live_deployment_through_a_rollback_cycle(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $live = fn () => Deployment::where('business_id', $biz->id)
+            ->where('edge_zone_id', $zone->id)
+            ->where('status', 'deployed')
+            ->count();
+
+        $first = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $aRow = Deployment::where('deploy_hash', $first['deploy_hash'])->firstOrFail();
+        $this->assertEquals(1, $live());
+
+        $second = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $bRow = Deployment::where('deploy_hash', $second['deploy_hash'])->firstOrFail();
+        $this->assertEquals(1, $live());
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $bRow->id);
+        $this->assertEquals(1, $live());
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+
+        $third = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+        $cRow = Deployment::where('deploy_hash', $third['deploy_hash'])->firstOrFail();
+        $this->assertEquals(1, $live());
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")->assertStatus(404);
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $cRow->id);
+        $this->assertEquals(1, $live());
+        $this->get("/sites/{$biz->id}/{$first['deploy_hash']}")
+            ->assertStatus(200)
+            ->assertSee('dni-pool-x137', false);
+    }
 }
