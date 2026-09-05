@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T20:23:11",
+ "updated": "2026-09-04T20:24:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1382,6 +1382,12 @@
    "module": "X-199",
    "chose": "terms are a closed set (due_on_receipt, net_15, net_30, net_60) and a limit is never negative: TermsSetAction refuses with InvalidTermsException before any write, and a null card token means keep, never blank \u2014 the overflow rule charges that card (\u00a746A, G1-33). Test: CreditsScreenTest",
    "at": "2026-09-04T20:23:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "MRR on this screen is the row this account contributes: the agreed price on the subscription row (3443) plus extra locations, a yearly term shown as a twelfth, never the registry figure (3444); the cross-account roll-up is a finished waiting state until an operator read path exists (OWNER ACTION 15, G9-31). Test: MrrScreenTest",
+   "at": "2026-09-04T20:24:38",
    "ruling": "R245"
   }
  ]
