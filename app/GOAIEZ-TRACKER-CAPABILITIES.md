@@ -676,7 +676,7 @@
 | G13-02 | Activity Heatmaps | ENH | X-200 | SPECCED | the wallboard;  team-level operational state only — T677 bars the punitive read |
 | G13-03 | AI Token Arbitrage | ENH | C-Billing | SPECCED | 8:1 over cent-precision true cost, DERIVED, never typed |
 | G13-04 | Automatic Appending | ENH | X-138 | SPECCED | a pasted URL gets its UTM and its short link (P-072) |
-| G13-05 | Bot Fingerprinting | ENH | X-155 | SPECCED | spam and bot filtering is named in the header |
+| G13-05 | Bot Fingerprinting | ENH | X-155 | SPECCED | spam and bot filtering is named in the header; a rejected submission is STORED and flagged, never discarded — asserted by rejecting one and finding the row; the tenant can see and release it |
 | G13-06 | Click-Level Attribution | ENH | X-138 | SPECCED | attribution is a query over the action log |
 | G13-07 | Cold Storage Hashing | ENH | X-203 | SPECCED | the minted desk's first mechanism — a restore that cannot prove itself is not a backup |
 | G13-08 | Competitor Tracking | ENH | X-144 | SPECCED | competitor benchmarks are named in the header; the geo-grid is X-177's, metered |
