@@ -174,11 +174,11 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
         Event::assertNotDispatched(ArOverdue::class, function ($e) use ($disputedId) {
             return $e->invoiceId === $disputedId;
         }); // No new dunning action should be written for a disputed line
-        
+
         Event::assertNotDispatched(ArOverdue::class, function ($e) use ($complaintId) {
             return $e->invoiceId === $complaintId;
         }); // No new dunning action should be written for a complaint
-        
+
         Event::assertDispatched(ArOverdue::class, function ($e) use ($silenceId) {
             return $e->invoiceId === $silenceId;
         }); // Silence invoice should be chased
