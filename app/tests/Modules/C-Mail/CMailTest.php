@@ -275,6 +275,22 @@ class CMailTest extends TestCase
             $this->assertSame('WARMUP_CONSTANT_QUANTITY', $e::REFUSAL_CODE);
             $this->assertStringContainsString('day_1', $e->getMessage());
         }
+
+        // no two domains share a schedule — the decided line, asserted
+        $second = $this->dnsAction->handle($biz->id, 'jitter-two.apex-air.com');
+        $secondCalendar = $this->warmupAction->handle($biz->id, $second->id, 2, 100);
+
+        $storedTwo = WarmupCalendar::where('business_id', $biz->id)
+            ->where('mail_domain_id', $second->id)
+            ->firstOrFail();
+
+        $quantities = static fn (array $s): array => array_column($s, 'quantity');
+
+        $this->assertNotSame(
+            $quantities($stored->schedule),
+            $quantities($storedTwo->schedule),
+            'two domains drew the same five quantities — the ladder is not jittered per domain'
+        );
     }
 
     /**
