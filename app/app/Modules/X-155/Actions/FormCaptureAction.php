@@ -22,6 +22,15 @@ final class FormCaptureAction
         ?string $ipAddress = null,
         ?string $userTimezone = null
     ): array {
+        // P-148 (GOAIEZ-MASTER-PLAN.md:625, row 30484): an under-18 signal at ingest
+        // prevents the contact row. Asserted at the write, not at the reply.
+        if ($this->isUnderEighteen($payload)) {
+            return [
+                'status' => 'rejected',
+                'reason' => 'under_18',
+            ];
+        }
+
         $validation = $this->validator->handle($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone);
 
         if (! $validation['is_valid']) {
@@ -104,5 +113,27 @@ final class FormCaptureAction
                 'person_id' => $person->id,
             ];
         });
+    }
+
+    private function isUnderEighteen(array $payload): bool
+    {
+        if (isset($payload['age']) && is_numeric($payload['age']) && $payload['age'] < 18) {
+            return true;
+        }
+
+        foreach (['date_of_birth', 'dob'] as $key) {
+            if (! empty($payload[$key])) {
+                try {
+                    $dob = \Carbon\Carbon::parse($payload[$key]);
+                    if ($dob->diffInYears(now()) < 18) {
+                        return true;
+                    }
+                } catch (\Exception $e) {
+                    // unparseable value is not a signal
+                }
+            }
+        }
+
+        return false;
     }
 }
