@@ -24,7 +24,7 @@ class X215Test extends TestCase
     private DocSendForSignatureAction $sendAction;
 
     private DocSignAction $signAction;
-    
+
     private DocRemindAction $remindAction;
 
     private DocCommentAction $commentAction;
