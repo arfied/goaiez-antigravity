@@ -8,6 +8,9 @@ use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X121\Models\Asset;
+use App\Modules\X121\Models\Person;
+use App\Modules\X155\Models\FormDefinition;
+use App\Modules\X155\Models\FormSubmission;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X157\Actions\EdgeRollbackAction;
@@ -1597,7 +1600,7 @@ class X157Test extends TestCase
         );
         $this->get("/sites/{$biz->id}/{$aRow->deploy_hash}")->assertStatus(200);
     }
-    
+
     /** (R245) */
     public function test_the_published_form_posts_to_an_address_that_captures(): void
     {
@@ -1620,7 +1623,7 @@ class X157Test extends TestCase
 
         $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
 
-        $form = \App\Modules\X155\Models\FormDefinition::create([
+        $form = FormDefinition::create([
             'business_id' => $biz->id,
             'form_name' => 'Contact',
             'slug' => 'contact',
@@ -1662,12 +1665,12 @@ class X157Test extends TestCase
         ]);
         $post->assertStatus(201);
 
-        $person = \App\Modules\X121\Models\Person::where('business_id', $biz->id)->where('phone', '+15559990001')->first();
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15559990001')->first();
         $this->assertNotNull($person, 'the published form captured no contact');
 
         $this->assertSame('Rae', $person->first_name);
 
-        $this->assertSame(1, \App\Modules\X155\Models\FormSubmission::where('business_id', $biz->id)
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
             ->where('form_definition_id', $form->id)->count());
 
         $deployment = Deployment::where('deploy_hash', $deploy['deploy_hash'])->firstOrFail();
@@ -1678,7 +1681,7 @@ class X157Test extends TestCase
             'phone' => '+15559990002',
         ])->assertStatus(404);
 
-        $this->assertSame(1, \App\Modules\X155\Models\FormSubmission::where('business_id', $biz->id)
+        $this->assertSame(1, FormSubmission::where('business_id', $biz->id)
             ->where('form_definition_id', $form->id)->count(),
             'a rolled back site still accepted a submission');
     }
