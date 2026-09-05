@@ -145,8 +145,13 @@ final class UnifiedInboxManager
     /**
      * Calculate and record lead score (G2-32, G2-38, G2-61).
      */
-    public function scoreLead(int $businessId, int $personId, int $score, string $grade = 'A'): LeadScore
+    public function scoreLead(int $businessId, int $personId, int $score): LeadScore
     {
+        if ($score < 0 || $score > 100) {
+            throw \App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused::forRating($score);
+        }
+
+        $grade = $this->gradeFor($score);
         $ls = LeadScore::updateOrCreate(
             ['business_id' => $businessId, 'person_id' => $personId],
             [
@@ -165,5 +170,14 @@ final class UnifiedInboxManager
         ));
 
         return $ls;
+    }
+
+    private function gradeFor(int $rating): string
+    {
+        if ($rating >= 80) return 'A';
+        if ($rating >= 60) return 'B';
+        if ($rating >= 40) return 'C';
+        if ($rating >= 20) return 'D';
+        return 'F';
     }
 }
