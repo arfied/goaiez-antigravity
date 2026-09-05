@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T10:30:04",
+ "updated": "2026-09-05T12:05:48",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1646,6 +1646,12 @@
    "module": "C-Agent",
    "chose": "Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)",
    "at": "2026-09-05T07:37:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-150",
+   "chose": "N-150 was cited in ProviderEngine.php but appears nowhere in the package; the citation stage's own fix string offers 'state the FACT instead of the id', so the exception message now names junk-value rejection and tier bounding directly. Commit 07e20fb1. citation 94 -> 93.",
+   "at": "2026-09-05T12:05:48",
    "ruling": "R245"
   }
  ],
