@@ -29,10 +29,7 @@
       "Bash(php -l:*)",
       "Bash(./vendor/bin/phpstan:*)",
       "Bash(./vendor/bin/pint --test:*)",
-      "Bash(bash .agents/supervisor/launch-coder.sh:*)"
-    ],
-    "deny": [
-      "NotebookEdit",
+      "Bash(bash .agents/supervisor/launch-coder.sh:*)",
       "Edit(app/**)",
       "Write(app/**)",
       "Edit(source/**)",
@@ -85,6 +82,9 @@
       "Bash(./vendor/bin/pint --repair:*)",
       "Bash(./vendor/bin/pint --dirty:*)",
       "Bash(runtime/goaiez-runtime.sh:*)"
+    ],
+    "deny": [
+      "NotebookEdit"
     ]
   }
 }
