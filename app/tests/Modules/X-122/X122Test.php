@@ -155,7 +155,20 @@ class X122Test extends TestCase
         $this->registry->handle($biz->id, 'task.done', ['required' => ['id']]);
         $res = $this->invoker->handle($biz->id, 'task.done', ['id' => 1]);
 
-        $this->assertGreaterThan(0, $res['invocation_id']);
+        $drivers = array_column(config('database.connections'), 'driver');
+        $this->assertNotContains('qldb', $drivers);
+        $this->assertNull((new ActionInvocation)->getConnectionName());
+
+        $firstInv = ActionInvocation::findOrFail($res['invocation_id']);
+        $firstParams = $firstInv->parameters;
+
+        $res2 = $this->invoker->handle($biz->id, 'task.done', ['id' => 2]);
+        $this->assertNotEquals($res['invocation_id'], $res2['invocation_id']);
+
+        $firstInvReRead = ActionInvocation::findOrFail($res['invocation_id']);
+        $this->assertEquals($firstParams, $firstInvReRead->parameters);
+        
+        $this->assertEquals(2, ActionInvocation::where('business_id', $biz->id)->count());
     }
 
     /**
