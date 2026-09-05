@@ -17,7 +17,7 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Never:** commit, push, migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
+| **Commits only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`) as `chore(supervisor): …` — the coder guard refuses those paths, so merge step 0 is the supervisor's (run 67, 2026-09-05). **Pushes only a sha it has gated and recorded in REVIEWS**, by explicit ref (`git push origin <sha>:main`), never a branch head, never `--force` (the owner opened the push 2026-09-05 06:4x). **Never:** migrate, touch a database, edit `app/**`, edit `.claude/settings.json` (the owner's file), run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push (the guard stays closed), edit sealed or generated files |
 
 `.claude/settings.json` enforces your column. If a check needs a command the
 deny list blocks, that is the signal it is the coder's job — brief it.
@@ -149,6 +149,23 @@ Never run `state.py done/journey/stage` from the supervisor; never touch
 `app/Doctor`; never let the coder and supervisor loop without a human seeing
 each verdict block in `REVIEWS.md`.
 
+- **A dispatch is real only when `launch-coder.sh` printed `LAUNCHED`, and that
+  line is pasted into the REVIEWS block that announces it** (Track 8, 2026-09-05:
+  a block ended "S-57 dispatched" with no brief, no kickoff, no process, and the
+  track idled). A block that says "dispatched" without the `LAUNCHED run N (pid …)
+  log=…` line is a claim, not a dispatch. Confirm the coder's cwd with
+  `ls -l /proc/<pid>/cwd` when the log name is not `agy-grs-antig-runN.log`.
+- **Wave selection checks the deferred list first.** Plan §257.4 (owner ruling
+  2026-09-04): X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213
+  X-208 X-215 X-214 are kept, hidden and unbuilt. No brief opens a wave in one; a
+  defect found there is a `state.py note`, not a wave (Track 8 spent eight waves
+  inside X-200/X-215 and moved no count).
+- **A lane cannot "contain main" while main is unpushed.** Local `main` was 283
+  ahead of `origin/main` on 2026-09-05 04:5x; a merge-readiness rule phrased as
+  "the lane contains main's tip" is unsatisfiable until the owner pushes. Merge
+  readiness is measured with `git merge-tree --write-tree --name-only HEAD
+  origin/track/<x>` and a per-file resolution list, as runs 73–75 did; the
+  owner's push is a separate blocker and is named as such.
 - **One writer per checkout (2026-09-03 incident).** An interactive `agy`
   started by hand inside this checkout has no pidfile, no `coder-bin` guard,
   no brief and no review — it overwrote 170 files with `place-files.sh`,
@@ -172,10 +189,10 @@ Only Track 1 merges. Per-track files NEVER merge: `.agents/supervisor/**`,
 `.agents/rules/10-supervisor.md`, `app/phpunit.xml`, `.agents/state/**`.
 
 Procedure (the coder runs it, the supervisor reviews the merge commit):
-0. **First, commit the supervisor's working notes** — `git add .agents/supervisor
-   CLAUDE.md bin/supervise.sh .claude/settings.json && git commit -m
-   "chore(supervisor): notes before merge"` — so no uncommitted note can be
-   lost (run 27 clobbered them with a blanket checkout; the launcher's
+0. **First, the SUPERVISOR commits its own tracked notes** — `git add CLAUDE.md
+   bin/supervise.sh && git commit -m "chore(supervisor): notes before merge"`
+   (the coder guard refuses those paths; run 67 stopped on exactly this) — so
+   no uncommitted note can be lost (run 27 clobbered them with a blanket checkout; the launcher's
    pre-run snapshot under /home/goaiez/tmp/sup-snap-* is the recovery path).
 1. `git merge --no-ff --no-commit origin/track/<x>`.
 2. Restore ONLY per-track paths the merge actually changed:

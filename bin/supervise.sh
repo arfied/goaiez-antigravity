@@ -110,7 +110,12 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
-  out=$(./vendor/bin/pest 2>&1); rc=$?
+  # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
+  out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  if [ $rc -eq 124 ]; then
+    echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
+    out="$out"$'\n''{"tool":"pest","result":"timeout"}'
+  fi
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
