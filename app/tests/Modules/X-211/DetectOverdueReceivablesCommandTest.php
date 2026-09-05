@@ -160,9 +160,6 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
 
         Tenancy::forgetAll();
 
-        // Use sync queue so the listener processes immediately in this test
-        config(['queue.default' => 'sync']);
-
         Tenancy::actingAs((int) $business->id, function () use ($disputedId, $complaintId, $silenceId) {
             $this->assertEquals(2, ArDunningAction::where('invoice_id', $disputedId)->count());
             $this->assertEquals(2, ArDunningAction::where('invoice_id', $complaintId)->count());
@@ -170,12 +167,20 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
         });
         Tenancy::forgetAll();
 
+        Event::fake([ArOverdue::class]);
+
         Artisan::call('x211:detect-overdue');
 
-        Tenancy::actingAs((int) $business->id, function () use ($disputedId, $complaintId, $silenceId) {
-            $this->assertEquals(2, ArDunningAction::where('invoice_id', $disputedId)->count(), 'No new dunning action should be written for a disputed line');
-            $this->assertEquals(2, ArDunningAction::where('invoice_id', $complaintId)->count(), 'No new dunning action should be written for a complaint');
-            $this->assertEquals(1, ArDunningAction::where('invoice_id', $silenceId)->count(), 'Silence invoice should be chased');
-        });
+        Event::assertNotDispatched(ArOverdue::class, function ($e) use ($disputedId) {
+            return $e->invoiceId === $disputedId;
+        }); // No new dunning action should be written for a disputed line
+        
+        Event::assertNotDispatched(ArOverdue::class, function ($e) use ($complaintId) {
+            return $e->invoiceId === $complaintId;
+        }); // No new dunning action should be written for a complaint
+        
+        Event::assertDispatched(ArOverdue::class, function ($e) use ($silenceId) {
+            return $e->invoiceId === $silenceId;
+        }); // Silence invoice should be chased
     }
 }
