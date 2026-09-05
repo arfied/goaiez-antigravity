@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T10:15:15",
+ "updated": "2026-09-05T10:55:53",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1380,6 +1380,12 @@
    "module": "C-Agent",
    "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
    "at": "2026-09-05T10:15:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Sms",
+   "chose": "C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)",
+   "at": "2026-09-05T10:55:53",
    "ruling": "R245"
   }
  ],
