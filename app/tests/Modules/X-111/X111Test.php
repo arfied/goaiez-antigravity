@@ -94,6 +94,33 @@ class X111Test extends TestCase
     }
 
     /**
+     * [G4-14] the operator's; the tenant's conversational search is X-01's. ElasticSearch is corpus vocabulary — one database (§22)
+     */
+    public function test_g4_14_elasticsearch_vocabulary(): void
+    {
+        $drivers = array_column(config('database.connections'), 'driver');
+        $this->assertNotContains('elasticsearch', $drivers);
+
+        $this->assertNull((new \App\Modules\X111\Models\IpBan)->getConnectionName());
+        $this->assertNull((new \App\Modules\X111\Models\ManualQueue)->getConnectionName());
+        $this->assertNull((new \App\Modules\X111\Models\OperatorAlert)->getConnectionName());
+        $this->assertNull((new \App\Modules\X111\Models\TenantTicket)->getConnectionName());
+
+        $biz = TestCase::provisionTenant(['name' => 'Elastic Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'critical', 'Check elasticsearch');
+
+        $row = DB::connection(config('database.default'))
+            ->table((new \App\Modules\X111\Models\OperatorAlert)->getTable())
+            ->where('id', $alert->id)
+            ->first();
+
+        $this->assertNotNull($row);
+        $this->assertEquals($biz->id, $row->business_id);
+    }
+
+    /**
      * [G1-29], [G1-35], [G2-63], [G4-05], [G4-14], [G4-24], [G4-28], [G4-31], [G4-33], [G4-36], [G4-40], [G4-41], [G4-47], [G5-17], [G5-18], [G5-38], [G7-33], [G9-05], [G9-19], [G9-20], [G9-28], [G17-07], [G17-17], [G19-09], [G21-02], [G21-05], [G21-14], [G15-28]
      */
     public function test_ops_console_capabilities(): void
