@@ -273,4 +273,64 @@ class X102Test extends TestCase
         $response = $this->actingAs($user)->get('/x-102/offline-form-inbox');
         $response->assertOk();
     }
+
+    public function test_a_chat_capture_never_erases_a_contact_detail_the_visitor_did_not_give(): void
+    {
+        Event::fake([ChatStarted::class, ChatLeadCaptured::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Chat Clobber', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session1 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadA = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session1->id,
+            name: 'Hank',
+            phone: '+15556660001',
+            email: 'hank@example.com',
+            message: 'first chat'
+        );
+
+        $session2 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadB = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session2->id,
+            name: 'Hank',
+            phone: '+15556660001',
+            message: 'second chat'
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15556660001')->firstOrFail();
+        $this->assertSame('hank@example.com', $person->email, 'a chat capture with no email erased the stored email');
+
+        $session3 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadC = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session3->id,
+            name: 'Hank',
+            phone: '+15556660001',
+            email: '',
+            message: 'third chat'
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15556660001')->firstOrFail();
+        $this->assertSame('hank@example.com', $person->email, 'a chat capture with a blank email erased the stored email');
+
+        $session4 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadD = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session4->id,
+            name: 'Hank Updated',
+            phone: '+15556660001',
+            email: 'hank.new@example.com',
+            message: 'fourth chat'
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15556660001')->firstOrFail();
+        $this->assertSame('hank.new@example.com', $person->email, 'a visitor must be able to correct their own email');
+        $this->assertSame('Hank Updated', $person->first_name, 'a visitor must be able to correct their own name');
+
+        $this->assertSame($leadA->person_id, $leadD->person_id, 'four chats on one phone must resolve to one contact');
+        $this->assertSame('', $leadC->email, 'the lead row must record what this interaction carried');
+        $this->assertNotNull($leadA->person_id);
+    }
 }
