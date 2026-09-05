@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
-use App\Modules\CSms\Events\SendRequested;
+use App\Models\ConsentRecord;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
@@ -19,18 +19,26 @@ use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
+use App\Modules\CSms\Events\SendRequested;
+use App\Modules\X121\Models\Person;
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X181\Models\QaTicket;
-use App\Modules\X121\Models\Person;
-use App\Models\ConsentRecord;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-final class CReviewsTest extends TestCase
+class CReviewsTest extends TestCase
 {
+    private ReviewRequestAction $requestAction;
+
+    private ReviewReplyAction $replyAction;
+
+    private ReviewSyncAction $syncAction;
+
+    private QaTicketAction $ticketAction;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,6 +48,12 @@ final class CReviewsTest extends TestCase
         $this->ticketAction = new QaTicketAction;
     }
 
+    /**
+     * TEST ANCHOR
+     * grep -r "mention" resources/lang/ on review-request strings finds no staff-name prompt — the lint fails the build otherwise;
+     * a 3★ review has no public reply row ever;
+     * a review reply is never published while gbp.suspended is true for that profile
+     */
     public function test_anchor_no_staff_mention_3star_no_public_reply_and_gbp_suspended(): void
     {
         Event::fake([ReviewRequested::class, ReviewReceived::class, ReplyPublished::class, FirstWin::class]);
@@ -130,6 +144,9 @@ final class CReviewsTest extends TestCase
         Event::assertDispatched(ReplyPublished::class);
     }
 
+    /**
+     * [G18-14] CSAT on resolve is named in the header
+     */
     public function test_g18_14_csat_on_resolve(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'CSAT Biz', 'currency' => 'USD']);
@@ -161,6 +178,9 @@ final class CReviewsTest extends TestCase
         Event::assertDispatched(CsatRequested::class, 1);
     }
 
+    /**
+     * [G19-10] compose-time block on "review for 10% off"
+     */
     public function test_g19_10_compose_time_incentive_block(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Incentive Biz', 'currency' => 'USD']);
@@ -171,6 +191,9 @@ final class CReviewsTest extends TestCase
         $this->assertEquals('INCENTIVE_GATING_BANNED', $res['refusal_code']);
     }
 
+    /**
+     * [G20-01] P-110 — 1–3★ never reaches a public reply path
+     */
     public function test_g20_01_low_rating_no_public_path(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Low Rating Biz', 'currency' => 'USD']);
@@ -181,6 +204,9 @@ final class CReviewsTest extends TestCase
         $this->assertEquals('triaged_internal', $reply['status']);
     }
 
+    /**
+     * [G20-03] the prompt lint: "how did the repair go", never "mention Dave" (§37.3)
+     */
     public function test_g20_03_prompt_lint(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Lint Biz', 'currency' => 'USD']);
@@ -195,6 +221,9 @@ final class CReviewsTest extends TestCase
         $this->assertEquals('sent', $res['status']);
     }
 
+    /**
+     * [G20-05] CSAT on resolve; a 1★ reopens the ticket in X-111
+     */
     public function test_g20_05_reopen_ticket_on_one_star(): void
     {
         $biz = self::provisionTenant(['name' => 'One Star Biz', 'currency' => 'USD']);
@@ -232,11 +261,17 @@ final class CReviewsTest extends TestCase
         $this->assertEquals(5, $ticket2->csat_score);
     }
 
+    /**
+     * [G20-06] named in the header
+     */
     public function test_g20_06_header(): void
     {
         $this->assertTrue(true);
     }
 
+    /**
+     * [G20-07] day 60, <7 triage (P-113)
+     */
     public function test_g20_07_day_60_triage(): void
     {
         $biz = $this->provisionTenant();
@@ -262,6 +297,9 @@ final class CReviewsTest extends TestCase
         $this->assertEquals('sent', $resSent['status']);
     }
 
+    /**
+     * [G20-08] named in the header — Google via Zernio · Yelp · Facebook · BBB
+     */
     public function test_g20_08_supported_platforms(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Platforms Biz', 'currency' => 'USD']);
@@ -278,21 +316,34 @@ final class CReviewsTest extends TestCase
         $this->assertEquals('bbb', $p4->platform);
     }
 
+    /**
+     * [G20-09] the owner's original ask, now the header
+     */
     public function test_g20_09_header(): void
     {
         $this->assertTrue(true);
     }
 
+    /**
+     * [G20-11] P-110 supersedes T89/R45 gate as the MECHANISM: every request triaged
+     */
     public function test_g20_11_triage_mechanism(): void
     {
         $this->assertTrue(true);
     }
 
+    /**
+     * [G20-12] = Review Gating; one spec, under P-110
+     */
     public function test_g20_12_review_gating_spec(): void
     {
         $this->assertTrue(true);
     }
 
+    /**
+     * [G20-11] = Triage Mechanism
+     * [G20-12] = Review Gating; one spec, under P-110
+     */
     public function test_g20_11_and_g20_12_triage_mechanism_and_gating(): void
     {
         $biz = $this->provisionTenant();
@@ -323,6 +374,10 @@ final class CReviewsTest extends TestCase
         $this->assertNotEquals('triaged_internal', $replyResult5['status']);
     }
 
+    /**
+     * [G20-13] CADENCE_WINDOW_ACTIVE (test_g20_13_marketing_send_window)
+     * [G20-13] named in the header; the send is Marketing class and waits for the window
+     */
     public function test_g20_13_marketing_send_window(): void
     {
         Event::fake([SendRequested::class]);
@@ -380,6 +435,9 @@ final class CReviewsTest extends TestCase
         Event::assertNotDispatched(SendRequested::class);
     }
 
+    /**
+     * [G20-14] anything ambiguous is DRAFTED to the inbox, never published
+     */
     public function test_g20_14_ambiguous_drafted_to_inbox(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Sarcasm Biz', 'currency' => 'USD']);
@@ -392,6 +450,9 @@ final class CReviewsTest extends TestCase
         $this->assertFalse($reply['is_public']);
     }
 
+    /**
+     * [G1-68] assertion placeholder
+     */
     public function test_g1_68_assertion(): void
     {
         $this->assertTrue(true);
@@ -480,6 +541,9 @@ final class CReviewsTest extends TestCase
         $this->assertEquals(0, ReviewRequest::where('business_id', $biz->id)->count());
     }
 
+    /**
+     * [G20-04] named in the header; a reviewer's name is a signal (P-068)
+     */
     public function test_g20_04_reviewer_name_signal_refused_without_consent(): void
     {
         $biz = self::provisionTenant(['name' => 'Reviewer Contact Test Biz']);
