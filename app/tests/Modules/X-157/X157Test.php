@@ -239,9 +239,9 @@ class X157Test extends TestCase
             'page_id' => $page->id,
             'commit_id' => $commitId,
             'content_blocks' => [
-                ['type' => 'chat'],
+                ['type' => 'chat_widget'],
                 ['type' => 'form_capture'],
-                ['type' => 'dni'],
+                ['type' => 'dni_script'],
             ],
             'pixel_installed' => true,
         ]);
@@ -1398,7 +1398,7 @@ class X157Test extends TestCase
             'business_id' => $biz->id,
             'page_id' => $page->id,
             'commit_id' => $commitId,
-            'content_blocks' => [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']],
+            'content_blocks' => [['type' => 'chat_widget'], ['type' => 'form_capture'], ['type' => 'dni_script']],
             'pixel_installed' => true,
         ]);
 
