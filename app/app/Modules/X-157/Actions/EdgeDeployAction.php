@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X157\Actions;
 
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
@@ -115,7 +116,11 @@ final class EdgeDeployAction
                         $html .= "<div class=\"chat-widget-container\"></div>\n";
                     }
                     if ($hasForm) {
-                        $html .= "<form class=\"form-capture-x155\"></form>\n";
+                        $formId = FormDefinition::where('business_id', $businessId)->orderBy('id')->value('id');
+                        $action = $formId === null
+                            ? ''
+                            : " method=\"post\" action=\"/sites/{$businessId}/{$deployHash}/forms/{$formId}\"";
+                        $html .= "<form class=\"form-capture-x155\"{$action}></form>\n";
                     }
                     if ($hasDni) {
                         $html .= "<div class=\"dni-pool-x137\"></div>\n";

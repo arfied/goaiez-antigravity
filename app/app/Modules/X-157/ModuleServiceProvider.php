@@ -6,11 +6,13 @@ namespace App\Modules\X157;
 
 use App\Models\Business;
 use App\Modules\X103\Events\SitePublished;
+use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
 use App\Modules\X157\Ui\EdgeStatusPer;
 use App\Support\Tenancy;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -48,6 +50,23 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response($html, 200)->header('Content-Type', 'text/html');
         })->whereNumber('business');
+
+        Route::post('/sites/{business}/{deploy_hash}/forms/{form}', function (string $business, string $deployHash, string $form, Request $request) {
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+
+            $result = app(FormCaptureAction::class)->handle(
+                businessId: $businessId,
+                formDefinitionId: (int) $form,
+                payload: $request->all(),
+                ipAddress: $request->ip(),
+            );
+
+            return response()->json($result, $result['status'] === 'captured' ? 201 : 422);
+        })->whereNumber('business')->whereNumber('form');
 
         Event::listen(SitePublished::class, function (SitePublished $event): void {
             $zone = EdgeZone::where('business_id', $event->businessId)
