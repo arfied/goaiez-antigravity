@@ -36,6 +36,7 @@ final class SchedulingEngine
             ->toArray();
 
         $lockedHours = SlotLock::where('business_id', $businessId)
+            ->whereDate('slot_start', $baseDate->toDateString())
             ->where('expires_at', '>', now())
             ->pluck('slot_start')
             ->map(fn ($t) => Carbon::parse($t)->hour)
@@ -81,11 +82,15 @@ final class SchedulingEngine
 
     private function isBlackedOut(int $hour, Collection $blackouts): bool
     {
+        $slotStartMinutes = $hour * 60;
         foreach ($blackouts as $rule) {
-            $start = Carbon::parse($rule->start_time)->hour;
-            $end = Carbon::parse($rule->end_time)->hour;
+            $start = Carbon::parse($rule->start_time);
+            $startMinutes = $start->hour * 60 + $start->minute;
+            
+            $end = Carbon::parse($rule->end_time);
+            $endMinutes = $end->hour * 60 + $end->minute;
 
-            if ($hour >= $start && $hour < $end) {
+            if ($slotStartMinutes >= $startMinutes && $slotStartMinutes < $endMinutes) {
                 return true;
             }
         }

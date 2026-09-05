@@ -82,6 +82,35 @@ class X108Test extends TestCase
         $this->assertNotContains($selectedSlot['start_time'], $offeredTimes, 'Locked/booked window must never be offered again');
     }
 
+    public function test_a_slot_lock_only_hides_its_own_date(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lock Date Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dayOne = now()->addDays(2)->format('Y-m-d');
+        $dayTwo = now()->addDays(3)->format('Y-m-d');
+
+        $start = Carbon::parse($dayOne)->setHour(14)->setMinute(0)->toIso8601String();
+        $end = Carbon::parse($dayOne)->setHour(16)->setMinute(0)->toIso8601String();
+
+        $this->engine->lockSlot(
+            businessId: $biz->id,
+            slotStart: $start,
+            slotEnd: $end,
+            sessionId: 'sess-123'
+        );
+
+        $availDayOne = $this->engine->getAvailableSlots($biz->id, $dayOne, true);
+        $this->assertSame(3, $availDayOne['slots_count']);
+
+        $availDayTwo = $this->engine->getAvailableSlots($biz->id, $dayTwo, true);
+        $this->assertSame(4, $availDayTwo['slots_count']);
+        $this->assertContains(
+            '2:00 PM - 4:00 PM',
+            array_column($availDayTwo['offered_slots'], 'formatted_window')
+        );
+    }
+
     /**
      * [G1-12] tokens only (P-160), the iframe boundary asserted
      */
@@ -178,7 +207,38 @@ class X108Test extends TestCase
      */
     public function test_g2_13_out_of_office(): void
     {
-        $this->assertTrue(true);
+        // 14:00-14:30 rule
+        $biz1 = TestCase::provisionTenant(['name' => 'OOO Biz 1', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz1->id}'");
+
+        $date = now()->addDays(2)->format('Y-m-d');
+        $dow = Carbon::parse($date)->dayOfWeekIso;
+
+        AvailabilityRule::create([
+            'business_id' => $biz1->id,
+            'day_of_week' => $dow,
+            'start_time' => '14:00',
+            'end_time' => '14:30',
+            'is_blackout' => true,
+        ]);
+        $avail1 = $this->engine->getAvailableSlots($biz1->id, $date, true);
+        $this->assertSame(3, $avail1['slots_count']);
+        $this->assertNotContains('2:00 PM - 4:00 PM', array_column($avail1['offered_slots'], 'formatted_window'));
+
+        // 09:30-10:30 rule
+        $biz2 = TestCase::provisionTenant(['name' => 'OOO Biz 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+
+        AvailabilityRule::create([
+            'business_id' => $biz2->id,
+            'day_of_week' => $dow,
+            'start_time' => '09:30',
+            'end_time' => '10:30',
+            'is_blackout' => true,
+        ]);
+        $avail2 = $this->engine->getAvailableSlots($biz2->id, $date, true);
+        $this->assertSame(4, $avail2['slots_count']);
+        $this->assertContains('9:00 AM - 11:00 AM', array_column($avail2['offered_slots'], 'formatted_window'));
     }
 
     /**
