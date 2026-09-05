@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+/**
+ * (R245) empty state wording uses standard x-ui.empty-state pattern with no action button
+ * (R245) renders event_filter column, events cast is ignored as dead
+ * (R245) is_active cast to boolean added to WebhookSubscription model
+ */
 class X142Test extends TestCase
 {
     private McpTokenAction $tokenAction;
@@ -202,5 +207,28 @@ class X142Test extends TestCase
         Livewire::test(McpTokenRegistry::class)
             ->assertSeeHtml('data-revoked="yes"')
             ->assertSee($token->token_name);
+    }
+
+    public function test_webhooks_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Webhooks Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(WebhooksView::class)
+            ->assertSee('No webhooks yet.')
+            ->assertSee('Webhooks push events to your system.');
+    }
+
+    public function test_webhooks_list(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'List Webhooks Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $sub = $this->webhookAction->subscribe($biz->id, 'https://example.com/webhooks/list', 'event.test.*');
+
+        Livewire::test(WebhooksView::class)
+            ->assertSeeHtml('data-active="yes"')
+            ->assertSee($sub->target_url)
+            ->assertDontSee($sub->secret);
     }
 }

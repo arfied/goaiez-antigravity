@@ -547,3 +547,6 @@
 - `2026-09-04T19:18:02` UNRESOLVED error X-142 - not reachable from Livewire::test (unreachable error branch)
 - `2026-09-04T19:36:15` X-142 -> DONE
 - `2026-09-04T19:36:15` note: X-142 returned to DONE: the three 2026-09-04T19:18:02 unresolved records were coverage facts about Livewire::test reach, not missing dependencies (ruling 48, bin/state.py:9). They stay in the arrays because state.py has no withdraw; the status is the field of record.
+- `2026-09-04T19:38:02` (R245) X-142 — empty state wording uses standard x-ui.empty-state pattern with no action button
+- `2026-09-04T19:38:02` (R245) X-142 — renders event_filter column, events cast is ignored as dead
+- `2026-09-04T19:38:02` (R245) X-142 — is_active cast to boolean added to WebhookSubscription model
