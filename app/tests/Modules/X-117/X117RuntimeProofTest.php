@@ -17,7 +17,7 @@ class X117RuntimeProofTest extends TestCase
 
         $data = json_decode(File::get($path), true);
         $this->assertStringStartsWith('ch_', $data['gateway_charge_id']);
-        
+
         // Assert the order the command wrote is paid
         $this->assertEquals('paid', $data['order_status']);
     }

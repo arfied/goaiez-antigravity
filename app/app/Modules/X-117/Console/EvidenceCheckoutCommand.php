@@ -12,7 +12,6 @@ use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 
 final class EvidenceCheckoutCommand extends Command
 {
