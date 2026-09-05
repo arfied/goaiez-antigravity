@@ -49,13 +49,18 @@ final class FormCaptureAction
             return DB::transaction(function () use ($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone, $validation) {
                 $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
-                $person = Person::updateOrCreate(
-                    ['business_id' => $businessId, 'phone' => $payload['phone'] ?? '+15550000000'],
-                    [
+                $person = Person::firstOrNew([
+                    'business_id' => $businessId,
+                    'phone' => $payload['phone'] ?? '+15550000000',
+                ]);
+                // A submission judged spam never rewrites a contact the business already has (R245, 2026-09-05).
+                if (! $person->exists) {
+                    $person->fill([
                         'first_name' => $payload['first_name'] ?? ($payload['name'] ?? 'Visitor'),
                         'email' => $payload['email'] ?? null,
-                    ]
-                );
+                    ]);
+                    $person->save();
+                }
 
                 $submission = FormSubmission::create([
                     'business_id' => $businessId,
