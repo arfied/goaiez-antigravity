@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T01:18:14",
+ "updated": "2026-09-05T01:29:59",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1407,6 +1407,12 @@
    "module": "X-176",
    "chose": "R245 A page has one address, and `SeoRenderAction` is where it is decided \u2014 the schema's `url` is that action's `canonical`, so the `<link rel=\"canonical\">` and the JSON-LD `url` in one published document can never disagree. They disagreed on every site published so far: the canonical used the page slug and the schema used `pages/{id}` unconditionally, a form this platform routes nowhere. Rejected: copying the slug-or-fallback rule into `SchemaRenderAction` \u2014 refused, two copies of one rule is how these drifted apart and the copy would drift again. Rejected: changing `SeoRenderAction` to emit `pages/{id}` \u2014 refused, it would invert the canonical for every page that has a slug and break `X176Test::test_seo_never_reads_another_tenants_page`'s fallback assertion, which is a true statement about a page the tenant scope hides.",
    "at": "2026-09-05T01:18:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "The published document escapes the JSON-LD block at the point of emission \u2014 JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT \u2014 so no character in a tenant's own business name can open or close an element in an artifact this platform published; before this, a name containing </script> truncated the schema block and injected an element, and every existing assertion, which matches the substring application/ld+json, stayed green on it. JSON_THROW_ON_ERROR is added with it: an artifact that cannot carry its schema must fail the deploy, not publish an empty block that reads as present. Rejected: sanitising the business name \u2014 refused, that is the compiler's bug charged to the tenant and it would corrupt the same name in the title and the description. Rejected: e() around the encoded JSON \u2014 refused, HTML entities are not decoded inside a script element, so it would stop the block being JSON at all.",
+   "at": "2026-09-05T01:29:59",
    "ruling": "R245"
   }
  ]
