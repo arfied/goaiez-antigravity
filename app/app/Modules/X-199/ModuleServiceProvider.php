@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X199;
 
+use App\Modules\X199\Console\MarkInvoicesDueCommand;
 use App\Modules\X199\Ui\Credits;
 use App\Modules\X199\Ui\Declines;
 use App\Modules\X199\Ui\Invoices;
@@ -18,7 +19,7 @@ final class ModuleServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \App\Modules\X199\Console\MarkInvoicesDueCommand::class,
+                MarkInvoicesDueCommand::class,
             ]);
         }
     }

@@ -67,7 +67,7 @@ final class MarkInvoicesDueCommand extends Command
                         invoiceId: (int) $invoice->id,
                         dueDate: $invoice->due_date->toDateString()
                     ));
-                    
+
                     $invoice->update(['due_notified_at' => now()]);
                     $localDispatched++;
                 }

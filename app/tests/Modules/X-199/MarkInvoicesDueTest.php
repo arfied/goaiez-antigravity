@@ -2,13 +2,12 @@
 
 use App\Models\Business;
 use App\Models\User;
+use App\Modules\X121\Models\Person;
 use App\Modules\X199\Events\InvoiceDue;
 use App\Modules\X199\Models\Invoice;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Artisan;
-
-use App\Modules\X121\Models\Person;
+use Illuminate\Support\Facades\Event;
 
 test('it marks invoices due and dispatches event only once', function () {
     Event::fake();
