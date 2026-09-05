@@ -285,4 +285,95 @@ class X110Test extends TestCase
         $this->assertEquals('rage_click.detected', $evt->event_name);
         $this->assertEquals(6, $evt->payload['clicks']);
     }
+
+    /**
+     * [G13-09] §44 · P-128 — geo-fenced ad serving; we have no device-location source and X-139 uploads completed JOBS, not store visits
+     */
+    public function test_g13_09_no_geo_fenced_ad_serving(): void
+    {
+        Http::fake();
+
+        $biz = TestCase::provisionTenant(['name' => 'Geo Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_geo_1');
+
+        $this->eventAction->handle(
+            businessId: $biz->id,
+            sessionId: $v['session_id'],
+            eventName: 'store.visited',
+            payload: [
+                'location_id' => 'LOC-123',
+                'device_id' => 'DEV-456',
+            ]
+        );
+
+        $readEvent = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'store.visited')
+            ->first();
+
+        $this->assertNotNull($readEvent);
+        $this->assertEquals('LOC-123', $readEvent->payload['location_id']);
+
+        Http::assertNothingSent();
+    }
+
+    /**
+     * [G13-13] §44 · P-128 — a filter on ad delivery is ad management
+     */
+    public function test_g13_13_no_ad_delivery_filter(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Form Biz 1']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v1 = $this->engine->recordVisit($biz->id, 'vis_form_1');
+        $this->eventAction->handle($biz->id, $v1['session_id'], 'form.abandoned', [
+            'form_id' => 'form_A',
+            'abandoned_field' => 'email'
+        ]);
+        $this->eventAction->handle($biz->id, $v1['session_id'], 'form.abandoned', [
+            'form_id' => 'form_A',
+            'abandoned_field' => 'phone'
+        ]);
+
+        $otherBiz = TestCase::provisionTenant(['name' => 'Form Biz 2']);
+        DB::statement("SET app.business_id = '{$otherBiz->id}'");
+        $v2 = $this->engine->recordVisit($otherBiz->id, 'vis_form_2');
+        $this->eventAction->handle($otherBiz->id, $v2['session_id'], 'form.abandoned', [
+            'form_id' => 'form_A',
+            'abandoned_field' => 'name'
+        ]);
+
+        $result = $this->engine->abandonPointsForForm($biz->id, 'form_A');
+        $this->assertEquals(2, $result['total']);
+        $this->assertCount(2, $result['points']);
+        $fields = array_column($result['points'], 'abandoned_field');
+        $this->assertContains('email', $fields);
+        $this->assertContains('phone', $fields);
+        $this->assertNotContains('name', $fields);
+    }
+
+    /**
+     * [G13-32] E3's property law is first-party only with NO session recording — a watch-the-user replay needs the owner's word before it can be specced. Owner question
+     */
+    public function test_g13_32_no_session_recording(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Rage Biz 2']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_rage_2');
+        $this->engine->recordRageClick($biz->id, $v['session_id'], 'button#checkout', 4);
+
+        $event = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'rage_click.detected')
+            ->first();
+
+        $this->assertNotNull($event);
+        $this->assertEquals(['element' => 'button#checkout', 'clicks' => 4], $event->payload);
+
+        $count = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'rage_click.detected')
+            ->count();
+        $this->assertEquals(1, $count);
+    }
 }

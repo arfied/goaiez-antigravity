@@ -18,6 +18,8 @@ use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X121\Models\Person;
+use App\Modules2\Models\ChatLead;
+
 use App\Services\Ai\AiSpend;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
@@ -332,5 +334,32 @@ class X102Test extends TestCase
         $this->assertSame($leadA->person_id, $leadD->person_id, 'four chats on one phone must resolve to one contact');
         $this->assertSame('', $leadC->email, 'the lead row must record what this interaction carried');
         $this->assertNotNull($leadA->person_id);
+    }
+
+    /**
+     * [G21-01] P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof. (Same class as the "just in time" webinar killed at G15-01.)
+     */
+    public function test_g21_01_no_manufactured_social_proof(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Social Proof', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'Real Visitor',
+            phone: '+15551234567',
+            message: 'I have a question'
+        );
+
+        $this->assertEquals(1, ChatLead::where('business_id', $biz->id)->count());
+        $this->assertEquals(1, ChatSession::where('business_id', $biz->id)->count());
+
+        $lead = ChatLead::where('business_id', $biz->id)->first();
+        $this->assertEquals('Real Visitor', $lead->name);
+        $this->assertEquals('+15551234567', $lead->phone);
+        $this->assertEquals('I have a question', $lead->message);
     }
 }
