@@ -872,6 +872,7 @@ class X155Test extends TestCase
         $this->assertEquals('Visitor', $visitor->first_name, 'a first submission with no name must still record the visitor placeholder');
         $this->assertNull($visitor->email);
     }
+
     public function test_a_spam_submission_never_rewrites_a_known_contact(): void
     {
         Event::fake([FormCaptured::class, FormSpamRejected::class]);
