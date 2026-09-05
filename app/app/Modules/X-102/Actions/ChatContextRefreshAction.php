@@ -9,9 +9,7 @@ use App\Modules\X110\Domain\PixelEngine;
 
 final class ChatContextRefreshAction
 {
-    public function __construct(private PixelEngine $pixelEngine)
-    {
-    }
+    public function __construct(private PixelEngine $pixelEngine) {}
 
     public function handle(ChatSession $session): void
     {

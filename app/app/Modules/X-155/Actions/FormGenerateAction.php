@@ -26,7 +26,7 @@ final class FormGenerateAction
             $groupMatched = false;
             foreach ($group['needles'] as $needle) {
                 if ($hasNeedle($lowercased, $needle)) {
-                    if (!$groupMatched) {
+                    if (! $groupMatched) {
                         $refused[] = ['ask' => $needle, 'reason' => $group['reason']];
                         $groupMatched = true;
                     }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X110;
 
+use App\Modules\X102\Actions\ChatContextRefreshAction;
+use App\Modules\X102\Actions\ChatStartAction;
+use App\Modules\X102\Models\ChatSession;
 use App\Modules\X110\Actions\PixelEventsAction;
 use App\Modules\X110\Actions\PixelInstallAction;
 use App\Modules\X110\Actions\PixelVerifyAction;
@@ -166,8 +169,8 @@ class X110Test extends TestCase
         $this->assertEquals('google', $context['utm_source']);
         $this->assertEquals('/hvac-repair', $context['current_page']);
 
-        $chatStart = new \App\Modules\X102\Actions\ChatStartAction($this->engine);
-        $chatRefresh = new \App\Modules\X102\Actions\ChatContextRefreshAction($this->engine);
+        $chatStart = new ChatStartAction($this->engine);
+        $chatRefresh = new ChatContextRefreshAction($this->engine);
 
         $session = $chatStart->handle($biz->id, '192.168.1.1', false, $v['session_token']);
         $this->assertEquals($v['session_token'], $session->pixel_session_token);
@@ -178,7 +181,7 @@ class X110Test extends TestCase
 
         $chatRefresh->handle($session);
 
-        $fresh = \App\Modules\X102\Models\ChatSession::find($session->id)->fresh();
+        $fresh = ChatSession::find($session->id)->fresh();
         $this->assertEquals('/hvac-repair/pricing', $fresh->page_context['current_page']);
         $this->assertEquals('/hvac-repair', $fresh->page_context['landing_page']);
 
