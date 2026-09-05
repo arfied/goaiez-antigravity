@@ -321,8 +321,15 @@ trait JourneyHarness
             'dni' => str_contains($html, 'dni-pool-x137'),
             'seo' => str_contains($html, 'seo-meta-x176'),
             'schema' => str_contains($html, 'application/ld+json'),
-            'ssl' => Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone->has_valid_ssl,
+            'ssl' => false,
         ];
+
+        $zoneRow = Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone;
+        $zoneRow->update(['has_valid_ssl' => false]);
+        $withoutSsl = $this->get("/sites/{$tenant['id']}/{$deploy['deploy_hash']}");
+        $zoneRow->update(['has_valid_ssl' => true]);
+        $features['ssl'] = $response->status() === 200 && $withoutSsl->status() === 404;
+
 
         return [
             'deploy_id' => $deploy['deploy_hash'],
