@@ -95,8 +95,8 @@ class X103Test extends TestCase
         $page = $this->pageAction->handle($biz->id, 'home', 'Homepage', false);
         $pubRes = $this->publishAction->handle($biz->id, $page->id, ['hero' => 'Top HVAC Services']);
 
-        Event::assertDispatched(SitePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id']);
-        Event::assertDispatched(PagePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id']);
+        Event::assertDispatched(SitePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id'] && $e->versionId === $pubRes['version_id']);
+        Event::assertDispatched(PagePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id'] && $e->versionId === $pubRes['version_id']);
     }
 
     /**
