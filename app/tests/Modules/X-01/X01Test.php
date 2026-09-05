@@ -292,7 +292,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $smsRes = $this->manager->ingestMessage($biz->id, 'sms', '+15125550177', 'Omni Person', 'sms msg');
-        
+
         $person = Person::where('business_id', $biz->id)->find($smsRes['person_id']);
         $person->update(['email' => 'omni@example.com']);
 
@@ -312,7 +312,7 @@ class X01Test extends TestCase
         $this->assertEquals(1, $count);
 
         $conv = Conversation::find($smsRes['conversation_id']);
-        $this->assertInstanceOf(\App\Models\Conversation::class, $conv);
+        $this->assertInstanceOf(Conversation::class, $conv);
 
         // The channel is frozen at the first message's channel ('sms')
         $this->assertEquals('sms', $conv->channel);
