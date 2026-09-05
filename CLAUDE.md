@@ -222,3 +222,102 @@ Procedure (the coder runs it, the supervisor reviews the merge commit):
 `git checkout main -- <each per-track path above>`, then commit
 `merge: track/ui — <scope>`; the gate must pass on the merge commit before it
 pushes. A merge that changes any per-track file is a BLOCK.
+
+---
+
+⚠️ **Everything above this line is `main`'s copy**, which this checkout inherited
+wholesale in the 2026-09-05 17:4x fast-forward. It is written from Track 1's seat
+— it describes `wtN` worktrees, `roster.sh` and a PR flow that do not exist here,
+and its "Merging a track branch" sections are Track 1's job, not this track's.
+**Everything below this line is Track 7's own charter**, restored by hand the
+same evening because the ff overwrote it. Where the two disagree, below wins.
+That the charter travels through `main` at all is the defect recorded as OWNER
+ACTION 37 — per-track supervisor files are per-track by construction and are
+nonetheless shared through `main`, so every track that fast-forwards silently
+inherits Track 1's copy and loses its own.
+
+## TRACK 7 — site (this worktree)
+
+This checkout is **Track 7**: branch `track/site`, worktree
+`/home/goaiez/agents/grs-antig-site`. Track 1 (`/home/goaiez/agents/grs-antig`
+on `main`) is the ONLY track that merges to `main`. This track pushes to
+`origin track/site` after a PASS; Track 1's supervisor reviews and merges.
+
+- Databases: dev `goaiez_antig_site`, tests `goaiez_antig_site_test` (the gate
+  exports it over phpunit.xml's pin; brief every pest run with the
+  `DB_DATABASE=goaiez_antig_site_test` prefix). `goaiez_antig` is production and
+  `goaiez_antig_dev`/`goaiez_antig_test` belong to Track 1 — touch neither.
+  ⚠️ **Since the ff, `app/phpunit.xml` pins `goaiez_antig_test` — Track 1's.**
+  `bin/supervise.sh` now carries `TRACK_DB` and exports over it, so the gate is
+  safe; a bare `./vendor/bin/pest` or `php artisan test` in this checkout is
+  not. Restoring the pin is a coder item (app/ is their column).
+- Journeys owned: J11 (a published site carries all seven).
+- Modules owned: X-157, X-110, X-102, X-155, X-137, **X-176** (ruling 17,
+  2026-09-04) and **X-103** (ruling 19, effective after SITE-5). Edits stay under `app/app/Modules/<id>/**` for
+  those ids, plus the owned journeys' methods in
+  `tests/Journeys/TwelveJourneysTest.php`. OUT of scope: every other track's
+  modules and journeys, `resources/views` and `app/Livewire` (Track 2),
+  and everything in Track 1's never-list (Doctor, seals,
+  `JourneyHarness.php`, phpunit DB lines, generated manifests).
+- Goal: J11 green: a published site carries all seven required elements, verified on the published output.
+- Vendor: **the publishing target is the platform itself** (ruling 16,
+  2026-09-04) — X-157 serves `GET /sites/{deploy_hash}` from local storage and
+  J11 verifies the seven on that HTTP response. Vendor edge delivery stays
+  `UNRESOLVED — no CDN credential`; a transport swap later, not a blocker.
+- The loop: coder builds → `bash bin/supervise.sh --tests` → THIS track's
+  supervisor reads the diff, the raw doctor journey line and the test count
+  → verdicts in this worktree's REVIEWS.md. Two dispatches per BLOCK, then
+  the owner. A journey the coder marks green is never taken at face value;
+  only the gate's output counts.
+- Shared files: `.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written
+  by every track through `state.py`. **This track pushes unrebased** (ruling
+  15, 2026-09-04): the `reference-transaction` guard refuses every
+  non-fast-forward update for a coder, so Track 1 integrates by cherry-pick
+  and resolves the harness hunk per ruling 13. Never edit either state file
+  by hand.
+- SMS/mail drivers stay `log` in tests. A vendor send happens only in a
+  journey on the real transport, with the owner's credentials.
+
+## Delegation — 2026-09-04
+
+The owner delegated decisions to this supervisor ("i authorize you to make
+decisions. i will just review everything when the product is done"). Rulings
+made under that delegation are numbered on from the last OWNER ACTION and live
+in `.agents/supervisor/OWNER.md` under DELEGATION. The One Rule and the retry
+cap are not delegable.
+
+## Owner rulings — 2026-09-02
+
+1. **Harness.** A journey track may implement, in `app/tests/Journeys/JourneyHarness.php`,
+   only the `todo()` methods its own journeys call, against the real transport.
+   Touching any other method, assertion or guard there is a BLOCK. Track 1 merges
+   and expects harness hunks from several branches.
+2. **X-179 belongs to Track 2 (UI).** Its `dd()` is removed on `track/ui`
+   (commit 88d85c1). No other track touches that file; §2c stays red on every
+   track until Track 1 merges it. Record it, do not fix it.
+3. **`app/phpunit.xml` keeps its pin.** It is a never-list file. The gate exports
+   this track's test database over it; every hand-run pest carries the same
+   `DB_DATABASE=` prefix. Accepted as a standing hazard, briefed every time.
+4. **Databases exist** for every track, owner goaiez_owner, pgvector installed.
+   The grants file needs a superuser and runs on request after the first
+   `migrate`: write the request as an OWNER ACTION and stop.
+5. **Module ownership.** sixty: C-Telephony, C-Sms, C-Agent, X-188, X-204,
+   X-118, X-66 · pricebook: X-163, X-119, X-126 · money: X-199, X-198, X-211 ·
+   reviews: C-Reviews, X-181 · site: X-157, X-110, X-102, X-155, X-137 ·
+   Track 1: X-212, X-172, X-112, X-166, X-203, C-Billing · Track 2: all Ui/,
+   views, Livewire · stages: everything not listed, checker findings only.
+6. **Shared harness methods have one owner.** `tenantWithLiveNumber` (nine
+   journeys) and `personWithPendingSteps` are owned by track sixty;
+   `issueInvoice` by track money. No other track edits them, rewrites their
+   `todo()` message, or waits on them with a vendor guess: if your journey
+   needs one, record `UNRESOLVED — waiting on track/sixty merge` and build
+   everything that does not depend on it. Pricebook commit a4b2d5a edited
+   `tenantWithLiveNumber`; that is a BLOCK, to be reverted forward.
+7. **The carrier is Infobip.** Inbound, delivery and voice webhooks, the
+   verifier, and 113 files say so. There are no `TWILIO_*` keys anywhere and
+   none will be added. A brief or report that names Twilio as a dependency is
+   the vendor-from-memory trap: read `app/app/Modules/C-Telephony/` and
+   `config/services.php` before naming a key.
+8. **X-121 is the spine and belongs to Track 1.** Pricebook: `bookFromQuote()`
+   records `UNRESOLVED — X-121 exposes no create path` (option b); the raw
+   insert is not accepted.
