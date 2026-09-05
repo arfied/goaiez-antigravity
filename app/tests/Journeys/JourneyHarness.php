@@ -29,6 +29,7 @@ use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Symfony\Component\Process\Process;
@@ -650,7 +651,72 @@ trait JourneyHarness
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
     private function walkCancelFlow(array $tenant): array
     {
-        throw $this->todo('cancel reaches Authorize.Net — needs the sandbox login id + transaction key in platform_credentials');
+        $loginId = PlatformCredentials::get('authorize_net_api_login_id');
+        $clientKey = PlatformCredentials::get('authorize_net_public_client_key');
+
+        if (! $clientKey) {
+            throw new \RuntimeException("UNRESOLVED — authorize_net_public_client_key is missing");
+        }
+
+        $business = Business::find($tenant['id']);
+        
+        $req = [
+            'securePaymentContainerRequest' => [
+                'merchantAuthentication' => [
+                    'name' => $loginId,
+                    'clientKey' => $clientKey,
+                ],
+                'data' => [
+                    'type' => 'TOKEN',
+                    'id' => (string) Str::uuid(),
+                    'token' => [
+                        'cardNumber' => '4111111111111111',
+                        'expirationDate' => '2033-12',
+                    ]
+                ]
+            ]
+        ];
+        $res = Http::post('https://apitest.authorize.net/xml/v1/request.api', $req);
+        $json = json_decode(trim($res->body(), "\xEF\xBB\xBF"), true);
+        if (($json['messages']['resultCode'] ?? '') !== 'Ok') {
+            $msg = $json['messages']['message'][0]['text'] ?? 'Unknown refusal';
+            throw new \RuntimeException("UNRESOLVED — Sandbox refused nonce creation: {$msg}");
+        }
+        $opaqueDataValue = $json['opaqueData']['dataValue'];
+
+        $user = User::factory()->create();
+        $business->owner_user_id = $user->id;
+        $business->save();
+        $this->actingAs($user);
+
+        $gateway = app(\App\Services\Billing\AuthorizeNetGateway::class);
+        $cardholder = \App\Support\CardholderName::fromInput('Test', 'User');
+        
+        try {
+            $sub = $gateway->subscribe($business, 'test@example.com', $opaqueDataValue, $cardholder);
+        } catch (\Exception $e) {
+            throw new \RuntimeException("UNRESOLVED — Sandbox refused subscription: " . $e->getMessage());
+        }
+
+        $cancellationId = $sub->authorize_net_subscription_id;
+
+        $screensBetween = 1;
+
+        $this->post(route('account.plan.cancel'), ['confirm' => 'yes']);
+
+        $api = app(\App\Services\Billing\AuthorizeNetApi::class);
+        try {
+            $status = $api->subscriptionStatus($business->id, $cancellationId);
+        } catch (\Exception $e) {
+            throw new \RuntimeException("UNRESOLVED — Sandbox refused status read: " . $e->getMessage());
+        }
+
+        return [
+            'screens_between' => $screensBetween,
+            'retention_offer_shown' => false,
+            'cancelled' => ($status === 'canceled'),
+            'cancellation_id' => $cancellationId,
+        ];
     }
 
     /** @return array<string,mixed> */
