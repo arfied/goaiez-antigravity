@@ -1537,4 +1537,64 @@ class X157Test extends TestCase
             'two published pages must leave two live deployments'
         );
     }
+
+    public function test_rolling_back_one_page_leaves_another_pages_history_alone(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $home = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $about = Page::create(['business_id' => $biz->id, 'title' => 'About', 'slug' => 'about']);
+
+        app(SitePublishAction::class)->handle($biz->id, $home->id, [['type' => 'chat']]);
+        $aRow = Deployment::where('business_id', $biz->id)->where('status', 'deployed')->sole();
+
+        app(SitePublishAction::class)->handle($biz->id, $home->id, [['type' => 'chat']]);
+        $bRow = Deployment::where('business_id', $biz->id)->where('status', 'deployed')->sole();
+
+        app(SitePublishAction::class)->handle($biz->id, $about->id, [['type' => 'chat']]);
+        $cRow = Deployment::where('business_id', $biz->id)
+            ->where('page_id', $about->id)
+            ->where('status', 'deployed')
+            ->sole();
+
+        $this->assertSame(
+            'superseded',
+            $aRow->refresh()->status,
+            'the first home deploy should already be superseded before any rollback'
+        );
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $cRow->id);
+
+        $this->assertSame(
+            'superseded',
+            $aRow->refresh()->status,
+            'rolling back the about page promoted a retired home deployment'
+        );
+        $this->get("/sites/{$biz->id}/{$aRow->deploy_hash}")->assertStatus(404);
+        $this->assertSame(
+            'deployed',
+            $bRow->refresh()->status,
+            'rolling back the about page disturbed the live home deploy'
+        );
+        $this->assertSame(
+            1,
+            Deployment::where('business_id', $biz->id)
+                ->where('page_id', $home->id)
+                ->where('status', 'deployed')
+                ->count(),
+            'the home page must have exactly one live deployment'
+        );
+
+        app(EdgeRollbackAction::class)->handle($biz->id, $bRow->id);
+
+        $this->assertSame(
+            'deployed',
+            $aRow->refresh()->status,
+            'rolling back the live home deploy did not restore its own predecessor'
+        );
+        $this->get("/sites/{$biz->id}/{$aRow->deploy_hash}")->assertStatus(200);
+    }
 }
