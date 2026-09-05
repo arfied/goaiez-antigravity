@@ -11,12 +11,16 @@ use App\Modules\X01\Actions\ConversationTakeoverAction;
 use App\Modules\X01\Actions\SearchGlobalAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Events\ContactCreated;
+use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
+use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
+use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X121\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X01Test extends TestCase
@@ -198,14 +202,14 @@ class X01Test extends TestCase
         $floor = $this->manager->scoreLead($biz->id, $p->id, 0);
         $this->assertSame('F', $floor->grade, 'a zero rating grades F, it does not default to A');
 
-        $before = \App\Modules\X01\Models\LeadScore::where('business_id', $biz->id)->count();
+        $before = LeadScore::where('business_id', $biz->id)->count();
         try {
             $this->manager->scoreLead($biz->id, $p->id, 101);
             $this->fail('a rating above 100 must be refused');
-        } catch (\App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused $e) {
-            $this->assertSame('LEAD_RATING_OUT_OF_RANGE', \App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused::REFUSAL_CODE);
+        } catch (LeadRatingOutOfRangeRefused $e) {
+            $this->assertSame('LEAD_RATING_OUT_OF_RANGE', LeadRatingOutOfRangeRefused::REFUSAL_CODE);
         }
-        $this->assertSame($before, \App\Modules\X01\Models\LeadScore::where('business_id', $biz->id)->count(), 'a refused rating writes no row');
+        $this->assertSame($before, LeadScore::where('business_id', $biz->id)->count(), 'a refused rating writes no row');
     }
 
     /**
@@ -221,8 +225,8 @@ class X01Test extends TestCase
      */
     public function test_g2_61_fenced_lookalike(): void
     {
-        \Illuminate\Support\Facades\Http::fake();
-        Event::fake([\App\Modules\X01\Events\LeadScored::class]);
+        Http::fake();
+        Event::fake([LeadScored::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Fence Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -231,8 +235,8 @@ class X01Test extends TestCase
         $score = $this->manager->scoreLead($biz->id, $p->id, 95);
 
         $this->assertSame('A', $score->grade, 'the score half of the split is a lead_score');
-        Event::assertDispatched(\App\Modules\X01\Events\LeadScored::class);
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Event::assertDispatched(LeadScored::class);
+        Http::assertNothingSent();
     }
 
     /**

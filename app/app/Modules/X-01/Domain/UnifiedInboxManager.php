@@ -8,6 +8,7 @@ use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
+use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Models\Conversation;
@@ -148,7 +149,7 @@ final class UnifiedInboxManager
     public function scoreLead(int $businessId, int $personId, int $score): LeadScore
     {
         if ($score < 0 || $score > 100) {
-            throw \App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused::forRating($score);
+            throw LeadRatingOutOfRangeRefused::forRating($score);
         }
 
         $grade = $this->gradeFor($score);
@@ -174,10 +175,19 @@ final class UnifiedInboxManager
 
     private function gradeFor(int $rating): string
     {
-        if ($rating >= 80) return 'A';
-        if ($rating >= 60) return 'B';
-        if ($rating >= 40) return 'C';
-        if ($rating >= 20) return 'D';
+        if ($rating >= 80) {
+            return 'A';
+        }
+        if ($rating >= 60) {
+            return 'B';
+        }
+        if ($rating >= 40) {
+            return 'C';
+        }
+        if ($rating >= 20) {
+            return 'D';
+        }
+
         return 'F';
     }
 }
