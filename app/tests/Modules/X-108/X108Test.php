@@ -11,6 +11,8 @@ use App\Modules\X108\Actions\WaitlistJoinAction;
 use App\Modules\X108\Domain\SchedulingEngine;
 use App\Modules\X108\Events\AppointmentBooked;
 use App\Modules\X108\Events\SlotLocked;
+use App\Modules\X108\Models\AvailabilityRule;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -125,7 +127,46 @@ class X108Test extends TestCase
      */
     public function test_g2_12_blackout_calendar(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Blackout Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $date = '2026-09-08';
+        $dow = Carbon::parse($date)->dayOfWeekIso;
+        $otherDow = ($dow % 7) + 1;
+
+        $clean = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(4, $clean['slots_count'], 'with no availability rules the four standard slots stand');
+
+        AvailabilityRule::create([
+            'business_id' => $biz->id,
+            'day_of_week' => $otherDow,
+            'start_time' => '09:00',
+            'end_time' => '17:00',
+            'is_blackout' => true,
+        ]);
+        $otherDay = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(4, $otherDay['slots_count'], 'a blackout on another weekday does not touch this date');
+
+        AvailabilityRule::create([
+            'business_id' => $biz->id,
+            'day_of_week' => $dow,
+            'start_time' => '09:00',
+            'end_time' => '11:00',
+            'is_blackout' => true,
+        ]);
+        $blacked = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(3, $blacked['slots_count'], 'the 09:00 slot falls inside the blackout window');
+        $this->assertStringContainsString('11:00 AM', $blacked['offered_slots'][0]['formatted_window'], '11:00 is the exclusive end of the blackout and survives it');
+
+        AvailabilityRule::create([
+            'business_id' => $biz->id,
+            'day_of_week' => $dow,
+            'start_time' => '14:00',
+            'end_time' => '16:00',
+            'is_blackout' => false,
+        ]);
+        $notBlackout = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(3, $notBlackout['slots_count'], 'an is_blackout=false row is not a blackout and subtracts nothing');
     }
 
     /**
