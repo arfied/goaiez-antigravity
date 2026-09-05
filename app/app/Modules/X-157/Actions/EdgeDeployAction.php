@@ -39,6 +39,22 @@ final class EdgeDeployAction
                 ];
             }
 
+            // A deploy is a page deploy (pageId, commitId and businessName all given) or a
+            // zone deploy (none of them). A partial set means a caller lost one of the three
+            // on the way — ModuleServiceProvider:70 sources businessName from
+            // Business::…->value('name'), which is null when that row is not visible — and it
+            // would publish four of the seven required elements under a `deployed` row
+            // (R245, 2026-09-05). Refuse it: the transaction rolls the row back and the
+            // listener's catch keeps the page published.
+            $pageArgs = array_filter(
+                [$pageId, $commitId, $businessName],
+                static fn ($arg): bool => $arg !== null
+            );
+
+            if ($pageArgs !== [] && count($pageArgs) !== 3) {
+                throw new \RuntimeException('a page deploy needs pageId, commitId and businessName together; got '.count($pageArgs).' of 3');
+            }
+
             $deployHash = 'deploy_'.Str::random(16);
 
             $deployment = Deployment::create([
