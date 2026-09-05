@@ -448,12 +448,16 @@ final class TwelveJourneysTest extends TestCase
 
     private function drainQueueOnce(): void
     {
-        $this->artisan('queue:work --once --stop-when-empty');
+        if ($job = app('queue')->pop()) {
+            $job->fire();
+        }
     }
 
     private function drainQueue(): void
     {
-        $this->artisan('queue:work --stop-when-empty');
+        while ($job = app('queue')->pop()) {
+            $job->fire();
+        }
     }
 
     private function pendingStepsFor(array $person): int
