@@ -15,6 +15,5 @@ class PageVersion extends Model
     protected $casts = [
         'content_blocks' => 'array',
         'pixel_installed' => 'boolean',
-        'ssl_installed' => 'boolean',
     ];
 }
