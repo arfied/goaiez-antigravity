@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T01:49:22",
+ "updated": "2026-09-05T02:02:08",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1419,6 +1419,18 @@
    "module": "X-157",
    "chose": "The route that serves a published site establishes its tenant through Tenancy::set(), because Tenancy::applyToDatabase() is documented in its own file as the only writer of app.business_id and this route was the only line in the application contradicting it; writing the database variable alone left every request that serves a site with the database scoped and Tenancy::id() null, so anything reached from that route calling idOrFail() threw on a request the database served. Rejected: leave the set_config and add Context::addHidden beside it \u2014 refused, that is two writers doing what one method exists to do, and the second copy drifts the day Tenancy changes. Rejected: add Tenancy::forget() after the response \u2014 refused for this wave; the docblock's unconditional-set invariant already covers the reuse case, and it is a separate claim needing its own test.",
    "at": "2026-09-05T01:49:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "Publishing a page deploys it \u2014 X-157 listens for X-103's SitePublished and runs EdgeDeployAction against the business's most recently provisioned zone with valid SSL, because until now nothing under app/app/ called that action at all: a tenant could publish, get is_published true and a PageVersion written, and never have an artifact this platform could serve, since the Deployment row the route reads was only ever created by the test suite. A business with no valid zone publishes and deploys nothing, because a connected domain is a separate onboarding step and a page must not fail to publish for want of one. Rejected: calling EdgeDeployAction from inside SiteEngine::publish() \u2014 refused, publishing is X-103's door and it must not learn what an edge zone is; the event already carries the four values the deploy needs. Rejected: deploying to every zone the business has \u2014 refused, a page has one address, which is the decision recorded on 2026-09-05 for the canonical and the schema url, and two domains for one commit reopens it from the other end.",
+   "at": "2026-09-05T02:02:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "Publishing a page deploys it \u2014 X-157 listens for X-103's `SitePublished` and\nruns `EdgeDeployAction` against the business's most recently provisioned zone\nwith valid SSL, because until now nothing under `app/app/` called that action\nat all: a tenant could publish, get `is_published` true and a `PageVersion`\nwritten, and never have an artifact this platform could serve, since the\n`Deployment` row the route reads was only ever created by the test suite. A\nbusiness with no valid zone publishes and deploys nothing, because a connected\ndomain is a separate onboarding step and a page must not fail to publish for\nwant of one. Rejected: calling `EdgeDeployAction` from inside\n`SiteEngine::publish()` \u2014 refused, publishing is X-103's door and it must not\nlearn what an edge zone is; the event already carries the four values the\ndeploy needs. Rejected: deploying to every zone the business has \u2014 refused, a\npage has one address, which is the decision recorded on 2026-09-05 for the\ncanonical and the schema url, and two domains for one commit reopens it from\nthe other end.",
+   "at": "2026-09-05T02:02:08",
    "ruling": "R245"
   }
  ]
