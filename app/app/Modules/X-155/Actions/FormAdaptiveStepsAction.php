@@ -44,7 +44,25 @@ final class FormAdaptiveStepsAction
                 $given = $answers[$field] ?? null;
                 $allowed = is_array($accepted) ? $accepted : [$accepted];
 
-                if (! in_array($given, $allowed, true)) {
+                $match = false;
+
+                foreach ($allowed as $candidate) {
+                    if ($candidate === $given) {
+                        $match = true;
+
+                        break;
+                    }
+
+                    $comparable = fn ($v) => is_int($v) || is_float($v) || is_string($v);
+
+                    if ($comparable($candidate) && $comparable($given) && (string) $candidate === (string) $given) {
+                        $match = true;
+
+                        break;
+                    }
+                }
+
+                if (! $match) {
                     $shown = false;
 
                     break;
