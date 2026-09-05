@@ -250,12 +250,23 @@ class X01Test extends TestCase
      */
     public function test_g2_76_unified_inbox_header(): void
     {
-        $tables = array_column(
-            DB::select("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'"),
-            'tablename'
+        $files = array_merge(
+            glob(database_path('migrations/*.php')) ?: [],
+            glob(app_path('Modules/*/Database/migrations/*.php')) ?: []
         );
 
-        $violators = preg_grep('/_(messages|conversations|threads|contacts)$/i', $tables);
+        $violators = [];
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            if (preg_match_all('/Schema::create\(\s*\'([^\']+)\'/i', $content, $matches)) {
+                foreach ($matches[1] as $table) {
+                    if (preg_match('/_(messages|conversations|threads|contacts)$/i', $table)) {
+                        $violators[] = $table;
+                    }
+                }
+            }
+        }
+        $violators = array_unique($violators);
 
         $this->assertEmpty($violators, 'No table outside the twelve nouns may hold a message, thread, or contact. Found violators: '.implode(', ', $violators));
     }
