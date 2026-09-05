@@ -872,4 +872,62 @@ class X155Test extends TestCase
         $this->assertEquals('Visitor', $visitor->first_name, 'a first submission with no name must still record the visitor placeholder');
         $this->assertNull($visitor->email);
     }
+    public function test_a_spam_submission_never_rewrites_a_known_contact(): void
+    {
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Spam Guard Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'email' => 'alice@example.com',
+                'phone' => '+15551110001',
+            ]
+        );
+
+        $spam = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bot Spammer',
+                'email' => 'bot@spam.ru',
+                'phone' => '+15551110001',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $this->assertEquals('rejected', $spam['status']);
+        $this->assertEquals('honeypot_triggered', $spam['reason']);
+
+        $alice = Person::where('business_id', $biz->id)->where('phone', '+15551110001')->firstOrFail();
+        $this->assertEquals('Alice', $alice->first_name, 'a spam submission rewrote a known contact with the bot payload');
+        $this->assertEquals('alice@example.com', $alice->email);
+        $this->assertEquals($alice->id, FormSubmission::find($spam['submission_id'])->person_id, 'a spam submission must still reference the contact it matched');
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15551110001')->count());
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15551110002',
+                'issue_description' => 'Help me',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $unknown = Person::where('business_id', $biz->id)->where('phone', '+15551110002')->firstOrFail();
+        $this->assertEquals('Visitor', $unknown->first_name, 'a spam submission from an unknown number must still record the visitor placeholder');
+    }
 }
