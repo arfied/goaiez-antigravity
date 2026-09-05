@@ -55,6 +55,47 @@ git log --oneline -5 | sed 's/^/  /'
 git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
   | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
 
+bar "1b. state ledger not truncated  (BUILD-STATE.json vs its parents)"
+# ⛔ TICK 151 / OWNER 66. A merge resolution staged BUILD-STATE.json at 218 lines where
+# HEAD had 1524 and MERGE_HEAD 1411 — twelve of sixteen top-level keys gone, `modules`,
+# `stages`, `waves`, `journeys` and `runtime_build` among them. NOTHING here caught it:
+# the file stayed valid JSON, `grep -rn '<<<<<<<'` was empty, `php -l` does not apply,
+# and §1 reported it only as "1 uncommitted path". One `git commit` — the supervisor's,
+# the one merge commit made without `-- <paths>` — would have written the loss into
+# history. The honest test is the KEY SET: a ledger may grow, and it may keep either
+# side's rows, but its top-level key set is never a proper subset of a parent's.
+bs_keys() {  # $1 = git ref, or WT for the working tree
+  if [ "$1" = "WT" ]; then
+    python3 -c "import json,sys;print(' '.join(sorted(json.load(open('$ROOT/.agents/state/BUILD-STATE.json')))))" 2>/dev/null
+  else
+    git show "$1:.agents/state/BUILD-STATE.json" 2>/dev/null \
+      | python3 -c "import json,sys;print(' '.join(sorted(json.load(sys.stdin))))" 2>/dev/null
+  fi
+}
+bs_now=$(bs_keys WT)
+if [ -z "$bs_now" ]; then
+  echo "  ⛔ .agents/state/BUILD-STATE.json is missing or not parseable JSON"
+  fail=1
+else
+  echo "  working tree: $(printf '%s' "$bs_now" | wc -w) keys, $(wc -l < "$ROOT/.agents/state/BUILD-STATE.json") lines"
+  for parent in HEAD MERGE_HEAD; do
+    git rev-parse -q --verify "$parent" >/dev/null 2>&1 || continue
+    bs_par=$(bs_keys "$parent")
+    [ -n "$bs_par" ] || continue
+    missing=""
+    for k in $bs_par; do
+      case " $bs_now " in *" $k "*) ;; *) missing="$missing $k";; esac
+    done
+    if [ -n "$missing" ]; then
+      echo "  ⛔ keys present in $parent and LOST here:$missing"
+      echo "     rebuild from both parents — never hand-write it; state.py owns this file"
+      fail=1
+    else
+      echo "  ✓ every $parent key survives ($(printf '%s' "$bs_par" | wc -w) keys)"
+    fi
+  done
+fi
+
 bar "2. forbidden paths touched  (uncommitted + last commit)"
 touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
 sup_edits=$(git diff --name-only HEAD -- .agents/supervisor CLAUDE.md bin/supervise.sh 2>/dev/null)

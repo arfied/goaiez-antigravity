@@ -29,7 +29,7 @@
       "Bash(php -l:*)",
       "Bash(./vendor/bin/phpstan:*)",
       "Bash(./vendor/bin/pint --test:*)",
-      "Bash(git push origin:*)",
+"Bash(git push origin:*)",
       "Bash(git commit:*)",
       "Bash(git add:*)",
       "Bash(ps -p:*)",
