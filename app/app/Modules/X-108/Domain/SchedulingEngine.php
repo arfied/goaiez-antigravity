@@ -27,22 +27,15 @@ final class SchedulingEngine
         // Standard potential slots: 09:00, 11:00, 14:00, 16:00
         $allSlotHours = [9, 11, 14, 16];
 
-        // Check booked appointments and active slot locks
-        $bookedHours = Appointment::where('business_id', $businessId)
+        $bookedIntervals = Appointment::where('business_id', $businessId)
             ->whereDate('start_time', $baseDate->toDateString())
             ->where('status', '!=', 'cancelled')
-            ->pluck('start_time')
-            ->map(fn ($t) => Carbon::parse($t)->hour)
-            ->toArray();
+            ->get(['start_time', 'end_time']);
 
-        $lockedHours = SlotLock::where('business_id', $businessId)
+        $lockedIntervals = SlotLock::where('business_id', $businessId)
             ->whereDate('slot_start', $baseDate->toDateString())
             ->where('expires_at', '>', now())
-            ->pluck('slot_start')
-            ->map(fn ($t) => Carbon::parse($t)->hour)
-            ->toArray();
-
-        $unavailable = array_merge($bookedHours, $lockedHours);
+            ->get(['slot_start', 'slot_end']);
 
         $blackouts = AvailabilityRule::where('business_id', $businessId)
             ->where('is_blackout', true)
@@ -51,11 +44,31 @@ final class SchedulingEngine
 
         $availableSlots = [];
         foreach ($allSlotHours as $hour) {
-            if (in_array($hour, $unavailable, true) || $this->isBlackedOut($hour, $blackouts)) {
-                continue;
-            }
             $start = $baseDate->copy()->setHour($hour)->setMinute(0);
             $end = $start->copy()->addHours(2);
+
+            $overlaps = false;
+            foreach ($bookedIntervals as $booked) {
+                $rowStart = Carbon::parse($booked->start_time);
+                $rowEnd = Carbon::parse($booked->end_time);
+                if ($start < $rowEnd && $rowStart < $end) {
+                    $overlaps = true;
+                    break;
+                }
+            }
+            foreach ($lockedIntervals as $locked) {
+                $rowStart = Carbon::parse($locked->slot_start);
+                $rowEnd = Carbon::parse($locked->slot_end);
+                if ($start < $rowEnd && $rowStart < $end) {
+                    $overlaps = true;
+                    break;
+                }
+            }
+
+            if ($overlaps || $this->isBlackedOut($hour, $blackouts)) {
+                continue;
+            }
+
             $availableSlots[] = [
                 'start_time' => $start->toIso8601String(),
                 'end_time' => $end->toIso8601String(),

@@ -249,8 +249,24 @@ class X108Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Confirm Win Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $avail = $this->avail->handle($biz->id, now()->addDays(1)->format('Y-m-d'));
-        $this->assertIsArray($avail['offered_slots']);
+        $date = now()->addDays(2)->format('Y-m-d');
+        $avail = $this->avail->handle($biz->id, $date, true);
+        $this->assertSame(4, $avail['slots_count']);
+
+        \App\Modules\X108\Models\Appointment::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Consultation',
+            'start_time' => Carbon::parse($date . ' 10:00:00'),
+            'end_time' => Carbon::parse($date . ' 11:00:00'),
+            'status' => 'booked',
+        ]);
+
+        $avail2 = $this->avail->handle($biz->id, $date, true);
+        $this->assertSame(3, $avail2['slots_count']);
+        
+        $windows = array_column($avail2['offered_slots'], 'formatted_window');
+        $this->assertNotContains('9:00 AM - 11:00 AM', $windows);
+        $this->assertContains('11:00 AM - 1:00 PM', $windows);
     }
 
     /**
@@ -342,6 +358,35 @@ class X108Test extends TestCase
      */
     public function test_g15_32_assertion(): void
     {
-        $this->assertTrue(true);
+        $tables = ['resources', 'availability_rules', 'slot_locks', 'appointments', 'waitlists'];
+        $needles = ['pay', 'wage', 'salary', 'rate', 'compensation', 'earning', 'payout'];
+
+        // Negative assertion: X-108 scheduling tables have no pay/compensation columns
+        foreach ($tables as $table) {
+            $columns = \Illuminate\Support\Facades\Schema::getColumnListing($table);
+            foreach ($columns as $column) {
+                foreach ($needles as $needle) {
+                    $this->assertFalse(
+                        stripos($column, $needle) !== false,
+                        "Table '{$table}' contains forbidden pay column: '{$column}' (matched '{$needle}')"
+                    );
+                }
+            }
+        }
+
+        // Positive control: affiliates table has an earning/rate column
+        $found = false;
+        $affiliatesColumns = \Illuminate\Support\Facades\Schema::getColumnListing('affiliates');
+        foreach ($affiliatesColumns as $column) {
+            foreach ($needles as $needle) {
+                if (stripos($column, $needle) !== false) {
+                    $found = true;
+                    $this->assertTrue(true, "Found money column '{$column}' in affiliates");
+                    break 2;
+                }
+            }
+        }
+        
+        $this->assertTrue($found, "Failed to find any money column in affiliates for positive control");
     }
 }
