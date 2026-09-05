@@ -21,9 +21,11 @@ final class EdgeRollbackAction
             'rollback_reason' => $reason,
         ]);
 
+        // (R245, 2026-09-05) a rollback restores only the previous deploy of the same page.
         if ($wasLive) {
             $predecessor = Deployment::where('business_id', $businessId)
                 ->where('edge_zone_id', $deployment->edge_zone_id)
+                ->where('page_id', $deployment->page_id)
                 ->where('status', 'superseded')
                 ->orderByDesc('id')
                 ->first();
