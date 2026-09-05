@@ -14,7 +14,9 @@ use App\Modules\X123\Models\EventLog;
 use App\Modules\X123\Models\EventSubscription;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Horizon\Horizon;
 use Tests\TestCase;
 
 class X123Test extends TestCase
@@ -237,7 +239,21 @@ class X123Test extends TestCase
      */
     public function test_g7_26_redis_horizon_vocabulary(): void
     {
-        $this->assertTrue(true);
+        $this->assertNotContains(config('queue.default'), ['sqs', 'beanstalkd']);
+
+        $drivers = collect(config('queue.connections'))->pluck('driver')->all();
+        $this->assertNotContains('rabbitmq', $drivers);
+
+        $this->assertTrue(class_exists(Horizon::class));
+
+        Http::fake();
+        $biz = self::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $action = new EventPublishAction;
+        $action->handle($biz->id, 'test.event', ['key' => 'value']);
+
+        Http::assertNothingSent();
     }
 
     /**

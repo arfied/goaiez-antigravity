@@ -18,10 +18,12 @@ use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
+use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X01Test extends TestCase
@@ -250,7 +252,25 @@ class X01Test extends TestCase
      */
     public function test_g2_76_unified_inbox_header(): void
     {
-        $this->assertTrue(true);
+        $files = array_merge(
+            glob(database_path('migrations/*.php')) ?: [],
+            glob(app_path('Modules/*/Database/migrations/*.php')) ?: []
+        );
+
+        $violators = [];
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            if (preg_match_all('/Schema::create\(\s*\'([^\']+)\'/i', $content, $matches)) {
+                foreach ($matches[1] as $table) {
+                    if (preg_match('/_(messages|conversations|threads|contacts)$/i', $table)) {
+                        $violators[] = $table;
+                    }
+                }
+            }
+        }
+        $violators = array_unique($violators);
+
+        $this->assertEmpty($violators, 'No table outside the twelve nouns may hold a message, thread, or contact. Found violators: '.implode(', ', $violators));
     }
 
     /**
@@ -288,7 +308,34 @@ class X01Test extends TestCase
      */
     public function test_g11_23_omnichannel_spec(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Omni Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $smsRes = $this->manager->ingestMessage($biz->id, 'sms', '+15125550177', 'Omni Person', 'sms msg');
+
+        $person = Person::where('business_id', $biz->id)->find($smsRes['person_id']);
+        $person->update(['email' => 'omni@example.com']);
+
+        $voiceRes = $this->manager->ingestMessage($biz->id, 'voice', '+15125550177', 'Omni Person', 'voice msg');
+        $chatRes = $this->manager->ingestMessage($biz->id, 'chat', '+15125550177', 'Omni Person', 'chat msg');
+        $emailRes = $this->manager->ingestMessage($biz->id, 'email', 'omni@example.com', 'Omni Person', 'email msg');
+
+        $this->assertEquals($smsRes['person_id'], $voiceRes['person_id'], 'voice channel broken');
+        $this->assertEquals($smsRes['person_id'], $chatRes['person_id'], 'chat channel broken');
+        $this->assertEquals($smsRes['person_id'], $emailRes['person_id'], 'email channel broken');
+
+        $this->assertEquals($smsRes['conversation_id'], $voiceRes['conversation_id']);
+        $this->assertEquals($smsRes['conversation_id'], $chatRes['conversation_id']);
+        $this->assertEquals($smsRes['conversation_id'], $emailRes['conversation_id']);
+
+        $count = Conversation::where('business_id', $biz->id)->where('person_id', $smsRes['person_id'])->count();
+        $this->assertEquals(1, $count);
+
+        $conv = Conversation::find($smsRes['conversation_id']);
+        $this->assertInstanceOf(Conversation::class, $conv);
+
+        // The channel is frozen at the first message's channel ('sms')
+        $this->assertEquals('sms', $conv->channel);
     }
 
     /**
@@ -296,7 +343,29 @@ class X01Test extends TestCase
      */
     public function test_g11_40_header_line(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Header Line Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $smsRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550188',
+            senderName: 'Fifth Channel User',
+            body: 'First sms'
+        );
+
+        $waRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550188',
+            senderName: 'Fifth Channel User',
+            body: 'Second whatsapp'
+        );
+
+        $this->assertEquals($smsRes['person_id'], $waRes['person_id']);
+        $this->assertEquals($smsRes['conversation_id'], $waRes['conversation_id'], 'WhatsApp is the header\'s fifth channel and must land in the same timeline');
+        $this->assertEquals(1, Conversation::where('business_id', $biz->id)->where('person_id', $smsRes['person_id'])->count());
+        $this->assertEquals('whatsapp', $waRes['channel']);
     }
 
     /**
@@ -304,7 +373,19 @@ class X01Test extends TestCase
      */
     public function test_g11_41_thread_list_sort(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Sort Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p1 = Person::create(['business_id' => $biz->id, 'first_name' => 'P1']);
+        $p2 = Person::create(['business_id' => $biz->id, 'first_name' => 'P2']);
+        $p3 = Person::create(['business_id' => $biz->id, 'first_name' => 'P3']);
+
+        Livewire::test(CustomersList::class, ['businessId' => $biz->id])
+            ->assertViewHas('persons', function ($persons) use ($p1, $p2, $p3) {
+                $ids = $persons->pluck('id')->toArray();
+
+                return $ids === [$p3->id, $p2->id, $p1->id];
+            });
     }
 
     /**
