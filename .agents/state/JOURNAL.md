@@ -824,3 +824,4 @@
 - `2026-09-05T06:11:10` note: --help
 - `2026-09-05T06:11:18` note: app/app/Modules/X-215/Actions/DocCommentAction.php DocCommentAction::addCommentAndReissue() has no state check, so a comment on a signed or voided document re-issues it with 'status' => 'sent' and silently re-opens a finished contract. deferred module, recorded under ruling 47, not built
 - `2026-09-05T06:11:18` note: app/app/Modules/X-215/Actions/DocRemindAction.php DocRemindAction returns 'reminder_sent' and sends nothing — no mail, no event, no queued job, no column. deferred module, recorded under ruling 47, not built
+- `2026-09-05T07:59:40` (R245) X-202 — a non-terminal approval persists its comment, appended and timestamped; status stays pending and decided_at stays null (R245)
