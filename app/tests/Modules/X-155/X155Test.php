@@ -822,4 +822,54 @@ class X155Test extends TestCase
             ->assertDontSee('NAN')
             ->assertDontSee('%');
     }
+
+    public function test_a_short_form_keeps_the_name_and_email_the_business_already_has(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Short Form Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Short Form',
+            'slug' => 'short',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'email' => 'alice@example.com',
+                'phone' => '+15551234567',
+            ]
+        );
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15551234567',
+                'message' => 'Call me back',
+            ]
+        );
+
+        $alice = Person::where('business_id', $biz->id)->where('phone', '+15551234567')->firstOrFail();
+        $this->assertEquals('Alice', $alice->first_name, 'a phone only submission renamed a known contact to the placeholder');
+        $this->assertEquals('alice@example.com', $alice->email);
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'phone' => '+15550009999',
+                'message' => 'New number',
+            ]
+        );
+
+        $visitor = Person::where('business_id', $biz->id)->where('phone', '+15550009999')->firstOrFail();
+        $this->assertEquals('Visitor', $visitor->first_name, 'a first submission with no name must still record the visitor placeholder');
+        $this->assertNull($visitor->email);
+    }
 }
