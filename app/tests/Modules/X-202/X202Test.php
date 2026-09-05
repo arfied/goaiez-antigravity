@@ -225,7 +225,21 @@ class X202Test extends TestCase
      */
     public function test_g12_09_batch_decision(): void
     {
-        $this->assertTrue(true);
+        Event::fake([ApprovalRaised::class, ApprovalDecided::class, ApprovalExpired::class, ApprovalEscalated::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Batch Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $id1 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 1', ['a' => 1])['approval_item_id'];
+        $id2 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 2', ['a' => 2])['approval_item_id'];
+        $id3 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 3', ['a' => 3])['approval_item_id'];
+        $id4 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 4', ['a' => 4])['approval_item_id'];
+        $id5 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 5', ['a' => 5], 'L1', true)['approval_item_id'];
+
+        $res = $this->engine->batchApprove($biz->id, [$id1, $id2, $id3, $id4, $id5]);
+
+        $this->assertSame(4, $res['approved_count']);
+        $this->assertSame([$id5], $res['skipped_l1_forever_ids']);
+        Event::assertDispatchedTimes(ApprovalDecided::class, 4);
     }
 
     /**
@@ -267,7 +281,22 @@ class X202Test extends TestCase
      */
     public function test_g21_07_no_login_two_buttons(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Token Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $item1 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 1', ['a' => 1]);
+        $item2 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 2', ['a' => 2]);
+        $item3 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 3', ['a' => 3]);
+
+        $tokens = array_unique([$item1['item']->magic_token, $item2['item']->magic_token, $item3['item']->magic_token]);
+        
+        $this->assertCount(3, $tokens);
+        $this->assertSame(32, strlen($item1['item']->magic_token));
+        $this->assertSame(32, strlen($item2['item']->magic_token));
+        $this->assertSame(32, strlen($item3['item']->magic_token));
+
+        $retrieved = ApprovalItem::where('magic_token', $item2['item']->magic_token)->first();
+        $this->assertSame($item2['approval_item_id'], $retrieved->id);
     }
 
     /**
@@ -275,6 +304,14 @@ class X202Test extends TestCase
      */
     public function test_g21_11_approve_deny_without_crm(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'CRM Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $item = $this->enqueueAction->handle($biz->id, 'creative', 'Item', ['a' => 1]);
+        $dec = $this->decideAction->handle($biz->id, $item['approval_item_id'], 'approved', null, null);
+
+        $this->assertSame('approved', $dec['status']);
+        $fresh = ApprovalItem::find($item['approval_item_id']);
+        $this->assertNull($fresh->decided_by_user_id);
     }
 }
