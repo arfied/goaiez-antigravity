@@ -566,6 +566,94 @@ class X157Test extends TestCase
     }
 
     /** (R245) */
+    public function test_a_site_published_with_no_blocks_still_carries_all_seven(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertStringContainsString('chat-widget-container', $html);
+        $this->assertStringContainsString('x110-pixel', $html);
+        $this->assertStringContainsString('form-capture-x155', $html);
+        $this->assertStringContainsString('dni-pool-x137', $html);
+        $this->assertStringContainsString('seo-meta-x176', $html);
+        $this->assertStringContainsString('application/ld+json', $html);
+
+        $zoneRow = Deployment::where('deploy_hash', $deploy['deploy_hash'])->first()->edgeZone;
+        $zoneRow->update(['has_valid_ssl' => false]);
+        $withoutSsl = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $withoutSsl->assertStatus(404);
+        $zoneRow->update(['has_valid_ssl' => true]);
+    }
+
+    /** (R245) */
+    public function test_the_published_route_emits_each_site_law_element_once(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, [
+                ['type' => 'chat'],
+                ['type' => 'form_capture'],
+                ['type' => 'dni'],
+            ]);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+        $html = (string) $response->getContent();
+
+        $this->assertSame(1, substr_count($html, 'chat-widget-container'));
+        $this->assertSame(1, substr_count($html, 'form-capture-x155'));
+        $this->assertSame(1, substr_count($html, 'dni-pool-x137'));
+        $this->assertSame(1, substr_count($html, 'x110-pixel'));
+    }
+
+    /** (R245) */
     public function test_route_deployment_whose_artifact_is_missing_returns_404(): void
     {
         Storage::fake('local');

@@ -139,6 +139,22 @@ class X103Test extends TestCase
         $this->assertTrue($version->pixel_installed);
     }
 
+    /** (R245) */
+    public function test_g9_04_a_published_version_carries_the_three_site_law_flags(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Law Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'law', 'Law', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertTrue($version->chat_installed);
+        $this->assertTrue($version->form_capture_installed);
+        $this->assertTrue($version->dni_installed);
+        $this->assertSame([], $version->content_blocks);
+    }
+
     /**
      * G12-39
      */
