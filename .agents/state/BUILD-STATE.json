@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T07:59:40",
+ "updated": "2026-09-05T08:16:08",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1031,10 +1031,23 @@
    ]
   },
   "X-202": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 9,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-202",
+     "stage": "capability",
+     "why": "G7-09 \u2014 no unopened/viewed signal and no nudge channel exists; approval_items has no opened_at column and grep -rn 'nudge' app/app/Modules/X-202 finds only the capability text",
+     "at": "2026-09-05T08:16:05"
+    },
+    {
+     "module": "X-202",
+     "stage": "capability",
+     "why": "G12-04 \u2014 ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)",
+     "at": "2026-09-05T08:16:08"
+    }
+   ]
   },
   "X-203": {
    "status": "DONE",
@@ -1312,6 +1325,18 @@
    "stage": "capability",
    "why": "no action enrols a person into a campaign",
    "at": "2026-09-04T22:41:56"
+  },
+  {
+   "module": "X-202",
+   "stage": "capability",
+   "why": "G7-09 \u2014 no unopened/viewed signal and no nudge channel exists; approval_items has no opened_at column and grep -rn 'nudge' app/app/Modules/X-202 finds only the capability text",
+   "at": "2026-09-05T08:16:05"
+  },
+  {
+   "module": "X-202",
+   "stage": "capability",
+   "why": "G12-04 \u2014 ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)",
+   "at": "2026-09-05T08:16:08"
   }
  ],
  "decisions": [
@@ -1344,6 +1369,10 @@
   {
    "at": "2026-09-03T09:34:34",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-05T08:17:09",
+   "note": "app/app/Modules/X-209/Domain/X209Engine.php + DeskEngine.php have zero callers; X209Engine's seven methods return hard-coded refusal strings restating the capability text (P-210 closed loop), DeskEngine is an empty class. Recorded under ruling 47, not built."
   }
  ]
 }
