@@ -13,6 +13,10 @@ final class PortalActionHandler
 {
     public function handle(string $token, string $actionType, array $payload): array
     {
+        if ($actionType === 'redline_accepted') {
+            throw new \InvalidArgumentException('REFUSAL (G10-24): a redline is SURFACED with a diff, never accepted');
+        }
+
         $link = PortalLink::where('token', $token)->where('is_active', true)->firstOrFail();
 
         $view = PortalView::create([
