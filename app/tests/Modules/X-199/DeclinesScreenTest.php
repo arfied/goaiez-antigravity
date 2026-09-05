@@ -75,6 +75,6 @@ class DeclinesScreenTest extends TestCase
             ->assertDontSee('350.00')
             ->assertSeeHtml("didn't authorise")
             ->call('sendPayLink', $failed->id)->assertSee('pay.goaiez.com/link/')
-            ->call('sendPayLink', 999999)->assertSee("isn't in this account");
+            ->call('sendPayLink', 999999)->assertSee("isn't in this account")->assertSee('Not recovered')->call('settleUpLater', $failed->id)->assertDontSee('150.00')->assertSee('No declines this week.');
     }
 }
