@@ -17,8 +17,8 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Commits only its own files** — `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh` — as `chore(supervisor): …`, with named paths | Commits `app/**` and `.agents/state/**`, per module |
-| **Pushes only a sha it has gated and recorded in `REVIEWS.md`**, by explicit ref: `git push origin <sha>:track/money`. Never a branch head, never `--force`, never a sha under a live `BLOCK` | Pushes when `BRIEF.md`'s `push:` line names the range |
+| **Commits only its own files** — `CLAUDE.md`, `bin/supervise.sh`, `.claude/settings.json`, `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh` — as `chore(supervisor): …`, with named paths | Commits `app/**` and `.agents/state/**`, per module |
+| **Runs ALL git for this lane, the push included** (OWNER.md 14:0x). Pushes only a sha it has gated and recorded in `REVIEWS.md`, by explicit ref: `git push origin <sha>:track/money`. Never a branch head, never `--force`, never a sha under a live `BLOCK` | **Never pushes.** Its guard stays closed; `BRIEF.md`'s `push:` line is always `NO` and the launcher hard-closes `GOAIEZ_PUSH_OK` |
 | **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, `git merge\|switch\|checkout\|restore\|reset\|stash` (all denied) | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files, commit `.agents/supervisor`/`CLAUDE.md`/`.claude`/`bin` |
 
 `.claude/settings.json` enforces your column. Since 2026-09-05 08:0x (owner,
@@ -27,7 +27,9 @@ commit `0634e31f`) it **allows** the supervisor `git add`, `git commit` and
 check needs a command the deny list blocks, that is the signal it is the coder's
 job — brief it. **Merge step 0 (committing the supervisor's own notes) is
 therefore the supervisor's, not the coder's** — the coder guard refuses those
-paths.
+paths. Since 14:0x (ruling 26) **the push is the supervisor's too**, and the
+owner runs no git by hand: a gated tip that no tick pushes stays unmerged
+forever, so the push is a step of the review, not of the next brief.
 
 ## The mailbox — `.agents/supervisor/`
 
@@ -450,3 +452,23 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     unchanged: integration is money → main, from the pushed tip, with the
     five module-owner resolutions in `OWNER.md`'s 20:0x section. The go/no-go
     on the new two-party path is **OWNER ACTION 21**, not a tick's to take.
+26. **The supervisor runs ALL git for this lane, the push included; the coder
+    never pushes (owner via Track 1, `OWNER.md` 14:0x; applied by the 12:1x
+    tick).** The owner runs no git by hand from now on. The supervisor commits
+    its own five files — `CLAUDE.md`, `bin/supervise.sh`,
+    `.claude/settings.json`, `.agents/rules/10-supervisor.md`,
+    `.agents/supervisor/launch-coder.sh` — as `chore(supervisor): …` with named
+    paths, and **pushes every tip it has gated and written into `REVIEWS.md`**
+    by explicit ref (`git push origin <sha>:track/money`), never a branch head,
+    never `--force`, never a sha under a live `BLOCK`. This supersedes ruling
+    24's division only on the push: the coder's `push:` gate is closed
+    permanently. Concretely — (a) `BRIEF.md`'s `push:` line is now always
+    `NO — the supervisor pushes the gated tip (ruling 26)`, and it stops being a
+    coder step 0; (b) `launch-coder.sh` hard-sets `GOAIEZ_PUSH_OK=0` rather than
+    deriving it from `BRIEF.md`, so a stale `YES` cannot reopen the coder's
+    gate; (c) **the push happens in the tick that writes the PASS**, immediately
+    after the verdict block is appended — a gated tip nobody pushes never
+    reaches Track 1, and there is no human left to catch it. If a tick finds
+    `origin/track/money` behind a sha already recorded PASS in `REVIEWS.md`, it
+    pushes that sha before doing anything else, even with a coder alive: a push
+    stages nothing and touches no file in the tree.

@@ -29,13 +29,15 @@ if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
 fi
 [ -s .agents/supervisor/KICKOFF.md ] || { echo "REFUSED: KICKOFF.md missing or empty"; exit 1; }
 
-# Push gate (added 2026-09-04 14:2x, MONEY-17c). coder-bin/git refuses `git push`
-# unless GOAIEZ_PUSH_OK=1, and says "launcher sets" it — but nothing did, so a
-# briefed `push: YES — <from>..<to>` was refused (run 20). Only a BRIEF.md whose
-# `push:` line starts with YES opens the gate; anything else leaves it shut.
+# Push gate. Added 2026-09-04 14:2x (MONEY-17c) to open the coder's push on a
+# briefed `push: YES`; CLOSED PERMANENTLY 2026-09-05 14:0x (owner ruling 26) —
+# the supervisor runs all git for this lane, the coder never pushes. The gate is
+# no longer derived from BRIEF.md, so a stale `push: YES` cannot reopen it.
 PUSH_OK=0
-grep -qE '^push: *\**YES' .agents/supervisor/BRIEF.md 2>/dev/null && PUSH_OK=1
-echo "push gate: $(grep -m1 -E '^push:' .agents/supervisor/BRIEF.md 2>/dev/null || echo 'no push: line') -> GOAIEZ_PUSH_OK=$PUSH_OK"
+echo "push gate: CLOSED — ruling 26, the supervisor pushes the gated tip -> GOAIEZ_PUSH_OK=$PUSH_OK"
+if grep -qE '^push: *\**YES' .agents/supervisor/BRIEF.md 2>/dev/null; then
+  echo "  note: BRIEF.md still carries a 'push: YES' line. Stale, ignored."
+fi
 
 
 # Snapshot the supervisor's uncommitted files before every dispatch (a coder
