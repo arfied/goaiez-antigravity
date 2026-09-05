@@ -11,10 +11,12 @@ use App\Modules\X108\Actions\WaitlistJoinAction;
 use App\Modules\X108\Domain\SchedulingEngine;
 use App\Modules\X108\Events\AppointmentBooked;
 use App\Modules\X108\Events\SlotLocked;
+use App\Modules\X108\Models\Appointment;
 use App\Modules\X108\Models\AvailabilityRule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X108Test extends TestCase
@@ -253,17 +255,17 @@ class X108Test extends TestCase
         $avail = $this->avail->handle($biz->id, $date, true);
         $this->assertSame(4, $avail['slots_count']);
 
-        \App\Modules\X108\Models\Appointment::create([
+        Appointment::create([
             'business_id' => $biz->id,
             'service_name' => 'Consultation',
-            'start_time' => Carbon::parse($date . ' 10:00:00'),
-            'end_time' => Carbon::parse($date . ' 11:00:00'),
+            'start_time' => Carbon::parse($date.' 10:00:00'),
+            'end_time' => Carbon::parse($date.' 11:00:00'),
             'status' => 'booked',
         ]);
 
         $avail2 = $this->avail->handle($biz->id, $date, true);
         $this->assertSame(3, $avail2['slots_count']);
-        
+
         $windows = array_column($avail2['offered_slots'], 'formatted_window');
         $this->assertNotContains('9:00 AM - 11:00 AM', $windows);
         $this->assertContains('11:00 AM - 1:00 PM', $windows);
@@ -363,7 +365,7 @@ class X108Test extends TestCase
 
         // Negative assertion: X-108 scheduling tables have no pay/compensation columns
         foreach ($tables as $table) {
-            $columns = \Illuminate\Support\Facades\Schema::getColumnListing($table);
+            $columns = Schema::getColumnListing($table);
             foreach ($columns as $column) {
                 foreach ($needles as $needle) {
                     $this->assertFalse(
@@ -376,7 +378,7 @@ class X108Test extends TestCase
 
         // Positive control: affiliates table has an earning/rate column
         $found = false;
-        $affiliatesColumns = \Illuminate\Support\Facades\Schema::getColumnListing('affiliates');
+        $affiliatesColumns = Schema::getColumnListing('affiliates');
         foreach ($affiliatesColumns as $column) {
             foreach ($needles as $needle) {
                 if (stripos($column, $needle) !== false) {
@@ -386,7 +388,7 @@ class X108Test extends TestCase
                 }
             }
         }
-        
-        $this->assertTrue($found, "Failed to find any money column in affiliates for positive control");
+
+        $this->assertTrue($found, 'Failed to find any money column in affiliates for positive control');
     }
 }
