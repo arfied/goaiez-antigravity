@@ -389,7 +389,7 @@ final class PriceBook
     }
 
     /**
-     * @return Builder<PriceListItem>
+     * @return Builder<PriceBookItem>
      */
     private function query(): Builder
     {
