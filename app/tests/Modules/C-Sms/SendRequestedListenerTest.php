@@ -9,14 +9,20 @@ use App\Enums\CaptureSurface;
 use App\Enums\ConsentType;
 use App\Enums\CreditKind;
 use App\Enums\CreditProduct;
+use App\Enums\OptOutScope;
 use App\Enums\OutreachChannel;
+use App\Enums\SuppressionReason;
 use App\Models\Customer;
+use App\Models\Location;
+use App\Models\OptOut;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X204\Models\Suppression;
 use App\Services\Billing\CreditLedger;
+use App\Services\Config\DefaultsRegistry;
 use App\Services\Consent\ConsentCapture;
 use App\Services\Consent\ConsentService;
 use App\Support\HashedIp;
+use App\Support\Identifier;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -31,16 +37,30 @@ final class SendRequestedListenerTest extends TestCase
     {
         parent::setUp();
         Http::allowStrayRequests();
+        \loadEveryRequiredRegister();
     }
 
     #[Test]
     public function it_sends_sms_and_writes_outreach_row_on_consent(): void
     {
         $business = self::provisionTenant();
-        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, 100, 'test');
+
+        $location = Location::forceCreate([
+            'business_id' => $business->id,
+            'name' => 'HQ',
+            'timezone' => 'America/Chicago',
+        ]);
+
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
 
         $customer = Customer::forceCreate([
             'business_id' => $business->id,
+            'location_id' => $location->id,
+            'region_code' => 'TX',
             'phone' => '+15551234567',
             'name' => 'John',
         ]);
@@ -58,6 +78,16 @@ final class SendRequestedListenerTest extends TestCase
             ]
         );
         app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'test');
+
+        OptOut::forceCreate([
+            'scope' => OptOutScope::Tenant,
+            'business_id' => $business->id,
+            'identifier_type' => OutreachChannel::Sms,
+            'value_hash' => Identifier::hash('+15550009999', OutreachChannel::Sms),
+            'reason_class' => SuppressionReason::Stop,
+            'lift_generation' => 0,
+            'created_at' => now(),
+        ]);
 
         Event::dispatch(new SendRequested(
             businessId: $business->id,
@@ -78,7 +108,7 @@ final class SendRequestedListenerTest extends TestCase
     public function it_stops_and_records_refusal_for_stop_on_file(): void
     {
         $business = self::provisionTenant();
-        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, 100, 'test');
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 100, 'test');
 
         $customer = Customer::forceCreate([
             'business_id' => $business->id,
@@ -119,6 +149,10 @@ final class SendRequestedListenerTest extends TestCase
 
         $this->assertDatabaseMissing('outreach_messages', [
             'business_id' => $business->id,
+        ]);
+        $this->assertDatabaseHas('send_permits', [
+            'business_id' => $business->id,
+            'permit_status' => 'refused',
         ]);
     }
 }

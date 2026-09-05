@@ -8,8 +8,10 @@ use App\Contracts\MessageSender;
 use App\Enums\OutreachChannel;
 use App\Enums\OutreachPurpose;
 use App\Enums\ReviewInviteKind;
+use App\Enums\SendRefusalReason;
 use App\Models\Customer;
 use App\Modules\CSms\Domain\SmsComposer;
+use App\Modules\CSms\Exceptions\ConsentDisagreementException;
 use App\Services\Consent\ConsentService;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
@@ -52,9 +54,32 @@ final class SmsSendAction
 
         if (! $decision->isGranted()) {
             if ($permitId > 0) {
-                $reasonName = $decision->reason->name ?? 'Unknown';
-                throw new \Exception('UNRESOLVED C-Sms design "two consent engines disagree: X-204 granted, legacy refused ('.$reasonName.')"');
+                $isInfrastructure = match ($decision->reason) {
+                    SendRefusalReason::RegistryNotLoaded,
+                    SendRefusalReason::SuppressionUnreadable,
+                    SendRefusalReason::TenantPaused,
+                    SendRefusalReason::GlobalHalt,
+                    SendRefusalReason::InsufficientCredit,
+                    SendRefusalReason::ChannelUnavailable => true,
+                    default => false,
+                };
+
+                if (! $isInfrastructure) {
+                    $reasonName = $decision->reason->name ?? 'Unknown';
+                    throw new ConsentDisagreementException('Two consent engines disagree: X-204 granted, legacy refused ('.$reasonName.')');
+                }
             }
+
+            DB::table('outreach_messages')->insert([
+                'business_id' => $businessId,
+                'recipient_phone' => $recipientPhone,
+                'channel' => 'sms',
+                'status' => 'refused',
+                'refusal_reason' => $decision->reason->value ?? $decision->reason->name,
+                'purpose' => $purposeEnum->value,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
             return [
                 'status' => 'refused',

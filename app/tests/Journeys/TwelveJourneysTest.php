@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Journeys;
 
 use App\Enums\CreditProduct;
+use App\Exceptions\TrialGrantRefused;
 use App\Models\Business;
 use App\Services\Billing\CreditLedger;
 use App\Services\Billing\TrialEligibility;
-use App\Services\Billing\TrialGrantRefused;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
@@ -83,7 +83,7 @@ final class TwelveJourneysTest extends TestCase
     {
         $this->assertQueueIsNotSync();
 
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
         $started = microtime(true);
 
         // The caller hangs up. Nothing about this is synchronous — the webhook
@@ -161,7 +161,7 @@ final class TwelveJourneysTest extends TestCase
     #[Test]
     public function a_quote_comes_from_the_pricebook_or_does_not_come_at_all(): void
     {
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
 
         // Empty pricebook → the agent must refuse, with a code.
         $refusal = $this->askAgent($tenant, 'how much to unblock a drain?');
@@ -190,7 +190,7 @@ final class TwelveJourneysTest extends TestCase
     {
         $this->assertQueueIsNotSync();
 
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
         $person = $this->personWithPendingSteps($tenant, count: 5);
 
         $this->receiveInbound($tenant, from: $person['phone'], body: 'STOP');
@@ -220,7 +220,7 @@ final class TwelveJourneysTest extends TestCase
     {
         $this->assertQueueIsNotSync();
 
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
         $before = $this->totalOutbound($tenant);
 
         // ⛔⛔ P-203. Historical jobs look exactly like completed jobs, and a
@@ -250,7 +250,7 @@ final class TwelveJourneysTest extends TestCase
     #[Test]
     public function cancel_is_one_tap_with_nothing_in_between(): void
     {
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
 
         $flow = $this->walkCancelFlow($tenant);
 
@@ -350,7 +350,7 @@ final class TwelveJourneysTest extends TestCase
     #[Test]
     public function an_invoice_reaches_a_real_charge_id(): void
     {
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
         $invoice = $this->issueInvoice($tenant, amountMinor: 12_500);
 
         $charge = $this->payInvoice($invoice);
@@ -400,7 +400,7 @@ final class TwelveJourneysTest extends TestCase
     #[Test]
     public function a_published_site_carries_all_seven(): void
     {
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
         $site = $this->publishSite($tenant);
 
         // ⛔ The plan: "every site ships with pixel · identity graph · chat AI ·
@@ -420,7 +420,7 @@ final class TwelveJourneysTest extends TestCase
     {
         $this->assertQueueIsNotSync();
 
-        $tenant = $this->fundedTenant();
+        $tenant = $this->tenantWithLiveNumber();
         $invoice = $this->issueInvoice($tenant, amountMinor: 40_000);
         $this->makeOverdue($invoice);
         $this->drainQueue();
