@@ -790,3 +790,11 @@
 - `2026-09-05T11:22:12` UNRESOLVED capability C-Sms - TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant
 - `2026-09-05T13:13:29` (R245) X-163 — X-163 owns the price_book_items table; PriceBook is a reader, not the sole owner.
 - `2026-09-05T14:41:06` note: re-serialise BUILD-STATE.json at indent=1
+- `2026-09-05T14:44:01` stage integrity = 0
+- `2026-09-05T14:44:01` stage boundary = 6
+- `2026-09-05T14:44:01` stage contract = 87
+- `2026-09-05T14:44:01` stage citation = 94
+- `2026-09-05T14:44:01` stage schema = 15
+- `2026-09-05T14:44:01` stage capability = 399
+- `2026-09-05T14:44:01` stage anchor = 138
+- `2026-09-05T14:44:01` stage journey = 6

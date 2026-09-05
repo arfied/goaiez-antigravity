@@ -15,7 +15,7 @@
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 3,
+   "violations": 6,
    "fails": "COMMIT"
   },
   "contract": {
@@ -35,11 +35,11 @@
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 137,
+   "violations": 138,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 7,
+   "violations": 6,
    "fails": "WAVE"
   }
  },
