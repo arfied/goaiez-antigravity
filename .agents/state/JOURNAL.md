@@ -786,3 +786,4 @@
 - `2026-09-05T10:13:56` (R245) C-Agent — the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)
 - `2026-09-05T10:15:15` (R245) C-Agent — one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)
 - `2026-09-05T10:55:37` (R245) X-163 — <R245> price_book_items (X-163) is the pricebook of record; PriceBook reads price_book_items because the journey harness already seeds it and the tenant scoping and confirm gates have been properly migrated.
+- `2026-09-05T13:13:29` (R245) X-163 — X-163 owns the price_book_items table; PriceBook is a reader, not the sole owner.
