@@ -20,5 +20,7 @@ class ArPlanTerm extends Model
     protected $casts = [
         'max_installments' => 'integer',
         'max_term_days' => 'integer',
+        'late_fee_percent' => 'integer',
+        'late_fee_cap_cents' => 'integer',
     ];
 }

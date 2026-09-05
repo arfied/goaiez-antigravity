@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T02:04:48",
+ "updated": "2026-09-05T03:34:23",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1339,6 +1339,10 @@
   {
    "at": "2026-09-05T03:02:31",
    "note": "MONEY-28: push e93d89b7..e6607e9f landed (e6607e9f on origin/track/money) \u2014 X-199 declines, invoices, unpaid on the kit; now the X-198 backfill under NO FORCE, the unpaid proof, the discrepancies apostrophe, and C-Billing credits and dunning-board on the kit"
+  },
+  {
+   "at": "2026-09-05T03:32:13",
+   "note": "MONEY-29: push e6607e9f..4235b454 landed (4235b454 on origin/track/money) \u2014 the X-198 backfill under NO FORCE, the unpaid proof, the discrepancies apostrophe, C-Billing credits and dunning-board on the kit; now G1-71 (a fee with no matching term is refused) and the :label sweep"
   }
  ],
  "decisions": [
@@ -1484,6 +1488,12 @@
    "module": "X-199",
    "chose": "X-199 \u2014 paid today is the recorded payment time: invoices.paid_at (nullable, indexed) is stamped by InvoiceEngine::recordPayment in the same write that sets status paid, and MoneyPaidToday reads and orders by it \u2014 an old paid invoice edited today is not paid today, and a paid row with null paid_at predates the column and is not counted; the screen reads, it never writes (\u00a758.4). Test: MoneyPaidTodayScreenTest",
    "at": "2026-09-05T02:04:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "the late-fee term is a ROW on ar_plan_terms \u2014 late_fee_percent and late_fee_cap_cents, nullable, beside the plan threshold; null means the agreement names no late fee and ArEngine::applyLateFee throws FeeWithoutTermException before any write (G1-71); the percent and the cap replace the engine's 10 % / $50 literal (P-193). Rejected: a per-invoice term column (the agreement is the tenant's terms; X-121's quote is Track 1's spine, ruling 8); keeping the literal (P-193); a caller-supplied hasTerm flag (ruling 15 \u2014 a refusal clause is not a refusal). Consequence: a tenant with no term written gets no late fee until the owner writes one. Test: X211Test::test_a_fee_with_no_matching_term_is_refused",
+   "at": "2026-09-05T03:34:23",
    "ruling": "R245"
   }
  ]

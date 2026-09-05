@@ -12,9 +12,12 @@ use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArOfferPlanAction;
 use App\Modules\X211\Actions\ArPackageForCollectionsAction;
 use App\Modules\X211\Domain\ArEngine;
+use App\Modules\X211\Domain\FeeWithoutTermException;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArPackaged;
 use App\Modules\X211\Events\ArPlanAccepted;
+use App\Modules\X211\Models\ArPlanTerm;
+use App\Modules\X211\Models\ReceivableState;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -66,6 +69,8 @@ class X211Test extends TestCase
             'due_date' => now()->subDays(15)->toDateString(),
         ]);
 
+        ArPlanTerm::create(['business_id' => $biz->id, 'late_fee_percent' => 10, 'late_fee_cap_cents' => 5000]);
+
         // 1. Late fee capped at 10% or $50 (for $600 invoice, 10% is $60, max cap is $50 = 5000 cents)
         $feeRes = $this->lateFeeAction->handle($biz->id, $invoice->id, 7500);
         $this->assertEquals(5000, $feeRes['applied_fee_cents']);
@@ -94,6 +99,45 @@ class X211Test extends TestCase
         $this->assertEquals('packaged_collections', $collectionsRes['status']);
         $this->assertStringContainsString('.zip', $collectionsRes['bundle_url']);
         Event::assertDispatched(ArPackaged::class);
+    }
+
+    /**
+     * G1-71 — a fee with no matching term in the agreement is refused before any write; P-193 — the percent and the cap are the tenant's row
+     */
+    public function test_a_fee_with_no_matching_term_is_refused(): void
+    {
+        Event::fake([ArFeeApplied::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'No-term Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Late', 'last_name' => 'Payer']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-201',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        try {
+            $this->lateFeeAction->handle($biz->id, $invoice->id, 7500);
+            $this->fail('a fee with no term was applied');
+        } catch (FeeWithoutTermException $e) {
+            $this->assertStringContainsString('no matching term is refused', $e->getMessage());
+            $this->assertStringContainsString('INV-AR-201', $e->getMessage());
+        }
+
+        $this->assertSame(0, ReceivableState::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
+        Event::assertNotDispatched(ArFeeApplied::class);
+
+        // The term is a row: write one with no cap and the same call applies 5 % of the total, not the old $50 literal.
+        ArPlanTerm::firstOrCreate(['business_id' => $biz->id])->update(['late_fee_percent' => 5]);
+        $applied = $this->lateFeeAction->handle($biz->id, $invoice->id, 7500);
+        $this->assertSame(3000, $applied['applied_fee_cents']);
+        Event::assertDispatched(ArFeeApplied::class);
     }
 
     /**
