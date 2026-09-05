@@ -53,6 +53,7 @@ class SequenceBuilder extends Component
     {
         if (empty($this->newCampaignId) || empty($this->newTemplateName)) {
             $this->composeError = 'A sequence needs a campaign id and a template name.';
+
             return;
         }
 

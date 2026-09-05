@@ -72,7 +72,7 @@ class SequenceBuilderTest extends TestCase
             ->where('campaign_id', 'LOCAL-CAMPAIGN-copy')
             ->orderBy('step_number')
             ->get();
-        
+
         $this->assertCount(2, $copiedSteps);
         $this->assertEquals(1, $copiedSteps[0]->step_number);
         $this->assertEquals(2, $copiedSteps[1]->step_number);
