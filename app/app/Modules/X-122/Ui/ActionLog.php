@@ -31,7 +31,7 @@ class ActionLog extends Component
             ->where('id', $id)
             ->firstOrFail();
 
-        $reverser->reverse($invocation->id);
+        $reverser->handle($invocation->id, $this->businessId, 'operator');
     }
 
     public function render()
