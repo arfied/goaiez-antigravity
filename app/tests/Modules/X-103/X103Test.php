@@ -179,8 +179,19 @@ class X103Test extends TestCase
     /** (R245) */
     public function test_g6_16_header_tenant_offer(): void
     {
-        $caps = require app_path('Modules/X-103/capabilities.php');
-        $this->assertArrayHasKey('G6-16', $caps);
+        $biz = TestCase::provisionTenant(['name' => 'Offer Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'offer', 'Offer', false);
+        
+        $blocks = [
+            ['type' => 'offer', 'text' => '20% off'],
+            ['type' => 'chat']
+        ];
+        $res = $this->publishAction->handle($biz->id, $page->id, $blocks);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertEquals($blocks, $version->content_blocks);
     }
 
     /** (R245) */
@@ -202,9 +213,16 @@ class X103Test extends TestCase
     /** (R245) */
     public function test_g6_27_header_c_sms(): void
     {
-        $caps = require app_path('Modules/X-103/capabilities.php');
-        $this->assertArrayHasKey('G6-27', $caps);
-        $this->assertTrue(is_dir(app_path('Modules/C-Sms')));
+        \Illuminate\Support\Facades\Http::fake();
+        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'SMS Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'sms-page', 'SMS Page', false);
+        $this->publishAction->handle($biz->id, $page->id, []);
+
+        \Illuminate\Support\Facades\Http::assertNothingSent();
     }
 
     /** (R245) */
