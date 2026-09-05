@@ -8,42 +8,44 @@
         </div>
         
         @if ($actionFailed)
-            <x-ui.alert type="error" class="mb-4">
+            <div class="text-red-500 mb-4 bg-red-100 p-2 rounded">
                 Action failed.
-            </x-ui.alert>
+            </div>
         @endif
 
         @if ($attentionMessage)
-            <x-ui.alert type="info" class="mb-4">
+            <div class="text-blue-500 mb-4 bg-blue-100 p-2 rounded">
                 {{ $attentionMessage }}
-            </x-ui.alert>
+            </div>
         @endif
         
         @if ($queue->isEmpty())
             <x-ui.empty-state icon="check-circle" title="Queue is empty" description="No parked submissions requiring manual review." />
         @else
-            <x-ui.table>
-                <x-slot name="head">
-                    <x-ui.table.heading>Campaign</x-ui.table.heading>
-                    <x-ui.table.heading>Prospect</x-ui.table.heading>
-                    <x-ui.table.heading>Reason</x-ui.table.heading>
-                    <x-ui.table.heading>Action</x-ui.table.heading>
-                </x-slot>
-                <x-slot name="body">
+            <table class="w-full text-left border-collapse border">
+                <thead>
+                    <tr>
+                        <th class="p-2 border">Campaign</th>
+                        <th class="p-2 border">Prospect</th>
+                        <th class="p-2 border">Reason</th>
+                        <th class="p-2 border">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
                     @foreach ($queue as $item)
-                        <x-ui.table.row>
-                            <x-ui.table.cell>{{ is_object($item) ? $item->campaign_id : '' }}</x-ui.table.cell>
-                            <x-ui.table.cell>{{ is_object($item) ? $item->prospect_identifier : '' }}</x-ui.table.cell>
-                            <x-ui.table.cell>Quota exhausted</x-ui.table.cell>
-                            <x-ui.table.cell>
+                        <tr>
+                            <td class="p-2 border">{{ is_object($item) ? $item->campaign_id : '' }}</td>
+                            <td class="p-2 border">{{ is_object($item) ? $item->prospect_identifier : '' }}</td>
+                            <td class="p-2 border">Quota exhausted</td>
+                            <td class="p-2 border">
                                 <form wire:submit="resubmit({{ is_object($item) ? $item->id : 0 }})">
-                                    <x-ui.submit size="sm">Re-submit</x-ui.submit>
+                                    <x-ui.submit size="sm" target="resubmit({{ is_object($item) ? $item->id : 0 }})" busy="Submitting...">Re-submit</x-ui.submit>
                                 </form>
-                            </x-ui.table.cell>
-                        </x-ui.table.row>
+                            </td>
+                        </tr>
                     @endforeach
-                </x-slot>
-            </x-ui.table>
+                </tbody>
+            </table>
         @endif
     </div>
 </div>

@@ -10,24 +10,26 @@
         @if ($logs->isEmpty())
             <x-ui.empty-state icon="document-text" title="No submissions yet" description="No contact forms have been submitted for this tenant." />
         @else
-            <x-ui.table>
-                <x-slot name="head">
-                    <x-ui.table.heading>Campaign</x-ui.table.heading>
-                    <x-ui.table.heading>Prospect</x-ui.table.heading>
-                    <x-ui.table.heading>Quota Remaining</x-ui.table.heading>
-                    <x-ui.table.heading>Submitted At</x-ui.table.heading>
-                </x-slot>
-                <x-slot name="body">
+            <table class="w-full text-left border-collapse border">
+                <thead>
+                    <tr>
+                        <th class="p-2 border">Campaign</th>
+                        <th class="p-2 border">Prospect</th>
+                        <th class="p-2 border">Quota Remaining</th>
+                        <th class="p-2 border">Submitted At</th>
+                    </tr>
+                </thead>
+                <tbody>
                     @foreach ($logs as $log)
-                        <x-ui.table.row>
-                            <x-ui.table.cell>{{ is_object($log) ? $log->campaign_id : '' }}</x-ui.table.cell>
-                            <x-ui.table.cell>{{ is_object($log) ? $log->prospect_identifier : '' }}</x-ui.table.cell>
-                            <x-ui.table.cell>{{ is_object($log) ? $log->available_quota : '' }}</x-ui.table.cell>
-                            <x-ui.table.cell>{{ is_object($log) ? $log->updated_at : '' }}</x-ui.table.cell>
-                        </x-ui.table.row>
+                        <tr>
+                            <td class="p-2 border">{{ is_object($log) ? $log->campaign_id : '' }}</td>
+                            <td class="p-2 border">{{ is_object($log) ? $log->prospect_identifier : '' }}</td>
+                            <td class="p-2 border">{{ is_object($log) ? $log->available_quota : '' }}</td>
+                            <td class="p-2 border">{{ is_object($log) ? $log->updated_at : '' }}</td>
+                        </tr>
                     @endforeach
-                </x-slot>
-            </x-ui.table>
+                </tbody>
+            </table>
         @endif
     </div>
 </div>
