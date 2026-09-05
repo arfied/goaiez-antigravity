@@ -243,7 +243,7 @@ trait JourneyHarness
     /** ⭐ A real call to the provisioned number. @return array<string,mixed> */
     private function placeRealCallTo(string $number): array
     {
-        return ['call_id' => 'call_'.uniqid(), 'answered' => true, 'call_sid' => 'sid_'.uniqid()];
+        throw $this->todo('place a REAL call — the owner calling their own business is the only proof that matters');
     }
 
     // ── waiting on asynchronous work ─────────────────────────────────────
