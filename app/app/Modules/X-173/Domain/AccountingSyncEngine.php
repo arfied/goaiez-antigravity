@@ -63,4 +63,51 @@ final class AccountingSyncEngine
             'message' => 'resolved',
         ];
     }
+
+
+    public function mapAccount(int $businessId, int $connectionId, string $internalCategory, string $remoteGlAccountId, string $remoteGlAccountName): array
+    {
+        $internalCategory = trim($internalCategory);
+        $remoteGlAccountId = trim($remoteGlAccountId);
+        $remoteGlAccountName = trim($remoteGlAccountName);
+
+        if (empty($internalCategory) || empty($remoteGlAccountId) || empty($remoteGlAccountName)) {
+            return [
+                'status' => 'refused',
+                'message' => 'blank parts refused',
+            ];
+        }
+
+        $connection = \App\Modules\X173\Models\AccountingConnection::where('business_id', $businessId)->findOrFail($connectionId);
+        
+        if (! $connection->is_active) {
+            return [
+                'status' => 'refused',
+                'message' => 'inactive connection refused',
+            ];
+        }
+
+        $mapping = \App\Modules\X173\Models\AccountMapping::updateOrCreate(
+            [
+                'business_id' => $businessId,
+                'connection_id' => $connectionId,
+                'internal_category' => $internalCategory,
+            ],
+            [
+                'remote_gl_account_id' => $remoteGlAccountId,
+                'remote_gl_account_name' => $remoteGlAccountName,
+            ]
+        );
+
+        return [
+            'status' => 'mapped',
+            'mapping_id' => $mapping->id,
+        ];
+    }
+
+
+
+
+
+
 }
