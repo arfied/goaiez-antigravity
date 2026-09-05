@@ -339,7 +339,69 @@ class X155Test extends TestCase
      */
     public function test_g5_07_wizard(): void
     {
-        $this->assertTrue(true);
+        \Illuminate\Support\Facades\Http::fake();
+
+        $gen = new \App\Modules\X155\Actions\FormGenerateAction;
+
+        // ④ the field set, from ③ the description
+        $plain = $gen->handle('I need their name, phone and email, and a preferred date');
+        $this->assertEquals(
+            ['first_name', 'phone', 'email', 'preferred_date'],
+            array_column($plain['fields'], 'name')
+        );
+        $this->assertEquals([], $plain['refused']);
+
+        // ⑤ a regulated ask never becomes a field
+        $regulated = $gen->handle('their name and their social security number');
+        $this->assertEquals(['first_name'], array_column($regulated['fields'], 'name'));
+        $this->assertEquals(['regulated_ask'], array_column($regulated['refused'], 'reason'));
+
+        // ⑤ and the platform never asks for the age it rejects on
+        $aged = $gen->handle('their name and how old they are');
+        $this->assertEquals(['first_name'], array_column($aged['fields'], 'name'));
+        $this->assertEquals(['under_18_gate'], array_column($aged['refused'], 'reason'));
+
+        \Illuminate\Support\Facades\Http::assertNothingSent();
+
+        $biz = TestCase::provisionTenant(['name' => 'G5-07 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Quote Request',
+            'slug' => 'quote-request',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $minor = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Kid',
+            'phone' => '+15550001111',
+            'age' => 15,
+        ]);
+
+        $this->assertEquals('rejected', $minor['status']);
+        $this->assertEquals('under_18', $minor['reason']);
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15550001111')->count());
+        $this->assertEquals(0, FormSubmission::where('business_id', $biz->id)->count());
+
+        // a date of birth carries the same signal
+        $dob = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Kid',
+            'phone' => '+15550002222',
+            'date_of_birth' => now()->subYears(15)->toDateString(),
+        ]);
+        $this->assertEquals('under_18', $dob['reason']);
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '+15550002222')->count());
+
+        // and an adult still gets through — the gate is not a blanket refusal
+        $adult = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Grown',
+            'phone' => '+15550003333',
+            'age' => 40,
+        ]);
+        $this->assertEquals('captured', $adult['status']);
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15550003333')->count());
     }
 
     /**
@@ -376,6 +438,29 @@ class X155Test extends TestCase
 
         $result = $this->validateAction->handle($biz->id, $form->id, ['service_type' => 'commercial', 'company_name' => 'Acme HVAC']);
         $this->assertTrue($result['is_valid']);
+
+        $numeric = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Table Booking',
+            'slug' => 'table-booking',
+            'steps' => [
+                ['step' => 1, 'required' => ['party_size']],
+                ['step' => 2, 'show_if' => ['party_size' => 4], 'required' => ['high_chairs']],
+            ],
+            'schema' => [],
+        ]);
+
+        $applicable = (new FormAdaptiveStepsAction)->handle($numeric, ['party_size' => '4']);
+        $this->assertEquals([1, 2], array_column($applicable, 'step'));
+
+        $result = $this->validateAction->handle($biz->id, $numeric->id, ['party_size' => '4']);
+        $this->assertFalse($result['is_valid']);
+        $this->assertEquals('incomplete_step', $result['reason']);
+        $this->assertEquals(2, $result['step']);
+        $this->assertEquals(['high_chairs'], $result['missing']);
+
+        $applicable = (new FormAdaptiveStepsAction)->handle($numeric, ['party_size' => '2']);
+        $this->assertEquals([1], array_column($applicable, 'step'));
     }
 
     /**
