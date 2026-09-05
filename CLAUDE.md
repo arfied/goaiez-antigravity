@@ -156,6 +156,23 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   exports it over phpunit.xml's pin; brief every pest run with the
   `DB_DATABASE=goaiez_antig_stages_test` prefix). `goaiez_antig` is production and
   `goaiez_antig_dev`/`goaiez_antig_test` belong to Track 1 — touch neither.
+  **2026-09-04 08:20 (owner: "give each team its own test sandbox", applied by
+  Track 1's supervisor, REVIEWS.md 09:2x note):** `app/phpunit.xml` now pins
+  `goaiez_antig_stages_test` as an **uncommitted** working-tree diff. It is the
+  owner's, not a coder's — not a BLOCK, never `checkout`/`restore` it, never
+  commit it from a coder run (never-list). Ruling 3's prefix stays as standing
+  practice; it is now the same name the pin carries.
+  **2026-09-04 11:40 (OWNER.md ruling 44):** the owner committed that pin by
+  hand as `700c600` on this branch. It rides to `origin` with the next
+  post-PASS push; no coder commit touches `app/phpunit.xml`.
+- **OWNER.md 2026-09-04 11:32 (rulings relayed by Track 1 under the owner's
+  delegation):** 17 (`AiModel` enum) and 40 (`refuses: <Parent>` scaffold
+  artefact) are Track 1's fixes, not this track's; 43 — this branch's S-9…S-12
+  X-205 build wins the merge, Track 1 merges `track/stages` into `main` (their
+  run 66) and **this track never rebases, cherry-picks or merges**; 44 — the
+  pin is the owner's, committed by hand. Next wave S-13 (G13-20's real
+  refusal), then HOLD until Track 1's merge lands. Full text in REVIEWS.md
+  tick 249.
 - Journeys owned: none — this track owns checker findings, not journeys.
 - Modules owned: any module no journey track owns (the owned lists are in the other tracks' CLAUDE.md); an owned module gets a note in REPORT.md, not a commit. Edits stay under `app/app/Modules/<id>/**` for
   those ids, plus the owned journeys' methods in

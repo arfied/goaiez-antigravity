@@ -106,7 +106,7 @@ bar "6. style + static analysis"
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (DB_DATABASE=goaiez_antig_stages_test, exported over phpunit.xml's $xml_db)"
   out=$(DB_DATABASE=goaiez_antig_stages_test ./vendor/bin/pest 2>&1); rc=$?
-  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
+  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
