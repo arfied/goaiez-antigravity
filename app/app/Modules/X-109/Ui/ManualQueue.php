@@ -58,20 +58,14 @@ class ManualQueue extends Component
             return;
         }
 
-        try {
-            $result = $action->submitForm(
-                businessId: $this->businessId,
-                campaignId: (string) $queueItem->campaign_id,
-                prospectIdentifier: (string) $queueItem->prospect_identifier
-            );
+        $result = $action->submitForm(
+            businessId: $this->businessId,
+            campaignId: (string) $queueItem->campaign_id,
+            prospectIdentifier: (string) $queueItem->prospect_identifier
+        );
 
-            $queueItem->delete();
-
-            if (in_array($result['status'], ['queued_manual', 'skipped_duplicate'])) {
-                $this->attentionMessage = $result['message'];
-            }
-        } catch (\Exception $e) {
-            $this->actionFailed = true;
+        if (in_array($result['status'], ['queued_manual', 'skipped_duplicate'])) {
+            $this->attentionMessage = $result['message'];
         }
     }
 

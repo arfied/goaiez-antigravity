@@ -1,9 +1,11 @@
 <div>
-    @if ($isSample)
-        <x-surface.sample-state module="asynchronous auto-submit of a researched proposal into the prospect's own contact form" screen="manual_queue" />
-    @endif
     <div class="manual-queue-view p-4">
-        <h3 class="text-lg font-bold mb-4">Manual Form Review Queue</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">Manual Form Review Queue</h3>
+            <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
+                {{ $isSample ? 'Hide sample' : 'Show sample' }}
+            </x-ui.button>
+        </div>
         
         @if ($actionFailed)
             <x-ui.alert type="error" class="mb-4">

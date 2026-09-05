@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X109;
 
-use App\Models\User;
 use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\X109\Models\CaptchaQuota;
 use App\Modules\X109\Ui\ManualQueue;
 use App\Modules\X109\Ui\SubmissionLog;
@@ -171,9 +171,108 @@ class X109ScreensTest extends TestCase
             ->call('resubmit', $queueRow->id)
             ->assertSee('Zero quota: queued to manual review without third-party charges');
 
-        // Original row should be deleted
-        $this->assertNull(CaptchaQuota::find($queueRow->id));
-        // A new queued_manual row should be created by the action
+        // Original row should be updated in place, not deleted
+        $this->assertNotNull(CaptchaQuota::find($queueRow->id));
         $this->assertTrue(CaptchaQuota::where('business_id', $biz->id)->where('prospect_identifier', '992')->where('status', 'queued_manual')->exists());
+    }
+
+    public function test_manual_queue_resubmit_skipped_duplicate(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        CaptchaQuota::forceCreate([
+            'business_id' => $biz->id,
+            'campaign_id' => 991,
+            'prospect_identifier' => '992',
+            'status' => 'submitted',
+            'available_quota' => 5,
+        ]);
+
+        $queueRow = CaptchaQuota::forceCreate([
+            'business_id' => $biz->id,
+            'campaign_id' => 991,
+            'prospect_identifier' => '992',
+            'status' => 'queued_manual',
+            'available_quota' => 0,
+        ]);
+
+        Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
+            ->call('resubmit', $queueRow->id)
+            ->assertSee('Prospect form already submitted in this campaign');
+
+        $this->assertNotNull(CaptchaQuota::find($queueRow->id));
+    }
+
+    public function test_manual_queue_resubmit_cross_tenant_id(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        $otherBizQueueRow = CaptchaQuota::forceCreate([
+            'business_id' => 99999, // Another tenant
+            'campaign_id' => 991,
+            'prospect_identifier' => '992',
+            'status' => 'queued_manual',
+            'available_quota' => 0,
+        ]);
+
+        Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
+            ->call('resubmit', $otherBizQueueRow->id)
+            ->assertDontSee('Prospect form already submitted')
+            ->assertDontSee('Zero quota'); // shouldn't show messages meant for valid actions
+
+        // Shouldn't be processed or deleted
+        $this->assertNotNull(CaptchaQuota::find($otherBizQueueRow->id));
+    }
+
+    public function test_submission_log_excludes_quota_balance_row(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        CaptchaQuota::forceCreate([
+            'business_id' => $biz->id,
+            'campaign_id' => 991,
+            'prospect_identifier' => null, // This is the balance row
+            'status' => 'submitted',
+            'available_quota' => 45,
+        ]);
+
+        Livewire::test(SubmissionLog::class, ['businessId' => $biz->id])
+            ->assertOk()
+            ->assertSee('No submissions yet');
+    }
+
+    public function test_manual_queue_toggles_sample_state(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
+            ->assertDontSee('9401')
+            ->call('toggleSample')
+            ->assertSee('9401');
+    }
+
+    public function test_submission_log_toggles_sample_state(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        Livewire::test(SubmissionLog::class, ['businessId' => $biz->id])
+            ->assertDontSee('9401')
+            ->call('toggleSample')
+            ->assertSee('9401');
     }
 }

@@ -1,9 +1,11 @@
 <div>
-    @if ($isSample)
-        <x-surface.sample-state module="asynchronous auto-submit of a researched proposal into the prospect's own contact form" screen="submission_log" />
-    @endif
     <div class="submission-log-view p-4">
-        <h3 class="text-lg font-bold mb-4">Contact Form Submission Log</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">Contact Form Submission Log</h3>
+            <x-ui.button wire:click="toggleSample" size="default" variant="secondary">
+                {{ $isSample ? 'Hide sample' : 'Show sample' }}
+            </x-ui.button>
+        </div>
         
         @if ($logs->isEmpty())
             <x-ui.empty-state icon="document-text" title="No submissions yet" description="No contact forms have been submitted for this tenant." />

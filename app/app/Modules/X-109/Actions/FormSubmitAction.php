@@ -38,6 +38,12 @@ final class FormSubmitAction
             ];
         }
 
+        $parkedRow = CaptchaQuota::where('business_id', $businessId)
+            ->where('campaign_id', $campaignId)
+            ->where('prospect_identifier', $prospectIdentifier)
+            ->where('status', 'queued_manual')
+            ->first();
+
         // Get tenant quota balance
         $quotaRecord = CaptchaQuota::where('business_id', $businessId)
             ->whereNull('prospect_identifier')
@@ -48,14 +54,19 @@ final class FormSubmitAction
 
         // 2. Quota at zero -> produce queue row and NO third-party charge (TEST ANCHOR)
         if ($availableQuota <= 0) {
-            $queueRow = CaptchaQuota::create([
-                'business_id' => $businessId,
-                'campaign_id' => $campaignId,
-                'prospect_identifier' => $prospectIdentifier,
-                'status' => 'queued_manual',
-                'available_quota' => 0,
-                'used_quota' => 0,
-            ]);
+            if ($parkedRow) {
+                $parkedRow->touch();
+                $queueRow = $parkedRow;
+            } else {
+                $queueRow = CaptchaQuota::create([
+                    'business_id' => $businessId,
+                    'campaign_id' => $campaignId,
+                    'prospect_identifier' => $prospectIdentifier,
+                    'status' => 'queued_manual',
+                    'available_quota' => 0,
+                    'used_quota' => 0,
+                ]);
+            }
 
             Event::dispatch(new QuotaExhausted($businessId, $campaignId));
 
@@ -82,6 +93,10 @@ final class FormSubmitAction
             'available_quota' => $quotaRecord->available_quota,
             'used_quota' => 1,
         ]);
+
+        if ($parkedRow) {
+            $parkedRow->delete();
+        }
 
         Event::dispatch(new FormSubmitted($businessId, $campaignId, $prospectIdentifier));
 

@@ -52,6 +52,7 @@ class SubmissionLog extends Component
         } else {
             $logs = CaptchaQuota::where('business_id', $this->businessId)
                 ->where('status', 'submitted')
+                ->whereNotNull('prospect_identifier')
                 ->orderByDesc('updated_at')
                 ->get();
         }
