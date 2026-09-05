@@ -74,7 +74,22 @@ trait JourneyHarness
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
     private function signUp(string $businessName, string $phone): array
     {
-        throw $this->todo('sign up with exactly two fields — a third is a P-207 violation');
+        \Livewire\Livewire::test(\App\Modules\X118\Ui\ProspectSignup::class)
+            ->set('businessName', $businessName)
+            ->set('contactPhone', $phone)
+            ->call('startSignup')
+            ->assertHasNoErrors();
+            
+        $user = auth()->user();
+        $this->assertNotNull($user);
+        
+        $business = \App\Models\Business::where('owner_user_id', $user->id)->first();
+        $this->assertNotNull($business);
+        
+        $phoneNumber = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('business_id', $business->id)->first();
+        $this->assertNotNull($phoneNumber);
+        
+        return $business->toArray();
     }
 
     /** @return array<string,mixed> */
