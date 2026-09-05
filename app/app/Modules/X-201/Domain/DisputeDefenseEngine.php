@@ -69,6 +69,10 @@ final class DisputeDefenseEngine
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
 
+        if ($dispute->deadline_at && \Carbon\Carbon::now()->isAfter($dispute->deadline_at)) {
+            throw new \Exception('Dispute deadline has passed');
+        }
+
         $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
 
         if ($dispute->reason === 'fraudulent') {
