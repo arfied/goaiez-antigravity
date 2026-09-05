@@ -121,19 +121,6 @@ class X103Test extends TestCase
         $this->assertTrue($version->pixel_installed);
     }
 
-    public function test_every_built_page_version_carries_ssl_installed(): void
-    {
-        $biz = TestCase::provisionTenant(['name' => 'SSL Tenant']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $page = $this->pageAction->handle($biz->id, 'ssl-page', 'SSL Page', false);
-        $res = $this->publishAction->handle($biz->id, $page->id, []);
-
-        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
-        $this->assertTrue($version->ssl_installed);
-    }
-
-
     public function test_g12_39_the_review_widget_is_not_yet_on_the_built_site(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);

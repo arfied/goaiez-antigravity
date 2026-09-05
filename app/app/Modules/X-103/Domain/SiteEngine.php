@@ -46,7 +46,6 @@ final class SiteEngine
                 'content_blocks' => $contentBlocks,
                 'pixel_installed' => true, // G9-04 full-stack site law
                 'ssl_enabled' => true,
-                'ssl_installed' => true,
             ]);
 
             $page->update([
