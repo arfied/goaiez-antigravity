@@ -37,7 +37,7 @@ final class PricesTest extends TestCase
             }
         }
 
-        $this->assertEmpty($offenders, 'quote_disclaimer is accessed outside of PriceBook.php: ' . implode(', ', $offenders));
+        $this->assertEmpty($offenders, 'quote_disclaimer is accessed outside of PriceBook.php: '.implode(', ', $offenders));
     }
 
     public function test_urgent_terms_store_is_only_accessed_by_urgent_terms_service(): void
@@ -60,15 +60,15 @@ final class PricesTest extends TestCase
                     if ($name === 'T_COMMENT' || $name === 'T_DOC_COMMENT') {
                         continue;
                     }
-                    
+
                     if (($name === 'T_STRING' && $val === 'UrgentTerm') || ($name === 'T_NAME_QUALIFIED' && str_ends_with($val, '\UrgentTerm'))) {
                         $offenders[] = $file->getRelativePathname();
                         break;
                     }
-                    
+
                     if ($name === 'T_CONSTANT_ENCAPSED_STRING' && str_contains(strtolower($val), 'urgent_terms')) {
                         // AgentGroundingSource has it as an enum value, not accessing the store.
-                        if (!str_contains($file->getFilename(), 'AgentGroundingSource')) {
+                        if (! str_contains($file->getFilename(), 'AgentGroundingSource')) {
                             $offenders[] = $file->getRelativePathname();
                             break;
                         }
@@ -77,7 +77,7 @@ final class PricesTest extends TestCase
             }
         }
 
-        $this->assertEmpty($offenders, 'Urgent terms store accessed outside of UrgentTerms.php: ' . implode(', ', array_unique($offenders)));
+        $this->assertEmpty($offenders, 'Urgent terms store accessed outside of UrgentTerms.php: '.implode(', ', array_unique($offenders)));
     }
 
     public function test_no_second_store_for_emergency_keywords(): void
@@ -100,7 +100,7 @@ final class PricesTest extends TestCase
                     }
                     if (str_contains($val, 'emergency_keywords')) {
                         $filename = $file->getFilename();
-                        if (!str_contains($filename, 'drop_emergency_keywords') && !str_contains($filename, 'create_support_settings')) {
+                        if (! str_contains($filename, 'drop_emergency_keywords') && ! str_contains($filename, 'create_support_settings')) {
                             $offenders[] = $file->getRelativePathname();
                             break;
                         }
@@ -109,7 +109,7 @@ final class PricesTest extends TestCase
             }
         }
 
-        $this->assertEmpty($offenders, 'emergency_keywords column/store found outside of legacy migrations: ' . implode(', ', array_unique($offenders)));
+        $this->assertEmpty($offenders, 'emergency_keywords column/store found outside of legacy migrations: '.implode(', ', array_unique($offenders)));
     }
 
     public function test_no_seeder_or_factory_seeds_a_price_urgent_word_or_emergency_keyword(): void
@@ -138,6 +138,6 @@ final class PricesTest extends TestCase
             }
         }
 
-        $this->assertEmpty($offenders, 'Seeder or factory seeds a price, urgent word, or emergency keyword: ' . implode(', ', array_unique($offenders)));
+        $this->assertEmpty($offenders, 'Seeder or factory seeds a price, urgent word, or emergency keyword: '.implode(', ', array_unique($offenders)));
     }
 }
