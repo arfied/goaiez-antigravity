@@ -20,7 +20,7 @@ use App\Modules\X110\Models\IdentityLink;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
-use App\Services\Config\DefaultsRegistry;
+
 use App\Services\ShortLinks\ShortLinks;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -242,7 +242,7 @@ class X110Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Hop Biz']);
         Tenancy::set($biz->id);
 
-        $registry = app(DefaultsRegistry::class);
+
 
         $links = app(ShortLinks::class);
         $link = $links->mint('https://target.example.com', ShortLinkPurpose::ReviewInvite);

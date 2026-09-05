@@ -38,6 +38,9 @@ final class SiteEngine
                 'current_version_id' => $version->id,
             ]);
 
+            Event::dispatch(new \App\Modules\X103\Events\PagePublished($businessId, $page->id, $commitId));
+            Event::dispatch(new \App\Modules\X103\Events\SitePublished($businessId, $page->id, $commitId));
+
             return [
                 'status' => 'published',
                 'page_id' => $page->id,

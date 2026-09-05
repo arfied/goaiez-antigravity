@@ -121,6 +121,9 @@ class X103Test extends TestCase
         $this->assertTrue($version->pixel_installed);
     }
 
+    /**
+     * G12-39
+     */
     public function test_g12_39_the_review_widget_is_not_yet_on_the_built_site(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
