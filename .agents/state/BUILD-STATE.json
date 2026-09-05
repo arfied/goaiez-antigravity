@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T03:20:06",
+ "updated": "2026-09-05T03:43:41",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1574,6 +1574,18 @@
    "module": "X-125",
    "chose": "Use a backed enum cast for FlowRun status and exhaustive match to fix boundary violation. Rejected: match (true), array lookup (teach checker to be noise), reusing AutomationRunStatus (different table's lifecycle). Consequence: a flow_runs row with a status outside the three cases now throws when the Runs screen renders its pill, where it used to show a grey Unknown pill.",
    "at": "2026-09-05T03:20:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "The scaffold DOES harvest @agent_reachable and X-01 manifest is not stale; the defect is in ContractStage.php:423 which does not support a mix of reachable and unreachable actions. Stopped per branch (c).",
+   "at": "2026-09-05T03:43:33",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-121",
+   "chose": "schema 13 is recorded, not fixed: 11 of 12 tables are deliberate PLATFORM_EXEMPTIONS in X-121's 2026_08_31_000001 migration (platform STOPs with a NULL business_id, worker queues, global triage); operator_alerts has 16 console writers outside Tenancy::actingAs() and belongs on that list. X-121 is Track 1's (ruling 8) and UNRESOLVED on the owner's runtime rebundle.",
+   "at": "2026-09-05T03:43:41",
    "ruling": "R245"
   }
  ]
