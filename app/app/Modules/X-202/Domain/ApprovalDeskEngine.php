@@ -87,7 +87,7 @@ final class ApprovalDeskEngine
                 $timestamp = now()->toIso8601String();
                 $newLine = "[{$timestamp}] {$comment}";
                 $newComment = $item->decision_comment
-                    ? $item->decision_comment . "\n" . $newLine
+                    ? $item->decision_comment."\n".$newLine
                     : $newLine;
             }
 
@@ -114,7 +114,7 @@ final class ApprovalDeskEngine
                 'decided_by_user_id' => $userId,
                 'decided_at' => now(),
             ];
-            
+
             if ($newComment !== null) {
                 $updates['decision_comment'] = $newComment;
             }

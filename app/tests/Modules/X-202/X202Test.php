@@ -291,7 +291,7 @@ class X202Test extends TestCase
 
         $step1 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved', null, 'fine by me, over to legal');
         $this->assertSame('pending', $step1['status']);
-        
+
         $itemFresh = ApprovalItem::find($chained['approval_item_id']);
         $this->assertSame('pending', $itemFresh->status);
         $this->assertNull($itemFresh->decided_at);
@@ -299,7 +299,7 @@ class X202Test extends TestCase
 
         $step2 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved', null, 'looks ok');
         $this->assertSame('pending', $step2['status']);
-        
+
         $itemFresh2 = ApprovalItem::find($chained['approval_item_id']);
         $this->assertSame('pending', $itemFresh2->status);
         $this->assertNull($itemFresh2->decided_at);
@@ -308,14 +308,14 @@ class X202Test extends TestCase
 
         $step3 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved', null, 'approved to go');
         $this->assertSame('approved', $step3['status']);
-        
+
         $itemFresh3 = ApprovalItem::find($chained['approval_item_id']);
         $this->assertSame('approved', $itemFresh3->status);
         $this->assertNotNull($itemFresh3->decided_at);
         $this->assertStringContainsString('fine by me, over to legal', $itemFresh3->decision_comment);
         $this->assertStringContainsString('looks ok', $itemFresh3->decision_comment);
         $this->assertStringContainsString('approved to go', $itemFresh3->decision_comment);
-        
+
         Event::assertDispatchedTimes(ApprovalDecided::class, 1);
     }
 
