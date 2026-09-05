@@ -161,7 +161,7 @@ class X142Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Empty Token Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
-        
+
         Livewire::test(McpTokenRegistry::class)
             ->assertSee('No tokens yet.')
             ->assertSee('Tokens give external systems access to your account.');
