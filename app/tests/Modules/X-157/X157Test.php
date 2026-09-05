@@ -770,6 +770,46 @@ class X157Test extends TestCase
         $this->assertSame($biz->name, $ld['name']);
     }
 
+
+    public function test_serving_a_published_site_resolves_the_tenant_through_the_chokepoint(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Acme HVAC', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $site = app(SitePublishAction::class)
+            ->handle($biz->id, $page->id, []);
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $site['commit_id'],
+            businessName: $biz->name
+        );
+
+        Tenancy::forgetAll();
+
+        $response = $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}");
+        $response->assertStatus(200);
+
+        $this->assertSame(
+            (string) $biz->id,
+            DB::connection('pgsql')->selectOne("SELECT current_setting('app.business_id', true) AS v")->v
+        );
+
+        $this->assertSame($biz->id, Tenancy::id());
+    }
     /** (R245) */
     public function test_route_deployment_whose_artifact_is_missing_returns_404(): void
     {
