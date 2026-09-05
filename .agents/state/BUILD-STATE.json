@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T01:24:11",
+ "updated": "2026-09-05T01:30:58",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1401,6 +1401,12 @@
    "module": "X-156",
    "chose": "Ingest-volume screen: one row per source with run count, records total, last run and rejections; the row action is pause/resume through IngestSourcePauseAction (the module's only write path); emits nothing; a source with no run reads 'never'",
    "at": "2026-09-05T01:24:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-16",
+   "chose": "Geo-grid screen: grids are created and regenerated through MapsGeogridAction::generateGrid (25 points, rank null); a scan needs the tenant's own Places key (\u00a7474) which no module stores yet, so an unscanned grid renders 'Waiting on a Places key' as its finished vendor-gated state and a scan is never faked; holding grids debits nothing (TEST ANCHOR)",
+   "at": "2026-09-05T01:30:58",
    "ruling": "R245"
   }
  ],

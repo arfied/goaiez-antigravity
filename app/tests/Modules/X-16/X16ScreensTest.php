@@ -56,7 +56,8 @@ class X16ScreensTest extends TestCase
 
         Livewire::test(GeogridMap::class, ['businessId' => $this->businessId])
             ->call('regenerate', $grid->id)
-            ->assertSee('Downtown');
+            ->assertSee('Downtown')
+            ->assertDontSee('Action failed');
 
         $this->assertEquals(1, GeoGrid::where('business_id', $this->businessId)->count());
         $grid->refresh();

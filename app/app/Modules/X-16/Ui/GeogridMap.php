@@ -122,8 +122,8 @@ class GeogridMap extends Component
             $grids[0]->grid_points[3]['rank'] = 3;
             $grids[0]->grid_points[4]['rank'] = 2;
         } else {
-            $dbGrids = GeoGrid::where('business_id', $this->businessId)->orderByDesc('id')->get();
-            $grids = $dbGrids->map(function (GeoGrid $g): object {
+            $dbGrids = GeoGrid::where('business_id', $this->businessId)->orderByDesc('id')->get()->all();
+            $grids = collect($dbGrids)->map(function (GeoGrid $g): \stdClass {
                 $points = is_array($g->grid_points) ? $g->grid_points : [];
                 $scanned = 0;
                 foreach ($points as $p) {
@@ -133,11 +133,11 @@ class GeogridMap extends Component
                 }
 
                 return (object) [
-                    'id' => $g->id,
-                    'grid_name' => $g->grid_name,
-                    'center_lat' => $g->center_lat,
-                    'center_lng' => $g->center_lng,
-                    'radius_km' => $g->radius_km,
+                    'id' => (int) $g->id,
+                    'grid_name' => (string) $g->grid_name,
+                    'center_lat' => (float) $g->center_lat,
+                    'center_lng' => (float) $g->center_lng,
+                    'radius_km' => (int) $g->radius_km,
                     'points_total' => count($points),
                     'points_scanned' => $scanned,
                     'last_scanned_at' => null, // Nothing writes rank yet
