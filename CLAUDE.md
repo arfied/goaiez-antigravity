@@ -201,13 +201,37 @@ Watch for: <the trap that applies, by name>
   line on the truncated ledger; it prints identically on a healthy 17-key one
   (measured 2026-09-05, tick 153). The truncation's real tell was §3 —
   `KeyError: 'stages'` and an `{"action": "BOOTSTRAP"}` answer.
-- ⚠️ **`supervise.sh` §7 prints five failures and then `… 3 more`.** Pest's order varies
-  between runs, so two runs of an identical tree show two different five-name windows —
-  measured at tick 158, where the coder's window and this column's shared only one name out
-  of eight. **Never read §7's list as the failure list.** Wave 67 quoted its five as though
-  they were all of them and so never noticed that `errors` had gone `3 → 8`. Get the whole
-  list before concluding anything about *which* tests are red; the summary line
-  (`tests N · passed N · errors N`) is the only complete number §7 gives you.
+- ⚠️ **`supervise.sh` §7 could not show a *failure* at all until tick 161 — and its summary
+  line still hid the count.** Pest's order varies between runs, so two runs of an identical
+  tree showed two different five-name windows (tick 158: the coder's window and this
+  column's shared one name out of eight). But the deeper defect was structural, measured at
+  tick 161 and now **fixed in `bin/supervise.sh`**: the old `python3 -c` block printed
+  `tests · passed · errors` with **no `failed`**, and its list walked **`error_details`
+  alone**, never the `failures` array. Wave 69's clean run therefore printed `tests 1710 ·
+  passed 1703 · errors 4` while three real failures — `NavigationTest`,
+  `X172 CustomerfacingPortalScreenTest`, and **`a_published_site_carries_all_seven`, the
+  very test that wave was sent to fix** — were invisible in §7 output.
+  ⚠️ **This retires "the summary line is the only complete number §7 gives you", which this
+  column wrote at tick 158. It was wrong**, and it is what made wave 68's puzzled note
+  (*"`a_published_site_carries_all_seven` was not in the failure list but failed when I ran
+  it manually"*) look like the concurrent-pest collision. The collision was real and
+  explains the 4-vs-11, but it was **never** the explanation for that test's absence: it
+  could not have appeared either way.
+  **The arithmetic is the tell, and §7 now checks it out loud:** `passed + failed + errors`
+  must equal `tests` — 1703 + 4 ≠ 1710 was visible on the face of the old line for two
+  waves and nobody added it up. Read it on any reporter, not just this one.
+  The window is now 12 and each row is tagged `FAIL `/`ERROR`, but **a window is still a
+  window**: the complete list is the JSON object on the **last line** of the raw pest
+  output (`tests`, `passed`, `failed`, `failures[]`, `errors`, `error_details[]`).
+- ⚠️ **A cross-track relay can attribute another lane's commit to yours.** Track 1's 19:4x
+  note called `d6b9f35d` *"your"* commit; `git merge-base --is-ancestor d6b9f35d HEAD` said
+  `1` and `git branch -a --contains d6b9f35d` named `main` and `track/stages` only. The
+  finding routed here on **module ownership** (`OWNER.md` puts X-01's inbox half in this
+  lane) rather than commit authorship, and the lint it described does not exist on this
+  branch at all — this lane's `test_g2_76_unified_inbox_header` is still an
+  `assertTrue(true)` stub. **Run both checks before accepting a relayed finding as this
+  lane's**, and never widen, weaken or defend a lint you do not have. A *proposal* can
+  still be yours by module ownership when the *commit* is not.
 - ⚠️ **`app/Modules/` is a composer *classmap*, not PSR-4** (`app/composer.json`, the
   `classmap` block). A merge that adds a file there leaves it **invisible to the autoloader
   until `composer dump-autoload` runs**, and the symptom is `Target class […] does not

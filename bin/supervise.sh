@@ -230,14 +230,29 @@ if [ $want_tests -eq 1 ]; then
   fi
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
+    # ⚠️ THIS BLOCK LIED FOR TWO WAVES AND THE FIX IS WHY IT LOOKS LIKE THIS.
+    # Until 2026-09-05 (tick 161) the summary printed only tests/passed/errors and
+    # the list walked `error_details` ALONE — so a *failure* could not appear here
+    # at all. Wave 69's clean run printed `tests 1710 · passed 1703 · errors 4` and
+    # was silent about three real failures, one of them the very test that wave was
+    # sent to fix. Two consequences, both now built in: `failed` is printed, and the
+    # arithmetic is checked out loud, because `passed + failed + errors != tests` is
+    # the tell that a reporter is holding something back. The window is still a
+    # window — 12, not 5 — so the last line says where the whole list actually lives.
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
-print("  tests %s · passed %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("errors"),d.get("result")))
-for e in (d.get("error_details") or [])[:5]:
-    print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
-n=len(d.get("error_details") or [])
-if n>5: print("   … %d more" % (n-5))'
+t,p=d.get("tests"),d.get("passed")
+f=d.get("failed") or 0
+e=d.get("errors") or 0
+print("  tests %s · passed %s · failed %s · errors %s · result %s" % (t,p,f,e,d.get("result")))
+if isinstance(t,int) and isinstance(p,int) and p+f+e != t:
+    print("  ⚠️ %d passed + %d failed + %d errors = %d, not %d — this line is not telling you everything" % (p,f,e,p+f+e,t))
+rows=[("FAIL ",x) for x in (d.get("failures") or [])]+[("ERROR",x) for x in (d.get("error_details") or [])]
+for kind,x in rows[:12]:
+    print("   %s %s\n      %s" % (kind, (x.get("test") or "?").split("::")[-1], ((x.get("message") or "").splitlines() or [""])[0][:160]))
+if len(rows)>12:
+    print("   … %d more — the complete list is the JSON object on the LAST LINE of the raw pest output" % (len(rows)-12))'
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi
