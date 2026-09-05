@@ -60,6 +60,7 @@ final class EdgeDeployAction
             $deployment = Deployment::create([
                 'business_id' => $businessId,
                 'edge_zone_id' => $zone->id,
+                'page_id' => $pageId,
                 'deploy_hash' => $deployHash,
                 'status' => 'deploying',
                 'speed_index' => ($measuredTtfbMs <= $speedBudgetMs) ? 100 : 40,
@@ -169,9 +170,11 @@ final class EdgeDeployAction
             // Nothing outside this action learns of a deploy until the artifact it
             // announces is on disk (R245, 2026-09-05): the supersede, the status flip and
             // DeployCompleted all follow the write, because ModuleServiceProvider's route
-            // serves a `deployed` row by reading that exact file.
+            // serves a `deployed` row by reading that exact file. A deploy supersedes only
+            // the previous deploy of the same page (R245, 2026-09-05).
             Deployment::where('business_id', $businessId)
                 ->where('edge_zone_id', $zone->id)
+                ->where('page_id', $pageId)
                 ->where('status', 'deployed')
                 ->where('id', '!=', $deployment->id)
                 ->update(['status' => 'superseded']);
