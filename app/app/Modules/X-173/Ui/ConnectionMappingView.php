@@ -5,42 +5,67 @@ declare(strict_types=1);
 namespace App\Modules\X173\Ui;
 
 use App\Modules\X173\Actions\AccountingMapAction;
-use App\Modules\X173\Models\AccountMapping;
 use App\Modules\X173\Models\AccountingConnection;
+use App\Modules\X173\Models\AccountMapping;
 use App\Support\Tenancy;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Component;
 
 class ConnectionMappingView extends Component
 {
-    public string $internalCategory = '';
-    public string $remoteGlAccountId = '';
-    public string $remoteGlAccountName = '';
-    public string $message = '';
-    public string $oauthMessage = '';
+    public string $provider = 'quickbooks';
 
-    public function mapAccount(int $connectionId, AccountingMapAction $action)
+    public string $realmId = '';
+
+    public array $map = [];
+
+    public ?string $error = null;
+
+    public ?string $success = null;
+
+    public ?string $waiting = null;
+
+    public function connect(): void
     {
-        $result = $action->mapAccount(Tenancy::idOrFail(), $connectionId, $this->internalCategory, $this->remoteGlAccountId, $this->remoteGlAccountName);
-        if ($result['status'] === 'refused') {
-            $this->message = $result['message'];
-        } else {
-            $this->message = 'mapped';
-        }
+        $this->error = null;
+        $this->success = null;
+        $this->waiting = sprintf('Waiting on %s OAuth: no %s credentials exist in this checkout, so nothing was connected. The one-click connect lands when the owner grants them (§141.5).', $this->provider, $this->provider);
     }
 
-    public function connect(string $provider)
+    public function mapAccount(int $connectionId, AccountingMapAction $action): void
     {
-        $this->oauthMessage = 'Waiting on ' . $provider . ' OAuth';
+        $this->error = null;
+        $this->success = null;
+        $this->waiting = null;
+
+        $category = $this->map[$connectionId]['category'] ?? '';
+        $glId = $this->map[$connectionId]['glId'] ?? '';
+        $glName = $this->map[$connectionId]['glName'] ?? '';
+
+        try {
+            $r = $action->mapAccount(Tenancy::idOrFail(), $connectionId, $category, $glId, $glName);
+            if ($r['status'] === 'refused') {
+                $this->error = $r['message'];
+            } else {
+                $this->success = $r['message'];
+                unset($this->map[$connectionId]);
+            }
+        } catch (ModelNotFoundException $e) {
+            $this->error = "That ledger connection isn't in this account.";
+        }
     }
 
     public function render()
     {
-        $mappings = AccountMapping::where('business_id', Tenancy::idOrFail())->get();
-        $connection = AccountingConnection::where('business_id', Tenancy::idOrFail())->first();
+        abort_unless(Tenancy::check(), 403);
+        $businessId = Tenancy::idOrFail();
+
+        $connections = AccountingConnection::where('business_id', $businessId)->orderBy('id')->get();
+        $mappings = AccountMapping::where('business_id', $businessId)->get()->groupBy('connection_id');
 
         return view('x-173::connection-mapping', [
+            'connections' => $connections,
             'mappings' => $mappings,
-            'connection' => $connection,
         ]);
     }
 }
