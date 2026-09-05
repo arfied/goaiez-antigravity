@@ -129,6 +129,30 @@ Watch for: <the trap that applies, by name>
 - **The supervisor can be wrong; the seal cannot.** If the coder's `REPORT.md`
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
+- **A partial commit is invisible to every gate step (MONEY-37, 2026-09-05).**
+  A run that dies mid-item can leave a commit that references a class it does
+  not contain: `445987c3` imported and dispatched three `X-199` `Events\*`
+  classes that were still `??` in the working tree. **§2b's `php -l` cannot see
+  it** — it is per-file syntax and does not resolve a class — and **§7 cannot
+  see it**, because the suite runs against the working tree, where the file is
+  present. Nothing in the gate distinguishes a finished commit from a truncated
+  one. So, for every commit under review: `git show --name-only --format= <sha>`
+  against the `use` lines and `new`/`::class` references in its own diff, and
+  `git status --short` accounted for line by line (`app/composer.phar` is the
+  only expected `??`, OWNER ACTION 19a). Pushing such a tip hands the merging
+  track a fatal `Class … not found`; ruling 26 already forbids pushing under a
+  live `BLOCK`, and this is one.
+- **A quota death looks like a stop and is not (MONEY-37).** `agy` exits with
+  `Error: Individual quota reached … Resets in NNm`, `AGY_EXIT=1`, and writes no
+  `REPORT.md` — so the newest report is whatever *interim* one the run left
+  behind, describing a tree that no longer exists (MONEY-37's said
+  `COMMITS:` empty while `445987c3` was already in the log). Read
+  `.agents/supervisor/logs/agy-run<N>.log` before reading the report; it is two
+  lines and it names the reset time. **Do not dispatch inside the reset window**
+  — the launch produces another two-line log and spends one of the two
+  dispatches the BLOCK is allowed. Hold the ready brief and leave a
+  `TICK-ADDENDUM.md` telling the next tick to launch it, because a BLOCK verdict
+  closes case (b) *and* case (e) and the brief would otherwise never run.
 - **`git merge --abort` wipes the supervisor's uncommitted ledger (2026-09-04
   13:07).** The abort briefed as MONEY-17 step 0 reset `CLAUDE.md` to `HEAD`,
   dropping rulings 17–18 written at 12:58; the coder's `cp CLAUDE.md
