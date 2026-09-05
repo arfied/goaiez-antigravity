@@ -161,11 +161,13 @@ class X122Test extends TestCase
 
         $firstInv = ActionInvocation::findOrFail($res['invocation_id']);
         $firstParams = $firstInv->parameters;
+        $firstCreatedAt = $firstInv->created_at;
 
         $res2 = $this->invoker->handle($biz->id, 'task.done', ['id' => 2]);
         $this->assertNotEquals($res['invocation_id'], $res2['invocation_id']);
 
         $firstInvReRead = ActionInvocation::findOrFail($res['invocation_id']);
+        $this->assertEquals($firstCreatedAt, $firstInvReRead->created_at);
         $this->assertEquals($firstParams, $firstInvReRead->parameters);
 
         $this->assertEquals(2, ActionInvocation::where('business_id', $biz->id)->count());
