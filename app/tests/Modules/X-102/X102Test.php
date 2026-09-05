@@ -18,7 +18,7 @@ use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X121\Models\Person;
-use App\Modules2\Models\ChatLead;
+use App\Modules\X102\Models\ChatLead;
 
 use App\Services\Ai\AiSpend;
 use App\Support\Tenancy;
