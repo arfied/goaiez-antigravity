@@ -18,6 +18,7 @@ class ManualQueue extends Component
     public bool $isSample = false;
 
     public ?string $attentionMessage = null;
+
     public bool $actionFailed = false;
 
     public function mount(): void
@@ -51,8 +52,9 @@ class ManualQueue extends Component
             ->where('status', 'queued_manual')
             ->find($queueId);
 
-        if (!$queueItem) {
+        if (! $queueItem) {
             $this->actionFailed = true;
+
             return;
         }
 
@@ -62,7 +64,7 @@ class ManualQueue extends Component
                 campaignId: (string) $queueItem->campaign_id,
                 prospectIdentifier: (string) $queueItem->prospect_identifier
             );
-            
+
             $queueItem->delete();
 
             if (in_array($result['status'], ['queued_manual', 'skipped_duplicate'])) {
@@ -82,7 +84,7 @@ class ManualQueue extends Component
                     'campaign_id' => '12',
                     'prospect_identifier' => '9401',
                     'updated_at' => now()->subMinutes(15),
-                ]
+                ],
             ]);
         } else {
             $queue = CaptchaQuota::where('business_id', $this->businessId)

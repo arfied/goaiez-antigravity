@@ -7,6 +7,7 @@ namespace Tests\Modules\X109;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Modules\X109\Models\CaptchaQuota;
+use App\Modules\X109\Ui\ManualQueue;
 use App\Modules\X109\Ui\SubmissionLog;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,7 +37,7 @@ class X109ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('No submissions yet')
             ->assertDontSee('99999');
-            
+
         $this->get(route('x-109.submission-log.admin', ['business' => $biz->id]))
             ->assertOk()
             ->assertSee('No submissions yet');
@@ -78,11 +79,11 @@ class X109ScreensTest extends TestCase
             'available_quota' => 0,
         ]);
 
-        Livewire::test(\App\Modules\X109\Ui\ManualQueue::class, ['businessId' => $biz->id])
+        Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
             ->assertOk()
             ->assertSee('Queue is empty')
             ->assertDontSee('99999');
-            
+
         $this->get(route('x-109.manual-queue.admin', ['business' => $biz->id]))
             ->assertOk()
             ->assertSee('Queue is empty');
@@ -103,9 +104,9 @@ class X109ScreensTest extends TestCase
             'available_quota' => 0,
         ]);
 
-        Livewire::test(\App\Modules\X109\Ui\ManualQueue::class, ['businessId' => $biz->id])
+        Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
             ->assertOk()
-            ->assertSeeHtml('wire:submit="resubmit(' . $queueRow->id . ')"');
+            ->assertSeeHtml('wire:submit="resubmit('.$queueRow->id.')"');
     }
 
     /**
@@ -135,7 +136,7 @@ class X109ScreensTest extends TestCase
             'available_quota' => 0,
         ]);
 
-        Livewire::test(\App\Modules\X109\Ui\ManualQueue::class, ['businessId' => $biz->id])
+        Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
             ->call('resubmit', $queueRow->id)
             ->assertDontSee('Zero quota');
 
@@ -166,7 +167,7 @@ class X109ScreensTest extends TestCase
             'available_quota' => 0,
         ]);
 
-        Livewire::test(\App\Modules\X109\Ui\ManualQueue::class, ['businessId' => $biz->id])
+        Livewire::test(ManualQueue::class, ['businessId' => $biz->id])
             ->call('resubmit', $queueRow->id)
             ->assertSee('Zero quota: queued to manual review without third-party charges');
 
