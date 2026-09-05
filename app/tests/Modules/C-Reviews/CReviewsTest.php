@@ -240,16 +240,14 @@ class CReviewsTest extends TestCase
         ]);
 
         // Satisfy the legacy foreign key
-        DB::table('customers')->insert([
-            'id' => $person->id,
+        $customerId = DB::table('customers')->insertGetId([
             'business_id' => $biz->id,
             'created_at' => now(),
         ]);
-        \Illuminate\Support\Facades\DB::statement("SELECT setval('customers_id_seq', (SELECT MAX(id) FROM customers))");
 
         ConsentRecord::create([
             'business_id' => $biz->id,
-            'customer_id' => $person->id,
+            'customer_id' => $customerId,
             'channel' => 'sms',
             'state' => 'opted_in',
             'captured_by' => 'platform',
@@ -263,7 +261,7 @@ class CReviewsTest extends TestCase
             'business_id' => $biz->id,
             'platform' => 'google',
             'customer_name' => 'John Doe',
-            'customer_id' => $person->id,
+            'customer_id' => $customerId,
         ]);
 
         $action = new ReviewerContactAction;
