@@ -11,6 +11,7 @@ use App\Modules\CSms\Domain\SmsComposer;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class CSmsTest extends TestCase
 
     protected function tearDown(): void
     {
-        \Illuminate\Support\Carbon::setTestNow();
+        Carbon::setTestNow();
         parent::tearDown();
     }
 
@@ -48,7 +49,7 @@ class CSmsTest extends TestCase
      */
     public function test_anchor_segment_count_quiet_hours_and_stop_suppression(): void
     {
-        \Illuminate\Support\Carbon::setTestNow('2026-09-04 12:00:00');
+        Carbon::setTestNow('2026-09-04 12:00:00');
         Event::fake([SendRequested::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'SMS Tenant', 'currency' => 'USD']);
@@ -64,7 +65,7 @@ class CSmsTest extends TestCase
         $this->assertNotNull($calc['warning']);
 
         // 2. Quiet hours: at 21:30, marketing waits (scheduled), transactional goes (sent)
-        \Illuminate\Support\Carbon::setTestNow('2026-09-04 22:30:00');
+        Carbon::setTestNow('2026-09-04 22:30:00');
         $mktRes = $this->send->handle(
             businessId: $biz->id,
             recipientPhone: '+15125550111',
