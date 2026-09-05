@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T21:15:07",
+ "updated": "2026-09-04T21:32:13",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1335,6 +1335,18 @@
    "module": "X-137",
    "chose": "G13-28 decisions",
    "at": "2026-09-04T21:15:03",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "the two-segment public route: the segment sets the tenant context before any tenant-owned table is read and the row is then read scoped to that business, so a hash under another tenant's segment is a 404 and the segment selects a policy rather than lifting one; rejected BYPASSRLS for public routes (no superuser credential, and it puts a hole around the one guard that cannot be argued with) and rejected encoding the business id inside deploy_hash (same information with a parser in front of it, and existing rows do not carry it).",
+   "at": "2026-09-04T21:32:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "There is one public redirect endpoint in this application and it is ShortLinkController. A module does not add a second door onto a table the platform already serves; it tests the door that exists. A capability about the redirect is proved against GET /{token}, where the hop actually happens. Rejected: keep /l/{business}/{code} and add the four missing refusals to it \u2014 refused, that is a second implementation of an endpoint whose whole value is that its refusals are uniform, and two of them will drift. Rejected: point LinkRedirectAction at ShortLinkClicks::record() so at least the click lands in the table with readers \u2014 refused, that service is a chokepoint with a lint behind it and X-137 is not a caller it was written for; the caller belongs behind the service, which is what using the existing controller means.",
+   "at": "2026-09-04T21:32:13",
    "ruling": "R245"
   }
  ]
