@@ -60,7 +60,6 @@ trait JourneyHarness
     /** A tenant with a REAL provisioned number from the carrier. @return array<string,mixed> */
     private function tenantWithLiveNumber(): array
     {
-        \Illuminate\Support\Facades\Log::info("PDO in tenantWithLiveNumber: " . spl_object_id(\Illuminate\Support\Facades\DB::connection("pgsql")->getPdo()));
         $numbers = app(TenantNumbers::class);
         $e164 = env('INFOBIP_SENDER', '+19015922708');
 
