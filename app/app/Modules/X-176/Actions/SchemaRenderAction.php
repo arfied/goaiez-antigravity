@@ -38,12 +38,15 @@ final class SchemaRenderAction
             $entityType = $map[$vertical] ?? 'LocalBusiness';
         }
 
+        $canonical = app(SeoRenderAction::class)
+            ->handle($businessId, $pageId, $businessName, $commitId, $domainName)['canonical'];
+
         // Build valid schema.org structure (G8-32)
         $jsonLd = [
             '@context' => 'https://schema.org',
             '@type' => $entityType,
             'name' => $businessName,
-            'url' => "https://{$domainName}/pages/{$pageId}",
+            'url' => $canonical,
         ];
 
         if (! empty($productOffers)) {
