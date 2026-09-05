@@ -11,8 +11,8 @@ final class DisputeRecordAction
 {
     public function __construct(private readonly DisputeDefenseEngine $engine = new DisputeDefenseEngine) {}
 
-    public function handle(int $businessId, int $invoiceId, int $chargebackAmountCents, string $reason = 'fraudulent'): Dispute
+    public function handle(int $businessId, int $invoiceId, int $chargebackAmountCents, string $reason = 'fraudulent', string $gateway = ''): Dispute
     {
-        return $this->engine->record($businessId, $invoiceId, $chargebackAmountCents, $reason);
+        return $this->engine->record($businessId, $invoiceId, $chargebackAmountCents, $reason, $gateway);
     }
 }

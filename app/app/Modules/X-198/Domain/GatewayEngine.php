@@ -11,8 +11,10 @@ use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
+use App\Support\PlatformCredentials;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 
 final class GatewayEngine
 {
@@ -36,9 +38,10 @@ final class GatewayEngine
         int $amountCents,
         string $paymentToken,
         string $idempotencyKey,
-        string $currency = 'USD'
+        string $currency = 'USD',
+        ?int $invoiceId = null
     ): Payment {
-        return DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
+        return DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency, $invoiceId) {
             // Idempotency check: duplicated ref charges once (G17-04, G1-23)
             $existing = Payment::where('business_id', $businessId)
                 ->where('idempotency_key', $idempotencyKey)
@@ -54,6 +57,10 @@ final class GatewayEngine
                 throw new \InvalidArgumentException('Gateway connection is absent; payment capture refused before external request');
             }
 
+            if (empty($connection->merchant_account_id)) {
+                throw new \InvalidArgumentException('Gateway connection carries no credential; payment capture refused before external request');
+            }
+
             $payment = Payment::create([
                 'business_id' => $businessId,
                 'merchant_connection_id' => $connection->id,
@@ -62,18 +69,94 @@ final class GatewayEngine
                 'currency' => $currency,
                 'payment_token' => $paymentToken,
                 'idempotency_key' => $idempotencyKey,
+                'invoice_id' => $invoiceId,
                 'status' => 'pending',
+            ]);
+
+            return $payment;
+        });
+    }
+
+    public function confirmCapture(int $businessId, int $paymentId, string $gatewayChargeId): Payment
+    {
+        return DB::transaction(function () use ($businessId, $paymentId, $gatewayChargeId) {
+            if (empty($gatewayChargeId)) {
+                throw new \InvalidArgumentException('Gateway charge ID cannot be empty');
+            }
+
+            $payment = Payment::where('business_id', $businessId)->findOrFail($paymentId);
+
+            if ($payment->status !== 'pending') {
+                throw new \InvalidArgumentException('Only pending payments can be captured');
+            }
+
+            $payment->update([
+                'status' => 'captured',
+                'gateway_charge_id' => $gatewayChargeId,
             ]);
 
             Event::dispatch(new PaymentCaptured(
                 businessId: $businessId,
                 paymentId: $payment->id,
-                gatewayChargeId: $payment->gateway_charge_id,
-                amountCents: $amountCents
+                gatewayChargeId: $gatewayChargeId,
+                amountCents: $payment->amount_cents,
+                invoiceId: $payment->invoice_id
             ));
 
             return $payment;
         });
+    }
+
+    public function requestCharge(int $businessId, int $paymentId, int $amountCents, string $currency, string $paymentToken, string $idempotencyKey, ?int $invoiceId = null): Payment
+    {
+        $connection = MerchantConnection::where('business_id', $businessId)->first();
+
+        if ($connection === null || ! $connection->is_connected || empty($connection->merchant_account_id)) {
+            throw new \InvalidArgumentException('Gateway connection carries no credential; request refused');
+        }
+
+        $gatewayChargeId = null;
+
+        $headers = ['Idempotency-Key' => $idempotencyKey];
+        if ($connection->merchant_account_id !== 'self') {
+            $headers['Stripe-Account'] = $connection->merchant_account_id;
+        }
+
+        if ($connection->gateway_name === 'stripe') {
+            if (! PlatformCredentials::has('stripe_secret')) {
+                throw new \InvalidArgumentException('Gateway connection carries no credential; request refused');
+            }
+
+            $payload = [
+                'amount' => $amountCents,
+                'currency' => strtolower($currency),
+                'payment_method_data[type]' => 'card',
+                'payment_method_data[card][token]' => $paymentToken,
+                'confirm' => 'true',
+                'return_url' => 'https://example.com/return',
+            ];
+
+            if ($invoiceId !== null) {
+                $payload['metadata[invoice_id]'] = $invoiceId;
+            }
+
+            $response = Http::withToken(PlatformCredentials::get('stripe_secret'))
+                ->withHeaders($headers)
+                ->asForm()
+                ->post('https://api.stripe.com/v1/payment_intents', $payload);
+
+            if (! $response->successful()) {
+                throw new \RuntimeException('Stripe Error: '.$response->body());
+            }
+
+            $gatewayChargeId = $response->json('id');
+        }
+
+        if (empty($gatewayChargeId)) {
+            throw new \RuntimeException('Gateway did not return a charge ID');
+        }
+
+        return $this->confirmCapture($businessId, $paymentId, (string) $gatewayChargeId);
     }
 
     /**

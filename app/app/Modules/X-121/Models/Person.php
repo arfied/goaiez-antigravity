@@ -24,5 +24,6 @@ class Person extends Model
 
     protected $casts = [
         'metadata' => 'array',
+        'consent_state' => 'string',
     ];
 }

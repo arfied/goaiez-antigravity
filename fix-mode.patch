@@ -1,0 +1,10 @@
+--- app/tests/Journeys/JourneyHarness.php
++++ app/tests/Journeys/JourneyHarness.php
+@@ -111,6 +111,7 @@
+         \Illuminate\Support\Facades\DB::table('platform_settings')->updateOrInsert(['key' => 'voice.enabled'], ['value' => 'true']);
+         \Illuminate\Support\Facades\DB::table('platform_settings')->updateOrInsert(['key' => 'voice.announcement_attested_at'], ['value' => now()->toIso8601String()]);
+         \Illuminate\Support\Facades\DB::table('platform_settings')->updateOrInsert(['key' => 'voice.announcement_attested_by'], ['value' => 'test']);
++        \Illuminate\Support\Facades\DB::table('support_settings')->where('business_id', $tenant['id'])->update(['call_routing_mode' => 'conditional']);
+         
+         $url = config('services.infobip.base_url') . '/calls/1/calls/39f44da2-9d1c-4851-b808-7a8c57ce5a2e';
+         \Illuminate\Support\Facades\Http::fake([

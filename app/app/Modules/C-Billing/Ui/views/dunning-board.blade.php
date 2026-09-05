@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="C-Billing" screen="dunning_board" />
     <div class="dunning-board p-4">
         <h3 class="text-lg font-bold">21-Day Dunning Lifecycle Board</h3>
         @if($states->isEmpty())

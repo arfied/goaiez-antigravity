@@ -1,4 +1,5 @@
 <div>
+<x-surface.sample-state module="multi-channel sequencing" screen="sequence_builder" />
     <div class="p-4 space-y-6">
         <h3 class="text-lg font-bold text-ink">Broadcast Composer</h3>
 
@@ -77,6 +78,6 @@
                     @endforeach
                 </div>
             @endif
-        </div>
+            </div>
     </div>
 </div>

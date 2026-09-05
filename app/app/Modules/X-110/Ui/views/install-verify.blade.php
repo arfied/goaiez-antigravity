@@ -1,4 +1,5 @@
 <div>
+<x-surface.sample-state module="the 14 KB smart pixel" screen="install_verify" />
     <div wire:loading.delay>
         <x-ui.skeleton label="Loading verification..." />
     </div>
@@ -8,8 +9,7 @@
             <x-ui.error-panel heading="Could not verify the tag">
                 {{ $loadError }}
             </x-ui.error-panel>
-        @elseif($isSample)
-            <x-ui.sample />
+        
         @elseif(isset($isEmpty) && $isEmpty)
             <x-ui.empty-state icon="🌐" heading="No website location set" action="Add Website" href="#">
                 Set your website URL in your location settings so we know where to listen.
@@ -121,6 +121,5 @@
                     </x-ui.row>
                 </x-ui.row-list>
             </div>
-        @endif
-    </div>
+        @endif    </div>
 </div>

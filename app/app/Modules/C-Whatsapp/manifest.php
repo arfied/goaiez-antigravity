@@ -42,6 +42,7 @@ return [
         'message.received',
         'send.requested',
         'notification.classified',
+        'consent.decided',
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.

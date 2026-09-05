@@ -10,6 +10,7 @@ final class ApprovalRequested
         public readonly int $businessId,
         public readonly string $requestType,
         public readonly int $referenceId,
-        public readonly int $amountCents
+        public readonly int $amountCents,
+        public readonly ?string $status = null
     ) {}
 }

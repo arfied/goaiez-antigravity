@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="C-Billing" screen="credits" />
     <div class="credits-ledger p-4">
         <h3 class="text-lg font-bold">Credits Ledger</h3>
         @if($entries->isEmpty())

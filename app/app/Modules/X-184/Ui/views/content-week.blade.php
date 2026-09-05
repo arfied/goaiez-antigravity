@@ -1,4 +1,5 @@
 <div>
+<x-surface.sample-state module="the content calendar: a whole plan proposed from their industry and their transcripts" screen="content_week" />
     <div class="p-4 space-y-4">
         <h3 class="text-lg font-bold text-ink">Weekly Content Cadence Proposal</h3>
         
@@ -67,6 +68,6 @@
                     @endforeach
                 </div>
             @endif
-        </div>
+            </div>
     </div>
 </div>

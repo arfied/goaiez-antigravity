@@ -1,4 +1,5 @@
 <div>
+<x-surface.sample-state module="the 14 KB smart pixel" screen="visitors_live" />
     <div wire:loading.delay>
         <x-ui.skeleton label="Loading live visitors..." />
     </div>
@@ -8,8 +9,7 @@
             <x-ui.error-panel heading="Could not load live visitors">
                 {{ $loadError }}
             </x-ui.error-panel>
-        @elseif($isSample)
-            <x-ui.sample />
+        
         @elseif($sessions->isEmpty())
             <x-ui.empty-state icon="👀" heading="Nobody on the site right now" action="Install pixel" href="{{ route('account.pixel-install') }}">
                 @if($installVerified)
@@ -64,6 +64,5 @@
                     @endforeach
                 </x-ui.row-list>
             </div>
-        @endif
-    </div>
+        @endif    </div>
 </div>

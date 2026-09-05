@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="the front-desk agent on a live call: voice RAG with in-stream hesitation and objection detection" screen="calls" />
     <div class="calls-container p-4">
         <h3 class="text-lg font-bold">Voice Call Sessions</h3>
         @if($calls->isEmpty())

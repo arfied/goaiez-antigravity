@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="`Business" screen="entity_history_viewer" />
     <div class="entity-history-container p-4">
         <h3 class="text-lg font-bold">Entity History</h3>
         @if($history->isEmpty())

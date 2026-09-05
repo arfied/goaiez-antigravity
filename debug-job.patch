@@ -1,0 +1,13 @@
+--- app/app/Jobs/SendMissedCallTextBackJob.php
++++ app/app/Jobs/SendMissedCallTextBackJob.php
+@@ -191,7 +191,9 @@
+      */
+     protected function execute(): array
+     {
+-        return $this->textBack();
++        $res = $this->textBack();
++        \Illuminate\Support\Facades\Log::info("TextBack job outcome: " . json_encode($res));
++        return $res;
+     }
+ 
+     /**

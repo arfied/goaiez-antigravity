@@ -1,4 +1,5 @@
 <div>
+<x-surface.sample-state module="multi-channel sequencing" screen="stop_log" />
     <div class="p-4 space-y-6">
         <h3 class="text-lg font-bold text-ink">Do-Not-Text / Stopped Log</h3>
 
@@ -60,6 +61,6 @@
                     @endforeach
                 </x-ui.row-list>
             @endif
-        </div>
+            </div>
     </div>
 </div>

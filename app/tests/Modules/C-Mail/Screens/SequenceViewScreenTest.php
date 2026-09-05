@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\CMail\Screens;
+
+use App\Enums\UserRole;
+use App\Models\User;
+use App\Modules\CMail\Ui\SequenceView;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+class SequenceViewScreenTest extends TestCase
+{
+    public function test_screen_renders_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+
+        $this->get(route('c-mail.sequence-view'))->assertOk();
+
+        Livewire::test(SequenceView::class)->assertOk();
+    }
+}

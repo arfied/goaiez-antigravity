@@ -1,4 +1,5 @@
 <div>
+<x-surface.sample-state module="the 14 KB smart pixel" screen="cooling" />
     <div wire:loading.delay>
         <x-ui.skeleton label="Loading cooling list..." />
     </div>
@@ -8,8 +9,7 @@
             <x-ui.error-panel heading="Could not load cooling list">
                 {{ $loadError }}
             </x-ui.error-panel>
-        @elseif($isSample)
-            <x-ui.sample />
+        
         @elseif(count($visitors) === 0)
             <x-ui.empty-state icon="🧊" heading="Nobody cooling down right now" action="Check install status" href="{{ route('account.pixel-install') }}">
                 When visitors drop off or abandon forms, they will appear here.
@@ -43,6 +43,5 @@
                     @endforeach
                 </x-ui.row-list>
             </div>
-        @endif
-    </div>
+        @endif    </div>
 </div>

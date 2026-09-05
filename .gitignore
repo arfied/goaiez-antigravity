@@ -14,5 +14,7 @@ app/storage/app/evidence/
 
 __pycache__/
 *.pyc
+
+# per-track supervisor mailbox — never merged, never shared (owner ruling 2026-09-04)
 .agents/supervisor/*
 !.agents/supervisor/launch-coder.sh

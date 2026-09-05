@@ -40,6 +40,7 @@ return [
     ],
     'consumes' => [
         '*',
+        'consent.decided',
     ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.
@@ -48,7 +49,10 @@ return [
         'event_subscriptions',
         'dead_letters',
     ],
-    'reads_table' => [],
+    'reads_table' => [
+        'businesses',
+        'users',
+    ],
 
     'renders' => [
         'dlq_request_inspector',

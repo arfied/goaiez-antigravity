@@ -1,51 +1,23 @@
-<div>
-    <div class="mb-6 sm:mb-8">
-        <h2 class="text-sm font-semibold text-ink-2 uppercase tracking-wider mb-3">Needs you now</h2>
-        
-        <div wire:loading>
-            <x-ui.skeleton label="Checking recommendations..." />
+<div wire:init="load">
+    @if($errorMessage)
+        <x-ui.error-panel heading="We could not load recommendations." retry="load" />
+    @elseif($recs->isNotEmpty())
+        <div class="mb-4">
+            <h3 class="font-display text-lg font-bold mb-4">Today's Recommendations</h3>
+            @foreach($recs as $r)
+                <div class="mb-4">
+                    <x-ui.attention-card
+                        state="attention"
+                        heading="{{ $r->title }}"
+                    >
+                        Action required: {{ $r->action_key }}
+                    </x-ui.attention-card>
+                    <div class="mt-2 flex gap-2">
+                        <x-ui.button wire:click="accept({{ $r->id }})" size="default" variant="primary">Accept</x-ui.button>
+                        <x-ui.button wire:click="dismiss({{ $r->id }})" size="default" variant="secondary">Dismiss</x-ui.button>
+                    </div>
+                </div>
+            @endforeach
         </div>
-        
-        <div wire:loading.remove>
-            @if($loadError)
-                <x-ui.error-panel heading="Could not load recommendations">
-                    {{ $loadError }}
-                </x-ui.error-panel>
-            @elseif($isSample)
-                <x-ui.sample />
-            @elseif($recs->isEmpty())
-                <x-ui.empty-state icon="✓" heading="All clear">
-                    Nothing on your desk right now.
-                </x-ui.empty-state>
-            @else
-                <x-ui.row-list>
-                    @foreach($recs as $r)
-                        <x-ui.row class="!flex-col sm:!flex-row !items-start sm:!items-center sm:flex-row items-start sm:items-center gap-3 sm:gap-0">
-                            <div class="flex-1 min-w-0 pr-4">
-                                <p class="text-sm font-medium text-ink ">{{ $r->title }}</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <x-ui.button variant="quiet" size="default" wire:click="dismiss({{ $r->id }})">Dismiss</x-ui.button>
-                                <x-ui.button variant="secondary" size="default" wire:click="preview({{ $r->id }})">Review</x-ui.button>
-                            </div>
-                        </x-ui.row>
-                        @if($previewingId === $r->id)
-                            <div class="p-4 bg-paper border-t border-rule text-sm">
-                                <div class="mb-4">
-                                    <p class="text-ink-2">{{ collect($previewData)->get('projected_changes', 'Reviewing...') }}</p>
-                                </div>
-                                <div class="flex justify-end gap-3">
-                                    @if(collect($previewData)->get('is_irreversible', false) && !$previewIsConfirmed)
-                                        <x-ui.button variant="primary" size="default" wire:click="execute({{ $r->id }})">Confirm</x-ui.button>
-                                    @else
-                                        <x-ui.button variant="primary" size="default" wire:click="execute({{ $r->id }})">Execute</x-ui.button>
-                                    @endif
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
-                </x-ui.row-list>
-            @endif
-        </div>
-    </div>
+    @endif
 </div>
