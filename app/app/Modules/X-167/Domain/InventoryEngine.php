@@ -38,7 +38,7 @@ final class InventoryEngine
             'status' => 'proposed',
             'po_number' => 'PO-'.rand(1000, 9999),
             'total_cents' => $totalCents,
-            'items' => json_encode($items),
+            'items' => $items,
         ]);
     }
 
