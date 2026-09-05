@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X66;
 
 use App\Enums\UserRole;
+use App\Models\Business;
 use App\Models\User;
 use App\Modules\X188\Models\NumberAssignment;
 use App\Modules\X188\Models\NumberPool;
@@ -20,7 +21,7 @@ class CallsScreenTest extends TestCase
 {
     public function test_calls_screen_renders_states(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Calls Tenant', 'currency' => 'USD']);
+        $biz = Business::factory()->create(['name' => 'Calls Tenant', 'currency' => 'USD']);
         $user = User::factory()->create();
 
         Tenancy::actingAs($biz->id, function () use ($biz, $user) {
@@ -56,6 +57,7 @@ class CallsScreenTest extends TestCase
             // 4. Pool-number state: NO number assignment
             // Delete only rows WE created.
             $assignment->delete();
+            $pool->delete();
 
             Livewire::test(Calls::class)
                 ->assertSeeHtml('<span class="text-ink-3 italic">None</span>')
@@ -108,7 +110,7 @@ class CallsScreenTest extends TestCase
     public function test_screen_renders_for_tenant(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
-        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $biz = Business::factory()->create(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
         Tenancy::actingAs($biz->id, function () use ($biz) {
@@ -127,7 +129,7 @@ class CallsScreenTest extends TestCase
     {
         $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
-        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+        $biz = Business::factory()->create(['owner_user_id' => $user->id]);
 
         $this->get(route('x-66.calls.admin'))
             ->assertOk();
