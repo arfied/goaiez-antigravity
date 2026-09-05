@@ -519,7 +519,7 @@ final class AuthorizeNetApi
                 if (is_array($detail)
                     && $this->stringAt($detail, 'customerProfileId') === $customerProfileId
                     && $this->stringAt($detail, 'customerPaymentProfileId') === $customerPaymentProfileId
-                    && $this->stringAt($detail, 'name') === $subscription['name']
+                    && str_starts_with((string) $this->stringAt($detail, 'name'), $subscription['name'])
                     && in_array($this->stringAt($detail, 'status'), ['active', 'suspended'], true)
                 ) {
                     $existingId = $this->stringAt($detail, 'id');
