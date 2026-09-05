@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T21:52:13",
+ "updated": "2026-09-05T01:30:36",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1323,6 +1323,10 @@
   {
    "at": "2026-09-04T21:43:44",
    "note": "MONEY-24: push 657ba583..ed3051fd; X-201 dispute-card \u2014 the compiled bundle with one note field, a submitted defence is sealed, approval submits; X-120 the card door \u2014 number, expiry and name, never the security code, nothing stored until Stripe returns a token; X-117 cart-block \u2014 the catalogue and the cart with a true countdown, stock comes off at paid never at cart"
+  },
+  {
+   "at": "2026-09-05T01:30:20",
+   "note": "MONEY-25: push ed3051fd..568d4daa landed (568d4daa on origin/track/money); X-117 checkout-block \u2014 the fresh-authorisation door, stock off at paid, one authorisation pays once; X-173 conflicts-list \u2014 a person names the account, uncategorised or blank is not a resolution, never auto-closed; X-173 connection-mapping \u2014 one category maps to one account per connection, the OAuth door is a finished waiting state; X-173 sync-error-rate \u2014 conflicts over every line seen, nothing seen is unknown not 0%. Recorded in MONEY-25b: run 34 journaled nothing (M25-A)"
   }
  ],
  "decisions": [
@@ -1438,6 +1442,30 @@
    "module": "X-117",
    "chose": "X-117 \u2014 the cart block is the catalogue and the cart, customer-facing behind tenancy: CheckoutEngine::addToCart refuses more than the stock (SoldOutException, before any write), reads inventory and writes only the cart row \u2014 stock comes off at paid, never at cart (\u00a7147.2); the countdown is the row's expires_at, never moved by render, add or remove, restarted only when a cart is new or expired (G16-05); prices are read from sellables, never written; Check out is a finished waiting state on the checkout block, where every charge takes a fresh authorisation (G1-15). Test: CartBlockScreenTest",
    "at": "2026-09-04T21:52:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "X-117 \u2014 the checkout block is the fresh-authorisation door: CheckoutEngine::checkoutCart refuses a missing, expired_ or ALREADY-USED authorisation (an orders.auth_token match \u2014 G1-15, G1-39: a second charge on a stored token with no new consent is refused), an empty or expired cart, and any short line before anything is written; then one order, N lines, stock off at paid (\u00a7147.2), the cart row deleted, InventoryUpdated per line; a tap on Authorise mints the authorisation event and pay() clears it in a finally so it is never round-tripped; cancel reverses stock through OrderCancelAction; the card is never asked for here (P-160) and the capture through the gateway is a finished waiting state. Test: CheckoutBlockScreenTest",
+   "at": "2026-09-05T01:30:24",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "X-173 \u2014 the conflicts list is where a person closes a sync conflict and the only place: AccountingSyncEngine::resolveConflict answers status refused for a blank or 'uncategorised' answer (posting to uncategorised is not a resolution) and for a resolved row (a resolution is not overwritten silently), status resolved otherwise \u2014 an array answer, not an exception, is the module's shape; the sync path never calls it, so a conflict row is never auto-closed (anchor, \u00a7141.5); no event \u2014 a person's decision is not an inference; sync.conflict (\u00a7141.5) is absent from the generated manifest, UNRESOLVED on Track 1's scaffold. Test: ConflictsListScreenTest",
+   "at": "2026-09-05T01:30:28",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "X-173 \u2014 the connection-mapping screen: AccountingSyncEngine::mapAccount maps one category to one ledger account per connection (updateOrCreate keyed on business, connection, category \u2014 a remap replaces, never duplicates; \u00a730.5 reviewed once then automatic), refuses a blank part and an inactive or foreign connection with a status refused answer; AccountingMapAction delegates and returns that array (X173Test reads no return); the OAuth connect is a finished waiting state that writes no row \u2014 a connection with a made-up token is a guess (\u00a7141.5 never guesses silently); QuickBooks/Xero/Sage credentials are UNRESOLVED (owner). Test: ConnectionMappingScreenTest",
+   "at": "2026-09-05T01:30:32",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "X-173 \u2014 the sync error rate counts every line the run saw: AccountingSyncEngine::rateOf is conflicts over records_synced + conflicts_count and null \u2014 'nothing to sync', never a healthy 0% \u2014 when nothing was seen; errorRate(businessId, runId) reads a run and delegates to it; the overall line is rateOf over the tenant's sums (\u00a730.5 a failed line is a dead letter not a silent gap; the tracker's UNKNOWN-not-STALE invariant); a run's conflicts open under its row in-page because routing is Track 1's. Test: SyncErrorRateScreenTest",
+   "at": "2026-09-05T01:30:36",
    "ruling": "R245"
   }
  ]
