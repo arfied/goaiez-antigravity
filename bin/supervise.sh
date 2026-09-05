@@ -105,7 +105,38 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (DB_DATABASE=goaiez_antig_stages_test, exported over phpunit.xml's $xml_db)"
-  out=$(DB_DATABASE=goaiez_antig_stages_test ./vendor/bin/pest 2>&1); rc=$?
+  gate_db=goaiez_antig_stages_test
+  # (a) OWNER 2026-09-05 08:0x — refuse while another checkout has a pest live on OUR database.
+  #     Concurrent runs share one schema; the number would be noise (OWNER ACTION 56).
+  busy=""
+  for pid in $(pgrep -f 'vendor/bin/pest' 2>/dev/null); do
+    cwd=$(readlink /proc/"$pid"/cwd 2>/dev/null) || continue
+    [ -n "$cwd" ] || continue
+    case "$cwd" in "$APP"*) continue ;; esac
+    other_db=$(tr '\0' '\n' < /proc/"$pid"/environ 2>/dev/null | sed -n 's/^DB_DATABASE=//p' | head -1)
+    [ -n "$other_db" ] || other_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$cwd/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
+    [ "$other_db" = "$gate_db" ] && busy="$busy $cwd(pid=$pid)"
+  done
+  if [ -n "$busy" ]; then
+    echo "  ⛔ REFUSED — a pest run is already live on $gate_db in:$busy"
+    echo "  (rerun when idle; a shared-database run is a measurement failure, not a code failure)"
+    fail=1
+    out=""; rc=0; skip_pest=1
+  else
+    skip_pest=0
+    out=$(DB_DATABASE=$gate_db timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  fi
+  # (b) rc 124 is the 1800s timeout; (c) a zero-byte run is named, never printed as a blank.
+  if [ "$skip_pest" -eq 1 ]; then
+    :
+  elif [ $rc -eq 124 ]; then
+    echo "  ⛔ TIMEOUT — pest exceeded 1800s and was killed (rc 124). No number from this run."
+    fail=1
+  elif [ -z "$out" ]; then
+    echo "  ⛔ ZERO BYTES — pest printed nothing, rc $rc. Narrow with --filter before debugging code"
+    echo "  (memory, a missing Vite manifest, or a died-before-the-formatter run all read like this)"
+    fail=1
+  else
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
@@ -121,6 +152,7 @@ n=len(d.get("error_details") or [])
 if n>5: print("   … %d more" % (n-5))'
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
+  fi
   fi
 fi
 

@@ -17,10 +17,29 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Never:** commit, push, migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
+| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
 
 `.claude/settings.json` enforces your column. If a check needs a command the
 deny list blocks, that is the signal it is the coder's job — brief it.
+
+**Commit and push rights — owner, 2026-09-05 08:0x (OWNER.md, relayed by Track 1;
+committed here as `f7cd6d5b`).** `.claude/settings.json` now allows the supervisor
+`git add`, `git commit` and `git push origin`; the fifty-entry deny list otherwise
+stands. The rights are narrow:
+
+- **Commit ONLY the supervisor's own files** — `CLAUDE.md`, `bin/supervise.sh`,
+  `.agents/rules/10-supervisor.md` — as `chore(supervisor): …`, with named
+  paths (`git commit -m "…" -- <paths>`), never `-a`, never `add -A`. Merge
+  step 0, committing the supervisor column ahead of a take of `origin/main`, is
+  therefore **the supervisor's job, not the coder's**: the coder guard refuses
+  those paths.
+- **Push ONLY a sha this track has gated and recorded in `REVIEWS.md`**, by
+  explicit ref — `git push origin <sha>:track/stages` — never a branch head,
+  never `--force`.
+- Still never: `app/**`, a migration, a database, `state.py done|journey|stage`,
+  or a test run outside `supervise.sh --tests`.
+- **Never edit `bin/supervise.sh` while a gate is running** — bash reads the
+  script incrementally and a mid-run edit executes a spliced file.
 
 ## The mailbox — `.agents/supervisor/`
 
