@@ -186,6 +186,50 @@ class X137Test extends TestCase
         Http::assertNothingSent();
     }
 
+    /**
+     * [G13-24]
+     */
+    public function test_G13_24_offline_campaign_reuses_token(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'G1324 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $t1 = $this->attributeAction->allocateToken($biz->id, 'v1', '+15554440000', 'print_ad', 30, true);
+        $t2 = $this->attributeAction->allocateToken($biz->id, 'v2', '+15554449999', 'print_ad', 30, true);
+
+        $this->assertEquals('+15554440000', $t1->allocated_number);
+        $this->assertEquals('+15554440000', $t2->allocated_number);
+        $this->assertNotEquals($t1->id, $t2->id);
+
+        $t3 = $this->attributeAction->allocateToken($biz->id, 'v3', '+15554448888', 'print_ad', 30, false);
+        $this->assertEquals('+15554448888', $t3->allocated_number);
+    }
+
+    public function test_a_cold_link_click_is_recorded_without_a_session(): void
+    {
+        Event::fake([\App\Modules\X137\Events\LinkClicked::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Cold Click', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $link = $this->shortAction->handle($biz->id, 'https://example.com/dest', 'flyer_a');
+
+        // no session is present or required for a cold link click
+        $response = $this->get("/l/{$biz->id}/{$link->short_code}");
+        $response->assertRedirect('https://example.com/dest');
+
+        $this->assertEquals(1, \App\Modules\X137\Models\LinkClick::count());
+        $click = \App\Modules\X137\Models\LinkClick::first();
+        $this->assertEquals($biz->id, $click->business_id);
+        $this->assertEquals($link->id, $click->short_link_id);
+
+        Event::assertDispatched(\App\Modules\X137\Events\LinkClicked::class, function ($e) use ($biz, $link) {
+            return $e->businessId === $biz->id && $e->shortLinkId === $link->id && $e->shortCode === $link->short_code;
+        });
+
+        $this->get("/l/{$biz->id}/unknown_code")->assertNotFound();
+    }
+
     public function test_header_capabilities(): void
     {
 
