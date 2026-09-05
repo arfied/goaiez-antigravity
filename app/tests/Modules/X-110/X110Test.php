@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X110;
 
+use App\Enums\ShortLinkPurpose;
+use App\Models\ShortLinkClick;
 use App\Modules\X102\Actions\ChatContextRefreshAction;
 use App\Modules\X102\Actions\ChatStartAction;
 use App\Modules\X102\Models\ChatSession;
@@ -18,6 +20,9 @@ use App\Modules\X110\Models\IdentityLink;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\ShortLinks\ShortLinks;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -235,12 +240,12 @@ class X110Test extends TestCase
     public function test_g13_28_redirect_hop(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Hop Biz']);
-        \App\Support\Tenancy::set($biz->id);
+        Tenancy::set($biz->id);
 
-        $registry = app(\App\Services\Config\DefaultsRegistry::class);
+        $registry = app(DefaultsRegistry::class);
 
-        $links = app(\App\Services\ShortLinks\ShortLinks::class);
-        $link = $links->mint('https://target.example.com', \App\Enums\ShortLinkPurpose::ReviewInvite);
+        $links = app(ShortLinks::class);
+        $link = $links->mint('https://target.example.com', ShortLinkPurpose::ReviewInvite);
 
         $domain = $links->domain();
 
@@ -248,9 +253,9 @@ class X110Test extends TestCase
         $response = $this->get("https://{$domain}/{$link->token}");
         $response->assertRedirect('https://target.example.com');
 
-        \App\Support\Tenancy::set($biz->id);
+        Tenancy::set($biz->id);
 
-        $click = \App\Models\ShortLinkClick::where('short_link_id', $link->id)->first();
+        $click = ShortLinkClick::where('short_link_id', $link->id)->first();
         $this->assertNotNull($click);
         $this->assertEquals($link->id, $click->short_link_id);
 
@@ -262,10 +267,10 @@ class X110Test extends TestCase
         $this->assertEquals($responseNeverExisted->status(), $responseDead->status());
         $this->assertEquals($responseNeverExisted->content(), $responseDead->content());
 
-        \App\Support\Tenancy::set($biz->id);
+        Tenancy::set($biz->id);
 
         // 3. A dead link is still not a hit
-        $clicksAfter = \App\Models\ShortLinkClick::where('short_link_id', $link->id)->count();
+        $clicksAfter = ShortLinkClick::where('short_link_id', $link->id)->count();
         $this->assertEquals(1, $clicksAfter);
     }
 
