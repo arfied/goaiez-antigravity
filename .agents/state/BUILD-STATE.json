@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T18:22:27",
+ "updated": "2026-09-05T18:58:29",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -459,10 +459,29 @@
    "unresolved": []
   },
   "X-102": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-102",
+     "stage": "capability",
+     "why": "CapabilitiesScaffoldCommand rewrites unconditionally and deletes other tracks' hand-written lines (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:21"
+    },
+    {
+     "module": "X-102",
+     "stage": "capability",
+     "why": "G13-15: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-102",
+     "stage": "capability",
+     "why": "G16-21: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
+    }
+   ]
   },
   "X-103": {
    "status": "UNRESOLVED",
@@ -502,10 +521,17 @@
    "unresolved": []
   },
   "X-110": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-110",
+     "stage": "capability",
+     "why": "G13-09: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
+    }
+   ]
   },
   "X-111": {
    "status": "DONE",
@@ -652,10 +678,35 @@
    "unresolved": []
   },
   "X-137": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 13,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-137",
+     "stage": "capability",
+     "why": "G3-11: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-137",
+     "stage": "capability",
+     "why": "G8-13: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-137",
+     "stage": "capability",
+     "why": "G13-24: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-137",
+     "stage": "capability",
+     "why": "G18-17: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
+    }
+   ]
   },
   "X-138": {
    "status": "DONE",
@@ -757,6 +808,12 @@
      "stage": "capability",
      "why": "The scaffold command reads the master plan first and G13-05 appears on line 28087 without the refusal before line 31363, so the thin row wins and the tracker note is ignored.",
      "at": "2026-09-05T18:22:23"
+    },
+    {
+     "module": "X-155",
+     "stage": "capability",
+     "why": "G13-05: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+     "at": "2026-09-05T18:58:29"
     }
    ]
   },
@@ -1377,6 +1434,60 @@
    "stage": "contract",
    "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same shape as send.requested), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
    "at": "2026-09-05T18:22:27"
+  },
+  {
+   "module": "X-102",
+   "stage": "capability",
+   "why": "CapabilitiesScaffoldCommand rewrites unconditionally and deletes other tracks' hand-written lines (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:21"
+  },
+  {
+   "module": "X-102",
+   "stage": "capability",
+   "why": "G13-15: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-102",
+   "stage": "capability",
+   "why": "G16-21: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-110",
+   "stage": "capability",
+   "why": "G13-09: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-137",
+   "stage": "capability",
+   "why": "G3-11: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-137",
+   "stage": "capability",
+   "why": "G8-13: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-137",
+   "stage": "capability",
+   "why": "G13-24: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-137",
+   "stage": "capability",
+   "why": "G18-17: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-155",
+   "stage": "capability",
+   "why": "G13-05: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
+   "at": "2026-09-05T18:58:29"
   }
  ],
  "decisions": [

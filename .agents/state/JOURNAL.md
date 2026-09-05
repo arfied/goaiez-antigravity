@@ -772,3 +772,12 @@
 - `2026-09-05T17:33:50` note: X-172 generated screen test renders through Fixtures::token() (run 101)
 - `2026-09-05T18:22:23` UNRESOLVED capability X-155 - The scaffold command reads the master plan first and G13-05 appears on line 28087 without the refusal before line 31363, so the thin row wins and the tracker note is ignored.
 - `2026-09-05T18:22:27` UNRESOLVED contract X-103 - approval.requested correctly emitted by multiple proposing modules per the master plan rule (same shape as send.requested), but sealed ContractStage.php lacks an exemption and unconditionally fails.
+- `2026-09-05T18:58:21` UNRESOLVED capability X-102 - CapabilitiesScaffoldCommand rewrites unconditionally and deletes other tracks' hand-written lines (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-102 - G13-15: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-102 - G16-21: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-110 - G13-09: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-137 - G3-11: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-137 - G8-13: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-137 - G13-24: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-137 - G18-17: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+- `2026-09-05T18:58:29` UNRESOLVED capability X-155 - G13-05: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
