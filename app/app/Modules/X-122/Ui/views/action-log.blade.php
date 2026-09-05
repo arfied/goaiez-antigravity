@@ -12,7 +12,9 @@
             <x-ui.skeleton label="Loading actions..." />
         </div>
 
-        @if($invocations->isEmpty())
+        @if($errorMessage)
+            <x-ui.error-panel heading="We could not load the action log.">{{ $errorMessage }}</x-ui.error-panel>
+        @elseif($invocations->isEmpty())
             @if($search !== '')
                 <x-ui.empty-state heading="No results found" description="No actions matched your search." />
             @else

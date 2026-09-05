@@ -20,6 +20,8 @@ class ActionLog extends Component
 
     public string $search = '';
 
+    public ?string $errorMessage = null;
+
     public function mount(): void
     {
         $this->businessId = Tenancy::idOrFail();
@@ -36,17 +38,22 @@ class ActionLog extends Component
 
     public function render()
     {
-        $query = ActionInvocation::query()
-            ->where('business_id', $this->businessId);
+        try {
+            $query = ActionInvocation::query()
+                ->where('business_id', $this->businessId);
 
-        if ($this->search !== '') {
-            $query->where('action_name', 'like', '%'.$this->search.'%');
+            if ($this->search !== '') {
+                $query->where('action_name', 'like', '%'.$this->search.'%');
+            }
+
+            $invocations = $query
+                ->orderByRaw("CASE WHEN status = 'refused' THEN 0 ELSE 1 END ASC")
+                ->orderBy('id', 'desc')
+                ->paginate(15);
+        } catch (\Exception $e) {
+            $this->errorMessage = 'Failed to load action log';
+            $invocations = collect();
         }
-
-        $invocations = $query
-            ->orderByRaw("CASE WHEN status = 'refused' THEN 0 ELSE 1 END ASC")
-            ->orderBy('id', 'desc')
-            ->paginate(15);
 
         return view('x-122::action-log', [
             'invocations' => $invocations,
