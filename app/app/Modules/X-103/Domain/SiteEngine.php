@@ -40,8 +40,8 @@ final class SiteEngine
                 'current_version_id' => $version->id,
             ]);
 
-            Event::dispatch(new PagePublished($businessId, $page->id, $commitId));
-            Event::dispatch(new SitePublished($businessId, $page->id, $commitId));
+            Event::dispatch(new PagePublished($businessId, $page->id, $commitId, $version->id));
+            Event::dispatch(new SitePublished($businessId, $page->id, $commitId, $version->id));
 
             return [
                 'status' => 'published',
