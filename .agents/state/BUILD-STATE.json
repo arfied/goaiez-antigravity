@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T09:37:16",
+ "updated": "2026-09-05T09:57:09",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -436,6 +436,90 @@
      "stage": "capability",
      "why": "G19-08 \u2014 no ghost-risk system exists; grep -rn 'ghost' app/app/Modules/X-01 app/app/Models returns capabilities.php:76 and three identical x-surface.sample-state boilerplate paragraphs in Ui/views. No model, column, action or flag, and nothing is 'flagged before a send is wasted'.",
      "at": "2026-09-05T09:37:16"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
+     "at": "2026-09-05T09:57:00"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
+     "at": "2026-09-05T09:57:00"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
+     "at": "2026-09-05T09:57:00"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
+     "at": "2026-09-05T09:57:00"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
+     "at": "2026-09-05T09:57:00"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
+     "at": "2026-09-05T09:57:00"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast.  is a  with no interface \u2014 it does not implement , so nothing leaves the process.",
+     "at": "2026-09-05T09:57:00"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
+     "at": "2026-09-05T09:57:09"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
+     "at": "2026-09-05T09:57:09"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
+     "at": "2026-09-05T09:57:09"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
+     "at": "2026-09-05T09:57:09"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
+     "at": "2026-09-05T09:57:09"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
+     "at": "2026-09-05T09:57:09"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast. Events/ConversationUpdated.php is a 'final class ConversationUpdated' with no interface \u2014 it does not implement ShouldBroadcast, so nothing leaves the process.",
+     "at": "2026-09-05T09:57:09"
     }
    ]
   },
@@ -1399,6 +1483,90 @@
    "stage": "capability",
    "why": "G19-08 \u2014 no ghost-risk system exists; grep -rn 'ghost' app/app/Modules/X-01 app/app/Models returns capabilities.php:76 and three identical x-surface.sample-state boilerplate paragraphs in Ui/views. No model, column, action or flag, and nothing is 'flagged before a send is wasted'.",
    "at": "2026-09-05T09:37:16"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
+   "at": "2026-09-05T09:57:00"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
+   "at": "2026-09-05T09:57:00"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
+   "at": "2026-09-05T09:57:00"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
+   "at": "2026-09-05T09:57:00"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
+   "at": "2026-09-05T09:57:00"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
+   "at": "2026-09-05T09:57:00"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast.  is a  with no interface \u2014 it does not implement , so nothing leaves the process.",
+   "at": "2026-09-05T09:57:00"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
+   "at": "2026-09-05T09:57:09"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
+   "at": "2026-09-05T09:57:09"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
+   "at": "2026-09-05T09:57:09"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
+   "at": "2026-09-05T09:57:09"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
+   "at": "2026-09-05T09:57:09"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
+   "at": "2026-09-05T09:57:09"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast. Events/ConversationUpdated.php is a 'final class ConversationUpdated' with no interface \u2014 it does not implement ShouldBroadcast, so nothing leaves the process.",
+   "at": "2026-09-05T09:57:09"
   }
  ],
  "decisions": [
@@ -1465,6 +1633,10 @@
   {
    "at": "2026-09-05T09:37:20",
    "note": "X-01 \u2014 G11-23 pins current behaviour: UnifiedInboxManager:70-75 keys Conversation::firstOrCreate on person_id alone, so all four channels land on one row (the cell's 'one polymorphic Conversation') and the channel column freezes at the first message's channel. A consumer reading conversation.channel as 'the channel this thread is on now' reads the wrong value from the second message onward. Recorded, not changed \u2014 a rewrite is a behaviour change outside S-69."
+  },
+  {
+   "at": "2026-09-05T09:56:22",
+   "note": "X-01 \u2014 G11-40 pins the header's first line (GOAIEZ-MASTER-PLAN.md:26556), which names FIVE channels including WhatsApp, against AccountInbox::$channels = ['sms','email','voice','chat'] (Ui/Account/Inbox.php:11), which names four. WhatsApp already threads correctly because UnifiedInboxManager::ingestMessage validates the $channel argument not at all \u2014 no enum, no list, no guard \u2014 so any string threads and freezes into conversations.channel at first write. The consequence is the other way round from the gap: a typo'd channel ('smss') is accepted silently and becomes the conversation's channel forever. Recorded, not fixed \u2014 adding validation or a fifth list entry is a behaviour change outside S-70, and the list lives in a Track 2 file (ruling 5)."
   }
  ]
 }
