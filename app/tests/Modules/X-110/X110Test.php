@@ -344,10 +344,11 @@ class X110Test extends TestCase
             'abandoned_field' => 'name'
         ]);
 
+        DB::statement("SET app.business_id = '{$biz->id}'");
         $result = $this->engine->abandonPointsForForm($biz->id, 'form_A');
         $this->assertEquals(2, $result['total']);
         $this->assertCount(2, $result['points']);
-        $fields = array_column($result['points'], 'abandoned_field');
+        $fields = array_column($result['points'], 'field');
         $this->assertContains('email', $fields);
         $this->assertContains('phone', $fields);
         $this->assertNotContains('name', $fields);
