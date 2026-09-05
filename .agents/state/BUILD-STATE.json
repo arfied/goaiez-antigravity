@@ -1255,6 +1255,18 @@
   {
    "at": "2026-09-04T19:36:15",
    "note": "X-142 returned to DONE: the three 2026-09-04T19:18:02 unresolved records were coverage facts about Livewire::test reach, not missing dependencies (ruling 48, bin/state.py:9). They stay in the arrays because state.py has no withdraw; the status is the field of record."
+  },
+  {
+   "at": "2026-09-05T06:11:10",
+   "note": "--help"
+  },
+  {
+   "at": "2026-09-05T06:11:18",
+   "note": "app/app/Modules/X-215/Actions/DocCommentAction.php DocCommentAction::addCommentAndReissue() has no state check, so a comment on a signed or voided document re-issues it with 'status' => 'sent' and silently re-opens a finished contract. deferred module, recorded under ruling 47, not built"
+  },
+  {
+   "at": "2026-09-05T06:11:18",
+   "note": "app/app/Modules/X-215/Actions/DocRemindAction.php DocRemindAction returns 'reminder_sent' and sends nothing \u2014 no mail, no event, no queued job, no column. deferred module, recorded under ruling 47, not built"
   }
  ],
  "decisions": [
