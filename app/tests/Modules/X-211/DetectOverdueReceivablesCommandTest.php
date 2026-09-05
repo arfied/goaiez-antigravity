@@ -6,6 +6,7 @@ namespace Tests\Modules\X211;
 
 use App\Models\Business;
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Support\Tenancy;
@@ -118,7 +119,7 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
     /**
      * [N-037]
      */
-    public function test_an_open_recover_blocks_dunning_entirely_N_037(): void
+    public function test_an_open_recover_blocks_dunning_entirely_n_037(): void
     {
         Tenancy::forgetAll();
         $business = Business::factory()->create();
@@ -152,7 +153,7 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
             ]);
             $silenceId = $silence->id;
 
-            $engine = app(\App\Modules\X211\Domain\ArEngine::class);
+            $engine = app(ArEngine::class);
             $engine->recordReason($business->id, $disputedId, 'disputed_line');
             $engine->recordReason($business->id, $complaintId, 'complaint');
         });
