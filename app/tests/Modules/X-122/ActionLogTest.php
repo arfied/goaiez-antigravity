@@ -13,7 +13,6 @@ use Tests\TestCase;
 
 class ActionLogTest extends TestCase
 {
-
     public function test_seeded_row_renders(): void
     {
         $business = Business::factory()->create();

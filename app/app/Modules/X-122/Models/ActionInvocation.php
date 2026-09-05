@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X122\Models;
 
+use Database\Factories\ActionInvocationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Database\Factories\ActionInvocationFactory;
 
 class ActionInvocation extends Model
 {
