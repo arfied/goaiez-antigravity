@@ -317,7 +317,13 @@ trait JourneyHarness
             ->first()->e164 ?? '+19015922708';
         $customerPhone = '+15550123';
 
+        $person = Person::firstOrCreate(
+            ['business_id' => $tenant['id'], 'phone' => $customerPhone],
+            ['first_name' => 'Journey Customer']
+        );
+
         DB::table('customers')->insertOrIgnore([
+            'id' => $person->id,
             'business_id' => $tenant['id'],
             'phone' => $customerPhone,
             'name' => 'Journey Customer',
