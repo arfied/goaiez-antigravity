@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\X199;
 
+use App\Modules\X198\Events\PaymentCaptured;
+use App\Modules\X199\Listeners\RecordPaymentOnCapture;
 use App\Modules\X199\Ui\Credits;
 use App\Modules\X199\Ui\Declines;
 use App\Modules\X199\Ui\Invoices;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Modules\X199\Ui\Unpaid;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -21,8 +24,15 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
+
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-199');
+
+        Event::listen(
+            PaymentCaptured::class,
+            RecordPaymentOnCapture::class
+        );
 
         if (class_exists(Livewire::class)) {
             Livewire::component('x-199.money-paid-today', MoneyPaidToday::class);

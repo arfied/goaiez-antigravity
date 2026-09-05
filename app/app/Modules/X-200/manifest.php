@@ -41,10 +41,16 @@ return [
     'emits' => [
         'call.requested',
     ],
-    'consumes' => [],
+    'consumes' => [
+        'capability.decided',
+    ],
 
     // ⛔ P-163 — @owns_table may not name one of X-121's canonical nouns.
-    'owns_table' => [],
+    'owns_table' => [
+        'callcenter_campaigns',
+        'callcenter_seats',
+        'qa_scorecards',
+    ],
     'reads_table' => [],
 
     'renders' => [
@@ -59,5 +65,12 @@ return [
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.
     'agent_reachable' => [
         'qa.score',
+        'campaign.start',
+        'campaign.pause',
+        'dial.next',
+        'call.dispose',
+        'callback.schedule',
+        'seat.login',
+        'seat.logout',
     ],
 ];

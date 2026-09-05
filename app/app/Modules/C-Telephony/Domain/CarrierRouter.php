@@ -10,11 +10,16 @@ use App\Modules\CTelephony\Events\CarrierSelected;
 use App\Modules\CTelephony\Models\CarrierBinding;
 use App\Modules\CTelephony\Models\CarrierHealth;
 use App\Modules\CTelephony\Models\CarrierReceipt;
+use App\Modules\X204\Domain\ConsentService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class CarrierRouter
 {
+    public function __construct(
+        private readonly ConsentService $consentService
+    ) {}
+
     public const ADAPTERS = [
         'twilio' => 'App\Modules\CTelephony\Adapters\TwilioAdapter',
         'telnyx' => 'App\Modules\CTelephony\Adapters\TelnyxAdapter',
@@ -35,9 +40,21 @@ final class CarrierRouter
         string $toPhone,
         string $body,
         bool $isRcs = false,
-        ?string $preferredCarrier = null
+        ?string $preferredCarrier = null,
+        string $class = 'transactional'
     ): array {
-        return DB::transaction(function () use ($businessId, $threadKey, $isRcs, $preferredCarrier) {
+        return DB::transaction(function () use ($businessId, $threadKey, $toPhone, $isRcs, $preferredCarrier, $class) {
+            $decision = $this->consentService->decide($businessId, $toPhone, 'telephony', $class);
+            if (! $decision['granted']) {
+                $reason = $decision['reason'];
+
+                return [
+                    'status' => 'refused',
+                    'reason' => $reason,
+                    'message' => 'Send suppressed due to consent check: '.$decision['reason'],
+                ];
+            }
+
             // 1. Thread Stickiness Check (TEST ANCHOR: Thread bound to Telnyx stays on Telnyx)
             $binding = CarrierBinding::where('business_id', $businessId)
                 ->where('thread_key', $threadKey)

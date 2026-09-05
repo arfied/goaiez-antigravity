@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X01\Ui;
 
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -15,6 +16,10 @@ class Thread extends Component
 
     public function render()
     {
+        if ($this->businessId > 0) {
+            Tenancy::set($this->businessId);
+        }
+
         $conversations = ($this->businessId > 0)
             ? Conversation::where('business_id', $this->businessId)->get()
             : collect();

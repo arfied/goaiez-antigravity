@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="time tracking" screen="own_hours" />
     <h1>Own Hours</h1>
 
     @if($timesheets->isEmpty())

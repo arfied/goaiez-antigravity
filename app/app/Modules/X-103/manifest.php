@@ -36,6 +36,10 @@ return [
     ],
     'emits' => [
         'approval.requested',
+        'page.published',
+        'site.published',
+        'funnel.completed',
+        'optimiser.proposed',
     ],
     'consumes' => [
         'capability.decided',

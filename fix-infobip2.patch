@@ -1,0 +1,10 @@
+--- app/app/Services/Voice/InfobipVoiceProvider.php
++++ app/app/Services/Voice/InfobipVoiceProvider.php
+@@ -194,6 +194,7 @@
+         }
+ 
+         $body = $response->json();
++        \Illuminate\Support\Facades\Log::info("Infobip GET $url response body: " . json_encode($body));
+ 
+         return is_array($body) ? $body : null;
+     }

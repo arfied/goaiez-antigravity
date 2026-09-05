@@ -13,6 +13,8 @@ use App\Modules\X200\Actions\QaScoreAction;
 use App\Modules\X200\Actions\SeatLoginAction;
 use App\Modules\X200\Actions\SeatLogoutAction;
 use App\Modules\X200\Events\CallRequested;
+use App\Modules\X200\Models\CallDisposition;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
@@ -114,10 +116,122 @@ class X200Test extends TestCase
     }
 
     /**
-     * [G2-09], [G2-26], [G2-35], [G2-37], [G3-04], [G5-09], [G5-40], [G9-01], [G9-38], [G10-03], [G11-25], [G13-02], [G16-11], [G16-15], [G18-01], [G18-02], [G18-03], [G18-06], [G18-08], [G18-13], [G18-15], [G18-16], [G18-19], [G21-13], [G15-29]
+     * [G2-09], [G2-26], [G2-35], [G2-37], [G3-04], [G5-09], [G5-40], [G9-01], [G9-38], [G10-03], [G11-25], [G13-02], [G16-11], [G16-15], [G18-01], [G18-02], [G18-03], [G18-06], [G18-08], [G18-13], [G18-15], [G18-16], [G18-19], [G18-25], [G21-13], [G15-29]
      */
     public function test_dialer_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_g18_25_certain_voicemail_is_not_upgraded_to_a_live_human(): void
+    {
+        // G18-25: A certain voicemail is not upgraded
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $humanSeat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+
+        $disp = $this->disposeAction->disposeCall(
+            businessId: $biz->id,
+            campaignId: $camp->id,
+            seatId: $humanSeat->id,
+            phone: '+12145550188',
+            disposition: 'voicemail',
+            isUncertainAmd: false // Certain AMD
+        );
+
+        $this->assertEquals('voicemail', $disp->disposition);
+        $this->assertFalse($disp->is_uncertain_human);
+    }
+
+    public function test_dispose_refuses_a_campaign_from_another_business(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Second Contact Center Tenant', 'currency' => 'USD']);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $foreignCamp = $this->startAction->startCampaign($bizB->id, 'Other Tenant Campaign', 2.50);
+        $foreignSeat = $this->loginAction->login($bizB->id, 'Agent Mallory', isAi: false);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $camp = $this->startAction->startCampaign($bizA->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $seat = $this->loginAction->login($bizA->id, 'Agent John', isAi: false);
+
+        try {
+            $this->disposeAction->disposeCall(
+                businessId: $bizA->id,
+                campaignId: $foreignCamp->id,
+                seatId: $seat->id,
+                phone: '+12145550188',
+                disposition: 'answered'
+            );
+            $this->fail('disposeCall accepted a campaign id belonging to another business');
+        } catch (ModelNotFoundException) {
+            // expected
+        }
+
+        $this->assertSame(
+            0,
+            CallDisposition::where('business_id', $bizA->id)->count(),
+            'the disposition row must not be written before the ids are validated'
+        );
+    }
+
+    public function test_dispose_refuses_a_seat_from_another_business(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Second Contact Center Tenant', 'currency' => 'USD']);
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $foreignCamp = $this->startAction->startCampaign($bizB->id, 'Other Tenant Campaign', 2.50);
+        $foreignSeat = $this->loginAction->login($bizB->id, 'Agent Mallory', isAi: false);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $camp = $this->startAction->startCampaign($bizA->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $seat = $this->loginAction->login($bizA->id, 'Agent John', isAi: false);
+
+        try {
+            $this->disposeAction->disposeCall(
+                businessId: $bizA->id,
+                campaignId: $camp->id,
+                seatId: $foreignSeat->id,
+                phone: '+12145550188',
+                disposition: 'answered'
+            );
+            $this->fail('disposeCall accepted a seat id belonging to another business');
+        } catch (ModelNotFoundException) {
+            // expected
+        }
+
+        $this->assertSame(
+            0,
+            CallDisposition::where('business_id', $bizA->id)->count(),
+            'the disposition row must not be written before the ids are validated'
+        );
+    }
+
+    public function test_a_paused_campaign_does_not_dial(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Event::fake([CallRequested::class]);
+
+        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+
+        $this->pauseAction->pauseCampaign($biz->id, $camp->id);
+
+        try {
+            $this->dialAction->dialNext($biz->id, $camp->id, $seat->id, '+12145550188');
+            $this->fail('dialNext dialed a paused campaign');
+        } catch (InvalidArgumentException $e) {
+            $this->assertStringContainsString('campaign is paused', $e->getMessage());
+        }
+
+        Event::assertNotDispatched(CallRequested::class);
+
+        $seat->refresh();
+        $this->assertSame('idle', $seat->state, 'a refused dial must not leave the seat in dialing');
     }
 }

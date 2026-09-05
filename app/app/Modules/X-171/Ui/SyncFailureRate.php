@@ -19,7 +19,7 @@ class SyncFailureRate extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin), 403);
         $this->businessId = Tenancy::id();
     }
 

@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="recurring service plans" screen="members" />
     <h1 class="text-2xl font-bold mb-4 text-ink">Members</h1>
 
     @if($memberships->isEmpty())

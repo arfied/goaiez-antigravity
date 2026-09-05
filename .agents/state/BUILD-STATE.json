@@ -1,45 +1,45 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
- "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T20:39:07",
- "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
- "roster": 124,
+ "started": "2026-09-03T09:33:12",
+ "updated": "2026-09-05T10:15:15",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
+ "roster": 127,
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
- "seal_digest_observed": "f1e73d9fc181eb1c",
+ "seal_digest_observed": null,
  "runtime_sound": true,
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 2,
+   "violations": null,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 102,
+   "violations": null,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 13,
+   "violations": null,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 120,
+   "violations": 372,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 10,
+   "violations": null,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 12,
+   "violations": null,
    "fails": "WAVE"
   }
  },
@@ -59,7 +59,9 @@
    "track": "spine",
    "status": "DONE",
    "modules": [
-    "X-128"
+    "X-128",
+    "X-222",
+    "X-223"
    ]
   },
   "3": {
@@ -68,7 +70,8 @@
    "modules": [
     "C-Ai",
     "X-219",
-    "X-220"
+    "X-220",
+    "X-221"
    ]
   },
   "4": {
@@ -381,10 +384,23 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Reviews",
+     "stage": "tests",
+     "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+     "at": "2026-09-04T07:55:55"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-04T08:05:31"
+    }
+   ]
   },
   "C-Sms": {
    "status": "DONE",
@@ -435,17 +451,10 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-103",
-     "stage": "schema",
-     "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-     "at": "2026-09-02T02:30:15"
-    }
-   ]
+   "unresolved": []
   },
   "X-104": {
    "status": "DONE",
@@ -532,17 +541,10 @@
    "unresolved": []
   },
   "X-121": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-121",
-     "stage": "schema",
-     "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-     "at": "2026-09-02T02:39:43"
-    }
-   ]
+   "unresolved": []
   },
   "X-122": {
    "status": "DONE",
@@ -773,72 +775,16 @@
    "unresolved": []
   },
   "X-162": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-162",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-162 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T14:35:12"
-    },
-    {
-     "module": "X-162",
-     "stage": "vendor",
-     "why": "live technician position needs a GPS/position feed; no vendor in the repo; the map draws the ordered stops from routes until one exists",
-     "at": "2026-09-04T20:39:07"
-    },
-    {
-     "module": "X-162",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-162 map waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T20:39:07"
-    }
-   ]
+   "unresolved": []
   },
   "X-163": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 7,
    "intent": "NONE",
-   "unresolved": [
-    {
-     "module": "X-163",
-     "stage": "journey",
-     "why": "journey J3 \u2014 C-Agent\\Actions\\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.",
-     "at": "2026-09-02T13:49:13"
-    },
-    {
-     "module": "X-163",
-     "stage": "journey",
-     "why": "J3 \u2014 tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path",
-     "at": "2026-09-03T01:58:12"
-    },
-    {
-     "module": "X-163",
-     "stage": "ConfirmationScreen missing the [fill-me] refusal_code handling UI explicitly beyond Needs a Price.",
-     "why": "",
-     "at": "2026-09-04T13:11:25"
-    },
-    {
-     "module": "X-163",
-     "stage": "DailyPricingDigest missing email dispatch logic.",
-     "why": "",
-     "at": "2026-09-04T13:11:25"
-    },
-    {
-     "module": "X-163",
-     "stage": "UI",
-     "why": "Daily pricing digest missing email/SMS dispatch loop",
-     "at": "2026-09-04T13:11:43"
-    },
-    {
-     "module": "X-163",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T13:28:19"
-    }
-   ]
+   "unresolved": []
   },
   "X-164": {
    "status": "DONE",
@@ -847,74 +793,28 @@
    "unresolved": []
   },
   "X-165": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-165",
-     "stage": "surface",
-     "why": "",
-     "at": "2026-09-04T15:22:13"
-    },
-    {
-     "module": "X-165",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-165 plans and members waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T16:15:01"
-    }
-   ]
+   "unresolved": []
   },
   "X-166": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-166",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-166 margin_by_job, by_tech and by_service waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T16:26:13"
-    },
-    {
-     "module": "X-166",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-166 by_source waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T16:51:42"
-    }
-   ]
+   "unresolved": []
   },
   "X-167": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-167",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-167 stock_by_van and reorders waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T16:52:25"
-    },
-    {
-     "module": "X-167",
-     "stage": "approval",
-     "why": "approved_action_id is written by no module in this lane (grep: X-167 only); Approve-and-send stays off the Reorders screen until the approval desk that issues it exists",
-     "at": "2026-09-04T16:54:43"
-    }
-   ]
+   "unresolved": []
   },
   "X-168": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-168",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-168 timesheets, own_hours and approvals waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T16:07:44"
-    }
-   ]
+   "unresolved": []
   },
   "X-170": {
    "status": "DONE",
@@ -923,29 +823,10 @@
    "unresolved": []
   },
   "X-171": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-171",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-171 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T14:42:35"
-    },
-    {
-     "module": "X-171",
-     "stage": "surface",
-     "why": "X-198 payment surface (track money)",
-     "at": "2026-09-04T14:42:35"
-    },
-    {
-     "module": "X-171",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T20:18:36"
-    }
-   ]
+   "unresolved": []
   },
   "X-172": {
    "status": "UNRESOLVED",
@@ -954,15 +835,9 @@
    "unresolved": [
     {
      "module": "X-172",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-172 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T14:44:41"
-    },
-    {
-     "module": "X-172",
-     "stage": "surface",
-     "why": "X-164/X-199 render (tracks one/money)",
-     "at": "2026-09-04T14:44:41"
+     "stage": "tests",
+     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+     "at": "2026-09-05T08:35:23"
     }
    ]
   },
@@ -973,17 +848,10 @@
    "unresolved": []
   },
   "X-175": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-175",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-175 stafffacing_assistant_panel waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T17:19:22"
-    }
-   ]
+   "unresolved": []
   },
   "X-176": {
    "status": "DONE",
@@ -1046,10 +914,23 @@
    "unresolved": []
   },
   "X-186": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-186",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T13:47:25"
+    },
+    {
+     "module": "X-186",
+     "stage": "capability",
+     "why": "no action enrols a person into a campaign",
+     "at": "2026-09-04T22:41:56"
+    }
+   ]
   },
   "X-188": {
    "status": "DONE",
@@ -1064,10 +945,17 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-190",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:48:24"
+    }
+   ]
   },
   "X-191": {
    "status": "DONE",
@@ -1082,10 +970,17 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-193",
+     "stage": "tests",
+     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-194": {
    "status": "DONE",
@@ -1130,10 +1025,17 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-201",
+     "stage": "tests",
+     "why": "column deadline_at is missing from disputes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-202": {
    "status": "DONE",
@@ -1157,7 +1059,14 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-205",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:56:38"
+    }
+   ]
   },
   "X-206": {
    "status": "DONE",
@@ -1223,13 +1132,27 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-217",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:00:33"
+    }
+   ]
   },
   "X-218": {
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-218",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:01:55"
+    }
+   ]
   },
   "X-219": {
    "status": "DONE",
@@ -1250,495 +1173,220 @@
    "unresolved": []
   },
   "X-82": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 24,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-82",
-     "stage": "surface",
-     "why": "",
-     "at": "2026-09-04T15:28:49"
-    },
-    {
-     "module": "X-82",
-     "stage": "surface",
-     "why": "GET\u2192assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-     "at": "2026-09-04T16:15:01"
-    }
-   ]
+   "unresolved": []
+  },
+  "X-221": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-222": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "PROTECT",
+   "unresolved": []
+  },
+  "X-223": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "GROW",
+   "unresolved": []
   }
  },
  "journeys": {
   "J1": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a missed call becomes a consented text back",
    "green_after_wave": 5
   },
   "J2": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "two fields at signup put a live agent on a real number",
    "green_after_wave": 6
   },
   "J3": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a quote comes from the pricebook or does not come at all",
    "green_after_wave": 7
   },
   "J4": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "STOP halts every pending step for that person",
    "green_after_wave": 5
   },
   "J5": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a migration of five hundred jobs sends nothing",
    "green_after_wave": 14
   },
   "J6": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "cancel is one tap with nothing in between",
    "green_after_wave": 11
   },
   "J7": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an agency client never sees cost or margin",
    "green_after_wave": 11
   },
   "J8": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a deliberately corrupted backup fails the restore",
    "green_after_wave": 14
   },
   "J9": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an invoice reaches a real charge id",
    "green_after_wave": 10
   },
   "J10": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a completed job asks for a review once inside the cadence",
    "green_after_wave": 8
   },
   "J11": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a published site carries all seven",
    "green_after_wave": 13
   },
   "J12": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an overdue invoice is chased by reason, resolution first",
    "green_after_wave": 9
   }
  },
  "unresolved": [
   {
-   "module": "X-103",
-   "stage": "schema",
-   "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-   "at": "2026-09-02T02:30:15"
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
   },
   {
-   "module": "X-121",
-   "stage": "schema",
-   "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-   "at": "2026-09-02T02:39:43"
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
   },
   {
-   "module": "X-163",
-   "stage": "journey",
-   "why": "journey J3 \u2014 C-Agent\\Actions\\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.",
-   "at": "2026-09-02T13:49:13"
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
   },
   {
-   "module": "X-163",
-   "stage": "journey",
-   "why": "J3 \u2014 tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path",
-   "at": "2026-09-03T01:58:12"
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
   },
   {
-   "module": "X-163",
-   "stage": "ConfirmationScreen missing the [fill-me] refusal_code handling UI explicitly beyond Needs a Price.",
-   "why": "",
-   "at": "2026-09-04T13:11:25"
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-163",
-   "stage": "DailyPricingDigest missing email dispatch logic.",
-   "why": "",
-   "at": "2026-09-04T13:11:25"
+   "module": "X-193",
+   "stage": "tests",
+   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
   },
   {
-   "module": "X-163",
-   "stage": "UI",
-   "why": "Daily pricing digest missing email/SMS dispatch loop",
-   "at": "2026-09-04T13:11:43"
+   "module": "X-201",
+   "stage": "tests",
+   "why": "column deadline_at is missing from disputes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
   },
   {
-   "module": "X-163",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T13:28:19"
+   "module": "C-Reviews",
+   "stage": "tests",
+   "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+   "at": "2026-09-04T07:55:55"
   },
   {
-   "module": "X-162",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-162 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T14:35:12"
+   "module": "C-Reviews",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-04T08:05:31"
   },
   {
-   "module": "X-171",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-171 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T14:42:35"
-  },
-  {
-   "module": "X-171",
-   "stage": "surface",
-   "why": "X-198 payment surface (track money)",
-   "at": "2026-09-04T14:42:35"
+   "module": "X-186",
+   "stage": "capability",
+   "why": "no action enrols a person into a campaign",
+   "at": "2026-09-04T22:41:56"
   },
   {
    "module": "X-172",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-172 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T14:44:41"
-  },
-  {
-   "module": "X-172",
-   "stage": "surface",
-   "why": "X-164/X-199 render (tracks one/money)",
-   "at": "2026-09-04T14:44:41"
-  },
-  {
-   "module": "X-165",
-   "stage": "surface",
-   "why": "",
-   "at": "2026-09-04T15:22:13"
-  },
-  {
-   "module": "X-82",
-   "stage": "surface",
-   "why": "",
-   "at": "2026-09-04T15:28:49"
-  },
-  {
-   "module": "X-168",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-168 timesheets, own_hours and approvals waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T16:07:44"
-  },
-  {
-   "module": "X-165",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-165 plans and members waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T16:15:01"
-  },
-  {
-   "module": "X-82",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T16:15:01"
-  },
-  {
-   "module": "X-166",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-166 margin_by_job, by_tech and by_service waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T16:26:13"
-  },
-  {
-   "module": "X-166",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-166 by_source waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T16:51:42"
-  },
-  {
-   "module": "X-167",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-167 stock_by_van and reorders waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T16:52:25"
-  },
-  {
-   "module": "X-167",
-   "stage": "approval",
-   "why": "approved_action_id is written by no module in this lane (grep: X-167 only); Approve-and-send stays off the Reorders screen until the approval desk that issues it exists",
-   "at": "2026-09-04T16:54:43"
-  },
-  {
-   "module": "X-175",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-175 stafffacing_assistant_panel waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T17:19:22"
-  },
-  {
-   "module": "X-171",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T20:18:36"
-  },
-  {
-   "module": "X-162",
-   "stage": "vendor",
-   "why": "live technician position needs a GPS/position feed; no vendor in the repo; the map draws the ordered stops from routes until one exists",
-   "at": "2026-09-04T20:39:07"
-  },
-  {
-   "module": "X-162",
-   "stage": "surface",
-   "why": "GET\u2192assertOk for X-162 map waits on Track 1 surfaces:generate (run 67); no route in this checkout",
-   "at": "2026-09-04T20:39:07"
-  }
- ],
- "notes": [
-  {
-   "at": "2026-08-29T14:37:58",
-   "note": "bootstrap-done"
-  },
-  {
-   "at": "2026-09-02T14:24:07",
-   "note": "X-119 contract stage finding: X-119 consumes 'entity.updated' \u2014 nothing emits it. Missing dependency from X-121 (owning track unknown)."
-  },
-  {
-   "at": "2026-09-02T14:24:07",
-   "note": "X-119 contract stage finding: X-119 consumes 'site.published' \u2014 nothing emits it. Missing dependency from X-157 (track site)."
-  },
-  {
-   "at": "2026-09-02T14:24:07",
-   "note": "X-163 contract stage finding: X-163 consumes 'agent.refused' \u2014 nothing emits it. Missing dependency from C-Agent (track sixty)."
-  },
-  {
-   "at": "2026-09-02T14:38:52",
-   "note": "contract X-119 \u2014 @provides fact.confirm / fact.teach / knowledge.ingest_sync report 'does not declare whether the agent may reach it'. ContractStage:420 re-reports every provided action absent from a POPULATED allow-list; :279 already catches true silence separately. The allow-list of fact.lookup alone IS the denial (P-209). Checker gap, sealed path, not fixable from any track."
-  },
-  {
-   "at": "2026-09-02T14:38:59",
-   "note": "anchor X-119/X-126/X-163 \u2014 no runtime proof. TestAnchorStage requires a vendor-minted artifact id in storage/app/evidence/<id>/runtime-proof.json; these three modules have no external transport and this track has no vendor (CLAUDE.md TRACK 4). Owner action."
-  },
-  {
-   "at": "2026-09-02T15:04:34",
-   "note": "capability N-062 is attributed to X-163 by capabilities:scaffold but its canonical row is X-129 MigrationEngine (GOAIEZ-MASTER-PLAN.md:35616). Likely cause: the N-062\u2026N-086 range row at GOAIEZ-TRACKER-CAPABILITIES.md:1084 names nine modules and mentions X-163 in prose. Repo-wide, not fixable from this track. Owner action."
-  },
-  {
-   "at": "2026-09-02T15:22:58",
-   "note": "capability G3-02 (X-119) \u2014 CANNOT REFUSE. The cell asserts only that the crawl is X-151's and the grounding store is X-119's; X-119 implements no domain concept, so no refusal is derivable from it. PB-6's ' \u00b7 refuses: a domain mismatch' was invented and is reverted at PB-7. The finding stands open."
-  },
-  {
-   "at": "2026-09-02T15:23:02",
-   "note": "capability G5-25 (X-119) \u2014 CANNOT REFUSE. The system guarantees a source by defaulting to 'volunteered' in FactResolver::teach(), so it does not refuse an insert without a source. PB-6's clause was invented and is reverted at PB-7. The finding stands open."
-  },
-  {
-   "at": "2026-09-02T23:46:26",
-   "note": "journey J3 \u2014 bookFromQuote records UNRESOLVED per owner ruling 8; X-121 exposes no create path and the raw work_orders insert is not accepted."
-  },
-  {
-   "at": "2026-09-04T13:28:19",
-   "note": "X-163 \u2014 the three 2026-09-04T13:11 UNRESOLVED lines were written with stage and why transposed and name unmade decisions, not missing dependencies (rule 09); superseded by the two (R245) decisions and the surface line above. The 13:11:43 (R245) line records no decision."
+   "stage": "tests",
+   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "at": "2026-09-05T08:35:23"
   }
  ],
  "decisions": [
   {
-   "module": "X-211",
-   "chose": "R245: Built AR recovery engine with late fee capping (max 10% or 0), structured installment payment plan contracts, ACH enforcement, offline reconciliation, and collections packaging with evidence bundle.",
-   "at": "2026-08-29T15:20:06",
+   "module": "X-205",
+   "chose": "affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
-   "module": "X-140",
-   "chose": "@agent_reachable widened with topic.identify \u2014 read-shaped, per the plan's derivation rule; owner may overrule",
-   "at": "2026-09-02T04:13:54",
+   "module": "X-82",
+   "chose": "agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
-   "module": "X-179",
-   "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
-   "at": "2026-09-02T04:38:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "PriceQuoteAction does intent resolution by checking if any space-separated words of a confirmed pricebook item's service_name appear in the user question.",
-   "at": "2026-09-02T13:48:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "PriceQuoteAction resolves intent by splitting each confirmed pricebook item's service_name on '-' and requiring ALL resulting words to appear in the lowercased question, or the whole hyphenated SKU to appear verbatim",
-   "at": "2026-09-02T14:07:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "(R245) seam (a) \u2014 AgentAnswerAction calls PriceQuoteAction directly and avoids hardcoded facts, passing boundary lint via string instantiation.",
-   "at": "2026-09-02T23:52:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "(R245) seam (b): PricebookUpdated event passes minor units to Fact store; AgentAnswerAction reads Fact and formats minor units as string reply while preserving amount for contract",
-   "at": "2026-09-03T01:58:03",
+   "module": "X-82",
+   "chose": "plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
    "module": "C-Agent",
-   "chose": "agent fact key schema: both price.<slug> and legacy service.oil_change.price stand to preserve compatibility with existing data",
-   "at": "2026-09-03T05:41:18",
+   "chose": "Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)",
+   "at": "2026-09-05T07:37:41",
    "ruling": "R245"
   },
   {
-   "module": "X-163",
-   "chose": "Built ConfirmationScreen, rebuilt Pricebook, added DailyPricingDigest.",
-   "at": "2026-09-04T13:11:43",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "the daily digest lists SAMPLE refusals flagged on the item (\u00a7140.1); a NO_FACT refusal has no item and is not persisted this wave",
-   "at": "2026-09-04T13:28:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-163",
-   "chose": "the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave",
-   "at": "2026-09-04T13:28:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-162",
-   "chose": "(R245) Added is_sample flag migration to dispatch_assignments for SAMPLE row flag; fallback sentence 'There are no jobs assigned for today. Go to Jobs to schedule and dispatch a technician.'",
-   "at": "2026-09-04T14:35:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "(R245) Added is_sample flag to device_sync_queue and device_sync_conflicts; fallback sentence 'You have no jobs scheduled for today'; disabled pay button says 'payment arrives with the money track'.",
-   "at": "2026-09-04T14:42:35",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-172",
-   "chose": "(R245) Added is_sample flag to portal_links; the sentence 'This document is being prepared' replaces unrendered estimate/invoice models.",
-   "at": "2026-09-04T14:44:41",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-165",
-   "chose": "add is_sample to membership_plans and memberships (R245)",
-   "at": "2026-09-04T15:22:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-165",
-   "chose": "X-163 confirmation of a plan price is a later wave",
-   "at": "2026-09-04T15:22:13",
+   "module": "C-Agent",
+   "chose": "agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured \u2014 owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands",
+   "at": "2026-09-05T08:12:23",
    "ruling": "R245"
   },
   {
    "module": "X-82",
-   "chose": "gate on UserRole::SuperAdmin or UserRole::OpsAdmin",
-   "at": "2026-09-04T15:28:49",
+   "chose": "RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)",
+   "at": "2026-09-05T08:35:16",
    "ruling": "R245"
   },
   {
-   "module": "X-82",
-   "chose": "add is_sample to rates (R245)",
-   "at": "2026-09-04T15:28:58",
+   "module": "C-Billing",
+   "chose": "a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)",
+   "at": "2026-09-05T09:47:06",
    "ruling": "R245"
   },
   {
-   "module": "X-168",
-   "chose": "timesheets.person_id is the technician's users.id, the id X-171 passes as the tech; names resolve from users in one query (R245)",
-   "at": "2026-09-04T16:07:44",
+   "module": "C-Agent",
+   "chose": "the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)",
+   "at": "2026-09-05T10:13:56",
    "ruling": "R245"
   },
   {
-   "module": "X-168",
-   "chose": "add is_sample to timesheets (R245)",
-   "at": "2026-09-04T16:07:44",
+   "module": "C-Agent",
+   "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
+   "at": "2026-09-05T10:15:15",
    "ruling": "R245"
-  },
+  }
+ ],
+ "notes": [
   {
-   "module": "X-168",
-   "chose": "a week whose period_end has passed is closed and waits for approval; the close is the rule, not a status write (R235) (R245)",
-   "at": "2026-09-04T16:13:51",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-166",
-   "chose": "add is_sample to job_costs (R245)",
-   "at": "2026-09-04T16:26:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-166",
-   "chose": "job_costs.tech_id is the technician's users.id, the id X-168 records as person_id; names resolve from users in one query (R245)",
-   "at": "2026-09-04T16:26:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-166",
-   "chose": "the margin pill turns attention below 20.0 %, the threshold JobCostAction already alerts on; one number, two readers (R245)",
-   "at": "2026-09-04T16:26:13",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-166",
-   "chose": "margin by source keys on job_costs.source as JobCostAction records it (inbound_call by default); no source table exists to rename it (R245)",
-   "at": "2026-09-04T16:51:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "add is_sample to stock_items and purchase_orders (R245)",
-   "at": "2026-09-04T16:52:25",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "a stock row reads Low when quantity <= reorder_point, the threshold InventoryEngine already emits StockLow on; one number, two readers (R245)",
-   "at": "2026-09-04T16:53:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-167",
-   "chose": "Propose restock proposes one reorder_point of the item with no supplier and total 0 \u2014 the supplier prices it; nothing on the screen orders, approves or sends (R245)",
-   "at": "2026-09-04T16:53:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "the field assistant asks X-163 PriceLookupAction on the staff channel first; a quoted SAMPLE row is refused to the tech through FieldAskAction(isSamplePrice: true) and lands as field_suggestions.is_unconfirmed_price \u2014 the engine flags only customer channels, so that row is the nudge (R245)",
-   "at": "2026-09-04T17:19:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "NO_FACT from the pricebook answers 'Not in the pricebook. Nothing to quote.'; the panel never invents a price or a procedure, so the engine's default-answer branch is never called from a screen (R245)",
-   "at": "2026-09-04T17:19:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "add is_sample to field_suggestions (R245)",
-   "at": "2026-09-04T17:19:22",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-175",
-   "chose": "customerfacing_none and by_design are one plan sentence ('customer-facing: none, by design') split by the renders derivation; neither is a screen; both files stay untouched and off the menu (R245)",
-   "at": "2026-09-04T17:20:14",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "sync failure rate is the tenant's own \u2014 conflicted device_sync_queue rows over all rows, Owner \u00b7 Manager; the fleet-wide operator view is Track 1's console; Keep device replays through ReplayOfflineSyncAction exactly as the app's resolveConflict does (R245)",
-   "at": "2026-09-04T20:18:36",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-162",
-   "chose": "the map is the ordered stop list per technician from routes.stop_order with each stop's dispatch status; no GPS vendor exists in this repo, so there is no position layer to draw (R245)",
-   "at": "2026-09-04T20:39:07",
-   "ruling": "R245"
+   "at": "2026-09-03T09:34:34",
+   "note": "bootstrap-done"
   }
  ]
 }

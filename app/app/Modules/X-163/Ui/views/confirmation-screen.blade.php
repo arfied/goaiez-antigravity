@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="services with prices" screen="confirmation_screen" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-3xl mx-auto px-4 py-8" wire:loading.class="opacity-50">

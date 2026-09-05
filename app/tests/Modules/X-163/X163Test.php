@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\CalloutLookupAction;
@@ -17,8 +19,10 @@ use App\Modules\X163\Events\VersionBumped;
 use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\LocationBook;
 use App\Modules\X163\Models\PriceBookItem;
+use App\Modules\X163\Ui\Pricebook;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X163Test extends TestCase
@@ -232,5 +236,19 @@ class X163Test extends TestCase
 
         $resNegative = $agent->handle($biz->id, 'How much for a roof repair?');
         $this->assertEquals('NO_FACT', $resNegative['refusal_code']);
+    }
+
+    public function test_no_fake_rows_written_on_mount(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        Livewire::test(Pricebook::class)
+            ->assertOk();
+
+        $this->assertEquals(0, PriceBookItem::where('business_id', $biz->id)->count());
     }
 }

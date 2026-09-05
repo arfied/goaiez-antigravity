@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="recurring service plans" screen="plans" />
     <h1 class="text-2xl font-bold mb-4 text-ink">Membership Plans</h1>
 
     <div class="bg-paper rounded-xl border border-rule p-6 mb-8">

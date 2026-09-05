@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="the rate registry — **a row cannot be invented; no document carries a number**" screen="rate_registry" />
     <h1 class="text-2xl font-bold mb-4 text-ink">Rate Registry</h1>
 
     <div class="bg-paper rounded-xl border border-rule p-6 mb-8">

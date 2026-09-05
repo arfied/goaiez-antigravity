@@ -31,7 +31,7 @@ class CTelephonyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->router = new CarrierRouter;
+        $this->router = app(CarrierRouter::class);
         $this->sender = new CarrierSendAction($this->router);
         $this->caller = new CarrierCallAction($this->router);
         $this->provisioner = new CarrierProvisionAction;

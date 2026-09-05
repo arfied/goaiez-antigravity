@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace App\Modules\X140\Ui;
 
+use App\Enums\UserRole;
 use App\Modules\X140\Models\ContentTopic;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ProposedPagesView extends Component
 {
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin), 403);
+    }
+
     #[Locked]
     public int $businessId = 0;
 

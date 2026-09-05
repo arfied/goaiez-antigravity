@@ -31,7 +31,7 @@
     <section class="space-y-3">
         <h2 class="font-display text-lg font-semibold text-ink">Visits to customers' accounts</h2>
 
-        <div class="overflow-x-auto rounded-[--radius-card] border border-rule bg-card shadow-[--shadow-card]">
+        <div tabindex="0" class="overflow-x-auto rounded-[--radius-card] border border-rule bg-card shadow-[--shadow-card]">
             <table class="w-full min-w-[52rem] border-collapse text-left">
                 <caption class="sr-only">Support sessions</caption>
                 <thead>
@@ -101,7 +101,7 @@
     <section class="space-y-3">
         <h2 class="font-display text-lg font-semibold text-ink">Platform settings they changed</h2>
 
-        <div class="overflow-x-auto rounded-[--radius-card] border border-rule bg-card shadow-[--shadow-card]">
+        <div tabindex="0" class="overflow-x-auto rounded-[--radius-card] border border-rule bg-card shadow-[--shadow-card]">
             <table class="w-full min-w-[44rem] border-collapse text-left">
                 <caption class="sr-only">Platform setting changes</caption>
                 <thead>
@@ -155,7 +155,7 @@
     <section class="space-y-3">
         <h2 class="font-display text-lg font-semibold text-ink">Access and sign-ins</h2>
 
-        <div class="overflow-x-auto rounded-[--radius-card] border border-rule bg-card shadow-[--shadow-card]">
+        <div tabindex="0" class="overflow-x-auto rounded-[--radius-card] border border-rule bg-card shadow-[--shadow-card]">
             <table class="w-full min-w-[48rem] border-collapse text-left">
                 <caption class="sr-only">Internal access changes and sign-ins</caption>
                 <thead>

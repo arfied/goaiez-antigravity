@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Journeys;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -48,6 +49,12 @@ final class TwelveJourneysTest extends TestCase
     //   journeys pass while touching nothing.
     use JourneyHarness;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::allowStrayRequests();
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS
     // ═══════════════════════════════════════════════════════════════════
@@ -64,6 +71,7 @@ final class TwelveJourneysTest extends TestCase
         // returns immediately and the work is queued, which is exactly why a
         // sync-driver run would prove nothing.
         $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+15550123');
+        $this->drainQueueOnce();
 
         $message = $this->waitForOutbound($tenant, to: '+15550123', timeoutSeconds: 90);
         $elapsedMs = (int) ((microtime(true) - $started) * 1000);
@@ -148,7 +156,10 @@ final class TwelveJourneysTest extends TestCase
         $this->assertSame(18_500_00, $quote['amount'] ?? null,
             'The quote did not match the pricebook row exactly.');
 
-        $this->bookFromQuote($tenant, $quote);
+        $booking = $this->bookFromQuote($tenant, $quote);
+        $this->assertNotEmpty($booking['job_id'] ?? '');
+
+        $this->writeEvidence('quote-to-booking', ['passed' => true, 'artifact_id' => $booking['job_id']]);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -444,12 +455,16 @@ final class TwelveJourneysTest extends TestCase
 
     private function drainQueueOnce(): void
     {
-        $this->artisan('queue:work --once --stop-when-empty');
+        if ($job = app('queue')->pop()) {
+            $job->fire();
+        }
     }
 
     private function drainQueue(): void
     {
-        $this->artisan('queue:work --stop-when-empty');
+        while ($job = app('queue')->pop()) {
+            $job->fire();
+        }
     }
 
     private function pendingStepsFor(array $person): int

@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="time tracking" screen="approvals" />
     <header>
         <h2>Approvals</h2>
         <p>the week closes AUTOMATICALLY … it closes on the rule; the tenant may reopen it</p>

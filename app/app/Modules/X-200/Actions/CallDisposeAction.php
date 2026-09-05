@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X200\Actions;
 
+use App\Modules\X200\Models\CallCampaign;
 use App\Modules\X200\Models\CallDisposition;
 use App\Modules\X200\Models\DialerSeat;
 
@@ -27,6 +28,9 @@ final class CallDisposeAction
             $finalDisp = 'answered';
         }
 
+        CallCampaign::where('business_id', $businessId)->findOrFail($campaignId);
+        $seat = DialerSeat::where('business_id', $businessId)->findOrFail($seatId);
+
         $disp = CallDisposition::create([
             'business_id' => $businessId,
             'campaign_id' => $campaignId,
@@ -36,10 +40,7 @@ final class CallDisposeAction
             'is_uncertain_human' => $isUncertainAmd,
         ]);
 
-        $seat = DialerSeat::where('business_id', $businessId)->find($seatId);
-        if ($seat) {
-            $seat->update(['state' => 'idle']);
-        }
+        $seat->update(['state' => 'idle']);
 
         return $disp;
     }

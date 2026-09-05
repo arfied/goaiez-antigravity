@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="van and storage-unit stock" screen="reorders" />
     <div class="reorders-view p-4">
         <h2>Reorders</h2>
         <p>A restock is proposed at the reorder point; the supplier prices it.</p>

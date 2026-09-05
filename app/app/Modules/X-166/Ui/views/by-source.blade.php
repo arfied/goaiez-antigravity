@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="actual vs expected per job" screen="by_source" />
     <div class="margin-source-view p-4">
         <h2>Margin by source</h2>
         

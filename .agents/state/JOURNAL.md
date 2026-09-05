@@ -486,68 +486,280 @@
 - `2026-09-02T04:38:50` (R245) X-179 — widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects
 - `2026-09-02T04:39:09` X-179 -> DONE
 - `2026-09-02T05:03:10` X-192 -> DONE
-- `2026-09-02T13:48:45` (R245) X-163 — PriceQuoteAction does intent resolution by checking if any space-separated words of a confirmed pricebook item's service_name appear in the user question.
-- `2026-09-02T13:49:13` UNRESOLVED journey X-163 - journey J3 — C-Agent\Actions\AgentAnswerAction grounds on a hardcoded facts key ('service.oil_change.price') and returns prose, never an integer amount; it never calls X-163. C-Agent is Track sixty's module.
-- `2026-09-02T14:07:07` (R245) X-163 — PriceQuoteAction resolves intent by splitting each confirmed pricebook item's service_name on '-' and requiring ALL resulting words to appear in the lowercased question, or the whole hyphenated SKU to appear verbatim
-- `2026-09-02T14:24:07` note: X-119 contract stage finding: X-119 consumes 'entity.updated' — nothing emits it. Missing dependency from X-121 (owning track unknown).
-- `2026-09-02T14:24:07` note: X-119 contract stage finding: X-119 consumes 'site.published' — nothing emits it. Missing dependency from X-157 (track site).
-- `2026-09-02T14:24:07` note: X-163 contract stage finding: X-163 consumes 'agent.refused' — nothing emits it. Missing dependency from C-Agent (track sixty).
-- `2026-09-02T14:38:52` note: contract X-119 — @provides fact.confirm / fact.teach / knowledge.ingest_sync report 'does not declare whether the agent may reach it'. ContractStage:420 re-reports every provided action absent from a POPULATED allow-list; :279 already catches true silence separately. The allow-list of fact.lookup alone IS the denial (P-209). Checker gap, sealed path, not fixable from any track.
-- `2026-09-02T14:38:59` note: anchor X-119/X-126/X-163 — no runtime proof. TestAnchorStage requires a vendor-minted artifact id in storage/app/evidence/<id>/runtime-proof.json; these three modules have no external transport and this track has no vendor (CLAUDE.md TRACK 4). Owner action.
-- `2026-09-02T15:04:34` note: capability N-062 is attributed to X-163 by capabilities:scaffold but its canonical row is X-129 MigrationEngine (GOAIEZ-MASTER-PLAN.md:35616). Likely cause: the N-062…N-086 range row at GOAIEZ-TRACKER-CAPABILITIES.md:1084 names nine modules and mentions X-163 in prose. Repo-wide, not fixable from this track. Owner action.
-- `2026-09-02T15:22:58` note: capability G3-02 (X-119) — CANNOT REFUSE. The cell asserts only that the crawl is X-151's and the grounding store is X-119's; X-119 implements no domain concept, so no refusal is derivable from it. PB-6's ' · refuses: a domain mismatch' was invented and is reverted at PB-7. The finding stands open.
-- `2026-09-02T15:23:02` note: capability G5-25 (X-119) — CANNOT REFUSE. The system guarantees a source by defaulting to 'volunteered' in FactResolver::teach(), so it does not refuse an insert without a source. PB-6's clause was invented and is reverted at PB-7. The finding stands open.
-- `2026-09-02T23:46:26` note: journey J3 — bookFromQuote records UNRESOLVED per owner ruling 8; X-121 exposes no create path and the raw work_orders insert is not accepted.
-- `2026-09-02T23:52:42` (R245) X-163 — (R245) seam (a) — AgentAnswerAction calls PriceQuoteAction directly and avoids hardcoded facts, passing boundary lint via string instantiation.
-- `2026-09-03T01:58:03` (R245) X-163 — (R245) seam (b): PricebookUpdated event passes minor units to Fact store; AgentAnswerAction reads Fact and formats minor units as string reply while preserving amount for contract
-- `2026-09-03T01:58:12` UNRESOLVED journey X-163 - J3 — tenantWithLiveNumber throws missing real tenant/carrier; bookFromQuote missing X-121 create path
-- `2026-09-03T05:41:18` (R245) C-Agent — agent fact key schema: both price.<slug> and legacy service.oil_change.price stand to preserve compatibility with existing data
-- `2026-09-04T13:11:25` UNRESOLVED ConfirmationScreen missing the [fill-me] refusal_code handling UI explicitly beyond Needs a Price. X-163 - 
-- `2026-09-04T13:11:25` UNRESOLVED DailyPricingDigest missing email dispatch logic. X-163 - 
-- `2026-09-04T13:11:43` (R245) X-163 — Built ConfirmationScreen, rebuilt Pricebook, added DailyPricingDigest.
-- `2026-09-04T13:11:43` UNRESOLVED UI X-163 - Daily pricing digest missing email/SMS dispatch loop
-- `2026-09-04T13:28:19` (R245) X-163 — the daily digest lists SAMPLE refusals flagged on the item (§140.1); a NO_FACT refusal has no item and is not persisted this wave
-- `2026-09-04T13:28:19` (R245) X-163 — the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave
-- `2026-09-04T13:28:19` UNRESOLVED surface X-163 - GET→assertOk for x-163.pricebook, confirmation-screen and daily-pricing-digest waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T13:28:19` note: X-163 — the three 2026-09-04T13:11 UNRESOLVED lines were written with stage and why transposed and name unmade decisions, not missing dependencies (rule 09); superseded by the two (R245) decisions and the surface line above. The 13:11:43 (R245) line records no decision.
-- `2026-09-04T14:35:12` (R245) X-162 — (R245) Added is_sample flag migration to dispatch_assignments for SAMPLE row flag; fallback sentence 'There are no jobs assigned for today. Go to Jobs to schedule and dispatch a technician.'
-- `2026-09-04T14:35:12` UNRESOLVED surface X-162 - GET→assertOk for X-162 waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T14:42:35` (R245) X-171 — (R245) Added is_sample flag to device_sync_queue and device_sync_conflicts; fallback sentence 'You have no jobs scheduled for today'; disabled pay button says 'payment arrives with the money track'.
-- `2026-09-04T14:42:35` UNRESOLVED surface X-171 - GET→assertOk for X-171 waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T14:42:35` UNRESOLVED surface X-171 - X-198 payment surface (track money)
-- `2026-09-04T14:44:41` (R245) X-172 — (R245) Added is_sample flag to portal_links; the sentence 'This document is being prepared' replaces unrendered estimate/invoice models.
-- `2026-09-04T14:44:41` UNRESOLVED surface X-172 - GET→assertOk for X-172 waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T14:44:41` UNRESOLVED surface X-172 - X-164/X-199 render (tracks one/money)
-- `2026-09-04T15:22:13` UNRESOLVED surface X-165 - 
-- `2026-09-04T15:22:13` (R245) X-165 — add is_sample to membership_plans and memberships (R245)
-- `2026-09-04T15:22:13` (R245) X-165 — X-163 confirmation of a plan price is a later wave
-- `2026-09-04T15:28:49` UNRESOLVED surface X-82 - 
-- `2026-09-04T15:28:49` (R245) X-82 — gate on UserRole::SuperAdmin or UserRole::OpsAdmin
-- `2026-09-04T15:28:58` (R245) X-82 — add is_sample to rates (R245)
-- `2026-09-04T16:07:44` (R245) X-168 — timesheets.person_id is the technician's users.id, the id X-171 passes as the tech; names resolve from users in one query (R245)
-- `2026-09-04T16:07:44` (R245) X-168 — add is_sample to timesheets (R245)
-- `2026-09-04T16:07:44` UNRESOLVED surface X-168 - GET→assertOk for X-168 timesheets, own_hours and approvals waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T16:13:51` (R245) X-168 — a week whose period_end has passed is closed and waits for approval; the close is the rule, not a status write (R235) (R245)
-- `2026-09-04T16:15:01` UNRESOLVED surface X-165 - GET→assertOk for X-165 plans and members waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T16:15:01` UNRESOLVED surface X-82 - GET→assertOk for X-82 rate_registry waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T16:26:06` (R245) X-166 — add is_sample to job_costs (R245)
-- `2026-09-04T16:26:13` (R245) X-166 — job_costs.tech_id is the technician's users.id, the id X-168 records as person_id; names resolve from users in one query (R245)
-- `2026-09-04T16:26:13` (R245) X-166 — the margin pill turns attention below 20.0 %, the threshold JobCostAction already alerts on; one number, two readers (R245)
-- `2026-09-04T16:26:13` UNRESOLVED surface X-166 - GET→assertOk for X-166 margin_by_job, by_tech and by_service waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T16:51:42` (R245) X-166 — margin by source keys on job_costs.source as JobCostAction records it (inbound_call by default); no source table exists to rename it (R245)
-- `2026-09-04T16:51:42` UNRESOLVED surface X-166 - GET→assertOk for X-166 by_source waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T16:52:25` (R245) X-167 — add is_sample to stock_items and purchase_orders (R245)
-- `2026-09-04T16:52:25` UNRESOLVED surface X-167 - GET→assertOk for X-167 stock_by_van and reorders waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T16:53:19` (R245) X-167 — a stock row reads Low when quantity <= reorder_point, the threshold InventoryEngine already emits StockLow on; one number, two readers (R245)
-- `2026-09-04T16:53:19` (R245) X-167 — Propose restock proposes one reorder_point of the item with no supplier and total 0 — the supplier prices it; nothing on the screen orders, approves or sends (R245)
-- `2026-09-04T16:54:43` UNRESOLVED approval X-167 - approved_action_id is written by no module in this lane (grep: X-167 only); Approve-and-send stays off the Reorders screen until the approval desk that issues it exists
-- `2026-09-04T17:19:22` (R245) X-175 — the field assistant asks X-163 PriceLookupAction on the staff channel first; a quoted SAMPLE row is refused to the tech through FieldAskAction(isSamplePrice: true) and lands as field_suggestions.is_unconfirmed_price — the engine flags only customer channels, so that row is the nudge (R245)
-- `2026-09-04T17:19:22` (R245) X-175 — NO_FACT from the pricebook answers 'Not in the pricebook. Nothing to quote.'; the panel never invents a price or a procedure, so the engine's default-answer branch is never called from a screen (R245)
-- `2026-09-04T17:19:22` (R245) X-175 — add is_sample to field_suggestions (R245)
-- `2026-09-04T17:19:22` UNRESOLVED surface X-175 - GET→assertOk for X-175 stafffacing_assistant_panel waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T17:20:14` (R245) X-175 — customerfacing_none and by_design are one plan sentence ('customer-facing: none, by design') split by the renders derivation; neither is a screen; both files stay untouched and off the menu (R245)
-- `2026-09-04T20:18:36` (R245) X-171 — sync failure rate is the tenant's own — conflicted device_sync_queue rows over all rows, Owner · Manager; the fleet-wide operator view is Track 1's console; Keep device replays through ReplayOfflineSyncAction exactly as the app's resolveConflict does (R245)
-- `2026-09-04T20:18:36` UNRESOLVED surface X-171 - GET→assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout
-- `2026-09-04T20:39:07` (R245) X-162 — the map is the ordered stop list per technician from routes.stop_order with each stop's dispatch status; no GPS vendor exists in this repo, so there is no position layer to draw (R245)
-- `2026-09-04T20:39:07` UNRESOLVED vendor X-162 - live technician position needs a GPS/position feed; no vendor in the repo; the map draws the ordered stops from routes until one exists
-- `2026-09-04T20:39:07` UNRESOLVED surface X-162 - GET→assertOk for X-162 map waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-02T05:38:33` journey J8 -> green
+- `2026-09-02T05:38:33` journey J7 -> green
+- `2026-09-02T05:38:33` stage journey = 10
+- `2026-09-02T05:53:55` journey J8 -> green
+- `2026-09-02T05:53:55` journey J7 -> green
+- `2026-09-02T05:54:05` stage journey = 10
+- `2026-09-02T09:32:31` journey J5 -> green
+- `2026-09-02T09:32:31` stage journey = 5
+- `2026-09-02T10:06:30` journey J11 -> green
+- `2026-09-02T10:10:53` journey J11 -> red
+- `2026-09-02T10:10:53` journey J3 -> red
+- `2026-09-02T10:11:06` stage journey = 9
+- `2026-09-02T10:12:36` UNRESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-02T10:19:45` journey J11 -> green
+- `2026-09-02T10:19:56` stage journey = 8
+- `2026-09-02T10:24:52` journey J11 -> red
+- `2026-09-02T10:24:59` stage journey = 9
+- `2026-09-02T10:28:55` UNRESOLVED journey X-126 - Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)
+- `2026-09-02T23:58:57` stage capability = 391
+- `2026-09-03T01:03:21` stage capability = 352
+- `2026-09-03T01:03:24` stage contract = 100
+- `2026-09-03T01:16:24` RESOLVED journey X-126 - J3 needs an AI provider key; none in this checkout
+- `2026-09-03T01:20:26` (R245) X-171 — (R245) X-171 reads X-121's work_orders (person_id for JobCompleted) — declared in the plan row and regenerated manifest, not a raw undeclared read
+- `2026-09-03T01:48:06` (R245) X-204 — (R245) §239.1 rows attribute to their nearest enclosing heading module when the table lacks a parent column, never by prose
+- `2026-09-03T07:54:31` stage capability = 372
+- `2026-09-03T07:59:46` (R245) X-186 — (R245) X-186 sets cancelled_at on pending campaign_steps when suppression.added is emitted by X-204 — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) X-121 — (R245) Added people.consent_state string NOT NULL default 'UNPERMITTED' — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) X-123 — (R245) X-123 dead-letter mail is an operator alert to the Business owner (P-060 governs customer sends); reads businesses+users for the owner address — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) C-Telephony — (R245) CarrierRouter consults ConsentService::decide before any carrier; class from the caller — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` (R245) C-Whatsapp — (R245) WhatsappEngine consults ConsentService::decide before the driver; class from the caller — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` note: P-060 discrepancy: SendRefusalReason enum has 21 cases, but P-060 says 20 — re-recorded after run 41's checkout wiped the original
+- `2026-09-03T07:59:46` stage capability = 372
+- `2026-09-03T09:00:10` selftest: sound
+- `2026-09-03T09:06:35` UNRESOLVED contract X-145 - consumes outcome.recorded nothing emits it
+- `2026-09-03T09:06:35` UNRESOLVED contract C-Mail - consumes campaign.scheduled nothing emits it
+- `2026-09-03T09:06:35` UNRESOLVED contract C-Whatsapp - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-153 - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract C-Agent - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-185 - consumes message.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-137 - consumes message.sent nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract C-Ai - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-148 - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-119 - consumes entity.updated nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-119 - consumes site.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-160 - consumes upload.received nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-16 - consumes refresh.due nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-136 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-129 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-156 - consumes any.event nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-110 - consumes page.loaded nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-155 - consumes page.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-157 - consumes page.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-195 - consumes page.published nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-198 - consumes cart.checkout nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-198 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-199 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract C-Billing - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-82 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-120 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-127 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-163 - consumes agent.refused nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-167 - consumes order.paid nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-167 - consumes order.cancelled nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-175 - consumes note.voice nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-177 - consumes zernio.webhook nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-185 - consumes entity.state_changed nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-82 - consumes country.detected nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-120 - consumes limit.exceeded nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-111 - consumes help.human_requested nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-112 - consumes credit.debited nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-195 - consumes rule.fired nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-211 - consumes invoice.overdue nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-217 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:06:36` UNRESOLVED contract X-218 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:16:54` stage anchor = 10
+- `2026-09-03T09:17:22` UNRESOLVED contract X-145 - consumes outcome.recorded nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Mail - consumes campaign.scheduled nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Whatsapp - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-153 - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Agent - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-185 - consumes message.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-137 - consumes message.sent nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Ai - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-148 - consumes agent.turn.started nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-119 - consumes entity.updated nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-119 - consumes site.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-160 - consumes upload.received nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-16 - consumes refresh.due nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-136 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-129 - consumes fetch.completed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-156 - consumes any.event nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-110 - consumes page.loaded nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-155 - consumes page.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-157 - consumes page.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-195 - consumes page.published nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-198 - consumes cart.checkout nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-198 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-199 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract C-Billing - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-82 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-120 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-127 - consumes subscription.renewed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-163 - consumes agent.refused nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-167 - consumes order.paid nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-167 - consumes order.cancelled nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-175 - consumes note.voice nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-177 - consumes zernio.webhook nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-185 - consumes entity.state_changed nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-82 - consumes country.detected nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-120 - consumes limit.exceeded nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-111 - consumes help.human_requested nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-112 - consumes credit.debited nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-195 - consumes rule.fired nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-211 - consumes invoice.overdue nothing emits it
+- `2026-09-03T09:17:22` UNRESOLVED contract X-217 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:17:23` UNRESOLVED contract X-218 - consumes prospect.scored nothing emits it
+- `2026-09-03T09:18:48` UNRESOLVED contract X-190 - one event, one emitter
+- `2026-09-03T09:33:12` state initialised
+- `2026-09-03T09:34:34` note: bootstrap-done
+- `2026-09-03T09:43:25` X-121 -> DONE
+- `2026-09-03T10:06:31` X-123 -> DONE
+- `2026-09-03T10:08:24` X-122 -> DONE
+- `2026-09-03T10:11:29` X-126 -> DONE
+- `2026-09-03T10:20:14` X-119 -> DONE
+- `2026-09-03T10:21:47` X-128 -> DONE
+- `2026-09-03T10:23:27` C-Ai -> DONE
+- `2026-09-03T10:24:57` X-219 -> DONE
+- `2026-09-03T10:26:32` X-220 -> DONE
+- `2026-09-03T10:29:00` X-204 -> DONE
+- `2026-09-03T10:30:31` X-206 -> DONE
+- `2026-09-03T10:31:56` C-Telephony -> DONE
+- `2026-09-03T10:33:20` C-Sms -> DONE
+- `2026-09-03T10:34:52` C-Agent -> DONE
+- `2026-09-03T10:36:47` X-66 -> DONE
+- `2026-09-03T10:38:05` X-188 -> DONE
+- `2026-09-03T10:39:35` X-153 -> DONE
+- `2026-09-03T10:42:13` X-01 -> DONE
+- `2026-09-03T10:44:59` X-118 -> DONE
+- `2026-09-03T10:50:58` X-163 -> DONE
+- `2026-09-03T10:56:33` X-164 -> DONE
+- `2026-09-03T11:01:39` X-108 -> DONE
+- `2026-09-03T11:04:23` C-Reviews -> DONE
+- `2026-09-03T11:06:31` X-181 -> DONE
+- `2026-09-03T11:09:46` X-110 -> DONE
+- `2026-09-03T11:12:59` C-Billing -> DONE
+- `2026-09-03T11:14:54` X-199 -> DONE
+- `2026-09-03T11:17:48` X-211 -> DONE
+- `2026-09-03T11:19:51` X-202 -> DONE
+- `2026-09-03T11:21:33` X-117 -> DONE
+- `2026-09-03T11:23:22` X-198 -> DONE
+- `2026-09-03T11:24:35` X-172 -> DONE
+- `2026-09-03T11:26:00` X-112 -> DONE
+- `2026-09-03T11:27:51` X-166 -> DONE
+- `2026-09-03T11:28:58` X-157 -> DONE
+- `2026-09-03T11:30:03` X-178 -> DONE
+- `2026-09-03T11:31:56` X-103 -> DONE
+- `2026-09-03T11:33:17` X-102 -> DONE
+- `2026-09-03T11:34:37` X-155 -> DONE
+- `2026-09-03T11:35:52` X-137 -> DONE
+- `2026-09-03T11:37:43` X-176 -> DONE
+- `2026-09-03T11:39:06` X-212 -> DONE
+- `2026-09-03T11:40:20` X-203 -> DONE
+- `2026-09-03T11:42:25` C-Mail -> DONE
+- `2026-09-03T11:43:47` C-Whatsapp -> DONE
+- `2026-09-03T11:44:57` X-147 -> DONE
+- `2026-09-03T11:46:56` X-207 -> DONE
+- `2026-09-03T11:48:54` X-193 -> DONE
+- `2026-09-03T11:50:16` X-208 -> DONE
+- `2026-09-03T11:51:22` X-125 -> DONE
+- `2026-09-03T11:52:50` X-127 -> DONE
+- `2026-09-03T11:54:07` X-149 -> DONE
+- `2026-09-03T11:56:28` X-170 -> DONE
+- `2026-09-03T11:57:53` X-201 -> DONE
+- `2026-09-03T11:59:10` X-10 -> DONE
+- `2026-09-03T12:00:24` X-113 -> DONE
+- `2026-09-03T12:01:49` X-124 -> DONE
+- `2026-09-03T12:03:15` X-143 -> DONE
+- `2026-09-03T12:05:26` X-151 -> DONE
+- `2026-09-03T12:07:09` X-162 -> DONE
+- `2026-09-03T12:09:45` X-165 -> DONE
+- `2026-09-03T12:11:00` X-171 -> DONE
+- `2026-09-03T12:13:08` X-189 -> DONE
+- `2026-09-03T12:14:21` X-214 -> DONE
+- `2026-09-03T12:15:40` X-215 -> DONE
+- `2026-09-03T12:19:38` X-07 -> DONE
+- `2026-09-03T12:22:00` X-104 -> DONE
+- `2026-09-03T12:25:17` X-111 -> DONE
+- `2026-09-03T12:26:55` X-129 -> DONE
+- `2026-09-03T12:28:17` stage capability = 372
+- `2026-09-03T12:28:45` X-138 -> DONE
+- `2026-09-03T12:29:58` X-139 -> DONE
+- `2026-09-03T12:31:39` X-145 -> DONE
+- `2026-09-03T12:33:55` X-148 -> DONE
+- `2026-09-03T12:35:19` X-150 -> DONE
+- `2026-09-03T12:37:53` X-16 -> DONE
+- `2026-09-03T12:40:00` X-160 -> DONE
+- `2026-09-03T12:41:48` X-167 -> DONE
+- `2026-09-03T12:44:49` X-168 -> DONE
+- `2026-09-03T12:46:30` X-175 -> DONE
+- `2026-09-03T12:48:02` X-177 -> DONE
+- `2026-09-03T12:49:07` X-180 -> DONE
+- `2026-09-03T12:50:34` X-194 -> DONE
+- `2026-09-03T12:52:46` X-195 -> DONE
+- `2026-09-03T12:56:34` X-197 -> DONE
+- `2026-09-03T12:58:31` X-209 -> DONE
+- `2026-09-03T13:02:10` X-82 -> DONE
+- `2026-09-03T13:03:19` X-08 -> DONE
+- `2026-09-03T13:05:12` X-120 -> DONE
+- `2026-09-03T13:06:57` X-136 -> DONE
+- `2026-09-03T13:08:19` X-141 -> DONE
+- `2026-09-03T13:09:49` X-142 -> DONE
+- `2026-09-03T13:12:03` X-156 -> DONE
+- `2026-09-03T13:13:26` X-173 -> DONE
+- `2026-09-03T13:14:33` X-213 -> DONE
+- `2026-09-03T13:15:56` X-105 -> DONE
+- `2026-09-03T13:17:09` X-109 -> DONE
+- `2026-09-03T13:18:24` X-114 -> DONE
+- `2026-09-03T13:19:44` X-116 -> DONE
+- `2026-09-03T13:21:11` X-130 -> DONE
+- `2026-09-03T13:23:09` X-131 -> DONE
+- `2026-09-03T13:24:37` X-132 -> DONE
+- `2026-09-03T13:26:08` X-134 -> DONE
+- `2026-09-03T13:27:29` X-135 -> DONE
+- `2026-09-03T13:28:44` X-140 -> DONE
+- `2026-09-03T13:29:57` X-144 -> DONE
+- `2026-09-03T13:31:25` X-154 -> DONE
+- `2026-09-03T13:32:59` X-158 -> DONE
+- `2026-09-03T13:34:53` X-159 -> DONE
+- `2026-09-03T13:36:35` X-161 -> DONE
+- `2026-09-03T13:37:48` X-179 -> DONE
+- `2026-09-03T13:39:13` X-182 -> DONE
+- `2026-09-03T13:40:35` X-183 -> DONE
+- `2026-09-03T13:41:49` X-184 -> DONE
+- `2026-09-03T13:44:46` X-185 -> DONE
+- `2026-09-03T13:47:25` UNRESOLVED contract X-186 - send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-03T13:48:24` UNRESOLVED contract X-190 - approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.
+- `2026-09-03T13:49:52` X-191 -> DONE
+- `2026-09-03T13:51:24` X-192 -> DONE
+- `2026-09-03T13:52:44` X-196 -> DONE
+- `2026-09-03T13:55:07` X-200 -> DONE
+- `2026-09-03T13:56:38` UNRESOLVED contract X-205 - approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.
+- `2026-09-03T13:57:06` X-205 -> DONE
+- `2026-09-03T13:58:56` X-210 -> DONE
+- `2026-09-03T14:00:33` UNRESOLVED contract X-217 - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-03T14:00:54` X-217 -> DONE
+- `2026-09-03T14:01:55` UNRESOLVED contract X-218 - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-03T14:02:19` X-218 -> DONE
+- `2026-09-03T14:52:42` journey J1 -> green
+- `2026-09-03T14:55:18` journey J2 -> unresolved
+- `2026-09-03T15:21:53` journey J2 -> green
+- `2026-09-03T15:33:56` journey J3 -> green
+- `2026-09-03T15:38:40` journey J4 -> green
+- `2026-09-03T15:39:25` journey J5 -> green
+- `2026-09-03T15:46:31` journey J6 -> green
+- `2026-09-03T15:47:01` journey J7 -> green
+- `2026-09-03T15:47:30` journey J8 -> green
+- `2026-09-03T15:54:49` journey J9 -> green
+- `2026-09-03T16:01:11` journey J10 -> green
+- `2026-09-03T16:02:21` journey J11 -> green
+- `2026-09-03T16:06:19` journey J12 -> green
+- `2026-09-03T22:14:14` selftest: sound
+- `2026-09-04T02:05:53` UNRESOLVED tests X-193 - column quiet_hours_start is missing from notification_classes and not named in the brief
+- `2026-09-04T02:05:53` UNRESOLVED tests X-201 - column deadline_at is missing from disputes and not named in the brief
+- `2026-09-04T07:55:55` UNRESOLVED tests C-Reviews - ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change
+- `2026-09-04T08:05:31` UNRESOLVED contract C-Reviews - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
+- `2026-09-04T22:41:56` UNRESOLVED capability X-186 - no action enrols a person into a campaign
+- `2026-09-05T03:56:25` (R245) X-205 — affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded
+- `2026-09-05T03:56:25` (R245) X-82 — agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader
+- `2026-09-05T03:56:25` (R245) X-82 — plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader
+- `2026-09-05T07:37:41` (R245) C-Agent — Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)
+- `2026-09-05T07:46:15` C-Agent -> DONE
+- `2026-09-05T08:12:23` (R245) C-Agent — agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured — owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands
+- `2026-09-05T08:35:16` (R245) X-82 — RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)
+- `2026-09-05T08:35:23` UNRESOLVED tests X-172 - generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
+- `2026-09-05T09:47:06` (R245) C-Billing — a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)
+- `2026-09-05T10:13:56` (R245) C-Agent — the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)
+- `2026-09-05T10:15:15` (R245) C-Agent — one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)

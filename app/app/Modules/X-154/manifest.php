@@ -52,5 +52,6 @@ return [
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.
     'agent_reachable' => [
         'lexicon.readback',
+        'none',
     ],
 ];

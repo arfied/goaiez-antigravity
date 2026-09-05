@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="actual vs expected per job" screen="by_tech" />
     <div class="margin-tech-view p-4">
         <h2>Margin by technician</h2>
         

@@ -1,0 +1,10 @@
+--- app/tests/Journeys/JourneyHarness.php
++++ app/tests/Journeys/JourneyHarness.php
+@@ -176,6 +176,7 @@
+         \Illuminate\Support\Facades\Log::info("Jobs before drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
+         $this->drainQueue();
+         \Illuminate\Support\Facades\Log::info("Jobs after drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
++        \Illuminate\Support\Facades\Log::info("Remaining job: " . json_encode(\Illuminate\Support\Facades\DB::table('jobs')->get()));
+         \Illuminate\Support\Facades\Log::info("Failed jobs: " . \Illuminate\Support\Facades\DB::table('failed_jobs')->count());
+         $failed = \Illuminate\Support\Facades\DB::table('failed_jobs')->get();
+         if ($failed->isNotEmpty()) {

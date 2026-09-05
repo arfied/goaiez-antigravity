@@ -6,6 +6,7 @@ namespace App\Modules\X118;
 
 use App\Modules\X118\Ui\DayOneSignup;
 use App\Modules\X118\Ui\Groundcheck;
+use App\Modules\X118\Ui\ProspectSignup;
 use App\Modules\X118\Ui\SameFlow;
 use App\Modules\X118\Ui\TestCall;
 use App\Modules\X118\Ui\Today;
@@ -22,6 +23,8 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
+
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'x-118');
 
@@ -32,6 +35,7 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-118.today', Today::class);
             Livewire::component('x-118.same-flow', SameFlow::class);
             Livewire::component('x-118.ttfm-distribution', TtfmDistribution::class);
+            Livewire::component('x-118.prospect-signup', ProspectSignup::class);
         }
     }
 }

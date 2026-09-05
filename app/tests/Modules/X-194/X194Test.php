@@ -13,8 +13,11 @@ use App\Modules\X194\Events\ViewRendered;
 use App\Modules\X194\Events\ViewSaved;
 use App\Modules\X194\Models\SavedView;
 use App\Modules\X194\Models\ViewSchedule;
+use App\Modules\X194\Ui\AnyViewIt;
+use App\Modules\X194\Ui\SavedViewsList;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X194Test extends TestCase
@@ -114,6 +117,132 @@ class X194Test extends TestCase
         $pdfRes = $this->pdfAction->generate($biz->id, $savedView->id);
         $this->assertEquals('generated', $pdfRes['status']);
         $this->assertNotEmpty($pdfRes['pdf_payload']);
+    }
+
+    public function test_saved_views_list_component(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'UI Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view1 = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'View Alpha',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+        $view2 = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'View Beta',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('View Alpha')
+            ->assertSee('View Beta');
+
+        $component->call('makeDefault', $view2->id);
+
+        $this->assertFalse(SavedView::find($view1->id)->is_default);
+        $this->assertTrue(SavedView::find($view2->id)->is_default);
+    }
+
+    public function test_saved_views_list_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty UI Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Livewire::test(SavedViewsList::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('You have not saved a view yet.')
+            ->assertSee('When you save a view, it will appear here.');
+    }
+
+    public function test_saved_views_list_error_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Error UI Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $component = Livewire::test(SavedViewsList::class, ['businessId' => $biz->id]);
+        $component->set('errorMessage', 'Terrible error occurred.');
+
+        $component->assertSee('We could not load your saved views.')
+            ->assertSee('Terrible error occurred.');
+    }
+
+    public function test_any_view_it_component(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Render Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $view = $this->saveAction->save(
+            businessId: $biz->id,
+            viewName: 'Job View Alpha',
+            viewType: 'table',
+            filterConfig: [],
+            columnsConfig: []
+        );
+
+        // Test with null value
+        Livewire::test(AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => $view->id,
+            'locationTimezone' => 'America/Denver',
+            'jobValue' => null,
+            'jobCount' => 7,
+        ])
+            ->call('load')
+            ->assertSee('Job View Alpha')
+            ->assertSee('America/Denver')
+            ->assertSeeHtml('data-job-count="7"')
+            ->assertSeeHtml('data-estimate-tile="--"');
+
+        // Test with real value
+        Livewire::test(AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => $view->id,
+            'locationTimezone' => 'America/New_York',
+            'jobValue' => 1500.50,
+            'jobCount' => 3,
+        ])
+            ->call('load')
+            ->assertSee('Job View Alpha')
+            ->assertSee('America/New_York')
+            ->assertSeeHtml('data-job-count="3"')
+            ->assertSeeHtml('data-estimate-tile="$1,500.50"');
+    }
+
+    public function test_any_view_it_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Empty Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // The empty state is only reachable when businessId or viewId is 0, since invalid IDs throw.
+        Livewire::test(AnyViewIt::class, [
+            'businessId' => 0,
+            'viewId' => 0,
+        ])
+            ->call('load')
+            ->assertSee('No view selected')
+            ->assertSee('Please select a view to see its details.');
+    }
+
+    public function test_any_view_it_error_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'View Error Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $component = Livewire::test(AnyViewIt::class, [
+            'businessId' => $biz->id,
+            'viewId' => 9999, // Non-existent view will throw ModelNotFoundException
+        ]);
+
+        $component->call('load')
+            ->assertSee('We could not render your view.')
+            ->assertSee('Please try again later or contact support if the issue persists.');
     }
 
     /**

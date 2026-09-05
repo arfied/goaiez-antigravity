@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="the kanban and predictability board" screen="dispatch_board" />
     <livewire:x-124.chat-dock-every />
     
     <div class="max-w-7xl mx-auto px-4 py-8" wire:loading.class="opacity-50">

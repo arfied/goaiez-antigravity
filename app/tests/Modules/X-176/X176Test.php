@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X176;
 
+use App\Modules\X103\Models\Page;
+use App\Modules\X157\Actions\EdgeDeployAction;
+use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X176\Actions\IndexRequestAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
+use App\Modules\X176\Actions\SeoRenderAction;
 use App\Modules\X176\Actions\SitemapPingAction;
 use App\Modules\X176\Events\IndexRequested;
 use App\Modules\X176\Events\SchemaPublished;
 use App\Modules\X176\Models\SchemaSnapshot;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class X176Test extends TestCase
@@ -50,6 +55,7 @@ class X176Test extends TestCase
             pageId: 101,
             businessName: 'Apex HVAC & Plumbing',
             commitId: $sharedCommitId,
+            domainName: 'seo.com',
             entityType: 'Plumber',
             productOffers: [
                 ['name' => 'Drain Clearing', 'price' => '99.00'],
@@ -78,11 +84,295 @@ class X176Test extends TestCase
         $this->assertEquals('pinged', $sitemapRes['status']);
     }
 
-    /**
-     * [G3-34], [G8-02], [G8-03], [G8-04], [G8-14], [G8-15], [G8-16], [G8-22], [G8-23], [G8-25], [G8-30], [G8-32], [G8-33], [G12-03], [G16-25], [G7-48]
-     */
-    public function test_header_capabilities(): void
+    /** (R245) */
+    public function test_g3_34_capabilities(): void
     {
-        $this->assertTrue(true);
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G3-34', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_02_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-02', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_03_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-03', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_04_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-04', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_14_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-14', $caps);
+        // product schema from the pricebook (delegates to X-163/X-119, but we just assert the shape here)
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        $res = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com', entityType: 'Plumber',
+            productOffers: [['name' => 'Drain Clearing', 'price' => '99.00']]
+        );
+        $this->assertArrayHasKey('hasOfferCatalog', $res['json_ld']);
+        $this->assertEquals('c123', $res['commit_id']);
+
+        $resFree = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com', entityType: 'Plumber',
+            productOffers: [
+                ['name' => 'Free Callout', 'price' => '0.00'],
+                ['name' => 'Zero String', 'price' => '0'],
+                ['name' => 'Zero Integer', 'price' => 0],
+            ]
+        );
+        $this->assertEquals('published', $resFree['status']);
+        $this->assertArrayHasKey('hasOfferCatalog', $resFree['json_ld']);
+        $this->assertCount(3, $resFree['json_ld']['hasOfferCatalog']['itemListElement']);
+    }
+
+    /** (R245) */
+    public function test_g8_15_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-15', $caps);
+        // Delegates to X-108
+        $this->assertTrue(is_dir(app_path('Modules/X-108')));
+    }
+
+    /** (R245) */
+    public function test_g8_16_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-16', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_22_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-22', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_23_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-23', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_25_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-25', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_30_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-30', $caps);
+    }
+
+    /** (R245) */
+    public function test_g8_32_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-32', $caps);
+
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res1 = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
+        );
+        $this->assertEquals('published', $res1['status']);
+        $this->assertEquals('https://schema.org', $res1['json_ld']['@context'] ?? null);
+
+        $snapshot = SchemaSnapshot::where('business_id', $biz->id)->where('page_id', 101)->first();
+        $this->assertTrue($snapshot->is_valid_schema);
+
+        $res2 = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: '', commitId: 'c124', domainName: 'seo.com'
+        );
+        $this->assertEquals('refused', $res2['status']);
+        $this->assertEquals('SCHEMA_INVALID', $res2['refusal_code']);
+        $this->assertFalse(array_key_exists('json_ld', $res2));
+
+        $reflection = new \ReflectionClass($this->renderAction);
+        $method = $reflection->getMethod('validateSchema');
+        $method->setAccessible(true);
+        $this->assertFalse($method->invoke($this->renderAction, [
+            '@context' => 'http://bad.org',
+            '@type' => 'LocalBusiness',
+            'name' => 'SEO',
+            'url' => 'https://seo.com/pages/101',
+        ]));
+        $this->assertFalse($method->invoke($this->renderAction, [
+            '@context' => 'https://schema.org', '@type' => 'LocalBusiness', 'name' => 'SEO', 'url' => 'https://seo.com',
+            'hasOfferCatalog' => ['@type' => 'OfferCatalog', 'itemListElement' => [['@type' => 'Thing']]],
+        ]));
+    }
+
+    /** (R245) */
+    public function test_g8_33_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G8-33', $caps);
+    }
+
+    /** (R245) */
+    public function test_g12_03_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G12-03', $caps);
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        $biz->vertical = 'hvac';
+        $biz->save();
+        Tenancy::set((int) $biz->id);
+        $res = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
+        );
+        $this->assertEquals('HVACBusiness', $res['json_ld']['@type'] ?? null);
+
+        $biz->vertical = null;
+        $biz->save();
+        $res2 = $this->renderAction->handle(
+            businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
+        );
+        $this->assertEquals('LocalBusiness', $res2['json_ld']['@type'] ?? null);
+    }
+
+    /** (R245) */
+    public function test_g16_25_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G16-25', $caps);
+    }
+
+    /** (R245) */
+    public function test_g7_48_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G7-48', $caps);
+
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'seo.com', true);
+
+        $deployValid = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: 'Valid Name'
+        );
+        $htmlValid = Storage::disk('local')->get("sites/{$deployValid['deploy_hash']}.html");
+        $this->assertStringContainsString('application/ld+json', $htmlValid);
+
+        $deployRefused = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c124',
+            businessName: ''
+        );
+        $htmlRefused = Storage::disk('local')->get("sites/{$deployRefused['deploy_hash']}.html");
+        $this->assertStringNotContainsString('application/ld+json', $htmlRefused);
+    }
+
+    public function test_seo_block_present_and_absent(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'seo.com', true);
+
+        $deployLegacy = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500
+        );
+        $htmlLegacy = Storage::disk('local')->get("sites/{$deployLegacy['deploy_hash']}.html");
+        $this->assertStringNotContainsString('id="seo-meta-x176"', $htmlLegacy);
+
+        $deployNew = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: 'SEO Tenant'
+        );
+        $htmlNew = Storage::disk('local')->get("sites/{$deployNew['deploy_hash']}.html");
+
+        $this->assertStringContainsString('id="seo-meta-x176"', $htmlNew);
+        $this->assertStringContainsString('<title id="seo-meta-x176">SEO Tenant</title>', $htmlNew);
+        $this->assertStringContainsString('<meta name="description" content="SEO Tenant">', $htmlNew);
+        $this->assertStringContainsString('<link rel="canonical" href="https://seo.com/pages/101">', $htmlNew);
+        $this->assertStringNotContainsString('example.com', $htmlNew);
+
+        // Test escaping
+        $deployEscaped = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: 'SEO & "Co"'
+        );
+        $htmlEscaped = Storage::disk('local')->get("sites/{$deployEscaped['deploy_hash']}.html");
+
+        $this->assertStringContainsString('<title id="seo-meta-x176">SEO &amp; &quot;Co&quot;</title>', $htmlEscaped);
+        $this->assertStringContainsString('<meta name="description" content="SEO &amp; &quot;Co&quot;">', $htmlEscaped);
+    }
+
+    public function test_seo_never_reads_another_tenants_page(): void
+    {
+        $tenantA = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+        $tenantB = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
+
+        Tenancy::set((int) $tenantB->id);
+        $pageB = Page::create([
+            'business_id' => $tenantB->id,
+            'slug' => 'tenant-b-slug',
+            'title' => 'Tenant B Title',
+            'is_published' => true,
+        ]);
+
+        // Deliberately run as Tenant B to bypass RLS hiding the row,
+        // and prove that where('business_id', $tenantA->id) protects it.
+        Tenancy::set((int) $tenantB->id);
+        $action = new SeoRenderAction;
+        $res = $action->handle(
+            businessId: $tenantA->id,
+            pageId: $pageB->id,
+            businessName: 'Tenant A',
+            commitId: 'c1',
+            domainName: 'seo-a.com'
+        );
+
+        $this->assertEquals('Tenant A', $res['title']);
+        $this->assertEquals("https://seo-a.com/pages/{$pageB->id}", $res['canonical']);
     }
 }

@@ -110,6 +110,7 @@ final class CapabilitiesScaffoldCommand extends Command
     private function parse(string $tracker): array
     {
         $out = [];
+        $canonicalOwners = $this->canonicalOwners();
 
         foreach (explode("\n", $tracker) as $line) {
             if (! str_starts_with($line, '|')) {
@@ -118,32 +119,123 @@ final class CapabilitiesScaffoldCommand extends Command
 
             $c = array_map('trim', explode('|', $line));
 
-            if (preg_match('/^⭐?\s*\*{0,2}(G\d+-\d+|N-\d+(?:-\d+)?)/u', $c[1] ?? '', $m) !== 1) {
+            $matchedIds = [];
+            if (preg_match('/^⭐?\s*\*{0,2}N-(\d+)\s*[–…-]\s*N?-(\d+)/u', $c[1] ?? '', $rm)) {
+                $start = (int) $rm[1];
+                $end = (int) $rm[2];
+                for ($i = $start; $i <= $end; $i++) {
+                    $matchedIds[] = sprintf('N-%03d', $i);
+                }
+                $parentCell = $c[2] ?? '';
+            } elseif (preg_match('/^⭐?\s*\*{0,2}(G\d+-\d+|N-\d+(?:-\d+)?)/u', $c[1] ?? '', $m)) {
+                $matchedIds[] = $m[1];
+                $parentCell = ($c[4] ?? '') !== '' ? $c[4] : ($c[2] ?? '');
+            } else {
                 continue;
             }
-            $id = $m[1];
 
-            $parentCell = ($c[4] ?? '') !== '' ? $c[4] : ($c[2] ?? '');
             $status = $c[5] ?? '';
-
-            // ⛔ NOT the tracker's note column — that carries dispositions, not
-            //    test contracts. The ⑤ comes from the plan's capability tables.
-            $assertion = $this->assertions()[$id] ?? '';
-            if ($assertion === '') {
-                $trackerNote = trim((string) ($c[count($c) - 2] ?? ''));
-                if ($trackerNote !== '' && mb_strlen($trackerNote) >= 8) {
-                    $assertion = $trackerNote;
-                }
-            }
+            $trackerModules = [];
 
             foreach (preg_split('/[·,]/u', $parentCell) ?: [] as $piece) {
                 if (preg_match('/\b((?:X|C)-[A-Za-z0-9]+)\b/', $piece, $mm) === 1) {
-                    $out[$mm[1]][$id] = ['assertion' => $assertion, 'status' => $status];
+                    $trackerModules[] = $mm[1];
+                }
+            }
+
+            foreach ($matchedIds as $id) {
+                $assertion = $this->assertions()[$id] ?? '';
+                if ($assertion === '') {
+                    $trackerNote = trim((string) ($c[count($c) - 2] ?? ''));
+                    if ($trackerNote !== '' && mb_strlen($trackerNote) >= 8) {
+                        $assertion = $trackerNote;
+                    }
+                }
+
+                $canonicalOwner = $canonicalOwners[$id] ?? null;
+
+                if ($canonicalOwner !== null) {
+                    $out[$canonicalOwner][$id] = ['assertion' => $assertion, 'status' => $status];
+                } else {
+                    foreach ($trackerModules as $tm) {
+                        $out[$tm][$id] = ['assertion' => $assertion, 'status' => $status];
+                    }
                 }
             }
         }
 
         return $out;
+    }
+
+    /**
+     * Map of ID to Canonical Owner from the Master Plan.
+     *
+     * @return array<string, string>
+     */
+    private function canonicalOwners(): array
+    {
+        static $cache = null;
+        if ($cache !== null) {
+            return $cache;
+        }
+
+        $cache = [];
+        $plan = base_path('GOAIEZ-MASTER-PLAN.md');
+        if (! is_file($plan)) {
+            return $cache;
+        }
+
+        $currentHeadingModule = null;
+
+        foreach (explode("\n", (string) file_get_contents($plan)) as $line) {
+            if (preg_match('/^#{1,6}\s/', $line)) {
+                if (preg_match_all('/\b((?:X|C)-[A-Za-z0-9]+)\b/', $line, $hm) === 1) {
+                    $currentHeadingModule = $hm[1][0];
+                } else {
+                    $currentHeadingModule = null;
+                }
+
+                continue;
+            }
+
+            if (! str_starts_with($line, '|')) {
+                continue;
+            }
+            $cells = array_map('trim', explode('|', $line));
+            if (count($cells) < 4) {
+                continue;
+            }
+
+            $matchedIds = [];
+            if (preg_match_all('/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/', $cells[1], $m) > 0) {
+                $matchedIds = $m[1];
+            } elseif (preg_match('/N-(\d+)\s*[–…-]\s*N?-(\d+)/u', $cells[1], $rm)) {
+                $start = (int) $rm[1];
+                $end = (int) $rm[2];
+                for ($i = $start; $i <= $end; $i++) {
+                    $matchedIds[] = sprintf('N-%03d', $i);
+                }
+            }
+
+            if ($matchedIds === []) {
+                continue;
+            }
+
+            if (preg_match('/\b((?:X|C)-[A-Za-z0-9]+)\b/', $cells[2], $om) === 1) {
+                $owner = $om[1];
+                foreach ($matchedIds as $id) {
+                    $cache[$id] = $owner;
+                }
+            } elseif ($currentHeadingModule !== null) {
+                foreach ($matchedIds as $id) {
+                    if (str_starts_with($id, 'N-')) {
+                        $cache[$id] = $currentHeadingModule;
+                    }
+                }
+            }
+        }
+
+        return $cache;
     }
 
     /**
@@ -248,7 +340,8 @@ final class CapabilitiesScaffoldCommand extends Command
         $body = '';
         foreach ($caps as $id => $c) {
             $a = str_replace("'", "\\'", $c['assertion']);
-            $body .= "\n    // status: {$c['status']}\n    '{$id}' => '{$a}',\n";
+            $statusLine = $c['status'] === '' ? '// status:' : "// status: {$c['status']}";
+            $body .= "\n    {$statusLine}\n    '{$id}' => '{$a}',\n";
         }
 
         $count = count($caps);

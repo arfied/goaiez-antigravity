@@ -1,0 +1,10 @@
+--- app/app/Services/Voice/VoiceCalls.php
++++ app/app/Services/Voice/VoiceCalls.php
+@@ -515,6 +515,8 @@
+             // call they told us not to touch.
+             \Illuminate\Support\Facades\Log::info("touchesLiveCalls: " . ($this->forwarding->modeFor()->touchesLiveCalls() ? 'true' : 'false'));
++            \Illuminate\Support\Facades\Log::info("eventType: " . (is_object($eventType) ? get_class($eventType) : gettype($eventType)));
++            \Illuminate\Support\Facades\Log::info("owesTextBack: " . ($eventType instanceof \App\Enums\VoiceEventType && $eventType->owesTextBack() ? 'true' : 'false'));
+             if ($eventType instanceof VoiceEventType
+                 && $eventType->owesTextBack()
+                 && $this->forwarding->modeFor()->touchesLiveCalls()

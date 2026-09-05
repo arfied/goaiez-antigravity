@@ -6,16 +6,21 @@ namespace Tests;
 
 use App\Models\Business;
 use App\Models\User;
+use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Features\SupportAutoInjectedAssets\SupportAutoInjectedAssets;
 use RuntimeException;
+use Tests\Concerns\RefreshesTenantDatabase;
 
 abstract class TestCase extends BaseTestCase
 {
+    // // use RefreshesTenantDatabase;
+
     /**
      * ⚠️ LIVEWIRE'S ASSET-INJECTION FLAG IS A CLASS STATIC AND SURVIVES THE
      * APPLICATION REFRESH BETWEEN TESTS.
@@ -48,6 +53,22 @@ abstract class TestCase extends BaseTestCase
 
         SupportAutoInjectedAssets::$hasRenderedAComponentThisRequest = false;
         SupportAutoInjectedAssets::$forceAssetInjection = false;
+    }
+
+    protected function tearDown(): void
+    {
+        // Release numbers so journeys committing their transactions do not exhaust the pool
+        DB::table('phone_numbers')
+            ->where('e164', 'like', '+1512555%')
+            ->update([
+                'business_id' => null,
+                'location_id' => null,
+                'role' => 'shared_pool',
+                'state' => 'provisioning',
+                'state_reason' => 'Released in teardown',
+            ]);
+
+        parent::tearDown();
     }
 
     /**
@@ -135,7 +156,10 @@ abstract class TestCase extends BaseTestCase
 
     public static function provisionTenant(array $attributes = []): Business
     {
-        $owner = User::first() ?? User::factory()->create();
+        static $numberSeed = 1000;
+        app(TenantNumbers::class)->addToPool('+1512555'.$numberSeed++);
+
+        $owner = isset($attributes['owner_user_id']) ? User::find($attributes['owner_user_id']) : User::factory()->create();
         $name = $attributes['name'] ?? 'Test Business';
         $biz = app(TenantProvisioner::class)->provision($owner);
 

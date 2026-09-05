@@ -5,6 +5,7 @@ use App\Http\Middleware\Impersonating;
 use App\Http\Middleware\RequiresTwoFactor;
 use App\Http\Middleware\ResolveTenant;
 use App\Http\Middleware\SuspendedTenantStatus;
+use App\Http\Middleware\TenantRole;
 use App\Http\Middleware\WatchPlatformHeartbeats;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
@@ -31,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->alias(['tenant.role' => TenantRole::class]);
         // ⛔ GLOBAL, AND IN THE WEB PROCESS ON PURPOSE (T176 P23). It watches
         // for the scheduler or the queue workers going silent, and silence is
         // exactly what neither of them can report about itself. The web process

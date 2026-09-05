@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X124;
 
+use App\Modules\X124\Actions\AssistantActOnRecommendationAction;
 use App\Modules\X124\Actions\AssistantAskAction;
 use App\Modules\X124\Actions\AssistantExecuteAction;
 use App\Modules\X124\Actions\AssistantPreviewAction;
+use App\Modules\X124\Actions\AssistantRecommendAction;
+use App\Modules\X124\Domain\AssistantRecommendationActionRefused;
+use App\Modules\X124\Events\AssistantActed;
+use App\Modules\X124\Events\AssistantRecommended;
 use App\Modules\X124\Events\AssistantRequest;
+use App\Modules\X124\Models\AssistantSession;
 use App\Modules\X124\Models\AssistantUnsupported;
+use App\Modules\X124\Ui\ChatDockEvery;
+use App\Modules\X124\Ui\PreviewCard;
+use App\Modules\X124\Ui\TodaysRecommendationStrip;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X124Test extends TestCase
@@ -98,5 +108,162 @@ class X124Test extends TestCase
     public function test_help_and_escalation(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_constant_irreversible_actions(): void
+    {
+        $this->assertEqualsCanonicalizing(
+            ['delete_tenant', 'refund_charge', 'bulk_delete', 'wipe_database'],
+            AssistantExecuteAction::IRREVERSIBLE,
+        );
+
+        $biz = TestCase::provisionTenant(['name' => 'Constant Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        foreach (AssistantExecuteAction::IRREVERSIBLE as $actionKey) {
+            $preview = $this->previewAction->handle($biz->id, $actionKey);
+            $this->assertTrue($preview['is_irreversible']);
+
+            $exec = $this->executeAction->handle($biz->id, $actionKey, [], false);
+            $this->assertEquals('refused_confirmation_required', $exec['status']);
+        }
+
+        $ordinaryKey = 'send_invoice';
+        $previewOrd = $this->previewAction->handle($biz->id, $ordinaryKey);
+        $this->assertFalse($previewOrd['is_irreversible']);
+
+        $execOrd = $this->executeAction->handle($biz->id, $ordinaryKey, [], false);
+        $this->assertEquals('executed', $execOrd['status']);
+    }
+
+    public function test_todays_recommendation_strip_renders_active_and_emits_events(): void
+    {
+        Event::fake([
+            AssistantRecommended::class,
+            AssistantActed::class,
+        ]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Strip Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = AssistantSession::create(['business_id' => $biz->id, 'session_token' => 'sess_test', 'user_id' => null, 'context' => '[]']);
+        $recommendAction = app(AssistantRecommendAction::class);
+        $rec = $recommendAction->handle($biz->id, $session->id, 'Enable Two-Factor Auth', 'enable_2fa');
+
+        Event::assertDispatched(AssistantRecommended::class);
+
+        $component = Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertSee('Enable Two-Factor Auth')
+            ->call('accept', $rec->id)
+            ->assertHasNoErrors();
+
+        Event::assertDispatched(AssistantActed::class, function ($event) use ($rec) {
+            return $event->recommendationId === $rec->id && $event->action === 'accepted';
+        });
+
+        $this->assertEquals('accepted', $rec->refresh()->status);
+
+        Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->assertDontSee('Enable Two-Factor Auth');
+    }
+
+    public function test_assistant_act_on_recommendation_refuses_invalid_status(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Strip Biz 2', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = AssistantSession::create(['business_id' => $biz->id, 'session_token' => 'sess_test2', 'user_id' => null, 'context' => '[]']);
+        $recommendAction = app(AssistantRecommendAction::class);
+        $rec = $recommendAction->handle($biz->id, $session->id, 'Enable Two-Factor Auth 2', 'enable_2fa');
+
+        $this->expectException(AssistantRecommendationActionRefused::class);
+
+        $actAction = app(AssistantActOnRecommendationAction::class);
+        $actAction->handle($biz->id, $rec->id, 'invalid_status');
+    }
+
+    public function test_todays_recommendation_strip_blade_renders_the_error_panel(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Strip Biz Error', 'currency' => 'USD']);
+
+        Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
+            ->call('load')
+            ->set('errorMessage', 'Failed to load recommendations')
+            ->assertSee('We could not load recommendations.')
+            ->assertSee('Failed to load recommendations')
+            ->assertSee('wire:click="load"', false);
+    }
+
+    public function test_preview_card_ready_reversible(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Preview Reversible', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(PreviewCard::class, [
+            'businessId' => $biz->id,
+            'actionKey' => 'send_invoice',
+            'params' => [],
+        ])
+            ->call('load')
+            ->assertSeeHtml('data-irreversible="no"')
+            ->assertSeeHtml('data-action-key="send_invoice"')
+            ->assertSee('Will execute send_invoice with given parameters')
+            ->assertDontSee('Warning: this action cannot be undone and needs confirmation.');
+    }
+
+    public function test_preview_card_ready_irreversible(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Preview Irreversible', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(PreviewCard::class, [
+            'businessId' => $biz->id,
+            'actionKey' => 'delete_tenant',
+            'params' => [],
+        ])
+            ->call('load')
+            ->assertSeeHtml('data-irreversible="yes"')
+            ->assertSeeHtml('data-action-key="delete_tenant"')
+            ->assertSee('Will execute delete_tenant with given parameters')
+            ->assertSee('Warning: this action cannot be undone and needs confirmation.');
+    }
+
+    public function test_chat_dock_renders_default_state(): void
+    {
+        Livewire::test(ChatDockEvery::class)
+            ->assertSee('Copilot Assistant Chat Dock')
+            ->assertSee('Ask me anything about your business.');
+    }
+
+    public function test_chat_dock_renders_answered_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(ChatDockEvery::class, ['businessId' => $biz->id])
+            ->set('utterance', 'show invoices')
+            ->call('ask')
+            ->assertSee('show invoices')
+            ->assertSeeHtml('data-status="answered"');
+    }
+
+    public function test_chat_dock_renders_unsupported_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Chat Dock Biz Unsupported', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(ChatDockEvery::class, ['businessId' => $biz->id])
+            ->set('utterance', 'Fly me to Mars')
+            ->call('ask')
+            ->assertSee('Fly me to Mars')
+            ->assertSee('I can\'t do that yet')
+            ->assertSeeHtml('data-status="unsupported"');
+
+        $this->assertDatabaseHas('assistant_unsupported', [
+            'business_id' => $biz->id,
+            'utterance' => 'Fly me to Mars',
+        ]);
     }
 }

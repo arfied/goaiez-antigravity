@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="actual vs expected per job" screen="margin_by_job" />
     <div class="margin-job-view p-4">
         <h2>Margin by job</h2>
         <p>Expected comes from the pricebook; actual comes from the field.</p>

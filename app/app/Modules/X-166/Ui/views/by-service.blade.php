@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="actual vs expected per job" screen="by_service" />
     <div class="margin-service-view p-4">
         <h2>Margin by service</h2>
         

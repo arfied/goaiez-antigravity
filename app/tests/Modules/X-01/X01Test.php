@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X01;
 
+use App\Models\Conversation;
 use App\Modules\X01\Actions\ContactCreateAction;
 use App\Modules\X01\Actions\ContactMergeAction;
 use App\Modules\X01\Actions\ConversationReadAction;
@@ -11,12 +12,16 @@ use App\Modules\X01\Actions\ConversationTakeoverAction;
 use App\Modules\X01\Actions\SearchGlobalAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Events\ContactCreated;
+use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
+use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
+use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
+use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
-use App\Modules\X121\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X01Test extends TestCase
@@ -162,7 +167,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Scored Lead', '+15125550166');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 85, 'A');
+        $score = $this->manager->scoreLead($biz->id, $p->id, 85);
 
         $this->assertEquals(85, $score->lead_rating);
         $this->assertEquals('A', $score->grade);
@@ -185,9 +190,32 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Graded Lead', '+15125550155');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 92, 'A');
+        $score = $this->manager->scoreLead($biz->id, $p->id, 92);
 
         $this->assertGreaterThan(0.9, $score->confidence);
+
+        $atBand = $this->manager->scoreLead($biz->id, $p->id, 80);
+        $this->assertSame('A', $atBand->grade, '80 is the inclusive floor of the A band');
+
+        $underBand = $this->manager->scoreLead($biz->id, $p->id, 79);
+        $this->assertSame('B', $underBand->grade, '79 is one below the A band and grades B');
+
+        $floor = $this->manager->scoreLead($biz->id, $p->id, 0);
+        $this->assertSame('F', $floor->grade, 'a zero rating grades F, it does not default to A');
+
+        $other = $this->createContact->handle($biz->id, 'Never Scored', '+15125550157');
+        $before = LeadScore::where('business_id', $biz->id)->count();
+
+        try {
+            $this->manager->scoreLead($biz->id, $other->id, 101);
+            $this->fail('a rating above 100 must be refused');
+        } catch (LeadRatingOutOfRangeRefused $e) {
+            $this->assertSame('LEAD_RATING_OUT_OF_RANGE', LeadRatingOutOfRangeRefused::REFUSAL_CODE);
+        }
+
+        $this->assertSame($before, LeadScore::where('business_id', $biz->id)->count(), 'a refused rating creates no row');
+        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('person_id', $other->id)->count(), 'the refused person has no lead_score at all');
+        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('lead_rating', 101)->count(), 'no row anywhere carries the refused rating');
     }
 
     /**
@@ -203,7 +231,18 @@ class X01Test extends TestCase
      */
     public function test_g2_61_fenced_lookalike(): void
     {
-        $this->assertTrue(true);
+        Http::fake();
+        Event::fake([LeadScored::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Fence Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $p = $this->createContact->handle($biz->id, 'Fence Lead', '+15125550156');
+
+        $score = $this->manager->scoreLead($biz->id, $p->id, 95);
+
+        $this->assertSame('A', $score->grade, 'the score half of the split is a lead_score');
+        Event::assertDispatched(LeadScored::class);
+        Http::assertNothingSent();
     }
 
     /**
@@ -282,5 +321,17 @@ class X01Test extends TestCase
     public function test_g19_15_thread_live_update(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_takeover_reply_refuses_when_no_latch_is_active(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Render Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+
+        $this->expectException(TakeoverNotLatchedRefused::class);
+        $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
     }
 }

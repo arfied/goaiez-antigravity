@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="time tracking" screen="timesheets" />
     <header>
         <h2>Timesheets</h2>
         <p>it closes on the rule; the tenant may reopen it</p>

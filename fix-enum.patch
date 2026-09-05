@@ -1,0 +1,15 @@
+--- app/app/Services/Voice/VoiceCalls.php
++++ app/app/Services/Voice/VoiceCalls.php
+@@ -453,9 +453,9 @@
+ 
+                 \App\Models\ConsentRecord::create([
+                     'customer_id' => $customer->id,
+-                    'channel' => \App\Enums\OutreachChannel::Sms,
+-                    'consent_type' => \App\Enums\ConsentType::Express,
+-                    'captured_by' => \App\Enums\CapturedBy::Tenant,
++                    'channel' => \App\Enums\OutreachChannel::Sms->value,
++                    'consent_type' => \App\Enums\ConsentType::Express->value,
++                    'captured_by' => \App\Enums\CapturedBy::Tenant->value,
+                     'basis' => 'Inbound call',
+                 ]);
+             }

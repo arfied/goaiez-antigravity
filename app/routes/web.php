@@ -161,6 +161,14 @@ use Laravel\Fortify\RoutePath;
 */
 Route::get('/', [MarketingController::class, 'home'])->name('home');
 
+Route::get('/signup', function () {
+    if (! env('ALLOW_PUBLIC_SIGNUP', false) && ! config('app.allow_public_signup', false)) {
+        abort(404);
+    }
+
+    return view('x-118::signup-page');
+})->name('signup');
+
 Route::get('/audit/{token}', [MarketingController::class, 'audit'])->name('audit.show');
 
 /*
