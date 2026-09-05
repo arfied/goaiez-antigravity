@@ -127,7 +127,28 @@ class X142Test extends TestCase
      */
     public function test_mcp_capabilities(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Capabilities Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test Capabilities',
+            roleScope: 'staff',
+            permissions: ['job.create', 'job.eta_notify']
+        );
+
+        $dbToken = \App\Modules\X142\Models\McpToken::findOrFail($token->id);
+        $this->assertEquals('staff', $dbToken->role_scope);
+        $this->assertSame(['job.create', 'job.eta_notify'], $dbToken->permissions);
+
+        try {
+            $this->tokenAction->revoke($biz->id + 100000, $token->id);
+            $this->fail('revoke accepted a token id under a business id that does not own it');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // the where('business_id') guard refused it
+        }
+
+        $this->assertFalse((bool) \App\Modules\X142\Models\McpToken::findOrFail($token->id)->is_revoked);
     }
 
     public function test_components_render(): void
