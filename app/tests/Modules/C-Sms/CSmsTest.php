@@ -34,6 +34,12 @@ class CSmsTest extends TestCase
         $this->halt = new SmsHaltAction($this->composer);
     }
 
+    protected function tearDown(): void
+    {
+        \Illuminate\Support\Carbon::setTestNow();
+        parent::tearDown();
+    }
+
     /**
      * TEST ANCHOR
      * a 161-character GSM-7 draft with one emoji is billed at the carrier's 3-segment count, and the composer said so before send;
@@ -42,6 +48,7 @@ class CSmsTest extends TestCase
      */
     public function test_anchor_segment_count_quiet_hours_and_stop_suppression(): void
     {
+        \Illuminate\Support\Carbon::setTestNow('2026-09-04 12:00:00');
         Event::fake([SendRequested::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'SMS Tenant', 'currency' => 'USD']);
@@ -57,6 +64,7 @@ class CSmsTest extends TestCase
         $this->assertNotNull($calc['warning']);
 
         // 2. Quiet hours: at 21:30, marketing waits (scheduled), transactional goes (sent)
+        \Illuminate\Support\Carbon::setTestNow('2026-09-04 22:30:00');
         $mktRes = $this->send->handle(
             businessId: $biz->id,
             recipientPhone: '+15125550111',
