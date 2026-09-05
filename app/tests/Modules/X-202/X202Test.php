@@ -290,7 +290,7 @@ class X202Test extends TestCase
         $item3 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 3', ['a' => 3]);
 
         $tokens = array_unique([$item1['item']->magic_token, $item2['item']->magic_token, $item3['item']->magic_token]);
-        
+
         $this->assertCount(3, $tokens);
         $this->assertSame(32, strlen($item1['item']->magic_token));
         $this->assertSame(32, strlen($item2['item']->magic_token));
