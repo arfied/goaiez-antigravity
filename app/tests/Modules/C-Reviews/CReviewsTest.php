@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
-use App\Modules\Contract\Events\SendRequested;
+use App\Modules\CSms\Events\SendRequested;
 use App\Modules\CReviews\Actions\QaTicketAction;
 use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
@@ -21,8 +21,8 @@ use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X181\Models\QaTicket;
-use App\Modules\X182\Models\Person;
-use App\Modules\X198\Models\ConsentRecord;
+use App\Modules\X121\Models\Person;
+use App\Models\ConsentRecord;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
