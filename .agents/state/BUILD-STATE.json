@@ -1428,6 +1428,14 @@
   {
    "at": "2026-09-05T09:08:07",
    "note": "X-193 \u2014 NotificationClassifyAction infers classification and respects_quiet_hours from a str_contains() ladder over caller_type inside firstOrCreate's defaults (Actions/NotificationClassifyAction.php:28-41). Two consequences: a caller named 'chatty_promo' classifies operational because it contains 'chat', and the defaults are frozen at first write so no later policy change reaches an existing notification_classes row. Recorded, not fixed \u2014 a rewrite is a behaviour change outside S-67."
+  },
+  {
+   "at": "2026-09-05T09:18:25",
+   "note": "X-127 \u2014 N-127-01 pins current behaviour: TenantzeroProofAction:21 compares published_value to the recomputed value with === on raw strings, so a one-cent drift pulls the claim and a pulled claim (published_value null) can never re-verify. Recorded as the intended reading of 'match to the digit', not changed."
+  },
+  {
+   "at": "2026-09-05T09:18:25",
+   "note": "X-127 \u2014 N-127-03 has no application-side mutation: published_metrics and tenant_zero_config are FORCE ROW LEVEL SECURITY with a tenant_isolation policy on current_setting('app.business_id') (migration 2026_08_30_000050:41-49), and PublishedMetric is a plain Model with no TenantScoped trait. The load-bearing proof is the in-test positive control (same query, 1 row under tenant B, 0 under tenant A), not a mutation."
   }
  ]
 }
