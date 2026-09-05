@@ -167,6 +167,17 @@ Watch for: <the trap that applies, by name>
   still names absent Anthropic and Infobip credentials.
 - **`state.py` owns `BUILD-STATE.json`.** A hand edit there is a `BLOCK`; so is
   a `JOURNAL.md` line with no matching commit.
+- ⚠️ **The plan is `build-plan.json` in the repo root. There is no `.agents/plan/`.**
+  `bin/state.py:42` is `PLAN = ROOT / "build-plan.json"` — that file is the `p` whose
+  `p["waves"]` `next` iterates, and it also carries a `modules` map and a `roster_list`.
+  **A module can be in the map with a `"wave"` field and absent from every
+  `waves[].modules` list**, which is how `next` answers `FINISHED` while `MODULES` reads
+  `3 not started` (X-221/X-222/X-223, still open at tick 158). A wave-67 brief of this
+  column's sent the coder to grep `.agents/plan/`; with `2>/dev/null` the missing directory
+  returned nothing, the nothing was read as evidence of "out of scope", and a false finding
+  reached the append-only ledger. **Never conclude from a grep's silence without `ls -d`
+  on the path first** — rule 01's anchor trap, and it binds this column when writing briefs
+  exactly as it binds the coder running them.
 - **`BUILDING` is not progress.** On 2026-08-31 13:04:41 twelve modules flipped
   to `BUILDING` in one second — a batch mark. Count `DONE` transitions and
   commits, never `BUILDING`.
@@ -190,6 +201,20 @@ Watch for: <the trap that applies, by name>
   line on the truncated ledger; it prints identically on a healthy 17-key one
   (measured 2026-09-05, tick 153). The truncation's real tell was §3 —
   `KeyError: 'stages'` and an `{"action": "BOOTSTRAP"}` answer.
+- ⚠️ **`supervise.sh` §7 prints five failures and then `… 3 more`.** Pest's order varies
+  between runs, so two runs of an identical tree show two different five-name windows —
+  measured at tick 158, where the coder's window and this column's shared only one name out
+  of eight. **Never read §7's list as the failure list.** Wave 67 quoted its five as though
+  they were all of them and so never noticed that `errors` had gone `3 → 8`. Get the whole
+  list before concluding anything about *which* tests are red; the summary line
+  (`tests N · passed N · errors N`) is the only complete number §7 gives you.
+- ⚠️ **`app/Modules/` is a composer *classmap*, not PSR-4** (`app/composer.json`, the
+  `classmap` block). A merge that adds a file there leaves it **invisible to the autoloader
+  until `composer dump-autoload` runs**, and the symptom is `Target class […] does not
+  exist` on a class that is plainly on disk with the right namespace. Check
+  `app/vendor/composer/autoload_classmap.php`'s mtime against the merge commit's before
+  treating it as a code defect. At tick 158 the map was stamped 09:27 and the merge landed
+  13:55, so four tests errored across two waves on a class nobody had broken.
 - **§1b is a key-set check, not a row check.** It catches a ledger truncated to a
   subset of a parent's top-level keys — the wave-65 incident — and nothing finer. A
   merge resolution can keep all 17 keys and still drop rows, so before concluding a
