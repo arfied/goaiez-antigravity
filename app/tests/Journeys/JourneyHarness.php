@@ -18,6 +18,8 @@ use App\Modules\X118\Ui\ProspectSignup;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
 use App\Modules\X162\Models\DispatchAssignment;
+use App\Modules\X163\Actions\PriceConfirmAction;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X171\Actions\JobStateAction;
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Domain\InvoiceEngine;
@@ -352,11 +354,11 @@ trait JourneyHarness
 
     private function confirmPrice(array $tenant, string $sku, int $amountMinor): void
     {
-        $item = \App\Modules\X163\Models\PriceBookItem::updateOrCreate(
+        $item = PriceBookItem::updateOrCreate(
             ['business_id' => $tenant['id'], 'service_name' => $sku],
             ['price_cents' => $amountMinor, 'tax_rate_pct' => 0, 'is_sample' => true, 'is_confirmed' => false]
         );
-        app(\App\Modules\X163\Actions\PriceConfirmAction::class)->handle($tenant['id'], $item->id);
+        app(PriceConfirmAction::class)->handle($tenant['id'], $item->id);
     }
 
     private function bookFromQuote(array $tenant, array $quote): array
