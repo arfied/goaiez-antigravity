@@ -22,33 +22,32 @@ class CoolingTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Cooling Tenant']);
         Tenancy::set((int) $biz->id);
 
-        // Visitor 1: 1 visit, no events, very quiet (quietest)
         $visit1 = Visit::create([
             'business_id' => $biz->id,
-            'visitor_id' => 'v-quiet',
+            'visitor_id' => 'v-cool',
             'landing_page' => '/',
-            'created_at' => now()->subDays(10),
+            'created_at' => now()->subMinutes(5),
         ]);
         Session::create([
             'business_id' => $biz->id,
             'visit_id' => $visit1->id,
             'session_token' => 'tok1',
-            'started_at' => now()->subDays(10),
-            'created_at' => now()->subDays(10),
+            'started_at' => now()->subMinutes(5),
+            'created_at' => now()->subMinutes(5),
         ]);
 
         $visit2 = Visit::create([
             'business_id' => $biz->id,
             'visitor_id' => 'v-hot',
             'landing_page' => '/',
-            'created_at' => now()->subDays(2),
+            'created_at' => now()->subDays(10),
         ]);
         $session2 = Session::create([
             'business_id' => $biz->id,
             'visit_id' => $visit2->id,
             'session_token' => 'tok2',
-            'started_at' => now()->subDays(2),
-            'created_at' => now()->subDays(2),
+            'started_at' => now()->subDays(10),
+            'created_at' => now()->subDays(10),
         ]);
         PixelEvent::create([
             'business_id' => $biz->id,
@@ -58,15 +57,48 @@ class CoolingTest extends TestCase
                 'form_id' => 'lead',
                 'abandoned_field' => 'phone',
             ],
-            'created_at' => now()->subDays(2),
+            'created_at' => now()->subDays(10),
         ]);
 
-        // We want to test that it sorts by heat descending, then quiet-time descending.
-        // Heat: v-hot (2), v-quiet (1)
-        // Quiet-time: v-quiet (10 days), v-hot (2 days)
-        // Order should be v-hot first, then v-quiet.
+        Livewire::test(Cooling::class, ['businessId' => $biz->id])
+            ->assertSeeInOrder(['v-hot', 'v-cool'])
+            ->assertSee('opener-v-hot', false);
+    }
+
+    public function test_cooling_empty_and_derivation(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Cooling Tenant']);
+        Tenancy::set((int) $biz->id);
 
         Livewire::test(Cooling::class, ['businessId' => $biz->id])
-            ->assertSeeInOrder(['v-hot', 'v-quiet']);
+            ->assertSee('Nobody cooling down right now');
+
+        $visit = Visit::create([
+            'business_id' => $biz->id,
+            'visitor_id' => 'v-derived',
+            'landing_page' => '/',
+            'created_at' => now()->subDays(1),
+        ]);
+        $session = Session::create([
+            'business_id' => $biz->id,
+            'visit_id' => $visit->id,
+            'session_token' => 'tok1',
+            'started_at' => now()->subDays(1),
+            'created_at' => now()->subDays(1),
+        ]);
+        PixelEvent::create([
+            'business_id' => $biz->id,
+            'session_id' => $session->id,
+            'event_name' => 'form.abandoned',
+            'payload' => [
+                'form_id' => 'lead',
+                'abandoned_field' => 'phone',
+            ],
+            'created_at' => now()->subDays(1),
+        ]);
+
+        Livewire::test(Cooling::class, ['businessId' => $biz->id])
+            ->assertSee("quit the lead at 'phone'")
+            ->assertSee("Quiet ");
     }
 }
