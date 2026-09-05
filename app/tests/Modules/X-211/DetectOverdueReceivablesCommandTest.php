@@ -114,4 +114,67 @@ final class DetectOverdueReceivablesCommandTest extends TestCase
         Event::assertNotDispatched(ArOverdue::class, fn ($e) => $e->invoiceId === $draftId);
         Event::assertDispatched(ArOverdue::class, fn ($e) => $e->invoiceId === $issuedId);
     }
+
+    /**
+     * [N-037]
+     */
+    public function test_an_open_recover_blocks_dunning_entirely_N_037(): void
+    {
+        Tenancy::forgetAll();
+        $business = Business::factory()->create();
+
+        $disputedId = null;
+        $complaintId = null;
+        $silenceId = null;
+
+        Tenancy::actingAs((int) $business->id, function () use ($business, &$disputedId, &$complaintId, &$silenceId) {
+            $disputed = Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-DISP',
+                'status' => 'issued',
+                'due_date' => now()->subDays(10),
+            ]);
+            $disputedId = $disputed->id;
+
+            $complaint = Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-COMP',
+                'status' => 'issued',
+                'due_date' => now()->subDays(10),
+            ]);
+            $complaintId = $complaint->id;
+
+            $silence = Invoice::create([
+                'business_id' => $business->id,
+                'invoice_number' => 'INV-SIL',
+                'status' => 'issued',
+                'due_date' => now()->subDays(10),
+            ]);
+            $silenceId = $silence->id;
+
+            $engine = app(\App\Modules\X211\Domain\ArEngine::class);
+            $engine->recordReason($business->id, $disputedId, 'disputed_line');
+            $engine->recordReason($business->id, $complaintId, 'complaint');
+        });
+
+        Tenancy::forgetAll();
+
+        // Use sync queue so the listener processes immediately in this test
+        config(['queue.default' => 'sync']);
+
+        Tenancy::actingAs((int) $business->id, function () use ($disputedId, $complaintId, $silenceId) {
+            $this->assertEquals(2, ArDunningAction::where('invoice_id', $disputedId)->count());
+            $this->assertEquals(2, ArDunningAction::where('invoice_id', $complaintId)->count());
+            $this->assertEquals(0, ArDunningAction::where('invoice_id', $silenceId)->count());
+        });
+        Tenancy::forgetAll();
+
+        Artisan::call('x211:detect-overdue');
+
+        Tenancy::actingAs((int) $business->id, function () use ($disputedId, $complaintId, $silenceId) {
+            $this->assertEquals(2, ArDunningAction::where('invoice_id', $disputedId)->count(), 'No new dunning action should be written for a disputed line');
+            $this->assertEquals(2, ArDunningAction::where('invoice_id', $complaintId)->count(), 'No new dunning action should be written for a complaint');
+            $this->assertEquals(1, ArDunningAction::where('invoice_id', $silenceId)->count(), 'Silence invoice should be chased');
+        });
+    }
 }
