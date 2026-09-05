@@ -10,6 +10,7 @@ use App\Modules\X127\Actions\TenantzeroProofAction;
 use App\Modules\X127\Events\TenantzeroClaimVerified;
 use App\Modules\X127\Events\TenantzeroMetricPublished;
 use App\Modules\X127\Models\PublishedMetric;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -127,7 +128,7 @@ class X127Test extends TestCase
         $count = DB::table('tenant_zero_config')->where('business_id', $biz->id)->count();
         $this->assertEquals(1, $count);
 
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
         $this->proofAction->handle($biz->id, 'metric_that_was_never_published', '$1.00');
     }
 
@@ -152,7 +153,7 @@ class X127Test extends TestCase
         $countA = PublishedMetric::where('business_id', $bizB->id)->count();
         $this->assertEquals(0, $countA);
 
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
         $this->proofAction->handle($bizB->id, 'metric_b', '$100.00');
     }
 }
