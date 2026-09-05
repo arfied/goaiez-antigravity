@@ -33,7 +33,7 @@ class AttributionRowTest extends TestCase
             'business_id' => $biz->id,
             'job_id' => 9001,
             'job_value' => 734000,
-            'touches' => json_encode([['source' => '/plumbing-services'], ['source' => '/about-us']]),
+            'touches' => json_encode([['source' => 'google_cpc'], ['source' => 'organic_search']]),
             'attribution_status' => 'ambiguous',
             'created_at' => now(),
             'updated_at' => now(),
@@ -53,8 +53,8 @@ class AttributionRowTest extends TestCase
             ->assertDontSee('No attribution data yet')
             ->assertSee('This job earned')
             ->assertSee('$7,340.00')
-            ->assertSee('/plumbing-services')
-            ->assertSee('/about-us')
+            ->assertSee('google_cpc')
+            ->assertSee('organic_search')
             ->assertSee('Summer Promo')
             ->assertSee('$500.00');
 
@@ -62,7 +62,7 @@ class AttributionRowTest extends TestCase
             'business_id' => $biz->id,
             'job_id' => 9002,
             'job_value' => null,
-            'touches' => json_encode([['source' => '/contact']]),
+            'touches' => json_encode([['source' => 'direct']]),
             'attribution_status' => 'single',
             'created_at' => now(),
             'updated_at' => now(),

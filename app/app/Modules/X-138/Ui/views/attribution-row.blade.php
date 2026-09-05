@@ -23,7 +23,7 @@
                                 </p>
                                 <div class="text-sm text-ink-2 mt-1">
                                     @foreach($touches as $t)
-                                        <div class="truncate">{{ $t['source'] ?? 'Unknown page' }}</div>
+                                        <div class="truncate">{{ $t['source'] ?? 'Unknown source' }}</div>
                                     @endforeach
                                 </div>
                             </div>
