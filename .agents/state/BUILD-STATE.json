@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T22:51:42",
+ "updated": "2026-09-04T23:10:49",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1478,6 +1478,18 @@
    "module": "C-Mail",
    "chose": "G11-05: a fired seed sets is_marketing_paused only and is never cleared; 'never the thread' is EmailSendAction's existing sendType === 'marketing' guard, so no second flag, column or send-type argument is introduced",
    "at": "2026-09-04T22:51:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "G2-38: the lead grade is derived from lead_rating inside UnifiedInboxManager::scoreLead on an inclusive ladder (>=80 A, >=60 B, >=40 C, >=20 D, else F) and the caller-supplied $grade parameter is removed; the rejected alternative was keeping it, which is what made X01Test's assertEquals('A', grade) read back its own argument",
+   "at": "2026-09-04T23:10:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "G2-38: a lead_rating outside 0..100 is refused with LEAD_RATING_OUT_OF_RANGE before updateOrCreate rather than clamped, so a refused rating leaves no row; the confidence half of P-147 is NOT in this wave because lead_scores has no source column and no migration is written here",
+   "at": "2026-09-04T23:10:49",
    "ruling": "R245"
   }
  ]
