@@ -68,7 +68,6 @@ final class TwelveJourneysTest extends TestCase
     {
         $tenant = $this->tenantWithLiveNumber();
         $allowance = (int) app(DefaultsRegistry::class)->entitlement(\App\Enums\Plan::Base, 'credits.monthly_grant.sms');
-        dump('Funding tenant with allowance: ' . $allowance);
         
         \App\Support\Tenancy::set($tenant['id']);
         app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, $allowance, 'journey fixture (owner ruling 2026-09-05)');
@@ -381,8 +380,6 @@ final class TwelveJourneysTest extends TestCase
         $this->drainQueue();
 
         $invites = $this->reviewInvitesFor($person);
-        $allMsgs = DB::table('outreach_messages')->get()->toArray();
-        dump('ALL MESSAGES:', $allMsgs, 'Person ID:', $person['id']);
         $this->assertCount(1, $invites, 'A completed job must ask ONCE — not zero, not twice.');
 
         // ⭐ Completing a second job must NOT produce a second invite inside the
