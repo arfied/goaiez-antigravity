@@ -1420,6 +1420,10 @@
   {
    "at": "2026-09-05T08:53:57",
    "note": "X-108 G17-27 \u2014 offered slots carry an ISO-8601 start_time/end_time with an explicit offset (tested), but the same payload ships formatted_window, a server-rendered 'g:i A' wall clock in the app timezone (SchedulingEngine.php:75, asserted at X108Test.php:63-69,113,193). A customer in another timezone reads the server's clock. Dropping the field or moving the render to the client is Track 2's under ruling 5."
+  },
+  {
+   "at": "2026-09-05T09:07:07",
+   "note": "X-193 \u2014 the 'quiet_hours_start is missing' UNRESOLVED (tests stage) is superseded: migration 2026_09_04_072838 arrived with the b445d2f1 take and adds quiet_hours_start + quiet_hours_end; NotificationClassifyAction reads both. The G10-31/G10-38 stubs are now buildable."
   }
  ]
 }
