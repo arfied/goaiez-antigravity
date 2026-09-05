@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 final class ChatStartAction
 {
     private PixelEngine $pixelEngine;
+
     private AiSpend $aiSpend;
 
     public function __construct(?PixelEngine $pixelEngine = null, ?AiSpend $aiSpend = null)

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X102;
 
+use App\Enums\AiModel;
+use App\Enums\AiProvider;
+use App\Enums\AiTask;
+use App\Models\AiCall;
 use App\Models\User;
 use App\Modules\X102\Actions\ChatCaptureAction;
 use App\Modules\X102\Actions\ChatEscalateAction;
@@ -14,6 +18,7 @@ use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X121\Models\Person;
+use App\Services\Ai\AiSpend;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -233,13 +238,13 @@ class X102Test extends TestCase
         $this->assertEquals('active', $live->status);
 
         // spend past the platform cap for an account the balance cannot bound
-        $spend = app(\App\Services\Ai\AiSpend::class);
+        $spend = app(AiSpend::class);
         $this->assertGreaterThan(0, $spend->monthlyCapHundredths());
-        
-        \App\Models\AiCall::query()->create([
-            'task' => \App\Enums\AiTask::Conversation,
-            'provider' => \App\Enums\AiProvider::Anthropic,
-            'model' => \App\Enums\AiModel::ClaudeSonnet5,
+
+        AiCall::query()->create([
+            'task' => AiTask::Conversation,
+            'provider' => AiProvider::Anthropic,
+            'model' => AiModel::ClaudeSonnet5,
             'input_tokens' => 10,
             'output_tokens' => 10,
             'cost_hundredths_cents' => $spend->monthlyCapHundredths() + 100,
