@@ -159,6 +159,15 @@ final class SchedulingEngine
                 throw new SlotUnavailableRefused('the scheduler has not confirmed this window: it overlaps a booked appointment');
             }
 
+            $blackouts = AvailabilityRule::where('business_id', $businessId)
+                ->where('is_blackout', true)
+                ->where('day_of_week', $start->dayOfWeekIso)
+                ->get();
+
+            if ($this->isBlackedOut($start->hour, $blackouts)) {
+                throw new SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule');
+            }
+
             $apt = Appointment::create([
                 'business_id' => $businessId,
                 'customer_id' => $customerId,

@@ -242,6 +242,12 @@ class X108Test extends TestCase
         $avail2 = $this->engine->getAvailableSlots($biz2->id, $date, true);
         $this->assertSame(4, $avail2['slots_count']);
         $this->assertContains('9:00 AM - 11:00 AM', array_column($avail2['offered_slots'], 'formatted_window'));
+
+        DB::statement("SET app.business_id = '{$biz1->id}'");
+        $ok = $this->book->handle($biz1->id, 'Consultation', $date.' 09:00:00', $date.' 11:00:00');
+        $this->assertSame('booked', $ok->status);
+        $this->expectException(SlotUnavailableRefused::class);
+        $this->book->handle($biz1->id, 'Consultation', $date.' 14:00:00', $date.' 16:00:00');
     }
 
     /**
