@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T01:29:59",
+ "updated": "2026-09-05T01:49:22",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1413,6 +1413,12 @@
    "module": "X-157",
    "chose": "The published document escapes the JSON-LD block at the point of emission \u2014 JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT \u2014 so no character in a tenant's own business name can open or close an element in an artifact this platform published; before this, a name containing </script> truncated the schema block and injected an element, and every existing assertion, which matches the substring application/ld+json, stayed green on it. JSON_THROW_ON_ERROR is added with it: an artifact that cannot carry its schema must fail the deploy, not publish an empty block that reads as present. Rejected: sanitising the business name \u2014 refused, that is the compiler's bug charged to the tenant and it would corrupt the same name in the title and the description. Rejected: e() around the encoded JSON \u2014 refused, HTML entities are not decoded inside a script element, so it would stop the block being JSON at all.",
    "at": "2026-09-05T01:29:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "The route that serves a published site establishes its tenant through Tenancy::set(), because Tenancy::applyToDatabase() is documented in its own file as the only writer of app.business_id and this route was the only line in the application contradicting it; writing the database variable alone left every request that serves a site with the database scoped and Tenancy::id() null, so anything reached from that route calling idOrFail() threw on a request the database served. Rejected: leave the set_config and add Context::addHidden beside it \u2014 refused, that is two writers doing what one method exists to do, and the second copy drifts the day Tenancy changes. Rejected: add Tenancy::forget() after the response \u2014 refused for this wave; the docblock's unconditional-set invariant already covers the reuse case, and it is a separate claim needing its own test.",
+   "at": "2026-09-05T01:49:22",
    "ruling": "R245"
   }
  ]
