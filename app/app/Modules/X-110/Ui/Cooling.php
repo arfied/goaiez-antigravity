@@ -37,9 +37,12 @@ class Cooling extends Component
     public function render()
     {
         try {
-            $visits = Visit::where('business_id', $this->businessId)->get();
-            $sessions = Session::where('business_id', $this->businessId)->get();
+            $visits = Visit::where('business_id', $this->businessId)->latest()->limit(50)->get();
+            $visitIds = $visits->pluck('id');
+            $sessions = Session::where('business_id', $this->businessId)->whereIn('visit_id', $visitIds)->get();
+            $sessionIds = $sessions->pluck('id');
             $events = PixelEvent::where('business_id', $this->businessId)
+                ->whereIn('session_id', $sessionIds)
                 ->whereIn('event_name', ['form.abandoned', 'rage_click.detected'])
                 ->get();
         } catch (Exception $e) {

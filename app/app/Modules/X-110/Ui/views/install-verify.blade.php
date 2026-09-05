@@ -19,7 +19,7 @@
                 <h2 class="text-xl font-bold text-ink">Tag Installation & Verification</h2>
 
                 <x-ui.row-list>
-                    <x-ui.row>
+                    <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">1. First-party domain serving</p>
                             @if($verify['first_party'])
@@ -33,7 +33,7 @@
                         </div>
                     </x-ui.row>
 
-                    <x-ui.row>
+                    <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">2. Third-party cookies</p>
                             @if($verify['third_party_cookies_disabled'])
@@ -47,7 +47,7 @@
                         </div>
                     </x-ui.row>
 
-                    <x-ui.row>
+                    <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">3. Live events arriving</p>
                             @if($recentEvents->count() > 0)
@@ -76,7 +76,7 @@
                         </div>
                     </x-ui.row>
 
-                    <x-ui.row>
+                    <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">4. Web vitals reporting</p>
                             @if($cwv)
@@ -90,17 +90,17 @@
                         </div>
                     </x-ui.row>
 
-                    <x-ui.row>
+                    <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">5. Snippet</p>
-                            <code id="install-snippet" class="block text-xs bg-card p-2 mt-1">{{ $install['script_tag'] }}</code>
+                            <code id="install-snippet" class="block text-xs bg-card p-2 mt-1 whitespace-pre-wrap break-all">{{ $install['script_tag'] }}</code>
                         </div>
                         <div>
                             <x-ui.button variant="secondary" size="default" type="button" x-on:click="navigator.clipboard.writeText(document.getElementById('install-snippet').innerText)">Copy</x-ui.button>
                         </div>
                     </x-ui.row>
 
-                    <x-ui.row>
+                    <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">6. Tag performance budget</p>
                             <p class="text-sm text-ink-2">We need to observe the tag's execution time on your live site to measure this budget.</p>
@@ -110,7 +110,7 @@
                         </div>
                     </x-ui.row>
 
-                    <x-ui.row>
+                    <x-ui.row class="flex flex-col gap-3 sm:flex-row items-start sm:items-center p-4">
                         <div class="min-w-0 flex-1">
                             <p class="font-medium text-ink">7. Call token swapping</p>
                             <p class="text-sm text-ink-2">We need a page view containing phone numbers to confirm swapping works.</p>

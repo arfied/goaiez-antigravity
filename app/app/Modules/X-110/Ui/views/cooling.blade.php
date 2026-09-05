@@ -11,7 +11,7 @@
         @elseif($isSample)
             <x-ui.sample />
         @elseif(count($visitors) === 0)
-            <x-ui.empty-state icon="🧊" heading="Nobody cooling down right now" action="Check live visitors" href="{{ route('account.pixel-install') }}">
+            <x-ui.empty-state icon="🧊" heading="Nobody cooling down right now" action="Check install status" href="{{ route('account.pixel-install') }}">
                 When visitors drop off or abandon forms, they will appear here.
             </x-ui.empty-state>
         @else
