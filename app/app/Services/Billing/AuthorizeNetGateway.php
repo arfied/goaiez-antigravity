@@ -501,10 +501,6 @@ final class AuthorizeNetGateway
             ? $name
             : $name.', '.($selection->additionalLocations + 1).' locations';
 
-        if (config('services.authorizenet.environment') !== 'production') {
-            $name .= ' (run 97)';
-        }
-
         return $name;
     }
 
