@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T12:05:48",
+ "updated": "2026-09-05T12:48:11",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -526,6 +526,12 @@
      "stage": "capability",
      "why": "Refused G2-25. D1 is a design system (surface is blades/Livewire, Track 2). The 5 'honest counter' hits are all in app/app/Services/Ops/ (PlatformHealthSignal.php, PlatformHealth.php, etc.) - which is 9371's platform-health levelling rule, a different system from X-01's tenant inbox, and platform ops besides. No glassmorph/god mode hits anywhere.",
      "at": "2026-09-05T10:30:04"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-25 \u2014 no marker set separates the two designs anywhere in the tree; grep -rnwi 'glassmorphism\\|god-mode' app/app/Modules app/resources/views returns nothing, so no honest assertion exists",
+     "at": "2026-09-05T12:48:11"
     }
    ]
   },
@@ -1615,6 +1621,12 @@
    "stage": "capability",
    "why": "Refused G2-25. D1 is a design system (surface is blades/Livewire, Track 2). The 5 'honest counter' hits are all in app/app/Services/Ops/ (PlatformHealthSignal.php, PlatformHealth.php, etc.) - which is 9371's platform-health levelling rule, a different system from X-01's tenant inbox, and platform ops besides. No glassmorph/god mode hits anywhere.",
    "at": "2026-09-05T10:30:04"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-25 \u2014 no marker set separates the two designs anywhere in the tree; grep -rnwi 'glassmorphism\\|god-mode' app/app/Modules app/resources/views returns nothing, so no honest assertion exists",
+   "at": "2026-09-05T12:48:11"
   }
  ],
  "decisions": [
