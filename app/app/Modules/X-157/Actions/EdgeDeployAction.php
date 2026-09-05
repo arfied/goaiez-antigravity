@@ -154,10 +154,8 @@ final class EdgeDeployAction
                 );
 
                 if (isset($schemaResult['json_ld'])) {
-                    $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'])."\n</script>\n";
+                    $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)."\n</script>\n";
                 }
-
-                // seo is completely missing from X-176, so we do not emit anything for it.
             }
 
             $html .= '</body></html>';
