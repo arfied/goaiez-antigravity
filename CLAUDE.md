@@ -17,10 +17,17 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Never:** commit, push, migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
+| Commits **only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`) as `chore(supervisor): …` with named paths | Commits `app/**` and `.agents/state/**`, one commit per module, named paths |
+| Pushes **only a sha it has gated and recorded in `REVIEWS.md`**, by explicit ref: `git push origin <sha>:track/reviews` — never a branch head, never `--force` | Pushes only when `BRIEF.md`'s `push:` line is open, and only the range that line names |
+| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, commit any path outside its three files, push an ungated sha | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files, commit `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` |
 
-`.claude/settings.json` enforces your column. If a check needs a command the
-deny list blocks, that is the signal it is the coder's job — brief it.
+`.claude/settings.json` enforces your column. Since 2026-09-05 it allows the
+supervisor `git add`, `git commit` and `git push origin` (owner ruling, relayed
+through `OWNER.md` 08:0x); the 50-entry deny list otherwise stands. That opening
+is what makes **merge step 0 — committing the supervisor's own notes — yours,
+not the coder's**: the coder guard refuses those paths outright. If a check needs
+a command the deny list still blocks, that is the signal it is the coder's job —
+brief it.
 
 ## The mailbox — `.agents/supervisor/`
 

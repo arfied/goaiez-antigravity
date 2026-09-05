@@ -129,12 +129,41 @@ if [ $want_tests -eq 1 ]; then
   # (owner ruling 3: the pin stays, this track exports over it). Label the DB the
   # run actually used — the pin's name here once read as "we hit Track 1's DB".
   bar "7. test suite  (DB_DATABASE=goaiez_antig_reviews_test, over phpunit.xml's $xml_db pin)"
-  out=$(DB_DATABASE=goaiez_antig_reviews_test "$PHP" ./vendor/bin/pest 2>&1); rc=$?
+  # Two pests on ONE database truncate each other's tables mid-run and the loser
+  # reads as a code failure. Refuse the step while any OTHER checkout that pins
+  # goaiez_antig_reviews_test has a pest live (Track 1 commit 9b65e1e5).
+  busy=""
+  for other in /home/goaiez/agents/*/app/phpunit.xml /home/goaiez/public_html/*/app/phpunit.xml; do
+    [ -f "$other" ] || continue
+    oroot=$(dirname "$(dirname "$other")")
+    [ "$oroot" = "$ROOT" ] && continue
+    grep -q 'goaiez_antig_reviews_test' "$other" 2>/dev/null || continue
+    for pid in $(pgrep -f 'vendor/bin/pest' 2>/dev/null); do
+      cwd=$(readlink -f "/proc/$pid/cwd" 2>/dev/null) || continue
+      case "$cwd" in "$oroot"*) busy="$busy $oroot(pid $pid)";; esac
+    done
+  done
+  if [ -n "$busy" ]; then
+    echo "  ⛔ REFUSED — another checkout pinned on goaiez_antig_reviews_test has pest live:$busy"
+    echo "     Wait for it to finish; a second run truncates the tables under both."
+    fail=1
+    bar "verdict"
+    echo "  ⛔ a gate failed above."
+    exit $fail
+  fi
+  out=$(timeout 1800 env DB_DATABASE=goaiez_antig_reviews_test "$PHP" ./vendor/bin/pest 2>&1); rc=$?
   # Track-scoped: /home/goaiez/tmp is shared by every worktree, and an unscoped
   # last-pest.json means one track reads another track's run as its own.
   printf '%s' "$out" | tail -1 > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
   [ $rc -ne 0 ] && fail=1
-  if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
+  [ $rc -eq 124 ] && echo "  ⛔ TIMEOUT — pest exceeded 1800s (rc=124). The numbers below, if any, are partial."
+  if [ -z "$out" ]; then
+    # A blank block used to read as "nothing to say". It is a crash: memory_limit,
+    # a missing Vite manifest, or a suite that died before its formatter existed.
+    echo "  ⛔ ZERO BYTES — pest printed nothing (rc=$rc). Narrow it with --filter before"
+    echo "     reading the code; check memory_limit and that npm run build has run."
+    fail=1
+  elif printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
@@ -146,6 +175,7 @@ for e in (d.get("error_details") or [])[:5]:
 n=len(d.get("error_details") or [])
 if n>5: print("   … %d more" % (n-5))'
   else
+    echo "  no JSON summary (rc=$rc) — last 12 lines:"
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi
 fi
