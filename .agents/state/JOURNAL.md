@@ -541,3 +541,10 @@
 - `2026-09-04T16:53:19` (R245) X-167 — a stock row reads Low when quantity <= reorder_point, the threshold InventoryEngine already emits StockLow on; one number, two readers (R245)
 - `2026-09-04T16:53:19` (R245) X-167 — Propose restock proposes one reorder_point of the item with no supplier and total 0 — the supplier prices it; nothing on the screen orders, approves or sends (R245)
 - `2026-09-04T16:54:43` UNRESOLVED approval X-167 - approved_action_id is written by no module in this lane (grep: X-167 only); Approve-and-send stays off the Reorders screen until the approval desk that issues it exists
+- `2026-09-04T17:19:22` (R245) X-175 — the field assistant asks X-163 PriceLookupAction on the staff channel first; a quoted SAMPLE row is refused to the tech through FieldAskAction(isSamplePrice: true) and lands as field_suggestions.is_unconfirmed_price — the engine flags only customer channels, so that row is the nudge (R245)
+- `2026-09-04T17:19:22` (R245) X-175 — NO_FACT from the pricebook answers 'Not in the pricebook. Nothing to quote.'; the panel never invents a price or a procedure, so the engine's default-answer branch is never called from a screen (R245)
+- `2026-09-04T17:19:22` (R245) X-175 — add is_sample to field_suggestions (R245)
+- `2026-09-04T17:19:22` UNRESOLVED surface X-175 - GET→assertOk for X-175 stafffacing_assistant_panel waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T17:20:14` (R245) X-175 — customerfacing_none and by_design are one plan sentence ('customer-facing: none, by design') split by the renders derivation; neither is a screen; both files stay untouched and off the menu (R245)
+- `2026-09-04T20:18:36` (R245) X-171 — sync failure rate is the tenant's own — conflicted device_sync_queue rows over all rows, Owner · Manager; the fleet-wide operator view is Track 1's console; Keep device replays through ReplayOfflineSyncAction exactly as the app's resolveConflict does (R245)
+- `2026-09-04T20:18:36` UNRESOLVED surface X-171 - GET→assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout

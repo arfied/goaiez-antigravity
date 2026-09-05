@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T16:54:43",
+ "updated": "2026-09-04T20:18:36",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -926,6 +926,12 @@
      "stage": "surface",
      "why": "X-198 payment surface (track money)",
      "at": "2026-09-04T14:42:35"
+    },
+    {
+     "module": "X-171",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T20:18:36"
     }
    ]
   },
@@ -955,10 +961,17 @@
    "unresolved": []
   },
   "X-175": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-175",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-175 stafffacing_assistant_panel waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T17:19:22"
+    }
+   ]
   },
   "X-176": {
    "status": "DONE",
@@ -1438,6 +1451,18 @@
    "stage": "approval",
    "why": "approved_action_id is written by no module in this lane (grep: X-167 only); Approve-and-send stays off the Reorders screen until the approval desk that issues it exists",
    "at": "2026-09-04T16:54:43"
+  },
+  {
+   "module": "X-175",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-175 stafffacing_assistant_panel waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T17:19:22"
+  },
+  {
+   "module": "X-171",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T20:18:36"
   }
  ],
  "notes": [
@@ -1653,6 +1678,36 @@
    "module": "X-167",
    "chose": "Propose restock proposes one reorder_point of the item with no supplier and total 0 \u2014 the supplier prices it; nothing on the screen orders, approves or sends (R245)",
    "at": "2026-09-04T16:53:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-175",
+   "chose": "the field assistant asks X-163 PriceLookupAction on the staff channel first; a quoted SAMPLE row is refused to the tech through FieldAskAction(isSamplePrice: true) and lands as field_suggestions.is_unconfirmed_price \u2014 the engine flags only customer channels, so that row is the nudge (R245)",
+   "at": "2026-09-04T17:19:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-175",
+   "chose": "NO_FACT from the pricebook answers 'Not in the pricebook. Nothing to quote.'; the panel never invents a price or a procedure, so the engine's default-answer branch is never called from a screen (R245)",
+   "at": "2026-09-04T17:19:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-175",
+   "chose": "add is_sample to field_suggestions (R245)",
+   "at": "2026-09-04T17:19:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-175",
+   "chose": "customerfacing_none and by_design are one plan sentence ('customer-facing: none, by design') split by the renders derivation; neither is a screen; both files stay untouched and off the menu (R245)",
+   "at": "2026-09-04T17:20:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "sync failure rate is the tenant's own \u2014 conflicted device_sync_queue rows over all rows, Owner \u00b7 Manager; the fleet-wide operator view is Track 1's console; Keep device replays through ReplayOfflineSyncAction exactly as the app's resolveConflict does (R245)",
+   "at": "2026-09-04T20:18:36",
    "ruling": "R245"
   }
  ]
