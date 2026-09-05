@@ -67,7 +67,9 @@ class StopLogTest extends TestCase
             ->assertDontSee('FOREIGN-RUN')
             ->assertDontSee('STILL-RUNNING-CAMPAIGN')
             ->call('stopRemaining', $person->id)
-            ->assertSee('Stopped 2 remaining sequences');
+            ->assertSee('Stopped 2 remaining sequences')
+            ->call('stopRemaining', $person->id)
+            ->assertSee('Nothing else was running');
 
         $runningRun->refresh();
         $this->assertFalse($runningRun->is_active);

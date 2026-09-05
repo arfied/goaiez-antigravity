@@ -30,7 +30,7 @@
                     <input type="text" id="newTemplateName" wire:model="newTemplateName" placeholder="Template Name" class="w-full sm:w-auto min-h-11 rounded-[--radius-field] border border-rule bg-paper px-4 text-base text-ink" />
                 </div>
                 <div class="w-full sm:w-auto">
-                    <x-ui.button wire:click="compose" class="w-full sm:w-auto" size="sm">Create</x-ui.button>
+                    <x-ui.button wire:click="compose" class="w-full sm:w-auto" size="default">Create</x-ui.button>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between">
                                 <div class="font-medium text-ink">{{ $campaignId }}</div>
-                                <x-ui.button wire:click="duplicate('{{ $campaignId }}')" size="sm">
+                                <x-ui.button wire:click="duplicate('{{ $campaignId }}')" size="default">
                                     Duplicate
                                 </x-ui.button>
                             </div>
