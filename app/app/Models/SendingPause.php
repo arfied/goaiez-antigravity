@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * One incident of a tenant being stopped from sending — T137 `SL-8`'s per-tenant
+ * One incident of a tenant being stopped from sending — T137 `SL-08`'s per-tenant
  * kill switch, and the record of every time it fired.
  *
  * ⚠️ **A LIVE ROW IS THE STATE, AND A RELEASED ROW IS THE HISTORY** (2470). Until

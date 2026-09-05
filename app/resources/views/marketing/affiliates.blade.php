@@ -2,10 +2,7 @@
     The affiliate programme (CC-2 §2.9).
 
     ⛔ EVERY RATE ON THIS PAGE IS WITHHELD AND THE DEAL BLOCK THEREFORE DOES NOT
-    RENDER (decision 5197). T287 writes all four as `[DATA: …]` slots and the L-8
-    draft carries them in counsel's square brackets; a bracket in a draft is a
-    placeholder for a ruling rather than the ruling, and copying one out is how a
-    plausible figure becomes policy. Asking the registry for one raises, and the
+    RENDER (P-009). Asking the registry for one raises, and the
     controller renders nothing rather than a number nobody chose.
 
     ⚠️ THE FOUR FIGURES ARE ONE BLOCK. A commission rate with no payout floor is as

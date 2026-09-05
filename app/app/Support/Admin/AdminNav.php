@@ -73,7 +73,7 @@ final class AdminNav
             // paid for three and can be given one is 2753's SKU sold and not
             // delivered. Outcome language: what the operator does, not the SKU.
             NavItem::make('Extra locations', 'admin.tenant-locations', AdminAccess::GATE),
-            // T137 `SL-8`'s kill switches (2630). Listed for the same reason
+            // T137 `SL-08`'s kill switches (2630). Listed for the same reason
             // 'Health information' is — it takes no route parameter and finds
             // its own tenant — and listed at all because a kill switch nobody
             // can find is most of the way to one that does not exist. Outcome

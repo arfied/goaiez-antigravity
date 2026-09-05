@@ -162,7 +162,7 @@ use Throwable;
  * closes it. The guard answers three questions in one call and any of them
  * refusing means no message goes:
  *
- *   - **`messaging.global_halt`** — T137 `SL-8`'s platform switch, whose own
+ *   - **`messaging.global_halt`** — T137 `SL-08`'s platform switch, whose own
  *     registry description is *"stops ALL outbound messaging on the platform,
  *     for every tenant and **every channel**"*. It is thrown by an operator on
  *     the sending-controls screen **and automatically** by

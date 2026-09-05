@@ -295,9 +295,9 @@ final class MarketingController extends Controller
     }
 
     /**
-     * The affiliate programme (CC-2 §2.9).
+     * The affiliate programme (CC-2 §2.9, P-009).
      *
-     * ⚠️ **EVERY RATE ON THIS PAGE IS WITHHELD AND THE PAGE SHIPS ANYWAY** (5197).
+     * ⚠️ **EVERY RATE ON THIS PAGE IS WITHHELD AND THE PAGE SHIPS ANYWAY**.
      * The deal block renders only when all four figures are set, because a
      * commission with a rate and no payout floor is as unfinished a promise as one
      * with neither.
@@ -327,14 +327,16 @@ final class MarketingController extends Controller
     }
 
     /**
-     * The agency programme (CC-2 §2.10).
+     * The agency programme (CC-2 §2.10, P-008).
      */
     public function agencies(DefaultsRegistry $registry): View
     {
-        $discount = $this->settledInt($registry, 'agency.wholesale_discount_bp');
+        $usageDiscount = $this->settledInt($registry, 'agency.usage_discount_bp');
+        $voiceDiscount = $this->settledInt($registry, 'agency.voice_discount_bp');
 
         return view('marketing.agencies', [
-            'wholesaleDiscount' => $discount === null ? null : self::percent($discount),
+            'usageDiscount' => $usageDiscount === null ? null : self::percent($usageDiscount),
+            'voiceDiscount' => $voiceDiscount === null ? null : self::percent($voiceDiscount),
         ]);
     }
 

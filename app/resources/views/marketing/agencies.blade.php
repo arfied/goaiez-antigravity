@@ -2,10 +2,7 @@
     The agency programme (CC-2 §2.10).
 
     ⛔ THE WHOLESALE RATE IS WITHHELD, SO THE DEAL SENTENCE DOES NOT RENDER
-    (decision 5197). T287 writes it as `[DATA: agency_discount]% off retail` and the
-    agency draft says "list minus [20]% **or per Order**" — where "or per Order" is
-    itself a statement that no platform-wide figure has been decided. A discount
-    guessed here is a discount every agency would hold us to.
+    (P-008).
 
     ⚠️ THE HONESTY BLOCK IS THE POINT OF THE PAGE, not a caveat at the bottom of it.
     `29` §13 and the versioned-site rule agree: we do not sell futures, so this page
@@ -54,8 +51,8 @@
         </h1>
 
         <p class="mt-6 text-lg text-ink-2">
-            @if ($wholesaleDiscount !== null)
-                Agency accounts get {{ $wholesaleDiscount }} off retail on every client
+            @if ($usageDiscount !== null && $voiceDiscount !== null)
+                Agency accounts get {{ $usageDiscount }} off SMS, AI and lead usage, {{ $voiceDiscount }} off voice on every client
                 workspace.
             @endif
             You bill your clients your way, at your price — the margin is yours. Every
