@@ -17,10 +17,21 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Never:** commit, push, migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
+| Commits **only its own files** — `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md` — as `chore(supervisor): …`. Pushes **only a sha it has gated and recorded in `REVIEWS.md`**, by explicit ref: `git push origin <sha>:track/ui`. Never a branch head, never `--force` | Commits `app/**` per module with named paths |
+| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, commit any path outside the three above | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files, commit under `.agents/supervisor`, `CLAUDE.md`, `.claude` or `bin` |
 
-`.claude/settings.json` enforces your column. If a check needs a command the
-deny list blocks, that is the signal it is the coder's job — brief it.
+`.claude/settings.json` enforces your column. The owner opened `git push origin`,
+`git commit` and `git add` to the supervisor on 2026-09-05; the 50-entry deny list
+otherwise stands. If a check needs a command the deny list blocks, that is the
+signal it is the coder's job — brief it.
+
+**Merge step 0 — committing the supervisor notes — is yours, not the coder's.** The
+coder guard refuses `.agents/supervisor`, `CLAUDE.md`, `.claude` and `bin`, so a coder
+commit that touches any of them is a `BLOCK` (the one standing exception is the merge
+commit itself, and only when a brief names it).
+
+⚠️ **Do not commit or `git add` while a coder run is alive** — you share one index with
+it, and an `index.lock` collision lands in the middle of its per-module commit.
 
 ## The mailbox — `.agents/supervisor/`
 
@@ -90,11 +101,15 @@ Watch for: <the trap that applies, by name>
 ## Traps specific to this checkout
 
 - **`goaiez_antig` is PRODUCTION** (anti.goaiez.com). On 2026-08-31 a test run
-  from this checkout dropped its schema (`NEXT-SESSION.md`). The checkout now
-  runs on `goaiez_antig_dev`; `app/phpunit.xml` pins `goaiez_antig_test`.
-  `supervise.sh` exits 2 if either points at production. Never brief a change
-  to either value, and treat any diff to `phpunit.xml` or `.env.example`'s
-  `DB_` lines as a `BLOCK` until explained.
+  from this checkout dropped its schema (`NEXT-SESSION.md`). **This track runs on
+  `goaiez_antig_ui`; `app/phpunit.xml` pins `goaiez_antig_ui_test`** — verified on
+  disk 2026-09-05 08:0x. `supervise.sh` exits 2 if either points at production.
+  Never brief a change to either value, and treat any diff to `phpunit.xml` or
+  `.env.example`'s `DB_` lines as a `BLOCK` until explained.
+  ⚠️ **`goaiez_antig_test` is Track 1's**, not ours. Track 1 found the site and
+  sixty lanes pinned to it at 07:1x on 2026-09-05. A `phpunit.xml` here that says
+  `goaiez_antig_test` is a lane running its suite inside another track's database,
+  which is the drop-the-schema shape again — restore the pin before anything else.
 - **`JOURNEYS n/12 green` in `state.py status` is a hand mark**
   (`state.py journey Jn green`), not a test result. All twelve were marked
   green on 2026-08-29/30 before any harness that could pass existed, and the
