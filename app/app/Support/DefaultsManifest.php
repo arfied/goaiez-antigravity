@@ -26,7 +26,7 @@ use App\Services\Visibility\ReviewLossDetection;
  * where a reader has a chance to catch it; `38`'s manifest is loaded on a fresh
  * install, so a stale number writes itself into the database where nobody is
  * watching and is then read back as fact. `38`'s own list still carries the
- * **Free/49/149/349** tiering that decisions 95–99, 146 and 154–157 replaced.
+ * **Free/49/149/349** tiering that decisions 95–99, 146 and 154–156 replaced.
  * **None of it is copied from `38`.** The prices below are rebuilt from
  * `CLAUDE.md`'s commercial-model table, which is the authority, and
  * `ArchitectureTest` parses that table and compares it against this file, so the
@@ -191,7 +191,7 @@ final class DefaultsManifest
              * audit is unaffected. That is why autocomplete is allowed to fail
              * closed cheaply. Raising it is a settings row, not a deploy — and
              * the owner should, with the real cost in front of them, once there
-             * is a measured submit rate to size it from (BUILD-PLAN §5.1).
+             * is a measured submit rate to size it from .
              */
             'public_audit.autocomplete_daily_budget' => [
                 'seed' => 333,
@@ -233,7 +233,7 @@ final class DefaultsManifest
              *
              * ⛔ THIS KEY WAS REMOVED AT 3608 AND RESTORED AT 3820, WITHIN THE
              * SAME BRANCH AND BEFORE EITHER SHIPPED. 3608 removed it because the
-             * AI credit balance had become a real ceiling and 3295 said this key
+             * AI credit balance had become a real ceiling and a ruling said this key
              * went with it. The removal was right about the funded tenant and
              * wrong about everybody else: 3609 deliberately permits an account
              * that has never been funded, and 3612 recorded the cost of that
@@ -262,7 +262,7 @@ final class DefaultsManifest
             'ai.monthly_cap_per_tenant' => [
                 'seed' => 500_000,
                 'group' => 'AI',
-                'description' => 'Per-tenant AI spend ceiling for a calendar month, in hundredths of a cent of OUR cost — not of the tenant\'s charge, which is eight times it and lives in ai_calls.retail_hundredths_cents (3304, 3358). 500,000 is $50. ⛔ DECISION 3293 DELETED THE PER-TENANT DOLLAR COST CAP AND 3295 SAYS THIS KEY GOES WITH IT: "an AI-only dollar cap is still a dollar cap, so it goes the same way, and the AI credit balance replaces it." IT IS STILL HERE, DELIBERATELY, AND 3820 IS THE ARGUMENT. The AI credit balance now exists and does refuse (3419, 3424, 3608) — but only for a tenant who HAS a balance. 3609 permits an account that has never been funded, because gating a bare zero would have stopped all AI for every tenant at once, and the unfunded set is not a corner of the plan ladder: Subscriptions provisions every new business as Plan::Base/pending_checkout, and ResetMonthlyCredits grants nothing at all to any account TrialEligibility refuses — which is every account with no confirmed Google listing. Deleting this key therefore handed every unverified account unlimited AI, permanently, in a state under the tenant\'s own control. It is OUTER CONTAINMENT behind the balance gate: AiSpend::allows() asks the balance first and this second. ⚠️ IT IS NOT RULE 43\'S CAP, which the owner deleted: rule 43 capped a tenant\'s TOTAL service cost, and messaging, Places and everything else sit outside this key entirely (3107). The four plan.*.cost_cap.* entitlements that did claim to be rule 43\'s cap are gone (3364) — they had no reader in app/ at all. This one fires. ⚠️ At AiTask\'s defaults a busy tenant costs about 61c a month, so it should never fire; if it does, read it as a signal rather than raise it. It comes out when the monthly reset has demonstrably granted in production and the owner has ruled on the unfunded account.',
+                'description' => 'Per-tenant AI spend ceiling for a calendar month, in hundredths of a cent of OUR cost — not of the tenant\'s charge, which is eight times it and lives in ai_calls.retail_hundredths_cents (3304, 3358). 500,000 is $50. ⛔ A DECISION DELETED THE PER-TENANT DOLLAR COST CAP AND THIS KEY GOES WITH IT: "an AI-only dollar cap is still a dollar cap, so it goes the same way, and the AI credit balance replaces it." IT IS STILL HERE, DELIBERATELY, AND 3820 IS THE ARGUMENT. The AI credit balance now exists and does refuse (3419, 3424, 3608) — but only for a tenant who HAS a balance. 3609 permits an account that has never been funded, because gating a bare zero would have stopped all AI for every tenant at once, and the unfunded set is not a corner of the plan ladder: Subscriptions provisions every new business as Plan::Base/pending_checkout, and ResetMonthlyCredits grants nothing at all to any account TrialEligibility refuses — which is every account with no confirmed Google listing. Deleting this key therefore handed every unverified account unlimited AI, permanently, in a state under the tenant\'s own control. It is OUTER CONTAINMENT behind the balance gate: AiSpend::allows() asks the balance first and this second. ⚠️ IT IS NOT RULE 43\'S CAP, which the owner deleted: rule 43 capped a tenant\'s TOTAL service cost, and messaging, Places and everything else sit outside this key entirely (3107). The four plan.*.cost_cap.* entitlements that did claim to be rule 43\'s cap are gone — they had no reader in app/ at all. This one fires. ⚠️ At AiTask\'s defaults a busy tenant costs about 61c a month, so it should never fire; if it does, read it as a signal rather than raise it. It comes out when the monthly reset has demonstrably granted in production and the owner has ruled on the unfunded account.',
             ],
 
             /*
@@ -641,7 +641,7 @@ final class DefaultsManifest
              * WHY.** A withheld figure raises `WithheldRegistryValue`, and the
              * fail-closed state on this path is *no voicemail audio for anybody*
              * — the ceiling gates `FetchVoicemailRecordingJob`. A price is the
-             * thing worth refusing to quote (157); an operational ceiling on a
+             * thing worth refusing to quote; an operational ceiling on a
              * live product feature is not.
              */
             'voice.tenant_daily_inbound_minutes_ceiling' => [
@@ -740,7 +740,7 @@ final class DefaultsManifest
              *
              * ⚠️ **50 IS A CONSERVATIVE GUESS AND IT IS THE OWNER'S TO RAISE.** A
              * safety ceiling is the one place a guess in the strict direction is
-             * the right kind of guess — unlike a price, which 153's rule forbids
+             * the right kind of guess — unlike a price, which the rule forbids
              * guessing at all, because a low cap costs a tenant a day's silence
              * while a wrong price silently becomes policy. Fifty SMS opt-ins in
              * one day is far above any realistic single-location feedback-page
@@ -868,7 +868,7 @@ final class DefaultsManifest
              * `messaging.complaint_trip_bp` for both would have been a guess
              * wearing a seeded key's clothes. **The mechanism was the
              * deliverable; the number was the owner's**, exactly as decision
-             * 153's add-on cap is theirs — and it now has an answer, so the
+             * the add-on cap is theirs — and it now has an answer, so the
              * mechanism is switched on rather than merely built.
              *
              * ⚠️ **ARMING THIS ONLY BECAME SAFE WHEN THE COUNTERS GAINED
@@ -962,7 +962,7 @@ final class DefaultsManifest
             'messaging.global_halt' => [
                 'seed' => false,
                 'group' => 'Messaging',
-                'description' => 'Stops ALL outbound messaging on the platform, for every tenant and every channel, immediately and without a deploy — T137 SL-8\'s global halt, and A PERSON\'S SWITCH ONLY. ⚠️ Distinct from `sms.enabled`, which is one channel\'s switch: this one outranks every channel and every tenant. Checked before the per-tenant pause so that an operator who halted the platform gets a refusal naming the switch they actually threw, rather than reasoning about ten thousand tenant rows. ⛔ NOTHING WRITES THIS AUTOMATICALLY, AND THAT CHANGED ON 2026-08-15 (3980–3983): `messaging:watch-platform-complaint-rate` wrote `true` HERE from 2400–2410 until then, which meant an automatic trip also silenced every carrier-mandated STOP confirmation and HELP answer, because `ComplianceReplies` honours this key. The sweep now writes `messaging.automatic_halt` instead — same effect on every send, no effect on the two replies 2099 makes unconditional. ⚠️ THE AUTOMATIC TRIP IS ARMED (2684): `messaging.platform_complaint_trip_bp` is 100 basis points over a floor of 50 delivered messages, and either platform key set back to zero disables it again (2409). ⚠️ NOTHING EVER WRITES `false` AUTOMATICALLY on either key (2408): a rate that has fallen back under the threshold is not evidence that whatever produced it was dealt with, so releasing is always a person\'s act with an actor, on the sending-controls screen — and that screen releases both.',
+                'description' => 'Stops ALL outbound messaging on the platform, for every tenant and every channel, immediately and without a deploy — T137 SL-08\'s global halt, and A PERSON\'S SWITCH ONLY. ⚠️ Distinct from `sms.enabled`, which is one channel\'s switch: this one outranks every channel and every tenant. Checked before the per-tenant pause so that an operator who halted the platform gets a refusal naming the switch they actually threw, rather than reasoning about ten thousand tenant rows. ⛔ NOTHING WRITES THIS AUTOMATICALLY, AND THAT CHANGED ON 2026-08-15 (3980–3983): `messaging:watch-platform-complaint-rate` wrote `true` HERE from 2400–2410 until then, which meant an automatic trip also silenced every carrier-mandated STOP confirmation and HELP answer, because `ComplianceReplies` honours this key. The sweep now writes `messaging.automatic_halt` instead — same effect on every send, no effect on the two replies 2099 makes unconditional. ⚠️ THE AUTOMATIC TRIP IS ARMED (2684): `messaging.platform_complaint_trip_bp` is 100 basis points over a floor of 50 delivered messages, and either platform key set back to zero disables it again (2409). ⚠️ NOTHING EVER WRITES `false` AUTOMATICALLY on either key (2408): a rate that has fallen back under the threshold is not evidence that whatever produced it was dealt with, so releasing is always a person\'s act with an actor, on the sending-controls screen — and that screen releases both.',
             ],
 
             /*
@@ -2187,7 +2187,7 @@ final class DefaultsManifest
              * class of number as `campaigns.batch_size` or
              * `messaging.complaint_trip_min_delivered` — something this system
              * needs in order to operate, chosen by us and admin-editable (3415),
-             * rather than a commercial term withheld until he rules (157, 3304).
+             * rather than a commercial term withheld until he rules (3304).
              *
              * ⛔ **READ AGAINST THE PRODUCT'S TOTAL SPENDABLE BALANCE AND NOT
              * AGAINST THE TOP-UP POOL ALONE.** A spend draws the monthly grant
@@ -2789,6 +2789,36 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => '⛔ Nothing applies this list yet, so an edit here changes no website today. Extra third-party script hosts the speed layer may defer, beyond the list that ships in code (`28` §4.2). ⚠️ Exact hostnames, one per entry — never a suffix, because a suffix match also accepts a lookalike somebody else registered. ⛔ This can only widen what may be deferred: payment, checkout and booking scripts are refused after this list is read, so adding one here does not defer it. ⚠️ A general-purpose CDN is not a safe entry — allowlisting one allowlists everything anybody serves through it.',
             ],
+            'affiliate.rate_monthly_bp' => [
+                'seed' => 4000,
+                'group' => 'Affiliate',
+                'description' => 'P-009 (40% of subscription, lifetime, nothing on usage)',
+            ],
+            'affiliate.rate_annual_bp' => [
+                'seed' => 4000,
+                'group' => 'Affiliate',
+                'description' => 'P-009 (40% of subscription, lifetime, nothing on usage)',
+            ],
+            'affiliate.cookie_days' => [
+                'seed' => 90,
+                'group' => 'Affiliate',
+                'description' => 'R245, owner delegation 2026-09-05',
+            ],
+            'affiliate.minimum_payout_cents' => [
+                'seed' => 5000,
+                'group' => 'Affiliate',
+                'description' => 'R245, owner delegation 2026-09-05',
+            ],
+            'agency.usage_discount_bp' => [
+                'seed' => 4000,
+                'group' => 'Agency',
+                'description' => 'P-008',
+            ],
+            'agency.voice_discount_bp' => [
+                'seed' => 2500,
+                'group' => 'Agency',
+                'description' => 'P-008',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
@@ -2911,8 +2941,7 @@ final class DefaultsManifest
      * compared against these figures and the `credits.*` settings, the same way
      * the price table always has been.
      *
-     * ⛔ **THE FOUR `cost_cap.*` SEEDS THAT LIVED HERE ARE GONE** (decision 3364,
-     * on 3293 and 3295). The owner deleted the per-tenant dollar cost cap
+     * ⛔ **THE FOUR `cost_cap.*` SEEDS THAT LIVED HERE ARE GONE** (removed). The owner deleted the per-tenant dollar cost cap
      * outright — *"delete caps follow credit amounts"* — which overrides `29` §2
      * rule 43, one of the 48, and supersedes decisions 150, 151, 152 and 156's
      * $2/month. **All four were correct values with no reader anywhere in
@@ -2922,8 +2951,8 @@ final class DefaultsManifest
      * of rule 43 is the discipline and not the figure** (3294): graceful
      * degradation, never hard-fail, never bill by surprise. ⚠️ **The family's
      * fifth member is withheld rather than seeded and stays where it is** — see
-     * {@see self::withheld()} and 3365. ⛔ **Removing a seeded key does not move a
-     * database that has already been seeded** (3271, restated at 3295) — an
+     * {@see self::withheld()}. ⛔ **Removing a seeded key does not move a
+     * database that has already been seeded** (3271, restated) — an
      * installation carrying these rows keeps them until somebody deletes them,
      * and that is a production step rather than a consequence of this file.
      *
@@ -3458,76 +3487,10 @@ final class DefaultsManifest
      */
     public static function withheld(): array
     {
-        return [
-            'plan.limited.price.monthly_cents' => 'Decision 157: the Limited tier\'s contents are decided and its price is "not set — owner\'s call" (BUILD-PLAN §5.1). Nothing may bill, display or compare a Limited price until the owner sets one.',
-
-            'plan.limited.price.annual_cents' => 'Decision 157, as above. Note there is no basis for deriving one from the other either: $997 and $497 are the owner\'s own figures and neither is exactly 5× its monthly line, so the annual/monthly ratio is not a formula this codebase may apply.',
-
-            /*
-             * ⚠️ **THE `cost_cap` KEY BELOW OUTLIVES THE FOUR SEEDS IT BELONGED
-             * BESIDE, AND THAT ASYMMETRY IS DELIBERATE** (decision 3365).
-             *
-             * 3364 removes the four *seeded* `cost_cap.*` entitlements: they had
-             * no reader anywhere in `app/` (3106), so removing them opens no
-             * window and changes no behaviour. This one is different in the only
-             * way that matters — **withheld is the fail-closed state**, and
-             * pulling a key out of `withheld()` is the un-fail-closed direction
-             * (3317). Asking for it raises an exception naming decision 153; the
-             * cost of leaving it is that the exception names a cap that no longer
-             * exists, and the cost of removing it is that a caller gets a number
-             * instead of a refusal.
-             *
-             * ⛔ **"AND ITS SIBLING IS NOW WITHHELD BESIDE IT" WAS TRUE FOR ONE
-             * DAY AND HAS BEEN FALSE SINCE 2026-08-14.** That sentence said the
-             * credits lane had put `plan.base.credits.monthly_grant.ai_cents` in
-             * this list on 3304's open denomination. **3412 answered 3304, the
-             * key left this list, and it has been seeded ever since** — and
-             * `RegistryTest` asserts it is *out* of `withheld()` in both
-             * directions, so the paragraph was contradicted by a passing test in
-             * the same repository for ten days. ⚠️ **The argument it carried is
-             * kept because it outlived its instance**: two lanes running the same
-             * day should not disagree about whether this list shrinks, so it does
-             * not shrink here; the last member of the family goes with the
-             * production step 3295 requires, which no branch can perform.
-             */
-            /*
-             * The affiliate and agency commercial terms — CC-2 §2.9/§2.10,
-             * decision 5197.
-             *
-             * ⛔ **NOT ONE OF THESE FIVE FIGURES HAS EVER BEEN STATED BY THE
-             * OWNER.** T287 writes every one as a `[DATA: …]` slot, and the L-8
-             * and agency legal drafts carry them in counsel's square brackets —
-             * `[20]%`, `[90]-day`, `min $[50]`. A bracket in a draft is a
-             * placeholder for a decision, not the decision, and copying one out
-             * of the brackets is how a plausible figure becomes policy.
-             *
-             * ⚠️ **THESE BELONG IN `withheld()` RATHER THAN BESIDE `demo.number`
-             * IN {@see self::declaredWithoutSeed()}, AND THE LINE BETWEEN THEM IS
-             * 4019's.** A number an operator types into Ops is indistinguishable
-             * from a decision when the number is a *price* — which a commission
-             * rate and a payout floor are, from the other side of the deal. A
-             * phone number is not. So these fail closed the way the Limited tier
-             * price does: asking raises, and the block that would have quoted a
-             * rate does not render at all.
-             *
-             * ⚠️ **THE PAGES SHIP ANYWAY AND THAT IS THE POINT.** `/affiliates`
-             * and `/agencies` render their H1, the collected-not-booked trust
-             * line, the three one-strike rules and the honesty block — everything
-             * that is true without a number — and the deal lines appear on the
-             * day the owner rules. What is refused is a page quoting a rate
-             * somebody would then hold us to.
-             */
-            'affiliate.rate_monthly_bp' => 'The affiliate\'s share of every monthly payment, in basis points (decision 5197). ⛔ Never stated: T287 writes it as `[DATA: affiliate_monthly]` and the L-8 draft carries `[20]%` in counsel\'s brackets, which is a placeholder for a ruling rather than the ruling. Basis points because a commission is compared and summed like money and a float would not survive a JSON round trip. Nothing may quote an affiliate rate until this is set.',
-
-            'affiliate.rate_annual_bp' => 'The affiliate\'s share of an annual plan payment, in basis points (decision 5197). ⛔ Never stated — see `affiliate.rate_monthly_bp`. ⚠️ There is no basis for deriving it from the monthly rate either: T287 states them as two slots precisely because they may differ, and the retail annual is not 12× the retail monthly either.',
-
-            'affiliate.cookie_days' => 'How many days an affiliate link remembers who sent a visitor (decision 5197). ⛔ Never stated: T287 writes `[DATA: cookie_days]` and the L-8 draft says `[90]-day` in brackets. ⚠️ It is also a privacy figure and not only a commercial one — an attribution window is how long a cookie about a person is honoured — so a guessed number here would be a guessed retention period.',
-
-            'affiliate.minimum_payout_cents' => 'The balance an affiliate must reach before a payout goes out, in integer cents (decision 5197). ⛔ Never stated: T287 writes `$[DATA: min_payout]` and the L-8 draft says `min $[50]` in brackets.',
-
-            'agency.wholesale_discount_bp' => 'The agency discount off retail, in basis points (decision 5197). ⛔ Never stated: T287 writes `[DATA: agency_discount]% off retail` and the agency draft says "list minus [20]% or per Order" — where "or per Order" is itself a statement that no platform-wide figure has been decided. ⚠️ A wholesale rate is a price, so it fails closed the way the Limited tier price does rather than defaulting to zero, which would give every agency the platform for nothing.',
-
-            'plan.base.cost_cap.monthly_additional_location_cents' => 'Decision 153: "the only unstated number. Proportion from the primary would be $25, but a guessed cap silently becomes policy." The proportion is stated in that decision precisely so that nobody has to re-derive it and be tempted to use it. ⚠️ Decision 3293 deleted the cap this was a figure of, so it is now moot rather than pending — but withheld is the fail-closed state and this key stays here until the whole family is removed with the production step 3295 requires (3365).',
-        ];
+        /*
+         * This list is empty (run 84, ruling R245).
+         * A key enters this list only with a ruling that names what is missing.
+         */
+        return [];
     }
 }
