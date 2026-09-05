@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X121;
 
-use Tests\TestCase;
+use App\Models\Business;
 use App\Modules\X121\Actions\JobCreateAction;
 use App\Modules\X121\Events\JobCreated;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\DB;
 use App\Support\Tenancy;
-use App\Models\Business;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tests\TestCase;
 
 final class JobCreateActionTest extends TestCase
 {
@@ -29,7 +29,7 @@ final class JobCreateActionTest extends TestCase
 
         Event::fake();
 
-        $action = new JobCreateAction();
+        $action = new JobCreateAction;
         $res = $action->handle($business->id, $personId, 'Test Job', 15000);
 
         $this->assertDatabaseHas('work_orders', [
@@ -54,7 +54,7 @@ final class JobCreateActionTest extends TestCase
         $business = Business::factory()->create();
         Tenancy::set($business->id);
 
-        $action = new JobCreateAction();
+        $action = new JobCreateAction;
 
         try {
             $action->handle($business->id, 99999, 'Test Job');

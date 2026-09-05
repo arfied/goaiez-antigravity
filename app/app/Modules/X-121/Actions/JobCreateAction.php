@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X121\Actions;
 
 use App\Modules\X121\Events\JobCreated;
-use Illuminate\Support\Facades\DB;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 
 final class JobCreateAction
 {
@@ -18,7 +18,7 @@ final class JobCreateAction
         ?int $techId = null,
         ?int $locationId = null
     ): array {
-        if (!Tenancy::id()) {
+        if (! Tenancy::id()) {
             abort(403, 'Missing tenant');
         }
 
@@ -27,7 +27,7 @@ final class JobCreateAction
             ->where('business_id', $businessId)
             ->exists();
 
-        if (!$exists) {
+        if (! $exists) {
             abort(400, 'PERSON_UNKNOWN');
         }
 
@@ -45,11 +45,11 @@ final class JobCreateAction
 
         event(new JobCreated(
             businessId: $businessId,
-            jobId: (int)$id,
+            jobId: (int) $id,
             title: $title,
             priceCents: $priceCents ?? 0
         ));
 
-        return ['job_id' => (int)$id];
+        return ['job_id' => (int) $id];
     }
 }

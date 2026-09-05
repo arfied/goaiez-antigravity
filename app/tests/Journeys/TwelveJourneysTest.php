@@ -1,17 +1,30 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CapturedBy;
+use App\Enums\CaptureSurface;
+use App\Enums\ConsentType;
 use App\Enums\CreditKind;
 use App\Enums\CreditProduct;
 use App\Enums\OutreachChannel;
 use App\Enums\Plan;
 use App\Models\Business;
+use App\Models\Customer;
+use App\Models\User;
+use App\Modules\X111\Models\Subscription;
+use App\Modules\X121\Models\Person;
+use App\Services\Billing\AuthorizeNetGateway;
 use App\Services\Billing\CreditLedger;
+use App\Services\Billing\Subscriptions;
 use App\Services\Config\DefaultsRegistry;
+use App\Services\Consent\ConsentCapture;
+use App\Services\Consent\ConsentService;
+use App\Support\CardholderName;
+use App\Support\HashedIp;
+use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -68,17 +81,16 @@ final class TwelveJourneysTest extends TestCase
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS
     // ═══════════════════════════════════════════════════════════════════
 
-
     private function subscribedTenant(array $tenant): array
     {
-        $loginId = \App\Support\PlatformCredentials::get('authorize_net_api_login_id');
-        $clientKey = \App\Support\PlatformCredentials::get('authorize_net_public_client_key');
+        $loginId = PlatformCredentials::get('authorize_net_api_login_id');
+        $clientKey = PlatformCredentials::get('authorize_net_public_client_key');
 
         if (! $clientKey) {
             throw new \RuntimeException('UNRESOLVED — authorize_net_public_client_key is missing');
         }
 
-        $business = \App\Models\Business::find($tenant['id']);
+        $business = Business::find($tenant['id']);
 
         $req = [
             'securePaymentContainerRequest' => [
@@ -100,7 +112,7 @@ final class TwelveJourneysTest extends TestCase
             ],
         ];
 
-        $res = \Illuminate\Support\Facades\Http::post('https://apitest.authorize.net/xml/v1/request.api', $req);
+        $res = Http::post('https://apitest.authorize.net/xml/v1/request.api', $req);
         $json = json_decode(trim($res->body(), "\xEF\xBB\xBF"), true);
         if (($json['messages']['resultCode'] ?? '') !== 'Ok') {
             $msg = $json['messages']['message'][0]['text'] ?? 'Unknown refusal';
@@ -108,17 +120,17 @@ final class TwelveJourneysTest extends TestCase
         }
         $opaqueDataValue = $json['opaqueData']['dataValue'];
 
-        $user = \App\Models\User::where('id', $business->owner_user_id)->first();
-        if (!$user) {
-            $user = \App\Models\User::factory()->create();
+        $user = User::where('id', $business->owner_user_id)->first();
+        if (! $user) {
+            $user = User::factory()->create();
             $business->owner_user_id = $user->id;
             $business->save();
         }
 
         $this->actingAs($user);
 
-        $gateway = app(\App\Services\Billing\AuthorizeNetGateway::class);
-        $cardholder = \App\Support\CardholderName::fromInput('Test', 'User');
+        $gateway = app(AuthorizeNetGateway::class);
+        $cardholder = CardholderName::fromInput('Test', 'User');
 
         try {
             $sub = $gateway->subscribe($business, 'test@example.com', $opaqueDataValue, $cardholder);
@@ -131,25 +143,25 @@ final class TwelveJourneysTest extends TestCase
 
     private function personWithConsentedNumber(array $tenant): array
     {
-        $phone = '+1555012' . rand(1000, 9999);
-        $person = \App\Modules\X121\Models\Person::create([
+        $phone = '+1555012'.rand(1000, 9999);
+        $person = Person::create([
             'business_id' => $tenant['id'],
             'first_name' => 'Review Person',
             'phone' => $phone,
         ]);
 
-        $locationId = \Illuminate\Support\Facades\DB::table('locations')->where('business_id', $tenant['id'])->value('id');
-        if (!$locationId) {
-            $locationId = \Illuminate\Support\Facades\DB::table('locations')->insertGetId([
+        $locationId = DB::table('locations')->where('business_id', $tenant['id'])->value('id');
+        if (! $locationId) {
+            $locationId = DB::table('locations')->insertGetId([
                 'business_id' => $tenant['id'],
                 'name' => 'HQ',
                 'timezone' => 'America/Chicago',
             ]);
         } else {
-            \Illuminate\Support\Facades\DB::table('locations')->where('id', $locationId)->update(['timezone' => 'America/Chicago']);
+            DB::table('locations')->where('id', $locationId)->update(['timezone' => 'America/Chicago']);
         }
 
-        $customer = \App\Models\Customer::forceCreate([
+        $customer = Customer::forceCreate([
             'id' => $person->id,
             'business_id' => $tenant['id'],
             'location_id' => $locationId,
@@ -158,22 +170,23 @@ final class TwelveJourneysTest extends TestCase
             'region_code' => 'TX',
         ]);
 
-        $capture = new \App\Services\Consent\ConsentCapture(
-            \App\Enums\CapturedBy::Platform,
-            \App\Enums\CaptureSurface::FeedbackPage,
-            \App\Enums\ConsentType::ExpressWritten,
+        $capture = new ConsentCapture(
+            CapturedBy::Platform,
+            CaptureSurface::FeedbackPage,
+            ConsentType::ExpressWritten,
             'v1.0',
             'web',
             [
                 'url' => 'https://example.com',
-                'ip_hash' => \App\Support\HashedIp::hash('127.0.0.1'),
+                'ip_hash' => HashedIp::hash('127.0.0.1'),
                 'user_agent' => 'test',
             ]
         );
-        app(\App\Services\Consent\ConsentService::class)->record($customer, \App\Enums\OutreachChannel::Sms, $capture, 'journey fixture');
+        app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'journey fixture');
 
         return $person->toArray();
     }
+
     private function fundedTenant(): array
     {
         app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
@@ -185,9 +198,9 @@ final class TwelveJourneysTest extends TestCase
 
         $this->subscribedTenant($tenant);
 
-        if (!app(\App\Services\Billing\Subscriptions::class)->isEntitled(\App\Models\Business::find($tenant['id']))) {
-            $status = \App\Modules\X111\Models\Subscription::where('business_id', $tenant['id'])->value('status');
-            throw new \RuntimeException('UNRESOLVED — ' . $status);
+        if (! app(Subscriptions::class)->isEntitled(Business::find($tenant['id']))) {
+            $status = Subscription::where('business_id', $tenant['id'])->value('status');
+            throw new \RuntimeException('UNRESOLVED — '.$status);
         }
 
         Tenancy::set($tenant['id']);
@@ -502,8 +515,7 @@ final class TwelveJourneysTest extends TestCase
         $this->drainQueue();
 
         $invites = $this->reviewInvitesFor($person);
-        
-        
+
         $this->assertCount(1, $invites, 'A completed job must ask ONCE — not zero, not twice.');
 
         // ⭐ Completing a second job must NOT produce a second invite inside the
