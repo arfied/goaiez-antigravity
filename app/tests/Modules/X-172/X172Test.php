@@ -83,11 +83,21 @@ class X172Test extends TestCase
     }
 
     /**
-     * [G10-24] the signature pad lives in the customer portal
+     * [G10-24] REFUSAL: a redline is SURFACED with a diff, never accepted
      */
-    public function test_g10_24_signature_pad_in_portal(): void
+    public function test_g10_24_refusal_redline_never_accepted(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Refusal Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $link = $this->linkAction->handle($biz->id, 'contract', 101);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('REFUSAL (G10-24): a redline is SURFACED with a diff, never accepted');
+
+        $this->actionHandler->handle($link->token, 'redline_accepted', [
+            'clause_id' => 'section_4',
+        ]);
     }
 
     /**
@@ -112,7 +122,11 @@ class X172Test extends TestCase
      */
     public function test_g13_14_document_opened_timestamp(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Open Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $link = $this->linkAction->handle($biz->id, 'contract', 101);
+        $view = $this->viewAction->handle($link->token, '1.2.3.4', 'Mozilla');
+        $this->assertEquals('opened', $view['status']);
     }
 
     /**
@@ -120,6 +134,13 @@ class X172Test extends TestCase
      */
     public function test_g16_27_explanation_above_signature(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Sign Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $link = $this->linkAction->handle($biz->id, 'contract', 101);
+        $res = $this->actionHandler->handle($link->token, 'signature_signed', [
+            'signature_data' => 'base64...',
+            'explanation' => 'I agree to the terms',
+        ]);
+        $this->assertEquals('action_recorded', $res['status']);
     }
 }
