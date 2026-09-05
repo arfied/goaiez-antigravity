@@ -59,13 +59,20 @@ final class ModuleServiceProvider extends ServiceProvider
                 return;
             }
 
-            app(EdgeDeployAction::class)->handle(
-                businessId: $event->businessId,
-                edgeZoneId: $zone->id,
-                pageId: $event->pageId,
-                commitId: $event->commitId,
-                businessName: Business::where('id', $event->businessId)->value('name'),
-            );
+            // A deploy failure is contained here: the page stays published (R245,
+            // 2026-09-05). Publishing is X-103's door and the edge is a separate
+            // concern — the tenant must not lose the content because the edge did.
+            try {
+                app(EdgeDeployAction::class)->handle(
+                    businessId: $event->businessId,
+                    edgeZoneId: $zone->id,
+                    pageId: $event->pageId,
+                    commitId: $event->commitId,
+                    businessName: Business::where('id', $event->businessId)->value('name'),
+                );
+            } catch (\Throwable) {
+                return;
+            }
         });
     }
 }
