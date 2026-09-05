@@ -28,7 +28,7 @@ class CustomerfacingPortal extends Component
         $result = $action->handle((string) $this->token);
 
         if ($result['status'] === 'invalid_link') {
-            // abort(404);
+            abort(404);
         }
 
         if ($result['status'] === 'expired_link') {
