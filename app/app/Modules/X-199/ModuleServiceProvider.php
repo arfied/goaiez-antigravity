@@ -10,6 +10,7 @@ use App\Modules\X199\Ui\Declines;
 use App\Modules\X199\Ui\Invoices;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Modules\X199\Ui\Unpaid;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -17,11 +18,7 @@ final class ModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                MarkInvoicesDueCommand::class,
-            ]);
-        }
+        //
     }
 
     public function boot(): void
@@ -35,6 +32,17 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-199.declines', Declines::class);
             Livewire::component('x-199.invoices', Invoices::class);
             Livewire::component('x-199.credits', Credits::class);
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MarkInvoicesDueCommand::class,
+            ]);
+
+            $this->app->booted(function () {
+                $schedule = $this->app->make(Schedule::class);
+                $schedule->command('x199:mark-due')->daily()->withoutOverlapping(180);
+            });
         }
     }
 }
