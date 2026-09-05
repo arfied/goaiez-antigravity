@@ -10,6 +10,9 @@ use App\Modules\CSms\Ui\PernumberComplaintMonitoring;
 use App\Modules\CSms\Ui\Thread;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Illuminate\Support\Facades\Event;
+use App\Modules\CSms\Events\SendRequested;
+use App\Modules\CSms\Listeners\SendRequestedListener;
 
 final class ModuleServiceProvider extends ServiceProvider
 {
@@ -20,6 +23,7 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(SendRequested::class, SendRequestedListener::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
