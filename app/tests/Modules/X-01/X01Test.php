@@ -18,10 +18,12 @@ use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
+use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X01Test extends TestCase
@@ -378,9 +380,10 @@ class X01Test extends TestCase
         $p2 = Person::create(['business_id' => $biz->id, 'first_name' => 'P2']);
         $p3 = Person::create(['business_id' => $biz->id, 'first_name' => 'P3']);
 
-        \Livewire\Livewire::test(\App\Modules\X01\Ui\CustomersList::class, ['businessId' => $biz->id])
+        Livewire::test(CustomersList::class, ['businessId' => $biz->id])
             ->assertViewHas('persons', function ($persons) use ($p1, $p2, $p3) {
                 $ids = $persons->pluck('id')->toArray();
+
                 return $ids === [$p3->id, $p2->id, $p1->id];
             });
     }
