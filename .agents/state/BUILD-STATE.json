@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-02T05:03:10",
+ "updated": "2026-09-04T20:04:53",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1214,6 +1214,60 @@
    "module": "X-179",
    "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
    "at": "2026-09-02T04:38:50",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "\u2014 G6-15/16/17/20/27/32 and G7-18 are declarations of another module's work; X-103's test asserts the delegation exists, never the rendering, because rendering it here would be a cross-module boundary",
+   "at": "2026-09-04T15:40:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "infer entityType from businesses.vertical with LocalBusiness fallback",
+   "at": "2026-09-04T16:26:57",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "the vertical map is keyed on the lowercase values BusinessFactory, DayOneSignup and BenchmarkVertical write; the stored column is lowercased and trimmed before lookup, and an unmapped or null vertical falls back to LocalBusiness",
+   "at": "2026-09-04T16:57:00",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G2-17 is a required-fields reader over form_definitions.steps: a step may declare a required array and FormValidateAction refuses a submission missing any of those fields with reason incomplete_step, naming the step and the missing fields",
+   "at": "2026-09-04T19:16:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G2-17 is a required-fields reader over form_definitions.steps: a step may declare a required array and FormValidateAction refuses a submission missing any of those fields with reason incomplete_step, naming the step and the missing fields; a step with no required key keeps today's behaviour, which is why the anchor form's step 2 still captures",
+   "at": "2026-09-04T19:16:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G3-64/G13-05: a spam-classified submission is STORED and FLAGGED, never discarded \u2014 FormCaptureAction writes the FormSubmission row with is_spam true and spam_reason set to the validator reason and keeps the full payload, and does not dispatch FormCaptured",
+   "at": "2026-09-04T19:36:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G3-64/G13-05: a spam-classified submission is STORED and FLAGGED, never discarded \u2014 FormCaptureAction writes the FormSubmission row with is_spam true and spam_reason set to the validator reason and keeps the full payload, and does not dispatch FormCaptured; an incomplete_step rejection is not spam and stays unstored; the row references a Person because form_submissions.person_id is NOT NULL and the TEST ANCHOR requires it, and the rejected alternative of making person_id nullable was refused as a CHECK change",
+   "at": "2026-09-04T19:36:21",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G11-01 \u2014 the abandon point is read per form: the pixel's payload.form_id carries form_definitions.slug, because the published page knows a form's slug and has no row id to send; X-155's FormAbandonPointAction resolves the FormDefinition and asks X-110's PixelEngine, which owns pixel_events, so no X-155 file queries another module's table; the rejected alternative of writing the numeric form_definitions.id into payload.form_id was refused because the published page has no id and PixelEventsAction's default_form fallback is already a string",
+   "at": "2026-09-04T19:46:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G5-30 \u2014 adaptive questions: a step in form_definitions.steps may carry show_if, a map of field => accepted value or list of accepted values, and a step whose show_if is not satisfied by the submitted answers is not shown and its required fields are never enforced; the rule lives in FormAdaptiveStepsAction and FormValidateAction's G2-17 loop walks its output instead of the raw column, so a step with no show_if key keeps today's behaviour and the TEST ANCHOR is unchanged; the rejected alternative of a show_if keyed on a step number was refused because completion is already required's job and the thing a tenant branches on is an answer",
+   "at": "2026-09-04T20:04:53",
    "ruling": "R245"
   }
  ]
