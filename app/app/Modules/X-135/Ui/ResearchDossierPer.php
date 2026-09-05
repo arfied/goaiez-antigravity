@@ -73,6 +73,10 @@ class ResearchDossierPer extends Component
         $this->selectedRunId = $runId;
     }
 
+    /**
+     * Dispatch IcebreakerGenerateAction::generateIcebreaker.
+     * A refusal renders as *Not grounded* and never as a failure.
+     */
     public function ground(IcebreakerGenerateAction $action): void
     {
         if ($this->isSample) {

@@ -28,8 +28,8 @@ final class IcebreakerGenerateAction
         }
 
         $scheme = parse_url($sourceUrl, PHP_URL_SCHEME);
-        if (filter_var($sourceUrl, FILTER_VALIDATE_URL) === false || ! in_array($scheme, ['http', 'https'])) {
-            throw new InvalidArgumentException('Icebreaker generation failed: the source must be an http(s) URL that can be fetched');
+        if (filter_var($sourceUrl, FILTER_VALIDATE_URL) === false || ! in_array($scheme, ['http', 'https'], true)) {
+            throw new InvalidArgumentException('Icebreaker generation failed: the source must be an http(s) URL that can be fetched (G5-26, P-120)');
         }
 
         $date = $observedDate ?? now()->toDateString();
