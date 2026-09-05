@@ -131,6 +131,10 @@ class AgeingByReasonScreenTest extends TestCase
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
+        Tenancy::forgetUser();
+        Livewire::test(AgeingByReason::class)->assertForbidden();
+        Tenancy::setUser($owner->id);
+
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Late', 'last_name' => 'Payer']);
         $inv = Invoice::create([
             'business_id' => $biz->id,
@@ -187,8 +191,5 @@ class AgeingByReasonScreenTest extends TestCase
         $this->assertSame(1000, $state->late_fee_cents);
         $this->assertSame('overdue', $state->status);
         Event::assertDispatchedTimes(ArFeeApplied::class, 1);
-
-        Tenancy::forgetUser();
-        Livewire::test(AgeingByReason::class)->assertForbidden();
     }
 }

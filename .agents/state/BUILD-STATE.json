@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T03:34:23",
+ "updated": "2026-09-05T06:31:52",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1351,6 +1351,10 @@
   {
    "at": "2026-09-05T06:31:35",
    "note": "MONEY-30: the term is saved from the ageing screen and applied from the ageing screen, so a refused late fee can be fixed and retried in one place"
+  },
+  {
+   "at": "2026-09-05T06:31:52",
+   "note": "MONEY-30: the UNRESOLVED capability record of 2026-09-04T15:22:06 (X-211 \u2014 engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71) is resolved for G1-61/G1-70 by PlanPastThresholdException and for G1-71 by FeeWithoutTermException (6d617f01); state.py has no verb to retire the record (OWNER ACTION 19b)"
   }
  ],
  "decisions": [
@@ -1502,6 +1506,12 @@
    "module": "X-211",
    "chose": "the late-fee term is a ROW on ar_plan_terms \u2014 late_fee_percent and late_fee_cap_cents, nullable, beside the plan threshold; null means the agreement names no late fee and ArEngine::applyLateFee throws FeeWithoutTermException before any write (G1-71); the percent and the cap replace the engine's 10 % / $50 literal (P-193). Rejected: a per-invoice term column (the agreement is the tenant's terms; X-121's quote is Track 1's spine, ruling 8); keeping the literal (P-193); a caller-supplied hasTerm flag (ruling 15 \u2014 a refusal clause is not a refusal). Consequence: a tenant with no term written gets no late fee until the owner writes one. Test: X211Test::test_a_fee_with_no_matching_term_is_refused",
    "at": "2026-09-05T03:34:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "the ageing screen is the fee door and the term door \u2014 the late-fee term is written on the page through ArSetLateFeeTermAction (ArEngine::setLateFeeTerm, updateOrCreate on the tenant's ar_plan_terms row, ArLateFeeTermSet emitted; percent 1\u2013100 required, cap optional), and a fee is applied per overdue row through ArApplyLateFeeAction; FeeWithoutTermException is rendered as a finished attention state on the same page, never swallowed (G1-71, P-193). Rejected: the term on the paymentplan builder (that page is the schedule threshold, not the fee); a default term seeded on tenant provisioning (a tenant with no term written gets no fee \u2014 the R245 decision of 03:34); a fee button with no amount (the amount is the owner's, the cap is the row's). Consequence: the first fee a tenant applies is refused until the term is written on the same screen. Test: AgeingByReasonScreenTest::test_a_late_fee_is_refused_without_a_term_and_applied_inside_it",
+   "at": "2026-09-05T06:31:52",
    "ruling": "R245"
   }
  ]
