@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X137;
 
-use App\Modules\X137\Actions\LinkRedirectAction;
 use App\Modules\X137\Ui\AttributionRow;
 use App\Modules\X137\Ui\DniPoolUtilisation;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -29,17 +25,5 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-137.attribution-row', AttributionRow::class);
             Livewire::component('x-137.dni-pool-utilisation', DniPoolUtilisation::class);
         }
-
-        Route::get('/l/{business}/{code}', function (string $business, string $code, Request $request) {
-            $business = (int) $business;
-            DB::statement("SELECT set_config('app.business_id', ?, false)", [(string) $business]);
-
-            return app(LinkRedirectAction::class)->handle(
-                $business,
-                $code,
-                $request->ip(),
-                $request->userAgent()
-            );
-        })->whereNumber('business');
     }
 }
