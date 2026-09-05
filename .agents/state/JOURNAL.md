@@ -552,3 +552,6 @@
 - `2026-09-04T19:38:02` (R245) X-142 — is_active cast to boolean added to WebhookSubscription model
 - `2026-09-04T19:59:21` (R245) X-142 — ConnectYourAi empty state renders sentence 'Connect an AI to get started.'
 - `2026-09-04T19:59:21` (R245) X-142 — ConnectYourAi connected state renders token_name and role_scope, asserting DontSee token_hash
+- `2026-09-04T20:19:11` (R245) X-142 — (R245) X-142 — McpTokenAction::issue writes the permissions array directly; the model's array cast does the encoding
+- `2026-09-04T20:19:15` (R245) X-142 — (R245) X-142 — G4-02 is proven by revoke refusing a token id under a business id that does not own it; a second tenant cannot prove it because mcp_tokens is FORCE RLS
+- `2026-09-04T20:19:21` (R245) X-142 — (R245) X-142 — ConnectYourAi lists only tokens where is_revoked is false; that scope is what distinguishes it from McpTokenRegistry, which lists every token ever issued

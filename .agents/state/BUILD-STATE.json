@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T19:59:21",
+ "updated": "2026-09-04T20:19:21",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1406,6 +1406,24 @@
    "module": "X-142",
    "chose": "ConnectYourAi connected state renders token_name and role_scope, asserting DontSee token_hash",
    "at": "2026-09-04T19:59:21",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "(R245) X-142 \u2014 McpTokenAction::issue writes the permissions array directly; the model's array cast does the encoding",
+   "at": "2026-09-04T20:19:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "(R245) X-142 \u2014 G4-02 is proven by revoke refusing a token id under a business id that does not own it; a second tenant cannot prove it because mcp_tokens is FORCE RLS",
+   "at": "2026-09-04T20:19:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "(R245) X-142 \u2014 ConnectYourAi lists only tokens where is_revoked is false; that scope is what distinguishes it from McpTokenRegistry, which lists every token ever issued",
+   "at": "2026-09-04T20:19:21",
    "ruling": "R245"
   }
  ]
