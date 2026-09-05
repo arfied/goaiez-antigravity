@@ -31,7 +31,7 @@ class CSmsTest extends TestCase
         parent::setUp();
         $this->composer = new SmsComposer(new ConsentService);
         $this->compose = new SmsComposeAction($this->composer);
-        $this->send = new SmsSendAction($this->composer);
+        $this->send = new SmsSendAction(app(\App\Contracts\MessageSender::class));
         $this->halt = new SmsHaltAction($this->composer);
     }
 
@@ -66,7 +66,7 @@ class CSmsTest extends TestCase
 
         // 2. Quiet hours: at 21:30, marketing waits (scheduled), transactional goes (sent)
         Carbon::setTestNow('2026-09-04 22:30:00');
-        $mktRes = $this->send->handle(
+        $mktRes = $this->composer->send(
             businessId: $biz->id,
             recipientPhone: '+15125550111',
             body: 'Special summer discount!',
@@ -76,7 +76,7 @@ class CSmsTest extends TestCase
         $this->assertEquals('scheduled', $mktRes['status']);
         $this->assertNotNull($mktRes['scheduled_at']);
 
-        $trxRes = $this->send->handle(
+        $trxRes = $this->composer->send(
             businessId: $biz->id,
             recipientPhone: '+15125550111',
             body: 'Your verification code is 123456',
@@ -93,7 +93,7 @@ class CSmsTest extends TestCase
             'reason' => 'STOP',
         ]);
 
-        $stopRes = $this->send->handle(
+        $stopRes = $this->composer->send(
             businessId: $biz->id,
             recipientPhone: '+15125550111',
             body: 'Hello again',
@@ -113,7 +113,7 @@ class CSmsTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => '10DLC Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $res = $this->send->handle($biz->id, '+15125550122', '10DLC compliant template');
+        $res = $this->composer->send($biz->id, '+15125550122', '10DLC compliant template');
         $this->assertEquals('sent', $res['status']);
     }
 
@@ -137,7 +137,7 @@ class CSmsTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Missed Call Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $res = $this->send->handle($biz->id, '+15125550133', 'Sorry we missed your call!', 'transactional');
+        $res = $this->composer->send($biz->id, '+15125550133', 'Sorry we missed your call!', 'transactional');
         $this->assertEquals('sent', $res['status']);
     }
 
