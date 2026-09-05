@@ -6,26 +6,22 @@
             </div>
         </div>
         <div class="mt-8 flow-root">
-            <div wire:loading class="w-full text-center p-4">
-                <span class="text-gray-500 text-base">Loading...</span>
+            <div wire:loading>
+                <x-ui.skeleton label="Reading the invoices…" lines="3" />
             </div>
 
             @if($error)
-                <div role="alert" class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative text-base">
-                    {{ $error }}
-                </div>
+                <x-ui.error-panel heading="We couldn't record that payment">{{ $error }}</x-ui.error-panel>
             @endif
             
             @if($invoices->isEmpty())
-                <div wire:loading.remove class="text-center p-8 bg-white rounded-lg border border-gray-200">
-                    <h3 class="text-base font-semibold text-gray-900">No invoices yet.</h3>
-                    <p class="mt-2 text-sm text-gray-500">A completed job becomes an invoice and it sends (R235).</p>
-                    <div class="mt-6">
-                        <button wire:click="$refresh" class="text-indigo-600 hover:text-indigo-900 text-base font-semibold">Reload list</button>
-                    </div>
+                <div wire:loading.remove>
+                    <x-ui.empty-state heading="No invoices yet." action="Reload list" target="$refresh">
+                        A completed job becomes an invoice and it sends (R235).
+                    </x-ui.empty-state>
                 </div>
             @else
-                <div wire:loading.remove class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                <div wire:loading.remove class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-[--radius-card]">
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead class="bg-gray-50">
                             <tr>
@@ -45,19 +41,23 @@
                                 <tr>
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ $invoice->invoice_number }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->customer_name }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->status }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <x-ui.status-pill :state="$invoice->status === 'paid' ? 'ok' : ($invoice->status === 'draft' ? 'unknown' : 'attention')" label="{{ $invoice->status }}" />
+                                    </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ $invoice->due_date }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right cursor-pointer tabular-nums" wire:click="toggleExpanded({{ $invoice->id }})">
-                                        <button class="hover:underline">{{ number_format($invoice->total_cents / 100, 2) }}</button>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right tabular-nums">
+                                        <x-ui.button size="default" variant="quiet" class="!px-0" wire:click="toggleExpanded({{ $invoice->id }})">
+                                            {{ number_format($invoice->total_cents / 100, 2) }}
+                                        </x-ui.button>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">{{ number_format($invoice->paid_cents / 100, 2) }}</td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                         @if($invoice->status === 'paid')
-                                            <a href="{{ $invoice->pdf_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 p-2">Receipt</a>
+                                            <x-ui.button :href="$invoice->pdf_url" variant="quiet" size="default" target="_blank">Receipt</x-ui.button>
                                         @elseif(in_array($invoice->status, ['issued', 'due', 'offline_recorded']))
-                                            <button wire:loading.attr="disabled" wire:target="recordPayment({{ $invoice->id }})" wire:click="recordPayment({{ $invoice->id }})" class="text-indigo-600 hover:text-indigo-900 p-2">Record payment</button>
+                                            <x-ui.button size="default" wire:loading.attr="disabled" wire:target="recordPayment({{ $invoice->id }})" wire:click="recordPayment({{ $invoice->id }})">Record payment</x-ui.button>
                                         @elseif($invoice->status === 'draft')
-                                            <a href="{{ $invoice->pdf_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 p-2">Open PDF</a>
+                                            <x-ui.button :href="$invoice->pdf_url" variant="quiet" size="default" target="_blank">Open PDF</x-ui.button>
                                         @endif
                                     </td>
                                 </tr>

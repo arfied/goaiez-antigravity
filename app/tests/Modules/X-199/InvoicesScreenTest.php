@@ -20,6 +20,15 @@ class InvoicesScreenTest extends TestCase
         $biz = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);
 
+        $otherBiz = self::provisionTenant();
+        Tenancy::set($otherBiz->id);
+        $otherCustomer = Person::create([
+            'business_id' => $otherBiz->id,
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+        ]);
+        $invOther = app(InvoiceEngine::class)->issueInvoice($otherBiz->id, $otherCustomer->id, [['description' => 'Other tenant thing', 'quantity' => 1, 'unit_price_cents' => 77700]])['invoice'];
+
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
@@ -54,6 +63,11 @@ class InvoicesScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Invoices::class)
             ->assertOk()
             ->assertSeeInOrder([$inv2->invoice_number, $inv1->invoice_number])
+            ->assertSee('John Doe')
+            ->assertDontSee($invOther->invoice_number)
+            ->assertDontSee('777.00')
+            ->call('toggleExpanded', $inv1->id)
+            ->assertSee('Item 1')
             ->call('recordPayment', $inv2->id)
             ->call('recordPayment', 999999)
             ->assertSee("isn't in this account");
