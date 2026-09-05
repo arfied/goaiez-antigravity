@@ -10,11 +10,11 @@
 
         <div class="mt-8 flow-root">
             <div wire:loading>
-                <x-ui.skeleton label="Loading invoices..." lines="3" />
+                <x-ui.skeleton label="Reading today's payments…" lines="3" />
             </div>
 
             @if($error)
-                <x-ui.error-panel :message="$error" />
+                <x-ui.error-panel heading="We couldn't open that invoice">{{ $error }}</x-ui.error-panel>
             @endif
             
             @if($invoices->isEmpty())

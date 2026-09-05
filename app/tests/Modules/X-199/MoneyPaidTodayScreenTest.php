@@ -55,20 +55,39 @@ class MoneyPaidTodayScreenTest extends TestCase
         // today's invoice paid through recordPayment() appears with its Paid: time and its lines on explain
         $engine = new InvoiceEngine;
         $issued = $engine->issueInvoice($biz->id, $customer->id, [
-            ['description' => 'Roofing', 'quantity' => 1, 'unit_price_cents' => 10000],
+            ['description' => 'Roofing service', 'quantity' => 1, 'unit_price_cents' => 10000],
+            ['description' => 'Materials', 'quantity' => 1, 'unit_price_cents' => 2500],
         ]);
         $invA = $issued['invoice'];
 
         $engine->recordPayment($biz->id, $invA->id);
         $invA->refresh();
 
+        $unpaid = $engine->issueInvoice($biz->id, $customer->id, [
+            ['description' => 'Unpaid thing', 'quantity' => 1, 'unit_price_cents' => 5000],
+        ])['invoice'];
+
+        Tenancy::forgetUser();
+        Livewire::test(MoneyPaidToday::class)->assertForbidden();
+
+        Tenancy::setUser($owner->id);
+
         Livewire::actingAs($owner)->test(MoneyPaidToday::class)
             ->assertOk()
             ->assertSee($invA->invoice_number)
+            ->assertSee('125.00')
             ->assertSee('Paid: '.$invA->paid_at->format('g:i A'))
             ->assertDontSee('INV-OLD')
+            ->assertDontSee($unpaid->invoice_number)
             ->assertDontSee('INV-OTHER')
             ->call('explain', $invA->id)
-            ->assertSee('Roofing');
+            ->assertSee('Roofing service')
+            ->assertSee('Materials')
+            ->call('explain', $old->id)
+            ->assertSee("isn't in this account")
+            ->call('explain', 999999)
+            ->assertSee("isn't in this account");
+
+        $this->assertNotNull(Invoice::find($invA->id)->paid_at);
     }
 }
