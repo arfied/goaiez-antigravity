@@ -84,7 +84,7 @@ final class ApprovalDeskEngine
 
             // A sequential chain advances one desk per approval; only the last step decides,
             // and ApprovalDecided fires only on the step that sets a terminal status (R245).
-            if ($decision === 'approved' && $item->current_step <= $stepsCount) {
+            if ($decision === 'approved' && $item->current_step < $stepsCount) {
                 $item->update(['current_step' => $item->current_step + 1]);
 
                 return [
