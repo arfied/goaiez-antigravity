@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T14:41:02",
+ "updated": "2026-09-05T15:47:22",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1696,6 +1696,24 @@
    "module": "X-110",
    "chose": "this track does not spec session recording, and this row does not go to the owner.",
    "at": "2026-09-05T14:41:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "135.6 X-103 SiteBuilder + X-155 FormCapture is already named in X-103 and X-156 headers",
+   "at": "2026-09-05T15:33:03",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G2-39 clause 1 excludes the generated capabilities.php: G13-35's own prose contains 'staging' while asserting there is no staging table. Rejected alternative: scanning it and having the anchor fail on the plan text that states the invariant.",
+   "at": "2026-09-05T15:47:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G2-39 clause 2 (every submission references a Person id) is enforced by form_submissions.person_id NOT NULL + FK (migration 2026_08_30_000038:32) and by FORCE RLS on people; no FormCaptureAction mutation can redden the assertion because the constraint refuses first. Ruling 47. Rejected alternative: treating the SQLSTATE[42501] RLS refusal as an assertion proof.",
+   "at": "2026-09-05T15:47:22",
    "ruling": "R245"
   }
  ],
