@@ -14,6 +14,7 @@ use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
+use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X121\Models\Conversation;
@@ -320,5 +321,17 @@ class X01Test extends TestCase
     public function test_g19_15_thread_live_update(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_takeover_reply_refuses_when_no_latch_is_active(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Render Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+
+        $this->expectException(TakeoverNotLatchedRefused::class);
+        $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
     }
 }

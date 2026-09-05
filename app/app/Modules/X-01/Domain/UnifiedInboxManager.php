@@ -9,6 +9,7 @@ use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
+use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Models\Conversation;
@@ -132,14 +133,16 @@ final class UnifiedInboxManager
             ->where('is_active', true)
             ->first();
 
-        $operatorName = $latch ? $latch->operator_name : 'Staff Member';
+        if ($latch === null) {
+            throw TakeoverNotLatchedRefused::forConversation($conversationId);
+        }
 
         return [
             'conversation_id' => $conversationId,
-            'operator_name' => $operatorName,
+            'operator_name' => $latch->operator_name,
             'label' => 'Human takeover',
             'body' => $body,
-            'formatted_reply' => "[Human takeover by {$operatorName}]: {$body}",
+            'formatted_reply' => "[Human takeover by {$latch->operator_name}]: {$body}",
         ];
     }
 
