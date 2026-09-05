@@ -770,3 +770,7 @@
 - `2026-09-05T16:22:13` (R245) C-Billing — a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)
 - `2026-09-05T17:11:31` UNRESOLVED tests X-01 - four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold
 - `2026-09-05T17:33:50` note: X-172 generated screen test renders through Fixtures::token() (run 101)
+- `2026-09-05T17:42:53` note: X-193 quiet_hours_start: answered — migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main
+- `2026-09-05T17:42:54` note: X-201 deadline_at: answered — migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main
+- `2026-09-05T17:42:54` note: C-Reviews messageClass: answered — ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)
+- `2026-09-05T17:42:54` note: C-Sms TrialEligibility: answered by owner ruling 2026-09-05 — the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)

@@ -1439,6 +1439,22 @@
   {
    "at": "2026-09-05T17:33:50",
    "note": "X-172 generated screen test renders through Fixtures::token() (run 101)"
+  },
+  {
+   "at": "2026-09-05T17:42:53",
+   "note": "X-193 quiet_hours_start: answered \u2014 migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main"
+  },
+  {
+   "at": "2026-09-05T17:42:54",
+   "note": "X-201 deadline_at: answered \u2014 migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main"
+  },
+  {
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Reviews messageClass: answered \u2014 ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)"
+  },
+  {
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
   }
  ]
 }
