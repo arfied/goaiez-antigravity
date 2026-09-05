@@ -371,7 +371,18 @@ class X01Test extends TestCase
      */
     public function test_g11_41_thread_list_sort(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Sort Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p1 = Person::create(['business_id' => $biz->id, 'first_name' => 'P1']);
+        $p2 = Person::create(['business_id' => $biz->id, 'first_name' => 'P2']);
+        $p3 = Person::create(['business_id' => $biz->id, 'first_name' => 'P3']);
+
+        \Livewire\Livewire::test(\App\Modules\X01\Ui\CustomersList::class, ['businessId' => $biz->id])
+            ->assertViewHas('persons', function ($persons) use ($p1, $p2, $p3) {
+                $ids = $persons->pluck('id')->toArray();
+                return $ids === [$p3->id, $p2->id, $p1->id];
+            });
     }
 
     /**
