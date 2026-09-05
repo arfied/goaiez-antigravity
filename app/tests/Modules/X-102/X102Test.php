@@ -221,6 +221,38 @@ class X102Test extends TestCase
             ->assertSeeHtml('chat-widget-container');
     }
 
+    /** (R245) */
+    public function test_ai_cap_comes_from_the_meter_not_the_caller(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Meter Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        // positive control: nothing spent, the meter allows, the widget is live
+        $live = (new ChatStartAction)->handle($biz->id, '192.168.1.1');
+        $this->assertFalse($live->is_ai_capped);
+        $this->assertEquals('active', $live->status);
+
+        // spend past the platform cap for an account the balance cannot bound
+        $spend = app(\App\Services\Ai\AiSpend::class);
+        $this->assertGreaterThan(0, $spend->monthlyCapHundredths());
+        
+        \App\Models\AiCall::query()->create([
+            'task' => \App\Enums\AiTask::Conversation,
+            'provider' => \App\Enums\AiProvider::Anthropic,
+            'model' => \App\Enums\AiModel::ClaudeSonnet5,
+            'input_tokens' => 10,
+            'output_tokens' => 10,
+            'cost_hundredths_cents' => $spend->monthlyCapHundredths() + 100,
+            'retail_hundredths_cents' => ($spend->monthlyCapHundredths() + 100) * 8,
+            'refused' => false,
+            'failure_reason' => null,
+        ]);
+
+        $capped = (new ChatStartAction)->handle($biz->id, '192.168.1.1');
+        $this->assertTrue($capped->is_ai_capped);
+        $this->assertEquals('offline_form', $capped->status);
+    }
+
     public function test_screen_renders_only_for_authenticated_users(): void
     {
         $response = $this->get('/x-102/offline-form-inbox');

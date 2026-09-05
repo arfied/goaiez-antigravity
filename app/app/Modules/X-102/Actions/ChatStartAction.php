@@ -7,29 +7,33 @@ namespace App\Modules\X102\Actions;
 use App\Modules\X102\Events\ChatStarted;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X110\Domain\PixelEngine;
+use App\Services\Ai\AiSpend;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 final class ChatStartAction
 {
     private PixelEngine $pixelEngine;
+    private AiSpend $aiSpend;
 
-    public function __construct(?PixelEngine $pixelEngine = null)
+    public function __construct(?PixelEngine $pixelEngine = null, ?AiSpend $aiSpend = null)
     {
         $this->pixelEngine = $pixelEngine ?? app(PixelEngine::class);
+        $this->aiSpend = $aiSpend ?? app(AiSpend::class);
     }
 
-    public function handle(int $businessId, ?string $visitorIp = null, bool $isAiCapped = false, ?string $pixelSessionToken = null): ChatSession
+    public function handle(int $businessId, ?string $visitorIp = null, ?bool $isAiCapped = null, ?string $pixelSessionToken = null): ChatSession
     {
+        $capped = $isAiCapped ?? ! $this->aiSpend->allows();
         $pageContext = $pixelSessionToken ? $this->pixelEngine->pageContextForSession($businessId, $pixelSessionToken) : null;
 
         $session = ChatSession::create([
             'business_id' => $businessId,
             'session_token' => 'chat_sess_'.Str::random(16),
             'visitor_ip' => $visitorIp,
-            'status' => $isAiCapped ? 'offline_form' : 'active',
+            'status' => $capped ? 'offline_form' : 'active',
             'rage_clicks_count' => 0,
-            'is_ai_capped' => $isAiCapped,
+            'is_ai_capped' => $capped,
             'pixel_session_token' => $pixelSessionToken,
             'page_context' => $pageContext,
         ]);
@@ -38,7 +42,7 @@ final class ChatStartAction
             businessId: $businessId,
             sessionId: $session->id,
             sessionToken: $session->session_token,
-            isAiCapped: $isAiCapped
+            isAiCapped: $capped
         ));
 
         return $session;
