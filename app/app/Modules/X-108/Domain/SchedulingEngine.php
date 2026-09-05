@@ -8,8 +8,10 @@ use App\Modules\X108\Events\AppointmentBooked;
 use App\Modules\X108\Events\SlotLocked;
 use App\Modules\X108\Models\Appointment;
 use App\Modules\X108\Models\SlotLock;
+use App\Modules\X108\Models\AvailabilityRule;
 use App\Modules\X108\Models\Waitlist;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -41,18 +43,24 @@ final class SchedulingEngine
 
         $unavailable = array_merge($bookedHours, $lockedHours);
 
+        $blackouts = AvailabilityRule::where('business_id', $businessId)
+            ->where('is_blackout', true)
+            ->where('day_of_week', $baseDate->dayOfWeekIso)
+            ->get();
+
         $availableSlots = [];
         foreach ($allSlotHours as $hour) {
-            if (! in_array($hour, $unavailable, true)) {
-                $start = $baseDate->copy()->setHour($hour)->setMinute(0);
-                $end = $start->copy()->addHours(2);
-                $availableSlots[] = [
-                    'start_time' => $start->toIso8601String(),
-                    'end_time' => $end->toIso8601String(),
-                    'formatted_window' => $start->format('g:i A').' - '.$end->format('g:i A'),
-                    'is_vip_reserved' => ($hour === 9), // 09:00 AM reserved for members
-                ];
+            if (in_array($hour, $unavailable, true) || $this->isBlackedOut($hour, $blackouts)) {
+                continue;
             }
+            $start = $baseDate->copy()->setHour($hour)->setMinute(0);
+            $end = $start->copy()->addHours(2);
+            $availableSlots[] = [
+                'start_time' => $start->toIso8601String(),
+                'end_time' => $end->toIso8601String(),
+                'formatted_window' => $start->format('g:i A').' - '.$end->format('g:i A'),
+                'is_vip_reserved' => ($hour === 9), // 09:00 AM reserved for members
+            ];
         }
 
         // VIP Member Priority Rule (TEST ANCHOR):
@@ -69,6 +77,20 @@ final class SchedulingEngine
             'offered_slots' => $offeredSlots,
             'slots_count' => count($offeredSlots),
         ];
+    }
+
+    private function isBlackedOut(int $hour, Collection $blackouts): bool
+    {
+        foreach ($blackouts as $rule) {
+            $start = Carbon::parse($rule->start_time)->hour;
+            $end = Carbon::parse($rule->end_time)->hour;
+
+            if ($hour >= $start && $hour < $end) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
