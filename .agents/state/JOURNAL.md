@@ -808,3 +808,4 @@
 - `2026-09-05T17:35:30` note: correction to 2026-09-05T17:12:44 note: ConsentService.php:65 is the state-validity refusal branch, not the tenant-scoped suppression check (which is at :34) nor the grant (which is at :91). SendRequestedListener.php:33 is 'sms', not 'transactional'; the 'transactional' value is resolved earlier into $consentState which is passed at :34.
 - `2026-09-05T17:35:51` (R245) X-103 — drop ssl_installed from PageVersion because true SSL establishment requires EdgeZone from X-157 deploy path, which itself lacks credentials; routing to UNRESOLVED missing dependency rather than mocking.
 - `2026-09-05T17:48:23` (R245) X-103 — drop constant-true ssl_enabled column from page_versions because it has zero readers and was a duplicate of ssl_installed
+- `2026-09-05T17:50:38` stage journey = 6
