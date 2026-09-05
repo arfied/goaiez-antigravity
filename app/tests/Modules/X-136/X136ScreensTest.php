@@ -1,0 +1,140 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\X136;
+
+use App\Models\User;
+use App\Enums\UserRole;
+use App\Modules\X136\Models\Signal;
+use App\Modules\X136\Models\SignalScore;
+use App\Modules\X136\Ui\CoolingView;
+use App\Support\Tenancy;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use Tests\TestCase;
+
+class X136ScreensTest extends TestCase
+{
+
+    protected int $businessId;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->businessId = TestCase::provisionTenant()->id;
+        Tenancy::set($this->businessId);
+    }
+
+    public function test_cooling_view_mount_and_empty(): void
+    {
+        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->assertOk()
+            ->assertSee('No cooling signals yet');
+    }
+
+    public function test_cooling_view_sample_state(): void
+    {
+        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->call('toggleSample')
+            ->assertSee('John Doe')
+            ->assertSee('Jane Smith')
+            ->call('markDecayed', 'John Doe');
+
+        $this->assertSame(0, SignalScore::where('business_id', $this->businessId)->count());
+    }
+
+    public function test_cooling_view_shows_signals(): void
+    {
+        $s = Signal::create([
+            'business_id' => $this->businessId,
+            'prospect_identifier' => 'test-prospect',
+            'signal_type' => 'test_type'
+        ]);
+
+        SignalScore::create([
+            'business_id' => $this->businessId,
+            'signal_id' => $s->id,
+            'prospect_identifier' => 'test-prospect',
+            'signal_value' => 75.0,
+            'cooling_status' => 'cooling',
+            'is_high_intent' => true,
+        ]);
+
+        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->assertSee('test-prospect')
+            ->assertSee('75')
+            ->assertSee('cooling');
+    }
+
+    public function test_cooling_view_mark_decayed_success(): void
+    {
+        $s = Signal::create([
+            'business_id' => $this->businessId,
+            'prospect_identifier' => 'test-prospect',
+            'signal_type' => 'test_type'
+        ]);
+
+        $score = SignalScore::create([
+            'business_id' => $this->businessId,
+            'signal_id' => $s->id,
+            'prospect_identifier' => 'test-prospect',
+            'signal_value' => 75.0,
+            'cooling_status' => 'cooling',
+            'is_high_intent' => true,
+        ]);
+
+        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->call('markDecayed', 'test-prospect')
+            ->assertOk();
+
+        $this->assertSame('decayed', $score->fresh()->cooling_status);
+    }
+
+    public function test_cooling_view_mark_decayed_unknown(): void
+    {
+        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->call('markDecayed', 'unknown-prospect')
+            ->assertSee('Unknown prospect identifier')
+            ->assertSee('Action failed');
+    }
+
+    /**
+     * [G3-27] a signal never sends
+     */
+    public function test_cooling_view_never_a_send(): void
+    {
+        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->assertSee('A signal informs, it never sends')
+            ->assertDontSeeHtml('Send Message')
+            ->assertDontSeeHtml('wire:click="send"');
+    }
+
+    public function test_cooling_view_get_route(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        $s = Signal::create([
+            'business_id' => $biz->id,
+            'prospect_identifier' => 'seeded-prospect',
+            'signal_type' => 'test_type'
+        ]);
+
+        SignalScore::create([
+            'business_id' => $biz->id,
+            'signal_id' => $s->id,
+            'prospect_identifier' => 'seeded-prospect',
+            'signal_value' => 80.0,
+            'cooling_status' => 'fresh',
+            'is_high_intent' => true,
+        ]);
+
+        $this->get(route('x-136.cooling'))
+            ->assertOk()
+            ->assertSee('seeded-prospect')
+            ->assertSee('80');
+    }
+}
