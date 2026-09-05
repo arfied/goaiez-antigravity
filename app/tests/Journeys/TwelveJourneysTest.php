@@ -1,4 +1,4 @@
-<?php
+
 
 declare(strict_types=1);
 
@@ -67,13 +67,129 @@ final class TwelveJourneysTest extends TestCase
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS
     // ═══════════════════════════════════════════════════════════════════
 
+
+    private function subscribedTenant(array $tenant): array
+    {
+        $loginId = \App\Services\PlatformCredentials::get('authorize_net_api_login_id');
+        $clientKey = \App\Services\PlatformCredentials::get('authorize_net_public_client_key');
+
+        if (! $clientKey) {
+            throw new \RuntimeException('UNRESOLVED — authorize_net_public_client_key is missing');
+        }
+
+        $business = \App\Models\Business::find($tenant['id']);
+
+        $req = [
+            'securePaymentContainerRequest' => [
+                'merchantAuthentication' => [
+                    'name' => $loginId,
+                    'clientKey' => $clientKey,
+                ],
+                'data' => [
+                    'type' => 'TOKEN',
+                    'id' => '12345678-90ab-cdef-1234-567890abcdef',
+                    'token' => [
+                        'cardNumber' => '4007000000027',
+                        'expirationDate' => '2030-12',
+                        'cardCode' => '123',
+                        'zip' => '90210',
+                        'fullName' => 'Test User',
+                    ],
+                ],
+            ],
+        ];
+
+        $json = app(\App\Services\Billing\Gateway\AuthorizeNetStub::class)->post('https://api.authorize.net/xml/v1/request.api', $req);
+        if ($json['messages']['resultCode'] !== 'Ok') {
+            throw new \RuntimeException('UNRESOLVED — Sandbox refused tokenize: '.$json['messages']['message'][0]['text']);
+        }
+        $opaqueDataValue = $json['opaqueData']['dataValue'];
+
+        $user = \App\Models\User::where('id', $business->owner_user_id)->first();
+        if (!$user) {
+            $user = \App\Models\User::factory()->create();
+            $business->owner_user_id = $user->id;
+            $business->save();
+        }
+
+        $this->actingAs($user);
+
+        $gateway = app(\App\Services\Billing\AuthorizeNetGateway::class);
+        $subs = app(\App\Services\Billing\Subscriptions::class);
+
+        try {
+            $sub = $subs->create($business, \App\Enums\Plan::Base, $opaqueDataValue);
+        } catch (\App\Exceptions\PaymentFailedException $e) {
+            throw new \RuntimeException('UNRESOLVED — Sandbox refused subscription: '.$e->getMessage());
+        }
+
+        return ['business' => $business, 'subscription_id' => $sub->authorize_net_subscription_id];
+    }
+
+    private function personWithConsentedNumber(array $tenant): array
+    {
+        $phone = '+1555012' . rand(1000, 9999);
+        $person = \App\Modules\X121\Models\Person::create([
+            'business_id' => $tenant['id'],
+            'first_name' => 'Review Person',
+            'phone' => $phone,
+        ]);
+
+        $locationId = \Illuminate\Support\Facades\DB::table('locations')->where('business_id', $tenant['id'])->value('id');
+        if (!$locationId) {
+            $locationId = \Illuminate\Support\Facades\DB::table('locations')->insertGetId([
+                'business_id' => $tenant['id'],
+                'name' => 'HQ',
+                'timezone' => 'America/Chicago',
+            ]);
+        } else {
+            \Illuminate\Support\Facades\DB::table('locations')->where('id', $locationId)->update(['timezone' => 'America/Chicago']);
+        }
+
+        $customer = \App\Models\Customer::forceCreate([
+            'id' => $person->id,
+            'business_id' => $tenant['id'],
+            'location_id' => $locationId,
+            'phone' => $phone,
+            'name' => 'Review Person',
+            'region_code' => 'TX',
+        ]);
+
+        $capture = new \App\Services\Consent\ConsentCapture(
+            \App\Enums\CapturedBy::Platform,
+            \App\Enums\CaptureSurface::FeedbackPage,
+            \App\Enums\ConsentType::ExpressWritten,
+            'v1.0',
+            'web',
+            [
+                'url' => 'https://example.com',
+                'ip_hash' => \App\Support\HashedIp::hash('127.0.0.1'),
+                'user_agent' => 'test',
+            ]
+        );
+        app(\App\Services\Consent\ConsentService::class)->record($customer, \App\Enums\OutreachChannel::Sms, $capture, 'journey fixture');
+
+        return $person->toArray();
+    }
     private function fundedTenant(): array
     {
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
         $tenant = $this->tenantWithLiveNumber();
         $allowance = (int) app(DefaultsRegistry::class)->entitlement(Plan::Base, 'credits.monthly_grant.sms');
 
+        $this->subscribedTenant($tenant);
+
+        if (!app(\App\Services\Billing\Subscriptions::class)->isEntitled(\App\Models\Business::find($tenant['id']))) {
+            $status = \App\Modules\X111\Models\Subscription::where('business_id', $tenant['id'])->value('status');
+            throw new \RuntimeException('UNRESOLVED — ' . $status);
+        }
+
         Tenancy::set($tenant['id']);
         app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, $allowance, 'journey fixture (owner ruling 2026-09-05)');
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 10000, 'journey fixture topup');
 
         loadEveryRequiredRegister(OutreachChannel::Sms);
 
@@ -377,12 +493,14 @@ final class TwelveJourneysTest extends TestCase
         $this->assertQueueIsNotSync();
 
         $tenant = $this->fundedTenant();
-        $person = $this->personWithPendingSteps($tenant, count: 0);
+        $person = $this->personWithConsentedNumber($tenant);
 
         $this->completeJob($tenant, $person);
         $this->drainQueue();
 
         $invites = $this->reviewInvitesFor($person);
+        
+        
         $this->assertCount(1, $invites, 'A completed job must ask ONCE — not zero, not twice.');
 
         // ⭐ Completing a second job must NOT produce a second invite inside the
