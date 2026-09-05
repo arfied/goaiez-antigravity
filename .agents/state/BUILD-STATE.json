@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T13:11:33",
+ "updated": "2026-09-05T13:27:15",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -696,6 +696,36 @@
      "stage": "capability",
      "why": "G1-39 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
      "at": "2026-09-05T13:11:33"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-73 \u2014 fires only on a milestone the CUSTOMER accepted, never an internal status change; grep -rniE 'milestone' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of milestones is not implemented here",
+     "at": "2026-09-05T13:27:15"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-75 \u2014 a pricing STRUCTURE, not a promotion; grep -rniE 'structure|promotion' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pricing structures or promotions is not implemented here",
+     "at": "2026-09-05T13:27:15"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-81 \u2014 issuer_scope=tenant (R190) \u2014 a tenant gifts their customer; grep -rniE 'issuer|gift' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of gift cards or issuer scope is not implemented here",
+     "at": "2026-09-05T13:27:15"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G1-82 \u2014 pause STOPS the meter; grep -rniE 'pause|meter' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pausing or metering is not implemented here",
+     "at": "2026-09-05T13:27:15"
+    },
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G17-31 \u2014 R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here",
+     "at": "2026-09-05T13:27:15"
     }
    ]
   },
@@ -1688,6 +1718,36 @@
    "stage": "capability",
    "why": "G1-39 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
    "at": "2026-09-05T13:11:33"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-73 \u2014 fires only on a milestone the CUSTOMER accepted, never an internal status change; grep -rniE 'milestone' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of milestones is not implemented here",
+   "at": "2026-09-05T13:27:15"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-75 \u2014 a pricing STRUCTURE, not a promotion; grep -rniE 'structure|promotion' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pricing structures or promotions is not implemented here",
+   "at": "2026-09-05T13:27:15"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-81 \u2014 issuer_scope=tenant (R190) \u2014 a tenant gifts their customer; grep -rniE 'issuer|gift' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of gift cards or issuer scope is not implemented here",
+   "at": "2026-09-05T13:27:15"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G1-82 \u2014 pause STOPS the meter; grep -rniE 'pause|meter' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pausing or metering is not implemented here",
+   "at": "2026-09-05T13:27:15"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G17-31 \u2014 R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here",
+   "at": "2026-09-05T13:27:15"
   }
  ],
  "decisions": [
