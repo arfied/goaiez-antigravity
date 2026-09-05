@@ -315,7 +315,32 @@ class X108Test extends TestCase
      */
     public function test_g17_27_localised_slots(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Localised Slots', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $date = now()->addDays(3)->format('Y-m-d');
+        $res = $this->avail->handle($biz->id, $date, isMember: true);
+
+        $this->assertNotEmpty($res['offered_slots']);
+
+        foreach ($res['offered_slots'] as $slot) {
+            // an explicit offset is the only form a browser can localise without guessing
+            $this->assertMatchesRegularExpression(
+                '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/',
+                $slot['start_time'],
+                'start_time must carry an explicit UTC offset'
+            );
+            $this->assertMatchesRegularExpression(
+                '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/',
+                $slot['end_time'],
+                'end_time must carry an explicit UTC offset'
+            );
+            $this->assertSame(
+                $slot['start_time'],
+                Carbon::parse($slot['start_time'])->toIso8601String(),
+                'the string round-trips through Carbon unchanged, so it is unambiguous'
+            );
+        }
     }
 
     /**
