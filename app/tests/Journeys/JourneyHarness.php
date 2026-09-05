@@ -15,6 +15,7 @@ use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X118\Ui\ProspectSignup;
+use App\Modules\X121\Actions\JobCreateAction;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
 use App\Modules\X162\Models\DispatchAssignment;
@@ -388,18 +389,23 @@ trait JourneyHarness
     private function bookFromQuote(array $tenant, array $quote): array
     {
         $personId = DB::table('people')->where('business_id', $tenant['id'])->value('id');
-        if (!$personId) {
-            $personId = DB::table('customers')->where('business_id', $tenant['id'])->value('id');
+        if (! $personId) {
+            $personId = DB::table('people')->insertGetId([
+                'business_id' => $tenant['id'],
+                'first_name' => 'Journey',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
-        $action = new \App\Modules\X121\Actions\JobCreateAction();
+        $action = new JobCreateAction;
         $res = $action->handle(
             businessId: $tenant['id'],
             personId: (int) $personId,
             title: 'Drain Unblock',
             priceCents: $quote['amount'] ?? 0
         );
-        
+
         DB::table('work_orders')->where('id', $res['job_id'])->update(['status' => 'booked']);
 
         return ['status' => 'booked', 'job_id' => (string) $res['job_id']];
@@ -630,7 +636,7 @@ trait JourneyHarness
             $roleId
         );
 
-        $jobRes = (new \App\Modules\X121\Actions\JobCreateAction())->handle(
+        $jobRes = (new JobCreateAction)->handle(
             businessId: $tenant['id'],
             personId: $person['id'],
             title: 'Real Job',
@@ -639,7 +645,7 @@ trait JourneyHarness
         $jobId = $jobRes['job_id'];
 
         DB::table('work_orders')->where('id', $jobId)->update(['status' => 'committed']);
-        $job = \App\Modules\X121\Models\Job::find($jobId);
+        $job = Job::find($jobId);
 
         DispatchAssignment::create([
             'business_id' => $tenant['id'],
