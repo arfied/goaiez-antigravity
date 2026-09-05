@@ -109,7 +109,7 @@ class X16ScreensTest extends TestCase
     {
         Livewire::test(ServiceareaPolygon::class, ['businessId' => $this->businessId])
             ->assertOk()
-            ->assertSee('No polygons defined yet');
+            ->assertSee('No service area yet');
     }
 
     public function test_servicearea_polygon_sample_state(): void
@@ -152,7 +152,7 @@ class X16ScreensTest extends TestCase
             ->set('name', 'Two points')
             ->set('pointsText', "41.8, -87.6\n41.9, -87.6")
             ->call('define')
-            ->assertSee('Polygon requires at least 3 points.');
+            ->assertSee('a service area needs at least three points');
     }
 
     /**

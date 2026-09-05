@@ -37,7 +37,7 @@ final class MapsPolygonAction
     public function define(int $businessId, string $name, array $points): ServicePolygon
     {
         if (count($points) < 3) {
-            throw new \DomainException('Polygon requires at least 3 points.');
+            throw new \DomainException('a service area needs at least three points');
         }
 
         $lats = array_column($points, 0);

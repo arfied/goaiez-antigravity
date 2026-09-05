@@ -1,6 +1,6 @@
 <div>
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">Service Area Polygons</h2>
+        <h2 class="text-xl font-semibold">Service area</h2>
         <x-ui.button wire:click="toggleSample" size="sm" variant="secondary">
             {{ $isSample ? 'Hide sample' : 'Show sample' }}
         </x-ui.button>
@@ -13,9 +13,7 @@
     @endif
 
     @if($actionFailed)
-        <x-ui.error-panel heading="Action failed">
-            {{ $actionFailed }}
-        </x-ui.error-panel>
+        <x-ui.error-panel heading="Action failed" />
     @endif
 
     <div class="mb-6 p-4 border rounded-md">
@@ -24,6 +22,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700">Name</label>
                 <input type="text" wire:model="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm">
+                @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Points (lat,lng per line)</label>
@@ -37,21 +36,21 @@
     </div>
 
     @if($polygons->isEmpty())
-        <x-ui.empty-state heading="No polygons defined yet" />
+        <x-ui.empty-state heading="No service area yet" />
     @else
         <div class="space-y-4">
             @foreach($polygons as $polygon)
                 <div class="p-4 border rounded-md flex justify-between items-center">
                     <div>
-                        <div class="font-medium">
+                        <div class="font-medium flex items-center">
                             {{ $polygon->polygon_name }}
                             @if($polygon->is_active)
-                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Active</span>
+                                <x-ui.status-pill state="ok" label="Active" class="ml-2" />
                             @else
-                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Inactive</span>
+                                <x-ui.status-pill state="unknown" label="Inactive" class="ml-2" />
                             @endif
                         </div>
-                        <div class="text-sm text-gray-500">
+                        <div class="text-sm text-gray-500 mt-1">
                             {{ count($polygon->coordinates) }} points
                         </div>
                         <div class="text-xs text-gray-400 mt-1">

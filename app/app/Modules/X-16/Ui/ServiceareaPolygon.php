@@ -25,6 +25,7 @@ class ServiceareaPolygon extends Component
                 abort(403, 'Tenant context is required');
             }
         }
+        Tenancy::set($this->businessId);
     }
 
     public string $name = '';
@@ -33,7 +34,7 @@ class ServiceareaPolygon extends Component
 
     public ?string $refusal = null;
 
-    public ?string $actionFailed = null;
+    public bool $actionFailed = false;
 
     public function toggleSample(): void
     {
@@ -47,10 +48,10 @@ class ServiceareaPolygon extends Component
         }
 
         $this->refusal = null;
-        $this->actionFailed = null;
+        $this->actionFailed = false;
 
         if (trim($this->name) === '') {
-            $this->actionFailed = 'Name cannot be empty';
+            $this->addError('name', 'Name cannot be empty');
 
             return;
         }
@@ -74,7 +75,7 @@ class ServiceareaPolygon extends Component
         } catch (\DomainException $e) {
             $this->refusal = $e->getMessage();
         } catch (\Exception $e) {
-            $this->actionFailed = $e->getMessage();
+            $this->actionFailed = true;
         }
     }
 
@@ -85,14 +86,14 @@ class ServiceareaPolygon extends Component
         }
 
         $this->refusal = null;
-        $this->actionFailed = null;
+        $this->actionFailed = false;
 
         try {
             $current = ServicePolygon::where('business_id', $this->businessId)->find($polygonId);
             $nextState = $current ? ! $current->is_active : false;
             $action->setActive($this->businessId, $polygonId, $nextState);
         } catch (\Exception $e) {
-            $this->actionFailed = $e->getMessage();
+            $this->actionFailed = true;
         }
     }
 
