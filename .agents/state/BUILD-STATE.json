@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T04:12:43",
+ "updated": "2026-09-05T04:28:02",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1467,6 +1467,12 @@
    "module": "X-157",
    "chose": "A deployment records the page it rendered and supersedes only the previous deployment of that same page. The deployments row carried no page id, so publishing a second page superseded the first and its deploy hash began returning 404 at the route guard - a site with two pages could serve only the one published last. The listener fires once per SitePublished and that event carries a pageId, and one deploy renders exactly one page with one title and one canonical from one commit id, so the row is what was missing. Rejected: rendering every published page into a single artifact, because an artifact with two canonical links is not a page and serving a page per slug is a new transport. Rejected: a foreign key from deployments to pages, because pages belongs to X-103 and a cascade across module boundaries is coupling this change has no mandate for - the column is indexed and nullable, and a zone deploy still passes no page id.",
    "at": "2026-09-05T04:12:43",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "A rollback restores only the previous deployment of the same page. The predecessor query was scoped to the business and the zone and the superseded status alone, so rolling back one page promoted whichever superseded row in the whole zone had the highest id. After SITE-50 gave a deployment a page id this became reachable: publishing home twice and then about, then rolling back about, restored the retired first home deploy and left the home page with two live deployments and a retired artifact back on the wire. The page scope is the same clause the supersede path already carries, so both halves of the deployment lifecycle now agree, and a zone deploy whose page id is null still restores only a previous zone deploy because a null value compiles to page id is null. Rejected: leaving the predecessor query alone and having the route guard pick a winner among two deployed rows, because two live rows for one page is the exact state the supersede clause exists to prevent and the guard has no basis to choose. Rejected: refusing a rollback when the page has no predecessor, because a page whose only deploy is rolled back correctly leaves the site without that page, which is what the caller asked for.",
+   "at": "2026-09-05T04:28:02",
    "ruling": "R245"
   }
  ]
