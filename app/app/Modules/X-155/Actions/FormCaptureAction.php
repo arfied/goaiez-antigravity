@@ -8,6 +8,7 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -124,7 +125,7 @@ final class FormCaptureAction
         foreach (['date_of_birth', 'dob'] as $key) {
             if (! empty($payload[$key])) {
                 try {
-                    $dob = \Carbon\Carbon::parse($payload[$key]);
+                    $dob = Carbon::parse($payload[$key]);
                     if ($dob->diffInYears(now()) < 18) {
                         return true;
                     }

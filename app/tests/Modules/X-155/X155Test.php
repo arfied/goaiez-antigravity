@@ -10,6 +10,7 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X155\Actions\FormAbandonPointAction;
 use App\Modules\X155\Actions\FormAdaptiveStepsAction;
 use App\Modules\X155\Actions\FormCaptureAction;
+use App\Modules\X155\Actions\FormGenerateAction;
 use App\Modules\X155\Actions\FormValidateAction;
 use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Events\FormSpamRejected;
@@ -21,6 +22,7 @@ use App\Modules\X155\Ui\SubmissionsThread;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -339,9 +341,9 @@ class X155Test extends TestCase
      */
     public function test_g5_07_wizard(): void
     {
-        \Illuminate\Support\Facades\Http::fake();
+        Http::fake();
 
-        $gen = new \App\Modules\X155\Actions\FormGenerateAction;
+        $gen = new FormGenerateAction;
 
         // ④ the field set, from ③ the description
         $plain = $gen->handle('I need their name, phone and email, and a preferred date');
@@ -361,7 +363,7 @@ class X155Test extends TestCase
         $this->assertEquals(['first_name'], array_column($aged['fields'], 'name'));
         $this->assertEquals(['under_18_gate'], array_column($aged['refused'], 'reason'));
 
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
 
         $biz = TestCase::provisionTenant(['name' => 'G5-07 Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
