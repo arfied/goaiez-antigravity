@@ -24,6 +24,8 @@ class SequenceBuilder extends Component
 
     public string $newTemplateName = '';
 
+    public ?string $composeError = null;
+
     public function duplicate(string $campaignId, CampaignCreateAction $action): void
     {
         try {
@@ -50,8 +52,11 @@ class SequenceBuilder extends Component
     public function compose(CampaignCreateAction $action): void
     {
         if (empty($this->newCampaignId) || empty($this->newTemplateName)) {
+            $this->composeError = 'A sequence needs a campaign id and a template name.';
             return;
         }
+
+        $this->composeError = null;
 
         try {
             $action->createCampaign($this->businessId, $this->newCampaignId, [

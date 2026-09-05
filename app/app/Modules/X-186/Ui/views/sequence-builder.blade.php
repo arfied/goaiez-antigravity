@@ -8,14 +8,30 @@
         
         <div class="bg-card border border-rule rounded-lg p-4 space-y-4">
             <h4 class="font-medium text-ink">Compose New Sequence</h4>
-            <div class="flex gap-4">
-                <input type="text" wire:model="newCampaignId" placeholder="Campaign ID" class="border border-rule rounded px-3 py-1" />
-                <select wire:model="newChannel" class="border border-rule rounded px-3 py-1">
-                    <option value="sms">SMS</option>
-                    <option value="email">Email</option>
-                </select>
-                <input type="text" wire:model="newTemplateName" placeholder="Template Name" class="border border-rule rounded px-3 py-1" />
-                <x-ui.button wire:click="compose" size="sm">Create</x-ui.button>
+            
+            @if ($composeError)
+                <x-ui.status-pill state="alert" label="{{ $composeError }}" />
+            @endif
+
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div class="w-full sm:w-auto">
+                    <label for="newCampaignId" class="block text-sm font-medium text-ink-2 mb-1">Campaign ID</label>
+                    <input type="text" id="newCampaignId" wire:model="newCampaignId" placeholder="Campaign ID" class="w-full sm:w-auto min-h-11 rounded-[--radius-field] border border-rule bg-paper px-4 text-base text-ink" />
+                </div>
+                <div class="w-full sm:w-auto">
+                    <label for="newChannel" class="block text-sm font-medium text-ink-2 mb-1">Channel</label>
+                    <select id="newChannel" wire:model="newChannel" class="w-full sm:w-auto min-h-11 rounded-[--radius-field] border border-rule bg-paper px-4 text-base text-ink">
+                        <option value="sms">SMS</option>
+                        <option value="email">Email</option>
+                    </select>
+                </div>
+                <div class="w-full sm:w-auto">
+                    <label for="newTemplateName" class="block text-sm font-medium text-ink-2 mb-1">Template Name</label>
+                    <input type="text" id="newTemplateName" wire:model="newTemplateName" placeholder="Template Name" class="w-full sm:w-auto min-h-11 rounded-[--radius-field] border border-rule bg-paper px-4 text-base text-ink" />
+                </div>
+                <div class="w-full sm:w-auto">
+                    <x-ui.button wire:click="compose" class="w-full sm:w-auto" size="sm">Create</x-ui.button>
+                </div>
             </div>
         </div>
 

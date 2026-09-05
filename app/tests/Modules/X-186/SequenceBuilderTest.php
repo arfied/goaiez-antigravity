@@ -40,9 +40,26 @@ class SequenceBuilderTest extends TestCase
             'delay_days' => 2,
         ]);
 
+        CampaignStep::create([
+            'business_id' => $biz->id,
+            'campaign_id' => 'LOCAL-CAMPAIGN',
+            'step_number' => 2,
+            'channel' => 'email',
+            'template_name' => 'local-followup',
+            'delay_days' => 3,
+        ]);
+
         Livewire::test(SequenceBuilder::class, ['businessId' => $biz->id])
             ->assertSee('LOCAL-CAMPAIGN')
+            ->assertSee('local-hello')
+            ->assertSee('local-followup')
+            ->assertSee('Step 1')
+            ->assertSee('Step 2')
             ->assertDontSee('FOREIGN-CAMPAIGN')
+            ->set('newCampaignId', '')
+            ->set('newTemplateName', '')
+            ->call('compose')
+            ->assertSee('A sequence needs a campaign id and a template name.')
             ->call('duplicate', 'LOCAL-CAMPAIGN')
             ->assertSee('LOCAL-CAMPAIGN-copy')
             ->set('newCampaignId', 'NEW-COMPOSED')
@@ -51,7 +68,15 @@ class SequenceBuilderTest extends TestCase
             ->call('compose')
             ->assertSee('NEW-COMPOSED');
 
-        $this->assertTrue(CampaignStep::where('business_id', $biz->id)->where('campaign_id', 'LOCAL-CAMPAIGN-copy')->exists());
+        $copiedSteps = CampaignStep::where('business_id', $biz->id)
+            ->where('campaign_id', 'LOCAL-CAMPAIGN-copy')
+            ->orderBy('step_number')
+            ->get();
+        
+        $this->assertCount(2, $copiedSteps);
+        $this->assertEquals(1, $copiedSteps[0]->step_number);
+        $this->assertEquals(2, $copiedSteps[1]->step_number);
+
         $this->assertTrue(CampaignStep::where('business_id', $biz->id)->where('campaign_id', 'NEW-COMPOSED')->exists());
     }
 }
