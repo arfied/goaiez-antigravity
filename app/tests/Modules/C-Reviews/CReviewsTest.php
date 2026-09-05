@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CReviews;
 
+use App\Modules\Contract\Events\SendRequested;
 use App\Modules\CReviews\Actions\QaTicketAction;
+use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Actions\ReviewReplyAction;
 use App\Modules\CReviews\Actions\ReviewRequestAction;
 use App\Modules\CReviews\Actions\ReviewSyncAction;
-use App\Modules\CReviews\Actions\ReviewerContactAction;
 use App\Modules\CReviews\Events\CsatRequested;
 use App\Modules\CReviews\Events\FirstWin;
 use App\Modules\CReviews\Events\ReplyPublished;
@@ -18,7 +19,6 @@ use App\Modules\CReviews\Models\QaSetting;
 use App\Modules\CReviews\Models\ReviewReply;
 use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
-use App\Modules\Contract\Events\SendRequested;
 use App\Modules\X171\Events\JobCompleted;
 use App\Modules\X181\Models\QaTicket;
 use App\Modules\X182\Models\Person;
@@ -349,13 +349,13 @@ final class CReviewsTest extends TestCase
             return $e->messageClass === 'marketing';
         });
 
-                // 2b. Refused by the incentive lint -> no send, no row (main's assertion)
+        // 2b. Refused by the incentive lint -> no send, no row (main's assertion)
         Event::fake([SendRequested::class]);
         $resIncentive = $this->requestAction->handle($biz->id, $customerId, 'Leave a review for 10% off your next visit!', 'google');
         $this->assertEquals('refused', $resIncentive['status']);
         Event::assertNotDispatched(SendRequested::class);
 
-// 3. Second request inside the window on a different platform (yelp) is refused
+        // 3. Second request inside the window on a different platform (yelp) is refused
         Event::fake([SendRequested::class]);
         $res2 = $this->requestAction->handle($biz->id, $customerId, 'How did it go again?', 'yelp');
         $this->assertEquals('refused', $res2['status']);
@@ -538,5 +538,4 @@ final class CReviewsTest extends TestCase
 
         $this->assertEquals('sent', $res['status']);
     }
-
 }
