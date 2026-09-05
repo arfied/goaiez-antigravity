@@ -221,6 +221,44 @@ class X157Test extends TestCase
         $this->assertStringNotContainsString('dni-pool-x137', $html);
     }
 
+    public function test_the_pixel_flag_alone_does_not_put_a_pixel_on_the_page(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zone = $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $commitId = 'commit_'.Str::random(16);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => $commitId,
+            'content_blocks' => [],
+            'pixel_installed' => true,
+        ]);
+
+        $deploy = $this->deployAction->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: $commitId,
+            businessName: $biz->name
+        );
+
+        $html = Storage::disk('local')->get("sites/{$deploy['deploy_hash']}.html");
+
+        $this->assertStringNotContainsString('x110-pixel', $html);
+    }
+
     public function test_feature_flags_absent(): void
     {
         Storage::fake('local');
@@ -282,6 +320,7 @@ class X157Test extends TestCase
             'page_id' => $page->id,
             'commit_id' => $commitId,
             'content_blocks' => [
+                ['type' => 'pixel_script'],
                 ['type' => 'chat_widget'],
                 ['type' => 'form_capture'],
                 ['type' => 'dni_script'],

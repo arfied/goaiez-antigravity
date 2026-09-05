@@ -149,10 +149,12 @@ class X103Test extends TestCase
         $res = $this->publishAction->handle($biz->id, $page->id, []);
 
         $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertTrue($version->pixel_installed);
         $this->assertTrue($version->chat_installed);
         $this->assertTrue($version->form_capture_installed);
         $this->assertTrue($version->dni_installed);
         $this->assertSame([
+            ['type' => 'pixel_script'],
             ['type' => 'chat_widget'],
             ['type' => 'form_capture'],
             ['type' => 'dni_script'],
@@ -217,6 +219,7 @@ class X103Test extends TestCase
         $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
         $this->assertEquals($blocks, array_slice($version->content_blocks, 0, count($blocks)));
         $this->assertEquals([
+            ['type' => 'pixel_script'],
             ['type' => 'chat_widget'],
             ['type' => 'form_capture'],
             ['type' => 'dni_script'],

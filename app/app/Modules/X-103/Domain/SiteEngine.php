@@ -27,7 +27,7 @@ final class SiteEngine
 
             $commitId = 'commit_'.Str::random(16);
 
-            $required = ['chat_widget', 'form_capture', 'dni_script', 'seo_tags', 'schema_markup'];
+            $required = ['pixel_script', 'chat_widget', 'form_capture', 'dni_script', 'seo_tags', 'schema_markup'];
             foreach ($required as $type) {
                 $found = false;
                 foreach ($contentBlocks as $block) {
@@ -47,7 +47,7 @@ final class SiteEngine
                 'page_id' => $page->id,
                 'commit_id' => $commitId,
                 'content_blocks' => $contentBlocks,
-                'pixel_installed' => true, // G9-04 full-stack site law
+                'pixel_installed' => in_array('pixel_script', $blockTypes, true), // G9-04 full-stack site law
                 'chat_installed' => in_array('chat_widget', $blockTypes, true), // G9-04 full-stack site law
                 'form_capture_installed' => in_array('form_capture', $blockTypes, true), // G9-04 full-stack site law
                 'dni_installed' => in_array('dni_script', $blockTypes, true), // G9-04 full-stack site law

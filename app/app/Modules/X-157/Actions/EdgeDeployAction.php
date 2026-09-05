@@ -100,13 +100,14 @@ final class EdgeDeployAction
             if ($commitId) {
                 $version = PageVersion::where('commit_id', $commitId)->first();
                 if ($version) {
-                    if ($version->pixel_installed) {
-                        $pixelSrc = route('pixel.bundle.pointer', absolute: false);
-                        $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\"></script>\n";
-                    }
                     $blockTypes = is_array($version->content_blocks)
                         ? array_column($version->content_blocks, 'type')
                         : [];
+
+                    if (in_array('pixel_script', $blockTypes, true)) {
+                        $pixelSrc = route('pixel.bundle.pointer', absolute: false);
+                        $html .= "<script id=\"x110-pixel\" src=\"{$pixelSrc}\"></script>\n";
+                    }
 
                     $hasChat = in_array('chat_widget', $blockTypes, true);
                     $hasForm = in_array('form_capture', $blockTypes, true);
