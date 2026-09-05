@@ -24,10 +24,10 @@ class InstallVerifyTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Install Verify Tenant']);
         Tenancy::set((int) $biz->id);
 
-        $loc = \App\Models\Location::create([
-            'business_id' => $biz->id,
-            'name' => 'HQ',
-        ]);
+        $loc = \App\Models\Location::where('business_id', $biz->id)->first();
+        if (!$loc) {
+            $loc = \App\Models\Location::create(['business_id' => $biz->id, 'name' => 'HQ']);
+        }
         app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:1', true);
 
         Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
@@ -57,12 +57,11 @@ class InstallVerifyTest extends TestCase
         $this->seed(UiReviewSeeder::class);
         $owner = User::where('email', 'owner2@business.com')->firstOrFail();
         
-        $loc = \App\Models\Location::withoutGlobalScopes()->where('name', 'HQ')->first();
+        $this->actingAs($owner)->get('/account/tracking');
+        
+        $loc = \App\Models\Location::where('business_id', Tenancy::id())->first();
         if ($loc) {
-            Tenancy::actingAsUser($owner->id, function() use ($loc, $owner) {
-                Tenancy::set((int) $loc->business_id);
-                app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:' . $owner->id, true);
-            });
+            app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:' . $owner->id, true);
         }
 
         $this->actingAs($owner)->get('/account/tracking')
