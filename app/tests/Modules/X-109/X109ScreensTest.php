@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X109;
 
 use App\Models\User;
-use App\Models\UserRole;
+use App\Enums\UserRole;
 use App\Modules\X109\Models\CaptchaQuota;
 use App\Modules\X109\Ui\ManualQueue;
 use App\Modules\X109\Ui\SubmissionLog;
