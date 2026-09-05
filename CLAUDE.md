@@ -191,6 +191,20 @@ Watch for: <the trap that applies, by name>
   `Edit`/`Write` on it, which matches the owner's-file rule above. Do not plan a fix
   to it in a `REVIEWS.md` item — it is an `OWNER ACTION` every time. `git checkout
   HEAD -- <path>` is denied too, so a bad copy ships until the owner touches it.
+- **A stillborn dispatch is not a coder failure.** `launch-coder.sh` confirms the
+  pid two seconds after launch, which run 40 passed and then died on
+  `Error: Individual quota reached … Resets in 34m9s` / `AGY_EXIT=1` without ever
+  reading `KICKOFF.md` (tick 154). The tell is a dead pid with `REPORT.md`
+  unchanged, no commit and a clean tree. **Never review it as a failed wave, never
+  rewrite the brief it never read**, and re-dispatch after the reset — the same
+  `BRIEF.md`/`KICKOFF.md`, verbatim. Two stillborn launches in a row is an
+  `OWNER ACTION`, not a third launch: the quota is per-account and shared with
+  every other track running `agy` on this box.
+- **Read a coder log with the `Read` tool, never Bash.** `/home/goaiez/tmp` is
+  outside the supervisor's Bash sandbox — `cat`, `tail`, `ls` and `find` on
+  `/home/goaiez/tmp/agy-<track>-run<N>.log` are all refused with *"may only … from
+  the allowed working directories"* — but `Read` on the same absolute path returns
+  it. A tick that concludes it cannot see why a coder died has used the wrong tool.
 
 ## Style
 
