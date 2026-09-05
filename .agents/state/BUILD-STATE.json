@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T03:28:22",
+ "updated": "2026-09-05T06:29:21",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1455,6 +1455,12 @@
    "module": "X-16",
    "chose": "Service-area screen: polygons are defined and (de)activated through MapsPolygonAction::define/setActive (the module's only polygon write path); define refuses fewer than three points and refuses a fence whose bounding box is under 0.002 degrees on both axes \u2014 a fence around one building is geo-fenced ad targeting (G17-22, \u00a744 \u00b7 P-128) \u2014 and a refusal renders as 'Not a service area', never as a failure; setActive fails loudly on an unknown id; rows are never deleted; no map tiles \u2014 the polygon is typed as lat,lng lines",
    "at": "2026-09-05T03:28:22",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-135",
+   "chose": "Research-dossier screen: one dossier per research run, read from research_runs with its prospect_signals and icebreakers; research is never started from the screen \u2014 it fires only on a scored prospect in distress (G3-20, P-146) and its cost lands in ai_calls tagged research, which the screen meters by calendar month; the one write is a grounded icebreaker through IcebreakerGenerateAction::generateIcebreaker, which refuses an empty or non-http(s) source URL (G3-59 \u00b7 G5-26, P-120) \u2014 a refusal renders as 'Not grounded', never as a failure; the 200-at-generation fetch of the TEST ANCHOR waits on an outbound transport the suite cannot fake (Http::fake is forbidden), so the action validates the URL's shape until one exists; rows are never deleted",
+   "at": "2026-09-05T06:29:21",
    "ruling": "R245"
   }
  ],

@@ -27,6 +27,11 @@ final class IcebreakerGenerateAction
             throw new InvalidArgumentException('Icebreaker generation failed: every icebreaker must carry a valid source_url (TEST ANCHOR)');
         }
 
+        $scheme = parse_url($sourceUrl, PHP_URL_SCHEME);
+        if (filter_var($sourceUrl, FILTER_VALIDATE_URL) === false || ! in_array($scheme, ['http', 'https'])) {
+            throw new InvalidArgumentException('Icebreaker generation failed: the source must be an http(s) URL that can be fetched');
+        }
+
         $date = $observedDate ?? now()->toDateString();
 
         $icebreaker = Icebreaker::create([
