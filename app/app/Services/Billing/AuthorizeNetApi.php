@@ -322,7 +322,7 @@ final class AuthorizeNetApi
                 ],
             ],
             'validationMode' => $this->isProduction() ? 'liveMode' : 'testMode',
-        ], $businessId);
+        ], $businessId, null, ['E00039']);
 
         $id = $this->stringAt($body, 'customerPaymentProfileId');
 
@@ -833,7 +833,7 @@ final class AuthorizeNetApi
      *
      * @throws AuthorizeNetRequestFailed
      */
-    private function send(string $request, array $payload, int $businessId, ?string $refId = null): array
+    private function send(string $request, array $payload, int $businessId, ?string $refId = null, array $allowedErrorCodes = []): array
     {
         $url = $this->url();
 
@@ -894,7 +894,7 @@ final class AuthorizeNetApi
             throw AuthorizeNetRequestFailed::unreadable();
         }
 
-        $this->assertOk($body, $url, $businessId);
+        $this->assertOk($body, $url, $businessId, $allowedErrorCodes);
 
         return $body;
     }
@@ -960,10 +960,11 @@ final class AuthorizeNetApi
      * ⚠️ The 200-is-not-success check.
      *
      * @param  array<string, mixed>  $body
+     * @param  list<string>  $allowedErrorCodes
      *
      * @throws AuthorizeNetRequestFailed
      */
-    private function assertOk(array $body, string $url, int $businessId): void
+    private function assertOk(array $body, string $url, int $businessId, array $allowedErrorCodes = []): void
     {
         $messages = is_array($body['messages'] ?? null) ? $body['messages'] : [];
 
@@ -984,6 +985,10 @@ final class AuthorizeNetApi
                 // rejected. See AuthorizeNetRequestFailed.
                 $codes[] = $message['code'];
             }
+        }
+
+        if ($codes !== [] && count(array_diff($codes, $allowedErrorCodes)) === 0) {
+            return;
         }
 
         $failure = AuthorizeNetRequestFailed::fromResult($codes);
