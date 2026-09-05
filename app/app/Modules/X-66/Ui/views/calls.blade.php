@@ -52,12 +52,10 @@
                 <ul class="flex flex-col gap-3">
                     @foreach ($calls as $call)
                         @php
-                            $stateStr = match($call->status) {
-                                'answered', 'completed' => 'ok',
-                                'missed' => 'alert',
-                                'ringing' => 'attention',
-                                default => 'unknown',
-                            };
+                            $stateStr = 'unknown';
+                            if (in_array($call->status, ['answered', 'completed'])) $stateStr = 'ok';
+                            elseif ($call->status === 'missed') $stateStr = 'alert';
+                            elseif ($call->status === 'ringing') $stateStr = 'attention';
                             
                             $hasVoicemail = isset($voicemailsExist[$call->id]);
                             $hasTranscript = isset($transcriptsExist[$call->id]);

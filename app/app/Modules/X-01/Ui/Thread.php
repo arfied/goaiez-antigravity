@@ -7,7 +7,7 @@ namespace App\Modules\X01\Ui;
 use App\Models\Customer;
 use App\Modules\CAgent\Actions\AgentDraftAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -103,7 +103,7 @@ class Thread extends Component
             Tenancy::set($this->businessId);
         }
 
-        $conversations = ($this->businessId > 0 || Tenancy::isSet())
+        $conversations = ($this->businessId > 0 || Tenancy::check())
             ? Conversation::where('business_id', Tenancy::idOrFail())->get()
             : collect();
 

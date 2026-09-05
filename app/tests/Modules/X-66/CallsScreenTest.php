@@ -62,42 +62,28 @@ class CallsScreenTest extends TestCase
                 ->assertSee('No calls yet');
 
             // 2. Default - Two sessions
-            $completedSession = CallSession::create([
-                'business_id' => $biz->id,
-                'call_sid' => 'sid-1',
+            $completedSession = \Database\Factories\CallSessionFactory::new()->create(['business_id' => $biz->id, 
                 'from_phone' => '+11111111111',
-                'to_phone' => '+15559998888',
                 'status' => 'completed',
-                'latency_ms' => 150,
             ]);
 
-            $missedSession = CallSession::create([
-                'business_id' => $biz->id,
-                'call_sid' => 'sid-2',
+            $missedSession = \Database\Factories\CallSessionFactory::new()->create(['business_id' => $biz->id, 
                 'from_phone' => '+22222222222',
-                'to_phone' => '+15559998888',
                 'status' => 'missed',
-                'latency_ms' => 0,
             ]);
 
-            CallTurn::create([
-                'business_id' => $biz->id,
+            \Database\Factories\CallTurnFactory::new()->create(['business_id' => $biz->id, 
                 'session_id' => $completedSession->id,
-                'speaker' => 'caller',
                 'transcript' => 'I am calling about a quote.',
             ]);
 
-            CallTurn::create([
-                'business_id' => $biz->id,
+            \Database\Factories\CallTurnFactory::new()->create(['business_id' => $biz->id, 
                 'session_id' => $missedSession->id,
-                'speaker' => 'caller',
                 'transcript' => 'This is a missed call turn.',
             ]);
 
-            Voicemail::create([
-                'business_id' => $biz->id,
+            \Database\Factories\X66VoicemailFactory::new()->create(['business_id' => $biz->id, 'business_id' => $biz->id, 
                 'call_session_id' => $completedSession->id,
-                'audio_url' => 'https://example.com/audio1.mp3',
                 'transcription' => 'Voicemail for completed call.',
             ]);
 
@@ -116,5 +102,34 @@ class CallsScreenTest extends TestCase
                 ->assertSee('Voicemail for completed call.')
                 ->assertDontSee('This is a missed call turn.');
         });
+    }
+
+    public function test_screen_renders_for_tenant(): void
+    {
+        $owner = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        
+        \App\Support\Tenancy::actingAs($biz->id, function() use ($biz) {
+            $completedSession = \Database\Factories\CallSessionFactory::new()->create(['business_id' => $biz->id, 
+                'business_id' => $biz->id,
+                'from_phone' => '+11111111111',
+                'status' => 'completed',
+            ]);
+        });
+
+        $this->get(route('x-66.calls'))
+            ->assertOk()
+            ->assertSee('+11111111111');
+    }
+
+    public function test_screen_renders_for_admin(): void
+    {
+        $user = User::factory()->withSecondFactor()->create(['role' => \App\Enums\UserRole::SuperAdmin]);
+        $this->actingAs($user);
+        $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
+
+        $this->get(route('x-66.calls.admin'))
+            ->assertOk();
     }
 }
