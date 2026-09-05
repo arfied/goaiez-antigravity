@@ -245,6 +245,7 @@ class CReviewsTest extends TestCase
             'business_id' => $biz->id,
             'created_at' => now(),
         ]);
+        \Illuminate\Support\Facades\DB::statement("SELECT setval('customers_id_seq', (SELECT MAX(id) FROM customers))");
 
         ConsentRecord::create([
             'business_id' => $biz->id,
