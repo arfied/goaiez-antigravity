@@ -10,6 +10,8 @@ use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
+use App\Modules\X103\Events\PagePublished;
+use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use Carbon\Carbon;
@@ -81,6 +83,20 @@ class X103Test extends TestCase
         $optValidRes = $this->engine->proposeOptimization($biz->id, $page->id, ['hero' => 'Optimized Hero']);
         $this->assertEquals('proposal_submitted', $optValidRes['status']);
         Event::assertDispatched(ApprovalRequested::class);
+    }
+
+    public function test_anchor_site_published_shares_commit_id(): void
+    {
+        Event::fake([PagePublished::class, SitePublished::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'home', 'Homepage', false);
+        $pubRes = $this->publishAction->handle($biz->id, $page->id, ['hero' => 'Top HVAC Services']);
+
+        Event::assertDispatched(SitePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id']);
+        Event::assertDispatched(PagePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id']);
     }
 
     /**
