@@ -31,7 +31,9 @@ class ServiceareaPolygon extends Component
 
     public string $pointsText = '';
 
-    public ?string $error = null;
+    public ?string $refusal = null;
+
+    public ?string $actionFailed = null;
 
     public function toggleSample(): void
     {
@@ -44,10 +46,11 @@ class ServiceareaPolygon extends Component
             return;
         }
 
-        $this->error = null;
+        $this->refusal = null;
+        $this->actionFailed = null;
 
         if (trim($this->name) === '') {
-            $this->error = 'Name cannot be empty';
+            $this->actionFailed = 'Name cannot be empty';
 
             return;
         }
@@ -55,18 +58,23 @@ class ServiceareaPolygon extends Component
         $lines = array_filter(array_map('trim', explode("\n", $this->pointsText)));
         $points = [];
         foreach ($lines as $line) {
-            if (strpos($line, ',') !== false) {
-                [$lat, $lng] = explode(',', $line, 2);
-                $points[] = [(float) $lat, (float) $lng];
+            if (strpos($line, ',') === false) {
+                $this->addError('pointsText', 'One lat,lng pair per line');
+
+                return;
             }
+            [$lat, $lng] = explode(',', $line, 2);
+            $points[] = [(float) $lat, (float) $lng];
         }
 
         try {
             $action->define($this->businessId, $this->name, $points);
             $this->name = '';
             $this->pointsText = '';
+        } catch (\DomainException $e) {
+            $this->refusal = $e->getMessage();
         } catch (\Exception $e) {
-            $this->error = $e->getMessage();
+            $this->actionFailed = $e->getMessage();
         }
     }
 
@@ -76,9 +84,15 @@ class ServiceareaPolygon extends Component
             return;
         }
 
-        $polygon = ServicePolygon::where('business_id', $this->businessId)->find($polygonId);
-        if ($polygon) {
-            $action->setActive($this->businessId, $polygonId, ! $polygon->is_active);
+        $this->refusal = null;
+        $this->actionFailed = null;
+
+        try {
+            $current = ServicePolygon::where('business_id', $this->businessId)->find($polygonId);
+            $nextState = $current ? ! $current->is_active : false;
+            $action->setActive($this->businessId, $polygonId, $nextState);
+        } catch (\Exception $e) {
+            $this->actionFailed = $e->getMessage();
         }
     }
 
@@ -86,8 +100,8 @@ class ServiceareaPolygon extends Component
     {
         if ($this->isSample) {
             $polygons = collect([
-                (object) ['id' => 1, 'polygon_name' => 'Downtown Area', 'is_active' => true, 'coordinates' => [[41.8781, -87.6298], [41.8782, -87.6299], [41.8783, -87.6297]]],
-                (object) ['id' => 2, 'polygon_name' => 'North Side', 'is_active' => false, 'coordinates' => [[41.9781, -87.6298], [41.9782, -87.6299], [41.9783, -87.6297]]],
+                (object) ['id' => 1, 'polygon_name' => 'Downtown Area', 'is_active' => true, 'coordinates' => [[41.8781, -87.6298], [41.9782, -87.6299], [41.8783, -87.5297]]],
+                (object) ['id' => 2, 'polygon_name' => 'North Side', 'is_active' => false, 'coordinates' => [[41.9781, -87.6298], [42.0782, -87.6299], [41.9783, -87.5297]]],
             ]);
         } else {
             $polygons = ($this->businessId > 0)

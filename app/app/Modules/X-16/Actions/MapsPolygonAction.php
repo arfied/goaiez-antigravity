@@ -37,7 +37,7 @@ final class MapsPolygonAction
     public function define(int $businessId, string $name, array $points): ServicePolygon
     {
         if (count($points) < 3) {
-            throw new \InvalidArgumentException('Polygon requires at least 3 points.');
+            throw new \DomainException('Polygon requires at least 3 points.');
         }
 
         $lats = array_column($points, 0);
@@ -58,10 +58,11 @@ final class MapsPolygonAction
         ]);
     }
 
-    public function setActive(int $businessId, int $polygonId, bool $active): void
+    public function setActive(int $businessId, int $polygonId, bool $active): ServicePolygon
     {
-        ServicePolygon::where('business_id', $businessId)
-            ->where('id', $polygonId)
-            ->update(['is_active' => $active]);
+        $polygon = ServicePolygon::where('business_id', $businessId)->findOrFail($polygonId);
+        $polygon->update(['is_active' => $active]);
+
+        return $polygon;
     }
 }

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T02:12:35",
+ "updated": "2026-09-05T02:37:59",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1425,6 +1425,12 @@
    "module": "X-16",
    "chose": "Harvest-coverage screen: one row per active service polygon with the harvested places inside its bounding box, plus 'outside every territory' and 'no coordinates' rows; chains are never listed (G7-21); no harvest is started from the screen \u2014 the Places key is the tenant's own and not connected (\u00a7474, G8-31), so the screen reads and 'Waiting on a Places key' is its finished vendor-gated state",
    "at": "2026-09-05T02:12:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-16",
+   "chose": "X-16 ServiceareaPolygon fix-forward, ONE commit with the six named paths: define's < 3 refusal becomes a \\DomainException; setActive uses findOrFail and returns the row; the component splits refusal (Not a service area attention card) from actionFailed (Action failed error panel), refuses a malformed line with addError('pointsText', 'One lat,lng pair per line'), and the blade is a <form wire:submit=\"define\"> with <x-ui.submit>, <x-ui.button> everywhere a raw <button> was, the Spans \u2026 line, status pills, Deactivate/Activate; sample rows are real-sized territories. Tests follow the copy and gain error_state and define_malformed_line (20 -> 22).",
+   "at": "2026-09-05T02:37:59",
    "ruling": "R245"
   }
  ],

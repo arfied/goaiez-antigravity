@@ -183,6 +183,22 @@ class X16ScreensTest extends TestCase
         $this->assertFalse($polygon->fresh()->is_active);
     }
 
+    public function test_servicearea_polygon_error_state(): void
+    {
+        Livewire::test(ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->call('toggle', 999999)
+            ->assertSee('Action failed');
+    }
+
+    public function test_servicearea_polygon_define_malformed_line(): void
+    {
+        Livewire::test(ServiceareaPolygon::class, ['businessId' => $this->businessId])
+            ->set('name', 'Bad Line')
+            ->set('pointsText', "41.8, -87.6\nbadline\n41.9, -87.5")
+            ->call('define')
+            ->assertHasErrors(['pointsText' => 'One lat,lng pair per line']);
+    }
+
     public function test_servicearea_polygon_get_shows_seeded_polygon(): void
     {
         $owner = User::factory()->create(['role' => UserRole::Owner]);
