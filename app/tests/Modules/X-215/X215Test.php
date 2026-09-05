@@ -147,7 +147,7 @@ class X215Test extends TestCase
         $doc = $sentResult['document'];
         $request = $sentResult['signature_request'];
 
-        $this->voidAction->handle($biz->id, $doc->id, 'Voided due to cancellation');
+        $this->voidAction->handle($biz->id, $doc->id);
 
         $res = $this->signAction->sign(
             businessId: $biz->id,
