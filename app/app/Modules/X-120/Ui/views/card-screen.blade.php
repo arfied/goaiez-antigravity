@@ -42,8 +42,20 @@
     </div>
 
     <div class="mt-6">
-        @if($status === 'waiting on Stripe tokenisation')
-            <x-ui.status-pill state="attention" label="waiting on Stripe tokenisation" />
+        @if($waiting)
+            <x-ui.attention-card state="attention" heading="Waiting on Stripe">{{ $waiting }}</x-ui.attention-card>
+        @endif
+        @if($adding)
+            <form wire:submit="present" class="flex flex-col gap-2 max-w-sm">
+                <p class="text-sm text-ink-2">The number never leaves this form: storing it is waiting on Stripe tokenisation. We ask for the number, the expiry and the name — nothing else, ever.</p>
+                <input type="text" wire:model="number" inputmode="numeric" autocomplete="cc-number" placeholder="Card number" class="border rounded px-2 py-1">
+                <div class="flex gap-2">
+                    <input type="text" wire:model="expMonth" inputmode="numeric" autocomplete="cc-exp-month" placeholder="MM" class="border rounded px-2 py-1 w-16">
+                    <input type="text" wire:model="expYear" inputmode="numeric" autocomplete="cc-exp-year" placeholder="YYYY" class="border rounded px-2 py-1 w-24">
+                </div>
+                <input type="text" wire:model="name" autocomplete="cc-name" placeholder="Name on the card" class="border rounded px-2 py-1">
+                <x-ui.submit target="present" busy="Checking…">Keep this card</x-ui.submit>
+            </form>
         @else
             <x-ui.button wire:click="addCard">Add a card</x-ui.button>
         @endif

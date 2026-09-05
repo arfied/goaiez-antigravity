@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T21:46:53",
+ "updated": "2026-09-04T21:48:39",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1426,6 +1426,12 @@
    "module": "X-201",
    "chose": "X-201 \u2014 the tenant's card: the bundle compiles itself and the tenant adds what only they know \u2014 DisputeNoteAction compiles the invoice line with the first note and the note alone after; DisputeDefenseEngine::compile refuses a submitted, won or lost dispute (DisputeAlreadySubmittedException) because a submitted bundle is sealed; approval submits through DisputeSubmitAction; there is no refund verb on the card (N-010) and the deadline is a finished waiting state on the gateway's chargeback webhook (N-011, \u00a7156.3). Test: DisputeCardScreenTest",
    "at": "2026-09-04T21:46:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-120",
+   "chose": "X-120 \u2014 the vault's door takes the number, the expiry and the name and keeps none of them: CardPresentAction checks Luhn, the month, the expiry and the name, derives brand and last four, writes no row, dispatches no event and logs nothing, and answers waiting_on_tokenisation; the screen clears the number in a finally so it is never round-tripped, and the finished state is 'Waiting on Stripe tokenisation' until Stripe Elements or a tokenisation contract exists; the security code has no field of any name (N-046, N-047, N-120-01, P-196, ruling 20/21). Test: CardScreenTest::test_card_door_takes_number_expiry_and_name_stores_nothing_and_never_shows_the_number_again",
+   "at": "2026-09-04T21:48:39",
    "ruling": "R245"
   }
  ]

@@ -84,4 +84,50 @@ class CardScreenTest extends TestCase
             ->call('addCard')
             ->assertSee('waiting on Stripe tokenisation');
     }
+
+    /**
+     * [N-046] the security code is never taken, so it is never persisted;
+     * [N-047] the number is not on the page after it is presented.
+     */
+    public function test_card_door_takes_number_expiry_and_name_stores_nothing_and_never_shows_the_number_again(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $screen = Livewire::actingAs($owner)->test(CardScreen::class)
+            ->call('addCard')
+            ->assertSee('waiting on Stripe tokenisation')
+            ->assertSeeHtml('autocomplete="cc-number"')
+            ->assertSeeHtml('autocomplete="cc-exp-month"')
+            ->assertSeeHtml('autocomplete="cc-name"')
+            ->assertDontSeeHtml('cvv')
+            ->assertDontSeeHtml('cvc')
+            ->assertDontSeeHtml('CVV')
+            ->set('number', '4242 4242 4242 4242')
+            ->set('expMonth', '1')
+            ->set('expYear', '2020')
+            ->set('name', 'A Plumber')
+            ->call('present')
+            ->assertSee('expired 01/2020')
+            ->assertDontSee('4242424242424242')
+            ->assertDontSee('4242 4242 4242 4242')
+            ->set('number', '4242424242424241')
+            ->set('expMonth', '12')
+            ->set('expYear', (string) (now()->year + 2))
+            ->call('present')
+            ->assertSee('does not check out')
+            ->set('number', '4242424242424242')
+            ->set('expMonth', '12')
+            ->set('expYear', (string) (now()->year + 2))
+            ->set('name', 'A Plumber')
+            ->call('present')
+            ->assertSee('Waiting on Stripe tokenisation: the visa ending 4242')
+            ->assertSee('A Plumber')
+            ->assertDontSee('4242424242424242');
+
+        $this->assertSame(0, CardToken::where('business_id', $biz->id)->count(), 'the door stores nothing');
+        $this->assertSame('', $screen->get('number'), 'the number is cleared before the page goes back');
+    }
 }
