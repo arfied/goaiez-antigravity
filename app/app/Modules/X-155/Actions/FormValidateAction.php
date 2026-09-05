@@ -42,8 +42,9 @@ final class FormValidateAction
             ];
         }
 
-        // 3. Multi-step logic (G2-17): a step may declare which of its fields are required
-        $steps = is_array($form->steps) ? $form->steps : [];
+        // 3. Multi-step logic (G2-17), narrowed by the adaptive rule (G5-30):
+        //    a step the answers do not reach is never enforced.
+        $steps = (new FormAdaptiveStepsAction)->handle($form, $payload);
 
         foreach ($steps as $step) {
             $required = $step['required'] ?? [];
