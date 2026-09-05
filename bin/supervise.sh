@@ -105,10 +105,35 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
-  out=$(DB_DATABASE=goaiez_antig_money_test ./vendor/bin/pest 2>&1); rc=$?
+  # Another checkout whose app/phpunit.xml pins OUR database will migrate:fresh it out
+  # from under this run. Refuse rather than produce a number nobody can trust
+  # (OWNER.md 2026-09-05 08:0x; Track 1 commit 9b65e1e5, adapted — money's DB name).
+  busy=""
+  for x in /home/goaiez/agents/*/app/phpunit.xml /home/goaiez/public_html/*/app/phpunit.xml; do
+    [ -f "$x" ] || continue
+    case "$x" in "$ROOT"/app/phpunit.xml) continue ;; esac
+    grep -q 'goaiez_antig_money_test' "$x" || continue
+    other=$(dirname "$(dirname "$x")")
+    for p in /proc/[0-9]*; do
+      [ "$(readlink "$p/cwd" 2>/dev/null)" = "$other/app" ] || continue
+      tr '\0' ' ' < "$p/cmdline" 2>/dev/null | grep -q 'pest\|phpunit' && busy="$busy $other"
+    done
+  done
+  if [ -n "$busy" ]; then
+    echo "  ⛔ REFUSED: a pest run is live in a checkout pinning goaiez_antig_money_test:$busy"
+    echo "     (two suites on one database is the 'permission denied to terminate process' shape — rerun when idle)"
+    fail=1
+    out=''; rc=0
+  else
+  # pest under a wall clock: a hung suite must say so, not hang the tick (OWNER.md 08:0x).
+  out=$(DB_DATABASE=goaiez_antig_money_test timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
   [ $rc -ne 0 ] && fail=1
-  if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
+  [ $rc -eq 124 ] && echo "  ⛔ TIMEOUT: pest exceeded 1800s and was killed — the number below, if any, is partial"
+  if [ -z "$out" ]; then
+    echo "  ⛔ ZERO BYTES: pest produced no output · rc=$rc"
+    echo "     (memory, or a missing Vite manifest — narrow with --filter, do not debug the code)"
+  elif printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
@@ -120,7 +145,9 @@ for e in (d.get("error_details") or [])[:5]:
 n=len(d.get("error_details") or [])
 if n>5: print("   … %d more" % (n-5))'
   else
+    echo "  (pest's last line is not the JSON summary · rc=$rc)"
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
+  fi
   fi
 fi
 

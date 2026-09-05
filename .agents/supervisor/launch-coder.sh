@@ -29,6 +29,14 @@ if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
 fi
 [ -s .agents/supervisor/KICKOFF.md ] || { echo "REFUSED: KICKOFF.md missing or empty"; exit 1; }
 
+# Push gate (added 2026-09-04 14:2x, MONEY-17c). coder-bin/git refuses `git push`
+# unless GOAIEZ_PUSH_OK=1, and says "launcher sets" it — but nothing did, so a
+# briefed `push: YES — <from>..<to>` was refused (run 20). Only a BRIEF.md whose
+# `push:` line starts with YES opens the gate; anything else leaves it shut.
+PUSH_OK=0
+grep -qE '^push: *\**YES' .agents/supervisor/BRIEF.md 2>/dev/null && PUSH_OK=1
+echo "push gate: $(grep -m1 -E '^push:' .agents/supervisor/BRIEF.md 2>/dev/null || echo 'no push: line') -> GOAIEZ_PUSH_OK=$PUSH_OK"
+
 
 # Snapshot the supervisor's uncommitted files before every dispatch (a coder
 # reset/checkout/stash wiped them once, 2026-09-02 15:31).
@@ -43,7 +51,7 @@ TRACK=$(basename "$PWD")
 while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
 LOG="/home/goaiez/tmp/agy-${TRACK}-run${n}.log"
 
-nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 echo $! > "$PIDFILE"
 
 sleep 2

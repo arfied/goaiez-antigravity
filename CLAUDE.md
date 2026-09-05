@@ -17,14 +17,21 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Never:** commit, push, migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files |
+| **Commits only its own files** — `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh` — as `chore(supervisor): …`, with named paths | Commits `app/**` and `.agents/state/**`, per module |
+| **Pushes only a sha it has gated and recorded in `REVIEWS.md`**, by explicit ref: `git push origin <sha>:track/money`. Never a branch head, never `--force`, never a sha under a live `BLOCK` | Pushes when `BRIEF.md`'s `push:` line names the range |
+| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, `git merge\|switch\|checkout\|restore\|reset\|stash` (all denied) | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files, commit `.agents/supervisor`/`CLAUDE.md`/`.claude`/`bin` |
 
-`.claude/settings.json` enforces your column. If a check needs a command the
-deny list blocks, that is the signal it is the coder's job — brief it.
+`.claude/settings.json` enforces your column. Since 2026-09-05 08:0x (owner,
+commit `0634e31f`) it **allows** the supervisor `git add`, `git commit` and
+`git push origin`; the other 50 deny entries stand, `git merge` among them. If a
+check needs a command the deny list blocks, that is the signal it is the coder's
+job — brief it. **Merge step 0 (committing the supervisor's own notes) is
+therefore the supervisor's, not the coder's** — the coder guard refuses those
+paths.
 
 ## The mailbox — `.agents/supervisor/`
 
-| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line is the push gate |
+| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line is the push gate — `YES — <from>..<to>` is executed by the coder as step 0 of its next run (owner automated pushes 2026-09-03); the supervisor sets it only after a PASS and only to the reviewed tip |
 | :--- | :--- |
 | `REPORT.md` | coder → you. Overwritten at every wave close or stop, fixed shape (rule 10) |
 | `REVIEWS.md` | you → coder. **Append-only**, dated blocks at EOF, verdict `PASS` / `PASS-WITH-NOTES` / `BLOCK` |
@@ -120,6 +127,24 @@ Watch for: <the trap that applies, by name>
 - **The supervisor can be wrong; the seal cannot.** If the coder's `REPORT.md`
   lists a brief item under `REFUSED` because it would change a CHECK, that
   refusal stands. Re-read rule 01 before overruling it.
+- **`git merge --abort` wipes the supervisor's uncommitted ledger (2026-09-04
+  13:07).** The abort briefed as MONEY-17 step 0 reset `CLAUDE.md` to `HEAD`,
+  dropping rulings 17–18 written at 12:58; the coder's `cp CLAUDE.md
+  CLAUDE.md.bak` (13:06:52) and the launch snapshot
+  `/home/goaiez/tmp/sup-snap-grs-antig-money-<stamp>/` kept them, and the
+  13:33 tick restored the file from the backup. The supervisor's tracked files
+  (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`,
+  `launch-coder.sh`) are only as safe as that snapshot: after any briefed
+  merge, abort or reset, the next tick compares them against the snapshot
+  before anything else. An `OWNER.md` appendix written while a tick is mid-read
+  is invisible to that tick — every tick re-reads `OWNER.md` to EOF, not just
+  its mtime. **Correction (13:46 tick):** `git reflog` shows no `reset:` entry
+  for that window and the coder's run-18 log says it "removed the worktree's
+  `AUTO_MERGE` file" — it was not `merge --abort`. Whatever ran reset tracked
+  files to `HEAD` and left `main`'s 149 merge-added files untracked, which
+  inflated the gate by 36 tests / 17 red until MONEY-17b removed them. After
+  any briefed merge step, read `git reflog -5` and count `??` paths, not just
+  `M/A/D` lines.
 
 ## Dispatching the coder (added 2026-09-02)
 
@@ -132,11 +157,26 @@ concurrent run and auto-numbers logs.
 **Retry cap — absolute:** at most **two** dispatches per BLOCK (the original
 run plus one fix run). If the same BLOCK item survives a second dispatch,
 STOP and put it to the user — never dispatch a third time for the same
-failure, never loosen the check to get past it. A journey/wave marked green
+failure, never loosen the check to get past it. **The cap stops an ITEM, never
+the track (2026-09-03, after an idle hour):** a defect the fix run introduced,
+or one the supervisor's own brief caused, is a new item with its own two
+dispatches; and work that is not blocked at all (the next brief item, the next
+merge) is dispatched immediately. Idle is never the default — when a cap
+stops one item, list it for the owner AND dispatch the next work in the same
+breath. A journey/wave marked green
 by the coder is never taken at face value: the supervisor's own gate decides.
 Never run `state.py done/journey/stage` from the supervisor; never touch
 `app/Doctor`; never let the coder and supervisor loop without a human seeing
 each verdict block in `REVIEWS.md`.
+
+- **One writer per checkout (2026-09-03 incident).** An interactive `agy`
+  started by hand inside this checkout has no pidfile, no `coder-bin` guard,
+  no brief and no review — it overwrote 170 files with `place-files.sh`,
+  hand-marked four journeys green in seven minutes, and pushed `main`. Any
+  process with `cwd` here that `launch-coder.sh` did not start is a BLOCK:
+  `for p in /proc/[0-9]*; do readlink $p/cwd 2>/dev/null | grep -q 'grs-antig$' && ps -o pid=,cmd= -p ${p#/proc/}; done | grep agy`
+  must print nothing before any dispatch or gate. The supervisor may stop
+  such a process to protect `main`; it says so in REVIEWS the same minute.
 
 ## Style
 
@@ -239,3 +279,174 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     change that ties the two together.
 16. **Reviews builds the cadence guard now** (`ReviewRequestAction`), with J10
     recorded UNRESOLVED while review-platform access is ungranted.
+17. **The screens rebuild slice (owner via Track 1, 2026-09-04 12:44).** Money
+    rebuilds, in this order, three per run: X-199 `declines` (§46A.2, §57.2),
+    `invoices`, `unpaid`, `money-paid-today`; C-Billing `credits`,
+    `dunning-board`, `mrr`; X-198 `connect-card`,
+    `reconciliation-discrepancies`; X-211 `ageing-by-reason`,
+    `paymentplan-builder`. For exactly these screens the `Ui/` files are
+    money's, overriding ruling 5's "Track 2: all Ui/"; C-Billing's `Domain/`
+    stays Track 1's. Rules per screen: the module header + §58.4, live data
+    from the module's own models, an action on every row, five states
+    (SAMPLE declared n/a where no model carries a flag), mobile first, no
+    hand-written routes (Track 1's `surfaces:generate` mounts them), a page
+    test via `Livewire::test` and a SYSTEM mutation with the RED line quoted.
+18. **Integration runs money → main only.** The coder guard refuses any merge
+    commit that stages `main`'s hunks in `CLAUDE.md`, `.agents/rules/`,
+    `.agents/supervisor/launch-coder.sh` or `source/`, and the supervisor may
+    not commit. A stuck `origin/main` → `track/money` merge is aborted by the
+    coder (`git merge --abort`, guard-permitted) and never briefed again
+    until OWNER ACTION 9(b) — a merge exemption in `coder-bin/git` — lands.
+    Track 1 merges `track/money` daily (owner, 12:44) and reconciles there.
+19. **HOLD on the screens rebuild (Track 1 supervisor relaying the boss,
+    `OWNER.md` appendix written 12:55, headed "16:0x"; applied by the 13:33
+    tick).** The boss re-cut the rebuild around FEATURES, not modules: money's
+    module screens will be sections inside feature pages, never standalone
+    module pages. Ruling 17's list stays the list of screens, but **no further
+    screen is mounted or rebuilt** until (a) the feature map is approved
+    (https://claude.ai/code/artifact/80afa4f2-bf4a-401f-b368-922c1bdf445c)
+    and (b) Track 1 merges the feature-page shells. "Nothing changes for waves
+    already in flight": MONEY-17 (dispatched 13:02, X-199 declines · invoices ·
+    unpaid) finishes and is reviewed on its merits; MONEY-18 and later rebuild
+    waves are **not dispatched** while the HOLD stands. The HOLD lifts only by
+    a new `OWNER.md` section or a Track 1 merge carrying the shells — a tick
+    checks both, never infers the lift.
+20. **HOLD LIFTED — the Money lane (Track 1 supervisor relaying the boss,
+    `OWNER.md` 14:2x; applied 14:27).** Ruling 19's HOLD is over: the plan is
+    approved, the clock runs Monday 8 Sep → Friday 25 Sep. The lane is
+    **Money**: X-199 · X-198 (P-197 apply = the merchant state machine only;
+    the processor adapter waits on a contract) · X-120 CardVault (PAN + expiry
+    + name, CVV never — P-196) · X-117 cart/checkout/storefront · X-201 ·
+    X-211 · C-Billing · X-173. **X-214 surcharging is deferred.** This widens
+    ruling 5's money list; ruling 17's `Ui/` override now covers every screen
+    of these modules (C-Billing `Domain/` stays Track 1's). Fourteen modules
+    are deferred product-wide (X-200 X-158 X-159 X-114 X-144 X-197 X-147
+    X-143 X-141 X-145 X-213 X-208 X-215 X-214): files, tests and routes stay,
+    nothing builds them. X-221/X-222/X-223 are minted on `main` — never
+    scaffold them here. **Week 1 (8–12 Sep), in order, one commit and one real
+    page test each:** declines · invoices · unpaid *(landed, `66b28d2`, pushed
+    14:25)* · paid today · credits · dunning board · connect card + merchant
+    application · card vault screen · ageing by reason · payment-plan builder.
+    Waves: MONEY-18 = paid today · credits · dunning board; MONEY-19 = connect
+    card + merchant application · card vault screen · ageing by reason;
+    MONEY-20 = payment-plan builder, then week 2 (every remaining capability
+    and shell screen, proven). Definition of done per screen: routed, gated,
+    renders real model data with a real GET test, a SYSTEM mutation reddens
+    the test (RED line quoted). Routing is generated on Track 1
+    (`surfaces:generate`): never hand-write a route; ruling 18 still forbids
+    the `origin/main` → `track/money` merge, so `surfaces:generate` runs only
+    after Track 1 merges and the regenerated files come back with `main`. No
+    `Http::fake` in a journey. Track 1 merges `track/money` daily: push after
+    every PASS.
+21. **The one-pass recipe — a commit is a FINISHED screen, never a shell
+    (Track 1 answering the boss, `OWNER.md` appended 14:31; applied by the
+    14:41 tick, after MONEY-18 was dispatched at 14:28).** Order inside every
+    screen, one pass: (1) the table and model the module owns (migration +
+    RLS policy); (2) the engine/action that writes it and the event it
+    emits; (3) the Livewire screen with a real query against that table, its
+    empty state written, actions wired to the module's `Actions/` (through
+    the approval desk where the plan says so); (4) the page test: rows
+    seeded through the module's own factory/seeder, a real GET asserting a
+    seeded value is on the page, `Livewire::test` per interaction; (5) the
+    `config/features.php` entry and, where the entry has one, the Reports
+    tile fed from the module's events; (6) commit, then the mutation proof.
+    Only the UI kit's components in `Ui/` — no raw markup. A dashboard tile
+    names its source event and has a test that emits it and asserts the
+    number moves. A vendor-gated feature ships its door and a "waiting on
+    <vendor>" state as a finished state. `surfaces:generate` prints `shells
+    remaining: N`, which must fall on every merge. **Measured against this
+    checkout (14:41):** `config/features.php` does not exist here (it lands
+    with Track 1's run 68 merge) — step 5 is `UNRESOLVED — waiting on Track 1
+    merge`, never hand-created; the real GET 404s until `surfaces:generate`
+    mounts the route, so the local proof stays `Livewire::test` +
+    `assertSee` on a seeded value and the GET is added the run after the
+    merge; the UI kit at `resources/views/components/ui/` has nine
+    components (attention-card, button, empty-state, error-panel, gauge,
+    skeleton, status-pill, submit, systems-strip) and no table, form, tile,
+    drawer or assistant strip — the kit is Track 2's (`resources/views`), so
+    money uses every component that exists and records the missing ones
+    `UNRESOLVED — waiting on Track 2's kit`, it does not build them. Money's
+    six rebuilt screens use zero `<x-ui.*>` components today. MONEY-18 was
+    briefed before this ruling and is reviewed on ruling 20; from MONEY-19
+    on, a `Ui/` view with raw markup where a kit component fits is a
+    `BLOCK`, and a screen whose table is new ships its migration and RLS
+    policy in the same commit.
+22. **The main → money merge is refused again, with numbers (Track 1's
+    `OWNER.md` 19:0x ask; measured by the 20:0x tick against
+    `refs/track1/main` = `ef817c16`).** Main changes seven guarded paths this
+    branch cannot stage — `CLAUDE.md`, `launch-coder.sh` (main's copy has no
+    `--check` and no push gate), `.agents/rules/10-supervisor.md`,
+    `bin/supervise.sh`, `app/phpunit.xml` (→ Track 1's pin), `source/*` —
+    two of them dirty in this tree, so the merge can neither start nor be
+    committed by the coder; and resolving them "ours" would ship money's
+    copies onto `main` on the reverse merge. Ruling 18 stands. The module
+    owner's resolutions for Track 1's money → main merge are in `OWNER.md`
+    (20:0x section) and REVIEWS.md. **The fetch is allowed and is how a tick
+    measures main without moving anything:** `git fetch
+    --no-write-fetch-head /home/goaiez/agents/grs-antig
+    main:refs/track1/main`, then `git diff --stat HEAD refs/track1/main --
+    <paths>`. Until OWNER ACTION 9(b) or a re-cut (OWNER ACTION 16), the
+    money-side follow-ups main's engine makes necessary — `EvidenceChargeCommand`
+    → `requestCharge()`, the generator's `Layout` attribute, `surfaces:generate`
+    — are listed in REVIEWS, not built here.
+23. **The main → money merge is refused a third time (Track 1's `OWNER.md`
+    06:4x section, "`origin/main` PUSHED at `1ec86979`… take it before your
+    next push"; measured by the 06:3x tick).** `origin/main` = `1ec86979` =
+    the `refs/track1/main` ruling 22 measured; no `.gitattributes` merge
+    driver on `main`; `coder-bin/git` still has no `merge` exemption. Merge
+    base `fe094469`; main 384 ahead, money 93. The merge (1) cannot start —
+    `CLAUDE.md` and `launch-coder.sh` are dirty here and main changes both;
+    (2) cannot be committed — both sides changed `CLAUDE.md` (139 / 19 lines)
+    and `launch-coder.sh` (13 / 5) since the base, a conflict on paths the
+    guard's `commit` case refuses; (3) "ours" on all seven would ship money's
+    copies onto `main` on the reverse merge. Rulings 18 and 22 stand: money
+    pushes `track/money` after every PASS; Track 1 merges money → main from
+    the pushed tip with the 20:0x resolutions and keeps per-track files out
+    in both directions; `track/money` takes `main` only through OWNER ACTION
+    9(b) or the re-cut (16). Money's reply is `OWNER.md`'s 06:3x section;
+    the re-list is OWNER ACTION 20. Follow-ups main makes necessary stay
+    listed in REVIEWS, not built: `EvidenceChargeCommand` → `requestCharge()`,
+    the `Layout` attribute, `surfaces:generate`, `config/features.php`
+    entries, the harness merge, the withheld-figures ruling (six registry
+    keys — check money's screens print no withheld figure the run after the
+    re-cut).
+24. **The supervisor's own commit and push rights (owner via Track 1,
+    `OWNER.md` 08:0x; `.claude/settings.json` committed here at `0634e31f`,
+    07:30).** `git add`, `git commit` and `git push origin` are allowed to the
+    supervisor; the 50-entry deny list otherwise stands and **`git merge` is
+    still denied**. The role table above is rewritten to match: the supervisor
+    commits ONLY `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`
+    and `.agents/supervisor/launch-coder.sh`, as `chore(supervisor): …` with
+    named paths, and pushes ONLY a sha it has gated and written into
+    `REVIEWS.md`, by explicit ref (`git push origin <sha>:track/money`) — never
+    a branch head, never `--force`, never a sha carrying a live `BLOCK`. The
+    three gate hunks the owner named are adopted in this track's own
+    `bin/supervise.sh` (never copied from Track 1's — the files differ by
+    50–90 lines): pest under `timeout 1800` with a `TIMEOUT` line on rc 124;
+    the test step refuses while another checkout pinning
+    `goaiez_antig_money_test` has a pest live; `ZERO BYTES` + `rc` printed when
+    pest returns no output. **Never edit the gate script while a gate is
+    running** — bash reads it incrementally.
+25. **The `origin/main` → `track/money` merge is refused a FOURTH time, and
+    what changed (measured 11:3x against `origin/main` = `54ead493`).** Track 1
+    named `b3ea8d37` at 07:4x; `origin/main` has moved past it to `54ead493`
+    (main 684 ahead, money 94, base still `fe094469`). Money's
+    `app/phpunit.xml` pin is intact (`goaiez_antig_money_test`) — Track 1's
+    07:4x sweep found site and sixty on the wrong database, not money.
+    Guarded-path diff HEAD → `origin/main`: `CLAUDE.md` 177, `bin/supervise.sh`
+    54, `.agents/supervisor/launch-coder.sh` 18, `.agents/rules/10-supervisor.md`
+    16, `app/phpunit.xml` 2 (→ Track 1's database), `source/*` 15. Four of
+    those are **two-sided** since the base (`CLAUDE.md` 139, `launch-coder.sh`
+    13, `bin/supervise.sh` 19, `app/phpunit.xml` 2) and therefore conflict.
+    Ruling 24 removes reason (1) of rulings 22–23 — the supervisor can now
+    commit its own dirty files, so the merge could *start* — and softens
+    reason (2), since the supervisor can `git add` and commit the four guarded
+    conflicts the coder guard refuses. **Reason (3) is untouched and decisive:**
+    resolving them "ours" makes money's per-track copies clean hunks on Track
+    1's reverse merge, which is the overwrite incident by construction. The
+    merge is also a two-party dance now (the coder must run `git merge`, denied
+    to the supervisor; the supervisor must commit it, refused to the coder)
+    and neither half is briefable alone. So rulings 18, 22 and 23 stand
+    unchanged: integration is money → main, from the pushed tip, with the
+    five module-owner resolutions in `OWNER.md`'s 20:0x section. The go/no-go
+    on the new two-party path is **OWNER ACTION 21**, not a tick's to take.
