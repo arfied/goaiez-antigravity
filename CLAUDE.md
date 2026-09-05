@@ -120,6 +120,20 @@ Green gates are necessary, not sufficient. For every commit in
   has fooled the column as well as the coder. **`diff` the line against §3 every
   wave**, and generalise it: *a report field is raw output only once you have
   found the command that emits it.*
+- ⚠️ **Run that rule in the other direction before calling a field invented.** A
+  field whose shape looks impossible is not invented until you have looked for the
+  set it *would* be right for. Wave 72's `X-121 NOUN PROPOSAL` printed three rows
+  whose `production + test + incidental` exceeded the row's own `Count` —
+  `triage_conversations` read as 8 production readers out of 7 files — the §5 shape
+  exactly, and the brief had said a second invented field is a `BLOCK`. It was not
+  invented: `Count` counts `grep -rl "<table>"` while the group columns count the
+  **union** of table name *or* model class, which the report stated only in a
+  parenthetical. Measured at tick 164:
+  `grep -rl "triage_conversations\|TriageConversation" app/app app/tests | wc -l` →
+  **17** = 8+0+9, and `support_messages` → **13** = 8+1+4, both exact. **Two
+  commands in one row is a reporting defect, not a fabrication, and a wrong `BLOCK`
+  costs a wave.** The check is the same one either way — find the command — so
+  spend it on the numbers you would refuse as well as the ones you would accept.
 - **Tests are real.** `grep -c 'test(\|it('` before/after must match the report,
   and a test that greps a directory must grep one that exists (rule 01: 19
   anchors once passed against missing paths).
