@@ -25,15 +25,25 @@ class CallsScreenTest extends TestCase
         Tenancy::actingAs($biz->id, function () use ($biz, $user) {
             Tenancy::setUser($user->id);
 
-            // Just check what is there
-            $assignment = NumberAssignment::where('business_id', $biz->id)->first();
-            if (! $assignment) {
-                // If it isn't there, create one. We can bypass RLS for NumberPool if we need to.
-                // Wait, provisionTenant DOES assign a number, let's assume it's there.
-            }
+            // 4. Pool-number state: WITH assignment
+            $poolNumber = '+15559876543';
+            $pool = NumberPool::create([
+                'business_id' => $biz->id,
+                'phone_number' => $poolNumber,
+                'area_code' => '555',
+                'carrier_name' => 'telnyx',
+                'status' => 'available',
+                'complaint_count' => 0,
+            ]);
+            $assignment = NumberAssignment::create([
+                'business_id' => $biz->id,
+                'phone_number_id' => $pool->id,
+                'assigned_at' => now(),
+                'status' => 'active',
+            ]);
 
-            // 4. Pool-number state: WITH assignment (default from provisionTenant)
             Livewire::test(Calls::class)
+                ->assertSee($poolNumber)
                 ->assertDontSee('Failed to load number')
                 ->assertDontSee('We couldn\'t load the assigned number');
 
@@ -43,10 +53,11 @@ class CallsScreenTest extends TestCase
                 ->assertSee('SAMPLE'); // SAMPLE badge
 
             // 4. Pool-number state: NO number assignment
-            NumberAssignment::where('business_id', $biz->id)->delete();
+            // Delete only rows WE created.
+            $assignment->delete();
 
             Livewire::test(Calls::class)
-                ->assertSee('None')
+                ->assertSeeHtml('<span class="text-ink-3 italic">None</span>')
                 ->assertDontSee('Failed to load number')
                 ->assertSee('No calls yet');
 
