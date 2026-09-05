@@ -48,7 +48,7 @@ class InstallVerifyTest extends TestCase
         Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
             ->assertSee('1 event in the last 60 seconds')
             ->assertDontSee('page_view')
-            ->call('$toggle', 'showEvents')
+            ->set('showEvents', true)
             ->assertSee('page_view');
     }
 
@@ -57,11 +57,13 @@ class InstallVerifyTest extends TestCase
         $this->seed(UiReviewSeeder::class);
         $owner = User::where('email', 'owner2@business.com')->firstOrFail();
         
-        Tenancy::actingAsUser($owner->id, function() use ($owner) {
-            $businessId = Tenancy::id();
-            $loc = \App\Models\Location::where('business_id', $businessId)->first();
-            app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:' . $owner->id, true);
-        });
+        $loc = \App\Models\Location::withoutGlobalScopes()->where('name', 'HQ')->first();
+        if ($loc) {
+            Tenancy::actingAsUser($owner->id, function() use ($loc, $owner) {
+                Tenancy::set((int) $loc->business_id);
+                app(\App\Services\Tenant\LocationWebsite::class)->confirm($loc, 'https://example.com', 'user:' . $owner->id, true);
+            });
+        }
 
         $this->actingAs($owner)->get('/account/tracking')
             ->assertOk()
