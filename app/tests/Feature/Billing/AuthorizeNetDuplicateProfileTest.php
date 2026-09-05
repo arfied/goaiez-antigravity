@@ -227,8 +227,8 @@ it('fetches list to reuse the existing subscription ID if E00012 is returned wit
                             'status' => 'active',
                             'customerProfileId' => 'prof_existing',
                             'customerPaymentProfileId' => 'pay_existing',
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
             }
             throw new RuntimeException('Unexpected request: '.$rootKey);
@@ -302,6 +302,6 @@ it('throws immediately without returning ID for E00027 during ARBCreateSubscript
     } catch (AuthorizeNetRequestFailed $e) {
         expect($e->reason)->toBe('E00027');
     }
-    
+
     expect($apiCalls)->toBe(3); // profile, payment profile, create sub
 });
