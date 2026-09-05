@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X163;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\CalloutLookupAction;
@@ -240,6 +242,9 @@ class X163Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Mount Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
 
         Livewire::test(Pricebook::class)
             ->assertOk();
