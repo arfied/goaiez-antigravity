@@ -162,7 +162,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Scored Lead', '+15125550166');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 85, 'A');
+        $score = $this->manager->scoreLead($biz->id, $p->id, 85);
 
         $this->assertEquals(85, $score->lead_rating);
         $this->assertEquals('A', $score->grade);
@@ -185,9 +185,27 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Graded Lead', '+15125550155');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 92, 'A');
+        $score = $this->manager->scoreLead($biz->id, $p->id, 92);
 
         $this->assertGreaterThan(0.9, $score->confidence);
+
+        $atBand = $this->manager->scoreLead($biz->id, $p->id, 80);
+        $this->assertSame('A', $atBand->grade, '80 is the inclusive floor of the A band');
+
+        $underBand = $this->manager->scoreLead($biz->id, $p->id, 79);
+        $this->assertSame('B', $underBand->grade, '79 is one below the A band and grades B');
+
+        $floor = $this->manager->scoreLead($biz->id, $p->id, 0);
+        $this->assertSame('F', $floor->grade, 'a zero rating grades F, it does not default to A');
+
+        $before = \App\Modules\X01\Models\LeadScore::where('business_id', $biz->id)->count();
+        try {
+            $this->manager->scoreLead($biz->id, $p->id, 101);
+            $this->fail('a rating above 100 must be refused');
+        } catch (\App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused $e) {
+            $this->assertSame('LEAD_RATING_OUT_OF_RANGE', \App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused::REFUSAL_CODE);
+        }
+        $this->assertSame($before, \App\Modules\X01\Models\LeadScore::where('business_id', $biz->id)->count(), 'a refused rating writes no row');
     }
 
     /**
@@ -203,7 +221,18 @@ class X01Test extends TestCase
      */
     public function test_g2_61_fenced_lookalike(): void
     {
-        $this->assertTrue(true);
+        \Illuminate\Support\Facades\Http::fake();
+        Event::fake([\App\Modules\X01\Events\LeadScored::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Fence Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $p = $this->createContact->handle($biz->id, 'Fence Lead', '+15125550156');
+
+        $score = $this->manager->scoreLead($biz->id, $p->id, 95);
+
+        $this->assertSame('A', $score->grade, 'the score half of the split is a lead_score');
+        Event::assertDispatched(\App\Modules\X01\Events\LeadScored::class);
+        \Illuminate\Support\Facades\Http::assertNothingSent();
     }
 
     /**
