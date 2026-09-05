@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T02:09:33",
+ "updated": "2026-09-05T02:12:35",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1419,6 +1419,12 @@
    "module": "X-16",
    "chose": "tenant: the service-area polygon \u2014 the plan's \u00a7128.3 SCREENS line; it needs a write path, which MapsPolygonAction does not have yet \u2014 define + setActive are the SYSTEM, and G17-22's refusal lives in define: a fence around one building is geo-fenced ad targeting, \u00a744 \u00b7 P-128",
    "at": "2026-09-05T02:09:33",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-16",
+   "chose": "Harvest-coverage screen: one row per active service polygon with the harvested places inside its bounding box, plus 'outside every territory' and 'no coordinates' rows; chains are never listed (G7-21); no harvest is started from the screen \u2014 the Places key is the tenant's own and not connected (\u00a7474, G8-31), so the screen reads and 'Waiting on a Places key' is its finished vendor-gated state",
+   "at": "2026-09-05T02:12:35",
    "ruling": "R245"
   }
  ],
