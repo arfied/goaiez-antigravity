@@ -9,6 +9,7 @@ use App\Models\AssistantBrief;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -460,7 +461,7 @@ final class PriceBook
             $item->price_max_cents,
             'USD',
             PriceListItemSource::Manual,
-            \Carbon\CarbonImmutable::now(),
+            CarbonImmutable::now(),
         );
     }
 }
