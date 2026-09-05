@@ -246,7 +246,88 @@ class X155Test extends TestCase
      */
     public function test_g3_64_bot_filtering(): void
     {
-        $this->assertTrue(true);
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'G3-64 Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'G3-64 Form',
+            'slug' => 'g3-64',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        // (a) the honeypot is stored and flagged
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bot',
+                'phone' => '+15552220001',
+                'issue_description' => 'AC blowing warm air',
+                'website_url' => 'http://spam.ru',
+            ],
+            ipAddress: '194.55.22.1'
+        );
+
+        $this->assertEquals('rejected', $res['status']);
+        $this->assertEquals('honeypot_triggered', $res['reason']);
+
+        $row = FormSubmission::find($res['submission_id']);
+        $this->assertNotNull($row);
+        $this->assertTrue($row->is_spam);
+        $this->assertEquals('honeypot_triggered', $row->spam_reason);
+        $this->assertEquals('AC blowing warm air', $row->payload['issue_description']);
+
+        Event::assertDispatched(FormSpamRejected::class);
+        Event::assertNotDispatched(FormCaptured::class);
+
+        // (b) the timezone signal is stored too
+        $res2 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bot 2',
+                'phone' => '+15552220002',
+                'issue_description' => 'no heat',
+            ],
+            ipAddress: '203.0.113.10',
+            userTimezone: 'Not/AZone'
+        );
+
+        $this->assertEquals('rejected', $res2['status']);
+        $this->assertEquals('ip_timezone_mismatch', $res2['reason']);
+
+        $row2 = FormSubmission::find($res2['submission_id']);
+        $this->assertNotNull($row2);
+        $this->assertTrue($row2->is_spam);
+        $this->assertEquals('ip_timezone_mismatch', $row2->spam_reason);
+
+        // (c) the ⛔⛔ — a real customer is not swept up
+        $res3 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Dana',
+                'phone' => '+15552220003',
+                'issue_description' => 'thermostat replacement',
+                'website_url' => '',
+            ],
+            ipAddress: '24.18.99.12',
+            userTimezone: 'America/Chicago'
+        );
+
+        $this->assertEquals('captured', $res3['status']);
+
+        $row3 = FormSubmission::find($res3['submission_id']);
+        $this->assertNotNull($row3);
+        $this->assertFalse($row3->is_spam);
+        $this->assertNull($row3->spam_reason);
+
+        $this->assertEquals(2, FormSubmission::where('business_id', $biz->id)->where('is_spam', true)->count());
+        $this->assertEquals(1, FormSubmission::where('business_id', $biz->id)->where('is_spam', false)->count());
     }
 
     /**
