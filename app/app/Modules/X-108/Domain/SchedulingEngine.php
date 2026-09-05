@@ -146,6 +146,19 @@ final class SchedulingEngine
         ?int $customerId = null
     ): Appointment {
         return DB::transaction(function () use ($businessId, $serviceName, $startTime, $endTime, $isMember, $customerId) {
+            $start = Carbon::parse($startTime);
+            $end = Carbon::parse($endTime);
+
+            $conflict = Appointment::where('business_id', $businessId)
+                ->where('status', '!=', 'cancelled')
+                ->where('start_time', '<', $end)
+                ->where('end_time', '>', $start)
+                ->exists();
+
+            if ($conflict) {
+                throw new SlotUnavailableRefused('the scheduler has not confirmed this window: it overlaps a booked appointment');
+            }
+
             $apt = Appointment::create([
                 'business_id' => $businessId,
                 'customer_id' => $customerId,

@@ -9,6 +9,7 @@ use App\Modules\X108\Actions\AppointmentCancelAction;
 use App\Modules\X108\Actions\AvailabilityRequestAction;
 use App\Modules\X108\Actions\WaitlistJoinAction;
 use App\Modules\X108\Domain\SchedulingEngine;
+use App\Modules\X108\Domain\SlotUnavailableRefused;
 use App\Modules\X108\Events\AppointmentBooked;
 use App\Modules\X108\Events\SlotLocked;
 use App\Modules\X108\Models\Appointment;
@@ -269,6 +270,12 @@ class X108Test extends TestCase
         $windows = array_column($avail2['offered_slots'], 'formatted_window');
         $this->assertNotContains('9:00 AM - 11:00 AM', $windows);
         $this->assertContains('11:00 AM - 1:00 PM', $windows);
+
+        $ok = $this->book->handle($biz->id, 'Consultation', $date.' 14:00:00', $date.' 16:00:00');
+        $this->assertSame('booked', $ok->status);
+
+        $this->expectException(SlotUnavailableRefused::class);
+        $this->book->handle($biz->id, 'Consultation', $date.' 10:30:00', $date.' 11:30:00');
     }
 
     /**
