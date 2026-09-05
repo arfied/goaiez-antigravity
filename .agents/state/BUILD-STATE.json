@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T22:17:53",
+ "updated": "2026-09-04T23:29:36",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1359,6 +1359,12 @@
    "module": "X-103",
    "chose": "module:scaffold's header harvest stops at the first `\u00b7` that follows the closing backtick of a declaration span, so X-103's @emits list was truncated to `approval.requested` \u2014 the four remaining names sat outside the backticks, behind a \u2b50\u2b50\u2b50 footnote wedged inside the list. The closing backtick moved to after `optimiser.proposed` and the footnote after it; same five emits, same four consumes, nothing added or removed. The manifest then regenerated with all five. Patching ModuleScaffoldCommand::parseHeaders() to skip footnote spans was rejected \u2014 refused, that is the generator half and app/app/Console/Commands/ModuleScaffoldCommand.php is not this track's file; and the plan's own 2026-08-27 note on this same line already rules that prose inside a declaration span is the defect, so the document is what was wrong.",
    "at": "2026-09-04T22:17:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "the chat's AI cap is a fact about the tenant's meter, not an argument the caller supplies: handle()'s $isAiCapped is nullable and null asks AiSpend::allows(). An explicit true/false still wins, because callers on the offline-form path have already resolved it. Rejected: drop the parameter and always ask the meter \u2014 refused, that is two reads of one question on a path that has already answered it.",
+   "at": "2026-09-04T23:29:36",
    "ruling": "R245"
   }
  ]
