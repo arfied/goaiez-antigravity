@@ -1301,4 +1301,34 @@ class X157Test extends TestCase
         $this->assertNotNull($page->fresh()->current_version_id);
         $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
     }
+
+    public function test_nothing_learns_of_a_deploy_before_its_artifact_exists(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        $artifactExistedAtDispatch = null;
+
+        Event::listen(DeployCompleted::class, function (DeployCompleted $event) use (&$artifactExistedAtDispatch): void {
+            $artifactExistedAtDispatch = Storage::disk('local')->exists("sites/{$event->deployHash}.html");
+        });
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']]);
+
+        $this->assertNotNull($artifactExistedAtDispatch, 'the DeployCompleted listener never ran');
+        $this->assertTrue($artifactExistedAtDispatch);
+
+        $deployment = Deployment::where('business_id', $biz->id)->firstOrFail();
+        $this->assertSame('deployed', $deployment->status);
+        $this->assertTrue(Storage::disk('local')->exists("sites/{$deployment->deploy_hash}.html"));
+    }
 }
