@@ -32,7 +32,11 @@
       "Bash(git push origin:*)",
       "Bash(git commit:*)",
       "Bash(git add:*)",
-      "Bash(bash .agents/supervisor/launch-coder.sh:*)"
+      "Bash(bash .agents/supervisor/launch-coder.sh:*)",
+      "Bash(pkill -P :*)",
+      "Bash(kill :*)",
+      "Bash(git reset --hard HEAD)",
+      "Bash(git read-tree:*)"
     ],
     "deny": [
       "NotebookEdit",
