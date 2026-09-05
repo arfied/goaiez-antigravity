@@ -9,6 +9,7 @@ use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Actions\EmailUnsubscribeAction;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Events\EmailSent;
+use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
 use App\Modules\X204\Domain\ConsentService;
@@ -152,6 +153,11 @@ class CMailTest extends TestCase
         );
         $this->assertSame('refused_suppressed', $after['status']);
         $this->assertSame('MARKETING_SEND_SUPPRESSED', $after['refusal_code']);
+        $this->assertSame(
+            'Recipient has unsubscribed from marketing; the suppression is X-204\'s',
+            $after['message'],
+            'the refusal names where the suppression lives'
+        );
         $this->assertSame(1, MailEvent::where('business_id', $biz->id)
             ->where('recipient_email', 'homeowner@acme.com')
             ->where('event_type', 'sent')
@@ -227,6 +233,51 @@ class CMailTest extends TestCase
     }
 
     /**
+     * [G15-31] every warm-up quantity is a range plus jitter; a constant is refused
+     */
+    public function test_g15_31_warmup_quantities_are_ranges_not_constants(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Jitter Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'jitter.apex-air.com');
+        $calendar = $this->warmupAction->handle($biz->id, $domain->id, 2, 100);
+
+        // the caller's explicit allowance is still the caller's
+        $this->assertSame(100, $calendar->daily_allowance);
+
+        // read the row back, never the value updateOrCreate returned
+        $stored = WarmupCalendar::where('business_id', $biz->id)
+            ->where('mail_domain_id', $domain->id)
+            ->firstOrFail();
+
+        $this->assertIsArray($stored->schedule, 'the cast reads back an array, not a JSON string');
+        $this->assertCount(5, $stored->schedule);
+
+        foreach ($stored->schedule as $day => $entry) {
+            $this->assertIsArray($entry, "{$day} is a range, not a bare quantity");
+            $this->assertGreaterThan($entry['min'], $entry['max'], "{$day} spans a range");
+            $this->assertGreaterThanOrEqual($entry['min'], $entry['quantity'], "{$day} sits in its range");
+            $this->assertLessThanOrEqual($entry['max'], $entry['quantity'], "{$day} sits in its range");
+        }
+
+        // the published ladder is the midpoint, and the stored quantity is not pinned to it
+        $this->assertSame(50, intdiv($stored->schedule['day_1']['min'] + $stored->schedule['day_1']['max'], 2));
+        $this->assertSame(800, intdiv($stored->schedule['day_5']['min'] + $stored->schedule['day_5']['max'], 2));
+
+        // ⑤ refuses: a constant quantity
+        try {
+            $this->warmupAction->handle($biz->id, $domain->id, 2, 100, [
+                'day_1' => ['min' => 50, 'max' => 50],
+            ]);
+            $this->fail('a constant warm-up quantity must be refused');
+        } catch (ConstantWarmupQuantityRefused $e) {
+            $this->assertSame('WARMUP_CONSTANT_QUANTITY', $e::REFUSAL_CODE);
+            $this->assertStringContainsString('day_1', $e->getMessage());
+        }
+    }
+
+    /**
      * [G4-08], [G7-40], [G10-28], [G11-03], [G11-20] DNS & DMARC
      */
     public function test_dns_dmarc_records(): void
@@ -241,7 +292,7 @@ class CMailTest extends TestCase
     }
 
     /**
-     * [G9-21], [G11-05], [G11-06], [G11-09], [G11-10], [G11-11], [G11-12], [G11-15], [G11-17], [G11-18], [G11-29], [G11-38], [G15-31]
+     * [G9-21], [G11-05], [G11-06], [G11-09], [G11-10], [G11-11], [G11-12], [G11-15], [G11-17], [G11-18], [G11-29], [G11-38]
      */
     public function test_header_capabilities(): void
     {
