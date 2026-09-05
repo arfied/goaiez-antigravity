@@ -31,7 +31,8 @@
       "Bash(./vendor/bin/pint --test:*)",
       "Bash(git push origin:*)",
       "Bash(git commit:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(bash .agents/supervisor/launch-coder.sh:*)"
     ],
     "deny": [
       "NotebookEdit",
