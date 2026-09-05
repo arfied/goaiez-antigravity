@@ -550,3 +550,5 @@
 - `2026-09-04T19:38:02` (R245) X-142 — empty state wording uses standard x-ui.empty-state pattern with no action button
 - `2026-09-04T19:38:02` (R245) X-142 — renders event_filter column, events cast is ignored as dead
 - `2026-09-04T19:38:02` (R245) X-142 — is_active cast to boolean added to WebhookSubscription model
+- `2026-09-04T19:59:21` (R245) X-142 — ConnectYourAi empty state renders sentence 'Connect an AI to get started.'
+- `2026-09-04T19:59:21` (R245) X-142 — ConnectYourAi connected state renders token_name and role_scope, asserting DontSee token_hash
