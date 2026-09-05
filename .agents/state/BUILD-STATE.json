@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T20:39:35",
+ "updated": "2026-09-04T21:15:07",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -629,10 +629,23 @@
    "unresolved": []
   },
   "X-137": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 13,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-137",
+     "stage": "tracking",
+     "why": "PixelEventsAction requires a session; a cold link click has none",
+     "at": "2026-09-04T21:15:07"
+    },
+    {
+     "module": "X-137",
+     "stage": "latency",
+     "why": "the 50ms budget has no measuring instrument; no latency harness exists on this track",
+     "at": "2026-09-04T21:15:07"
+    }
+   ]
   },
   "X-138": {
    "status": "DONE",
@@ -1189,6 +1202,18 @@
    "stage": "schema",
    "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
    "at": "2026-09-02T02:39:43"
+  },
+  {
+   "module": "X-137",
+   "stage": "tracking",
+   "why": "PixelEventsAction requires a session; a cold link click has none",
+   "at": "2026-09-04T21:15:07"
+  },
+  {
+   "module": "X-137",
+   "stage": "latency",
+   "why": "the 50ms budget has no measuring instrument; no latency harness exists on this track",
+   "at": "2026-09-04T21:15:07"
   }
  ],
  "notes": [
@@ -1298,6 +1323,18 @@
    "module": "X-110",
    "chose": "G13-12 \u2014 the chat's context comes from the pixel and follows the page: PixelEngine gains one public read, pageContextForSession(businessId, sessionToken), returning the visit's landing_page and utm triple plus a current_page taken from the newest page_view event for that session and falling back to landing_page, and null when the token does not belong to that business; X-102 stores the token and the returned map on chat_sessions in a NEW migration and refreshes it through ChatContextRefreshAction, so no X-102 file names visits, visitor_sessions or pixel_events; the rejected alternative of X-102 querying pixel_events directly was refused because it puts one module's table in another module's action, which is the boundary G11-01 already settled the other way",
    "at": "2026-09-04T20:39:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "record the public-route tenancy",
+   "at": "2026-09-04T21:15:03",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "G13-28 decisions",
+   "at": "2026-09-04T21:15:03",
    "ruling": "R245"
   }
  ]
