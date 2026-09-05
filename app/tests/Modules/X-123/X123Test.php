@@ -237,7 +237,21 @@ class X123Test extends TestCase
      */
     public function test_g7_26_redis_horizon_vocabulary(): void
     {
-        $this->assertTrue(true);
+        $this->assertNotContains(config('queue.default'), ['sqs', 'beanstalkd']);
+
+        $drivers = collect(config('queue.connections'))->pluck('driver')->all();
+        $this->assertNotContains('rabbitmq', $drivers);
+
+        $this->assertTrue(class_exists(\Laravel\Horizon\Horizon::class));
+
+        \Illuminate\Support\Facades\Http::fake();
+        $biz = self::provisionTenant();
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $action = new \App\Modules\X123\Actions\EventPublishAction;
+        $action->handle($biz->id, 'test.event', ['key' => 'value']);
+
+        \Illuminate\Support\Facades\Http::assertNothingSent();
     }
 
     /**
