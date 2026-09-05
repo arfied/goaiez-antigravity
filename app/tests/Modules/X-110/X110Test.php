@@ -156,7 +156,38 @@ class X110Test extends TestCase
      */
     public function test_g13_12_chat_page_context(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Chat Context Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_chat_1', 'google', 'cpc', 'spring', '/hvac-repair');
+
+        $context = $this->engine->pageContextForSession($biz->id, $v['session_token']);
+        $this->assertEquals('/hvac-repair', $context['landing_page']);
+        $this->assertEquals('google', $context['utm_source']);
+        $this->assertEquals('/hvac-repair', $context['current_page']);
+
+        $chatStart = new \App\Modules\X102\Actions\ChatStartAction($this->engine);
+        $chatRefresh = new \App\Modules\X102\Actions\ChatContextRefreshAction($this->engine);
+
+        $session = $chatStart->handle($biz->id, '192.168.1.1', false, $v['session_token']);
+        $this->assertEquals($v['session_token'], $session->pixel_session_token);
+        $this->assertEquals('/hvac-repair', $session->page_context['current_page']);
+
+        $this->eventAction->handle($biz->id, $v['session_id'], 'page_view', ['url' => '/hvac-repair/pricing']);
+
+        $chatRefresh->handle($session);
+
+        $fresh = \App\Modules\X102\Models\ChatSession::find($session->id)->fresh();
+        $this->assertEquals('/hvac-repair/pricing', $fresh->page_context['current_page']);
+        $this->assertEquals('/hvac-repair', $fresh->page_context['landing_page']);
+
+        $sessionNoToken = $chatStart->handle($biz->id, '192.168.1.1', false, null);
+        $this->assertNull($sessionNoToken->pixel_session_token);
+        $this->assertNull($sessionNoToken->page_context);
+
+        $otherBiz = TestCase::provisionTenant(['name' => 'Other Biz']);
+        $badContext = $this->engine->pageContextForSession($otherBiz->id, $v['session_token']);
+        $this->assertNull($badContext);
     }
 
     /**

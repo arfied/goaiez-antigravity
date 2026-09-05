@@ -184,4 +184,30 @@ final class PixelEngine
 
         return $sample;
     }
+
+    public function pageContextForSession(int $businessId, string $sessionToken): ?array
+    {
+        $session = Session::where('business_id', $businessId)
+            ->where('session_token', $sessionToken)
+            ->first();
+
+        if (! $session || ! $session->visit) {
+            return null;
+        }
+
+        $latestPageView = PixelEvent::where('session_id', $session->id)
+            ->where('event_name', 'page_view')
+            ->orderByDesc('id')
+            ->first();
+
+        $visit = $session->visit;
+
+        return [
+            'landing_page' => $visit->landing_page,
+            'utm_source' => $visit->utm_source,
+            'utm_medium' => $visit->utm_medium,
+            'utm_campaign' => $visit->utm_campaign,
+            'current_page' => $latestPageView ? ($latestPageView->payload['url'] ?? $visit->landing_page) : $visit->landing_page,
+        ];
+    }
 }
