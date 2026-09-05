@@ -764,3 +764,4 @@
 - `2026-09-05T10:13:56` (R245) C-Agent — the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)
 - `2026-09-05T10:15:15` (R245) C-Agent — one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)
 - `2026-09-05T12:07:11` UNRESOLVED X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate) X-172 - 
+- `2026-09-05T12:29:26` UNRESOLVED capability X-171 - G4-27 belongs to track sixty or money
