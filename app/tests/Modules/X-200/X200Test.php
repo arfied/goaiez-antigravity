@@ -120,4 +120,25 @@ class X200Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_g18_25_certain_voicemail_is_not_upgraded_to_a_live_human(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $humanSeat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+
+        $disp = $this->disposeAction->disposeCall(
+            businessId: $biz->id,
+            campaignId: $camp->id,
+            seatId: $humanSeat->id,
+            phone: '+12145550188',
+            disposition: 'voicemail',
+            isUncertainAmd: false // Certain AMD
+        );
+
+        $this->assertEquals('voicemail', $disp->disposition);
+        $this->assertFalse($disp->is_uncertain_human);
+    }
 }
