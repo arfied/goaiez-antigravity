@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\X137;
 
+use App\Modules\X137\Events\LinkClicked;
+use App\Modules\X137\Models\LinkClick;
+use App\Modules\X137\Models\ShortLink;
 use App\Modules\X137\Ui\AttributionRow;
 use App\Modules\X137\Ui\DniPoolUtilisation;
+use App\Support\Tenancy;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -28,15 +35,15 @@ final class ModuleServiceProvider extends ServiceProvider
             Livewire::component('x-137.dni-pool-utilisation', DniPoolUtilisation::class);
         }
 
-        \Illuminate\Support\Facades\Route::get('/l/{business}/{code}', function (string $business, string $code, \Illuminate\Http\Request $request) {
+        Route::get('/l/{business}/{code}', function (string $business, string $code, Request $request) {
             $businessId = (int) $business;
-            \App\Support\Tenancy::set($businessId);
+            Tenancy::set($businessId);
 
-            $shortLink = \App\Modules\X137\Models\ShortLink::where('business_id', $businessId)
+            $shortLink = ShortLink::where('business_id', $businessId)
                 ->where('short_code', $code)
                 ->firstOrFail();
 
-            \App\Modules\X137\Models\LinkClick::create([
+            LinkClick::create([
                 'business_id' => $businessId,
                 'short_link_id' => $shortLink->id,
                 'ip_address' => $request->ip(),
@@ -44,7 +51,7 @@ final class ModuleServiceProvider extends ServiceProvider
                 'clicked_at' => now(),
             ]);
 
-            \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\X137\Events\LinkClicked(
+            Event::dispatch(new LinkClicked(
                 businessId: $businessId,
                 shortLinkId: $shortLink->id,
                 shortCode: $code,

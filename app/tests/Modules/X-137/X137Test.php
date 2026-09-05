@@ -9,8 +9,10 @@ use App\Modules\X137\Actions\LinkQrAction;
 use App\Modules\X137\Actions\LinkShortAction;
 use App\Modules\X137\Domain\X137Engine;
 use App\Modules\X137\Events\CallAttributed;
+use App\Modules\X137\Events\LinkClicked;
 use App\Modules\X137\Events\VisitJoinedToCall;
 use App\Modules\X137\Models\CallToken;
+use App\Modules\X137\Models\LinkClick;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -189,7 +191,7 @@ class X137Test extends TestCase
     /**
      * [G13-24]
      */
-    public function test_G13_24_offline_campaign_reuses_token(): void
+    public function test_g13_24_offline_campaign_reuses_token(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'G1324 Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -207,7 +209,7 @@ class X137Test extends TestCase
 
     public function test_a_cold_link_click_is_recorded_without_a_session(): void
     {
-        Event::fake([\App\Modules\X137\Events\LinkClicked::class]);
+        Event::fake([LinkClicked::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Cold Click', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -218,12 +220,12 @@ class X137Test extends TestCase
         $response = $this->get("/l/{$biz->id}/{$link->short_code}");
         $response->assertRedirect('https://example.com/dest');
 
-        $this->assertEquals(1, \App\Modules\X137\Models\LinkClick::count());
-        $click = \App\Modules\X137\Models\LinkClick::first();
+        $this->assertEquals(1, LinkClick::count());
+        $click = LinkClick::first();
         $this->assertEquals($biz->id, $click->business_id);
         $this->assertEquals($link->id, $click->short_link_id);
 
-        Event::assertDispatched(\App\Modules\X137\Events\LinkClicked::class, function ($e) use ($biz, $link) {
+        Event::assertDispatched(LinkClicked::class, function ($e) use ($biz, $link) {
             return $e->businessId === $biz->id && $e->shortLinkId === $link->id && $e->shortCode === $link->short_code;
         });
 
