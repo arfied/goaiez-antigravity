@@ -560,3 +560,5 @@
 - `2026-09-04T20:50:45` (R245) C-Mail — EmailUnsubscribeAction writes the preference through X204\Domain\ConsentService::suppress with channel email, mirroring C-Sms's SmsComposer; the mail_events row stays as the event log, not the preference store
 - `2026-09-04T20:50:45` (R245) C-Mail — EmailSendAction passes ConsentService::decide only for marketing sends, so a conversational or transactional send is never gated; that scoping is how an unsubscribed recipient still receives the invoice, which is G1-43's refusal clause
 - `2026-09-04T20:50:45` (R245) C-Mail — G1-43's category-confirmation half has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called
+- `2026-09-04T22:29:12` (R245) C-Mail — G15-31: the published warm-up ladder is the midpoint of a +/-20% range; the stored quantity is drawn inside it, so no two domains share a schedule
+- `2026-09-04T22:29:12` (R245) C-Mail — G15-31: a caller-supplied schedule with min === max is refused with WARMUP_CONSTANT_QUANTITY rather than silently jittered
