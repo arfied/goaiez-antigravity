@@ -82,13 +82,18 @@ final class FormCaptureAction
 
             // Direct entity writing (G2-20, G13-35): forms write straight to Person entity, no intermediate buffer
             $phone = $payload['phone'] ?? '+15550000000';
-            $firstName = $payload['first_name'] ?? ($payload['name'] ?? 'Visitor');
-            $email = $payload['email'] ?? null;
 
-            $person = Person::updateOrCreate(
-                ['business_id' => $businessId, 'phone' => $phone],
-                ['first_name' => $firstName, 'email' => $email]
-            );
+            $person = Person::firstOrNew(['business_id' => $businessId, 'phone' => $phone]);
+            // Only write the fields the payload actually carried (R245, 2026-09-05).
+            $person->fill(array_filter([
+                'first_name' => $payload['first_name'] ?? ($payload['name'] ?? null),
+                'email' => $payload['email'] ?? null,
+            ], fn ($v) => $v !== null));
+
+            if (! $person->exists) {
+                $person->first_name ??= 'Visitor';
+            }
+            $person->save();
 
             // Every submission row references a Person id (TEST ANCHOR)
             $submission = FormSubmission::create([
