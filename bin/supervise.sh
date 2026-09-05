@@ -114,6 +114,21 @@ if [ $want_tests -eq 1 ]; then
   # the second one's migrate:fresh drops the first one's schema mid-run.
   busy=0
   for pid in $(pgrep -f 'vendor/bin/pest' 2>/dev/null); do
+    # pgrep -f matches any process whose command line merely MENTIONS the path.
+    # The coder is one of them: launch-coder.sh:91 passes the whole of KICKOFF.md
+    # as a single argv element, so a brief that names ./vendor/bin/pest anywhere
+    # makes this guard refuse the very gate it was briefed to run, from the repo
+    # root, whose app/phpunit.xml pins our own TEST_DB. PB-34 (2026-09-05 18:0x)
+    # measured nothing for exactly that reason. A real pest run is the php binary
+    # (vendor/bin/pest is #!/usr/bin/env php), so require that and no shell or
+    # agent process can trip it.
+    # An unreadable exe (a pid that died, or another account's) keeps the OLD
+    # conservative behaviour and still gets the cwd check — this narrows the
+    # guard, it does not open it.
+    exe=$(readlink -f "/proc/$pid/exe" 2>/dev/null)
+    if [ -n "$exe" ]; then
+      case "${exe##*/}" in php|php[0-9]*) ;; *) continue ;; esac
+    fi
     cw=$(readlink -f "/proc/$pid/cwd" 2>/dev/null) || continue
     [ -n "$cw" ] || continue
     for px in "$cw/phpunit.xml" "$cw/app/phpunit.xml"; do
