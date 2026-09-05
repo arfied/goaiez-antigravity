@@ -931,4 +931,62 @@ class X155Test extends TestCase
         $unknown = Person::where('business_id', $biz->id)->where('phone', '+15551110002')->firstOrFail();
         $this->assertEquals('Visitor', $unknown->first_name, 'a spam submission from an unknown number must still record the visitor placeholder');
     }
+
+    public function test_a_phone_less_submission_gets_its_own_contact(): void
+    {
+        Event::fake([FormCaptured::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Spam Guard Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $resA = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'email' => 'alice@example.com',
+            ]
+        );
+
+        $resB = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bob',
+                'email' => 'bob@example.com',
+            ]
+        );
+
+        $resC = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Carol',
+                'phone' => '+15556660001',
+            ]
+        );
+
+        $resD = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Carol Updated',
+                'phone' => '+15556660001',
+            ]
+        );
+
+        $this->assertNotSame($resA['person_id'], $resB['person_id'], 'two phone less submissions were funnelled into one contact');
+        $this->assertSame('Alice', Person::findOrFail($resA['person_id'])->first_name, 'the first submitters name was overwritten by the second');
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '+15550000000')->count(), 'the reserved fallback number was written to a contact row');
+        $this->assertNotNull($resA['person_id']);
+        $this->assertSame('Bob', Person::findOrFail($resB['person_id'])->first_name);
+        $this->assertSame($resC['person_id'], $resD['person_id'], 'two submissions on the same phone must resolve to one contact');
+    }
 }
