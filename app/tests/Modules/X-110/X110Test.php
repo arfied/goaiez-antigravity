@@ -234,7 +234,39 @@ class X110Test extends TestCase
      */
     public function test_g13_28_redirect_hop(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Hop Biz']);
+        \App\Support\Tenancy::set($biz->id);
+
+        $registry = app(\App\Services\Config\DefaultsRegistry::class);
+
+        $links = app(\App\Services\ShortLinks\ShortLinks::class);
+        $link = $links->mint('https://target.example.com', \App\Enums\ShortLinkPurpose::ReviewInvite);
+
+        $domain = $links->domain();
+
+        // 1. The click is recorded before the visitor leaves
+        $response = $this->get("https://{$domain}/{$link->token}");
+        $response->assertRedirect('https://target.example.com');
+
+        \App\Support\Tenancy::set($biz->id);
+
+        $click = \App\Models\ShortLinkClick::where('short_link_id', $link->id)->first();
+        $this->assertNotNull($click);
+        $this->assertEquals($link->id, $click->short_link_id);
+
+        // 2. A dead link is indistinguishable from one that never existed
+        $links->revoke($link);
+        $responseDead = $this->get("https://{$domain}/{$link->token}");
+        $responseNeverExisted = $this->get("https://{$domain}/neverexisted");
+
+        $this->assertEquals($responseNeverExisted->status(), $responseDead->status());
+        $this->assertEquals($responseNeverExisted->content(), $responseDead->content());
+
+        \App\Support\Tenancy::set($biz->id);
+
+        // 3. A dead link is still not a hit
+        $clicksAfter = \App\Models\ShortLinkClick::where('short_link_id', $link->id)->count();
+        $this->assertEquals(1, $clicksAfter);
     }
 
     /**
