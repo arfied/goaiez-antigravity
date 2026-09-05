@@ -767,3 +767,4 @@
 - `2026-09-05T11:22:12` UNRESOLVED capability C-Sms - TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant
 - `2026-09-05T12:14:55` note: J10: owner ruling 2026-09-05 — the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production
 - `2026-09-05T13:46:19` (R245) X-121 — JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)
+- `2026-09-05T16:22:13` (R245) C-Billing — a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)
