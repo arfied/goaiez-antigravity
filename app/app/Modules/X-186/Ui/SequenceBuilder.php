@@ -31,7 +31,7 @@ class SequenceBuilder extends Component
                 ->where('campaign_id', $campaignId)
                 ->orderBy('step_number')
                 ->get();
-                
+
             $steps = [];
             foreach ($campaignSteps as $s) {
                 $steps[] = [
