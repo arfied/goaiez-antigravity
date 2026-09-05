@@ -330,7 +330,6 @@ trait JourneyHarness
         $zoneRow->update(['has_valid_ssl' => true]);
         $features['ssl'] = $response->status() === 200 && $withoutSsl->status() === 404;
 
-
         return [
             'deploy_id' => $deploy['deploy_hash'],
             'features' => $features,
