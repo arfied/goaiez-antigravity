@@ -80,11 +80,11 @@ final class ApprovalDeskEngine
             $chain = $item->approval_chain_id !== null
                 ? ApprovalChain::where('business_id', $businessId)->find($item->approval_chain_id)
                 : null;
-            $stepsCount = $chain?->steps_count ?? 1;
+            $stepsCount = $chain->steps_count ?? 1;
 
             // A sequential chain advances one desk per approval; only the last step decides,
             // and ApprovalDecided fires only on the step that sets a terminal status (R245).
-            if ($decision === 'approved' && $item->current_step < $stepsCount) {
+            if ($decision === 'approved' && $item->current_step <= $stepsCount) {
                 $item->update(['current_step' => $item->current_step + 1]);
 
                 return [
