@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T08:35:23",
+ "updated": "2026-09-05T10:10:03",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -11,35 +11,35 @@
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": null,
+   "violations": 0,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": null,
+   "violations": 3,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": null,
+   "violations": 87,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": null,
+   "violations": 94,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": null,
+   "violations": 15,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 372,
+   "violations": 399,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": null,
+   "violations": 137,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": null,
+   "violations": 7,
    "fails": "WAVE"
   }
  },
@@ -360,10 +360,23 @@
  },
  "modules": {
   "C-Agent": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Agent",
+     "stage": "journey",
+     "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
+     "at": "2026-09-05T09:56:06"
+    },
+    {
+     "module": "C-Agent",
+     "stage": "journey",
+     "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
+     "at": "2026-09-05T09:56:06"
+    }
+   ]
   },
   "C-Ai": {
    "status": "DONE",
@@ -372,10 +385,23 @@
    "unresolved": []
   },
   "C-Billing": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 9,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Billing",
+     "stage": "journey",
+     "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
+     "at": "2026-09-05T09:56:06"
+    },
+    {
+     "module": "C-Billing",
+     "stage": "journey",
+     "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
+     "at": "2026-09-05T09:56:06"
+    }
+   ]
   },
   "C-Mail": {
    "status": "DONE",
@@ -399,6 +425,12 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-04T08:05:31"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "journey",
+     "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
+     "at": "2026-09-05T09:56:06"
     }
    ]
   },
@@ -409,10 +441,23 @@
    "unresolved": []
   },
   "C-Telephony": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Telephony",
+     "stage": "journey",
+     "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+     "at": "2026-09-05T09:54:32"
+    },
+    {
+     "module": "C-Telephony",
+     "stage": "journey",
+     "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+     "at": "2026-09-05T09:56:02"
+    }
+   ]
   },
   "C-Whatsapp": {
    "status": "DONE",
@@ -454,7 +499,14 @@
    "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-103",
+     "stage": "journey",
+     "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
+     "at": "2026-09-05T09:56:06"
+    }
+   ]
   },
   "X-104": {
    "status": "DONE",
@@ -1325,6 +1377,54 @@
    "stage": "tests",
    "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
    "at": "2026-09-05T08:35:23"
+  },
+  {
+   "module": "C-Telephony",
+   "stage": "journey",
+   "why": "missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+   "at": "2026-09-05T09:54:32"
+  },
+  {
+   "module": "C-Telephony",
+   "stage": "journey",
+   "why": "missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials",
+   "at": "2026-09-05T09:56:02"
+  },
+  {
+   "module": "C-Agent",
+   "stage": "journey",
+   "why": "day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Agent",
+   "stage": "journey",
+   "why": "quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "journey",
+   "why": "review-invite needs Infobip credentials in .env for SMS outreach transport",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "X-103",
+   "stage": "journey",
+   "why": "site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "journey",
+   "why": "cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials",
+   "at": "2026-09-05T09:56:06"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "journey",
+   "why": "dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice",
+   "at": "2026-09-05T09:56:06"
   }
  ],
  "decisions": [
@@ -1369,6 +1469,26 @@
   {
    "at": "2026-09-03T09:34:34",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey C-Agent quote-to-booking - not a credential; askAgent is local and the failure is assertSame NO_FACT at TwelveJourneysTest.php:149"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey C-Reviews review-invite - not a credential; reviewInvitesFor is a DB::table read on outreach_messages, JourneyHarness.php:414"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey X-103 site-publish - not a credential; publishSite calls the local SiteEngine, JourneyHarness.php:619, and Vercel appears nowhere in the tree"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "WITHDRAWN wave-57 journey C-Billing dunning-by-reason - journey PASSES; artifact_id is an internal ReceivableState id, JourneyHarness.php:520. A finding, not a missing dependency"
+  },
+  {
+   "at": "2026-09-05T10:10:03",
+   "note": "wave-57 recorded missed-call-textback UNRESOLVED twice, 09:54:32 and 09:56:02 - one row, not two"
   }
  ]
 }

@@ -760,3 +760,25 @@
 - `2026-09-05T08:12:23` (R245) C-Agent — agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured — owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands
 - `2026-09-05T08:35:16` (R245) X-82 — RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)
 - `2026-09-05T08:35:23` UNRESOLVED tests X-172 - generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
+- `2026-09-05T09:50:50` stage integrity = 0
+- `2026-09-05T09:51:01` stage boundary = 3
+- `2026-09-05T09:51:01` stage contract = 87
+- `2026-09-05T09:51:01` stage citation = 94
+- `2026-09-05T09:51:01` stage schema = 15
+- `2026-09-05T09:51:01` stage capability = 399
+- `2026-09-05T09:51:01` stage anchor = 137
+- `2026-09-05T09:51:01` stage journey = 7
+- `2026-09-05T09:54:32` UNRESOLVED journey C-Telephony - missed-call-textback: needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials
+- `2026-09-05T09:56:02` UNRESOLVED journey C-Telephony - missed-call-textback needs Infobip sandbox or real credentials (INFOBIP_SENDER, INFOBIP_API_KEY) in .env, and infobip_webhook_secret in platform_credentials
+- `2026-09-05T09:56:06` UNRESOLVED journey C-Agent - day-one needs real Infobip environment with voice capability activated (spend decision) and provisioned number; credentials in .env
+- `2026-09-05T09:56:06` UNRESOLVED journey C-Agent - quote-to-booking needs Anthropic/OpenAI API key in .env for agent to answer, and Infobip credentials for webhook to be dispatched correctly
+- `2026-09-05T09:56:06` UNRESOLVED journey C-Reviews - review-invite needs Infobip credentials in .env for SMS outreach transport
+- `2026-09-05T09:56:06` UNRESOLVED journey X-103 - site-publish needs site engine hosting/deployment credentials (e.g. Vercel) in platform_credentials
+- `2026-09-05T09:56:06` UNRESOLVED journey C-Billing - cancel needs Authorize.Net sandbox login id + transaction key in platform_credentials
+- `2026-09-05T09:56:06` UNRESOLVED journey C-Billing - dunning-by-reason passed with no external artifact id. A real artifact id would come from a real payment gateway (e.g. Stripe or Authorize.Net) or communications vendor sending the dunning notice
+- `2026-09-05T10:10:03` note: WITHDRAWN wave-57 journey C-Agent quote-to-booking - not a credential; askAgent is local and the failure is assertSame NO_FACT at TwelveJourneysTest.php:149
+- `2026-09-05T10:10:03` note: WITHDRAWN wave-57 journey C-Reviews review-invite - not a credential; reviewInvitesFor is a DB::table read on outreach_messages, JourneyHarness.php:414
+- `2026-09-05T10:10:03` note: WITHDRAWN wave-57 journey X-103 site-publish - not a credential; publishSite calls the local SiteEngine, JourneyHarness.php:619, and Vercel appears nowhere in the tree
+- `2026-09-05T10:10:03` note: WITHDRAWN wave-57 journey C-Billing dunning-by-reason - journey PASSES; artifact_id is an internal ReceivableState id, JourneyHarness.php:520. A finding, not a missing dependency
+- `2026-09-05T10:10:03` X-103 -> DONE
+- `2026-09-05T10:10:03` note: wave-57 recorded missed-call-textback UNRESOLVED twice, 09:54:32 and 09:56:02 - one row, not two
