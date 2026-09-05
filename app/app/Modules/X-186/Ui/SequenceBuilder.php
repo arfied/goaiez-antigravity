@@ -31,7 +31,7 @@ class SequenceBuilder extends Component
                 ->where('campaign_id', $campaignId)
                 ->orderBy('step_number')
                 ->get()
-                ->map(fn ($s) => [
+                ->map(fn (CampaignStep $s) => [
                     'channel' => $s->channel,
                     'template_name' => $s->template_name,
                     'delay_days' => $s->delay_days,
