@@ -329,11 +329,11 @@ class X110Test extends TestCase
         $v1 = $this->engine->recordVisit($biz->id, 'vis_form_1');
         $this->eventAction->handle($biz->id, $v1['session_id'], 'form.abandoned', [
             'form_id' => 'form_A',
-            'abandoned_field' => 'email'
+            'abandoned_field' => 'email',
         ]);
         $this->eventAction->handle($biz->id, $v1['session_id'], 'form.abandoned', [
             'form_id' => 'form_A',
-            'abandoned_field' => 'phone'
+            'abandoned_field' => 'phone',
         ]);
 
         $otherBiz = TestCase::provisionTenant(['name' => 'Form Biz 2']);
@@ -341,7 +341,7 @@ class X110Test extends TestCase
         $v2 = $this->engine->recordVisit($otherBiz->id, 'vis_form_2');
         $this->eventAction->handle($otherBiz->id, $v2['session_id'], 'form.abandoned', [
             'form_id' => 'form_A',
-            'abandoned_field' => 'name'
+            'abandoned_field' => 'name',
         ]);
 
         DB::statement("SET app.business_id = '{$biz->id}'");

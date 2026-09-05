@@ -15,11 +15,10 @@ use App\Modules\X102\Actions\ChatStartAction;
 use App\Modules\X102\Events\ChatEscalated;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Events\ChatStarted;
+use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X121\Models\Person;
-use App\Modules\X102\Models\ChatLead;
-
 use App\Services\Ai\AiSpend;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
@@ -345,7 +344,7 @@ class X102Test extends TestCase
         Tenancy::set((int) $biz->id);
 
         $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
-        
+
         $this->captureAction->handle(
             businessId: $biz->id,
             sessionId: $session->id,
