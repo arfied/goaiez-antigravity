@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X01;
 
+use App\Enums\UserRole;
+use App\Models\Conversation;
 use App\Models\Customer;
+use App\Models\Message;
 use App\Models\User;
 use App\Modules\X01\Ui\Thread;
-use App\Models\Conversation;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
@@ -19,7 +21,7 @@ class ThreadScreenTest extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Thread Tenant', 'currency' => 'USD']);
         $user = User::factory()->create();
-        Tenancy::actingAs($biz->id, function () use ($biz, $user) {
+        Tenancy::actingAs($biz->id, function () use ($user) {
             Tenancy::setUser($user->id);
             // Default and empty state
             $customer = Customer::factory()->create(['name' => 'Jane Empty']);
@@ -35,7 +37,7 @@ class ThreadScreenTest extends TestCase
                 'status' => 'open',
             ]);
 
-            \App\Models\Message::factory()->create([
+            Message::factory()->create([
                 'conversation_id' => $conversation->id,
                 'direction' => 'inbound',
                 'sender_type' => 'customer',
@@ -52,7 +54,6 @@ class ThreadScreenTest extends TestCase
             Livewire::test(Thread::class, ['customer' => $customer])
                 ->call('draftAiReply', $messageId)
                 ->assertSet('replyText', 'Drafted response based on context');
-                
 
             // Interaction - Takeover reply
             Livewire::test(Thread::class, ['customer' => $customer])
@@ -71,11 +72,11 @@ class ThreadScreenTest extends TestCase
 
     public function test_screen_renders_for_tenant(): void
     {
-        $owner = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        
-        \App\Support\Tenancy::actingAs($biz->id, function() {
+
+        Tenancy::actingAs($biz->id, function () {
             Conversation::factory()->count(3)->create();
         });
 

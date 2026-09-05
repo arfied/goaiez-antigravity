@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X01\Ui;
 
+use App\Models\Conversation;
 use App\Models\Customer;
 use App\Modules\CAgent\Actions\AgentDraftAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
-use App\Models\Conversation;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;

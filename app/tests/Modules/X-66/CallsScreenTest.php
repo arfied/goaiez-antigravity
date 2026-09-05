@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X66;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\X188\Models\NumberAssignment;
 use App\Modules\X188\Models\NumberPool;
-use App\Modules\X66\Models\CallSession;
-use App\Modules\X66\Models\CallTurn;
-use App\Modules\X66\Models\Voicemail;
 use App\Modules\X66\Ui\Calls;
 use App\Support\Tenancy;
+use Database\Factories\CallSessionFactory;
+use Database\Factories\CallTurnFactory;
+use Database\Factories\X66VoicemailFactory;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -62,27 +63,27 @@ class CallsScreenTest extends TestCase
                 ->assertSee('No calls yet');
 
             // 2. Default - Two sessions
-            $completedSession = \Database\Factories\CallSessionFactory::new()->create(['business_id' => $biz->id, 
+            $completedSession = CallSessionFactory::new()->create(['business_id' => $biz->id,
                 'from_phone' => '+11111111111',
                 'status' => 'completed',
             ]);
 
-            $missedSession = \Database\Factories\CallSessionFactory::new()->create(['business_id' => $biz->id, 
+            $missedSession = CallSessionFactory::new()->create(['business_id' => $biz->id,
                 'from_phone' => '+22222222222',
                 'status' => 'missed',
             ]);
 
-            \Database\Factories\CallTurnFactory::new()->create(['business_id' => $biz->id, 
+            CallTurnFactory::new()->create(['business_id' => $biz->id,
                 'session_id' => $completedSession->id,
                 'transcript' => 'I am calling about a quote.',
             ]);
 
-            \Database\Factories\CallTurnFactory::new()->create(['business_id' => $biz->id, 
+            CallTurnFactory::new()->create(['business_id' => $biz->id,
                 'session_id' => $missedSession->id,
                 'transcript' => 'This is a missed call turn.',
             ]);
 
-            \Database\Factories\X66VoicemailFactory::new()->create(['business_id' => $biz->id, 'business_id' => $biz->id, 
+            X66VoicemailFactory::new()->create(['business_id' => $biz->id,
                 'call_session_id' => $completedSession->id,
                 'transcription' => 'Voicemail for completed call.',
             ]);
@@ -106,13 +107,12 @@ class CallsScreenTest extends TestCase
 
     public function test_screen_renders_for_tenant(): void
     {
-        $owner = User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
-        
-        \App\Support\Tenancy::actingAs($biz->id, function() use ($biz) {
-            $completedSession = \Database\Factories\CallSessionFactory::new()->create(['business_id' => $biz->id, 
-                'business_id' => $biz->id,
+
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            $completedSession = CallSessionFactory::new()->create(['business_id' => $biz->id,
                 'from_phone' => '+11111111111',
                 'status' => 'completed',
             ]);
@@ -125,11 +125,13 @@ class CallsScreenTest extends TestCase
 
     public function test_screen_renders_for_admin(): void
     {
-        $user = User::factory()->withSecondFactor()->create(['role' => \App\Enums\UserRole::SuperAdmin]);
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         $this->actingAs($user);
         $biz = $this->provisionTenant(['owner_user_id' => $user->id]);
 
         $this->get(route('x-66.calls.admin'))
             ->assertOk();
+
+        Livewire::test(Calls::class)->assertOk();
     }
 }
