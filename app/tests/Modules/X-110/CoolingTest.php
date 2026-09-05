@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X110;
 
+use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
-use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Ui\Cooling;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -37,7 +37,6 @@ class CoolingTest extends TestCase
             'created_at' => now()->subDays(10),
         ]);
 
-        // Visitor 2: 1 visit, but has form abandoned (hotter). Not as quiet as visitor 1.
         $visit2 = Visit::create([
             'business_id' => $biz->id,
             'visitor_id' => 'v-hot',

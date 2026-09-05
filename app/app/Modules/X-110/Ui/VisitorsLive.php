@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X110\Ui;
 
-use App\Modules\X110\Models\Session;
-use App\Modules\X110\Models\Visit;
 use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -32,7 +31,7 @@ class VisitorsLive extends Component
                 ->orderByDesc('visitor_sessions.started_at')
                 ->select('visitor_sessions.*', 'visits.visitor_id', 'visits.landing_page', 'visits.utm_source', 'visits.utm_medium', 'visits.utm_campaign')
                 ->get();
-                
+
             $installVerified = PixelEvent::where('business_id', $this->businessId)->exists();
         } catch (\Exception $e) {
             return view('x-110::visitors-live', ['loadError' => $e->getMessage()]);

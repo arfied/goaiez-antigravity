@@ -6,6 +6,8 @@ namespace Tests\Modules\X110;
 
 use App\Models\User;
 use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
 use App\Modules\X110\Ui\InstallVerify;
 use App\Support\Tenancy;
 use Database\Seeders\UiReviewSeeder;
@@ -26,8 +28,8 @@ class InstallVerifyTest extends TestCase
             ->assertSee('Tag Installation', false)
             ->assertSee('No events seen in the last 60 seconds');
 
-        $visit = \App\Modules\X110\Models\Visit::create(['business_id' => $biz->id, 'visitor_id' => 'x']);
-        $session = \App\Modules\X110\Models\Session::create(['business_id' => $biz->id, 'visit_id' => $visit->id, 'session_token' => 'x', 'started_at' => now()]);
+        $visit = Visit::create(['business_id' => $biz->id, 'visitor_id' => 'x']);
+        $session = Session::create(['business_id' => $biz->id, 'visit_id' => $visit->id, 'session_token' => 'x', 'started_at' => now()]);
 
         PixelEvent::create([
             'business_id' => $biz->id,

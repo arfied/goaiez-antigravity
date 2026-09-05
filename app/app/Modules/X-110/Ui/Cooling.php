@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\X110\Ui;
 
-use App\Modules\X110\Models\Visit;
-use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
+use Carbon\CarbonInterface;
+use Exception;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Exception;
 
 class Cooling extends Component
 {
@@ -20,6 +21,7 @@ class Cooling extends Component
     public bool $isSample = false;
 
     public array $dismissed = [];
+
     public array $openers = [];
 
     public function mount(int $businessId = 0)
@@ -56,17 +58,17 @@ class Cooling extends Component
             }
 
             $visitCount = $visitorVisits->count();
-            
+
             $visitorSessions = collect();
             foreach ($visitorVisits as $v) {
                 if ($sessionsByVisit->has($v->id)) {
                     $visitorSessions = $visitorSessions->merge($sessionsByVisit->get($v->id));
                 }
             }
-            
+
             $latestSession = $visitorSessions->sortByDesc('started_at')->first();
             $quietTime = $latestSession ? $latestSession->started_at : null;
-            
+
             $visitorEvents = collect();
             foreach ($visitorSessions as $s) {
                 if ($eventsBySession->has($s->id)) {
@@ -76,13 +78,13 @@ class Cooling extends Component
 
             $heatScore = $visitCount;
             $derivation = "{$visitCount} visits";
-            $openerDerivation = "visiting our site";
+            $openerDerivation = 'visiting our site';
 
             $rageClicks = $visitorEvents->where('event_name', 'rage_click.detected')->count();
             if ($rageClicks > 0) {
                 $heatScore += $rageClicks;
-                $derivation .= ", experienced frustration clicking";
-                $openerDerivation = "having some trouble clicking around";
+                $derivation .= ', experienced frustration clicking';
+                $openerDerivation = 'having some trouble clicking around';
             }
 
             $abandoned = $visitorEvents->where('event_name', 'form.abandoned')->first();
@@ -96,8 +98,8 @@ class Cooling extends Component
 
             // §59.5: "sorted hottest-went-quietest" -> we will sort later
             $defaultOpener = "Hi — saw you were {$openerDerivation}. Want me to call you back?";
-            
-            if (!isset($this->openers[$visitorId])) {
+
+            if (! isset($this->openers[$visitorId])) {
                 $this->openers[$visitorId] = $defaultOpener;
             }
 
@@ -105,7 +107,7 @@ class Cooling extends Component
                 'visitor_id' => $visitorId,
                 'heat' => $heatScore,
                 'quiet_at' => $quietTime,
-                'quiet_diff' => $quietTime ? $quietTime->diffForHumans(['syntax' => \Carbon\CarbonInterface::DIFF_ABSOLUTE]) : 'unknown',
+                'quiet_diff' => $quietTime ? $quietTime->diffForHumans(['syntax' => CarbonInterface::DIFF_ABSOLUTE]) : 'unknown',
                 'derivation' => $derivation,
                 'opener_text' => $this->openers[$visitorId],
             ];
@@ -116,6 +118,7 @@ class Cooling extends Component
             if ($a['heat'] !== $b['heat']) {
                 return $b['heat'] <=> $a['heat'];
             }
+
             return $a['quiet_at'] <=> $b['quiet_at']; // smaller is older => quietest
         });
 
