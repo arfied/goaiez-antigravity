@@ -382,7 +382,7 @@ final class AnswerAgentTurnJob extends AutopilotJob
 
         $outcome = $this->send($conversation, $draft);
 
-        $alreadyRecorded = $isPriceQuestion ?? false;
+        $alreadyRecorded = $isPriceQuestion;
 
         if (! $alreadyRecorded) {
             if ($draft->fallbackReason !== null) {
