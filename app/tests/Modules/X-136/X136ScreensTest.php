@@ -6,6 +6,7 @@ namespace Tests\Modules\X136;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
@@ -156,31 +157,9 @@ class X136ScreensTest extends TestCase
 
     public function test_signal_volume_precision_shows_stats(): void
     {
-        $s1 = Signal::create([
-            'business_id' => $this->businessId,
-            'prospect_identifier' => 'p1',
-            'signal_type' => 'pricing_visit',
-        ]);
-        SignalScore::create([
-            'business_id' => $this->businessId,
-            'signal_id' => $s1->id,
-            'prospect_identifier' => 'p1',
-            'signal_value' => 80.0,
-            'is_high_intent' => true,
-        ]);
-
-        $s2 = Signal::create([
-            'business_id' => $this->businessId,
-            'prospect_identifier' => 'p2',
-            'signal_type' => 'pricing_visit',
-        ]);
-        SignalScore::create([
-            'business_id' => $this->businessId,
-            'signal_id' => $s2->id,
-            'prospect_identifier' => 'p2',
-            'signal_value' => 40.0,
-            'is_high_intent' => false,
-        ]);
+        $action = new SignalScoreAction;
+        $action->recordAndScore($this->businessId, 'p1', 'pricing_visit', [], 80.0);
+        $action->recordAndScore($this->businessId, 'p2', 'pricing_visit', [], 40.0);
 
         DecayModel::create([
             'business_id' => $this->businessId,
@@ -199,22 +178,12 @@ class X136ScreensTest extends TestCase
 
     public function test_signal_volume_precision_no_decay_model(): void
     {
-        $s1 = Signal::create([
-            'business_id' => $this->businessId,
-            'prospect_identifier' => 'p1',
-            'signal_type' => 'hiring',
-        ]);
-        SignalScore::create([
-            'business_id' => $this->businessId,
-            'signal_id' => $s1->id,
-            'prospect_identifier' => 'p1',
-            'signal_value' => 80.0,
-            'is_high_intent' => true,
-        ]);
+        $action = new SignalScoreAction;
+        $action->recordAndScore($this->businessId, 'p1', 'hiring', [], 80.0);
 
         Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
             ->assertSee('hiring')
-            ->assertSee('N/A');
+            ->assertSee('No decay model yet. A model needs 30 days of events.');
     }
 
     public function test_signal_volume_precision_get_route(): void

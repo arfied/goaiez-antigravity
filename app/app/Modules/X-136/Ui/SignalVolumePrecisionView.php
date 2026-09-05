@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X136\Ui;
 
 use App\Modules\X136\Models\DecayModel;
-use App\Modules\X136\Models\Signal;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -59,9 +58,9 @@ class SignalVolumePrecisionView extends Component
                     ->get()
                     ->keyBy('signal_type');
 
-                $rows = DB::table("signals")
+                $rows = DB::table('signals')
                     ->where('signals.business_id', $this->businessId)
-                    ->join('signal_scores', 'signals.id', '=', 'signal_scores.signal_id')
+                    ->leftJoin('signal_scores', 'signals.id', '=', 'signal_scores.signal_id')
                     ->select(
                         'signals.signal_type',
                         DB::raw('count(signals.id) as total_count'),
@@ -78,7 +77,7 @@ class SignalVolumePrecisionView extends Component
                     $decay = $decayModels->get($row->signal_type);
                     $decayStr = $decay
                         ? "{$decay->half_life_days} days / ".($decay->decay_rate * 100).'%'
-                        : 'N/A';
+                        : 'No decay model yet. A model needs 30 days of events.';
 
                     return (object) [
                         'signal_type' => $row->signal_type,
@@ -91,7 +90,7 @@ class SignalVolumePrecisionView extends Component
             }
         }
 
-        return view('x-136::signal-volume-precision-view', [
+        return view('x-136::signal-volume-precision', [
             'stats' => $stats,
         ]);
     }
