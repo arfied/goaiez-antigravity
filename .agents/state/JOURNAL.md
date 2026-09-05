@@ -760,3 +760,4 @@
 - `2026-09-05T08:12:23` (R245) C-Agent — agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured — owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands
 - `2026-09-05T08:35:16` (R245) X-82 — RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)
 - `2026-09-05T08:35:23` UNRESOLVED tests X-172 - generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
+- `2026-09-05T09:47:06` (R245) C-Billing — a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)
