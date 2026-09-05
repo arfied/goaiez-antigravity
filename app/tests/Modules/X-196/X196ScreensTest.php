@@ -21,7 +21,7 @@ class X196ScreensTest extends TestCase
         $otherSession = ExtensionSession::forceCreate([
             'business_id' => $otherBiz->id,
             'is_active' => true,
-            'session_token' => 'test-token-1',
+            'session_token' => 'test-token-'.uniqid(),
         ]);
         ExtensionInjection::forceCreate([
             'business_id' => $otherBiz->id,
@@ -40,6 +40,10 @@ class X196ScreensTest extends TestCase
             ->assertSee('No active sessions')
             ->assertDontSee('OTHER-TENANT-SENTINEL');
 
+        $this->actingAs($owner)->get(route('x-196.extension-popup'))
+            ->assertOk()
+            ->assertSee('No active sessions');
+
         $admin = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
         TestCase::provisionTenant(['owner_user_id' => $admin->id]);
         $this->actingAs($admin)->get(route('x-196.extension-popup.admin'))
@@ -57,8 +61,14 @@ class X196ScreensTest extends TestCase
         $session = ExtensionSession::forceCreate([
             'business_id' => $biz->id,
             'is_active' => true,
-            'session_token' => 'test-token-2',
+            'session_token' => 'test-token-'.uniqid(),
         ]);
+        $inactiveSession = ExtensionSession::forceCreate([
+            'business_id' => $biz->id,
+            'is_active' => false,
+            'session_token' => 'test-token-'.uniqid(),
+        ]);
+
         ExtensionInjection::forceCreate([
             'business_id' => $biz->id,
             'session_id' => $session->id,
@@ -70,6 +80,9 @@ class X196ScreensTest extends TestCase
         Livewire::test(ExtensionPopup::class, ['businessId' => $biz->id])
             ->assertOk()
             ->assertSee('Session #'.$session->id)
+            ->assertSee('Active')
+            ->assertSee('Session #'.$inactiveSession->id)
+            ->assertSee('Inactive')
             ->assertSee('INJECTED-URL')
             ->assertSee('ATTESTATION-999');
     }

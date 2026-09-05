@@ -16,9 +16,9 @@ class ExtensionPopup extends Component
     #[Locked]
     public int $businessId = 0;
 
-    public function mount(): void
+    public function mount(int $businessId = 0): void
     {
-        $this->businessId = Tenancy::id() ?? 0;
+        $this->businessId = $businessId > 0 ? $businessId : (Tenancy::id() ?? 0);
         if ($this->businessId <= 0) {
             abort(403, 'Tenant context is required');
         }

@@ -13,9 +13,7 @@
                         <div class="flex flex-col gap-1 w-full">
                             <div class="flex justify-between w-full">
                                 <span class="font-bold">Session #{{ $session->id }}</span>
-                                <x-ui.status-pill :color="$session->is_active ? 'green' : 'gray'">
-                                    {{ $session->is_active ? 'Active' : 'Inactive' }}
-                                </x-ui.status-pill>
+                                <x-ui.status-pill :state="$session->is_active ? 'ok' : 'unknown'" :label="$session->is_active ? 'Active' : 'Inactive'" />
                             </div>
                             <div class="text-sm text-ink-2">
                                 @if($session->injections->isEmpty())
@@ -27,11 +25,6 @@
                                         @endforeach
                                     </ul>
                                 @endif
-                            </div>
-                            <div class="flex gap-2 mt-2">
-                                <form wire:submit="scanPage({{ $session->id }}, 'https://example.com', 'dummy dom')">
-                                    <x-ui.submit target="scanPage" busy="Scanning...">Scan Page</x-ui.submit>
-                                </form>
                             </div>
                         </div>
                     </x-ui.row>
