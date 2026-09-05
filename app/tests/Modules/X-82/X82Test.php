@@ -7,6 +7,7 @@ namespace Tests\Modules\X82;
 use App\Modules\X82\Actions\AllowanceLookupAction;
 use App\Modules\X82\Actions\RateLookupAction;
 use App\Modules\X82\Actions\RateSetAction;
+use App\Modules\X82\Domain\X82Engine;
 use App\Modules\X82\Events\AllowanceGranted;
 use App\Modules\X82\Events\RateChanged;
 use App\Modules\X82\Models\Allowance;
@@ -120,6 +121,6 @@ class X82Test extends TestCase
 
     public function test_engine_class_exists(): void
     {
-        $this->assertTrue(class_exists(\App\Modules\X82\Domain\X82Engine::class));
+        $this->assertTrue(class_exists(X82Engine::class));
     }
 }
