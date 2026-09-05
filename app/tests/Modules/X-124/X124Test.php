@@ -190,8 +190,9 @@ class X124Test extends TestCase
 
         Livewire::test(TodaysRecommendationStrip::class, ['businessId' => $biz->id])
             ->call('load')
-            ->set('errorMessage', 'Failed')
+            ->set('errorMessage', 'Failed to load recommendations')
             ->assertSee('We could not load recommendations.')
+            ->assertSee('Failed to load recommendations')
             ->assertSee('wire:click="load"', false);
     }
 

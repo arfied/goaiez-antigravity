@@ -156,4 +156,51 @@ class X142Test extends TestCase
         $this->assertNotEquals($sub->secret, $rawSecret);
         $this->assertStringNotContainsString('sec_', $rawSecret); // the encrypted payload should not contain the raw prefix in plain text
     }
+
+    public function test_mcp_token_registry_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Empty Token Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+        
+        Livewire::test(McpTokenRegistry::class)
+            ->assertSee('No tokens yet.')
+            ->assertSee('Tokens give external systems access to your account.');
+    }
+
+    public function test_mcp_token_registry_list(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'List Token Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test List Token',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+
+        Livewire::test(McpTokenRegistry::class)
+            ->assertSeeHtml('data-revoked="no"')
+            ->assertSee($token->token_name)
+            ->assertSee($token->role_scope)
+            ->assertDontSee($token->token_hash);
+    }
+
+    public function test_mcp_token_registry_revoked(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Revoked Token Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test Revoked Token',
+            roleScope: 'staff',
+            permissions: ['job.create']
+        );
+        $this->tokenAction->revoke($biz->id, $token->id);
+
+        Livewire::test(McpTokenRegistry::class)
+            ->assertSeeHtml('data-revoked="yes"')
+            ->assertSee($token->token_name);
+    }
 }
