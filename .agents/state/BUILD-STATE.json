@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T03:47:09",
+ "updated": "2026-09-05T04:12:43",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1461,6 +1461,12 @@
    "module": "X-157",
    "chose": "A deploy is either a page deploy - pageId, commitId and businessName all given, and the artifact carries every element the version asks for - or a zone deploy, with none of the three given and no page content at all. A partial set is a caller that lost one of the three on the way (ModuleServiceProvider:71 sources businessName from Business::where(id)->value(name), which is null when that row is not visible) and is refused by throwing before the deploy hash is generated, so the transaction rolls the Deployment row back and the listener catch keeps the page published. Rejected: looking the business name up inside the action when it arrives null, because X-157 would then reach into the tenant record for a value its only caller already holds and the null would become invisible rather than refused. Rejected: emitting the SEO half with an empty title, because a page indexed under a blank name is worse than a page that was never announced, and X-176 already treats an empty name as a schema refusal (X176Test.php:287-297). This entry replaces the empty one recorded at 2026-09-05T03:30:02, whose text was lost before state.py saw it.",
    "at": "2026-09-05T03:47:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "A deployment records the page it rendered and supersedes only the previous deployment of that same page. The deployments row carried no page id, so publishing a second page superseded the first and its deploy hash began returning 404 at the route guard - a site with two pages could serve only the one published last. The listener fires once per SitePublished and that event carries a pageId, and one deploy renders exactly one page with one title and one canonical from one commit id, so the row is what was missing. Rejected: rendering every published page into a single artifact, because an artifact with two canonical links is not a page and serving a page per slug is a new transport. Rejected: a foreign key from deployments to pages, because pages belongs to X-103 and a cascade across module boundaries is coupling this change has no mandate for - the column is indexed and nullable, and a zone deploy still passes no page id.",
+   "at": "2026-09-05T04:12:43",
    "ruling": "R245"
   }
  ]
