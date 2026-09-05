@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\CReviews;
 
-use App\Modules\CReviews\Listeners\RequestReviewOnJobCompleted;
+use App\Modules\CReviews\Listeners\AskForReviewOnJobCompleted;
 use App\Modules\CReviews\Ui\LossAlerts;
 use App\Modules\CReviews\Ui\QaReport;
 use App\Modules\CReviews\Ui\ReviewsQaRequests;
@@ -27,8 +27,9 @@ final class ModuleServiceProvider extends ServiceProvider
 
         Event::listen(
             JobCompleted::class,
-            RequestReviewOnJobCompleted::class
+            AskForReviewOnJobCompleted::class
         );
+
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadViewsFrom(__DIR__.'/Ui/views', 'c-reviews');
 

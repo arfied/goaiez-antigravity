@@ -4,12 +4,82 @@ declare(strict_types=1);
 
 namespace App\Modules\X181\Ui;
 
+use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\X181\Actions\QaTicketResolveAction;
+use App\Modules\X181\Models\QaTicket;
+use App\Support\Tenancy;
+use Exception;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Ticket extends Component
 {
+    #[Locked]
+    public int $businessId;
+
+    #[Locked]
+    public int $ticketId = 0;
+
+    public bool $isSample = false;
+
+    public string $resolutionNotes = '';
+
+    public ?string $actionNotice = null;
+
+    public function toggleSample(): void
+    {
+        $this->isSample = ! $this->isSample;
+    }
+
+    public function resolve(string $notes): void
+    {
+        try {
+            $this->actionNotice = null;
+            app(QaTicketResolveAction::class)->handle($this->businessId, $this->ticketId, $notes);
+            $this->resolutionNotes = '';
+        } catch (Exception $e) {
+            $this->actionNotice = $e->getMessage();
+        }
+    }
+
     public function render()
     {
-        return view('x-181::ticket');
+        Tenancy::set($this->businessId);
+
+        $ticket = null;
+        $review = null;
+
+        if ($this->isSample) {
+            $ticket = (object) [
+                'id' => 9999,
+                'business_id' => $this->businessId,
+                'person_id' => 123,
+                'review_request_id' => 456,
+                'subject' => 'Sample poor rating',
+                'description' => 'Customer was very unhappy with the wait time.',
+                'status' => 'open',
+                'arrived_at' => now()->subHours(24),
+                'sla_due_at' => now()->subHours(2),
+                'resolved_at' => null,
+                'resolution_notes' => null,
+            ];
+            $review = (object) [
+                'rating' => 2,
+                'csat_score' => null,
+            ];
+        } elseif ($this->ticketId > 0) {
+            $ticket = QaTicket::where('business_id', $this->businessId)
+                ->where('id', $this->ticketId)
+                ->first();
+
+            if ($ticket && $ticket->review_request_id) {
+                $review = ReviewRequest::find($ticket->review_request_id);
+            }
+        }
+
+        return view('x-181::ticket', [
+            'ticket' => $ticket,
+            'review' => $review,
+        ]);
     }
 }
