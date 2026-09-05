@@ -1604,6 +1604,14 @@
   {
    "at": "2026-08-29T14:37:58",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-05T07:55:22",
+   "note": "X-137: X137Engine is not autoloaded because its namespace expects X137 but the folder is X-137 and the classmap is stale; temporarily bypassed with require_once to green the suite"
+  },
+  {
+   "at": "2026-09-05T08:07:26",
+   "note": "X-137 X137Engine was missing from app/vendor/composer/autoload_classmap.php because app/Modules is a composer classmap root and the file postdates the last dump-autoload; composer dump-autoload is the fix and the require_once bypass was reverted"
   }
  ]
 }
