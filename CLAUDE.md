@@ -17,7 +17,7 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| Commits **only its own files** — `CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md` — as `chore(supervisor): …`. Pushes **only a sha it has gated and recorded in `REVIEWS.md`**, by explicit ref: `git push origin <sha>:track/ui`. Never a branch head, never `--force` | Commits `app/**` per module with named paths |
+| Commits **only its own files** — `CLAUDE.md`, `bin/supervise.sh`, `.claude/settings.json`, `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh` — as `chore(supervisor): …`. Pushes **only a sha it has gated and recorded in `REVIEWS.md`**, by explicit ref: `git push origin <sha>:track/ui`. Never a branch head, never `--force` | Commits `app/**` per module with named paths |
 | **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, commit any path outside the three above | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files, commit under `.agents/supervisor`, `CLAUDE.md`, `.claude` or `bin` |
 
 `.claude/settings.json` enforces your column. The owner opened `git push origin`,
