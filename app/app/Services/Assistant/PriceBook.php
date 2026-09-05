@@ -6,7 +6,7 @@ namespace App\Services\Assistant;
 
 use App\Enums\PriceListItemSource;
 use App\Models\AssistantBrief;
-use App\Models\PriceListItem;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Config\DefaultsRegistry;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\Builder;
@@ -107,7 +107,7 @@ final class PriceBook
 
         $entries = [];
 
-        foreach ($this->query()->whereNotNull('confirmed_at')->orderBy('label')->get() as $item) {
+        foreach ($this->query()->where('is_confirmed', true)->orderBy('service_name')->get() as $item) {
             $entry = $this->toEntry($item);
 
             $entries[$entry->slug] = $entry;
@@ -130,7 +130,7 @@ final class PriceBook
 
         $entries = [];
 
-        foreach ($this->query()->whereNull('confirmed_at')->orderBy('id')->get() as $item) {
+        foreach ($this->query()->where('is_confirmed', false)->orderBy('id')->get() as $item) {
             $entries[] = $this->toEntry($item);
         }
 
@@ -205,15 +205,13 @@ final class PriceBook
             );
         }
 
-        $item = $this->query()->where('slug', $slug)->first() ?? new PriceListItem;
+        $item = $this->query()->where('service_name', $name)->first() ?? new PriceBookItem;
 
         $item->forceFill([
-            'label' => $name,
-            'slug' => $slug,
-            'source' => PriceListItemSource::Manual,
-            'amount_cents' => $this->assertPrice($minorUnits, $maxCents),
-            'amount_max_cents' => $maxCents,
-            'currency' => $this->currency(),
+            'service_name' => $name,
+            'price_cents' => $this->assertPrice($minorUnits, $maxCents),
+            'price_max_cents' => $maxCents,
+            'is_confirmed' => true,
             // ⛔ CONFIRMED ON THE SPOT, AND THAT IS NOT A SHORTCUT PAST THE
             // GATE. A person naming a price IS the review; asking them to
             // confirm what they have just typed is a second press, and a second
@@ -243,7 +241,7 @@ final class PriceBook
             throw new InvalidArgumentException('Removing a price needs the name it is stored under.');
         }
 
-        $this->query()->where('slug', $normalised)->delete();
+        $this->query()->whereRaw('REPLACE(LOWER(service_name), " ", "-") = ?', [$normalised])->delete();
     }
 
     /**
@@ -295,16 +293,14 @@ final class PriceBook
                 continue;
             }
 
-            $item = new PriceListItem;
+            $item = new PriceBookItem;
 
             $item->forceFill([
-                'label' => $row['label'],
-                'slug' => $slug,
-                'source' => PriceListItemSource::Document,
-                'amount_cents' => $row['minorUnits'],
-                'amount_max_cents' => $row['maxCents'],
-                'currency' => $currency,
-                // ⛔ THE WHOLE OF REVIEW-BEFORE-LIVE IS THIS NULL.
+                'service_name' => $row['label'],
+                'price_cents' => $row['minorUnits'],
+                'price_max_cents' => $row['maxCents'],
+                'is_confirmed' => false,
+                // ⛔ THE WHOLE OF REVIEW-BEFORE-LIVE IS THIS FALSE.
                 'confirmed_at' => null,
             ])->save();
 
@@ -337,8 +333,8 @@ final class PriceBook
         // `confirmed_at` is the record of when it became quotable, and moving it
         // would erase the one thing anybody asks for after a wrong quote.
         $this->query()
-            ->whereNull('confirmed_at')
-            ->where('slug', $normalised)
+            ->where('is_confirmed', false)
+            ->whereRaw('REPLACE(LOWER(service_name), " ", "-") = ?', [$normalised])
             ->update(['confirmed_at' => Carbon::now()]);
     }
 
@@ -356,7 +352,7 @@ final class PriceBook
     {
         Tenancy::idOrFail();
 
-        return $this->query()->whereNull('confirmed_at')->delete();
+        return $this->query()->where('is_confirmed', false)->delete();
     }
 
     /**
@@ -397,7 +393,7 @@ final class PriceBook
      */
     private function query(): Builder
     {
-        return PriceListItem::query();
+        return PriceBookItem::query();
     }
 
     private function brief(): ?AssistantBrief
@@ -455,16 +451,16 @@ final class PriceBook
         return is_string($stored) && trim($stored) !== '' ? strtoupper(trim($stored)) : 'USD';
     }
 
-    private function toEntry(PriceListItem $item): PriceListEntry
+    private function toEntry(PriceBookItem $item): PriceListEntry
     {
         return new PriceListEntry(
-            $item->label,
-            $item->slug,
-            $item->amount_cents,
-            $item->amount_max_cents,
-            $item->currency,
-            $item->source,
-            $item->confirmed_at,
+            $item->service_name,
+            Str::slug($item->service_name),
+            $item->price_cents,
+            $item->price_max_cents,
+            'USD',
+            PriceListItemSource::Owner,
+            $item->created_at,
         );
     }
 }
