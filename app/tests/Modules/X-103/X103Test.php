@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Modules\CReviews\Models\ReviewRequest;
 use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
@@ -15,6 +16,8 @@ use App\Modules\X103\Events\PagePublished;
 use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Models\InvoiceLine;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -266,6 +269,17 @@ class X103Test extends TestCase
         $caps = require app_path('Modules/X-103/capabilities.php');
         $this->assertArrayHasKey('G6-32', $caps);
         $this->assertTrue(is_dir(app_path('Modules/X-199')));
+
+        $biz = TestCase::provisionTenant(['name' => 'Invoice Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'invoice-page', 'Invoice Page', false);
+        $this->publishAction->handle($biz->id, $page->id, [
+            ['type' => 'offer', 'text' => '20% off'],
+        ]);
+
+        $this->assertSame(0, Invoice::count());
+        $this->assertSame(0, InvoiceLine::count());
     }
 
     /** (R245) */
@@ -274,6 +288,16 @@ class X103Test extends TestCase
         $caps = require app_path('Modules/X-103/capabilities.php');
         $this->assertArrayHasKey('G7-18', $caps);
         $this->assertTrue(is_dir(app_path('Modules/C-Reviews')));
+
+        $biz = TestCase::provisionTenant(['name' => 'Review Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'review-page', 'Review Page', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertNotContains('review_widget', array_column($version->content_blocks, 'type'));
+        $this->assertSame(0, ReviewRequest::count());
     }
 
     public function test_page_create_and_site_publish_resolve_from_container(): void

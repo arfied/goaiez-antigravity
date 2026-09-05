@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T10:45:48",
+ "updated": "2026-09-05T11:06:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -444,6 +444,18 @@
      "stage": "schema",
      "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
      "at": "2026-09-02T02:30:15"
+    },
+    {
+     "module": "X-103",
+     "stage": "capability",
+     "why": "G6-17: the header names X-194 as the renderer, but grep -rn 'X-103' app/app/Modules/X-194 is empty \u2014 X-194 exposes no X-103 surface to assert against from this track",
+     "at": "2026-09-05T11:06:38"
+    },
+    {
+     "module": "X-103",
+     "stage": "capability",
+     "why": "G6-20: the header names X-195's manifest rule, but grep -rn 'X-103' app/app/Modules/X-195 is empty \u2014 X-195 exposes no X-103 surface to assert against from this track",
+     "at": "2026-09-05T11:06:38"
     }
    ]
   },
@@ -1274,6 +1286,18 @@
    "stage": "latency",
    "why": "the 50ms budget has no measuring instrument; no latency harness exists on this track",
    "at": "2026-09-04T21:15:07"
+  },
+  {
+   "module": "X-103",
+   "stage": "capability",
+   "why": "G6-17: the header names X-194 as the renderer, but grep -rn 'X-103' app/app/Modules/X-194 is empty \u2014 X-194 exposes no X-103 surface to assert against from this track",
+   "at": "2026-09-05T11:06:38"
+  },
+  {
+   "module": "X-103",
+   "stage": "capability",
+   "why": "G6-20: the header names X-195's manifest rule, but grep -rn 'X-103' app/app/Modules/X-195 is empty \u2014 X-195 exposes no X-103 surface to assert against from this track",
+   "at": "2026-09-05T11:06:38"
   }
  ],
  "decisions": [
