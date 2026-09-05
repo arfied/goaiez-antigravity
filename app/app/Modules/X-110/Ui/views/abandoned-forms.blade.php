@@ -44,9 +44,9 @@
                             </div>
                             <div class="flex sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0 items-center sm:items-end">
                                 @if ($a['sent'])
-                                    <span class="text-ink-2 text-sm font-medium">Send pending</span>
+                                    <span class="text-ink-2 text-sm font-medium">Draft saved (sending not wired yet)</span>
                                 @else
-                                    <x-ui.button variant="primary" size="default" type="button" class="flex-1 sm:flex-none" wire:click="recover({{ $a['id'] }})">Send Message</x-ui.button>
+                                    <x-ui.button variant="primary" size="default" type="button" class="flex-1 sm:flex-none" wire:click="recover({{ $a['id'] }})">Save Draft</x-ui.button>
                                 @endif
                             </div>
                         </x-ui.row>
