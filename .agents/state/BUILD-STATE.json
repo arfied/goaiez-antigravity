@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T00:25:26",
+ "updated": "2026-09-05T00:54:50",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1389,6 +1389,12 @@
    "module": "X-157",
    "chose": "A rollback of the live deployment promotes the most recent superseded deployment of the same zone back to deployed, because a rollback is a revert and an operator who asked for the previous version must get it, not a dark site. Rolling back a deployment that was not live promotes nothing. Rejected: leave the zone with no live deployment and require the operator to redeploy \u2014 refused, that turns one click on a screen this module ships into an outage with no warning.",
    "at": "2026-09-05T00:25:26",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "The full-stack site law is applied at the publish door as version-level flags \u2014 `SiteEngine::publish()` sets `chat_installed`, `form_capture_installed` and `dni_installed` true beside `pixel_installed`, and the compiler emits each marker at most once from the flag or a matching block. `N-272-01` asserts the seven at publish, not at build. Rejected: appending the three blocks to `content_blocks` \u2014 refused, it conflates the platform's law with the tenant's composition and would break `X103Test::test_g6_16_header_tenant_offer`'s `assertEquals($blocks, $version->content_blocks)`. Rejected: emitting the three markers unconditionally in `EdgeDeployAction` \u2014 refused, that is the build door, and it would invert `X157Test::test_feature_flags_absent`.",
+   "at": "2026-09-05T00:54:50",
    "ruling": "R245"
   }
  ]
