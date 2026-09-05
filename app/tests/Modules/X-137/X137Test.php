@@ -207,6 +207,25 @@ class X137Test extends TestCase
         $this->assertEquals('+15554448888', $t3->allocated_number);
     }
 
+    /**
+     * [G13-24]
+     */
+    public function test_g13_24_short_code_is_redeemable_only_under_its_own_business(): void
+    {
+        $a = TestCase::provisionTenant(['name' => 'Tenant A', 'currency' => 'USD']);
+        $b = TestCase::provisionTenant(['name' => 'Tenant B', 'currency' => 'USD']);
+
+        DB::statement("SET app.business_id = '{$a->id}'");
+        $link = $this->shortAction->handle($a->id, 'https://example.com/dest', 'flyer_a');
+
+        DB::statement("SET app.business_id = '{$b->id}'");
+        $this->get("/l/{$b->id}/{$link->short_code}")->assertNotFound();
+        $this->assertEquals(0, LinkClick::count());
+
+        DB::statement("SET app.business_id = '{$a->id}'");
+        $this->get("/l/{$a->id}/{$link->short_code}")->assertRedirect('https://example.com/dest');
+    }
+
     public function test_a_cold_link_click_is_recorded_without_a_session(): void
     {
         Event::fake([LinkClicked::class]);

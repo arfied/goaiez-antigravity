@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T13:11:20",
+ "updated": "2026-09-05T13:28:13",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1684,6 +1684,12 @@
    "module": "X-137",
    "chose": "G13-24 gets the test its \u2464 has been owed (ruling 44)",
    "at": "2026-09-05T13:11:20",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "Ruling 43's tenant-in-the-path is proven by a refusal: business B redeeming business A's short code 404s and writes no link_clicks row. Rejected alternative: leaving the unknown-code 404 as the only guard, which passes identically if the business_id clause is deleted.",
+   "at": "2026-09-05T13:28:13",
    "ruling": "R245"
   }
  ],
