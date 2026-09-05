@@ -33,6 +33,9 @@ final class SiteEngine
                 'commit_id' => $commitId,
                 'content_blocks' => $contentBlocks,
                 'pixel_installed' => true, // G9-04 full-stack site law
+                'chat_installed' => true,         // G9-04 full-stack site law
+                'form_capture_installed' => true, // G9-04 full-stack site law
+                'dni_installed' => true,          // G9-04 full-stack site law
             ]);
 
             $page->update([
