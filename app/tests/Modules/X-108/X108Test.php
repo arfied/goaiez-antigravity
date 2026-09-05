@@ -151,7 +151,40 @@ class X108Test extends TestCase
      */
     public function test_g2_10_calendar_spec(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Merged View Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $date = '2026-09-09';                        // fixed: the fixture must not drift with the clock
+        $dow = Carbon::parse($date)->dayOfWeekIso;   // the migration's own convention (S-39's decision)
+
+        $clean = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(4, $clean['slots_count'], 'the unmerged ladder is four');
+
+        // (a) capacity — a booked appointment over 11:00-13:00
+        $this->book->handle($biz->id, 'Consultation', $date.' 11:00:00', $date.' 13:00:00');
+
+        // (b) a live hold — a slot lock over 14:00-16:00
+        $this->engine->lockSlot($biz->id, $date.' 14:00:00', $date.' 16:00:00', 'sess-merged-view');
+
+        // (c) out of office — a blackout over [16:00, 18:00)
+        AvailabilityRule::create([
+            'business_id' => $biz->id,
+            'day_of_week' => $dow,
+            'start_time' => '16:00',
+            'end_time' => '18:00',
+            'is_blackout' => true,
+        ]);
+
+        $merged = $this->engine->getAvailableSlots($biz->id, $date, true);
+        $this->assertSame(1, $merged['slots_count'], 'one view: appointment, lock and blackout all subtract before the offer');
+        $this->assertSame(
+            ['9:00 AM - 11:00 AM'],
+            array_column($merged['offered_slots'], 'formatted_window'),
+            '09:00 is the only window no input touched'
+        );
+
+        $nonMember = $this->engine->getAvailableSlots($biz->id, $date, false);
+        $this->assertSame(0, $nonMember['slots_count'], 'the single surviving window is VIP-reserved, so a non-member is offered nothing');
     }
 
     /**
