@@ -28,6 +28,8 @@ final class FormCaptureAction
             return [
                 'status' => 'rejected',
                 'reason' => $validation['reason'],
+                'step' => $validation['step'] ?? null,
+                'missing' => $validation['missing'] ?? [],
             ];
         }
 
