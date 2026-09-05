@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T22:29:12",
+ "updated": "2026-09-04T22:51:42",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1466,6 +1466,18 @@
    "module": "C-Mail",
    "chose": "G15-31: a caller-supplied schedule with min === max is refused with WARMUP_CONSTANT_QUANTITY rather than silently jittered",
    "at": "2026-09-04T22:29:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "G11-05: the R17 halt seeds are evaluated by EmailHaltSeedAction over counted mail_events rows; the complaint seed is complained/sent >= 0.0010 and the bounce seed is a bounced count >= 250, both INCLUSIVE at the boundary, because a domain sitting exactly on R17's number is at the limit and G4-08 puts deliverability first; the rejected alternative was a strict > , which lets a domain park permanently at exactly the seed",
+   "at": "2026-09-04T22:51:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "G11-05: a fired seed sets is_marketing_paused only and is never cleared; 'never the thread' is EmailSendAction's existing sendType === 'marketing' guard, so no second flag, column or send-type argument is introduced",
+   "at": "2026-09-04T22:51:42",
    "ruling": "R245"
   }
  ]
