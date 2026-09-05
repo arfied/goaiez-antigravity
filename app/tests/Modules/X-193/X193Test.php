@@ -6,9 +6,11 @@ namespace Tests\Modules\X193;
 
 use App\Modules\X193\Actions\NotificationClassifyAction;
 use App\Modules\X193\Events\NotificationClassified;
+use App\Modules\X193\Models\NotificationClass;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X193Test extends TestCase
@@ -19,6 +21,11 @@ class X193Test extends TestCase
     {
         parent::setUp();
         $this->classifyAction = new NotificationClassifyAction;
+    }
+
+    public function test_dependency_quiet_hours_start_exists(): void
+    {
+        $this->assertTrue(Schema::hasColumn('notification_classes', 'quiet_hours_start'), 'notification_classes.quiet_hours_start must exist');
     }
 
     /**
@@ -33,7 +40,17 @@ class X193Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Quiet Hours Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        // 03:00 AM (inside quiet hours: 21:00 - 08:00)
+        // Seed via factory/model and READ the column behavior directly.
+        NotificationClass::create([
+            'business_id' => $biz->id,
+            'caller_type' => 'marketing_promo_blast',
+            'classification' => 'marketing',
+            'respects_quiet_hours' => true,
+            'quiet_hours_start' => 20, // using the column to gate a send
+            'quiet_hours_end' => 9,
+        ]);
+
+        // 03:00 AM (inside quiet hours: 20:00 - 09:00)
         $time3am = Carbon::parse('2026-08-30 03:00:00');
 
         // 1. Account-class dunning text at 03:00 SENDS IMMEDIATELY (TEST ANCHOR)
@@ -48,7 +65,7 @@ class X193Test extends TestCase
         $this->assertNull($dunningRes['held_until']);
         $this->assertFalse($dunningRes['respects_quiet_hours']);
 
-        // 2. Marketing-class text at 03:00 HOLDS until the window (08:00) (TEST ANCHOR)
+        // 2. Marketing-class text at 03:00 HOLDS until the window (09:00) (TEST ANCHOR)
         $marketingRes = $this->classifyAction->handle(
             businessId: $biz->id,
             callerType: 'marketing_promo_blast',
@@ -56,8 +73,9 @@ class X193Test extends TestCase
         );
 
         $this->assertEquals('marketing', $marketingRes['classification']);
-        $this->assertEquals('hold_until_window', $marketingRes['delivery_decision'], 'Marketing-class text at 03:00 holds until 08:00 window');
+        $this->assertEquals('hold_until_window', $marketingRes['delivery_decision'], 'Marketing-class text at 03:00 holds until 09:00 window');
         $this->assertNotNull($marketingRes['held_until']);
+        $this->assertTrue(str_contains($marketingRes['held_until'], 'T09:00:00')); // Held until 9AM based on seeded DB read
         $this->assertTrue($marketingRes['respects_quiet_hours']);
 
         // 3. Operational missed-call / chat alerts NEVER wait (G10-31)
