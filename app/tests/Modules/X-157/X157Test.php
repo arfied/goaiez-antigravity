@@ -770,7 +770,6 @@ class X157Test extends TestCase
         $this->assertSame($biz->name, $ld['name']);
     }
 
-
     public function test_serving_a_published_site_resolves_the_tenant_through_the_chokepoint(): void
     {
         Storage::fake('local');
@@ -810,6 +809,7 @@ class X157Test extends TestCase
 
         $this->assertSame($biz->id, Tenancy::id());
     }
+
     /** (R245) */
     public function test_route_deployment_whose_artifact_is_missing_returns_404(): void
     {
