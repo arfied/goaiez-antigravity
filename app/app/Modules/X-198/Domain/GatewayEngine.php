@@ -153,4 +153,50 @@ final class GatewayEngine
             ];
         });
     }
+
+    /**
+     * A discrepancy is reviewed, never corrected (X-198 anchor): the mark is who
+     * looked and when; the numbers on the run are never touched.
+     */
+    public function reviewDiscrepancy(int $businessId, int $runId, int $userId): ReconciliationRun
+    {
+        $run = ReconciliationRun::where('business_id', $businessId)->findOrFail($runId);
+
+        if ($run->status !== 'discrepancy_logged') {
+            throw new NothingToReviewException('Nothing to review: that payout balanced to the cent.');
+        }
+
+        if ($run->reviewed_at !== null) {
+            return $run;
+        }
+
+        $run->update(['reviewed_at' => now(), 'reviewed_by_user_id' => $userId]);
+
+        return $run->fresh();
+    }
+
+    /**
+     * A detached payment (its connection row is gone) is attached to one of THIS
+     * account's connections, once. A payment that already lands somewhere is never
+     * moved — that would be a payment appearing in a payout it was not in (X-198 anchor).
+     */
+    public function attachPayment(int $businessId, int $paymentId, int $connectionId): Payment
+    {
+        return DB::transaction(function () use ($businessId, $paymentId, $connectionId) {
+            $payment = Payment::where('business_id', $businessId)->findOrFail($paymentId);
+            $connection = MerchantConnection::where('business_id', $businessId)->findOrFail($connectionId);
+
+            if ($payment->merchant_connection_id !== null) {
+                $current = MerchantConnection::where('business_id', $businessId)->find($payment->merchant_connection_id);
+                throw new PaymentAlreadyLandedException(sprintf(
+                    'That payment already lands in %s; a payment is never moved.',
+                    $current->merchant_account_id ?? 'connection #'.$payment->merchant_connection_id
+                ));
+            }
+
+            $payment->update(['merchant_connection_id' => $connection->id]);
+
+            return $payment->fresh();
+        });
+    }
 }
