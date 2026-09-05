@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CreditProduct;
 use App\Enums\OutreachChannel;
 use App\Models\Business;
 use App\Models\User;
@@ -27,6 +28,9 @@ use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Models\ReceivableState;
 use App\Services\Billing\AuthorizeNetApi;
 use App\Services\Billing\AuthorizeNetGateway;
+use App\Services\Billing\CreditLedger;
+use App\Services\Billing\TrialEligibility;
+use App\Services\Billing\TrialGrantRefused;
 use App\Services\Sms\TenantNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\CardholderName;
@@ -77,14 +81,14 @@ trait JourneyHarness
         $numbers->addToPool($e164);
 
         $biz = static::provisionTenant(['name' => 'Live Number Tenant']);
-        $bizModel = \App\Models\Business::find($biz['id']);
+        $bizModel = Business::find($biz['id']);
         try {
-            app(\App\Services\Billing\TrialEligibility::class)->authorize($bizModel);
-        } catch (\App\Services\Billing\TrialGrantRefused $e) {
+            app(TrialEligibility::class)->authorize($bizModel);
+        } catch (TrialGrantRefused $e) {
             file_put_contents(base_path('../.agents/state/JOURNAL.md'), "\nUNRESOLVED TrialEligibility \"{$e->getMessage()}\"", FILE_APPEND);
             throw $e;
         }
-        app(\App\Services\Billing\CreditLedger::class)->resetMonthly(\App\Enums\CreditProduct::Sms, 500, 'harness');
+        app(CreditLedger::class)->resetMonthly(CreditProduct::Sms, 500, 'harness');
 
         return $biz->toArray();
     }

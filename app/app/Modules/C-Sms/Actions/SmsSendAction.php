@@ -53,8 +53,9 @@ final class SmsSendAction
         if (! $decision->isGranted()) {
             if ($permitId > 0) {
                 $reasonName = $decision->reason->name ?? 'Unknown';
-                throw new \Exception("UNRESOLVED C-Sms design \"two consent engines disagree: X-204 granted, legacy refused (".$reasonName.")\"");
+                throw new \Exception('UNRESOLVED C-Sms design "two consent engines disagree: X-204 granted, legacy refused ('.$reasonName.')"');
             }
+
             return [
                 'status' => 'refused',
                 'reason' => $decision->reason->value ?? $decision->reason->name,

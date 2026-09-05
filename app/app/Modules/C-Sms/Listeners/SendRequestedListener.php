@@ -42,9 +42,10 @@ final class SendRequestedListener
                 };
                 $legacyDecision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
                 if ($legacyDecision->isGranted()) {
-                    throw new \Exception("UNRESOLVED C-Sms design \"two consent engines disagree: X-204 refused, legacy granted\"");
+                    throw new \Exception('UNRESOLVED C-Sms design "two consent engines disagree: X-204 refused, legacy granted"');
                 }
             }
+
             return;
         }
 

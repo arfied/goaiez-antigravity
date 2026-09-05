@@ -38,13 +38,13 @@ final class SendRequestedListenerTest extends TestCase
     {
         $business = self::provisionTenant();
         app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, 100, 'test');
-        
+
         $customer = Customer::forceCreate([
             'business_id' => $business->id,
             'phone' => '+15551234567',
             'name' => 'John',
         ]);
-        
+
         $capture = new ConsentCapture(
             CapturedBy::Platform,
             CaptureSurface::FeedbackPage,
@@ -54,7 +54,7 @@ final class SendRequestedListenerTest extends TestCase
             [
                 'url' => 'https://example.com',
                 'ip_hash' => HashedIp::hash('127.0.0.1'),
-                'user_agent' => 'test'
+                'user_agent' => 'test',
             ]
         );
         app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'test');
@@ -79,13 +79,13 @@ final class SendRequestedListenerTest extends TestCase
     {
         $business = self::provisionTenant();
         app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, 100, 'test');
-        
+
         $customer = Customer::forceCreate([
             'business_id' => $business->id,
             'phone' => '+15550009999',
             'name' => 'Jane',
         ]);
-        
+
         $capture = new ConsentCapture(
             CapturedBy::Platform,
             CaptureSurface::FeedbackPage,
@@ -95,7 +95,7 @@ final class SendRequestedListenerTest extends TestCase
             [
                 'url' => 'https://example.com',
                 'ip_hash' => HashedIp::hash('127.0.0.1'),
-                'user_agent' => 'test'
+                'user_agent' => 'test',
             ]
         );
         app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'test');

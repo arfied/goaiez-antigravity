@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CSms;
 
+use App\Contracts\MessageSender;
 use App\Modules\CSms\Actions\SmsComposeAction;
 use App\Modules\CSms\Actions\SmsHaltAction;
 use App\Modules\CSms\Actions\SmsSendAction;
@@ -31,7 +32,7 @@ class CSmsTest extends TestCase
         parent::setUp();
         $this->composer = new SmsComposer(new ConsentService);
         $this->compose = new SmsComposeAction($this->composer);
-        $this->send = new SmsSendAction(app(\App\Contracts\MessageSender::class), $this->composer);
+        $this->send = new SmsSendAction(app(MessageSender::class), $this->composer);
         $this->halt = new SmsHaltAction($this->composer);
     }
 
