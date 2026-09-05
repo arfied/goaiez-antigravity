@@ -8,6 +8,7 @@ use App\Modules\X200\Events\CallRequested;
 use App\Modules\X200\Models\CallCampaign;
 use App\Modules\X200\Models\DialerSeat;
 use Illuminate\Support\Facades\Event;
+use InvalidArgumentException;
 
 final class DialNextAction
 {
@@ -15,6 +16,10 @@ final class DialNextAction
     {
         $campaign = CallCampaign::where('business_id', $businessId)->findOrFail($campaignId);
         $seat = DialerSeat::where('business_id', $businessId)->findOrFail($seatId);
+
+        if (! $campaign->is_running) {
+            throw new InvalidArgumentException('Dial rejected: campaign is paused');
+        }
 
         $seat->update(['state' => 'dialing']);
 
