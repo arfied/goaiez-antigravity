@@ -255,8 +255,10 @@ class X155Test extends TestCase
                 $path.'/Domain',
                 $path.'/Database',
                 $path.'/Events',
+                $path.'/Ui',
             ], 'is_dir'))
             ->append([new \SplFileInfo($path.'/ModuleServiceProvider.php')])
+            // G13-35's prose contains 'staging' while asserting there is no staging table.
             ->notName('capabilities.php')
             ->name('*.php');
 
@@ -291,6 +293,7 @@ class X155Test extends TestCase
 
         $submission = FormSubmission::find($res['submission_id']);
         $this->assertNotNull($submission);
+        // clause 2 is enforced at 2026_08_30_000038:32 (person_id NOT NULL FK); ruling 47
         $this->assertNotNull($submission->person_id);
         $person = Person::find($submission->person_id);
         $this->assertEquals($biz->id, $person->business_id);
