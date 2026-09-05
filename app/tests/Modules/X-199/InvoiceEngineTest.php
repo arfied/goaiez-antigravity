@@ -99,6 +99,7 @@ test('the overflow rule — card absorbs limit overflow and payment reverses it'
         $reversal = $reversals->first();
         expect($reversal->amount_cents)->toBe(50000);
         expect($reversal->amount_cents)->toBe($charge->amount_cents); // Assert it's the exact same amount
+        expect($reversal->reference_id)->toBeNull();
 
         Event::assertDispatched(OverflowReversed::class, function ($e) use ($invoice) {
             return $e->invoiceId === $invoice->id && $e->amountCents === 50000;

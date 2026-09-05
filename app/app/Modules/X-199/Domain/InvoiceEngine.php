@@ -183,7 +183,7 @@ final class InvoiceEngine
                     'charge_type' => 'overflow_reversed',
                     'amount_cents' => $c->amount_cents,
                     'card_token' => $c->card_token,
-                    'reference_id' => 're_overflow_'.Str::random(12),
+                    'reference_id' => null,
                 ]);
                 $reversedCharges[] = $reversed;
 
