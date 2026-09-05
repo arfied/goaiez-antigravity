@@ -1572,6 +1572,14 @@ class X157Test extends TestCase
         $this->assertStringContainsString('seo-meta-x176', $html, 'the listener deploy is missing the SEO title');
         $this->assertStringContainsString('rel="canonical"', $html, 'the listener deploy is missing the canonical link');
         $this->assertStringContainsString('application/ld+json', $html, 'the listener deploy is missing the schema block');
+
+        $zone->update(['has_valid_ssl' => false]);
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $response->assertStatus(404);
+
+        $zone->update(['has_valid_ssl' => true]);
+        $response = $this->get("/sites/{$biz->id}/{$deployment->deploy_hash}");
+        $response->assertStatus(200);
     }
 
     public function test_a_second_pages_publish_leaves_the_first_page_live(): void

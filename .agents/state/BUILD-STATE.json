@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T12:09:45",
+ "updated": "2026-09-05T12:47:11",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1666,6 +1666,12 @@
    "module": "X-157",
    "chose": "J11's seven elements are asserted on the body of GET /sites/{business}/{deploy_hash} and on nothing else (ruling 16), rejected alternative = reading page_versions.content_blocks, which proves what the engine stored and not what was served.",
    "at": "2026-09-05T12:09:45",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "Ruling 42 \u2014 J11's seventh element gets a committed proof on the served surface: X157Test::test_the_listener_publishes_all_seven_on_a_real_request asserts the 200/404 pair against edge_zones.has_valid_ssl on GET /sites/{business}/{deploy_hash}, so the whole seven-element claim survives a cherry-pick that does not carry the uncommitted JourneyHarness.php (OWNER ACTION 28). Rejected alternative: a new test method, which would have left the existing method's name overstating what it asserts and risked orphaning its capability ids.",
+   "at": "2026-09-05T12:47:11",
    "ruling": "R245"
   }
  ],
