@@ -162,6 +162,48 @@ class X215Test extends TestCase
         $this->assertSame('voided', $doc->status, 'a refused signature must not revive a voided document');
     }
 
+    public function test_a_signed_request_cannot_be_signed_a_second_time(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([DocSent::class, DocSigned::class]);
+
+        $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";
+
+        $sentResult = $this->sendAction->handle(
+            businessId: $biz->id,
+            title: 'HVAC Master Agreement',
+            contentBody: $originalBody,
+            signerEmail: 'homeowner@example.com',
+            signerName: 'Jane Homeowner'
+        );
+
+        $request = $sentResult['signature_request'];
+
+        $first = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_first',
+            currentRenderedContent: $originalBody
+        );
+
+        $second = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_SECOND_attempt',
+            currentRenderedContent: $originalBody
+        );
+
+        $this->assertSame('signed', $first['status']);
+        $this->assertSame('refused', $second['status']);
+        $this->assertSame('SIGNATURE_REQUEST_NOT_PENDING', $second['refusal_code']);
+        $this->assertFalse($second['signed']);
+        Event::assertDispatchedTimes(DocSigned::class, 1);
+        $request->refresh();
+        $this->assertSame('data:image/png;base64,signature_first', $request->signature_data, 'a refused second signature must not overwrite the stored signature');
+    }
+
     /**
      * [N-215-01], [N-215-02]
      */
