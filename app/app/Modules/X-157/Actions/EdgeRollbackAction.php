@@ -13,10 +13,25 @@ final class EdgeRollbackAction
     public function handle(int $businessId, int $deploymentId, string $reason = 'manual_rollback'): array
     {
         $deployment = Deployment::where('business_id', $businessId)->findOrFail($deploymentId);
+        
+        $wasLive = $deployment->status === 'deployed';
+
         $deployment->update([
             'status' => 'rolled_back',
             'rollback_reason' => $reason,
         ]);
+
+        if ($wasLive) {
+            $predecessor = Deployment::where('business_id', $businessId)
+                ->where('edge_zone_id', $deployment->edge_zone_id)
+                ->where('status', 'superseded')
+                ->orderByDesc('id')
+                ->first();
+
+            if ($predecessor) {
+                $predecessor->update(['status' => 'deployed']);
+            }
+        }
 
         Event::dispatch(new DeployRolledBack(
             businessId: $businessId,
