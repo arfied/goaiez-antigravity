@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T10:14:06",
+ "updated": "2026-09-05T10:30:04",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -520,6 +520,12 @@
      "stage": "capability",
      "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast. Events/ConversationUpdated.php is a 'final class ConversationUpdated' with no interface \u2014 it does not implement ShouldBroadcast, so nothing leaves the process.",
      "at": "2026-09-05T09:57:09"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "Refused G2-25. D1 is a design system (surface is blades/Livewire, Track 2). The 5 'honest counter' hits are all in app/app/Services/Ops/ (PlatformHealthSignal.php, PlatformHealth.php, etc.) - which is 9371's platform-health levelling rule, a different system from X-01's tenant inbox, and platform ops besides. No glassmorph/god mode hits anywhere.",
+     "at": "2026-09-05T10:30:04"
     }
    ]
   },
@@ -599,6 +605,12 @@
      "stage": "capability",
      "why": "G15-08: The out-of-office half is built and asserted: SchedulingEngine.php:167-169 throws SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule') on the booking door, and test_g2_13_out_of_office (X108Test.php:211) asserts both the availability door and that refusal message. Nothing is missing there. The \"X-10 skips an unavailable assignee\" half has no reader \u2014 `grep -rn \"X-108\\|Appointment\\|availability\\|assignee\" app/app/Modules/X-10 --include=*.php` returned nothing (exit code 1). The two-way sync half needs staff_calendar_links (X-209) and X-206's credential, neither of which this track owns or can create; `grep -rn \"staff_calendar_links\" app/app app/database --include=*.php` returned only X-209 migration/model/manifest lines.",
      "at": "2026-09-05T10:14:06"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.",
+     "at": "2026-09-05T10:30:04"
     }
    ]
   },
@@ -1591,6 +1603,18 @@
    "stage": "capability",
    "why": "G15-08: The out-of-office half is built and asserted: SchedulingEngine.php:167-169 throws SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule') on the booking door, and test_g2_13_out_of_office (X108Test.php:211) asserts both the availability door and that refusal message. Nothing is missing there. The \"X-10 skips an unavailable assignee\" half has no reader \u2014 `grep -rn \"X-108\\|Appointment\\|availability\\|assignee\" app/app/Modules/X-10 --include=*.php` returned nothing (exit code 1). The two-way sync half needs staff_calendar_links (X-209) and X-206's credential, neither of which this track owns or can create; `grep -rn \"staff_calendar_links\" app/app app/database --include=*.php` returned only X-209 migration/model/manifest lines.",
    "at": "2026-09-05T10:14:06"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.",
+   "at": "2026-09-05T10:30:04"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "Refused G2-25. D1 is a design system (surface is blades/Livewire, Track 2). The 5 'honest counter' hits are all in app/app/Services/Ops/ (PlatformHealthSignal.php, PlatformHealth.php, etc.) - which is 9371's platform-health levelling rule, a different system from X-01's tenant inbox, and platform ops besides. No glassmorph/god mode hits anywhere.",
+   "at": "2026-09-05T10:30:04"
   }
  ],
  "decisions": [
@@ -1673,6 +1697,14 @@
   {
    "at": "2026-09-05T10:14:20",
    "note": "X-01 the seven X-01 capability refusals recorded at 2026-09-05T09:57:00 are a duplicate first pass of the same seven at 09:57:09; the 09:57:00 G19-15 entry lost the identifiers `Events/ConversationUpdated.php`, `final class ConversationUpdated` and `ShouldBroadcast` to shell command substitution (backticks inside double quotes); the 09:57:09 pass is the correct record for all seven."
+  },
+  {
+   "at": "2026-09-05T10:30:04",
+   "note": "X-01 The spec's second half (GOAIEZ-MASTER-PLAN.md:31512) is asserted ('one thread, three Message rows' was already covered by test_g11_22_polymorphic_conversation, test_g11_23_omnichannel_spec, and test_g11_40_header_line), but the first was not. 'No table holding a message, thread or contact outside the twelve nouns' had no test until this wave. It uses a mechanical rule (the violator's name ends with _messages/conversations/threads/contacts), which is why contact_tags is out by that rule rather than by exception."
+  },
+  {
+   "at": "2026-09-05T10:30:04",
+   "note": "X-01 Real offenders found by the sweep (g2_76 grep): outreach_messages (app/database/migrations/2026_07_30_081926_create_outreach_messages_table.php), triage_conversations (app/database/migrations/2026_08_13_161545_create_triage_conversations_table.php), inbound_messages (app/database/migrations/2026_08_09_043337_create_inbound_messages_table.php), and support_messages (app/database/migrations/2026_08_13_200424_create_support_messages_table.php)."
   }
  ]
 }
