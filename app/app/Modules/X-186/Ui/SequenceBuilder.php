@@ -27,16 +27,19 @@ class SequenceBuilder extends Component
     public function duplicate(string $campaignId, CampaignCreateAction $action): void
     {
         try {
-            $steps = CampaignStep::where('business_id', $this->businessId)
+            $campaignSteps = CampaignStep::where('business_id', $this->businessId)
                 ->where('campaign_id', $campaignId)
                 ->orderBy('step_number')
-                ->get()
-                ->map(fn (CampaignStep $s) => [
+                ->get();
+                
+            $steps = [];
+            foreach ($campaignSteps as $s) {
+                $steps[] = [
                     'channel' => $s->channel,
                     'template_name' => $s->template_name,
                     'delay_days' => $s->delay_days,
-                ])
-                ->toArray();
+                ];
+            }
 
             $action->createCampaign($this->businessId, $campaignId.'-copy', $steps);
         } catch (\Throwable $e) {
