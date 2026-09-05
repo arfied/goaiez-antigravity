@@ -348,7 +348,32 @@ class X108Test extends TestCase
      */
     public function test_g18_07_holiday_overrides(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Holiday Override', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $holiday = now()->addDays(4)->startOfDay();
+        $sameWeekdayNextWeek = $holiday->copy()->addDays(7);
+
+        AvailabilityRule::create([
+            'business_id' => $biz->id,
+            'day_of_week' => $holiday->dayOfWeekIso,
+            'start_time'  => '14:00',
+            'end_time'    => '16:00',
+            'is_blackout' => true,
+        ]);
+
+        // the day it was meant for
+        $onTheDay = $this->engine->getAvailableSlots($biz->id, $holiday->format('Y-m-d'), true);
+        $this->assertNotContains('2:00 PM - 4:00 PM', array_column($onTheDay['offered_slots'], 'formatted_window'));
+
+        // and every following week, because the rule is keyed on the weekday and not the date
+        $nextWeek = $this->engine->getAvailableSlots($biz->id, $sameWeekdayNextWeek->format('Y-m-d'), true);
+        $this->assertNotContains(
+            '2:00 PM - 4:00 PM',
+            array_column($nextWeek['offered_slots'], 'formatted_window'),
+            'a one-day holiday is not expressible: the rule recurs on the weekday'
+        );
+        $this->assertSame($onTheDay['slots_count'], $nextWeek['slots_count']);
     }
 
     /**
