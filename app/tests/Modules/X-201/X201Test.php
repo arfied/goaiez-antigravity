@@ -14,10 +14,10 @@ use App\Modules\X201\Events\EvidenceCompiled;
 use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Models\DisputeOutcome;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
-use Carbon\Carbon;
 use Tests\TestCase;
 
 class X201Test extends TestCase
