@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T05:18:33",
+ "updated": "2026-09-05T05:34:26",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1634,6 +1634,12 @@
    "module": "X-215",
    "chose": "the already-signed direction is closed by the pending guard rather than by a second guard of its own, a separate ALREADY_SIGNED refusal code was rejected because not-pending already describes it and two codes for one state invites callers to branch on the wrong one, and the blast radius is zero because the only callers of sign() are the three methods in X215Test.php",
    "at": "2026-09-05T05:18:33",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-215",
+   "chose": "the void guard keys on $doc->status rather than $request->status because after a successful sign both read 'signed', so no test can tell them apart, and the document is the subject of the void call. The rejected alternative was throwing an exception (the X-200 idiom) rather than returning a refusal array, because DocSignAction returns an array and keeping the module consistent is safer. The blast radius is one line: X215Test.php:146, which voids a pending document.",
+   "at": "2026-09-05T05:34:26",
    "ruling": "R245"
   }
  ]
