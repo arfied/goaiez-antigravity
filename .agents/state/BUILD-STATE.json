@@ -1709,6 +1709,10 @@
   {
    "at": "2026-09-05T08:07:26",
    "note": "X-137 X137Engine was missing from app/vendor/composer/autoload_classmap.php because app/Modules is a composer classmap root and the file postdates the last dump-autoload; composer dump-autoload is the fix and the require_once bypass was reverted"
+  },
+  {
+   "at": "2026-09-05T13:28:22",
+   "note": "X-137 tracking UNRESOLVED (2026-09-04T21:15:07) is superseded by d985bb60: GET /l/{business}/{code} records a cold click with no session and link_clicks has its first writer. X-137 stays UNRESOLVED on its second entry, latency."
   }
  ]
 }

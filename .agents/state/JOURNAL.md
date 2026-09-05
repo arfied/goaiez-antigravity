@@ -833,3 +833,4 @@ the other end.
 - `2026-09-05T13:11:15` (R245) X-137 — A cold link click gets somewhere to land (ruling 43)
 - `2026-09-05T13:11:20` (R245) X-137 — G13-24 gets the test its ⑤ has been owed (ruling 44)
 - `2026-09-05T13:28:13` (R245) X-137 — Ruling 43's tenant-in-the-path is proven by a refusal: business B redeeming business A's short code 404s and writes no link_clicks row. Rejected alternative: leaving the unknown-code 404 as the only guard, which passes identically if the business_id clause is deleted.
+- `2026-09-05T13:28:22` note: X-137 tracking UNRESOLVED (2026-09-04T21:15:07) is superseded by d985bb60: GET /l/{business}/{code} records a cold click with no session and link_clicks has its first writer. X-137 stays UNRESOLVED on its second entry, latency.
