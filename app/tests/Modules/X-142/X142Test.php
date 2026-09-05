@@ -107,6 +107,21 @@ class X142Test extends TestCase
         $this->assertNotNull($sub->id);
     }
 
+    public function test_mcp_token_permissions_read_back_as_an_array(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Perms Array Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $token = $this->tokenAction->issue(
+            businessId: $biz->id,
+            tokenName: 'Test Perms',
+            roleScope: 'staff',
+            permissions: ['job.create', 'job.eta_notify']
+        );
+
+        $this->assertSame(['job.create', 'job.eta_notify'], \App\Modules\X142\Models\McpToken::findOrFail($token->id)->permissions);
+    }
+
     /**
      * [G4-02], [G4-18]
      */
