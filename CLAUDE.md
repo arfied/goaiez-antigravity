@@ -197,9 +197,18 @@ Watch for: <the trap that applies, by name>
   reading `KICKOFF.md` (tick 154). The tell is a dead pid with `REPORT.md`
   unchanged, no commit and a clean tree. **Never review it as a failed wave, never
   rewrite the brief it never read**, and re-dispatch after the reset — the same
-  `BRIEF.md`/`KICKOFF.md`, verbatim. Two stillborn launches in a row is an
-  `OWNER ACTION`, not a third launch: the quota is per-account and shared with
-  every other track running `agy` on this box.
+  `BRIEF.md`/`KICKOFF.md`, verbatim. Read the reset minute from the newest agy log by
+  mtime and wait for it; do not spin. The quota is per-account and shared with every
+  other track running `agy` on this box.
+  ⚠️ **"Two stillborn launches in a row is an `OWNER ACTION`" is superseded** (owner
+  ruling 2026-09-05 17:1x, `OWNER.md`). If the redispatch *after the reset* also dies on
+  quota, the fallback is **Claude Code on the default account**:
+  `bash .agents/supervisor/launch-coder.sh --coder claude`. It is **never automatic** —
+  a tick passes the flag by hand and writes `coder=claude` in the `REVIEWS.md` block
+  quoting the `LAUNCHED` line; agy stays the default and the first launch after any
+  reset is agy. That default account is shared with Track 1's supervisor session, so a
+  claude run ending in *"reached your Fable limit"* means that pool is drained too —
+  **HOLD until it resets; never switch accounts unasked.**
 - **Read a coder log with the `Read` tool, never Bash.** `/home/goaiez/tmp` is
   outside the supervisor's Bash sandbox — `cat`, `tail`, `ls` and `find` on
   `/home/goaiez/tmp/agy-<track>-run<N>.log` are all refused with *"may only … from

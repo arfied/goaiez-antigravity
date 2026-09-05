@@ -2,7 +2,15 @@
 
 **There is a supervisor. It reviews; you build.** The supervisor is a Claude Code
 session in this same checkout, bound by `CLAUDE.md` at the root. It never edits
-`app/**` and never commits. You never edit its files.
+`app/**`. You never edit its files.
+
+⚠️ **Updated 2026-09-05 (owner ruling, 08:0x and 14:0x): "and never commits" is
+retired.** The supervisor commits its **own five files only** — `CLAUDE.md`,
+`bin/supervise.sh`, `.claude/settings.json`, `.agents/rules/10-supervisor.md`,
+`.agents/supervisor/launch-coder.sh` — always as `chore(supervisor): …` with named
+paths, plus the one merge commit nobody else can make. **Merge step 0 — committing
+supervisor notes — is therefore the supervisor's, not yours**; your guard refuses
+those paths, and that refusal is correct.
 
 ## THE MAILBOX — `.agents/supervisor/`
 
@@ -52,18 +60,15 @@ RAW       : <doctor output for anything not fixed>
 - **Commit per module.** `feat(X-nnn): …` for a module, `fix(<stage>): …` for a
   stage fix, `chore: …` otherwise. Uncommitted work is invisible to review, and
   a review of a moving tree proves nothing.
-- ⛔ **Do not `git push` until the newest `REVIEWS.md` block for that wave says
-  `PASS` or `PASS-WITH-NOTES`** — unless `BRIEF.md`'s `push:` line says `free`.
-  Commits stay local until then. Pushing early is the one thing here that
+- ⛔⛔ **You never `git push`. Not ever, on this lane.** (Owner ruling 2026-09-05
+  14:0x: *"the supervisor runs ALL git for this lane from now on"*, and the owner
+  runs no git by hand either.) Commit; the supervisor pushes the sha it has gated,
+  by explicit ref. `BRIEF.md`'s `push:` line reads `⛔ closed — the supervisor
+  pushes`, and there is no wording that opens it for you — a `PASS` verdict does
+  **not** open it. This retires the earlier "push after a PASS" and "push step"
+  rules that stood here; if an old `BRIEF.md` still says `YES — <from>..<to>`, that
+  brief is stale — report it and push nothing. Pushing is the one thing here that
   cannot be reviewed back.
-- **Push step (Track 1, added 2026-09-03 — the owner automated pushes).** The
-  FIRST thing every run does, before reading the task: if `BRIEF.md`'s `push:`
-  line reads `YES — <from>..<to>`, run `git push origin main` and confirm the
-  output names exactly that range (or a prefix of it ending at `<to>`). Quote
-  the `<from>..<to>  main -> main` line in `REPORT.md` under `PUSHED`. If the
-  push is refused or the range differs, STOP and report — never `--force`,
-  never push a tip newer than `<to>`. If the line reads `NO` or `⛔`, push
-  nothing. A run that is only a push (`KICKOFF` says so) ends right after it.
 - ⛔⛔ **The coder guard is never bypassed.** `git` in a coder run is
   `/home/goaiez/agents/coder-bin/git`. Calling `/usr/bin/git`, `command git`,
   `env PATH=… git`, or any other route around it is a BLOCK on the wave even
