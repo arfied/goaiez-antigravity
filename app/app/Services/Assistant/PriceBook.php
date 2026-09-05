@@ -18,7 +18,7 @@ use InvalidArgumentException;
 /**
  * What a business charges, and the one line it is always said with — T176 P5.
  *
- * ⛔ **THE ONLY READER AND WRITER OF `price_list_items`, AND OF THE DISCLAIMER ON
+ * ⛔ **THE ONLY READER AND WRITER OF `price_book_items`, AND OF THE DISCLAIMER ON
  * `assistant_briefs`, HELD THERE BY A LINT**
  * (`tests/Feature/Architecture/PricesTest.php`), on 624/1223's reasoning and
  * with a sharper motive than either. Two things live here that cannot live
@@ -242,7 +242,7 @@ final class PriceBook
             throw new InvalidArgumentException('Removing a price needs the name it is stored under.');
         }
 
-        $this->query()->whereRaw('REPLACE(LOWER(service_name), " ", "-") = ?', [$normalised])->delete();
+        $this->query()->whereRaw("REPLACE(LOWER(service_name), ' ', '-') = ?", [$normalised])->delete();
     }
 
     /**
@@ -335,8 +335,11 @@ final class PriceBook
         // would erase the one thing anybody asks for after a wrong quote.
         $this->query()
             ->where('is_confirmed', false)
-            ->whereRaw('REPLACE(LOWER(service_name), " ", "-") = ?', [$normalised])
-            ->update(['confirmed_at' => Carbon::now()]);
+            ->whereRaw("REPLACE(LOWER(service_name), ' ', '-') = ?", [$normalised])
+            ->update([
+                'is_confirmed' => true,
+                'confirmed_at' => \Carbon\CarbonImmutable::now()
+            ]);
     }
 
     /**
@@ -459,9 +462,9 @@ final class PriceBook
             Str::slug($item->service_name),
             $item->price_cents,
             $item->price_max_cents,
-            'USD',
+            $this->currency(),
             PriceListItemSource::Manual,
-            CarbonImmutable::now(),
+            $item->confirmed_at,
         );
     }
 }
