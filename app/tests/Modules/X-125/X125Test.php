@@ -226,7 +226,8 @@ class X125Test extends TestCase
         $run->status = 'simulated';
         $this->assertEquals(SignalState::Unknown, $run->statusSignal());
 
-        $run->status = 'queued'; // unrecognized
-        $this->assertEquals(SignalState::Unknown, $run->statusSignal());
+        $run->status = 'queued';
+        $this->expectException(\ValueError::class);
+        $run->statusSignal();
     }
 }
