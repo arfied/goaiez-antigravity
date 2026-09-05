@@ -56,9 +56,23 @@ narrow and this table, not the permissions file, is its scope:
   `settings.json` loosens and this table does not, **this table governs**.
 
 `.claude/settings.json` enforces your column and is the **owner's** file — read it,
-edit it only on an owner ruling that names it, and never take main's copy (it
-currently has its whole deny list inside `allow`). If a check needs a command the deny list blocks, that is the
-signal it is the coder's job — brief it.
+edit it only on an owner ruling that names it. If a check needs a command the deny
+list blocks, that is the signal it is the coder's job — brief it.
+
+⚠️ **"Never take main's copy — its whole deny list is inside `allow`" is retired
+(measured 2026-09-05, tick 149).** Main fixed that nesting in `06f6f1d3`, and
+`git diff HEAD origin/main -- .claude/settings.json` now shows the two copies
+structurally identical: both carry a proper `deny` block with all 50 entries. The
+only difference left is that **sixty allows three that main does not** — `ps -p`,
+`ps -o` and `kill -0`, which are how an unattended tick answers case (a) without
+launching a coder to find out. So taking main's copy would no longer loosen the
+guard; it would only cost this track those three. Still not a swap to make without
+an owner ruling — but do not refuse it on the old reasoning.
+⚠️ **Compare with two dots, not three.** `git diff HEAD...origin/main` diffs the
+*merge base* to main, so it shows main's changes against an ancestor and says
+nothing about what this checkout holds now. Reading that output as "sixty is
+broken" is a mistake this column made and caught at tick 149; `git diff HEAD
+origin/main -- <path>` is the question actually being asked.
 
 ## The mailbox — `.agents/supervisor/`
 

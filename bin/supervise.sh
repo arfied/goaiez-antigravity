@@ -99,8 +99,16 @@ else
 fi
 
 bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
-if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
-  echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
+# This checkout is a linked worktree, so $ROOT/.git is a FILE and $ROOT/.git/hooks
+# can never exist. Git runs hooks from core.hooksPath, else the COMMON git dir —
+# never the per-worktree one. Resolve it the way git does. (Fixed 2026-09-05: the
+# literal path made this gate report MISSING for several waves while the hook the
+# supervisor wrote on 2026-09-02 was present and live all along.)
+hooksdir=$(git -C "$ROOT" config --get core.hooksPath 2>/dev/null)
+[ -n "$hooksdir" ] || hooksdir="$(git -C "$ROOT" rev-parse --git-common-dir)/hooks"
+case "$hooksdir" in /*) ;; *) hooksdir="$ROOT/$hooksdir" ;; esac
+if [ ! -x "$hooksdir/post-rewrite" ]; then
+  echo "  ⛔ post-rewrite hook is MISSING at $hooksdir — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
   tail -6 "$ROOT/.agents/supervisor/REWRITES.log" | sed 's/^/  ⛔ /'; fail=1
 else
