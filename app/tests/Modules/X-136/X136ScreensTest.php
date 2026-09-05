@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X136;
 
-use App\Models\User;
 use App\Enums\UserRole;
+use App\Models\User;
+use App\Modules\X136\Models\DecayModel;
 use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
 use App\Modules\X136\Ui\CoolingView;
+use App\Modules\X136\Ui\SignalVolumePrecisionView;
 use App\Support\Tenancy;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
 class X136ScreensTest extends TestCase
 {
-
     protected int $businessId;
 
     protected function setUp(): void
@@ -49,7 +49,7 @@ class X136ScreensTest extends TestCase
         $s = Signal::create([
             'business_id' => $this->businessId,
             'prospect_identifier' => 'test-prospect',
-            'signal_type' => 'test_type'
+            'signal_type' => 'test_type',
         ]);
 
         SignalScore::create([
@@ -72,7 +72,7 @@ class X136ScreensTest extends TestCase
         $s = Signal::create([
             'business_id' => $this->businessId,
             'prospect_identifier' => 'test-prospect',
-            'signal_type' => 'test_type'
+            'signal_type' => 'test_type',
         ]);
 
         $score = SignalScore::create([
@@ -120,7 +120,7 @@ class X136ScreensTest extends TestCase
         $s = Signal::create([
             'business_id' => $biz->id,
             'prospect_identifier' => 'seeded-prospect',
-            'signal_type' => 'test_type'
+            'signal_type' => 'test_type',
         ]);
 
         SignalScore::create([
@@ -136,5 +136,109 @@ class X136ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('seeded-prospect')
             ->assertSee('80');
+    }
+
+    public function test_signal_volume_precision_mount_and_empty(): void
+    {
+        Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
+            ->assertOk()
+            ->assertSee('No signal stats yet');
+    }
+
+    public function test_signal_volume_precision_sample(): void
+    {
+        Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
+            ->call('toggleSample')
+            ->assertSee('hiring')
+            ->assertSee('permit filed')
+            ->assertSee('90% Precision');
+    }
+
+    public function test_signal_volume_precision_shows_stats(): void
+    {
+        $s1 = Signal::create([
+            'business_id' => $this->businessId,
+            'prospect_identifier' => 'p1',
+            'signal_type' => 'pricing_visit',
+        ]);
+        SignalScore::create([
+            'business_id' => $this->businessId,
+            'signal_id' => $s1->id,
+            'prospect_identifier' => 'p1',
+            'signal_value' => 80.0,
+            'is_high_intent' => true,
+        ]);
+
+        $s2 = Signal::create([
+            'business_id' => $this->businessId,
+            'prospect_identifier' => 'p2',
+            'signal_type' => 'pricing_visit',
+        ]);
+        SignalScore::create([
+            'business_id' => $this->businessId,
+            'signal_id' => $s2->id,
+            'prospect_identifier' => 'p2',
+            'signal_value' => 40.0,
+            'is_high_intent' => false,
+        ]);
+
+        DecayModel::create([
+            'business_id' => $this->businessId,
+            'signal_type' => 'pricing_visit',
+            'half_life_days' => 14,
+            'decay_rate' => 0.05,
+        ]);
+
+        Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
+            ->assertSee('pricing visit')
+            ->assertSee('Volume: 2 total')
+            ->assertSee('1 high-intent')
+            ->assertSee('50% Precision')
+            ->assertSee('14 days / 5%');
+    }
+
+    public function test_signal_volume_precision_no_decay_model(): void
+    {
+        $s1 = Signal::create([
+            'business_id' => $this->businessId,
+            'prospect_identifier' => 'p1',
+            'signal_type' => 'hiring',
+        ]);
+        SignalScore::create([
+            'business_id' => $this->businessId,
+            'signal_id' => $s1->id,
+            'prospect_identifier' => 'p1',
+            'signal_value' => 80.0,
+            'is_high_intent' => true,
+        ]);
+
+        Livewire::test(SignalVolumePrecisionView::class, ['businessId' => $this->businessId])
+            ->assertSee('hiring')
+            ->assertSee('N/A');
+    }
+
+    public function test_signal_volume_precision_get_route(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        $this->actingAs($owner);
+        Tenancy::set($biz->id);
+
+        $s1 = Signal::create([
+            'business_id' => $biz->id,
+            'prospect_identifier' => 'p1',
+            'signal_type' => 'hiring',
+        ]);
+        SignalScore::create([
+            'business_id' => $biz->id,
+            'signal_id' => $s1->id,
+            'prospect_identifier' => 'p1',
+            'signal_value' => 80.0,
+            'is_high_intent' => true,
+        ]);
+
+        $this->get(route('x-136.signal-volume-precision'))
+            ->assertOk()
+            ->assertSee('hiring');
     }
 }
