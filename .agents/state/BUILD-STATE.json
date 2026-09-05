@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T12:08:00",
+ "updated": "2026-09-05T14:38:01",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -466,10 +466,17 @@
    "unresolved": []
   },
   "X-105": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 26,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-105",
+     "stage": "AdvanceOutreachStageAction does not exist, so the board does not offer a control to advance a stage",
+     "why": "",
+     "at": "2026-09-05T14:38:01"
+    }
+   ]
   },
   "X-108": {
    "status": "DONE",
@@ -1316,6 +1323,12 @@
    "stage": "C-Reviews",
    "why": "completeJob: X-121 exposes no create path for work_orders (EntityWriteAction updates by id; X-171 actions create nothing but device-sync rows). A raw insert is what ad95b42 reverted. J10's completeJob stays todo() until X-121 exposes one (ruling 8, option b).",
    "at": "2026-09-04T11:20:06"
+  },
+  {
+   "module": "X-105",
+   "stage": "AdvanceOutreachStageAction does not exist, so the board does not offer a control to advance a stage",
+   "why": "",
+   "at": "2026-09-05T14:38:01"
   }
  ],
  "decisions": [
@@ -1473,6 +1486,12 @@
    "module": "X-109",
    "chose": "I built one write action on the ManualQueue screen to re-submit parked form submissions directly through FormSubmitAction::submitForm.",
    "at": "2026-09-05T12:08:00",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-105",
+   "chose": "what the board reads; that halt and demo-request are its only writes and both go through the module actions; that an id is pre-scoped so a foreign id never reaches the action; that advancing a stage is refused for want of an action",
+   "at": "2026-09-05T14:37:55",
    "ruling": "R245"
   }
  ],
