@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CreditProduct;
+use App\Models\Business;
+use App\Services\Billing\CreditLedger;
+use App\Services\Billing\TrialEligibility;
+use App\Services\Billing\TrialGrantRefused;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
@@ -62,13 +67,14 @@ final class TwelveJourneysTest extends TestCase
     private function fundedTenant(): array
     {
         $tenant = $this->tenantWithLiveNumber();
-        $bizModel = \App\Models\Business::find($tenant['id']);
+        $bizModel = Business::find($tenant['id']);
         try {
-            app(\App\Services\Billing\TrialEligibility::class)->authorize($bizModel);
-        } catch (\App\Services\Billing\TrialGrantRefused $e) {
+            app(TrialEligibility::class)->authorize($bizModel);
+        } catch (TrialGrantRefused $e) {
             throw $e;
         }
-        app(\App\Services\Billing\CreditLedger::class)->resetMonthly(\App\Enums\CreditProduct::Sms, 500, 'harness');
+        app(CreditLedger::class)->resetMonthly(CreditProduct::Sms, 500, 'harness');
+
         return $tenant;
     }
 
