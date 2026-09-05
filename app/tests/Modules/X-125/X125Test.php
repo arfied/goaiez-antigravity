@@ -226,8 +226,10 @@ class X125Test extends TestCase
         $run->status = 'simulated';
         $this->assertEquals(SignalState::Unknown, $run->statusSignal());
 
-        $run->status = 'queued';
+        // An unrecognised status is REFUSED at the cast, on the WRITE — the enum
+        // cast calls FlowRunStatus::from() in setAttribute, so the assignment is
+        // what throws. See the S-45 decision.
         $this->expectException(\ValueError::class);
-        $run->statusSignal();
+        $run->status = 'queued';
     }
 }
