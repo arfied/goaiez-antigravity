@@ -48,5 +48,24 @@ final class ModuleServiceProvider extends ServiceProvider
 
             return response($html, 200)->header('Content-Type', 'text/html');
         })->whereNumber('business');
+
+        Event::listen(SitePublished::class, function (SitePublished $event): void {
+            $zone = EdgeZone::where('business_id', $event->businessId)
+                ->where('has_valid_ssl', true)
+                ->latest('id')
+                ->first();
+
+            if ($zone === null) {
+                return;
+            }
+
+            app(EdgeDeployAction::class)->handle(
+                businessId: $event->businessId,
+                edgeZoneId: $zone->id,
+                pageId: $event->pageId,
+                commitId: $event->commitId,
+                businessName: Business::where('id', $event->businessId)->value('name'),
+            );
+        });
     }
 }
