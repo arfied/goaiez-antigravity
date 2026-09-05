@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T01:39:03",
+ "updated": "2026-09-05T01:57:57",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1532,6 +1532,18 @@
    "module": "X-108",
    "chose": "rejected interval overlap between the two-hour slot and the rule because it would change the meaning of every rule already stored and contradict the existing test_g2_12_blackout_calendar fixtures and the module's TEST ANCHOR",
    "at": "2026-09-05T01:39:03",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "interval overlap is adopted for appointments and slot_locks (concrete rows with real start/end timestamps) and remains rejected for availability_rules blackout rows (S-39's (R245), weekly recurrence, a stored meaning that would change)",
+   "at": "2026-09-05T01:57:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "G15-32 negative architecture assertion uses needles pay, wage, salary, rate, compensation, earning, payout over live schema; positive control uses affiliates table to ensure needle hits a real money column",
+   "at": "2026-09-05T01:57:57",
    "ruling": "R245"
   }
  ]
