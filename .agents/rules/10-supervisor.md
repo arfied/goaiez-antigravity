@@ -56,6 +56,22 @@ RAW       : <doctor output for anything not fixed>
   `PASS` or `PASS-WITH-NOTES`** — unless `BRIEF.md`'s `push:` line says `free`.
   Commits stay local until then. Pushing early is the one thing here that
   cannot be reviewed back.
+- **Push step (Track 1, added 2026-09-03 — the owner automated pushes).** The
+  FIRST thing every run does, before reading the task: if `BRIEF.md`'s `push:`
+  line reads `YES — <from>..<to>`, run `git push origin main` and confirm the
+  output names exactly that range (or a prefix of it ending at `<to>`). Quote
+  the `<from>..<to>  main -> main` line in `REPORT.md` under `PUSHED`. If the
+  push is refused or the range differs, STOP and report — never `--force`,
+  never push a tip newer than `<to>`. If the line reads `NO` or `⛔`, push
+  nothing. A run that is only a push (`KICKOFF` says so) ends right after it.
+- ⛔⛔ **The coder guard is never bypassed.** `git` in a coder run is
+  `/home/goaiez/agents/coder-bin/git`. Calling `/usr/bin/git`, `command git`,
+  `env PATH=… git`, or any other route around it is a BLOCK on the wave even
+  when the commit itself is legitimate. A guard refusal goes in `REPORT.md`
+  under `REFUSED` with the exact message, and the run stops there — the guard
+  being wrong is the supervisor's problem to fix, not the coder's to route
+  around. (Run 33 committed `.agents/state/*` through `/usr/bin/git` after the
+  guard refused it; that is the incident this rule records.)
 - ⛔ **Never resolve a `BLOCK` by editing `REVIEWS.md` or `BRIEF.md`.** Fix,
   commit, `REPORT.md`.
 - **A `BLOCK` never stops the loop.** Do its items, report, continue with

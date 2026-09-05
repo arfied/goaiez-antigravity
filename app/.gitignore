@@ -32,3 +32,4 @@ pint_output.json
 stan.json
 composer.phar
 error_log
+/pest.json

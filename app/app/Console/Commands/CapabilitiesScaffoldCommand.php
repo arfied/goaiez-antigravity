@@ -185,7 +185,19 @@ final class CapabilitiesScaffoldCommand extends Command
             return $cache;
         }
 
+        $currentHeadingModule = null;
+
         foreach (explode("\n", (string) file_get_contents($plan)) as $line) {
+            if (preg_match('/^#{1,6}\s/', $line)) {
+                if (preg_match_all('/\b((?:X|C)-[A-Za-z0-9]+)\b/', $line, $hm) === 1) {
+                    $currentHeadingModule = $hm[1][0];
+                } else {
+                    $currentHeadingModule = null;
+                }
+
+                continue;
+            }
+
             if (! str_starts_with($line, '|')) {
                 continue;
             }
@@ -213,6 +225,12 @@ final class CapabilitiesScaffoldCommand extends Command
                 $owner = $om[1];
                 foreach ($matchedIds as $id) {
                     $cache[$id] = $owner;
+                }
+            } elseif ($currentHeadingModule !== null) {
+                foreach ($matchedIds as $id) {
+                    if (str_starts_with($id, 'N-')) {
+                        $cache[$id] = $currentHeadingModule;
+                    }
                 }
             }
         }

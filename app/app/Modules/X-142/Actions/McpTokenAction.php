@@ -17,7 +17,7 @@ class McpTokenAction
             'business_id' => $businessId,
             'token_name' => $tokenName,
             'role_scope' => $roleScope,
-            'permissions' => $permissions,
+            'permissions' => json_encode($permissions),
             'token_hash' => hash('sha256', Str::random(40)),
             'is_revoked' => false,
         ]);

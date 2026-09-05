@@ -48,6 +48,30 @@
         <p class="px-3 text-sm text-ink-3">Nothing here for your account.</p>
     @endforelse
 
+        <!-- Generated Operator Routes -->
+    <div class="pt-4 border-t border-rule mt-4">
+        <div class="px-3 text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-2">Modules (Generated)</div>
+        @foreach (config('surfaces.generated.operator', []) as $group => $items)
+            <div class="mt-4">
+                <h2 class="px-3 text-xs font-bold uppercase tracking-wider text-ink-3">{{ $group }}</h2>
+                <ul class="mt-2 space-y-1">
+                    @foreach ($items as $item)
+                        @php $current = request()->routeIs($item['route']); @endphp
+                        <li>
+                            <a
+                                href="{{ route($item['route']) }}"
+                                @if ($current) aria-current="page" @endif
+                                class="flex min-h-10 items-center justify-between rounded-[--radius-control] px-3 text-sm transition {{ $current ? 'bg-card font-semibold text-ink border-l-2 border-indigo-600 shadow-sm' : 'text-ink-2 hover:text-ink hover:bg-card/50 font-medium' }}"
+                            >
+                                <span>{{ $item['label'] }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endforeach
+    </div>
+
     <!-- Current Operator Card & Sign Out -->
     <div class="pt-4 border-t border-rule px-3 space-y-3">
         @auth

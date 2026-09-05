@@ -19,9 +19,12 @@ final class ArEngine
     /**
      * Apply late fee with standard legal capping (max 10% or $50).
      */
-    public function applyLateFee(int $businessId, int $invoiceId, int $feeCents): array
+    public function applyLateFee(int $businessId, int $invoiceId, int $feeCents, bool $hasTerm = true): array
     {
-        return DB::transaction(function () use ($businessId, $invoiceId, $feeCents) {
+        return DB::transaction(function () use ($businessId, $invoiceId, $feeCents, $hasTerm) {
+            if (! $hasTerm) {
+                throw new \DomainException('A fee with no matching TERM in the agreement is refused');
+            }
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
             $maxFee = min((int) ($invoice->total_cents * 0.10), 5000); // capped at 10% or $50
             $finalFee = min($feeCents, $maxFee);
@@ -49,12 +52,15 @@ final class ArEngine
     /**
      * Offer and accept structured installment payment plan.
      */
-    public function offerPlan(int $businessId, int $invoiceId, int $installmentsCount = 3, string $frequency = 'monthly'): PaymentPlan
+    public function offerPlan(int $businessId, int $invoiceId, int $installmentsCount = 3, string $frequency = 'monthly', int $threshold = 100000): PaymentPlan
     {
-        return DB::transaction(function () use ($businessId, $invoiceId, $installmentsCount, $frequency) {
+        return DB::transaction(function () use ($businessId, $invoiceId, $installmentsCount, $frequency, $threshold) {
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
             $remaining = $invoice->total_cents - $invoice->paid_cents;
             $installmentAmount = (int) ceil($remaining / $installmentsCount);
+            if ($remaining > $threshold) {
+                throw new \DomainException('A plan past the threshold routes to a financing partner');
+            }
 
             $plan = PaymentPlan::create([
                 'business_id' => $businessId,
@@ -85,9 +91,13 @@ final class ArEngine
         int $invoiceId,
         int $amountCents,
         string $method = 'check',
-        ?string $reference = null
+        ?string $reference = null,
+        ?string $photoUrl = null
     ): OfflinePayment {
-        return DB::transaction(function () use ($businessId, $invoiceId, $amountCents, $method, $reference) {
+        return DB::transaction(function () use ($businessId, $invoiceId, $amountCents, $method, $reference, $photoUrl) {
+            if (empty($reference) && empty($photoUrl)) {
+                throw new \DomainException('Offline payment needs a reference or a photo');
+            }
             $payment = OfflinePayment::create([
                 'business_id' => $businessId,
                 'invoice_id' => $invoiceId,
@@ -114,9 +124,12 @@ final class ArEngine
     /**
      * Package defaulted account into collections evidence bundle.
      */
-    public function packageForCollections(int $businessId, int $invoiceId): array
+    public function packageForCollections(int $businessId, int $invoiceId, bool $isHumanAction = false): array
     {
-        return DB::transaction(function () use ($businessId, $invoiceId) {
+        return DB::transaction(function () use ($businessId, $invoiceId, $isHumanAction) {
+            if (! $isHumanAction) {
+                throw new \DomainException('Collections transmission is a human action only');
+            }
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
             $bundleUrl = "https://cdn.goaiez.com/collections/bundle_{$invoice->invoice_number}.zip";
 
@@ -132,6 +145,33 @@ final class ArEngine
                 'invoice_id' => $invoiceId,
                 'status' => 'packaged_collections',
                 'bundle_url' => $bundleUrl,
+            ];
+        });
+    }
+
+    public function chaseOverdue(int $businessId, int $invoiceId, int $daysOverdue): array
+    {
+        return DB::transaction(function () use ($businessId, $invoiceId, $daysOverdue) {
+            $state = ReceivableState::firstOrCreate(
+                ['business_id' => $businessId, 'invoice_id' => $invoiceId],
+                ['status' => 'overdue']
+            );
+
+            // R211: "resolution PRECEDES any automatic stop"
+            // So action should be 'offer_plan' or similar, not 'suspend'
+            $action = 'offer_plan';
+            $reason = 'Invoice is '.$daysOverdue.' days overdue';
+
+            $state->update([
+                'status' => 'overdue',
+                'last_action' => $action,
+                'last_reason' => $reason,
+            ]);
+
+            return [
+                'invoice_id' => $invoiceId,
+                'action' => $action,
+                'reason' => $reason,
             ];
         });
     }

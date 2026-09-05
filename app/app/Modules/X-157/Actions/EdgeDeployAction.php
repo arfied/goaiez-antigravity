@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Modules\X157\Actions;
 
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X176\Actions\SchemaRenderAction;
+use App\Modules\X176\Actions\SeoRenderAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 final class EdgeDeployAction
@@ -18,9 +22,12 @@ final class EdgeDeployAction
         int $businessId,
         int $edgeZoneId,
         int $measuredTtfbMs = 120,
-        int $speedBudgetMs = 1500
+        int $speedBudgetMs = 1500,
+        ?int $pageId = null,
+        ?string $commitId = null,
+        ?string $businessName = null
     ): array {
-        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs) {
+        return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
@@ -78,6 +85,73 @@ final class EdgeDeployAction
                 domainName: $zone->domain_name,
                 deployHash: $deployHash
             ));
+
+            // Compile HTML artifact to local storage
+            $html = '<html><head>';
+            $html .= "<meta name=\"ssl\" content=\"valid\">\n";
+            $html .= "</head><body>\n";
+
+            if ($commitId) {
+                $version = PageVersion::where('commit_id', $commitId)->first();
+                if ($version) {
+                    if ($version->pixel_installed) {
+                        $html .= "<script id=\"x110-pixel\" src=\"/pixel.js\"></script>\n";
+                    }
+                    if (is_array($version->content_blocks)) {
+                        foreach ($version->content_blocks as $block) {
+                            if (($block['type'] ?? '') === 'chat') {
+                                $html .= "<div class=\"chat-widget-container\"></div>\n";
+                            }
+                            if (($block['type'] ?? '') === 'form_capture') {
+                                $html .= "<form class=\"form-capture-x155\"></form>\n";
+                            }
+                            if (($block['type'] ?? '') === 'dni') {
+                                $html .= "<div class=\"dni-pool-x137\"></div>\n";
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ($pageId !== null && $businessName !== null && $commitId !== null) {
+                $seoResult = app(SeoRenderAction::class)->handle(
+                    $businessId,
+                    $pageId,
+                    $businessName,
+                    $commitId,
+                    $zone->domain_name
+                );
+
+                $escapedTitle = e($seoResult['title']);
+                $escapedDesc = e($seoResult['description']);
+                $escapedCanonical = e($seoResult['canonical']);
+
+                $html = str_replace(
+                    '</head>',
+                    "<title id=\"seo-meta-x176\">{$escapedTitle}</title>\n".
+                    "<meta name=\"description\" content=\"{$escapedDesc}\">\n".
+                    "<link rel=\"canonical\" href=\"{$escapedCanonical}\">\n</head>",
+                    $html
+                );
+
+                $schemaResult = app(SchemaRenderAction::class)->handle(
+                    $businessId,
+                    $pageId,
+                    $businessName,
+                    $commitId,
+                    $zone->domain_name
+                );
+
+                if (isset($schemaResult['json_ld'])) {
+                    $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'])."\n</script>\n";
+                }
+
+                // seo is completely missing from X-176, so we do not emit anything for it.
+            }
+
+            $html .= '</body></html>';
+
+            Storage::disk('local')->put("sites/{$deployHash}.html", $html);
 
             return [
                 'status' => 'deployed',

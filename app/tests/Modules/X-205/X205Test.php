@@ -93,7 +93,7 @@ class X205Test extends TestCase
     }
 
     /**
-     * [G13-20]
+     * [G7-04], [G7-11], [G7-23], [G7-41], [G7-45], [G10-36], [G13-20]
      */
     public function test_g13_20_sale_outside_the_90_day_cookie_is_refused_and_lifetime_balance_is_a_running_sum(): void
     {

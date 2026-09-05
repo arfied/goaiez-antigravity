@@ -39,13 +39,13 @@ return [
     // status:
     'N-076' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
-    // status:
+    // status: SPECCED
     'N-078' => 'a replay NEVER emits (P-203\'s shape) · "would this rule have helped?" is answered from history, never from a model · session replay stays killed (G13-32)',
 
-    // status:
-    'N-079' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
+    // status: SPECCED
+    'N-079' => '⛔ **a replay NEVER emits** *(P-203\'s shape)* · *"would this rule have helped?" is answered from history, never from a model* · **session replay stays killed** *(G13-32)*',
 
-    // status:
+    // status: SPECCED
     'N-080' => 'a replay NEVER emits (P-203\'s shape) · "would this rule have helped?" is answered from history, never from a model · session replay stays killed (G13-32)',
 
     // status:

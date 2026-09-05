@@ -35,6 +35,9 @@ return [
     ],
     'emits' => [
         'enrichment.requested',
+        'prospect.enriched',
+        'enrichment.failed',
+        'identity.resolved',
     ],
     'consumes' => [
         'capability.decided',
@@ -54,5 +57,6 @@ return [
     // P-209 — silence fails OPEN. `none` is a decision; absence is not.
     'agent_reachable' => [
         'identity.resolve',
+        'none',
     ],
 ];

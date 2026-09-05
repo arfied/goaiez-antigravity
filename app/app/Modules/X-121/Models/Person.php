@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property int $id
  * @property int $business_id
- * @property string $name
+ * @property ?string $first_name
+ * @property ?string $last_name
  * @property ?string $phone
  * @property ?string $email
  * @property ?string $address
@@ -23,5 +24,6 @@ class Person extends Model
 
     protected $casts = [
         'metadata' => 'array',
+        'consent_state' => 'string',
     ];
 }

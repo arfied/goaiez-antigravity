@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X157\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Deployment extends Model
 {
@@ -18,4 +19,9 @@ class Deployment extends Model
         'measured_ttfb_ms' => 'integer',
         'deployed_at' => 'datetime',
     ];
+
+    public function edgeZone(): BelongsTo
+    {
+        return $this->belongsTo(EdgeZone::class, 'edge_zone_id');
+    }
 }

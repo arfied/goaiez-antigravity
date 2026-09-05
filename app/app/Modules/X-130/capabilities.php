@@ -42,13 +42,13 @@ return [
     // status:
     'N-079' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
 
-    // status:
+    // status: SPECCED
     'N-081' => 'aggregate only — a query that resolves to fewer than N tenants is REFUSED · no tenant\'s data is identifiable in a fleet number · it informs; it never routes',
 
-    // status:
-    'N-082' => '**a tenant is never left on an empty domain · priority scheduling MUST BE REAL · a sync conflict goes UNKNOWN not STALE · ⛔ X-168 has no overtime/out-of-hours/attendance (P-204) · a price on site comes from X-163 or is refused · a replay NEVER emits · X-130 is AGGREGATE ONLY and refuses below N tenants · an RCS→SMS degrade never re-sends**',
+    // status: SPECCED
+    'N-082' => '⛔⛔ **aggregate only — a query that resolves to fewer than N tenants is REFUSED** · *no tenant\'s data is identifiable in a fleet number* · **it informs; it never routes**',
 
-    // status:
+    // status: SPECCED
     'N-083' => 'aggregate only — a query that resolves to fewer than N tenants is REFUSED · no tenant\'s data is identifiable in a fleet number · it informs; it never routes',
 
     // status:

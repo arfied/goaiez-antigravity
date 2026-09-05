@@ -24,6 +24,7 @@ class ReviewsQaRequests extends Component
 
     public string $platform = 'google';
 
+    #[Locked]
     public ?int $selectedReviewId = null;
 
     public string $replyDraft = '';
@@ -47,14 +48,6 @@ class ReviewsQaRequests extends Component
         }
         Tenancy::set($this->businessId);
 
-        // Seed initial sample reviews if empty
-        if (ReviewRequest::where('business_id', $this->businessId)->count() === 0) {
-            $sync = app(ReviewSyncAction::class);
-            $sync->handle($this->businessId, 'google', 5, 'Exceptional emergency leak repair on Sunday afternoon! Tech arrived in 25 mins.');
-            $sync->handle($this->businessId, 'google', 5, 'Ava answered my call immediately and booked technician John. 5-star service.');
-            $sync->handle($this->businessId, 'yelp', 2, 'The plumber fixed the issue, but arrived 45 minutes past the 2-hour dispatch window.');
-            $sync->handle($this->businessId, 'google', 1, 'Water heater pressure valve leaked again 2 days after installation.');
-        }
     }
 
     public function sendRequest(): void
@@ -70,6 +63,11 @@ class ReviewsQaRequests extends Component
             $this->noticeType = 'success';
             $this->actionNotice = "✅ Review request dispatched via {$this->platform} (P-110 compliant, zero-incentive rule).";
         }
+    }
+
+    public function unselectReview(): void
+    {
+        $this->selectedReviewId = null;
     }
 
     public function selectReview(int $id): void

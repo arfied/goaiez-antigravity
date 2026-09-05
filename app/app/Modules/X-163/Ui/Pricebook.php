@@ -62,61 +62,12 @@ class Pricebook extends Component
         $this->businessId = (int) $tenantId;
         Tenancy::set($this->businessId);
 
-        // Seed initial items if empty
-        if (PriceBookItem::where('business_id', $this->businessId)->count() === 0) {
-            PriceBookItem::create([
-                'business_id' => $this->businessId,
-                'service_name' => 'Standard Diagnostic & Inspection',
-                'price_cents' => 8500,
-                'is_sample' => false,
-                'is_confirmed' => true,
-                'tax_rate_pct' => 8.25,
-            ]);
-            PriceBookItem::create([
-                'business_id' => $this->businessId,
-                'service_name' => 'Emergency Leak Repair & Coupling',
-                'price_cents' => 19500,
-                'is_sample' => false,
-                'is_confirmed' => true,
-                'tax_rate_pct' => 8.25,
-            ]);
-            PriceBookItem::create([
-                'business_id' => $this->businessId,
-                'service_name' => 'Main Drain Hydro-Jetting & Rooter',
-                'price_cents' => 35000,
-                'is_sample' => false,
-                'is_confirmed' => true,
-                'tax_rate_pct' => 8.25,
-            ]);
-            PriceBookItem::create([
-                'business_id' => $this->businessId,
-                'service_name' => 'Sample Tankless Water Heater Install',
-                'price_cents' => 185000,
-                'is_sample' => true,
-                'is_confirmed' => false,
-                'tax_rate_pct' => 8.25,
-            ]);
-        }
-
-        // Seed or load Callout Fee
+        // Load Callout Fee
         $fee = CalloutFee::where('business_id', $this->businessId)->first();
         if ($fee) {
             $this->calloutFeeDollars = $fee->callout_fee_cents / 100;
             $this->deductedIfProceeding = (bool) $fee->deducted_if_proceeding;
             $this->calloutExplanation = (string) ($fee->explanation_text ?? $this->calloutExplanation);
-        } else {
-            CalloutFee::create([
-                'business_id' => $this->businessId,
-                'callout_fee_cents' => 8500,
-                'deducted_if_proceeding' => true,
-                'explanation_text' => $this->calloutExplanation,
-            ]);
-        }
-
-        // Seed initial locations if empty
-        if (LocationBook::where('business_id', $this->businessId)->count() === 0) {
-            LocationBook::create(['business_id' => $this->businessId, 'location_name' => 'Austin Central', 'version' => 1]);
-            LocationBook::create(['business_id' => $this->businessId, 'location_name' => 'North Austin / Round Rock', 'version' => 1]);
         }
     }
 
@@ -133,7 +84,7 @@ class Pricebook extends Component
                 'explanation_text' => $this->calloutExplanation,
             ]);
         } else {
-            CalloutFee::create([
+            CalloutFee::query()->create([
                 'business_id' => $this->businessId,
                 'callout_fee_cents' => $cents,
                 'deducted_if_proceeding' => $this->deductedIfProceeding,
@@ -152,7 +103,7 @@ class Pricebook extends Component
         }
 
         Tenancy::set($this->businessId);
-        PriceBookItem::create([
+        PriceBookItem::query()->create([
             'business_id' => $this->businessId,
             'service_name' => $this->newServiceName,
             'price_cents' => (int) round($this->newPriceDollars * 100),

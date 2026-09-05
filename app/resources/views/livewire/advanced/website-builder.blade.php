@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+<div class="space-y-6 sm:space-y-8">
     <div class="md:flex md:items-center md:justify-between mb-6">
         <div class="flex-1 min-w-0">
             <nav class="flex mb-2" aria-label="Breadcrumb">
@@ -30,18 +30,22 @@
                 type="text"
                 wire:model="aiPrompt"
                 wire:keydown.enter="generateWithAI"
-                class="w-full text-xs sm:text-sm p-3 rounded-lg bg-indigo-950/80 border border-indigo-600 text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                class="w-full text-xs sm:text-sm p-3 rounded-lg bg-indigo-950/80 border {{ $errors->has('aiPrompt') ? 'border-red-400 focus:ring-red-400' : 'border-indigo-600 focus:ring-indigo-400' }} text-white placeholder-indigo-300 focus:outline-none focus:ring-2"
                 placeholder="Describe your business, specialty & location (e.g. 24/7 Emergency plumbing in Austin)..."
+                {{ $errors->has('aiPrompt') ? 'aria-invalid="true"' : '' }}
             />
             <button
                 wire:click="generateWithAI"
                 wire:loading.attr="disabled"
-                class="w-full sm:w-auto px-5 py-3 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs sm:text-sm shrink-0 shadow transition flex items-center justify-center gap-1.5"
+                class="w-full sm:w-auto px-5 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm shrink-0 shadow transition flex items-center justify-center gap-1.5"
             >
                 <span wire:loading.remove>✨ Generate Page</span>
                 <span wire:loading>Writing Copy & SEO...</span>
             </button>
         </div>
+        @error('aiPrompt')
+            <p class="mt-2 text-sm text-red-300" role="alert">{{ $message }}</p>
+        @enderror
     </div>
 
     @if ($aiNotification)
@@ -94,7 +98,7 @@
                     <textarea aria-label="Subheadline" wire:model.live.debounce.200ms="subheadline" rows="3" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink"></textarea>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-ink-2 mb-1">Call to Action</label>
                         <input aria-label="CTA Button Text" type="text" wire:model.live.debounce.200ms="ctaText" class="w-full text-xs p-2.5 rounded-md border border-rule bg-paper text-ink">
@@ -148,8 +152,8 @@
                     <span class="text-[11px] text-ink-3 font-mono ms-2 truncate max-w-[150px] sm:max-w-none">https://{{ Str::slug($businessName) }}.goaiez.com</span>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
-                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-400 font-bold shadow-xs' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
+                    <button wire:click="$set('previewDevice', 'desktop')" class="px-2.5 py-1 min-h-[40px] text-xs rounded-md transition {{ $previewDevice === 'desktop' ? 'bg-paper text-indigo-400 font-bold shadow-xs ring-1 ring-rule-strong' : 'text-ink-2 hover:text-ink' }}">🖥️ Desktop</button>
+                    <button wire:click="$set('previewDevice', 'mobile')" class="px-2.5 py-1 min-h-[40px] text-xs rounded-md transition {{ $previewDevice === 'mobile' ? 'bg-paper text-indigo-400 font-bold shadow-xs ring-1 ring-rule-strong' : 'text-ink-2 hover:text-ink' }}">📱 Mobile Mockup</button>
                 </div>
             </div>
 
@@ -158,7 +162,7 @@
                 
                 @if ($previewDevice === 'mobile')
                     <!-- Realistic Smartphone Mockup Frame -->
-                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 bg-white shadow-2xl overflow-x-auto overflow-y-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
+                    <div class="relative w-[340px] sm:w-[375px] rounded-[44px] border-[10px] border-slate-900 bg-white shadow-2xl overflow-x-auto overflow-y-hidden min-h-[660px] max-h-[720px] flex flex-col ring-1 ring-slate-900/10">
                         <!-- Dynamic Island / Speaker Notch -->
                         <div class="h-6 bg-slate-900 w-full flex items-center justify-center shrink-0">
                             <div class="h-3.5 w-24 bg-black rounded-full"></div>
@@ -266,15 +270,15 @@
                             <!-- Mobile Footer -->
                             <footer class="bg-gray-900 text-white px-4 py-6 text-center text-[10px]">
                                 <div class="font-bold">{{ $businessName }}</div>
-                                <div class="text-gray-600 mt-0.5">{{ $phoneNumber }}</div>
-                                <div class="text-gray-600 mt-2 text-[9px]">Powered by GO AI EZ</div>
+                                <div class="text-gray-400 mt-0.5">{{ $phoneNumber }}</div>
+                                <div class="text-gray-400 mt-2 text-[9px]">Powered by GO AI EZ</div>
                             </footer>
                         </div>
 
                         @if ($showStickySpeedDial)
                             <!-- Floating Mobile Sticky Speed-Dial Bar -->
                             <div class="absolute bottom-4 inset-x-3 bg-white/95 backdrop-blur-md p-2 rounded-xl shadow-lg border border-gray-200 flex items-center justify-between gap-2 z-30">
-                                <a href="tel:{{ $phoneNumber }}" class="flex-1 py-2 px-3 rounded-lg bg-emerald-600 text-white text-[11px] font-bold text-center flex items-center justify-center gap-1">
+                                <a href="tel:{{ $phoneNumber }}" class="flex-1 py-2 px-3 rounded-lg bg-emerald-700 text-white text-[11px] font-bold text-center flex items-center justify-center gap-1">
                                     <span>📞 Call Now</span>
                                 </a>
                                 <a href="#quote" class="flex-1 py-2 px-3 rounded-lg bg-indigo-600 text-white text-[11px] font-bold text-center flex items-center justify-center gap-1">

@@ -10,6 +10,7 @@ final class PaymentCaptured
         public readonly int $businessId,
         public readonly int $paymentId,
         public readonly ?string $gatewayChargeId = null,
-        public readonly int $amountCents = 0
+        public readonly int $amountCents = 0,
+        public readonly ?int $invoiceId = null
     ) {}
 }

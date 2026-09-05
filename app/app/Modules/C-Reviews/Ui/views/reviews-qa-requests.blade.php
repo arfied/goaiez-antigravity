@@ -1,4 +1,5 @@
 <div class="max-w-6xl mx-auto space-y-6">
+    <x-surface.sample-state module="C-Reviews" screen="reviews_qa_requests" />
     <!-- Header & Stats Overview -->
     <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-sm shadow-xl space-y-6">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
@@ -84,7 +85,7 @@
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Prompt Template</label>
                     <textarea 
-                        wire:model.defer="promptTemplate" 
+                        wire:model="promptTemplate" 
                         rows="3" 
                         class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                     ></textarea>
@@ -172,13 +173,13 @@
                             <div class="mt-3 p-4 rounded-xl bg-slate-950 border border-purple-500/40 space-y-3">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-white">AI Response Generator</span>
-                                    <button wire:click="$set('selectedReviewId', null)" class="text-xs text-slate-400 hover:text-white">&times; Cancel</button>
+                                    <button wire:click="unselectReview()" class="text-xs text-slate-400 hover:text-white">&times; Cancel</button>
                                 </div>
-                                <textarea wire:model.defer="replyDraft" rows="3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
+                                <textarea wire:model="replyDraft" rows="3" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white"></textarea>
                                 
                                 <div class="flex items-center justify-between">
                                     <label class="flex items-center gap-2 text-xs text-slate-400">
-                                        <input type="checkbox" wire:model.defer="isSarcasticOrAmbiguous" class="rounded bg-slate-900 border-slate-700 text-purple-600" />
+                                        <input type="checkbox" wire:model="isSarcasticOrAmbiguous" class="rounded bg-slate-900 border-slate-700 text-purple-600" />
                                         Flag as Sarcastic / Ambiguous (Draft to Inbox)
                                     </label>
                                     <button wire:click="publishReply" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition">

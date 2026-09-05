@@ -1,45 +1,45 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
- "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T05:51:46",
- "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
- "roster": 124,
+ "started": "2026-09-03T09:33:12",
+ "updated": "2026-09-05T03:56:25",
+ "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
+ "roster": 127,
  "runtime_build": "20260829-0647",
  "seal_digest": "f1e73d9fc181eb1c",
- "seal_digest_observed": "f1e73d9fc181eb1c",
+ "seal_digest_observed": null,
  "runtime_sound": true,
  "bootstrap_done": true,
  "stages": {
   "integrity": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "boundary": {
-   "violations": 2,
+   "violations": null,
    "fails": "COMMIT"
   },
   "contract": {
-   "violations": 100,
+   "violations": null,
    "fails": "COMMIT"
   },
   "citation": {
-   "violations": 0,
+   "violations": null,
    "fails": "COMMIT"
   },
   "schema": {
-   "violations": 13,
+   "violations": null,
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 352,
+   "violations": 372,
    "fails": "MERGE"
   },
   "anchor": {
-   "violations": 10,
+   "violations": null,
    "fails": "WAVE"
   },
   "journey": {
-   "violations": 9,
+   "violations": null,
    "fails": "WAVE"
   }
  },
@@ -59,7 +59,9 @@
    "track": "spine",
    "status": "DONE",
    "modules": [
-    "X-128"
+    "X-128",
+    "X-222",
+    "X-223"
    ]
   },
   "3": {
@@ -68,7 +70,8 @@
    "modules": [
     "C-Ai",
     "X-219",
-    "X-220"
+    "X-220",
+    "X-221"
    ]
   },
   "4": {
@@ -381,10 +384,23 @@
    "unresolved": []
   },
   "C-Reviews": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 8,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Reviews",
+     "stage": "tests",
+     "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+     "at": "2026-09-04T07:55:55"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-04T08:05:31"
+    }
+   ]
   },
   "C-Sms": {
    "status": "DONE",
@@ -435,17 +451,10 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-103",
-     "stage": "schema",
-     "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-     "at": "2026-09-02T02:30:15"
-    }
-   ]
+   "unresolved": []
   },
   "X-104": {
    "status": "DONE",
@@ -532,17 +541,10 @@
    "unresolved": []
   },
   "X-121": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-121",
-     "stage": "schema",
-     "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-     "at": "2026-09-02T02:39:43"
-    }
-   ]
+   "unresolved": []
   },
   "X-122": {
    "status": "DONE",
@@ -569,23 +571,10 @@
    "unresolved": []
   },
   "X-126": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 1,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-126",
-     "stage": "journey",
-     "why": "J3 needs an AI provider key; none in this checkout",
-     "at": "2026-09-02T10:12:36"
-    },
-    {
-     "module": "X-126",
-     "stage": "journey",
-     "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
-     "at": "2026-09-02T10:28:55"
-    }
-   ]
+   "unresolved": []
   },
   "X-127": {
    "status": "DONE",
@@ -675,26 +664,7 @@
    "status": "DONE",
    "wave": 25,
    "intent": "OBSERVE",
-   "unresolved": [
-    {
-     "module": "X-142",
-     "stage": "loading",
-     "why": "not reachable from Livewire::test (wire:init fires before the assertion \u2014 your own X-125 decision)",
-     "at": "2026-09-04T19:18:02"
-    },
-    {
-     "module": "X-142",
-     "stage": "SAMPLE",
-     "why": "not reachable from Livewire::test (no sample marker on mcp_tokens; adding a column is refused)",
-     "at": "2026-09-04T19:18:02"
-    },
-    {
-     "module": "X-142",
-     "stage": "error",
-     "why": "not reachable from Livewire::test (unreachable error branch)",
-     "at": "2026-09-04T19:18:02"
-    }
-   ]
+   "unresolved": []
   },
   "X-143": {
    "status": "DONE",
@@ -937,10 +907,23 @@
    "unresolved": []
   },
   "X-186": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-186",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T13:47:25"
+    },
+    {
+     "module": "X-186",
+     "stage": "capability",
+     "why": "no action enrols a person into a campaign",
+     "at": "2026-09-04T22:41:56"
+    }
+   ]
   },
   "X-188": {
    "status": "DONE",
@@ -955,10 +938,17 @@
    "unresolved": []
   },
   "X-190": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-190",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:48:24"
+    }
+   ]
   },
   "X-191": {
    "status": "DONE",
@@ -973,10 +963,17 @@
    "unresolved": []
   },
   "X-193": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-193",
+     "stage": "tests",
+     "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-194": {
    "status": "DONE",
@@ -1021,10 +1018,17 @@
    "unresolved": []
   },
   "X-201": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-201",
+     "stage": "tests",
+     "why": "column deadline_at is missing from disputes and not named in the brief",
+     "at": "2026-09-04T02:05:53"
+    }
+   ]
   },
   "X-202": {
    "status": "DONE",
@@ -1048,7 +1052,14 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-205",
+     "stage": "contract",
+     "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-03T13:56:38"
+    }
+   ]
   },
   "X-206": {
    "status": "DONE",
@@ -1114,13 +1125,27 @@
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-217",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:00:33"
+    }
+   ]
   },
   "X-218": {
    "status": "DONE",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-218",
+     "stage": "contract",
+     "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+     "at": "2026-09-03T14:01:55"
+    }
+   ]
   },
   "X-219": {
    "status": "DONE",
@@ -1145,26 +1170,44 @@
    "wave": 24,
    "intent": "INFORM",
    "unresolved": []
+  },
+  "X-221": {
+   "status": "NOT_STARTED",
+   "wave": 3,
+   "intent": "GROW",
+   "unresolved": []
+  },
+  "X-222": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "PROTECT",
+   "unresolved": []
+  },
+  "X-223": {
+   "status": "NOT_STARTED",
+   "wave": 2,
+   "intent": "GROW",
+   "unresolved": []
   }
  },
  "journeys": {
   "J1": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a missed call becomes a consented text back",
    "green_after_wave": 5
   },
   "J2": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "two fields at signup put a live agent on a real number",
    "green_after_wave": 6
   },
   "J3": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a quote comes from the pricebook or does not come at all",
    "green_after_wave": 7
   },
   "J4": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "STOP halts every pending step for that person",
    "green_after_wave": 5
   },
@@ -1174,7 +1217,7 @@
    "green_after_wave": 14
   },
   "J6": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "cancel is one tap with nothing in between",
    "green_after_wave": 11
   },
@@ -1189,476 +1232,112 @@
    "green_after_wave": 14
   },
   "J9": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an invoice reaches a real charge id",
    "green_after_wave": 10
   },
   "J10": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a completed job asks for a review once inside the cadence",
    "green_after_wave": 8
   },
   "J11": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "a published site carries all seven",
    "green_after_wave": 13
   },
   "J12": {
-   "status": "RED",
+   "status": "GREEN",
    "title": "an overdue invoice is chased by reason, resolution first",
    "green_after_wave": 9
   }
  },
  "unresolved": [
   {
-   "module": "X-103",
-   "stage": "schema",
-   "why": "class-based module tests get no DB refresh; rows accumulate in goaiez_antig_test and edited migrations never re-apply there. Recommend binding RefreshesTenantDatabase in base TestCase to resolve this.",
-   "at": "2026-09-02T02:30:15"
+   "module": "X-186",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T13:47:25"
   },
   {
-   "module": "X-121",
-   "stage": "schema",
-   "why": "11 platform-scoped tables are exempt from tenant RLS by ruling (audit C-1); the sealed schema stage counts them as violations; needs a runtime rebundle to teach the checker",
-   "at": "2026-09-02T02:39:43"
+   "module": "X-190",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:48:24"
   },
   {
-   "module": "X-126",
-   "stage": "journey",
-   "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
-   "at": "2026-09-02T10:28:55"
+   "module": "X-205",
+   "stage": "contract",
+   "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same as send.requested shape), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-03T13:56:38"
   },
   {
-   "module": "X-142",
-   "stage": "loading",
-   "why": "not reachable from Livewire::test (wire:init fires before the assertion \u2014 your own X-125 decision)",
-   "at": "2026-09-04T19:18:02"
+   "module": "X-217",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:00:33"
   },
   {
-   "module": "X-142",
-   "stage": "SAMPLE",
-   "why": "not reachable from Livewire::test (no sample marker on mcp_tokens; adding a column is refused)",
-   "at": "2026-09-04T19:18:02"
+   "module": "X-218",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-03T14:01:55"
   },
   {
-   "module": "X-142",
-   "stage": "error",
-   "why": "not reachable from Livewire::test (unreachable error branch)",
-   "at": "2026-09-04T19:18:02"
-  }
- ],
- "notes": [
-  {
-   "at": "2026-08-29T14:37:58",
-   "note": "bootstrap-done"
+   "module": "X-193",
+   "stage": "tests",
+   "why": "column quiet_hours_start is missing from notification_classes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
   },
   {
-   "at": "2026-09-04T19:36:15",
-   "note": "X-142 returned to DONE: the three 2026-09-04T19:18:02 unresolved records were coverage facts about Livewire::test reach, not missing dependencies (ruling 48, bin/state.py:9). They stay in the arrays because state.py has no withdraw; the status is the field of record."
+   "module": "X-201",
+   "stage": "tests",
+   "why": "column deadline_at is missing from disputes and not named in the brief",
+   "at": "2026-09-04T02:05:53"
   },
   {
-   "at": "2026-09-05T06:11:10",
-   "note": "--help"
+   "module": "C-Reviews",
+   "stage": "tests",
+   "why": "ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change",
+   "at": "2026-09-04T07:55:55"
   },
   {
-   "at": "2026-09-05T06:11:18",
-   "note": "app/app/Modules/X-215/Actions/DocCommentAction.php DocCommentAction::addCommentAndReissue() has no state check, so a comment on a signed or voided document re-issues it with 'status' => 'sent' and silently re-opens a finished contract. deferred module, recorded under ruling 47, not built"
+   "module": "C-Reviews",
+   "stage": "contract",
+   "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
+   "at": "2026-09-04T08:05:31"
   },
   {
-   "at": "2026-09-05T06:11:18",
-   "note": "app/app/Modules/X-215/Actions/DocRemindAction.php DocRemindAction returns 'reminder_sent' and sends nothing \u2014 no mail, no event, no queued job, no column. deferred module, recorded under ruling 47, not built"
+   "module": "X-186",
+   "stage": "capability",
+   "why": "no action enrols a person into a campaign",
+   "at": "2026-09-04T22:41:56"
   }
  ],
  "decisions": [
   {
-   "module": "X-211",
-   "chose": "R245: Built AR recovery engine with late fee capping (max 10% or 0), structured installment payment plan contracts, ACH enforcement, offline reconciliation, and collections packaging with evidence bundle.",
-   "at": "2026-08-29T15:20:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-140",
-   "chose": "@agent_reachable widened with topic.identify \u2014 read-shaped, per the plan's derivation rule; owner may overrule",
-   "at": "2026-09-02T04:13:54",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-179",
-   "chose": "widened agent_reachable to include content.extract because it's a read-shaped extraction action without side effects",
-   "at": "2026-09-02T04:38:50",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-171",
-   "chose": "(R245) X-171 reads X-121's work_orders (person_id for JobCompleted) \u2014 declared in the plan row and regenerated manifest, not a raw undeclared read",
-   "at": "2026-09-03T01:20:26",
-   "ruling": "R245"
-  },
-  {
    "module": "X-205",
-   "chose": "(R245) SaleAttributionRefused \u2014 a sale whose referral click is outside the 90-day cookie (or missing) is refused; missing visitor ID bypasses check",
-   "at": "2026-09-04T11:49:20",
+   "chose": "affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
-   "module": "X-125",
-   "chose": "runs status-pill mapping: success -> ok, error -> alert, simulated -> unknown, default -> unknown",
-   "at": "2026-09-04T15:49:06",
+   "module": "X-82",
+   "chose": "agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
   },
   {
-   "module": "X-125",
-   "chose": "runs skeleton test skipped: wire:init fires before assertion, manual ready=false proves the if/else not the state",
-   "at": "2026-09-04T15:49:06",
+   "module": "X-82",
+   "chose": "plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader",
+   "at": "2026-09-05T03:56:25",
    "ruling": "R245"
-  },
+  }
+ ],
+ "notes": [
   {
-   "module": "X-125",
-   "chose": "flow_id is a non-nullable FK; removed ?? from run->flow->name to match run->flow->trigger_event",
-   "at": "2026-09-04T15:49:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-194",
-   "chose": "ViewListAction uses ->lazy() instead of ->get() because ->get() is forbidden by the anchor grep rule, and ->lazy() returns a LazyCollection which supports isEmpty() correctly in blade without violating the One Rule.",
-   "at": "2026-09-04T16:03:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-125",
-   "chose": "empty state ships with no action because the only useful destination has no route until Track 1's generator lands.",
-   "at": "2026-09-04T16:04:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-194",
-   "chose": "any-view-it empty state ships with no action because it is only reachable when no view is selected (e.g. viewId is 0) and the user must select an existing view.",
-   "at": "2026-09-04T16:37:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-194",
-   "chose": "Keep both unreachable catches in SavedViewsList as declared defence in depth, each with a one-line comment explaining why no test reaches it.",
-   "at": "2026-09-04T16:38:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-124",
-   "chose": "Centralised IRREVERSIBLE actions list as a constant on AssistantExecuteAction because it ensures both preview and execute actions read from a single source of truth.",
-   "at": "2026-09-04T16:59:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-124",
-   "chose": "Wired PreviewCard component for 3 states (ready reversible, ready irreversible, error) with tests, matching TodaysRecommendationStrip pattern.",
-   "at": "2026-09-04T16:59:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-124",
-   "chose": "AssistantPreviewAction is final, so Mockery cannot mock it to throw an exception, making the error state untestable. Fallback taken: removed try/catch and error state.",
-   "at": "2026-09-04T18:39:18",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-124",
-   "chose": "Kept TodaysRecommendationStrip catch as defence in depth, documented unreachability, and renamed test since per-test transactions cannot simulate connection failure without breaking the suite.",
-   "at": "2026-09-04T19:01:20",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "Empty state heading reads 'No tokens yet.', body reads 'Tokens give external systems access to your account.'",
-   "at": "2026-09-04T19:17:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "Token registry role scope is rendered directly as text without extra labeling",
-   "at": "2026-09-04T19:17:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "Token registry token name is rendered as a bold h2",
-   "at": "2026-09-04T19:17:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "Token registry list renders with a border-rule container and --radius-card rounded corners",
-   "at": "2026-09-04T19:17:56",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "empty state wording uses standard x-ui.empty-state pattern with no action button",
-   "at": "2026-09-04T19:38:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "renders event_filter column, events cast is ignored as dead",
-   "at": "2026-09-04T19:38:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "is_active cast to boolean added to WebhookSubscription model",
-   "at": "2026-09-04T19:38:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "ConnectYourAi empty state renders sentence 'Connect an AI to get started.'",
-   "at": "2026-09-04T19:59:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "ConnectYourAi connected state renders token_name and role_scope, asserting DontSee token_hash",
-   "at": "2026-09-04T19:59:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "(R245) X-142 \u2014 McpTokenAction::issue writes the permissions array directly; the model's array cast does the encoding",
-   "at": "2026-09-04T20:19:11",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "(R245) X-142 \u2014 G4-02 is proven by revoke refusing a token id under a business id that does not own it; a second tenant cannot prove it because mcp_tokens is FORCE RLS",
-   "at": "2026-09-04T20:19:15",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-142",
-   "chose": "(R245) X-142 \u2014 ConnectYourAi lists only tokens where is_revoked is false; that scope is what distinguishes it from McpTokenRegistry, which lists every token ever issued",
-   "at": "2026-09-04T20:19:21",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "G3-18 and G11-16 are proven by the day's spend carrying across sends via warmup_calendars.sent_today and by an uncapped send on a domain with no calendar row; the schedule ladder is data the send path never reads",
-   "at": "2026-09-04T20:37:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "G11-37's refusal has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called",
-   "at": "2026-09-04T20:37:59",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "EmailUnsubscribeAction writes the preference through X204\\Domain\\ConsentService::suppress with channel email, mirroring C-Sms's SmsComposer; the mail_events row stays as the event log, not the preference store",
-   "at": "2026-09-04T20:50:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "EmailSendAction passes ConsentService::decide only for marketing sends, so a conversational or transactional send is never gated; that scoping is how an unsubscribed recipient still receives the invoice, which is G1-43's refusal clause",
-   "at": "2026-09-04T20:50:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "G1-43's category-confirmation half has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called",
-   "at": "2026-09-04T20:50:45",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "G15-31: the published warm-up ladder is the midpoint of a +/-20% range; the stored quantity is drawn inside it, so no two domains share a schedule",
-   "at": "2026-09-04T22:29:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "G15-31: a caller-supplied schedule with min === max is refused with WARMUP_CONSTANT_QUANTITY rather than silently jittered",
-   "at": "2026-09-04T22:29:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "G11-05: the R17 halt seeds are evaluated by EmailHaltSeedAction over counted mail_events rows; the complaint seed is complained/sent >= 0.0010 and the bounce seed is a bounced count >= 250, both INCLUSIVE at the boundary, because a domain sitting exactly on R17's number is at the limit and G4-08 puts deliverability first; the rejected alternative was a strict > , which lets a domain park permanently at exactly the seed",
-   "at": "2026-09-04T22:51:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "C-Mail",
-   "chose": "G11-05: a fired seed sets is_marketing_paused only and is never cleared; 'never the thread' is EmailSendAction's existing sendType === 'marketing' guard, so no second flag, column or send-type argument is introduced",
-   "at": "2026-09-04T22:51:42",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "G2-38: the lead grade is derived from lead_rating inside UnifiedInboxManager::scoreLead on an inclusive ladder (>=80 A, >=60 B, >=40 C, >=20 D, else F) and the caller-supplied $grade parameter is removed; the rejected alternative was keeping it, which is what made X01Test's assertEquals('A', grade) read back its own argument",
-   "at": "2026-09-04T23:10:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "G2-38: a lead_rating outside 0..100 is refused with LEAD_RATING_OUT_OF_RANGE before updateOrCreate rather than clamped, so a refused rating leaves no row; the confidence half of P-147 is NOT in this wave because lead_scores has no source column and no migration is written here",
-   "at": "2026-09-04T23:10:49",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "G2-12: SchedulingEngine::getAvailableSlots reads availability_rules and treats is_blackout=true rows as SUBTRACTIVE overlays on the standard [9,11,14,16] ladder, matched on Carbon dayOfWeekIso (1=Monday..7=Sunday, the migration's own convention) over a half-open [start_time, end_time) hour window; the rejected alternative was making is_blackout=false rows the authoritative positive availability window, which would return zero slots for every tenant alive today because no tenant has a single row, reddening five live assertions in X108Test",
-   "at": "2026-09-04T23:29:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "G2-12: a blackout applies to the whole business and resource_id is ignored, and the holiday-override half of G2-12/G18-07 is NOT built because availability_rules has day_of_week and no date column, so a one-off dated holiday has nowhere to be stored; no migration is written in this wave",
-   "at": "2026-09-04T23:29:34",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-202",
-   "chose": "G10-34: an item with no chain decides in one hop; rejected requiring a chain for every item because it would redden tests and break live tenants",
-   "at": "2026-09-04T23:49:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-202",
-   "chose": "G10-34: an approval short of the last step advances the chain and leaves the item pending while rejection is terminal; rejected letting any step approve outright because it makes steps_count decorative",
-   "at": "2026-09-04T23:49:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-202",
-   "chose": "G10-34: ApprovalDecided does NOT fire on an intermediate approval; rejected firing per step with a step field on the event because it adds a required constructor parameter that fatals existing call sites",
-   "at": "2026-09-04T23:49:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-202",
-   "chose": "G10-34: an intermediate approval records current_step and nothing else; rejected per-step attribution to decision_comment because it would overwrite the audit trail as there is no table for it",
-   "at": "2026-09-04T23:49:10",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "rejected interval overlap between the two-hour slot and the rule because it would change the meaning of every rule already stored and contradict the existing test_g2_12_blackout_calendar fixtures and the module's TEST ANCHOR",
-   "at": "2026-09-05T01:39:03",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "interval overlap is adopted for appointments and slot_locks (concrete rows with real start/end timestamps) and remains rejected for availability_rules blackout rows (S-39's (R245), weekly recurrence, a stored meaning that would change)",
-   "at": "2026-09-05T01:57:53",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "G15-32 negative architecture assertion uses needles pay, wage, salary, rate, compensation, earning, payout over live schema; positive control uses affiliates table to ensure needle hits a real money column",
-   "at": "2026-09-05T01:57:57",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "waitlist backfill scopes candidates to the cancelled appointment's date using preferred_date; this is a distinct question from slot availability (S-39/S-40). Member priority now ranks within the matched day rather than globally.",
-   "at": "2026-09-05T02:07:23",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "The booking door refuses a window the availability door already excludes, using the same half-open predicate. This is a fourth, separate question: S-39 decided blackout semantics for availability_rules, S-40 adopted interval overlap for appointments/slot_locks in the availability door, and S-41 decided which waitlisted person gets a freed slot. The rejected strict reading (equality with the four canonical slots) was discarded because three existing call sites book non-slot windows. None of the earlier three decisions is reopened or overturned.",
-   "at": "2026-09-05T02:19:30",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "the booking door now refuses a blacked-out window on the same predicate as the availability door; the known limit is that isBlackedOut() reads the start hour only, so a booking starting before a blackout and running into it is not refused \u2014 matching X108Test.php:231-244, which pins that behaviour for the availability door; the rejected alternative is a finer overlap-based blackout check, refused because it would make the two doors disagree in the opposite direction and is new semantics rather than precision; the slot-lock arm stays UNRESOLVED and S-39's, S-40's, S-41's and S-42's decisions are untouched",
-   "at": "2026-09-05T02:41:46",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-108",
-   "chose": "offer-not-door: the VIP filter narrows $offeredSlots (offer policy) while settled arms continue out of $availableSlots (capacity). A non-member booking 09:00 is evidence, not a bug. Rejected symmetry with S-42/S-43 because VIP is offer policy, not capacity. Consequence: non-member can book the window withheld from them. This closes the door-disagreement series. The slot-lock arm stays UNRESOLVED. S-39, S-40, S-41, S-42, S-43 are untouched.",
-   "at": "2026-09-05T03:04:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-125",
-   "chose": "Use a backed enum cast for FlowRun status and exhaustive match to fix boundary violation. Rejected: match (true), array lookup (teach checker to be noise), reusing AutomationRunStatus (different table's lifecycle). Consequence: a flow_runs row with a status outside the three cases now throws when the Runs screen renders its pill, where it used to show a grey Unknown pill.",
-   "at": "2026-09-05T03:20:06",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "The scaffold DOES harvest @agent_reachable and X-01 manifest is not stale; the defect is in ContractStage.php:423 which does not support a mix of reachable and unreachable actions. Stopped per branch (c).",
-   "at": "2026-09-05T03:43:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-121",
-   "chose": "schema 13 is recorded, not fixed: 11 of 12 tables are deliberate PLATFORM_EXEMPTIONS in X-121's 2026_08_31_000001 migration (platform STOPs with a NULL business_id, worker queues, global triage); operator_alerts has 16 console writers outside Tenancy::actingAs() and belongs on that list. X-121 is Track 1's (ruling 8) and UNRESOLVED on the owner's runtime rebundle.",
-   "at": "2026-09-05T03:43:41",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "replyWithTakeover now refuses with TakeoverNotLatchedRefused when no active latch exists, instead of inventing an operator named Staff Member and labelling the reply a human takeover. Rejected alternative: return the reply unlabelled with no operator name, refused because a caller reading formatted_reply would send an unlabelled message where it expected a labelled one, which is the same fail open in the other direction. Blast radius zero: the only caller in the tree is X01Test.php line 94, which runs after a real takeover.",
-   "at": "2026-09-05T04:00:02",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-01",
-   "chose": "the takeover latch has no release door, is_active and released_at have a writer and no un-writer, AgentEvalSuite line 430 makes it a permanently silenced thread, and a release path is new surface and stays UNRESOLVED.",
-   "at": "2026-09-05T04:00:07",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-200",
-   "chose": "G18-25 clause one is built at CallDisposeAction line 25 and was already exercised by the anchor under the wrong id G18-01, the new test pins the untested direction a certain voicemail is not upgraded, and mutation A proves it covers ground the anchor does not.",
-   "at": "2026-09-05T04:12:41",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-200",
-   "chose": "the 3 percent abandonment ceiling is a column with no arithmetic, abandonment_ceiling_pct is written by the migration and the only reader renders CallCampaign rows without computing a rate, disposeCall has no abandoned path, and a rate and a ceiling check are new surface and stay UNRESOLVED.",
-   "at": "2026-09-05T04:12:44",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-200",
-   "chose": "disposeCall was the only door in X-200 that did not validate the campaign and seat ids it was handed, dialNext and logout and scoreCall all use findOrFail on the same ids, the row was written before the seat lookup so a foreign seat left the real seat in dialing forever and told nobody, and the fix adopts the module existing findOrFail idiom rather than a named refusal class because three sibling doors already read that way.",
-   "at": "2026-09-05T04:30:12",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-200",
-   "chose": "dialNext refuses a paused campaign",
-   "at": "2026-09-05T04:50:19",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-215",
-   "chose": "sign action refuses requests that are not pending",
-   "at": "2026-09-05T05:09:58",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-215",
-   "chose": "the already-signed direction is closed by the pending guard rather than by a second guard of its own, a separate ALREADY_SIGNED refusal code was rejected because not-pending already describes it and two codes for one state invites callers to branch on the wrong one, and the blast radius is zero because the only callers of sign() are the three methods in X215Test.php",
-   "at": "2026-09-05T05:18:33",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-215",
-   "chose": "the void guard keys on $doc->status rather than $request->status because after a successful sign both read 'signed', so no test can tell them apart, and the document is the subject of the void call. The rejected alternative was throwing an exception (the X-200 idiom) rather than returning a refusal array, because DocSignAction returns an array and keeping the module consistent is safer. The blast radius is one line: X215Test.php:146, which voids a pending document.",
-   "at": "2026-09-05T05:34:26",
-   "ruling": "R245"
-  },
-  {
-   "module": "X-215",
-   "chose": "the remind guard keys on request->status because remind is given a requestId and loads only the request, the document is not in scope and loading it would be a new dependency for no gain; SIGNATURE_REQUEST_NOT_PENDING is reused rather than a new REMINDER_REFUSED because the code names the state, S-54 already rejected two codes for one state, and a caller that branches on the code should not have to know which action produced it. The rejected alternative was adding 'reminded' => true to the success path, or a reminded_at column, neither was written because a key no assertion reads is untested code and the action does not send anything today. The blast radius is zero callers: grep -rn 'DocRemindAction|remindAction|reminder_sent' returns only the action's own two lines inside X-215 and its test.",
-   "at": "2026-09-05T05:51:46",
-   "ruling": "R245"
+   "at": "2026-09-03T09:34:34",
+   "note": "bootstrap-done"
   }
  ]
 }

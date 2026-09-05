@@ -1,0 +1,16 @@
+--- app/tests/Journeys/JourneyHarness.php
++++ app/tests/Journeys/JourneyHarness.php
+@@ -176,6 +176,14 @@
+     {
+         $this->guardOutboundSend($to);
++        \Illuminate\Support\Facades\Log::info("Jobs before drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
+         $this->drainQueue();
++        \Illuminate\Support\Facades\Log::info("Jobs after drain: " . \Illuminate\Support\Facades\DB::table('jobs')->count());
++        \Illuminate\Support\Facades\Log::info("Failed jobs: " . \Illuminate\Support\Facades\DB::table('failed_jobs')->count());
++        $failed = \Illuminate\Support\Facades\DB::table('failed_jobs')->get();
++        if ($failed->isNotEmpty()) {
++            \Illuminate\Support\Facades\Log::error("Failed job exception: " . $failed->first()->exception);
++        }
+         $msg = \Illuminate\Support\Facades\DB::table('outreach_messages')->where('status', '!=', 'queued')->latest('id')->first();
+         return $msg ? (array) $msg : null;
+     }

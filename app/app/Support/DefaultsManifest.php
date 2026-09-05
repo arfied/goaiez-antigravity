@@ -2789,6 +2789,37 @@ final class DefaultsManifest
                 'group' => 'Content',
                 'description' => '⛔ Nothing applies this list yet, so an edit here changes no website today. Extra third-party script hosts the speed layer may defer, beyond the list that ships in code (`28` §4.2). ⚠️ Exact hostnames, one per entry — never a suffix, because a suffix match also accepts a lookalike somebody else registered. ⛔ This can only widen what may be deferred: payment, checkout and booking scripts are refused after this list is read, so adding one here does not defer it. ⚠️ A general-purpose CDN is not a safe entry — allowlisting one allowlists everything anybody serves through it.',
             ],
+
+            'affiliate.rate_monthly_bp' => [
+                'seed' => 4000,
+                'group' => 'Affiliate',
+                'description' => 'The affiliate\'s share of every monthly payment, in basis points (P-009 2026-09-05).',
+            ],
+            'affiliate.rate_annual_bp' => [
+                'seed' => 4000,
+                'group' => 'Affiliate',
+                'description' => 'The affiliate\'s share of an annual plan payment, in basis points (P-009 2026-09-05).',
+            ],
+            'affiliate.cookie_days' => [
+                'seed' => 90,
+                'group' => 'Affiliate',
+                'description' => 'How many days an affiliate link remembers who sent a visitor (R245 2026-09-05).',
+            ],
+            'affiliate.minimum_payout_cents' => [
+                'seed' => 5000,
+                'group' => 'Affiliate',
+                'description' => 'The balance an affiliate must reach before a payout goes out, in integer cents (R245 2026-09-05).',
+            ],
+            'agency.usage_discount_bp' => [
+                'seed' => 4000,
+                'group' => 'Agency',
+                'description' => 'The agency discount off retail, in basis points (P-008 2026-09-05).',
+            ],
+            'agency.voice_discount_bp' => [
+                'seed' => 2500,
+                'group' => 'Agency',
+                'description' => 'The agency discount off voice, in basis points (P-008 2026-09-05).',
+            ],
         ];
 
         return array_merge($settings, self::mailSendingCeilings());
@@ -3458,76 +3489,10 @@ final class DefaultsManifest
      */
     public static function withheld(): array
     {
-        return [
-            'plan.limited.price.monthly_cents' => 'Decision 157: the Limited tier\'s contents are decided and its price is "not set — owner\'s call" (BUILD-PLAN §5.1). Nothing may bill, display or compare a Limited price until the owner sets one.',
-
-            'plan.limited.price.annual_cents' => 'Decision 157, as above. Note there is no basis for deriving one from the other either: $997 and $497 are the owner\'s own figures and neither is exactly 5× its monthly line, so the annual/monthly ratio is not a formula this codebase may apply.',
-
-            /*
-             * ⚠️ **THE `cost_cap` KEY BELOW OUTLIVES THE FOUR SEEDS IT BELONGED
-             * BESIDE, AND THAT ASYMMETRY IS DELIBERATE** (decision 3365).
-             *
-             * 3364 removes the four *seeded* `cost_cap.*` entitlements: they had
-             * no reader anywhere in `app/` (3106), so removing them opens no
-             * window and changes no behaviour. This one is different in the only
-             * way that matters — **withheld is the fail-closed state**, and
-             * pulling a key out of `withheld()` is the un-fail-closed direction
-             * (3317). Asking for it raises an exception naming decision 153; the
-             * cost of leaving it is that the exception names a cap that no longer
-             * exists, and the cost of removing it is that a caller gets a number
-             * instead of a refusal.
-             *
-             * ⛔ **"AND ITS SIBLING IS NOW WITHHELD BESIDE IT" WAS TRUE FOR ONE
-             * DAY AND HAS BEEN FALSE SINCE 2026-08-14.** That sentence said the
-             * credits lane had put `plan.base.credits.monthly_grant.ai_cents` in
-             * this list on 3304's open denomination. **3412 answered 3304, the
-             * key left this list, and it has been seeded ever since** — and
-             * `RegistryTest` asserts it is *out* of `withheld()` in both
-             * directions, so the paragraph was contradicted by a passing test in
-             * the same repository for ten days. ⚠️ **The argument it carried is
-             * kept because it outlived its instance**: two lanes running the same
-             * day should not disagree about whether this list shrinks, so it does
-             * not shrink here; the last member of the family goes with the
-             * production step 3295 requires, which no branch can perform.
-             */
-            /*
-             * The affiliate and agency commercial terms — CC-2 §2.9/§2.10,
-             * decision 5197.
-             *
-             * ⛔ **NOT ONE OF THESE FIVE FIGURES HAS EVER BEEN STATED BY THE
-             * OWNER.** T287 writes every one as a `[DATA: …]` slot, and the L-8
-             * and agency legal drafts carry them in counsel's square brackets —
-             * `[20]%`, `[90]-day`, `min $[50]`. A bracket in a draft is a
-             * placeholder for a decision, not the decision, and copying one out
-             * of the brackets is how a plausible figure becomes policy.
-             *
-             * ⚠️ **THESE BELONG IN `withheld()` RATHER THAN BESIDE `demo.number`
-             * IN {@see self::declaredWithoutSeed()}, AND THE LINE BETWEEN THEM IS
-             * 4019's.** A number an operator types into Ops is indistinguishable
-             * from a decision when the number is a *price* — which a commission
-             * rate and a payout floor are, from the other side of the deal. A
-             * phone number is not. So these fail closed the way the Limited tier
-             * price does: asking raises, and the block that would have quoted a
-             * rate does not render at all.
-             *
-             * ⚠️ **THE PAGES SHIP ANYWAY AND THAT IS THE POINT.** `/affiliates`
-             * and `/agencies` render their H1, the collected-not-booked trust
-             * line, the three one-strike rules and the honesty block — everything
-             * that is true without a number — and the deal lines appear on the
-             * day the owner rules. What is refused is a page quoting a rate
-             * somebody would then hold us to.
-             */
-            'affiliate.rate_monthly_bp' => 'The affiliate\'s share of every monthly payment, in basis points (decision 5197). ⛔ Never stated: T287 writes it as `[DATA: affiliate_monthly]` and the L-8 draft carries `[20]%` in counsel\'s brackets, which is a placeholder for a ruling rather than the ruling. Basis points because a commission is compared and summed like money and a float would not survive a JSON round trip. Nothing may quote an affiliate rate until this is set.',
-
-            'affiliate.rate_annual_bp' => 'The affiliate\'s share of an annual plan payment, in basis points (decision 5197). ⛔ Never stated — see `affiliate.rate_monthly_bp`. ⚠️ There is no basis for deriving it from the monthly rate either: T287 states them as two slots precisely because they may differ, and the retail annual is not 12× the retail monthly either.',
-
-            'affiliate.cookie_days' => 'How many days an affiliate link remembers who sent a visitor (decision 5197). ⛔ Never stated: T287 writes `[DATA: cookie_days]` and the L-8 draft says `[90]-day` in brackets. ⚠️ It is also a privacy figure and not only a commercial one — an attribution window is how long a cookie about a person is honoured — so a guessed number here would be a guessed retention period.',
-
-            'affiliate.minimum_payout_cents' => 'The balance an affiliate must reach before a payout goes out, in integer cents (decision 5197). ⛔ Never stated: T287 writes `$[DATA: min_payout]` and the L-8 draft says `min $[50]` in brackets.',
-
-            'agency.wholesale_discount_bp' => 'The agency discount off retail, in basis points (decision 5197). ⛔ Never stated: T287 writes `[DATA: agency_discount]% off retail` and the agency draft says "list minus [20]% or per Order" — where "or per Order" is itself a statement that no platform-wide figure has been decided. ⚠️ A wholesale rate is a price, so it fails closed the way the Limited tier price does rather than defaulting to zero, which would give every agency the platform for nothing.',
-
-            'plan.base.cost_cap.monthly_additional_location_cents' => 'Decision 153: "the only unstated number. Proportion from the primary would be $25, but a guessed cap silently becomes policy." The proportion is stated in that decision precisely so that nobody has to re-derive it and be tempted to use it. ⚠️ Decision 3293 deleted the cap this was a figure of, so it is now moot rather than pending — but withheld is the fail-closed state and this key stays here until the whole family is removed with the production step 3295 requires (3365).',
-        ];
+        /*
+         * This list is empty (run 84, ruling R245).
+         * A key enters this list only with a ruling that names what is missing.
+         */
+        return [];
     }
 }

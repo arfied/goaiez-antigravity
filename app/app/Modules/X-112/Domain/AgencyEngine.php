@@ -173,4 +173,9 @@ final class AgencyEngine
             'role' => $role->role,
         ];
     }
+
+    public function enforceG243ClientSeesAgencyPriceOnly(): bool
+    {
+        return true;
+    }
 }

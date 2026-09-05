@@ -36,6 +36,7 @@ return [
     'emits' => [
         'document.ingested',
         'document.reviewed',
+        'upload.received',
     ],
     'consumes' => [
         'upload.received',

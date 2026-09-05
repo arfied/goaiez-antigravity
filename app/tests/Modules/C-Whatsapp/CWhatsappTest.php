@@ -30,7 +30,7 @@ class CWhatsappTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->engine = new WhatsappEngine;
+        $this->engine = app(WhatsappEngine::class);
         $this->sendAction = new WhatsappSendAction($this->engine);
         $this->connectAction = new WhatsappConnectAction($this->engine);
         $this->templateAction = new TemplateSubmitAction;

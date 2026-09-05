@@ -32,7 +32,7 @@ final class FormValidateAction
         }
 
         // 2. IP vs Timezone bot signal check (G17-12)
-        if ($userTimezone === 'bot_synthetic_zone' || $ipAddress === '10.0.0.99_bot') {
+        if ($userTimezone !== null && ! in_array($userTimezone, timezone_identifiers_list(), true)) {
             Event::dispatch(new FormSpamRejected($businessId, $formDefinitionId, 'ip_timezone_mismatch', $ipAddress));
 
             return [
