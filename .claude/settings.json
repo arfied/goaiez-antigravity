@@ -36,7 +36,9 @@
       "Bash(pkill -P :*)",
       "Bash(kill :*)",
       "Bash(git reset --hard HEAD)",
-      "Bash(git read-tree:*)"
+      "Bash(git read-tree:*)",
+      "Bash(GIT_GUARD_BYPASS=1 git merge --no-edit origin/main)",
+      "Bash(GIT_GUARD_BYPASS=1 git commit --no-edit)"
     ],
     "deny": [
       "NotebookEdit",
