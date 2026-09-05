@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T04:28:02",
+ "updated": "2026-09-05T04:40:09",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1473,6 +1473,12 @@
    "module": "X-157",
    "chose": "A rollback restores only the previous deployment of the same page. The predecessor query was scoped to the business and the zone and the superseded status alone, so rolling back one page promoted whichever superseded row in the whole zone had the highest id. After SITE-50 gave a deployment a page id this became reachable: publishing home twice and then about, then rolling back about, restored the retired first home deploy and left the home page with two live deployments and a retired artifact back on the wire. The page scope is the same clause the supersede path already carries, so both halves of the deployment lifecycle now agree, and a zone deploy whose page id is null still restores only a previous zone deploy because a null value compiles to page id is null. Rejected: leaving the predecessor query alone and having the route guard pick a winner among two deployed rows, because two live rows for one page is the exact state the supersede clause exists to prevent and the guard has no basis to choose. Rejected: refusing a rollback when the page has no predecessor, because a page whose only deploy is rolled back correctly leaves the site without that page, which is what the caller asked for.",
    "at": "2026-09-05T04:28:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "A capture never overwrites a known contact with a value the submitter did not give. The upsert applied its whole value list on update as well as on create, so a form that does not ask for a name or an email rewrote a known contact name to the literal placeholder Visitor and set the stored email to null. Forms are tenant defined and the validator enforces only each step required list, so a phone and message callback form is ordinary here and every submission from a returning customer degraded the contact record. Only the fields the payload actually carried are written now, and the placeholder name belongs to the create path alone because first name is nullable and a stored null must not silently become Visitor on someone else submission. Rejected: keeping updateOrCreate and passing the placeholder through, because the second argument is applied on update and no value list can express leave this column as it is. Rejected: filling the missing values from the last submission of the same person, because a capture would then invent an answer the submitter did not give, which is the fabrication this change exists to remove.",
+   "at": "2026-09-05T04:40:09",
    "ruling": "R245"
   }
  ]
