@@ -103,18 +103,22 @@ final class EdgeDeployAction
                     if ($version->pixel_installed) {
                         $html .= "<script id=\"x110-pixel\" src=\"/pixel.js\"></script>\n";
                     }
-                    if (is_array($version->content_blocks)) {
-                        foreach ($version->content_blocks as $block) {
-                            if (($block['type'] ?? '') === 'chat') {
-                                $html .= "<div class=\"chat-widget-container\"></div>\n";
-                            }
-                            if (($block['type'] ?? '') === 'form_capture') {
-                                $html .= "<form class=\"form-capture-x155\"></form>\n";
-                            }
-                            if (($block['type'] ?? '') === 'dni') {
-                                $html .= "<div class=\"dni-pool-x137\"></div>\n";
-                            }
-                        }
+                    $blockTypes = is_array($version->content_blocks)
+                        ? array_column($version->content_blocks, 'type')
+                        : [];
+
+                    $hasChat = $version->chat_installed || in_array('chat', $blockTypes, true);
+                    $hasForm = $version->form_capture_installed || in_array('form_capture', $blockTypes, true);
+                    $hasDni = $version->dni_installed || in_array('dni', $blockTypes, true);
+
+                    if ($hasChat) {
+                        $html .= "<div class=\"chat-widget-container\"></div>\n";
+                    }
+                    if ($hasForm) {
+                        $html .= "<form class=\"form-capture-x155\"></form>\n";
+                    }
+                    if ($hasDni) {
+                        $html .= "<div class=\"dni-pool-x137\"></div>\n";
                     }
                 }
             }
