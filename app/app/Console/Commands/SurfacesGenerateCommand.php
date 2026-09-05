@@ -417,27 +417,22 @@ class SurfacesGenerateCommand extends Command
         }
         $featuresConfig = require config_path('features.php');
 
+        $navOrder = [];
+        foreach ($featuresConfig['entries'] ?? [] as $entry) {
+            $navOrder[] = $entry['label'];
+        }
+
         $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn [\n";
         foreach (['tenant', 'operator', 'agency', 'tech'] as $surf) {
-            $mappedSurface = $surf === 'tenant' ? 'tenant' : 'other';
-            $navOrder = [];
-            foreach ($featuresConfig['entries'] ?? [] as $entry) {
-                if (($entry['surface'] ?? 'tenant') === $mappedSurface) {
-                    $navOrder[] = $entry['label'];
-                }
-            }
             $content .= "    '$surf' => [\n";
             uksort($allNavGroups[$surf], function ($a, $b) use ($navOrder) {
                 $posA = array_search($a, $navOrder, true);
                 $posB = array_search($b, $navOrder, true);
-                if ($posA === false && $posB === false) {
-                    return strcmp($a, $b);
-                }
                 if ($posA === false) {
-                    return 1;
+                    throw new \RuntimeException("Nav group '{$a}' is not an entry label in config/features.php");
                 }
                 if ($posB === false) {
-                    return -1;
+                    throw new \RuntimeException("Nav group '{$b}' is not an entry label in config/features.php");
                 }
 
                 return $posA <=> $posB;
