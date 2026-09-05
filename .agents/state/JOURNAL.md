@@ -537,3 +537,4 @@
 - `2026-09-04T16:59:30` (R245) X-124 — Centralised IRREVERSIBLE actions list as a constant on AssistantExecuteAction because it ensures both preview and execute actions read from a single source of truth.
 - `2026-09-04T16:59:33` (R245) X-124 — Wired PreviewCard component for 3 states (ready reversible, ready irreversible, error) with tests, matching TodaysRecommendationStrip pattern.
 - `2026-09-04T18:39:18` (R245) X-124 — AssistantPreviewAction is final, so Mockery cannot mock it to throw an exception, making the error state untestable. Fallback taken: removed try/catch and error state.
+- `2026-09-04T19:01:20` (R245) X-124 — Kept TodaysRecommendationStrip catch as defence in depth, documented unreachability, and renamed test since per-test transactions cannot simulate connection failure without breaking the suite.
