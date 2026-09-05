@@ -1276,4 +1276,29 @@ class X157Test extends TestCase
         $this->assertTrue($page->fresh()->is_published);
         $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
     }
+
+    public function test_a_failed_deploy_leaves_the_page_published(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        Event::listen(DeployCompleted::class, function (): void {
+            throw new \RuntimeException('edge storage unavailable');
+        });
+
+        app(SitePublishAction::class)->handle($biz->id, $page->id, [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']]);
+
+        $this->assertTrue($page->fresh()->is_published);
+        $this->assertNotNull($page->fresh()->current_version_id);
+        $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
+    }
 }
