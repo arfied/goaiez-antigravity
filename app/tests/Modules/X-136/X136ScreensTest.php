@@ -13,6 +13,7 @@ use App\Modules\X136\Models\SignalScore;
 use App\Modules\X136\Ui\CoolingView;
 use App\Modules\X136\Ui\SignalVolumePrecisionView;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -31,16 +32,16 @@ class X136ScreensTest extends TestCase
     {
         Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
             ->assertOk()
-            ->assertSee('No cooling signals yet');
+            ->assertSee('Nobody is cooling');
     }
 
     public function test_cooling_view_sample_state(): void
     {
         Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
             ->call('toggleSample')
-            ->assertSee('John Doe')
-            ->assertSee('Jane Smith')
-            ->call('markDecayed', 'John Doe');
+            ->assertSee('acme-roofing')
+            ->assertSee('northside-dental')
+            ->call('markDecayed', 'acme-roofing');
 
         $this->assertSame(0, SignalScore::where('business_id', $this->businessId)->count());
     }
@@ -65,7 +66,8 @@ class X136ScreensTest extends TestCase
         Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
             ->assertSee('test-prospect')
             ->assertSee('75')
-            ->assertSee('cooling');
+            ->assertSee('test type')
+            ->assertSee('0 days quiet');
     }
 
     public function test_cooling_view_mark_decayed_success(): void
@@ -109,6 +111,9 @@ class X136ScreensTest extends TestCase
             ->assertSee('A signal informs, it never sends')
             ->assertDontSeeHtml('Send Message')
             ->assertDontSeeHtml('wire:click="send"');
+
+        $this->assertSame(0, DB::table('send_permits')->count());
+        $this->assertSame(0, DB::table('outreach_messages')->count());
     }
 
     public function test_cooling_view_get_route(): void
@@ -129,7 +134,7 @@ class X136ScreensTest extends TestCase
             'signal_id' => $s->id,
             'prospect_identifier' => 'seeded-prospect',
             'signal_value' => 80.0,
-            'cooling_status' => 'fresh',
+            'cooling_status' => 'cooling',
             'is_high_intent' => true,
         ]);
 
@@ -137,6 +142,28 @@ class X136ScreensTest extends TestCase
             ->assertOk()
             ->assertSee('seeded-prospect')
             ->assertSee('80');
+    }
+
+    public function test_cooling_view_lists_cooling_only(): void
+    {
+        $s1 = Signal::create([
+            'business_id' => $this->businessId,
+            'prospect_identifier' => 'fresh-co',
+            'signal_type' => 'test_type',
+        ]);
+
+        SignalScore::create([
+            'business_id' => $this->businessId,
+            'signal_id' => $s1->id,
+            'prospect_identifier' => 'fresh-co',
+            'signal_value' => 92.5,
+            'cooling_status' => 'fresh',
+            'is_high_intent' => true,
+        ]);
+
+        Livewire::test(CoolingView::class, ['businessId' => $this->businessId])
+            ->assertDontSee('fresh-co')
+            ->assertDontSee('92.5');
     }
 
     public function test_signal_volume_precision_mount_and_empty(): void
