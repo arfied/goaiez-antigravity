@@ -48,7 +48,7 @@ class SyncFailureRateTest extends TestCase
             ->assertSee('No sync conflicts. Every device mutation replayed cleanly.');
     }
 
-    public function test_conflicts_and_processed_mutate_stats_and_keep_device_replays(): void
+    public function test_conflicts_and_processed_mutate_stats(): void
     {
         Event::fake([SyncConflict::class, JobCompleted::class]);
 
@@ -65,23 +65,39 @@ class SyncFailureRateTest extends TestCase
         // Processed
         $action->replayMutation($biz->id, 'mut_processed', $deviceId, 'job.completed', ['job_id' => 2, 'tech_id' => $owner->id], 2, 2);
 
-        $test = Livewire::actingAs($owner)
+        Livewire::actingAs($owner)
             ->test(SyncFailureRate::class)
             ->assertSee('50.0 %')
             ->assertSee('v1 → v2')
             ->assertSee($deviceId)
             ->assertSee('Open')
             ->assertSee('1 of 2 device mutations conflicted');
+    }
+
+    public function test_keep_device_replays_and_resolves(): void
+    {
+        Event::fake([SyncConflict::class, JobCompleted::class]);
+
+        $owner = User::factory()->role(UserRole::Owner)->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $action = app(ReplayOfflineSyncAction::class);
+        $deviceId = 'device123';
+
+        $action->replayMutation($biz->id, 'mut_conflict', $deviceId, 'job.completed', ['job_id' => 1, 'tech_id' => $owner->id], 1, 2);
 
         $conflict = DeviceSyncConflict::where('business_id', $biz->id)->firstOrFail();
-        $test->call('keepDevice', $conflict->id)
+        Livewire::actingAs($owner)
+            ->test(SyncFailureRate::class)
+            ->call('keepDevice', $conflict->id)
             ->assertSee('Resolved');
 
         $conflict->refresh();
         $this->assertStringStartsWith('Resolved:', $conflict->conflict_reason);
 
         $count = DeviceSyncQueue::where('business_id', $biz->id)->count();
-        $this->assertEquals(3, $count); // 2 original + 1 replayed
+        $this->assertEquals(2, $count);
     }
 
     public function test_sample_renders_pill(): void
@@ -95,19 +111,12 @@ class SyncFailureRateTest extends TestCase
         $action = app(ReplayOfflineSyncAction::class);
         $action->replayMutation($biz->id, 'mut_conflict', 'dev_sample', 'job.completed', ['job_id' => 1, 'tech_id' => $owner->id], 1, 2);
 
-        $conflict = DeviceSyncConflict::where('business_id', $biz->id)->first();
-        if ($conflict) {
-            $conflict->is_sample = true;
-            $conflict->save();
-        }
+        $conflict = DeviceSyncConflict::where('business_id', $biz->id)->firstOrFail();
+        $conflict->is_sample = true;
+        $conflict->save();
 
         Livewire::actingAs($owner)
             ->test(SyncFailureRate::class)
             ->assertSee('<span>Sample</span>', false);
-    }
-
-    public function test_extra_test_for_count(): void
-    {
-        $this->assertTrue(true);
     }
 }
