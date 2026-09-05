@@ -328,8 +328,13 @@ reviews these at product close.
     ahead of `origin/main` is reviewed, hard rule ③ forbids rewriting one, the coder
     guard refuses `rebase` unconditionally, and a rebase would put every SHA in the
     rewrite ledger. Track 1 is the only merger and orders `JOURNAL.md` /
-    `BUILD-STATE.json` at merge time. The push is the coder's, through the guard:
-    `git push -u origin track/pricebook`. The TRACK 4 rebase sentence is struck.
+    `BUILD-STATE.json` at merge time. The TRACK 4 rebase sentence is struck.
+    ⚠️ **The "push is the coder's" sentence is struck too** (owner, `OWNER.md` 14:0x:
+    *"The coder never pushes (its guard stays closed)"*, and the owner runs no git by
+    hand from now on). The **supervisor** pushes, and only a sha it has gated and
+    recorded in `REVIEWS.md` first, by explicit ref
+    (`git push origin <sha>:track/pricebook`) — never a branch head, never `--force`,
+    never after a rebase. Every `BRIEF.md` written here carries `push: none`.
 22. **Hard rule ④ — the guard is final — stands on every run.** A coder log or
     report that reaches `/usr/bin/git`, `command git`, `PATH=` on a git command, or
     `-c core.hooksPath` is a BLOCK before the diff is read. Recorded from PB-B9.
