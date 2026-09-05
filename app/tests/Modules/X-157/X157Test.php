@@ -1331,4 +1331,48 @@ class X157Test extends TestCase
         $this->assertSame('deployed', $deployment->status);
         $this->assertTrue(Storage::disk('local')->exists("sites/{$deployment->deploy_hash}.html"));
     }
+
+    public function test_a_deploy_whose_artifact_cannot_be_written_is_not_announced(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = Page::create([
+            'business_id' => $biz->id,
+            'title' => 'Home',
+            'slug' => 'home',
+        ]);
+
+        $this->provisionAction->handle($biz->id, 'acme-hvac.com', true);
+
+        Storage::disk('local')->makeDirectory('sites');
+
+        $sitesDir = Storage::disk('local')->path('sites');
+        $this->assertDirectoryExists($sitesDir);
+
+        chmod($sitesDir, 0500);
+        clearstatcache();
+
+        try {
+            $this->assertFalse(
+                Storage::disk('local')->put('sites/probe.html', 'x'),
+                'the sabotage did not make sites/ unwritable — this test proves nothing'
+            );
+
+            $announced = false;
+
+            Event::listen(DeployCompleted::class, function () use (&$announced): void {
+                $announced = true;
+            });
+
+            app(SitePublishAction::class)->handle($biz->id, $page->id, [['type' => 'chat'], ['type' => 'form_capture'], ['type' => 'dni']]);
+
+            $this->assertFalse($announced, 'DeployCompleted fired for a deploy whose artifact was never written');
+            $this->assertSame(0, Deployment::where('business_id', $biz->id)->count());
+            $this->assertTrue($page->fresh()->is_published);
+        } finally {
+            chmod($sitesDir, 0700);
+        }
+    }
 }
