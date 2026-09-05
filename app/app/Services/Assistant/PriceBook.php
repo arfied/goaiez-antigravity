@@ -338,7 +338,7 @@ final class PriceBook
             ->whereRaw("REPLACE(LOWER(service_name), ' ', '-') = ?", [$normalised])
             ->update([
                 'is_confirmed' => true,
-                'confirmed_at' => \Carbon\CarbonImmutable::now()
+                'confirmed_at' => CarbonImmutable::now(),
             ]);
     }
 
