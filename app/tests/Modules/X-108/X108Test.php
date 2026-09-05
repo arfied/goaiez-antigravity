@@ -247,6 +247,7 @@ class X108Test extends TestCase
         $ok = $this->book->handle($biz1->id, 'Consultation', $date.' 09:00:00', $date.' 11:00:00');
         $this->assertSame('booked', $ok->status);
         $this->expectException(SlotUnavailableRefused::class);
+        $this->expectExceptionMessage('falls in an out-of-office rule');
         $this->book->handle($biz1->id, 'Consultation', $date.' 14:00:00', $date.' 16:00:00');
     }
 
@@ -281,6 +282,7 @@ class X108Test extends TestCase
         $this->assertSame('booked', $ok->status);
 
         $this->expectException(SlotUnavailableRefused::class);
+        $this->expectExceptionMessage('overlaps a booked appointment');
         $this->book->handle($biz->id, 'Consultation', $date.' 10:30:00', $date.' 11:30:00');
     }
 
