@@ -667,43 +667,7 @@ trait JourneyHarness
     /** ⛔ R34: a save-offer may add NO STEP. @param array<string,mixed> $tenant @return array<string,mixed> */
     private function walkCancelFlow(array $tenant): array
     {
-        $tenantUser = \App\Models\User::find($tenant['owner_user_id']);
-
-        // A tenant with no vendor subscription cannot be cancelled.
-        $sub = \App\Models\Subscription::where('business_id', $tenant['id'])->first();
-        if ($sub) {
-            $sub->forceFill([
-                'authorize_net_subscription_id' => 'fake_sub_123',
-                'status' => \App\Enums\SubscriptionStatus::Active->value,
-            ])->save();
-        }
-
-        // Fake AuthorizeNet API to avoid GatewayRequestFailure
-        \Illuminate\Support\Facades\Http::fake([
-            'https://api.authorize.net/xml/v1/request.api' => \Illuminate\Support\Facades\Http::response(
-                '{"messages":{"resultCode":"Ok","message":[{"code":"I00001","text":"Successful."}]},"subscription":{"status":"active"}}'
-            ),
-            'https://apitest.authorize.net/xml/v1/request.api' => \Illuminate\Support\Facades\Http::response(
-                '{"messages":{"resultCode":"Ok","message":[{"code":"I00001","text":"Successful."}]},"subscription":{"status":"active"}}'
-            ),
-        ]);
-
-        $response = $this->actingAs($tenantUser)
-            ->get(route('account.plan'));
-        $response->assertOk();
-
-        $postResponse = $this->actingAs($tenantUser)
-            ->post(route('account.plan.cancel'), ['confirm' => '1']);
-        $postResponse->assertSessionHasNoErrors();
-
-        $sub = \App\Models\Subscription::where('business_id', $tenant['id'])->first();
-
-        return [
-            'screens_between' => 1,
-            'cancelled' => $sub->cancellation_requested_at !== null,
-            'cancellation_id' => $sub->id,
-            'retention_offer_shown' => false,
-        ];
+        throw $this->todo('cancel reaches Authorize.Net — needs the sandbox login id + transaction key in platform_credentials');
     }
 
     /** @return array<string,mixed> */
