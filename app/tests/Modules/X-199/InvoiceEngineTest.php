@@ -195,6 +195,13 @@ test('the no-card case', function () {
         $charge = OverflowCharge::where('invoice_id', $result['invoice']->id)->where('charge_type', 'overflow_charged')->first();
         expect($charge)->not->toBeNull();
         expect($charge->status)->toBe('refused');
+
+        $engine->recordPayment($business->id, $result['invoice']->id);
+
+        $reversals = OverflowCharge::where('invoice_id', $result['invoice']->id)->where('charge_type', 'overflow_reversed')->get();
+        expect($reversals)->toHaveCount(0);
+
+        Event::assertNotDispatched(OverflowReversed::class);
     });
 });
 

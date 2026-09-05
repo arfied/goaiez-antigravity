@@ -6,13 +6,11 @@ namespace Tests\Modules\X199;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
-use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\Unpaid;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -84,7 +82,7 @@ class UnpaidScreenTest extends TestCase
             ->assertSee($inv3->invoice_number)
             ->assertDontSee($inv1->invoice_number)
             ->assertSee('250.00') // Outstanding for inv2
-            ->assertSee('covered by the card on file; service never stopped')
+            ->assertDontSee('covered by the card on file; service never stopped')
             ->assertDontSee($invOther->invoice_number)
             ->assertDontSee('777.00')
             ->assertSee('Not overdue')

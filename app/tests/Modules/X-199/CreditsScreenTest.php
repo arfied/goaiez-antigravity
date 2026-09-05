@@ -6,13 +6,11 @@ namespace Tests\Modules\X199;
 
 use App\Models\User;
 use App\Modules\X121\Models\Person;
-use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\CreditTerm;
 use App\Modules\X199\Ui\Credits;
 use App\Support\Tenancy;
-use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -54,7 +52,8 @@ class CreditsScreenTest extends TestCase
             ->assertSee('500.00')
             ->assertSee('600.00')
             ->assertSee('over the limit')
-            ->assertSee('covered by the card on file')
+            ->assertDontSee('covered by the card on file')
+            ->assertSee('the card did not absorb it and the invoice still stands')
             ->assertDontSee('Bea Corp')
             ->assertSeeHtml('wire:submit="setTerms('.$term->id.')"')
             ->set('termsType.'.$term->id, 'net_60')
@@ -81,6 +80,7 @@ class CreditsScreenTest extends TestCase
             ->call('setTerms', $term->id)
             ->assertSee('A credit limit is never negative');
 
+        $issued['overflow_charge']->update(['status' => 'charged']);
         app(InvoiceEngine::class)->recordPayment($biz->id, $issued['invoice']->id);
 
         Livewire::actingAs($owner)->test(Credits::class)

@@ -91,6 +91,7 @@ class Credits extends Component
 
             $term->overflow = match (true) {
                 $latestCharged === null => 'no overflow yet',
+                $latestCharged->status === 'refused' => 'the card did not absorb it and the invoice still stands',
                 in_array($latestCharged->invoice_id, $reversedInvoices, true) => 'reversed against the invoice',
                 default => 'covered by the card on file; service never stopped',
             };

@@ -16,6 +16,7 @@ use App\Modules\X199\Models\InvoiceLine;
 use App\Modules\X199\Models\OverflowCharge;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 final class InvoiceEngine
@@ -107,6 +108,7 @@ final class InvoiceEngine
                         $gatewayChargeId = $payment->gateway_charge_id;
                         $status = 'charged';
                     } catch (\Exception $e) {
+                        Log::warning('Gateway capture failed: '.$e->getMessage(), ['exception' => $e]);
                         $status = 'refused';
                     }
                 }
@@ -169,6 +171,7 @@ final class InvoiceEngine
             $charges = OverflowCharge::where('business_id', $businessId)
                 ->where('invoice_id', $invoice->id)
                 ->where('charge_type', 'overflow_charged')
+                ->where('status', 'charged')
                 ->get();
 
             $reversedCharges = [];

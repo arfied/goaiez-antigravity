@@ -82,7 +82,7 @@ class Unpaid extends Component
             ->whereIn('invoice_id', $invoiceIds)
             ->get();
 
-        $charged = $overflows->where('charge_type', 'overflow_charged');
+        $charged = $overflows->where('charge_type', 'overflow_charged')->where('status', 'charged');
         $reversed = $overflows->where('charge_type', 'overflow_reversed')->pluck('invoice_id')->toArray();
 
         foreach ($invoices as $invoice) {
