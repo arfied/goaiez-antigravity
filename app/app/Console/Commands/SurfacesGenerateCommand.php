@@ -17,8 +17,9 @@ class SurfacesGenerateCommand extends Command
 
     public function handle(): int
     {
-        if (!is_file(config_path('features.php'))) {
+        if (! is_file(config_path('features.php'))) {
             $this->error('STOP: config/features.php is missing.');
+
             return 1;
         }
         $featuresConfig = require config_path('features.php');
@@ -175,7 +176,7 @@ class SurfacesGenerateCommand extends Command
                 }
                 $humanName = Str::title(str_replace('_', ' ', $render));
 
-                                $navGroup = 'Unplaced';
+                $navGroup = 'Unplaced';
                 $navGroupSurface = 'tenant';
                 $isDeferred = in_array($modId, $featuresConfig['deferred'] ?? []);
 
@@ -411,7 +412,7 @@ class SurfacesGenerateCommand extends Command
 
     private function generateSurfacesConfig(array $allNavGroups): void
     {
-        if (!is_file(config_path('features.php'))) {
+        if (! is_file(config_path('features.php'))) {
             throw new \RuntimeException('config/features.php is missing');
         }
         $featuresConfig = require config_path('features.php');
