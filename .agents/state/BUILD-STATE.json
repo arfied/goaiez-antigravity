@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T20:18:36",
+ "updated": "2026-09-04T20:39:07",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -782,6 +782,18 @@
      "stage": "surface",
      "why": "GET\u2192assertOk for X-162 waits on Track 1 surfaces:generate (run 67); no route in this checkout",
      "at": "2026-09-04T14:35:12"
+    },
+    {
+     "module": "X-162",
+     "stage": "vendor",
+     "why": "live technician position needs a GPS/position feed; no vendor in the repo; the map draws the ordered stops from routes until one exists",
+     "at": "2026-09-04T20:39:07"
+    },
+    {
+     "module": "X-162",
+     "stage": "surface",
+     "why": "GET\u2192assertOk for X-162 map waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+     "at": "2026-09-04T20:39:07"
     }
    ]
   },
@@ -1463,6 +1475,18 @@
    "stage": "surface",
    "why": "GET\u2192assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout",
    "at": "2026-09-04T20:18:36"
+  },
+  {
+   "module": "X-162",
+   "stage": "vendor",
+   "why": "live technician position needs a GPS/position feed; no vendor in the repo; the map draws the ordered stops from routes until one exists",
+   "at": "2026-09-04T20:39:07"
+  },
+  {
+   "module": "X-162",
+   "stage": "surface",
+   "why": "GET\u2192assertOk for X-162 map waits on Track 1 surfaces:generate (run 67); no route in this checkout",
+   "at": "2026-09-04T20:39:07"
   }
  ],
  "notes": [
@@ -1708,6 +1732,12 @@
    "module": "X-171",
    "chose": "sync failure rate is the tenant's own \u2014 conflicted device_sync_queue rows over all rows, Owner \u00b7 Manager; the fleet-wide operator view is Track 1's console; Keep device replays through ReplayOfflineSyncAction exactly as the app's resolveConflict does (R245)",
    "at": "2026-09-04T20:18:36",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-162",
+   "chose": "the map is the ordered stop list per technician from routes.stop_order with each stop's dispatch status; no GPS vendor exists in this repo, so there is no position layer to draw (R245)",
+   "at": "2026-09-04T20:39:07",
    "ruling": "R245"
   }
  ]

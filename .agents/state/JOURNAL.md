@@ -548,3 +548,6 @@
 - `2026-09-04T17:20:14` (R245) X-175 — customerfacing_none and by_design are one plan sentence ('customer-facing: none, by design') split by the renders derivation; neither is a screen; both files stay untouched and off the menu (R245)
 - `2026-09-04T20:18:36` (R245) X-171 — sync failure rate is the tenant's own — conflicted device_sync_queue rows over all rows, Owner · Manager; the fleet-wide operator view is Track 1's console; Keep device replays through ReplayOfflineSyncAction exactly as the app's resolveConflict does (R245)
 - `2026-09-04T20:18:36` UNRESOLVED surface X-171 - GET→assertOk for X-171 sync_failure_rate waits on Track 1 surfaces:generate (run 67); no route in this checkout
+- `2026-09-04T20:39:07` (R245) X-162 — the map is the ordered stop list per technician from routes.stop_order with each stop's dispatch status; no GPS vendor exists in this repo, so there is no position layer to draw (R245)
+- `2026-09-04T20:39:07` UNRESOLVED vendor X-162 - live technician position needs a GPS/position feed; no vendor in the repo; the map draws the ordered stops from routes until one exists
+- `2026-09-04T20:39:07` UNRESOLVED surface X-162 - GET→assertOk for X-162 map waits on Track 1 surfaces:generate (run 67); no route in this checkout
