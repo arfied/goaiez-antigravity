@@ -401,24 +401,18 @@ class SurfacesGenerateCommand extends Command
 
     private function generateSurfacesConfig(array $allNavGroups): void
     {
-        $navJsonPath = base_path('.agents/supervisor/NAVIGATION.json');
+        $featuresConfig = is_file(config_path('features.php')) ? require config_path('features.php') : ['entries' => []];
         $navOrder = [];
-        if (file_exists($navJsonPath)) {
-            $navJson = json_decode(file_get_contents($navJsonPath), true);
-            foreach ($navJson['entries'] ?? [] as $entry) {
-                if (isset($entry['surface'], $entry['label'])) {
-                    $navOrder[$entry['surface'] === 'other' ? 'operator' : $entry['surface']][] = $entry['label'];
-                }
-            }
+        foreach ($featuresConfig['entries'] ?? [] as $entry) {
+            $navOrder[] = $entry['label'];
         }
 
         $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn [\n";
         foreach (['tenant', 'operator', 'agency', 'tech'] as $surf) {
             $content .= "    '$surf' => [\n";
-            $surfOrder = $navOrder[$surf] ?? [];
-            uksort($allNavGroups[$surf], function ($a, $b) use ($surfOrder) {
-                $posA = array_search($a, $surfOrder, true);
-                $posB = array_search($b, $surfOrder, true);
+            uksort($allNavGroups[$surf], function ($a, $b) use ($navOrder) {
+                $posA = array_search($a, $navOrder, true);
+                $posB = array_search($b, $navOrder, true);
                 if ($posA === false && $posB === false) {
                     return strcmp($a, $b);
                 }
