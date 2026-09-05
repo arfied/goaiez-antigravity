@@ -11,6 +11,8 @@ use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
+use App\Modules\X204\Domain\ConsentService;
+use App\Modules\X204\Models\Suppression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -28,7 +30,7 @@ class CMailTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $consentService = app(\App\Modules\X204\Domain\ConsentService::class);
+        $consentService = app(ConsentService::class);
         $this->sendAction = new EmailSendAction($consentService);
         $this->dnsAction = new EmailDnsCheckAction;
         $this->warmupAction = new EmailWarmupAction;
@@ -111,42 +113,61 @@ class CMailTest extends TestCase
      */
     public function test_g1_43_categories(): void
     {
-        \Illuminate\Support\Facades\Event::fake([\App\Modules\CMail\Events\EmailSent::class]);
+        Event::fake([EmailSent::class]);
 
-        $biz = TestCase::provisionTenant(['name' => 'Mail Categories', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        $biz = TestCase::provisionTenant(['name' => 'Consent Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $domain = $this->dnsAction->handle($biz->id, 'mail.categories.com');
-        
-        $this->unsubscribeAction->handle($biz->id, $domain->id, 'user@example.com');
-        
-        $suppression = \App\Modules\X204\Models\Suppression::where('business_id', $biz->id)
-            ->where('recipient_phone', 'user@example.com')
-            ->where('channel', 'email')
-            ->first();
-        
-        $this->assertNotNull($suppression);
-        $this->assertEquals('unsubscribed_marketing', $suppression->reason);
-        
-        $marketingSend = $this->sendAction->handle(
+        $domain = $this->dnsAction->handle($biz->id, 'consent.apex-air.com');
+
+        // no warm-up calendar on this domain, so nothing here is capped
+        $before = $this->sendAction->handle(
             businessId: $biz->id,
             mailDomainId: $domain->id,
-            recipientEmail: 'user@example.com',
-            subject: 'Marketing',
+            recipientEmail: 'homeowner@acme.com',
+            subject: 'Spring tune-up',
             sendType: 'marketing',
             requestedCount: 1
         );
-        $this->assertEquals('refused_suppressed', $marketingSend['status']);
-        
-        $invoiceSend = $this->sendAction->handle(
+        $this->assertSame('processed', $before['status'], 'marketing reaches a recipient who has not unsubscribed');
+
+        $res = $this->unsubscribeAction->handle($biz->id, $domain->id, 'homeowner@acme.com');
+        $this->assertSame('unsubscribed', $res['status']);
+
+        // the preference write landed in X-204, not in a table C-Mail owns
+        $suppression = Suppression::where('business_id', $biz->id)
+            ->where('recipient_phone', 'homeowner@acme.com')
+            ->where('channel', 'email')
+            ->firstOrFail();
+        $this->assertSame('unsubscribed_marketing', $suppression->reason);
+
+        // ⑦ honoured on the NEXT send, always
+        $after = $this->sendAction->handle(
             businessId: $biz->id,
             mailDomainId: $domain->id,
-            recipientEmail: 'user@example.com',
-            subject: 'Invoice',
+            recipientEmail: 'homeowner@acme.com',
+            subject: 'Summer tune-up',
+            sendType: 'marketing',
+            requestedCount: 1
+        );
+        $this->assertSame('refused_suppressed', $after['status']);
+        $this->assertSame('MARKETING_SEND_SUPPRESSED', $after['refusal_code']);
+        $this->assertSame(1, MailEvent::where('business_id', $biz->id)
+            ->where('recipient_email', 'homeowner@acme.com')
+            ->where('event_type', 'sent')
+            ->count(), 'the refused send wrote no second sent event');
+
+        // the refusal clause: the job still completes and the invoice still arrives
+        $invoice = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'homeowner@acme.com',
+            subject: 'Your invoice for the spring tune-up',
             sendType: 'conversational',
             requestedCount: 1
         );
-        $this->assertEquals('processed', $invoiceSend['status'], 'unsubscribing from marketing does not stop the invoice');
+        $this->assertSame('processed', $invoice['status'], 'unsubscribing from marketing does not stop the invoice');
+        $this->assertSame(1, $invoice['sent_count']);
     }
 
     /**

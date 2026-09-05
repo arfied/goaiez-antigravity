@@ -48,6 +48,7 @@ final class EmailSendAction
                 return [
                     'status' => 'refused_suppressed',
                     'refusal_code' => 'MARKETING_SEND_SUPPRESSED',
+                    'message' => 'Recipient has unsubscribed from marketing; the suppression is X-204\'s',
                 ];
             }
         }
