@@ -757,3 +757,4 @@
 - `2026-09-05T03:56:25` (R245) X-82 — plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader
 - `2026-09-05T07:37:41` (R245) C-Agent — Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)
 - `2026-09-05T07:46:15` C-Agent -> DONE
+- `2026-09-05T08:12:23` (R245) C-Agent — agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured — owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands
