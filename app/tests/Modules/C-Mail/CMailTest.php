@@ -313,7 +313,6 @@ class CMailTest extends TestCase
     }
 
     /**
-    /**
      * [G11-05] the R17 halt seeds — 0.10% complaint or 250 bounces — pause the campaign family, never the thread
      */
     public function test_g11_05_halt_seeds_pause_the_campaign_family_not_the_thread(): void
