@@ -10,6 +10,18 @@ set -euo pipefail
 cd "$(dirname "$(readlink -f "$0")")/../.." || exit 1
 
 PIDFILE=".agents/supervisor/coder.pid"
+
+# --status: liveness only, never launches. The unattended supervisor tick needs
+# step (a) of its contract and cannot run `kill -0` under its own allow list.
+if [ "${1:-}" = "--status" ]; then
+  if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+    echo "CODER ALIVE pid=$(cat "$PIDFILE")"
+  else
+    echo "CODER DEAD"
+  fi
+  exit 0
+fi
+
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
   exit 1
@@ -31,7 +43,18 @@ TRACK=$(basename "$PWD")
 while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
 LOG="/home/goaiez/tmp/agy-${TRACK}-run${n}.log"
 
-nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+# Push gate — WIRED SHUT. OWNER RULING 2026-09-05 14:0x: the coder never
+# pushes; the supervisor runs every push for this lane by explicit ref, on a sha
+# it has gated and recorded in REVIEWS.md. coder-bin/git (2026-09-04 09:13)
+# refuses `git push` unless GOAIEZ_PUSH_OK=1, and only the launcher may set it,
+# so holding it at 0 here is what makes the ruling structural rather than a
+# sentence in a brief. Do NOT restore the BRIEF.md `push:` derivation: reading
+# the gate out of a file the supervisor rewrites every tick is exactly the door
+# the ruling closes.
+PUSH_OK=0
+echo "push gate: closed (owner ruling 2026-09-05 14:0x — the coder never pushes)"
+
+nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 echo $! > "$PIDFILE"
 
 sleep 2

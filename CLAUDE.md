@@ -17,9 +17,9 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| Commits **only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`) as `chore(supervisor): …` with named paths | Commits `app/**` and `.agents/state/**`, one commit per module, named paths |
-| Pushes **only a sha it has gated and recorded in `REVIEWS.md`**, by explicit ref: `git push origin <sha>:track/reviews` — never a branch head, never `--force` | Pushes only when `BRIEF.md`'s `push:` line is open, and only the range that line names |
-| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, commit any path outside its three files, push an ungated sha | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push before `PASS`, edit sealed or generated files, commit `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` |
+| Commits **only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.claude/settings.json`, `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh`) as `chore(supervisor): …` with named paths | Commits `app/**` and `.agents/state/**`, one commit per module, named paths |
+| **Runs every `git push` for this lane** (owner ruling, `OWNER.md` 14:0x — the owner runs no git by hand), and only on a sha it has gated and recorded in `REVIEWS.md`, by explicit ref: `git push origin <sha>:track/reviews` — never a branch head, never `--force` | **Never pushes.** Its guard stays closed; the launcher exports `GOAIEZ_PUSH_OK=0` on every run |
+| **Never:** migrate, touch a database, edit `app/**`, run a test suite outside `supervise.sh --tests`, commit any path outside its five files, push an ungated sha | **Never:** edit `BRIEF.md`/`REVIEWS.md`, `git push` at all, edit sealed or generated files, commit `.agents/supervisor/**`, `CLAUDE.md`, `.claude/**` or `bin/**` |
 
 `.claude/settings.json` enforces your column. Since 2026-09-05 it allows the
 supervisor `git add`, `git commit` and `git push origin` (owner ruling, relayed
@@ -31,7 +31,7 @@ brief it.
 
 ## The mailbox — `.agents/supervisor/`
 
-| `BRIEF.md` | you → coder. The current directive, overwritten in place. Its `push:` line is the push gate |
+| `BRIEF.md` | you → coder. The current directive, overwritten in place. Since `OWNER.md` 14:0x its `push:` line is **always `CLOSED`** — the push is the supervisor's, not a coder item |
 | :--- | :--- |
 | `REPORT.md` | coder → you. Overwritten at every wave close or stop, fixed shape (rule 10) |
 | `REVIEWS.md` | you → coder. **Append-only**, dated blocks at EOF, verdict `PASS` / `PASS-WITH-NOTES` / `BLOCK` |
