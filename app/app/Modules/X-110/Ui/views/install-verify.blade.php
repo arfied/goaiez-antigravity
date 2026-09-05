@@ -4,8 +4,16 @@
     </div>
 
     <div wire:loading.remove>
-        @if($isSample)
+        @if(isset($loadError) && $loadError)
+            <x-ui.error-panel heading="Could not verify the tag">
+                {{ $loadError }}
+            </x-ui.error-panel>
+        @elseif($isSample)
             <x-ui.sample />
+        @elseif(isset($isEmpty) && $isEmpty)
+            <x-ui.empty-state icon="🌐" heading="No website location set" action="Add Website" href="#">
+                Set your website URL in your location settings so we know where to listen.
+            </x-ui.empty-state>
         @else
             <div class="space-y-6">
                 <h2 class="text-xl font-bold text-ink">Tag Installation & Verification</h2>
@@ -44,11 +52,21 @@
                             <p class="font-medium text-ink">3. Live events arriving</p>
                             @if($recentEvents->count() > 0)
                                 <p class="text-sm text-ink-2">
-                                    We see you. {{ $recentEvents->count() }} events in the last 60 seconds: 
-                                    <span class="font-mono text-xs cursor-pointer" title="{{ $recentEvents->pluck('event_name')->implode(', ') }}">
-                                        {{ $recentEvents->pluck('event_name')->first() }}...
-                                    </span>
+                                    We see you. {{ $recentEvents->count() }} {{ \Illuminate\Support\Str::plural('event', $recentEvents->count()) }} in the last 60 seconds.
+                                    <button type="button" wire:click="$toggle('showEvents')" class="text-ink underline ml-1 hover:text-brand">
+                                        {{ $showEvents ? 'Hide' : 'View' }}
+                                    </button>
                                 </p>
+                                @if($showEvents)
+                                    <ul class="mt-2 space-y-1">
+                                        @foreach($recentEvents as $event)
+                                            <li class="flex justify-between items-center text-xs">
+                                                <span class="font-mono text-ink">{{ $event->event_name }}</span>
+                                                <span class="text-ink-2">{{ $event->created_at->diffForHumans() }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
                             @else
                                 <p class="text-sm text-ink-2">No events seen in the last 60 seconds. Check if the tag is on the page.</p>
                             @endif

@@ -26,6 +26,8 @@ class InstallVerify extends Component
     #[Locked]
     public bool $thirdPartyCookiesDisabled = true;
 
+    public bool $showEvents = false;
+
     public function mount(int $businessId = 0)
     {
         $this->businessId = $businessId;
@@ -34,23 +36,30 @@ class InstallVerify extends Component
     public function render()
     {
         $location = Location::where('business_id', $this->businessId)->first();
-        $domain = $location && $location->website_url ? parse_url($location->website_url, PHP_URL_HOST) : 'yourdomain.com';
+        $domain = $location && $location->website_url ? parse_url($location->website_url, PHP_URL_HOST) : null;
+        
+        $isEmpty = false;
         if (! $domain) {
+            $isEmpty = true;
             $domain = 'yourdomain.com';
         }
 
-        $verify = app(PixelVerifyAction::class)->handle($this->businessId, $this->servedDomain, $this->thirdPartyCookiesDisabled);
-        $install = app(PixelInstallAction::class)->handle($this->businessId, $domain);
+        try {
+            $verify = app(PixelVerifyAction::class)->handle($this->businessId, $this->servedDomain, $this->thirdPartyCookiesDisabled);
+            $install = app(PixelInstallAction::class)->handle($this->businessId, $domain);
 
-        $recentEvents = PixelEvent::where('business_id', $this->businessId)
-            ->where('created_at', '>=', now()->subMinute())
-            ->orderByDesc('created_at')
-            ->limit(5)
-            ->get();
+            $recentEvents = PixelEvent::where('business_id', $this->businessId)
+                ->where('created_at', '>=', now()->subMinute())
+                ->orderByDesc('created_at')
+                ->limit(5)
+                ->get();
 
-        $cwv = CwvSample::where('business_id', $this->businessId)
-            ->latest('created_at')
-            ->first();
+            $cwv = CwvSample::where('business_id', $this->businessId)
+                ->latest('created_at')
+                ->first();
+        } catch (\Exception $e) {
+            return view('x-110::install-verify', ['loadError' => $e->getMessage()]);
+        }
 
         return view('x-110::install-verify', [
             'domain' => $domain,
@@ -58,6 +67,8 @@ class InstallVerify extends Component
             'install' => $install,
             'recentEvents' => $recentEvents,
             'cwv' => $cwv,
+            'loadError' => null,
+            'isEmpty' => $isEmpty,
         ]);
     }
 }

@@ -24,6 +24,12 @@ class InstallVerifyTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Install Verify Tenant']);
         Tenancy::set((int) $biz->id);
 
+        \App\Models\Location::create([
+            'business_id' => $biz->id,
+            'name' => 'HQ',
+            'website_url' => 'https://example.com',
+        ]);
+
         Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
             ->assertSee('Tag Installation', false)
             ->assertSee('No events seen in the last 60 seconds');
@@ -40,7 +46,10 @@ class InstallVerifyTest extends TestCase
         ]);
 
         Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
-            ->assertSee('1 events in the last 60 seconds');
+            ->assertSee('1 event in the last 60 seconds')
+            ->assertDontSee('page_view')
+            ->call('$toggle', 'showEvents')
+            ->assertSee('page_view');
     }
 
     public function test_account_tracking_renders_install_verify(): void
@@ -50,5 +59,15 @@ class InstallVerifyTest extends TestCase
         $this->actingAs($owner)->get('/account/tracking')
             ->assertOk()
             ->assertSee('Tag Installation', false);
+    }
+
+    public function test_install_verify_handles_empty_state(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Install Verify Empty State']);
+        Tenancy::set((int) $biz->id);
+
+        Livewire::test(InstallVerify::class, ['businessId' => $biz->id])
+            ->assertSee('No website location set')
+            ->assertSee('Set your website URL in your location settings so we know where to listen.');
     }
 }
