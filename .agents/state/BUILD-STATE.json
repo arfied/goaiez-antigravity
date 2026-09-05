@@ -1355,6 +1355,10 @@
   {
    "at": "2026-09-05T06:31:52",
    "note": "MONEY-30: the UNRESOLVED capability record of 2026-09-04T15:22:06 (X-211 \u2014 engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71) is resolved for G1-61/G1-70 by PlanPastThresholdException and for G1-71 by FeeWithoutTermException (6d617f01); state.py has no verb to retire the record (OWNER ACTION 19b)"
+  },
+  {
+   "at": "2026-09-05T12:03:53",
+   "note": "MONEY-32: push db1f90c2..761178a4 landed (761178a4 on origin/track/money) \u2014 the ageing screen's 403 asserted before the guard, the 06:31:52 decision line committed"
   }
  ],
  "decisions": [
