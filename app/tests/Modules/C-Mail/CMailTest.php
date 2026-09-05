@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Tests\Modules\CMail;
 
 use App\Modules\CMail\Actions\EmailDnsCheckAction;
+use App\Modules\CMail\Actions\EmailHaltSeedAction;
 use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Actions\EmailUnsubscribeAction;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
+use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
 use App\Modules\X204\Domain\ConsentService;
@@ -28,6 +30,8 @@ class CMailTest extends TestCase
 
     private EmailUnsubscribeAction $unsubscribeAction;
 
+    private EmailHaltSeedAction $haltSeedAction;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,6 +40,7 @@ class CMailTest extends TestCase
         $this->dnsAction = new EmailDnsCheckAction;
         $this->warmupAction = new EmailWarmupAction;
         $this->unsubscribeAction = new EmailUnsubscribeAction($consentService);
+        $this->haltSeedAction = new EmailHaltSeedAction;
     }
 
     /**
@@ -308,7 +313,87 @@ class CMailTest extends TestCase
     }
 
     /**
-     * [G9-21], [G11-05], [G11-06], [G11-09], [G11-10], [G11-11], [G11-12], [G11-15], [G11-17], [G11-18], [G11-29], [G11-38]
+    /**
+     * [G11-05] the R17 halt seeds — 0.10% complaint or 250 bounces — pause the campaign family, never the thread
+     */
+    public function test_g11_05_halt_seeds_pause_the_campaign_family_not_the_thread(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Halt Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $atSeed = $this->dnsAction->handle($biz->id, 'seed-at.apex-air.com');
+        $underSeed = $this->dnsAction->handle($biz->id, 'seed-under.apex-air.com');
+        $bounceSeed = $this->dnsAction->handle($biz->id, 'seed-bounce.apex-air.com');
+        $bounceUnderSeed = $this->dnsAction->handle($biz->id, 'seed-bounce-under.apex-air.com');
+
+        $now = now();
+
+        $atEvents = [];
+        for ($i = 0; $i < 1000; $i++) {
+            $atEvents[] = ['business_id' => $biz->id, 'mail_domain_id' => $atSeed->id, 'event_type' => 'sent', 'recipient_email' => "at{$i}@acme.com", 'subject' => 'S', 'created_at' => $now, 'updated_at' => $now];
+        }
+        $atEvents[] = ['business_id' => $biz->id, 'mail_domain_id' => $atSeed->id, 'event_type' => 'complained', 'recipient_email' => 'at0@acme.com', 'subject' => 'S', 'created_at' => $now, 'updated_at' => $now];
+        MailEvent::insert($atEvents);
+
+        $underEvents = [];
+        for ($i = 0; $i < 2000; $i++) {
+            $underEvents[] = ['business_id' => $biz->id, 'mail_domain_id' => $underSeed->id, 'event_type' => 'sent', 'recipient_email' => "under{$i}@acme.com", 'subject' => 'S', 'created_at' => $now, 'updated_at' => $now];
+        }
+        $underEvents[] = ['business_id' => $biz->id, 'mail_domain_id' => $underSeed->id, 'event_type' => 'complained', 'recipient_email' => 'under0@acme.com', 'subject' => 'S', 'created_at' => $now, 'updated_at' => $now];
+        MailEvent::insert($underEvents);
+
+        $bounceEvents = [];
+        for ($i = 0; $i < 250; $i++) {
+            $bounceEvents[] = ['business_id' => $biz->id, 'mail_domain_id' => $bounceSeed->id, 'event_type' => 'bounced', 'recipient_email' => "b{$i}@acme.com", 'subject' => 'S', 'created_at' => $now, 'updated_at' => $now];
+        }
+        MailEvent::insert($bounceEvents);
+
+        $bounceUnderEvents = [];
+        for ($i = 0; $i < 249; $i++) {
+            $bounceUnderEvents[] = ['business_id' => $biz->id, 'mail_domain_id' => $bounceUnderSeed->id, 'event_type' => 'bounced', 'recipient_email' => "bu{$i}@acme.com", 'subject' => 'S', 'created_at' => $now, 'updated_at' => $now];
+        }
+        MailEvent::insert($bounceUnderEvents);
+
+        $this->haltSeedAction->handle($biz->id, $atSeed->id);
+        $rowAt = MailDomain::where('business_id', $biz->id)->findOrFail($atSeed->id);
+        $this->assertTrue($rowAt->is_marketing_paused, 'a complaint rate of exactly 0.10% meets the R17 seed');
+        $this->assertSame(0.0010, round($rowAt->complaint_rate, 4), 'the measured rate is stored, not just the flag');
+
+        $this->haltSeedAction->handle($biz->id, $underSeed->id);
+        $rowUnder = MailDomain::where('business_id', $biz->id)->findOrFail($underSeed->id);
+        $this->assertFalse($rowUnder->is_marketing_paused, 'a complaint rate of 0.05% does not meet the R17 complaint seed');
+
+        $this->haltSeedAction->handle($biz->id, $bounceSeed->id);
+        $rowBounce = MailDomain::where('business_id', $biz->id)->findOrFail($bounceSeed->id);
+        $this->assertTrue($rowBounce->is_marketing_paused, '250 bounces meets the R17 bounce seed');
+
+        $this->haltSeedAction->handle($biz->id, $bounceUnderSeed->id);
+        $rowBounceUnder = MailDomain::where('business_id', $biz->id)->findOrFail($bounceUnderSeed->id);
+        $this->assertFalse($rowBounceUnder->is_marketing_paused, '249 bounces does not meet the R17 bounce seed');
+
+        $reply = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $bounceSeed->id,
+            recipientEmail: 'owner@acme.com',
+            subject: 'Re: your quote',
+            sendType: 'conversational',
+            requestedCount: 1
+        );
+        $this->assertSame('processed', $reply['status'], 'a fired halt seed never touches the thread');
+
+        $marketing = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $bounceSeed->id,
+            recipientEmail: 'lead@acme.com',
+            subject: 'Spring tune-up',
+            sendType: 'marketing',
+            requestedCount: 1
+        );
+        $this->assertSame('refused_paused', $marketing['status'], 'the campaign family is halted by the seed');
+    }
+
+    /**
+     * [G9-21], [G11-06], [G11-09], [G11-10], [G11-11], [G11-12], [G11-15], [G11-17], [G11-18], [G11-29], [G11-38]
      */
     public function test_header_capabilities(): void
     {
