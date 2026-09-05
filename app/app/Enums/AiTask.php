@@ -107,9 +107,9 @@ enum AiTask: string
     public function defaultModel(): AiModel
     {
         return match ($this) {
-            self::ReviewAnalysis, self::Moderation => AiModel::ClaudeHaiku45,
-            self::ReplyGeneration => AiModel::ClaudeOpus5,
-            self::Conversation => AiModel::ClaudeSonnet5,
+            self::ReviewAnalysis, self::Moderation,
+            self::ReplyGeneration,
+            self::Conversation => AiModel::Gpt4oMini,
             self::KnowledgeEmbedding => AiModel::TextEmbedding3Small,
         };
     }

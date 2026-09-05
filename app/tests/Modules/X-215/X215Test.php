@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Tests\Modules\X215;
 
 use App\Modules\X215\Actions\DocCommentAction;
+use App\Modules\X215\Actions\DocRemindAction;
 use App\Modules\X215\Actions\DocSendForSignatureAction;
 use App\Modules\X215\Actions\DocSignAction;
+use App\Modules\X215\Actions\DocVoidAction;
 use App\Modules\X215\Events\DocCommented;
 use App\Modules\X215\Events\DocSent;
 use App\Modules\X215\Events\DocSigned;
+use App\Modules\X215\Events\DocVoided;
 use App\Modules\X215\Models\DocumentComment;
 use App\Modules\X215\Models\SignableDocument;
 use Illuminate\Support\Facades\DB;
@@ -22,14 +25,20 @@ class X215Test extends TestCase
 
     private DocSignAction $signAction;
 
+    private DocRemindAction $remindAction;
+
     private DocCommentAction $commentAction;
+
+    private DocVoidAction $voidAction;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->sendAction = new DocSendForSignatureAction;
         $this->signAction = new DocSignAction;
+        $this->remindAction = new DocRemindAction;
         $this->commentAction = new DocCommentAction;
+        $this->voidAction = new DocVoidAction;
     }
 
     /**
@@ -116,6 +125,166 @@ class X215Test extends TestCase
         $this->assertEquals('Please change warranty to 10 years.', $commentRow->comment_text);
 
         Event::assertDispatched(DocCommented::class);
+    }
+
+    public function test_a_voided_document_cannot_be_signed(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([DocSent::class, DocVoided::class, DocSigned::class]);
+
+        $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";
+
+        $sentResult = $this->sendAction->handle(
+            businessId: $biz->id,
+            title: 'HVAC Master Agreement',
+            contentBody: $originalBody,
+            signerEmail: 'homeowner@example.com',
+            signerName: 'Jane Homeowner'
+        );
+
+        $doc = $sentResult['document'];
+        $request = $sentResult['signature_request'];
+
+        $this->voidAction->handle($biz->id, $doc->id);
+
+        $res = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_jane_hw',
+            currentRenderedContent: $originalBody
+        );
+
+        $this->assertSame('refused', $res['status']);
+        $this->assertSame('SIGNATURE_REQUEST_NOT_PENDING', $res['refusal_code']);
+        $this->assertFalse($res['signed']);
+        Event::assertNotDispatched(DocSigned::class);
+        $request->refresh();
+        $this->assertSame('voided', $request->status, 'a refused signature must not flip the request to signed');
+        $doc->refresh();
+        $this->assertSame('voided', $doc->status, 'a refused signature must not revive a voided document');
+    }
+
+    public function test_a_signed_request_cannot_be_signed_a_second_time(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([DocSent::class, DocSigned::class]);
+
+        $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";
+
+        $sentResult = $this->sendAction->handle(
+            businessId: $biz->id,
+            title: 'HVAC Master Agreement',
+            contentBody: $originalBody,
+            signerEmail: 'homeowner@example.com',
+            signerName: 'Jane Homeowner'
+        );
+
+        $request = $sentResult['signature_request'];
+
+        $first = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_first',
+            currentRenderedContent: $originalBody
+        );
+
+        $second = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_SECOND_attempt',
+            currentRenderedContent: $originalBody
+        );
+
+        $this->assertSame('signed', $first['status']);
+        $this->assertSame('refused', $second['status']);
+        $this->assertSame('SIGNATURE_REQUEST_NOT_PENDING', $second['refusal_code']);
+        $this->assertFalse($second['signed']);
+        Event::assertDispatchedTimes(DocSigned::class, 1);
+        $request->refresh();
+        $this->assertSame('data:image/png;base64,signature_first', $request->signature_data, 'a refused second signature must not overwrite the stored signature');
+    }
+
+    public function test_a_signed_document_cannot_be_voided(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([DocSent::class, DocSigned::class, DocVoided::class]);
+
+        $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";
+
+        $sentResult = $this->sendAction->handle(
+            businessId: $biz->id,
+            title: 'HVAC Master Agreement',
+            contentBody: $originalBody,
+            signerEmail: 'homeowner@example.com',
+            signerName: 'Jane Homeowner'
+        );
+
+        $doc = $sentResult['document'];
+        $request = $sentResult['signature_request'];
+
+        $signResult = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_jane_hw',
+            currentRenderedContent: $originalBody
+        );
+
+        $voidResult = $this->voidAction->handle($biz->id, $doc->id);
+
+        $this->assertSame('signed', $signResult['status']);
+        $this->assertSame('refused', $voidResult['status']);
+        $this->assertSame('DOCUMENT_ALREADY_SIGNED', $voidResult['refusal_code']);
+        $this->assertFalse($voidResult['voided']);
+        Event::assertNotDispatched(DocVoided::class);
+        $doc->refresh();
+        $this->assertSame('signed', $doc->status, 'a refused void must not erase a completed signature');
+        $request->refresh();
+        $this->assertSame('signed', $request->status, 'a refused void must not reopen a signed request');
+    }
+
+    public function test_a_signed_request_cannot_be_reminded(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([DocSent::class, DocSigned::class]);
+
+        $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";
+
+        $sentResult = $this->sendAction->handle(
+            businessId: $biz->id,
+            title: 'HVAC Master Agreement',
+            contentBody: $originalBody,
+            signerEmail: 'homeowner@example.com',
+            signerName: 'Jane Homeowner'
+        );
+
+        $request = $sentResult['signature_request'];
+
+        $pendingReminder = $this->remindAction->handle($biz->id, $request->id);
+        $this->assertSame('reminder_sent', $pendingReminder['status'], 'a pending request must still be remindable');
+
+        $signResult = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_jane_hw',
+            currentRenderedContent: $originalBody
+        );
+        $this->assertSame('signed', $signResult['status']);
+
+        $secondReminder = $this->remindAction->handle($biz->id, $request->id);
+        $this->assertSame('refused', $secondReminder['status']);
+        $this->assertSame('SIGNATURE_REQUEST_NOT_PENDING', $secondReminder['refusal_code']);
+        $this->assertFalse($secondReminder['reminded']);
+
+        $request->refresh();
+        $this->assertSame('signed', $request->status, 'a refused reminder must not disturb a signed request');
     }
 
     /**

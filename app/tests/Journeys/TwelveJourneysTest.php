@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CreditProduct;
+use App\Exceptions\TrialGrantRefused;
+use App\Models\Business;
+use App\Services\Billing\CreditLedger;
+use App\Services\Billing\TrialEligibility;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
@@ -58,6 +63,20 @@ final class TwelveJourneysTest extends TestCase
     // ═══════════════════════════════════════════════════════════════════
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS
     // ═══════════════════════════════════════════════════════════════════
+
+    private function fundedTenant(): array
+    {
+        $tenant = $this->tenantWithLiveNumber();
+        $bizModel = Business::find($tenant['id']);
+        try {
+            app(TrialEligibility::class)->authorize($bizModel);
+        } catch (TrialGrantRefused $e) {
+            throw $e;
+        }
+        app(CreditLedger::class)->resetMonthly(CreditProduct::Sms, 500, 'harness');
+
+        return $tenant;
+    }
 
     #[Test]
     public function a_missed_call_becomes_a_consented_text_back(): void
@@ -355,7 +374,7 @@ final class TwelveJourneysTest extends TestCase
     {
         $this->assertQueueIsNotSync();
 
-        $tenant = $this->tenantWithLiveNumber();
+        $tenant = $this->fundedTenant();
         $person = $this->personWithPendingSteps($tenant, count: 0);
 
         $this->completeJob($tenant, $person);

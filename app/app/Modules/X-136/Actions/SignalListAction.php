@@ -17,9 +17,13 @@ final class SignalListAction
 
     public function markDecayed(int $businessId, string $prospectIdentifier, int $daysInactive): void
     {
-        SignalScore::where('business_id', $businessId)
+        $updated = SignalScore::where('business_id', $businessId)
             ->where('prospect_identifier', $prospectIdentifier)
             ->update(['cooling_status' => 'decayed']);
+
+        if ($updated === 0) {
+            throw new \DomainException('Unknown prospect identifier');
+        }
 
         Event::dispatch(new ProspectDecayed($businessId, $prospectIdentifier, $daysInactive));
     }

@@ -8,10 +8,18 @@ use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
+use App\Modules\X204\Domain\ConsentService;
 use Illuminate\Support\Facades\Event;
 
 final class EmailSendAction
 {
+    private ConsentService $consentService;
+
+    public function __construct(ConsentService $consentService)
+    {
+        $this->consentService = $consentService;
+    }
+
     /**
      * Send email with warmup calendar limits & marketing complaint pause enforcement (TEST ANCHOR).
      */
@@ -32,6 +40,17 @@ final class EmailSendAction
                 'refusal_code' => 'MARKETING_SENDS_PAUSED_COMPLAINT_RATE',
                 'message' => 'Marketing sends paused due to complaint rate crossing 0.10% threshold',
             ];
+        }
+
+        if ($sendType === 'marketing') {
+            $decision = $this->consentService->decide($businessId, $recipientEmail, 'email');
+            if (! $decision['granted']) {
+                return [
+                    'status' => 'refused_suppressed',
+                    'refusal_code' => 'MARKETING_SEND_SUPPRESSED',
+                    'message' => 'Recipient has unsubscribed from marketing; the suppression is X-204\'s',
+                ];
+            }
         }
 
         // 2. Warmup calendar check (applies to marketing sends: TEST ANCHOR)

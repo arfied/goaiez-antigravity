@@ -5,9 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\CMail\Actions;
 
 use App\Modules\CMail\Models\MailEvent;
+use App\Modules\X204\Domain\ConsentService;
 
 final class EmailUnsubscribeAction
 {
+    private ConsentService $consentService;
+
+    public function __construct(ConsentService $consentService)
+    {
+        $this->consentService = $consentService;
+    }
+
     public function handle(int $businessId, int $mailDomainId, string $recipientEmail): array
     {
         MailEvent::create([
@@ -19,9 +27,12 @@ final class EmailUnsubscribeAction
             'subject' => 'Unsubscribed',
         ]);
 
+        $suppression = $this->consentService->suppress($businessId, $recipientEmail, 'email', 'unsubscribed_marketing');
+
         return [
             'status' => 'unsubscribed',
             'recipient_email' => $recipientEmail,
+            'suppression_id' => $suppression->id,
         ];
     }
 }

@@ -9,6 +9,8 @@ use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
+use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
+use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X121\Models\Person;
@@ -134,22 +136,29 @@ final class UnifiedInboxManager
             ->where('is_active', true)
             ->first();
 
-        $operatorName = $latch ? $latch->operator_name : 'Staff Member';
+        if ($latch === null) {
+            throw TakeoverNotLatchedRefused::forConversation($conversationId);
+        }
 
         return [
             'conversation_id' => $conversationId,
-            'operator_name' => $operatorName,
+            'operator_name' => $latch->operator_name,
             'label' => 'Human takeover',
             'body' => $body,
-            'formatted_reply' => "[Human takeover by {$operatorName}]: {$body}",
+            'formatted_reply' => "[Human takeover by {$latch->operator_name}]: {$body}",
         ];
     }
 
     /**
      * Calculate and record lead score (G2-32, G2-38, G2-61).
      */
-    public function scoreLead(int $businessId, int $personId, int $score, string $grade = 'A'): LeadScore
+    public function scoreLead(int $businessId, int $personId, int $score): LeadScore
     {
+        if ($score < 0 || $score > 100) {
+            throw LeadRatingOutOfRangeRefused::forRating($score);
+        }
+
+        $grade = $this->gradeFor($score);
         $ls = LeadScore::updateOrCreate(
             ['business_id' => $businessId, 'person_id' => $personId],
             [
@@ -168,5 +177,23 @@ final class UnifiedInboxManager
         ));
 
         return $ls;
+    }
+
+    private function gradeFor(int $rating): string
+    {
+        if ($rating >= 80) {
+            return 'A';
+        }
+        if ($rating >= 60) {
+            return 'B';
+        }
+        if ($rating >= 40) {
+            return 'C';
+        }
+        if ($rating >= 20) {
+            return 'D';
+        }
+
+        return 'F';
     }
 }

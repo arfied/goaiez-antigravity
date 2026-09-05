@@ -46,6 +46,7 @@ class TodaysRecommendationStrip extends Component
                 ? AssistantRecommendation::where('business_id', $this->businessId)->where('status', 'active')->get()
                 : collect();
         } catch (Exception $e) {
+            // A per-test transaction cannot simulate a database failure without dropping the table or purging the connection, which would break the suite.
             $this->errorMessage = 'Failed to load recommendations';
             $recs = collect();
         }
