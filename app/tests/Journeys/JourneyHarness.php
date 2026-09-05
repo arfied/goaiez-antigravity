@@ -153,54 +153,7 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant */
     private function postCarrierWebhook(array $tenant, string $event, string $from): void
     {
-        if ($event === 'call.missed') {
-            $callId = 'call_'.uniqid();
-            
-            // Provide the honest webhook payload shape for Infobip (at least callId and type)
-            // The vendor sends these 8 fields:
-            $payload = [
-                'conferenceId' => 'conf_1',
-                'callId' => $callId,
-                'timestamp' => now()->toIso8601String(),
-                'callsConfigurationId' => 'conf_2',
-                'platform' => ['entityId' => 'e1', 'applicationId' => 'a1'],
-                'bulkId' => 'bulk_1',
-                'dialogId' => 'dialog_1',
-                'type' => 'CALL_FINISHED',
-            ];
-            
-            // Fake the Infobip API that VoiceCalls->record will hit
-            $tenantPhone = \Illuminate\Support\Facades\DB::table('phone_numbers')
-                ->where('business_id', $tenant['id'])
-                ->first()->e164 ?? '+15550123';
-            
-            \Illuminate\Support\Facades\Http::fake([
-                "https://api.infobip.com/calls/1/calls/{$callId}" => \Illuminate\Support\Facades\Http::response([
-                    'id' => $callId,
-                    'from' => $from,
-                    'to' => $tenantPhone,
-                    'state' => 'FINISHED',
-                    'direction' => 'INBOUND',
-                    'startTime' => now()->toIso8601String(),
-                    'ringDuration' => 15,
-                ]),
-            ]);
-
-            $bodyStr = json_encode($payload);
-            $timestamp = (string) round(microtime(true) * 1000);
-            
-            $secret = \App\Support\PlatformCredentials::get('infobip_webhook_secret');
-            if (!$secret) {
-                throw new \RuntimeException('Missing infobip_webhook_secret');
-            }
-            
-            $signature = hash_hmac('sha256', $timestamp.$bodyStr, $secret);
-
-            $this->withHeaders([
-                'X-Ib-Exchange-Req-Timestamp' => $timestamp,
-                'X-Ib-Exchange-Req-Signature' => $signature,
-            ])->postJson('/webhooks/infobip/voice', $payload);
-        }
+        throw $this->todo('post carrier webhook — needs real Infobip environment or honest isolation');
     }
 
     /** @param array<string,mixed> $tenant */
@@ -274,13 +227,24 @@ trait JourneyHarness
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
         $this->guardOutboundSend($to);
+        
+        $customer = \Illuminate\Support\Facades\DB::table('customers')
+            ->where('business_id', $tenant['id'])
+            ->where('phone', $to)
+            ->first();
+
         $start = microtime(true);
         while (microtime(true) - $start < $timeoutSeconds) {
-            $message = \Illuminate\Support\Facades\DB::table('outreach_messages')
+            $query = \Illuminate\Support\Facades\DB::table('outreach_messages')
                 ->where('business_id', $tenant['id'])
                 ->whereNotNull('provider_msg_id')
-                ->orderBy('id', 'desc')
-                ->first();
+                ->orderBy('id', 'desc');
+                
+            if ($customer) {
+                $query->where('customer_id', $customer->id);
+            }
+            
+            $message = $query->first();
             if ($message) {
                 // The test expects provider_message_id
                 $msgArray = (array) $message;
@@ -622,13 +586,8 @@ trait JourneyHarness
             'status' => 'committed',
         ]);
         
-        \Illuminate\Support\Facades\Http::fake([
-            'https://api.openai.com/v1/embeddings' => \Illuminate\Support\Facades\Http::response(['data' => [['embedding' => array_fill(0, 1536, 0.0)]]]),
-            'https://api.openai.com/v1/chat/completions' => \Illuminate\Support\Facades\Http::response(['choices' => [['message' => ['content' => 'Review invite']]]]),
-        ]);
-
         $action = new \App\Modules\X171\Actions\JobStateAction();
-        $action->updateState($tenant['id'], $job->id, 1, 'completed');
+        $action->updateState($tenant['id'], $job->id, $job->technician_id, 'completed');
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
