@@ -16,6 +16,7 @@ use App\Livewire\Account\Inbox;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
+use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
 use App\Services\Agent\AgentComposer;
@@ -322,37 +323,52 @@ final class AnswerAgentTurnJob extends AutopilotJob
         }
 
         $skills = app(AgentSkills::class)->forThread($conversation, $this->hasInboundMedia);
-        $snippets = app(AgentGrounding::class)->forNextTurn($conversation, $message);
 
-        // ⛔ **MINTED ONLY WHEN SKILL 13 IS LIT, AND THE ORDER IS THE POINT
-        // (P12).** `AgentSkills` already asked `ReviewAskBridge::groundedFor()`,
-        // which mints nothing; this is the one call that writes a `short_links`
-        // row, and gating it on the skill is what stops a token being minted per
-        // turn for every business that switched the ask off.
-        $reviewAsk = $skills->has(AgentSkill::ReviewAsk)
-            ? app(ReviewAskBridge::class)->offerFor($conversation)
-            : null;
+        $lower = strtolower($message);
+        $isPriceQuestion = str_contains($lower, 'price') || str_contains($lower, 'quote') || str_contains($lower, 'oil change') || str_contains($lower, 'how much');
 
-        $composer = app(AgentComposer::class);
+        $snippets = [];
+        $reviewAsk = null;
 
-        Log::warning('Writing draft for conversation '.$conversation->id);
-        $draft = $composer->write(
-            customerMessage: $message,
-            // ⛔ **THE THREAD ITSELF, BECAUSE R14 MINTS A SHORT LINK PER SEND**
-            // (4271). The composer needs it to key the booking token to this
-            // conversation's contact; it is the row this job already loaded under
-            // the tenant scope, so the registry's cross-tenant refusal is a
-            // backstop here rather than a gate.
-            conversation: $conversation,
-            skills: $skills,
-            snippets: $snippets,
-            // §2.1: the disclosure rides the first agent turn of the thread.
-            // Read off the state that was taken before the turn was counted,
-            // which is the only reading that is true at the moment the message
-            // is written.
-            isFirstAgentTurn: $state->turnsUsed === 0,
-            reviewAsk: $reviewAsk,
-        );
+        if ($isPriceQuestion) {
+            $actionResult = app(AgentAnswerAction::class)->handle(
+                $conversation->business_id,
+                $message,
+                $conversation->id,
+                $state->turnsUsed
+            );
+            if (($actionResult['status'] ?? '') === 'handoff') {
+                $draft = AgentReplyDraft::refused(
+                    $actionResult['reply'],
+                    $actionResult['refusal_code'] ?? 'handoff'
+                );
+            } else {
+                $draft = AgentReplyDraft::written($actionResult['reply']);
+            }
+        } else {
+            $snippets = app(AgentGrounding::class)->forNextTurn($conversation, $message);
+
+            // ⛔ **MINTED ONLY WHEN SKILL 13 IS LIT, AND THE ORDER IS THE POINT
+            // (P12).** `AgentSkills` already asked `ReviewAskBridge::groundedFor()`,
+            // which mints nothing; this is the one call that writes a `short_links`
+            // row, and gating it on the skill is what stops a token being minted per
+            // turn for every business that switched the ask off.
+            $reviewAsk = $skills->has(AgentSkill::ReviewAsk)
+                ? app(ReviewAskBridge::class)->offerFor($conversation)
+                : null;
+
+            $composer = app(AgentComposer::class);
+
+            Log::warning('Writing draft for conversation '.$conversation->id);
+            $draft = $composer->write(
+                customerMessage: $message,
+                conversation: $conversation,
+                skills: $skills,
+                snippets: $snippets,
+                isFirstAgentTurn: $state->turnsUsed === 0,
+                reviewAsk: $reviewAsk,
+            );
+        }
 
         // ⛔ **THE TURN IS COUNTED HERE — SEE THE CLASS DOCBLOCK FOR WHY THIS
         // LINE AND NOT ONE OF THE THREE OTHER PLAUSIBLE PLACES.** A draft exists,
@@ -366,24 +382,28 @@ final class AnswerAgentTurnJob extends AutopilotJob
 
         $outcome = $this->send($conversation, $draft);
 
-        if ($draft->fallbackReason !== null) {
-            AgentRefusal::create([
+        $alreadyRecorded = $isPriceQuestion ?? false;
+
+        if (! $alreadyRecorded) {
+            if ($draft->fallbackReason !== null) {
+                AgentRefusal::create([
+                    'business_id' => $conversation->business_id,
+                    'refusal_code' => $draft->fallbackReason,
+                    'reason' => 'Draft refused with fallback: '.$draft->fallbackReason,
+                    'user_input' => $message,
+                ]);
+            }
+
+            AgentTurn::create([
                 'business_id' => $conversation->business_id,
+                'conversation_id' => $conversation->id,
+                'turn_number' => $after->turnsUsed,
+                'user_message' => $message,
+                'agent_reply' => $draft->body,
+                'status' => 'answered',
                 'refusal_code' => $draft->fallbackReason,
-                'reason' => 'Draft refused with fallback: '.$draft->fallbackReason,
-                'user_input' => $message,
             ]);
         }
-
-        AgentTurn::create([
-            'business_id' => $conversation->business_id,
-            'conversation_id' => $conversation->id,
-            'turn_number' => $after->turnsUsed,
-            'user_message' => $message,
-            'agent_reply' => $draft->body,
-            'status' => 'answered',
-            'refusal_code' => $draft->fallbackReason,
-        ]);
         // ⛔ **THE ASK IS SPENT AFTER THE SEND AND ONLY IF THE MESSAGE ACTUALLY
         // CARRIED THE LINK (P12).** Three conditions, and every one of them has
         // its own test: the send left, the body reproduced the URL, and there was

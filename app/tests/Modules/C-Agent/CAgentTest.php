@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CAgent;
 
+use App\Jobs\AnswerAgentTurnJob;
+use App\Models\AiCall;
 use App\Models\Conversation;
+use App\Models\Message;
 use App\Modules\CAgent\Actions\AgentAnswerAction;
 use App\Modules\CAgent\Actions\AgentClassifyAction;
 use App\Modules\CAgent\Actions\AgentDraftAction;
@@ -13,6 +16,7 @@ use App\Modules\CAgent\Actions\AgentTeachAction;
 use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentRefusal;
+use App\Modules\CAgent\Models\AgentTurn;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
 use App\Support\Tenancy;
@@ -326,5 +330,57 @@ class CAgentTest extends TestCase
 
             $this->assertEquals('NO_FACT', $draft->fallbackReason);
         });
+    }
+
+    public function test_price_question_uses_fact_gate_and_does_not_call_model(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Price Gate Biz', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $conversation = Conversation::factory()->create(['business_id' => $biz->id]);
+        $message = Message::factory()->create([
+            'business_id' => $biz->id,
+            'conversation_id' => $conversation->id,
+            'direction' => 'inbound',
+            'body' => 'How much is an oil change?',
+        ]);
+
+        Http::preventStrayRequests();
+        Http::fake();
+
+        $job = new AnswerAgentTurnJob($biz->id, null, $conversation->id, $message->id, 'occ');
+        $job->handle();
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNotNull($turn);
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
+        $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
+    }
+
+    public function test_price_question_with_fact_uses_gate_and_replies_with_amount(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Price Gate Biz 2', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $this->teach->handle($biz->id, 'service.oil_change.price', '$49.99');
+
+        $conversation = Conversation::factory()->create(['business_id' => $biz->id]);
+        $message = Message::factory()->create([
+            'business_id' => $biz->id,
+            'conversation_id' => $conversation->id,
+            'direction' => 'inbound',
+            'body' => 'How much is an oil change?',
+        ]);
+
+        Http::preventStrayRequests();
+        Http::fake();
+
+        $job = new AnswerAgentTurnJob($biz->id, null, $conversation->id, $message->id, 'occ');
+        $job->handle();
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNotNull($turn);
+        $this->assertStringContainsString('$49.99', $turn->agent_reply);
+        $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
     }
 }
