@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SiteBuildAction;
@@ -17,6 +18,7 @@ use App\Modules\X103\Models\PageVersion;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X103Test extends TestCase
@@ -183,10 +185,10 @@ class X103Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $page = $this->pageAction->handle($biz->id, 'offer', 'Offer', false);
-        
+
         $blocks = [
             ['type' => 'offer', 'text' => '20% off'],
-            ['type' => 'chat']
+            ['type' => 'chat'],
         ];
         $res = $this->publishAction->handle($biz->id, $page->id, $blocks);
 
@@ -213,8 +215,8 @@ class X103Test extends TestCase
     /** (R245) */
     public function test_g6_27_header_c_sms(): void
     {
-        \Illuminate\Support\Facades\Http::fake();
-        Event::fake([\App\Modules\CSms\Events\SendRequested::class]);
+        Http::fake();
+        Event::fake([SendRequested::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'SMS Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -222,7 +224,7 @@ class X103Test extends TestCase
         $page = $this->pageAction->handle($biz->id, 'sms-page', 'SMS Page', false);
         $this->publishAction->handle($biz->id, $page->id, []);
 
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
     }
 
     /** (R245) */
