@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X163\Ui;
 
+use App\Enums\UserRole;
 use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Actions\PriceLookupAction;
@@ -12,88 +13,74 @@ use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\LocationBook;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
-use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Pricebook extends Component
 {
-    #[Locked]
-    public int $businessId = 0;
+    public float $calloutFeeDollars = 0.00;
 
-    public string $activeCategory = 'all';
+    public bool $deductedIfProceeding = false;
 
-    // Callout Fee Configuration
-    public float $calloutFeeDollars = 85.00;
-
-    public bool $deductedIfProceeding = true;
-
-    public string $calloutExplanation = 'Our diagnostic callout fee is $85.00, which is fully credited toward your repair if you approve the job.';
-
-    // New Item Form
     public string $newServiceName = '';
 
-    public string $newCategory = 'repairs';
+    public float $newPriceDollars = 0.00;
 
-    public float $newPriceDollars = 150.00;
+    public ?float $newMinPriceDollars = null;
 
-    public float $newTaxRatePct = 8.25;
+    public ?float $newMaxPriceDollars = null;
+
+    public float $newTaxRatePct = 0.00;
 
     public bool $newIsSample = false;
 
-    // AI Quoting Simulator
-    public string $testQuery = 'Emergency Leak Repair';
-
-    public string $testChannel = 'customer'; // customer vs admin
+    public string $testQuery = '';
 
     public ?array $testQuoteResult = null;
 
-    // Flash Notice
-    public ?string $actionNotice = null;
+    public array $inlinePrices = [];
 
-    public string $noticeType = 'success';
+    public ?int $traceItemId = null;
 
     public function mount(): void
     {
-        $tenantId = Tenancy::id() ?: 0;
-        if ($tenantId <= 0) {
-            abort(403, 'Tenant context is required to access pricebook');
-        }
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager, UserRole::SuperAdmin), 403);
+        $businessId = Tenancy::id();
+        abort_unless($businessId !== null && $businessId > 0, 403);
 
-        $this->businessId = (int) $tenantId;
-        Tenancy::set($this->businessId);
-
-        // Load Callout Fee
-        $fee = CalloutFee::where('business_id', $this->businessId)->first();
+        $fee = CalloutFee::where('business_id', $businessId)->first();
         if ($fee) {
             $this->calloutFeeDollars = $fee->callout_fee_cents / 100;
             $this->deductedIfProceeding = (bool) $fee->deducted_if_proceeding;
-            $this->calloutExplanation = (string) ($fee->explanation_text ?? $this->calloutExplanation);
         }
+
+        $items = PriceBookItem::where('business_id', $businessId)->get();
+        foreach ($items as $item) {
+            $this->inlinePrices[$item->id] = $item->price_cents / 100;
+        }
+    }
+
+    public function updatedCalloutFeeDollars($value): void
+    {
+        $this->saveCalloutFee();
+    }
+
+    public function updatedCalloutFeeDeducted($value): void
+    {
+        $this->saveCalloutFee();
     }
 
     public function saveCalloutFee(): void
     {
-        Tenancy::set($this->businessId);
-        $fee = CalloutFee::where('business_id', $this->businessId)->first();
-        $cents = (int) round($this->calloutFeeDollars * 100);
+        $businessId = Tenancy::id();
+        $cents = (int) round((float) $this->calloutFeeDollars * 100);
 
-        if ($fee) {
-            $fee->update([
+        CalloutFee::updateOrCreate(
+            ['business_id' => $businessId],
+            [
                 'callout_fee_cents' => $cents,
                 'deducted_if_proceeding' => $this->deductedIfProceeding,
-                'explanation_text' => $this->calloutExplanation,
-            ]);
-        } else {
-            CalloutFee::query()->create([
-                'business_id' => $this->businessId,
-                'callout_fee_cents' => $cents,
-                'deducted_if_proceeding' => $this->deductedIfProceeding,
-                'explanation_text' => $this->calloutExplanation,
-            ]);
-        }
-
-        $this->noticeType = 'success';
-        $this->actionNotice = '✅ Diagnostic callout fee updated. Ava will cite this verbatim to callers.';
+            ]
+        );
     }
 
     public function addItem(): void
@@ -102,69 +89,95 @@ class Pricebook extends Component
             return;
         }
 
-        Tenancy::set($this->businessId);
-        PriceBookItem::query()->create([
-            'business_id' => $this->businessId,
+        $businessId = Tenancy::id();
+
+        $min = $this->newMinPriceDollars ? (int) round((float) $this->newMinPriceDollars * 100) : null;
+        $max = $this->newMaxPriceDollars ? (int) round((float) $this->newMaxPriceDollars * 100) : null;
+
+        $item = PriceBookItem::create([
+            'business_id' => $businessId,
             'service_name' => $this->newServiceName,
-            'price_cents' => (int) round($this->newPriceDollars * 100),
-            'tax_rate_pct' => $this->newTaxRatePct,
+            'price_cents' => (int) round((float) $this->newPriceDollars * 100),
+            'price_min_cents' => $min,
+            'price_max_cents' => $max,
+            'tax_rate_pct' => (float) $this->newTaxRatePct,
             'is_sample' => $this->newIsSample,
             'is_confirmed' => ! $this->newIsSample,
         ]);
 
+        $this->inlinePrices[$item->id] = $item->price_cents / 100;
+
         $this->newServiceName = '';
-        $this->newPriceDollars = 150.00;
-        $this->noticeType = 'success';
-        $this->actionNotice = '✅ New service item added to pricebook.';
+        $this->newPriceDollars = 0.00;
+        $this->newMinPriceDollars = null;
+        $this->newMaxPriceDollars = null;
+        $this->newTaxRatePct = 0.00;
+        $this->newIsSample = false;
+    }
+
+    public function updatePrice(int $id): void
+    {
+        $businessId = Tenancy::id();
+        if (isset($this->inlinePrices[$id])) {
+            PriceBookItem::where('business_id', $businessId)->where('id', $id)->update([
+                'price_cents' => (int) round((float) $this->inlinePrices[$id] * 100),
+            ]);
+        }
     }
 
     public function confirmItem(int $id): void
     {
-        Tenancy::set($this->businessId);
-        $confirmer = app(PriceConfirmAction::class);
-        $confirmer->handle($this->businessId, $id);
+        $businessId = Tenancy::id();
+        if (isset($this->inlinePrices[$id])) {
+            $this->updatePrice($id);
+        }
 
-        $this->noticeType = 'success';
-        $this->actionNotice = "🎉 Item #{$id} confirmed! It is now live and quotable by the voice AI agent.";
+        $confirmer = app(PriceConfirmAction::class);
+        $confirmer->handle($businessId, $id);
     }
 
     public function deleteItem(int $id): void
     {
-        Tenancy::set($this->businessId);
-        PriceBookItem::where('business_id', $this->businessId)->where('id', $id)->delete();
+        $businessId = Tenancy::id();
+        PriceBookItem::where('business_id', $businessId)->where('id', $id)->delete();
+        unset($this->inlinePrices[$id]);
+    }
 
-        $this->noticeType = 'warning';
-        $this->actionNotice = "🗑️ Item #{$id} removed from pricebook.";
+    public function tracePrice(int $id): void
+    {
+        if ($this->traceItemId === $id) {
+            $this->traceItemId = null;
+        } else {
+            $this->traceItemId = $id;
+        }
     }
 
     public function bumpVersion(string $locationName): void
     {
-        Tenancy::set($this->businessId);
+        $businessId = Tenancy::id();
         $action = new BookVersionAction(new PricebookEngine);
-        $res = $action->handle($this->businessId, $locationName);
-
-        $this->noticeType = 'success';
-        $this->actionNotice = "🚀 Version bumped for '{$locationName}' to Version {$res['version']}. Other location books remain untouched.";
+        $action->handle($businessId, $locationName);
     }
 
     public function runTestQuote(): void
     {
-        Tenancy::set($this->businessId);
+        $businessId = Tenancy::id();
         $lookup = new PriceLookupAction(new PricebookEngine);
-        $res = $lookup->handle($this->businessId, $this->testQuery, $this->testChannel);
+        $res = $lookup->handle($businessId, $this->testQuery, 'customer');
 
         $this->testQuoteResult = $res;
     }
 
     public function render()
     {
-        Tenancy::set($this->businessId);
-        $items = PriceBookItem::where('business_id', $this->businessId)->orderBy('id', 'desc')->get();
-        $locations = LocationBook::where('business_id', $this->businessId)->get();
+        $businessId = Tenancy::id();
+        $items = PriceBookItem::where('business_id', $businessId)->orderBy('id', 'desc')->get();
+        $locations = LocationBook::where('business_id', $businessId)->get();
 
         return view('x-163::pricebook', [
             'items' => $items,
             'locations' => $locations,
+            'firstLocation' => $locations->first(),
         ]);
     }
 }

@@ -709,7 +709,7 @@
 | G13-35 | UTM Harvesting | ENH | X-155 | SPECCED | hidden fields write straight to the entities, no staging table |
 | G13-36 | View Tracking | ENH | X-199 | SPECCED | invoice opened → the alert names an action |
 | G13-37 | Widget Rage-Click Detection | ENH | X-102 | SPECCED | the widget offers help instead of watching them fail |
-| G13-38 | Zero-Party Data Collection | ENH | X-119 | SPECCED | a volunteered detail becomes a `Fact` with its source |
+| G13-38 | Zero-Party Data Collection | ENH | X-119 | SPECCED | a volunteered detail becomes a `Fact` with its source · refuses: an inference |
 
 ## G14 · ADS & PAID — 38
 **Modules of record:** ⛔ FENCED §44 · X-139 · **Turn:** ⛔ REMOVED (fenced §44)
