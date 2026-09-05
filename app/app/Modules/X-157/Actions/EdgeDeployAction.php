@@ -142,7 +142,13 @@ final class EdgeDeployAction
 
             $html .= '</body></html>';
 
-            Storage::disk('local')->put("sites/{$deployHash}.html", $html);
+            // The local disk is configured 'throw' => false (config/filesystems.php:37), so a
+            // failed write returns false rather than raising (R245, 2026-09-05). Refuse the
+            // deploy: the transaction rolls the row back and ModuleServiceProvider's catch
+            // keeps the page published, rather than announcing an artifact that is not there.
+            if (Storage::disk('local')->put("sites/{$deployHash}.html", $html) === false) {
+                throw new \RuntimeException("the site artifact could not be written: sites/{$deployHash}.html");
+            }
 
             // Nothing outside this action learns of a deploy until the artifact it
             // announces is on disk (R245, 2026-09-05): the supersede, the status flip and
