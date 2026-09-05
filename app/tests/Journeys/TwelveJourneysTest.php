@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CreditKind;
 use App\Enums\CreditProduct;
+use App\Enums\OutreachChannel;
+use App\Enums\Plan;
 use App\Models\Business;
 use App\Services\Billing\CreditLedger;
-use App\Enums\CreditKind;
 use App\Services\Config\DefaultsRegistry;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
@@ -67,13 +70,13 @@ final class TwelveJourneysTest extends TestCase
     private function fundedTenant(): array
     {
         $tenant = $this->tenantWithLiveNumber();
-        $allowance = (int) app(DefaultsRegistry::class)->entitlement(\App\Enums\Plan::Base, 'credits.monthly_grant.sms');
-        
-        \App\Support\Tenancy::set($tenant['id']);
+        $allowance = (int) app(DefaultsRegistry::class)->entitlement(Plan::Base, 'credits.monthly_grant.sms');
+
+        Tenancy::set($tenant['id']);
         app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, $allowance, 'journey fixture (owner ruling 2026-09-05)');
 
-        loadEveryRequiredRegister(\App\Enums\OutreachChannel::Sms);
-        
+        loadEveryRequiredRegister(OutreachChannel::Sms);
+
         return $tenant;
     }
 
