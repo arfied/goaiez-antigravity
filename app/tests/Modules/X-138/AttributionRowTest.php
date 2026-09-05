@@ -27,14 +27,14 @@ class AttributionRowTest extends TestCase
         Livewire::actingAs($user)
             ->test(AttributionRow::class, ['businessId' => $biz->id])
             ->assertSee('No attribution data yet')
-            ->assertDontSee('This page earned');
+            ->assertDontSee('This job earned');
 
         DB::table('attribution_queries')->insert([
             'business_id' => $biz->id,
             'job_id' => 9001,
             'job_value' => 734000,
-            'touches' => json_encode([['url' => '/plumbing-services']]),
-            'attribution_status' => 'single',
+            'touches' => json_encode([['source' => '/plumbing-services'], ['source' => '/about-us']]),
+            'attribution_status' => 'ambiguous',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -51,10 +51,25 @@ class AttributionRowTest extends TestCase
         Livewire::actingAs($user)
             ->test(AttributionRow::class, ['businessId' => $biz->id])
             ->assertDontSee('No attribution data yet')
-            ->assertSee('This page earned')
-            ->assertSee('£7,340')
+            ->assertSee('This job earned')
+            ->assertSee('$7,340.00')
             ->assertSee('/plumbing-services')
+            ->assertSee('/about-us')
             ->assertSee('Summer Promo')
-            ->assertSee('£500');
+            ->assertSee('$500.00');
+
+        DB::table('attribution_queries')->insert([
+            'business_id' => $biz->id,
+            'job_id' => 9002,
+            'job_value' => null,
+            'touches' => json_encode([['source' => '/contact']]),
+            'attribution_status' => 'single',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        Livewire::actingAs($user)
+            ->test(AttributionRow::class, ['businessId' => $biz->id])
+            ->assertSee('--');
     }
 }
