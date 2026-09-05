@@ -48,10 +48,17 @@ cp .agents/supervisor/*.md "$SNAP/.agents/supervisor/" 2>/dev/null
 cp .claude/settings.json "$SNAP/.claude/" 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
 echo "snapshot: $SNAP"
 
-n=1
+# Run log. It lives INSIDE the checkout from 2026-09-05 13:4x: an unattended tick's
+# tool sandbox is confined to the worktree, so a log under /home/goaiez/tmp cannot be
+# read when it is most needed — diagnosing a run that died without writing REPORT.md
+# (MONEY-36 did exactly that). `.gitignore` ignores `.agents/supervisor/*`, so nothing
+# here is ever committed. Numbering continues across both locations.
 TRACK=$(basename "$PWD")
-while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
-LOG="/home/goaiez/tmp/agy-${TRACK}-run${n}.log"
+LOGDIR=".agents/supervisor/logs"
+mkdir -p "$LOGDIR"
+n=1
+while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] || [ -e "$LOGDIR/agy-run${n}.log" ]; do n=$((n+1)); done
+LOG="$LOGDIR/agy-run${n}.log"
 
 nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 echo $! > "$PIDFILE"
