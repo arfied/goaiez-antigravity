@@ -6,7 +6,7 @@ namespace App\Modules\X01\Ui;
 
 use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Models\LeadScore;
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
