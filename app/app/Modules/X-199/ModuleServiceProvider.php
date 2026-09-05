@@ -16,7 +16,11 @@ final class ModuleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \App\Modules\X199\Console\MarkInvoicesDueCommand::class,
+            ]);
+        }
     }
 
     public function boot(): void
