@@ -96,7 +96,13 @@ echo "  runtime_build in BUILD-STATE: $(python3 -c "import json;print(json.load(
 
 if [ $want_doctor -eq 1 ]; then
   bar "5. all eight stages  (non-zero exit on any red stage is by design)"
-  php artisan doctor 2>&1 | tail -30 | sed 's/^/  /'
+  _doc="$ROOT/.agents/supervisor/.doctor-full.out"
+  php artisan doctor > "$_doc" 2>&1
+  # per-stage counts first: the tail below drops them, and a total with no stage
+  # attribution cannot tell you which stage a wave was supposed to move
+  grep -aE '(integrity|boundary|contract|citation|schema|capability|anchor|journey) [0-9]+ms ' "$_doc" | sed 's/^/  /'
+  echo "  ---"
+  tail -30 "$_doc" | sed 's/^/  /'
 fi
 
 bar "6. style + static analysis"

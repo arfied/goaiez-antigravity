@@ -140,6 +140,21 @@ Watch for: <the trap that applies, by name>
   green on 2026-08-29/30 before any harness that could pass existed, and the
   on-disk `evidence/journeys/*.json` came from a forbidden simulation harness.
   Only `supervise.sh --tests` output counts as the journey number.
+- **§3 `STAGES` is a stored mark; §5 is the measurement.** Same class as the
+  journey hand mark above. `supervise.sh` §3 prints `state.py`'s cached
+  `BUILD-STATE.json` numbers — on 2026-09-05 it read `capability 372` for three
+  consecutive gates while `php artisan doctor` measured **400**. Every other
+  stage there prints `?`. Never quote a §3 count in a verdict; read §5.
+  Measured breakdown at tick 371, `742` total: boundary 3 · contract 87 ·
+  citation 93 · schema 15 · capability 400 · anchor 137 · journey 7.
+- **A target the checker does not measure cannot lower a count.** Before
+  briefing a module, grep it in the doctor output — S-86 strengthened X-132 to
+  a real assertion (good work, kept) but X-132 appears nowhere in the 742, so
+  the wave could not move a number and the brief should have said so. The two
+  capability findings that stages can actually clear are `specced but no test
+  names this id` (87 of them; fixed by a test whose *name* carries the id, over
+  real system) and nothing else — `the ⑤ names no refusal` edits
+  `capabilities.php` prose and is Track 1's under ruling 15/40.
 - **`state.py` owns `BUILD-STATE.json`.** A hand edit there is a `BLOCK`; so is
   a `JOURNAL.md` line with no matching commit.
 - **`BUILDING` is not progress.** On 2026-08-31 13:04:41 twelve modules flipped
