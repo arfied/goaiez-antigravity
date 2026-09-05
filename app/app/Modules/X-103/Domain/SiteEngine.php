@@ -40,9 +40,6 @@ final class SiteEngine
                 'current_version_id' => $version->id,
             ]);
 
-            require_once __DIR__.'/../Events/PagePublished.php';
-            require_once __DIR__.'/../Events/SitePublished.php';
-
             Event::dispatch(new PagePublished($businessId, $page->id, $commitId));
             Event::dispatch(new SitePublished($businessId, $page->id, $commitId));
 
