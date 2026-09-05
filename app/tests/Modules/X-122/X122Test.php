@@ -167,7 +167,7 @@ class X122Test extends TestCase
 
         $firstInvReRead = ActionInvocation::findOrFail($res['invocation_id']);
         $this->assertEquals($firstParams, $firstInvReRead->parameters);
-        
+
         $this->assertEquals(2, ActionInvocation::where('business_id', $biz->id)->count());
     }
 

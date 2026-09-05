@@ -12,6 +12,10 @@ use App\Modules\X111\Actions\OpsTicketAction;
 use App\Modules\X111\Domain\OpsEngine;
 use App\Modules\X111\Events\AlertOperator;
 use App\Modules\X111\Events\TicketOpened;
+use App\Modules\X111\Models\IpBan;
+use App\Modules\X111\Models\ManualQueue;
+use App\Modules\X111\Models\OperatorAlert;
+use App\Modules\X111\Models\TenantTicket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -101,10 +105,10 @@ class X111Test extends TestCase
         $drivers = array_column(config('database.connections'), 'driver');
         $this->assertNotContains('elasticsearch', $drivers);
 
-        $this->assertNull((new \App\Modules\X111\Models\IpBan)->getConnectionName());
-        $this->assertNull((new \App\Modules\X111\Models\ManualQueue)->getConnectionName());
-        $this->assertNull((new \App\Modules\X111\Models\OperatorAlert)->getConnectionName());
-        $this->assertNull((new \App\Modules\X111\Models\TenantTicket)->getConnectionName());
+        $this->assertNull((new IpBan)->getConnectionName());
+        $this->assertNull((new ManualQueue)->getConnectionName());
+        $this->assertNull((new OperatorAlert)->getConnectionName());
+        $this->assertNull((new TenantTicket)->getConnectionName());
 
         $biz = TestCase::provisionTenant(['name' => 'Elastic Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -112,7 +116,7 @@ class X111Test extends TestCase
         $alert = $this->alertAction->handle($biz->id, 'critical', 'Check elasticsearch');
 
         $row = DB::connection(config('database.default'))
-            ->table((new \App\Modules\X111\Models\OperatorAlert)->getTable())
+            ->table((new OperatorAlert)->getTable())
             ->where('id', $alert->id)
             ->first();
 
