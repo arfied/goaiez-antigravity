@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T19:01:20",
+ "updated": "2026-09-04T19:36:15",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -675,7 +675,26 @@
    "status": "DONE",
    "wave": 25,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-142",
+     "stage": "loading",
+     "why": "not reachable from Livewire::test (wire:init fires before the assertion \u2014 your own X-125 decision)",
+     "at": "2026-09-04T19:18:02"
+    },
+    {
+     "module": "X-142",
+     "stage": "SAMPLE",
+     "why": "not reachable from Livewire::test (no sample marker on mcp_tokens; adding a column is refused)",
+     "at": "2026-09-04T19:18:02"
+    },
+    {
+     "module": "X-142",
+     "stage": "error",
+     "why": "not reachable from Livewire::test (unreachable error branch)",
+     "at": "2026-09-04T19:18:02"
+    }
+   ]
   },
   "X-143": {
    "status": "DONE",
@@ -1208,12 +1227,34 @@
    "stage": "journey",
    "why": "Agent failed to refuse with NO_FACT for unpriced service (returned null instead of NO_FACT)",
    "at": "2026-09-02T10:28:55"
+  },
+  {
+   "module": "X-142",
+   "stage": "loading",
+   "why": "not reachable from Livewire::test (wire:init fires before the assertion \u2014 your own X-125 decision)",
+   "at": "2026-09-04T19:18:02"
+  },
+  {
+   "module": "X-142",
+   "stage": "SAMPLE",
+   "why": "not reachable from Livewire::test (no sample marker on mcp_tokens; adding a column is refused)",
+   "at": "2026-09-04T19:18:02"
+  },
+  {
+   "module": "X-142",
+   "stage": "error",
+   "why": "not reachable from Livewire::test (unreachable error branch)",
+   "at": "2026-09-04T19:18:02"
   }
  ],
  "notes": [
   {
    "at": "2026-08-29T14:37:58",
    "note": "bootstrap-done"
+  },
+  {
+   "at": "2026-09-04T19:36:15",
+   "note": "X-142 returned to DONE: the three 2026-09-04T19:18:02 unresolved records were coverage facts about Livewire::test reach, not missing dependencies (ruling 48, bin/state.py:9). They stay in the arrays because state.py has no withdraw; the status is the field of record."
   }
  ],
  "decisions": [
@@ -1311,6 +1352,30 @@
    "module": "X-124",
    "chose": "Kept TodaysRecommendationStrip catch as defence in depth, documented unreachability, and renamed test since per-test transactions cannot simulate connection failure without breaking the suite.",
    "at": "2026-09-04T19:01:20",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "Empty state heading reads 'No tokens yet.', body reads 'Tokens give external systems access to your account.'",
+   "at": "2026-09-04T19:17:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "Token registry role scope is rendered directly as text without extra labeling",
+   "at": "2026-09-04T19:17:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "Token registry token name is rendered as a bold h2",
+   "at": "2026-09-04T19:17:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-142",
+   "chose": "Token registry list renders with a border-rule container and --radius-card rounded corners",
+   "at": "2026-09-04T19:17:56",
    "ruling": "R245"
   }
  ]

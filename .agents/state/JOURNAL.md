@@ -538,3 +538,12 @@
 - `2026-09-04T16:59:33` (R245) X-124 — Wired PreviewCard component for 3 states (ready reversible, ready irreversible, error) with tests, matching TodaysRecommendationStrip pattern.
 - `2026-09-04T18:39:18` (R245) X-124 — AssistantPreviewAction is final, so Mockery cannot mock it to throw an exception, making the error state untestable. Fallback taken: removed try/catch and error state.
 - `2026-09-04T19:01:20` (R245) X-124 — Kept TodaysRecommendationStrip catch as defence in depth, documented unreachability, and renamed test since per-test transactions cannot simulate connection failure without breaking the suite.
+- `2026-09-04T19:17:56` (R245) X-142 — Empty state heading reads 'No tokens yet.', body reads 'Tokens give external systems access to your account.'
+- `2026-09-04T19:17:56` (R245) X-142 — Token registry role scope is rendered directly as text without extra labeling
+- `2026-09-04T19:17:56` (R245) X-142 — Token registry token name is rendered as a bold h2
+- `2026-09-04T19:17:56` (R245) X-142 — Token registry list renders with a border-rule container and --radius-card rounded corners
+- `2026-09-04T19:18:02` UNRESOLVED loading X-142 - not reachable from Livewire::test (wire:init fires before the assertion — your own X-125 decision)
+- `2026-09-04T19:18:02` UNRESOLVED SAMPLE X-142 - not reachable from Livewire::test (no sample marker on mcp_tokens; adding a column is refused)
+- `2026-09-04T19:18:02` UNRESOLVED error X-142 - not reachable from Livewire::test (unreachable error branch)
+- `2026-09-04T19:36:15` X-142 -> DONE
+- `2026-09-04T19:36:15` note: X-142 returned to DONE: the three 2026-09-04T19:18:02 unresolved records were coverage facts about Livewire::test reach, not missing dependencies (ruling 48, bin/state.py:9). They stay in the arrays because state.py has no withdraw; the status is the field of record.
