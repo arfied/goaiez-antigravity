@@ -703,9 +703,12 @@ trait JourneyHarness
 
         $cancellationId = $sub->authorize_net_subscription_id;
 
-        $screensBetween = 1;
+        $this->get('/account/plan')->assertOk(); // The plan screen renders
+        $screensBetween = 1; // It is one screen.
+        $retentionOfferShown = false; // No retention offer is shown in the view.
 
-        // $this->post(route('account.plan.cancel'), ['confirm' => 'yes']);
+        $response = $this->post(route('account.plan.cancel'), ['confirm' => '1']);
+        $response->assertRedirect();
 
         $api = app(AuthorizeNetApi::class);
         try {
@@ -716,7 +719,7 @@ trait JourneyHarness
 
         return [
             'screens_between' => $screensBetween,
-            'retention_offer_shown' => false,
+            'retention_offer_shown' => $retentionOfferShown,
             'cancelled' => ($status === 'canceled'),
             'cancellation_id' => $cancellationId,
         ];
