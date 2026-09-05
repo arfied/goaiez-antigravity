@@ -166,7 +166,6 @@ final class EdgeDeployAction
                 deployHash: $deployHash
             ));
 
-
             return [
                 'status' => 'deployed',
                 'deployment_id' => $deployment->id,
