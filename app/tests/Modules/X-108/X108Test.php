@@ -357,8 +357,8 @@ class X108Test extends TestCase
         AvailabilityRule::create([
             'business_id' => $biz->id,
             'day_of_week' => $holiday->dayOfWeekIso,
-            'start_time'  => '14:00',
-            'end_time'    => '16:00',
+            'start_time' => '14:00',
+            'end_time' => '16:00',
             'is_blackout' => true,
         ]);
 
