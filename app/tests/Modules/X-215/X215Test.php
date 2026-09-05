@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X215;
 
 use App\Modules\X215\Actions\DocCommentAction;
+use App\Modules\X215\Actions\DocRemindAction;
 use App\Modules\X215\Actions\DocSendForSignatureAction;
 use App\Modules\X215\Actions\DocSignAction;
 use App\Modules\X215\Actions\DocVoidAction;
@@ -23,6 +24,8 @@ class X215Test extends TestCase
     private DocSendForSignatureAction $sendAction;
 
     private DocSignAction $signAction;
+    
+    private DocRemindAction $remindAction;
 
     private DocCommentAction $commentAction;
 
@@ -33,6 +36,7 @@ class X215Test extends TestCase
         parent::setUp();
         $this->sendAction = new DocSendForSignatureAction;
         $this->signAction = new DocSignAction;
+        $this->remindAction = new DocRemindAction;
         $this->commentAction = new DocCommentAction;
         $this->voidAction = new DocVoidAction;
     }
@@ -242,6 +246,45 @@ class X215Test extends TestCase
         $this->assertSame('signed', $doc->status, 'a refused void must not erase a completed signature');
         $request->refresh();
         $this->assertSame('signed', $request->status, 'a refused void must not reopen a signed request');
+    }
+
+    public function test_a_signed_request_cannot_be_reminded(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Signature Authority Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([DocSent::class, DocSigned::class]);
+
+        $originalBody = "HVAC Installation Contract #1042.\nTotal Agreed Price: $4,500.00.\nWarranty: 5 years.";
+
+        $sentResult = $this->sendAction->handle(
+            businessId: $biz->id,
+            title: 'HVAC Master Agreement',
+            contentBody: $originalBody,
+            signerEmail: 'homeowner@example.com',
+            signerName: 'Jane Homeowner'
+        );
+
+        $request = $sentResult['signature_request'];
+
+        $pendingReminder = $this->remindAction->handle($biz->id, $request->id);
+        $this->assertSame('reminder_sent', $pendingReminder['status'], 'a pending request must still be remindable');
+
+        $signResult = $this->signAction->sign(
+            businessId: $biz->id,
+            requestId: $request->id,
+            signatureData: 'data:image/png;base64,signature_jane_hw',
+            currentRenderedContent: $originalBody
+        );
+        $this->assertSame('signed', $signResult['status']);
+
+        $secondReminder = $this->remindAction->handle($biz->id, $request->id);
+        $this->assertSame('refused', $secondReminder['status']);
+        $this->assertSame('SIGNATURE_REQUEST_NOT_PENDING', $secondReminder['refusal_code']);
+        $this->assertFalse($secondReminder['reminded']);
+
+        $request->refresh();
+        $this->assertSame('signed', $request->status, 'a refused reminder must not disturb a signed request');
     }
 
     /**
