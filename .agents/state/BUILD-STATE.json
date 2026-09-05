@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T10:15:15",
+ "updated": "2026-09-05T12:07:11",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -838,6 +838,12 @@
      "stage": "tests",
      "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
      "at": "2026-09-05T08:35:23"
+    },
+    {
+     "module": "X-172",
+     "stage": "X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate)",
+     "why": "",
+     "at": "2026-09-05T12:07:11"
     }
    ]
   },
@@ -1325,6 +1331,12 @@
    "stage": "tests",
    "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
    "at": "2026-09-05T08:35:23"
+  },
+  {
+   "module": "X-172",
+   "stage": "X-172 generated screen test cannot mint a portal token; needs a generator fixture hook (Track 1 owns surfaces:generate)",
+   "why": "",
+   "at": "2026-09-05T12:07:11"
   }
  ],
  "decisions": [
