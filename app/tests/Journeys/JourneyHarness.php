@@ -583,6 +583,20 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @param array<string,mixed> $person */
     private function completeJob(array $tenant, array $person): void
     {
+        $roleId = \Illuminate\Support\Facades\DB::table('roles')->insertGetId([
+            'business_id' => $tenant['id'],
+            'name' => 'technician',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $tech = (new \App\Modules\X113\Actions\StaffInviteAction)->handle(
+            $tenant['id'],
+            'tech'.uniqid().'@example.com',
+            'Tech',
+            $roleId
+        );
+
         $job = Job::create([
             'business_id' => $tenant['id'],
             'person_id' => $person['id'],
@@ -591,8 +605,14 @@ trait JourneyHarness
             'status' => 'committed',
         ]);
 
+        \App\Modules\X162\Models\DispatchAssignment::create([
+            'business_id' => $tenant['id'],
+            'job_id' => $job->id,
+            'tech_id' => $tech->id,
+        ]);
+
         $action = new JobStateAction;
-        $action->updateState($tenant['id'], $job->id, $job->technician_id, 'completed');
+        $action->updateState($tenant['id'], $job->id, $tech->id, 'completed');
     }
 
     /** @param array<string,mixed> $tenant @return array<string,mixed> */
