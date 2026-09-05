@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-04T20:04:53",
+ "updated": "2026-09-04T20:18:47",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1268,6 +1268,24 @@
    "module": "X-155",
    "chose": "G5-30 \u2014 adaptive questions: a step in form_definitions.steps may carry show_if, a map of field => accepted value or list of accepted values, and a step whose show_if is not satisfied by the submitted answers is not shown and its required fields are never enforced; the rule lives in FormAdaptiveStepsAction and FormValidateAction's G2-17 loop walks its output instead of the raw column, so a step with no show_if key keeps today's behaviour and the TEST ANCHOR is unchanged; the rejected alternative of a show_if keyed on a step number was refused because completion is already required's job and the thing a tenant branches on is an answer",
    "at": "2026-09-04T20:04:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G5-30 \u2014 the show_if comparison is normalised for scalars: when the submitted answer and the accepted value are both int, float or string, they are compared as strings, so a JSON-stored int 4 is reached by the '4' an HTTP form posts; every other pair (null, bool, array, object) keeps the strict === it has today, so an absent answer still hides the step and a bool is never matched to an empty string; the rejected alternative of a loose == was refused because it makes null == 0 and '' == 0 true, which would show steps no answer reaches",
+   "at": "2026-09-04T20:17:37",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G5-07 \u2014 describing the form is the wizard: FormGenerateAction turns a plain-language description into a field set by a keyword map that lives in the action, no vendor call and no model, because there is no LLM credential on this track and a generated field set that cannot be reproduced offline cannot be asserted; the field set is an ordered list of name/label/type maps, and the map is applied only after the refusal pass, so a refused ask never becomes a field; the rejected alternative of calling C-Ai was refused because C-Ai belongs to another track and a live model makes the \u2464 refusal untestable",
+   "at": "2026-09-04T20:18:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "G5-07 \u2014 P-148 at the form door: an under-18 signal in a submitted payload prevents the contact row, so the gate sits at the TOP of FormCaptureAction::handle, before the validator runs and before any write, and returns rejected/under_18 with no Person and no FormSubmission whether or not the payload is also spam; the signal is an age key that is numeric and under 18, or a date_of_birth or dob key that parses to under 18 years before now, and nothing else \u2014 an absent, blank or unparseable value is not a signal; the rejected alternative of a new reason inside FormValidateAction was refused because the G3-64 spam branch STORES its row and P-148 forbids the record existing at all; and because the platform must never ask for the age it rejects on, the generator refuses an age or date-of-birth ask as a regulated ask",
+   "at": "2026-09-04T20:18:47",
    "ruling": "R245"
   }
  ]
