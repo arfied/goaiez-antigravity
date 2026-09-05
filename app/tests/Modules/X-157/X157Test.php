@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X157;
 
+use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X121\Models\Asset;
@@ -22,11 +23,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Tests\Concerns\RefreshesTenantDatabase;
 use Tests\TestCase;
 
 class X157Test extends TestCase
 {
-    use \Tests\Concerns\RefreshesTenantDatabase;
+    use RefreshesTenantDatabase;
 
     private EdgeProvisionAction $provisionAction;
 
@@ -465,6 +467,22 @@ class X157Test extends TestCase
     public function test_route_cleared_tenant_returns_404(): void
     {
         Storage::fake('local');
+        $bizA = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+
+        $page = Page::create(['business_id' => $bizA->id, 'title' => 'Home', 'slug' => 'home']);
+        $site = app(SitePublishAction::class)->handle($bizA->id, $page->id, []);
+        $zone = $this->provisionAction->handle($bizA->id, 'acme.com', true);
+        $deploy = $this->deployAction->handle($bizA->id, $zone->id, 120, 1500, $page->id, $site['commit_id'], $bizA->name);
+
+        $bizB = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD']);
+
+        $this->get("/sites/{$bizB->id}/{$deploy['deploy_hash']}")->assertStatus(404);
+    }
+
+    public function test_route_cleared_tenant_returns_200_positive(): void
+    {
+        Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'Edge Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -474,7 +492,7 @@ class X157Test extends TestCase
             'slug' => 'home',
         ]);
 
-        $site = app(\App\Modules\X103\Actions\SitePublishAction::class)
+        $site = app(SitePublishAction::class)
             ->handle($biz->id, $page->id, [
                 ['type' => 'chat'],
                 ['type' => 'form_capture'],
@@ -494,7 +512,6 @@ class X157Test extends TestCase
         );
 
         DB::statement("SELECT set_config('app.business_id', '', true)");
-        $wrongBizId = $biz->id + 1;
-        $this->get("/sites/{$wrongBizId}/{$deploy['deploy_hash']}")->assertStatus(404);
+        $this->get("/sites/{$biz->id}/{$deploy['deploy_hash']}")->assertStatus(200);
     }
 }

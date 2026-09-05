@@ -7,8 +7,8 @@ namespace Tests\Modules\X137;
 use App\Modules\X137\Models\LinkClick;
 use App\Modules\X137\Models\ShortLink;
 use Illuminate\Support\Facades\DB;
-use Tests\TestCase;
 use Tests\Concerns\RefreshesTenantDatabase;
+use Tests\TestCase;
 
 class X137RedirectTest extends TestCase
 {
@@ -53,7 +53,7 @@ class X137RedirectTest extends TestCase
 
         // Break the LinkClick insert by using an Eloquent event
         LinkClick::saving(function () {
-            throw new \Exception("DB Error");
+            throw new \Exception('DB Error');
         });
 
         DB::statement("SELECT set_config('app.business_id', '', true)");
