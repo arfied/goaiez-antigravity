@@ -63,6 +63,11 @@ final class DisputeDefenseEngine
     public function submit(int $businessId, int $disputeId): Dispute
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        if ($dispute->status !== 'compiled') {
+            throw new DisputeNotCompiledException('Compile the evidence first: a dispute is never submitted empty.');
+        }
+
         $dispute->update(['status' => 'submitted']);
 
         return $dispute;
