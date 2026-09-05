@@ -534,3 +534,4 @@ deploy needs. Rejected: deploying to every zone the business has — refused, a
 page has one address, which is the decision recorded on 2026-09-05 for the
 canonical and the schema url, and two domains for one commit reopens it from
 the other end.
+- `2026-09-05T02:20:43` (R245) X-157 — A deploy failure is contained at the listener. The page stays published. Rejected: move the SitePublished dispatch outside SiteEngine's transaction, or register the listener through DB::afterCommit, because every test runs inside RefreshDatabase's outer transaction which never commits, so an afterCommit listener would never run in any test. Rejected: let the deploy failure propagate, because the tenant loses the content as well as the deploy, and the two are separate concerns.
