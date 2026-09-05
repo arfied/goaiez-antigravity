@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Support\Tenancy;
+use Database\Factories\PersonFactory;
 use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
@@ -22,7 +23,7 @@ class MoneyPaidTodayTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Money Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $customer = \Database\Factories\PersonFactory::new()->create(['business_id' => $biz->id]);
+        $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
 
         Invoice::create([
             'business_id' => $biz->id,
@@ -56,7 +57,6 @@ class MoneyPaidTodayTest extends TestCase
         $owner = User::where('email', 'owner2@business.com')->first();
 
         $this->actingAs($owner)->get('/home')
-            ->assertOk()
-            ;
+            ->assertOk();
     }
 }

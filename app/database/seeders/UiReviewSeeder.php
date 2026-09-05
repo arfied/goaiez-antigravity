@@ -338,5 +338,6 @@ class UiReviewSeeder extends Seeder
 
         app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());
         app(ProofNumbers::class)->recompute(ProofNumbers::ALL);
+
     }
 }

@@ -13,8 +13,10 @@ use App\Modules\X103\Models\PageVersion;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
+use App\Modules\X118\Ui\ProspectSignup;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
+use App\Modules\X171\Actions\JobStateAction;
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
@@ -27,6 +29,7 @@ use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 use Symfony\Component\Process\Process;
 
 /**
@@ -74,21 +77,21 @@ trait JourneyHarness
     /** ⛔ P-207: signup asks EXACTLY two fields. A third fails the build. @return array<string,mixed> */
     private function signUp(string $businessName, string $phone): array
     {
-        \Livewire\Livewire::test(\App\Modules\X118\Ui\ProspectSignup::class)
+        Livewire::test(ProspectSignup::class)
             ->set('businessName', $businessName)
             ->set('contactPhone', $phone)
             ->call('startSignup')
             ->assertHasNoErrors();
-            
+
         $user = auth()->user();
         $this->assertNotNull($user);
-        
-        $business = \App\Models\Business::where('owner_user_id', $user->id)->first();
+
+        $business = Business::where('owner_user_id', $user->id)->first();
         $this->assertNotNull($business);
-        
-        $phoneNumber = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('business_id', $business->id)->first();
+
+        $phoneNumber = DB::table('phone_numbers')->where('business_id', $business->id)->first();
         $this->assertNotNull($phoneNumber);
-        
+
         return $business->toArray();
     }
 
@@ -227,32 +230,34 @@ trait JourneyHarness
     private function waitForOutbound(array $tenant, string $to, int $timeoutSeconds): ?array
     {
         $this->guardOutboundSend($to);
-        
-        $customer = \Illuminate\Support\Facades\DB::table('customers')
+
+        $customer = DB::table('customers')
             ->where('business_id', $tenant['id'])
             ->where('phone', $to)
             ->first();
 
         $start = microtime(true);
         while (microtime(true) - $start < $timeoutSeconds) {
-            $query = \Illuminate\Support\Facades\DB::table('outreach_messages')
+            $query = DB::table('outreach_messages')
                 ->where('business_id', $tenant['id'])
                 ->whereNotNull('provider_msg_id')
                 ->orderBy('id', 'desc');
-                
+
             if ($customer) {
                 $query->where('customer_id', $customer->id);
             }
-            
+
             $message = $query->first();
             if ($message) {
                 // The test expects provider_message_id
                 $msgArray = (array) $message;
                 $msgArray['provider_message_id'] = $msgArray['provider_msg_id'];
+
                 return $msgArray;
             }
             usleep(100000);
         }
+
         return null;
     }
 
@@ -261,7 +266,7 @@ trait JourneyHarness
     {
         $start = microtime(true);
         while (microtime(true) - $start < $timeoutSeconds) {
-            $number = \Illuminate\Support\Facades\DB::table('phone_numbers')->where('business_id', $tenant['id'])->first();
+            $number = DB::table('phone_numbers')->where('business_id', $tenant['id'])->first();
             if ($number) {
                 return $number->e164;
             }
@@ -369,7 +374,7 @@ trait JourneyHarness
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
     private function consentWasCheckedFor(string $phone): bool
     {
-        return \Illuminate\Support\Facades\DB::table('send_permits')
+        return DB::table('send_permits')
             ->where('recipient_phone', $phone)
             ->exists();
     }
@@ -407,11 +412,11 @@ trait JourneyHarness
     /** @param array<string,mixed> $person @return list<array<string,mixed>> */
     private function reviewInvitesFor(array $person): array
     {
-        return \Illuminate\Support\Facades\DB::table('outreach_messages')
+        return DB::table('outreach_messages')
             ->where('customer_id', $person['id'])
             ->where('purpose', 'review_request')
             ->get()
-            ->map(fn($row) => (array) $row)
+            ->map(fn ($row) => (array) $row)
             ->toArray();
     }
 
@@ -578,15 +583,15 @@ trait JourneyHarness
     /** @param array<string,mixed> $tenant @param array<string,mixed> $person */
     private function completeJob(array $tenant, array $person): void
     {
-        $job = \App\Modules\X121\Models\Job::create([
+        $job = Job::create([
             'business_id' => $tenant['id'],
             'person_id' => $person['id'],
             'title' => 'Real Job',
             'price_cents' => 10000,
             'status' => 'committed',
         ]);
-        
-        $action = new \App\Modules\X171\Actions\JobStateAction();
+
+        $action = new JobStateAction;
         $action->updateState($tenant['id'], $job->id, $job->technician_id, 'completed');
     }
 

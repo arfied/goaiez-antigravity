@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\X01\Ui;
 
+use App\Models\Conversation;
+use App\Models\Message;
 use App\Modules\X01\Models\ContactTag;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Models\TakeoverLatch;
-use App\Models\Conversation;
-use App\Models\Message;
 use App\Modules\X121\Models\Person as PersonModel;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
