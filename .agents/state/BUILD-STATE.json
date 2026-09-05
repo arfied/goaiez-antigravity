@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T04:12:44",
+ "updated": "2026-09-05T04:30:12",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1610,6 +1610,12 @@
    "module": "X-200",
    "chose": "the 3 percent abandonment ceiling is a column with no arithmetic, abandonment_ceiling_pct is written by the migration and the only reader renders CallCampaign rows without computing a rate, disposeCall has no abandoned path, and a rate and a ceiling check are new surface and stay UNRESOLVED.",
    "at": "2026-09-05T04:12:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-200",
+   "chose": "disposeCall was the only door in X-200 that did not validate the campaign and seat ids it was handed, dialNext and logout and scoreCall all use findOrFail on the same ids, the row was written before the seat lookup so a foreign seat left the real seat in dialing forever and told nobody, and the fix adopts the module existing findOrFail idiom rather than a named refusal class because three sibling doors already read that way.",
+   "at": "2026-09-05T04:30:12",
    "ruling": "R245"
   }
  ]
