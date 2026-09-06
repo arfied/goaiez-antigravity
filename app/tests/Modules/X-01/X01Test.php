@@ -13,15 +13,18 @@ use App\Modules\X01\Actions\ContactCreateAction;
 use App\Modules\X01\Actions\ContactMergeAction;
 use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Actions\ConversationTakeoverAction;
+use App\Modules\X01\Actions\ConversationTakeoverReleaseAction;
 use App\Modules\X01\Actions\SearchGlobalAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
+use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
+use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
@@ -550,7 +553,7 @@ class X01Test extends TestCase
 
     public function test_takeover_release(): void
     {
-        Event::fake([TakeoverStarted::class, \App\Modules\X01\Events\TakeoverReleased::class]);
+        Event::fake([TakeoverStarted::class, TakeoverReleased::class]);
 
         $biz = TestCase::provisionTenant(['name' => 'Release Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -560,10 +563,10 @@ class X01Test extends TestCase
 
         $this->takeover->handle($biz->id, $c->id, 42, 'Operator Alice');
 
-        $action = new \App\Modules\X01\Actions\ConversationTakeoverReleaseAction($this->manager);
+        $action = new ConversationTakeoverReleaseAction($this->manager);
         $action->handle($biz->id, $c->id);
 
-        $latch = \App\Modules\X01\Models\TakeoverLatch::where('business_id', $biz->id)
+        $latch = TakeoverLatch::where('business_id', $biz->id)
             ->where('conversation_id', $c->id)
             ->first();
 
@@ -572,7 +575,7 @@ class X01Test extends TestCase
         $this->assertNotNull($latch->released_at);
 
         // 2. That the ending was published — the event, with whatever you decided it carries.
-        Event::assertDispatched(\App\Modules\X01\Events\TakeoverReleased::class, function ($event) use ($biz, $c) {
+        Event::assertDispatched(TakeoverReleased::class, function ($event) use ($biz, $c) {
             return $event->businessId === $biz->id && $event->conversationId === $c->id;
         });
 
