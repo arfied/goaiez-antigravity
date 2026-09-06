@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X117\Domain;
 
+use App\Modules\X117\Events\CartCheckedOut;
 use App\Modules\X117\Events\InventoryUpdated;
 use App\Modules\X117\Models\Cart;
 use App\Modules\X117\Models\Order;
@@ -97,6 +98,15 @@ final class CheckoutEngine
                 businessId: $businessId,
                 sellableId: $sellable->id,
                 newQuantity: $sellable->inventory_quantity
+            ));
+
+            Event::dispatch(new CartCheckedOut(
+                businessId: $businessId,
+                orderId: $order->id,
+                orderNumber: $order->order_number,
+                totalCents: $totalCents,
+                authToken: $freshAuthToken,
+                customerId: $customerId,
             ));
 
             return [
@@ -222,6 +232,15 @@ final class CheckoutEngine
                     newQuantity: $sellable->inventory_quantity
                 ));
             }
+
+            Event::dispatch(new CartCheckedOut(
+                businessId: $businessId,
+                orderId: $order->id,
+                orderNumber: $order->order_number,
+                totalCents: $totalCents,
+                authToken: $freshAuthToken,
+                customerId: $customerId,
+            ));
 
             $cart->delete();
 
