@@ -1683,3 +1683,47 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     own REVIEWS block** — an unreviewable harness change is the exact shape of the fake green this
     repo keeps finding. Never a standing flag: if the wave does not touch the harness, dispatch
     without it.
+75. **A brief that dictates a line of code has dictated a `pint` result, and a `state.py` run is a
+    commit (RULED by the lane supervisor 2026-09-06 18:1x, on MONEY-82's `15b20f8d`).** MONEY-82's
+    substance passed in full — four commits on named paths, three mutation proofs quoting committed
+    assertions, an empty `git status --short`, phpstan `0`, and §7 landing on the predicted number
+    exactly (`2051 · 2046 · FAILED 2 · errors 3`, all five reds other lanes') — and the tip was
+    BLOCKED on §6 alone. Two files: `binary_operator_spaces` on
+    `X-173/Actions/AccountingSyncAction.php` and `no_whitespace_in_blank_line` on `X173Test.php`.
+    With `git diff --stat HEAD -- app/` **empty**, ruling 34 makes that verdict the sha's and ruling
+    26 refuses the push, so four accepted commits sat unpushed for a style red. ⚠️ **Half the defect
+    was the brief's own**: its fenced code block wrote `$suggested  = $tx['category'] ?? …` with the
+    `=` aligned, which is precisely what `binary_operator_spaces` refuses, and the coder transcribed
+    it faithfully. This is ruling 66 one instrument over — there a dictated *signature* dictated a
+    phpstan error, here a dictated *line* dictated a style error — so: **every fenced code block in a
+    brief is read for alignment, trailing whitespace and blank-line whitespace before the brief
+    ships**, and every brief tells the coder to run `./vendor/bin/pint <touched paths>` **before**
+    each commit, since the gate's `--test` is the sha's verdict and there is no fix mode in it.
+    ⛔ Never resolved by excluding the path or by editing `pint.json` — that is the One Rule.
+    **Second, recorded because it cost a REFUSED line:** MONEY-82 described its item 4 as "two
+    `state.py` lines with **no commit**" while also requiring `git status --short` to print nothing.
+    `state.py` writes two tracked files, so the two demands cannot both hold; the coder reported the
+    contradiction and committed `.agents/state/*` by named path, which is its own column in the role
+    table. **A `state.py` run IS a commit** and every brief says so. ⚠️ Per the ruling 46/49/50/62/66
+    precedent a supervisor-caused defect is a new item with its own two dispatches, so MONEY-83 is
+    1 of 2 and MONEY-82's cap is untouched.
+76. **A true empty state is half of ruling 50(a), and a brief that suggests a string gets that string
+    or something shorter (RULED by the lane supervisor 2026-09-06 18:1x, same review).** MONEY-82
+    replaced two X-173 empty states that described machinery nobody built. The replacements are
+    **true** — `conflicts-list.blade.php:17` *"No line has ever been synced."* and
+    `sync-error-rate.blade.php:9` *"There is no nightly anything."* — and neither names a dependency,
+    which is the other half of ruling 50(a) (*"names what has not happened yet **and what it waits
+    on**"*). Worse, the second is a sentence lifted from the MONEY-82 brief's own argument, addressed
+    to a reviewer: an owner reads that machinery they never asked about is absent, and learns nothing
+    about why their screen is empty. The real answer is one sentence — `AccountingConnectAction`'s
+    door refuses by design because no ledger OAuth credential exists in this checkout (ruling 73).
+    **RULED: that shortfall is PASS-WITH-NOTES-grade, not a BLOCK** — nothing false was introduced,
+    50(a)'s prohibition half holds, and the tip is strictly more honest than its parent — and it is
+    fixed forward, with each **existing** assertion changed rather than added to or deleted (ruling
+    39's companion lesson). ⚠️ The generalisable half is the supervisor's: **a brief that offers a
+    suggested string and then says "write it in your own words" gets the shortest true sentence that
+    clears the test.** Where the copy must carry a specific fact, dictate it verbatim and require the
+    assertion to name the clause carrying the fact — not merely a clause that differs from the old
+    one. ⚠️ Both new assertions also sat at or under that brief's own six-word floor; at 29 characters
+    they are not ruling 61's bare-digit defect and they do measure the change, so they were recorded,
+    not charged.
