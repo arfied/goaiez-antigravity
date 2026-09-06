@@ -85,4 +85,24 @@ class DailyPricingDigestTest extends TestCase
             'is_confirmed' => true,
         ]);
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Digest Seam',
+            'price_cents' => 10000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 477,
+            'refusal_flagged_at' => now(),
+        ]);
+
+        $this->actingAs($owner);
+        $this->get(route('x-163.daily-pricing-digest'))->assertOk()->assertSee('477');
+    }
 }
