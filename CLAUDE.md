@@ -169,6 +169,22 @@ Watch for: <the trap that applies, by name>
 - **An `UNRESOLVED` filing does not lower a count.** It is a record, not a fix;
   the finding stays red. Say the expected number in the brief so the wave is not
   read as a fix that did not land.
+- **Pick the next module by measuring, and reject three classes for cause.** The
+  breakdown of the only clearable class is
+  `grep -B1 'specced but no test names this id' <doctor out> | grep -oE 'X-[0-9]+|C-[A-Za-z]+' | sort | uniq -c | sort -rn`.
+  The head of that list is a trap — the biggest module is usually the emptiest.
+  Before briefing one, reject it if: (a) `ls app/app/Modules/<id>` shows only
+  `capabilities.php manifest.php seeds.yml`, i.e. no system exists and every id
+  is an UNRESOLVED filing that moves nothing (X-221, 31 ids); (b) its ids are
+  `N-0??` carrying a companion `this capability id has NO row in the tracker or
+  the plan`, or its rows all hold the *same* boilerplate law paragraph — naming
+  either is authoring the ⑤ (P-210) (X-129/X-143/X-147/X-165/X-173/X-175;
+  X-128/X-145/X-150); (c) the module has code but **the schema has no column for
+  the ⑤** — read the migration, not the Actions. X-182 has three real Actions and
+  still only one reachable id, because `social_posts` has no `scheduled_at`,
+  `comments` has no `conversation_id`, and the stock-photo refusal lives in a
+  `SocialEngine` stub no Action calls. **An engine method that takes the answer
+  as its argument (`refreshOnFatigue(bool $isFatigued)`) is not a seam.**
 - **No background waiter, on either side.** S-87's coder left
   `wait_and_write.sh` — `while true; sleep 5` polling a log, with `\$` escaped so
   its `break` was unreachable — running after its work finished at 15:54. The
