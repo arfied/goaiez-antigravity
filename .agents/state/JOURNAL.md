@@ -805,3 +805,5 @@
 - `2026-09-06T08:25:57` X-137 -> DONE
 - `2026-09-06T08:25:57` note: X-137 phone_numbers UNRESOLVED withdrawn (REV-61): the creating migration is app/database/migrations/2026_08_09_142534_create_phone_numbers_table.php and the test database was simply unmigrated; not a missing dependency per rule 09
 - `2026-09-06T08:25:57` note: X-201 phone_numbers UNRESOLVED withdrawn (REV-61): same cause; X-201 remains UNRESOLVED on its standing deadline_at entry, which is untouched
+- `2026-09-06T08:42:38` UNRESOLVED tests X-01 - test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) instead of the capability text 'the unified inbox is the header's first line', which X-01 was never specced to enforce.
+- `2026-09-06T08:42:49` UNRESOLVED tests X-01 - G2-76: The test test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) while the capability text is 'the unified inbox is the header's first line'. The module was never specced to enforce this table naming rule.

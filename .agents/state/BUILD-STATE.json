@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T08:25:57",
+ "updated": "2026-09-06T08:42:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -424,10 +424,23 @@
    "unresolved": []
   },
   "X-01": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 6,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-01",
+     "stage": "tests",
+     "why": "test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) instead of the capability text 'the unified inbox is the header's first line', which X-01 was never specced to enforce.",
+     "at": "2026-09-06T08:42:38"
+    },
+    {
+     "module": "X-01",
+     "stage": "tests",
+     "why": "G2-76: The test test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) while the capability text is 'the unified inbox is the header's first line'. The module was never specced to enforce this table naming rule.",
+     "at": "2026-09-06T08:42:49"
+    }
+   ]
   },
   "X-07": {
    "status": "DONE",
@@ -1403,6 +1416,18 @@
    "stage": "tests",
    "why": "relation phone_numbers does not exist",
    "at": "2026-09-06T08:11:25"
+  },
+  {
+   "module": "X-01",
+   "stage": "tests",
+   "why": "test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) instead of the capability text 'the unified inbox is the header's first line', which X-01 was never specced to enforce.",
+   "at": "2026-09-06T08:42:38"
+  },
+  {
+   "module": "X-01",
+   "stage": "tests",
+   "why": "G2-76: The test test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) while the capability text is 'the unified inbox is the header's first line'. The module was never specced to enforce this table naming rule.",
+   "at": "2026-09-06T08:42:49"
   }
  ],
  "decisions": [
