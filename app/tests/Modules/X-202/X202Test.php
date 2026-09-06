@@ -239,7 +239,6 @@ class X202Test extends TestCase
         Event::assertDispatchedTimes(ApprovalDecided::class, 3);
     }
 
-
     /**
      * [G12-09] thirty graphics, one decision
      */

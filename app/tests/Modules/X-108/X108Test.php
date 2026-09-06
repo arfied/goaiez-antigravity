@@ -114,7 +114,6 @@ class X108Test extends TestCase
         );
     }
 
-
     /**
      * [G2-04] Google/Outlook calendars; the header already owns Calendly/Eventbrite sync
      */
