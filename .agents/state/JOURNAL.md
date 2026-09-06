@@ -878,3 +878,17 @@
 - `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-19 — X-200 exposes no Twilio or Infobip primary surface.
 - `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G21-13 — X-200 exposes no closed deal on the wallboard or channel surface.
 - `2026-09-06T17:13:02` (R245) X-200 — (R245) X-200 — 11 ASSERT, 0 REFUSE, 10 UNRESOLVED of twenty-one; capability ids are never deleted from the generated capabilities.php and never marked by editing it — a refusal is a test, an UNRESOLVED is state.py unresolved (REV-89)
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-47 - missing idempotency key on restoreStockFromCancellation
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-49 - missing serial column on stock_items
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G2-24 - stock_items carries a barcode column but no scan action
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-08 - stock_items carries a barcode column but no barcode generation action
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-18 - missing multi-warehouse shipping surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-22 - missing Shopify/WooCommerce stock sync surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-24 - missing retail stock across locations surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G17-15 - missing in-browser barcode scan surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G19-02 - missing parcel rates surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G1-76 - missing partial receipt and PO open/close surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G1-79 - missing PO receipt reconciliation surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-39 - missing job completion reconciliation surface
+- `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-43 - missing kit decrement surface
+- `2026-09-06T17:32:43` (R245) X-167 — (R245) 4 ASSERT, 0 REFUSE, 13 UNRESOLVED of seventeen; an id may be attached to an existing test only when that test would go red if the id's promise broke - a docblock tag that cannot fail closes the checker and covers nothing (REV-90)
