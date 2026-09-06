@@ -218,6 +218,25 @@ Watch for: <the trap that applies, by name>
   8) and the total `220` did not — the block says so in those words. A method exact on five
   independently checked rows is a method; a total nobody can re-run is still a total nobody can
   re-run, and the ledger should not blur the two.
+- ⚠️ **A measurement whose rule is not the checker's rule cannot move the checker's count — read
+  the stage's own predicate before briefing work off any pile.** `CapabilityStage::testedIds`
+  (`app/app/Doctor/Stages/CapabilityStage.php:279-292`) globs `tests/Modules/{module}/*.php` and
+  regexes `\b(G\d+-\d+|N-\d+(-\d+)?)\b` over the **whole file contents**, so **an id named in a
+  docblock counts as tested.** Wave 77's `scratch/measure_w77.py` used a stricter rule — an id is
+  covered only on a line that does not start with `//`, `*`, `/*` or `#` — which is a defensible
+  rule and *not* doctor's. It reported C-Mail `0 covered / 22 missing`; measured at tick 169,
+  `comm -23` of C-Mail's 22 declared ids against the pre-wave test dir (`e6ffd5fd~1`) is **empty**,
+  so doctor already counted all 22 and the wave targeted the one module in the thirteen where
+  `capability` had nothing to gain. It duly did not move: full-doctor total `745` at tick 167
+  (19:25, pre-work) and `745` at tick 169 (post-work). **Two rules follow.** (i) Before briefing a
+  pile, re-derive one row under the *stage's* predicate — the gap here was 107 vs 8 across the same
+  thirteen modules. (ii) A brief that says "re-run script X's rule" has chosen a rule; name the
+  predicate you want instead, and prefer the checker's own `fix:` text — here *"a test whose name or
+  attribute carries '{id}'"*, which satisfies both rules at once.
+  ⚠️ **The stricter rule is still the more valuable measurement, so do not discard it.** That
+  ~99-id gap across the thirteen is real: those ids are green at doctor on a comment alone — the
+  `green by construction` shape. Strengthening `CapabilityStage` is a **CHECK** change and therefore
+  an `OWNER ACTION`, never a coder task and never this column's.
 - **`JOURNEYS n/12 green` in `state.py status` is a hand mark**
   (`state.py journey Jn green`), not a test result. All twelve were marked
   green on 2026-08-29/30 before any harness that could pass existed, and the
