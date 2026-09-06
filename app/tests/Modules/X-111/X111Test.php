@@ -189,4 +189,26 @@ class X111Test extends TestCase
 
         $this->assertGreaterThanOrEqual(8, $controlCount);
     }
+
+    /**
+     * [G5-18] the HELP path; reply HUMAN always escalates (R37)
+     */
+    public function test_g5_18_help_path_always_escalates(): void
+    {
+        Event::fake([TicketOpened::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Help Path Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $t1 = $this->ticketAction->handle($biz->id, '<a transcript>', 'billing');
+        $t2 = $this->ticketAction->handle($biz->id, '<a different transcript>', 'general');
+
+        $this->assertSame('billing', $t1->category);
+        $this->assertSame('general', $t2->category);
+
+        Event::assertDispatchedTimes(TicketOpened::class, 2);
+
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t1->id && $e->source === 'human_requested');
+        Event::assertDispatched(TicketOpened::class, fn (TicketOpened $e) => $e->ticketId === $t2->id && $e->source === 'human_requested');
+    }
 }
