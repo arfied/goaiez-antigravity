@@ -170,7 +170,7 @@
 | G3-08 | Automatic Refresh | ENH | X-134 | SPECCED | a 90-day re-ping; staleness is `fetched_at`, never an eviction (P-143) |
 | G3-09 | Autonomous Follow-up | ENH | X-105 | SPECCED | named in the header |
 | G3-10 | Bulk Extraction | ENH | X-16 | SPECCED | named in the header |
-| G3-11 | Callback Tracking | ENH | X-137 | SPECCED | every visitor gets a call token;  CallTrackingMetrics is corpus vocabulary |
+| G3-11 | Callback Tracking | ENH | X-137 | SPECCED | every visitor gets a call token;  CallTrackingMetrics is corpus vocabulary; with the pool exhausted, the page renders the **static fallback number** and the session is marked `unattributed` — ⛔ **never a reused token**, asserted by forcing exhaustion |
 | G3-12 | Captcha Evasion | ENH | X-109 | SPECCED | P-144 — solved ONLY here, on the tenant's own key; a scrape that meets one retries 3× then skips |
 | G3-13 | Competitor Backlink Poaching | ENH | X-191 | SPECCED | named in the header |
 | G3-14 | Competitor Density Scoring | ENH | X-16 | SPECCED | a distress signal, never a send permit (P-068) |
@@ -453,7 +453,7 @@
 | G8-10 | Custom Fields & Schemas | ENH | X-194 | SPECCED | named in the header; the JSONB column is X-121's |
 | G8-11 | Domain Authority Filtering | ENH | X-191 | SPECCED | named in the header |
 | ~~G8-12~~ | Dynamic Keyword Insertion | KILLED | - | PURGED | cloaking risk - killed by the owner at T677 (section 190.3); X-116's distinct local pages carry the job |
-| G8-13 | Dynamic Number Swapping | ENH | X-137 | SPECCED | DNI — every visitor gets a call token |
+| G8-13 | Dynamic Number Swapping | ENH | X-137 | SPECCED | DNI — every visitor gets a call token; with the pool exhausted, the page renders the **static fallback number** and the session is marked `unattributed` — ⛔ **never a reused token**, asserted by forcing exhaustion · ⚠️ *CallTrackingMetrics is corpus vocabulary* |
 | G8-14 | Dynamic Product Schema | ENH | X-176 | SPECCED | product schema from the pricebook, invalidated in the same commit |
 | G8-15 | Event Auto-Sync | ENH | X-176 | SPECCED | `Event` schema from X-108's calendar |
 | G8-16 | FAQ Schema Extraction | ENH | X-176 | SPECCED | named in the header |
@@ -676,7 +676,7 @@
 | G13-02 | Activity Heatmaps | ENH | X-200 | SPECCED | the wallboard;  team-level operational state only — T677 bars the punitive read |
 | G13-03 | AI Token Arbitrage | ENH | C-Billing | SPECCED | 8:1 over cent-precision true cost, DERIVED, never typed |
 | G13-04 | Automatic Appending | ENH | X-138 | SPECCED | a pasted URL gets its UTM and its short link (P-072) |
-| G13-05 | Bot Fingerprinting | ENH | X-155 | SPECCED | spam and bot filtering is named in the header |
+| G13-05 | Bot Fingerprinting | ENH | X-155 | SPECCED | spam and bot filtering is named in the header; a rejected submission is STORED and flagged, never discarded — asserted by rejecting one and finding the row; the tenant can see and release it |
 | G13-06 | Click-Level Attribution | ENH | X-138 | SPECCED | attribution is a query over the action log |
 | G13-07 | Cold Storage Hashing | ENH | X-203 | SPECCED | the minted desk's first mechanism — a restore that cannot prove itself is not a backup |
 | G13-08 | Competitor Tracking | ENH | X-144 | SPECCED | competitor benchmarks are named in the header; the geo-grid is X-177's, metered |
@@ -686,7 +686,7 @@
 | G13-12 | Cross-Domain Tracking | ENH | X-110 | SPECCED | the chat's context updates from the page (X-102) |
 | G13-13 | Dwell Time Filtering | KILLED → X-110 | X-110 | SPECCED | §44 · P-128 — a filter on ad delivery is ad management |
 | G13-14 | Engagement Tracking | ENH | X-172 | SPECCED | when the customer opened the document, in the portal |
-| G13-15 | Exit Intent RAG | ENH | X-102 | SPECCED | the pixel triggers; the chat answers grounded (X-119) |
+| G13-15 | Exit Intent RAG | ENH | X-102 | SPECCED | the pixel triggers; the chat answers grounded (X-119); an exit-intent answer containing an ungrounded price **refuses instead** *(P-092)* — asserted with the pricebook empty |
 | G13-16 | First vs. Last Click | ENH | X-138 | SPECCED | both stored; the model is a query, not a pipeline |
 | G13-17 | Heatmap Overlay | ENH | X-194 | SPECCED | revenue on the territory map; the polygons are X-10's |
 | G13-18 | Identity Resolution | ENH | X-132 | SPECCED | Clearbit Reveal is corpus vocabulary;  P-068 — a company name is a signal, not a permit |
@@ -695,7 +695,7 @@
 | G13-21 | Link Tracking | ENH | X-138 | SPECCED | every link rides the short-linker; no module can send an untracked one (P-072) |
 | G13-22 | Offline Event Uploads | ENH | X-139 | SPECCED | named in the header —  the one-way push is explicitly NOT fenced (P-128) |
 | G13-23 | Offline Link Tracking | ENH | X-138 | SPECCED | QR for print unpacks to a full UTM |
-| G13-24 | Offline Tracking | ENH | X-137 | SPECCED | a static number per offline campaign |
+| G13-24 | Offline Tracking | ENH | X-137 | SPECCED | a static number per offline campaign; a number cannot be assigned to a second live campaign — the assignment is refused, asserted |
 | G13-25 | Pixel Deanonymization | ENH | X-132 | SPECCED | the six-tier waterfall with per-field confidence (P-147) |
 | G13-26 | Pixel Detection | ENH | X-134 | SPECCED | a prospect's installed pixels as an enrichment field |
 | G13-27 | Pixel Diagnostics | ENH | X-110 | SPECCED | watching the tenant's OWN tags fire is not ad management |
@@ -797,7 +797,7 @@
 | G16-18 | Photo EXIF Injection | KILLED → X-189 | X-189 | SPECCED | Q-012 — Google is the SEO source. The EXIF-geotag myth was settled in the corpus by citing Google's own eng… |
 | G16-19 | Quote Graphic Generation | ENH | X-189 | SPECCED | the branded card |
 | G16-20 | Rich Media Hub | ENH | X-114 | SPECCED | transcoding to each channel's limits · ⛔ **REFUSES with OVER_LIMIT** |
-| G16-21 | Rich Media Support | ENH | X-102 | SPECCED | carousels rendered in the chat |
+| G16-21 | Rich Media Support | ENH | X-102 | SPECCED | carousels rendered in the chat; a missing asset renders text, never a broken placeholder *(the never-fails image law)*, asserted |
 | G16-22 | Short-Form Script Extraction | ENH | X-158 | SPECCED | three cuts from the long form |
 | G16-23 | Timestamped Chapters | ENH | X-158 | SPECCED | topic changes detected in the audio |
 | G16-24 | Video Frame Annotation | ENH | X-202 | SPECCED | a comment at a timestamp IS a pending decision |
@@ -865,7 +865,7 @@
 | G18-14 | Post-Call CSAT Survey | ENH | C-Reviews | SPECCED | CSAT on resolve is named in the header |
 | G18-15 | Queue Position Announcements | ENH | X-200 | SPECCED | live queue state; the AI answers first (R11/R20) |
 | G18-16 | Talk-to-Listen Ratio | ENH | X-200 | SPECCED | T677 — a coaching signal only |
-| G18-17 | Telephony Call Whisper | ENH | X-137 | SPECCED | the whisper names the SOURCE — that is what call tracking is for |
+| G18-17 | Telephony Call Whisper | ENH | X-137 | SPECCED | the whisper names the SOURCE — that is what call tracking is for; the whisper audio is asserted present on the agent leg and **absent on the caller leg**, in one test on a real bridge |
 | G18-18 | Telephony Router | ENH | C-Telephony | SPECCED | the router and the eight adapters are the header |
 | G18-19 | Twilio Power-Dialing | ENH | X-200 | SPECCED | Twilio is corpus vocabulary — Infobip primary (§120–§122) · refuses: to treat Twilio as primary — Infobip is primary (§120–§122) |
 | G18-20 | VIP Skipping | ENH | C-Telephony | SPECCED | LTV read from C-Billing; the bypass is a routing rule |
