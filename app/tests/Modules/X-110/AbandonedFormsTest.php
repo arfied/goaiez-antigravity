@@ -111,7 +111,7 @@ class AbandonedFormsTest extends TestCase
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->call('recover', $event->id)
-            ->assertSee('Draft saved (sending not wired yet)');
+            ->assertSee('drafted (sending not wired yet)');
 
         Event::assertNotDispatched(\App\Modules\CSms\Events\SendRequested::class);
         Event::assertNotDispatched(\App\Modules\X127\Events\SendRequested::class);
