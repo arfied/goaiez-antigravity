@@ -87,6 +87,8 @@ final class GatewayEngine
                     $gatewayChargeId = app(StripeGatewayClient::class)->charge($amountCents, $paymentToken, $currency);
                 }
 
+                $status = $gatewayChargeId !== null ? 'captured' : 'awaiting_processor';
+
                 $payment = Payment::create([
                     'business_id' => $businessId,
                     'merchant_connection_id' => $connection->id,
@@ -95,7 +97,7 @@ final class GatewayEngine
                     'currency' => $currency,
                     'payment_token' => $paymentToken,
                     'idempotency_key' => $idempotencyKey,
-                    'status' => 'pending',
+                    'status' => $status,
                 ]);
 
                 Event::dispatch(new PaymentCaptured(

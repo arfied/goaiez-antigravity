@@ -67,7 +67,7 @@ class X198Test extends TestCase
         $this->assertEquals(5000, $pay1->amount_cents);
         // (R245) owner ruling 10 (2026-09-02)
         $this->assertNull($pay1->gateway_charge_id, 'Charge id is null unless the gateway returned one');
-        $this->assertEquals('pending', $pay1->status);
+        $this->assertEquals('awaiting_processor', $pay1->status);
         Event::assertDispatched(PaymentCaptured::class);
 
         // 2. Tenant payout isolation: tenant payment links only to tenant merchant connection
@@ -105,7 +105,7 @@ class X198Test extends TestCase
 
         $conn = $this->connectAction->handle($biz->id, 'square', 'sq_acct_888');
         $p = $this->captureAction->handle($biz->id, 2500, 'sq_tok_abc', 'idem_sq_1');
-        $this->assertEquals('pending', $p->status);
+        $this->assertEquals('awaiting_processor', $p->status);
     }
 
     /**
@@ -202,9 +202,48 @@ class X198Test extends TestCase
         $payment = $this->captureAction->handle($biz->id, 3000, 'tok_success', $idempotencyKey);
 
         $this->assertEquals('ch_stub_money60', $payment->gateway_charge_id);
-        $this->assertEquals('pending', $payment->status);
+        $this->assertEquals('captured', $payment->status);
 
         $count = Payment::where('business_id', $biz->id)->count();
         $this->assertEquals(2, $count, 'Expected two rows: one failed and one charged.');
+    }
+
+    public function test_a_successful_charge_is_captured_not_pending(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Success Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            {
+                return 'ch_stub_money61';
+            }
+        });
+
+        $payment = $this->captureAction->handle($biz->id, 1000, 'tok_123', 'idemp_456');
+
+        $this->assertEquals('ch_stub_money61', $payment->gateway_charge_id);
+        $this->assertEquals('captured', $payment->status);
+    }
+
+    public function test_a_payments_row_written_without_a_status_is_awaiting_processor(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Default Status Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $id = DB::table('payments')->insertGetId([
+            'business_id' => $biz->id,
+            'amount_cents' => 1000,
+            'payment_token' => 'tok_123',
+            'idempotency_key' => 'idemp_456',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $row = DB::table('payments')->find($id);
+        $this->assertEquals('awaiting_processor', $row->status);
     }
 }
