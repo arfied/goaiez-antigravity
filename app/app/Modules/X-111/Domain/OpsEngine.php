@@ -77,8 +77,4 @@ final class OpsEngine
         );
     }
 
-    public function enforceOpsConsoleCapabilities(): bool
-    {
-        return true;
-    }
 }
