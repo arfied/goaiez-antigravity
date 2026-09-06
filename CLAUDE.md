@@ -325,6 +325,40 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   is never the whole column** — the same blind spot applies to any track
   reasoning from module paths alone.
 
+  ⛔ **The census has a SECOND half, and it is not optional** (tick 164). Even
+  with both `app/app/` and `app/tests/Modules/`, all fourteen paths print nothing
+  for a commit that writes this track's column from a *shared* directory. Run
+  this too, every HOLD tick:
+
+  ```
+  git log --format='%h %ci %s' ^origin/main ^origin/track/site \
+    origin/track/money origin/track/pricebook origin/track/reviews \
+    origin/track/sixty origin/track/stages origin/track/ui \
+    -- app/database/migrations app/tests/Journeys
+  ```
+
+  It is short (eleven commits total on 2026-09-05) and it does not have to print
+  nothing — other tracks legitimately migrate. Read the new entries and attribute
+  them. It is what found `1aa65e7a` (`track/sixty`, 18:16:25, one file under
+  `app/database/migrations/`, `chore(X-103): drop unused site law flags`), which
+  the fourteen module paths had hidden for 4 h 4x m. Same lesson as tick 163
+  stated for a single claim, now stated for the standing query: **a module's
+  footprint is not confined to its module directory.**
+
+  ⚠️ **Another track's "zero readers/writers" is measured on its own branch**
+  (tick 164, OWNER ACTION 47). `1aa65e7a` drops five `page_versions` booleans —
+  `chat_installed form_capture_installed dni_installed seo_tags_installed
+  schema_installed` — asserting they have no readers. True on `track/sixty`;
+  false on `main`, which gained the writer (`X-103/Domain/SiteEngine.php:51-55`,
+  in `publish()`), the casts (`PageVersion.php:18-20`) and the assertions
+  (`X103Test.php:156-158`, `X157Test.php:202-204`) *after* the merge-base
+  `2bd2b926`. That is the verify-the-bound-not-the-direction trap committed by
+  another track, and its own grep cannot see it. The drop sorts after X-103's
+  `2026_09_0*_000000_*` migrations, so a Track 1 merge of sixty leaves
+  `publish()` inserting five dropped columns — X-103 and X-157 red, X-157 being
+  J11's serving path. Advisory to Track 1; **do not brief a parallel fix**, the
+  file is sixty's.
+
   ⚠️ **Two things that query gets wrong on its own** (tick 147):
 
   1. **It lists merges that changed nothing here.** One of the five,
