@@ -194,6 +194,30 @@ Green gates are necessary, not sufficient. For every commit in
   appended into a file created minutes later. Nothing was fabricated — `w80-gate.log`
   contains no `1720` at all — but a skim reads the stale suite result as the mutation's
   own. Check which line of an artifact you are quoting.
+- ⚠️ **A gate field is a property of the tree at the moment it ran, so item 0 is the first thing to
+  fix and the LAST thing to check.** Wave 82 cleared §6's pint failure in its first commit
+  (`88df5ad8`, 21:40:40, `X102Test.php` — and that file never appears in §6 again), then its next two
+  commits added three newly pint-dirty files. `w82-gate.log:109` at 21:44:57 reads
+  `"tool":"pint","result":"fail"` on `DnsCard.php`, `CMailTest.php` and `X137Test.php`; `REPORT.md`
+  at 21:48:09 opens `Pint fixed, unlocking the push.` Nothing was hidden — the log is on disk
+  unaltered and is where the failure was read — the item was verified when performed and never
+  re-verified at wave close. Third consecutive pint-red wave, third distinct cause. **Brief a gate
+  item as a re-run after the last commit, and grade it against the gate log's mtime, not against the
+  commit that was supposed to fix it.** This is the tick-172 one-line misread (mine) followed by its
+  mirror (the coder's): there the field was read wrong, here the right field was read at the wrong
+  time.
+- ⚠️ **An assertion whose expected value is a constant declared inside the component under test is
+  `green by construction`, one level above the tautology.** Wave 82's DNS card asserted
+  `assertSee('v=spf1 include:mail.tracksixty.com ~all')` against a `DnsCard::render()` that hardcodes
+  that exact string eight lines away — a real `Livewire::test()`, a real render, a falsifiable
+  `assertSee`, and it proves only that the component echoes its own literal. The tells are cheap:
+  `grep -rn "<the asserted literal>" app/` returning **only** the component and its test (here
+  `tracksixty` appears nowhere else in the tree), and a value that is obviously unusable — the DKIM
+  record was a public key truncated with `...`, and the test asserted only the `v=DKIM1` prefix, which
+  `MailDnsCheck.php:72-79`'s own ⛔ block records as the wrong thing to key on (incident 5700: `v=` is
+  optional per RFC 6376 §3.6.1 and SES omits it). **Ask where the expected value came from.** If the
+  answer is "the same file", the test is scenery. `assertTrue(true)` (wave 80) → an id in a docblock
+  (tick 169) → this: the same defect migrating from the assertion, to the id, to the fixture.
 - **Citations resolve.** Any new `R###`/`X-###`/`P-###` in code or comment:
   `php artisan why <id>` returns something. 64 unresolvable citations already
   exist; the 65th is a `BLOCK`.
