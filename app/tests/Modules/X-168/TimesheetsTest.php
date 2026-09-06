@@ -147,4 +147,29 @@ class TimesheetsTest extends TestCase
 
         $this->assertDatabaseHas('timesheets', ['id' => $sheet->id, 'status' => 'open']);
     }
+
+    public function test_seeded_timesheet_reaches_the_page(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Timesheet::create([
+            'business_id' => $biz->id,
+            'person_id' => $user->id,
+            'period_start' => '2026-08-25',
+            'period_end' => '2026-08-31',
+            'total_hours' => 7.75,
+            'status' => 'open',
+            'is_sample' => false,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('x-168.timesheets'))
+            ->assertOk()
+            ->assertSee('7:45');
+    }
 }
