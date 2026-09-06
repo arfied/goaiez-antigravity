@@ -2516,3 +2516,171 @@ wave, and ⛔ never a parallel fix. Same shape as tick 182's pricebook/X-172 not
 returns lines the lane does not own. Tick 208 ruled that a brief's enumerated
 scope is where the regression sits; this is the converse — an over-wide scope
 returns work that is not the lane's, and only reading the subject separates them.
+
+## ⛔ RETRACTED at tick 212 — TRACK 1 ACTION 1 is ALIVE. A writer that EXISTS is not a writer that RUNS (tick 212)
+
+Tick 211 closed TRACK 1 ACTION 1 as "DEAD, not blocked", reasoning that
+`JourneyHarness.php:693` reads the column's **value**, so once main's
+`EdgeDeployAction` wrote that value truthfully J11 would go green "with no edit to
+the guard-refused file". The merge landed and **J11 is still red**:
+
+```
+a_published_site_carries_all_seven
+A published site shipped WITHOUT ssl. Every site carries all seven.
+Failed asserting that false is true.
+```
+
+Measured on the merged tree. `EdgeDeployAction`'s only caller is
+`X-157/ModuleServiceProvider.php:113`, inside an `Event::listen(SitePublished…)`
+whose first act is
+
+```php
+$zone = EdgeZone::where('business_id', …)->where('has_valid_ssl', true)->latest('id')->first();
+if ($zone === null) { return; }
+```
+
+and the harness's `publishSite()` (`:667-696`) creates a `Page`, calls
+`SiteEngine::publish()`, and **provisions no `EdgeZone` at all**. So the listener
+returns early, no deploy runs, the derivation at `EdgeDeployAction:35-36` never
+fires, and `ssl_installed` stays at main's migration default — `false`, correctly.
+J11 is red **for the right reason** and no truthful writer in this lane's column
+can change that: publish is not deploy, and a site with no provisioned edge
+genuinely has no SSL.
+
+⛔ **The generalisation, and it is the one tick 211 needed.** Tick 195's law — *a
+blocked item's substance can be deliverable somewhere the block does not reach* —
+is true, and tick 211 applied it to a **writer's existence** rather than to the
+**reader's execution path**. Before closing a blocked item because "something else
+writes it now", trace the path from the *reader's own fixture* to that writer and
+confirm every guard between them is satisfied. `grep` finds the writer; only the
+path says whether the fixture reaches it. Same family as tick 206's *a mutation
+proof shows an assertion is REACHABLE, not that it asserts its CLAUSE* — here the
+code is reachable in principle and unreached in fact.
+
+✅ The remedy is unchanged and still one line in the guard-refused file: give
+`publishSite()` a provisioned `EdgeZone` (this lane's `EdgeProvisionAction`
+already writes `has_valid_ssl`), or take ruling 16's graft and assert the seven on
+the served 200/404 pair as `X157Test.php:604` already does. Two dispatches spent,
+a third forbidden → **TRACK 1 ACTION 1, re-opened.**
+
+## ⛔ `git merge --no-ff` without `--no-commit` deletes the restore window (tick 212)
+
+The charter's merge procedure is `git merge --no-ff --no-commit`, restore the
+per-track paths, *then* commit. Tick 211's brief wrote `git merge --no-ff`. The
+merge auto-committed, and by the time anyone could restore anything the per-track
+files were already in a commit — which the coder correctly reported and could not
+amend (`git commit --amend` is refused by the coder guard, properly).
+
+Three per-track files came across in that commit, none of them conflicting, none
+of them producing any signal:
+
+| file | what main's version did |
+| :-- | :-- |
+| `bin/supervise.sh` | deleted `TRACK_DB` — §7 stops exporting this lane's database and falls back to `phpunit.xml`; also reverted the worktree-correct `rev-parse --git-path` hook probe and the per-track `last-pest-<root>.json` |
+| `.agents/supervisor/launch-coder.sh` | deleted `--status` (every liveness probe becomes `REFUSED: unknown argument`, exit 1) **and** the `GOAIEZ_PUSH_OK` derivation (the push gate reaches the coder guard UNSET) |
+| `.claude/settings.json` | moved `Edit/Write(bin/state.py)` **deny → allow**, and added `Edit(//home/goaiez/agents/coder-bin/git)` |
+
+⛔ **This is tick 211's own `merge=ours` finding, walked into one tick later.** 211
+recorded the mechanism exactly — *a per-track file that only `main` changed is
+taken in full silence, no driver, no conflict, no line in the merge output* — and
+then predicted the affected set by diffing merge-base against main and naming
+`.claude/settings.json` alone. The prediction was **wrong on two of three files**,
+and being wrong was invisible until after the commit. The rule that survives is
+not "predict better": it is **`--no-commit`, always, so the restore step exists at
+all.** A measurement that decides whether a restore is needed must never be the
+only thing standing between a merge and a commit.
+
+⚠️ **And the direction was wrong too.** 211 read main's settings.json as *"moving
+`Edit(bin/state.py)`/`Write(bin/state.py)` from `allow` to `deny`, a tightening —
+take it."* It is the exact opposite: deny → **allow**, plus a new
+`Edit(//home/goaiez/agents/coder-bin/git)` allowing this seat to edit the **shared
+coder guard** — the "patch the thing that is refusing you" act tick 197 catalogued
+as the BLOCK side of the disclosure line. Neither is used here and neither should
+be. ⛔ **Read a permission diff by quoting both lists, never by narrating the
+hunk** — `allow` and `deny` are adjacent arrays of near-identical strings, and a
+`-`/`+` pair reads the same in both directions.
+
+## ✅ `git checkout` and `git restore` are DENIED to this seat — restore by inverse-diff (tick 212)
+
+Both are on `.claude/settings.json`'s deny list, so the charter's own restore step
+(`git checkout HEAD -- <path>`) cannot be executed from the supervisor seat. It
+does not follow that the restore is the coder's job: `bin/supervise.sh` and
+`.agents/supervisor/**` are `Write`-allowed by name, and the *coder* guard refuses
+them. The accepted procedure, used at tick 212 on both files:
+
+1. `git diff HEAD~1 HEAD -- <path>` to get the hunks verbatim.
+2. `Read` the file, then `Edit` the **inverse** of each hunk. ⛔ Never retype a
+   gate script from `git show` — a transcription slip in `supervise.sh` is a
+   silently wrong gate, which is worse than the regression being repaired.
+3. **Prove it**: `git diff HEAD~1 -- <paths>` must print **nothing**. That is the
+   byte-identity check, and it is the whole verification.
+4. Exercise the repaired path (`launch-coder.sh --status` → `DEAD: no coder…`).
+
+⛔ `.claude/settings.json` is **not** `Write`-allowed and cannot be repaired from
+either seat — the coder guard refuses `.claude/**` and this seat has no `Edit`
+grant. It is a TRACK 1 ACTION, and until it is answered this lane's supervisor
+guard is one merge looser than it was written to be.
+
+## ⛔ A doctor violation whose only two fixes are BOTH regressions is a CHECK defect (tick 212)
+
+X-110's three unfiled `contract` lines were measured to the plan at tick 212, and
+neither is this lane's to fix. Both matter more as a shape than as a filing.
+
+**① `@provides pixel.install` · `pixel.events` — "does not declare whether the
+agent may reach it".** `ContractStage:405-435` clears a provided action only if it
+appears in `agent_reachable`, or if the list contains the single token `none`. The
+plan's convention is a **partial allow-list** — `GOAIEZ-MASTER-PLAN.md:26300`
+declares X-110's as exactly `` `pixel.verify` ``, with the standing gloss
+*"DERIVED, never guessed: read-shaped and proposal actions only. **Anything that
+spends, sends, deletes or changes config is NOT reachable**"* — and
+`X-110/manifest.php:68-70` reproduces it byte for byte. So the manifest is
+**already correct** and the check reports it anyway. The only two ways to clear it
+are to add `pixel.install` to the allow-list (widening the agent onto a
+config-changing action, which P-209 forbids by name) or to declare `none` (dropping
+`pixel.verify`, contradicting the plan). ⛔ **When every available fix for a red
+line is a regression, the line is the check's defect and the remedy is a filing** —
+and the *naive* fix here is a security loosening dressed as a doctor fix, which is
+the fake-green family one level up. Never brief "clear the agent_reachable
+violations."
+
+**② `consumes 'page.loaded' — nothing emits it`.** The plan declares
+`@ingress page.loaded <browser>` at `:26301` — *"an ingress event has no emitter BY
+DESIGN"* — and `ContractStage:551-554` has exactly that exemption. It never fires.
+`:195-206` builds its `$ingress`/`$scheduled` maps by regexing
+`$this->manifests->source($m)`, which `ManifestReader:245-250` resolves to
+`app/Modules/<id>/manifest.php` — **compiled PHP that contains no annotations at
+all.** Measured: `@ingress` appears in **0 of 127** manifests, `@scheduled` in
+**0 of 127**. Both maps are always empty and the exemption is dead code.
+
+⚠️ That is the **ninth instance** of the defect this same file documents at
+`:409-422` — *"⛔⛔⛔ THE EIGHTH INSTANCE OF THE SAME DEFECT … a manifest is COMPILED
+PHP that never contains that annotation … Regexing `$src` in this stage is now the
+bug, not the tool."* The author fixed it for `@agent_reachable` (now read from
+`$m->agentReachable`) in the block **immediately below** the one still regexing
+`$src` for `@ingress`. ⛔ **A comment that says "I keep making this mistake" is a
+census instruction, not an apology**: when a file names a recurring defect, grep
+the whole file for the pattern before trusting any of its other blocks. One
+`grep -n 'source($m)'` would have found this eight instances ago.
+
+Both are sealed (`app/app/Doctor/**`) → reserved → **TRACK 1 ACTION**. SITE-104
+files all three under rule 09, naming the sealed fix as the missing dependency —
+the shape `state.py` already carries for X-186, X-190, X-205, X-217, X-218,
+C-Reviews, X-103 and X-137.
+
+## The lane is FINISHED and its red is now fully filed (tick 212)
+
+`python3 bin/state.py next` returns `{"action": "FINISHED"}`. Every doctor line
+naming the seven owned ids is a filed `UNRESOLVED` except X-110's three above,
+which SITE-104 closes. The lane's four standing reds, none of them buildable here:
+
+| red | why it is not this lane's |
+| :-- | :-- |
+| `journey` J11 `ssl` | the harness fixture provisions no `EdgeZone`; the file is guard-refused → TRACK 1 ACTION 1 |
+| `contract` ×3 X-110 | sealed `ContractStage` (both defects above) |
+| `contract` X-103 `approval.requested` · X-137 `message.sent` | filed; sealed stage / a truncating scaffold |
+| `anchor` ×7 · `capability` | filed twice over (tick 210); vendor credential + OWNER ACTION 39 |
+
+⚠️ **A filing wave's pass condition is ZERO movement in every stage count** (tick
+209) plus one new `state.py status` line per filing. And per tick 210, a filing
+must **not** also be recorded as `decided` — they are a partition, not a pair, and
+`state.py` has no withdraw.

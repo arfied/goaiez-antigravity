@@ -13,6 +13,13 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
+# Track 7 (site): dev DB goaiez_antig_site, tests goaiez_antig_site_test.
+# This is the authority for §7, NOT app/phpunit.xml. The 2026-09-05 17:4x
+# fast-forward onto main replaced app/phpunit.xml with Track 1's copy
+# (goaiez_antig_test), so a bare pest here would point RefreshDatabase at
+# ANOTHER TRACK's schema — the 2026-08-31 shape. The export below wins over
+# phpunit.xml's <env>, which does not carry force="true".
+TRACK_DB="goaiez_antig_site_test"
 want_tests=0; want_doctor=0
 for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
@@ -29,6 +36,12 @@ for db in "$env_db" "$xml_db"; do
   fi
 done
 [ -z "$env_db" ] && echo "  ⚠ .env has no DB_DATABASE — anything reading config would use the framework default"
+echo "  §7 will export DB_DATABASE=$TRACK_DB (this track's authority)"
+if [ "$xml_db" != "$TRACK_DB" ]; then
+  echo "  ⚠ app/phpunit.xml pins '$xml_db', NOT this track's '$TRACK_DB'."
+  echo "    §7's export covers the gate; anything run WITHOUT it (a bare ./vendor/bin/pest,"
+  echo "    php artisan test) would hit '$xml_db'. app/ is the coder's column — briefed."
+fi
 
 bar "1. working tree"
 git status --short | head -40
@@ -53,7 +66,8 @@ else
 fi
 
 bar "2a. rewrite ledger (amends/rebases are recorded by the post-rewrite hook)"
-if [ ! -x "$ROOT/.git/hooks/post-rewrite" ]; then
+hook=$(git -C "$ROOT" rev-parse --git-path hooks/post-rewrite 2>/dev/null); [ "${hook#/}" = "$hook" ] && hook="$ROOT/$hook"
+if [ ! -x "$hook" ]; then
   echo "  ⛔ post-rewrite hook is MISSING — its absence is a finding"; fail=1
 elif [ -s "$ROOT/.agents/supervisor/REWRITES.log" ]; then
   SEEN="/home/goaiez/tmp/rewrites-seen-$(basename "$ROOT")"
@@ -109,30 +123,34 @@ bar "6. style + static analysis"
 ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
 
 if [ $want_tests -eq 1 ]; then
-  bar "7. test suite  (phpunit.xml → $xml_db)"
+  bar "7. test suite  (exported DB_DATABASE → $TRACK_DB;  app/phpunit.xml pins $xml_db)"
   # Refuse while another pest runs on THIS database from any checkout whose
   # phpunit.xml pins it (2026-09-05 07:1x: the sixty checkout wiped the schema
   # under a Track 1 gate — 32 spurious "relation does not exist" errors).
-  shared=""
+  # Keyed on $TRACK_DB, not $xml_db: after the ff this checkout's phpunit.xml
+  # names a database the gate does not actually use, and scanning for THAT
+  # would both miss a real clash on ours and refuse on a harmless Track 1 run.
+  shared="$ROOT"
   for co in /home/goaiez/agents/grs-antig*; do
-    grep -q "DB_DATABASE\" value=\"$xml_db\"" "$co/app/phpunit.xml" 2>/dev/null && shared="$shared $co"
+    [ "$co" = "$ROOT" ] && continue
+    grep -q "DB_DATABASE\" value=\"$TRACK_DB\"" "$co/app/phpunit.xml" 2>/dev/null && shared="$shared $co"
   done
   clash=0
   for p in $(pgrep -x php); do
     if tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null | grep -q "bin/pes""t"; then
       c=$(readlink /proc/$p/cwd 2>/dev/null)
-      for co in $shared; do case "$c" in "$co"/*) clash=$((clash+1)); echo "  ✗ pest pid $p running on $xml_db from $c";; esac; done
+      for co in $shared; do case "$c" in "$co"/*) clash=$((clash+1)); echo "  ✗ pest pid $p running on $TRACK_DB from $c";; esac; done
     fi
   done
   if [ $clash -gt 0 ]; then
-    echo "  ✗ REFUSED: $clash other pest process(es) on $xml_db (checkouts pinning it:$shared) — a gate now would be false"
-    echo '{"tool":"pest","result":"refused-shared-db"}' > /home/goaiez/tmp/last-pest.json
+    echo "  ✗ REFUSED: $clash other pest process(es) on $TRACK_DB (checkouts pinning it:$shared) — a gate now would be false"
+    echo '{"tool":"pest","result":"refused-shared-db"}' > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
     fail=1; want_tests=0
   fi
 fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
-  out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  out=$(timeout 1800 env DB_DATABASE="$TRACK_DB" ./vendor/bin/pest 2>&1); rc=$?
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
@@ -146,7 +164,8 @@ if [ $want_tests -eq 1 ]; then
     out='{"tool":"pest","result":"silent","rc":'"$rc"'}'
     fail=1
   fi
-  printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest.json
+  # OWNER ACTION 8 (answered 2026-09-04): per-track path. $ROOT, not $PWD — we cd'd into $APP above.
+  printf '%s' "$out" | tail -1 > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
   [ $rc -ne 0 ] && fail=1
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
