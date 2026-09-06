@@ -1,7 +1,7 @@
 <div>
     <x-surface.sample-state module="click- and keyword-level attribution" screen="roi_dashboard" />
     <div class="roi-dashboard-view p-4">
-        <h3 class="text-lg font-bold">Campaign ROI Dashboard</h3>
+        <h2 class="text-lg font-bold">Campaign ROI Dashboard</h2>
         @if($snapshots->isEmpty())
             <x-ui.empty-state
                 icon="🎯"

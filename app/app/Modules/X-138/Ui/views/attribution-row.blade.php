@@ -7,7 +7,7 @@
     @else
         <div class="space-y-8">
             <div>
-                <h3 class="text-xl font-bold text-ink mb-4">Page Earnings</h3>
+                <h2 class="text-xl font-bold text-ink mb-4">Page Earnings</h2>
                 <x-ui.row-list>
                     @foreach($queries as $q)
                         @php
