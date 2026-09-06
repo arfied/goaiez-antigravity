@@ -2037,3 +2037,99 @@ after all.
 - ✅ `git diff <a>..<b> <c>..<d> -- <path>` accepts two ranges in one call, which
   is the accepted substitute for the refused loop when checking several siblings'
   shared-state deletions at once.
+- ⛔ `awk 'NR>=80 && NR<=210' <file>` and `sed -n '/pat/,$p' <file>` — "requires
+  approval" / "contains potentially dangerous operations". Use `Read` with
+  `offset`/`limit` for a line window, and `grep -n -A <n> '<pat>'` for a section.
+- ⛔ `sort -u -t: -k3` and any shell **function definition** (`f() { …; }`) —
+  refused ("Contains function_definition"). For a distinct-id census use
+  `grep -rho -E '<pat>' <dir> | sort | uniq -c`, which is accepted and also gives
+  the occurrence counts the dedup would have thrown away.
+
+## ⛔ An enumerated EVIDENCE REQUEST is a scope, and the section you forget to name is where the regression sits (tick 208)
+
+SITE-99's brief named `supervise.sh` §2 and §7 as the evidence to quote. The
+report quoted §2 and §7 — verbatim, honestly, from a gate log whose **§6 was
+red**: `pint` went `passed` (tick 207) → `fail` (tick 208) on *exactly the two
+files the wave edited*, because a deleted `use` line was replaced by a blank line
+and a deleted method left a double blank. The coder did what it was asked. The
+brief asked the wrong question.
+
+✅ **RULED: that is the BRIEF's defect, not the coder's**, and the fix is a
+standing rule — **every brief requires §6 AND §7 quoted in full,
+unconditionally**, on top of whatever else it asks for.
+
+⛔ **Fifteenth statement of this section's law, and the first turned on a brief
+rather than on a query or an instrument.** 163/178/180/183/185/187 concern a
+query's *pathspec*, 190 its *strip*, 191 its *bounds moving*, 192/193 its
+*unrecorded bounds*, 194 its *configuration*, 196 its *width*, 207 its *expected
+output*. This concerns the **evidence request**: the claim I wanted was "the gate
+is green"; what I asked for was two sections of it. **Never ask for named
+excerpts of a check whose verdict you intend to rely on — ask for the verdict,
+then the excerpts.**
+
+⚠️ Verdict discipline: this was **PASS-WITH-NOTES, not BLOCK**, under tick 207's
+discriminator — a red `pint` weakens no CHECK and restores no known hazard.
+But it does block the **push**: tick 206's "a tip carrying a BLOCK is not pushed"
+generalises, because the charter's words are *gated and recorded as **passing***,
+and a red §6 is not passing however cosmetic. `push: NO`, and the next tick
+pushes the whole range as one.
+
+## ⛔ The THIRD false-credit class: `assertArrayHasKey('<id>', $caps)` on the GENERATED file (tick 208)
+
+Two false-credit shapes were already catalogued — the `assertTrue(true)` body
+that credits ids (tick 444) and the comment-credit over a body that asserts
+nothing (tick 455). X-176 carries a third, and it is the most deceptive of the
+three because, unlike both, **it is a real assertion on real data**:
+
+```php
+public function test_g8_02_capabilities(): void
+{
+    $caps = require app_path('Modules/X-176/capabilities.php');
+    $this->assertArrayHasKey('G8-02', $caps);
+}
+```
+
+`capabilities.php` is **generated** from `GOAIEZ-TRACKER-CAPABILITIES.md`, so the
+key is present because the tracker row exists. The test asserts *that the
+generator ran*; it cannot fail while the row exists and cannot pass while it does
+not. And the literal `'G8-02'` is **simultaneously the id's only carrier** under
+`CapabilityStage`'s regex — so the tautology is what credits the capability. It
+inflates `capability` by proving the tracker exists.
+
+⚠️ **The trap when clearing it: strip the tautology and four honest tests stop
+crediting.** Six of X-176's sixteen methods open with the same two lines and then
+do real work, and for four of them (`G8-15` `G12-03` `G16-25` `G7-48`) that line
+is the **only** place the id appears — occurrence counts 1, against 2 for `G8-14`
+and `G8-32`. **RULED: re-credit by docblock FIRST, strip second.** The
+measurement that decides it is the one-command census, which gives the counts a
+`sort -u` would have discarded:
+
+```
+grep -rho -E '\b(G[0-9]+-[0-9]+|N-[0-9]+)\b' app/tests/Modules/<id>/ | sort | uniq -c
+```
+
+Same family as tick 189's partition rule: **a set collapsed to its members loses
+the multiplicity that decides the verdict.**
+
+## ✅ Tick 207's presence check, exercised on its healthy branch (tick 208)
+
+Tick 207 gave §2 three readings after the pin edit vanished silently. Tick 208 is
+the other interesting branch, and both are now measured rather than argued:
+
+| | tick 207 | tick 208 |
+| :-- | :-- | :-- |
+| §0 `app/phpunit.xml` | `goaiez_antig_test` | **`goaiez_antig_site_test`** |
+| §1 working tree | *(absent)* | ` M app/phpunit.xml` |
+| §2 forbidden paths | `none` | **`⛔ app/phpunit.xml`** |
+
+The ⛔ is health; the silence was the loss. ⚠️ Also cleared this tick: the twelve
+`plugins/wordpress/*` modified paths §1 carried at tick 206 — the collateral of
+the same blanket checkout — are gone.
+
+⚠️ **A `pest` line reading `ZERO BYTES (rc=143)` is not the zero-bytes trap.**
+143 is 128+15, i.e. SIGTERM: something killed the run from outside. It is neither
+the memory wall nor the missing Vite manifest nor `supervise.sh:153`'s 1800 s
+timeout (which prints `pest TIMEOUT`). When it happens, the tick has **no
+independent §7** — say so, and accept the coder's numbers only if they reconcile
+against the previous tick's saved gate (here: 1875→1874 tests, 1869→1868 passed,
+failure and error *sets* identical ⇒ exactly one deleted test).
