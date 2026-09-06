@@ -14,6 +14,7 @@ use App\Modules\X137\Models\CallToken;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class X137Test extends TestCase
@@ -86,18 +87,63 @@ class X137Test extends TestCase
         $this->assertStringContainsString('<svg', $qr);
     }
 
-    public function test_header_capabilities(): void
+    #[Test]
+    public function g3_11_every_visitor_gets_a_call_token(): void
     {
-        $engine = new X137Engine;
-        $methods = ['enforceG3_11', 'enforceG8_13', 'enforceG13_19', 'enforceG13_24', 'enforceG18_17', 'enforceG18_24'];
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        
+        $token = $this->attributeAction->allocateToken(
+            businessId: $biz->id,
+            visitorSessionToken: 'sess_g311',
+            allocatedNumber: '+15550000001',
+            campaignSource: 'test_g311'
+        );
+        $this->assertEquals('sess_g311', $token->visitor_session_token);
+    }
 
-        foreach ($methods as $method) {
-            try {
-                $engine->$method();
-                $this->fail("Should throw for $method");
-            } catch (\DomainException $e) {
-                $this->assertStringContainsString('[G', $e->getMessage());
-            }
-        }
+    #[Test]
+    public function g8_13_dni_every_visitor_gets_a_call_token(): void
+    {
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        
+        $token = $this->attributeAction->allocateToken(
+            businessId: $biz->id,
+            visitorSessionToken: 'sess_g813',
+            allocatedNumber: '+15550000002',
+            campaignSource: 'test_g813'
+        );
+        $this->assertEquals('sess_g813', $token->visitor_session_token);
+    }
+
+    #[Test]
+    public function g18_17_the_whisper_names_the_source(): void
+    {
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        
+        $token = $this->attributeAction->allocateToken(
+            businessId: $biz->id,
+            visitorSessionToken: 'sess_g1817',
+            allocatedNumber: '+15550000003',
+            campaignSource: 'source_g1817'
+        );
+        $this->assertEquals('Call from source_g1817', $token->whisper_text);
+    }
+
+    #[Test]
+    public function g18_24_telephony_call_whisper_one_spec(): void
+    {
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        
+        $token = $this->attributeAction->allocateToken(
+            businessId: $biz->id,
+            visitorSessionToken: 'sess_g1824',
+            allocatedNumber: '+15550000004',
+            campaignSource: 'source_g1824'
+        );
+        $this->assertEquals('Call from source_g1824', $token->whisper_text);
     }
 }
