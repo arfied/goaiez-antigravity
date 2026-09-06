@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X157\Actions;
 
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X108\Models\Appointment;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
@@ -101,7 +102,7 @@ final class EdgeDeployAction
             $videos = [];
             $events = [];
 
-            $appointments = \App\Modules\X108\Models\Appointment::where('business_id', $businessId)
+            $appointments = Appointment::where('business_id', $businessId)
                 ->where('start_time', '>=', now())
                 ->get();
             foreach ($appointments as $apt) {
