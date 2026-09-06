@@ -472,6 +472,35 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   *derivation* from the refs, never the refs themselves. A HOLD tick that
   measured eight unmoved tips has already measured the census.
 
+  ✅ **A cache MISS is not a suspicion** (tick 178, the converse measurement).
+  Tick 177 measured the hit — identical table, identical output. Tick 178
+  measured the miss: `origin/track/money` moved (`ab84f8ee` → `c421dc15`), the
+  census was obliged to run in full, and all three halves plus the complement
+  printed **byte-identical** output anyway. Silence stays the expected result
+  (tick 169). The rule costs one full census per sibling commit; that is the
+  correct price. Do not weaken it to "run only if the mover looks relevant" —
+  relevance is the thing the census exists to decide.
+
+  ⛔ **The migration surface is split in two, and each half covers one location**
+  (tick 178). `c421dc15` writes
+  `app/app/Modules/X-199/Database/migrations/…_add_unique_invoice_number_per_business.php`
+  — **module-local**. Tick 163's X-103 drop migration went to the **app-level**
+  `app/database/migrations/`, which is precisely what let ticks 147/162 read it
+  as absent. Same verb, two homes, depending on the track:
+
+  - **module-local** → caught by half 1, because `-- app/app/Modules/X-137` is a
+    recursive directory pathspec. Proven positively by sixty's `2b7319c5`
+    (`…/X-137/Database/migrations/…_add_is_static_to_call_tokens.php`), which
+    appears in half 1's output.
+  - **app-level shared** → caught by half 2, which is why half 2 exists (tick
+    164, `1aa65e7a`).
+
+  The complement proves there is no third location: its eleven files hold exactly
+  three migrations and all three are app-level. This is tick 163's lesson plus
+  its converse — a module's footprint is not confined to its module directory,
+  **and it is not confined to the shared directory either**. A claim about
+  migrations that reads one path has measured one path.
+
   ⚠️ **This track's ledger is untracked** (tick 175). `git ls-files
   .agents/supervisor/` returns one file. `REVIEWS.md` — 2.2 MB, 175 tick blocks —
   exists only in this working tree, and with no coder running the launcher writes
