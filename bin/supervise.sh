@@ -131,8 +131,39 @@ if [ $want_tests -eq 1 ]; then
   fi
 fi
 if [ $want_tests -eq 1 ]; then
+  # SHARED SUITE LOCK (2026-09-06). This box runs eight checkouts of this project
+  # plus a sibling project's agents on the same account. Two suites at once is not
+  # only slow — it is what gives an agent a reason to reap a "stray" pest, and on
+  # 2026-09-06 that cost this repo a gate to `killall -9` (rc 137) and two more to
+  # SIGTERM (rc 143), while the sibling project lost a suite and a Pint run the same
+  # day and blamed a neighbour. Nobody could prove who killed what.
+  #
+  # The lock removes the reason. It is ADVISORY and cross-project by design: any
+  # script on this box that wraps its suite in the same flock serialises with this
+  # one. It is not a DB guard — §7 above still refuses a clash on the pinned
+  # database, which is a correctness problem, not a scheduling one.
+  #
+  # Never kill a suite you did not start. Wait for the lock, or report and stop.
+  PEST_LOCK=/home/goaiez/tmp/pest.lock
+  lock_held=0
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>>"$PEST_LOCK" 2>/dev/null && {
+      if ! flock -n 9; then
+        echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+      fi
+      flock -w 2400 9 && lock_held=1
+    }
+    if [ $lock_held -eq 0 ]; then
+      echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+      echo '{"tool":"pest","result":"lock-timeout"}' > /home/goaiez/tmp/last-pest.json
+      fail=1; want_tests=0
+    fi
+  fi
+fi
+if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
   out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
