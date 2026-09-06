@@ -183,6 +183,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-39] compose-time, both directions
+     * ⛔ REFUSED: The text 'compose-time, both directions' defines no measurable behavior to assert.
      */
     public function test_g5_39_compose_time_both_directions(): void
     {

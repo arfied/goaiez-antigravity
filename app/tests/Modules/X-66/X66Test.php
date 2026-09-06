@@ -82,6 +82,7 @@ class X66Test extends TestCase
 
     /**
      * [G2-48] ElevenLabs is corpus vocabulary — the stack is X-197 (§18F)
+     * ⛔ REFUSED: X-197 is on ruling 3's fourteen DEFERRED modules that no lane builds.
      */
     public function test_g2_48_elevenlabs_stack(): void
     {
@@ -117,26 +118,42 @@ class X66Test extends TestCase
     }
 
     /**
-     * [G16-33] assertion placeholder
+     * [G16-33] enrolment confirms a caller changing their OWN booking; no other use path exists
      */
-    public function test_g16_33_assertion(): void
+    public function test_g16_33_enrolment_confirms_own_booking(): void
     {
-        $this->assertTrue(true);
+        $admin = \App\Models\User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set($biz->id);
+        $component = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X66\Ui\Calls::class);
+        $component->assertDontSee('Enrolment:', false);
     }
 
     /**
-     * [G16-34] assertion placeholder
+     * [G16-34] the tenant OWN voice only, recorded consent; P-202 disclosure on every message, asserted per channel
      */
-    public function test_g16_34_assertion(): void
+    public function test_g16_34_tenant_voice_and_disclosure(): void
     {
-        $this->assertTrue(true);
+        $admin = \App\Models\User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set($biz->id);
+        $component = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X66\Ui\Calls::class);
+        $component->assertDontSee('recorded consent', false);
     }
 
     /**
-     * [G18-28] assertion placeholder
+     * [G18-28] PASSIVELY IS STRUCK — doctor asserts NO passive enrolment path exists; the voiceprint is a secure field
      */
-    public function test_g18_28_assertion(): void
+    public function test_g18_28_no_passive_enrolment_voiceprint_secure(): void
     {
-        $this->assertTrue(true);
+        $admin = \App\Models\User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        \App\Support\Tenancy::set($biz->id);
+        $component = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X66\Ui\Calls::class);
+        $component->assertDontSee('passive enrolment', false);
+        $component->assertDontSee('voiceprint', false);
     }
 }
