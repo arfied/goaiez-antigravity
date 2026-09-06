@@ -728,3 +728,38 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the same lie ruling 36 removed, relocated to the page the customer lands on
     **after paying**. The real paid-confirmation surface is a listed follow-up,
     not built in this lane today.
+39. **An evidence-artifact test is committed only if the artifact exists, and a
+    missing credential is `UNRESOLVED`, never a red suite (RULED by the lane
+    supervisor 2026-09-06 10:3x, pre-ruling MONEY-67b's evidence run).**
+    `git ls-files app/storage/app/evidence/` prints **nothing** — every evidence
+    JSON in this lane lives on disk, outside git — while
+    `tests/Modules/X-198/GatewayEngineTest.php:5-7` fails hard on a missing file
+    (`$this->fail('Artifact missing…')`). So a test committed ahead of its
+    artifact is not a pending TODO; it is a **permanently red suite** here and in
+    every checkout that takes the merge, red for a reason no code change can fix.
+    Therefore, on every evidence wave: run the command first, **open the artifact
+    and read it**, and only then write the assertion — in the same commit as the
+    run. If the provider refused or the key is absent, the outcome is
+    `UNRESOLVED` with the **quoted** provider error and **no artifact and no test
+    committed**; that is a PASS-WITH-NOTES, never a BLOCK, because ruling 13 puts
+    the vendor call outside the suite exactly so a missing credential cannot
+    redden it. ⛔ A hand-written artifact, a `pay.goaiez.com` URL or a
+    `Str::random` token inside `storage/app/evidence/` is a **BLOCK** — ruling
+    36's prohibition relocated. ⚠️ The companion lesson from the same run: **before
+    briefing the deletion of an assertion, prove the path is covered elsewhere.**
+    The 10:1x note called both `pay.goaiez.com` stubs dead; `test_declines_screen`
+    was in fact calling `sendPayLink`, and its deletion cost nothing only because
+    `DeclinesScreenTest.php:238` already asserts that path across a remount.
+40. **A 0-byte run log with the pid gone is a KILL, and it spends no dispatch cap
+    (measured 10:3x on run 79).** `launch-coder.sh:95-97` wraps both coders in
+    `bash -c '… ; echo "<CODER>_EXIT=$?" >> LOG'`, so every ordinary exit — a
+    success, a transport death, a quota death — leaves at least one line. An
+    **empty** log plus `CODER DEAD` means the wrapper was killed before it could
+    append, so there is no `Individual quota reached` line and no reset minute:
+    ruling 30's HOLD does not apply and neither does the two-dispatch cap, which
+    counts dispatches against a BLOCK. The tick's job is to **measure what the
+    dead run committed** (`git log --oneline -5`, then `git status --short` and
+    `git diff --stat HEAD -- app/` for the half-done item) and brief a
+    **continuation**, not a retry. ⚠️ Distinguish it from the *running* case the
+    same way as always: a 0-byte log with `CODER ALIVE` is a live run, because
+    the log is written at exit.
