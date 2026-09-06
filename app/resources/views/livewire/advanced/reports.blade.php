@@ -48,4 +48,8 @@
             </div>
         </div>
     </div>
+
+    <livewire:x-139.adaccount-connect-card :business-id="\App\Support\Tenancy::id()" />
+    <livewire:x-139.conversions-pushed-tile :business-id="\App\Support\Tenancy::id()" />
+    <livewire:x-139.rejection-rate :business-id="\App\Support\Tenancy::id()" />
 </div>
