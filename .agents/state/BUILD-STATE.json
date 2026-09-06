@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T05:55:14",
+ "updated": "2026-09-06T06:31:39",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1786,6 +1786,12 @@
    "chose": "X-103 \u2194 X-157 seam: ssl_installed is written in EdgeDeployAction at the exact moment the version goes live. Writing it before the SSL validity check accurately reflects EdgeZone.has_valid_ssl whether the deploy succeeds or is refused.",
    "at": "2026-09-06T05:55:14",
    "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "A per-business DNI number pool is implemented under app/app/Modules/X-137/Database/migrations/.",
+   "at": "2026-09-06T06:31:39",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1812,6 +1818,10 @@
   {
    "at": "2026-09-06T06:10:38",
    "note": "J11 ssl \u2014 JourneyHarness::publishSite() (line 667) creates a Page and calls SiteEngine::publish() and provisions no EdgeZone, so X-157/ModuleServiceProvider.php:73's SitePublished listener returns at :74 before EdgeDeployAction at :87 and ssl_installed keeps SiteEngine.php:57's honest false. The fix is one line in publishSite(), which owner ruling 1 does not open to this lane: publishSite() is a private helper, not a todo(). Filed as TRACK 1 ACTION 1."
+  },
+  {
+   "at": "2026-09-06T06:31:33",
+   "note": "X-137 G18-17 \u2014 the whisper's two-leg assertion needs a real Infobip voice bridge: present on the agent leg, absent on the caller leg. The transport is C-Telephony (track sixty, ruling 5) and the credential is the owner's. X137Test.php:161 asserts whisper_text on the model, which is the most this lane can assert without the bridge."
   }
  ]
 }
