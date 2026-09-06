@@ -66,8 +66,8 @@ final class CallAttributeAction
             ->first();
 
         // 1. If no token or token is expired -> unattributed (TEST ANCHOR)
-        if ($token === null || (!$token->is_static && $token->expires_at->isPast())) {
-            if ($token !== null && !$token->is_static) {
+        if ($token === null || (! $token->is_static && $token->expires_at->isPast())) {
+            if ($token !== null && ! $token->is_static) {
                 $token->update(['status' => 'expired_unattributed']);
             }
 
@@ -80,7 +80,7 @@ final class CallAttributeAction
         }
 
         // 2. Call within TTL joins the visit, or static number attributes to campaign
-        if (!$token->is_static) {
+        if (! $token->is_static) {
             $token->update([
                 'status' => 'joined',
                 'joined_call_id' => $callId,
@@ -94,7 +94,7 @@ final class CallAttributeAction
             whisperText: $token->whisper_text
         ));
 
-        if (!$token->is_static) {
+        if (! $token->is_static) {
             Event::dispatch(new VisitJoinedToCall(
                 businessId: $businessId,
                 callId: $callId,

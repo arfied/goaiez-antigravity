@@ -177,7 +177,6 @@ class X137Test extends TestCase
         $this->assertCount(2, CallToken::where('business_id', $biz->id)->where('status', 'active')->get());
     }
 
-
     #[Test]
     #[Group('G13-24')]
     public function static_number_per_offline_campaign(): void
