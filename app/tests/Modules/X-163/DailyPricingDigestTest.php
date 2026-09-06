@@ -173,12 +173,13 @@ class DailyPricingDigestTest extends TestCase
         Event::dispatch($event);
 
         PriceBookItem::query()->update(['refusal_flagged_at' => now()->subDays(3)]);
+        $expected = PriceBookItem::first()->refusal_flagged_at->format('j M H:i');
 
         Livewire::actingAs($owner)
             ->test(DailyPricingDigest::class)
             ->assertOk()
             ->assertSee('drain unblock')
-            ->assertSee(now()->subDays(3)->format('j M H:i'));
+            ->assertSee($expected);
     }
 
     public function test_pricing_a_gap_in_the_digest_confirms_it_and_clears_it(): void
