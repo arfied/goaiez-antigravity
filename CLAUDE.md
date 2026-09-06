@@ -3855,3 +3855,91 @@ fetch. The check is not always-fires, and recording its quiet results is what ke
 (`1099892`) unreadable; a second `pgrep` seconds later showed it **gone** and a new pid
 (`1121761` → `…/grs-antig-ui`) in its place. The ALIVE→dead race, exactly as 176 described, and
 neither `ps -o user=` nor `stat -c %U` was needed — both are still refused here.
+
+## ⛔ A credit STRIP can be a RENAME — the census sees the count fall and never the shape (tick 226)
+
+Tick 225 predicted `capability` +2 for this column because main's take of stages' `X176Test.php`
+drops `G8-14` and `G8-15`. It landed exactly. But *what* landed was measured only by reading the
+diff, and it is not what a filing wave would have assumed:
+
+```
+- /** (R245) [G8-14] product schema from the pricebook asserts shape and free products */
+- public function test_g8_14_capabilities(): void
++ /** (R245) */
++ public function test_offer_catalog_renders_zero_priced_offers(): void      <- body UNCHANGED
+```
+
+Both bodies survive **verbatim** and both were renamed to describe what they actually assert. That
+is the constructive form of a false-credit strip and a better answer than deletion: the test still
+proves three zero-priced offers render, it merely stops claiming to discharge G8-14.
+
+⚠️ **So a filing's `why` must name the missing dependency for the CLAUSE, never say the module has
+no test.** A wave briefed off the count alone ("these two ids lost their tests") writes a false
+`why` into a file with **no withdraw**. The id census, the stage count and the census halves can
+all only ever show the credit falling; the shape of the removal exists in one diff. **Before
+filing against a credit that disappeared, read the commit that removed it** — the same law as tick
+210 (grep for the record before producing it), one step earlier: read the *cause* before recording
+the *consequence*.
+
+✅ Corollary, exercised: tick 211's "no site wave touches `X176Test.php` while stages' rewrite is
+unmerged" retired **correctly** when main merged it, because it was recorded with its reason
+(do not deepen a conflict) rather than as a bare remedy — tick 199's law working as designed.
+
+## ⛔ An identical failure SET says nothing about tests that stopped existing (tick 226)
+
+Tick 216 established that §7's only sound baseline is this checkout's own previous gate, and every
+block since has reported the failure and error **sets** alongside the counts. Tick 226's merge went
+1939 → 1924 (−15) with the sets byte-identical, which reads like proof that nothing broke. It is
+not: **a deleted test cannot fail**, so a set comparison is structurally blind to exactly the
+population a −15 is made of. The check that closes it is arithmetic on the diff:
+
+```
+git diff HEAD~1 HEAD | grep -c '^-.*public function test'   ->  22
+git diff HEAD~1 HEAD | grep -c '^+.*public function test'   ->   7
+```
+
+−22 + 7 = −15, against a §7 delta of −15 ⇒ the merge accounts for the whole of it and no test was
+silently dropped outside the files in the stat. ⛔ **Whenever §7's total falls, reconcile it against
+the commit's own method delta.** The sets are necessary and they are not sufficient; without the
+arithmetic, fifteen deletions and "fourteen deletions plus one new red that replaced a deletion"
+are the same three numbers.
+
+## ⛔ ui's X-110 disjointness now rests on OUR restraint, not on the files being ABSENT (tick 226)
+
+Ticks 185/187 certified ui's X-110 traffic partly on the ground that the test files it edits are
+absent from this checkout — an absence being a guarantee nobody can revoke by accident. Tick 216
+noted `AbandonedFormsTest.php` arriving with `main` moved the argument onto the clause that was
+always load-bearing (ui never touches `X110Test.php`). Tick 226 completes the drift: `884b5893`
+edits **`CoolingTest.php` and `VisitorsLiveTest.php`, both of which exist here.**
+
+Both diffs read in full and both are honest — `CoolingTest` re-anchors from the raw visitor id
+(which the view stopped rendering as text) onto the DOM id it still emits, ordering assertion
+untouched; `VisitorsLiveTest` is **strengthened**, keeping the humanised label *and* adding
+`assertSee("openEvents('v-123')", false)` so the real id is still proven to reach the DOM. And
+`X110Test.php` is touched by zero of ui's ten commits.
+
+⛔ **The exposure is that the surviving argument is a property of THIS lane's next wave, not of
+ui's commits.** "We do not edit those two files" is true today and a brief can break it without
+anyone re-reading a census. **Every SITE brief touching X-110 names `CoolingTest.php` and
+`VisitorsLiveTest.php` as files to leave alone.** Same family as tick 189's conflict-vs-correctness
+split: the guarantee weakened one clause at a time, each step individually fine.
+
+⚠️ Also measured: `880a52b7` writes `X-110/**Models**/PixelEvent.php`, outside ruling 5's Track 2
+`Ui/` grant — and it is five lines of `@property` docblock plus a `use`, zero behaviour, required
+by a `->map(fn (PixelEvent $e) => …)` its own `Ui/` change added. Same **location** as tick 199's
+missing-`$casts` fake-green, not the same act: a `@property` annotation cannot make a false value
+read true. Sanctioned; run the sub-path test anyway (tick 185) — it is what surfaced it.
+
+## ⚠️ A `BUILD-STATE.json` hunk's context lines name modules that did not transition (tick 226)
+
+Tick 181's trigger fired on stages' `3fb25ca7` (11 deletions), tick 184's arithmetic predicted
+1 + 2×5, and grepping the hunk for `"module":` printed **`"module": "X-103"`** — one of this
+lane's seven — immediately above a `- "status": "DONE"`. It did not transition. In a JSON array of
+objects, inserting new blocks next to an existing one puts that one's `"module"` line in the diff
+as *context*, adjacent to another block's deletions. `JOURNAL.md` disambiguates it in one read:
+the six are **X-104, X-105, X-109, X-116, X-123, X-131**.
+
+⛔ **Read the JOURNAL, not the JSON hunk, to attribute a shared-state transition.** `state.py`
+writes both, the JOURNAL is one line per action with the module named explicitly, and the JSON is
+the only one of the two whose adjacency is meaningless. Grepping the hunk would have opened a
+finding against a sibling for touching X-103.
