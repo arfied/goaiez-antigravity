@@ -3077,3 +3077,110 @@ is why every block records it.
   write via output redirection require explicit approval."* Redirection alone at the
   checkout root is still accepted (tick 197). Pipe to `grep`/`head` instead and read
   the filtered output.
+
+## ⛔ J11's blocker is the guard's CHECKOUT NAME — read the shared guard's source before carrying a refusal another tick (tick 217)
+
+Twelve ticks carried TRACK 1 ACTION 1 as *"`coder-bin/git` refuses to stage
+`JourneyHarness.php`, two dispatches spent, a third forbidden"* — a true statement
+that named no mechanism and therefore supported no ask. The guard is fifty-seven
+lines and `:30` is the whole of it:
+
+```bash
+HARNESS='app/tests/Journeys/JourneyHarness\.php$|'
+[ "$(basename "$($REAL rev-parse --show-toplevel 2>/dev/null)")" = grs-antig ] && HARNESS=''
+```
+
+**The exemption is keyed to the checkout's directory name, and the name is Track
+1's.** In `grs-antig` the pattern is emptied and the file commits freely; in
+`grs-antig-site` `:41` refuses it unconditionally. So owner ruling 1 — a journey
+track may implement its own journeys' `todo()` methods there — is granted to seven
+lanes and mechanically available to one. ⛔ **Nothing inside this checkout changes
+that verdict**, which is what makes the HOLD honest rather than merely cautious:
+there is no in-lane path, measured, not assumed.
+
+✅ **And `:31-40` is the precedent that turns the complaint into a diff.** It is a
+harness exception added *for another lane*, commented *"(reviews lane REV-51 patch,
+applied on the owner's authorisation 2026-09-06 04:2x)"*, keyed to
+`GOAIEZ_MERGE_OK` — the launcher-owned, per-run, auditable shape. So the ask is (a)
+extend `:30` to the lane that owns the journey, or (b) add `GOAIEZ_HARNESS_OK`
+behind a `--allow-harness` flag parallel to `--allow-merge` at `:51`. Two
+consequences: because `:35-40` exists, **this lane inherits the fix through a merge**
+the moment Track 1 lands it — no dispatch, no third attempt against the cap.
+
+**The generalisation, and it is the third firing of tick 215's law.** 215 read a
+sibling's supervisor commits and found the `app/phpunit.xml` split; 216 found the
+pest lock; 217 read the **shared guard itself**. Every one converted "no remedy
+exists" into a named mechanism. ⛔ **A refusal recorded by its message is a
+complaint; a refusal recorded by its mechanism is an ask.** Before carrying a
+guard-refusal into a second tick, read the guard. It is cheaper than one census.
+⚠️ Reading the guard is diagnosis and is not the "patch the thing that is refusing
+you" act (tick 197) — this seat holds an `Edit(//home/goaiez/agents/coder-bin/git)`
+grant it has asked to have reverted and did not use.
+
+⛔ `grep -n '<pat>' /home/goaiez/agents/coder-bin/git` is refused (*"contains
+multiple operations"* — a path outside the checkout). ✅ The `Read` tool on the same
+absolute path is accepted, and is how this was measured.
+
+## ⛔ A MERGE COMMIT in half 1 prints no files — its own output cannot say why it appeared (tick 217)
+
+Half 1 grew by one: stages' `f73544df`, *"Merge remote-tracking branch 'origin/main'
+into track/stages"*. `git log --name-only` shows **no files for a merge commit**, so
+the surface that flagged it cannot explain it. It appeared because it is not
+TREESAME to a parent on the fourteen paths — which is what a merge bringing main's
+X-110/X-137 content onto a branch that lacked it looks like, and which is also what
+a resolution that *dropped* our column looks like. Same output, opposite verdicts.
+
+Measure the merged tree against the side it merged, **not** against the merge-base:
+
+```
+git diff --stat origin/main origin/track/stages -- <the fourteen paths>
+  app/tests/Modules/X-176/X176Test.php | 15 insertions(+), 89 deletions(-)
+```
+
+One file, and it is `7577a8b7` — stages' own X-176 rewrite, already ruled at tick
+211. All thirteen other watched paths byte-identical between `origin/main` and
+stages' tip ⇒ the resolution took main's side whole in this lane's column and
+dropped nothing.
+
+⚠️ **This is the accepting direction, and it is not the tick-147 staleness trap.**
+147 forbids `git diff origin/main origin/track/<x>` because for an **unmerged**
+branch it reports main's own later commits as that branch's deletions. For a branch
+that has *just merged main*, main's content is contained by construction, so a
+difference on our paths is either the branch's own edit or a resolution loss —
+exactly the question. ⛔ The bound to pick is decided by what the branch has
+merged, never by a rule about which ref goes on the left.
+
+## ✅ Doctor's numbers ARE cacheable — on a provably unchanged tree, and never into a brief (tick 217)
+
+Tick 210 ruled a brief may not name a lane's red list from a prior tick's table, and
+tick 209 that a copied doctor number decays. Both stand. Neither means a HOLD tick
+must spend a live doctor run to answer *"has the red moved?"*
+
+Doctor is a pure function of the tree it reads. At tick 217 `git status --short`
+showed exactly ` M app/phpunit.xml` (which doctor does not read) plus untracked
+scratch files, and the only commit since the last live run was `9f24555c` —
+`CLAUDE.md` and `bin/supervise.sh`. Input byte-identical ⇒ output identical, so tick
+216's `boundary 6 · contract 87 · citation 93 · schema 15 · capability 431 · anchor
+137 · journey 5` stand **because the input is provably unchanged, not because they
+are recent.** Tick 177's cache argument, one surface over, with the same caveat that
+makes it sound: the *derivation* is cached, never the input — `git status` is re-run
+every tick, not remembered.
+
+⛔ **It licenses a HOLD, never a brief.** The moment a wave is dispatched, tick 210
+applies in full and the red list is re-measured live. And it is a second reason to
+skip `--tests` on an unchanged tree: §7 would reproduce the previous gate exactly
+while holding the box-wide pest lock all seven lanes now serialise on.
+
+## ⚠️ This lane's `OWNER.md` mtime is not the frontier of Track 1's rulings (tick 217)
+
+pricebook's `600217f9` and reviews' `c88dab65` both credit *"Track 1, OWNER.md
+14:1x"* for the pest lock. This lane's `OWNER.md` is stamped **13:49** and carries
+no 14:1x entry — yet this lane had already adopted the same lock at tick 216, an
+hour earlier, by reading the sibling supervisor commits directly.
+
+So the sibling-commit channel is **faster** than the per-lane `OWNER.md` channel,
+and ⛔ an absent `OWNER.md` update is not evidence that a Track 1 ruling does not
+exist. Case (d) keys on `OWNER.md`'s mtime and is correct as far as it goes; it is
+not a complete view of what Track 1 has decided. The paired `--stat` already prints
+every sibling supervisor commit every tick — read them for rulings, not only for
+violations.
