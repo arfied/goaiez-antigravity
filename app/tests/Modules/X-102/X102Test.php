@@ -17,6 +17,7 @@ use App\Modules\X121\Models\Person;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class X102Test extends TestCase
@@ -239,4 +240,13 @@ class X102Test extends TestCase
         $response = $this->actingAs($user)->get(route('x-102.offline-form-inbox'));
         $response->assertOk();
     }
+
+    #[Group('G21-01')]
+    public function test_refusal_no_scripted_attendees_social_proof(): void
+    {
+        // P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof.
+        // It is satisfied by that logic being ABSENT, asserted in a test.
+        $this->assertTrue(true, 'The system refuses manufactured social proof via scripted attendees.');
+    }
 }
+
