@@ -589,3 +589,5 @@
 - `2026-09-06T07:09:30` note: MONEY-58 item 1: the orders.status default and comment in 2026_08_30_000029_create_x117_sellables_tables.php:46 still say paid and are deferred, deliberately, to a wave of their own.
 - `2026-09-06T07:09:36` (R245) X-117 — (R245) For X-117 and X-198: The order an unconfirmed checkout creates is pending_payment. Only a non-null gateway_charge_id promotes it to paid. Tested in test_an_unconfirmed_checkout_leaves_the_order_pending.
 - `2026-09-06T07:09:42` (R245) X-198 — (R245) For X-117 and X-198: The order an unconfirmed checkout creates is pending_payment. Only a non-null gateway_charge_id promotes it to paid. Tested in test_an_unconfirmed_checkout_leaves_the_order_pending.
+- `2026-09-06T07:29:07` (R245) X-117 — (R245) the value checkout returns is read from the row after the checkout event, so a synchronous listener's promotion is visible to the caller
+- `2026-09-06T07:29:07` note: MONEY-59 owns the orders.status migration default
