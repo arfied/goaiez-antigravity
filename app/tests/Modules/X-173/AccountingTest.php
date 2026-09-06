@@ -2,6 +2,7 @@
 
 namespace Tests\Modules\X173;
 
+use App\Modules\X173\Domain\AccountingSyncEngine;
 use PHPUnit\Framework\TestCase;
 
 class AccountingTest extends TestCase
@@ -19,7 +20,7 @@ class AccountingTest extends TestCase
      */
     public function test_capabilities_are_enforced_for_accounting()
     {
-        $engine = new \App\Modules\X173\Domain\AccountingSyncEngine();
+        $engine = new AccountingSyncEngine();
 
         $lowResult = $engine->inferCategory('Desc', 0.62, 'Unknown Guess');
         $this->assertSame('uncategorised', $lowResult['assigned_category'], 'never to a guessed code');
