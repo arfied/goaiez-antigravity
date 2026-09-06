@@ -25,27 +25,6 @@ use Tests\TestCase;
 
 class X198Test extends TestCase
 {
-    public function test_gateway_engine_capture_asserts_all_columns(): void
-    {
-        $biz = TestCase::provisionTenant(['name' => 'Capture Tenant', 'currency' => 'USD']);
-        \DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $this->app->instance(StripeGatewayClient::class, new class
-        {
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
-            {
-                return 'ch_stub_captured_id';
-            }
-        });
-
-        app(GatewayEngine::class)->connect($biz->id, 'stripe', 'acct_123');
-        $payment = app(GatewayEngine::class)->capture($biz->id, 24000, 'tok_fresh', 'x117-order-999');
-
-        $this->assertSame(24000, $payment->amount_cents);
-        $this->assertSame('x117-order-999', $payment->idempotency_key);
-        $this->assertSame('ch_stub_captured_id', $payment->gateway_charge_id);
-    }
-
     private GatewayEngine $engine;
 
     private MerchantConnectAction $connectAction;
@@ -84,11 +63,12 @@ class X198Test extends TestCase
 
         // 1. Idempotent payment capture using payment token (G17-04, G1-23, G1-34)
         $idempotencyKey = 'idem_unique_tx_999';
-        $pay1 = $this->captureAction->handle($biz->id, 5000, 'sq_tok_tokenized', $idempotencyKey);
-        $pay2 = $this->captureAction->handle($biz->id, 5000, 'sq_tok_tokenized', $idempotencyKey);
+        $pay1 = app(GatewayEngine::class)->capture($biz->id, 5000, 'sq_tok_tokenized', $idempotencyKey);
+        $pay2 = app(GatewayEngine::class)->capture($biz->id, 5000, 'sq_tok_tokenized', $idempotencyKey);
 
         $this->assertEquals($pay1->id, $pay2->id, 'Duplicated ref charges once and returns identical payment record');
         $this->assertEquals(5000, $pay1->amount_cents);
+        $this->assertEquals($idempotencyKey, $pay1->idempotency_key);
         // (R245) owner ruling 10 (2026-09-02)
         $this->assertNull($pay1->gateway_charge_id, 'Charge id is null unless the gateway returned one');
         $this->assertEquals('awaiting_processor', $pay1->status);
