@@ -5069,6 +5069,10 @@
   {
    "at": "2026-09-06T17:32:53",
    "note": "CORRECTION to the 17:07:22 note. The nothing-emits-it split is 13 ABSENT and 0 EMITTED-UNDECLARED, not 12 and 1. The any.event row cited X-110 today.blade.php line 18, which reads received any events yet - the unquoted dot in the grep pattern matched a space. The only other hit is X-156 manifest.php line 41 and it sits under consumes, not emits. The 87 decomposition and the 42-row split are unaffected."
+  },
+  {
+   "at": "2026-09-06T18:31:53",
+   "note": "MEASUREMENT not a filing. X-213 was classified as MANIFEST-GRANTS-MORE, but GOAIEZ-MASTER-PLAN.md DOES carry an @module X-213 header (inline on a markdown heading) which declares vision.check.run, matching the manifest exactly. Therefore X-213 is AGREE. It is inside the deferred list, so it is recorded and not built. X-208 is in the same 25 PLAN-UNREADABLE modules and is also deferred. With the 25 classified the census closes at AGREE 124, MANIFEST-GRANTS-MORE 3, PLAN-NAMES-MORE 0, PLAN-UNREADABLE 0, of 127."
   }
  ]
 }
