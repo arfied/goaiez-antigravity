@@ -1267,6 +1267,69 @@ Watch for: <the trap that applies, by name>
   w98-pest-raw.log 05:18:03 → REPORT.md 05:18:28`, strictly increasing, `duration_ms 101676` distinct from
   wave 97b's `101206` on a byte-count that happens to be identical (3504 both). **Equal file sizes are not
   the tell; `duration_ms` is.**
+- ⚠️⚠️ **A merge commit commits the INDEX, so an unstaged working-tree fix does NOT ride into it — and a
+  merge commit is the one commit that *looks* like it takes everything.** Wave 99b was told, in my words,
+  *"items 0 and 1 are working tree only, and they ride into the merge commit."* True of item 0, whose command
+  block ended in `git add`; false of item 1, whose did not. The coder fixed both files at 05:55:41, committed
+  the merge at 05:57:07 from an index that lacked them, and gated the **working tree** at 05:59:14 — so all
+  1859 of its tests describe a tree that is not the sha, and `git show HEAD:app/tests/Modules/X-137/X137Test.php
+  | php -l` returns `Errors parsing Standard input code` (a stray `}` from the wave-99 union closed the class
+  early). This is the **wave-86 orphan trap** moved from a named-path commit to a merge commit, where it is
+  worse for exactly the reason the brief said what it said. ⚠️ **`PERTRACK` cannot catch it** — the orphaned
+  paths are not per-track files, which is that diff's whole point. **The check is one command and belongs in
+  every merge brief: `git status --porcelain` immediately after the merge commit, empty of `M` lines on paths
+  the wave touched.** Corollary for briefs: **every instruction that edits a tracked file ends in its own
+  `git add`**; never let one item's `add` vouch for another's.
+- ⚠️ **Extend the wave-82 rule: "the tree at the moment it ran" means the WORKING tree, not the sha — a gate
+  run on a dirty tree gates nothing that can be pushed.** At tick 199 my own `supervise.sh` printed §6
+  `{"tool":"pint","result":"passed"}` and the verdict `gates green` over a `HEAD` that does not parse, because
+  two files were modified and unstaged. **§2b `php -l on every PHP file in that set` → `all parse` is doubly
+  blind here**: the set is §2's *forbidden-path* list, not the tree, and it lints the working copies. It is not
+  a syntax gate on a commit and must never be read as one. Before gating a sha, `git status --porcelain` first;
+  a dirty tree means the numbers are the working tree's and the review is of neither.
+- ⭐ **`error_log` at the repo root is free evidence and no gate reads it.** Untracked, appended by PHP's own
+  handler, it carried wave 99b's failure in full — `[06-Sep-2026 10:35:33 UTC] PHP Parse error: syntax error,
+  unexpected token "public", expecting end of file in …/X137Test.php on line 286` — file, line and wall-clock,
+  hours before any tick would have found it. **`head` it on any wave that touched PHP**, and read its
+  timestamps: the entries interleave the coder's run and the supervisor's own commands, so the ordering tells
+  you which side produced each one.
+- ⚠️ **§2 cannot tell a forbidden path this lane touched from one a merge brought in, and one command
+  discriminates them: `git diff --cached MERGE_HEAD -- <path>`. Empty means it is theirs.** Wave 99 tripped §2
+  on `app/tests/Journeys/JourneyHarness.php`; the staged file was byte-identical to main's, Track 1's run 96
+  moving the harness off `DB::table('work_orders')->insertGetId(...)` onto `X121\Actions\JobCreateAction` —
+  announced at `OWNER.md` 2026-09-05 15:2x and a strengthening. Every merge wave trips §2 on something;
+  without that command the only options are a false `BLOCK` or a blind pass.
+- ⚠️ **"Merged clean" describes git's exit status, not the outcome the per-track rule requires.** Wave 99's
+  report listed `.agents/rules/10-supervisor.md` under *paths that merged clean*; it differed from `HEAD` by
+  29 lines — a silent three-way take of a never-merge file, the tick-195 shape with no conflict to notice.
+  **The per-track restore step (`git show HEAD:<path> > <path> && git add <path>`, `OWNER.md` 2026-09-05
+  15:2x) is mandatory in every merge brief and its proof is `git diff HEAD -- <path>` printing nothing.**
+  ⚠️ `.gitattributes` `merge=ours` is the second belt, not the first: a merge driver runs only when **both**
+  sides changed the file, and the tick-195 shape is *ours identical to the base, theirs changed*, which git
+  resolves on a trivial fast-path with no driver.
+- ⚠️⚠️ **This column cannot commit anything while a merge is open, so merge step 0 is the only window that
+  exists.** `git commit --dry-run -- CLAUDE.md` → `fatal: cannot do a partial commit during a merge`, and a
+  bare `git commit` would *be* the merge commit. **Commit the supervisor's own notes BEFORE
+  `git merge --no-commit`**, and expect every lesson learned during the merge to wait for its close. Keeping
+  `CLAUDE.md` byte-identical to `HEAD` through the merge is also what makes the step-3 `PERTRACK` proof print
+  nothing, so the constraint and the proof are the same fact.
+- ✅ **A per-track restore can discharge an `OWNER ACTION` without the owner — check before carrying one.**
+  `OWNER ACTION 2` (the three `Bash(ps -p:*)` · `Bash(ps -o:*)` · `Bash(kill -0:*)` grants main's copy of
+  `.claude/settings.json` lacks) was written as reserved because that file is the owner's to edit. It closed
+  itself: `git show HEAD:.claude/settings.json > .claude/settings.json` is a **restore, not an edit** — it
+  prevents the merge from changing the owner's file rather than changing it, and its proof is
+  `git diff HEAD -- <path>` empty. Verified at tick 199 at `:35-37`, with the merged file byte-identical to
+  pre-merge `HEAD`. **A reserved item whose remedy is "put back what was already committed" is inside the
+  lane; re-check every carried `OWNER ACTION` against the tree before restating it.**
+- ⚠️ **A test whose docblock is ours and whose body is main's is a real defect and usually not ours to fix.**
+  After the merge, `X01Test::test_g2_76_unified_inbox_header` carries this lane's
+  `⛔ REFUSED: G2-76 — … there is no clause to assert` over a live noun lint that asserts and fails. It is not
+  a merge regression: `origin/main` already holds both halves (main took our docblock via this lane's
+  `7815e337`, then filled the body), and all four violators — `outreach_messages` · `triage_conversations` ·
+  `inbound_messages` · `support_messages` — are created by migrations that exist on `origin/main`, so it fails
+  there too. **Establish the failing test's provenance with `git show origin/main:<file>` and a `git grep` on
+  `origin/main` for its subject before treating an inherited red as the wave's** — and when the subject is
+  another lane's nouns, it is a `TRACK 1 ACTION`, not an `UNRESOLVED` and not a coder task.
 
 ## Style
 
