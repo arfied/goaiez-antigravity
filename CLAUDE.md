@@ -1727,3 +1727,55 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     one. ⚠️ Both new assertions also sat at or under that brief's own six-word floor; at 29 characters
     they are not ruling 61's bare-digit defect and they do measure the change, so they were recorded,
     not charged.
+77. **A §7 error is attributed to concurrency by the mechanism and the gate log, never by hope (RULED
+    by the lane supervisor 2026-09-06 18:4x, on MONEY-83's `2fbe00f0`).** The gate landed
+    `2051 · 2045 · FAILED 2 · errors 4` against a floor of `2051 · 2046 · FAILED 2 · errors 3`, the
+    extra member being `a_deliberately_corrupted_backup_fails_the_restore` —
+    `SQLSTATE[42501] … permission denied to terminate process`. Ruling 42 named the
+    `relation "users" does not exist` shape and owner ruling 12 named this 42501, but neither said how
+    a tick *proves* it in the minute it has, and a wrong call either way is expensive: read as the
+    sha's it withholds a correct tip under ruling 26, read as concurrency it pushes a regression.
+    **The instrument is two greps and one file.** (a) The failing statement's own mechanism in the
+    tree — here `JourneyHarness.php:921`'s `DROP DATABASE IF EXISTS goaiez_antig_drill_<pid> WITH
+    (FORCE)`, which terminates every backend on that database, plus an **empty**
+    `grep -rn pg_terminate_backend app/app app/tests`, which together show 42501 can arrive *only*
+    from a backend owned by another role. (b) `/home/goaiez/tmp/gate-runs.tsv` read for **foreign rows
+    overlapping this gate's own pest window**, which ruling 74's eight columns make exact: this pest
+    ran `18:30:45 → 18:32:46` with grs-antig-reviews running `doctor` at `18:31:01` and `18:32:07`
+    inside it. (c) Reachability from the wave's own diff, which here was nil — five commits over two
+    X-173 blades, two X-173 screen tests, a comment, an unread local, an X-120 class with zero
+    readers and the state files, none on J8's path. A tick that cannot produce all three treats the
+    error as the sha's. ⚠️ **The lane's Bash is confined to this checkout, so the TSV is read with
+    `Read`, never `grep`** — a refused grep is not an absent file. ⚠️ Frequency corroborates but never
+    substitutes: the string appears in **2 of 87** gate files here. ⚠️ The floor returns to `errors 3`
+    the next run; a second appearance on an idle box stops being concurrency and becomes an item.
+78. **The gate log is also this lane's cheapest schedule evidence.** This tick's pest sat on the
+    shared `flock` for roughly eight minutes and then ran in two, legible only from the TSV's paired
+    `gate`/`pest` rows. A brief or addendum that predicts gate duration reads them rather than
+    remembering the last one.
+79. **X-201's two empty states describe machinery nobody built, and `disputes` has no production
+    writer (RULED by the lane supervisor 2026-09-06 18:4x, briefed as MONEY-84).** Ruling 50(a)'s
+    sweep has cleaned X-198's two reconciliation screens and all three of X-173's; X-201 is the last
+    unaudited pair in the lane and it is the same defect twice.
+    `dispute-queue.blade.php:9` reads *"A chargeback from any gateway opens one here; the evidence
+    compiles within the hour"* and `dispute-card.blade.php:9` *"A chargeback from any gateway opens
+    one here, with the invoice already in the bundle"*. Measured: (a) the only writer of `disputes` is
+    `DisputeDefenseEngine::record()` behind `DisputeRecordAction`, whose callers are **five test files
+    and no production path**, so both screens are empty forever for every real tenant (decision 272,
+    ruling 51); (b) `X-198/Events/ChargebackReceived.php` is dispatched by nothing and consumed by
+    nothing — `grep -rn ChargebackReceived app/app` returns only its own declaration — which is the
+    seam `dispute-queue.blade.php:2`'s generated sample-state line advertises; (c) *"the evidence
+    compiles within the hour"* and `dispute-card.blade.php:4`'s *"The bundle compiles itself"* name an
+    automatic process that does not exist, since `DisputeCompileAction`'s only caller is
+    `DisputeQueue::compile()`, **a button**. ⛔ Not resolved by wiring a chargeback webhook: that is a
+    live vendor call under ruling 13, and `app/app/Services/Billing/StripeWebhooks.php`'s
+    `charge.dispute.funds_withdrawn` handler is **Track 1's** platform-billing clawback, not a tenant
+    merchant dispute and not this lane's file. ⛔ Not resolved by minting a dispatcher for
+    `ChargebackReceived` to make the generated line true (rulings 29, 32, 56). The outcome is ruling
+    21's finished waiting state plus an `UNRESOLVED` naming the webhook. ⚠️ **Two asymmetries the
+    brief carries:** the queue's empty state *is* asserted (`DisputeQueueScreenTest:72`, on the
+    heading, mid-chain after the last `outcome` call — so a slot rewrite alone would not redden it,
+    and the assertion is *changed* to the dependency clause), while the card's is asserted by
+    **nothing**, which is ruling 70's *"prose is the one thing in this lane no gate reads"* and is why
+    that item must **add** a method rather than change an assertion. ⚠️ Every string dictated was
+    checked against `N010Test`'s directory-wide `refund` scan (ruling 63) before the brief shipped.
