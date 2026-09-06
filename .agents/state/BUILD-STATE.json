@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T10:16:39",
+ "updated": "2026-09-06T10:38:47",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1615,6 +1615,12 @@
    "module": "X-112",
    "chose": "R245: the no-generated-tests rule covers a generator in any language, not only PHP; write test bodies by hand in the file (REV-67)",
    "at": "2026-09-06T10:16:39",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "R245: a seam that ignores its parameters and returns a constant is a stub, and a capability test against it is a refusal, not an assertion; asserting the constant is a change-detector on a string literal (REV-68)",
+   "at": "2026-09-06T10:38:47",
    "ruling": "R245"
   }
  ],

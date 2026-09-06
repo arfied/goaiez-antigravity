@@ -809,3 +809,4 @@
 - `2026-09-06T08:42:49` UNRESOLVED tests X-01 - G2-76: The test test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) while the capability text is 'the unified inbox is the header's first line'. The module was never specced to enforce this table naming rule.
 - `2026-09-06T09:58:19` (R245) X-129 — R245: markTestSkipped is refused as an answer to a capability test in this lane; a refusal goes in REPORT.md under REFUSED with the test body left intact (REV-66)
 - `2026-09-06T10:16:39` (R245) X-112 — R245: the no-generated-tests rule covers a generator in any language, not only PHP; write test bodies by hand in the file (REV-67)
+- `2026-09-06T10:38:47` (R245) C-Agent — R245: a seam that ignores its parameters and returns a constant is a stub, and a capability test against it is a refusal, not an assertion; asserting the constant is a change-detector on a string literal (REV-68)
