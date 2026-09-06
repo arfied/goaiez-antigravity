@@ -914,3 +914,4 @@
 - `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G13-33 - out of module; short domain is in X-137
 - `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G17-24 - out of module; QR codes and short links are in X-137
 - `2026-09-06T18:23:01` (R245) X-138 — (R245) X-138 - 0 ASSERT, 0 REFUSE, 8 UNRESOLVED of eight; an id whose entire surface lives in another module is UNRESOLVED naming the cross-module gap, not an assertion against that module's classes from this one's test directory (REV-92)
+- `2026-09-06T18:25:19` stage capability = 277
