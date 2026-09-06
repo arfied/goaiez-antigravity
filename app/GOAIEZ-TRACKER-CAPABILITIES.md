@@ -680,7 +680,7 @@
 | G13-06 | Click-Level Attribution | ENH | X-138 | SPECCED | attribution is a query over the action log |
 | G13-07 | Cold Storage Hashing | ENH | X-203 | SPECCED | the minted desk's first mechanism — a restore that cannot prove itself is not a backup |
 | G13-08 | Competitor Tracking | ENH | X-144 | SPECCED | competitor benchmarks are named in the header; the geo-grid is X-177's, metered |
-| G13-09 | Conversion Zone Tracking | KILLED → X-110 | X-110 | SPECCED | §44 · P-128 — geo-fenced ad serving; we have no device-location source and X-139 uploads completed JOBS, no… |
+| G13-09 | Conversion Zone Tracking | KILLED → X-110 | X-110 | SPECCED | §44 · P-128 — geo-fenced ad serving; we have no device-location source and X-139 uploads completed JOBS, not store visits — ⛔ KILLED: a conversion zone is never asserted, and the system refuses to infer a store visit from a completed job |
 | G13-10 | CRM Attribution | ENH | X-138 | SPECCED | the offline close mapped back to the click |
 | G13-11 | Cross-Device Graphing | ENH | X-132 | SPECCED | knowing who someone is does not make them contactable (P-068) |
 | G13-12 | Cross-Domain Tracking | ENH | X-110 | SPECCED | the chat's context updates from the page (X-102) |
@@ -865,7 +865,7 @@
 | G18-14 | Post-Call CSAT Survey | ENH | C-Reviews | SPECCED | CSAT on resolve is named in the header |
 | G18-15 | Queue Position Announcements | ENH | X-200 | SPECCED | live queue state; the AI answers first (R11/R20) |
 | G18-16 | Talk-to-Listen Ratio | ENH | X-200 | SPECCED | T677 — a coaching signal only |
-| G18-17 | Telephony Call Whisper | ENH | X-137 | SPECCED | the whisper names the SOURCE — that is what call tracking is for; the whisper audio is asserted present on the agent leg and **absent on the caller leg**, in one test on a real bridge |
+| G18-17 | Telephony Call Whisper | ENH | X-137 | SPECCED | the whisper names the SOURCE — that is what call tracking is for; the whisper audio is asserted present on the agent leg and **absent on the caller leg**, in one test on a real bridge — ⛔ the whisper is never audible to the caller; a bridge that would play it on the caller leg refuses the whisper rather than play it, asserted absent on the caller leg |
 | G18-18 | Telephony Router | ENH | C-Telephony | SPECCED | the router and the eight adapters are the header |
 | G18-19 | Twilio Power-Dialing | ENH | X-200 | SPECCED | Twilio is corpus vocabulary — Infobip primary (§120–§122) · refuses: to treat Twilio as primary — Infobip is primary (§120–§122) |
 | G18-20 | VIP Skipping | ENH | C-Telephony | SPECCED | LTV read from C-Billing; the bypass is a routing rule |
