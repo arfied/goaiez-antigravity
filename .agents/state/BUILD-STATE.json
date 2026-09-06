@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T11:18:55",
+ "updated": "2026-09-06T11:38:42",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1430,10 +1430,83 @@
    "unresolved": []
   },
   "X-176": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 13,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G3-34 \u2014 the \u2464 is \"named in the header\"; there is no clause to assert and naming one authors the \u2464 (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-02 \u2014 the \u2464 is \"the internal linking graph is named in the header\"; no clause, and grep -rniE 'nofollow|internal_link|link_graph' app/app/Modules/X-176/ returns only capabilities.php (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-03 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-04 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-14 \u2014 \"product schema from the pricebook, invalidated in the same commit\": both halves arrive as arguments to SchemaRenderAction::handle ($productOffers, $commitId) and commit_id in the return is the argument echoed back \u2014 the method takes the answer as its argument. grep -rniE 'pricebook|X-163|X-119' app/app/Modules/X-176/ returns three lines and no code (capabilities.php:37, a comment at SchemaRenderAction.php:54, the literal 'Services Pricebook' at :57); the module never reads a pricebook",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-15 \u2014 \"Event schema from X-108's calendar\": SchemaRenderAction has no event or calendar path (the 'event' grep hits are the Laravel Event facade and SchemaPublished), so assertArrayNotHasKey('event', ...) asserts the absence of a key nothing can write; no calendar read and no event column exist here",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-16 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-22 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-23 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-25 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-30 \u2014 \"nofollow on low-value internal links\": grep -rniE 'nofollow|internal_link|link_graph' app/app/Modules/X-176/ returns only capabilities.php:55; there is no link table, no rel attribute and no low-value signal anywhere in the module",
+     "at": "2026-09-06T11:38:23"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-33 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:38:23"
+    }
+   ]
   },
   "X-177": {
    "status": "DONE",
@@ -2949,6 +3022,78 @@
    "stage": "capability",
    "why": "G17-09 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
    "at": "2026-09-06T11:18:17"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G3-34 \u2014 the \u2464 is \"named in the header\"; there is no clause to assert and naming one authors the \u2464 (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-02 \u2014 the \u2464 is \"the internal linking graph is named in the header\"; no clause, and grep -rniE 'nofollow|internal_link|link_graph' app/app/Modules/X-176/ returns only capabilities.php (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-03 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-04 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-14 \u2014 \"product schema from the pricebook, invalidated in the same commit\": both halves arrive as arguments to SchemaRenderAction::handle ($productOffers, $commitId) and commit_id in the return is the argument echoed back \u2014 the method takes the answer as its argument. grep -rniE 'pricebook|X-163|X-119' app/app/Modules/X-176/ returns three lines and no code (capabilities.php:37, a comment at SchemaRenderAction.php:54, the literal 'Services Pricebook' at :57); the module never reads a pricebook",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-15 \u2014 \"Event schema from X-108's calendar\": SchemaRenderAction has no event or calendar path (the 'event' grep hits are the Laravel Event facade and SchemaPublished), so assertArrayNotHasKey('event', ...) asserts the absence of a key nothing can write; no calendar read and no event column exist here",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-16 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-22 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-23 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-25 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-30 \u2014 \"nofollow on low-value internal links\": grep -rniE 'nofollow|internal_link|link_graph' app/app/Modules/X-176/ returns only capabilities.php:55; there is no link table, no rel attribute and no low-value signal anywhere in the module",
+   "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-33 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:38:23"
   }
  ],
  "decisions": [
@@ -3046,6 +3191,12 @@
    "module": "X-191",
    "chose": "R245 \u2014 X-191's follow-up ceiling (LinkPitchAction:72, over link_pitches.follow_up_count) and its page-fact gate (LinkPitchAction:37, over link_pitches.page_specific_fact) are the two clauses this module decides; G8-20, G8-21, G12-07, G17-06 and G11-34 are credited on the anchor body that asserts them and the other eleven rows carry no clause X-191 can assert (S-113)",
    "at": "2026-09-06T11:18:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "R245 \u2014 X-176's schema validator (SchemaRenderAction::validateSchema, 113-159, refusing SCHEMA_INVALID) and its entity-type inference (lines 27-40, over businesses.vertical, with no entityType argument) are the clauses this module decides; G8-32, G7-48, G12-03 and G16-25 are credited on the bodies that assert them and the other twelve rows carry no clause X-176 can assert \u2014 G8-14 and G8-15 take their answer as an argument or have no source at all, G8-30 greps nowhere outside capabilities.php, and the remaining nine are 'named in the header' (P-210) (S-114)",
+   "at": "2026-09-06T11:38:42",
    "ruling": "R245"
   }
  ],
