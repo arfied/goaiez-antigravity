@@ -763,3 +763,28 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **continuation**, not a retry. ⚠️ Distinguish it from the *running* case the
     same way as always: a 0-byte log with `CODER ALIVE` is a live run, because
     the log is written at exit.
+41. **A column that stores a provider-issued string is `text`, and a stub that
+    returns a short one tests nothing (RULED by the lane supervisor 2026-09-06
+    10:5x, on MONEY-67b's live Stripe call).**
+    `2026_09_06_100000_create_x198_payment_links_table.php:20` is
+    `$table->string('url')` = `varchar(255)`; a live Stripe Checkout URL is **422
+    characters** (the `cs_test_…` id, `/c/pay/`, the id again, then a ~300-byte
+    `#fid…` fragment), so the column can never hold one and the first real call
+    died `SQLSTATE[22001] … value too long for type character varying(255)`. Four
+    passing tests could not see it because **all four stubs return the same
+    44-character fiction** (`X198Test.php:326,:363,:453`,
+    `DeclinesScreenTest.php:262`) — right prefix, which is all the assertions
+    check, and a length nothing real ever has. So: (1) `url`, and any future
+    column holding a provider-issued URL, is `text` — `provider_link_id` stays
+    `string`, Stripe ids are bounded, but a URL is not; (2) **a test double
+    returns a value of the real thing's shape AND size** — at least one stub
+    returns a 400+ character URL, or the write path is untested at the only
+    length that matters; (3) ⛔ **never widen by editing
+    `2026_09_06_100000_…`** — fact 17: an edited migration takes effect in the
+    suite's `migrate:fresh` and **never** in `goaiez_antig_money`, so the dev
+    database would stay `varchar(255)` and the evidence run would fail again
+    behind a green suite. A **new** migration. ⚠️ This is ruling 36 one level
+    further down again: 36 asked whether the URL reached a real Stripe object,
+    37 whether it was the *right* object, 41 whether we can **store** the answer.
+    The supervisor approved `string('url')` at MONEY-66 review; the miss is the
+    reviewer's as much as the coder's.
