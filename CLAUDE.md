@@ -446,3 +446,50 @@ pidfile, that check has regressed — do not wait it out.
       with no owner answer must wait — no longer applies to anything on the unreserved list. An
       `UNRESOLVED` that names an unmade **decision** rather than a missing **dependency** (rule 09)
       is now this supervisor's to rule on, and PB-55 is the first wave cut that way.
+
+## Owner ruling relayed by Track 1 — 2026-09-06 17:2x (`OWNER.md`, applied 18:4x)
+
+31. **`--allow-harness` exists, per run, and it opens the ability to commit — not permission to
+    weaken.** `coder-bin/git` keyed its `JourneyHarness.php` exemption to the checkout name
+    `grs-antig`, so a lane could not fix the harness of a journey it owns; it now also clears on
+    `GOAIEZ_HARNESS_OK=1`, which `launch-coder.sh --allow-harness` sets for one run, exactly
+    parallel to `--allow-merge`. The flag is in this lane's launcher as of `5504dd7b`.
+    - **Provisioning real state so a real code path runs is a fix** — it makes a journey *harder*
+      to pass, and that is why the flag was granted.
+    - **Deleting an assertion, stubbing a transport, or making a journey pass on a constant is a
+      `BLOCK`, and the supervisor that opened the gate wears it.**
+    - **Whoever passes it quotes the harness diff in the `REVIEWS.md` block that opened it.** A run
+      that used the flag with no quoted diff is not reviewable, and an unreviewable harness change
+      is the exact shape of the fake green this repo keeps finding.
+    - Never standing. In this lane ruling 29 still routes J3's harness lines to Track 1, so it stays
+      unused here until that changes.
+
+## Trap added 2026-09-06 18:4x — the gate now records itself, and §6 finally has teeth
+
+`bin/supervise.sh` writes one eight-column row per tool run to `${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}`:
+`start_iso end_iso gate_pid tool_pid rc project checkout tool`. `rc` is **raw** (124 = `timeout(1)`,
+143 SIGTERM, 137 SIGKILL) because the signal is the whole point, `tool` is one of exactly
+`gate|pint|phpstan|pest|doctor`, and `project` is always `goaiez-antigravity`. `GATE_LOG` is
+overridable so **no test can ever write the shared file** — a sibling project's harness executed its
+own gate and appended twelve rows for tools that never ran, with every property the schema demands
+satisfied, and *the only tell was a `pest` row whose start and end were the same second*. Filter
+`wt10` gate pids `1411718 1411764 1425556 1425618 1468140 1468184` when reading it. A diagnostic log
+that records its own harness is worse than no log.
+
+Separately, and it was ours: §6 read `./vendor/bin/pint --test | tail -3 | sed … || fail=1`. **A
+pipeline's status is its last command's**, so `fail=1` could never fire — a pint or phpstan red was
+printed and then forgotten by the verdict, for as long as the file has existed. Both tools now run
+through `run_tool`, rc read before the output is printed, and 124 or 128+N prints
+`⛔ <tool> was KILLED or timed out — this is NOT a verdict`. ⚠️ Never edit the gate script while a
+gate is running: bash reads it incrementally.
+
+## Trap added 2026-09-06 18:4x — `test -d /proc/<pid>` tells a tick NOTHING
+
+The tick harness does not surface an exit code: `test -d /proc/999999999` and `test -d` on a live pid
+both print *"Bash completed with no output"*, and the `&& echo` that would disambiguate is refused as
+a compound. `ls -d /proc/N` and `tail`/`wc`/`grep` outside the checkout are blocked. **The liveness
+check that works is `pgrep -af 'grs-antig-pricebook'`** — if the only line is the tick's own shell,
+no coder is alive — plus the run log's last line, read with the `Read` tool. Correspondingly:
+`AGY_EXIT=124` is the launcher's own `timeout -k 60 3h`, a machine death that **does not spend the
+cap**, and a run that dies that way still leaves commits and evidence on disk. A dead run is not an
+empty run.
