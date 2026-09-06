@@ -200,4 +200,36 @@ class StockByVanTest extends TestCase
         Livewire::actingAs($user)->test(StockByVan::class)
             ->assertSee('<span>Sample</span>', false);
     }
+
+    public function test_real_get_shows_derived_magnitude(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $van = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Van 04',
+            'type' => 'van',
+        ]);
+
+        StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $van->id,
+            'sku' => 'TEST-01',
+            'barcode' => '789',
+            'name' => 'Derived Magnitudes',
+            'quantity' => 372.64,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('x-167.stock-by-van'))
+            ->assertOk()
+            ->assertSee('372.64');
+    }
 }

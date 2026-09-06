@@ -113,7 +113,17 @@ class X171Test extends TestCase
      */
     public function test_offline_first_premise(): void
     {
-        $this->assertTrue(true);
+        $path = base_path('app/Modules/X-171');
+        $this->assertTrue(is_dir($path) && count(scandir($path)) > 2, 'X-171 module directory must exist and be non-empty');
+
+        $grepCommand = sprintf('grep -rniE "(Http::|curl_|Guzzle|file_get_contents\(\'http)" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-171/ performs an outbound network call.');
     }
 
     /** [G4-27] */
