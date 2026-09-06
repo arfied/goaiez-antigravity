@@ -177,6 +177,66 @@ class DailyPricingDigestTest extends TestCase
         Livewire::actingAs($owner)
             ->test(DailyPricingDigest::class)
             ->assertOk()
-            ->assertSee('drain unblock');
+            ->assertSee('drain unblock')
+            ->assertSee(now()->subDays(3)->format('j M H:i'));
+    }
+
+    public function test_pricing_a_gap_in_the_digest_confirms_it_and_clears_it(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $event = new AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a drain unblock',
+            'drain unblock'
+        );
+        Event::dispatch($event);
+
+        $item = PriceBookItem::first();
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->set('prices.'.$item->id, 125.00)
+            ->call('confirm', $item->id);
+
+        $this->assertDatabaseHas('price_book_items', [
+            'id' => $item->id,
+            'is_confirmed' => true,
+            'price_cents' => 12500,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->assertDontSee('drain unblock');
+    }
+
+    public function test_a_gap_left_at_zero_stays_and_says_it_needs_a_price(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $event = new AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a drain unblock',
+            'drain unblock'
+        );
+        Event::dispatch($event);
+
+        $item = PriceBookItem::first();
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->call('confirm', $item->id)
+            ->assertSee('Needs a price');
+
+        $this->assertDatabaseHas('price_book_items', [
+            'id' => $item->id,
+            'is_confirmed' => false,
+        ]);
     }
 }

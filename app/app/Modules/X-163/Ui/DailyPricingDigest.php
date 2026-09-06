@@ -16,6 +16,8 @@ class DailyPricingDigest extends Component
 {
     public array $refusals = [];
 
+    public array $prices = [];
+
     public function mount(): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
@@ -23,9 +25,30 @@ class DailyPricingDigest extends Component
         abort_unless($businessId !== null && $businessId > 0, 403);
     }
 
+    public function updatePrice(int $itemId, $value)
+    {
+        $businessId = Tenancy::id();
+        PriceBookItem::where('business_id', $businessId)->where('id', $itemId)->update(['price_cents' => (int) round((float) $value * 100)]);
+    }
+
     public function confirm(int $itemId)
     {
         $businessId = Tenancy::id();
+
+        $cents = 0;
+        if (isset($this->prices[$itemId])) {
+            $cents = (int) round((float) $this->prices[$itemId] * 100);
+        }
+
+        if ($cents <= 0) {
+            $this->refusals[$itemId] = true;
+            return;
+        }
+
+        if (isset($this->prices[$itemId])) {
+            $this->updatePrice($itemId, $this->prices[$itemId]);
+        }
+
         $result = app(PriceConfirmAction::class)->handle($businessId, $itemId);
 
         if (isset($result['refusal_code']) && $result['refusal_code'] === 'FILL_ME') {
@@ -45,6 +68,12 @@ class DailyPricingDigest extends Component
             ->orderByDesc('refusal_flagged_at')
             ->orderByDesc('refusal_count')
             ->get();
+
+        foreach ($items as $item) {
+            if (!isset($this->prices[$item->id])) {
+                $this->prices[$item->id] = $item->price_cents / 100;
+            }
+        }
 
         return view('x-163::daily-pricing-digest', [
             'items' => $items,

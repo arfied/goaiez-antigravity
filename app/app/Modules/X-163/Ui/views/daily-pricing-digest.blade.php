@@ -26,12 +26,19 @@
                                     <span class="text-sm text-alert font-medium bg-alert-bg px-2 py-0.5 rounded">Needs a price</span>
                                 @endif
                             </h3>
-                            <p class="text-sm text-ink-2 mt-1">Last refused: {{ $item->refusal_flagged_at->format('H:i') }} &middot; ${{ number_format($item->price_cents / 100, 2) }}</p>
+                            <p class="text-sm text-ink-2 mt-1">Last refused: {{ $item->refusal_flagged_at->format('j M H:i') }} &middot; ${{ number_format($item->price_cents / 100, 2) }}</p>
                         </div>
                         
-                        <button wire:click="confirm({{ $item->id }})" class="h-10 px-4 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors whitespace-nowrap">
-                            Click to confirm
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <span class="text-ink-2">$</span>
+                            <input type="number" step="0.01" min="0" 
+                                   wire:model="prices.{{ $item->id }}"
+                                   class="w-32 h-10 px-3 py-2 bg-paper border border-rule rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+                                   placeholder="0.00">
+                            <button wire:click="confirm({{ $item->id }})" class="h-10 px-4 text-sm font-medium text-white bg-accent hover:bg-accent-hover rounded-md transition-colors whitespace-nowrap">
+                                Click to confirm
+                            </button>
+                        </div>
                     </div>
                 @endforeach
             </div>

@@ -73,6 +73,16 @@ class ConfirmationScreen extends Component
     {
         $businessId = Tenancy::id();
 
+        $cents = 0;
+        if (isset($this->prices[$itemId])) {
+            $cents = (int) round((float) $this->prices[$itemId] * 100);
+        }
+
+        if ($cents <= 0) {
+            $this->refusals[$itemId] = true;
+            return;
+        }
+
         if (isset($this->prices[$itemId])) {
             $this->updatePrice($itemId, $this->prices[$itemId]);
         }
