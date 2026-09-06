@@ -269,6 +269,37 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   → verdicts in this worktree's REVIEWS.md. Two dispatches per BLOCK, then
   the owner. A journey the coder marks green is never taken at face value;
   only the gate's output counts.
+- **Every tick fetches before it reads a remote ref** (tick 146). "`origin/main`
+  is unmoved" read off a ref last refreshed hours ago is an argument from a stale
+  pointer, not a measurement. `git fetch --no-write-fetch-head --quiet origin`
+  first — that flag is what avoids the root-owned `FETCH_HEAD` trap.
+- **A HOLD tick checks four things, not three.** The three documented re-openers
+  (an owner answer, a Track 1 merge of a sealed-file fix, a regeneration that
+  moves a count) all watch `main`. The fourth watches the *other tracks*: is a
+  branch writing in this track's column?
+
+  ```
+  git log --format='%h %ci %s' ^origin/main ^origin/track/site \
+    origin/track/money origin/track/pricebook origin/track/reviews \
+    origin/track/sixty origin/track/stages origin/track/ui \
+    -- app/app/Modules/X-157 app/app/Modules/X-110 app/app/Modules/X-102 \
+       app/app/Modules/X-155 app/app/Modules/X-137 app/app/Modules/X-176 \
+       app/app/Modules/X-103
+  ```
+
+  It must print nothing. On 2026-09-05 it printed five `track/sixty` commits in
+  X-103 — correct on the merits, invisible to this track for three hours
+  (OWNER ACTION 43). **Verify the substance before calling it a violation**, and
+  never brief a duplicate cleanup: two branches fixing one finding in one module
+  hands Track 1 a conflict.
+- **J11's `ssl` is a name mismatch, not a credential gap** (tick 146).
+  `JourneyHarness.php:693` reads `$version->ssl_installed`; X-103 writes
+  `ssl_enabled`; the names have never matched, and `isset()` turns the missing
+  attribute into a silent `false`. ⛔ **Never fix it by adding an `ssl_installed`
+  column** — that is a constant-`true` column existing only to be read, and
+  `track/sixty` added and reverted exactly that in 23 minutes. The fix is
+  OWNER ACTION 28's graft: `ssl` comes from the served 200/404 pair off
+  `EdgeZone.has_valid_ssl`, per ruling 16.
 - Shared files: `.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written
   by every track through `state.py`. **This track pushes unrebased** (ruling
   15, 2026-09-04): the `reference-transaction` guard refuses every
