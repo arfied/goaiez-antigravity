@@ -87,6 +87,13 @@ class X126Test extends TestCase
 
     /**
      * [N-126-01] capability arbiter decision evaluation
+     * [N-049]
+     * [N-050]
+     * [N-051]
+     * [N-052]
+     * [N-054]
+     * [N-057]
+     * [N-060]
      */
     public function test_n_126_01_decision_evaluation(): void
     {
