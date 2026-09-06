@@ -813,3 +813,4 @@
 - `2026-09-05T18:51:18` X-193 -> DONE
 - `2026-09-05T18:51:18` X-201 -> DONE
 - `2026-09-05T19:32:25` UNRESOLVED capability X-186 - G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)
+- `2026-09-05T19:48:47` UNRESOLVED capability C-Mail - G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.

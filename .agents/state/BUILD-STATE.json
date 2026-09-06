@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T19:32:25",
+ "updated": "2026-09-05T19:48:47",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -404,10 +404,17 @@
    ]
   },
   "C-Mail": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Mail",
+     "stage": "capability",
+     "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
+     "at": "2026-09-05T19:48:47"
+    }
+   ]
   },
   "C-Reviews": {
    "status": "UNRESOLVED",
@@ -1443,6 +1450,12 @@
    "stage": "capability",
    "why": "G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)",
    "at": "2026-09-05T19:32:25"
+  },
+  {
+   "module": "C-Mail",
+   "stage": "capability",
+   "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
+   "at": "2026-09-05T19:48:47"
   }
  ],
  "decisions": [
