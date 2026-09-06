@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T08:00:15",
+ "updated": "2026-09-06T08:22:40",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1493,6 +1493,10 @@
   {
    "at": "2026-09-06T07:48:55",
    "note": "the superseded comment at 2026_08_30_000029_create_x117_sellables_tables.php:46 is left alone because that file is applied on every database in the programme"
+  },
+  {
+   "at": "2026-09-06T08:22:45",
+   "note": "MONEY-61: GatewayEngineTest.php:13 asserts the J9 artifact's payment_status is pending, which this wave's vocabulary retires; the artifact is a real Stripe test-mode charge, so regenerating it must land in the same commit as the assertion change - sequenced as MONEY-62, left alone here"
   }
  ],
  "decisions": [
@@ -1710,6 +1714,18 @@
    "module": "X-198",
    "chose": "(R245) idempotency skips failed rows: an attempt that charged zero times is not the thing being deduplicated, so a card that declines once can be retried on the same key",
    "at": "2026-09-06T08:00:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) a payment row says what happened: captured on a non-null gateway charge id, awaiting_processor when no adapter was asked, failed when the gateway refused. pending is retired as a writer value.",
+   "at": "2026-09-06T08:22:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) payments.status defaults to awaiting_processor, not captured: a row that does not say what happened to the money has not had money taken.",
+   "at": "2026-09-06T08:22:40",
    "ruling": "R245"
   }
  ]
