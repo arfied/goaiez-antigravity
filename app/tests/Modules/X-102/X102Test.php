@@ -184,6 +184,21 @@ class X102Test extends TestCase
     }
 
     /**
+     * [G13-15] an exit-intent answer containing an ungrounded price refuses instead
+     */
+    public function test_g13_15_ungrounded_price_refuses(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Price Refusal', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->escalateAction->answerQuestion($biz->id, 'how much does the premium plan cost?', null);
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_GROUNDING_FACT', $res['refusal_code']);
+        $this->assertDoesNotMatchRegularExpression('/[\d$€£¥]/', $res['answer']);
+    }
+
+    /**
      * [G13-37] the widget offers help instead of watching them fail
      */
     public function test_g13_37_proactive_help(): void
