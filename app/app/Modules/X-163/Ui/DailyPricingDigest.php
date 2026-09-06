@@ -42,6 +42,7 @@ class DailyPricingDigest extends Component
 
         if ($cents <= 0) {
             $this->refusals[$itemId] = true;
+
             return;
         }
 
@@ -70,7 +71,7 @@ class DailyPricingDigest extends Component
             ->get();
 
         foreach ($items as $item) {
-            if (!isset($this->prices[$item->id])) {
+            if (! isset($this->prices[$item->id])) {
                 $this->prices[$item->id] = $item->price_cents / 100;
             }
         }

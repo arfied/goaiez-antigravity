@@ -80,6 +80,7 @@ class ConfirmationScreen extends Component
 
         if ($cents <= 0) {
             $this->refusals[$itemId] = true;
+
             return;
         }
 
