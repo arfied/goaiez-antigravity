@@ -59,7 +59,7 @@ class VisitorsLive extends Component
                     ->select('pixel_events.event_name', 'pixel_events.created_at')
                     ->get()
                     ->toBase()
-                    ->map(fn (PixelEvent $e) => ['label' => self::eventLabel((string) $e->event_name), 'at' => $e->created_at]);
+                    ->map(fn (PixelEvent $e) => ['label' => self::eventLabel((string) $e->event_name), 'at' => $e->created_at ? $e->created_at->diffForHumans() : 'unknown']);
             }
         } catch (\Exception $e) {
             return view('x-110::visitors-live', ['loadError' => $e->getMessage()]);

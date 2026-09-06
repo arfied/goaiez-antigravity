@@ -52,7 +52,7 @@
                                         @foreach($openVisitorEvents as $event)
                                             <li class="flex justify-between items-center text-ink-2">
                                                 <span class="text-ink">{{ $event['label'] }}</span>
-                                                <span>{{ $event['at']->diffForHumans() }}</span>
+                                                <span>{{ $event['at'] }}</span>
                                             </li>
                                         @endforeach
                                     </ul>
