@@ -92,6 +92,13 @@ class X166Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'No Refusal Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        $emptyJobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'No Cost Rows',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $this->costAction->handle(
             businessId: $biz->id,
             jobId: 999,
@@ -115,7 +122,7 @@ class X166Test extends TestCase
 
         // A job with no cost rows reports no margin (absent from array)
         // and is not present carrying a 100% margin.
-        $this->assertArrayNotHasKey(1000, $jobsWithMargins);
+        $this->assertArrayNotHasKey($emptyJobId, $jobsWithMargins);
         $this->assertNotContains(100.0, $jobsWithMargins);
     }
 }
