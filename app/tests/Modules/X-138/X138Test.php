@@ -92,6 +92,68 @@ class X138Test extends TestCase
         $this->assertEquals(4.0, $roiResult['roi_multiple']);
     }
 
+
+    /**
+     * [G9-14]
+     */
+    public function test_g9_14_ad_spend_stored_in_roi_snapshot(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ad Spend Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $result = $this->roiAction->computeCampaignRoi($biz->id, 'spend_campaign', 60000, 10000);
+        
+        $this->assertDatabaseHas('roi_snapshots', [
+            'id' => $result['snapshot_id'],
+            'ad_spend_cents' => 60000,
+            'business_id' => $biz->id,
+        ]);
+    }
+
+    /**
+     * [G9-33]
+     */
+    public function test_g9_33_campaign_mapped_to_closed_revenue(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Revenue Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $result = $this->roiAction->computeCampaignRoi($biz->id, 'revenue_campaign', 10000, 250000);
+        
+        $this->assertDatabaseHas('roi_snapshots', [
+            'id' => $result['snapshot_id'],
+            'campaign_name' => 'revenue_campaign',
+            'closed_revenue_cents' => 250000,
+            'business_id' => $biz->id,
+        ]);
+    }
+
+    /**
+     * [G13-10]
+     */
+    public function test_g13_10_offline_close_mapped_to_click_touches(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Offline Close Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $touches = [
+            ['source' => 'organic_search', 'timestamp' => '2026-08-20T10:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+        ];
+
+        $result = $this->queryAction->queryJobAttribution(
+            businessId: $biz->id,
+            jobId: 777,
+            qualifyingTouches: $touches,
+            jobValueCents: 85000 // offline close value
+        );
+        
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $result['query_id'],
+            'job_value' => 85000,
+            'touches' => json_encode($touches),
+        ]);
+    }
+
     /**
      * [G4-25], [G9-13], [G9-14], [G9-33], [G9-34], [G13-04], [G13-06], [G13-10], [G13-16], [G13-21], [G13-23], [G13-33], [G17-24]
      */
