@@ -1564,6 +1564,68 @@ Watch for: <the trap that applies, by name>
   domain rate, and the grep that catches the outer rung (does anything write it?) answers *yes* and clears it.
   **Ask which writer, and whether it is on this path.** Disclosed correctly here as a `BUILD PROPOSAL` in the
   docblock, which is the durable place; `REPORT.md` is overwritten every wave.
+- ⚠️⚠️ **A gate tool that is GREEN at dispatch still needs a re-run item after the last commit, because the wave
+  is what turns it red — and this column has now briefed the reading of §6 four times without ever briefing the
+  fix.** Wave 102's brief said, correctly, *"a gate-red sha is not a gated sha and it holds the push exactly as a
+  `BLOCK` would"*, and made item 0 `composer dump-autoload` because pint was green at waves 100 and 101c. The
+  wave then turned pint red on the two files it created (`ModuleServiceProvider.php`
+  `fully_qualified_strict_types`+`ordered_imports`; `X01Test.php` four fixers), the coder read §6 correctly and
+  quoted its own red in `GATE:`, and **the sha was unpushable with nothing anyone could do about it in that
+  tick**. Fourth pint-red wave on this lane and the first with no pint item in the brief at all. My own file
+  already said *"item 0 is the first thing to fix and the LAST thing to check"*; I had been briefing only the
+  first half. **The item is `./vendor/bin/pint --test` after the last commit, scoped fixes, re-gate — and it
+  costs one line.** ⚠️ Scope the fix to the wave's own files: a bare `./vendor/bin/pint` reformats the tree and
+  sweeps in files the wave never touched.
+- ⭐ **The SITE-offset tell works ACROSS files, and one exact file beside one uniformly-shifted file is stronger
+  evidence than either alone.** Wave 102 disclosed three sites: `ModuleServiceProvider.php:29` **exact** against
+  the committed file, and two in the listener both **−3** (`$event->body` at 27 not 24, the guard at 18 not 15).
+  A uniform offset confined to one of two files is what a real edit above the mutation point produces — here the
+  three lines of `use ...EmailReplied;` / `use ...UnifiedInboxManager;` / blank, added when the FQNs were pulled
+  up to imports between the last mutation and the commit. ⭐ **And the gate corroborated it from outside:** pint
+  was still flagging `fully_qualified_strict_types` on the *provider*, the one file where the inline FQNs were
+  left — a fabricator does not produce a shift in one of two files and then leave the trace of it in an
+  unrelated tool's output. **Still ask for the SITE as it reads in the file finally committed**; the offset tell
+  is a rescue, not a substitute.
+- ⚠️ **The `REPORT.md` TEMPLATE is the last place this column was still writing the answers down.** Wave 102's
+  template line was literally `FIXED: items 1, 2, 5 and 6 — what you changed…` and the report returned
+  `FIXED: items 1, 2, 5 and 6`. Items 0/3/4/7/8/9 were all demonstrably done — by the classmap, the new test,
+  three mutation logs, one named-paths commit and the artifact order — and appear nowhere in the field, which
+  therefore carries no information. **Fifth recurrence of the tick-171 leak** after the arithmetic (74), the
+  expected sentence (79), the triage table (93) and the prose paragraph (97b). Ask for *"which items you
+  fixed"*. Generalise: **a template is a brief too, and every literal in it is a prediction.**
+- ✅ **A four-assertion test with a THREE-mutation union is the complete form, and the subtractions are the whole
+  proof.** Wave 102: M1 (comment out the `Event::listen` seam) → `assertions 1`; M2 (`-$event->body`
+  `+$event->subject` in the listener) → `3`; M3 (remove the empty-body guard) → `4`. Each reddens exactly one of
+  A1/A2/A3 on its own terms and leaves the others executable — the wave-92 requirement and the wave-90
+  subtraction satisfied together. ⭐ **M2 self-pinned its site**: the failure printed expected
+  `'This is the reply body'` / actual `'Subj Reply'`, i.e. the **module's output**, where a test-body edit of the
+  expected string would have printed the two reversed. Third holding of the tick-200 exception — *ask first
+  whether a failure message carries the module's output or only the test's expectation.*
+- ⚠️ **Size the reachable set before reading a narrow radius as anything at all — a single `Event::fake` list can
+  force it.** Wave 102's three mutation logs were all `"tests":1` (the brief asked for unfiltered and did not get
+  it, undisclosed). It cost nothing: `CMailTest.php:538,560` fake `EmailReplied`, which **suppresses the new X-01
+  listener in the only other place in the suite that drives a `'replied'` ingest**, so radius 1 was forced. The
+  tick-204 rule (*a radius of one is forced when only one test can reach the code*) has a second mechanism —
+  not just "one caller exists" but "every other caller fakes the event". ✅ The report claimed **no** radius,
+  which is the wave-93 defect correctly avoided.
+- ⚠️ **A "seed" in a class name is not evidence that the class writes a fixture — read it before describing it in
+  a backlog.** Tick 204 recorded `EmailHaltSeedAction:38` as the lone, *seed* writer of `complaint_rate`, which
+  reads as "a fixture writer, so the value is not really produced". Measured at tick 205 the class derives the
+  rate from real `mail_events` counts (`:21-36`) and applies the R17 constants (`:40-42`) — real logic. **The
+  actual defect was one level up and worse:** `grep -rn "EmailHaltSeedAction" app/app app/tests` names its own
+  declaration and **three test lines, nothing else**, so the whole halt mechanism has no production caller and
+  `EmailSendAction:37`'s pause check reads a value no code path produces. That is the tick-184 dead-class shape
+  found by the tick-201 writerless-value grep, and it converts a wave from *build a mechanism* into *add one
+  call*. **When a grep for writers returns exactly one, grep that writer's own callers before writing the
+  backlog line.**
+- **Backlog at tick 205 — wave 103 is the complaint-halt WIRE.** Supersedes tick 204's framing of wave 103.
+  Requirements: the ingest's own new row must be counted by the recompute, and `EmailComplained` must carry the
+  **fresh** rate (`EmailIngestEventAction:42` dispatches the value loaded at `:28`, before anything happened).
+  Four assertions with a **negative** (A4), because A2/A3 both pass against code that pauses unconditionally;
+  and ⚠️ **A3 is the green-by-construction risk** — `EmailSendAction:36-67` has four distinct refusal paths and
+  wave 100's own bounce gate is one of them, so a test asserting only *"refused"* passes on the wrong gate
+  forever. No `UNRESOLVED`: nothing is missing to the derivation. Then wave 104 is
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — the live list, which beats any table copied into this file.
 - **Backlog at tick 204 — the C-Mail chain, ruled.** Wave 101 is closed: the ingest action exists, the gate and
   the ingest agree on `bounced`/`spam-trap`, and the migration's `event_type` comment names all seven values it
   writes or reads. **Wave 102 is `G11-12`'s second half, the C-Mail → X-01 bridge**, unblocked because
