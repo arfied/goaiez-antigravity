@@ -58,17 +58,11 @@ class AbandonedForms extends Component
             $rawField = $event->payload['abandoned_field'] ?? 'unknown';
             $rawForm = $event->payload['form_id'] ?? 'form';
 
-            $field = match ($rawField) {
-                'phone' => 'phone number',
-                'email' => 'email address',
-                default => ucfirst(str_replace('_', ' ', $rawField))
-            };
+            $field = ['phone' => 'phone number', 'email' => 'email address'][$rawField]
+                ?? ucfirst(str_replace('_', ' ', (string) $rawField));
 
-            $form = match ($rawForm) {
-                'quote_form' => 'quote form',
-                'contact_form' => 'contact form',
-                default => ucfirst(str_replace('_', ' ', $rawForm))
-            };
+            $form = ['quote_form' => 'quote form', 'contact_form' => 'contact form'][$rawForm]
+                ?? ucfirst(str_replace('_', ' ', (string) $rawForm));
 
             $visitorId = 'unknown';
             if ($event->session_id && isset($sessions[$event->session_id])) {
