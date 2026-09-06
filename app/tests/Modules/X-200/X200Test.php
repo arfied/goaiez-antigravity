@@ -284,6 +284,9 @@ class X200Test extends TestCase
      * [G2-35]
      * [G2-26]
      * [G2-37]
+     * [G18-02]
+     * [G18-13]
+     * [G18-16]
      */
     public function test_g2_35_the_wallboard_scorecard_is_positive_only(): void
     {
