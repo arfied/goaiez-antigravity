@@ -43,6 +43,8 @@ final class ModuleServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 DetectOverdueReceivablesCommand::class,
+                \App\Modules\X211\Console\EvidenceRecoveryCommand::class,
+                \App\Modules\X211\Console\RuntimeProofCommand::class,
             ]);
 
             $this->app->booted(function () {
