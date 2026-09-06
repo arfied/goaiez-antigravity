@@ -122,4 +122,64 @@ class X151Test extends TestCase
         $sitemapRes = $this->sitemapAction->handle($biz->id, 'contractor.io', 'https://contractor.io/sitemap.xml');
         $this->assertCount(3, $sitemapRes['urls_discovered']);
     }
+
+    /** [G7-36] */
+    public function test_g7_36_fetch_refresh_is_not_ad_management(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'G7-36 Biz', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $fetchRes = $this->runAction->handle(
+            businessId: $biz->id,
+            domain: 'g7-36-domain.com',
+            url: 'https://g7-36-domain.com/page',
+            encounterCaptcha: false,
+            currentActiveWorkers: 0
+        );
+        $fetchId = $fetchRes['fetch_id'];
+
+        $fetch = $this->refreshAction->handle($biz->id, $fetchId);
+        $this->assertTrue($fetch->is_stale);
+        $this->assertEquals('stale', $fetch->status);
+
+        $this->assertNotNull(Fetch::find($fetchId));
+
+        $paramNames = array_map(fn ($p) => $p->getName(), (new \ReflectionMethod(FetchRefreshAction::class, 'handle'))->getParameters());
+        $this->assertEquals(['businessId', 'fetchId'], $paramNames);
+        $this->assertCount(2, $paramNames);
+
+        $fetchKeys = array_keys((new Fetch)->getAttributes());
+        $targetKeys = array_keys((new FetchTarget)->getAttributes());
+        $allNames = array_merge($fetchKeys, $targetKeys, $paramNames);
+
+        $regex = '/(audience|lookalike|adset|ad_set|ad_spend|adwords|retarget|remarketing|cpc|cpm|pixel|meta_ads)/i';
+        foreach ($allNames as $name) {
+            $this->assertDoesNotMatchRegularExpression($regex, $name);
+        }
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-151')));
+        $files = [];
+        $controlCount = 0;
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                $filename = $file->getFilename();
+                if ($filename === 'capabilities.php' || $filename === 'manifest.php') {
+                    continue;
+                }
+                $files[] = $file->getPathname();
+                if (preg_match('/Fetch|ProxyPool|RobotsSignal/', $filename)) {
+                    $controlCount++;
+                }
+            }
+        }
+        $this->assertGreaterThanOrEqual(12, count($files));
+
+        $contentRegex = '/\b(meta_ads|seed_audience|custom_audience|audience|audiences|lookalike|adset|ad_set|retarget|retargeting|remarketing|ad_spend|adwords|cpc|cpm|pixel_id)\b/i';
+        foreach ($files as $filePath) {
+            $content = file_get_contents($filePath);
+            $this->assertDoesNotMatchRegularExpression($contentRegex, $content);
+        }
+
+        $this->assertGreaterThanOrEqual(3, $controlCount);
+    }
 }

@@ -9,9 +9,12 @@ use App\Modules\X136\Actions\SignalScoreAction;
 use App\Modules\X136\Events\IntentHigh;
 use App\Modules\X136\Events\ProspectDecayed;
 use App\Modules\X136\Events\SignalDetected;
+use App\Modules\X136\Models\DecayModel;
+use App\Modules\X136\Models\Signal;
 use App\Modules\X136\Models\SignalScore;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class X136Test extends TestCase
@@ -71,5 +74,122 @@ class X136Test extends TestCase
     public function test_signal_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    /** [G3-45] */
+    public function test_g3_45_geofence_input_is_a_signal_never_a_served_ad(): void
+    {
+        Event::fake([SignalDetected::class, IntentHigh::class, ProspectDecayed::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Signal Tenant 1', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payload = ['radius_m' => 500, 'lat' => 30.2672, 'lng' => -97.7431, 'source' => 'Foot Traffic'];
+
+        $score = $this->scoreAction->recordAndScore(
+            businessId: $biz->id,
+            prospectIdentifier: 'prospect_geo_austin_77',
+            signalType: 'geofence_proximity',
+            payload: $payload,
+            baseScore: 88.0,
+        );
+
+        $signalCount = Signal::where('business_id', $biz->id)->count();
+        $this->assertEquals(1, $signalCount);
+
+        $signal = Signal::where('business_id', $biz->id)->first();
+        $this->assertEquals('geofence_proximity', $signal->signal_type);
+        $this->assertEquals($payload, $signal->payload);
+
+        $scoreCount = SignalScore::where('business_id', $biz->id)->count();
+        $this->assertEquals(1, $scoreCount);
+
+        $scoreRow = SignalScore::where('business_id', $biz->id)->first();
+        $this->assertTrue($scoreRow->is_high_intent);
+        $this->assertEquals('fresh', $scoreRow->cooling_status);
+
+        Event::assertDispatched(SignalDetected::class);
+        Event::assertDispatched(IntentHigh::class);
+
+        $files = File::allFiles(app_path('Modules/X-136'));
+        $phpFiles = array_filter($files, fn ($f) => $f->getExtension() === 'php' && ! in_array($f->getFilename(), ['capabilities.php', 'manifest.php']));
+
+        $visited = 0;
+        $matchedControl = 0;
+
+        foreach ($phpFiles as $file) {
+            $visited++;
+            $content = file_get_contents($file->getPathname());
+
+            $this->assertDoesNotMatchRegularExpression(
+                '/(Http::|Mail::|Notification::|->send\(|ShouldQueue|dispatchNow)/',
+                $content,
+                'File '.$file->getFilename().' matches serving surface'
+            );
+
+            if (preg_match('/SignalScore/', $content)) {
+                $matchedControl++;
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(15, $visited);
+        $this->assertGreaterThanOrEqual(3, $matchedControl);
+    }
+
+    /** [G7-20] */
+    public function test_g7_20_pre_buy_request_reserves_nothing(): void
+    {
+        Event::fake([SignalDetected::class, IntentHigh::class, ProspectDecayed::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Signal Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $score = $this->scoreAction->recordAndScore(
+            businessId: $biz->id,
+            prospectIdentifier: 'prospect_geo_inventory_offer_12',
+            signalType: 'geofence_inventory_offer',
+            payload: ['vendor' => 'Regional Outdoor', 'units' => 10, 'price_cents' => 480000, 'window' => '2026-10'],
+            baseScore: 91.0,
+        );
+
+        $this->assertEquals(1, Signal::where('business_id', $biz->id)->count());
+        $this->assertEquals(1, SignalScore::where('business_id', $biz->id)->count());
+        $this->assertEquals(0, DecayModel::where('business_id', $biz->id)->count());
+
+        $signal = Signal::where('business_id', $biz->id)->first();
+        $this->assertEquals(480000, $signal->payload['price_cents']);
+
+        $keys = array_keys($signal->getAttributes());
+        foreach ($keys as $key) {
+            $this->assertDoesNotMatchRegularExpression(
+                '/(price|cost|amount|cents|units|vendor)/i',
+                $key,
+                'Signal table has money or inventory column: '.$key
+            );
+        }
+
+        $files = File::allFiles(app_path('Modules/X-136'));
+        $phpFiles = array_filter($files, fn ($f) => $f->getExtension() === 'php' && ! in_array($f->getFilename(), ['capabilities.php', 'manifest.php']));
+
+        $visited = 0;
+        $matchedControl = 0;
+
+        foreach ($phpFiles as $file) {
+            $visited++;
+            $content = file_get_contents($file->getPathname());
+
+            $this->assertDoesNotMatchRegularExpression(
+                '/\b(budget|bid|spend|placement|inventory|purchase|ad_account|adAccount|price_cents)\b/i',
+                $content,
+                'File '.$file->getFilename().' matches money or inventory surface'
+            );
+
+            if (preg_match('/SignalScore/', $content)) {
+                $matchedControl++;
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(15, $visited);
+        $this->assertGreaterThanOrEqual(3, $matchedControl);
     }
 }
