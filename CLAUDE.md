@@ -587,6 +587,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   degrading nothing here — **advisory to Track 1, not a new OWNER ACTION**, and
   never a parallel fix.
 
+  ⛔ **"The complement grew and no half names it" is NOT by itself a fourth
+  half — test the new file against the charter's OUT-of-scope list first**
+  (tick 183). Tick 182 gave the complement three readings and the middle one
+  ("grew, no half names it → an uncovered surface, and only this warrants a
+  fourth half") is about to misfire. Measured at tick 183: `origin/track/ui` is
+  **fully contained in `origin/main`** — `git log --format= --name-only
+  ^origin/main origin/track/ui` prints nothing, zero unmerged commits — and its
+  coder is **live** (pid 577215, `cwd` `…/grs-antig-ui`), on a tip 13 hours old.
+  Its next push therefore lands a batch that is by construction invisible to
+  every half: this checkout tracks **164** files under `app/resources/views/`
+  and **76** under `app/app/Livewire/`, none of which match any of the three
+  prefixes the complement strips (`app/app/Modules/`, `app/tests/Modules/`,
+  `.agents/`). A tick reading tick 182's middle branch literally would bolt a
+  fourth half onto Track 2's own column — explicitly OUT of scope in the charter
+  above, alongside every other track's modules and journeys.
+
+  So the branch has a second clause. A file the complement newly names and no
+  half claims is an **unwatched** surface; it is an **uncovered** one only if it
+  is also in *this track's* column. Widen the census only for the second. The
+  census exists to answer "is a sibling writing where we write", not "is a
+  sibling writing" — the tracks are supposed to be writing, all seven of them,
+  and the charter's out-of-scope list is what makes the complement's growth
+  legible instead of alarming. Same family as tick 180's bounded silence, read
+  from the other side: **the complement's scope is not its claim in either
+  direction** — silence does not prove nothing changed, and growth does not
+  prove something is missing.
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
@@ -729,6 +756,21 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   scoped-diff blind spot, tick 178's split migration surface and tick 180's
   bounded complement — every one of them a query whose scope was mistaken for its
   claim.
+
+  ✅ **The trigger's common firing has a known signature — recognise it, do not
+  skip the diff** (tick 183, second firing). Sixty's `f3fbf98e` reported three
+  deletions in `BUILD-STATE.json`, and they were the identical three as tick
+  181's `580e7693`: the top-level `"updated"` timestamp, one module's
+  `"status": "DONE"` → `"UNRESOLVED"`, and that module's `"unresolved": []`
+  expanding to a populated array. That is `state.py`'s DONE→UNRESOLVED
+  transition, and it is the ordinary way this file loses lines — so a non-zero
+  deletion count here is the *expected* case, not the exceptional one, and the
+  trigger will keep firing. It stays cheap because the signature is three lines
+  in one module's block: X-194 at tick 181, **X-124** ("X-111 owns escalation
+  target") at tick 183, neither one this track's. **Never infer the signature
+  from the count** — three deletions is what a benign transition and a
+  three-line theft of our entries both look like in `--stat`. Read which block
+  they sit in; that is the whole measurement, and it is one `git diff`.
 - **The stable unresolved count is `state.py status`'s printed entry list, not a
   grep of the JSON** (tick 152). `grep -c '"why"' .agents/state/BUILD-STATE.json`
   returns **70** on a file that holds **35** entries — each entry is serialised
