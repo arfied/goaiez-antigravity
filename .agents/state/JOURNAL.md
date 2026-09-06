@@ -857,3 +857,10 @@
 - `2026-09-06T15:52:56` stage capability = 311
 - `2026-09-06T16:07:37` (R245) X-111 — R245: a test is never renamed, re-annotated, hidden or split to move an instrument — run 81's G19-09 used a docblock @test, which PHPUnit 12.5 does not parse (no AnnotationParser; Registry.php:31 returns AttributeParser only), so the method was never collected and closed the id with a body PHPUnit never called. And when a quoted capability fifth field names another module's id, the id is elided and the elision marked, because the capability checker greps file text and cannot tell a quotation from an assertion — X-111's G4-47 clause was the sole thing holding G1-29 green while G1-29 is UNRESOLVED. Supervisor ruling, REVIEWS.md REV-86.
 - `2026-09-06T16:07:39` stage capability = 312
+- `2026-09-06T16:31:21` UNRESOLVED G3-22 X-158 - X-158 exposes no Fact reader and no name field; renderVideo takes a free-text title.
+- `2026-09-06T16:31:25` UNRESOLVED G15-01 X-158 - Video carries no scheduled start, no live flag and no presentation copy, so there is nothing on which that claim could be made or refused.
+- `2026-09-06T16:31:25` UNRESOLVED G16-02 X-158 - renderVideo emits a sidecar .vtt URL — the opposite of burned-in — and X-158 has no 90-second cut.
+- `2026-09-06T16:31:25` UNRESOLVED G16-06 X-158 - X-158 exposes no pack and no fence surface.
+- `2026-09-06T16:31:25` UNRESOLVED G16-30 X-158 - X-158 exposes no script path from five questions.
+- `2026-09-06T16:31:25` UNRESOLVED G16-32 X-158 - renderVideo returns a URL string; nothing renders a frame and no output file exists to assert against.
+- `2026-09-06T16:32:44` (R245) X-158 — X-158's twenty-one open ids split fifteen REFUSE and six UNRESOLVED, none assertable — the module's surface is a video row, a view row, a render action, a host action and an empty domain class, and no ⑤ in the twenty-one names a refusal that surface can be held to. Supervisor ruling (REV-87).

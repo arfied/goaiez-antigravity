@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T16:07:37",
+ "updated": "2026-09-06T16:32:44",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -807,10 +807,47 @@
    "unresolved": []
   },
   "X-158": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 28,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-158",
+     "stage": "G3-22",
+     "why": "X-158 exposes no Fact reader and no name field; renderVideo takes a free-text title.",
+     "at": "2026-09-06T16:31:21"
+    },
+    {
+     "module": "X-158",
+     "stage": "G15-01",
+     "why": "Video carries no scheduled start, no live flag and no presentation copy, so there is nothing on which that claim could be made or refused.",
+     "at": "2026-09-06T16:31:25"
+    },
+    {
+     "module": "X-158",
+     "stage": "G16-02",
+     "why": "renderVideo emits a sidecar .vtt URL \u2014 the opposite of burned-in \u2014 and X-158 has no 90-second cut.",
+     "at": "2026-09-06T16:31:25"
+    },
+    {
+     "module": "X-158",
+     "stage": "G16-06",
+     "why": "X-158 exposes no pack and no fence surface.",
+     "at": "2026-09-06T16:31:25"
+    },
+    {
+     "module": "X-158",
+     "stage": "G16-30",
+     "why": "X-158 exposes no script path from five questions.",
+     "at": "2026-09-06T16:31:25"
+    },
+    {
+     "module": "X-158",
+     "stage": "G16-32",
+     "why": "renderVideo returns a URL string; nothing renders a frame and no output file exists to assert against.",
+     "at": "2026-09-06T16:31:25"
+    }
+   ]
   },
   "X-159": {
    "status": "DONE",
@@ -1465,6 +1502,42 @@
    "stage": "capability",
    "why": "G21-02 requires one Person and one Conversation after a fuzzy merge; neither noun exists in X-111 and it exposes no ticket-merge path",
    "at": "2026-09-06T15:51:29"
+  },
+  {
+   "module": "X-158",
+   "stage": "G3-22",
+   "why": "X-158 exposes no Fact reader and no name field; renderVideo takes a free-text title.",
+   "at": "2026-09-06T16:31:21"
+  },
+  {
+   "module": "X-158",
+   "stage": "G15-01",
+   "why": "Video carries no scheduled start, no live flag and no presentation copy, so there is nothing on which that claim could be made or refused.",
+   "at": "2026-09-06T16:31:25"
+  },
+  {
+   "module": "X-158",
+   "stage": "G16-02",
+   "why": "renderVideo emits a sidecar .vtt URL \u2014 the opposite of burned-in \u2014 and X-158 has no 90-second cut.",
+   "at": "2026-09-06T16:31:25"
+  },
+  {
+   "module": "X-158",
+   "stage": "G16-06",
+   "why": "X-158 exposes no pack and no fence surface.",
+   "at": "2026-09-06T16:31:25"
+  },
+  {
+   "module": "X-158",
+   "stage": "G16-30",
+   "why": "X-158 exposes no script path from five questions.",
+   "at": "2026-09-06T16:31:25"
+  },
+  {
+   "module": "X-158",
+   "stage": "G16-32",
+   "why": "renderVideo returns a URL string; nothing renders a frame and no output file exists to assert against.",
+   "at": "2026-09-06T16:31:25"
   }
  ],
  "decisions": [
@@ -1874,6 +1947,12 @@
    "module": "X-111",
    "chose": "R245: a test is never renamed, re-annotated, hidden or split to move an instrument \u2014 run 81's G19-09 used a docblock @test, which PHPUnit 12.5 does not parse (no AnnotationParser; Registry.php:31 returns AttributeParser only), so the method was never collected and closed the id with a body PHPUnit never called. And when a quoted capability fifth field names another module's id, the id is elided and the elision marked, because the capability checker greps file text and cannot tell a quotation from an assertion \u2014 X-111's G4-47 clause was the sole thing holding G1-29 green while G1-29 is UNRESOLVED. Supervisor ruling, REVIEWS.md REV-86.",
    "at": "2026-09-06T16:07:37",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-158",
+   "chose": "X-158's twenty-one open ids split fifteen REFUSE and six UNRESOLVED, none assertable \u2014 the module's surface is a video row, a view row, a render action, a host action and an empty domain class, and no \u2464 in the twenty-one names a refusal that surface can be held to. Supervisor ruling (REV-87).",
+   "at": "2026-09-06T16:32:44",
    "ruling": "R245"
   }
  ],
