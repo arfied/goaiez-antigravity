@@ -8,17 +8,18 @@ use App\Modules\CMail\Actions\EmailDnsCheckAction;
 use App\Modules\CMail\Actions\EmailHaltSeedAction;
 use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Actions\EmailUnsubscribeAction;
-use Livewire\Livewire;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
 use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
+use App\Modules\CMail\Ui\DnsCard;
 use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CMailTest extends TestCase
@@ -313,7 +314,7 @@ class CMailTest extends TestCase
 
         $this->dnsAction->handle($biz->id, 'card.apex-air.com');
 
-        Livewire::test(\App\Modules\CMail\Ui\DnsCard::class)
+        Livewire::test(DnsCard::class)
             ->assertSee('v=spf1 include:mail.tracksixty.com ~all')
             ->assertSee('v=DKIM1')
             ->assertSee('v=DMARC1; p=quarantine;')

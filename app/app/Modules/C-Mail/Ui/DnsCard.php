@@ -13,7 +13,7 @@ class DnsCard extends Component
     public function render()
     {
         $domain = MailDomain::where('business_id', Tenancy::idOrFail())->first();
-        
+
         $records = [];
         if ($domain) {
             $records = [
@@ -22,11 +22,11 @@ class DnsCard extends Component
                     'value' => 'v=spf1 include:mail.tracksixty.com ~all',
                 ],
                 'DKIM' => [
-                    'name' => 'selector._domainkey.' . $domain->domain_name,
+                    'name' => 'selector._domainkey.'.$domain->domain_name,
                     'value' => 'v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC3...',
                 ],
                 'DMARC' => [
-                    'name' => '_dmarc.' . $domain->domain_name,
+                    'name' => '_dmarc.'.$domain->domain_name,
                     'value' => 'v=DMARC1; p=quarantine;',
                 ],
             ];

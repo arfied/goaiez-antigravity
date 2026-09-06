@@ -152,7 +152,6 @@ class X137Test extends TestCase
         $this->assertEquals('Call from source_g1824', $token->whisper_text);
     }
 
-
     #[Test]
     #[Group('G13-19')]
     public function the_number_pool_every_visitor_gets_a_call_token(): void
