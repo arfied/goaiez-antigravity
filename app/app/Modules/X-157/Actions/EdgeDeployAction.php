@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X157\Actions;
 
+use App\Models\Business;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X108\Models\Appointment;
 use App\Modules\X155\Models\FormDefinition;
@@ -102,7 +103,7 @@ final class EdgeDeployAction
             $videos = [];
             $events = [];
 
-            $business = \App\Models\Business::find($businessId);
+            $business = Business::find($businessId);
             $address = is_array($business?->address) ? $business->address : null;
 
             $appointments = Appointment::where('business_id', $businessId)
