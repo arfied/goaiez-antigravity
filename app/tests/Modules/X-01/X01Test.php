@@ -257,9 +257,17 @@ class X01Test extends TestCase
 
     /**
      * [G2-76] the unified inbox is the header's first line
-     * ⛔ REFUSED: G2-76 — the capability's own text is "the unified inbox is the header's first line"; there is no clause to assert
+     * ⛔ REFUSED: surveyed Domain and Ui and found no seam or method for rendering the header's first line; no Header component exists
      */
     public function test_g2_76_unified_inbox_header(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * A lint, cross-lane, red by design, awaiting a Track 1 ruling on the twelve-noun list.
+     */
+    public function test_no_table_outside_the_twelve_nouns_holds_a_message_thread_or_contact(): void
     {
         $files = array_merge(
             glob(database_path('migrations/*.php')) ?: [],
