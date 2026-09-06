@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T13:51:18",
+ "updated": "2026-09-06T14:13:58",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1789,6 +1789,18 @@
    "module": "C-Reviews",
    "chose": "R245: the bare-minus-marked-equals-zero target from REV-77 is retired, because it is unreachable whenever one test method carries more than one capability id and the only route to it is padding; a module's terminal state is that every capability id in the file is either asserted or carries a refusal marker, verified by reading the file (REV-78)",
    "at": "2026-09-06T13:51:18",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "R245: Merge origin/main 12447593 into track/reviews. Kept both sides of conflicted files X117Test.php and X108Test.php (our REFUSED markers, and main's additions).",
+   "at": "2026-09-06T14:13:58",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "R245: the anti-padding belt is scoped to -- app/tests/, because the instrument's own search string necessarily appears in the decision record that defines it \u2014 an unscoped git diff | grep -c '^+.*assertTrue(true)' reported two additions on run 74, and both were the text of the rule itself. Never let a grep instrument's literal string sit in prose the same grep will sweep.",
+   "at": "2026-09-06T14:13:58",
    "ruling": "R245"
   }
  ],
