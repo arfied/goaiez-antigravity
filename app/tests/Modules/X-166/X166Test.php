@@ -89,6 +89,33 @@ class X166Test extends TestCase
      */
     public function test_n_166_01_no_refusal(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'No Refusal Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->costAction->handle(
+            businessId: $biz->id,
+            jobId: 999,
+            priceBookVersion: 'v1.0',
+            laborCostCents: 5000,
+            materialsCostCents: 0,
+            overheadCostCents: 0,
+            revenueCents: 10000,
+            techId: 42,
+            serviceType: 'repair',
+            source: 'direct'
+        );
+
+        $report = $this->reportAction->handle($biz->id, 'job');
+
+        // A job with cost rows appears in the report and carries a margin figure
+        $jobsWithMargins = array_column($report, 'gross_margin_pct', 'job_id');
+        
+        $this->assertArrayHasKey(999, $jobsWithMargins);
+        $this->assertEquals(50.0, $jobsWithMargins[999]);
+
+        // A job with no cost rows reports no margin (absent from array)
+        // and is not present carrying a 100% margin.
+        $this->assertArrayNotHasKey(1000, $jobsWithMargins);
+        $this->assertNotContains(100.0, $jobsWithMargins);
     }
 }
