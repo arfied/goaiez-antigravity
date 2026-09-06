@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T14:59:57",
+ "updated": "2026-09-06T15:17:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -372,10 +372,41 @@
    "unresolved": []
   },
   "C-Billing": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 9,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Billing",
+     "stage": "capability",
+     "why": "G1-01, G1-56 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:101, whose docblock states '\u26d4 REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway implementation or MOCK configuration.' Re-ran survey for 'gateway' and 'MOCK' which returned nothing but capability definitions.",
+     "at": "2026-09-06T15:17:37"
+    },
+    {
+     "module": "C-Billing",
+     "stage": "capability",
+     "why": "G1-10 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:110, whose docblock states '\u26d4 REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no reconciliation process or mismatch detection.' Re-ran survey for 'reconcil' and 'mismatch' which returned nothing but capability definitions.",
+     "at": "2026-09-06T15:17:37"
+    },
+    {
+     "module": "C-Billing",
+     "stage": "capability",
+     "why": "G1-33, G1-42, G1-49, G1-59, G4-39 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:171, whose docblock states '\u26d4 REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no retry mechanism or exponential backoff logic.' Re-ran survey for 'retry' and 'backoff' which returned nothing but capability definitions.",
+     "at": "2026-09-06T15:17:37"
+    },
+    {
+     "module": "C-Billing",
+     "stage": "capability",
+     "why": "G9-31 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:238, whose docblock states '\u26d4 REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\\Mrr ignores parameters and returns a constant view.' Verified checkable claim: app/app/Modules/C-Billing/Ui/Mrr.php's render() method returns view('c-billing::mrr') without parameters.",
+     "at": "2026-09-06T15:17:37"
+    },
+    {
+     "module": "C-Billing",
+     "stage": "capability",
+     "why": "G19-17 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:278, whose docblock states '\u26d4 REFUSED: the capability\\'s own text declares a refusal; the $50/5,000 figures are dead and live in X-82.' Verified checkable claim: app/app/Modules/C-Billing/capabilities.php row literally states 'refuses: C-Billing; the $50/5,000 figures are dead \u2014 auto top-up is universal and the amounts live in X-82'.",
+     "at": "2026-09-06T15:17:37"
+    }
+   ]
   },
   "C-Mail": {
    "status": "DONE",
@@ -399,6 +430,36 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-04T08:05:31"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "capability",
+     "why": "G20-06 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:269, whose body is assertTrue(true); the docblock states the clause '[G20-06] named in the header' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'header' returns blade templates and unrelated documentation.",
+     "at": "2026-09-06T15:17:02"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "capability",
+     "why": "G20-09 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:324, whose body is assertTrue(true); the docblock states the clause '[G20-09] the owner\\'s original ask, now the header' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'header' returns blade templates and unrelated documentation.",
+     "at": "2026-09-06T15:17:02"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "capability",
+     "why": "G20-11 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:332, whose body is assertTrue(true); the docblock states the clause '[G20-11] P-110 supersedes T89/R45 gate as the MECHANISM: every request triaged' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'triage' returns multiple hits in Actions, migrations, and UI.",
+     "at": "2026-09-06T15:17:02"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "capability",
+     "why": "G20-12 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:340, whose body is assertTrue(true); the docblock states the clause '[G20-12] = Review Gating; one spec, under P-110' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'review gating' returns only capabilities text.",
+     "at": "2026-09-06T15:17:02"
+    },
+    {
+     "module": "C-Reviews",
+     "stage": "capability",
+     "why": "G1-68 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:458, whose body is assertTrue(true); the docblock states '[G1-68] assertion placeholder'. A docblock that explicitly admits it is an assertion placeholder names what is missing and functions as a documented refusal.",
+     "at": "2026-09-06T15:17:02"
     }
    ]
   },
@@ -1168,10 +1229,35 @@
    ]
   },
   "X-118": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 6,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-118",
+     "stage": "capability",
+     "why": "G4-38 \u2014 credited by app/tests/Modules/X-118/X118Test.php:124, whose body is assertTrue(true); the docblock states 'SAMPLE real on conversion; the $179.99 figure is dead (money-number law)'. Because the figure is dead, the clause is genuinely unbuildable, making this a documented refusal for an unusual reason.",
+     "at": "2026-09-06T15:16:52"
+    },
+    {
+     "module": "X-118",
+     "stage": "capability",
+     "why": "G4-44 \u2014 credited by app/tests/Modules/X-118/X118Test.php:132, whose body is assertTrue(true); the docblock states the clause '[G4-44] frictionless signup, magic link, no password' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'magic link' returns only the capability definition in capabilities.php.",
+     "at": "2026-09-06T15:17:02"
+    },
+    {
+     "module": "X-118",
+     "stage": "capability",
+     "why": "G4-45 \u2014 credited by app/tests/Modules/X-118/X118Test.php:140, whose body is assertTrue(true); the docblock states the clause '[G4-45] the hub is a generated index over every module\\'s .connect action (X-122) \u2014 not a module' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'connect' returns capability text and unrelated UI statuses.",
+     "at": "2026-09-06T15:17:02"
+    },
+    {
+     "module": "X-118",
+     "stage": "capability",
+     "why": "G5-05 \u2014 credited by app/tests/Modules/X-118/X118Test.php:148, whose body is assertTrue(true); the docblock states the clause '[G5-05] the whole module is an inference run' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'inference run' returns only capability definitions.",
+     "at": "2026-09-06T15:17:02"
+    }
+   ]
   },
   "X-119": {
    "status": "DONE",
@@ -4393,6 +4479,90 @@
    "stage": "capability",
    "why": "G19-21 \u2014 credited by app/tests/Modules/X-112/X112Test.php:289, whose body is assertTrue(true); the docblock refuses them as \"the account manager told before the client leaves; the score is X-08's\" and names AgencyEngine::notifyAccountManager() as missing \u2014 grep -rn \"notifyAccountManager\" app/app returns no output.",
    "at": "2026-09-06T14:59:57"
+  },
+  {
+   "module": "X-118",
+   "stage": "capability",
+   "why": "G4-38 \u2014 credited by app/tests/Modules/X-118/X118Test.php:124, whose body is assertTrue(true); the docblock states 'SAMPLE real on conversion; the $179.99 figure is dead (money-number law)'. Because the figure is dead, the clause is genuinely unbuildable, making this a documented refusal for an unusual reason.",
+   "at": "2026-09-06T15:16:52"
+  },
+  {
+   "module": "X-118",
+   "stage": "capability",
+   "why": "G4-44 \u2014 credited by app/tests/Modules/X-118/X118Test.php:132, whose body is assertTrue(true); the docblock states the clause '[G4-44] frictionless signup, magic link, no password' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'magic link' returns only the capability definition in capabilities.php.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "X-118",
+   "stage": "capability",
+   "why": "G4-45 \u2014 credited by app/tests/Modules/X-118/X118Test.php:140, whose body is assertTrue(true); the docblock states the clause '[G4-45] the hub is a generated index over every module\\'s .connect action (X-122) \u2014 not a module' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'connect' returns capability text and unrelated UI statuses.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "X-118",
+   "stage": "capability",
+   "why": "G5-05 \u2014 credited by app/tests/Modules/X-118/X118Test.php:148, whose body is assertTrue(true); the docblock states the clause '[G5-05] the whole module is an inference run' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'inference run' returns only capability definitions.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "capability",
+   "why": "G20-06 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:269, whose body is assertTrue(true); the docblock states the clause '[G20-06] named in the header' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'header' returns blade templates and unrelated documentation.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "capability",
+   "why": "G20-09 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:324, whose body is assertTrue(true); the docblock states the clause '[G20-09] the owner\\'s original ask, now the header' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'header' returns blade templates and unrelated documentation.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "capability",
+   "why": "G20-11 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:332, whose body is assertTrue(true); the docblock states the clause '[G20-11] P-110 supersedes T89/R45 gate as the MECHANISM: every request triaged' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'triage' returns multiple hits in Actions, migrations, and UI.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "capability",
+   "why": "G20-12 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:340, whose body is assertTrue(true); the docblock states the clause '[G20-12] = Review Gating; one spec, under P-110' and declares NO refusal, so the id is counted satisfied with nothing asserting it. A grep for 'review gating' returns only capabilities text.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "C-Reviews",
+   "stage": "capability",
+   "why": "G1-68 \u2014 credited by app/tests/Modules/C-Reviews/CReviewsTest.php:458, whose body is assertTrue(true); the docblock states '[G1-68] assertion placeholder'. A docblock that explicitly admits it is an assertion placeholder names what is missing and functions as a documented refusal.",
+   "at": "2026-09-06T15:17:02"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "capability",
+   "why": "G1-01, G1-56 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:101, whose docblock states '\u26d4 REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway implementation or MOCK configuration.' Re-ran survey for 'gateway' and 'MOCK' which returned nothing but capability definitions.",
+   "at": "2026-09-06T15:17:37"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "capability",
+   "why": "G1-10 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:110, whose docblock states '\u26d4 REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no reconciliation process or mismatch detection.' Re-ran survey for 'reconcil' and 'mismatch' which returned nothing but capability definitions.",
+   "at": "2026-09-06T15:17:37"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "capability",
+   "why": "G1-33, G1-42, G1-49, G1-59, G4-39 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:171, whose docblock states '\u26d4 REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no retry mechanism or exponential backoff logic.' Re-ran survey for 'retry' and 'backoff' which returned nothing but capability definitions.",
+   "at": "2026-09-06T15:17:37"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "capability",
+   "why": "G9-31 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:238, whose docblock states '\u26d4 REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\\Mrr ignores parameters and returns a constant view.' Verified checkable claim: app/app/Modules/C-Billing/Ui/Mrr.php's render() method returns view('c-billing::mrr') without parameters.",
+   "at": "2026-09-06T15:17:37"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "capability",
+   "why": "G19-17 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:278, whose docblock states '\u26d4 REFUSED: the capability\\'s own text declares a refusal; the $50/5,000 figures are dead and live in X-82.' Verified checkable claim: app/app/Modules/C-Billing/capabilities.php row literally states 'refuses: C-Billing; the $50/5,000 figures are dead \u2014 auto top-up is universal and the amounts live in X-82'.",
+   "at": "2026-09-06T15:17:37"
   }
  ],
  "decisions": [
