@@ -1689,3 +1689,113 @@ where most never contact a third party, and under owner ruling 16 this lane's
 publishing target is the platform itself — X-157 has no vendor **by design**.
 `anchor` is 138 roster-wide. That is a CHECK's shape; the file is sealed; the lane
 records its seven and hands the generalisation up.
+
+## ⛔ `track/reviews` re-added the constant-true `ssl_installed` column (tick 198)
+
+`ab051c0a` — `feat(X-103): record ssl_installed on page_versions under the G9-04
+site law` — is the exact fix this charter has forbidden since tick 146, in this
+lane's own module (X-103, ruling 19), and it was measured line for line, not
+inferred from its subject:
+
+```
++ $table->boolean('ssl_installed')->default(true);       migration, new file
++ 'ssl_installed' => true, // G9-04 full-stack site law  SiteEngine::publish()
++ 'ssl_installed' => 'boolean',                          PageVersion $casts
+```
+
+The value is a **literal**. Nothing derives it, nothing can falsify it. Its only
+reader is `JourneyHarness.php:693`'s `isset($version->ssl_installed)`, which the
+column makes unconditionally true — so **J11's `ssl` element turns green with no
+SSL verified anywhere.** That is the one element ruling 16 exists to make real,
+and the graft it asks for (`$response->status() === 200 && $withoutSsl->status()
+=== 404` off `EdgeZone.has_valid_ssl`) is already green in this lane's own
+`X157Test.php:604` (tick 195). A merge would replace a real assertion's subject
+with a constant.
+
+⚠️ **The migration ORDER is what makes it land, and it is the opposite of tick
+163's reading of sixty.** Sixty added the column (`322df696`,
+`2026_09_05_220831_…`) and then correctly dropped it three times — `531fcd39`,
+`e4cab02e`, `8560ce8a`, plus the app-level
+`2026_09_05_223339_drop_ssl_installed_from_page_versions.php` — falling back to
+`UNRESOLVED — missing dependency`. Reviews' add is
+`app/app/Modules/X-103/Database/migrations/**2026_09_06_000001**_add_ssl_installed…`.
+The migrator sorts every registered path together by filename and
+`2026_09_06_000001 > 2026_09_05_223339`, so on a `main` holding both branches the
+sequence is add → drop → **add**, and the column exists and is `true` after
+`migrate`. Sixty's correction is not merely lost; it is overwritten by a later
+timestamp. **Never read an add-then-drop pair as settled without re-checking for
+a third migration from a third branch** — tick 163 established the ordering
+argument and this is the same argument reaching the opposite verdict, because the
+population changed.
+
+⛔ **No site wave touches it and no parallel fix is briefed** — the files are
+reviews', and two branches fixing one finding hands Track 1 a conflict (tick 165,
+tick 182). Filed as a TRACK 1 ACTION, urgent: `origin/main` did **not** contain
+`ab051c0a` when it was found (04:56:35, one tip after main's 04:56:19), so it is
+preventable at the merge and only there.
+
+## A shrink and a growth in the SAME tick make half 1's total meaningless (tick 198)
+
+Tick 191 gave half 1 its fourth reading — *shrank → attribute it to a bound, never
+to the sibling side* — and tick 189 partitioned the set because a count aggregates
+opposite verdicts. Tick 198 is the first firing of both **at once**, and it is the
+case neither anticipated. Half 1 went 32 → 18. Two independent things happened:
+
+- **−15, a bound moving.** `origin/main` advanced to `fc8f0bab` ("regenerate after
+  the ui merge"), so the whole sanctioned ui/X-110 partition fell out of
+  `^origin/main`. Nothing was withdrawn; it merged, exactly as tick 195 predicted
+  for the sixty partition.
+- **+1, a new violation.** `ab051c0a` above, in a partition (`reviews`) that had
+  been empty at every prior tick.
+
+Net −14, and **a tick reading the total would have recorded "half 1 shrank, a
+bound moved, nothing to do" and missed the finding entirely.** The partition rule
+is therefore not an economy or a tidier presentation — it is the only reading that
+survives simultaneous movement in opposite directions. Take the delta *per
+partition, per branch*, always via `--source`/`%S`; the aggregate has no reading
+at all. Thirteenth statement of the section's law, and the first where two of the
+ledger's own correct rules combine into a wrong answer.
+
+⚠️ Corollary for the cache (tick 177): **`origin/main` moving is always a miss**,
+and the most consequential kind — it is the one ref that appears as an exclusion
+in all four surfaces at once, so it can silently empty partitions in every one of
+them in the same tick.
+
+## Half 3 is empty again, and that is also a bound (tick 198)
+
+Tick 182 recorded pricebook's `dcd5b1f2` as half 3's first real content and the
+complement's growth 11 → 13 as its independent confirmation. Both reverted this
+tick — half 3 prints nothing, the complement is back to the same **eleven** files
+— and for the same reason as half 1's −15: `main` now contains pricebook. Read as
+a withdrawal it would suggest pricebook backed out its G10-24 edit; it did not.
+Same attribution rule, third surface.
+
+## X-176 has NO outbound code — the "reachable vendor" was a design claim (tick 198)
+
+SITE-90's report refused an anchor filing for X-176 on the ground that it "has a
+real vendor this lane could reach". Correct to refuse a *copied* sentence, and the
+brief asked for exactly that judgement — but the premise is unmeasured.
+`grep -rn 'http\|Http::' app/app/Modules/X-176/` returns **three** hits and all
+three are `https://schema.org` / a canonical URL **string**; there is no client, no
+endpoint, no key, no request. `index.request` and `sitemap.ping` are declared in
+`manifest.php`'s `provides` and implemented nowhere.
+
+The vendor this programme actually uses is **IndexNow**, and the repo already
+holds the reading —`plugins/wordpress/includes/class-goaiez-indexnow.php`, which
+implements the *key-file* side and documents the protocol's shape at source
+(a key file at the site root; a wrong key and a missing key file return the same
+403). Two things follow and both must be verified at that file rather than
+recalled (ruling 7's vendor-from-memory trap applies to IndexNow as much as to
+Twilio): the protocol validates by **a publicly reachable domain**, which a
+`GET /sites/{deploy_hash}` served from local storage on a dev box does not have;
+and it answers with a **bare HTTP status**, which mints no message-id, call-sid or
+charge-id for `TestAnchorStage:83-95` to accept.
+
+⛔ **Do not brief the IndexNow client on that reasoning.** It is the supervisor's
+reading of one file, and the wave's job is to measure it, not to implement against
+it. If the measurement holds, the filing names a dependency that is real and
+nameable and belongs to the owner (a public domain, or the Google Indexing API's
+OAuth credential) — rule 09 satisfied. If it does not hold, the lane has a build
+item and says so. **The generalisation:** "a vendor exists" and "the vendor mints
+an artifact id" are two claims, and only the second is what the anchor stage asks
+for. Six of this lane's seven anchor entries turn on that distinction.
