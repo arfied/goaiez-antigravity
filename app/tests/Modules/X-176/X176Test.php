@@ -49,7 +49,7 @@ class X176Test extends TestCase
 
         $sharedCommitId = 'commit_price_change_9901';
 
-        // 1. Render schema with price changes from pricebook synchronized under sharedCommitId (G8-14)
+        // 1. Render schema with price changes from pricebook synchronized under sharedCommitId
         $res = $this->renderAction->handle(
             businessId: $biz->id,
             pageId: 101,
@@ -84,8 +84,8 @@ class X176Test extends TestCase
         $this->assertEquals('pinged', $sitemapRes['status']);
     }
 
-    /** (R245) [G8-14] product schema from the pricebook asserts shape and free products */
-    public function test_g8_14_capabilities(): void
+    /** (R245) */
+    public function test_offer_catalog_renders_zero_priced_offers(): void
     {
         // product schema from the pricebook (delegates to X-163/X-119, but we just assert the shape here)
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
@@ -110,8 +110,8 @@ class X176Test extends TestCase
         $this->assertCount(3, $resFree['json_ld']['hasOfferCatalog']['itemListElement']);
     }
 
-    /** (R245) [G8-15] renders published schema without event key for calendar tenant */
-    public function test_g8_15_capabilities(): void
+    /** (R245) */
+    public function test_render_omits_event_key_when_no_calendar_source(): void
     {
         // Delegates to X-108
         $this->assertTrue(is_dir(app_path('Modules/X-108')));
@@ -126,7 +126,9 @@ class X176Test extends TestCase
         $this->assertArrayNotHasKey('event', $res['json_ld']);
     }
 
-    /** (R245) [G8-32] validates schema, rendering refused if invalid with SCHEMA_INVALID code */
+    /**
+     * [G8-32]
+     */
     public function test_g8_32_capabilities(): void
     {
 
@@ -164,7 +166,9 @@ class X176Test extends TestCase
         ]));
     }
 
-    /** (R245) [G12-03] renders schema with specific LocalBusiness vertical type like HVACBusiness */
+    /**
+     * [G12-03]
+     */
     public function test_g12_03_capabilities(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
@@ -184,7 +188,9 @@ class X176Test extends TestCase
         $this->assertEquals('LocalBusiness', $res2['json_ld']['@type'] ?? null);
     }
 
-    /** (R245) [G16-25] renders VideoObject schema for videos and refuses if invalid */
+    /**
+     * [G16-25]
+     */
     public function test_g16_25_capabilities(): void
     {
 
@@ -207,7 +213,9 @@ class X176Test extends TestCase
         $this->assertSame('SCHEMA_INVALID', $bad['refusal_code']);
     }
 
-    /** (R245) [G7-48] deploy valid html contains application/ld+json and refuses invalid without it */
+    /**
+     * [G7-48]
+     */
     public function test_g7_48_capabilities(): void
     {
 
