@@ -37,6 +37,8 @@ final class ModuleServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MarkInvoicesDueCommand::class,
+                Console\EvidenceInvoiceCommand::class,
+                Console\RuntimeProofCommand::class,
             ]);
 
             $this->app->booted(function () {
