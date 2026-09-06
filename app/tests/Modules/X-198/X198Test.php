@@ -358,9 +358,9 @@ class X198Test extends TestCase
             public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
             {
                 $this->calls++;
-                $id = 'cs_test_abc' . str_repeat('0', 55);
+                $id = 'cs_test_abc'.str_repeat('0', 55);
 
-                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380)];
+                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/'.$id.'#fid'.str_repeat('a', 380)];
             }
         });
 
@@ -450,9 +450,9 @@ class X198Test extends TestCase
             public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
             {
                 $this->seenCurrency = $currency;
-                $id = 'cs_test_gbp' . str_repeat('0', 55);
+                $id = 'cs_test_gbp'.str_repeat('0', 55);
 
-                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380)];
+                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/'.$id.'#fid'.str_repeat('a', 380)];
             }
         });
 

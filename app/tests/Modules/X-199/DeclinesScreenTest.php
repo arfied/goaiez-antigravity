@@ -259,13 +259,14 @@ class DeclinesScreenTest extends TestCase
         {
             public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
             {
-                $id = 'cs_test_remount' . str_repeat('0', 51);
-                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380)];
+                $id = 'cs_test_remount'.str_repeat('0', 51);
+
+                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/'.$id.'#fid'.str_repeat('a', 380)];
             }
         });
 
-        $id = 'cs_test_remount' . str_repeat('0', 51);
-        $url = 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380);
+        $id = 'cs_test_remount'.str_repeat('0', 51);
+        $url = 'https://checkout.stripe.com/c/pay/'.$id.'#fid'.str_repeat('a', 380);
 
         Livewire::actingAs($owner)->test(Declines::class)
             ->call('sendPayLink', $payment->id)
