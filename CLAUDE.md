@@ -103,7 +103,11 @@ Watch for: <the trap that applies, by name>
 - **`goaiez_antig` is PRODUCTION** (anti.goaiez.com). On 2026-08-31 a test run
   from this checkout dropped its schema (`NEXT-SESSION.md`). **This track runs on
   `goaiez_antig_ui`; `app/phpunit.xml` pins `goaiez_antig_ui_test`** — verified on
-  disk 2026-09-05 08:0x. `supervise.sh` exits 2 if either points at production.
+  disk 2026-09-05 08:0x. **`supervise.sh` §0 is a positive allowlist** as of
+  2026-09-06 11:4x: `.env` must be `goaiez_antig_ui` and `phpunit.xml` must be
+  `goaiez_antig_ui_test`; **any other non-empty name exits 2**, production or not,
+  and an unset one sets `fail`. It was a blacklist of one until then and could not
+  catch the wrong name the aborted `origin/main` merge wrote in that morning.
   Never brief a change to either value, and treat any diff to `phpunit.xml` or
   `.env.example`'s `DB_` lines as a `BLOCK` until explained.
   ⚠️ **`goaiez_antig_test` is Track 1's**, not ours. Track 1 found the site and

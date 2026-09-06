@@ -14,6 +14,11 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
+# This lane's two databases, and the only two names §0 accepts. A blacklist of one
+# could not catch goaiez_antig_test (Track 1's) when a merge wrote it into
+# app/phpunit.xml on 2026-09-06; an allowlist catches every wrong name there is.
+LANE_DB="goaiez_antig_ui"
+LANE_TEST_DB="goaiez_antig_ui_test"
 want_tests=0; want_doctor=0; pest_filter=""
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -27,17 +32,25 @@ done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
-bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
+bar "0. database guard  (allowlist: .env=$LANE_DB · phpunit.xml=$LANE_TEST_DB)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
 echo "  app/.env         DB_DATABASE=${env_db:-<unset>}"
 echo "  app/phpunit.xml  DB_DATABASE=${xml_db:-<unset>}"
-for db in "$env_db" "$xml_db"; do
-  if [ "$db" = "$PROD_DB" ]; then
-    echo "  ⛔ points at PRODUCTION. Stop. Nothing below may run."; exit 2
-  fi
-done
-[ -z "$env_db" ] && echo "  ⚠ .env has no DB_DATABASE — anything reading config would use the framework default"
+# A wrong name is exit 2 whether or not it is production: goaiez_antig is PRODUCTION
+# (2026-08-31, NEXT-SESSION.md), goaiez_antig_test and goaiez_antig_dev are Track 1's,
+# and a suite run inside another track's database is the same drop-the-schema shape.
+guard_db() {  # <label> <value> <expected>
+  case "$2" in
+    "$3") return 0;;
+    "") echo "  ⚠ $1 has no DB_DATABASE — expected $3. Nothing below is trustworthy."; fail=1; return 0;;
+    "$PROD_DB") echo "  ⛔ $1 points at PRODUCTION ($PROD_DB). Stop. Nothing below may run."; exit 2;;
+    *) echo "  ⛔ $1 is $2, not this lane's $3. Stop — that is another track's database."; exit 2;;
+  esac
+}
+guard_db "app/.env        " "$env_db" "$LANE_DB"
+guard_db "app/phpunit.xml " "$xml_db" "$LANE_TEST_DB"
+[ $fail -eq 0 ] && echo "  both on this lane"
 
 bar "1. working tree"
 git status --short | head -40
