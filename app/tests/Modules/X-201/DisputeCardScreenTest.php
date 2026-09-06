@@ -74,4 +74,17 @@ class DisputeCardScreenTest extends TestCase
         Tenancy::set($bizB->id);
         $this->assertSame(1, Dispute::where('business_id', $bizB->id)->count());
     }
+
+    public function test_the_dispute_card_empty_state_names_what_it_waits_on()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(DisputeCard::class)
+            ->assertOk()
+            ->assertSee('no such webhook is received in this checkout, so no bundle exists to add to yet')
+            ->assertSee('You compile the bundle from the dispute queue and add what only you know.');
+    }
 }
