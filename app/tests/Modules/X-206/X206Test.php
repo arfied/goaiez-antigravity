@@ -15,6 +15,7 @@ use App\Modules\X206\Models\Credential;
 use App\Modules\X206\Models\CredentialReveal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class X206Test extends TestCase
@@ -101,5 +102,64 @@ class X206Test extends TestCase
 
         $secret = $this->fetcher->handle($biz->id, 'postmark');
         $this->assertEquals('NEW_KEY', $secret);
+    }
+
+    /** [N-044] */
+    public function test_n_044_fetch_path_cross_tenant(): void
+    {
+        $bizA = TestCase::provisionTenant(['name' => 'Vault A', 'currency' => 'USD']);
+        $bizB = TestCase::provisionTenant(['name' => 'Vault B', 'currency' => 'USD']);
+
+        DB::statement("SET app.business_id = '{$bizA->id}'");
+        $this->storer->handle($bizA->id, 'twilio', 'SK_ONLY_ALPHA_MAY_READ_THIS');
+
+        // control — from its own seat, the owner reads it
+        $this->assertEquals('SK_ONLY_ALPHA_MAY_READ_THIS', $this->fetcher->handle($bizA->id, 'twilio'));
+
+        DB::statement("SET app.business_id = '{$bizB->id}'");
+        $this->assertNull($this->fetcher->handle($bizB->id, 'twilio'));   // B has none
+        $this->assertNull($this->fetcher->handle($bizA->id, 'twilio'));   // B forging A's id
+    }
+
+    /** [N-045] */
+    public function test_n_045_no_credential_in_exhaust(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Exhaust Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $secret = 'SK_LIVE_ZZQQXX_9182736450';
+        Log::spy();
+        Event::fake([CredentialStored::class, CredentialRevealed::class, CredentialFailed::class]);
+
+        $cred = $this->storer->handle($biz->id, 'twilio', $secret);
+        $this->fetcher->handle($biz->id, 'twilio');
+        $this->revealer->handle($biz->id, $cred->id);
+        $this->rotator->handle($biz->id, 'twilio', 'NEW_SECRET');
+
+        // 1. The log
+        Log::shouldNotHaveReceived('info');
+        Log::shouldNotHaveReceived('debug');
+        Log::shouldNotHaveReceived('warning');
+        Log::shouldNotHaveReceived('error');
+
+        // 2. The event payloads
+        Event::assertDispatched(CredentialStored::class, function ($e) use ($secret) {
+            return ! str_contains(json_encode($e), $secret);
+        });
+        Event::assertDispatched(CredentialRevealed::class, function ($e) use ($secret) {
+            return ! str_contains(json_encode($e), $secret);
+        });
+
+        // 3. The stored row
+        $row = Credential::find($cred->id);
+        $this->assertNotEquals($secret, $row->encrypted_secret);
+        $this->assertStringNotContainsString($secret, $row->encrypted_secret);
+        $this->assertLessThanOrEqual(7, strlen($row->key_hint));
+        $this->assertStringNotContainsString($secret, $row->key_hint);
+
+        $revealRow = CredentialReveal::where('credential_id', $cred->id)->first();
+        if ($revealRow) {
+            $this->assertStringNotContainsString($secret, json_encode($revealRow->toArray()));
+        }
     }
 }

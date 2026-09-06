@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T00:42:19",
+ "updated": "2026-09-06T01:02:06",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1356,10 +1356,17 @@
    ]
   },
   "X-206": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 4,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-206",
+     "stage": "capability",
+     "why": "N-043 \u2014 CredentialFetchAction returns Crypt::decryptString, CredentialRevealAction returns 'secret' => $decrypted, and credential_reveals schema has no time-box column",
+     "at": "2026-09-06T01:02:06"
+    }
+   ]
   },
   "X-207": {
    "status": "UNRESOLVED",
@@ -1968,6 +1975,12 @@
    "stage": "capability",
    "why": "N-020 \u2014 missing dependency: mail_pieces has id, business_id, recipient_address, postcard_format, cost_cents, status, refusal_reason, lob_api_key_source, timestamps \u2014 no promotion_id column and no offer flag.",
    "at": "2026-09-06T00:42:19"
+  },
+  {
+   "module": "X-206",
+   "stage": "capability",
+   "why": "N-043 \u2014 CredentialFetchAction returns Crypt::decryptString, CredentialRevealAction returns 'secret' => $decrypted, and credential_reveals schema has no time-box column",
+   "at": "2026-09-06T01:02:06"
   }
  ],
  "decisions": [
