@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-05T06:31:52",
+ "updated": "2026-09-06T04:24:08",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1371,6 +1371,10 @@
   {
    "at": "2026-09-05T12:47:45",
    "note": "X-173 anchor UNRESOLVED \u2014 needs a QuickBooks or Xero credential that does not exist in this checkout."
+  },
+  {
+   "at": "2026-09-06T04:24:08",
+   "note": ""
   }
  ],
  "decisions": [
@@ -1528,6 +1532,12 @@
    "module": "X-211",
    "chose": "the ageing screen is the fee door and the term door \u2014 the late-fee term is written on the page through ArSetLateFeeTermAction (ArEngine::setLateFeeTerm, updateOrCreate on the tenant's ar_plan_terms row, ArLateFeeTermSet emitted; percent 1\u2013100 required, cap optional), and a fee is applied per overdue row through ArApplyLateFeeAction; FeeWithoutTermException is rendered as a finished attention state on the same page, never swallowed (G1-71, P-193). Rejected: the term on the paymentplan builder (that page is the schedule threshold, not the fee); a default term seeded on tenant provisioning (a tenant with no term written gets no fee \u2014 the R245 decision of 03:34); a fee button with no amount (the amount is the owner's, the cap is the row's). Consequence: the first fee a tenant applies is refused until the term is written on the same screen. Test: AgeingByReasonScreenTest::test_a_late_fee_is_refused_without_a_term_and_applied_inside_it",
    "at": "2026-09-05T06:31:52",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "X-199 owns reads of invoices; X-211 consumes and asks",
+   "at": "2026-09-06T04:24:08",
    "ruling": "R245"
   }
  ]
