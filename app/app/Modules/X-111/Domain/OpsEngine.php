@@ -76,5 +76,4 @@ final class OpsEngine
             ['reason' => $reason, 'expires_at' => $expiresAt]
         );
     }
-
 }

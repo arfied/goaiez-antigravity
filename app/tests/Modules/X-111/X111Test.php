@@ -133,7 +133,7 @@ class X111Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Human Ticket Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $transcript = "Please connect me to human support.";
+        $transcript = 'Please connect me to human support.';
         $ticket = $this->ticketAction->handle($biz->id, $transcript, 'human_escalation');
 
         $this->assertDatabaseHas('tenant_tickets', ['id' => $ticket->id, 'full_transcript' => $transcript]);
