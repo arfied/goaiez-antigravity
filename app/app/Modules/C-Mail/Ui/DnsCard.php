@@ -28,10 +28,10 @@ class DnsCard extends Component
                 ];
             }
 
-            if ($domain->dkim_status !== 'verified') {
+            if ($domain->dkim_status !== 'verified' && $domain->dkim_public_key) {
                 $records['DKIM'] = [
                     'name' => $dkimSelector.'._domainkey.'.$domain->domain_name,
-                    'value' => $domain->dkim_public_key ? 'v=DKIM1; k=rsa; p='.$domain->dkim_public_key : 'UNRESOLVED (missing key from provider)',
+                    'value' => 'v=DKIM1; k=rsa; p='.$domain->dkim_public_key,
                 ];
             }
 

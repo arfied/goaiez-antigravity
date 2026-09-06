@@ -319,8 +319,6 @@ class CMailTest extends TestCase
 
         Livewire::test(DnsCard::class)
             ->assertSee('v=spf1 include:'.$sendingDomain.' ~all')
-            ->assertSee('google._domainkey.card.apex-air.com')
-            ->assertSee('UNRESOLVED (missing key from provider)')
             ->assertSee('_dmarc.card.apex-air.com')
             ->assertSee('v=DMARC1; p=quarantine;')
             ->assertSee('Copy') // copy affordance
