@@ -3276,3 +3276,74 @@ the load-bearing default no diff ever calls out. The split that decides it:
 explicit-argument convention, not from disjointness and not from luck.** The generated
 screen tests have no such protection, so they — not the hand-written ones — are the
 surface to re-check every time the ui partition grows.
+
+## ⛔ `BUILD-STATE.json`'s stage counts are a ONE-SLOT record shared by seven trees — its history is a time series of NOTHING (tick 219)
+
+Tick 196 ruled §3's counts *recorded, not measured*, and tick 209 that a copied doctor
+number decays. Both treat the number as **this lane's, gone stale**. It is worse than
+stale: the slot is not this lane's at all. `state.py stage` writes
+`stages.<stage>.violations` **and appends a dated line to `JOURNAL.md`**, and all seven
+lanes write the same slot from seven different checkouts. Measured on `origin/main`:
+
+```
+git grep -h 'stage capability =' origin/main -- .agents/state/JOURNAL.md
+  08-29 957 · 08-31 120 · 08-31 120 · 09-02 139 · 09-02 120 · 09-02 391
+  09-03 352 · 09-03 372 · 09-03 372 · 09-03 372          ← last write, THREE DAYS old
+```
+
+`120 → 391 → 352 → 372` is not a count moving. Those are different trees. And in the
+same minute this tick measured **three live values for one field**: this checkout's
+`BUILD-STATE` says **372**, reviews' `a6d674a6` wrote **392** from its tree, and this
+checkout's own live doctor says **431**.
+
+⛔ **The JOURNAL is what makes this dangerous, because it preserves the whole sequence
+and therefore *looks* like a time series of one quantity.** A dated, ordered, numeric
+column is the most trustworthy-looking artefact in the state file, and it is the least
+meaningful — reading two adjacent lines as a delta compares two checkouts. Same error
+tick 216 caught for §7's test count (*never read a sibling checkout's absolute count as
+this one's baseline*), one surface over and much better disguised, because a test count
+at least announces which gate produced it and this column does not record the lane at
+all.
+
+- **Never diff two `stage <x> =` lines.** Not across commits, not across branches, not
+  within one branch. There is no bound that makes them comparable.
+- **The only sound reading is a single live `php artisan doctor` in this checkout**, and
+  per tick 217 it may be cached only while the tree is provably unchanged.
+- ⚠️ Corollary for a merge: this field conflicts constantly and resolving it "toward the
+  newer number" is meaningless. Either side is equally right and equally wrong.
+
+Nineteenth statement of this section's law. 163/178/180/183/185/187 concern a query's
+*pathspec*, 190 its *strip*, 191 its *bounds moving*, 192/193 its *unrecorded bounds*,
+194 its *configuration*, 196 its *width*, 207 its *expected output*, 208 the *evidence
+request*, 209 its *resolution context*, 210 the fault's *scope in time*, 215 the *cache
+key's identity*. This concerns the record's **provenance**: the one dimension the
+artefact does not carry, so no amount of reading it more carefully can recover it.
+
+## ✅ The deferred list forbids BUILDING — a refusal credit is its opposite, and the census cannot see either (tick 219)
+
+Reviews' `45437788` `c3befbe0` `5af7816f` write `app/tests/Modules/X-141`, `X-147` and
+`X-173`. **X-141 and X-147 are on plan §257.4's deferred list** (kept, hidden, unbuilt)
+— the first time this lane has seen a sibling touch it. Measured before characterising
+it, per tick 185, and per tick 194's rule that a paired-`--stat` hit gets the ad-hoc
+standing query on its module before any verdict:
+
+- The three commits are **docblock-only** — `+24 / +27 / +24`, zero deletions, no code,
+  no assertion added or weakened. Each adds `[N-0xx] ⛔ REFUSED:` lines recording that
+  `php artisan why` reports the id was never DEFINED and its ⑤ is boilerplate naming
+  *other* modules.
+- The standing query over all six siblings returns **exactly those three commits** for
+  X-141 and X-147. Nobody has built either module. The deferral holds.
+- **X-173 is not deferred**, and the same query shows money building it heavily since
+  09-05 (`Domain/AccountingSyncEngine`, three `Ui/` screens, their tests). Reading the
+  three commits as one act would have mis-scoped the question.
+
+✅ So this is **not a violation and not an advisory worth Track 1's time**: refusing a
+capability is the opposite of building the module that carries it, and the charter's
+rule (*"a defect found there is a `state.py note`, not a wave"*) is satisfied in spirit
+by a lane that recorded refusals instead of opening a wave. Recorded so the next tick
+does not rediscover it as one.
+
+⚠️ **The census is blind to all of it**, exactly as at ticks 190/194: X-141/X-147/X-173
+are not among half 1's fourteen paths, not in halves 2 or 3, and stripped by the
+complement's `app/tests/Modules/` prefix. The paired `--stat` is again the only surface
+that printed them — so tick 190's writing rule applies and this note *is* the record.
