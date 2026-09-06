@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T07:48:46",
+ "updated": "2026-09-06T08:00:15",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1698,6 +1698,18 @@
    "module": "X-117",
    "chose": "(R245) an orders row written without an explicit status defaults to pending_payment, not paid; sold_out and refused are envelope statuses that never reach the row",
    "at": "2026-09-06T07:48:46",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) a gateway decline is recorded, not erased: the charge attempt rolls back but a status=failed payment row is written outside that transaction and the original exception is rethrown, so X-199's declines screen has something to show",
+   "at": "2026-09-06T08:00:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) idempotency skips failed rows: an attempt that charged zero times is not the thing being deduplicated, so a card that declines once can be retried on the same key",
+   "at": "2026-09-06T08:00:15",
    "ruling": "R245"
   }
  ]

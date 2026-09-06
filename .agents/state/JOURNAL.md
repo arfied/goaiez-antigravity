@@ -594,3 +594,5 @@
 - `2026-09-06T07:48:46` (R245) X-117 — (R245) an orders row written without an explicit status defaults to pending_payment, not paid; sold_out and refused are envelope statuses that never reach the row
 - `2026-09-06T07:48:50` note: the  comment at 2026_08_30_000029_create_x117_sellables_tables.php:46 is superseded but left byte-for-byte alone because that file is applied on every database in the programme
 - `2026-09-06T07:48:55` note: the superseded comment at 2026_08_30_000029_create_x117_sellables_tables.php:46 is left alone because that file is applied on every database in the programme
+- `2026-09-06T08:00:12` (R245) X-198 — (R245) a gateway decline is recorded, not erased: the charge attempt rolls back but a status=failed payment row is written outside that transaction and the original exception is rethrown, so X-199's declines screen has something to show
+- `2026-09-06T08:00:15` (R245) X-198 — (R245) idempotency skips failed rows: an attempt that charged zero times is not the thing being deduplicated, so a card that declines once can be retried on the same key
