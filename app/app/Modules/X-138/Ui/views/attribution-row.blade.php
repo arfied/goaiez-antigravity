@@ -15,21 +15,22 @@
                             $value = $q->job_value !== null ? '$' . number_format($q->job_value / 100, 2) : null;
                             $jobLabel = $q->job_id ? "Job #{$q->job_id}" : "Unknown job";
                             
-                            $humanizeSource = function($src) {
-                                return match($src) {
+                            $humanizeSource = function ($src) {
+                                $key = (string) ($src ?? 'unknown');
+
+                                return [
                                     'organic_search' => 'Google search',
                                     'google_cpc' => 'Google ad',
                                     'direct' => 'Typed in directly',
-                                    default => ucfirst(str_replace('_', ' ', $src ?? 'unknown'))
-                                };
+                                ][$key] ?? ucfirst(str_replace('_', ' ', $key));
                             };
-                            $humanizeStatus = function($status) {
-                                $lower = strtolower($status ?? '');
-                                return match($lower) {
+                            $humanizeStatus = function ($status) {
+                                $lower = strtolower((string) ($status ?? ''));
+
+                                return [
                                     'single' => 'One source',
                                     'ambiguous' => 'More than one source',
-                                    default => ucfirst(str_replace('_', ' ', $lower))
-                                };
+                                ][$lower] ?? ucfirst(str_replace('_', ' ', $lower));
                             };
                         @endphp
                         <x-ui.row class="p-4 flex items-center justify-between">

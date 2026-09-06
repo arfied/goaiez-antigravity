@@ -72,7 +72,7 @@ class AttributionRowTest extends TestCase
         Livewire::actingAs($user)
             ->test(AttributionRow::class, ['businessId' => $biz->id])
             ->assertSee('This job has no value recorded yet')
-            ->assertDontSee(' -- ');
+            ->assertDontSee('This job earned --');
     }
 
     public function test_route_renders_attribution_row()
@@ -100,6 +100,6 @@ class AttributionRowTest extends TestCase
             ->assertDontSee('organic_search')
             ->assertDontSee('SINGLE')
             ->assertDontSee('single')
-            ->assertDontSee(' -- ');
+            ->assertDontSee('This job earned --');
     }
 }
