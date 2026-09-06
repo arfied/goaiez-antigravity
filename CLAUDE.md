@@ -3184,3 +3184,95 @@ exist. Case (d) keys on `OWNER.md`'s mtime and is correct as far as it goes; it 
 not a complete view of what Track 1 has decided. The paired `--stat` already prints
 every sibling supervisor commit every tick — read them for rulings, not only for
 violations.
+
+## ⛔ `origin/main` moved MID-TICK, and `supervise.sh` §1 saw it before the tip table did (tick 218)
+
+Tick 215 ruled the tip table is not stable within a tick (`refs/remotes` is shared —
+`--git-common-dir` is Track 1's `.git`) and required a closing re-read. Tick 218 is
+its first firing on **`origin/main`**, which is the worst ref for it: main is the one
+ref that excludes in all four surfaces at once (tick 198's corollary). The opening
+`for-each-ref` showed one mover; the closing read showed **three**, main and ui among
+them. The entire opening census was void and re-run — it had read half 1 = 4 against
+a true 6.
+
+✅ **The tell was not the tip table. It was the gate.** §1 printed `vs origin/main
+(local ref): behind 1, ahead 23` against a ref I had fetched myself minutes earlier,
+and `git rev-list --count origin/main ^HEAD` → 1 named `05f9b768`, **committer-dated
+13:49:53 — earlier than the 13:26:51 tip my own fetch had returned.** A child cannot
+be older than the tip that excludes it, and that contradiction is the whole signal.
+No clock skew is needed to explain it (tick 192's wrong guess): per tick 193's caveat
+2, push lag is real and unbounded and committer date is not an observable of arrival.
+
+**Standing reading: §1's `behind N` is computed from the same shared ref and is the
+FRESHER of the two.** When it disagrees with the tick's own tip table, re-read
+`for-each-ref` — the disagreement is free, it is already on screen, and it is a
+second independent witness of a mid-tick move.
+
+⛔ **And a moving bound ADDS to a surface, not only shrinks it.** Tick 191 gave half 1
+its shrink reading (*attribute to the bound, never to the sibling side*) because
+`main` advancing drops partitions out of `^origin/main`. Tick 218 is the converse:
+half 1 gained **two** commits — reviews' `227edeab` and stages' `f73544df`, both
+merges *of main* — and neither changed anything; they entered because the exclusion
+advanced past them. A tick reading half 1's +2 as sibling activity would have opened
+two findings against branches that did nothing. Both readings are the same rule:
+**the delta's sign says nothing about which side moved.**
+
+## ✅ An OWNER ACTION opened off half 1 is CLOSED by reading the ref — first firing (tick 218)
+
+Tick 191 wrote the corollary and nothing had ever exercised it: *once `main` contains
+it, read the standing evidence from the branch; the census will not print it.* Reviews'
+partition held `ab051c0a` (the constant-`true` `ssl_installed`) at ticks 198/199 and
+now reads zero. `git branch -r --contains ab051c0a` → `origin/main`: it **merged**, it
+was not withdrawn. Then the substance, measured on `main` itself — `hasColumn` guard on
+the duplicate `2026_09_06_000001` migration (tick 199's `migrate` breaker),
+`SiteEngine`'s literal deleted (tick 198), `PageVersion.php:18 'ssl_installed' =>
+'boolean'` present (tick 199's absence-only fake-green), `EdgeDeployAction:36`
+deriving from `EdgeZone.has_valid_ssl`. All three sub-findings repaired, the column
+falsifiable. **TRACK 1 ACTION 2 closed.**
+
+⚠️ It does **not** close J11. `JourneyHarness.php:693` reads the value honestly; the
+fixture provisions no `EdgeZone`, so the writer never runs (tick 212). **A repaired
+writer and an unreached writer are different things** — the same distinction tick 212
+drew when it retracted tick 211.
+
+## ⛔ `coder-bin/git` is OUTSIDE every repo — a fix there needs no merge (tick 218)
+
+Tick 217 wrote that this lane *"inherits the fix through a merge"*. That conflates two
+paths which behave differently, and the ask is weaker for it:
+
+- **The guard file lives at `/home/goaiez/agents/coder-bin/git`** — in no repository,
+  carried by no merge. A Track 1 edit to `:30` is live for all seven lanes **the
+  moment it is saved**.
+- **`:35-40`'s existing exemption is take-only** (the staged blob must equal
+  `MERGE_HEAD`'s — *"take main's side whole"*, not an edit). So a fix Track 1 makes in
+  `main` instead reaches this lane's coder through a merge with the guard untouched.
+
+Either closes J11 here with no dispatch against the spent cap; they are not the same
+request. Re-read the guard at source every tick it is carried (tick 196's law) — it
+was unchanged at 218.
+
+## ⛔ The generated `Screens/*ScreenTest.php` are the unprotected coupling surface (tick 218)
+
+Ui's `ceb28bbf` changed shape: every prior ui commit touched only
+`AbandonedFormsTest.php` (absent here, which is what tick 187's disjointness argument
+rested on), and this one edits **five `app/tests/Modules/X-110/Screens/*ScreenTest.php`
+that exist in this tree**. Disjointness had to be re-measured rather than cited, and it
+holds for a new reason: this lane's only X-110 edits in its unmerged range are
+`Domain/PixelEngine.php`, so site edits `Domain/`, ui edits `Ui/` and `Screens/` — no
+textual conflict for Track 1, sanctioned under ruling 5's Track 2 grant.
+
+⚠️ **The correctness half had real content** (tick 189: disjointness is a conflict
+test, not a correctness one). ui added `#[Layout(...)]` and changed the body to
+`$businessId !== 0 ? $businessId : (Tenancy::id() ?? 0)` — a live behaviour change in a
+class this lane's tests execute — while **preserving `mount(int $businessId = 0)`**,
+the load-bearing default no diff ever calls out. The split that decides it:
+
+- this lane's **hand-written** tests pass `['businessId' => $biz->id]` at **all eleven**
+  call sites → the `!== 0` branch takes the explicit value → byte-identical. Immune.
+- the **generated** `Screens/*` tests mount with **no arguments** → they are exactly
+  what observes the change, and exactly what ui edited in the same commit.
+
+✅ **The reason is worth more than the verdict: the immunity comes from the
+explicit-argument convention, not from disjointness and not from luck.** The generated
+screen tests have no such protection, so they — not the hand-written ones — are the
+surface to re-check every time the ui partition grows.
