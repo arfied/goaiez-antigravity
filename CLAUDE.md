@@ -2777,3 +2777,180 @@ one step removed.
 - ⛔ `grep -nE '<pat>' <file> | grep -vE '^\s*$'` — the second `grep -v` in a pipe
   *"requires approval"*. Pipe into `head`/`sort`/`uniq -c` instead, or narrow the
   first pattern.
+
+## ⛔ The FOURTH false-credit class: `assertTrue(is_dir(app_path('Modules/X-194')))` (tick 214)
+
+Three shapes were catalogued — the `assertTrue(true)` body that credits ids, the
+comment-credit over a body that asserts nothing, and (tick 208) the
+`assertArrayHasKey('<id>', $caps)` tautology on the **generated** file. X-103
+carries a fourth, and like the third it is *a real assertion on real data*:
+
+```php
+/** (R245) */
+public function test_g6_17_header_x194(): void
+{
+    $caps = require app_path('Modules/X-103/capabilities.php');
+    $this->assertArrayHasKey('G6-17', $caps);
+    $this->assertTrue(is_dir(app_path('Modules/X-194')));
+}
+```
+
+It asserts that **another module's directory exists**. It cannot fail when X-103
+breaks, and it cannot fail while the roster does — it is the `assertTrue(true)`
+class wearing a filesystem call. Four of X-103's five tautology methods carry it
+(`G6-17` `G6-20` `G6-32` `G7-18`), always paired with the third class.
+
+⚠️ **The discriminator that separates it from an honest cross-module assertion:**
+*what would have to change for this line to go red?* Here the answer is "another
+lane would have to delete its module directory" — an event with no relationship to
+the clause being credited. An honest cross-module refusal names the **output**
+(`assertNotContains('review_widget', array_column($version->content_blocks,
+'type'))`), not the filesystem.
+
+⛔ **The clearing trap is tick 208's, unchanged and it bites harder here.** Measured
+at tick 214: all five ids (`G6-15` `G6-17` `G6-20` `G6-32` `G7-18`) have an
+occurrence count of **1** in `app/tests/Modules/X-103/`, so the tautology is each
+id's *only* carrier — strip first and five credits vanish at once. **Re-credit by
+docblock FIRST, strip second**, and the census that decides it is the one that
+keeps the multiplicity a `sort -u` would discard:
+
+```
+grep -rho -E '\b(G[0-9]+-[0-9]+|N-[0-9]+)\b' app/tests/Modules/<id>/ | sort | uniq -c
+```
+
+⚠️ And the five are **not one case**. Two (`G6-32` `G7-18`) already carry the honest
+refusal in the same body — a pure re-credit. Two (`G6-17` `G6-20`) have a *stateable*
+refusal that must be measured before it is asserted. One (`G6-15`, "the header's
+first line") may be the property `test_g6_16_header_tenant_offer` already asserts.
+**A sweep briefed as "delete the tautologies" would have got three of the five
+wrong** — same law as tick 208's own trap, one class further in.
+
+✅ **SITE-106 answered all five correctly, and the two it FILED were measured at
+source** (tick 215). `G6-32`/`G7-18` re-credited by docblock with their honest
+assertions retained; `G6-15` merged into `test_g6_16_header_tenant_offer`'s
+docblock; `G6-17`/`G6-20` filed. The filings are right and the reason is worth
+keeping: `SiteEngine::publish()` (`:23-68`) takes `$contentBlocks` as an argument,
+appends the six required types when absent, and **performs no transformation on a
+provided block whatsoever** — so no path could refuse a funnel-visualisation block
+or convert a marketplace-app manifest into injected code, and asserting their
+absence would be *asserting the absence of a key nothing in the module can write*,
+the exact defect this lane adopted from stages' X-176 G8-15 finding at tick 211.
+`capability` 429 → 431, +1 per filing, every other stage byte-identical; §7
+1937→1934 with identical failure and error sets.
+
+## ⛔ An evidence block a wave pastes is a CLAIM — re-run the census that decides the pass condition (tick 215)
+
+SITE-106's report §1 pasted an "After" census of **10** ids omitting `G6-15`, while
+its own §2 two paragraphs later said G6-15 had been merged into G6-16's docblock,
+and a live `grep -rho … | sort | uniq -c` returned **11** including it. Doctor is
+the arbiter and reports no `G6-15` violation, so the substance was right and the
+paste was wrong — but the paste was the block the brief made the pass condition's
+basis, and a reviewer who trusted it would have recorded a lost credit that never
+happened.
+
+Same law as tick 196's *§3 stage counts are RECORDED, not measured* and tick 209's
+*a doctor number copied into this ledger decays*, moved one surface further out: a
+number in a **report** is a recording of a query, not the query. The reviewer
+re-runs the one census the verdict turns on. It costs one command.
+
+## ⛔ The tip table is NOT stable within a tick — `refs/remotes` is shared and a sibling's fetch moves it (tick 215)
+
+Caught in the act. The opening `for-each-ref` printed `origin/track/money 13:15:54
+909acdfd`; a `git log` minutes later, **with no fetch of mine in between**, listed
+`7d9eb086 origin/track/money 13:29:04` — three commits `909acdfd` cannot reach. A
+re-read confirmed the tip had moved. Cause measured at tick 193 caveat (1):
+`git rev-parse --git-common-dir` is `/home/goaiez/agents/grs-antig/.git`, so
+`refs/remotes` is shared with Track 1 and every sibling worktree.
+
+Tick 193 read that sharing as benign — *"it makes the bound earlier-or-equal, i.e.
+safe"* — which is true of the **reflog as a bound** and false of the **tip table as
+a cache key**. Tick 177's cache says "same table ⇒ same census output"; if another
+process can move the table mid-tick, a HIT is only valid for the queries issued
+between two reads of it, and nothing marks those boundaries.
+
+**RULED: re-read `for-each-ref` immediately before recording the block. If it
+differs from the opening read, the tick was a MISS whatever the opening read
+said.** Sixteenth statement of this section's law and the first turned on the
+**cache key** rather than on a query — 163/178/180/183/185/187 concern a query's
+pathspec, 190 its strip, 191 its bounds moving, 192/193 its unrecorded bounds, 194
+its configuration, 196 its width, 207 its expected output, 208 the evidence
+request, 209 its resolution context, 210 the fault's scope in time. This concerns
+the **identity of the input between two reads of it**: the one dimension along
+which re-running the query changes nothing, because the query was right both times
+and the world moved.
+
+## ✅ RETRACTED at tick 215 — `app/phpunit.xml` IS committable. Check whether a SIBLING LANE has solved it before recording a problem as having no remedy
+
+Tick 196 ruled *"no lane process commits or reverts it"* and this file has carried
+the pin as permanently uncommittable ever since, with `supervise.sh` §2's `⛔
+app/phpunit.xml` as permanent noise and no durable fix. `62c2a65c` on
+`origin/track/pricebook`, the same hour as tick 215:
+
+> `chore(supervisor): restore this track's test-database pin (ruling 27)` — *"Restored
+> from `b1e3d84b` **by the coder** in run 78 … The coder guard refuses this path, so
+> **the supervisor commits it**, per owner ruling 27."*
+
+The split is the part this lane never found: the **coder makes the edit** (it is
+`app/**`, its own column — the guard refuses only *staging*), and the **supervisor
+commits it**. Both halves are things each seat may already do; only the pairing was
+missing.
+
+⛔ **This lane does not simply adopt it.** `app/phpunit.xml` is outside this seat's
+enumerated commit list, and helping itself to another lane's ruling is "patch the
+thing that is refusing you" one step removed — the same reasoning that stopped this
+seat using the `bin/state.py` grant at tick 213. It goes up as TRACK 1 ACTION 3
+re-stated with a working precedent and a ruling number to copy, which is a
+materially better ask than nineteen ticks of "no remedy exists".
+
+**The generalisation:** tick 196 measured *this seat's* two refusals and concluded
+the **problem** was insoluble — a conclusion about the instrument stated as a
+conclusion about the world. Same shape as tick 192's asserted-but-never-fired
+fallback, tick 196's own `Write`-refusal diagnosis (retracted at 197 once the shell
+was reset), and tick 209's drifted shell. ⛔ **Before recording a problem as having
+no remedy, read a sibling lane's supervisor commits.** Seven lanes run this
+identical harness and the paired `--stat` prints their commits every tick; tick 215
+is the first time this lane read one for an answer rather than for a violation.
+
+## Predict a merge's per-track outcome by QUADRANT, two-sided, before every merge (tick 215)
+
+Tick 211 predicted the affected set from a one-sided merge-base diff and was wrong
+on two of three files; tick 212's missing `--no-commit` then removed the window in
+which that could be corrected. The reliable form is a two-sided table, and
+`git config --get merge.ours.driver` is part of it — an attribute with no driver
+configured silently does nothing, which is exactly the failure the table would
+otherwise hide. Measured before SITE-107 (base `9d4de6f9`, driver `true`):
+
+| path | ours changed | main changed | driver fires? | outcome |
+| :-- | :--: | :--: | :--: | :-- |
+| `CLAUDE.md` · `.agents/state/BUILD-STATE.json` · `JOURNAL.md` | ✅ | ✅ | **yes** | ours wins |
+| `bin/supervise.sh` · `launch-coder.sh` | ✅ | ❌ | n/a | ours kept |
+| `app/phpunit.xml` · `.claude/settings.json` | ❌ | ❌ | n/a | untouched — the dirty pin edit survives |
+
+The dangerous quadrant is **ours ❌ / main ✅**: no driver, no conflict, no line in
+the merge output, and it is what produced tick 212's damage. It was empty this
+time — which is a *measurement*, not a reason to skip the restore step, because its
+absence produces no signal either.
+
+⚠️ Corollary, and it bit: the driver **writes** the paths it resolves, so a merge
+attempted with `.agents/state/` dirty fails on exactly the rows `merge=ours`
+protects. Committing a wave's orphaned `state.py` filings is therefore the next
+merge wave's **step 0**, not housekeeping.
+
+## ⛔ A merge is a wave — never dispatch one carrying its own new code (tick 215)
+
+Track 1's 14:0x classmap ruling is the reason, and it is stronger than tidiness:
+`app/composer.json` declares `"classmap": ["app/Modules/"]` and module directories
+(`C-Mail`, `X-01`) do not match their namespaces (`CMail`, `X01`), so **any merge
+that adds a class under `app/Modules/` leaves it unloadable until `composer
+dump-autoload` runs** — presenting as `Class "App\Modules\…" not found` *inside
+another module's test*, the most misattributable shape there is. It cost Track 1
+three waves and nearly two false accusations against other lanes.
+
+Two tells that a red is the classmap and not code: (1) the class file exists but
+`grep -c '<Class>' app/vendor/composer/autoload_classmap.php` is **0** while its
+siblings are 1; (2) two gates on an identical tree disagree — **a number that moves
+without a commit is not a number.** ⛔ And "that lane is red too" is not evidence of
+ownership: every checkout carries its own stale classmap.
+
+A wave that merges *and* builds makes every such red unattributable between the two.
+`composer dump-autoload` goes before the first post-merge gate, always.
