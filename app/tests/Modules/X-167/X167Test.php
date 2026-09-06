@@ -202,7 +202,7 @@ class X167Test extends TestCase
         $capabilities = array_keys(require app_path('Modules/X-167/capabilities.php'));
         $doc = (new \ReflectionMethod($this, __FUNCTION__))->getDocComment();
         preg_match_all('/\[(G[0-9]+-[0-9]+|N-[0-9]+)\]/', $doc, $matches);
-        
+
         $this->assertEqualsCanonicalizing($capabilities, $matches[1]);
     }
 }
