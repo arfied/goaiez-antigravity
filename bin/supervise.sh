@@ -34,6 +34,22 @@ for db in "$env_db" "$xml_db"; do
 done
 [ -z "$env_db" ] && echo "  ⚠ .env has no DB_DATABASE — anything reading config would use the framework default"
 
+# 2026-09-06 07:0x. A merge from main takes main's app/phpunit.xml whole and SILENTLY —
+# our side had not touched the file since the merge base and main had, so git resolves it
+# with no conflict marker and nothing to see in `git show <merge> -- app/phpunit.xml`.
+# The same merge takes main's bin/supervise.sh, which has no TEST_DB export at all, so
+# both belts fail together and §7 runs the suite against whatever main pinned. On
+# 2026-09-06 that was goaiez_antig_test — Track 1's — and only the coder stopping of its
+# own accord kept 1860 tests and a migrate:fresh off another lane's schema.
+# Refuse instead of warning: a gate measured against the wrong database is not a number.
+if [ -n "$xml_db" ] && [ "$xml_db" != "goaiez_antig_pricebook_test" ]; then
+  echo "  ⛔ app/phpunit.xml pins '$xml_db', not this lane's goaiez_antig_pricebook_test."
+  echo "     A merge from main flips this silently. Restore it before anything runs:"
+  echo "       git show <our-last-pre-merge-sha>:app/phpunit.xml > app/phpunit.xml"
+  echo "     (the coder writes it; the supervisor commits that one path — ruling 27)"
+  exit 2
+fi
+
 bar "1. working tree"
 git status --short | head -40
 echo "  $(git status --short | wc -l) uncommitted path(s)"
