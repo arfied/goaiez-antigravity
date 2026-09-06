@@ -15,6 +15,7 @@ use App\Modules\X194\Models\SavedView;
 use App\Modules\X194\Models\ViewSchedule;
 use App\Modules\X194\Ui\AnyViewIt;
 use App\Modules\X194\Ui\SavedViewsList;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -80,6 +81,22 @@ class X194Test extends TestCase
 
         $this->assertEquals('--', $renderNullValue['estimate_tile'], 'Estimate tile stays dashed ("--") until job value entered (G9-35)');
         $this->assertEquals('America/Chicago', $renderNullValue['timezone'], 'Renders in location timezone (G9-37)');
+
+        $expectedOffset = Carbon::now('America/Chicago')->getOffsetString();
+        $this->assertStringContainsString($expectedOffset, $renderNullValue['rendered_at'], 'Renders in location timezone offset (G9-37)');
+
+        $renderWithValue = $this->renderAction->renderView(
+            businessId: $biz->id,
+            viewId: $savedView->id,
+            locationTimezone: 'America/Chicago',
+            jobValue: 1234.5,
+            jobCount: 12
+        );
+
+        $this->assertEquals('$1,234.50', $renderWithValue['estimate_tile'], 'Estimate tile formats value (G9-35)');
+        $this->assertNotEquals('--', $renderWithValue['estimate_tile'], 'Estimate tile is not dashed when value entered (G9-35)');
+        $this->assertEquals(12, $renderWithValue['job_count'], 'Job count survives estimate value being entered (G9-35)');
+
         Event::assertDispatched(ViewRendered::class);
 
         // 3. Digest with ZERO activity is NOT sent (TEST ANCHOR)
@@ -247,6 +264,13 @@ class X194Test extends TestCase
 
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
+     *
+     * ⛔ REFUSED: G4-20
+     * ⛔ REFUSED: G8-10
+     * ⛔ REFUSED: G9-11
+     * ⛔ REFUSED: G9-23
+     * ⛔ REFUSED: G9-26
+     * ⛔ REFUSED: G13-17
      */
     public function test_reporting_capabilities(): void
     {
