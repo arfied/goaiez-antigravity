@@ -1529,6 +1529,49 @@ Watch for: <the trap that applies, by name>
   pint names only the test file, phpstan reports 0, and `CapabilityStage::testedIds` globs `*.php`, which
   `CMailTest.php.orig` does not match. They are exactly what a `git add -A` would ship, which is the named-paths
   rule earning its keep.
+- ✅✅ **The complete form of a mutation proof is a PAIR whose subtractions are different, and wave 101c is the
+  first one this lane has produced — record it as the target shape.** A nine-assertion test, green at
+  `assertions 7869`. M1 (the ingest's `create()` writes a fixed `event_type`) → `7868`, **−1**: assertions 1–7
+  ran and passed, 8 failed on its own terms, 9 unreached. M2 (the send gate stops discriminating by recipient)
+  → `7867`, **−2**: assertions 1–8 ran and passed, 9 failed on its own terms. **The union shows every assertion
+  executing and reddens 8 and 9 separately**, which no single mutation can do — that is the wave-92 requirement
+  (each mutation leaves the other's assertion executable) and the wave-90 subtraction, both satisfied at once.
+  ⭐ Two site tells came free and are worth reusing: M1's radius of **1** is not the tick-185 red flag because
+  `grep -rn "<the action>" app/app app/tests` names only a declaration, a `use` and one `new` — **a radius of
+  one is forced when only one test can reach the code, so size the reachable set before reading a narrow radius
+  as a test-body mutation**; and M2 needed no `SITE` field at all, because it reddened a **second** test, and a
+  mutation made inside the new test's body cannot redden a different test.
+- ⚠️ **"Fix the property name, never the assertion" is impossible for a class that declares no such property —
+  check each class in a group before prescribing one remedy for all of them.** Wave 101c's brief named four
+  `assertDispatched` closures and refused retreating to a bare `assertDispatched(Foo::class)`. Three closures
+  had a declared property to move to; `EmailComplained` declares `businessId · mailDomainId · complaintRate`
+  and **no email-shaped field at all**, so for that one the prescribed remedy did not exist and the coder
+  dropped the closure and filed `REFUSED: none`. The bare assertion is **not** scenery (it fails if the
+  `'complained'` arm is missing, and an `assertNotDispatched` on the same class is its negative), and it had
+  never been red, so it is not the act the ⛔ named — but `complaintRate` was available and would have made it
+  load-bearing. **This is the wave-88 per-id rule applied to a group of CLOSURES**: one
+  `grep -n "public readonly" <the classes>` before the brief, spent per class, would have turned one refused
+  shape into three fixes and one disclosed exception. The finding is the silence, not the assertion.
+- ⚠️ **`TESTS: before / after` is ambiguous whenever a wave inherits an uncommitted test, and both readings are
+  honest.** Wave 101c reported `before 10 / after 10` — true of the tree it started on, since run 82's death had
+  left the new method in the working tree — while the commit's parent has 9. Nothing was wrong and pest's flat
+  `tests 1861` corroborated it. **Pin the field to the commit's parent in the brief** (`git show <sha>~1:<file>
+  | grep -c "public function test"`), or the number cannot be graded against any command.
+- ⚠️ **The writerless-value trap has an inner rung: a value with a writer, but not one on the path that reads
+  it.** Tick 201's form is *nothing writes `bounced`*. Wave 101c's ingest dispatches
+  `EmailComplained(…, $domain->complaint_rate)` and `grep -rn "complaint_rate" app/app` gives exactly one
+  writer — `EmailHaltSeedAction.php:38`, a **seed**. So ingesting a real complaint publishes the **stale**
+  domain rate, and the grep that catches the outer rung (does anything write it?) answers *yes* and clears it.
+  **Ask which writer, and whether it is on this path.** Disclosed correctly here as a `BUILD PROPOSAL` in the
+  docblock, which is the durable place; `REPORT.md` is overwritten every wave.
+- **Backlog at tick 204 — the C-Mail chain, ruled.** Wave 101 is closed: the ingest action exists, the gate and
+  the ingest agree on `bounced`/`spam-trap`, and the migration's `event_type` comment names all seven values it
+  writes or reads. **Wave 102 is `G11-12`'s second half, the C-Mail → X-01 bridge**, unblocked because
+  `EmailIngestEventAction:43` is now the `EmailReplied` dispatcher whose absence deferred it at tick 201.
+  `EmailReplied` is **eight hits in three files, all C-Mail**, so widening its constructor is in-lane (contrast
+  wave 85's `messageClass`, ten files across three out-of-lane modules). **Wave 103 is the `EmailComplained`
+  handler** — `complaint_rate` and `is_marketing_paused` — already on record as a `BUILD PROPOSAL`. The live
+  list stays `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 
