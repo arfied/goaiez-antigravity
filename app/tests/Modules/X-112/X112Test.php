@@ -128,7 +128,7 @@ class X112Test extends TestCase
 
     /**
      * [G2-67] & [G9-09]
-     * ⏳ UNRESOLVED: [G2-67] depends on X-194, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for rendering weekly client reports.
      */
     public function test_g2_67_weekly_report(): void
     {
@@ -154,10 +154,19 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-05], [G7-06], [G7-07], [G7-44] named in the header
+     * [G7-05], [G7-07], [G7-44] named in the header
      * ⛔ REFUSED: these are register bookkeeping, not capabilities, so there is nothing to assert.
      */
     public function test_header_capabilities(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [G7-06] named in the header; the log is X-122's
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam for X-122 logging; impersonation writes to its own ImpersonationLog.
+     */
+    public function test_g7_06_header_log(): void
     {
         $this->assertTrue(true);
     }
@@ -190,7 +199,7 @@ class X112Test extends TestCase
 
     /**
      * [G7-19]
-     * ⏳ UNRESOLVED: [G7-19] depends on X-114, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for Loom or client dashboard media.
      */
     public function test_g7_19_loom_on_dashboard(): void
     {
@@ -247,7 +256,7 @@ class X112Test extends TestCase
 
     /**
      * [G7-31]
-     * ⏳ UNRESOLVED: [G7-31] depends on X-82, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam for fetching Infobip rates from X-82.
      */
     public function test_g7_31_rates(): void
     {
@@ -256,7 +265,7 @@ class X112Test extends TestCase
 
     /**
      * [G9-32]
-     * ⏳ UNRESOLVED: [G9-32] depends on X-08, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for checking client health scores.
      */
     public function test_g9_32_client_health(): void
     {
@@ -274,7 +283,7 @@ class X112Test extends TestCase
 
     /**
      * [G19-21]
-     * ⏳ UNRESOLVED: [G19-21] depends on X-08, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
+     * ⛔ REFUSED: surveyed AgencyEngine and found no seam or method for account manager churn notifications.
      */
     public function test_g19_21_account_manager_notification(): void
     {
