@@ -129,6 +129,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-19] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_19_agent_header(): void
     {
@@ -137,6 +138,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-24] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_24_agent_intent(): void
     {
@@ -192,6 +194,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-41] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_41_header_contract(): void
     {
@@ -216,6 +219,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-48] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_48_intent_serve(): void
     {
@@ -224,6 +228,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-51] named in the header; the minute-by-minute graph is an X-194 view
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_51_minute_graph_view(): void
     {

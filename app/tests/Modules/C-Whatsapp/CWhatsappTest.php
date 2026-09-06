@@ -12,6 +12,7 @@ use App\Modules\CWhatsapp\Events\TemplateApproved;
 use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
+use App\Modules\X204\Domain\ConsentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -112,7 +113,33 @@ class CWhatsappTest extends TestCase
      */
     public function test_g10_40_opt_in(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'WhatsApp Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerPhone = '+15551234567';
+
+        $consentService = app(ConsentService::class);
+        $consentService->suppress($biz->id, $customerPhone, 'whatsapp', 'SUPPRESSED');
+
+        $refusedRes = $this->sendAction->handle(
+            businessId: $biz->id,
+            recipientPhone: $customerPhone,
+            messageText: 'Hello'
+        );
+
+        $this->assertEquals('refused', $refusedRes['status']);
+        $this->assertEquals('SUPPRESSED', $refusedRes['refusal_code']);
+
+        $this->engine->recordInbound($biz->id, $customerPhone);
+
+        $refusedRes2 = $this->sendAction->handle(
+            businessId: $biz->id,
+            recipientPhone: $customerPhone,
+            messageText: 'Hello again'
+        );
+
+        $this->assertEquals('refused', $refusedRes2['status']);
+        $this->assertEquals('SUPPRESSED', $refusedRes2['refusal_code']);
     }
 
     /**
