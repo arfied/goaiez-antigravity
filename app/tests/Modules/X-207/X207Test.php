@@ -107,7 +107,47 @@ class X207Test extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $this->assertTrue(true);
+        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $this->assertEquals('refused', $engine->checkConsent(false)['status']);
+        $this->assertEquals('ok', $engine->checkConsent(true)['status']);
+
+        $payload = ['secret' => 'foo', 'valid' => 'bar'];
+        $sanitized = $engine->sanitizePayload($payload);
+        $this->assertArrayNotHasKey('secret', $sanitized);
+        $this->assertArrayHasKey('valid', $sanitized);
+    }
+
+    /**
+     * [N-013]
+     */
+    public function test_cadence_ceiling(): void
+    {
+        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $this->assertEquals('ok', $engine->validateCadence(0, 3)['status']);
+        $this->assertEquals('refused', $engine->validateCadence(3, 3)['status']);
+        $this->assertEquals('refused', $engine->validateCadence(4, 3)['status']);
+    }
+
+    /**
+     * [N-014]
+     */
+    public function test_quiet_hours(): void
+    {
+        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $this->assertEquals('ok', $engine->validateQuietHours(false)['status']);
+        $this->assertEquals('refused', $engine->validateQuietHours(true)['status']);
+    }
+
+    /**
+     * [N-016]
+     */
+    public function test_get_priority(): void
+    {
+        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $this->assertEquals('minutes', $engine->getPriority('review_naming_employee'));
+        $this->assertEquals('minutes', $engine->getPriority('recover_escalation'));
+        $this->assertEquals('minutes', $engine->getPriority('money_event'));
+        $this->assertEquals('standard', $engine->getPriority('invoice_created'));
     }
 
     /**
