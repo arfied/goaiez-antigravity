@@ -87,4 +87,14 @@ class ConflictsListScreenTest extends TestCase
         $this->assertSame(1, AccountingSyncConflict::where('business_id', $bizB->id)->count());
         $this->assertSame('open', AccountingSyncConflict::where('business_id', $bizB->id)->first()->status);
     }
+
+    public function test_empty_state_shows_the_truth()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Livewire::test(ConflictsListView::class)
+            ->assertOk()
+            ->assertSee('No line has ever been synced.');
+    }
 }

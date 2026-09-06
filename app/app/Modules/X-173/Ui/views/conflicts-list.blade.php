@@ -14,7 +14,7 @@
     <div wire:loading><x-ui.skeleton label="Reading the conflicts…" /></div>
 
     @if(count($conflicts) === 0)
-        <x-ui.empty-state heading="No conflicts.">Every synced line had a confident account.</x-ui.empty-state>
+        <x-ui.empty-state heading="No conflicts.">No line has ever been synced.</x-ui.empty-state>
     @else
         <ul>
             @foreach($conflicts as $c)
