@@ -105,15 +105,31 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G2-43] & [G7-02] the client sees the agency's price only (§17.5)
+     * [G2-43] & [G7-02]
+     * Asserting: the client sees the agency's price only (§17.5)
      */
     public function test_g2_43_client_sees_agency_price_only(): void
     {
-        $this->assertTrue(true);
+        $owner = User::factory()->create();
+        $biz = app(TenantProvisioner::class)->provision($owner);
+        Tenancy::set($biz->id);
+
+        $agency = Agency::create(['business_id' => $biz->id, 'agency_name' => 'Agency', 'agency_mode' => 'full_service']);
+        $this->markupAction->handle($biz->id, $agency->id, 'sms_segment', 100, 300);
+
+        $clientRates = $this->engine->getClientFacingRates($biz->id, $agency->id);
+        $this->assertArrayHasKey('sms_segment', $clientRates);
+        $this->assertEquals(400, $clientRates['sms_segment']['rate_cents']);
+        $this->assertArrayNotHasKey('wholesale_rate_cents', $clientRates['sms_segment']);
+        $this->assertArrayNotHasKey('retail_markup_cents', $clientRates['sms_segment']);
+        $this->assertArrayNotHasKey('cost', $clientRates['sms_segment']);
+        $this->assertArrayNotHasKey('margin', $clientRates['sms_segment']);
     }
 
     /**
-     * [G2-67] & [G9-09] the agency's weekly client report
+     * [G2-67] & [G9-09]
+     * REFUSED: "the agency's weekly client report; rendered by X-194"
+     * AgencyEngine::renderWeeklyReport() is missing — X-194 owns rendering.
      */
     public function test_g2_67_weekly_report(): void
     {
@@ -121,7 +137,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G4-09] a sub-tenant may narrow, never widen
+     * [G4-09]
+     * REFUSED: "named in the header; a sub-tenant may narrow, never widen"
+     * AgencyEngine::enforceSubtenantScope() is missing.
      */
     public function test_g4_09_subtenant_scope(): void
     {
@@ -129,7 +147,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G4-22] the agency's client sees results without a password
+     * [G4-22]
+     * REFUSED: "the agency's client sees results without a password"
+     * AgencyEngine::getPublicResults() is missing.
      */
     public function test_g4_22_client_zero_password_results(): void
     {
@@ -137,7 +157,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-05], [G7-06], [G7-07], [G7-44] named in header
+     * [G7-05], [G7-06], [G7-07], [G7-44]
+     * REFUSED: "named in the header"
+     * AgencyEngine::getHeaderConfig() is missing.
      */
     public function test_header_capabilities(): void
     {
@@ -162,7 +184,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-13] task visibility per client
+     * [G7-13]
+     * REFUSED: "task visibility per client"
+     * AgencyEngine::getTasksForClient() is missing.
      */
     public function test_g7_13_task_visibility(): void
     {
@@ -170,7 +194,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-19] a Loom on the client dashboard
+     * [G7-19]
+     * REFUSED: "a Loom on the client dashboard; the asset is X-114's"
+     * AgencyEngine::getDashboardAssets() is missing.
      */
     public function test_g7_19_loom_on_dashboard(): void
     {
@@ -202,15 +228,33 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-30] gross margin per deal
+     * [G7-30]
+     * Asserting: gross margin per deal; the approval above a floor is X-202's
      */
     public function test_g7_30_gross_margin(): void
     {
-        $this->assertTrue(true);
+        Event::fake([MarginComputed::class]);
+        $owner = User::factory()->create();
+        $biz = app(TenantProvisioner::class)->provision($owner);
+        Tenancy::set($biz->id);
+
+        $agency = Agency::create(['business_id' => $biz->id, 'agency_name' => 'Agency', 'agency_mode' => 'full_service']);
+        $this->markupAction->handle($biz->id, $agency->id, 'seo_audit', 5000, 2000);
+
+        Event::assertDispatched(MarginComputed::class, function ($event) use ($biz, $agency) {
+            return $event->businessId === $biz->id && $event->serviceType === 'seo_audit' && $event->retailMarkupCents === 2000;
+        });
+
+        $agencyRates = $this->engine->getAgencyFacingRates($biz->id, $agency->id);
+        $this->assertArrayHasKey('seo_audit', $agencyRates);
+        $this->assertEquals(5000, $agencyRates['seo_audit']['cost']);
+        $this->assertEquals(2000, $agencyRates['seo_audit']['margin']);
     }
 
     /**
-     * [G7-31] named in header; Infobip rates from X-82
+     * [G7-31]
+     * REFUSED: "named in the header; the Twilio figures are corpus vocabulary — Infobip, rates from X-82"
+     * AgencyEngine::getInfobipRates() is missing.
      */
     public function test_g7_31_rates(): void
     {
@@ -218,7 +262,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G9-32] client health on the agency dashboard
+     * [G9-32]
+     * REFUSED: "client health on the agency dashboard; the score is X-08's"
+     * AgencyEngine::getClientHealthScore() is missing.
      */
     public function test_g9_32_client_health(): void
     {
@@ -226,7 +272,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G16-10] agency announcements are named in the header
+     * [G16-10]
+     * REFUSED: "agency announcements are named in the header; an un-dismissible popup is not a notification class we have (P-062)"
+     * AgencyEngine::getAnnouncements() is missing.
      */
     public function test_g16_10_agency_announcements(): void
     {
@@ -234,7 +282,9 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G19-21] account manager told before the client leaves
+     * [G19-21]
+     * REFUSED: "the account manager told before the client leaves; the score is X-08's"
+     * AgencyEngine::notifyAccountManager() is missing.
      */
     public function test_g19_21_account_manager_notification(): void
     {
