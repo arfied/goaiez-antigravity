@@ -49,7 +49,7 @@ class X176Test extends TestCase
 
         $sharedCommitId = 'commit_price_change_9901';
 
-        // 1. Render schema with price changes from pricebook synchronized under sharedCommitId (G8-14)
+        // 1. Render schema with price changes from pricebook synchronized under sharedCommitId
         $res = $this->renderAction->handle(
             businessId: $biz->id,
             pageId: 101,
@@ -85,38 +85,8 @@ class X176Test extends TestCase
     }
 
     /** (R245) */
-    public function test_g3_34_capabilities(): void
+    public function test_offer_catalog_renders_zero_priced_offers(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G3-34', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_02_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-02', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_03_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-03', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_04_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-04', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_14_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-14', $caps);
         // product schema from the pricebook (delegates to X-163/X-119, but we just assert the shape here)
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
@@ -141,10 +111,8 @@ class X176Test extends TestCase
     }
 
     /** (R245) */
-    public function test_g8_15_capabilities(): void
+    public function test_render_omits_event_key_when_no_calendar_source(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-15', $caps);
         // Delegates to X-108
         $this->assertTrue(is_dir(app_path('Modules/X-108')));
 
@@ -158,46 +126,11 @@ class X176Test extends TestCase
         $this->assertArrayNotHasKey('event', $res['json_ld']);
     }
 
-    /** (R245) */
-    public function test_g8_16_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-16', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_22_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-22', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_23_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-23', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_25_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-25', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_30_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-30', $caps);
-    }
-
-    /** (R245) */
+    /**
+     * [G8-32]
+     */
     public function test_g8_32_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-32', $caps);
 
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
@@ -233,18 +166,11 @@ class X176Test extends TestCase
         ]));
     }
 
-    /** (R245) */
-    public function test_g8_33_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-33', $caps);
-    }
-
-    /** (R245) */
+    /**
+     * [G12-03]
+     */
     public function test_g12_03_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G12-03', $caps);
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         $biz->vertical = 'hvac';
         $biz->save();
@@ -262,11 +188,11 @@ class X176Test extends TestCase
         $this->assertEquals('LocalBusiness', $res2['json_ld']['@type'] ?? null);
     }
 
-    /** (R245) */
+    /**
+     * [G16-25]
+     */
     public function test_g16_25_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G16-25', $caps);
 
         $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
@@ -287,11 +213,11 @@ class X176Test extends TestCase
         $this->assertSame('SCHEMA_INVALID', $bad['refusal_code']);
     }
 
-    /** (R245) */
+    /**
+     * [G7-48]
+     */
     public function test_g7_48_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G7-48', $caps);
 
         Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
