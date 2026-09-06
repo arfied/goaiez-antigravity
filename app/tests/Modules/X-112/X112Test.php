@@ -128,8 +128,7 @@ class X112Test extends TestCase
 
     /**
      * [G2-67] & [G9-09]
-     * REFUSED: "the agency's weekly client report; rendered by X-194"
-     * AgencyEngine::renderWeeklyReport() is missing — X-194 owns rendering.
+     * ⏳ UNRESOLVED: [G2-67] depends on X-194, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
      */
     public function test_g2_67_weekly_report(): void
     {
@@ -138,8 +137,7 @@ class X112Test extends TestCase
 
     /**
      * [G4-09]
-     * REFUSED: "named in the header; a sub-tenant may narrow, never widen"
-     * AgencyEngine::enforceSubtenantScope() is missing.
+     * ⛔ REFUSED: RoleAssignAction.php writes a role string with updateOrCreate and never compares it to a parent scope; AgencyEngine::authorizeStaff() returns authorized/role and enforces active/inactive only. There is no narrowing anywhere.
      */
     public function test_g4_09_subtenant_scope(): void
     {
@@ -147,9 +145,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G4-22]
-     * REFUSED: "the agency's client sees results without a password"
-     * AgencyEngine::getPublicResults() is missing.
+     * [G4-22] the agency's client sees results without a password
+     * ⛔ REFUSED: surveyed routes.generated.php and found all routes are under 'auth' middleware; no route serves a client view without auth.
      */
     public function test_g4_22_client_zero_password_results(): void
     {
@@ -157,9 +154,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-05], [G7-06], [G7-07], [G7-44]
-     * REFUSED: "named in the header"
-     * AgencyEngine::getHeaderConfig() is missing.
+     * [G7-05], [G7-06], [G7-07], [G7-44] named in the header
+     * ⛔ REFUSED: these are register bookkeeping, not capabilities, so there is nothing to assert.
      */
     public function test_header_capabilities(): void
     {
@@ -184,9 +180,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G7-13]
-     * REFUSED: "task visibility per client"
-     * AgencyEngine::getTasksForClient() is missing.
+     * [G7-13] task visibility per client
+     * ⛔ REFUSED: tasks are a core feature (CrmTask), but surveyed Actions, Database, Domain, Events, Models, Ui and found no client visibility implementation.
      */
     public function test_g7_13_task_visibility(): void
     {
@@ -195,8 +190,7 @@ class X112Test extends TestCase
 
     /**
      * [G7-19]
-     * REFUSED: "a Loom on the client dashboard; the asset is X-114's"
-     * AgencyEngine::getDashboardAssets() is missing.
+     * ⏳ UNRESOLVED: [G7-19] depends on X-114, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
      */
     public function test_g7_19_loom_on_dashboard(): void
     {
@@ -253,8 +247,7 @@ class X112Test extends TestCase
 
     /**
      * [G7-31]
-     * REFUSED: "named in the header; the Twilio figures are corpus vocabulary — Infobip, rates from X-82"
-     * AgencyEngine::getInfobipRates() is missing.
+     * ⏳ UNRESOLVED: [G7-31] depends on X-82, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
      */
     public function test_g7_31_rates(): void
     {
@@ -263,8 +256,7 @@ class X112Test extends TestCase
 
     /**
      * [G9-32]
-     * REFUSED: "client health on the agency dashboard; the score is X-08's"
-     * AgencyEngine::getClientHealthScore() is missing.
+     * ⏳ UNRESOLVED: [G9-32] depends on X-08, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
      */
     public function test_g9_32_client_health(): void
     {
@@ -272,9 +264,8 @@ class X112Test extends TestCase
     }
 
     /**
-     * [G16-10]
-     * REFUSED: "agency announcements are named in the header; an un-dismissible popup is not a notification class we have (P-062)"
-     * AgencyEngine::getAnnouncements() is missing.
+     * [G16-10] agency announcements
+     * ⛔ REFUSED: an un-dismissible popup is not a notification class we have (P-062).
      */
     public function test_g16_10_agency_announcements(): void
     {
@@ -283,8 +274,7 @@ class X112Test extends TestCase
 
     /**
      * [G19-21]
-     * REFUSED: "the account manager told before the client leaves; the score is X-08's"
-     * AgencyEngine::notifyAccountManager() is missing.
+     * ⏳ UNRESOLVED: [G19-21] depends on X-08, which does not exist in this checkout (surveyed Actions, Database, Domain, Events, Models, Ui)
      */
     public function test_g19_21_account_manager_notification(): void
     {
