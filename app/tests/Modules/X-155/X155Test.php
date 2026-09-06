@@ -11,6 +11,7 @@ use App\Modules\X155\Actions\FormAbandonPointAction;
 use App\Modules\X155\Actions\FormAdaptiveStepsAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X155\Actions\FormGenerateAction;
+use App\Modules\X155\Actions\FormReleaseAction;
 use App\Modules\X155\Actions\FormValidateAction;
 use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Events\FormSpamRejected;
@@ -342,7 +343,7 @@ class X155Test extends TestCase
         Event::assertNotDispatched(FormCaptured::class);
 
         // the release
-        $releaseAction = new \App\Modules\X155\Actions\FormReleaseAction();
+        $releaseAction = new FormReleaseAction;
         $releaseRes = $releaseAction->handle($biz->id, $submissionId);
 
         $this->assertEquals('released', $releaseRes['status']);
@@ -356,6 +357,7 @@ class X155Test extends TestCase
             return $event->submissionId === $submissionId;
         });
     }
+
     public function test_g3_64_bot_filtering(): void
     {
         Event::fake([FormCaptured::class, FormSpamRejected::class]);
