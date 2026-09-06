@@ -2182,6 +2182,10 @@
   {
    "at": "2026-09-06T16:51:57",
    "note": "X-176 CORRECTION to the G8-15 capability filing of 2026-09-06T16:31:06: its why implies X-108 is absent, but app/app/Modules/X-108 is fully built with Models/Appointment.php and Events/AppointmentBooked.php and a migration. The blocked thing is not the calendar module."
+  },
+  {
+   "at": "2026-09-06T17:32:43",
+   "note": "X-157 journey: the 2026-09-05 filing is superseded \u2014 EdgeDeployAction:35-36 writes ssl_installed derived from EdgeZone.has_valid_ssl, and JourneyHarness publishSite provisions the zone (71c9168b), so J11 ssl went green at tick 229; SITE-112 moves all seven elements to the served HTTP response per owner ruling 16"
   }
  ]
 }
