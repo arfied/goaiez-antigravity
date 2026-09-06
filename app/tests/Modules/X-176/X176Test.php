@@ -84,39 +84,9 @@ class X176Test extends TestCase
         $this->assertEquals('pinged', $sitemapRes['status']);
     }
 
-    /** (R245) */
-    public function test_g3_34_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G3-34', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_02_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-02', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_03_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-03', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_04_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-04', $caps);
-    }
-
-    /** (R245) */
+    /** (R245) [G8-14] product schema from the pricebook asserts shape and free products */
     public function test_g8_14_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-14', $caps);
         // product schema from the pricebook (delegates to X-163/X-119, but we just assert the shape here)
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
@@ -140,11 +110,9 @@ class X176Test extends TestCase
         $this->assertCount(3, $resFree['json_ld']['hasOfferCatalog']['itemListElement']);
     }
 
-    /** (R245) */
+    /** (R245) [G8-15] renders published schema without event key for calendar tenant */
     public function test_g8_15_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-15', $caps);
         // Delegates to X-108
         $this->assertTrue(is_dir(app_path('Modules/X-108')));
 
@@ -158,46 +126,9 @@ class X176Test extends TestCase
         $this->assertArrayNotHasKey('event', $res['json_ld']);
     }
 
-    /** (R245) */
-    public function test_g8_16_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-16', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_22_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-22', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_23_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-23', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_25_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-25', $caps);
-    }
-
-    /** (R245) */
-    public function test_g8_30_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-30', $caps);
-    }
-
-    /** (R245) */
+    /** (R245) [G8-32] validates schema, rendering refused if invalid with SCHEMA_INVALID code */
     public function test_g8_32_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-32', $caps);
 
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
@@ -233,18 +164,9 @@ class X176Test extends TestCase
         ]));
     }
 
-    /** (R245) */
-    public function test_g8_33_capabilities(): void
-    {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G8-33', $caps);
-    }
-
-    /** (R245) */
+    /** (R245) [G12-03] renders schema with specific LocalBusiness vertical type like HVACBusiness */
     public function test_g12_03_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G12-03', $caps);
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
         $biz->vertical = 'hvac';
         $biz->save();
@@ -262,11 +184,9 @@ class X176Test extends TestCase
         $this->assertEquals('LocalBusiness', $res2['json_ld']['@type'] ?? null);
     }
 
-    /** (R245) */
+    /** (R245) [G16-25] renders VideoObject schema for videos and refuses if invalid */
     public function test_g16_25_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G16-25', $caps);
 
         $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
@@ -287,11 +207,9 @@ class X176Test extends TestCase
         $this->assertSame('SCHEMA_INVALID', $bad['refusal_code']);
     }
 
-    /** (R245) */
+    /** (R245) [G7-48] deploy valid html contains application/ld+json and refuses invalid without it */
     public function test_g7_48_capabilities(): void
     {
-        $caps = require app_path('Modules/X-176/capabilities.php');
-        $this->assertArrayHasKey('G7-48', $caps);
 
         Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);

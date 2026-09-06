@@ -816,3 +816,19 @@
 - `2026-09-06T10:42:27` UNRESOLVED capability X-102 - no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's
 - `2026-09-06T10:42:36` (R245) X-102 — the assertable half of P-092 is on the answered path, not the refused one, because the refused answer is a constant string and the answered one echoes its input by value --ruling R245
 - `2026-09-06T11:07:25` (R245) X-137 — Deleted stub test and empty engine enforce methods; capability credits traced to real assertions in tests/Modules/X-137 --ruling R245
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - a content generation or compilation pipeline to produce an LLMs.txt file (G3-34)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - a site structure or content graph API to compute link associations (G8-02)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - a search engine ping endpoint credential and HTTP client (G8-03)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - page hierarchy or site tree data to construct breadcrumbs (G8-04)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - NLP or content parsing to extract questions and answers from page body (G8-16)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - location or coordinates data for the business to build localized schema (G8-22)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - an IndexNow API client or Google Indexing API credential (G8-23)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - page content relationship data to build the link graph (G8-25)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - analytics or link value data to identify low-value links for nofollow (G8-30)
+- `2026-09-06T11:21:02` UNRESOLVED capability X-176 - an NLP or entity extraction service to identify semantic entities (G8-33)
+- `2026-09-06T11:21:12` (R245) X-176 — re-credited G8-14 to existing assertion of product schema from pricebook --ruling R245
+- `2026-09-06T11:21:12` (R245) X-176 — re-credited G8-15 to existing assertion rendering published schema without event key for calendar tenant --ruling R245
+- `2026-09-06T11:21:12` (R245) X-176 — re-credited G8-32 to existing assertion validating schema, rendering refused if invalid with SCHEMA_INVALID code --ruling R245
+- `2026-09-06T11:21:12` (R245) X-176 — re-credited G12-03 to existing assertion rendering schema with specific LocalBusiness vertical type like HVACBusiness --ruling R245
+- `2026-09-06T11:21:12` (R245) X-176 — re-credited G16-25 to existing assertion rendering VideoObject schema for videos and refuses if invalid --ruling R245
+- `2026-09-06T11:21:12` (R245) X-176 — re-credited G7-48 to existing assertion that deploy valid html contains application/ld+json and refuses invalid without it --ruling R245

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T11:07:25",
+ "updated": "2026-09-06T11:21:12",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1075,6 +1075,66 @@
      "stage": "anchor",
      "why": "X-176's index.request (manifest:33) requires a public domain to serve the IndexNow key (plugin:12-18) which this lane lacks, and the protocol mints no captureable id as it responds with bare HTTP statuses (plugin:34-36).",
      "at": "2026-09-06T05:28:31"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "a content generation or compilation pipeline to produce an LLMs.txt file (G3-34)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "a site structure or content graph API to compute link associations (G8-02)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "a search engine ping endpoint credential and HTTP client (G8-03)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "page hierarchy or site tree data to construct breadcrumbs (G8-04)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "NLP or content parsing to extract questions and answers from page body (G8-16)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "location or coordinates data for the business to build localized schema (G8-22)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "an IndexNow API client or Google Indexing API credential (G8-23)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "page content relationship data to build the link graph (G8-25)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "analytics or link value data to identify low-value links for nofollow (G8-30)",
+     "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "an NLP or entity extraction service to identify semantic entities (G8-33)",
+     "at": "2026-09-06T11:21:02"
     }
    ]
   },
@@ -1754,6 +1814,66 @@
    "stage": "capability",
    "why": "no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's",
    "at": "2026-09-06T10:42:27"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "a content generation or compilation pipeline to produce an LLMs.txt file (G3-34)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "a site structure or content graph API to compute link associations (G8-02)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "a search engine ping endpoint credential and HTTP client (G8-03)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "page hierarchy or site tree data to construct breadcrumbs (G8-04)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "NLP or content parsing to extract questions and answers from page body (G8-16)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "location or coordinates data for the business to build localized schema (G8-22)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "an IndexNow API client or Google Indexing API credential (G8-23)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "page content relationship data to build the link graph (G8-25)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "analytics or link value data to identify low-value links for nofollow (G8-30)",
+   "at": "2026-09-06T11:21:02"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "an NLP or entity extraction service to identify semantic entities (G8-33)",
+   "at": "2026-09-06T11:21:02"
   }
  ],
  "decisions": [
@@ -1881,6 +2001,42 @@
    "module": "X-137",
    "chose": "Deleted stub test and empty engine enforce methods; capability credits traced to real assertions in tests/Modules/X-137 --ruling R245",
    "at": "2026-09-06T11:07:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "re-credited G8-14 to existing assertion of product schema from pricebook --ruling R245",
+   "at": "2026-09-06T11:21:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "re-credited G8-15 to existing assertion rendering published schema without event key for calendar tenant --ruling R245",
+   "at": "2026-09-06T11:21:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "re-credited G8-32 to existing assertion validating schema, rendering refused if invalid with SCHEMA_INVALID code --ruling R245",
+   "at": "2026-09-06T11:21:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "re-credited G12-03 to existing assertion rendering schema with specific LocalBusiness vertical type like HVACBusiness --ruling R245",
+   "at": "2026-09-06T11:21:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "re-credited G16-25 to existing assertion rendering VideoObject schema for videos and refuses if invalid --ruling R245",
+   "at": "2026-09-06T11:21:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "re-credited G7-48 to existing assertion that deploy valid html contains application/ld+json and refuses invalid without it --ruling R245",
+   "at": "2026-09-06T11:21:12",
    "ruling": "R245"
   }
  ],
