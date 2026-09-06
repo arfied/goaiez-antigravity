@@ -798,3 +798,10 @@
 - `2026-09-06T14:02:09` X-171 -> DONE
 - `2026-09-06T14:02:09` X-172 -> DONE
 - `2026-09-06T14:02:09` X-175 -> DONE
+- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G6-22: missing Shopify/Woo integration
+- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G19-02: missing parcel rates provider
+- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G17-15: missing hardware scanner integration
+- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G2-24: missing hardware scanner integration
+- `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G6-08: missing barcode library
+- `2026-09-06T14:05:28` (R245) X-167 — G6-18: bounded out by X-167 scope (a van and a storage unit, not a warehouse)
+- `2026-09-06T14:05:28` (R245) X-167 — G6-24: bounded out by X-167 scope (a van and a storage unit, not a warehouse)

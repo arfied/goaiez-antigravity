@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T14:02:09",
+ "updated": "2026-09-06T14:05:28",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -834,6 +834,36 @@
      "stage": "capability",
      "why": "G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions",
      "at": "2026-09-06T13:43:37"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-22: missing Shopify/Woo integration",
+     "at": "2026-09-06T14:05:28"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G19-02: missing parcel rates provider",
+     "at": "2026-09-06T14:05:28"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G17-15: missing hardware scanner integration",
+     "at": "2026-09-06T14:05:28"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G2-24: missing hardware scanner integration",
+     "at": "2026-09-06T14:05:28"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-08: missing barcode library",
+     "at": "2026-09-06T14:05:28"
     }
    ]
   },
@@ -1363,6 +1393,36 @@
    "stage": "capability",
    "why": "G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions",
    "at": "2026-09-06T13:43:37"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-22: missing Shopify/Woo integration",
+   "at": "2026-09-06T14:05:28"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G19-02: missing parcel rates provider",
+   "at": "2026-09-06T14:05:28"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G17-15: missing hardware scanner integration",
+   "at": "2026-09-06T14:05:28"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G2-24: missing hardware scanner integration",
+   "at": "2026-09-06T14:05:28"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-08: missing barcode library",
+   "at": "2026-09-06T14:05:28"
   }
  ],
  "decisions": [
@@ -1508,6 +1568,18 @@
    "module": "X-171",
    "chose": "offline-first is proven behaviourally by a whole offline session replaying with nothing lost and nothing doubled, not only by the structural no-network grep. Supersedes UNRESOLVED tests X-171.",
    "at": "2026-09-06T11:47:36",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "G6-18: bounded out by X-167 scope (a van and a storage unit, not a warehouse)",
+   "at": "2026-09-06T14:05:28",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "G6-24: bounded out by X-167 scope (a van and a storage unit, not a warehouse)",
+   "at": "2026-09-06T14:05:28",
    "ruling": "R245"
   }
  ],
