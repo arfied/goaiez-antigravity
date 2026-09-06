@@ -91,4 +91,61 @@ class X208Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /**
+     * [N-018]
+     */
+    public function test_do_not_mail_checked_at_generation_not_send(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'N018 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dnmRes = $this->composeAction->handle(
+            businessId: $biz->id,
+            recipientAddress: '742 Evergreen Terrace, Springfield',
+            isDoNotMail: true
+        );
+
+        $this->assertEquals('refused', $dnmRes['status']);
+        $this->assertEquals('RECIPIENT_ON_DO_NOT_MAIL_LIST', $dnmRes['refusal_code']);
+        $this->assertNull($dnmRes['piece']);
+
+        $this->assertEquals(0, MailPiece::where('business_id', $biz->id)->count());
+
+        $validRes = $this->composeAction->handle(
+            businessId: $biz->id,
+            recipientAddress: '100 Main St, Denver CO',
+            isDoNotMail: false
+        );
+        $this->assertEquals('composed', $validRes['status']);
+        $this->assertEquals(1, MailPiece::where('business_id', $biz->id)->count());
+    }
+
+    /**
+     * [N-017]
+     */
+    public function test_tenant_supplies_lob_key_no_platform_account(): void
+    {
+        $this->assertNull(config('services.lob'));
+
+        $lobKeys = collect(config('services'))->keys()->filter(fn ($key) => stripos((string) $key, 'lob') !== false);
+        $this->assertTrue($lobKeys->isEmpty());
+
+        $this->assertEquals(0, DB::table('platform_credentials')->where('key', 'like', '%lob%')->count());
+
+        $biz = TestCase::provisionTenant(['name' => 'N017 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $validRes = $this->composeAction->handle(
+            businessId: $biz->id,
+            recipientAddress: '100 Main St, Denver CO',
+            isDoNotMail: false
+        );
+        $this->assertEquals('tenant_vault', $validRes['piece']->lob_api_key_source);
+
+        $this->sendAction->handle($biz->id, $validRes['piece_id'], 'test_key');
+
+        $sentPiece = MailPiece::where('business_id', $biz->id)->find($validRes['piece_id']);
+        $this->assertEquals('tenant_vault', $sentPiece->lob_api_key_source);
+    }
 }

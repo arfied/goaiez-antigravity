@@ -25,7 +25,7 @@ class CustomerfacingPortal extends Component
         $this->token = $token;
 
         $action = app(PortalViewAction::class);
-        $result = $action->handle($this->token);
+        $result = $action->handle((string) $this->token);
 
         if ($result['status'] === 'invalid_link') {
             abort(404);

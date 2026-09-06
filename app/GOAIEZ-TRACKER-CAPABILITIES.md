@@ -556,7 +556,7 @@
 | G10-21 | Immutable Storage | ENH | X-122 | SPECCED | append-only action log;  QLDB is corpus vocabulary — one database (§22) |
 | G10-22 | Latency Guardrails | ENH | C-Ai | SPECCED | TTFT demotion in the model waterfall |
 | G10-23 | Legal & Privacy Engine | KILLED → X-222 | X-222 | SPECCED | P-167 · Law 122 — eight EMPTY admin slots, nothing authored, no generated ToS or privacy copy |
-| G10-24 | Legally Binding Signatures | ENH | X-172 | SPECCED | the signature pad lives in the customer portal; see F-19 |
+| G10-24 | Legally Binding Signatures | ENH | X-172 | SPECCED | the signature pad lives in the customer portal; see F-19 · refuses: a redline is SURFACED with a diff, never accepted |
 | G10-25 | List Scrubbing | ENH | X-186 | SPECCED | scrubbed against suppression fresh as of each send · refuses: to send without scrubbing against a fresh suppression list |
 | G10-26 | Non-Standard Terms | ENH | X-202 | SPECCED | a term outside the standard routes for a decision |
 | ⛔ FENCED | ~~Policy Enforcement (payroll)~~ (G10-27) | **⛔ FENCED T677** | **—** | FENCED | §220 — ⛔⛔ **NO PAYROLL. "The cleanest way to never produce a wrong wage is to never produce a wage."** The export ships HOURS and COMMISSION-EARNED only. |

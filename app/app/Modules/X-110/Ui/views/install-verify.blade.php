@@ -1,5 +1,5 @@
 <div>
-<x-surface.sample-state module="the 14 KB smart pixel" screen="install_verify" />
+
     <div wire:loading.delay>
         <x-ui.skeleton label="Loading verification..." />
     </div>

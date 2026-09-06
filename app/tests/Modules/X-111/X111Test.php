@@ -9,6 +9,7 @@ use App\Modules\X111\Actions\OpsBanAction;
 use App\Modules\X111\Actions\OpsExportAction;
 use App\Modules\X111\Actions\OpsImpersonateAction;
 use App\Modules\X111\Actions\OpsTicketAction;
+use App\Modules\X111\Actions\ResolveAlertAction;
 use App\Modules\X111\Domain\OpsEngine;
 use App\Modules\X111\Events\AlertOperator;
 use App\Modules\X111\Events\TicketOpened;
@@ -130,5 +131,55 @@ class X111Test extends TestCase
     public function test_ops_console_capabilities(): void
     {
         $this->assertTrue(true);
+    }
+
+    /** [G9-06] */
+    public function test_g9_06_ops_console_alerts_a_human_and_pauses_no_ad_spend(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ops Control Center Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'critical', 'Investigate anomalous request volume');
+
+        $this->assertEquals('open', $alert->status);
+        $this->assertEquals('Investigate anomalous request volume', $alert->action_verb_message);
+
+        (new ResolveAlertAction)->handle($alert);
+        $alert->refresh();
+        $this->assertEquals('resolved', $alert->status);
+
+        $alertKeys = array_keys($alert->getAttributes());
+        $params = (new \ReflectionMethod(OpsAlertAction::class, 'handle'))->getParameters();
+        $paramNames = array_map(fn ($p) => $p->getName(), $params);
+
+        $this->assertContains('businessId', $paramNames);
+        $this->assertContains('severity', $paramNames);
+        $this->assertContains('message', $paramNames);
+        $this->assertGreaterThanOrEqual(3, count($paramNames));
+
+        $names = array_merge($alertKeys, $paramNames);
+        foreach ($names as $name) {
+            $this->assertDoesNotMatchRegularExpression('/(cpc|adset|ad_spend|campaign|pause|budget|bidding|creative)/i', $name);
+        }
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-111')));
+        $files = [];
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && ! in_array($file->getBasename(), ['capabilities.php', 'manifest.php'])) {
+                $files[] = $file->getPathname();
+            }
+        }
+        $this->assertGreaterThanOrEqual(21, count($files));
+
+        $controlCount = 0;
+        foreach ($files as $filePath) {
+            $content = file_get_contents($filePath);
+            $this->assertDoesNotMatchRegularExpression('/\b(cpc|cost_per_click|bid|bids|bidding|adset|ad_set|ad_spend|adwords|campaign|campaigns|pause|paused|retarget|remarketing)\b/i', $content, "File $filePath matched forbidden term");
+            if (preg_match('/OperatorAlert|OpsEngine|TenantTicket/', $content)) {
+                $controlCount++;
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(8, $controlCount);
     }
 }

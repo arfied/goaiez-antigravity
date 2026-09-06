@@ -82,4 +82,56 @@ class X189Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /** [G16-18] */
+    public function test_g16_18_branding_never_injects_location_coordinates(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Branded Media Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $result = $this->overlayAction->overlay($biz->id, 'https://cdn.example.com/src/a.jpg', 'licensed', 'social');
+        $this->assertSame('branded', $result['status']);
+        $this->assertTrue($result['has_branded_overlay']);
+
+        $layerKeys = array_keys($result['overlay_layer']);
+        $stored = BrandedMedia::find($result['media_id']);
+        $storedKeys = array_keys($stored->overlay_layer);
+
+        $this->assertContains('tenant_watermark', $layerKeys);
+        $this->assertContains('logo_url', $layerKeys);
+        $this->assertGreaterThanOrEqual(5, count($layerKeys));
+        $this->assertEqualsCanonicalizing($layerKeys, $storedKeys);
+
+        foreach (array_merge($layerKeys, $storedKeys) as $key) {
+            $this->assertDoesNotMatchRegularExpression('/(exif|gps|geo|latitude|longitude|coordinate)/i', $key);
+        }
+
+        $dir = app_path('Modules/X-189');
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $phpFiles = [];
+        foreach ($files as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                $basename = $file->getBasename();
+                if ($basename === 'capabilities.php' || $basename === 'manifest.php') {
+                    continue;
+                }
+                $phpFiles[] = $file->getPathname();
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(11, count($phpFiles));
+
+        $controlMatches = 0;
+        foreach ($phpFiles as $path) {
+            $content = file_get_contents($path);
+            if (preg_match('/BrandedMedia|Overlay/', $content)) {
+                $controlMatches++;
+            }
+            $this->assertDoesNotMatchRegularExpression(
+                '/\b(exif|geotag|geotagged|gps|latitude|longitude|coordinate|coordinates|lat_lng|geo_stamp)\b/i',
+                $content
+            );
+        }
+        $this->assertGreaterThanOrEqual(3, $controlMatches);
+    }
 }

@@ -103,6 +103,22 @@ class X165Test extends TestCase
      */
     public function test_n_165_01(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $plan = $this->planAction->handle(
+            businessId: $biz->id,
+            name: 'Exact Price Plan',
+            priceCents: 12345
+        );
+
+        $this->assertEquals(12345, $plan->price_cents);
+
+        $membership = $this->startAction->handle($biz->id, $plan->id, 99);
+        $attributes = array_keys($membership->getAttributes());
+
+        $this->assertNotContains('price', $attributes);
+        $this->assertNotContains('price_cents', $attributes);
+        $this->assertContains('plan_id', $attributes);
     }
 }
