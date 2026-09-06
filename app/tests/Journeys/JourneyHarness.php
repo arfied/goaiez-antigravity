@@ -536,16 +536,21 @@ trait JourneyHarness
     /** ⛔ Must reach the gateway and return ITS id. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function payInvoice(array $invoice): array
     {
-        $engine = app(GatewayEngine::class);
-        $businessId = $invoice['business_id'];
-        $amount = $invoice['total_cents'];
-        $invoiceId = $invoice['id'];
+        $gatewayEngine = app(GatewayEngine::class);
+        $gatewayEngine->connect($invoice['business_id'], 'stripe', 'acct_test');
 
-        $engine->connect($businessId, 'stripe', 'self');
+        $payment = $gatewayEngine->capture(
+            $invoice['business_id'],
+            $invoice['total_cents'],
+            'tok_visa',
+            'idempotent_'.uniqid()
+        );
 
-        $payment = $engine->capture($businessId, $amount, 'tok_visa', 'idem_cap_'.uniqid(), 'USD', $invoiceId);
-
-        $payment = $engine->requestCharge($businessId, $payment->id, $amount, 'usd', 'tok_visa', 'idem_req_'.uniqid(), $invoiceId);
+        app(InvoiceEngine::class)->recordPayment(
+            $invoice['business_id'],
+            $invoice['id'],
+            $payment->amount_cents
+        );
 
         return $payment->toArray();
     }
@@ -558,20 +563,30 @@ trait JourneyHarness
     /** @param array<string,mixed> $invoice */
     private function makeOverdue(array $invoice): void
     {
-        app(InvoiceEngine::class)->markOverdue($invoice['business_id'], $invoice['id']);
+        $inv = Invoice::find($invoice['id']);
+        $inv->update(['due_date' => now()->subDays(10)]);
+
+        $tenantId = \App\Support\Tenancy::id();
+        $userId = \App\Support\Tenancy::userId();
+
+        \Illuminate\Support\Facades\Artisan::call('x211:detect-overdue');
+
+        if ($userId !== null) {
+            \App\Support\Tenancy::setUser($userId);
+        }
+        if ($tenantId !== null) {
+            \App\Support\Tenancy::set($tenantId);
+        }
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        $state = ReceivableState::where('business_id', $invoice['business_id'])
-            ->where('invoice_id', $invoice['id'])
+        $action = \App\Modules\X211\Models\ArDunningAction::where('invoice_id', $invoice['id'])
+            ->latest('id')
             ->first();
 
-        return [
-            'action' => $state->last_action ?? null,
-            'reason' => $state->last_reason ?? null,
-        ];
+        return $action ? $action->toArray() : [];
     }
 
     // ── agency isolation ─────────────────────────────────────────────────
