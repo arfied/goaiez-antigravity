@@ -86,7 +86,7 @@ class X166Test extends TestCase
 
     /**
      * [N-166-01] no refusal declared
-     * [N-048]
+     * [N-048] ⛔ REFUSED: `php artisan why N-048` reports it is never DEFINED. a margin figure is NEVER computed from invoiced revenue. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_166_01_no_refusal(): void
     {
