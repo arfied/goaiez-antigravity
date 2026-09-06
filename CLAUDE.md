@@ -693,3 +693,38 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the other end of the string this screen prints?"** — applies to every value a
     money screen renders, and is where the backlog now comes from (the doctor's
     lane group (3) is empty, ruling 32).
+37. **A value a money screen sends to the provider carries the persisted row's
+    own currency, never a method default (RULED by the lane supervisor
+    2026-09-06 10:1x, on MONEY-66's `21b680c0`).**
+    `X-198/Actions/PaymentLinkAction.php:26` called
+    `$client->createPaymentLink($payment->amount_cents, $description)` with no
+    third argument, so `$currency` took `createPaymentLink()`'s `'USD'` default.
+    `payments.currency` is a real column
+    (`2026_08_30_000030_create_x198_gateway_tables.php:32`), written by
+    `Domain/GatewayEngine.php:105`/`:130` from the caller and already threaded
+    into `charge()` at `:95` — the engine honours it and only the pay link did
+    not, so a GBP decline printed a link collecting the same integer in
+    **dollars**. So: `PaymentLinkAction` passes `$payment->currency`, every
+    future `StripeGatewayClient` method takes its currency from the row it acts
+    on, and the test that proves it seeds a **non-USD** payment and asserts the
+    currency the stub received — not merely that the call happened. ⛔ The
+    currency is never added as a parameter of `handle()`: the row already knows,
+    and a caller-supplied currency is a second place for the truth to disagree.
+    ⚠️ This is ruling 36's question one level down — the URL reached a real
+    Stripe object, but not the one it claimed to — and it is the failure class
+    that is silent, matches the column default, and is wrong only for the tenant
+    who is not American, which is the one no fixture in this lane carries.
+38. **A `success_url` is `config('app.url')` until a paid-confirmation surface
+    is generated, never a hand-written path (RULED by the lane supervisor
+    2026-09-06 10:1x, pre-ruling MONEY-67's evidence run).**
+    `createPaymentLink()` posts `mode=payment` + `line_items[0][price_data]` to
+    `POST /v1/checkout/sessions` and sends no `success_url`; Stripe's hosted
+    Checkout has historically required one for `mode: payment`, and nothing in
+    the suite can tell us because the stubs never reach the wire. It surfaces on
+    the first real test-mode call. If Stripe refuses the session, the value is
+    `config('app.url')` — the app root, which exists. ⛔ Never a path to an
+    unmounted route: routing is generated on Track 1 (ruling 20), so a
+    `success_url` pointing where no `surfaces:generate` has mounted anything is
+    the same lie ruling 36 removed, relocated to the page the customer lands on
+    **after paying**. The real paid-confirmation surface is a listed follow-up,
+    not built in this lane today.
