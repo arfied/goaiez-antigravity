@@ -64,7 +64,10 @@ echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) log=$LOG"
+  # Both gates are printed. Until 2026-09-06 18:4x only merge-gate was, while a REVIEWS
+  # block claimed "harness-gate in the LAUNCHED line" — the drift shape from CLAUDE.md:
+  # two sources of truth in one file, only one of them read back.
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi

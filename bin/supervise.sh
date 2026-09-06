@@ -160,12 +160,29 @@ fi
 # gate that always fails is worth exactly as much as one that always passes. A `claude`
 # started as the CODER is caught by the pidfile in §1a, which is where it belongs.
 # (After building anything that measures, its first output is data you do not trust.)
+#
+# EXCLUDE THE DISPATCHED CODER'S WHOLE TREE, NOT ITS PID — third false positive in this
+# section in one hour, and the costliest, because it fires only when a healthy coder is
+# running. `coder.pid` holds the `nohup bash -c` WRAPPER's pid; `agy` is its child. Matching
+# `pn = coder_pid` therefore never matches the process that is actually named agy, so the
+# census reported our own dispatched coder as a stray and set fail=1 — inside a gate the
+# CODER itself runs at item 6, which would have read its own existence as a failed gate.
+# Walk PPid instead.
+is_descendant_of() {              # is_descendant_of <pid> <ancestor>
+  local q="$1" hops=0 pp
+  while [ -n "$q" ] && [ "$q" != 0 ] && [ $hops -lt 12 ]; do
+    [ "$q" = "$2" ] && return 0
+    pp=$(awk '/^PPid:/{print $2}' "/proc/$q/status" 2>/dev/null)
+    q="$pp"; hops=$((hops+1))
+  done
+  return 1
+}
 bar "1b. one-writer census  ($CENSUS_NAME with cwd here that launch-coder.sh did not start)"
 strays=0
 for p in /proc/[0-9]*; do
   pn=${p#/proc/}
   [ "$pn" = "$$" ] && continue
-  [ "$pn" = "$coder_pid" ] && continue
+  [ -n "$coder_pid" ] && is_descendant_of "$pn" "$coder_pid" && continue
   case "$(readlink "$p/cwd" 2>/dev/null)" in
     "$ROOT")
       # ARGV[0], never the whole cmdline — MATCH COMMAND POSITION, NOT MENTION (7686da5c,
@@ -241,6 +258,31 @@ elif bash -n "$GUARD" 2>/tmp/guard-parse.$$; then
   rm -f /tmp/guard-parse.$$
 else
   sed 's/^/  ⛔ /' /tmp/guard-parse.$$; rm -f /tmp/guard-parse.$$; fail=1
+fi
+
+bar "2e. a merge that REVERTED a lane's check  (harness vs the incoming side)"
+# §2 above measures the last commit against OUR HEAD, so it is structurally blind to the
+# one thing a merge can do wrong: silently DROP the incoming side's change to a forbidden
+# path. Run 115 restored `app/tests/Journeys/JourneyHarness.php` to HEAD during the site
+# merge — reverting site's gated three-line J11 EdgeZone fix — and §2 printed `none`,
+# correctly, because against HEAD the merge changed nothing there. The baseline was wrong,
+# not the check. For a merge, the harness's baseline is the SECOND PARENT.
+# The shared guard already encodes the intent (coder-bin/git:66-75: a gated merge may carry
+# the harness ONLY when the staged blob is byte-identical to MERGE_HEAD's — "take the
+# incoming side whole"), so this section only reports what that clause is there to enforce.
+# Arms: it FIRES on c1849a75 (the known-bad merge) and is SILENT on any non-merge HEAD.
+p2=$(git rev-parse -q --verify 'HEAD^2' 2>/dev/null || true)
+if [ -z "$p2" ]; then
+  echo "  HEAD is not a merge — nothing to compare"
+else
+  drop=$(git diff --name-only HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
+  if [ -n "$drop" ]; then
+    echo "  ⛔ the merge did NOT take the incoming harness — $(git diff --shortstat HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php)"
+    echo "     inspect: git diff HEAD $p2 -- app/tests/Journeys/JourneyHarness.php"
+    fail=1
+  else
+    echo "  harness identical to the incoming side ✓"
+  fi
 fi
 
 bar "3. build state"

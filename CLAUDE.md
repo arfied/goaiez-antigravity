@@ -277,11 +277,35 @@ Procedure (the coder runs it, the supervisor reviews the merge commit):
    so a suite, a doctor stage or a `state.py status` run before the restore
    measures the wrong tree — `capability 372` read off the staged `BUILD-STATE.json`
    was stages' number, not main's.
+   ⚠️ **The restore list is those eight paths and nothing else, and
+   `app/tests/Journeys/JourneyHarness.php` is emphatically NOT one of them**
+   (run 115, 2026-09-06). The merge is precisely how a lane's *gated* harness
+   change reaches `main`; restoring the harness reverts it. The shared guard
+   already says so at `coder-bin/git:66-75` — a gated merge may carry the
+   harness **only when the staged blob is byte-identical to `MERGE_HEAD`'s**,
+   "take the incoming side whole". Run 115's coder restored it anyway and so
+   deleted site's three-line J11 EdgeZone fix, and the restore is what let the
+   commit through: once the blob equals `HEAD`, the harness leaves the staged
+   set entirely and that clause never runs. **A guard clause written for a case
+   is defeated by removing the case.** The cause was mine — the brief listed the
+   harness under "do not touch" on the same page as the restore procedure, two
+   statements about one path with only one of them qualified, which is the
+   drifted-refusal-message shape from the trap list above.
 3. Commit `merge: track/<x> — <scope>`; proof in the report:
    `git diff HEAD~1 HEAD --stat -- <per-track paths>` prints nothing.
 4. Rebuild if lockfiles/assets moved; full gate on the merge commit; the
    report quotes pint AND phpstan results explicitly.
 A merge commit that changes any per-track file is a BLOCK.
+
+⚠️ **A merge can also fail by DROPPING the incoming side, and §2 cannot see it.**
+Every forbidden-path check here measures the last commit against *our* `HEAD`, so a
+merge that reverts a lane's change to a CHECK diffs to nothing and reads clean —
+`supervise.sh` §2 printed `none` on the run-115 merge, correctly, against the wrong
+baseline. **For a merge, a forbidden path's baseline is the SECOND PARENT.** That is
+now §2e (`git diff HEAD HEAD^2 -- <harness>`), which fires on `c1849a75` and is
+silent on any non-merge `HEAD`. The general rule, and it is the day's rule again in a
+new place: an instrument is only as honest as the baseline it is handed — I had been
+reading a real measurement against a baseline that could not contain the defect.
 
 ## Style
 
