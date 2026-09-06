@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T15:59:53",
+ "updated": "2026-09-06T16:21:16",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -66,7 +66,7 @@
   },
   "3": {
    "track": "ai-core",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "C-Ai",
     "X-219",
@@ -366,10 +366,17 @@
    "unresolved": []
   },
   "C-Ai": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 3,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Ai",
+     "stage": "capability",
+     "why": "docblock: * [G2-27] the plan mechanism is grounding + lexicon + the teaching box (P-097); a per-tenant fine-tune is an owner question at line 121. Evidence: ls -R app/app/Modules/C-Ai; grep -rn -i \"ground\\|lexicon\" app/app/Modules/C-Ai --include=*.php. Target: a real assertion would test a lexicon or grounding mechanism in AiEngine. Class B: a false credit (the prose carries a real claim but the survey reveals no such mechanism exists in the module).",
+     "at": "2026-09-06T16:21:16"
+    }
+   ]
   },
   "C-Billing": {
    "status": "UNRESOLVED",
@@ -409,10 +416,17 @@
    ]
   },
   "C-Mail": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Mail",
+     "stage": "capability",
+     "why": "docblock: no docblock at all at line 652. Evidence: grep -B 3 \"test_header_capabilities\" app/tests/Modules/C-Mail/CMailTest.php. Target: a real assertion would test email header capabilities against MailDomain. Class D: a placeholder with no subject (method cites no id and credits nothing).",
+     "at": "2026-09-06T16:21:16"
+    }
+   ]
   },
   "C-Reviews": {
    "status": "UNRESOLVED",
@@ -574,16 +588,30 @@
    ]
   },
   "X-07": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 20,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-07",
+     "stage": "capability",
+     "why": "docblock: * [G1-36], [G1-46], [G1-47], [G2-56], [G2-59], [G2-66], [G2-68], [G9-27], [G10-04], [G17-19], [G9-42] at line 70. Evidence: ls -R app/app/Modules/X-07; grep -rn \"class \\|function \" app/app/Modules/X-07 --include=*.php | cut -c1-160. Target: a real assertion would invoke ForecastComputeAction and test the specific business rules for deal scoring and sandbagging. Class B: a false credit (G1-36, G1-46, G1-47 are genuinely asserted at line 40, so this placeholder falsely credits the remaining 8 ids).",
+     "at": "2026-09-06T16:21:04"
+    }
+   ]
   },
   "X-08": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 24,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-08",
+     "stage": "capability",
+     "why": "docblock: * [G9-15] at line 68. Evidence: ls -R app/app/Modules/X-08; grep -rn \"class \\|function \" app/app/Modules/X-08 --include=*.php | cut -c1-160. Target: a real assertion would invoke ChurnScoreAction to evaluate risk flag. Class D: a placeholder with no subject (G9-15 is genuinely asserted at line 48, so deleting this placeholder would move no count).",
+     "at": "2026-09-06T16:21:16"
+    }
+   ]
   },
   "X-10": {
    "status": "DONE",
@@ -1718,10 +1746,17 @@
    "unresolved": []
   },
   "X-16": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-16",
+     "stage": "capability",
+     "why": "docblock: * [G3-10], [G3-14], [G3-35], [G3-41], [G7-21], [G8-31] at line 107. Evidence: ls -R app/app/Modules/X-16; grep -rn \"class \\|function \" app/app/Modules/X-16 --include=*.php | cut -c1-160. Target: a real assertion would invoke MapsHarvestAction and test the specific geogrid and place harvesting constraints. Class B: a false credit (G7-21 is genuinely asserted at line 91, so this placeholder falsely credits the remaining 5 ids).",
+     "at": "2026-09-06T16:21:16"
+    }
+   ]
   },
   "X-160": {
    "status": "DONE",
@@ -2921,10 +2956,17 @@
    "unresolved": []
   },
   "X-66": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-66",
+     "stage": "capability",
+     "why": "docblock: * [G2-48] ElevenLabs is corpus vocabulary - the stack is X-197 (18F) / REFUSED: X-197 is on ruling 3s fourteen DEFERRED modules that no lane builds. at line 86. Evidence: grep -rn \"G2-48\" app/tests/Modules/X-66. Target: a real assertion would test ElevenLabs integration which is deferred to X-197. Class A: a documented refusal (docblock explicitly refuses building the capability as it belongs to a deferred module).",
+     "at": "2026-09-06T16:21:16"
+    }
+   ]
   },
   "X-82": {
    "status": "DONE",
@@ -4789,6 +4831,42 @@
    "stage": "capability",
    "why": "docblock: [G4-50] they ride the same catalogue; the catalogue is X-122s, line 230. Command: grep -rni catalogue app/app/Modules/X-123 app/app/Modules/X-122 app/tests/Modules/X-123 app/tests/Modules/X-122 and grep -rni catalog on the same. Output shows Action Catalog in X-122 UI, and test provisioning Catalog Tenant in X-122. X-123 docblock explicitly defers to X-122 by stating the catalogue is X-122s. It is X-122s job. A - documented refusal naming where the thing lives.",
    "at": "2026-09-06T15:59:53"
+  },
+  {
+   "module": "X-07",
+   "stage": "capability",
+   "why": "docblock: * [G1-36], [G1-46], [G1-47], [G2-56], [G2-59], [G2-66], [G2-68], [G9-27], [G10-04], [G17-19], [G9-42] at line 70. Evidence: ls -R app/app/Modules/X-07; grep -rn \"class \\|function \" app/app/Modules/X-07 --include=*.php | cut -c1-160. Target: a real assertion would invoke ForecastComputeAction and test the specific business rules for deal scoring and sandbagging. Class B: a false credit (G1-36, G1-46, G1-47 are genuinely asserted at line 40, so this placeholder falsely credits the remaining 8 ids).",
+   "at": "2026-09-06T16:21:04"
+  },
+  {
+   "module": "X-16",
+   "stage": "capability",
+   "why": "docblock: * [G3-10], [G3-14], [G3-35], [G3-41], [G7-21], [G8-31] at line 107. Evidence: ls -R app/app/Modules/X-16; grep -rn \"class \\|function \" app/app/Modules/X-16 --include=*.php | cut -c1-160. Target: a real assertion would invoke MapsHarvestAction and test the specific geogrid and place harvesting constraints. Class B: a false credit (G7-21 is genuinely asserted at line 91, so this placeholder falsely credits the remaining 5 ids).",
+   "at": "2026-09-06T16:21:16"
+  },
+  {
+   "module": "X-08",
+   "stage": "capability",
+   "why": "docblock: * [G9-15] at line 68. Evidence: ls -R app/app/Modules/X-08; grep -rn \"class \\|function \" app/app/Modules/X-08 --include=*.php | cut -c1-160. Target: a real assertion would invoke ChurnScoreAction to evaluate risk flag. Class D: a placeholder with no subject (G9-15 is genuinely asserted at line 48, so deleting this placeholder would move no count).",
+   "at": "2026-09-06T16:21:16"
+  },
+  {
+   "module": "X-66",
+   "stage": "capability",
+   "why": "docblock: * [G2-48] ElevenLabs is corpus vocabulary - the stack is X-197 (18F) / REFUSED: X-197 is on ruling 3s fourteen DEFERRED modules that no lane builds. at line 86. Evidence: grep -rn \"G2-48\" app/tests/Modules/X-66. Target: a real assertion would test ElevenLabs integration which is deferred to X-197. Class A: a documented refusal (docblock explicitly refuses building the capability as it belongs to a deferred module).",
+   "at": "2026-09-06T16:21:16"
+  },
+  {
+   "module": "C-Ai",
+   "stage": "capability",
+   "why": "docblock: * [G2-27] the plan mechanism is grounding + lexicon + the teaching box (P-097); a per-tenant fine-tune is an owner question at line 121. Evidence: ls -R app/app/Modules/C-Ai; grep -rn -i \"ground\\|lexicon\" app/app/Modules/C-Ai --include=*.php. Target: a real assertion would test a lexicon or grounding mechanism in AiEngine. Class B: a false credit (the prose carries a real claim but the survey reveals no such mechanism exists in the module).",
+   "at": "2026-09-06T16:21:16"
+  },
+  {
+   "module": "C-Mail",
+   "stage": "capability",
+   "why": "docblock: no docblock at all at line 652. Evidence: grep -B 3 \"test_header_capabilities\" app/tests/Modules/C-Mail/CMailTest.php. Target: a real assertion would test email header capabilities against MailDomain. Class D: a placeholder with no subject (method cites no id and credits nothing).",
+   "at": "2026-09-06T16:21:16"
   }
  ],
  "decisions": [
@@ -4965,6 +5043,14 @@
   {
    "at": "2026-09-06T15:57:28",
    "note": "ADDENDUM to the 2026-09-06T15:38:28 UNRESOLVED capability X-198 filing for N-010 (S-125): the class B stands - the body at app/tests/Modules/X-198/X198Test.php:126 cannot fail and declares no refusal. But N-010 is not uncredited. app/tests/Modules/X-201/N010Test.php:14 test_n_010_no_refund_verb asserts it for real against a provisioned tenant. X-198 carries the echo, X-201 carries the honest assertion. A wave acting on the original record alone would build a duplicate N-010 assertion in X-198. Read X-201 first."
+  },
+  {
+   "at": "2026-09-06T16:18:30",
+   "note": "CORRECTION to the 2026-09-06T15:59:22 UNRESOLVED capability X-105 record: it lists fifteen ids and the docblock at app/tests/Modules/X-105/X105Test.php:107 carries SIXTEEN. The sixteenth is G15-15, written last and out of numeric order after G20-10. Its capability row is app/app/Modules/X-105/capabilities.php:70 and it is credited by the same dead body as the other fifteen, so the class B finding covers it too. Cause: the S-126 brief handed the coder a fifteen-id list and the report transcribed the brief instead of the file. Verified by two counts that both return 16: grep -c for the capability rows, and grep -rnoE for the distinct ids in the test."
+  },
+  {
+   "at": "2026-09-06T16:19:16",
+   "note": "MEASUREMENT not a filing: 37 of the capability stages 291 specced-but-no-test-names-this-id violations belong to X-221 (31), X-223 (4) and X-222 (2). All three are NOT_STARTED in BUILD-STATE.json and are the 3 not started in gate section 3. On disk each holds exactly capabilities.php, manifest.php and seeds.yml - no Actions, no Models, no ModuleServiceProvider, and no app/tests/Modules directory at all. These ids are red because the modules were never built, which is the build plan working and not a blocker, so no UNRESOLVED is filed: rule 09 reserves UNRESOLVED for a missing dependency, and state.py unresolved would additionally flip the not-started count to zero and erase the only signal that three modules are unbuilt."
   }
  ]
 }
