@@ -1212,6 +1212,61 @@ Watch for: <the trap that applies, by name>
   is `1 → 2` on the one method. **A stub-closing wave that reports a rising test count has added a method it did
   not mention**; a build wave that reports a flat assertion count has not written an assertion. The subtraction is
   free and it is the same one that catches the wave-78 deletion and the wave-90 unreached assertion.
+- ⚠️⚠️ **A three-way merge takes THEIRS silently whenever ours is byte-identical to the base — so the paths this
+  lane most needs to protect are the ones that will never appear in a conflict list.** Measured at tick 195
+  against `fc8f0bab`: `app/phpunit.xml` reads `goaiez_antig_sixty_test` at the base **and** at `HEAD`, and
+  `goaiez_antig_test` on main. Unchanged on our side, changed on theirs ⇒ no conflict, no output, and this lane's
+  suite is repointed at **Track 1's** database — the one whose schema we wiped once already (`OWNER.md` 07:2x,
+  32 spurious errors under their gate). It is absent from `git diff --name-only <base> HEAD`, so every list a
+  merge wave naturally looks at omits it. **A file this lane deliberately does not touch is invisible to every
+  diff that proves what this lane changed**, which is the `.agents/plan/` silence with a *tracked* file as the
+  liar. Before any merge, `git show` the pin from all three of base, `HEAD` and the incoming ref, and restore it
+  explicitly afterwards — then check it **again** at wave close (the wave-82 rule).
+  ⚠️ **Its mirror is the same shape inverted, and Track 1's own ruling walked into it.** Sixty's three
+  `drop_*_from_page_versions` migrations are `A` since the base with no counterpart on main, so the merge
+  **keeps** all three, silently. Track 1 described them as conflicting *"deleted by them"* — true in the
+  sixty → main direction (run 105) and false in main → sixty, where the ruling's substance needs a deliberate
+  `git rm`. **A merge instruction is written for one direction; re-derive its mechanism for the direction you
+  are actually merging** before handing it to a coder, who will otherwise look for a conflict, not find one, and
+  read the item as already handled. ✅ The substance still verified out — main `SiteEngine.php:56` writes
+  `'ssl_enabled' => true` and our diff deleted exactly that line — which is the tick-177 rule (read the source
+  behind a resolution that hands another lane the win) paying off in the accepting direction.
+- ⚠️⚠️ **A mutation that throws while EVALUATING an assertion's ARGUMENT reads exactly like that assertion
+  failing, and the subtraction is the only discriminator.** Wave 98's `w98-mut-m1.log` errored on the target
+  with `Attempt to read property "id" on null` and `REPORT.md` filed it as *"A1 failed on its own terms"*.
+  It did not: the test is `$person = Person::where(…)->first();` then
+  `assertEquals(1, Conversation::where('person_id', $person->id)->count())`, so the null dereference happens
+  while **building `assertEquals`' argument** and the assertion is never called. `assertions 6704 → 6702` —
+  **minus two on a two-assertion test** — says neither A1 nor A2 executed, and the report's own next sentence
+  (*"A2 never executed"*) was half of that arithmetic read correctly. This is the wave-81 shape moved out of
+  the code under test and into the **test body's setup**, where nothing in §7 or the failure line marks it.
+  ✅ **It is still real evidence, of the other thing**: the radius was exactly **1 of 1726**, the mutated file
+  (`X-01/Listeners/WhatsappInboundListener.php`) is a different module from the failing test (C-Whatsapp), so
+  the site is unambiguously the live path and the bridge is proven load-bearing. **Grade it as path evidence
+  and say so**; the assertion itself stays unproven until a mutation reddens it with the row still present —
+  here, one that makes `ingestMessage` create a second conversation on the *first* call. **A mutation that
+  costs a test ALL of its assertions has proven a code path and no assertion.**
+- ⚠️ **A brief that predicts WHICH sibling a mutation will redden must say "at least" — and a report that
+  answers with the brief's line number has not read the artifact for that field.** Wave 98's brief named
+  `X01Test.php:431` as *"the only one I grepped that this wave can reach"*; `w98-mut-m2.log` shows **two**,
+  `X01Test:410` (the identity test, whose declaration line the reporter prints — 431 was the brief's
+  assertion line) and `X01Test:62` (`test_anchor_single_person_thread_takeover_labels_and_inbox_channels`,
+  *"Must render in the same conversation thread"*), both legitimately traversing the mutated `firstOrCreate`.
+  The report echoed `431`, a number that appears in no log. Two halves, one mine and one the coder's: **my
+  grep for reachable assertions was under-inclusive, so predict a floor and not a set**; and a numeric field
+  that matches the brief rather than the artifact is the tick-171 leak in its cheapest-to-catch form —
+  `grep` the number in `scratch/` before crediting it.
+- ✅ **The declaration-line offset tell also works when the shifting commit lands AFTER the logs.** Both of
+  wave 98's mutation logs print line **149**; the committed file declares that test at **151**, and the
+  `style: pint fixes` commit at 05:13 — later than either log (05:06, 05:10) — added exactly the two `use`
+  lines above it. Two logs, one uniform offset, one commit that explains it, in the opposite time order from
+  wave 88b's. **Find the commit that moved the lines before doubting a log, whichever side of it the log sits
+  on.**
+- ✅ **The artifact-ordering control has now held three consecutive waves — 96, 97b, 98 — every time it was
+  briefed in words.** Wave 98: `pest-raw-last.log 05:17:53.317 → w98-gate.log 05:17:53.330 →
+  w98-pest-raw.log 05:18:03 → REPORT.md 05:18:28`, strictly increasing, `duration_ms 101676` distinct from
+  wave 97b's `101206` on a byte-count that happens to be identical (3504 both). **Equal file sizes are not
+  the tell; `duration_ms` is.**
 
 ## Style
 
