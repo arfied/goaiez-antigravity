@@ -906,6 +906,40 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   Same family as every scope trap this section records: `--stat` is a summary
   whose bounds (here, the commit range) are not the claim. The diff is the
   measurement; the count only decides whether to read it.
+
+  ⛔ **`1 + 2n` is NOT the signature — it was fitted to two observations, and a
+  census of twenty-six falsifies it. The count is AMBIGUOUS BETWEEN OPPOSITE
+  EDITS** (tick 188). Ticks 181, 183 and 184 each measured one more sibling
+  commit and generalised: 3, 3, then 5, read as `1 + 2n`. One command measures
+  the whole population instead —
+  `git log --format='COMMIT %h %s' --shortstat ^origin/main <the six sibling tips>
+  -- .agents/state/BUILD-STATE.json` — and on 2026-09-06 it printed **26**
+  non-merge commits whose deletion counts are **0 · 1 · 2 · 3 · 5**
+  (one · eleven · one · twelve · one). Three of those break the arithmetic or its
+  reading, and each was diffed:
+
+  - **2 is inexpressible as `1 + 2n`.** `3cbb2409` = timestamp + **one**
+    `"unresolved": []` expansion and **no** `"status"` line, because that module
+    was not `DONE` to begin with. A transition contributes 1 or 2, not 2.
+  - **3 is produced by the OPPOSITE transition.** `cd1936cd` ("record X-193 and
+    X-201 reaching DONE") = timestamp + two `"status": "UNRESOLVED"` →
+    **`"DONE"`** deletions and zero `unresolved: []` lines. Identical count to
+    tick 183's X-124 case, reverse semantics. A tick that recognised "3, the
+    familiar signature" and moved on would have accepted an UNRESOLVED→DONE flip
+    as a DONE→UNRESOLVED one — and **a sibling flipping one of *our* modules to
+    DONE is exactly that shape in `--stat`.**
+  - **0 is reachable**, so the trigger is *sound*: `6a1030b5` is a pure
+    `state.py note` append (8+/0−) that does not rewrite `updated`. Zero
+    deletions still provably loses no line of ours.
+
+  So keep tick 181's trigger — it cannot miss a loss — but stop calling it an
+  economy: it fires on **25 of 26** commits, a 1-in-26 saving, not the "keeps
+  this cheap" it was introduced as. In practice *read the diff on every
+  shared-state change*. And never check a count against `1 + 2n`: a conforming
+  count is not confirmation, because the same 3 arrives from both directions.
+  This is the section's law turned on the ledger's own arithmetic — **a
+  signature fitted to two points is not a signature**, the same error shape as
+  tick 187's under-scoped query, which this ledger also wrote itself.
 - **The stable unresolved count is `state.py status`'s printed entry list, not a
   grep of the JSON** (tick 152). `grep -c '"why"' .agents/state/BUILD-STATE.json`
   returns **70** on a file that holds **35** entries — each entry is serialised
