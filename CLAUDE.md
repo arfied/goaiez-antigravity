@@ -733,6 +733,54 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   `app/tests/Modules/X-110/` for the edited class or view and read the
   assertions.
 
+  ⛔ **The complement's strip is FIVE TIMES wider than the half it credits — it is
+  a completeness proof CONDITIONAL on the out-of-scope list, not a general one**
+  (tick 190). Tick 175 built the complement by stripping three prefixes
+  (`app/app/Modules/`, `app/tests/Modules/`, `.agents/`) on the ground that the
+  halves already cover them, and called the result "provably complete". They do
+  not: half 1's pathspec is **fourteen paths naming seven module ids**, while the
+  stripped prefixes cover **127** module directories in this checkout, of which
+  siblings have touched **40** in the unmerged range — C-Agent C-Billing C-Mail
+  C-Sms C-Telephony C-Whatsapp X-01 X-07 X-102 X-103 X-110 X-117 X-120 X-124
+  X-136 X-137 X-138 X-163 X-165 X-166 X-167 X-168 X-171 X-172 X-173 X-175 X-183
+  X-184 X-189 X-193 X-194 X-198 X-199 X-201 X-206 X-207 X-208 X-211 X-66 X-82.
+  So the complement discards 40 ids' worth of traffic and credits a query that
+  watches 7; every module id that is not this track's is stripped as "covered"
+  when nothing covers it.
+
+  That is **correct for this track and must not be widened** — per tick 183's
+  second clause another track's module is *unwatched, not uncovered*, and
+  widening the census into it bolts a half onto someone else's column. The defect
+  is in the **claim**, not the query. Tick 183 found the same gap from the
+  opposite side (complement growth the halves do not name) and neither tick
+  connected them. Stated once, correctly: **the complement proves no surface in
+  THIS track's column is unwatched. It proves nothing about any other.** Seventh
+  statement of the section's law, now turned on the ledger's own completeness
+  proof — a query's scope is not its claim.
+
+  ⛔ **The paired `--stat` is an EVENT STREAM; every other census surface is a
+  STANDING SET. What only it can see is observable exactly once** (tick 190).
+  Tick 186 established the halves and the complement as cumulative sets bounded
+  by `^origin/main ^origin/track/site`, so a violation printed at tick 185 still
+  prints at tick 190 and can be re-read at leisure. The moved-tip `git show
+  --stat` that tick 180 made unconditional on a miss has the opposite shape: its
+  bounds are `<last recorded tip>..<new tip>`, so a commit it names falls out of
+  every query in this ledger the moment that branch commits again.
+
+  Measured at tick 190: sixty's `2c8a399a` ("chore(X-01): resolve ten stubbed
+  assertions in X01Test", `app/tests/Modules/X-01/X01Test.php`, +11 −0) is
+  invisible to half 1 (X-01 is not one of the fourteen paths), to halves 2 and 3,
+  and to the complement (stripped by `app/tests/Modules/`). The paired `--stat`
+  is the only surface that will ever print it, and only until sixty's next
+  commit. X-01 is **stages'** under ruling 5's catch-all ("everything not
+  listed"), so this is OWNER ACTION 45's shape one lane over, exactly like tick
+  182's pricebook/X-172 note: **advisory to Track 1, no OWNER ACTION here, never
+  a parallel fix.**
+
+  The consequence is a writing rule, not a query: **anything a paired `--stat`
+  alone surfaces must be written into that tick's block or it is lost.** The
+  halves forgive a tick that skims them; the paired stat does not.
+
   ⚠️ `app/database/seeders/` is a watch item, not a fourth half (tick 185). Ui's
   `3dfcb662` added `UiReviewSeeder.php` and it entered the complement as one of
   its two new files. It is the same *shape* as `app/database/migrations` — a
