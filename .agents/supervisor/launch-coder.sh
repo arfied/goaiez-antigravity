@@ -31,6 +31,14 @@ cd "$(dirname "$0")/../.." || exit 1
 
 CODER="agy"
 ALLOW_MERGE=0
+# --allow-harness exports GOAIEZ_HARNESS_OK=1 for ONE run (Track 1, OWNER.md
+# 2026-09-06 17:2x). coder-bin/git keyed the JourneyHarness exemption to the
+# checkout name grs-antig, so a lane could not fix the harness of a journey it
+# owns. The flag opens the ABILITY TO COMMIT, never permission to weaken: a
+# deleted assertion, a stubbed transport or a journey passing on a constant is a
+# BLOCK, and the supervisor that opened the gate wears it. The supervisor that
+# passes it quotes the harness diff in its own REVIEWS.md block. Never standing.
+ALLOW_HARNESS=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --coder)
@@ -41,8 +49,12 @@ while [ $# -gt 0 ]; do
       ALLOW_MERGE=1
       shift
       ;;
+    --allow-harness)
+      ALLOW_HARNESS=1
+      shift
+      ;;
     *)
-      echo "REFUSED: unknown argument '$1' (only --coder agy|claude, --allow-merge)"; exit 1
+      echo "REFUSED: unknown argument '$1' (only --coder agy|claude, --allow-merge, --allow-harness)"; exit 1
       ;;
   esac
 done
@@ -109,6 +121,12 @@ GOAIEZ_MERGE_OK=$ALLOW_MERGE
 export GOAIEZ_MERGE_OK
 echo "merge gate: GOAIEZ_MERGE_OK=$GOAIEZ_MERGE_OK (from --allow-merge)"
 
+# The harness gate. Set ONLY by --allow-harness on this command line, never from
+# a file. coder-bin/git clears its JourneyHarness refusal on this variable.
+GOAIEZ_HARNESS_OK=$ALLOW_HARNESS
+export GOAIEZ_HARNESS_OK
+echo "harness gate: GOAIEZ_HARNESS_OK=$GOAIEZ_HARNESS_OK (from --allow-harness)"
+
 # One run number per track, free under BOTH prefixes, so "run N" in REVIEWS.md
 # names one run whichever coder served it.
 n=1
@@ -121,7 +139,7 @@ LOG="/home/goaiez/tmp/${CODER}-${TRACK}-run${n}.log"
 if [ "$CODER" = "claude" ]; then
   # --setting-sources user keeps THIS checkout's supervisor .claude/settings.json
   # (which denies app/**) out of the coder's permissions.
-  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
   # `timeout -k 60 3h` bounds the run. agy's own --print-timeout does NOT: run 54
   # finished its wave, wrote REPORT.md at 04:42, and then sat alive indefinitely
@@ -129,7 +147,12 @@ else
   # column, so an unbounded parked coder stalls every following tick on case (a)
   # until a human intervenes (44 ticks, in another lane). Tracks 2 and 7 already
   # wrap agy this way; this lane did not. 3h is well past any wave here.
-  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  # BASH_ENV makes `kill` resolve through PATH in every non-interactive shell the
+  # coder spawns (coder-bin/shell-init.sh runs `enable -n kill`), so coder-bin/kill
+  # can record caller · target · cwd to /home/goaiez/tmp/kill-log.tsv and THEN kill.
+  # It refuses nothing — killing a pid you started is legitimate; it makes the
+  # SIGTERMs attributable (Track 1, OWNER.md 2026-09-06 16:0x).
+  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 

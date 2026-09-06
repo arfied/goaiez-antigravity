@@ -22,6 +22,73 @@ for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_docto
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
+# ── shared gate log (Track 1, OWNER.md 2026-09-06 16:0x, corrected 16:5x/17:1x) ──
+# One TSV row per tool run, appended at exit. EIGHT columns, in this order:
+#
+#   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
+#
+# `rc` is RAW — 128+N, so 143 SIGTERM, 137 SIGKILL, 124 timeout(1)'s own. Never
+# normalised to 0/1: the signal is the whole point. `project` is the project
+# (goaiez-antigravity), `checkout` the directory basename. `tool_pid` is the join
+# key against /home/goaiez/tmp/kill-log.tsv; `gate_pid` only groups a run's rows.
+# `tool` is one of exactly five values — gate | pint | phpstan | pest | doctor —
+# because a group-by on it is the entire point of the column (17:1x: four
+# spellings of the gate already split the shared file four ways). No lock: an
+# append under PIPE_BUF to an O_APPEND file is atomic on Linux, and a flock here
+# would interact with the pest lock for nothing.
+# GATE_LOG is overridable so a test that exercises the gate can never write the
+# shared file — the sibling project's harness appended twelve fabricated rows
+# with every property the schema demands, and the only tell was a pest row whose
+# start and end were the same second. No test here touches the gate today; this
+# is prevention.
+GATE_LOG=${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}
+GATE_PID=$$
+GATE_START=$(date -Is)
+GATE_CHECKOUT=$(basename "$ROOT")
+log_gate() {  # start_iso end_iso tool_pid rc tool
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$2" "$GATE_PID" "$3" "$4" "goaiez-antigravity" "$GATE_CHECKOUT" "$5" \
+    >> "$GATE_LOG" 2>/dev/null || true
+}
+# The sentinel pair distinguishes a gate killed at the wrapper from one that
+# never ran. Defined HERE, at the top — Track 1's sat where the tools run and
+# recorded nothing for a gate killed two seconds in — and `trap - EXIT` fires
+# INSIDE each signal trap, or the honest rc=143 row is hidden by a later rc=0.
+gate_end() { _rc=$?; trap - EXIT; log_gate "$GATE_START" "$(date -Is)" "-" "$_rc" "gate"; }
+trap 'gate_end' EXIT
+trap '_s=$?; trap - EXIT; log_gate "$GATE_START" "$(date -Is)" "-" "143" "gate"; exit 143' TERM
+trap '_s=$?; trap - EXIT; log_gate "$GATE_START" "$(date -Is)" "-" "130" "gate"; exit 130' INT
+log_gate "$GATE_START" "-" "-" "-" "gate"
+
+# Run one tool, capture its RAW rc and its own pid, log a row, leave the output
+# in $TOOL_OUT. `out=$(cmd)` gives no pid, so the job is backgrounded; and the
+# `pgrep -P` descent is not optional, because `timeout 1800 pest` makes timeout
+# the job and php the process a killer sees in ps — logging the wrapper's pid
+# fails the join in exactly the case the log exists for, silently.
+run_tool() {  # name cmd...
+  _tname="$1"; shift
+  _ts=$(date -Is)
+  _tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
+  "$@" > "$_tmp" 2>&1 &
+  _job=$!; _tpid=$_job
+  sleep 0.3   # the wrapper has to exec and fork before its child exists
+  _child=$(pgrep -P "$_job" 2>/dev/null | head -1)
+  [ -n "$_child" ] && _tpid=$_child
+  wait "$_job"; _rc=$?
+  TOOL_OUT=$(cat "$_tmp"); rm -f "$_tmp"
+  log_gate "$_ts" "$(date -Is)" "$_tpid" "$_rc" "$_tname"
+  return $_rc
+}
+# A tool that was killed did not return a verdict. 124 is timeout(1); 128+N is a
+# signal. Ours piped pint and phpstan into `tail`, which throws the exit code
+# away — a killed Pint prints a bare `Terminated` and was one step from being
+# recorded as "pint failed".
+killed_note() {  # name rc
+  if [ "$2" -eq 124 ] || [ "$2" -ge 128 ]; then
+    echo "  ⛔ $1 was KILLED or timed out (rc $2) — this is NOT a verdict"
+  fi
+}
+
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
@@ -119,8 +186,17 @@ if [ $want_doctor -eq 1 ]; then
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+# ⚠️ These two used to read `cmd | tail | sed || fail=1`. A pipeline's status is
+# its LAST command's, so `fail=1` could never fire and a pint or phpstan red was
+# printed and then forgotten by the verdict. Read the rc first, print second.
+run_tool pint ./vendor/bin/pint --test; pint_rc=$?
+printf '%s\n' "$TOOL_OUT" | tail -3 | sed 's/^/  /'
+[ $pint_rc -ne 0 ] && fail=1
+killed_note pint $pint_rc
+run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress; stan_rc=$?
+printf '%s\n' "$TOOL_OUT" | tail -4 | sed 's/^/  /'
+[ $stan_rc -ne 0 ] && fail=1
+killed_note phpstan $stan_rc
 
 TEST_DB=goaiez_antig_pricebook_test
 if [ $want_tests -eq 1 ]; then
@@ -174,7 +250,9 @@ if [ $want_tests -eq 1 ]; then
     echo '{"tool":"pest","result":"lock-timeout"}' > /home/goaiez/tmp/last-pest-grs-antig-pricebook.json
     fail=1
   else
-  out=$(DB_DATABASE=$TEST_DB timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  run_tool pest env DB_DATABASE=$TEST_DB timeout 1800 ./vendor/bin/pest; rc=$?
+  out=$TOOL_OUT
+  killed_note pest $rc
   flock -u 9 2>/dev/null
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
   [ $rc -ne 0 ] && fail=1
