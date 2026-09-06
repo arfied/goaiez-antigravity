@@ -1061,3 +1061,25 @@
 - `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G7-33 — no spend-ceiling producer exists: grep -rn "OpsAlertAction" app/app returns only X-111's own files, so the alert has no ceiling to fire from, and "never stops the phone answering" is C-Telephony's surface
 - `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G15-28 — the register description is STRIPPED (P-206) — the ① lives in the register, not in the file; the ⑤ names what doctor asserts, and writing a test to match it authors the ⑤
 - `2026-09-06T13:20:55` (R245) X-111 — R245 — the one clause X-111 decides that is not already credited is OpsEngine::createHumanTicket's escalation signal (:62), which freezes TicketOpened's source to the literal 'human_requested' whatever category the caller files the ticket under — and the 23 filed rows name subjects with no code, no column, or another module's system.
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G2-26 — a UI view, and the view belongs to X-194
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G2-37 — a UI surface, no clause
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G9-38 — a UI surface, no clause
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G13-02 — a UI surface; qa_scorecards has id, business_id, seat_id, call_id, score, coaching_note, is_positive_only, created_at, updated_at - there is no per-person punitive column
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-03 — a UI surface, and the thread is another module's
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-06 — a UI surface; no prompt exists in the module
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-15 — queue state is the wallboard, and there is no ordering code — SeatLoginAction freezes state => 'idle'
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G21-13 — a UI surface, and X-200 has no deal, no channel and no BAD_STATE refusal (grep returned matches only in capabilities.php)
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G16-15 — a UI surface, and the positive-by-construction half is already asserted at X200Test.php:107-108
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G2-35 — the wallboard half is UI, the positive-only half is is_positive_only at X200Test.php:107-108, already credited to the anchor
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G3-04 — there is no pacing code anywhere in the module (grep pacing|predictive returned only a comment in DialerEngine.php and capabilities.php), and the ceiling is CampaignStartAction:19, whose own refusal message cites G10-03
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G5-09 — the voice is another module's, and no coaching path exists here
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G9-01 — QaScoreAction has 1 method (scoreCall) and none rolls up, and the rendering is X-194's
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G11-25 — the 5 is the header itself (P-210); migration shows call_dispositions.disposition is a plain string with no closed set enforced anywhere
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G16-11 — no library table and no example store; migration creates call_campaigns, dialer_seats, call_dispositions, qa_scorecards, call_schedules
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-08 — grep listen|whisper|barge returned matches only in capabilities.php
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-13 — no scoreboard exists and no refusal code implements that clause; a refusal clause is not a refusal
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-16 — coaching_note is a free string with a default; nothing decides that it is a signal only
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-02 — nothing in X-200 states a next action; do not substitute a schema-absence assertion for the missing half
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G18-19 — X-200 names no carrier at all: grep TWILIO|Twilio|twilio across app/app and app/config/services.php returned no logic in X-200
+- `2026-09-06T13:43:35` UNRESOLVED capability X-200 - G15-29 — the register description is STRIPPED (P-206) — the 1 lives in the register, not in the file; the 5 names what doctor asserts, and writing a test to match it authors the 5
+- `2026-09-06T13:43:40` (R245) X-200 — R245 — X200Test already asserts the 3.0% ceiling, positive-only scorecards, clamps, AI parity, and uncertain AMD at lines 107-108, 117, 222-223, 248, and 262-263, and the 21 remaining ids are UNRESOLVED because they name a UI surface, another module's system, or a clause with no code.

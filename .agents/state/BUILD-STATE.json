@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T13:20:55",
+ "updated": "2026-09-06T13:43:40",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2143,6 +2143,132 @@
      "stage": "capability",
      "why": "G15-29 its register description is STRIPPED (P-206) and the \u2464 asserts an absence in the schema (no per-person negative output exists), which is a CHECK-shaped claim.",
      "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G2-26 \u2014 a UI view, and the view belongs to X-194",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G2-37 \u2014 a UI surface, no clause",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G9-38 \u2014 a UI surface, no clause",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G13-02 \u2014 a UI surface; qa_scorecards has id, business_id, seat_id, call_id, score, coaching_note, is_positive_only, created_at, updated_at - there is no per-person punitive column",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-03 \u2014 a UI surface, and the thread is another module's",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-06 \u2014 a UI surface; no prompt exists in the module",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-15 \u2014 queue state is the wallboard, and there is no ordering code \u2014 SeatLoginAction freezes state => 'idle'",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G21-13 \u2014 a UI surface, and X-200 has no deal, no channel and no BAD_STATE refusal (grep returned matches only in capabilities.php)",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G16-15 \u2014 a UI surface, and the positive-by-construction half is already asserted at X200Test.php:107-108",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G2-35 \u2014 the wallboard half is UI, the positive-only half is is_positive_only at X200Test.php:107-108, already credited to the anchor",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G3-04 \u2014 there is no pacing code anywhere in the module (grep pacing|predictive returned only a comment in DialerEngine.php and capabilities.php), and the ceiling is CampaignStartAction:19, whose own refusal message cites G10-03",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G5-09 \u2014 the voice is another module's, and no coaching path exists here",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G9-01 \u2014 QaScoreAction has 1 method (scoreCall) and none rolls up, and the rendering is X-194's",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G11-25 \u2014 the 5 is the header itself (P-210); migration shows call_dispositions.disposition is a plain string with no closed set enforced anywhere",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G16-11 \u2014 no library table and no example store; migration creates call_campaigns, dialer_seats, call_dispositions, qa_scorecards, call_schedules",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-08 \u2014 grep listen|whisper|barge returned matches only in capabilities.php",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-13 \u2014 no scoreboard exists and no refusal code implements that clause; a refusal clause is not a refusal",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-16 \u2014 coaching_note is a free string with a default; nothing decides that it is a signal only",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-02 \u2014 nothing in X-200 states a next action; do not substitute a schema-absence assertion for the missing half",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-19 \u2014 X-200 names no carrier at all: grep TWILIO|Twilio|twilio across app/app and app/config/services.php returned no logic in X-200",
+     "at": "2026-09-06T13:43:35"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G15-29 \u2014 the register description is STRIPPED (P-206) \u2014 the 1 lives in the register, not in the file; the 5 names what doctor asserts, and writing a test to match it authors the 5",
+     "at": "2026-09-06T13:43:35"
     }
    ]
   },
@@ -3610,6 +3736,132 @@
    "stage": "capability",
    "why": "G15-28 \u2014 the register description is STRIPPED (P-206) \u2014 the \u2460 lives in the register, not in the file; the \u2464 names what doctor asserts, and writing a test to match it authors the \u2464",
    "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G2-26 \u2014 a UI view, and the view belongs to X-194",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G2-37 \u2014 a UI surface, no clause",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G9-38 \u2014 a UI surface, no clause",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G13-02 \u2014 a UI surface; qa_scorecards has id, business_id, seat_id, call_id, score, coaching_note, is_positive_only, created_at, updated_at - there is no per-person punitive column",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-03 \u2014 a UI surface, and the thread is another module's",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-06 \u2014 a UI surface; no prompt exists in the module",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-15 \u2014 queue state is the wallboard, and there is no ordering code \u2014 SeatLoginAction freezes state => 'idle'",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G21-13 \u2014 a UI surface, and X-200 has no deal, no channel and no BAD_STATE refusal (grep returned matches only in capabilities.php)",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G16-15 \u2014 a UI surface, and the positive-by-construction half is already asserted at X200Test.php:107-108",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G2-35 \u2014 the wallboard half is UI, the positive-only half is is_positive_only at X200Test.php:107-108, already credited to the anchor",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G3-04 \u2014 there is no pacing code anywhere in the module (grep pacing|predictive returned only a comment in DialerEngine.php and capabilities.php), and the ceiling is CampaignStartAction:19, whose own refusal message cites G10-03",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G5-09 \u2014 the voice is another module's, and no coaching path exists here",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G9-01 \u2014 QaScoreAction has 1 method (scoreCall) and none rolls up, and the rendering is X-194's",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G11-25 \u2014 the 5 is the header itself (P-210); migration shows call_dispositions.disposition is a plain string with no closed set enforced anywhere",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G16-11 \u2014 no library table and no example store; migration creates call_campaigns, dialer_seats, call_dispositions, qa_scorecards, call_schedules",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-08 \u2014 grep listen|whisper|barge returned matches only in capabilities.php",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-13 \u2014 no scoreboard exists and no refusal code implements that clause; a refusal clause is not a refusal",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-16 \u2014 coaching_note is a free string with a default; nothing decides that it is a signal only",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-02 \u2014 nothing in X-200 states a next action; do not substitute a schema-absence assertion for the missing half",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-19 \u2014 X-200 names no carrier at all: grep TWILIO|Twilio|twilio across app/app and app/config/services.php returned no logic in X-200",
+   "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G15-29 \u2014 the register description is STRIPPED (P-206) \u2014 the 1 lives in the register, not in the file; the 5 names what doctor asserts, and writing a test to match it authors the 5",
+   "at": "2026-09-06T13:43:35"
   }
  ],
  "decisions": [
@@ -3737,6 +3989,12 @@
    "module": "X-111",
    "chose": "R245 \u2014 the one clause X-111 decides that is not already credited is OpsEngine::createHumanTicket's escalation signal (:62), which freezes TicketOpened's source to the literal 'human_requested' whatever category the caller files the ticket under \u2014 and the 23 filed rows name subjects with no code, no column, or another module's system.",
    "at": "2026-09-06T13:20:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-200",
+   "chose": "R245 \u2014 X200Test already asserts the 3.0% ceiling, positive-only scorecards, clamps, AI parity, and uncertain AMD at lines 107-108, 117, 222-223, 248, and 262-263, and the 21 remaining ids are UNRESOLVED because they name a UI surface, another module's system, or a clause with no code.",
+   "at": "2026-09-06T13:43:40",
    "ruling": "R245"
   }
  ],
