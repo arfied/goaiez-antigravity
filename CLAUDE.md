@@ -116,6 +116,15 @@ Watch for: <the trap that applies, by name>
 - **`app/CLAUDE.md` and `app/AGENTS.md` are Laravel Boost boilerplate**, not
   the contract. The contract is the root `AGENTS.md`. Do not cite the `app/`
   copies.
+- **A merged class is unloadable until the classmap is rebuilt (2026-09-06, run 110).** `app/composer.json`
+  declares `"classmap": ["app/Modules/"]`, and module directories (`C-Mail`, `X-01`) do not match their
+  namespaces (`CMail`, `X01`), so PSR-4 cannot resolve them at all — only a generated classmap can. Any
+  merge that **adds** a class under `app/Modules/` leaves it invisible until `composer dump-autoload` runs,
+  and it presents as `Class "…" not found` **in another module's test** — the most misattributable shape
+  there is. Six errors were about to be sent to two innocent lanes on exactly this. The tell that it is not
+  code: two gates on the identical tree, zero commits between them, disagreeing (`errors 10` then
+  `errors 8`). Rebuild the classmap **before** the first gate after any merge, and never attribute a
+  class-not-found to a lane until `grep -c <Class> app/vendor/composer/autoload_classmap.php` says 1.
 - **A stale doctor.** `doctor`'s first line is `goaiez doctor · build <stamp>`.
   Three identical runs once came from files that were never copied into the
   tree. Compare the stamp before trusting any count.
