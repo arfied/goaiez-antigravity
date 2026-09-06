@@ -65,7 +65,7 @@ class X111Test extends TestCase
      * ⛔ REFUSED: G4-41 — the capability's own text is "the T443 delete-list runner"; a noun phrase, not a refusal
      * ⛔ REFUSED: G4-31 — the capability's own text is "the screen; the mechanism is X-123's"; the mechanism is assigned to X-123
      * ⛔ REFUSED: G4-40 — the capability's own text is "ops.ban plus a mass token.revoke through X-142"; the mechanism runs through X-142
-     * ⛔ REFUSED: G4-47 — the capability's own text is "SOP edit history; the same home as G1-29 Interactive SOPs"; a restatement; the refusal it points at is G1-29's, asserted in List A
+     * ⛔ REFUSED: G4-47 — the capability's own text is "SOP edit history; the same home as […] Interactive SOPs" (the id in the original is elided: quoting it here would close it); a restatement, and the Interactive SOPs capability it points at is UNRESOLVED on this module — X-111 exposes no SOP or revenue surface
      * ⛔ REFUSED: G5-17 — the capability's own text is "a resolved ticket drafts a help row;  the help registry generates itself from X-122"; the registry is X-122's
      * ⛔ REFUSED: G9-19 — the capability's own text is "failed searches open a help topic;  the help registry generates itself from X-122"; the registry is X-122's
      * ⛔ REFUSED: G21-14 — the capability's own text is "the help card offered before the ticket is submitted"; a restatement, no refusal
@@ -240,11 +240,8 @@ class X111Test extends TestCase
         }
     }
 
-    /**
-     * @test
-     * [G19-09]
-     */
-    public function g19_09_compromise_halt_is_security_stop(): void
+    /** [G19-09] */
+    public function test_g19_09_compromise_halt_is_security_stop(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Security Halt', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
