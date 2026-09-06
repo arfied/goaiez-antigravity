@@ -44,8 +44,8 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('business_id')->constrained('businesses')->cascadeOnDelete();
                 $table->foreignId('mail_domain_id')->constrained('mail_domains')->cascadeOnDelete();
-                $table->string('event_type'); // sent, queued, bounced, complained, replied
-                $table->string('send_type')->default('marketing'); // marketing, conversational, transactional
+                $table->string('event_type'); // sent, queued, unsubscribed, bounced, complained, replied, spam-trap
+                $table->string('send_type')->default('marketing'); // marketing, conversational, transactional, inbound
                 $table->string('recipient_email');
                 $table->string('subject');
                 $table->jsonb('payload')->nullable();

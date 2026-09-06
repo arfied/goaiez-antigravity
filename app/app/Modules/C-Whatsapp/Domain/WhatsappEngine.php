@@ -22,7 +22,7 @@ final class WhatsappEngine
     /**
      * Inbound message opens/extends 24-hour conversational window.
      */
-    public function recordInbound(int $businessId, string $recipientPhone): WhatsappSession
+    public function recordInbound(int $businessId, string $recipientPhone, string $body = '', string $senderName = ''): WhatsappSession
     {
         $session = WhatsappSession::updateOrCreate(
             ['business_id' => $businessId, 'recipient_phone' => $recipientPhone],
@@ -33,7 +33,7 @@ final class WhatsappEngine
             ]
         );
 
-        Event::dispatch(new WhatsappSessionOpened($businessId, $session->id, $recipientPhone));
+        Event::dispatch(new WhatsappSessionOpened($businessId, $session->id, $recipientPhone, $body, $senderName));
 
         return $session;
     }
