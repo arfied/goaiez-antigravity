@@ -145,10 +145,21 @@ class CWhatsappTest extends TestCase
     /**
      * [G19-22] GBP through Zernio; every channel lands on ONE Conversation
      * ⛔ REFUSED: G19-22 (Zernio half) — GBP runs through Zernio
-     * BUILD PROPOSAL: G19-22 (positive half) — the live bridge from C-Whatsapp to X-01 has not been built yet; both are owned by this lane (WhatsappEngine::recordInbound, UnifiedInboxManager::ingestMessage:26)
      */
     public function test_g19_22_single_conversation(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'WhatsApp Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customerPhone = '+15550001111';
+
+        $this->engine->recordInbound($biz->id, $customerPhone, 'Hello there!', 'John Doe');
+        
+        $person = \App\Modules\X121\Models\Person::where('phone', $customerPhone)->first();
+        $this->assertEquals(1, \App\Models\Conversation::where('person_id', $person->id)->count());
+
+        $this->engine->recordInbound($biz->id, $customerPhone, 'Are you there?', 'John Doe');
+        
+        $this->assertEquals(1, \App\Models\Conversation::where('person_id', $person->id)->count());
     }
 }

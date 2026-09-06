@@ -10,6 +10,7 @@ use App\Modules\X01\Ui\History;
 use App\Modules\X01\Ui\PaymentRisk;
 use App\Modules\X01\Ui\Person as PersonComponent;
 use App\Modules\X01\Ui\Thread;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -22,6 +23,7 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(\App\Modules\CWhatsapp\Events\WhatsappSessionOpened::class, \App\Modules\X01\Listeners\WhatsappInboundListener::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
