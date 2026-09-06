@@ -1488,6 +1488,47 @@ Watch for: <the trap that applies, by name>
   and the class type-checks: **the whole gate stack is silent on statement order.** Read a new action's body for
   what it does before its first guard, and note that the guard here is also the tenancy guard — `mail_events`
   carries RLS, so the lookup is what proves the domain belongs to the caller.
+- ⚠️⚠️ **`AGY_EXIT=137` is a THIRD death cause and it is the only one that prints no sentence — SIGKILL, and the
+  log is one line long.** Run 82's whole `/home/goaiez/tmp/agy-grs-antig-sixty-run82.log` is `AGY_EXIT=137`
+  (`128+9`). There is no `Error: Individual quota reached` (run 40) and no `Error: timeout waiting for response`
+  (runs 65, 74, 81), so **the `--coder claude` chain is not triggered — it is keyed to quota and to nothing
+  else** — and, unlike the other two, there is no diagnostic text to route on at all. **The tree is the only
+  discriminator**, which makes the two shape commands (`git log origin/track/<x>..HEAD` against the dispatch
+  time, and `git status --porcelain`) not merely cheap but the entire diagnosis. Run 82 came back *dirty tree +
+  zero commits* = shape 2, and the four-shape rule held.
+- ⚠️ **The run-65 tell can fire POSITIVE and be benign, so a modified tracked file under `app/app/` is a prompt
+  to read the diff, not a finding.** That rule is written as *"`git diff --name-only` named no file under
+  `app/app/`, so there was no live mutation to strand."* Run 82 named one — the C-Mail migration — and the diff
+  was **one comment line** (`// marketing, conversational, transactional` gaining `, inbound`), which was its
+  own brief item. Treating the name list as the verdict would have produced a revert item that deleted a
+  completed deliverable. **Three commands prove absence of a mutation properly:** the mutated-file mtime
+  against the *test* file's (a mutation is applied only after its target test exists — here `07:14:49` action
+  vs `07:22:04` test, so no mutation), `ls scratch/` for the wave's mutation artifacts (none ⇒ item never
+  reached), and the assertion arithmetic below accounting for every new failure.
+- ⭐ **The `assertions` delta identifies WHICH of two identically-worded assertions failed — the wave-90
+  subtraction used to name a defect, not just to catch a false survivor.** Run 82's new test failed on
+  `The expected [App\Modules\CMail\Events\EmailBounced] event was not dispatched.`, a line that is **byte-identical**
+  for its first assertion (`'bounced'`) and its second (`'spam-trap'`). Baseline `assertions 7860` → `7862`:
+  `+2` says assertion 1 executed and passed and assertion 2 executed and failed. That is the difference between
+  *"the action is broken"* and *"one arm of a `match` is missing"*, and it costs one subtraction. **Take the
+  `assertions` baseline before every dispatch precisely so this subtraction is available afterwards.**
+- ⚠️ **A defect sitting AFTER the failing assertion is invisible until the earlier one clears — so grade a red
+  test for what it has not yet reached, not only for why it is red.** Run 82's test also reads
+  `$event->recipientEmail` on an `EmailReplied` whose constructor (`EmailReplied.php:12`) declares `$fromEmail`;
+  the closure would return `false` and the assertion would fail — but it is assertion 4 and nothing past 2 has
+  ever been evaluated. This is the wave-90 rule in **prospect** rather than in review: a wave that fixes only
+  the live defect will gate red a second time and look like a regression. ⛔ **And say the refusal out loud in
+  the brief**: when a closure disagrees with its event class, the class is the fact and the property name is
+  the fix — never a retreat to a bare `assertDispatched(Foo::class)`. Weakening an assertion to accommodate a
+  defect is the ladder's top rung, and it must not be the cheapest road out of a red gate.
+- ⭐ **A dead run's scratch files include its *drafts*, and a draft can show the coder reasoning better than any
+  report would.** Run 82 worked via `patch.diff`/`patch2.diff` + `patch`, leaving a `.orig`; `patch2.diff`'s own
+  inline note reads *"wait `EmailComplained` doesn't have `recipientEmail`? Let's check."* — it caught that
+  defect's shape on one event class and simply did not carry the check to the next one. **Read the drafts before
+  grading a dead run's judgement.** ✅ Measured, so it is not a gate finding: the four litter files trip nothing —
+  pint names only the test file, phpstan reports 0, and `CapabilityStage::testedIds` globs `*.php`, which
+  `CMailTest.php.orig` does not match. They are exactly what a `git add -A` would ship, which is the named-paths
+  rule earning its keep.
 
 ## Style
 
