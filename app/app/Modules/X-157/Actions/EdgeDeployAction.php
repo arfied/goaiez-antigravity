@@ -202,11 +202,12 @@ final class EdgeDeployAction
 
                 $page = \App\Modules\X103\Models\Page::find($pageId);
                 if ($page) {
+                    $contentBlocks = (isset($version) && $version && is_array($version->content_blocks)) ? $version->content_blocks : [];
                     $llmsTxtContent = app(\App\Modules\X176\Actions\LlmsTxtRenderAction::class)->handle(
                         $businessName,
                         $page->title,
                         $page->slug,
-                        is_array($version->content_blocks) ? $version->content_blocks : []
+                        $contentBlocks
                     );
                     if (Storage::disk('local')->put("sites/{$deployHash}.llms.txt", $llmsTxtContent) === false) {
                         throw new \RuntimeException("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
