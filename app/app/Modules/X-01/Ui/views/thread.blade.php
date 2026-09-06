@@ -33,6 +33,7 @@
                 @if($conversations->isEmpty())
                     <p class="text-gray-500">No conversations recorded.</p>
                 @else
+                    <p class="text-gray-500">Select a conversation. {{ $conversations->count() }} found.</p>
                     <ul class="space-y-2 mt-2">
                         @foreach($conversations as $conversation)
                             <li class="p-3 border border-rule rounded">
