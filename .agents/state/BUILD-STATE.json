@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T14:24:35",
+ "updated": "2026-09-06T14:38:12",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1775,6 +1775,36 @@
      "stage": "capability",
      "why": "N-085 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
      "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "G15-22 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'P-204: lands as a JOB COST; doctor asserts NO payment-to-a-person path in this module' is answered only by the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:34 in AccountingEngine, which has no callers (grep -rn \"AccountingEngine\" app/app app/tests returns only its declaration).",
+     "at": "2026-09-06T14:37:57"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "G15-25 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'mileage is a job cost with its route recorded; no payment path' is answered only by the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:39 in AccountingEngine, which has no callers (grep -rn \"AccountingEngine\" app/app app/tests returns only its declaration).",
+     "at": "2026-09-06T14:38:11"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "G15-26 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'the chase is a REMINDER, never a penalty (\u00a7150.4)' is answered only by the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:44 in AccountingEngine, which has no callers (grep -rn \"AccountingEngine\" app/app app/tests returns only its declaration).",
+     "at": "2026-09-06T14:38:12"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "G1-77 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'EXPENSE CAPTURE, not bank verification \u2014 a title collision, asserted by absence of any verification path' names a system this module does not own (grep -rni \"verification\" app/app/Modules/X-173/ returns only the capability file itself).",
+     "at": "2026-09-06T14:38:12"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "G15-13 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'an uncertain OCR goes to a REVIEW QUEUE, never to a ledger' names a system this module does not own (grep -rni \"ocr\" app/app/Modules/X-173/ returns only the capability file itself).",
+     "at": "2026-09-06T14:38:12"
     }
    ]
   },
@@ -4164,6 +4194,36 @@
    "stage": "contract",
    "why": "consumes help.human_requested \u2014 nothing emits it (sealed in app/app/Modules/X-111/manifest.php:46)",
    "at": "2026-09-06T14:24:35"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "G15-22 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'P-204: lands as a JOB COST; doctor asserts NO payment-to-a-person path in this module' is answered only by the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:34 in AccountingEngine, which has no callers (grep -rn \"AccountingEngine\" app/app app/tests returns only its declaration).",
+   "at": "2026-09-06T14:37:57"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "G15-25 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'mileage is a job cost with its route recorded; no payment path' is answered only by the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:39 in AccountingEngine, which has no callers (grep -rn \"AccountingEngine\" app/app app/tests returns only its declaration).",
+   "at": "2026-09-06T14:38:11"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "G15-26 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'the chase is a REMINDER, never a penalty (\u00a7150.4)' is answered only by the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:44 in AccountingEngine, which has no callers (grep -rn \"AccountingEngine\" app/app app/tests returns only its declaration).",
+   "at": "2026-09-06T14:38:12"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "G1-77 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'EXPENSE CAPTURE, not bank verification \u2014 a title collision, asserted by absence of any verification path' names a system this module does not own (grep -rni \"verification\" app/app/Modules/X-173/ returns only the capability file itself).",
+   "at": "2026-09-06T14:38:12"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "G15-13 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'an uncertain OCR goes to a REVIEW QUEUE, never to a ledger' names a system this module does not own (grep -rni \"ocr\" app/app/Modules/X-173/ returns only the capability file itself).",
+   "at": "2026-09-06T14:38:12"
   }
  ],
  "decisions": [
