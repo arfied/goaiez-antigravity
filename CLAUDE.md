@@ -1828,6 +1828,58 @@ Watch for: <the trap that applies, by name>
   listeners**). A C-Agent mirror driven by `TakeoverStarted` alone latches forever. So the order is: wave 105
   the verdicts and the `decided` row, then X-01's release half, then C-Agent's listener and gate. The live
   proposal list stays `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ⚠️⚠️ **A byte-identical per-wave pest object is NOT always a copy-ordering defect — read the wave's own §7
+  `result` field before grading it as one, because SIGTERM produces the identical artifact from an innocent
+  cause.** `cmp scratch/w104-pest-raw.log scratch/w105-pest-raw.log` → **no output**, `duration_ms 117499`
+  shared, which is the wave-88b/95 signature this file has twice recorded as the coder copying early. It was
+  not. `w105-gate.log:106-107` reads `✗ pest printed ZERO BYTES (rc=143) … tests None · result silent`:
+  `rc=143` is `128+15`, **SIGTERM**, the harness timeout killing the coder pid and taking its child pest with
+  it. `scratch/pest-raw-last.log` was therefore **never rewritten with a wave-105 object**, so a copy taken at
+  *any* moment of that wave — before the gate, after it, an hour later — is necessarily the previous wave's
+  bytes. **Neither the per-wave filename nor the copy ordering can help, and the coder is not at fault.** The
+  discriminator: a §7 carrying real numbers beside a byte-identical copy ⇒ the wave-88b race, a fact about the
+  coder; `result silent` + `rc=143` ⇒ the run was killed, a fact about the machine. Same artifact, opposite
+  verdicts. ⚠️ And distinguish it from tick-203's foreign `killall`: there the `(checkouts pinning it: …)`
+  parenthesis names another checkout, here it named only this one.
+- ⚠️⚠️ **The tick-197 corollary — *"a coder that dies before its gate has never run the suite, so the
+  supervisor must run it"* — is wrong as written: it may have run it and had it KILLED, and `scratch/` is the
+  only thing that says which.** Tick 210 opened intending to gate an ungated commit and found `w105-gate.log`
+  (112 lines, §1 naming the wave's own tip) and `w105-pest-raw.log` already on disk. The supervisor must still
+  run its own gate — the coder's produced no number — but *"it never gated"* and *"its gate was killed"* leave
+  different evidence and only one of them is a finding. **`ls scratch/` for the wave's gate log before
+  concluding a dead run never reached item 0.** This is the wave-79 rule (*a report's silence is not evidence
+  an item was skipped; artifact mtimes are*) applied to a **missing** report rather than a silent one, and a
+  missing report is the case where the temptation to infer is strongest.
+- ✅ **The one-byte `cmp` tell in the accepting direction is the whole proof that a comment-only wave moved
+  nothing, and it costs one command.** Tick 210: `cmp scratch/w104-pest-raw.log scratch/pest-raw-last.log` →
+  `differ: byte 94, line 1` — the `duration_ms` offset **alone** (`117499` → `124093`, both six digits so both
+  files stay 2436 bytes) with `tests 1863 · passed 1858 · assertions 7879` identical, and wave 103b's object
+  giving the same four on a third duration. **Three independent runs, three durations, one unchanged test
+  surface** — exactly and only what a docblock-only wave may produce, and the suite proves it rather than the
+  diff claiming it. Run `cmp` against the previous wave's object on every supervisor gate, not only when
+  grading a coder's paste.
+- ⭐ **A new event class dispatched from a module with no matching manifest token moves NO `contract` row —
+  measured, so a generated-file edit is never the price of a seam.** Before briefing wave 106 I checked what
+  would otherwise have looked like a blocker: `ContractStage` cross-references the manifest's
+  `emits`/`consumes`/`provides` **token arrays** (`:111`, `:146`, `:558`, and `:558`'s
+  `consumes '{$token}' — nothing emits it`) and **never inspects an `Event::dispatch` site**. So a lane can
+  build an event-driven seam without touching `manifest.php` — which is generated, harvested from the frozen
+  plan header by `ModuleScaffoldCommand.php:167`, and a `BLOCK` to hand-edit. This is the tick-194 finding
+  (*`ContractStage` reads `@consumes` from the manifest array and never inspects listener classes*) turned
+  into the permission it implies rather than the refusal it looked like: **the build is in lane and only the
+  token DECLARATION is Track 1's.** Filed as `TRACK 1 ACTION 1` at tick 210 so the gap is on the record
+  instead of being rediscovered as a silent omission.
+- **Backlog at tick 210 — wave 106 is X-01's takeover RELEASE half, wave 107 is C-Agent's listener and gate.**
+  Re-measured this tick rather than inherited (the tick-209 case-sensitivity lesson): `takeover()` at
+  `UnifiedInboxManager.php:99-127` writes `is_active => true` / `released_at => null` and dispatches
+  `TakeoverStarted`; that event has **zero listeners**; **no `TakeoverReleased` class exists**; and nothing
+  anywhere writes `is_active` false or a non-null `released_at`, so both columns the model casts
+  (`TakeoverLatch.php:16,18`) are write-once and dead. Its only readers are `replyWithTakeover():139` and
+  `Ui/Person.php:52`. ⚠️ **The load-bearing assertion for that wave is the one about a *released* latch, which
+  is a different case from `X01Test.php:476`** (`test_takeover_reply_refuses_when_no_latch_is_active`, where
+  the row does not exist at all) — nothing in the suite distinguishes them today, and a test whose only
+  witness is the release method's own return value proves that the method returns what it returns. After 107
+  the live proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 
