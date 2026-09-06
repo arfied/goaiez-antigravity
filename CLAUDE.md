@@ -771,6 +771,40 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   from the count** — three deletions is what a benign transition and a
   three-line theft of our entries both look like in `--stat`. Read which block
   they sit in; that is the whole measurement, and it is one `git diff`.
+
+  ⛔ **The signature is `1 + 2n`, not three — and a MISS diffs a RANGE, which is
+  where the arithmetic comes from** (tick 184, third firing). Ticks 181 and 183
+  both measured a single sibling commit and both got exactly three deletions, so
+  "three lines in one module's block" reads like the signature's shape. It is
+  not. Stages' `0917f01a..3bc45b36` reported **five** deletions, and the excess
+  is not an anomaly: the top-level `"updated"` timestamp is deleted **once per
+  range** however many commits it spans, while each DONE→UNRESOLVED transition
+  contributes **two** (`"status"` and the empty `"unresolved": []`). Two modules
+  transitioned here — **X-206** (`N-043`, credential reveal has no time-box
+  column) and **X-208** (`N-019`/`N-020`, `X208Engine` has no caller) — so
+  1 + 2×2 = 5. Both are stages' under ruling 5; X-208 is additionally on plan
+  §257.4's deferred list, where a `state.py note` is the sanctioned response and
+  a wave is not.
+
+  Two consequences, and the second is the one that bites:
+
+  - **Never predict the deletion count from the number of commits.** A two-commit
+    range with one transition is 3; a one-commit range with three transitions is
+    7. The count carries no information the diff does not, which is tick 183's
+    "never infer the signature from the count" stated with the arithmetic that
+    makes it true.
+  - **The cache-miss diff is a range diff, so the trigger aggregates.** Tick 181
+    phrased the trigger per-commit ("when a shared-surface commit reports any
+    deletions"); on a miss the `--stat` that actually fires it is
+    `git diff <last recorded tip>..<new tip>`, summing every commit in between.
+    Block attribution survives the aggregation — each transition is
+    self-contained inside one module's object, so reading the diff still names
+    the modules one by one — but the **count** is now a sum over commits and is
+    even less of a signal than at tick 183.
+
+  Same family as every scope trap this section records: `--stat` is a summary
+  whose bounds (here, the commit range) are not the claim. The diff is the
+  measurement; the count only decides whether to read it.
 - **The stable unresolved count is `state.py status`'s printed entry list, not a
   grep of the JSON** (tick 152). `grep -c '"why"' .agents/state/BUILD-STATE.json`
   returns **70** on a file that holds **35** entries — each entry is serialised
