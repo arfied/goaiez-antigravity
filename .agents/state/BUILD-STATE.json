@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T18:31:13",
+ "updated": "2026-09-05T23:49:19",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -837,10 +837,17 @@
    "unresolved": []
   },
   "X-171": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-171",
+     "stage": "tests",
+     "why": "G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves",
+     "at": "2026-09-05T23:49:19"
+    }
+   ]
   },
   "X-172": {
    "status": "UNRESOLVED",
@@ -862,10 +869,23 @@
    "unresolved": []
   },
   "X-175": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup \u2014 no seam exists in this module",
+     "at": "2026-09-05T23:48:18"
+    },
+    {
+     "module": "X-175",
+     "stage": "tests",
+     "why": "N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo",
+     "at": "2026-09-05T23:48:57"
+    }
+   ]
   },
   "X-176": {
    "status": "DONE",
@@ -1351,6 +1371,24 @@
    "stage": "tests",
    "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
    "at": "2026-09-05T17:11:31"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup \u2014 no seam exists in this module",
+   "at": "2026-09-05T23:48:18"
+  },
+  {
+   "module": "X-175",
+   "stage": "tests",
+   "why": "N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo",
+   "at": "2026-09-05T23:48:57"
+  },
+  {
+   "module": "X-171",
+   "stage": "tests",
+   "why": "G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves",
+   "at": "2026-09-05T23:49:19"
   }
  ],
  "decisions": [
@@ -1430,6 +1468,12 @@
    "module": "X-163",
    "chose": "removed test_n_062_assertion(): the merge's capabilities.php regeneration dropped N-062 from X-163 (owner ruling 18, misattribution fixed by Track 1), so the hardcoded true answers no assertion.",
    "at": "2026-09-05T18:31:13",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-168",
+   "chose": "removed test_n_062_capabilities(): N-062 is not a key in X-168/capabilities.php (grep -c = 0), so the assertTrue(true) answered no cell; same shape as the X-163 removal of 2026-09-05T18:31:13, owner ruling 18 (R245)",
+   "at": "2026-09-05T23:48:50",
    "ruling": "R245"
   }
  ],
