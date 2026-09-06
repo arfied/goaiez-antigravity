@@ -45,6 +45,7 @@ class X113Test extends TestCase
      * a staff user deactivated from the owner's seat is REFUSED ON THEIR VERY NEXT REQUEST, not at session expiry ·
      * grep -r 'rank' app/Modules/X-113/ finds no ranking field (§150.4) ·
      * a secure field reveal is role- AND job-scoped, and logged (P-198).
+     * [G11-04]
      */
     public function test_anchor_immediate_deactivation_no_ranking_fields_and_scoped_secure_reveal(): void
     {
@@ -53,7 +54,7 @@ class X113Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Staff Security Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        // 1. Staff creation & role assignment (G11-04)
+        // 1. Staff creation & role assignment
         $role = Role::create([
             'business_id' => $biz->id,
             'name' => 'Senior Technician',
@@ -121,14 +122,5 @@ class X113Test extends TestCase
         $this->assertEquals('revealed', $inScopeRes['status']);
         $this->assertEquals('GATE-CODE-4491', $inScopeRes['value']);
         $this->assertTrue($inScopeRes['audit_logged']);
-    }
-
-    /**
-     * [G2-15], [G2-28], [G2-44], [G4-15], [G4-35], [G7-29], [G9-36], [G10-11], [G10-15], [G11-04], [G15-02], [G15-04], [G15-05], [G17-03], [G20-02], [G21-08]
-     * Positive coaching framing, documents under RBAC, training reminders, new-hire provisioning
-     */
-    public function test_rbac_coaching_and_capabilities(): void
-    {
-        $this->assertTrue(true);
     }
 }

@@ -31,6 +31,11 @@ final class EdgeDeployAction
         return DB::transaction(function () use ($businessId, $edgeZoneId, $measuredTtfbMs, $speedBudgetMs, $commitId, $pageId, $businessName) {
             $zone = EdgeZone::where('business_id', $businessId)->findOrFail($edgeZoneId);
 
+            if ($commitId) {
+                // X-103 ↔ X-157 seam (R245): derive ssl_installed from EdgeZone.has_valid_ssl
+                PageVersion::where('commit_id', $commitId)->update(['ssl_installed' => $zone->has_valid_ssl]);
+            }
+
             // 1. SSL Certificate check: a site cannot be published without a valid certificate (TEST ANCHOR)
             if (! $zone->has_valid_ssl) {
                 return [

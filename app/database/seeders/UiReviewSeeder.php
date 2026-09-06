@@ -398,6 +398,30 @@ class UiReviewSeeder extends Seeder
                 ['business_id' => $businessId, 'job_id' => 107, 'status' => 'rejected', 'conversion_value_cents' => 5000, 'rejection_reason' => 'Mismatch', 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
+        if (! DB::table('invoices')->where('business_id', $businessId)->where('invoice_number', 'INV-REV-U1')->exists()) {
+            $customerId = DB::table('people')->where('business_id', $businessId)->value('id');
+            if (! $customerId) {
+                $customerId = DB::table('people')->insertGetId(['business_id' => $businessId, 'first_name' => 'Review', 'last_name' => 'Customer', 'email' => 'rev@ex.com', 'phone' => '+15551234567', 'created_at' => now(), 'updated_at' => now()]);
+            }
+            DB::table('invoices')->insert([
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_number' => 'INV-REV-U1', 'total_cents' => 389200, 'paid_cents' => 100000, 'status' => 'due', 'due_date' => now()->addDays(5)->toDateString(), 'pdf_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_number' => 'INV-REV-U2', 'total_cents' => 178900, 'paid_cents' => 0, 'status' => 'issued', 'due_date' => now()->addDays(15)->toDateString(), 'pdf_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_number' => 'INV-REV-PAID', 'total_cents' => 100000, 'paid_cents' => 100000, 'status' => 'paid', 'due_date' => now()->subDays(5)->toDateString(), 'pdf_url' => null, 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+
+        if (! DB::table('overflow_charges')->where('business_id', $businessId)->where('reference_id', 'REF-REV-001')->exists()) {
+            $customerId = DB::table('people')->where('business_id', $businessId)->value('id');
+            if (! $customerId) {
+                $customerId = DB::table('people')->insertGetId(['business_id' => $businessId, 'first_name' => 'Review', 'last_name' => 'Customer', 'email' => 'rev@ex.com', 'phone' => '+15551234567', 'created_at' => now(), 'updated_at' => now()]);
+            }
+            $invoiceId = DB::table('invoices')->where('business_id', $businessId)->value('id') ?? 1;
+            DB::table('overflow_charges')->insert([
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_id' => $invoiceId, 'charge_type' => 'overflow_reversed', 'amount_cents' => 84520, 'card_token' => 'tok_1', 'reference_id' => 'REF-REV-001', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_id' => $invoiceId, 'charge_type' => 'overflow_reversed', 'amount_cents' => 31950, 'card_token' => 'tok_2', 'reference_id' => 'REF-REV-002', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_id' => $invoiceId, 'charge_type' => 'overflow_charged', 'amount_cents' => 10000, 'card_token' => 'tok_3', 'reference_id' => 'REF-CHG-NOT', 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
 
         app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());
         app(ProofNumbers::class)->recompute(ProofNumbers::ALL);

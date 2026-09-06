@@ -76,9 +76,4 @@ final class OpsEngine
             ['reason' => $reason, 'expires_at' => $expiresAt]
         );
     }
-
-    public function enforceOpsConsoleCapabilities(): bool
-    {
-        return true;
-    }
 }

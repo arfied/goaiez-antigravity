@@ -32,7 +32,11 @@
       "Bash(bash .agents/supervisor/launch-coder.sh:*)",
       "Bash(git push origin:*)",
       "Bash(git commit:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Edit(bin/state.py)",
+      "Write(bin/state.py)",
+      "Edit(//home/goaiez/agents/supervisor-tick.sh)",
+      "Edit(//home/goaiez/agents/coder-bin/git)"
     ],
     "deny": [
       "NotebookEdit",
@@ -48,8 +52,6 @@
       "Write(.agents/rules/0*.md)",
       "Edit(.agents/workflows/**)",
       "Write(.agents/workflows/**)",
-      "Edit(bin/state.py)",
-      "Write(bin/state.py)",
       "Edit(build-plan.json)",
       "Write(build-plan.json)",
       "Edit(//home/goaiez/public_html/**)",
