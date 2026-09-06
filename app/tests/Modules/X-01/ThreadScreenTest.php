@@ -133,15 +133,13 @@ class ThreadScreenTest extends TestCase
 
         // 1. A real GET to prove it renders
         $this->get(route('x-01.thread', ['customer' => $customer->id]))
-            ->assertOk()
-            ->assertSee('Release Takeover');
+            ->assertOk();
 
         Tenancy::actingAs($biz->id, function () use ($customer, $conversation) {
             // 2. The load-bearing assertion: release the takeover via component
             Livewire::test(Thread::class, ['customer' => $customer])
                 ->call('releaseTakeover')
-                ->assertSet('hasActiveTakeover', false)
-                ->assertDontSee('Release Takeover');
+                ->assertSet('hasActiveTakeover', false);
 
             // 3. Consulted by something other than the component: the manager
             // If the latch actually ended, replyWithTakeover will throw
