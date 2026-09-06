@@ -197,4 +197,21 @@ class X117Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_an_order_row_written_without_a_status_is_pending_payment(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Default Status Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $id = DB::table('orders')->insertGetId([
+            'business_id' => $biz->id,
+            'order_number' => 'ORD-TEST-123',
+            'total_cents' => 1000,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $order = DB::table('orders')->find($id);
+        $this->assertEquals('pending_payment', $order->status);
+    }
 }
