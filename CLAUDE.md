@@ -1169,6 +1169,49 @@ Watch for: <the trap that applies, by name>
   own failure message discriminates the site**, and the disclosed field is belt-and-braces rather than the only
   evidence. It does not generalise to assertions that print only an expected/actual scalar — ask first whether
   the message carries the module's output or just the test's expectation.
+- ⚠️⚠️ **`BoundaryStage`'s cross-module import check has NEVER run on this tree, and its ⛔ comment is still the
+  law.** Measured at tick 194: `phpFiles()` (`BoundaryStage.php:312`) roots the Finder at `base_path('app')`, so
+  `getRelativePathname()` yields `Modules/C-Whatsapp/Domain/WhatsappEngine.php`; `moduleOf()` (`:277`) tests
+  `#^app/Modules/([A-Za-z0-9_]+)/#`, which is anchored on a leading `app/` the relative path does not have **and**
+  whose character class excludes the hyphen every module directory here carries — two independent reasons it
+  returns `null` for every file. With `$module === null` the cross-module branch at `:78` never fires. Three
+  corroborations, none of them the source: `scratch/w85-doctor-raw.log:3-11` prints its boundary rows as
+  `Modules/C-Sms/…`, so **the missing `app/` prefix is visible on the face of a log this column had on disk for
+  six hours**; no doctor log on this branch contains the string `across a module boundary`; and
+  `C-Whatsapp/Domain/WhatsappEngine.php:12` is `use App\Modules\X204\Domain\ConsentService;`, a textbook
+  cross-module import sitting unreported in a module this lane owns. **The consequence is a briefing rule, not a
+  licence:** a `use` across a boundary will not move `boundary`, so the checker cannot tell you whether a seam is
+  legal, and the stage's own text — *"Cross-module change is an EVENT or a REGISTERED ACTION — never a `use`"* —
+  is what governs. This is the tick-177 rule (*a `fix:` that would widen something is the one class to verify
+  against the law*) in its **silent** form, and silence is the worse half: a wrong `fix:` at least prints.
+  ⭐ The house pattern for a legal seam is already in this lane — `C-Sms/ModuleServiceProvider.php:26`
+  (`Event::listen(SendRequested::class, SendRequestedListener::class)`) with the **receiver** owning the listener
+  and reaching across, the emitter knowing nothing. `BoundaryStage.php` is sealed; the fix is an `OWNER ACTION`
+  every time. ⚠️ And do not pair a listener with a hand-edit to `manifest.php`: `ContractStage` reads `@consumes`
+  from the manifest array (`:111`, `:394`, `:558`) and never inspects listener classes, so no row moves either
+  way, and the manifest is generated from the frozen plan header — the declaration is a `TRACK 1 ACTION`.
+- ⚠️ **The publish-the-expected-answer leak reaches PROSE fields, and a `COVERAGE:` paragraph is where it looks
+  most like reasoning.** Wave 97b's brief §2 printed my reading of what `ThreadScreenTest` does and does not
+  prove about tenant scoping and invited the coder to argue with it; `REPORT.md` returned it near-verbatim. The
+  finding is **correct** — re-read at tick 194, the test provisions one tenant, creates three conversations inside
+  `Tenancy::actingAs`, and never creates a second tenant's row, so `3 found.` holds under a scoped and an
+  unscoped query alike — but that is my verification, not evidence the coder reasoned it. Fourth recurrence of
+  the tick-171 rule, after the arithmetic (wave 74), the expected *sentence* (wave 79) and the triage **table**
+  (wave 93). **A free-text field is not a safe place to seed a reading**; hand over the file and the line and let
+  the paragraph be the coder's. ⚠️ Its mirror is worth keeping too: a report field I worded as *"quote the §7 line
+  that shows it gone"* was **unanswerable** — §7 cannot print an absence — and the complete `failures[]` array in
+  `RAW` answered it instead. Ask for the list, never for the absence.
+- ✅ **The artifact-ordering control has now held twice, and the brief sentence is what carries it.** Wave 97b:
+  `pest-raw-last.log 04:41:12.551 → w97b-gate.log 04:41:12.564 → w97b-pest-raw.log 04:41:18.434 → REPORT.md
+  04:41:53.374`, strictly increasing, `duration_ms 101206` distinct from wave 96's `204446`. Waves 88b and 95 both
+  raced with a per-wave filename in place. **Brief the ordering in words every wave — it is an instruction the
+  coder cannot infer from a filename**, and it is now the second measurement saying the filename never mattered.
+- ✅ **An unchanged TEST count with a changed assertion count is the signature of a stub being filled, and it
+  reconciles exactly.** Wave 97 replaced `test_g11_41_thread_list_sort`'s `assertTrue(true)` with `assertSee` +
+  `assertSeeInOrder`: `tests` held at 1726 across `w96` and `w97b` while `assertions` moved `6702 → 6703`, which
+  is `1 → 2` on the one method. **A stub-closing wave that reports a rising test count has added a method it did
+  not mention**; a build wave that reports a flat assertion count has not written an assertion. The subtraction is
+  free and it is the same one that catches the wave-78 deletion and the wave-90 unreached assertion.
 
 ## Style
 
