@@ -57,7 +57,11 @@ fi
 # reset/checkout/stash wiped them once, 2026-09-02 15:31).
 SNAP="/home/goaiez/tmp/sup-snap-$(basename "$PWD")-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$SNAP/.agents/supervisor" "$SNAP/.claude" "$SNAP/bin"
-cp .agents/supervisor/*.md "$SNAP/.agents/supervisor/" 2>/dev/null
+# `*` not `*.md` (2026-09-06, REV-58): the 05:28 truncation zeroed 426 mailbox
+# files and the restore recovered only the .md ones, because that is all this
+# line ever copied. The `tick*-gate.txt` logs every verdict block cites were
+# unrecoverable. Copy everything; the directory is small and text.
+cp .agents/supervisor/* "$SNAP/.agents/supervisor/" 2>/dev/null
 cp .claude/settings.json "$SNAP/.claude/"
 mkdir -p "$SNAP/.agents/state" && cp .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md "$SNAP/.agents/state/" 2>/dev/null || true 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
 echo "snapshot: $SNAP"
