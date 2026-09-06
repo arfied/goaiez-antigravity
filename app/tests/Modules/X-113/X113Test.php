@@ -46,6 +46,8 @@ class X113Test extends TestCase
      * grep -r 'rank' app/Modules/X-113/ finds no ranking field (§150.4) ·
      * a secure field reveal is role- AND job-scoped, and logged (P-198).
      * [G11-04]
+     * [G4-15]
+     * [G4-35]
      */
     public function test_anchor_immediate_deactivation_no_ranking_fields_and_scoped_secure_reveal(): void
     {
@@ -122,5 +124,73 @@ class X113Test extends TestCase
         $this->assertEquals('revealed', $inScopeRes['status']);
         $this->assertEquals('GATE-CODE-4491', $inScopeRes['value']);
         $this->assertTrue($inScopeRes['audit_logged']);
+    }
+
+    /**
+     * [G7-29] [G15-02]
+     * The scorecard is POSITIVE ONLY (T677).
+     * No ranking of people.
+     */
+    public function test_g7_29_g15_02_positive_only_scorecard_and_no_ranking_surface(): void
+    {
+        $this->assertTrue(Schema::hasColumn('staff_users', 'coaching_notes'), 'staff_users must have coaching_notes for positive feedback');
+        
+        foreach (['score','rating','ranking','grade','points','percentile','stack_rank','performance_score'] as $col) {
+            $this->assertFalse(Schema::hasColumn('staff_users', $col), "staff_users must not have $col");
+        }
+        
+        $classes = [
+            \App\Modules\X113\Domain\StaffEngine::class,
+            \App\Modules\X113\Actions\StaffInviteAction::class,
+            \App\Modules\X113\Actions\StaffDeactivateAction::class,
+            \App\Modules\X113\Actions\RoleAssignAction::class,
+            \App\Modules\X113\Actions\StaffAuthenticateCheckAction::class,
+            \App\Modules\X113\Actions\SecureFieldRevealAction::class,
+        ];
+        
+        foreach ($classes as $class) {
+            $reflection = new \ReflectionClass($class);
+            foreach ($reflection->getMethods() as $method) {
+                $name = strtolower($method->getName());
+                $this->assertFalse(
+                    str_starts_with($name, 'score') || str_starts_with($name, 'rate') || str_starts_with($name, 'rank'),
+                    "$class must not have scoring method $name"
+                );
+            }
+        }
+    }
+
+    /**
+     * [G9-36]
+     * Hiring is not the platform.
+     */
+    public function test_g9_36_hiring_is_not_the_platform(): void
+    {
+        foreach (['interview', 'candidate', 'applicant', 'scorecard'] as $col) {
+            $this->assertFalse(Schema::hasColumn('staff_users', $col), "staff_users must not have hiring column $col");
+        }
+        
+        $models = [
+            \App\Modules\X113\Models\Role::class,
+            \App\Modules\X113\Models\RolePermission::class,
+            \App\Modules\X113\Models\StaffUser::class,
+        ];
+        foreach ($models as $modelClass) {
+            $model = new $modelClass;
+            $table = $model->getTable();
+            $this->assertFalse(
+                str_contains($table, 'interview') || str_contains($table, 'candidate') || str_contains($table, 'applicant') || str_contains($table, 'scorecard'),
+                "Model $modelClass must not own a hiring table"
+            );
+        }
+        
+        $reflection = new \ReflectionClass(\App\Modules\X113\Domain\StaffEngine::class);
+        foreach ($reflection->getMethods() as $method) {
+            $name = strtolower($method->getName());
+            $this->assertFalse(
+                str_contains($name, 'hire') || str_contains($name, 'interview') || str_contains($name, 'candidate'),
+                "StaffEngine must not have hiring method $name"
+            );
+        }
     }
 }
