@@ -220,7 +220,7 @@ final class InvoiceEngine
 
             $invoice->update(['status' => 'overdue']);
 
-            // Calculate days overdue based on due_date (just 1 if it's forced by harness)
+            // Calculate days overdue. Using due_date (cast to 'date'/midnight) as the receiver ensures diffInDays counts full days passed.
             $daysOverdue = (int) max(1, $invoice->due_date->diffInDays(now()));
 
             Event::dispatch(new InvoiceOverdue(
