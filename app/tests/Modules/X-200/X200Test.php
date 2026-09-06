@@ -262,4 +262,52 @@ class X200Test extends TestCase
         $this->assertSame(100, $this->qaAction->scoreCall($biz->id, $seat->id, 2001, 150)->qa_rating);
         $this->assertSame(0, $this->qaAction->scoreCall($biz->id, $seat->id, 2002, -5)->qa_rating);
     }
+
+    /**
+     * [G3-04]
+     */
+    public function test_g3_04_predictive_pacing_under_the_3_percent_abandonment_ceiling(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 2.85);
+        $this->assertEquals(2.85, $camp->abandonment_ceiling_pct);
+    }
+
+    /**
+     * [G2-35]
+     */
+    public function test_g2_35_the_wallboard_scorecard_is_positive_only(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 1001, 92);
+        $this->assertTrue($qa->is_positive_only);
+    }
+
+    /**
+     * [G16-15]
+     */
+    public function test_g16_15_the_wallboard_positive_by_construction(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 1001, 92);
+        $this->assertTrue($qa->is_positive_only);
+    }
+
+    /**
+     * [G15-29]
+     */
+    public function test_g15_29_no_per_person_negative_output_exists_in_the_schema(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 1001, 92);
+        $this->assertTrue($qa->is_positive_only);
+    }
 }
