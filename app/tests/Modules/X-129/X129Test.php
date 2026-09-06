@@ -103,10 +103,12 @@ class X129Test extends TestCase
 
     /**
      * [N-129-01]
+     * REFUSED: "cutover reversible until DNS propagates"
+     * There is no action in X-129 to reverse a cutover.
      */
     public function test_n_129_capabilities(): void
     {
-        $this->assertTrue(true);
+        $this->markTestSkipped('REFUSED: "cutover reversible until DNS propagates" - no reverse action exists.');
     }
 
     /**
