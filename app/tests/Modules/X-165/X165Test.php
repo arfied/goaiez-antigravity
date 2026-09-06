@@ -209,8 +209,8 @@ class X165Test extends TestCase
      */
     public function test_n_066_priority_scheduling(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $scheduleResult = $this->scheduleAction->scheduleWindow(
             businessId: $biz->id,
@@ -228,15 +228,15 @@ class X165Test extends TestCase
      */
     public function test_n_068_pricing_tier(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $plan = $this->planAction->handle(
             businessId: $biz->id,
             name: 'Exact Price Plan',
             priceCents: 12345
         );
-        
+
         $this->assertEquals(12345, $plan->price_cents);
         $this->assertNotContains('discount', array_keys($plan->getAttributes()));
     }

@@ -196,8 +196,8 @@ class X129Test extends TestCase
      */
     public function test_n_062_never_404s(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        $biz = TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sourceCrawl = [
             'https://oldplumber.com/emergency-services',
@@ -224,8 +224,8 @@ class X129Test extends TestCase
      */
     public function test_n_065_redirects_move(): void
     {
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        $biz = TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $sourceCrawl = [
             'https://oldplumber.com/',
