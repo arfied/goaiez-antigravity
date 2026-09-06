@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T12:08:29",
+ "updated": "2026-09-06T12:27:22",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1838,6 +1838,12 @@
    "module": "X-117",
    "chose": "(R245) The checkout listener makes no gateway call and leaves the order pending_payment, waiting for a real token from a connected card-entry surface",
    "at": "2026-09-06T12:08:29",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) a wave that deletes a code path owns every test that asserted it: ruling 45 removed the gateway call from CaptureCheckedOutCart and CheckoutCaptureSeamTest's three tests still asserted a Payment row and a paid order, so they are inverted to assert zero gateway calls, zero payment rows and a pending_payment order rather than deleted (ruling 46, MONEY-72b)",
+   "at": "2026-09-06T12:27:22",
    "ruling": "R245"
   }
  ]
