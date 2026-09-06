@@ -360,6 +360,42 @@ Green gates are necessary, not sufficient. For every commit in
   has a **real body** and is one of the six that hit `api.openai.com` under the wave's own mutation, which no
   `assertTrue(true)` could do. Three of four. This is the `.agents/plan/` shape once more, with a *test name*
   as the unchecked path: **run the `grep` that would show the work is already done before briefing it.**
+- ⚠️ **A `--filter`ed mutation log can prove DISCRIMINATION but never a RADIUS — read the log's own `"tests"`
+  field before crediting the radius the report names.** Wave 93's `w93-mut-g19-22-count.log` reads
+  `"tests":1,"assertions":2` and settles item 0a completely: the identity assertion executed first and passed,
+  the count assertion executed second and failed on its own terms, from a file the wave never changed. But
+  `REPORT.md` said `radius 1/2`, and the sibling **never ran** — that number is the coder's word where every
+  other field was an artifact. Nothing was fabricated; the standing `MUTATION` field asks for
+  `radius <n>/<total>` and never says which run must produce it. **A field that asks for a number no prescribed
+  artifact can carry gets filled from memory every time.** Ask for the unfiltered file run whenever a radius is
+  claimed, and grade the radius against that log's `"tests"` total — this is the zero-radius tell (tick 185)
+  and the wave-87 blast-radius rule, both of which are unanswerable on a one-test log.
+  ✅ **The positive half is worth keeping: `"assertions":2` is a complete proof of a two-assertion
+  discrimination**, and it costs one subtraction. Wave 92 stopped at assertion 1 with the identity message;
+  wave 93 reached assertion 2 with the count message. Same file, same declaration line, different assertion.
+- ⚠️ **`state.py unresolved` takes a stage name and will record a wrong one without complaint — and the ledger
+  is append-only.** Wave 93 ran it twice for `G9-21` and shipped both an `integrity` row and a `capability`
+  row for the same capability id. Nothing broke (`integrity` reads `0`, and both files were named in the one
+  commit, so the wave-86 orphan trap was avoided), but neither row can be withdrawn. **Brief the stage name
+  explicitly, and have the coder read `state.py`'s echo before re-running it.**
+- ⚠️⚠️ **A triage table row that names the SHAPE of the answer is the same act as naming the answer.** My
+  wave-93 brief tabled `G9-21` as *"the one candidate for a genuinely external `UNRESOLVED`"* and got `G9-21`
+  back as an external `UNRESOLVED`. The finding is independently correct — I verified there is no seed service
+  in the tree — but that is luck, not method. This is the tick-171 lesson (*publishing an expected finding gets
+  the finding back*) on its third recurrence, and the triage table is where it hides best, because a table
+  looks like evidence rather than like a prediction. **Give the capability's text and its line; let the shape
+  be the coder's to argue.** Note that wave 93's genuinely good verdicts — the two `BUILD PROPOSAL`s — are the
+  two rows where I named no shape.
+- ⚠️⚠️ **The wave-88 rule (*never call a group one shape*) binds this column's BACKLOG measurements exactly as
+  it binds a brief's ids — and a group claim that closes a backlog will survive ticks unchecked.** Tick 181
+  recorded that all 22 `C-Agent`/`X-01` stub survivors *"have no ⑤ clause and cannot be closed by a test at
+  all"*; tick 186 repeated it and concluded the lane's test-only work was spent. **Measured per id at tick 187
+  it is wrong in both directions**: four of C-Agent's twelve (`G5-19 · G5-24 · G5-39 · G5-41`) already carry
+  `⛔ REFUSED:` lines and are closed business, none of X-01's ten carries any verdict, and two of those ten are
+  not documentation claims at all — `G2-16` (*"Rep A is typing" presence*) is unbuilt behaviour in a module
+  this lane owns, and `G11-41` (*sort order on the thread list*) **exists** at `Thread.php:72`/`:125` and
+  `CustomersList.php:47`. **A claim that there is no work left is the one claim to check per id before acting
+  on it**, because its cost is a manufactured wave or a wrongly-closed lane.
 
 Write the block, append to `REVIEWS.md`, and if `BLOCK`, put the items at the
 top of `BRIEF.md` too — the coder reads `BRIEF.md` first.
@@ -929,7 +965,17 @@ Watch for: <the trap that applies, by name>
   to itself: the docblock is the record, so the docblock must carry the distinction** — `⛔ REFUSED` for a
   pointer at something outside the checkout, and words naming the unbuilt thing and its owner for anything
   this lane owns. Nothing needs reverting when the ledger is clean; it is one line in the next brief.
-- **Backlog, measured at tick 186.** The `assertTrue(true)` pile is **25**; the 22 `C-Agent`/`X-01` survivors
+- **Backlog, re-measured per id at tick 187 — the pile is 26 and the lane is NOT spent.** Supersedes the tick
+  181/186 group claim (see the trap above). `C-Agent` 12 · `X-01` 10 · `C-Mail`/`C-Whatsapp`/`X-66`/`X-194` 1
+  each. **Closed business, never re-brief:** `X-194:277`, `X-66:91`, C-Agent's `G5-19 · G5-24 · G5-39 · G5-41`,
+  `C-Whatsapp:150` (waves 92–93) and `C-Mail:424` (wave 93, eleven verdicts). **Live:** `X-01`'s ten, none of
+  which carries a verdict — `G2-23 · G2-42 · G2-76 · G9-10 · G11-40` are header/documentation claims,
+  `G2-36` adds a pointer at `X-138` and `G11-23` an indirection through `G11-22` at `X-121` (both out of lane),
+  `G2-25` carries a console-only refusal clause, **`G2-16` is unbuilt lane-owned behaviour** (a build proposal)
+  and **`G11-41`'s sort half is the first genuinely assertable id in this pile**. Then `C-Agent`'s remaining
+  eight. **After that the lane's test-only work really is spent**, and what remains is build work with
+  proposals on record — say so to the owner rather than manufacturing a wave.
+- **Backlog, measured at tick 186 (superseded, kept for the lesson).** The `assertTrue(true)` pile is **25**; the 22 `C-Agent`/`X-01` survivors
   have no ⑤ clause (tick 181) and `X-194:277` / `X-66:91` are closed business. What is left is
   `C-Mail:424 test_header_capabilities`, eleven ids under one docblock. **Triaged per id, never as a group**
   (the wave-88 lesson): `G11-06 · G11-11 · G11-15 · G11-17 · G11-29 · G11-38` read literally
