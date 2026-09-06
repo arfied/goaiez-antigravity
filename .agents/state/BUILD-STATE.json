@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 399,
+   "violations": 393,
    "fails": "MERGE"
   },
   "anchor": {
@@ -1642,6 +1642,10 @@
   {
    "at": "2026-09-05T21:01:59",
    "note": "X-102: G21-01 was a refusal, satisfied by test test_refusal_no_scripted_attendees_social_proof, not UNRESOLVED"
+  },
+  {
+   "at": "2026-09-05T21:18:49",
+   "note": "X-102: Replaced G21-01 tautology with structural assertion of absent attendees, mutated to prove load-bearing"
   }
  ]
 }
