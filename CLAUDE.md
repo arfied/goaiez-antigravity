@@ -293,6 +293,43 @@ Green gates are necessary, not sufficient. For every commit in
 - **Doctor build stamp** in the report's raw output matches
   `BUILD-STATE.json`'s `runtime_build`. Otherwise the numbers are from an old
   checker.
+- ⚠️ **`state.py unresolved` writes TWO tracked files, and a named-path commit can ship one and orphan the
+  other.** Wave 86's `eb05df1a` named `.agents/state/JOURNAL.md` and **not** `.agents/state/BUILD-STATE.json`,
+  so `origin/track/sixty` carries a journal line claiming two X-01 `UNRESOLVED` rows that the ledger does not
+  have, and X-01's `DONE → UNRESOLVED` status flip exists **only in this working copy** — a fresh clone loses
+  both. This is the mirror of the standing *"a `JOURNAL.md` line with no matching commit is a `BLOCK`"*: the
+  line has its commit, and the **row it describes** never shipped. ⚠️ **It survived two waves and a review of
+  mine because §1's `M .agents/state/…` reads as the supervisor's own working-tree noise** — rule 10's *"the
+  supervisor edits in the working tree, uncommitted"* trains this column to skip `M` lines, and `.agents/state/`
+  is the one path under that habit that is **never mine**. Grade §1's `M` lines by path, and pair every
+  journalled `UNRESOLVED` with a committed ledger row before crediting it.
+- ⚠️ **A mutation log proves the mutation you can DISCRIMINATE from it, not the one the report names.**
+  Wave 87 mutated four tests and logged four; three logs pin the mutation exactly (`-'handoff' +'answered'`,
+  `-'general_inquiry' +'stop'`, `Requests were recorded.`). The fourth cannot: `g19_08`'s failure is the
+  **positive** `assertSee('Ghost Risk')`, and a `'F' → 'A'` logic mutation and a blade-text mutation produce
+  the *identical* failure line — PHPUnit stops at the first failure, so the new `assertDontSee` never ran
+  either way. For a boolean flag the discriminating mutation is the **unconditional** one
+  (`$this->isGhostRisk = true`), because only the negative assertion can catch it. **Ask which assertion the
+  log shows failing, not just that one did** — this is the scenery-mutation rung again, now in the *evidence*
+  rather than the mutation.
+- ✅ **The way to prove an ABSENCE assertion is not vacuous is a mutation that makes the absence present.**
+  `Http::assertNothingSent()` is the classic unfalsifiable assertion — if the module never calls out at all,
+  it cannot fail. Wave 87's `g10-13` mutation settled it: six sibling tests errored with `Attempted request to
+  [https://api.openai.com/v1/chat/completions] without a matching fake`, proving a real LLM call exists on a
+  shared path, while the target's own assertion executed and failed on its own terms (`Requests were
+  recorded.`). ⚠️ **Its blast radius of 7 is NOT the wave-81 shape** — there the database broke and the
+  assertions never ran; here the six were broken by the very call the capability forbids, and each legitimately
+  traverses that path. **Grade a wide radius by what broke the siblings**, not by its width.
+- ⚠️ **A triage's own group counts are the cheapest tell that a row was dropped.** Wave 87's report headed a
+  bullet list `**Pointers to Modules in This Lane (6):**` and printed **five** bullets, with prose reading
+  *"These five"*. The twelve survivors minus the eleven listed is `G5-39` — the one the brief had named as its
+  fifth candidate. Sum the group labels against the pile size before reading a triage as complete; it costs
+  nothing and it is the arithmetic tell applied to prose rather than to tests.
+- ⚠️ **A brief that names candidate stubs must verify each is still a stub.** Wave 87's brief listed four
+  refusal-shaped `assertTrue(true)` stubs and named `test_g10_19_price_looked_up_or_refused` first; that test
+  has a **real body** and is one of the six that hit `api.openai.com` under the wave's own mutation, which no
+  `assertTrue(true)` could do. Three of four. This is the `.agents/plan/` shape once more, with a *test name*
+  as the unchecked path: **run the `grep` that would show the work is already done before briefing it.**
 
 Write the block, append to `REVIEWS.md`, and if `BLOCK`, put the items at the
 top of `BRIEF.md` too — the coder reads `BRIEF.md` first.
@@ -665,6 +702,15 @@ Watch for: <the trap that applies, by name>
   `grep` that sizes it.** The work needs no credentials, changes no CHECK, sits wholly inside the
   thirteen, and **moves no doctor count** — say that in the brief, or the wave gets graded on a number
   that cannot move (the tick-171 lesson).
+  **Pile at tick 179: 31** (waves 86 and 87 took three each) — `C-Agent` 12 · `X-01` 10 · `X-66` 4 ·
+  `C-Whatsapp` 2 · `C-Mail`/`X-124`/`X-194` 1 each. ⚠️ **The survivors are not interchangeable, and the
+  docblock says which kind each is**: *"named in the header"* is a documentation claim and the right answer
+  is a `REFUSED` with its own words; a pointer at another module (`[G5-31] the web-chat door is X-102's`)
+  needs the routing filter run on it, since X-102/X-66/X-194/X-01 are all in the thirteen and X-135/X-197
+  are not; and a **refusal capability** (*"no LLM in the send path"*, *"STOP belongs to `ConsentService`"*)
+  is the only kind that is real work, satisfied by an absence you assert. `X-66`'s three read
+  `[G16-33] assertion placeholder` and say nothing at all — for those the only source is the ⑤ clause in
+  `app/app/Modules/X-66/capabilities.php`, and all three of them are refusal-shaped.
 - ⚠️ **A missing artifact is not evidence of fabrication when the filename is reused — check the mtime
   ordering before reaching for the wave-74 verdict.** Wave 86's `RAW` read `assertions 6687 ·
   duration_ms 93104`; the run covering the tip read `6689 · 93893`; wave 85's had been `6687 · 93731`;
