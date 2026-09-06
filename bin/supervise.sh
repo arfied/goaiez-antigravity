@@ -32,12 +32,22 @@ fail=0
 # stray in `ps`, not the wrapper. Joining kill-log on gate_pid would fail silently in
 # exactly the case this log exists to answer. Both pids cost one `$!` and neither is
 # recoverable afterwards.
+# `project` is the PROJECT, `checkout` is the working copy — this file wrote `grs-antig`
+# in both until 2026-09-06 16:4x, which split its own traffic on any group-by. The seven
+# lanes had it right from the first message; Track 1 did not. One stable label per
+# project, and it is not the directory name.
+# ⚠️ HISTORY IS MIXED. Rows before 16:4x come in two widths — the lanes wrote 7 columns
+# (no `tool_pid`) because that is the shape Track 1 sent them, and Track 1 wrote 8 after
+# the sibling project's correction without re-sending it. Nothing in a row announces its
+# own width, so **a consumer must branch on NF before touching a field**: on a 7-column
+# row `$4` is `rc`, on an 8-column row `$4` is `tool_pid`. Read `$4` as rc across the mix
+# and every Track 1 row becomes a seven-digit failure code.
 # No lock: appends under PIPE_BUF to an O_APPEND file are atomic on Linux, and a flock
 # here would interact with the pest lock for nothing.
 GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
 log_gate() {                     # log_gate <tool> <start_iso> <rc> [tool_pid]
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-    "$2" "$(date -Is)" "$$" "${4:--}" "$3" "grs-antig" "$(basename "$ROOT")" "$1" \
+    "$2" "$(date -Is)" "$$" "${4:--}" "$3" "goaiez-antigravity" "$(basename "$ROOT")" "$1" \
     >> "$GATE_LOG" 2>/dev/null || true
 }
 # Defined here, at the top, deliberately: a gate killed during sections 0-5 must
