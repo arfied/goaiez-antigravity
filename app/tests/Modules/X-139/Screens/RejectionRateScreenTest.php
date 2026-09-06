@@ -33,4 +33,48 @@ class RejectionRateScreenTest extends TestCase
 
         Livewire::test(RejectionRate::class)->assertOk();
     }
+
+    public function test_component_shows_rate_and_reasons(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
+
+        // Empty state
+        Livewire::test(RejectionRate::class, ['businessId' => $biz->id])
+            ->assertSee('Rejected Conversions: 0 (0.0% Rate)');
+
+        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
+            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+                'business_id' => $biz->id,
+                'job_id' => 101,
+                'conversion_value_cents' => 10000,
+                'gclid_or_fbc' => 'gclid_1',
+                'status' => 'uploaded',
+            ]);
+            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+                'business_id' => $biz->id,
+                'job_id' => 102,
+                'conversion_value_cents' => 10000,
+                'gclid_or_fbc' => 'gclid_2',
+                'status' => 'rejected',
+                'rejection_reason' => 'Invalid click ID',
+            ]);
+            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+                'business_id' => $biz->id,
+                'job_id' => 103,
+                'conversion_value_cents' => 10000,
+                'gclid_or_fbc' => 'gclid_3',
+                'status' => 'rejected',
+                'rejection_reason' => 'Conversion too old',
+            ]);
+        });
+
+        $this->actingAs($owner);
+        \App\Support\Tenancy::set((int) $biz->id);
+
+        Livewire::test(RejectionRate::class, ['businessId' => $biz->id])
+            ->assertSee('Rejected Conversions: 2 (66.7% Rate)')
+            ->assertSee('Invalid click ID')
+            ->assertSee('Conversion too old');
+    }
 }
