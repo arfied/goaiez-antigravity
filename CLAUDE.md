@@ -132,6 +132,41 @@ Watch for: <the trap that applies, by name>
 - **A stale doctor.** `doctor`'s first line is `goaiez doctor · build <stamp>`.
   Three identical runs once came from files that were never copied into the
   tree. Compare the stamp before trusting any count.
+  ⚠️ **The stamp is not enough — match the eight stage numbers too.** Run 84's
+  report carried the *correct* stamp `20260829-0647` and a doctor block that was
+  never a doctor run: `boundary` and `citation` reported `clean` when they are
+  `6` and `94`, both folded into a `contract 187` line, because `6 + 87 + 94 =
+  187`. The **total was right**, which is what let it survive a glance. A right
+  total over a wrong distribution is the shape. The baseline is
+  `0 · 6 · 87 · 94 · 15 · 399 · 138 · 6 = 745` and it has not moved since UI-42.
+- **An exclusion list is a CHECK, and it bends.** `Architecture/OwnerNavTest`'s
+  first draft (run 84) excused twenty-one routes with one copy-pasted sentence
+  about a "module UI" that does not exist — `OwnerNav.php:8–28` says the layout
+  is the only way to render an owner screen — and went green by excusing exactly
+  the screens UI-30, UI-36 and UI-43 built. **RULED 2026-09-06 16:5x: an
+  exclusion states a fact about the route's *kind*, never about the nav's
+  current *contents*.** *"Not in the nav"* is the finding, not the excuse.
+  Related: `#[Layout]` reflection cannot separate an owner route from an admin
+  one, because `x-110.cooling` and `x-110.cooling.admin` are the same Livewire
+  class — derive owner-ness from the `Route` (URI prefix, or `tenant.role` vs
+  `can:`+`AdminAccess::GATE`), never from the class.
+- **A gate that reports `Deadlocked / Still running tests` is usually the pest
+  lock, not a deadlock.** `supervise.sh` §7 takes `/home/goaiez/tmp/pest.lock` and
+  waits up to 40 minutes, never killing the holder; the suite of another lane can
+  hold it for that long. Run 85's report called the wait a deadlock and shipped a
+  wave with **no suite result at all**. ⛔ A lock wait is not a suite verdict and a
+  paraphrase of one is not raw output — the row it writes carries `tool_pid -`,
+  because no process was ever started, and that is how you tell it from a run.
+- **The shared gate log's `tool` column is a closed vocabulary of five** —
+  `gate | pint | phpstan | pest | doctor` (Track 1, `OWNER.md` 17:1x). Both
+  sentinels are `gate` and a consumer tells start from end by `rc`. `GATE_LOG` is
+  overridable *as a safety property*: the sibling project's pre-push test ran the
+  real hook against no-op stubs and began appending rows for tools that never ran —
+  eight columns, correct types, distinct `tool_pid`, plausible `rc`, and the only
+  tell was a `pest` row whose start and end were the same second. **A diagnostic log
+  that records its own harness is worse than no log, because the fabrications have
+  exactly the shape of the evidence.** Any test that touches the gate points
+  `GATE_LOG` at a throwaway path.
 - **`php artisan doctor` exits non-zero on any red stage by design** — CI runs
   it with `|| true` and gates only `integrity` and `journey`. A red
   `capability`/`contract`/`citation` count is the measured truth, not a
@@ -181,8 +216,65 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-43 | the six components still rendering the staff console — X-110 `Cooling`, `InstallVerify`, `Today`, `VisitorsLive`, `TagVersionPer`; X-138 `RoiDashboard` | closed, pushed `f5966661` |
 | UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
 | UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
-| **UI-46** | **`Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry or a written exclusion · the two unguarded `->diffForHumans()` calls on a nullable column** | **in flight** |
+| **UI-46** | **`Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry or a written exclusion · the two unguarded `->diffForHumans()` calls on a nullable column** | **in flight — the test is written and RED on thirteen routes; run 86 closes it** |
 | UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"* — and the ten-call-site exclusion list it needs | next |
+| UI-48 | the six screens that still render `<x-surface.sample-state>` — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard`, X-199 `invoices` · `credits` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again | after UI-47 |
+
+### ✅ RULED 2026-09-06 17:1x — the thirteen unreachable owner routes
+
+Run 85 let B1 go red on exactly thirteen, correctly, and stopped rather than
+excusing them. Their disposition is **not** one kind, and that is why it needed a
+ruling rather than a list:
+
+- **Four get a nav entry** (`GROUP_MORE`, outcome labels per `22`):
+  `x-110.abandoned-forms` *"Forms people gave up on"* · `x-110.install-verify`
+  *"Is our tag working"* · `x-138.attribution-row` *"What your pages earn"* ·
+  `x-192.memberships-list` *"Where you are listed"*. `OwnerNav::all()` goes 24 → 28.
+- **Four are full-page duplicates of a tile `account.home` already renders** —
+  `@livewire` at `home.blade.php:18,19,20,21` is `x-110.today`,
+  `x-199.money-paid-today`, `x-199.unpaid`, `x-199.declines`. Run 85 found two of the
+  four; the other two are the same fact and take the same exclusion. ⚠️ This does not
+  contradict `JOURNAL 2026-09-06T12:33:20 (R245)`: the full-page route stays, it is
+  simply not a *second* door in the nav.
+- **One is a duplicate registration** — `x192.memberships` and
+  `x-192.memberships-list` are the **same** Livewire class `X192\Ui\MembershipsList`,
+  registered twice: `X-192/routes.php` at `/memberships` under `['web','auth']`, and
+  `X-192/routes.generated.php` at `/app/x-192/memberships-list` under
+  `['web','auth','tenant.role']`. The generated one is the canonical owner door. ⛔ The
+  hand-written copy **has no `tenant.role`** and the component's query is
+  `DB::table('directory_memberships')->orderBy(…)->get()` with no tenant predicate —
+  raised to Track 1, not fixed here, because X-192 is not this lane's module.
+- **Six still render `<x-surface.sample-state>` and go in a MEASURED list** — below.
+
+### ⛔ `<x-surface.sample-state>` is unconditional, and six owner screens still render it
+
+`resources/views/components/surface/sample-state.blade.php` is **three lines with no
+condition in them**: it always prints *"Sample — this screen is planned in {module}
+and not built yet"*. 253 module views carry the tag; six of them are owner screens on
+the reachability corpus — `x-110.cooling:2`, `x-110.visitors-live:2`,
+`x-110.tag-version-per:2`, `x-138.roi-dashboard:2`, `x-199.invoices:15`,
+`x-199.credits:15`.
+
+⚠️ **Three of those six sit inside waves this file records as closed** (UI-30, UI-43,
+UI-45). Those waves closed the shell, the `<h1>` seam, the copy and the axe numbers,
+and every one of those measurements is still true — but a screen that announces *"not
+built yet"* is not a screen an owner may be sent to, and the Week-2 definition of
+proven says so in its own last line. Nothing is being reversed; the banner is UI-48's
+work, and it is not smuggled into a reachability wave.
+
+### ✅ RULED — an exclusion for an unfinished screen must be MEASURED, never written
+
+The six above cannot take a written exclusion. *"Still a sample"* is a fact about the
+screen's **state**, and a written state-fact is exactly the shape that rots: the day
+the screen is finished, the sentence is false and nothing anywhere objects — which is
+how run 84's twenty-one excuses survived. So the list is `SAMPLE_STATE`, and a **third
+test drives a real authenticated `GET` on each and asserts the banner is still there**.
+Finish the screen and that assertion reds, naming the route and telling you to move it
+into `OwnerNav`. The exclusion cannot outlive the fact it states.
+
+⛔ **Its failure is not a regression and the assertion is never deleted to quiet it.**
+A test that reds when a screen improves is the design; the comment in the file says so
+in its own words, so that nobody reads it as a broken test six weeks from now.
 
 **UI-45 and UI-46 were one row until 2026-09-06 15:1x; UI-46 and UI-47 were one row
 until 16:1x.** `OwnerNavTest` is an architecture test that fails the build, it shares

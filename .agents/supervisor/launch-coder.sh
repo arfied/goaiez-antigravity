@@ -23,6 +23,31 @@ set -euo pipefail
 CODER=agy
 MODE=launch
 
+# ── `--allow-harness` (Track 1 ruling, OWNER.md 2026-09-06 17:2x).
+#
+# `coder-bin/git` keyed the harness exemption to the checkout name `grs-antig`,
+# so the lane that OWNS a journey could not fix its own harness. It now also
+# clears on GOAIEZ_HARNESS_OK=1, which this flag sets FOR ONE RUN — exactly
+# parallel to --allow-merge on the tracks that have one. Proved in an isolated
+# repo before it shipped: gate closed → harness commit refused; gate open →
+# harness commit succeeds; gate open plus `app/app/Doctor/x.php` → still
+# refused. The seal-adjacent never-list is untouched.
+#
+# ⛔ IT OPENS THE ABILITY TO COMMIT, NOT PERMISSION TO WEAKEN. The One Rule is
+# unchanged and this is not a loophole in it:
+#   - Provisioning real state so a real code path RUNS is a fix, and is the only
+#     reason this exists — it makes a journey harder to pass, not easier.
+#   - Deleting an assertion, stubbing a transport, or making a journey pass on a
+#     constant is a BLOCK, and THE SUPERVISOR THAT OPENED THE GATE WEARS IT.
+#   - The supervisor that passes this flag QUOTES THE HARNESS DIFF in its own
+#     REVIEWS.md block. A run that used the flag with no quoted diff is not
+#     reviewable, and an unreviewable harness change is the exact shape of the
+#     fake green this repo keeps finding — `ssl_installed => true` was one line.
+#
+# Open it for the run that needs it, never as a standing flag. If the wave does
+# not touch JourneyHarness.php, dispatch without it.
+ALLOW_HARNESS=0
+
 # Owner ruling 2026-09-06 03:5x, ui item 4 ("a shorter --print-timeout / log-based
 # liveness in launch-coder.sh: yours, do it").
 #
@@ -45,6 +70,7 @@ HARD_TIMEOUT="${GOAIEZ_HARD_TIMEOUT:-2h}"
 while [ $# -gt 0 ]; do
   case "$1" in
     --status) MODE=status; shift ;;
+    --allow-harness) ALLOW_HARNESS=1; shift ;;
     --coder)
       [ $# -ge 2 ] || { echo "REFUSED: --coder needs a value (agy|claude)"; exit 1; }
       case "$2" in
@@ -52,7 +78,7 @@ while [ $# -gt 0 ]; do
         *) echo "REFUSED: --coder takes agy|claude (got '$2')"; exit 1 ;;
       esac
       shift 2 ;;
-    *) echo "REFUSED: unknown argument '$1' (only --coder agy|claude, --status)"; exit 1 ;;
+    *) echo "REFUSED: unknown argument '$1' (only --coder agy|claude, --status, --allow-harness)"; exit 1 ;;
   esac
 done
 
@@ -243,6 +269,13 @@ case "$PUSHLINE" in
 esac
 export GOAIEZ_PUSH_OK="$PUSH_OK"
 echo "push gate: GOAIEZ_PUSH_OK=$PUSH_OK  <-  ${PUSHLINE:-<no push: line in BRIEF.md>}"
+
+# The harness gate. Exported HERE, in the parent, rather than inline in the two
+# nohup branches: `nohup bash -c` inherits the environment, GOAIEZ_PUSH_OK has
+# reached the coder that way since 2026-09-04, and one export is one place to be
+# wrong. Default 0 — the flag is per-run and never standing.
+export GOAIEZ_HARNESS_OK="$ALLOW_HARNESS"
+echo "harness gate: GOAIEZ_HARNESS_OK=$ALLOW_HARNESS  <-  $([ "$ALLOW_HARNESS" = 1 ] && echo '--allow-harness (QUOTE THE HARNESS DIFF IN REVIEWS.md)' || echo 'not passed')"
 
 # One run-number sequence across BOTH coders, so a claude run can never reuse an
 # agy run's number and the REVIEWS ledger stays readable as one history.

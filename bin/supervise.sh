@@ -59,7 +59,38 @@ fail=0
 # traffic on any group-by; we had this right and keep it.
 # `tool_pid` is the join key against /home/goaiez/tmp/kill-log.tsv. `gate_pid`
 # only groups one gate run's rows together.
-GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+#
+# ⚠️ `tool` IS A CLOSED VOCABULARY OF FIVE, NOT FREE TEXT (Track 1 correction,
+# OWNER.md 2026-09-06 17:1x). Track 1 first said it was free and the shared file
+# already holds four spellings of the same thing, which splits a group-by on the
+# one column that exists to be grouped. Exactly these and nothing else:
+#
+#   gate | pint | phpstan | pest | doctor
+#
+# `gate` covers BOTH sentinels — a consumer tells start from end by `rc` (`-` on
+# the start row), never by inventing `gate-start`/`gate-end`. `supervise.sh` is
+# not a tool, it IS the gate, so it logs as `gate`. Anything narrower collapses
+# to its family: `pest-not-run` is now `pest`, and the lock-timeout row is still
+# unmistakable because it carries `tool_pid -` — no process was ever started, so
+# the join key is the tell rather than a private tool name.
+#
+# ⚠️ `GATE_LOG` IS OVERRIDABLE, AND THAT IS A SAFETY PROPERTY (same correction).
+# The sibling project's pre-push test executes the real hook against no-op stubs
+# on a rigged PATH; once the hook logged, the TEST began appending rows for tools
+# that never ran — twelve rows, eight columns, correct types, distinct tool_pid,
+# plausible rc. Every property designed into the schema was satisfied and the
+# only tell was a `pest` row whose start and end were the same second. No test in
+# this project touches the gate today, so this is prevention: any test that ever
+# exercises the gate points GATE_LOG at a throwaway path. A diagnostic log that
+# records its own harness is worse than no log, because the fabrications have
+# exactly the shape of the evidence.
+#
+# ⚠️ WHEN READING THE SHARED FILE, filter twelve fabricated rows from
+# goaiez-review-system/wt10 under gate pids
+# `1411718 1411764 1425556 1425618 1468140 1468184`, 16:49–17:00 on 2026-09-06.
+# They are not being deleted — the file is append-only and a rewrite would race
+# our own writers.
+GATE_LOG=${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}
 log_gate() {  # <start_iso> <end_iso> <gate_pid> <tool_pid> <rc> <tool>
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
     "$1" "$2" "$3" "$4" "$5" "goaiez-antigravity" "$(basename "$ROOT")" "$6" \
@@ -76,8 +107,8 @@ log_gate() {  # <start_iso> <end_iso> <gate_pid> <tool_pid> <rc> <tool>
 #      the EXIT trap fired and wrote rc=0, so the last row read clean — the
 #      honest row existed and a later, cleaner row hid it.
 GATE_START_ISO=$(date -Iseconds)
-log_gate "$GATE_START_ISO" "-" "$$" "-" "-" "supervise.sh"
-_gate_exit() { log_gate "$GATE_START_ISO" "$(date -Iseconds)" "$$" "-" "$1" "supervise.sh"; }
+log_gate "$GATE_START_ISO" "-" "$$" "-" "-" "gate"
+_gate_exit() { log_gate "$GATE_START_ISO" "$(date -Iseconds)" "$$" "-" "$1" "gate"; }
 trap '_gate_exit $?' EXIT
 trap 'trap - EXIT; _gate_exit 143; exit 143' TERM
 trap 'trap - EXIT; _gate_exit 130; exit 130' INT
@@ -344,10 +375,12 @@ if [ $want_tests -eq 1 ]; then
     flock -u 9 2>/dev/null
   fi
   pest_elapsed=$(( $(date +%s) - pest_t0 ))
-  # The shared gate log. Raw rc — a `lock-timeout` writes rc 0 above and is
-  # logged as `pest-not-run`, so it can never be counted as a suite that ran.
-  [ $lock_held -eq 0 ] && log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$pest_pid" "$rc" "pest-not-run" \
-                       || log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$pest_pid" "$rc" "pest"
+  # The shared gate log. Raw rc — a `lock-timeout` writes rc 0 above, and the row
+  # can never be counted as a suite that ran because `pest_pid` stays `-`: no
+  # process was started, so the kill-log join key is empty. That is the tell now,
+  # not a private `pest-not-run` tool name — the vocabulary is the five and
+  # anything narrower collapses to its family (Track 1, OWNER.md 17:1x).
+  log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$pest_pid" "$rc" "pest"
   out=$(cat "$pest_log")
   [ $rc -ne 0 ] && fail=1
   [ $lock_held -eq 0 ] && fail=1
