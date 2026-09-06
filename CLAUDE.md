@@ -3392,6 +3392,15 @@ Three consequences, and the third is the one that changes a rule:
   its rationale is corrected — and note it also means an *earlier* fetch is never the
   remedy anyone will be tempted to reach for.
 
+✅ **Confirmed on a live case inside the same tick, which is why it is a rule and not a
+reading of one gap.** Tick 220's closing re-read caught `origin/track/reviews` moving
+`a6d674a6 → ed294b19`; the reflog dates that commit **14:49:41** and its arrival
+**15:03:39** — 13 m 58 s — while the tick's opening fetch landed at ~15:00, *three
+minutes before it arrived*. Two independent gaps (ui 12 m, reviews 14 m) on two branches,
+one of them observed as it happened. ⛔ A tick that treats its opening table as the
+tick's truth is not making a small error: on this box the arrival lag is routinely
+longer than a tick.
+
 ⚠️ **One property recorded as UNEXERCISED, per tick 193's own law that a fallback
 asserted but never fired is not a fallback.** The reflog can see a ref that moved to a
 value and back, which the tip table structurally cannot — a returned ref is a cache HIT
