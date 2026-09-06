@@ -405,7 +405,7 @@ class X163Test extends TestCase
             'is_confirmed' => false,
         ]);
 
-        $action = app(\App\Modules\X163\Actions\PriceConfirmAction::class);
+        $action = app(PriceConfirmAction::class);
         $result = $action->handle($biz->id, $zeroItem->id);
 
         $this->assertEquals('FILL_ME', $result['refusal_code'] ?? null);
@@ -423,7 +423,7 @@ class X163Test extends TestCase
 
         $resultGood = $action->handle($biz->id, $goodItem->id);
         $this->assertArrayNotHasKey('refusal_code', $resultGood);
-        
+
         $goodItem->refresh();
         $this->assertTrue($goodItem->is_confirmed);
     }

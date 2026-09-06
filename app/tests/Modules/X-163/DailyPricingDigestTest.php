@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Modules\X163;
 
 use App\Models\User;
+use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\DailyPricingDigest;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -112,13 +114,13 @@ class DailyPricingDigestTest extends TestCase
         $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
         Tenancy::setUser($owner->id);
 
-        $event = new \App\Modules\CAgent\Events\AgentRefused(
+        $event = new AgentRefused(
             $biz->id,
             'NO_FACT',
             'I do not know the pricebook rate for a drain unblock',
             'drain unblock'
         );
-        \Illuminate\Support\Facades\Event::dispatch($event);
+        Event::dispatch($event);
 
         Livewire::actingAs($owner)
             ->test(DailyPricingDigest::class)
