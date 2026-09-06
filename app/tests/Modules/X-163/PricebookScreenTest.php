@@ -71,4 +71,22 @@ class PricebookScreenTest extends TestCase
             ->assertSee('Sample Service')
             ->assertSee('Sample');
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Pricebook Seam',
+            'price_cents' => 94225,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $this->actingAs($owner);
+        $this->get(route('x-163.pricebook'))->assertOk()->assertSee('942.25');
+    }
 }
