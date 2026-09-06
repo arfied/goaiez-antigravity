@@ -31,11 +31,21 @@ fail=0
 # the project, never the directory; `checkout` is the directory basename.
 # No lock: an append under PIPE_BUF to an O_APPEND file is atomic on Linux, and a
 # flock here would interact with the pest lock for nothing.
-GATE_RUNS=/home/goaiez/tmp/gate-runs.tsv
+# `tool` is a CLOSED vocabulary — exactly `gate | pint | phpstan | pest | doctor`
+# (Track 1, 2026-09-06 17:1x, correcting its own "free text"). The column exists to
+# be grouped on, and four spellings of the gate across the checkouts split that
+# group-by four ways. Anything narrower than the five collapses to its family:
+# a per-stage doctor run logs `doctor`, never `doctor-<stage>`. The two sentinel
+# rows are both `gate` and a consumer tells them apart by `rc`, not by a name.
+# GATE_LOG is overridable so a test that exercises this gate writes a throwaway
+# file: the sibling project's pre-push test appended twelve perfectly-shaped rows
+# for tools that never ran, and the only tell was a `pest` row whose start and end
+# were the same second. A log that records its own harness is worse than no log.
+GATE_LOG=${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}
 log_gate() {  # $1 start_iso  $2 tool_pid  $3 rc  $4 tool
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
     "$1" "$(date -Is)" "$$" "$2" "$3" goaiez-antigravity "$(basename "$ROOT")" "$4" \
-    >> "$GATE_RUNS" 2>/dev/null || true
+    >> "$GATE_LOG" 2>/dev/null || true
 }
 
 # Runs one gate tool and captures BOTH its output and the pid a killer would see.
@@ -78,8 +88,8 @@ run_tool() {  # $1 tool-name  $2.. the command
 # signal trap (otherwise the honest rc=143 row is followed by a clean rc=0 row
 # that hides it). The gate's own rows carry `-` in the tool_pid column.
 GATE_T0=$(date -Is)
-log_gate "$GATE_T0" - - supervise.sh
-_gate_exit() { log_gate "$GATE_T0" - "$1" supervise.sh; }
+log_gate "$GATE_T0" - - gate
+_gate_exit() { log_gate "$GATE_T0" - "$1" gate; }
 trap '_gate_rc=$?; _gate_exit "$_gate_rc"' EXIT
 trap 'trap - EXIT; _gate_exit 143; exit 143' TERM
 trap 'trap - EXIT; _gate_exit 130; exit 130' INT
