@@ -107,6 +107,13 @@ class X145Test extends TestCase
 
     /**
      * [N-145-01]
+     * [N-050]
+     * [N-051]
+     * [N-054]
+     * [N-057]
+     * [N-059]
+     * [N-060]
+     * [N-061]
      */
     public function test_n_145_capabilities(): void
     {
