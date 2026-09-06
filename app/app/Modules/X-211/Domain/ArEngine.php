@@ -167,15 +167,24 @@ final class ArEngine
         int $invoiceId,
         int $amountCents,
         string $method = 'check',
-        ?string $reference = null
+        ?string $reference = null,
+        ?string $photoPath = null
     ): OfflinePayment {
-        return DB::transaction(function () use ($businessId, $invoiceId, $amountCents, $method, $reference) {
+        return DB::transaction(function () use ($businessId, $invoiceId, $amountCents, $method, $reference, $photoPath) {
+            // G1-74 / N-033: a logged offline payment carries a reference or a photo, or it is refused —
+            // an unreferenced row cannot be reconciled against the deposit. The throw is before the first write.
+            if (trim((string) $reference) === '' && trim((string) $photoPath) === '') {
+                $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
+                throw new UnreferencedPaymentException("Payment for {$invoice->invoice_number} must have a reference or photo. Nothing was logged.");
+            }
+
             $payment = OfflinePayment::create([
                 'business_id' => $businessId,
                 'invoice_id' => $invoiceId,
                 'amount_cents' => $amountCents,
                 'payment_method' => $method,
                 'reference_number' => $reference,
+                'photo_path' => $photoPath,
             ]);
 
             $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);

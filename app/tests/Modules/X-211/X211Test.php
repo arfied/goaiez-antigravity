@@ -14,12 +14,16 @@ use App\Modules\X211\Actions\ArOfferPlanAction;
 use App\Modules\X211\Actions\ArPackageForCollectionsAction;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Domain\FeeWithoutTermException;
+use App\Modules\X211\Domain\NoResolutionAttemptException;
+use App\Modules\X211\Domain\PlanPastThresholdException;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Events\ArPackaged;
 use App\Modules\X211\Events\ArPlanAccepted;
+use App\Modules\X211\Models\ArCollectionsPackage;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArPlanTerm;
+use App\Modules\X211\Models\PaymentPlan;
 use App\Modules\X211\Models\ReceivableState;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Artisan;
@@ -146,12 +150,83 @@ class X211Test extends TestCase
         Event::assertDispatched(ArFeeApplied::class);
     }
 
-    /**
-     * [N-033], [G1-61], [G1-65], [G1-70], [G1-71], [G1-74] no refusal declared
-     */
-    public function test_capability_assertions(): void
+    public function test_g1_61_g1_70_plan_past_threshold_is_refused(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Threshold Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'T', 'last_name' => 'T']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-THR-01',
+            'total_cents' => 100000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(10)->toDateString(),
+        ]);
+
+        $thrown = false;
+        try {
+            $this->planAction->handle($biz->id, $invoice->id, 12, 'monthly');
+        } catch (PlanPastThresholdException $e) {
+            $thrown = true;
+            $this->assertStringContainsString('routes to a financing partner', $e->getMessage());
+        }
+
+        $this->assertTrue($thrown);
+        $this->assertSame(0, PaymentPlan::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
+    }
+
+    public function test_g1_65_package_for_collections_refused_without_resolution_attempt(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Col Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'C', 'last_name' => 'C']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-COL-01',
+            'total_cents' => 50000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(60)->toDateString(),
+        ]);
+
+        $thrown = false;
+        try {
+            $this->collectionsAction->handle($biz->id, $invoice->id);
+        } catch (NoResolutionAttemptException $e) {
+            $thrown = true;
+            $this->assertStringContainsString('Record a resolution attempt first', $e->getMessage());
+        }
+
+        $this->assertTrue($thrown);
+        $this->assertSame(0, ArCollectionsPackage::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
+    }
+
+    public function test_n_033_reason_recorded_routes_to_human_when_needed(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Human Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'H', 'last_name' => 'H']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-HUM-01',
+            'total_cents' => 20000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        $engine = app(ArEngine::class);
+        $engine->recordReason($biz->id, $invoice->id, 'complaint');
+
+        $escalated = ArDunningAction::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->where('action', 'escalate_to_human')->count();
+        $this->assertSame(1, $escalated);
     }
 
     public function test_sweep_dispatches_aroverdue_for_qualifying_invoice_and_not_when_escalated(): void

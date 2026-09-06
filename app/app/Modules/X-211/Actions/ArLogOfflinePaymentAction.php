@@ -11,8 +11,8 @@ final class ArLogOfflinePaymentAction
 {
     public function __construct(private readonly ArEngine $engine) {}
 
-    public function handle(int $businessId, int $invoiceId, int $amountCents, string $method = 'check', ?string $reference = null): OfflinePayment
+    public function handle(int $businessId, int $invoiceId, int $amountCents, string $method = 'check', ?string $reference = null, ?string $photoPath = null): OfflinePayment
     {
-        return $this->engine->logOfflinePayment($businessId, $invoiceId, $amountCents, $method, $reference);
+        return $this->engine->logOfflinePayment($businessId, $invoiceId, $amountCents, $method, $reference, $photoPath);
     }
 }

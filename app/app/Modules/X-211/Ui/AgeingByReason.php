@@ -9,6 +9,7 @@ use App\Modules\X211\Actions\ArApplyLateFeeAction;
 use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArSetLateFeeTermAction;
 use App\Modules\X211\Domain\FeeWithoutTermException;
+use App\Modules\X211\Domain\UnreferencedPaymentException;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\ReceivableState;
@@ -111,6 +112,8 @@ class AgeingByReason extends Component
             $action->handle($businessId, $invoiceId, $amount, 'check', $ref);
             $this->success = 'Payment logged.';
             unset($this->reference[$invoiceId], $this->amountCents[$invoiceId]);
+        } catch (UnreferencedPaymentException $e) {
+            $this->refused = $e->getMessage();
         } catch (ModelNotFoundException) {
             $this->error = "That invoice isn't in this account any more.";
         } catch (\Throwable $e) {
