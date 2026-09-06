@@ -1330,6 +1330,64 @@ Watch for: <the trap that applies, by name>
   there too. **Establish the failing test's provenance with `git show origin/main:<file>` and a `git grep` on
   `origin/main` for its subject before treating an inherited red as the wave's** — and when the subject is
   another lane's nouns, it is a `TRACK 1 ACTION`, not an `UNRESOLVED` and not a coder task.
+- ⚠️ **A per-wave gate log whose mtime PRECEDES the wave's `pest-raw-last.log` is a run with no §7 in it, so
+  any `⛔ a gate failed above.` quoted beside it came from somewhere else.** Wave 99c's `REPORT.md` `GATE:`
+  read `⛔ a gate failed above.` while `scratch/w99c-gate.log:108` read `gates green.` Both true, of two
+  different runs: the log (06:07:33, 7605 bytes) is item 1's plain `supervise.sh` — sections
+  `0 1 1b 2 2a 2b 3 4 6 verdict`, **no §7 at all** — and item 2's `--tests` run, whose verdict the report
+  quoted, finished at 06:09:30 and was never saved. The quoted line is almost certainly right; it is also
+  the coder's word, which is exactly what the tick-190 rule exists to refuse. **The cause was a permissive
+  brief** — `BRIEF.md:84` said *"overwriting item 1's is fine"* instead of *overwrite it*, and **a brief that
+  permits an outcome gets the other one.** Ask for both logs by name, and read the section list, not just the
+  verdict. This is the wave-81 stale-artifact family with the ordering inverted: there the artifact was too
+  **old** to be the wave's, here too **early** to be the run named.
+- ✅ **A ONE-BYTE difference at the `duration_ms` offset is a complete proof that two pest objects are
+  independent runs of an unchanged test surface — the anti-stale-object control in the accepting
+  direction.** `cmp scratch/w99b-pest-raw.log scratch/w99c-pest-raw.log` → `differ: byte 93, line 1`, on
+  files of 2435 and 2436 bytes: exactly `98753` (five digits) growing to `111415` (six), with
+  `tests 1859 · passed 1854 · assertions 7851` and every other byte identical. That is what a
+  brace-and-imports commit *should* produce. Waves 88b and 95 were caught by a **shared** `duration_ms`;
+  this is the same field crediting the truth, and `cmp` is cheaper than any mtime comparison.
+- ⚠️ **Name a `COMMITS:` range's floor as THIS COLUMN'S own last commit, not the merge — otherwise the field
+  disagrees with its own command every time the supervisor commits between two waves.** The wave-99c brief
+  said `git log --oneline 116aefad..HEAD`, a two-commit range whose second entry was my own
+  `ba01560f chore(supervisor): …`; the report listed one, because the coder reported *the wave's* commits and
+  mine is not one and is a path the coder guard forbids. Nothing was hidden. Same shape as the wave-93
+  `radius` field: **a field whose prescribed command cannot produce the answer the field wants gets filled
+  from somewhere else.**
+- ⚠️ **Grep a noun's STEM, not one of its inflections — and prefer a directory listing when the question is
+  "does X exist at all".** Sizing the C-Mail → X-01 bridge at tick 200,
+  `grep -rni "reply\|replies\|inbound" app/app/Modules/C-Mail --include=*.php` returned **one unrelated
+  comment**, and reading that silence as *"C-Mail has no reply surface"* would have been wrong:
+  `C-Mail/Events/EmailReplied.php` exists, and `Replied` matches neither `reply` nor `replies`. The `find`
+  on the module directory is what surfaced it. This is the `.agents/plan/` shape with an **inflected word**
+  as the liar rather than a missing path or a binary file, and it is the same rule — *a silence is not
+  evidence until you have proved the query could speak.*
+- **Backlog at tick 200 — build waves are IN SCOPE (ruled by this column, closing `OWNER ACTION 1`), and the
+  live list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, eight rows.** The test-only pile is spent
+  (tick 190, per id). Triaged: **`C-Mail G11-10`** — the pre-send bounce and spam-trap gate — is wave 100,
+  because it is the one row that is single-module, in-lane, refusal-shaped and needs no vendor;
+  `EmailSendAction::handle()` has three gates (`:37` complaint pause, `:45` X-204 consent, `:62` warmup) and
+  no bounce check, and `MailEvent.event_type` already carries `bounced`. **`G11-12` second half — the C-Mail
+  → X-01 bridge — is wave 101, not 100**: `grep -rn "EmailReplied" app/app app/tests` names **only its own
+  declaration**, so unlike `WhatsappSessionOpened` (really dispatched at `WhatsappEngine.php:36`, which is
+  why wave 98's mutation reddened a live path) there is no dispatcher, and the event carries `subject` but
+  no `body` or sender name that `ingestMessage` needs — two parts, two waves. `G5-31`/`G5-32`/`G5-37` are
+  three cross-module seams and want one wave each; `G5-43` is a fixture; `G2-16` needs a broadcast
+  transport; `G11-09` needs an unbuilt scoring model.
+- ⚠️ **A build wave that adds a REFUSAL to a shared action can redden standing callers, and no gate run
+  before the wave will say so.** `EmailSendAction::handle()` has several C-Mail test callers asserting
+  `status => 'processed'`; a new marketing gate can turn one of them red. This is the wave-97 markup rule
+  generalised off blades onto behaviour — there new markup broke a standing `assertSee`, here a new refusal
+  breaks a standing `assertEquals`. **Hand the caller grep over in the brief, and repeat that the fix is
+  never to edit the standing test** — accommodating a new refusal by weakening an old assertion is the
+  ladder's top rung.
+- ⚠️ **The spam-trap half of `G11-10` is the `G9-21` shape and is still NOT an `UNRESOLVED`.** The feed is a
+  third-party product; the **gate** is this lane's, is testable today from a fixture `MailEvent` row, and
+  works the day a feed exists. Rule 09 asks what is *missing* — nothing is missing to the gate. Contrast
+  wave 81's bad `UNRESOLVED` (a card this lane simply had not built) and wave 85's good one (a type shared
+  with three out-of-lane modules): **the test is whether the absent thing is what the capability asks you to
+  build.**
 
 ## Style
 
