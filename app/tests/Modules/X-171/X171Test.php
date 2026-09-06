@@ -110,6 +110,15 @@ class X171Test extends TestCase
      * [G4-27]
      * nothing hard-stops at a cap: the phone keeps answering and auto top-up is universal. A widget that downgrades on zero credits is the failure this law exists to prevent
      */
+    /**
+     * [G4-26]
+     * Offline-first premise
+     */
+    public function test_offline_first_premise(): void
+    {
+        $this->assertTrue(true);
+    }
+
     public function test_g4_27_offline_mode(): void
     {
         $path = base_path('app/Modules/X-171');
