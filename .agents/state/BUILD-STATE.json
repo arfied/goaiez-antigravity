@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T10:42:36",
+ "updated": "2026-09-06T11:07:25",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1875,6 +1875,12 @@
    "module": "X-102",
    "chose": "the assertable half of P-092 is on the answered path, not the refused one, because the refused answer is a constant string and the answered one echoes its input by value --ruling R245",
    "at": "2026-09-06T10:42:36",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "Deleted stub test and empty engine enforce methods; capability credits traced to real assertions in tests/Modules/X-137 --ruling R245",
+   "at": "2026-09-06T11:07:25",
    "ruling": "R245"
   }
  ],

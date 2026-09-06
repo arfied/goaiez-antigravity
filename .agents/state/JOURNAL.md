@@ -815,3 +815,4 @@
 - `2026-09-06T08:07:17` UNRESOLVED events X-155 - Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction
 - `2026-09-06T10:42:27` UNRESOLVED capability X-102 - no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's
 - `2026-09-06T10:42:36` (R245) X-102 — the assertable half of P-092 is on the answered path, not the refused one, because the refused answer is a constant string and the answered one echoes its input by value --ruling R245
+- `2026-09-06T11:07:25` (R245) X-137 — Deleted stub test and empty engine enforce methods; capability credits traced to real assertions in tests/Modules/X-137 --ruling R245
