@@ -128,6 +128,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-16] "Rep A is typing" presence on the shared thread
+     * BUILD PROPOSAL: G2-16 — "Rep A is typing" presence on the shared thread is unbuilt (grep for typing/presence is empty). Owner: X-01
      */
     public function test_g2_16_rep_presence(): void
     {
@@ -148,6 +149,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-23] named in the header
+     * ⛔ REFUSED: G2-23 — the capability's own text is "named in the header"; there is no clause to assert
      */
     public function test_g2_23_header(): void
     {
@@ -156,6 +158,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-25] D1: MASTER = Honest Counter for the tenant app; God-Mode/glassmorphism is console-only
+     * ⛔ REFUSED: G2-25 — the capability's own text is "D1: MASTER = Honest Counter for the tenant app; God-Mode/glassmorphism is console-only"; there is no clause to assert
      */
     public function test_g2_25_honest_counter(): void
     {
@@ -179,6 +182,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-36] named in the header; the UTM itself is X-138's
+     * ⛔ REFUSED: G2-36 — the capability's own text is "named in the header; the UTM itself is X-138's"; there is no clause to assert, and it points to X-138 which is owned outside this lane
      */
     public function test_g2_36_utm_header(): void
     {
@@ -224,6 +228,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-42] named in the header
+     * ⛔ REFUSED: G2-42 — the capability's own text is "named in the header"; there is no clause to assert
      */
     public function test_g2_42_header(): void
     {
@@ -251,6 +256,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-76] the unified inbox is the header's first line
+     * ⛔ REFUSED: G2-76 — the capability's own text is "the unified inbox is the header's first line"; there is no clause to assert
      */
     public function test_g2_76_unified_inbox_header(): void
     {
@@ -271,6 +277,7 @@ class X01Test extends TestCase
 
     /**
      * [G9-10] named in the header (moved there from X-121)
+     * ⛔ REFUSED: G9-10 — the capability's own text is "named in the header (moved there from X-121)"; there is no clause to assert
      */
     public function test_g9_10_header_transfer(): void
     {
@@ -293,6 +300,7 @@ class X01Test extends TestCase
 
     /**
      * [G11-23] = the row above; one spec
+     * ⛔ REFUSED: G11-23 — the capability's own text is "= the row above; one spec"; there is no clause to assert
      */
     public function test_g11_23_omnichannel_spec(): void
     {
@@ -301,6 +309,7 @@ class X01Test extends TestCase
 
     /**
      * [G11-40] the header's first line
+     * ⛔ REFUSED: G11-40 — the capability's own text is "the header's first line"; there is no clause to assert
      */
     public function test_g11_40_header_line(): void
     {
@@ -309,6 +318,8 @@ class X01Test extends TestCase
 
     /**
      * [G11-41] sort order on the thread list; the LTV is C-Billing's
+     * BUILD PROPOSAL: G11-41 (first half) — "sort order on the thread list" is unbuilt (none of the three orderBy's is the thread list). Owner: X-01
+     * ⛔ REFUSED: G11-41 (second half) — "the LTV is C-Billing's" points to C-Billing which is owned outside this lane
      */
     public function test_g11_41_thread_list_sort(): void
     {
