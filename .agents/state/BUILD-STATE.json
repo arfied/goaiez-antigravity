@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T09:00:15",
+ "updated": "2026-09-06T09:17:10",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1744,6 +1744,12 @@
    "module": "X-199",
    "chose": "(R245) a decline recovered on the same token is counted as recovered: if a later captured row on the same payment_token exists, the failure is marked as recovered",
    "at": "2026-09-06T09:00:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "(R245) a lane test that seeds rows against a startOfWeek()/startOfDay() filter derives its timestamps from now()->startOfWeek() and keeps the clock frozen through the render; a literal date, or a relative offset with the clock cleared before the assertion, is green in the same second and red across a boundary",
+   "at": "2026-09-06T09:17:10",
    "ruling": "R245"
   }
  ]
