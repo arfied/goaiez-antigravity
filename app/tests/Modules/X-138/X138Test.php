@@ -11,6 +11,7 @@ use App\Modules\X138\Events\JobAttributed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class X138Test extends TestCase
@@ -166,10 +167,58 @@ class X138Test extends TestCase
     }
 
     /**
-     * [G4-25], [G9-13], [G9-14], [G9-33], [G9-34], [G13-04], [G13-06], [G13-10], [G13-16], [G13-21], [G13-23], [G13-33], [G17-24]
+     * [G9-13]
      */
-    public function test_attribution_capabilities(): void
+    public function test_g9_13_attribution_is_a_query_not_a_pipeline(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Query Not Pipeline Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $touches = [
+            ['source' => 'organic_search', 'timestamp' => '2026-08-22T10:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+            ['source' => 'paid_search',    'timestamp' => '2026-08-23T11:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+        ];
+
+        Queue::fake();
+
+        $result = $this->queryAction->queryJobAttribution(
+            businessId: $biz->id,
+            jobId: 8801,
+            qualifyingTouches: $touches,
+            jobValueCents: 50000
+        );
+
+        Queue::assertNothingPushed();
+        $this->assertSame('ambiguous', $result['attribution_status']);
+    }
+
+    /**
+     * [G13-16]
+     */
+    public function test_g13_16_both_touches_stored_in_one_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Both Touches Stored Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $touches = [
+            ['source' => 'organic_search', 'timestamp' => '2026-08-22T10:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+            ['source' => 'paid_search',    'timestamp' => '2026-08-23T11:00:00Z', 'utm_campaign' => 'fall_cleaning'],
+        ];
+
+        Event::fake([AttributionAmbiguous::class]);
+
+        $result = $this->queryAction->queryJobAttribution(
+            businessId: $biz->id,
+            jobId: 8802,
+            qualifyingTouches: $touches,
+            jobValueCents: 60000
+        );
+
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $result['query_id'],
+            'touches' => json_encode($touches),
+        ]);
+
+        Event::assertDispatched(AttributionAmbiguous::class, fn ($e) => count($e->qualifyingTouches) === 2);
     }
 }
