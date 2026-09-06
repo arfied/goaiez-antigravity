@@ -41,12 +41,46 @@ fail=0
 # populations and a kill lands on whichever happens to be running.
 # ⚠️ NO LOCK, deliberately. An O_APPEND write under PIPE_BUF is atomic on Linux,
 # and a flock here would interact with the pest lock below for nothing.
+#
+# ⚠️⚠️ EIGHT COLUMNS, NOT SEVEN (Track 1 correction, OWNER.md 2026-09-06 16:5x).
+# The shape Track 1 first sent was seven-wide and had since gained a column they
+# did not re-send. Nothing in a row announces its own width, so a field-index
+# parser is silently wrong in the column that carries the whole point:
+#   7-column row: $4 is rc (0,1,2)   ·   8-column row: $4 is tool_pid (1226723)
+# Read $4 as rc and every 8-column row looks like a failure with a seven-digit
+# code; read $5 as rc and every 7-column row reads the project name. History
+# stays mixed and is NOT migrated — the log is append-only. Any consumer
+# branches on NF.
+#
+#   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
+#
+# `project` is goaiez-antigravity — the project, not the directory; `checkout` is
+# the directory basename. Track 1 wrote grs-antig in both and split their own
+# traffic on any group-by; we had this right and keep it.
+# `tool_pid` is the join key against /home/goaiez/tmp/kill-log.tsv. `gate_pid`
+# only groups one gate run's rows together.
 GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
-log_gate() {  # <start_iso> <end_iso> <pid> <rc> <tool>
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-    "$1" "$2" "$3" "$4" "goaiez-antigravity" "$(basename "$ROOT")" "$5" \
+log_gate() {  # <start_iso> <end_iso> <gate_pid> <tool_pid> <rc> <tool>
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$2" "$3" "$4" "$5" "goaiez-antigravity" "$(basename "$ROOT")" "$6" \
     >> "$GATE_LOG" 2>/dev/null || true
 }
+
+# ── The gate sentinel: one row when this script starts, one when it exits.
+#
+# Without it, a gate killed at the wrapper is indistinguishable from one that
+# never ran at all. Two defects Track 1 already paid for and we inherit fixed:
+#   1. Define it at the TOP of the script. Theirs sat down where the tools run
+#      and recorded nothing for a gate killed two seconds in.
+#   2. `trap - EXIT` goes INSIDE the signal traps. Theirs wrote rc=143 and then
+#      the EXIT trap fired and wrote rc=0, so the last row read clean — the
+#      honest row existed and a later, cleaner row hid it.
+GATE_START_ISO=$(date -Iseconds)
+log_gate "$GATE_START_ISO" "-" "$$" "-" "-" "supervise.sh"
+_gate_exit() { log_gate "$GATE_START_ISO" "$(date -Iseconds)" "$$" "-" "$1" "supervise.sh"; }
+trap '_gate_exit $?' EXIT
+trap 'trap - EXIT; _gate_exit 143; exit 143' TERM
+trap 'trap - EXIT; _gate_exit 130; exit 130' INT
 
 # ── Run one gate tool and read ITS OWN exit code.
 #
@@ -58,14 +92,27 @@ log_gate() {  # <start_iso> <end_iso> <pid> <rc> <tool>
 # failing* command, and there was none.) Track 1 found the same hole on their
 # side from the other end: a KILLED Pint prints a bare `Terminated`, which reads
 # exactly like a style red and was about to be recorded as one.
+#
+# ⚠️ `out=$(cmd)` gives a correct rc but NO PID, and tool_pid is the join key
+# against kill-log.tsv. So the tool is backgrounded into a tempfile instead.
+# The `pgrep -P` descent is not optional for anything wrapped: `timeout 1800
+# pest` makes `timeout` the job and `php ./vendor/bin/pest` the process a killer
+# actually sees in `ps` — log the wrapper's pid and the join fails silently in
+# exactly the case the log exists for.
 gate_tool() {  # <tool-name> <cmd...>
   local label="$1"; shift
-  local start end out rc
+  local start end out rc tmp jobpid tpid child
   start=$(date -Iseconds)
-  out=$("$@" 2>&1); rc=$?
+  tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!; tpid=$jobpid
+  child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)
+  [ -n "$child" ] && tpid=$child
+  wait "$jobpid"; rc=$?
+  out=$(cat "$tmp"); rm -f "$tmp"
   end=$(date -Iseconds)
   printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
-  log_gate "$start" "$end" "$$" "$rc" "$label"
+  log_gate "$start" "$end" "$$" "$tpid" "$rc" "$label"
   if [ "$rc" -eq 124 ] || [ "$rc" -gt 128 ]; then
     echo "  ⛔ $label was KILLED or timed out (rc=$rc) — this is NOT a verdict."
     echo "     Do not report it as a style or analysis failure. Re-run it."
@@ -269,6 +316,7 @@ if [ $want_tests -eq 1 ]; then
   # kill that arrived in seconds, and 7c below guessed wrong for a whole wave.
   pest_t0=$(date +%s)
   pest_start_iso=$(date -Iseconds)
+  pest_pid="-"   # stays `-` on the lock-timeout path: no process was ever started
   if [ $lock_held -eq 0 ]; then
     # ⚠️ A lock-timeout is NOT a red suite — NO TEST RAN. Never take a number
     # from a run that did not happen. The JSON below carries result
@@ -279,17 +327,27 @@ if [ $want_tests -eq 1 ]; then
     rc=0
   elif [ -n "$pest_filter" ]; then
     echo "  narrowed: --filter $pest_filter"
-    timeout -k 30 "$pest_timeout" ./vendor/bin/pest --filter "$pest_filter" > "$pest_log" 2>&1; rc=$?
+    timeout -k 30 "$pest_timeout" ./vendor/bin/pest --filter "$pest_filter" > "$pest_log" 2>&1 &
+    pest_job=$!; pest_pid=$pest_job
+    pest_child=$(pgrep -P "$pest_job" 2>/dev/null | head -1)
+    [ -n "$pest_child" ] && pest_pid=$pest_child
+    wait "$pest_job"; rc=$?
     flock -u 9 2>/dev/null
   else
-    timeout -k 30 "$pest_timeout" ./vendor/bin/pest > "$pest_log" 2>&1; rc=$?
+    timeout -k 30 "$pest_timeout" ./vendor/bin/pest > "$pest_log" 2>&1 &
+    pest_job=$!; pest_pid=$pest_job
+    # ⚠️ The descent matters most here: `timeout` is the job, `php
+    # ./vendor/bin/pest` is what a killer sees. Logging $! would join to nothing.
+    pest_child=$(pgrep -P "$pest_job" 2>/dev/null | head -1)
+    [ -n "$pest_child" ] && pest_pid=$pest_child
+    wait "$pest_job"; rc=$?
     flock -u 9 2>/dev/null
   fi
   pest_elapsed=$(( $(date +%s) - pest_t0 ))
   # The shared gate log. Raw rc — a `lock-timeout` writes rc 0 above and is
   # logged as `pest-not-run`, so it can never be counted as a suite that ran.
-  [ $lock_held -eq 0 ] && log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$rc" "pest-not-run" \
-                       || log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$rc" "pest"
+  [ $lock_held -eq 0 ] && log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$pest_pid" "$rc" "pest-not-run" \
+                       || log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$pest_pid" "$rc" "pest"
   out=$(cat "$pest_log")
   [ $rc -ne 0 ] && fail=1
   [ $lock_held -eq 0 ] && fail=1
