@@ -114,6 +114,30 @@ Watch for: <the trap that applies, by name>
   sixty lanes pinned to it at 07:1x on 2026-09-05. A `phpunit.xml` here that says
   `goaiez_antig_test` is a lane running its suite inside another track's database,
   which is the drop-the-schema shape again — restore the pin before anything else.
+- ⛔ **A nine-line PHP script walks straight around the §0 guard, and a coder wrote one.**
+  Run 86 left `app/run_pest.php` and `app/run_pest_cooling.php` in the tree: they
+  `require bootstrap/app.php`, bootstrap the console kernel, then
+  `User::factory()->create()` and `Business::provision()`. Booting outside PHPUnit reads
+  **`.env`**, never `phpunit.xml` — so those rows landed in `goaiez_antig_ui`, outside any
+  transaction, with nothing to roll them back. **§0 pins `phpunit.xml`; a script that never
+  loads `phpunit.xml` is pinned by nothing**, and the identical nine lines in `grs-antig`
+  hit production. The tell is cheap: they also red `pint`, because they sit at `app/`'s
+  root. To see one screen's HTML, write a throwaway test and `--filter` it — that loads the
+  pin and rolls back.
+- ⛔ **A suite whose schema moved underneath it is VOID, not red — and it reads like a
+  catastrophic regression.** Run 86 came back `1726 · 1696 · failed 5 · errors 25` with
+  `relation "users" does not exist`, `column "recovering_at" … does not exist`, on
+  `goaiez_antig_ui_test`, off a two-file test-only commit. `X16ScreensTest` named the
+  cause: `Deadlock detected … Process 1599936 waits for AccessExclusiveLock on relation
+  101833137 of database 39382631` — two backends in one database, one taking a **DDL**
+  lock, i.e. a second `migrate:fresh` rebuilding the schema mid-run. ⚠️ `pest.lock` exists
+  to make that impossible and the run reported *waiting on it and then running*, so either
+  the lock released with its holder live or something ran a suite without taking it
+  (a bare `vendor/bin/pest`, a `--filter` run, a pre-push hook). **Until that is known no
+  suite number from this checkout is evidence.** Check `pgrep -fa 'vendor/bin/pest'` before
+  `--tests`, paste the run's own `pest` rows from `/home/goaiez/tmp/gate-runs.tsv` after,
+  and treat a recurrence as an `UNRESOLVED` naming the process — never a number, never a
+  reason to touch a test.
 - **`JOURNEYS n/12 green` in `state.py status` is a hand mark**
   (`state.py journey Jn green`), not a test result. All twelve were marked
   green on 2026-08-29/30 before any harness that could pass existed, and the
@@ -216,9 +240,9 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-43 | the six components still rendering the staff console — X-110 `Cooling`, `InstallVerify`, `Today`, `VisitorsLive`, `TagVersionPer`; X-138 `RoiDashboard` | closed, pushed `f5966661` |
 | UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
 | UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
-| **UI-46** | **`Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry or a written exclusion · the two unguarded `->diffForHumans()` calls on a nullable column** | **in flight — the test is written and RED on thirteen routes; run 86 closes it** |
+| **UI-46** | **`Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column** | **in flight — run 86 landed the dispositions and `OwnerNav` 24→28, but shipped a VOID suite (concurrent DDL on `goaiez_antig_ui_test`) as `wave closed`; run 87 closes it** |
 | UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"* — and the ten-call-site exclusion list it needs | next |
-| UI-48 | the six screens that still render `<x-surface.sample-state>` — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard`, X-199 `invoices` · `credits` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again | after UI-47 |
+| UI-48 | the **four** screens that still render `<x-surface.sample-state>` unconditionally — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again. **Plus the dead `$isSample` in X-199** — a `#[Locked] public bool = false` with no writer in `Invoices.php` and `Credits.php`, and the unreachable `@elseif($isSample)` at `invoices.blade.php:15` / `credits.blade.php:15`. It is SYSTEM, it is this lane's module, and it is what made the 17:2x six-screen list wrong | after UI-47 |
 
 ### ✅ RULED 2026-09-06 17:1x — the thirteen unreachable owner routes
 
@@ -244,18 +268,36 @@ ruling rather than a list:
   hand-written copy **has no `tenant.role`** and the component's query is
   `DB::table('directory_memberships')->orderBy(…)->get()` with no tenant predicate —
   raised to Track 1, not fixed here, because X-192 is not this lane's module.
-- **Six still render `<x-surface.sample-state>` and go in a MEASURED list** — below.
+- **Four still render `<x-surface.sample-state>` unconditionally and go in a MEASURED
+  list** — below. ⚠️ **It was six until 2026-09-06 18:0x**; the correction is there.
 
-### ⛔ `<x-surface.sample-state>` is unconditional, and six owner screens still render it
+### ⛔ `<x-surface.sample-state>` is unconditional — but two of its six call sites are not
 
 `resources/views/components/surface/sample-state.blade.php` is **three lines with no
 condition in them**: it always prints *"Sample — this screen is planned in {module}
-and not built yet"*. 253 module views carry the tag; six of them are owner screens on
-the reachability corpus — `x-110.cooling:2`, `x-110.visitors-live:2`,
-`x-110.tag-version-per:2`, `x-138.roi-dashboard:2`, `x-199.invoices:15`,
-`x-199.credits:15`.
+and not built yet"*. 253 module views carry the tag.
 
-⚠️ **Three of those six sit inside waves this file records as closed** (UI-30, UI-43,
+⚠️⚠️ **CORRECTED 2026-09-06 18:0x, by the test itself on its first run.** The 17:2x
+block put six owner screens in `SAMPLE_STATE` off a `grep -n`. **The component is
+unconditional; two of the call sites are not.** `x-110.cooling:2`,
+`x-110.visitors-live:2`, `x-110.tag-version-per:2` and `x-138.roi-dashboard:2` sit at
+the top of the root `<div>`, outside every conditional — **those four are the list**.
+`x-199.invoices:15` and `x-199.credits:15` sit inside
+`@if($loadError) … @elseif($isSample) … @else <real data> @endif`, and `$isSample` is a
+`#[Locked] public bool = false` that **nothing in either module ever writes**
+(`Invoices.php:20`; `mount()` sets only `businessId`, `render()` passes only
+`totalCents` and `invoices`). The branch is unreachable, so the banner can never render
+on a real `GET` and the assertion was false by construction. Both are real screens with
+a real `Invoice::where(…)` query, a skeleton, an error panel and an empty state: **they
+took nav entries** — *"Invoices you sent"* and *"Credit you've extended"*, `GROUP_MORE`
+— and `OwnerNav::all()` went 28 → 30.
+
+⚠️ **The trap, and it is the 16:1x trap from the other side: a grep finds the tag, not
+the branch it sits in.** Six hits looked like six identical facts and were two different
+ones. Before a route joins a list whose membership is a fact about *rendering*, open the
+call site and read what guards it.
+
+⚠️ **Two of the four sit inside waves this file records as closed** (UI-30, UI-43,
 UI-45). Those waves closed the shell, the `<h1>` seam, the copy and the axe numbers,
 and every one of those measurements is still true — but a screen that announces *"not
 built yet"* is not a screen an owner may be sent to, and the Week-2 definition of
@@ -264,13 +306,20 @@ work, and it is not smuggled into a reachability wave.
 
 ### ✅ RULED — an exclusion for an unfinished screen must be MEASURED, never written
 
-The six above cannot take a written exclusion. *"Still a sample"* is a fact about the
+The four above cannot take a written exclusion. *"Still a sample"* is a fact about the
 screen's **state**, and a written state-fact is exactly the shape that rots: the day
 the screen is finished, the sentence is false and nothing anywhere objects — which is
 how run 84's twenty-one excuses survived. So the list is `SAMPLE_STATE`, and a **third
 test drives a real authenticated `GET` on each and asserts the banner is still there**.
 Finish the screen and that assertion reds, naming the route and telling you to move it
 into `OwnerNav`. The exclusion cannot outlive the fact it states.
+
+✅ **It proved itself on its first run**, and against its author: run 86 reddened it on
+`x-199.invoices`, which is how the supervisor's own six-screen list was found to be
+wrong. ⛔ **The list is declared once** — a `sampleStateRoutes()` function called by both
+tests, never two copies of the array. Two copies and the reachability test goes on
+excusing a screen the state test has already released, which is the same rot arriving
+by duplication.
 
 ⛔ **Its failure is not a regression and the assertion is never deleted to quiet it.**
 A test that reds when a screen improves is the design; the comment in the file says so
