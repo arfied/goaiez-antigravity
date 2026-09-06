@@ -1133,6 +1133,42 @@ Watch for: <the trap that applies, by name>
   the per-id close done as arithmetic instead of as a 234-line read, and it is the cheap form of the tick-187
   rule (*a claim that there is no work left is the one claim to check*). **It does not replace the per-id
   sweep on the tick that first closes a pile; it is what re-confirms the close on every tick after.**
+- ⚠️⚠️ **The mid-wave-death trap has a THIRD branch, and the two written above would both have been wrong.**
+  The standing rule reads *"clean tree + quota line ⇒ stillborn, re-dispatch verbatim; dirty tree ⇒ rewrite the
+  brief around what survived."* Run 74 (wave 97) died on `Error: timeout waiting for response` / `AGY_EXIT=1` —
+  **no quota line**, so the `--coder claude` chain is not triggered — with a **clean tree** (`?? REPORT.md`
+  alone, so no mutation stranded in `app/**`) and **three commits on the tip**, plus a mutation log, made in the
+  four minutes before it died. Re-dispatching verbatim on the clean-tree branch would have briefed work already
+  committed, which is the wave-87 shape. **So: clean tree + commits on the tip ⇒ grade what landed and brief
+  only the remainder.** The discriminator is `git log origin/track/sixty..HEAD` against the dispatch time, and
+  it is one command. ⭐ The corollary that costs the most if missed: **a coder that dies before its gate has
+  never run the suite, so the supervisor must run it** — every number in such a review is this column's own, and
+  `bin/supervise.sh --tests` is the only way to get one.
+- ⚠️⚠️ **A build wave that changes RENDERED MARKUP can break an existing screen test that asserts on the old
+  markup, and no gate the coder skipped will say so.** Wave 97 replaced
+  `thread.blade.php`'s `Select a conversation. {{ $conversations->count() }} found.` with a `<ul>` of rows —
+  correct, briefed, and it broke `app/tests/Modules/X-01/ThreadScreenTest.php:85`, a **real `GET` on the route
+  asserting `assertOk()` then `assertSee('3 found.')`**. That is precisely the real-GET screen test this file
+  requires of every `/admin` screen, and it is the kind of test a `Livewire::test()`-shaped wave never thinks
+  about. Nothing was hidden and no assertion was weakened — the coder left it standing and broke it, then died
+  before the gate. **Two rules. (i) Before briefing any wave that changes a blade, `grep app/tests` for the
+  literal strings that blade renders and hand the list over** — here
+  `grep -rn "found\.\|Select a conversation\|No conversations recorded" app/tests --include=*.php` returns
+  exactly one row, which is a measurement worth thirty seconds. **(ii) When new markup collides with a standing
+  assertion, restore the old text alongside the new — never edit the test.** Editing a real-GET check to
+  accommodate new markup is weakening a check to fit a regression, and it is the ladder's shape one level up
+  from the assertion: there the test was scenery from birth, here a load-bearing test is *made* into scenery to
+  keep a wave green.
+- ✅ **A failure message that embeds the module's own OUTPUT pins the mutation SITE — the one thing the tick-185
+  rule says a log can never do.** That rule requires the site in `REPORT.md` because the mutation is reverted
+  before the log is read, so a test-body mutation and a live-path one produce identical failure lines. Wave 97
+  had no report at all and the site was still provable: `w97-mut-m1.log`'s `assertSeeInOrder` message contains
+  the **rendered HTML**, listing the subjects `A · C · B` — `updated_at` **ascending**, which is the module's
+  output under a `desc → asc` flip. A mutation made in the test body (reordering the expected array) would have
+  left the render at `B · C · A`. **So when the assertion under mutation is a render or output assertion, its
+  own failure message discriminates the site**, and the disclosed field is belt-and-braces rather than the only
+  evidence. It does not generalise to assertions that print only an expected/actual scalar — ask first whether
+  the message carries the module's output or just the test's expectation.
 
 ## Style
 
