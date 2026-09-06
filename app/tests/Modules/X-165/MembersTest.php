@@ -131,4 +131,30 @@ class MembersTest extends TestCase
         $membership->refresh();
         $this->assertNotNull($membership->renewal_reminder_sent_at);
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $plan = MembershipPlan::create([
+            'business_id' => $biz->id,
+            'name' => 'Gold Plan 444.44',
+            'price_cents' => 19900,
+            'billing_interval_months' => 12,
+            'renewal_reminder_days' => 7,
+        ]);
+
+        Membership::create([
+            'business_id' => $biz->id,
+            'plan_id' => $plan->id,
+            'person_id' => 1,
+            'status' => 'active',
+            'starts_at' => now(),
+            'renews_at' => now()->addMonths(12),
+        ]);
+
+        $this->actingAs($owner)->get(route('x-165.members'))->assertOk()->assertSee('444.44');
+    }
 }

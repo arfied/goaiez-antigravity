@@ -7,6 +7,7 @@ The build state machine.  This is what makes the loop autonomous.
     python3 bin/state.py start   <id>
     python3 bin/state.py done    <id>
     python3 bin/state.py unresolved <id> <stage> <why...>   # MISSING DEPENDENCY only
+    python3 bin/state.py resolve <id> <stage> --reason <why...>  # withdraw one of those
     python3 bin/state.py decided <id> <what you chose...>   # an R245 design decision
     python3 bin/state.py journey <J1..J12> green|red
     python3 bin/state.py note    <text...>
@@ -165,6 +166,41 @@ def main(argv):
         rec = {"module": mid, "stage": stage, "why": why, "at": now()}
         s["modules"][mid]["unresolved"].append(rec); s["unresolved"].append(rec)
         journal(f"UNRESOLVED {stage} {mid} - {why}")
+    elif c == "resolve":
+        # Withdraws ONE unresolved record and says why.  It never marks work done:
+        # UNRESOLVED is TERMINAL, so a module whose last blocker goes returns to
+        # BUILDING and `next` surfaces it again; `done` stays the coder's after a gate.
+        if "--reason" not in a or len(a) < 4:
+            print("resolve <id> <stage> --reason <why...>  "
+                  "(a withdrawal without a reason is not a record)"); sys.exit(1)
+        i = a.index("--reason")
+        mid, stage, why = a[0], a[1], " ".join(a[i + 1:]).strip()
+        if not why:
+            print("resolve needs a reason after --reason"); sys.exit(1)
+        if mid not in s["modules"]:
+            print(f"{mid} is not on the roster"); sys.exit(1)
+        hit = [r for r in s["modules"][mid]["unresolved"] if r["stage"] == stage]
+        if not hit:
+            print(f"no UNRESOLVED {stage} on {mid}"); sys.exit(1)
+        if len(hit) > 1:
+            print(f"{len(hit)} UNRESOLVED {stage} records on {mid} — a stage does "
+                  f"not name one of them; withdrawing would take both. Say which "
+                  f"in REVIEWS and fix the duplicate first"); sys.exit(1)
+        was = hit[0]["why"]
+        s["modules"][mid]["unresolved"] = [
+            r for r in s["modules"][mid]["unresolved"] if r["stage"] != stage]
+        s["unresolved"] = [r for r in s["unresolved"]
+                           if not (r["module"] == mid and r["stage"] == stage)]
+        s.setdefault("resolved", []).append(
+            {"module": mid, "stage": stage, "was": was, "why": why, "at": now()})
+        journal(f"RESOLVED {stage} {mid} - {why} (was: {was})")
+        left = len(s["modules"][mid]["unresolved"])
+        if left:
+            print(f"withdrew {stage} on {mid}; {left} UNRESOLVED left, status unchanged")
+        else:
+            _set(mid, "BUILDING", s)
+            print(f"withdrew the last UNRESOLVED on {mid}; status -> BUILDING "
+                  f"(actionable again; `done` is still yours after a gate)")
     elif c == "decided":
         mid, what = a[0], " ".join(a[1:])
         if mid not in s["modules"]:

@@ -115,14 +115,6 @@ class X108Test extends TestCase
     }
 
     /**
-     * [G1-12] tokens only (P-160), the iframe boundary asserted
-     */
-    public function test_g1_12_token_iframe_boundary(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G2-04] Google/Outlook calendars; the header already owns Calendly/Eventbrite sync
      */
     public function test_g2_04_calendar_sync(): void

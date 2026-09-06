@@ -106,4 +106,22 @@ class ConfirmationScreenTest extends TestCase
             ->test(ConfirmationScreen::class)
             ->assertSee('callout fee: set');
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirmation Seam',
+            'price_cents' => 62375,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $this->actingAs($owner);
+        $this->get(route('x-163.confirmation-screen'))->assertOk()->assertSee('623.75');
+    }
 }

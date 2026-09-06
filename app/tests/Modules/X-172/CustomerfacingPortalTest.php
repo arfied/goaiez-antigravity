@@ -21,6 +21,35 @@ class CustomerfacingPortalTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Test Tech Job 369.99',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $token = 'valid_job_tok_'.uniqid();
+        PortalLink::create([
+            'business_id' => $biz->id,
+            'resource_type' => 'job',
+            'resource_id' => $jobId,
+            'token' => $token,
+            'expires_at' => now()->addHours(24),
+            'is_active' => true,
+        ]);
+
+        $owner = User::find($biz->owner_user_id);
+
+        $response = $this->actingAs($owner)->get(route('x-172.customerfacing-portal', ['token' => $token]));
+        $response->assertOk()
+            ->assertSee('369.99');
+    }
+
     public function test_valid_job_link_renders_title_and_live_eta(): void
     {
         $biz = TestCase::provisionTenant(['owner_user_id' => User::factory()->create()->id]);
