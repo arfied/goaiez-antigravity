@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X199\Domain;
 
 use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Models\InvoiceLine;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -27,7 +28,7 @@ final class InvoiceReader
 
     public function linesForInvoice(int $businessId, int $invoiceId): array
     {
-        return \App\Modules\X199\Models\InvoiceLine::where('business_id', $businessId)
+        return InvoiceLine::where('business_id', $businessId)
             ->where('invoice_id', $invoiceId)
             ->orderBy('id')
             ->get(['description', 'quantity', 'subtotal_cents'])
