@@ -31,9 +31,12 @@ final class DisputeDefenseEngine
         return $dispute;
     }
 
-    public function getExposure(int $businessId): float
+    /**
+     * No delivery or fulfilment store exists in this lane, so money-taken-vs-work-delivered has no second term.
+     */
+    public function getExposure(int $businessId): ?float
     {
-        return (float) ($businessId * 100.0);
+        return null;
     }
 
     /**
