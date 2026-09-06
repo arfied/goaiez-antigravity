@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Modules\X117;
 
-use App\Modules\X117\Models\Order;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
