@@ -125,10 +125,14 @@ class StafffacingAssistantPanelTest extends TestCase
         Event::fake([AssistantSuggested::class, UpsellPrompted::class, PriceRefusalFlagged::class]);
 
         Livewire::actingAs($user)->test(StafffacingAssistantPanel::class)
-            ->set('question', 'Random Thing Not In DB')
+            ->set('question', 'How much for a Random Thing Not In DB')
             ->call('ask')
-            ->assertSee('Not in the pricebook. Nothing to quote.')
-            ->assertSee('Answered');
+            ->assertSee('I\'d need to confirm that price')
+            ->assertSee('Needs a price');
+
+        $this->assertEquals(1, FieldSuggestion::where('business_id', $biz->id)->count());
+        $suggestion = FieldSuggestion::where('business_id', $biz->id)->first();
+        $this->assertTrue((bool) $suggestion->is_unconfirmed_price);
     }
 
     public function test_ask_again(): void
