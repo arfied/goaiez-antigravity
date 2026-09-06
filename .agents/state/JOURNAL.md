@@ -916,3 +916,20 @@
 - `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G21-02 — fuzzy-merged tickets, one Person one Conversation — no merge path, and tenant_tickets carries no person_id or conversation_id
 - `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G21-14 — the help card offered before the ticket is submitted — a UI surface; resources/views and app/Livewire belong to Track 2 (ruling 5)
 - `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G15-28 — the ⑤ names a doctor assertion (doctor asserts no pay field); satisfying it would change a CHECK, which is the One Rule, and the module has no roles or pay column to assert over
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-47 - InventoryEngine::restoreStockFromCancellation() has no idempotency guard: no refund id, no restock ledger, no key on any of the four tables.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G1-64 - purchase_orders has no received, remaining or receipt column, and no receipt path.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G1-76 - purchase_orders has no received, remaining or receipt column, and no receipt path.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G1-79 - purchase_orders has no received, remaining or receipt column, and no receipt path.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-46 - doctor asserts NO autonomous ordering path, which is a CHECK.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-49 - no serial column on stock_items.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-51 - no transfer path and no transfer table.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-43 - no kit or component table.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-40 - no dead-stock report.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-39 - nothing reconciles at job completion.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G2-24 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-08 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G17-15 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-18 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-22 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G6-24 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.
+- `2026-09-06T09:57:27` UNRESOLVED capability X-167 - G19-02 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T09:22:09",
+ "updated": "2026-09-06T09:57:27",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1054,10 +1054,113 @@
    "unresolved": []
   },
   "X-167": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-47 - InventoryEngine::restoreStockFromCancellation() has no idempotency guard: no refund id, no restock ledger, no key on any of the four tables.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-64 - purchase_orders has no received, remaining or receipt column, and no receipt path.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-76 - purchase_orders has no received, remaining or receipt column, and no receipt path.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-79 - purchase_orders has no received, remaining or receipt column, and no receipt path.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-46 - doctor asserts NO autonomous ordering path, which is a CHECK.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-49 - no serial column on stock_items.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-51 - no transfer path and no transfer table.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-43 - no kit or component table.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-40 - no dead-stock report.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-39 - nothing reconciles at job completion.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G2-24 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-08 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G17-15 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-18 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-22 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G6-24 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+     "at": "2026-09-06T09:57:27"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G19-02 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+     "at": "2026-09-06T09:57:27"
+    }
+   ]
   },
   "X-168": {
    "status": "DONE",
@@ -1931,6 +2034,108 @@
    "stage": "capability",
    "why": "G15-28 \u2014 the \u2464 names a doctor assertion (doctor asserts no pay field); satisfying it would change a CHECK, which is the One Rule, and the module has no roles or pay column to assert over",
    "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-47 - InventoryEngine::restoreStockFromCancellation() has no idempotency guard: no refund id, no restock ledger, no key on any of the four tables.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G1-64 - purchase_orders has no received, remaining or receipt column, and no receipt path.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G1-76 - purchase_orders has no received, remaining or receipt column, and no receipt path.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G1-79 - purchase_orders has no received, remaining or receipt column, and no receipt path.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-46 - doctor asserts NO autonomous ordering path, which is a CHECK.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-49 - no serial column on stock_items.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-51 - no transfer path and no transfer table.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-43 - no kit or component table.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-40 - no dead-stock report.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-39 - nothing reconciles at job completion.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G2-24 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-08 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G17-15 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-18 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-22 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G6-24 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+   "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G19-02 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
+   "at": "2026-09-06T09:57:27"
   }
  ],
  "decisions": [
