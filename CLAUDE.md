@@ -866,3 +866,50 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `refunded`/`chargeback`): C-Billing `Domain/` is Track 1's by ruling 5, so
     that wave's first move may not be money's work at all, while X-211's `Domain/`
     is wholly this lane's.
+45. **A string this app mints for itself is never handed to the provider as the
+    customer's payment instrument (RULED by the lane supervisor 2026-09-06
+    12:0x, briefed as MONEY-72).** `X-117/Ui/CheckoutBlock.php:45`'s
+    `authorise()` sets `$this->authToken = 'auth_'.Str::random(20)` and tells the
+    customer *"Authorised at HH:MM:SS — this authorisation pays once."* That
+    string is persisted on `orders.auth_token` (`CheckoutEngine.php:211`),
+    carried by `Events\CartCheckedOut`, and
+    `X-198/Listeners/CaptureCheckedOutCart.php:23` passes it as
+    `GatewayEngine::capture()`'s **`$paymentToken`**, which
+    `GatewayEngine.php:95` forwards to `StripeGatewayClient::charge()` and
+    `:24` posts to `https://api.stripe.com/v1/charges` as **`source`**. Stripe's
+    `source` is a token *it* issues from the customer's card; `auth_<random20>`
+    is not one and never can be. So the lane's storefront cannot take money, and
+    says the opposite to the person paying. **The token has two roles and only
+    one is a fiction:** the **nonce** role is real and has a real reader — `:66`,
+    `:155` and `:163` refuse an empty/`expired_` token and refuse an
+    `auth_token` an order already used, which is a genuine one-shot
+    double-charge guard — so it **stays**, unchanged. The **payment-instrument**
+    role is the fabrication, and it stops at the listener. With no tokenisation
+    surface in this lane the honest outcome is ruling 21's finished waiting
+    state: the listener makes **no gateway call**, the order stays
+    `pending_payment`, and `UNRESOLVED` names the real missing dependency — a
+    browser-side Stripe Elements/publishable-key card-entry door, which is
+    X-120 CardVault's and which ruling 20 already parks behind a contract.
+    ⛔ Not resolved by minting a better-shaped fake (`tok_`-prefixed is worse —
+    it would reach Stripe looking legitimate), and not by hand-writing a card
+    form: PAN entry is P-196's and the kit is Track 2's (ruling 21).
+    ⚠️ **Why four green tests never saw it:** `CheckoutBlockScreenTest` connects
+    **no** `MerchantConnection`, so `CaptureCheckedOutCart:16` returns early and
+    the gateway branch of checkout is never entered — `:57` asserts
+    `'Pending — order ORD-'` and passes for the wrong reason. That is ruling 41
+    part 2 again (a double that never has the real thing's shape), one level up:
+    here the *fixture* omits the connection, so the call is not merely stubbed,
+    it is skipped. The test that proves the fix therefore **connects a merchant**
+    and asserts the client's **call count is zero**.
+    ⚠️ **Correction to the 11:5x addendum's fact 16.**
+    `storage/app/evidence/X-117/checkout.json`'s `order_status: paid` does **not**
+    evidence the current path. `EvidenceCheckoutCommand.php:50` captures directly
+    with Stripe's own `tok_visa` under idempotency `idem_x117_<time>`, and `:52`
+    separately runs `checkoutCart(…, 'auth_x117_<time>')` under
+    `x117-order-<id>`; the two share no payment (`capture()` dedupes on
+    `idempotency_key` alone, `:78`), so the real `ch_3UCN2eFXLB0i1zXl1I413pEA`
+    and the order's status are **unrelated facts printed as one flow**. The
+    artifact is also dated `2026-09-05T17:06`, before the listener split
+    (`2026_09_06_000001_…`), so it predates the code it is quoted as proving. It
+    is not evidence of the checkout path and is not to be cited as such; making
+    the command honest is MONEY-73, not this wave.
