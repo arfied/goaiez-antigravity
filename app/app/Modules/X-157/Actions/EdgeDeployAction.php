@@ -102,6 +102,9 @@ final class EdgeDeployAction
             $videos = [];
             $events = [];
 
+            $business = \App\Models\Business::find($businessId);
+            $address = is_array($business?->address) ? $business->address : null;
+
             $appointments = Appointment::where('business_id', $businessId)
                 ->where('start_time', '>=', now())
                 ->get();
@@ -188,7 +191,8 @@ final class EdgeDeployAction
                     $commitId,
                     $zone->domain_name,
                     videos: $videos ?: null,
-                    events: $events ?: null
+                    events: $events ?: null,
+                    address: $address ?: null
                 );
 
                 if (isset($schemaResult['json_ld'])) {

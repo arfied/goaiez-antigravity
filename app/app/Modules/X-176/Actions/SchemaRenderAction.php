@@ -23,7 +23,8 @@ final class SchemaRenderAction
         ?string $entityType = null,
         ?array $productOffers = null,
         ?array $videos = null,
-        ?array $events = null
+        ?array $events = null,
+        ?array $address = null
     ): array {
         if ($entityType === null) {
             $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
@@ -86,6 +87,26 @@ final class SchemaRenderAction
                 'startDate' => $e['startDate'] ?? null,
                 'endDate' => $e['endDate'] ?? null,
             ], $events);
+        }
+
+        if (! empty($address)) {
+            // LocalBusiness address schema (TEST ANCHOR, G8-22)
+            $jsonLd['address'] = [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $address['line1'] ?? null,
+                'addressLocality' => $address['city'] ?? null,
+                'addressRegion' => $address['region'] ?? null,
+                'postalCode' => $address['postal_code'] ?? null,
+                'addressCountry' => $address['country'] ?? null,
+            ];
+
+            if (isset($address['lat'], $address['lng'])) {
+                $jsonLd['geo'] = [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => $address['lat'],
+                    'longitude' => $address['lng'],
+                ];
+            }
         }
 
         $isValid = $this->validateSchema($jsonLd);
@@ -178,6 +199,36 @@ final class SchemaRenderAction
                     if (! isset($item[$k]) || ! is_string($item[$k]) || $item[$k] === '') {
                         return false;
                     }
+                }
+            }
+        }
+
+        if (isset($schema['address'])) {
+            $addr = $schema['address'];
+            if (! is_array($addr)) {
+                return false;
+            }
+            if (($addr['@type'] ?? '') !== 'PostalAddress') {
+                return false;
+            }
+            foreach (['streetAddress', 'addressLocality', 'addressRegion', 'postalCode', 'addressCountry'] as $k) {
+                if (! isset($addr[$k]) || ! is_string($addr[$k]) || $addr[$k] === '') {
+                    return false;
+                }
+            }
+        }
+
+        if (isset($schema['geo'])) {
+            $geo = $schema['geo'];
+            if (! is_array($geo)) {
+                return false;
+            }
+            if (($geo['@type'] ?? '') !== 'GeoCoordinates') {
+                return false;
+            }
+            foreach (['latitude', 'longitude'] as $k) {
+                if (! isset($geo[$k]) || ! is_numeric($geo[$k])) {
+                    return false;
                 }
             }
         }
