@@ -135,4 +135,102 @@ class DeclinesScreenTest extends TestCase
 
         Carbon::setTestNow();
     }
+
+    public function test_decline_deferral_persists_across_remounts(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 15000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_1',
+            'idempotency_key' => 'idemp1',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->assertSee('150.00')
+            ->call('settleUpLater', $payment->id)
+            ->assertDontSee('150.00');
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->assertDontSee('150.00');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_deferred_decline_shown_under_toggle_show_all(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 20000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_2',
+            'idempotency_key' => 'idemp2',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        \App\Modules\X199\Models\DeclineDeferral::create([
+            'business_id' => $biz->id,
+            'payment_id' => $payment->id,
+        ]);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->assertDontSee('200.00')
+            ->call('toggleShowAll')
+            ->assertSee('200.00')
+            ->assertSee('Deferred');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_deferring_another_accounts_payment_is_refused(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz1 = self::provisionTenant();
+        $owner1 = User::findOrFail($biz1->owner_user_id);
+
+        $biz2 = self::provisionTenant();
+
+        Tenancy::set($biz2->id);
+        $payment = Payment::create([
+            'business_id' => $biz2->id,
+            'amount_cents' => 30000,
+            'currency' => 'USD',
+            'payment_token' => 'tok_3',
+            'idempotency_key' => 'idemp3',
+            'status' => 'failed',
+            'created_at' => $base,
+        ]);
+
+        Tenancy::set($biz1->id);
+        Tenancy::setUser($owner1->id);
+
+        Livewire::actingAs($owner1)->test(Declines::class)
+            ->call('settleUpLater', $payment->id)
+            ->assertSee("isn't in this account");
+
+        $this->assertEquals(0, \App\Modules\X199\Models\DeclineDeferral::count());
+
+        Carbon::setTestNow();
+    }
 }

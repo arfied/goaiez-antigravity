@@ -6,6 +6,8 @@ namespace App\Modules\X199\Ui;
 
 use App\Modules\X198\Actions\PaymentLinkAction;
 use App\Modules\X198\Models\Payment;
+use App\Modules\X199\Actions\DeferDeclineAction;
+use App\Modules\X199\Models\DeclineDeferral;
 use App\Support\Tenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Component;
@@ -13,8 +15,6 @@ use Livewire\Component;
 class Declines extends Component
 {
     public bool $showAll = false;
-
-    public array $hiddenRows = [];
 
     public array $payLinks = [];
 
@@ -34,9 +34,14 @@ class Declines extends Component
         }
     }
 
-    public function settleUpLater(int $paymentId): void
+    public function settleUpLater(int $paymentId, DeferDeclineAction $action): void
     {
-        $this->hiddenRows[] = $paymentId;
+        $this->error = null;
+        try {
+            $action->handle(Tenancy::idOrFail(), $paymentId);
+        } catch (ModelNotFoundException) {
+            $this->error = "That attempt isn't in this account any more — reload the list.";
+        }
     }
 
     public function toggleShowAll(): void
@@ -50,11 +55,14 @@ class Declines extends Component
 
         $query = Payment::where('business_id', Tenancy::id())
             ->where('status', 'failed')
-            ->whereNotIn('id', $this->hiddenRows)
             ->orderByDesc('created_at');
 
         if (! $this->showAll) {
             $query->where('created_at', '>=', now()->startOfWeek());
+            
+            $deferredPaymentIds = DeclineDeferral::where('business_id', Tenancy::id())
+                ->pluck('payment_id');
+            $query->whereNotIn('id', $deferredPaymentIds);
         }
 
         $declines = $query->get();
@@ -72,6 +80,10 @@ class Declines extends Component
             if ($recovered) {
                 $recoveredCounts++;
             }
+            
+            $decline->deferred = DeclineDeferral::where('business_id', Tenancy::id())
+                ->where('payment_id', $decline->id)
+                ->exists();
         }
 
         return view('x-199::declines', [
