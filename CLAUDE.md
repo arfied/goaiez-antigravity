@@ -642,3 +642,23 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     HEAD -- app/` alongside §6 every time**: empty means §6's verdict is the
     sha's. The fix is one file — `./vendor/bin/pint <that path>`, never the tree,
     since another lane's file is not this lane's to reformat.
+35. **Workflow state belongs to the module whose screen owns the workflow, never
+    as a column on another module's table, and never as Livewire component state
+    (RULED by the lane supervisor 2026-09-06 09:3x, briefed as MONEY-65).**
+    `Declines.php:17`'s `public array $hiddenRows` made "Settle up later" a
+    per-mount dismissal: the row returns on the next page load and no test saw it,
+    because the existing test never remounts. **A button that says the owner dealt
+    with something writes a row.** That row is X-199's own `decline_deferrals`
+    (`business_id`, `payment_id`, unique per pair, `tenant_isolation` RLS as
+    `2026_08_30_000026_create_x199_invoice_tables.php:71-83` writes it) — **not** a
+    `deferred_at` column on `payments`, whose vocabulary is the gateway's alone
+    (ruling 32) and which X-199 may read but not annotate. The deferral **hides,
+    it never deletes**: the row stays reachable under `toggleShowAll()`, because
+    declined money must never vanish from the screen that exists to chase it.
+    ⚠️ Two corollaries for any future in-component filter: **a test that asserts a
+    hide inside one component instance proves nothing** — assert a fresh
+    `Livewire::test` mount; and **an action that becomes a durable write needs the
+    tenancy check the array push never needed**
+    (`Payment::where('business_id', Tenancy::idOrFail())->findOrFail(...)`, the
+    shape `sendPayLink` uses at `:27-31`). No event is minted for a deferral —
+    nothing consumes it and the frozen plan declares none (rulings 29, 32).
