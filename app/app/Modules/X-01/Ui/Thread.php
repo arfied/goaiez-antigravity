@@ -111,7 +111,10 @@ class Thread extends Component
         }
 
         $conversations = ($this->businessId > 0 || Tenancy::check())
-            ? Conversation::where('business_id', Tenancy::idOrFail())->get()
+            ? Conversation::where('business_id', Tenancy::idOrFail())
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->get()
             : collect();
 
         $messages = collect();

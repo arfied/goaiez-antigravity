@@ -319,12 +319,45 @@ class X01Test extends TestCase
 
     /**
      * [G11-41] sort order on the thread list; the LTV is C-Billing's
-     * BUILD PROPOSAL: G11-41 (first half) — "sort order on the thread list" is unbuilt (none of the three orderBy's is the thread list). Owner: X-01
      * ⛔ REFUSED: G11-41 (second half) — "the LTV is C-Billing's" points to C-Billing which is owned outside this lane
      */
     public function test_g11_41_thread_list_sort(): void
     {
-        $this->assertTrue(true);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Sort Biz']);
+        
+        $conv1 = Conversation::factory()->create([
+            'business_id' => $biz->id,
+            'subject' => 'Subject A - inserted first, oldest update',
+            'created_at' => now()->subDays(5),
+            'updated_at' => now()->subDays(5),
+        ]);
+        
+        $conv2 = Conversation::factory()->create([
+            'business_id' => $biz->id,
+            'subject' => 'Subject B - inserted second, newest update',
+            'created_at' => now()->subDays(3),
+            'updated_at' => now()->subDays(1),
+        ]);
+        
+        $conv3 = Conversation::factory()->create([
+            'business_id' => $biz->id,
+            'subject' => 'Subject C - inserted third, middle update',
+            'created_at' => now()->subDays(2),
+            'updated_at' => now()->subDays(3),
+        ]);
+        
+        $response = Livewire::actingAs($admin)->test(Thread::class);
+        
+        // 1. It renders. One conversation's subject is on the page.
+        $response->assertSee($conv1->subject);
+        
+        // 2. It is ordered. assertSeeInOrder over three subjects, newest activity first.
+        $response->assertSeeInOrder([
+            $conv2->subject,
+            $conv3->subject,
+            $conv1->subject,
+        ]);
     }
 
     /**
