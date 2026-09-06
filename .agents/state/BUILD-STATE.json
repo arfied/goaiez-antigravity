@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T20:13:16",
+ "updated": "2026-09-05T21:01:59",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -500,7 +500,14 @@
    "status": "DONE",
    "wave": 12,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-102",
+     "stage": "capability",
+     "why": "G21-01: no scripted attendees logic in app/app/Modules/X-102/Actions/ChatStartAction.php:1-33",
+     "at": "2026-09-05T20:42:20"
+    }
+   ]
   },
   "X-103": {
    "status": "DONE",
@@ -1469,6 +1476,12 @@
    "stage": "capability",
    "why": "G13-19: no pool allocation logic found in CallAttributeAction.php. G13-24: no static offline campaign logic found in X-137/Domain",
    "at": "2026-09-05T20:13:16"
+  },
+  {
+   "module": "X-102",
+   "stage": "capability",
+   "why": "G21-01: no scripted attendees logic in app/app/Modules/X-102/Actions/ChatStartAction.php:1-33",
+   "at": "2026-09-05T20:42:20"
   }
  ],
  "decisions": [
@@ -1625,6 +1638,10 @@
   {
    "at": "2026-09-05T17:35:30",
    "note": "correction to 2026-09-05T17:12:44 note: ConsentService.php:65 is the state-validity refusal branch, not the tenant-scoped suppression check (which is at :34) nor the grant (which is at :91). SendRequestedListener.php:33 is 'sms', not 'transactional'; the 'transactional' value is resolved earlier into $consentState which is passed at :34."
+  },
+  {
+   "at": "2026-09-05T21:01:59",
+   "note": "X-102: G21-01 was a refusal, satisfied by test test_refusal_no_scripted_attendees_social_proof, not UNRESOLVED"
   }
  ]
 }

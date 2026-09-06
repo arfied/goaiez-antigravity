@@ -815,3 +815,6 @@
 - `2026-09-05T19:32:25` UNRESOLVED capability X-186 - G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)
 - `2026-09-05T19:48:47` UNRESOLVED capability C-Mail - G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.
 - `2026-09-05T20:13:16` UNRESOLVED capability X-137 - G13-19: no pool allocation logic found in CallAttributeAction.php. G13-24: no static offline campaign logic found in X-137/Domain
+- `2026-09-05T20:42:20` UNRESOLVED capability X-102 - G21-01: no scripted attendees logic in app/app/Modules/X-102/Actions/ChatStartAction.php:1-33
+- `2026-09-05T21:01:59` note: X-102: G21-01 was a refusal, satisfied by test test_refusal_no_scripted_attendees_social_proof, not UNRESOLVED
+- `2026-09-05T21:01:59` X-102 -> DONE
