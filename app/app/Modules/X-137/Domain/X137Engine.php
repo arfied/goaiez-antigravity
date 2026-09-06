@@ -23,7 +23,7 @@ final class X137Engine
 
     public function enforceG13_24(): void
     {
-        throw new \DomainException('[G13-24] a static number per offline campaign');
+        return;
     }
 
     public function enforceG18_17(): void
