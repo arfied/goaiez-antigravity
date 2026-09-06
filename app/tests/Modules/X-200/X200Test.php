@@ -17,6 +17,7 @@ use App\Modules\X200\Models\CallDisposition;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
 use Tests\TestCase;
 
@@ -271,43 +272,47 @@ class X200Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 2.85);
-        $this->assertEquals(2.85, $camp->abandonment_ceiling_pct);
+        $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 3.00);
+        $this->assertEquals(3.00, $camp->abandonment_ceiling_pct);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->startAction->startCampaign($biz->id, 'Illegal Hyper-Dialing', 3.01);
     }
 
     /**
+     * Achievement layer has no rank or penalty columns.
      * [G2-35]
+     * [G2-26]
+     * [G2-37]
      */
     public function test_g2_35_the_wallboard_scorecard_is_positive_only(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
-        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 1001, 92);
-        $this->assertTrue($qa->is_positive_only);
+        foreach (['rank', 'ranking', 'position', 'penalty', 'demerit'] as $col) {
+            $this->assertFalse(Schema::hasColumn('qa_scorecards', $col), "qa_scorecards must not have $col");
+        }
     }
 
     /**
+     * Wallboard layer has no per-person tile/rank columns.
      * [G16-15]
+     * [G9-38]
+     * [G13-02]
      */
     public function test_g16_15_the_wallboard_positive_by_construction(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
-        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 1001, 92);
-        $this->assertTrue($qa->is_positive_only);
+        foreach (['rank', 'ranking', 'leaderboard_rank', 'position', 'penalty', 'demerit'] as $col) {
+            $this->assertFalse(Schema::hasColumn('dialer_seats', $col), "dialer_seats must not have $col");
+        }
     }
 
     /**
+     * No per-person negative output exists in the schema.
      * [G15-29]
      */
     public function test_g15_29_no_per_person_negative_output_exists_in_the_schema(): void
     {
-        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
-        $qa = $this->qaAction->scoreCall($biz->id, $seat->id, 1001, 92);
-        $this->assertTrue($qa->is_positive_only);
+        foreach (['rank', 'ranking', 'leaderboard_rank', 'position', 'penalty', 'demerit'] as $col) {
+            $this->assertFalse(Schema::hasColumn('qa_scorecards', $col), "qa_scorecards must not have $col");
+        }
     }
 }
