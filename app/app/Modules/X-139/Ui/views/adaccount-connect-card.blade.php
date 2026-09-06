@@ -1,8 +1,8 @@
 <div>
     <div class="adaccount-connect-view p-4">
-        <h3 class="text-lg font-bold">Ad Platform Connections</h3>
+        <h2 class="text-lg font-bold">Ad Platform Connections</h2>
         @if($connections->isEmpty())
-            <p class="text-gray-500">No ad accounts connected.</p>
+            <p class="text-ink-2">No ad accounts connected.</p>
         @else
             <ul>
                 @foreach($connections as $c)
