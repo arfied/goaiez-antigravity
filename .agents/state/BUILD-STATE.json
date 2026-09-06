@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T12:48:15",
+ "updated": "2026-09-06T13:14:42",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1525,6 +1525,10 @@
   {
    "at": "2026-09-06T12:08:29",
    "note": "X-117 MONEY-72: a real card-entry surface is UNRESOLVED \u2014 waiting on Track 2's kit to provide a browser-side Stripe Elements / publishable-key card-entry door (X-120 CardVault's, parked behind a contract by ruling 20)."
+  },
+  {
+   "at": "2026-09-06T13:14:47",
+   "note": "X-117 MONEY-74: X-117's runtime proof is UNRESOLVED - a vendor-issued artifact id requires a browser-side Stripe Elements / publishable-key card-entry surface (X-120 CardVault's, parked behind a contract by ruling 20). Ruling 32 group (2), vendor-gated."
   }
  ],
  "decisions": [
@@ -1850,6 +1854,12 @@
    "module": "X-117",
    "chose": "(R245) the X-117 checkout artifact evidences the checkout alone: the direct tok_visa capture is removed because a real charge id beside an order it did not pay for is a fabricated flow, and X-198's EvidenceChargeCommand plus GatewayEngineTest.php:12-13 already own that proof (ruling 48, MONEY-73)",
    "at": "2026-09-06T12:48:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "(R245) a wave that deletes an artifact key owns every reader of it: ruling 48 removed gateway_charge_id from evidence/X-117/checkout.json but RuntimeProofCommand read it at :32 and :96, and the derived runtime-proof.json still certified X-117's doctor anchor with ch_3UCN2eFXLB0i1zXl1I413pEA - a charge id from a direct tok_visa capture that touched no cart and no order. After ruling 45 the checkout reaches no vendor, so there is no artifact id to capture: the command refuses and names the dependency, the stale proof is deleted, and X-117's anchor is honestly no runtime proof (ruling 49, MONEY-74)",
+   "at": "2026-09-06T13:14:42",
    "ruling": "R245"
   }
  ]
