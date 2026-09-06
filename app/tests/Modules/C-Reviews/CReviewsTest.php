@@ -361,6 +361,31 @@ class CReviewsTest extends TestCase
     }
 
     /**
+     * [G20-11] the SLA on a triage ticket is derived from QaSetting.sla_hours, not a constant
+     */
+    public function test_g20_11_sla_due_at_honours_the_qa_setting(): void
+    {
+        $biz24 = TestCase::provisionTenant(['name' => 'Biz 24', 'currency' => 'USD']);
+        QaSetting::create(['business_id' => $biz24->id, 'sla_hours' => 24]);
+
+        $req24 = $this->syncAction->handle($biz24->id, 'google', 3, 'Bad 24');
+        $this->replyAction->handle($biz24->id, $req24->id, 'Sorry');
+        $this->ticketAction->handle($biz24->id, $req24->id);
+
+        $ticket24 = QaTicket::where('review_request_id', $req24->id)->first();
+        $this->assertEqualsWithDelta(now()->addHours(24)->timestamp, $ticket24->sla_due_at->timestamp, 10);
+
+        $biz48 = TestCase::provisionTenant(['name' => 'Biz 48', 'currency' => 'USD']);
+
+        $req48 = $this->syncAction->handle($biz48->id, 'google', 3, 'Bad 48');
+        $this->replyAction->handle($biz48->id, $req48->id, 'Sorry');
+        $this->ticketAction->handle($biz48->id, $req48->id);
+
+        $ticket48 = QaTicket::where('review_request_id', $req48->id)->first();
+        $this->assertEqualsWithDelta(now()->addHours(48)->timestamp, $ticket48->sla_due_at->timestamp, 10);
+    }
+
+    /**
      * [G20-13] CADENCE_WINDOW_ACTIVE (test_g20_13_marketing_send_window)
      * [G20-13] named in the header; the send is Marketing class and waits for the window
      */
