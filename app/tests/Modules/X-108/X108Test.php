@@ -340,7 +340,7 @@ class X108Test extends TestCase
 
     /**
      * [G15-08] out-of-office is named in the header; X-10 skips an unavailable assignee
-     * ⛔ REFUSED: the first clause ("out-of-office is named in the header") is already asserted by sibling test_g2_13_out_of_office. The second clause explicitly belongs to X-10.
+     * ⛔ REFUSED: X-108's Ui/ holds Calendar.php, Waitlist.php and views and no header component of any kind, so no test in this module can assert a header naming; the sibling covers the out-of-office seam itself. The first clause ("out-of-office is named in the header") is already asserted by sibling test_g2_13_out_of_office. The second clause explicitly belongs to X-10.
      */
     public function test_g15_08_skip_unavailable_assignee(): void
     {
