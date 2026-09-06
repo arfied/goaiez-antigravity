@@ -16,41 +16,18 @@ use Livewire\Attributes\Layout;
  * Architecture/OwnerNavTest ADMITS"
  * (Quoted from pixel-install.blade.php:128–131 and widget-install.blade.php:88–91)
  */
-const EXCLUSIONS = [
-    'account.data-export.download' => 'This is a file download route, not an interactive screen.',
-    'account.inbound-media.show' => 'This is a media endpoint returning images or audio, not a rendered HTML screen.',
-    'account.suspended' => 'This is an interruption screen shown when the account is suspended, not a navigable screen in the normal state.',
-    'account.voicemail.recording' => 'This is a media endpoint returning an audio file, not an HTML screen.',
-    'account.content-topics' => 'This is an internal sub-screen for content topics, not a standalone top-level screen.',
-
-    'x-110.visitors-live' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-110.today' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-110.cooling' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-110.abandoned-forms' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-110.install-verify' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-110.tag-version-per' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-
-    'x-110.visitors-live.admin' => 'This is an admin view for the module screen, not an owner screen.',
-    'x-110.today.admin' => 'This is an admin view for the module screen, not an owner screen.',
-    'x-110.cooling.admin' => 'This is an admin view for the module screen, not an owner screen.',
-    'x-110.abandoned-forms.admin' => 'This is an admin view for the module screen, not an owner screen.',
-    'x-110.install-verify.admin' => 'This is an admin view for the module screen, not an owner screen.',
-    'x-110.tag-version-per.admin' => 'This is an admin view for the module screen, not an owner screen.',
-
-    'x-199.money-paid-today' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-199.unpaid' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-199.declines' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-199.invoices' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-199.credits' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-
-    'x-138.attribution-row' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x-138.roi-dashboard' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-
-    'x-192.memberships-list' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-    'x192.memberships' => 'This is a module-specific detail screen, reached via the module UI rather than top-level navigation.',
-];
-
 test('every owner screen route has nav or exclusion', function () {
+    $exclusions = [
+        'account.data-export.download' => 'This is a file download route, not an interactive screen.',
+        'account.inbound-media.show' => 'This is a media endpoint returning images or audio, not a rendered HTML screen.',
+        'account.suspended' => 'This is an interruption screen shown when the account is suspended, not a navigable screen in the normal state.',
+        'account.voicemail.recording' => 'This is a media endpoint returning an audio file, not an HTML screen.',
+        'account.content-topics' => 'This is an internal sub-screen for content topics, not a standalone top-level screen.',
+
+        'x-110.today' => 'This is embedded via @livewire in resources/views/livewire/account/home.blade.php:18.',
+        'x-199.unpaid' => 'This is embedded via @livewire in resources/views/livewire/account/home.blade.php:20.',
+    ];
+
     $navRoutes = collect(OwnerNav::all())->pluck('route')->all();
     $alsoCurrentFor = [];
     foreach (OwnerNav::all() as $item) {
@@ -77,7 +54,12 @@ test('every owner screen route has nav or exclusion', function () {
                 $attributes = $reflection->getAttributes(Layout::class);
                 foreach ($attributes as $attribute) {
                     if (($attribute->getArguments()[0] ?? '') === 'components.account.layout') {
-                        $rendersLayout = true;
+                        // Decide owner-ness from the Route rather than the class,
+                        // so admin routes sharing the same Livewire class are excluded.
+                        // We check the route's middleware for the admin gate.
+                        if (! in_array('can:access-admin', $route->gatherMiddleware())) {
+                            $rendersLayout = true;
+                        }
                         break;
                     }
                 }
@@ -92,7 +74,7 @@ test('every owner screen route has nav or exclusion', function () {
     $ownerRoutes = array_unique($ownerRoutes);
 
     foreach ($ownerRoutes as $route) {
-        expect(in_array($route, $navRoutes, true) || array_key_exists($route, EXCLUSIONS))
+        expect(in_array($route, $navRoutes, true) || array_key_exists($route, $exclusions))
             ->toBeTrue("Owner screen route '{$route}' must either be in OwnerNav or EXCLUSIONS.");
     }
 });
