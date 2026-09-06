@@ -10,6 +10,7 @@ use App\Modules\CBilling\Actions\LedgerExplainAction;
 use App\Modules\CBilling\Actions\LedgerGrantAction;
 use App\Modules\CBilling\Actions\TopupChargeAction;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
+use App\Modules\CBilling\Events\LedgerPeriodClosed;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\TrialLimit;
 use Illuminate\Database\QueryException;
@@ -93,7 +94,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-01] & [G1-56] X-198's MOCK gateway is asserted unreachable from a live tenant (G1-34)
-     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no gateway implementation or MOCK configuration.
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway implementation or MOCK configuration.
      */
     public function test_g1_01_mock_gateway_unreachable(): void
     {
@@ -102,7 +103,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-10] an unreconciled cent RAISES, asserted by injecting a one-cent difference
-     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no reconciliation process or mismatch detection.
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no reconciliation process or mismatch detection.
      */
     public function test_g1_10_unreconciled_cent_raises(): void
     {
@@ -163,7 +164,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-33], [G1-42], [G1-49], [G1-59], [G4-39] exponential backoff with a hard attempt ceiling
-     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no retry mechanism or exponential backoff logic.
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no retry mechanism or exponential backoff logic.
      */
     public function test_g1_33_exponential_backoff(): void
     {
@@ -171,12 +172,25 @@ class CBillingTest extends TestCase
     }
 
     /**
-     * [G1-52], [G1-78], [G1-83] no refusal declared
-     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no gateway integration, Notice Before Charge, or credit block logic.
+     * [G1-78], [G1-83] no refusal declared
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway integration, Notice Before Charge, or credit block logic.
+     *
+     * [G1-52] the ledger is the source; the gateway receives period totals, never per-event usage
      */
-    public function test_g1_52_assertions(): void
+    public function test_g1_52_ledger_is_source(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Ledger Source Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $grant = $this->grantAction->handle($biz->id, 5000, 'grant_1', 'Grant $0.50');
+        $this->assertEquals(5000, $grant->balance_after_hundredths_cents);
+
+        $debit = $this->debitAction->handle($biz->id, 1000, 'debit_1', 'Debit $0.10');
+        $this->assertEquals(4000, $debit->balance_after_hundredths_cents);
+
+        $event = new LedgerPeriodClosed($biz->id, 4000, '2026-09-30');
+        $this->assertEquals(4000, $event->closingBalanceHundredthsCents);
+        $this->assertObjectNotHasProperty('events', $event, 'Gateway receives period totals, never per-event usage');
     }
 
     /**
