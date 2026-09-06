@@ -290,6 +290,24 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   that as unobservable; it is not). `pgrep -a` works but dumps whole KICKOFF
   cmdlines — ~30 KB — so use bare `pgrep agy` for pids. A pid whose `cwd` is this
   checkout and that `launch-coder.sh` did not start is a BLOCK, as above.
+
+  ⛔ **An unreadable cwd is resolved by a second `pgrep`, never by `ps`** (tick
+  176). `readlink /proc/<pid>/cwd` exiting 1 leaves the check inconclusive on
+  that pid, and the two commands that would attribute it are **both refused
+  here**: `ps -o user= -p <pid>` (even that narrow form) returns *"This command
+  requires approval"*, and `stat -c %U /proc/<pid>` is blocked by the
+  working-directory guard. The accepted disambiguation is to re-run `pgrep agy`:
+
+  - the pid **vanishes** → it was the ALIVE→dead race, it exited between the
+    `pgrep` that listed it and the `readlink` that probed it;
+  - the pid **persists and stays unreadable** → another uid's, and it cannot be
+    a one-writer BLOCK regardless: a process with `cwd` in this checkout would
+    be `goaiez`'s and its cwd readable, which is exactly what makes the sibling
+    checkouts legible in the table above.
+
+  Measured at tick 176: four pids, one unreadable (`358881`); a second `pgrep`
+  seconds later printed two, and it was gone. Same race as the launcher's
+  `--status` ALIVE→dead, one layer up in the supervisor's own check.
 - **A HOLD tick checks four things, not three.** The three documented re-openers
   (an owner answer, a Track 1 merge of a sealed-file fix, a regeneration that
   moves a count) all watch `main`. The fourth watches the *other tracks*: is a
@@ -357,7 +375,12 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   its own supervisor notes. A moved tip is not a column violation; the fourteen
   module paths plus the two shared directories are exactly what separates a
   notes commit from a code commit. Never open or re-escalate an OWNER ACTION off
-  a tip that moved.
+  a tip that moved. Confirmed against a **live** writer at tick 176: four tips
+  moved in 25 minutes and `track/sixty`'s coder was still running mid-tick, yet
+  all three halves stayed silent — its commits were another column's tests
+  (`c42b4f0e`: C-Agent, C-Whatsapp) and its own supervisor notes. `git show
+  --stat <tip>` on each moved tip is the cheap positive check that pairs with
+  the census's silence; do both, and neither alone.
 
   ⛔ **The census has a THIRD half: this track's only mergeable content**
   (tick 170). Ticks 152/164 widened the census from module code, to code plus
