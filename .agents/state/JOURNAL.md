@@ -850,3 +850,4 @@
 - `2026-09-06T08:20:35` (R245) X-01 — Registered EmailReplyInboundListener to ingest C-Mail EmailReplied events into the X-01 unified inbox, mapping the event sender and body to ingestMessage parameters.
 - `2026-09-06T08:51:38` (R245) C-Mail — recomputing complaint_rate on complained and bounced events because those are the types EmailHaltSeedAction counts to derive the rate and enforce the R17 seeds
 - `2026-09-06T11:10:05` (R245) C-Agent — the takeover latch store is X-01's, but the consultation wire is C-Agent's
+- `2026-09-06T11:56:21` (R245) X-01 — throws TakeoverNotLatchedRefused to match replyWithTakeover and signify error
