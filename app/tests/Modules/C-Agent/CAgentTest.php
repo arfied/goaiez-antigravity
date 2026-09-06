@@ -180,7 +180,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
-     * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt (grep for takeover is empty). Owner: C-Agent
+     * ⛔ REFUSED: G5-37 — the takeover latch is X-01's (R21)
      */
     public function test_g5_37_takeover_latch(): void
     {
