@@ -263,6 +263,7 @@ class CReviewsTest extends TestCase
 
     /**
      * [G20-06] named in the header
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
      */
     public function test_g20_06_header(): void
     {
@@ -318,6 +319,7 @@ class CReviewsTest extends TestCase
 
     /**
      * [G20-09] the owner's original ask, now the header
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
      */
     public function test_g20_09_header(): void
     {
@@ -326,6 +328,7 @@ class CReviewsTest extends TestCase
 
     /**
      * [G20-11] P-110 supersedes T89/R45 gate as the MECHANISM: every request triaged
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
      */
     public function test_g20_11_triage_mechanism(): void
     {
@@ -334,6 +337,7 @@ class CReviewsTest extends TestCase
 
     /**
      * [G20-12] = Review Gating; one spec, under P-110
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
      */
     public function test_g20_12_review_gating_spec(): void
     {
@@ -452,6 +456,7 @@ class CReviewsTest extends TestCase
 
     /**
      * [G1-68] assertion placeholder
+     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no Google review removal preparation or human confirmation logic.
      */
     public function test_g1_68_assertion(): void
     {
