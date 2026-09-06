@@ -827,3 +827,4 @@
 - `2026-09-05T21:02:33` stage anchor = 138
 - `2026-09-05T21:02:33` stage journey = 6
 - `2026-09-05T21:18:49` note: X-102: Replaced G21-01 tautology with structural assertion of absent attendees, mutated to prove load-bearing
+- `2026-09-05T21:20:14` UNRESOLVED capability C-Mail - G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.
