@@ -20,7 +20,7 @@ class AccountingTest extends TestCase
      */
     public function test_capabilities_are_enforced_for_accounting()
     {
-        $engine = new AccountingSyncEngine();
+        $engine = new AccountingSyncEngine;
 
         $lowResult = $engine->inferCategory('Desc', 0.62, 'Unknown Guess');
         $this->assertSame('uncategorised', $lowResult['assigned_category'], 'never to a guessed code');
