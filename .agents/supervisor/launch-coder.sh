@@ -6,6 +6,7 @@
 #   bash .agents/supervisor/launch-coder.sh                 # auto-numbers the run
 #   bash .agents/supervisor/launch-coder.sh --check         # liveness only, no launch
 #   bash .agents/supervisor/launch-coder.sh --coder claude   # quota fallback
+#   bash .agents/supervisor/launch-coder.sh --allow-merge    # opens GOAIEZ_MERGE_OK
 #
 # Refuses to start if a coder is already running (never two in one tree).
 #
@@ -19,6 +20,13 @@ cd "$(dirname "$0")/../.." || exit 1
 
 PIDFILE=".agents/supervisor/coder.pid"
 CODER="agy"
+# Merge gate. `coder-bin/git:51` refuses merge|pull|cherry-pick|revert unless
+# GOAIEZ_MERGE_OK=1, and says in as many words that only launch-coder.sh may open
+# it. This launcher never exported it, so six raisings of "OWNER ACTION 9(b)" were
+# spent on a door that has been unlocked since 2026-09-05 13:27 (Track 1, OWNER.md
+# 12:2x). Default CLOSED, per dispatch, by hand of tick — never read from BRIEF.md,
+# which is rewritten every tick (the door ruling 26 closed on the push gate).
+ALLOW_MERGE=0
 
 # --check: report liveness and exit without launching anything. Used by the
 # unattended supervisor tick, whose allowlist has no ps/pgrep/kill.
@@ -34,15 +42,18 @@ fi
 # --coder agy|claude. Anything else is refused rather than defaulted: a typo that
 # silently launched the wrong coder would be indistinguishable from a deliberate
 # fallback in the log, and ruling 30 requires the choice to be recorded.
-if [ "${1:-}" = "--coder" ]; then
-  case "${2:-}" in
-    agy|claude) CODER="$2" ;;
-    *) echo "REFUSED: --coder takes 'agy' or 'claude', got '${2:-}'"; exit 1 ;;
+while [ -n "${1:-}" ]; do
+  case "$1" in
+    --coder)
+      case "${2:-}" in
+        agy|claude) CODER="$2" ;;
+        *) echo "REFUSED: --coder takes 'agy' or 'claude', got '${2:-}'"; exit 1 ;;
+      esac
+      shift 2 ;;
+    --allow-merge) ALLOW_MERGE=1; shift ;;
+    *) echo "REFUSED: unknown argument '$1' (expected --check, --coder agy|claude, --allow-merge)"; exit 1 ;;
   esac
-  shift 2
-elif [ -n "${1:-}" ]; then
-  echo "REFUSED: unknown argument '$1' (expected --check or --coder agy|claude)"; exit 1
-fi
+done
 
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
@@ -58,6 +69,12 @@ PUSH_OK=0
 echo "push gate: CLOSED — ruling 26, the supervisor pushes the gated tip -> GOAIEZ_PUSH_OK=$PUSH_OK"
 if grep -qE '^push: *\**YES' .agents/supervisor/BRIEF.md 2>/dev/null; then
   echo "  note: BRIEF.md still carries a 'push: YES' line. Stale, ignored."
+fi
+
+if [ "$ALLOW_MERGE" = 1 ]; then
+  echo "merge gate: OPEN — --allow-merge passed by hand of tick -> GOAIEZ_MERGE_OK=$ALLOW_MERGE"
+else
+  echo "merge gate: closed -> GOAIEZ_MERGE_OK=$ALLOW_MERGE"
 fi
 
 
@@ -92,15 +109,16 @@ while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] \
 LOG="$LOGDIR/${CODER}-run${n}.log"
 
 if [ "$CODER" = "claude" ]; then
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "LAUNCHED run $n coder=$CODER (pid $(cat "$PIDFILE")) log=$LOG"
+  MG=closed; [ "$ALLOW_MERGE" = 1 ] && MG=OPEN
+  echo "LAUNCHED run $n coder=$CODER merge-gate=$MG (pid $(cat "$PIDFILE")) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi
