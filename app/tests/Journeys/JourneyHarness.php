@@ -25,7 +25,7 @@ use App\Modules\X171\Actions\JobStateAction;
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
-use App\Modules\X211\Models\ReceivableState;
+use App\Modules\X211\Models\ArDunningAction;
 use App\Services\Billing\AuthorizeNetApi;
 use App\Services\Billing\AuthorizeNetGateway;
 use App\Services\Sms\TenantNumbers;
@@ -34,6 +34,7 @@ use App\Support\CardholderName;
 use App\Support\Identifier;
 use App\Support\PlatformCredentials;
 use App\Support\Tenancy;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -566,23 +567,23 @@ trait JourneyHarness
         $inv = Invoice::find($invoice['id']);
         $inv->update(['due_date' => now()->subDays(10)]);
 
-        $tenantId = \App\Support\Tenancy::id();
-        $userId = \App\Support\Tenancy::userId();
+        $tenantId = Tenancy::id();
+        $userId = Tenancy::userId();
 
-        \Illuminate\Support\Facades\Artisan::call('x211:detect-overdue');
+        Artisan::call('x211:detect-overdue');
 
         if ($userId !== null) {
-            \App\Support\Tenancy::setUser($userId);
+            Tenancy::setUser($userId);
         }
         if ($tenantId !== null) {
-            \App\Support\Tenancy::set($tenantId);
+            Tenancy::set($tenantId);
         }
     }
 
     /** ⭐ R211: resolution precedes any automatic stop. @param array<string,mixed> $invoice @return array<string,mixed> */
     private function lastDunningAction(array $invoice): array
     {
-        $action = \App\Modules\X211\Models\ArDunningAction::where('invoice_id', $invoice['id'])
+        $action = ArDunningAction::where('invoice_id', $invoice['id'])
             ->latest('id')
             ->first();
 
