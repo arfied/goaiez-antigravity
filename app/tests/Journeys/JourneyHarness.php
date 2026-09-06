@@ -686,10 +686,13 @@ trait JourneyHarness
             ->latest()
             ->first();
 
+        $this->assertNotNull($deployment, 'publish produced no deployment — the edge listener did not run');
+
         $response = $this->get("/sites/{$tenant['id']}/{$deployment->deploy_hash}");
         $html = (string) $response->getContent();
 
         $zoneRow = $deployment->edgeZone;
+        $this->assertNotNull($zoneRow, 'the deployment carries no edge zone');
         $zoneRow->update(['has_valid_ssl' => false]);
         $withoutSsl = $this->get("/sites/{$tenant['id']}/{$deployment->deploy_hash}");
         $zoneRow->update(['has_valid_ssl' => true]);
