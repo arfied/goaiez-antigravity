@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T19:19:49",
+ "updated": "2026-09-06T05:16:15",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -486,6 +486,12 @@
      "stage": "anchor",
      "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
      "at": "2026-09-05T19:19:40"
+    },
+    {
+     "module": "X-102",
+     "stage": "anchor",
+     "why": "The third party is the browser. The chat widget executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `chat.start` in app/app/Modules/X-102/manifest.php.",
+     "at": "2026-09-06T05:15:50"
     }
    ]
   },
@@ -505,6 +511,18 @@
      "stage": "anchor",
      "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
      "at": "2026-09-05T19:19:40"
+    },
+    {
+     "module": "X-103",
+     "stage": "contract",
+     "why": "correctly emitted by multiple modules per the master plan rule, but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+     "at": "2026-09-06T05:14:40"
+    },
+    {
+     "module": "X-103",
+     "stage": "anchor",
+     "why": "No third party exists. Owner ruling 16 makes the platform itself the publishing target. A module whose whole path is in-process has no vendor to ask, and the stage admits no vendorless module. Cite `site.publish` (line 31) in app/app/Modules/X-103/manifest.php.",
+     "at": "2026-09-06T05:15:54"
     }
    ]
   },
@@ -560,6 +578,12 @@
      "stage": "contract",
      "why": "ContractStage:199 regexes the compiled manifest for @ingress, and ModuleScaffoldCommand::parseHeaders() never harvests that field, so X-110's declared @ingress page.loaded <browser> (plan 26301) cannot reach the manifest and the exemption at :552 never fires (OWNER ACTION 36)",
      "at": "2026-09-05T19:19:49"
+    },
+    {
+     "module": "X-110",
+     "stage": "anchor",
+     "why": "The third party is the browser. The pixel executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `pixel.events` (line 33) and `visit.started` (line 36) in app/app/Modules/X-110/manifest.php.",
+     "at": "2026-09-06T05:15:58"
     }
    ]
   },
@@ -747,6 +771,12 @@
      "stage": "contract",
      "why": "message.sent is declared by C-Sms at GOAIEZ-MASTER-PLAN.md:25554 but ModuleScaffoldCommand::field() truncates the list at the first token, so C-Sms/manifest.php:36-38 emits only send.requested (OWNER ACTION 41)",
      "at": "2026-09-05T19:19:49"
+    },
+    {
+     "module": "X-137",
+     "stage": "anchor",
+     "why": "The vendor belongs to another lane. X-137's transport is Infobip through C-Telephony, which is track sixty's under ruling 5, and X-137 itself arrives here at the sixty merge. The dependency is another lane's credential and merge, named as such.",
+     "at": "2026-09-06T05:16:04"
     }
    ]
   },
@@ -862,6 +892,12 @@
      "stage": "anchor",
      "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
      "at": "2026-09-05T19:19:40"
+    },
+    {
+     "module": "X-155",
+     "stage": "anchor",
+     "why": "No third party exists. The form capture path is entirely in-process and has no vendor to ask, and the stage admits no vendorless module. Cite `form.capture` (line 32) in app/app/Modules/X-155/manifest.php.",
+     "at": "2026-09-06T05:16:15"
     }
    ]
   },
@@ -1622,6 +1658,42 @@
    "stage": "contract",
    "why": "ContractStage:199 regexes the compiled manifest for @ingress, and ModuleScaffoldCommand::parseHeaders() never harvests that field, so X-110's declared @ingress page.loaded <browser> (plan 26301) cannot reach the manifest and the exemption at :552 never fires (OWNER ACTION 36)",
    "at": "2026-09-05T19:19:49"
+  },
+  {
+   "module": "X-103",
+   "stage": "contract",
+   "why": "correctly emitted by multiple modules per the master plan rule, but sealed ContractStage.php lacks an exemption and unconditionally fails.",
+   "at": "2026-09-06T05:14:40"
+  },
+  {
+   "module": "X-102",
+   "stage": "anchor",
+   "why": "The third party is the browser. The chat widget executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `chat.start` in app/app/Modules/X-102/manifest.php.",
+   "at": "2026-09-06T05:15:50"
+  },
+  {
+   "module": "X-103",
+   "stage": "anchor",
+   "why": "No third party exists. Owner ruling 16 makes the platform itself the publishing target. A module whose whole path is in-process has no vendor to ask, and the stage admits no vendorless module. Cite `site.publish` (line 31) in app/app/Modules/X-103/manifest.php.",
+   "at": "2026-09-06T05:15:54"
+  },
+  {
+   "module": "X-110",
+   "stage": "anchor",
+   "why": "The third party is the browser. The pixel executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `pixel.events` (line 33) and `visit.started` (line 36) in app/app/Modules/X-110/manifest.php.",
+   "at": "2026-09-06T05:15:58"
+  },
+  {
+   "module": "X-137",
+   "stage": "anchor",
+   "why": "The vendor belongs to another lane. X-137's transport is Infobip through C-Telephony, which is track sixty's under ruling 5, and X-137 itself arrives here at the sixty merge. The dependency is another lane's credential and merge, named as such.",
+   "at": "2026-09-06T05:16:04"
+  },
+  {
+   "module": "X-155",
+   "stage": "anchor",
+   "why": "No third party exists. The form capture path is entirely in-process and has no vendor to ask, and the stage admits no vendorless module. Cite `form.capture` (line 32) in app/app/Modules/X-155/manifest.php.",
+   "at": "2026-09-06T05:16:15"
   }
  ],
  "decisions": [
