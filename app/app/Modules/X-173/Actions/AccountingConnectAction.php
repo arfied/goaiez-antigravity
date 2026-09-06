@@ -18,7 +18,7 @@ final class AccountingConnectAction
             'business_id' => $businessId,
             'provider' => $provider,
             'realm_id' => $realmId,
-            'access_token' => $accessToken ?? 'token_oauth_'.bin2hex(random_bytes(12)),
+            'access_token' => $accessToken,
             'is_active' => true,
         ]);
     }

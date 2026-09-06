@@ -85,4 +85,13 @@ class X173Test extends TestCase
     {
         $this->assertTrue(true);
     }
+    public function test_accounting_connect_stores_no_credential_without_token(): void
+    {
+        $biz = TestCase::provisionTenant();
+        $connection = $this->connectAction->connect($biz->id, 'xero', 'realm_xyz');
+        
+        $persisted = \App\Modules\X173\Models\AccountingConnection::find($connection->id);
+        $this->assertNull($persisted->access_token);
+        $this->assertStringNotContainsString('token_oauth_', (string) $persisted->access_token);
+    }
 }
