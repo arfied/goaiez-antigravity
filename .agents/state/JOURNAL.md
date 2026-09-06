@@ -810,3 +810,6 @@
 - `2026-09-06T07:39:31` UNRESOLVED the renderer is X-102/Ui/, Track 2's under ruling 5; this lane cannot assert a rendering it may not build X-102 - 
 - `2026-09-06T07:40:19` UNRESOLVED exit-intent trigger does not exist X-102 - 
 - `2026-09-06T07:44:23` (R245) X-155 — FormReleaseAction clears is_spam and spam_reason, and emits FormCaptured event --ruling R245
+- `2026-09-06T08:07:09` (R245) X-102 — built refusal for ungrounded price questions per P-092, using existing 'refused' status and NO_GROUNDING_FACT code in ChatEscalateAction --ruling R245
+- `2026-09-06T08:07:09` (R245) X-155 — changed FormReleaseAction to be a no-op returning 'already_released' when submission is not spam, rather than throwing InvalidArgumentException --ruling R245
+- `2026-09-06T08:07:17` UNRESOLVED events X-155 - Track 2 Ui/ tenant inbox listener for FormCaptured

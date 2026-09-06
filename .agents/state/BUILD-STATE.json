@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T07:44:23",
+ "updated": "2026-09-06T08:07:17",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -910,6 +910,12 @@
      "stage": "anchor",
      "why": "No third party exists. The form capture path is entirely in-process and has no vendor to ask, and the stage admits no vendorless module. Cite `form.capture` (line 32) in app/app/Modules/X-155/manifest.php.",
      "at": "2026-09-06T05:16:15"
+    },
+    {
+     "module": "X-155",
+     "stage": "events",
+     "why": "Track 2 Ui/ tenant inbox listener for FormCaptured",
+     "at": "2026-09-06T08:07:17"
     }
    ]
   },
@@ -1730,6 +1736,12 @@
    "stage": "exit-intent trigger does not exist",
    "why": "",
    "at": "2026-09-06T07:40:19"
+  },
+  {
+   "module": "X-155",
+   "stage": "events",
+   "why": "Track 2 Ui/ tenant inbox listener for FormCaptured",
+   "at": "2026-09-06T08:07:17"
   }
  ],
  "decisions": [
@@ -1833,6 +1845,18 @@
    "module": "X-155",
    "chose": "FormReleaseAction clears is_spam and spam_reason, and emits FormCaptured event --ruling R245",
    "at": "2026-09-06T07:44:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "built refusal for ungrounded price questions per P-092, using existing 'refused' status and NO_GROUNDING_FACT code in ChatEscalateAction --ruling R245",
+   "at": "2026-09-06T08:07:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "changed FormReleaseAction to be a no-op returning 'already_released' when submission is not spam, rather than throwing InvalidArgumentException --ruling R245",
+   "at": "2026-09-06T08:07:09",
    "ruling": "R245"
   }
  ],
