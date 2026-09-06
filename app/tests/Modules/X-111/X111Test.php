@@ -51,6 +51,23 @@ class X111Test extends TestCase
      * TEST ANCHOR
      * every alert row's message begins with a verb — asserted by a lint on the alert templates;
      * a tenant HUMAN request produces a ticket within one minute with the full transcript
+     *
+     * ⛔ REFUSED: G4-05 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G4-28 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G4-33 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G9-05 — the capability's own text is "named in the header; the export row is X-122's log"; there is no clause to assert; the log is X-122's
+     * ⛔ REFUSED: G17-17 — the capability's own text is "fraud velocity is named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G5-38 — the capability's own text is "ticket categorisation"; a noun phrase, not a refusal
+     * ⛔ REFUSED: G9-20 — the capability's own text is "fleet-wide operator roll-up"; a noun phrase, not a refusal
+     * ⛔ REFUSED: G9-28 — the capability's own text is "API traffic per endpoint"; a noun phrase, not a refusal
+     * ⛔ REFUSED: G4-36 — the capability's own text is "the auto-healing supervisor"; a noun phrase, not a refusal
+     * ⛔ REFUSED: G4-41 — the capability's own text is "the T443 delete-list runner"; a noun phrase, not a refusal
+     * ⛔ REFUSED: G4-31 — the capability's own text is "the screen; the mechanism is X-123's"; the mechanism is assigned to X-123
+     * ⛔ REFUSED: G4-40 — the capability's own text is "ops.ban plus a mass token.revoke through X-142"; the mechanism runs through X-142
+     * ⛔ REFUSED: G4-47 — the capability's own text is "SOP edit history; the same home as G1-29 Interactive SOPs"; a restatement; the refusal it points at is G1-29's, asserted in List A
+     * ⛔ REFUSED: G5-17 — the capability's own text is "a resolved ticket drafts a help row;  the help registry generates itself from X-122"; the registry is X-122's
+     * ⛔ REFUSED: G9-19 — the capability's own text is "failed searches open a help topic;  the help registry generates itself from X-122"; the registry is X-122's
+     * ⛔ REFUSED: G21-14 — the capability's own text is "the help card offered before the ticket is submitted"; a restatement, no refusal
      */
     public function test_anchor_action_verb_alert_message_and_human_request_ticket_generation(): void
     {
