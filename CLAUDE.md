@@ -3347,3 +3347,101 @@ does not rediscover it as one.
 are not among half 1's fourteen paths, not in halves 2 or 3, and stripped by the
 complement's `app/tests/Modules/` prefix. The paired `--stat` is again the only surface
 that printed them — so tick 190's writing rule applies and this note *is* the record.
+
+## ⛔ `refs/remotes` is a LIVE FEED of this box's pushes, not a fetch-cached snapshot — 528 to 1 (tick 220)
+
+Ticks 193 and 215 both attributed the tip table's mid-tick movement to **a sibling's
+fetch** ("an entry may record another track's fetch, not this tick's" · "a sibling's
+fetch moves the table under this tick"). One command settles it, and the mechanism is
+the other one:
+
+```
+git log -g --format='%gs' <all eight refs> | sort | uniq -c
+    528  update by push
+      1  fetch --no-write-fetch-head origin: fast-forward
+```
+
+`--git-common-dir` is Track 1's `.git` (tick 193 caveat 1), and all eight lanes live on
+this box, so a sibling's `git push origin <sha>:track/<x>` updates
+`refs/remotes/origin/track/<x>` **here, locally, through the shared object store** — git
+logs that as `update by push`. 528 of 529 entries. `refs/remotes` is therefore not a
+snapshot my fetch refreshes; it is a live feed of the whole box's push traffic that
+moves whether or not I fetch.
+
+Three consequences, and the third is the one that changes a rule:
+
+- ⚠️ **My tick-opening `git fetch` is 1 of 529.** Tick 146's rule stands unchanged and
+  must — that single entry is proof it can matter, and it is the only thing that would
+  catch a ref moved by anyone *not* sharing this `.git`. But a tick that reasons "I
+  fetched, therefore the table is as fresh as my fetch" has the causality backwards:
+  the table is fresher than any fetch of mine, and it also moves **after** it.
+- ✅ **The reflog fired as a cache-HIT witness for the first time** (tick 193's third
+  rule, written and never exercised). Newest entry across all eight refs at tick 220 is
+  `site@14:56:12` — my own push closing tick 219 — and the newest *sibling* entry is
+  `ui@14:53:43`. Both predate this tick's fetch, so no ref has moved since tick 219
+  recorded its table. That is the HIT measured from git rather than from a remembered
+  table, which is what tick 177's cache was always missing.
+- ⛔ **A mid-tick move is ARRIVAL, not staleness — and that is why only the closing
+  re-read can catch it.** Tick 215 framed its finding as a stale opening read. Measured:
+  ui's `292e520a` has committer date **14:41:36** and reflog observation **14:53:43**, a
+  12-minute gap (tick 193 caveat 2's push lag). At tick 219's opening read the commit
+  existed in ui's checkout and **had not been pushed**. No amount of fetching earlier
+  could have seen it, because you cannot fetch a commit nobody has pushed. So tick 215's
+  closing re-read is not a defence against reading a stale ref; it is a defence against
+  work that **did not exist yet** at the top of the tick. The rule is strengthened and
+  its rationale is corrected — and note it also means an *earlier* fetch is never the
+  remedy anyone will be tempted to reach for.
+
+⚠️ **One property recorded as UNEXERCISED, per tick 193's own law that a fallback
+asserted but never fired is not a fallback.** The reflog can see a ref that moved to a
+value and back, which the tip table structurally cannot — a returned ref is a cache HIT
+by value and a MISS in fact. Checked at tick 220 rather than assumed:
+`git log -g --format='%h' refs/remotes/origin/main | sort | uniq -c | sort -rn` returns
+**no repeated sha**, so it has never happened on the one ref where it would matter most
+(main excludes in all four surfaces at once — tick 198's corollary). Stated as a
+capability of the instrument, not as a rule, until something fires it.
+
+Twentieth statement of this section's law. 163/178/180/183/185/187 concern a query's
+*pathspec*, 190 its *strip*, 191 its *bounds moving*, 192/193 its *unrecorded bounds*,
+194 its *configuration*, 196 its *width*, 207 its *expected output*, 208 the *evidence
+request*, 209 its *resolution context*, 210 the fault's *scope in time*, 215 the *cache
+key's identity*, 219 the record's *provenance*. This concerns the cache key's
+**update mechanism** — the one input a tick never observes, because it observes only the
+key's value and the value cannot say what moved it.
+
+## ⚠️ The box-wide pest lock's RESULT FILE is one slot shared by eight checkouts (tick 220)
+
+Tick 216 adopted Track 1's advisory lock and recorded it as *"adopted, not copied"* —
+the lock path taken verbatim, the result path kept as this lane's own
+`last-pest-$(basename "$ROOT").json`. Measured at tick 220 against `main`'s `05f9b768`,
+that distinction is load-bearing and the reason is tick 219's finding one surface over:
+
+- ✅ **The lock itself is genuinely box-wide.** Both versions use
+  `PEST_LOCK=/home/goaiez/tmp/pest.lock`, fd 9, `flock -w 2400`. Same file ⇒ the eight
+  lanes really do serialise against each other, which is what tick 216's adoption was
+  for (§7 is the only surface in the programme that sees J11 — tick 213).
+- ⛔ **`main` writes all three pest outcomes to `/home/goaiez/tmp/last-pest.json`** —
+  `:129` refused-shared-db, `:158` lock-timeout, `:180` the real result — one path, eight
+  checkouts. This lane's `:147`/`:167`/`:190` are per-root.
+
+**The lock makes that worse in a specific way, and that is the finding.** Before it, two
+concurrent suites raced for the file and the result was visibly unreliable. Serialised,
+`last-pest.json` now holds, deterministically and well-formed, the result of *whichever
+lane most recently released the lock* — it looks single-writer and authoritative and
+belongs to another checkout. Exactly tick 219's `BUILD-STATE.json` shape: **a one-slot
+record shared by many trees, whose provenance the artefact does not carry**, so no
+careful reading of it can recover which tree produced it. A correct fix for the reaping
+problem converted a visible race into an invisible substitution.
+
+✅ **This lane is not exposed** — it writes per-root and nothing here reads the shared
+path (`grep -rn last-pest bin .agents/supervisor/launch-coder.sh .agents/rules/` returns
+only this lane's own writes). ⛔ The file is `bin/supervise.sh`, per-track and on the
+never-merge list, so **no site wave touches it** and no parallel fix is briefed — the
+exposure is Track 1's and any lane that adopts main's hunk verbatim instead of adapting
+it. Advisory, filed as a TRACK 1 ACTION.
+
+⚠️ The general form, third statement of it in two ticks: **when a shared artefact has one
+slot and many writers, serialising the writers removes the corruption and keeps the
+substitution.** Tick 216 got this right by instinct ("adopted, not copied") and did not
+say why; the reason is worth more than the instance, because every lane is about to
+inherit main's version.
