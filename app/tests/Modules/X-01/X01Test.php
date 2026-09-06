@@ -356,4 +356,33 @@ class X01Test extends TestCase
         $this->expectException(TakeoverNotLatchedRefused::class);
         $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
     }
+
+    /**
+     * [G19-22] positive half: every channel lands on ONE Conversation.
+     * Asserts against UnifiedInboxManager::ingestMessage() on real data.
+     */
+    public function test_g19_22_single_conversation_identity(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Single Conv Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res1 = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550199',
+            senderName: 'John Doe',
+            body: 'Hello from WhatsApp'
+        );
+
+        $res2 = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550199',
+            senderName: 'John Doe',
+            body: 'Hello from SMS'
+        );
+
+        $this->assertEquals($res1['conversation_id'], $res2['conversation_id'], 'The conversation id from the first ingest must equal the id from the second');
+        $this->assertEquals(1, Conversation::where('person_id', $res1['person_id'])->count(), 'Conversation::count() for that person must be 1');
+    }
 }

@@ -144,6 +144,8 @@ class CWhatsappTest extends TestCase
 
     /**
      * [G19-22] GBP through Zernio; every channel lands on ONE Conversation
+     * ⛔ REFUSED: G19-22 (Zernio half) — GBP runs through Zernio
+     * ⛔ REFUSED: G19-22 (positive half) — every channel lands on ONE Conversation (No live path from C-Whatsapp to X-01; identity tested in X01Test)
      */
     public function test_g19_22_single_conversation(): void
     {
