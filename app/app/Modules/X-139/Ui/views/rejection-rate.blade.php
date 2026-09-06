@@ -1,6 +1,12 @@
 <div>
-    <x-surface.sample-state module="offline event uploads to Google and Meta" screen="rejection_rate" />
     <div class="rejection-rate-view p-4">
-        <h3 class="text-lg font-bold">Rejected Conversions: {{ $rejectedCount }}</h3>
+        <h2 class="text-lg font-bold">Rejected Conversions: {{ $rejectedCount }} ({{ number_format($rate, 1) }}% Rate)</h2>
+        @if($reasons->isNotEmpty())
+            <ul>
+                @foreach($reasons as $reason)
+                    <li>{{ $reason }}</li>
+                @endforeach
+            </ul>
+        @endif
     </div>
 </div>

@@ -336,6 +336,69 @@ class UiReviewSeeder extends Seeder
             }
         }
 
+        if (DB::table('attribution_queries')->where('business_id', $businessId)->count() < 2) {
+            DB::table('attribution_queries')->insert([
+                [
+                    'business_id' => $businessId,
+                    'job_id' => 101,
+                    'job_value' => null,
+                    'touches' => json_encode([['source' => 'organic_search']]),
+                    'attribution_status' => 'single',
+                    'created_at' => now()->subDays(2),
+                    'updated_at' => now()->subDays(2),
+                ],
+                [
+                    'business_id' => $businessId,
+                    'job_id' => 102,
+                    'job_value' => 50000,
+                    'touches' => json_encode([['source' => 'google_cpc'], ['source' => 'direct']]),
+                    'attribution_status' => 'ambiguous',
+                    'created_at' => now()->subDays(1),
+                    'updated_at' => now()->subDays(1),
+                ],
+            ]);
+        }
+
+        if (PixelEvent::where('business_id', $businessId)->where('event_name', 'form.abandoned')->count() < 2) {
+            $sess1 = Session::where('business_id', $businessId)->first();
+            $sess2 = Session::where('business_id', $businessId)->skip(1)->first();
+            if ($sess1 && $sess2) {
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $sess1->id,
+                    'event_name' => 'form.abandoned',
+                    'payload' => ['form_id' => 'contact_form', 'abandoned_field' => 'email'],
+                    'created_at' => now()->subHours(2),
+                ]);
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $sess2->id,
+                    'event_name' => 'form.abandoned',
+                    'payload' => ['form_id' => 'quote_form', 'abandoned_field' => 'phone'],
+                    'created_at' => now()->subHours(1),
+                ]);
+            }
+        }
+
+        if (! DB::table('ad_connections')->where('business_id', $businessId)->exists()) {
+            DB::table('ad_connections')->insert([
+                ['business_id' => $businessId, 'platform' => 'google', 'account_id' => 'act_google_1', 'is_connected' => true, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'platform' => 'facebook', 'account_id' => 'act_facebook_1', 'is_connected' => false, 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+
+        if (! DB::table('conversion_uploads')->where('business_id', $businessId)->exists()) {
+            DB::table('conversion_uploads')->insert([
+                ['business_id' => $businessId, 'job_id' => 101, 'status' => 'uploaded', 'conversion_value_cents' => 20000000, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 102, 'status' => 'uploaded', 'conversion_value_cents' => 25778900, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 103, 'status' => 'rejected', 'conversion_value_cents' => 1000, 'rejection_reason' => 'Invalid click ID', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 104, 'status' => 'rejected', 'conversion_value_cents' => 2000, 'rejection_reason' => 'Duplicate conversion', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 105, 'status' => 'rejected', 'conversion_value_cents' => 3000, 'rejection_reason' => 'Too old', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 106, 'status' => 'rejected', 'conversion_value_cents' => 4000, 'rejection_reason' => 'Unverified', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 107, 'status' => 'rejected', 'conversion_value_cents' => 5000, 'rejection_reason' => 'Mismatch', 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+
         app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());
         app(ProofNumbers::class)->recompute(ProofNumbers::ALL);
 
