@@ -58,6 +58,7 @@ class VisitorsLive extends Component
                     ->limit(5)
                     ->select('pixel_events.event_name', 'pixel_events.created_at')
                     ->get()
+                    ->toBase()
                     ->map(fn (PixelEvent $e) => ['label' => self::eventLabel((string) $e->event_name), 'at' => $e->created_at]);
             }
         } catch (\Exception $e) {
