@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T15:17:37",
+ "updated": "2026-09-06T15:38:28",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1320,10 +1320,17 @@
    "unresolved": []
   },
   "X-129": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 20,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-129",
+     "stage": "capability",
+     "why": "docblock: '[N-129-01] REFUSED: \"cutover reversible until DNS propagates\" MigrationEngine::ensureReversible() exists but is an unconditional `return true` stub \u2014 there is no behaviour to assert...', line 112. grep -rn 'function ensureReversible' app/app/Modules/X-129 shows it on line 22 of Domain/MigrationEngine.php, and its body is indeed just 'return true;'. This is an A - documented refusal naming what is missing.",
+     "at": "2026-09-06T15:38:28"
+    }
+   ]
   },
   "X-130": {
    "status": "DONE",
@@ -1842,6 +1849,18 @@
      "stage": "capability",
      "why": "The \u2464 is 'cleared commission into the payroll export'. 'grep -rniE \"(payroll|export)\" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.",
      "at": "2026-09-06T05:42:49"
+    },
+    {
+     "module": "X-170",
+     "stage": "capability",
+     "why": "docblock: '[G1-16] no commission payable until money in', line 107. grep -rniE 'payable|paid|money|collected' app/app/Modules/X-170 shows revenue_collected_cents logic and CommissionReleaseAction explicitly refuses release if paymentCapturedId is null. The payable/paid gate exists and the commission machinery is real, but this method is a tautology. What to assert: CommissionReleaseAction refusing release without payment. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    },
+    {
+     "module": "X-170",
+     "stage": "capability",
+     "why": "docblock: '[G7-03], [G7-38], [G7-42] commission projections, bonuses and tiers', line 115. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
     }
    ]
   },
@@ -2126,10 +2145,23 @@
    "unresolved": []
   },
   "X-178": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-178",
+     "stage": "capability",
+     "why": "docblock: '[G5-08], [G6-05], [G6-31] named in header', line 91. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    },
+    {
+     "module": "X-178",
+     "stage": "capability",
+     "why": "docblock: '[G5-21] design tokens', line 99. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    }
+   ]
   },
   "X-179": {
    "status": "DONE",
@@ -2355,16 +2387,48 @@
    "unresolved": []
   },
   "X-198": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 10,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-198",
+     "stage": "capability",
+     "why": "docblock: '[G17-04] the refId hash is named in X-122 \u2014 a duplicated ref charges once', line 118. grep -rniE 'refId|ref_id' app/app/Modules/X-198 returns 0 hits (aside from capabilities.php), but grep -rniE 'refId|ref_id' app/app/Modules/X-122 returns multiple hits in ActionInvokeAction.php and migrations where idempotency with ref_id is implemented. It is X-122's job. This is an A - documented refusal naming where the thing lives.",
+     "at": "2026-09-06T15:38:28"
+    },
+    {
+     "module": "X-198",
+     "stage": "capability",
+     "why": "docblock: '[N-010] no refusal declared', line 126. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    }
+   ]
   },
   "X-199": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 9,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-199",
+     "stage": "capability",
+     "why": "docblock: '[G1-05], [G1-31], [G1-40], [G1-51], [G1-60] no refusal declared', line 113. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:09"
+    },
+    {
+     "module": "X-199",
+     "stage": "capability",
+     "why": "docblock: '[G13-36] invoice opened the alert names an action', line 121. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    },
+    {
+     "module": "X-199",
+     "stage": "capability",
+     "why": "docblock: '[G21-04] card, invoices, seats \u2014 and R34\\'s cancel in under 60 seconds', line 144. grep -rniE 'card|invoices|seats|cancel' app/app/Modules/X-199 returns hits for 'card' and 'invoices' (e.g. Invoices component and UI views), but NO hits for 'seats' or 'cancel'. The card and invoices clauses have live code built but unasserted. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    }
+   ]
   },
   "X-200": {
    "status": "UNRESOLVED",
@@ -2652,10 +2716,23 @@
    ]
   },
   "X-203": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 14,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-203",
+     "stage": "capability",
+     "why": "docblock: '[G13-07] a restore that cannot prove itself is not a backup', line 116. grep -rniE 'restore|backup|proof|prove' app/app/Modules/X-203 shows DrRestoreTestAction verifying row counts and checksums, returning failure if mismatched. The proof path exists but this method is a tautology. What to assert: DrRestoreTestAction fails a restore test when actualChecksum != expectedChecksum or restoredRowCount != expectedRowCount. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    },
+    {
+     "module": "X-203",
+     "stage": "capability",
+     "why": "docblock: '[G21-03] the scripted response to a failure, with its own state', line 124. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:38:28"
+    }
+   ]
   },
   "X-204": {
    "status": "DONE",
@@ -4563,6 +4640,78 @@
    "stage": "capability",
    "why": "G19-17 \u2014 credited by app/tests/Modules/C-Billing/CBillingTest.php:278, whose docblock states '\u26d4 REFUSED: the capability\\'s own text declares a refusal; the $50/5,000 figures are dead and live in X-82.' Verified checkable claim: app/app/Modules/C-Billing/capabilities.php row literally states 'refuses: C-Billing; the $50/5,000 figures are dead \u2014 auto top-up is universal and the amounts live in X-82'.",
    "at": "2026-09-06T15:17:37"
+  },
+  {
+   "module": "X-199",
+   "stage": "capability",
+   "why": "docblock: '[G1-05], [G1-31], [G1-40], [G1-51], [G1-60] no refusal declared', line 113. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:09"
+  },
+  {
+   "module": "X-199",
+   "stage": "capability",
+   "why": "docblock: '[G13-36] invoice opened the alert names an action', line 121. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-199",
+   "stage": "capability",
+   "why": "docblock: '[G21-04] card, invoices, seats \u2014 and R34\\'s cancel in under 60 seconds', line 144. grep -rniE 'card|invoices|seats|cancel' app/app/Modules/X-199 returns hits for 'card' and 'invoices' (e.g. Invoices component and UI views), but NO hits for 'seats' or 'cancel'. The card and invoices clauses have live code built but unasserted. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-129",
+   "stage": "capability",
+   "why": "docblock: '[N-129-01] REFUSED: \"cutover reversible until DNS propagates\" MigrationEngine::ensureReversible() exists but is an unconditional `return true` stub \u2014 there is no behaviour to assert...', line 112. grep -rn 'function ensureReversible' app/app/Modules/X-129 shows it on line 22 of Domain/MigrationEngine.php, and its body is indeed just 'return true;'. This is an A - documented refusal naming what is missing.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-170",
+   "stage": "capability",
+   "why": "docblock: '[G1-16] no commission payable until money in', line 107. grep -rniE 'payable|paid|money|collected' app/app/Modules/X-170 shows revenue_collected_cents logic and CommissionReleaseAction explicitly refuses release if paymentCapturedId is null. The payable/paid gate exists and the commission machinery is real, but this method is a tautology. What to assert: CommissionReleaseAction refusing release without payment. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-170",
+   "stage": "capability",
+   "why": "docblock: '[G7-03], [G7-38], [G7-42] commission projections, bonuses and tiers', line 115. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-178",
+   "stage": "capability",
+   "why": "docblock: '[G5-08], [G6-05], [G6-31] named in header', line 91. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-178",
+   "stage": "capability",
+   "why": "docblock: '[G5-21] design tokens', line 99. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-198",
+   "stage": "capability",
+   "why": "docblock: '[G17-04] the refId hash is named in X-122 \u2014 a duplicated ref charges once', line 118. grep -rniE 'refId|ref_id' app/app/Modules/X-198 returns 0 hits (aside from capabilities.php), but grep -rniE 'refId|ref_id' app/app/Modules/X-122 returns multiple hits in ActionInvokeAction.php and migrations where idempotency with ref_id is implemented. It is X-122's job. This is an A - documented refusal naming where the thing lives.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-198",
+   "stage": "capability",
+   "why": "docblock: '[N-010] no refusal declared', line 126. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-203",
+   "stage": "capability",
+   "why": "docblock: '[G13-07] a restore that cannot prove itself is not a backup', line 116. grep -rniE 'restore|backup|proof|prove' app/app/Modules/X-203 shows DrRestoreTestAction verifying row counts and checksums, returning failure if mismatched. The proof path exists but this method is a tautology. What to assert: DrRestoreTestAction fails a restore test when actualChecksum != expectedChecksum or restoredRowCount != expectedRowCount. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-203",
+   "stage": "capability",
+   "why": "docblock: '[G21-03] the scripted response to a failure, with its own state', line 124. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:38:28"
   }
  ],
  "decisions": [
@@ -4727,6 +4876,10 @@
   {
    "at": "2026-09-05T17:42:54",
    "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
+  },
+  {
+   "at": "2026-09-06T15:36:54",
+   "note": "CORRECTION to the 2026-09-06T15:16:52 UNRESOLVED capability X-118 G4-38 filing (S-124): that record's why says the clause is 'genuinely unbuildable'. It is not. app/app/Modules/X-118/capabilities.php:37 is TWO clauses \u2014 'SAMPLE \u2192 real on conversion' and 'the 79.99 figure is dead (money-number law)' \u2014 and only the second is dead. grep -rniE 'sample|conversion' app/app/Modules/X-118 --include=*.php --include=*.blade.php returns 7 hits on x-surface.sample-state across X-118's blade views, so clause 1 has a live surface and IS assertable by a later wave. G4-38 reclassifies A -> B. The original record stands as a record that the id is credited by a body that cannot fail; only its reason is corrected."
   }
  ]
 }
