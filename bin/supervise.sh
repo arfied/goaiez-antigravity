@@ -196,7 +196,29 @@ if [ $want_tests -eq 1 ]; then
     echo "  ⛔ a gate failed above."
     exit $fail
   fi
+  # Shared, advisory, cross-project (Track 1, OWNER.md 2026-09-06 14:1x). Two suites
+  # at once on this box is what gives an agent a reason to reap a "stray" pest — it
+  # cost Track 1 three gates today. Anything on this box wrapping its suite in the
+  # same flock serialises with us. Orthogonal to the §7 shared-database refusal
+  # above: that one is correctness, this one is scheduling. Both stay.
+  PEST_LOCK=/home/goaiez/tmp/pest.lock
+  lock_held=0
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>>"$PEST_LOCK" 2>/dev/null && {
+      if ! flock -n 9; then
+        echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+      fi
+      flock -w 2400 9 && lock_held=1
+    }
+    if [ $lock_held -eq 0 ]; then
+      echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+      echo '{"tool":"pest","result":"lock-timeout"}' > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
+      fail=1; want_tests=0
+    fi
+  fi
+  if [ $want_tests -eq 1 ]; then
   out=$(timeout 1800 env DB_DATABASE=goaiez_antig_reviews_test "$PHP" ./vendor/bin/pest 2>&1); rc=$?
+  flock -u 9 2>/dev/null || true
   # Track-scoped: /home/goaiez/tmp is shared by every worktree, and an unscoped
   # last-pest.json means one track reads another track's run as its own.
   printf '%s' "$out" | tail -1 > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
@@ -222,6 +244,7 @@ if n>5: print("   … %d more" % (n-5))'
   else
     echo "  no JSON summary (rc=$rc) — last 12 lines:"
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
+  fi
   fi
 fi
 
