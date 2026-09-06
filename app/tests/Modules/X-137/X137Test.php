@@ -7,12 +7,14 @@ namespace Tests\Modules\X137;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X137\Actions\LinkQrAction;
 use App\Modules\X137\Actions\LinkShortAction;
+use App\Modules\X137\Domain\X137Engine;
 use App\Modules\X137\Events\CallAttributed;
 use App\Modules\X137\Events\VisitJoinedToCall;
 use App\Modules\X137\Models\CallToken;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -87,7 +89,8 @@ class X137Test extends TestCase
     }
 
     #[Test]
-    public function g3_11_every_visitor_gets_a_call_token(): void
+    #[Group('G3-11')]
+    public function every_visitor_gets_a_call_token(): void
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -102,7 +105,8 @@ class X137Test extends TestCase
     }
 
     #[Test]
-    public function g8_13_dni_every_visitor_gets_a_call_token(): void
+    #[Group('G8-13')]
+    public function dni_every_visitor_gets_a_call_token(): void
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -117,7 +121,8 @@ class X137Test extends TestCase
     }
 
     #[Test]
-    public function g18_17_the_whisper_names_the_source(): void
+    #[Group('G18-17')]
+    public function the_whisper_names_the_source(): void
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -132,7 +137,8 @@ class X137Test extends TestCase
     }
 
     #[Test]
-    public function g18_24_telephony_call_whisper_one_spec(): void
+    #[Group('G18-24')]
+    public function telephony_call_whisper_one_spec(): void
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -144,5 +150,20 @@ class X137Test extends TestCase
             campaignSource: 'source_g1824'
         );
         $this->assertEquals('Call from source_g1824', $token->whisper_text);
+    }
+
+    public function test_header_capabilities(): void
+    {
+        $engine = new X137Engine;
+        $methods = ['enforceG3_11', 'enforceG8_13', 'enforceG13_19', 'enforceG13_24', 'enforceG18_17', 'enforceG18_24'];
+
+        foreach ($methods as $method) {
+            try {
+                $engine->$method();
+                $this->fail("Should throw for $method");
+            } catch (\DomainException $e) {
+                $this->assertStringContainsString('[G', $e->getMessage());
+            }
+        }
     }
 }
