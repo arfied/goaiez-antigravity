@@ -18,6 +18,7 @@ use App\Modules\X118\Ui\ProspectSignup;
 use App\Modules\X121\Actions\JobCreateAction;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
+use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X162\Models\DispatchAssignment;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Models\PriceBookItem;
@@ -671,6 +672,8 @@ trait JourneyHarness
             'title' => 'Home',
             'slug' => 'home',
         ]);
+
+        app(EdgeProvisionAction::class)->handle($tenant['id'], 'j11-site.example.com', true);
 
         $published = app(SiteEngine::class)->publish(
             $tenant['id'],
