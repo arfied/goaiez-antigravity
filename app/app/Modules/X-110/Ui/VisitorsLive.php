@@ -6,9 +6,12 @@ namespace App\Modules\X110\Ui;
 
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout')]
 class VisitorsLive extends Component
 {
     #[Locked]
@@ -19,7 +22,7 @@ class VisitorsLive extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public ?string $openVisitor = null;

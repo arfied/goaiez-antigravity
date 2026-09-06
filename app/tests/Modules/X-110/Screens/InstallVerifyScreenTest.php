@@ -18,7 +18,10 @@ class InstallVerifyScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-110.install-verify'))->assertOk();
+        $this->get(route('x-110.install-verify'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(InstallVerify::class)->assertOk();
     }

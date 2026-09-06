@@ -9,9 +9,12 @@ use App\Modules\X110\Actions\PixelInstallAction;
 use App\Modules\X110\Actions\PixelVerifyAction;
 use App\Modules\X110\Models\CwvSample;
 use App\Modules\X110\Models\PixelEvent;
+use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout')]
 class InstallVerify extends Component
 {
     #[Locked]
@@ -35,7 +38,7 @@ class InstallVerify extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function render()

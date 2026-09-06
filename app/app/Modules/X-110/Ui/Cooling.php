@@ -7,11 +7,14 @@ namespace App\Modules\X110\Ui;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
+use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Exception;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout')]
 class Cooling extends Component
 {
     #[Locked]
@@ -26,7 +29,7 @@ class Cooling extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function dismiss(string $visitorId): void

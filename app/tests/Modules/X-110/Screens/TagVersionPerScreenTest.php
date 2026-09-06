@@ -18,7 +18,10 @@ class TagVersionPerScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-110.tag-version-per'))->assertOk();
+        $this->get(route('x-110.tag-version-per'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(TagVersionPer::class)->assertOk();
     }

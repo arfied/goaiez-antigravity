@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\X110\Ui;
 
+use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+#[Layout('components.account.layout')]
 class TagVersionPer extends Component
 {
     public function render()
