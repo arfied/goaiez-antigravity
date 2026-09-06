@@ -846,3 +846,7 @@
 - `2026-09-06T14:49:38` stage capability = 357
 - `2026-09-06T15:06:26` (R245) X-126 — R245: the N-### capability ids on X-126, X-128, X-145, X-166, X-206, X-211 and X-212 are closed by refusal, not assertion — php artisan why reports each id is never DEFINED. Same ground as X-143/X-175/X-130/X-150 in run 77.
 - `2026-09-06T15:06:31` stage capability = 332
+- `2026-09-06T15:30:53` UNRESOLVED capability X-111 - G1-29 missing dependency on MRR module (X-192)
+- `2026-09-06T15:31:28` RESOLVED capability X-111 - testing (was: G1-29 missing dependency on MRR module (X-192))
+- `2026-09-06T15:34:02` (R245) X-111 — R245: X-111's sixteen restated capability ids are closed by refusal, not assertion — each ⑤ restates the ① or assigns the mechanism to another module (X-122, X-123, X-142) and carries no clause to assert. Precedent: C-Mail G11-06, CMailTest.php:515. The other eight ⑤ lines carry real refusal clauses and are asserted with real bodies in the same run.
+- `2026-09-06T15:34:02` stage capability = 308

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T15:06:26",
+ "updated": "2026-09-06T15:34:02",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 332,
+   "violations": 308,
    "fails": "MERGE"
   },
   "anchor": {
@@ -224,7 +224,7 @@
   },
   "20": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-215",
     "X-07",
@@ -516,7 +516,7 @@
    "unresolved": []
   },
   "X-111": {
-   "status": "DONE",
+   "status": "BUILDING",
    "wave": 20,
    "intent": "INFORM",
    "unresolved": []
@@ -1820,6 +1820,12 @@
    "chose": "R245: the N-### capability ids on X-126, X-128, X-145, X-166, X-206, X-211 and X-212 are closed by refusal, not assertion \u2014 php artisan why reports each id is never DEFINED. Same ground as X-143/X-175/X-130/X-150 in run 77.",
    "at": "2026-09-06T15:06:26",
    "ruling": "R245"
+  },
+  {
+   "module": "X-111",
+   "chose": "R245: X-111's sixteen restated capability ids are closed by refusal, not assertion \u2014 each \u2464 restates the \u2460 or assigns the mechanism to another module (X-122, X-123, X-142) and carries no clause to assert. Precedent: C-Mail G11-06, CMailTest.php:515. The other eight \u2464 lines carry real refusal clauses and are asserted with real bodies in the same run.",
+   "at": "2026-09-06T15:34:02",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1878,6 +1884,15 @@
   {
    "at": "2026-09-06T08:25:57",
    "note": "X-201 phone_numbers UNRESOLVED withdrawn (REV-61): same cause; X-201 remains UNRESOLVED on its standing deadline_at entry, which is untouched"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "was": "G1-29 missing dependency on MRR module (X-192)",
+   "why": "testing",
+   "at": "2026-09-06T15:31:28"
   }
  ]
 }
