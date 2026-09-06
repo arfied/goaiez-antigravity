@@ -157,7 +157,7 @@ class X129Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Legacy Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/1', 'https://old.com/2'], 'https://new.com');
-        $count = \App\Modules9\Models\RedirectMap::where('business_id', $biz->id)->count();
+        $count = RedirectMap::where('business_id', $biz->id)->count();
         $this->assertEquals(2, $count);
     }
 
@@ -171,7 +171,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/1'], 'https://new.com');
         $this->buildAction->build($biz->id, ['https://old.com/1'], 'https://new.com');
-        $count = \App\Modules9\Models\RedirectMap::where('business_id', $biz->id)->count();
+        $count = RedirectMap::where('business_id', $biz->id)->count();
         $this->assertEquals(1, $count);
     }
 
