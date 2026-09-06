@@ -43,7 +43,7 @@ class DailyPricingDigest extends Component
         $items = PriceBookItem::where('business_id', $businessId)
             ->whereNotNull('refusal_flagged_at')
             ->where('is_confirmed', false)
-            ->whereDate('refusal_flagged_at', Carbon::today())
+            ->orderByDesc('refusal_flagged_at')
             ->orderByDesc('refusal_count')
             ->get();
 

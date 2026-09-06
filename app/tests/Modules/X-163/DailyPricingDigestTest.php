@@ -21,7 +21,7 @@ class DailyPricingDigestTest extends TestCase
         Livewire::test(DailyPricingDigest::class)->assertForbidden();
     }
 
-    public function test_renders_empty_state_when_no_refusals_today(): void
+    public function test_renders_empty_state_when_no_refusals(): void
     {
         $owner = User::factory()->create();
         $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
@@ -30,7 +30,7 @@ class DailyPricingDigestTest extends TestCase
         Livewire::actingAs($owner)
             ->test(DailyPricingDigest::class)
             ->assertOk()
-            ->assertSee('Every pricing question today was answered')
+            ->assertSee('Every pricing question was answered')
             ->assertDontSee('View Pricebook');
     }
 
@@ -56,7 +56,7 @@ class DailyPricingDigestTest extends TestCase
             ->assertOk()
             ->assertSee('Refused Service')
             ->assertSee('1 refusals')
-            ->assertSee('1 pricing questions we could not answer today');
+            ->assertSee('1 pricing questions we could not answer');
     }
 
     public function test_confirming_item_removes_it_from_digest(): void
@@ -127,7 +127,7 @@ class DailyPricingDigestTest extends TestCase
             ->assertOk()
             ->assertSee('drain unblock')
             ->assertSee('1 refusals')
-            ->assertSee('1 pricing questions we could not answer today');
+            ->assertSee('1 pricing questions we could not answer');
     }
 
     public function test_confirming_a_price_with_no_amount_is_refused_and_says_so(): void
@@ -156,5 +156,26 @@ class DailyPricingDigestTest extends TestCase
             'id' => $item->id,
             'is_confirmed' => false,
         ]);
+    }
+    public function test_a_gap_from_an_earlier_day_is_still_in_the_digest(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $event = new AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a drain unblock',
+            'drain unblock'
+        );
+        Event::dispatch($event);
+
+        PriceBookItem::query()->update(['refusal_flagged_at' => now()->subDays(3)]);
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->assertOk()
+            ->assertSee('drain unblock');
     }
 }

@@ -6,15 +6,15 @@
         <h1 class="text-2xl font-semibold text-ink mb-2">Daily Pricing Digest</h1>
         
         @if($items->isEmpty())
-            <p class="text-ink-2 mb-8">Every pricing question today was answered</p>
+            <p class="text-ink-2 mb-8">Every pricing question was answered</p>
             <x-ui.empty-state 
                 heading="All good"
                 {{-- action: href to the pricebook arrives with surfaces:generate --}}
                 icon="✓">
-                Every pricing question today was answered.
+                Every pricing question was answered.
             </x-ui.empty-state>
         @else
-            <p class="text-ink-2 mb-8">{{ $items->count() }} pricing questions we could not answer today</p>
+            <p class="text-ink-2 mb-8">{{ $items->count() }} pricing questions we could not answer</p>
             <div class="space-y-4">
                 @foreach($items as $item)
                     <div class="bg-paper rounded-xl border border-rule p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" wire:key="item-{{ $item->id }}">
