@@ -404,6 +404,7 @@ class X01Test extends TestCase
 
     /**
      * [G19-22] positive half: every channel lands on ONE Conversation.
+     * (R245) listener returns early when the inbound WhatsApp message body is empty
      * Asserts against UnifiedInboxManager::ingestMessage() on real data.
      */
     public function test_g19_22_single_conversation_identity(): void

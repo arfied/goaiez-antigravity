@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T04:18:44",
+ "updated": "2026-09-06T05:03:36",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1746,6 +1746,12 @@
    "module": "X-01",
    "chose": "R245: the thread list ships ordered and read-only; the per-row action waits for the selected-conversation re-cut that arrives with surfaces:generate mounting",
    "at": "2026-09-06T04:18:44",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "listener returns early when the inbound WhatsApp message body is empty, because a session-window ping is not a message",
+   "at": "2026-09-06T05:03:36",
    "ruling": "R245"
   }
  ],
