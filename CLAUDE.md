@@ -614,6 +614,46 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   direction** — silence does not prove nothing changed, and growth does not
   prove something is missing.
 
+  ⛔ **Half 1 printing is NOT sufficient for a violation — ruling 5 splits X-110
+  by SUBDIRECTORY and half 1 is id-scoped** (tick 185). Every scope finding from
+  163 through 183 is about a query's *silence* being bounded. This is the first
+  about its *output*: half 1 grew by eight commits for the first time since tick
+  165, every one `origin/track/ui` in **X-110**, and there was no violation.
+  Ruling 5 assigns X-110 twice over — "site: X-157, **X-110**, X-102, X-155,
+  X-137" *and* "Track 2: **all Ui/**, views, Livewire" — so the two clauses meet
+  inside one module id, and a pathspec cannot express *X-110 minus
+  `X-110/Ui/`*. Measured: 100 % of ui's X-110 edits are
+  `X-110/Ui/AbandonedForms.php`, `X-110/Ui/views/*.blade.php` and a **new**
+  `app/tests/Modules/X-110/AbandonedFormsTest.php`; zero touch `Domain/`,
+  `Actions/` or any non-`Ui/` path. The sub-path test is the whole check:
+
+  ```
+  git diff --stat <last recorded tip>..<new tip> -- app/app/Modules/X-110
+  ```
+
+  Three things confirmed it is sanctioned traffic rather than OWNER ACTION 45's
+  shape, and they are the pattern to re-run: (1) **this track has already merged
+  it once** — `57ad4021`, `merge: track/ui — X-110, X-184, X-186 screens and
+  tests`, so ui → site is the established route for X-110's screens; (2) **the
+  test files are disjoint** — ui adds `AbandonedFormsTest.php` and touched
+  `X110Test.php` (this track's capability spec file) in zero commits, so Track 1
+  gets no textual conflict; (3) **no diff weakens anything** — `69b67224`
+  actually *strengthens* the cross-tenant seed by wrapping it in
+  `Tenancy::actingAs($otherBiz->id, …)`, which had been letting `assertDontSee`
+  pass for the wrong reason. So: **never open or re-escalate an OWNER ACTION off
+  half 1 alone.** Run the sub-path test first. Stated in general —
+  tick 169 for a moved tip, tick 183 for the complement, and now for the halves
+  themselves: **every census query's scope is not its claim, in both
+  directions.**
+
+  ⚠️ `app/database/seeders/` is a watch item, not a fourth half (tick 185). Ui's
+  `3dfcb662` added `UiReviewSeeder.php` and it entered the complement as one of
+  its two new files. It is the same *shape* as `app/database/migrations` — a
+  shared app-level directory a module can write to, which is exactly why half 2
+  exists (tick 164) — but nothing this track owns seeds, and per tick 183's
+  second clause it is **unwatched, not uncovered**. If X-157 or X-103 ever gains
+  a seeder, half 2's pathspec is where it goes.
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
