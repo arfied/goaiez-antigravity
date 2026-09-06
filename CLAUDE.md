@@ -345,6 +345,20 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   stated for a single claim, now stated for the standing query: **a module's
   footprint is not confined to its module directory.**
 
+  ✅ **Read the tips before the census, and read the census, not the tips**
+  (tick 169). Run `git for-each-ref --format='%(refname:short)
+  %(committerdate:iso) %(objectname:short) %(contents:subject)'
+  refs/remotes/origin` right after the fetch: it prints all eight tips in one
+  accepted command (no loop, no `simple_expansion` refusal) and puts the shas
+  the census then runs over into the block, so the record is measured rather
+  than remembered. Then read the *census* for the verdict — on 2026-09-05
+  `origin/track/sixty` advanced twice in half an hour (`d17326b5` 23:26:56 →
+  `c26eeac4` 23:50:18) with **both halves unmoved**, because both commits were
+  its own supervisor notes. A moved tip is not a column violation; the fourteen
+  module paths plus the two shared directories are exactly what separates a
+  notes commit from a code commit. Never open or re-escalate an OWNER ACTION off
+  a tip that moved.
+
   ⚠️ **Another track's "zero readers/writers" is measured on its own branch**
   (tick 164, OWNER ACTION 47). `1aa65e7a` drops five `page_versions` booleans —
   `chat_installed form_capture_installed dni_installed seo_tags_installed
