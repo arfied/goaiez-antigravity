@@ -152,6 +152,32 @@ class X137Test extends TestCase
         $this->assertEquals('Call from source_g1824', $token->whisper_text);
     }
 
+
+    #[Test]
+    #[Group('G13-19')]
+    public function the_number_pool_every_visitor_gets_a_call_token(): void
+    {
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $token1 = $this->attributeAction->allocateToken(
+            businessId: $biz->id,
+            visitorSessionToken: 'sess_g1319_1',
+            allocatedNumber: '+15550000005',
+            campaignSource: 'test_g1319'
+        );
+
+        $token2 = $this->attributeAction->allocateToken(
+            businessId: $biz->id,
+            visitorSessionToken: 'sess_g1319_2',
+            allocatedNumber: '+15550000006',
+            campaignSource: 'test_g1319'
+        );
+
+        $this->assertNotSame($token1->id, $token2->id);
+        $this->assertCount(2, CallToken::where('business_id', $biz->id)->where('status', 'active')->get());
+    }
+
     public function test_header_capabilities(): void
     {
         $engine = new X137Engine;
