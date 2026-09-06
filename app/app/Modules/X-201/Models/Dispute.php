@@ -14,5 +14,6 @@ class Dispute extends Model
 
     protected $casts = [
         'chargeback_amount_cents' => 'integer',
+        'deadline_at' => 'datetime',
     ];
 }

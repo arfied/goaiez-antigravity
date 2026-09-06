@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X124;
 
+use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X124\Actions\AssistantActOnRecommendationAction;
 use App\Modules\X124\Actions\AssistantAskAction;
 use App\Modules\X124\Actions\AssistantExecuteAction;
@@ -104,10 +105,30 @@ class X124Test extends TestCase
     /**
      * [G1-30], [G5-28], [G21-10]
      * In-thread assistance from generated help registry & escalation
+     *
+     * ⛔ REFUSED: G1-30 (check) — a doctor rule fails any path where an internal-flagged message reaches a driver
+     * (G1-30 internal_only is a BUILD PROPOSAL for X-01)
+     * (G5-28 is UNRESOLVED, X-111 owns escalation target)
+     * (G21-10 is a BUILD PROPOSAL for X-124)
      */
-    public function test_help_and_escalation(): void
+    public function test_g1_30_internal_message_has_no_send_requested_in_its_trace(): void
     {
-        $this->assertTrue(true);
+        Event::fake([
+            AssistantRequest::class,
+            SendRequested::class,
+        ]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Internal Msg Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $this->askAction->handle(
+            businessId: $biz->id,
+            sessionToken: 'internal_tok_123',
+            utterance: 'Schedule estimate'
+        );
+
+        Event::assertDispatched(AssistantRequest::class);
+        Event::assertNotDispatched(SendRequested::class);
     }
 
     public function test_constant_irreversible_actions(): void

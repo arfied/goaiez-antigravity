@@ -14,6 +14,8 @@ use App\Modules\CTelephony\Events\CarrierSelected;
 use App\Modules\CTelephony\Models\CarrierBinding;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CTelephonyTest extends TestCase
@@ -44,6 +46,8 @@ class CTelephonyTest extends TestCase
      * an RCS send with Sinch cold is refused-and-alerted, never silently downgraded to SMS;
      * the CI contract test fails the build when any of the seven dormant adapters breaks
      */
+    #[Test]
+    #[Group('G19-03')]
     public function test_anchor_thread_stickiness_rcs_non_downgrade_and_adapters(): void
     {
         Event::fake([CarrierSelected::class, CarrierDegraded::class]);
@@ -99,10 +103,9 @@ class CTelephonyTest extends TestCase
         $this->assertCount(8, $adapters, 'All 8 carrier adapters must be defined in the contract');
     }
 
-    /**
-     * [G11-36] carrier-side screening before we pay for the minute
-     */
-    public function test_g11_36_carrier_side_screening(): void
+    #[Test]
+    #[Group('G11-36')]
+    public function carrier_side_screening(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Screen Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -116,10 +119,9 @@ class CTelephonyTest extends TestCase
         $this->assertEquals('reject_spam', $callC['action']);
     }
 
-    /**
-     * [G11-39] SHAKEN/STIR grading on inbound
-     */
-    public function test_g11_39_shaken_stir_grading(): void
+    #[Test]
+    #[Group('G11-39')]
+    public function shaken_stir_grading(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Shaken Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -128,10 +130,9 @@ class CTelephonyTest extends TestCase
         $this->assertEquals('B', $res['shaken_stir_grade']);
     }
 
-    /**
-     * [G18-18] the router and the eight adapters are the header
-     */
-    public function test_g18_18_eight_adapters_present(): void
+    #[Test]
+    #[Group('G18-18')]
+    public function eight_adapters_present(): void
     {
         $this->assertArrayHasKey('twilio', CarrierRouter::ADAPTERS);
         $this->assertArrayHasKey('telnyx', CarrierRouter::ADAPTERS);
@@ -143,10 +144,9 @@ class CTelephonyTest extends TestCase
         $this->assertArrayHasKey('vonage', CarrierRouter::ADAPTERS);
     }
 
-    /**
-     * [G18-20] LTV read from C-Billing; the bypass is a routing rule
-     */
-    public function test_g18_20_routing_rule_bypass(): void
+    #[Test]
+    #[Group('G18-20')]
+    public function routing_rule_bypass(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'LTV Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");

@@ -4,12 +4,45 @@ declare(strict_types=1);
 
 namespace App\Modules\CMail\Ui;
 
+use App\Modules\CMail\Models\MailDomain;
+use App\Services\Config\DefaultsRegistry;
+use App\Support\Tenancy;
 use Livewire\Component;
 
 class DnsCard extends Component
 {
-    public function render()
+    public function render(DefaultsRegistry $defaults)
     {
-        return view('c-mail::dns-card');
+        $domain = MailDomain::where('business_id', Tenancy::idOrFail())->first();
+        $sendingDomain = $defaults->value('mail.sending_domain');
+
+        $records = [];
+        if ($domain && is_string($sendingDomain)) {
+            $spfInclude = $domain->spf_include ?: $sendingDomain;
+            $dkimSelector = $domain->dkim_selector ?: 'google';
+
+            if ($domain->spf_status !== 'verified') {
+                $records['SPF'] = [
+                    'name' => $domain->domain_name,
+                    'value' => 'v=spf1 include:'.$spfInclude.' ~all',
+                ];
+            }
+
+            if ($domain->dkim_status !== 'verified' && $domain->dkim_public_key) {
+                $records['DKIM'] = [
+                    'name' => $dkimSelector.'._domainkey.'.$domain->domain_name,
+                    'value' => 'v=DKIM1; k=rsa; p='.$domain->dkim_public_key,
+                ];
+            }
+
+            if ($domain->dmarc_status !== 'verified') {
+                $records['DMARC'] = [
+                    'name' => '_dmarc.'.$domain->domain_name,
+                    'value' => 'v=DMARC1; p=quarantine;',
+                ];
+            }
+        }
+
+        return view('c-mail::dns-card', ['domain' => $domain, 'records' => $records]);
     }
 }

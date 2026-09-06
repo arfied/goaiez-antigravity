@@ -14,10 +14,14 @@ use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
 use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Models\MailEvent;
 use App\Modules\CMail\Models\WarmupCalendar;
+use App\Modules\CMail\Ui\DnsCard;
 use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class CMailTest extends TestCase
@@ -301,6 +305,27 @@ class CMailTest extends TestCase
     /**
      * [G4-08], [G7-40], [G10-28], [G11-03], [G11-20] DNS & DMARC
      */
+    #[Group('G11-03')]
+    public function test_g11_03_dns_card_shows_records_with_copy_button_and_no_spf_instructions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'DNS Card Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'card.apex-air.com');
+        $domain->update(['spf_status' => 'missing', 'dkim_status' => 'missing', 'dmarc_status' => 'missing']);
+
+        $defaults = app(DefaultsRegistry::class);
+        $sendingDomain = $defaults->value('mail.sending_domain');
+
+        Livewire::test(DnsCard::class)
+            ->assertSee('v=spf1 include:'.$sendingDomain.' ~all')
+            ->assertSee('_dmarc.card.apex-air.com')
+            ->assertSee('v=DMARC1; p=quarantine;')
+            ->assertSee('Copy') // copy affordance
+            ->assertDontSee('configure SPF', false)
+            ->assertDontSee('set up SPF', false);
+    }
+
     public function test_dns_dmarc_records(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'DNS Biz', 'currency' => 'USD']);
@@ -392,7 +417,18 @@ class CMailTest extends TestCase
     }
 
     /**
-     * [G9-21], [G11-06], [G11-09], [G11-10], [G11-11], [G11-12], [G11-15], [G11-17], [G11-18], [G11-29], [G11-38]
+     * ⛔ REFUSED: G11-06 — the capability's own text is "named in the header"; there is no clause to assert
+     * BUILD PROPOSAL: G11-09 — a test send scored before the campaign has not been built yet; C-Mail is owned by this lane (EmailWarmupAction.php, EmailSendAction.php)
+     * BUILD PROPOSAL: G11-10 — the pre-send bounce and spam-trap gate has not been built yet; C-Mail is owned by this lane (EmailSendAction::handle():26)
+     * ⛔ REFUSED: G11-11 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-12 (first half) — the capability's own text is "named in the header"; there is no clause to assert
+     * BUILD PROPOSAL: G11-12 (second half) — the live bridge from C-Mail to X-01 has not been built yet; both are owned by this lane (EmailSendAction, UnifiedInboxManager::ingestMessage)
+     * ⛔ REFUSED: G11-15 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-17 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-18 — the capability's own text is "= the row above; one spec"; it points at G11-17, which is itself "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-29 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-38 — the capability's own text is "named in the header"; there is no clause to assert
+     * UNRESOLVED: G9-21 — primary-vs-spam placement per network requires an external seed service not owned by this tree (capabilities.php:37)
      */
     public function test_header_capabilities(): void
     {

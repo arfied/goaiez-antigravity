@@ -30,7 +30,8 @@ final class SmsSendAction
         string $body,
         string $messageClass = 'transactional',
         string $recipientLocalTime = '12:00',
-        int $permitId = 0
+        int $permitId = 0,
+        string $occasion = ''
     ): array {
         if ($permitId === 0) {
             return $this->composer->send($businessId, $recipientPhone, $body, $messageClass, $recipientLocalTime);
@@ -61,7 +62,21 @@ final class SmsSendAction
                     SendRefusalReason::GlobalHalt,
                     SendRefusalReason::InsufficientCredit,
                     SendRefusalReason::ChannelUnavailable => true,
-                    default => false,
+                    SendRefusalReason::Archived,
+                    SendRefusalReason::Deleted,
+                    SendRefusalReason::MergedAway,
+                    SendRefusalReason::NoIdentifier,
+                    SendRefusalReason::UnparseableIdentifier,
+                    SendRefusalReason::CallerMismatch,
+                    SendRefusalReason::OptedOut,
+                    SendRefusalReason::DoNotCall,
+                    SendRefusalReason::Litigator,
+                    SendRefusalReason::NumberReassigned,
+                    SendRefusalReason::NoConsentRecord,
+                    SendRefusalReason::StateUnknown,
+                    SendRefusalReason::QuietHours,
+                    SendRefusalReason::ConsentTooWeakForState,
+                    SendRefusalReason::MessageTooLong => false,
                 };
 
                 if (! $isInfrastructure) {
@@ -88,7 +103,10 @@ final class SmsSendAction
         }
 
         $permit = $decision->permit;
-        $key = SendKey::for($permit, 'csms:'.uniqid());
+        if ($occasion === '') {
+            throw new \InvalidArgumentException('SmsSendAction requires a deterministic occasion');
+        }
+        $key = SendKey::for($permit, $occasion);
 
         $message = OutboundMessage::for(
             permit: $permit,

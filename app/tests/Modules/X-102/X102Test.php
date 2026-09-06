@@ -23,6 +23,7 @@ use App\Services\Ai\AiSpend;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class X102Test extends TestCase
@@ -360,5 +361,22 @@ class X102Test extends TestCase
         $this->assertEquals('Real Visitor', $lead->name);
         $this->assertEquals('+15551234567', $lead->phone);
         $this->assertEquals('I have a question', $lead->message);
+    }
+
+    #[Group('G21-01')]
+    public function test_refusal_no_scripted_attendees_social_proof(): void
+    {
+        // P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof.
+        // It is satisfied by that logic being ABSENT, asserted in a test.
+        $biz = TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $action = app(ChatStartAction::class);
+        $session = $action->handle($biz->id, '192.168.1.1', false);
+
+        // The strongest structural fact: ChatStartAction creates a blank active session
+        // with no injected attendees. A mutation adding them crashes.
+        $this->assertEquals('active', $session->status);
+        $this->assertArrayNotHasKey('attendees', $session->toArray());
     }
 }
