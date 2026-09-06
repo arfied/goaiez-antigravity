@@ -43,7 +43,7 @@ return [
     'G11-01' => 'the abandon point, with the pixel',
 
     // status: SPECCED
-    'G13-05' => 'spam and bot filtering is named in the header',
+    'G13-05' => 'spam and bot filtering is named in the header; a rejected submission is STORED and flagged, never discarded — asserted by rejecting one and finding the row; the tenant can see and release it',
 
     // status: SPECCED
     'G13-35' => 'hidden fields write straight to the entities, no staging table',
