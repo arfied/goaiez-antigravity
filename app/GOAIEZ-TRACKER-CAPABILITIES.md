@@ -453,7 +453,7 @@
 | G8-10 | Custom Fields & Schemas | ENH | X-194 | SPECCED | named in the header; the JSONB column is X-121's |
 | G8-11 | Domain Authority Filtering | ENH | X-191 | SPECCED | named in the header |
 | ~~G8-12~~ | Dynamic Keyword Insertion | KILLED | - | PURGED | cloaking risk - killed by the owner at T677 (section 190.3); X-116's distinct local pages carry the job |
-| G8-13 | Dynamic Number Swapping | ENH | X-137 | SPECCED | DNI — every visitor gets a call token; with the pool exhausted, the page renders the **static fallback number** and the session is marked `unattributed` — ⛔ **never a reused token**, asserted by forcing exhaustion |
+| G8-13 | Dynamic Number Swapping | ENH | X-137 | SPECCED | DNI — every visitor gets a call token; with the pool exhausted, the page renders the **static fallback number** and the session is marked `unattributed` — ⛔ **never a reused token**, asserted by forcing exhaustion · ⚠️ *CallTrackingMetrics is corpus vocabulary* |
 | G8-14 | Dynamic Product Schema | ENH | X-176 | SPECCED | product schema from the pricebook, invalidated in the same commit |
 | G8-15 | Event Auto-Sync | ENH | X-176 | SPECCED | `Event` schema from X-108's calendar |
 | G8-16 | FAQ Schema Extraction | ENH | X-176 | SPECCED | named in the header |
