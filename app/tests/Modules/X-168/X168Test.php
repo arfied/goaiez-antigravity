@@ -94,12 +94,4 @@ class X168Test extends TestCase
         $approvedTimesheet = $this->approveAction->approve($biz->id, $timesheet->id);
         $this->assertEquals('approved', $approvedTimesheet->status);
     }
-
-    /**
-     * [N-062]
-     */
-    public function test_n_062_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
 }
