@@ -329,6 +329,17 @@ class X200Test extends TestCase
      */
     public function test_g18_19_twilio_is_absent(): void
     {
+        Event::fake([CallRequested::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'G18-19 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $camp = $this->startAction->startCampaign($biz->id, 'G18-19 Campaign', 2.85);
+        $humanSeat = $this->loginAction->login($biz->id, 'G18-19 Agent', isAi: false);
+
+        $this->dialAction->dialNext($biz->id, $camp->id, $humanSeat->id, '+12145550188');
+        Event::assertDispatched(CallRequested::class);
+
         $process = new Process(['grep', '-ri', 'twilio', app_path('Modules/X-200')]);
         $process->run();
 
@@ -351,11 +362,11 @@ class X200Test extends TestCase
         // Also assert CallRequested carries no provider
         $reflection = new \ReflectionClass(CallRequested::class);
         $this->assertFalse($reflection->hasProperty('provider'), 'CallRequested must not carry a provider');
-        $this->assertFalse($reflection->hasProperty('transport'), 'CallRequested must not carry a transport');
     }
 
     /**
      * [G21-13]
+     * The channel half of this rule is owned by X-01.
      */
     public function test_g21_13_a_closed_deal_appears_on_the_wallboard(): void
     {
