@@ -14,7 +14,6 @@ use App\Modules\X171\Models\DeviceSyncQueue;
 use App\Modules\X171\Ui\SyncFailureRate;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -53,18 +52,16 @@ class SyncFailureRateTest extends TestCase
     {
         Event::fake([SyncConflict::class, JobCompleted::class]);
 
-        $owner = User::factory()->role(UserRole::Owner)->create();
-        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
-        Tenancy::setUser($owner->id);
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
 
         $action = app(ReplayOfflineSyncAction::class);
         $deviceId = '259.99';
 
-        $action->replayMutation($biz->id, 'mut_conflict', $deviceId, 'job.completed', ['job_id' => 1, 'tech_id' => $owner->id], 1, 2);
+        $action->replayMutation($biz->id, 'mut_conflict', $deviceId, 'job.completed', ['job_id' => 1, 'tech_id' => $user->id], 1, 2);
 
-        Gate::before(fn () => true);
-
-        $this->actingAs($owner)
+        $this->actingAs($user)
             ->get(route('x-171.sync-failure-rate.admin'))
             ->assertOk()
             ->assertSee('259.99');

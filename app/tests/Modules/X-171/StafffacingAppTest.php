@@ -13,7 +13,6 @@ use App\Modules\X171\Ui\StafffacingApp;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -26,9 +25,9 @@ class StafffacingAppTest extends TestCase
 
     public function test_seeded_row_reaches_the_page(): void
     {
-        $owner = User::factory()->role(UserRole::Owner)->create();
-        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
-        Tenancy::setUser($owner->id);
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
 
         $jobId = DB::table('work_orders')->insertGetId([
             'business_id' => $biz->id,
@@ -41,15 +40,13 @@ class StafffacingAppTest extends TestCase
         DB::table('dispatch_assignments')->insert([
             'business_id' => $biz->id,
             'job_id' => $jobId,
-            'tech_id' => $owner->id,
+            'tech_id' => $user->id,
             'status' => 'en_route',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        Gate::before(fn () => true);
-
-        $this->actingAs($owner)
+        $this->actingAs($user)
             ->get(route('x-171.stafffacing-app.admin'))
             ->assertOk()
             ->assertSee('149.99');
