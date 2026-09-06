@@ -242,14 +242,11 @@ final class ArEngine
                 'messages_count' => Message::where('business_id', $businessId)->whereIn('conversation_id', $conversationIds)->count(),
             ];
 
-            $bundleUrl = "https://cdn.goaiez.com/collections/bundle_{$invoice->invoice_number}.zip";
-
             $package = ArCollectionsPackage::create([
                 'business_id' => $businessId,
                 'invoice_id' => $invoiceId,
                 'packaged_by_user_id' => $packagedByUserId,
                 'contents' => $contents,
-                'bundle_url' => $bundleUrl,
             ]);
 
             $state = ReceivableState::firstOrCreate(
@@ -258,12 +255,12 @@ final class ArEngine
             );
             $state->update(['status' => 'packaged_collections']);
 
-            Event::dispatch(new ArPackaged($businessId, $invoiceId, $bundleUrl));
+            Event::dispatch(new ArPackaged($businessId, $invoiceId));
 
             return [
                 'invoice_id' => $invoiceId,
                 'status' => 'packaged_collections',
-                'bundle_url' => $bundleUrl,
+                'bundle_url' => null,
                 'package_id' => $package->id,
                 'packaged_by_user_id' => $packagedByUserId,
             ];
