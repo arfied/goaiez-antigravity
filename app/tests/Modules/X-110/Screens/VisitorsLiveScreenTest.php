@@ -21,7 +21,8 @@ class VisitorsLiveScreenTest extends TestCase
         $this->get(route('x-110.visitors-live'))
             ->assertOk()
             ->assertSee('Your account')
-            ->assertDontSee('Internal Platform Console');
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Real-time Visitors</h1>', false);
 
         Livewire::test(VisitorsLive::class)->assertOk();
     }

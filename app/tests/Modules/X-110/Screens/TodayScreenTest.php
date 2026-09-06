@@ -21,7 +21,8 @@ class TodayScreenTest extends TestCase
         $this->get(route('x-110.today'))
             ->assertOk()
             ->assertSee('Your account')
-            ->assertDontSee('Internal Platform Console');
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Worth a minute</h1>', false);
 
         Livewire::test(Today::class)->assertOk();
     }

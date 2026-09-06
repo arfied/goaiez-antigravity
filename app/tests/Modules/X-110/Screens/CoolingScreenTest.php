@@ -21,7 +21,8 @@ class CoolingScreenTest extends TestCase
         $this->get(route('x-110.cooling'))
             ->assertOk()
             ->assertSee('Your account')
-            ->assertDontSee('Internal Platform Console');
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Cooling Visitors</h1>', false);
 
         Livewire::test(Cooling::class)->assertOk();
     }

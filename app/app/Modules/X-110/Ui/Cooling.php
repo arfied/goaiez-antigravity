@@ -14,7 +14,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Layout('components.account.layout')]
+#[Layout('components.account.layout', ['heading' => 'Cooling Visitors'])]
 class Cooling extends Component
 {
     #[Locked]

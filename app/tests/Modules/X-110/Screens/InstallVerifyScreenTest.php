@@ -21,7 +21,8 @@ class InstallVerifyScreenTest extends TestCase
         $this->get(route('x-110.install-verify'))
             ->assertOk()
             ->assertSee('Your account')
-            ->assertDontSee('Internal Platform Console');
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Tag Installation &amp; Verification</h1>', false);
 
         Livewire::test(InstallVerify::class)->assertOk();
     }
