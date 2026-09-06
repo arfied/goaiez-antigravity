@@ -239,13 +239,6 @@ class X202Test extends TestCase
         Event::assertDispatchedTimes(ApprovalDecided::class, 3);
     }
 
-    /**
-     * [G12-04] approval granted the publish action fires
-     */
-    public function test_g12_04_approval_granted_publish(): void
-    {
-        $this->assertTrue(true);
-    }
 
     /**
      * [G12-09] thirty graphics, one decision
