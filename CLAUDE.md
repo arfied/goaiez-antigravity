@@ -662,3 +662,34 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     (`Payment::where('business_id', Tenancy::idOrFail())->findOrFail(...)`, the
     shape `sendPayLink` uses at `:27-31`). No event is minted for a deferral —
     nothing consumes it and the frozen plan declares none (rulings 29, 32).
+36. **A URL a money screen prints must reach the thing it claims to reach, and
+    the object behind it is persisted, never regenerated (RULED by the lane
+    supervisor 2026-09-06 09:5x, briefed as MONEY-66).**
+    `X-198/Actions/PaymentLinkAction.php` returned
+    `"https://pay.goaiez.com/link/".Str::random(24)` — no provider call, no row,
+    and it never saw the `Payment`; `Declines.php:29` stored it in the component
+    property `$payLinks` and the blade rendered it as a live `<a href>` under a
+    decline, where the owner's next act is to send it to a customer to collect
+    **real money**. Four properties were wrong at once: the URL was fabricated,
+    it was per-mount state (the `$hiddenRows` shape ruling 35 had just removed),
+    it was not idempotent (two clicks, two tokens, the second silently voiding
+    what the owner already sent), and no record tied a link to the decline it
+    settled. So: **a pay link is a real provider object created through
+    `StripeGatewayClient` in the shape `charge()` uses, persisted on X-198's own
+    `payment_links` table keyed by (`business_id`, `payment_id`) with RLS, and
+    read back by `render()`.** The unique pair IS the idempotency: an existing
+    row is returned and **no second provider call is made** — so the test that
+    proves it asserts the client's **call count**, not `count() === 1`, which
+    passes even when the provider was hit twice. ⛔ Three rejected alternatives,
+    closed: persisting the locally-minted token (durably storing a fabrication is
+    worse than losing it); a `link_url` column on `payments` (ruling 32 — that
+    table's vocabulary is the gateway's); keeping `$payLinks` and only adding the
+    provider call. ⛔ If the provider call cannot be made, the outcome is
+    `UNRESOLVED` with the old stub in place and **no new table** — never a
+    persisted fake. The real-transport evidence run is sequenced separately under
+    ruling 13 (a console command outside `runningUnitTests()` writing an artifact
+    the test asserts, as J9's `charge.json` works); the suite's no-live-calls
+    guard stands. ⚠️ The general question this came from — **"what is actually at
+    the other end of the string this screen prints?"** — applies to every value a
+    money screen renders, and is where the backlog now comes from (the doctor's
+    lane group (3) is empty, ruling 32).
