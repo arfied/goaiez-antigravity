@@ -190,7 +190,7 @@ class CBillingTest extends TestCase
 
         $event = new LedgerPeriodClosed($biz->id, $debit->balance_after_hundredths_cents, '2026-09-30');
         $this->assertEquals($debit->balance_after_hundredths_cents, $event->closingBalanceHundredthsCents);
-        $this->assertObjectNotHasProperty('events', $event, 'Gateway receives period totals, never per-event usage');
+        $this->assertEquals(['businessId', 'closingBalanceHundredthsCents', 'periodEnd'], array_keys(get_object_vars($event)));
     }
 
     /**
