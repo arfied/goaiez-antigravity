@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T11:55:34",
+ "updated": "2026-09-06T12:08:29",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1521,6 +1521,10 @@
   {
    "at": "2026-09-06T11:55:34",
    "note": "X-211 MONEY-71: a real collections bundle is UNRESOLVED - this lane has no zip generator, no storage surface and no mounted route to serve one from (routing is Track 1's, ruling 20), so ar_collections_packages.bundle_url stays null; the preview screen already shows the real package contents and its waiting state, so nothing is missing from the owner's view (ruling 44)"
+  },
+  {
+   "at": "2026-09-06T12:08:29",
+   "note": "X-117 MONEY-72: a real card-entry surface is UNRESOLVED \u2014 waiting on Track 2's kit to provide a browser-side Stripe Elements / publishable-key card-entry door (X-120 CardVault's, parked behind a contract by ruling 20)."
   }
  ],
  "decisions": [
@@ -1828,6 +1832,12 @@
    "module": "X-211",
    "chose": "(R245) a fabricated URL with no reader is still a fiction and dropping it is cheapest while nothing consumes it: ArEngine minted a per-invoice collections bundle .zip URL, persisted it on ar_collections_packages.bundle_url and carried it into ArPackaged, while nothing zips anything and no screen or listener reads it - the mint stops, the nullable column stays null, the event property is dropped because an always-null field on a published event propagates the fiction to every future consumer, and the real bundle is UNRESOLVED because this lane has no storage surface and no mounted route to serve one from (ruling 44, MONEY-71)",
    "at": "2026-09-06T11:55:34",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "(R245) The checkout listener makes no gateway call and leaves the order pending_payment, waiting for a real token from a connected card-entry surface",
+   "at": "2026-09-06T12:08:29",
    "ruling": "R245"
   }
  ]
