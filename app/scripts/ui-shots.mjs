@@ -326,7 +326,9 @@ function waitForServer(url) {
             { name: 'x-199-unpaid',           path: '/app/x-199/unpaid' },
             { name: 'x-199-declines',         path: '/app/x-199/declines' },
             { name: 'x-199-invoices',         path: '/app/x-199/invoices' },
-            { name: 'x-199-credits',          path: '/app/x-199/credits' }
+            { name: 'x-199-credits',          path: '/app/x-199/credits' },
+            { name: 'x-110-abandoned-forms', path: '/app/x-110/abandoned-forms' },
+            { name: 'x-138-attribution-row', path: '/app/x-138/attribution-row' }
         ];
         for (const screen of screens) {
             if (!shouldCapture(screen.name)) continue;
@@ -426,7 +428,9 @@ function waitForServer(url) {
             { name: 'x-199-unpaid',           path: '/app/x-199/unpaid' },
             { name: 'x-199-declines',         path: '/app/x-199/declines' },
             { name: 'x-199-invoices',         path: '/app/x-199/invoices' },
-            { name: 'x-199-credits',          path: '/app/x-199/credits' }
+            { name: 'x-199-credits',          path: '/app/x-199/credits' },
+            { name: 'x-110-abandoned-forms', path: '/app/x-110/abandoned-forms' },
+            { name: 'x-138-attribution-row', path: '/app/x-138/attribution-row' }
         ];
 
         for (const screen of mobileScreens) {
