@@ -567,3 +567,49 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     fallback run that dies without a `REPORT.md` is precisely when the log has to
     be readable. The run counter steps over both coders' names in both locations,
     so a claude run never reuses an agy run's number.
+31. **The `origin/main` → `track/money` merge is refused a FIFTH and SIXTH time,
+    and the reason is now `source/` alone (measured 05:1x against `fc8f0bab` and
+    05:4x against `230a2c3a`; RULED by the lane supervisor under the owner's
+    03:5x authority, so OWNER ACTION 21 is closed, not carried).** Main's
+    `.gitattributes` now marks eight paths `merge=ours` — `app/phpunit.xml`,
+    `CLAUDE.md`, `bin/supervise.sh`, `.claude/settings.json`,
+    `.agents/rules/10-supervisor.md`, `.agents/supervisor/launch-coder.sh`,
+    `.agents/state/BUILD-STATE.json`, `.agents/state/JOURNAL.md` — which answers
+    rulings 22/23/25's reasons (1) and (2). **`source/` is not among them.** Since
+    base `fe094469`, `git diff --stat fe094469 HEAD -- source/` is **empty** and
+    `git diff --stat fe094469 origin/main -- source/` is `GOAIEZ-MASTER-PLAN.md` 7
+    + `GOAIEZ-TRACKER-CAPABILITIES.md` 8: a **one-sided** change, so git takes
+    main's copy with no conflict and no driver, and the merge commit **must stage
+    main's `source/` hunks** — which ruling 18 records `coder-bin/git` refusing.
+    Restoring `source/` from money's HEAD instead would revert Track 1's
+    frozen-plan edits on the reverse merge, and ruling 29 forbids this lane
+    touching that text at all. So rulings 18, 22, 23, 25 and 27 stand: integration
+    is money → main from the pushed tip. The unblocking change is **OWNER ACTION
+    9(b)** — a merge exemption in the shared coder guard — which is cross-lane and
+    sits in every tick's `TRACK 1 ACTION` block. ⚠️ **A moved `origin/main` is
+    never a lift, and neither is a further "take main" ask**: Track 1 has asked
+    six times (05:0x `fc8f0bab`, 05:3x `230a2c3a` among them) and the measurement
+    is unchanged each time. Re-measure the four lines above, cite this ruling, and
+    do not re-open it as an open OWNER ACTION.
+32. **Most of what the doctor still reports against this lane is not lane work
+    (measured 05:4x).** `php artisan doctor` filtered to the lane's eight ids is
+    **52 violations**, in three groups: (1) **frozen-plan blocked** — X-173's
+    eleven ids `N-063…N-085` (each `NO row in the tracker or the plan` *and*
+    `specced but no test names this id`, plus eleven `capabilities.php` citation
+    lines), `X-199 · G1-60` and `X-198 · G1-34` (`the ⑤ names no refusal`), both
+    `X-117 @provides` `agent_reachable` lines, and the truncated `emits` lists;
+    these are cells in **generated** files harvested from the frozen plan, so
+    MONEY-52's "name the id on the test" move does **not** move them — it worked
+    there only because those five had a plan row; (2) **anchor `no runtime
+    proof`** for X-120, X-173, X-201 — a real-transport run writing `evidence/`,
+    i.e. credentials and vendor accounts, **reserved to the owner**; (3) **test
+    quality inside the lane**, which is the only buildable group. Brief group 3;
+    record 1 and 2 with their reason. ⛔ **`invoice.overdue` and `limit.exceeded`
+    are NOT missing emitters.** X-199 ships `Events/InvoiceDue.php`, dispatched by
+    `Console/MarkInvoicesDueCommand.php:65` under `due_date < today` AND
+    `status = 'issued'` AND `due_notified_at IS NULL` — that IS "went overdue,
+    once" — and `Domain/InvoiceEngine.php:85` dispatches `Events\LimitExceeded`.
+    The gap is a **name** in two generated manifests. Minting a second event class
+    to make a generated string resolve is the annotation-driven change §298
+    prohibits and would leave two events with one meaning; ruling 29's "build the
+    emitter first" is already satisfied. Record `UNRESOLVED` with the reason.
