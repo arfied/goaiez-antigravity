@@ -580,6 +580,27 @@ Watch for: <the trap that applies, by name>
   reset is agy. That default account is shared with Track 1's supervisor session, so a
   claude run ending in *"reached your Fable limit"* means that pool is drained too —
   **HOLD until it resets; never switch accounts unasked.**
+- ⚠️⚠️ **A dead pid with `REPORT.md` unchanged is TWO different situations, and the
+  discriminator is the TREE, not the pid — read the working diff and `scratch/` mtimes
+  before writing anything.** Run 65 died on `Error: timeout waiting for response` /
+  `AGY_EXIT=1` — **no quota line, so no reset to wait for and the `--coder claude` chain
+  is not triggered**; that chain is keyed to quota. It had already worked two of three
+  brief items and left them **uncommitted**, so every gate read the wave as if it had
+  never happened. ⛔ **The hazard is what a mid-wave death leaves behind: a live mutation
+  in `app/**`.** `WhatsappEngine.php` sat carrying
+  `$this->consentService->lift(...)` — a consent bypass in the one module whose capability
+  is that it does not mint permits — and the tick before had written *"dead pid + `REPORT.md`
+  unchanged + clean tree ⇒ re-dispatch verbatim"*. **Drop the "clean tree" qualifier and the
+  next coder's first `git commit -- <paths>` ships the mutation.** So: clean tree + quota line
+  ⇒ stillborn, re-dispatch verbatim after the reset; **dirty tree ⇒ rewrite the brief around
+  what survived**, with the revert as item 0 and `git diff --numstat` on the mutated file
+  quoted in it (`3  0` ⇒ the revert is exactly the mutation and takes nothing with it — the
+  "reverting a mutation deletes uncommitted work" trap does **not** apply when the slice is in
+  the *test* files). ⭐ **And check `scratch/` before assuming the run achieved nothing** —
+  run 65's `test-mut-w89-g10-40.log` was sound on all three tells (declaration line 113 exact,
+  the mutated method's signature real so nothing threw upstream, and `"assertions":3`
+  pinpointing *which* of four assertions failed), a finding no `REPORT.md` would ever have
+  carried. **A report is not the only evidence a dead run leaves.**
 - ⚠️ **Never `cd` in a Bash call — it moves the session's working directory and
   silently unbinds half the allow list.** Every pattern in `.claude/settings.json`
   is **relative**: `Write(CLAUDE.md)`, `Write(.agents/supervisor/**)`,
