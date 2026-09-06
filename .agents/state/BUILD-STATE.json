@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T08:50:54",
+ "updated": "2026-09-06T09:22:09",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -531,6 +531,150 @@
      "stage": "schema",
      "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
      "at": "2026-09-06T05:42:49"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G1-29 \u2014 MRR blends booked with collected \u2014 no revenue, booked or collected column in any of the module's four tables; MRR lives in X-07 / C-Billing",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G1-35 \u2014 the same boilerplate law paragraph as G1-29 on a second row; asserting either authors the other (P-210), and no revenue column exists here either",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-05 \u2014 the entire \u2464 is named in the header \u2014 naming it authors the row (P-210)",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-24 \u2014 throttling and hard limits \u2014 no throttle, limit, quota or tier column in the module; grep -rniE 'throttl\\|quota\\|tier' app/app/Modules/X-111/ returns only capabilities.php",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-28 \u2014 the entire \u2464 is named in the header (P-210)",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-31 \u2014 the \u2464 says the screen; the mechanism is X-123's \u2014 the mechanism is another module's and the screen is Track 2's (views and Livewire are out of this lane, ruling 5)",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-33 \u2014 the entire \u2464 is named in the header (P-210)",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-36 \u2014 the auto-healing supervisor \u2014 grep -rniE 'heal\\|supervisor' app/app/Modules/X-111/ returns nothing outside capabilities.php",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-40 \u2014 ops.ban plus a mass token.revoke through X-142 \u2014 OpsBanAction::handle() passes straight to OpsEngine::banIp(); grep -rniE 'token\\|revoke\\|X142' app/app/Modules/X-111/ returns nothing, so the mass-revoke half has no system",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-41 \u2014 the T443 delete-list runner \u2014 no delete-list table, no runner, no console command in the module",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-47 \u2014 SOP edit history \u2014 no SOP table and no history column anywhere in the module",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G5-17 \u2014 a resolved ticket drafts a help row \u2014 ResolveTicketAction::handle() sets status='resolved' and nothing else; there is no help table in X-111 and the help registry is X-122's",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G5-18 \u2014 the HELP path, reply HUMAN always escalates \u2014 no inbound keyword path in this module; the SMS reply path is C-Telephony / C-Sms's",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G5-38 \u2014 ticket categorisation \u2014 OpsEngine::createHumanTicket(\u2026, string $category = 'human_escalation') takes the category as an argument and stores it unchanged; there is no categoriser, and a method that takes the answer as its argument is not a seam",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G7-33 \u2014 a spend ceiling ALERTS and never stops the phone \u2014 no spend, ceiling or balance column in any of the four tables, so the refusal half has nothing to refuse against",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-05 \u2014 the export row is X-122's log \u2014 OpsExportAction::handle() returns a hardcoded array with a fabricated s3.amazonaws.com URL and writes no row at all",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-19 \u2014 failed searches open a help topic \u2014 no search table, no help topic table, no failure counter in the module",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-20 \u2014 fleet-wide operator roll-up \u2014 no aggregate or cross-tenant query exists; all four tables are FORCE ROW LEVEL SECURITY scoped to one business_id by the module's own migration",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-28 \u2014 API traffic per endpoint \u2014 no traffic, request or endpoint column anywhere in the module",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G17-17 \u2014 fraud velocity is named in the header (P-210), and there is no velocity or rate column on any table",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G19-09 \u2014 a compromise halt is a SECURITY stop and is not the credit cap \u2014 there is no halt action and no credit or balance column in the module",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G21-02 \u2014 fuzzy-merged tickets, one Person one Conversation \u2014 no merge path, and tenant_tickets carries no person_id or conversation_id",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G21-14 \u2014 the help card offered before the ticket is submitted \u2014 a UI surface; resources/views and app/Livewire belong to Track 2 (ruling 5)",
+     "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G15-28 \u2014 the \u2464 names a doctor assertion (doctor asserts no pay field); satisfying it would change a CHECK, which is the One Rule, and the module has no roles or pay column to assert over",
+     "at": "2026-09-06T09:22:09"
     }
    ]
   },
@@ -1643,6 +1787,150 @@
    "stage": "capability",
    "why": "G9-34 prose about the header; there is no behaviour to assert (P-210)",
    "at": "2026-09-06T08:50:54"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G1-29 \u2014 MRR blends booked with collected \u2014 no revenue, booked or collected column in any of the module's four tables; MRR lives in X-07 / C-Billing",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G1-35 \u2014 the same boilerplate law paragraph as G1-29 on a second row; asserting either authors the other (P-210), and no revenue column exists here either",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-05 \u2014 the entire \u2464 is named in the header \u2014 naming it authors the row (P-210)",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-24 \u2014 throttling and hard limits \u2014 no throttle, limit, quota or tier column in the module; grep -rniE 'throttl\\|quota\\|tier' app/app/Modules/X-111/ returns only capabilities.php",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-28 \u2014 the entire \u2464 is named in the header (P-210)",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-31 \u2014 the \u2464 says the screen; the mechanism is X-123's \u2014 the mechanism is another module's and the screen is Track 2's (views and Livewire are out of this lane, ruling 5)",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-33 \u2014 the entire \u2464 is named in the header (P-210)",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-36 \u2014 the auto-healing supervisor \u2014 grep -rniE 'heal\\|supervisor' app/app/Modules/X-111/ returns nothing outside capabilities.php",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-40 \u2014 ops.ban plus a mass token.revoke through X-142 \u2014 OpsBanAction::handle() passes straight to OpsEngine::banIp(); grep -rniE 'token\\|revoke\\|X142' app/app/Modules/X-111/ returns nothing, so the mass-revoke half has no system",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-41 \u2014 the T443 delete-list runner \u2014 no delete-list table, no runner, no console command in the module",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-47 \u2014 SOP edit history \u2014 no SOP table and no history column anywhere in the module",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G5-17 \u2014 a resolved ticket drafts a help row \u2014 ResolveTicketAction::handle() sets status='resolved' and nothing else; there is no help table in X-111 and the help registry is X-122's",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G5-18 \u2014 the HELP path, reply HUMAN always escalates \u2014 no inbound keyword path in this module; the SMS reply path is C-Telephony / C-Sms's",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G5-38 \u2014 ticket categorisation \u2014 OpsEngine::createHumanTicket(\u2026, string $category = 'human_escalation') takes the category as an argument and stores it unchanged; there is no categoriser, and a method that takes the answer as its argument is not a seam",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G7-33 \u2014 a spend ceiling ALERTS and never stops the phone \u2014 no spend, ceiling or balance column in any of the four tables, so the refusal half has nothing to refuse against",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-05 \u2014 the export row is X-122's log \u2014 OpsExportAction::handle() returns a hardcoded array with a fabricated s3.amazonaws.com URL and writes no row at all",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-19 \u2014 failed searches open a help topic \u2014 no search table, no help topic table, no failure counter in the module",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-20 \u2014 fleet-wide operator roll-up \u2014 no aggregate or cross-tenant query exists; all four tables are FORCE ROW LEVEL SECURITY scoped to one business_id by the module's own migration",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-28 \u2014 API traffic per endpoint \u2014 no traffic, request or endpoint column anywhere in the module",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G17-17 \u2014 fraud velocity is named in the header (P-210), and there is no velocity or rate column on any table",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G19-09 \u2014 a compromise halt is a SECURITY stop and is not the credit cap \u2014 there is no halt action and no credit or balance column in the module",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G21-02 \u2014 fuzzy-merged tickets, one Person one Conversation \u2014 no merge path, and tenant_tickets carries no person_id or conversation_id",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G21-14 \u2014 the help card offered before the ticket is submitted \u2014 a UI surface; resources/views and app/Livewire belong to Track 2 (ruling 5)",
+   "at": "2026-09-06T09:22:09"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G15-28 \u2014 the \u2464 names a doctor assertion (doctor asserts no pay field); satisfying it would change a CHECK, which is the One Rule, and the module has no roles or pay column to assert over",
+   "at": "2026-09-06T09:22:09"
   }
  ],
  "decisions": [

@@ -892,3 +892,27 @@
 - `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G13-06 there is no action log; touches arrives as an argument to queryJobAttribution()
 - `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G4-25 the ⑤ hands the term to X-195 — asserting it here authors another module's row (P-210)
 - `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G9-34 prose about the header; there is no behaviour to assert (P-210)
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G1-29 — MRR blends booked with collected — no revenue, booked or collected column in any of the module's four tables; MRR lives in X-07 / C-Billing
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G1-35 — the same boilerplate law paragraph as G1-29 on a second row; asserting either authors the other (P-210), and no revenue column exists here either
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-05 — the entire ⑤ is named in the header — naming it authors the row (P-210)
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-24 — throttling and hard limits — no throttle, limit, quota or tier column in the module; grep -rniE 'throttl\|quota\|tier' app/app/Modules/X-111/ returns only capabilities.php
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-28 — the entire ⑤ is named in the header (P-210)
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-31 — the ⑤ says the screen; the mechanism is X-123's — the mechanism is another module's and the screen is Track 2's (views and Livewire are out of this lane, ruling 5)
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-33 — the entire ⑤ is named in the header (P-210)
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-36 — the auto-healing supervisor — grep -rniE 'heal\|supervisor' app/app/Modules/X-111/ returns nothing outside capabilities.php
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-40 — ops.ban plus a mass token.revoke through X-142 — OpsBanAction::handle() passes straight to OpsEngine::banIp(); grep -rniE 'token\|revoke\|X142' app/app/Modules/X-111/ returns nothing, so the mass-revoke half has no system
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-41 — the T443 delete-list runner — no delete-list table, no runner, no console command in the module
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G4-47 — SOP edit history — no SOP table and no history column anywhere in the module
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G5-17 — a resolved ticket drafts a help row — ResolveTicketAction::handle() sets status='resolved' and nothing else; there is no help table in X-111 and the help registry is X-122's
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G5-18 — the HELP path, reply HUMAN always escalates — no inbound keyword path in this module; the SMS reply path is C-Telephony / C-Sms's
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G5-38 — ticket categorisation — OpsEngine::createHumanTicket(…, string $category = 'human_escalation') takes the category as an argument and stores it unchanged; there is no categoriser, and a method that takes the answer as its argument is not a seam
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G7-33 — a spend ceiling ALERTS and never stops the phone — no spend, ceiling or balance column in any of the four tables, so the refusal half has nothing to refuse against
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G9-05 — the export row is X-122's log — OpsExportAction::handle() returns a hardcoded array with a fabricated s3.amazonaws.com URL and writes no row at all
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G9-19 — failed searches open a help topic — no search table, no help topic table, no failure counter in the module
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G9-20 — fleet-wide operator roll-up — no aggregate or cross-tenant query exists; all four tables are FORCE ROW LEVEL SECURITY scoped to one business_id by the module's own migration
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G9-28 — API traffic per endpoint — no traffic, request or endpoint column anywhere in the module
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G17-17 — fraud velocity is named in the header (P-210), and there is no velocity or rate column on any table
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G19-09 — a compromise halt is a SECURITY stop and is not the credit cap — there is no halt action and no credit or balance column in the module
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G21-02 — fuzzy-merged tickets, one Person one Conversation — no merge path, and tenant_tickets carries no person_id or conversation_id
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G21-14 — the help card offered before the ticket is submitted — a UI surface; resources/views and app/Livewire belong to Track 2 (ruling 5)
+- `2026-09-06T09:22:09` UNRESOLVED capability X-111 - G15-28 — the ⑤ names a doctor assertion (doctor asserts no pay field); satisfying it would change a CHECK, which is the One Rule, and the module has no roles or pay column to assert over
