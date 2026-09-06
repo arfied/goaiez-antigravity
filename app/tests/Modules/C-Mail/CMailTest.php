@@ -549,7 +549,8 @@ class CMailTest extends TestCase
 
         $ingestAction->handle($biz->id, $domain->id, 'complained', 'c1@acme.com', 'Subj 3');
         Event::assertDispatched(EmailComplained::class, function ($event) use ($biz, $domain) {
-            return $event->businessId === $biz->id && $event->mailDomainId === $domain->id && $event->complaintRate === (float) $domain->complaint_rate;
+            $freshDomain = MailDomain::where('business_id', $biz->id)->findOrFail($domain->id);
+            return $event->businessId === $biz->id && $event->mailDomainId === $domain->id && $event->complaintRate === (float) $freshDomain->complaint_rate;
         });
 
         $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj 4');
