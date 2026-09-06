@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Domain;
 
-use App\Modules\X121\Models\Conversation;
-use App\Modules\X121\Models\Message;
+use App\Models\Conversation;
+use App\Models\Message;
 use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Events\ArEscalatedToHuman;
 use App\Modules\X211\Events\ArFeeApplied;

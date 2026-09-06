@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Ui;
 
-use App\Modules\X121\Models\Conversation;
-use App\Modules\X121\Models\Message;
+use App\Models\Conversation;
+use App\Models\Message;
 use App\Modules\X121\Models\Person;
 use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Actions\ArRecordReasonAction;
