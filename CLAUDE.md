@@ -3481,3 +3481,84 @@ never measured is not a hazard** — it is an open question sitting in the ledge
 like a finding. Both are cheap to settle and neither settles itself. When a tick records
 an instrument's capability it cannot exercise, write the one command that would measure
 it; the next tick that has a quiet minute owes the population, not another restatement.
+
+## ⛔ A commit's STATED SCOPE is not its diff's scope — money rewrote 18 harness methods under a subject saying five (tick 222)
+
+Half 2 exists to catch a sibling writing a shared directory, and this is its first
+substantive firing. Money's `d03b9843` ("money's five J9/J12 harness methods, per ruling
+56") and `80c13ce5` are `+39 −23` on `app/tests/Journeys/JourneyHarness.php`. The diff is
+**eighteen** methods, and ownership was measured against `TwelveJourneysTest.php`'s call
+sites rather than read off the method names:
+
+| method | call site | whose journey |
+| :-- | :-- | :-- |
+| `signUp` · `waitForProvisionedNumber` | `:270` `:272` `two_fields_at_signup…` | **sixty** |
+| `personWithPendingSteps` · `receiveInbound` · `outboundSince` | `:328` `:330` `:339` `stop_halts_every_pending_step…` | **sixty** |
+| `completeJob` · `reviewInvitesFor` | `:514` `:517` `:523` `:526` `a_completed_job_asks_for_a_review…` | **reviews** |
+| `confirmPrice` · `bookFromQuote` · `askAgent` | `a_quote_comes_from_the_pricebook…` `:296` | **pricebook** |
+| `issueInvoice` · `payInvoice` · `invoiceStatus` | `an_invoice_reaches_a_real_charge_id` `:485` | money ✅ |
+
+⛔ **`personWithPendingSteps` is named in owner ruling 6 by name** as sixty's, in the same
+sentence recording pricebook's `a4b2d5a` edit to `tenantWithLiveNumber` as "a BLOCK, to be
+reverted forward". ⛔ **`bookFromQuote()` has ruling 8 of its own**, assigning it to
+pricebook and ruling its disposition (record `UNRESOLVED`, the raw insert is not accepted)
+— though in fairness money's version calls `X121\Actions\JobCreateAction`, so ruling 8's
+premise may simply have expired. That is a question for the method's owner, and it is not
+money. ⛔ **`guardOutboundSend` is a *guard*, the word ruling 1 uses**: it went from
+`$destination !== '+12622164033'` (one real handset) to `! str_starts_with($destination,
+'+1555')` (the whole reserved-fictional range), with `askAgent`'s customer phone moved to
+match. ⚠️ **The direction is arguable and the change is not** — read one way it is safer,
+read the other it removes the property the guard held, since a real-transport journey that
+can only reach a fictional number can never prove a delivery. Ruling 1 is phrased about
+the act precisely so the direction need not be litigated.
+
+✅ **J11 is untouched and that was checked first**: `publishSite()` is byte-identical on
+money's tip (`:683`) and the `ssl` read survives verbatim at `:709`. ✅ And the merge risk
+is measured, not guessed — all six classes money's new bodies instantiate exist in this
+tree, and PHP resolves `use` lazily, so the exposure is ownership, not the classmap.
+
+⛔ **No site wave touches it; filed as a TRACK 1 ACTION**, preventable at the merge and
+only there (`origin/main` contains neither commit). **The generalisation:** a lane
+supervisor's own ruling cannot enlarge that lane's harness grant, because the grant is an
+**owner** ruling and cross-lane ownership is reserved to Track 1. *A commit message citing
+a lane ruling is an attribution, not an authorisation* — tick 216's law one document
+further in. And the subject/diff gap is this section's own law arriving on a surface that
+is neither a query nor an instrument but **a sentence**.
+
+## ✅ Reading a sibling's supervisor commits paid a THIRD time — this time on the blocked item itself (tick 222)
+
+Tick 215's rule (*before recording a problem as having no remedy, read a sibling lane's
+supervisor commits*) has now fired three times: pricebook's `app/phpunit.xml` split (215),
+the box-wide pest lock (216), and this. The first two found remedies for *secondary*
+hazards; this one lands on **TRACK 1 ACTION 1**, carried since tick 195.
+
+Money's `077c09d4` records *"ruling 60 (the guard refuses `JourneyHarness.php` on every
+commit, **so the supervisor commits it**)"*, and `d03b9843` is that ruling executed. It is
+structurally pricebook's ruling 27 for `app/phpunit.xml`: **the coder makes the edit** (it
+is `app/**`, its own column — `coder-bin/git` refuses only the *staging*), **the
+supervisor commits it** (the supervisor's `git` is `/usr/bin/git`, not the wrapper).
+
+⛔ **This lane does not help itself to the mechanism.** `JourneyHarness.php` is outside
+this seat's enumerated commit list, and adopting another lane's ruling to get past a guard
+aimed at this seat is "patch the thing that is refusing you" one step removed — the
+reasoning that stopped this seat using the `bin/state.py` grant at tick 213. It goes up as
+TRACK 1 ACTION 1 **re-stated with a second working precedent and a ruling number to copy**,
+which is a materially better ask than nineteen ticks of "no remedy exists".
+
+⚠️ Re-read at source this tick per tick 218: `coder-bin/git:53` is unchanged and still
+keyed to the checkout **directory name** `grs-antig`; `:58-63`'s `GOAIEZ_MERGE_OK`
+exemption is still take-only. But `:23-49` gained a narrow `checkout HEAD -- <existing
+file paths>` opening dated 2026-09-06 14:3x for Track 1 run 112 — **the guard is being
+edited this week**, which is evidence the ask is actionable rather than theoretical, and
+per tick 218 it needs no merge: the file is in no repository.
+
+## ⚠️ `--is-ancestor` answering NO on a sibling tip is the ordinary case read backwards (tick 222)
+
+`git merge-base --is-ancestor 978041fc c987815c` → **NOT ancestor**, which on a sibling
+branch reads like a force-push and would have opened a history-rewrite finding. It is
+nothing: `978041fc` is dated 14:12:48 and `c987815c` 13:44:51, so the merge did not exist
+when the older tip was recorded. The confirming pair is `--is-ancestor c987815c
+80c13ce5` → **YES** plus the reflog's eight consecutive `update by push` with no repeated
+sha. ⛔ **Test the direction the timeline implies, and settle ancestry from the reflog**
+(ticks 220/221) — a single `--is-ancestor` answers the question you asked, which is not
+always the question you have.
