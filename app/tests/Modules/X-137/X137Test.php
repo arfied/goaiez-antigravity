@@ -17,6 +17,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class X137Test extends TestCase
@@ -249,6 +251,35 @@ class X137Test extends TestCase
         });
 
         $this->get("/l/{$biz->id}/unknown_code")->assertNotFound();
+    }
+
+    #[Test]
+    #[Group('G13-24')]
+    public function test_static_number_per_offline_campaign(): void
+    {
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $token = $this->attributeAction->allocateStaticToken(
+            businessId: $biz->id,
+            allocatedNumber: '+15550000010',
+            campaignSource: 'billboard_q3'
+        );
+
+        $this->assertTrue($token->is_static);
+        $this->assertNull($token->expires_at);
+
+        // Multiple calls can be attributed without changing the token status to joined
+        $res1 = $this->attributeAction->attributeCall($biz->id, 1001, '+15550000010');
+        $this->assertEquals('attributed', $res1['status']);
+        $this->assertEquals('billboard_q3', $res1['campaign_source']);
+
+        $res2 = $this->attributeAction->attributeCall($biz->id, 1002, '+15550000010');
+        $this->assertEquals('attributed', $res2['status']);
+
+        $token->refresh();
+        $this->assertEquals('active', $token->status);
+        $this->assertNull($token->joined_call_id);
     }
 
     public function test_header_capabilities(): void

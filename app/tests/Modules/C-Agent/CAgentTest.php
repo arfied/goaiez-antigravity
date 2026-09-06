@@ -121,6 +121,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-15] = G5-31/32; one spec
+     * ⛔ REFUSED: G5-15 — the capability's own text is "= G5-31/32; one spec"; there is no clause to assert.
      */
     public function test_g5_15_omnichannel_spec(): void
     {
@@ -129,6 +130,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-19] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_19_agent_header(): void
     {
@@ -137,6 +139,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-24] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_24_agent_intent(): void
     {
@@ -145,6 +148,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
+     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt (grep for Chat/X-102 is empty). Owner: C-Agent
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -153,6 +157,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
+     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt (grep for Voice/X-66 is empty). Owner: C-Agent
      */
     public function test_g5_32_voice_door(): void
     {
@@ -175,6 +180,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
+     * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt (grep for takeover is empty). Owner: C-Agent
      */
     public function test_g5_37_takeover_latch(): void
     {
@@ -183,6 +189,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-39] compose-time, both directions
+     * ⛔ REFUSED: The text 'compose-time, both directions' defines no measurable behavior to assert.
      */
     public function test_g5_39_compose_time_both_directions(): void
     {
@@ -191,6 +198,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-41] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_41_header_contract(): void
     {
@@ -199,6 +207,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-42] the research behind it is X-135's
+     * ⛔ REFUSED: G5-42 — points to X-135, which is owned outside this lane.
      */
     public function test_g5_42_research_contract(): void
     {
@@ -207,6 +216,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-43] the 100 authored profiles are the fixture (P-126)
+     * BUILD PROPOSAL: G5-43 — "the 100 authored profiles" fixture is unbuilt. Owner: C-Agent
      */
     public function test_g5_43_profile_fixtures(): void
     {
@@ -215,6 +225,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-48] named in the header
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_48_intent_serve(): void
     {
@@ -223,6 +234,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-51] named in the header; the minute-by-minute graph is an X-194 view
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_51_minute_graph_view(): void
     {
@@ -234,7 +246,14 @@ class CAgentTest extends TestCase
      */
     public function test_g5_53_stop_belongs_to_consent_service(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Consent Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->classify->handle($biz->id, 'STOP');
+        $this->assertEquals('general_inquiry', $res['intent']);
+
+        $resAnswer = $this->answer->handle($biz->id, 'STOP');
+        $this->assertNotEquals('handoff', $resAnswer['status']);
     }
 
     /**
@@ -242,7 +261,17 @@ class CAgentTest extends TestCase
      */
     public function test_g10_08_compose_time_moderation(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Mod Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Http::preventStrayRequests();
+        Http::fake();
+
+        $res = $this->answer->handle($biz->id, 'I am 16 years old');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('UNDER_18', $res['refusal_code']);
+        Http::assertNothingSent();
     }
 
     /**
@@ -250,7 +279,16 @@ class CAgentTest extends TestCase
      */
     public function test_g10_13_no_llm_in_send_path(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Send Path Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Http::preventStrayRequests();
+        Http::fake();
+
+        $res = $this->answer->handle($biz->id, 'just a regular message');
+
+        $this->assertEquals('answered', $res['status']);
+        Http::assertNothingSent();
     }
 
     /**
