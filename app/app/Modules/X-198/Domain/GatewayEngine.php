@@ -140,11 +140,13 @@ final class GatewayEngine
 
     /**
      * Reconcile payout and log immutable discrepancy if mismatched (TEST ANCHOR).
+     * The actual side is the payout row's own figure and never a caller's.
      */
-    public function reconcilePayout(int $businessId, int $payoutId, int $expectedCents, int $actualCents): array
+    public function reconcilePayout(int $businessId, int $payoutId, int $expectedCents): array
     {
-        return DB::transaction(function () use ($businessId, $payoutId, $expectedCents, $actualCents) {
+        return DB::transaction(function () use ($businessId, $payoutId, $expectedCents) {
             $payout = Payout::where('business_id', $businessId)->findOrFail($payoutId);
+            $actualCents = (int) $payout->amount_cents;
 
             $discrepancy = $actualCents - $expectedCents;
             $status = ($discrepancy === 0) ? 'balanced' : 'discrepancy_logged';

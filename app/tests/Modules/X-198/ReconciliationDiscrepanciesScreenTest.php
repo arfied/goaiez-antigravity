@@ -23,8 +23,8 @@ class ReconciliationDiscrepanciesScreenTest extends TestCase
 
         Tenancy::set($bizB->id);
         $connB = MerchantConnection::create(['business_id' => $bizB->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_B9', 'is_connected' => true]);
-        $payoutB = Payout::create(['business_id' => $bizB->id, 'merchant_connection_id' => $connB->id, 'gateway_payout_id' => 'po_other_9', 'amount_cents' => 1000, 'status' => 'pending', 'payout_date' => now()->toDateString()]);
-        app(PayoutReconcileAction::class)->handle($bizB->id, $payoutB->id, 1000, 900);
+        $payoutB = Payout::create(['business_id' => $bizB->id, 'merchant_connection_id' => $connB->id, 'gateway_payout_id' => 'po_other_9', 'amount_cents' => 900, 'status' => 'pending', 'payout_date' => now()->toDateString()]);
+        app(PayoutReconcileAction::class)->handle($bizB->id, $payoutB->id, 1000);
 
         $owner = User::findOrFail($biz->owner_user_id);
         $owner->forceFill(['name' => "Mariano O'Connell"])->save();
@@ -32,11 +32,11 @@ class ReconciliationDiscrepanciesScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'square', 'merchant_account_id' => 'acct_A1', 'is_connected' => true]);
-        $payoutShort = Payout::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'gateway_payout_id' => 'po_short_1', 'amount_cents' => 5000, 'status' => 'pending', 'payout_date' => now()->toDateString()]);
-        $short = app(PayoutReconcileAction::class)->handle($biz->id, $payoutShort->id, 5000, 4900)['run_id'];
+        $payoutShort = Payout::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'gateway_payout_id' => 'po_short_1', 'amount_cents' => 4900, 'status' => 'pending', 'payout_date' => now()->toDateString()]);
+        $short = app(PayoutReconcileAction::class)->handle($biz->id, $payoutShort->id, 5000)['run_id'];
 
         $payoutBalanced = Payout::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'gateway_payout_id' => 'po_balanced_1', 'amount_cents' => 7000, 'status' => 'pending', 'payout_date' => now()->toDateString()]);
-        $balanced = app(PayoutReconcileAction::class)->handle($biz->id, $payoutBalanced->id, 7000, 7000)['run_id'];
+        $balanced = app(PayoutReconcileAction::class)->handle($biz->id, $payoutBalanced->id, 7000)['run_id'];
 
         Tenancy::forgetUser();
         Livewire::test(ReconciliationDiscrepancies::class)->assertForbidden();

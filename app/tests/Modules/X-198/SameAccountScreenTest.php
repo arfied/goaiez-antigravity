@@ -36,7 +36,7 @@ class SameAccountScreenTest extends TestCase
         $loose = Payment::create(['business_id' => $biz->id, 'merchant_connection_id' => null, 'amount_cents' => 2500, 'currency' => 'USD', 'payment_token' => 'sq_tok_loose', 'idempotency_key' => 'idem_loose', 'status' => 'pending']);
 
         $payout = Payout::create(['business_id' => $biz->id, 'merchant_connection_id' => $connA->id, 'gateway_payout_id' => 'po_a_1', 'amount_cents' => 5000, 'status' => 'pending', 'payout_date' => now()->toDateString()]);
-        app(PayoutReconcileAction::class)->handle($biz->id, $payout->id, 5000, 5000);
+        app(PayoutReconcileAction::class)->handle($biz->id, $payout->id, 5000);
 
         Tenancy::forgetUser();
         Livewire::test(SameAccount::class)->assertForbidden();

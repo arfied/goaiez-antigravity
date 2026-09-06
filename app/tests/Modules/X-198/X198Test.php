@@ -79,7 +79,7 @@ class X198Test extends TestCase
             'business_id' => $biz->id,
             'merchant_connection_id' => $conn->id,
             'gateway_payout_id' => 'po_stripe_tenant_456',
-            'amount_cents' => 5000,
+            'amount_cents' => 4900,
             'status' => 'pending',
             'payout_date' => now()->toDateString(),
         ]);
@@ -87,7 +87,7 @@ class X198Test extends TestCase
         $this->assertEquals($conn->id, $payout->merchant_connection_id);
 
         // 3. Discrepancy is written, never corrected: Expected $50.00 (5000 cents), got $49.00 (4900 cents)
-        $reconRes = $this->reconcileAction->handle($biz->id, $payout->id, 5000, 4900);
+        $reconRes = $this->reconcileAction->handle($biz->id, $payout->id, 5000);
         $this->assertEquals('discrepancy_logged', $reconRes['status']);
         $this->assertEquals(-100, $reconRes['discrepancy_cents']);
 
