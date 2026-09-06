@@ -252,4 +252,52 @@ class X122Test extends TestCase
         $this->assertEquals('GB', $inv->geo_country);
         $this->assertEquals('London', $inv->geo_city);
     }
+    /** [G4-53] */
+    public function test_g4_53_action_registry_api_not_graphql(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Registry Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->registry->handle($biz->id, 'invoice.issue', ['required' => ['amount']]);
+        
+        $res = $this->invoker->handle(businessId: $biz->id, actionName: 'invoice.issue', parameters: ['amount' => 500]);
+        
+        $this->assertEquals('completed', $res['status']);
+        
+        $invocation = \App\Modules\X122\Models\ActionInvocation::findOrFail($res['invocation_id']);
+        
+        $this->assertEqualsCanonicalizing(
+            ['executed', 'action', 'timestamp', 'payload_hash'],
+            array_keys($res['result'])
+        );
+
+        $outerKeys = array_keys($res);
+        $innerKeys = array_keys($res['result']);
+        $modelKeys = array_keys($invocation->getAttributes());
+        
+        $allNames = array_merge($outerKeys, $innerKeys, $modelKeys);
+        foreach ($allNames as $name) {
+            $this->assertDoesNotMatchRegularExpression('/(graphql|gql|resolver|typename|selection|edges|nodes|fragment)/i', $name);
+        }
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-122')));
+        $files = [];
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && !in_array($file->getBasename(), ['capabilities.php', 'manifest.php'])) {
+                $files[] = $file->getPathname();
+            }
+        }
+        $this->assertGreaterThanOrEqual(16, count($files));
+
+        $controlCount = 0;
+        foreach ($files as $filePath) {
+            $content = file_get_contents($filePath);
+            $this->assertDoesNotMatchRegularExpression('/\b(graphql|gql|apollo|resolver|resolvers|introspection|persisted_query|selection_set|__typename)\b/i', $content, "File $filePath matched forbidden term");
+            if (preg_match('/ActionManifest|ActionInvocation|ActionInvokeAction/', $content)) {
+                $controlCount++;
+            }
+        }
+
+        $this->assertEquals(8, $controlCount);
+    }
 }
