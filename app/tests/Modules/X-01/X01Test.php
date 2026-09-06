@@ -325,33 +325,33 @@ class X01Test extends TestCase
     {
         $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Sort Biz']);
-        
+
         $conv1 = Conversation::factory()->create([
             'business_id' => $biz->id,
             'subject' => 'Subject A - inserted first, oldest update',
             'created_at' => now()->subDays(5),
             'updated_at' => now()->subDays(5),
         ]);
-        
+
         $conv2 = Conversation::factory()->create([
             'business_id' => $biz->id,
             'subject' => 'Subject B - inserted second, newest update',
             'created_at' => now()->subDays(3),
             'updated_at' => now()->subDays(1),
         ]);
-        
+
         $conv3 = Conversation::factory()->create([
             'business_id' => $biz->id,
             'subject' => 'Subject C - inserted third, middle update',
             'created_at' => now()->subDays(2),
             'updated_at' => now()->subDays(3),
         ]);
-        
+
         $response = Livewire::actingAs($admin)->test(Thread::class);
-        
+
         // 1. It renders. One conversation's subject is on the page.
         $response->assertSee($conv1->subject);
-        
+
         // 2. It is ordered. assertSeeInOrder over three subjects, newest activity first.
         $response->assertSeeInOrder([
             $conv2->subject,
