@@ -11,6 +11,7 @@ use App\Modules\X207\Actions\PushSendAction;
 use App\Modules\X207\Events\SendRequested;
 use App\Modules\X207\Models\DeviceToken;
 use App\Modules\X207\Models\PushDelivery;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -130,7 +131,7 @@ class X207Test extends TestCase
         $this->assertEquals(3, PushDelivery::where('business_id', $biz->id)->count());
 
         $deliveries = PushDelivery::where('business_id', $biz->id)->orderBy('id')->get();
-        $shape = fn (array $p): array => \Illuminate\Support\Arr::except($p, ['timestamp']);
+        $shape = fn (array $p): array => Arr::except($p, ['timestamp']);
         $this->assertSame($shape($deliveries[0]->payload), $shape($deliveries[1]->payload));
         $this->assertSame($shape($deliveries[1]->payload), $shape($deliveries[2]->payload));
 

@@ -127,8 +127,8 @@ class X208Test extends TestCase
     public function test_tenant_supplies_lob_key_no_platform_account(): void
     {
         $this->assertNull(config('services.lob'));
-        
-        $lobKeys = collect(config('services'))->keys()->filter(fn($key) => stripos((string)$key, 'lob') !== false);
+
+        $lobKeys = collect(config('services'))->keys()->filter(fn ($key) => stripos((string) $key, 'lob') !== false);
         $this->assertTrue($lobKeys->isEmpty());
 
         $this->assertEquals(0, DB::table('platform_credentials')->where('key', 'like', '%lob%')->count());
@@ -144,7 +144,7 @@ class X208Test extends TestCase
         $this->assertEquals('tenant_vault', $validRes['piece']->lob_api_key_source);
 
         $this->sendAction->handle($biz->id, $validRes['piece_id'], 'test_key');
-        
+
         $sentPiece = MailPiece::where('business_id', $biz->id)->find($validRes['piece_id']);
         $this->assertEquals('tenant_vault', $sentPiece->lob_api_key_source);
     }
