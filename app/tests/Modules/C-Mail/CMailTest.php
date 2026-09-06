@@ -17,9 +17,11 @@ use App\Modules\CMail\Models\WarmupCalendar;
 use App\Modules\CMail\Ui\DnsCard;
 use App\Modules\X204\Domain\ConsentService;
 use App\Modules\X204\Models\Suppression;
+use App\Services\Config\DefaultsRegistry;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class CMailTest extends TestCase
@@ -303,20 +305,23 @@ class CMailTest extends TestCase
     /**
      * [G4-08], [G7-40], [G10-28], [G11-03], [G11-20] DNS & DMARC
      */
-
-    /**
-     * [G11-03]
-     */
+    #[Group('G11-03')]
     public function test_g11_03_dns_card_shows_records_with_copy_button_and_no_spf_instructions(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'DNS Card Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $this->dnsAction->handle($biz->id, 'card.apex-air.com');
+        $domain = $this->dnsAction->handle($biz->id, 'card.apex-air.com');
+        $domain->update(['spf_status' => 'missing', 'dkim_status' => 'missing', 'dmarc_status' => 'missing']);
+
+        $defaults = app(DefaultsRegistry::class);
+        $sendingDomain = $defaults->value('mail.sending_domain');
 
         Livewire::test(DnsCard::class)
-            ->assertSee('v=spf1 include:mail.tracksixty.com ~all')
-            ->assertSee('v=DKIM1')
+            ->assertSee('v=spf1 include:'.$sendingDomain.' ~all')
+            ->assertSee('google._domainkey.card.apex-air.com')
+            ->assertSee('UNRESOLVED (missing key from provider)')
+            ->assertSee('_dmarc.card.apex-air.com')
             ->assertSee('v=DMARC1; p=quarantine;')
             ->assertSee('Copy') // copy affordance
             ->assertDontSee('configure SPF', false)
