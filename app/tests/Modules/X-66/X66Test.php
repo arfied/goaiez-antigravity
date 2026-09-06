@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X66;
 
+use App\Models\User;
 use App\Modules\X66\Actions\VoiceAnswerAction;
 use App\Modules\X66\Actions\VoiceCoachAction;
 use App\Modules\X66\Actions\VoiceTransferAction;
@@ -11,8 +12,11 @@ use App\Modules\X66\Actions\VoiceVoicemailTranscribeAction;
 use App\Modules\X66\Domain\VoiceSessionEngine;
 use App\Modules\X66\Events\CallAnswered;
 use App\Modules\X66\Events\CallRinging;
+use App\Modules\X66\Ui\Calls;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X66Test extends TestCase
@@ -122,11 +126,11 @@ class X66Test extends TestCase
      */
     public function test_g16_33_enrolment_confirms_own_booking(): void
     {
-        $admin = \App\Models\User::factory()->create();
+        $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
-        \App\Support\Tenancy::set($biz->id);
-        $component = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X66\Ui\Calls::class);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
+        $component = Livewire::actingAs($admin)->test(Calls::class);
         $component->assertDontSee('Enrolment:', false);
     }
 
@@ -135,11 +139,11 @@ class X66Test extends TestCase
      */
     public function test_g16_34_tenant_voice_and_disclosure(): void
     {
-        $admin = \App\Models\User::factory()->create();
+        $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
-        \App\Support\Tenancy::set($biz->id);
-        $component = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X66\Ui\Calls::class);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
+        $component = Livewire::actingAs($admin)->test(Calls::class);
         $component->assertDontSee('recorded consent', false);
     }
 
@@ -148,11 +152,11 @@ class X66Test extends TestCase
      */
     public function test_g18_28_no_passive_enrolment_voiceprint_secure(): void
     {
-        $admin = \App\Models\User::factory()->create();
+        $admin = User::factory()->create();
         $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
-        \App\Support\Tenancy::set($biz->id);
-        $component = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X66\Ui\Calls::class);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        Tenancy::set($biz->id);
+        $component = Livewire::actingAs($admin)->test(Calls::class);
         $component->assertDontSee('passive enrolment', false);
         $component->assertDontSee('voiceprint', false);
     }
