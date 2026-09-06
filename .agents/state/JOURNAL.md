@@ -886,3 +886,12 @@
 - `2026-09-05T13:45:55` note: G1-73, G1-75, G1-81 and G1-82 were filed UNRESOLVED at 2026-09-05T13:27:15 with the words 'returns nothing'; each of those four greps returns exactly one line, its own capabilities.php entry (capabilities.php:46, :49, :52, :55). The filings stand — the only match in every case is the capability text, so no system exists behind any of the four — but the honest phrasing is the one used for G7-10 and G17-31, 'returns only the capability text'. Recorded so the ledger is not read as a stronger negative than the grep supports.
 - `2026-09-05T15:51:12` UNRESOLVED capability X-183 - G12-02: ContentGateAction::evaluateGate() implements no grounding check; grep -rn 'grounding' app/app/Modules/X-183 returns only the docblock and capabilities.php
 - `2026-09-05T15:51:15` UNRESOLVED capability X-183 - G13-29: ContentGateAction::evaluateGate() implements no citation check; grep -rn 'citation' app/app/Modules/X-183 returns only capabilities.php
+- `2026-09-05T23:57:08` UNRESOLVED capability X-183 - G5-11 — grep -inr "G5-11" app/ returns only the capability text; no comment model, no escalation path
+- `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G7-24 — grep -inr "G7-24" app/ returns only the capability text; nothing marks a draft human or AI
+- `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G8-39 — grep -inr "G8-39" app/ returns only the capability text; no grounding check — same absence as G12-02
+- `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G9-17 — grep -inr "G9-17" app/ returns only the capability text; nothing marks a draft a summary
+- `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G9-22 — grep -inr "G9-22" app/ returns only the capability text; no extraction, no provenance column
+- `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G12-05 — grep -inr "G12-05" app/ returns only the capability text; no builder/plugin publish target in the module
+- `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G16-03 — grep -inr "G16-03" app/ returns only the capability text; content_drafts has no content-type column so the gate cannot distinguish long-form, and no honest assertion exists
+- `2026-09-05T23:57:14` UNRESOLVED capability X-183 - G16-28 — grep -inr "G16-28" app/ returns only the capability text; nothing marks a draft a transcript
+- `2026-09-05T23:57:14` UNRESOLVED capability X-183 - G20-15 — grep -inr "G20-15" app/ returns only the capability text; no link from a draft to a review

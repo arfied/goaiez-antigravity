@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T15:51:15",
+ "updated": "2026-09-05T23:57:14",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1111,6 +1111,60 @@
      "stage": "capability",
      "why": "G13-29: ContentGateAction::evaluateGate() implements no citation check; grep -rn 'citation' app/app/Modules/X-183 returns only capabilities.php",
      "at": "2026-09-05T15:51:15"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G5-11 \u2014 grep -inr \"G5-11\" app/ returns only the capability text; no comment model, no escalation path",
+     "at": "2026-09-05T23:57:08"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G7-24 \u2014 grep -inr \"G7-24\" app/ returns only the capability text; nothing marks a draft human or AI",
+     "at": "2026-09-05T23:57:13"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G8-39 \u2014 grep -inr \"G8-39\" app/ returns only the capability text; no grounding check \u2014 same absence as G12-02",
+     "at": "2026-09-05T23:57:13"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G9-17 \u2014 grep -inr \"G9-17\" app/ returns only the capability text; nothing marks a draft a summary",
+     "at": "2026-09-05T23:57:13"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G9-22 \u2014 grep -inr \"G9-22\" app/ returns only the capability text; no extraction, no provenance column",
+     "at": "2026-09-05T23:57:13"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G12-05 \u2014 grep -inr \"G12-05\" app/ returns only the capability text; no builder/plugin publish target in the module",
+     "at": "2026-09-05T23:57:13"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G16-03 \u2014 grep -inr \"G16-03\" app/ returns only the capability text; content_drafts has no content-type column so the gate cannot distinguish long-form, and no honest assertion exists",
+     "at": "2026-09-05T23:57:13"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G16-28 \u2014 grep -inr \"G16-28\" app/ returns only the capability text; nothing marks a draft a transcript",
+     "at": "2026-09-05T23:57:14"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G20-15 \u2014 grep -inr \"G20-15\" app/ returns only the capability text; no link from a draft to a review",
+     "at": "2026-09-05T23:57:14"
     }
    ]
   },
@@ -1773,6 +1827,60 @@
    "stage": "capability",
    "why": "G13-29: ContentGateAction::evaluateGate() implements no citation check; grep -rn 'citation' app/app/Modules/X-183 returns only capabilities.php",
    "at": "2026-09-05T15:51:15"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G5-11 \u2014 grep -inr \"G5-11\" app/ returns only the capability text; no comment model, no escalation path",
+   "at": "2026-09-05T23:57:08"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G7-24 \u2014 grep -inr \"G7-24\" app/ returns only the capability text; nothing marks a draft human or AI",
+   "at": "2026-09-05T23:57:13"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G8-39 \u2014 grep -inr \"G8-39\" app/ returns only the capability text; no grounding check \u2014 same absence as G12-02",
+   "at": "2026-09-05T23:57:13"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G9-17 \u2014 grep -inr \"G9-17\" app/ returns only the capability text; nothing marks a draft a summary",
+   "at": "2026-09-05T23:57:13"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G9-22 \u2014 grep -inr \"G9-22\" app/ returns only the capability text; no extraction, no provenance column",
+   "at": "2026-09-05T23:57:13"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G12-05 \u2014 grep -inr \"G12-05\" app/ returns only the capability text; no builder/plugin publish target in the module",
+   "at": "2026-09-05T23:57:13"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G16-03 \u2014 grep -inr \"G16-03\" app/ returns only the capability text; content_drafts has no content-type column so the gate cannot distinguish long-form, and no honest assertion exists",
+   "at": "2026-09-05T23:57:13"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G16-28 \u2014 grep -inr \"G16-28\" app/ returns only the capability text; nothing marks a draft a transcript",
+   "at": "2026-09-05T23:57:14"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G20-15 \u2014 grep -inr \"G20-15\" app/ returns only the capability text; no link from a draft to a review",
+   "at": "2026-09-05T23:57:14"
   }
  ],
  "decisions": [
