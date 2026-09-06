@@ -125,12 +125,24 @@ if [ "$MODE" = status ]; then
   # Descendants: when the coder dies its suites are reparented to init, so they
   # are descendants of nothing and the tree walk above cannot see them. A tick
   # that runs its own gate with one of these alive gets the run 67 deadlock.
+  # ⛔ NOT `pgrep -f 'vendor/bin/pest'` and NOT `pgrep -p` (no such option).
+  # Measured 2026-09-06 04:4x against the live run 68: `-f` matched the coder's own
+  # agy process, because the coder's command line IS the whole KICKOFF and BRIEF and
+  # those name `vendor/bin/pest` in their text. Three conditions instead, none a name
+  # match: comm is php* (excludes agy, node, timeout, bash and any prompt text), cwd
+  # is under this checkout (excludes every sibling track), cmdline names pest
+  # (excludes `php artisan` here).
   echo "-- pest with cwd in this checkout (holds the test database) --"
   orph=""
-  for p in $( { pgrep -f 'vendor/bin/pest' || true; } ); do
-    c=$(readlink -f "/proc/$p/cwd" 2>/dev/null) || continue
-    case "$c" in "$PWD"|"$PWD"/*) orph="$orph $p"
-      { pgrep -a -p "$p" || true; } | cut -c1-110 | sed 's/^/  /' ;; esac
+  for d in /proc/[0-9]*; do
+    p=${d#/proc/}
+    read -r comm < "$d/comm" 2>/dev/null || continue
+    case "$comm" in php*) ;; *) continue ;; esac
+    c=$(readlink "$d/cwd" 2>/dev/null) || continue
+    case "$c" in "$PWD"|"$PWD"/*) ;; *) continue ;; esac
+    grep -qa 'vendor/bin/pest' "$d/cmdline" 2>/dev/null || continue
+    orph="$orph $p"
+    echo "  $p  $(tr '\0' ' ' < "$d/cmdline" 2>/dev/null | cut -c1-110)"
   done
   [ -n "$orph" ] && echo "  ⚠️ still holding the database:$orph — the gate will refuse to start a second"
   [ -z "$orph" ] && echo "  none"

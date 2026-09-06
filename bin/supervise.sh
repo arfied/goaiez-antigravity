@@ -120,11 +120,22 @@ if [ $want_tests -eq 1 ]; then
   # grs-antig-stages) run their own pest on this box and match every name
   # pattern there is; comparing the process's cwd to *this* $APP cannot reach
   # them. This only ever reports — killing anything is the owner's.
+  # ⛔ NOT `pgrep -f 'vendor/bin/pest'`. Measured 2026-09-06 04:4x: that matched the
+  # coder's own agy process, because the coder's command line IS the whole KICKOFF
+  # and BRIEF, and this brief names `./vendor/bin/pest` in its own text. The gate
+  # would then have refused every suite the coder ever tried to run. Three
+  # conditions together, all cheap and none of them a name match:
+  #   comm is php*  — excludes agy, node, timeout, bash, and any prompt text
+  #   cwd is $APP   — excludes every sibling track
+  #   cmdline names pest — excludes `php artisan` in this same checkout
   live=""
-  for p in $( { pgrep -f 'vendor/bin/pest' 2>/dev/null || true; } ); do
+  for d in /proc/[0-9]*; do
+    p=${d#/proc/}
     [ "$p" = "$$" ] && continue
-    cwd=$(readlink -f "/proc/$p/cwd" 2>/dev/null) || continue
-    [ "$cwd" = "$APP" ] && live="$live $p"
+    read -r comm < "$d/comm" 2>/dev/null || continue
+    case "$comm" in php*) ;; *) continue ;; esac
+    [ "$(readlink "$d/cwd" 2>/dev/null)" = "$APP" ] || continue
+    grep -qa 'vendor/bin/pest' "$d/cmdline" 2>/dev/null && live="$live $p"
   done
   if [ -n "$live" ]; then
     echo "  ⛔ REFUSED — a pest is already running in this checkout against $xml_db:$live"
