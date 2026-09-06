@@ -774,3 +774,4 @@
 - `2026-09-05T17:42:54` note: X-201 deadline_at: answered — migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main
 - `2026-09-05T17:42:54` note: C-Reviews messageClass: answered — ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)
 - `2026-09-05T17:42:54` note: C-Sms TrialEligibility: answered by owner ruling 2026-09-05 — the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)
+- `2026-09-06T11:36:06` note: X-103 ssl_installed: three migrations add/alter one column (2026_09_05_220831, 2026_09_06_000001, 2026_09_06_053000); order leaves default false; consolidate when X-103 next opens

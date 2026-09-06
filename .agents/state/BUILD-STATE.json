@@ -1455,6 +1455,10 @@
   {
    "at": "2026-09-05T17:42:54",
    "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
+  },
+  {
+   "at": "2026-09-06T11:36:06",
+   "note": "X-103 ssl_installed: three migrations add/alter one column (2026_09_05_220831, 2026_09_06_000001, 2026_09_06_053000); order leaves default false; consolidate when X-103 next opens"
   }
  ]
 }
