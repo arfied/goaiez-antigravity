@@ -52,9 +52,39 @@ case "$CODER" in
 esac
 
 PIDFILE=".agents/supervisor/coder.pid"
-if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
-  exit 1
+
+# A live pidfile is NOT proof of a live coder. `nohup bash -c '… agy …'` can
+# outlive the agy it launched: run 54 left its wrapper parented to init with no
+# agy under it and two orphaned `tail -f` holding its fds, and the plain
+# `kill -0` below then refused every dispatch that followed. The supervisor
+# cannot kill the orphan — `kill` is outside its column — so the launcher has to
+# see through it. A wrapper with no agy/claude DESCENDANT is a stale waiter:
+# say so, and launch anyway.
+coder_alive() {
+  want="$1"
+  [ -n "$want" ] || return 1
+  kill -0 "$want" 2>/dev/null || return 1
+  for pid in $(pgrep -f '/home/goaiez/\.local/bin/(agy|claude)' 2>/dev/null || true); do
+    q="$pid"
+    hops=0
+    while [ -n "$q" ] && [ "$q" != "1" ] && [ "$q" != "0" ] && [ "$hops" -lt 64 ]; do
+      [ "$q" = "$want" ] && return 0
+      q="$(ps -o ppid= -p "$q" 2>/dev/null | tr -d ' ' || true)"
+      hops=$((hops + 1))
+    done
+  done
+  return 1
+}
+
+if [ -f "$PIDFILE" ]; then
+  RUNNING="$(cat "$PIDFILE")"
+  if coder_alive "$RUNNING"; then
+    echo "REFUSED: this track's coder is already active (pid $RUNNING)"
+    exit 1
+  fi
+  if kill -0 "$RUNNING" 2>/dev/null; then
+    echo "STALE WAITER: pid $RUNNING is alive with no agy/claude under it — treating the run as finished and launching"
+  fi
 fi
 [ -s .agents/supervisor/KICKOFF.md ] || { echo "REFUSED: KICKOFF.md missing or empty"; exit 1; }
 

@@ -398,6 +398,29 @@ reviews these at product close.
     Track 1 fixes the merge-shape ones; whatever is a real defect in this lane's module comes
     back here and is the first post-merge wave.
 
+## Trap added 2026-09-06 04:5x — a push by explicit ref carries the sha's whole ancestry
+
+`git push origin <sha>:track/pricebook` is not a push of one commit. It publishes every commit
+beneath `<sha>`. On 2026-09-06 the tick pushed its own `473308f2` (`chore(supervisor)`) and
+carried `9bfa4d87` — a commit under BLOCK at that moment — onto the remote as a passenger.
+Nothing broke, because PB-56 then supplied the missing evidence and the range passed. **The rule
+"push only a sha you have gated" therefore means "gate the whole range, not the tip."** Before
+any push, read `git log --oneline origin/track/pricebook..<sha>` and confirm every line in it is
+named by a `PASS` block. A supervisor commit is never a safe carrier for an ungated coder commit
+below it.
+
+## Trap added 2026-09-06 04:5x — a live `coder.pid` is not a live coder
+
+`nohup bash -c '… agy …'` can outlive the `agy` it launched. Run 54 left its wrapper parented to
+init at zero CPU with no `agy` under it and two orphaned `tail -f` holding its fds, eight minutes
+after `REPORT.md` was written and the gate had finished. `launch-coder.sh`'s old `kill -0` check
+read that as a live coder and would have refused every dispatch after it — the failure that idled
+44 ticks in another lane. **`kill` is outside this supervisor's column**, so the launcher was
+taught to see through it instead: `coder_alive()` requires a live `agy`/`claude` **descendant** of
+the pidfile pid, and a wrapper without one prints `STALE WAITER` and is launched over. If a tick
+ever sees `REFUSED: this track's coder is already active` while `REPORT.md` is newer than the
+pidfile, that check has regressed — do not wait it out.
+
 ## Owner ruling — 2026-09-06 03:5x (from `OWNER.md`, quoted in `REVIEWS.md` at 04:1x)
 
 30. **The lane supervisor is authorised to decide.** The owner: *"are the other tracks authorized to
