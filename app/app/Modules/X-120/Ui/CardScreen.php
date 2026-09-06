@@ -87,7 +87,7 @@ class CardScreen extends Component
         $expiringCards = $cards->filter(function ($card) use ($now) {
             $expDate = Carbon::createFromDate($card->exp_year, $card->exp_month, 1)->endOfMonth();
 
-            return $expDate->isPast() || $expDate->diffInDays($now) <= 30;
+            return $expDate->isPast() || $now->diffInDays($expDate, false) <= 30;
         });
 
         return view('x-120::card-screen', [

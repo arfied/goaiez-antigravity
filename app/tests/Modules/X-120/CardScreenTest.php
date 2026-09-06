@@ -153,4 +153,57 @@ class CardScreenTest extends TestCase
         );
         $this->assertSame('', $screen->get('number'), 'the number is cleared before the page goes back');
     }
+
+    public function test_card_screen_filters_expiring_cards_correctly(): void
+    {
+        \Carbon\Carbon::setTestNow(\Carbon\Carbon::parse('2026-09-06 12:00:00'));
+        $now = now();
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $expiredCard = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_exp',
+            'gateway_customer_id' => 'cus_exp',
+            'brand' => 'Visa',
+            'last_four' => '1111',
+            'exp_month' => $now->copy()->subMonth()->month,
+            'exp_year' => $now->copy()->subMonth()->year,
+            'is_default' => true,
+        ]);
+
+        $soonCard = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_soon',
+            'gateway_customer_id' => 'cus_soon',
+            'brand' => 'Visa',
+            'last_four' => '2222',
+            'exp_month' => $now->copy()->addDays(15)->month,
+            'exp_year' => $now->copy()->addDays(15)->year,
+            'is_default' => false,
+        ]);
+
+        $farCard = CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_far',
+            'gateway_customer_id' => 'cus_far',
+            'brand' => 'Visa',
+            'last_four' => '3333',
+            'exp_month' => $now->copy()->addYears(2)->month,
+            'exp_year' => $now->copy()->addYears(2)->year,
+            'is_default' => false,
+        ]);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->assertViewHas('cards', fn ($cards) => $cards->count() === 3)
+            ->assertViewHas('expiringCards', fn ($cards) => $cards->count() === 2
+                && $cards->contains(fn ($c) => $c->id === $expiredCard->id)
+                && $cards->contains(fn ($c) => $c->id === $soonCard->id)
+                && ! $cards->contains(fn ($c) => $c->id === $farCard->id));
+
+        \Carbon\Carbon::setTestNow();
+    }
 }
