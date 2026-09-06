@@ -6,7 +6,7 @@
     <div wire:loading><x-ui.skeleton label="Reading the sync runs…" /></div>
 
     @if(count($runs) === 0)
-        <x-ui.empty-state heading="No sync has run yet.">Invoices and payments flow nightly once a ledger is connected.</x-ui.empty-state>
+        <x-ui.empty-state heading="No sync has run yet.">There is no nightly anything.</x-ui.empty-state>
     @else
         <p>This ledger: {{ $seen }} lines seen · {{ $conflicts }} conflicts · {{ $overall === null ? 'nothing synced yet' : round($overall * 100).'% conflicts' }}</p>
         

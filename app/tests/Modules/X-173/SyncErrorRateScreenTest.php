@@ -95,4 +95,14 @@ class SyncErrorRateScreenTest extends TestCase
         Tenancy::set($bizB->id);
         $this->assertSame(1, SyncRun::where('business_id', $bizB->id)->count());
     }
+
+    public function test_empty_state_shows_the_truth()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Livewire::test(SyncErrorRateView::class)
+            ->assertOk()
+            ->assertSee('There is no nightly anything.');
+    }
 }
