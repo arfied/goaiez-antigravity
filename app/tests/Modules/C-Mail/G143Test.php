@@ -7,13 +7,15 @@ namespace App\Tests\Modules\CMail;
 use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Models\MailDomain;
 use App\Modules\X204\Domain\ConsentService;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 final class G143Test extends TestCase
 {
     #[Test]
-    public function g1_43_refuses_marketing_but_delivers_invoice_when_unsubscribed(): void
+    #[Group('G1-43')]
+    public function refuses_marketing_but_delivers_invoice_when_unsubscribed(): void
     {
         $business = self::provisionTenant();
         $businessId = $business->id;

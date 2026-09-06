@@ -7,13 +7,15 @@ namespace App\Tests\Modules\CMail;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
 use App\Support\Tenancy;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 final class G1531Test extends TestCase
 {
     #[Test]
-    public function g15_31_refuses_constant_quantity_for_warmup(): void
+    #[Group('G15-31')]
+    public function refuses_constant_quantity_for_warmup(): void
     {
         $business = self::provisionTenant();
         $businessId = $business->id;

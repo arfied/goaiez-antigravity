@@ -7,13 +7,15 @@ namespace App\Tests\Modules\CMail;
 use App\Modules\CMail\Actions\EmailHaltSeedAction;
 use App\Modules\CMail\Models\MailDomain;
 use App\Modules\CMail\Models\MailEvent;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 final class G1105Test extends TestCase
 {
     #[Test]
-    public function g11_05_halts_marketing_when_complaint_rate_reaches_seed(): void
+    #[Group('G11-05')]
+    public function halts_marketing_when_complaint_rate_reaches_seed(): void
     {
         $business = self::provisionTenant();
         $businessId = $business->id;
