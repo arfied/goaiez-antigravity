@@ -8,7 +8,6 @@ use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Models\FormSubmission;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use InvalidArgumentException;
 
 final class FormReleaseAction
 {
@@ -18,7 +17,11 @@ final class FormReleaseAction
             $submission = FormSubmission::where('business_id', $businessId)->findOrFail($submissionId);
 
             if (! $submission->is_spam) {
-                throw new InvalidArgumentException('Submission is not flagged as spam.');
+                return [
+                    'status' => 'already_released',
+                    'submission_id' => $submission->id,
+                    'person_id' => $submission->person_id,
+                ];
             }
 
             $submission->update([

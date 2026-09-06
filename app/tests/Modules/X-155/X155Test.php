@@ -301,10 +301,6 @@ class X155Test extends TestCase
     }
 
     /**
-     * [G3-64] & [G13-05] spam and bot filtering
-     */
-
-    /**
      * [G13-05] the tenant can see and release it
      */
     public function test_g13_05_tenant_can_release_it(): void
@@ -352,12 +348,54 @@ class X155Test extends TestCase
         $this->assertFalse($rowFresh->is_spam);
         $this->assertNull($rowFresh->spam_reason);
 
-        // downstream reader now sees it
+        // event emitted; downstream consumption is external to this lane
         Event::assertDispatched(FormCaptured::class, function ($event) use ($submissionId) {
             return $event->submissionId === $submissionId;
         });
     }
 
+    public function test_g13_05_releasing_clean_submission_is_noop(): void
+    {
+        Event::fake([FormCaptured::class]);
+        $biz = TestCase::provisionTenant(['name' => 'G13-05 Noop']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Noop Form',
+            'slug' => 'noop-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $person = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'Clean',
+            'phone' => '+15550000001',
+        ]);
+
+        $sub = FormSubmission::create([
+            'business_id' => $biz->id,
+            'form_definition_id' => $form->id,
+            'person_id' => $person->id,
+            'is_spam' => false,
+            'payload' => [],
+        ]);
+
+        $releaseAction = new FormReleaseAction;
+        $releaseRes = $releaseAction->handle($biz->id, $sub->id);
+
+        $this->assertEquals('already_released', $releaseRes['status']);
+
+        $rowFresh = FormSubmission::find($sub->id);
+        $this->assertFalse($rowFresh->is_spam);
+
+        Event::assertNotDispatched(FormCaptured::class);
+    }
+
+    /**
+     * [G3-64] & [G13-05] spam and bot filtering
+     */
     public function test_g3_64_bot_filtering(): void
     {
         Event::fake([FormCaptured::class, FormSpamRejected::class]);
