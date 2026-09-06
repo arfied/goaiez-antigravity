@@ -427,4 +427,48 @@ class X163Test extends TestCase
         $goodItem->refresh();
         $this->assertTrue($goodItem->is_confirmed);
     }
+    public function test_a_price_from_another_business_is_never_confirmed(): void
+    {
+        $a = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
+        $b = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD']);
+
+        $bItem = PriceBookItem::create([
+            'business_id' => $b->id,
+            'service_name' => 'B Service',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        \DB::statement("SET app.business_id = '{$a->id}'");
+
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        app(PriceConfirmAction::class)->handle($a->id, $bItem->id);
+    }
+
+    public function test_the_other_businesses_price_is_still_unconfirmed(): void
+    {
+        $a = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
+        $b = TestCase::provisionTenant(['name' => 'Biz B', 'currency' => 'USD']);
+
+        $bItem = PriceBookItem::create([
+            'business_id' => $b->id,
+            'service_name' => 'B Service',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        \DB::statement("SET app.business_id = '{$a->id}'");
+
+        try {
+            app(PriceConfirmAction::class)->handle($a->id, $bItem->id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // caught
+        }
+
+        \DB::statement("SET app.business_id = '{$b->id}'");
+        $bItem->refresh();
+        $this->assertFalse($bItem->is_confirmed);
+    }
 }
