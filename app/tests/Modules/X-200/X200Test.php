@@ -53,6 +53,8 @@ class X200Test extends TestCase
 
     /**
      * Testing abandonment ceiling <= 3.0%, uncertain AMD treated as human, and AI seat scored like human.
+     * [G10-03]
+     * [G18-01]
      */
     public function test_dialer_operations_and_regulatory_constraints(): void
     {
@@ -61,12 +63,12 @@ class X200Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        // 1. Campaign start within 3.0% regulatory ceiling (G3-04, G10-03, §160.1)
+        // 1. Campaign start within 3.0% regulatory ceiling (§160.1)
         $camp = $this->startAction->startCampaign($biz->id, 'Spring AC Tune-Up Outbound', 2.85);
         $this->assertNotNull($camp);
         $this->assertTrue($camp->is_running);
 
-        // 2. Reject campaign exceeding 3.0% ceiling (G10-03)
+        // 2. Reject campaign exceeding 3.0% ceiling
         try {
             $this->startAction->startCampaign($biz->id, 'Illegal Hyper-Dialing', 4.50);
             $this->fail('Expected InvalidArgumentException for ceiling > 3.0%');
@@ -74,18 +76,18 @@ class X200Test extends TestCase
             $this->assertStringContainsString('3.0%', $e->getMessage());
         }
 
-        // 3. Login human seat and AI seat (G2-09, G18-08, G18-15)
+        // 3. Login human seat and AI seat
         $humanSeat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
         $aiSeat = $this->loginAction->login($biz->id, 'AI Assistant Eve', isAi: true);
 
         $this->assertTrue($humanSeat->is_logged_in);
         $this->assertTrue($aiSeat->is_logged_in);
 
-        // 4. Dial next (G18-19 Infobip/Telco primary)
+        // 4. Dial next (Infobip/Telco primary)
         $this->dialAction->dialNext($biz->id, $camp->id, $humanSeat->id, '+12145550188');
         Event::assertDispatched(CallRequested::class);
 
-        // 5. Uncertain AMD: treated as human (G18-01, §18C.4)
+        // 5. Uncertain AMD: treated as human (§18C.4)
         $disp = $this->disposeAction->disposeCall(
             businessId: $biz->id,
             campaignId: $camp->id,
@@ -94,9 +96,9 @@ class X200Test extends TestCase
             disposition: 'voicemail',
             isUncertainAmd: true // Uncertain AMD
         );
-        $this->assertEquals('answered', $disp->disposition, 'Uncertain AMD is treated as human answered call (G18-01, §18C.4)');
+        $this->assertEquals('answered', $disp->disposition, 'Uncertain AMD is treated as human answered call (§18C.4)');
 
-        // 6. QA Scorecards: AI seat scored identically to human; scorecards positive only (G2-09, G2-35, G5-40, G16-15, T677)
+        // 6. QA Scorecards: AI seat scored identically to human; scorecards positive only (T677)
         $humanQa = $this->qaAction->scoreCall($biz->id, $humanSeat->id, 1001, 92, 'Great empathy shown');
         $aiQa = $this->qaAction->scoreCall($biz->id, $aiSeat->id, 1002, 98, 'Zero latency response');
 
@@ -116,16 +118,10 @@ class X200Test extends TestCase
     }
 
     /**
-     * [G2-09], [G2-26], [G2-35], [G2-37], [G3-04], [G5-09], [G5-40], [G9-01], [G9-38], [G10-03], [G11-25], [G13-02], [G16-11], [G16-15], [G18-01], [G18-02], [G18-03], [G18-06], [G18-08], [G18-13], [G18-15], [G18-16], [G18-19], [G18-25], [G21-13], [G15-29]
+     * [G18-25]
      */
-    public function test_dialer_capabilities(): void
-    {
-        $this->assertTrue(true);
-    }
-
     public function test_g18_25_certain_voicemail_is_not_upgraded_to_a_live_human(): void
     {
-        // G18-25: A certain voicemail is not upgraded
         $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -233,5 +229,37 @@ class X200Test extends TestCase
 
         $seat->refresh();
         $this->assertSame('idle', $seat->state, 'a refused dial must not leave the seat in dialing');
+    }
+
+    /**
+     * [G2-09]
+     */
+    public function test_g2_09_an_ai_seat_is_scored_exactly_like_a_human(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $humanSeat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+        $aiSeat = $this->loginAction->login($biz->id, 'AI Assistant Eve', isAi: true);
+
+        $humanQa = $this->qaAction->scoreCall($biz->id, $humanSeat->id, 1001, 90);
+        $aiQa = $this->qaAction->scoreCall($biz->id, $aiSeat->id, 1002, 90);
+
+        $this->assertSame($humanQa->qa_rating, $aiQa->qa_rating, 'an AI seat is scored exactly like a human');
+        $this->assertSame(90, $aiQa->qa_rating);
+    }
+
+    /**
+     * [G5-40]
+     */
+    public function test_g5_40_the_qa_scorecard_clamps_a_rating_to_the_0_100_range(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Outbound Contact Center Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
+
+        $this->assertSame(100, $this->qaAction->scoreCall($biz->id, $seat->id, 2001, 150)->qa_rating);
+        $this->assertSame(0,   $this->qaAction->scoreCall($biz->id, $seat->id, 2002, -5)->qa_rating);
     }
 }
