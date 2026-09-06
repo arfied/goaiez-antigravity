@@ -128,7 +128,7 @@ class CollectionsPackagePreviewScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Draft', 'last_name' => 'Overdue']);
-        
+
         Invoice::create([
             'business_id' => $biz->id,
             'customer_id' => $customer->id,

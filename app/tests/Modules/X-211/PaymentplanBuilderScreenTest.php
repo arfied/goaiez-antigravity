@@ -106,7 +106,7 @@ class PaymentplanBuilderScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Paid', 'last_name' => 'Full']);
-        
+
         Invoice::create([
             'business_id' => $biz->id,
             'customer_id' => $customer->id,
