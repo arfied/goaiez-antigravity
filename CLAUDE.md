@@ -2133,3 +2133,113 @@ timeout (which prints `pest TIMEOUT`). When it happens, the tick has **no
 independent §7** — say so, and accept the coder's numbers only if they reconcile
 against the previous tick's saved gate (here: 1875→1874 tests, 1869→1868 passed,
 failure and error *sets* identical ⇒ exactly one deleted test).
+
+## ⛔ A DRIFTED SHELL turns every pathspec query into FALSE SILENCE (tick 209)
+
+The finding of tick 209, and it is the supervisor's own instrument rather than a
+sibling's. `cd app && php artisan doctor` **persists the cd** (already recorded).
+Census half 1 was then run from `/home/goaiez/agents/grs-antig-site/app`, git
+resolved `-- app/app/Modules/X-103` against that cwd into `app/app/app/Modules/
+X-103` — a path that does not exist — and **half 1 printed nothing.**
+
+Half 1 printing nothing is exactly what "no sibling is writing in our column"
+looks like. Tick 208 had it at **8**, so the true delta was 0 and the screen read
+**−8 with both bounds unmoved** — a state tick 191 says cannot happen.
+
+⚠️ **What followed is the lesson, not the typo.** No `pwd` was run. Instead a
+theory was built (reviews merged `main`, its X-103 tree now matches, default
+history simplification is pruning the partition as TREESAME) and **four more
+queries were run to support it** — `--full-history`, a tree `git diff --stat`,
+`git branch -r --contains`, `git show --stat`. Every one was mis-scoped too, every
+one was silent, and every silence read as confirmation. The theory was coherent
+and about nothing. One `pwd` ended it. Written up, the block would have recorded
+half 1 = 0 attributed to history simplification — **a fabricated bound-attribution
+over a live 8-commit set still containing `ab051c0a`**, this lane's open
+constant-`true` `ssl_installed` finding. The disappearance of an open finding
+would have been reported as a git subtlety.
+
+Three properties make it worse than an ordinary slip:
+
+- **A mis-scoped pathspec fails silent, never loud.** `git log -- <nonexistent
+  path>` exits 0 with no output. Nothing errors.
+- **It survives the tip-table cache (tick 177) intact.** The cache's claim —
+  same tips ⇒ same output — holds only for a *correctly run* census. A drifted
+  shell yields a stable wrong answer a cache HIT reproduces indefinitely.
+- **The existing drift rule protects the wrong victim.** Tick 197 records drift as
+  a cause of `Write`/`Edit` refusals and a coder losing `REPORT.md`. Those
+  announce themselves. It never says the supervisor's own *measurements* silently
+  invert — the more dangerous consequence, because nothing announces it.
+
+⚠️ The environment forces the exposure: **`php app/artisan doctor` is refused**
+here (*"contains multiple operations"*), so `cd app && php artisan …` — the form
+that drifts — is the only accepted way to run artisan from this seat.
+
+**RULED by the lane supervisor:**
+1. **`pwd` is the first command of every census**, and `cd
+   /home/goaiez/agents/grs-antig-site` follows every `cd app && …` in its own call.
+2. **A census surface that drops to zero with both bounds unmoved is a TOOLING
+   FAULT until `pwd` says otherwise.** Bound-attribution is the second hypothesis.
+3. **Never build an explanation for a silence before verifying the query ran.** A
+   mis-scoped shell is a **common-mode** fault across a whole family of checks, so
+   corroboration from sibling queries proves nothing.
+
+Seventeenth statement of this section's law, and the first where the query's
+pathspec was **correct**. 163/178/180/183/185/187 concern a query's *pathspec*,
+190 its *strip*, 191 its *bounds moving*, 192/193 its *unrecorded bounds*, 194 its
+*configuration*, 196 its *width*, 207 its *expected output*, 208 the *evidence
+request*. This concerns its **resolution context** — the one input that appears
+nowhere in the command text, so re-reading the command can never reveal it.
+
+## ⛔ A doctor number copied into this ledger is a RECORDING, and it decays (tick 209)
+
+Tick 196 wrote *"§3's stage counts are RECORDED, not measured — only doctor's own
+`FAIL <stage>` line is the measurement."* True and insufficient. Tick 209's brief
+warned the coder off §3's `372` and told it to gate against **388, the live
+doctor** — and the real pre-wave number was **355**. 388 was measured at tick 196;
+four waves had landed since. The label "live doctor" is a claim about *when*, and
+copying it forward fifteen ticks made a stale figure look durable.
+
+The coder ignored it and measured its own before/after, which is the only reading
+that could have been right; obeying the brief would have made a correct +10 wave
+report as falling short.
+
+**RULED: a brief may name an absolute stage count only if it was measured in the
+same tick that writes the brief, or it names the tick that measured it.**
+Otherwise state the *predicted delta* and leave the absolute to the wave's own
+before/after. Same family as tick 196 retiring tick 82's diagnosis and tick 207
+retracting the X-137 divergence: **re-measure a standing number before briefing
+against it.**
+
+## ⚠️ A filing does not lower a count — gate a filing wave on the FILINGS (tick 209)
+
+Measured, not assumed: SITE-100 deleted ten tautology tests **and** filed ten
+`state.py unresolved X-176 capability …`, and `capability` went 355 → **365**. The
+`unresolved` record does not suppress the stage's violation; it records that the
+violation has a named missing dependency. So the pass condition for a strip wave
+is the *rise* (tick 444's inverted-success ruling), and the pass condition for a
+pure filing wave is **zero movement in every stage** plus one new `state.py
+status` line per filing. A filing wave whose counts move has done something else.
+
+## This lane's remaining red is a CLOSED list (tick 209)
+
+Grepping the live doctor for the seven owned ids:
+
+| stage | ours | filed? |
+| :-- | :-- | :-- |
+| capability | X-102 G16-21 · X-176 ×10 | ✅ all 11 |
+| contract | X-110 `pixel.install` · `pixel.events` · `page.loaded` · X-137 `message.sent` · X-103 `approval.requested` | ✅ all 5 |
+| citation · schema · boundary | **none name our seven** | — |
+| anchor | X-102 X-103 X-110 X-137 X-155 X-157 X-176 — `no runtime proof` | ⛔ seven, **none** filed |
+| journey | J11 `ssl` | TRACK 1 ACTION 1 |
+
+`state.py status` carries no `anchor` line for this lane — tick 197's X-157 entry
+was a `note`, which does not appear there. **SITE-101 is the whole backlog.**
+
+`TestAnchorStage:55-108` measured: `storage/app/evidence/{id}/runtime-proof.json`
+with `driver` ≠ `sync`, `junit` + `captured_at` from one execution, and an
+`artifact_id` that is a **vendor's** — `/^(TEST|MOCK|FAKE|SAMPLE|DEMO)[-_]/i`
+rejected at `:90`, and `Str::ulid( Str::uuid( uniqid( random_bytes( fake()->` and
+six more banned anywhere near an artifact-id field (`:43-46`, `:112-128`). So the
+blocking half is **specifically the external artifact id**, and under ruling 16
+X-157 has none *by design* — a `deploy_hash` is the self-minted id `:90` exists to
+reject.
