@@ -2046,7 +2046,91 @@ Watch for: <the trap that applies, by name>
   so the revert is surgical and `git checkout` on the path would have destroyed the fix. Tick 203 softened
   that tell to *"a prompt to read the diff, not a finding"*; keep the softening and keep reading the diff —
   here it was both.
-- **Backlog at tick 213 — wave 107c finishes 107b; wave 108 is unchanged.** 107c is the pint fix committed
+- ⭐⭐ **A coder-written mutation SCRIPT kept on disk beats the tick-185 `SITE:` field, and it is the only
+  thing that makes a wave dying without a report gradeable at all.** Tick 185 requires the site in
+  `REPORT.md` *"because the mutation is reverted by the time you read the log and the site is unrecoverable
+  afterwards"* — true of a hand-applied mutation, **false of a scripted one**. Run 92 wrote no `REPORT.md`
+  and `scratch/run-mutations.sh` (13:24:45, before any run) carried every `sed -i` expression verbatim,
+  every `git checkout` revert, and the **order**: five mutations, every site in a module or view file and
+  not one in a test body, so the whole tick-185 hazard closes on an artifact instead of on the coder's word.
+  Read against the test's six assertions the set was also correctly *designed* — one mutation per assertion,
+  each leaving every earlier one executable, which is the wave-92 requirement met unprompted. **RULED at
+  tick 214 as the house form for a mutation set on this lane**; the `SITE:` field becomes corroboration.
+- ✅✅ **Two mutations whose subtractions differ by exactly one prove they hit different assertions, and the
+  green baseline can be PREDICTED from them before it is measured.** Wave 107c: `Mut 4` (`abort(500)` in
+  `mount()`) → `assertions 7885`; `Mut 5` (`@if($hasActiveTakeover)` → `@if(false)`) → `7886`. From the test
+  body's six assertions those are `−4` and `−3` off a green of **7889**, which my own run then returned
+  exactly. Three-way agreement, and the `−4 / −3` pair is what excludes the wave-107b `Mut 2` defect where
+  both mutations redden A1 and one assertion is proved twice. **Derive the green from the mutation logs
+  before you run it**; the prediction is free and it cannot be argued into by a report.
+- ⚠️ **An `assertOk` mutation and a CONDITION mutation buy different things — credit them separately.**
+  `Mut 4`'s `abort(500)` inside `mount()`'s existing `request()->has('customer')` guard reddens `assertOk()`
+  and nothing else (radius 1, because only a GET carrying `?customer=` with no bound model reaches that
+  branch): it proves **the route reaches this component** and says nothing about any `assertSee`. `Mut 5`
+  is the one that discharges the tick-213 finding — mutating the blade's `@if` rather than the button's text
+  proves the control is *gated on the flag* and that the flag is true at GET time. ⭐ And `Mut 5` self-pinned
+  its site: its failure message is the page's own rendered HTML, the module's output, which is the tick-200
+  exception holding for a third time.
+- ⚠️⚠️ **A mutation script's `|| true` keeps it running past a KILLED pest, so a harness death leaves a
+  partial set in which every artifact looks present — and the tell is the raw object's SIZE.** Run 92's
+  `w107c-mut-6-raw.log` and `-7-raw.log` are **43 bytes** — `{"tool":"pest","result":"silent","rc":143}` —
+  against 2735 and 103443 for the two real ones, while their *gate* logs are complete at 8690 and 8702 bytes
+  with only §7 silent. `ls scratch/` therefore shows four gate logs and four raw objects, a complete-looking
+  set, two of which carry no numbers at all. The timings say the same: the two real runs took 111.1 s and
+  107.3 s, the killed pair closed 88 s and 54 s after their predecessors. **Size the `-raw` artifacts before
+  counting how many mutations a wave measured.** Newest member of the stale-artifact family: not too old
+  (wave 81), not too early (wave 99c), not byte-identical (waves 88b, 95, 105) — **too small.** ⚠️ And it is
+  the tick-205 shape, not tick 203's foreign collision: `grep -n "pinning"` across all three gate logs is
+  empty, no second checkout was detected, and the runs are strictly sequential by mtime.
+- ⚠️⚠️ **A mutation run IS a post-commit gate run, so a mutating wave's own artifacts already answer the pint
+  question — brief `read §6 of your final mutation log`, not another sentence about re-running pint.** Wave
+  107c committed its pint fix first (correctly, as RULED) and its *next* commit made the tree pint-dirty
+  again on the docblock it rewrote (`no_trailing_whitespace_in_comment`, `ThreadScreenTest.php`). **Sixth
+  pint-red wave on this lane** — and `w107c-mut-4.log` through `-7.log` each carry a §6 naming that exact
+  file and fixer. The information was on disk four times. My own file has said since wave 82 that *item 0 is
+  the first thing to fix and the LAST thing to check*, and I had briefed only the first half seven times;
+  the fix costs nothing because the log is written anyway. Not a `BLOCK` — no assertion moves — but a
+  gate-red sha is not a gated sha and it holds the push exactly as a `BLOCK` would.
+- ✅ **The commit-before-mutate rule was tested on this lane for the first time and held.** Wave 107 deleted
+  its own deliverable with `git checkout` on an uncommitted blade. Wave 107c committed its slice at 13:24:05
+  and wrote the mutation script at 13:24:45, and four `git checkout`s took nothing. **Brief it as its own
+  item and make `git status --porcelain` empty of `M` lines the proof** — one command, and it retires the
+  trap. ✅ The tick-211/213 comment leak is also fixed: briefing *"comments say what the assertion proves"*
+  in words removed both my wave-106 sentence and the wave-107b `Note:` from the docblock.
+- ⚠️ **`test_g2_76_unified_inbox_header` is X-01's FILE and nobody's lint — measured at tick 214 after Track
+  1 assigned the red to this lane.** `X01Test.php:268-288` globs `database_path('migrations/*.php')` **and**
+  `app_path('Modules/*/Database/migrations/*.php')` and fails on any `Schema::create` whose table ends
+  `_messages|_conversations|_threads|_contacts`. All four violators — `outreach_messages`,
+  `triage_conversations`, `inbound_messages`, `support_messages` — are declared in the **shared root**
+  `app/database/migrations/`, under no module at all, with reader blast radii of **92 · 11 · 37 · 8** files.
+  Sixty owns none of them; narrowing the lint's glob would be weakening a check and a `BLOCK` under the One
+  Rule. Filed as `TRACK 1 ACTION 1` with the measurement rather than as a refusal. ⚠️ The tick-199
+  contradiction still stands in the file: this lane's `⛔ REFUSED: G2-76 … there is no clause to assert`
+  sits directly over main's live lint that asserts and fails.
+- ⚠️ **Track 1's classmap ruling (`OWNER.md` 2026-09-06 14:0x) adds the MISATTRIBUTION half to a trap this
+  lane already had.** Ticks 158/159/202 record that `app/Modules/` is a composer classmap, that a new class
+  is unloadable until `composer dump-autoload` runs, and that `grep -a` is mandatory on that binary file.
+  What is new: a stale classmap **presents inside another module's test**, so the red looks like someone
+  else's, and *"they are red too"* is not evidence of ownership because every checkout carries its own stale
+  map. Track 1 nearly filed six such errors against sixty and X-01. Two tells: the class file exists while
+  `grep -a -c` in the classmap is 0 with its siblings at 1; and **two gates on an identical tree disagree —
+  a number that moves without a commit is not a number.** `composer dump-autoload` is a mandatory item of
+  the wave-108 merge brief, before its first gate.
+- **Backlog at tick 214 — wave 107d is 107c's remainder, then wave 108 is the merge of `origin/main`.**
+  RULED this tick. **107d is the pint fix committed and the three unmeasured mutations, and nothing else**,
+  because nine commits have been held from `origin/track/sixty` for four consecutive ticks and the only
+  thing stopping the push is two lines of trailing whitespace; a wave that also merged would put that fix
+  behind a 157-commit merge. **`Mut 4` and `Mut 5` are spent — do not re-brief either** (tick 191). Two
+  measurements are handed to 107d without conclusions: `if ($latch === null)` appears **twice** in
+  `UnifiedInboxManager.php` (`:141`, `:173`) and `sed -i` acts on every matching line, while the blade's
+  `@if($hasActiveTakeover)` is unique. **Wave 108 is the merge of `origin/main@12447593`** (Track 1's gate:
+  `tests 1952 · passed 1948 · FAILED 2 · errors 2`, pint PASS, phpstan 0) — its own brief, with
+  `app/phpunit.xml`'s pin restored explicitly (tick 195: ours is byte-identical to the base, so it appears
+  in no conflict list), the per-track restores, and `composer dump-autoload` before the first gate. Then
+  wave 109 is C-Agent's `TakeoverStarted`/`TakeoverReleased` listener and gate, ruled at tick 209 and
+  unblocked now that a human can release. The live proposal list stays
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- **Backlog at tick 213 (superseded by tick 214) — wave 107c finishes 107b; wave 108 is unchanged.** 107c is the pint fix committed
   (the whole push blocker), the surgical revert of the stranded `Mut 3`, the litter, `assertDontSee`
   restored, a deliberate resolution of the two dead `hasActiveTakeover` assignments, and mutations for the
   assertions from the real `GET` onward. **`Mut 2` and `Mut 3` are both spent — do not re-brief either**
