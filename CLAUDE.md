@@ -359,6 +359,32 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   notes commit from a code commit. Never open or re-escalate an OWNER ACTION off
   a tip that moved.
 
+  ⛔ **The census has a THIRD half: this track's only mergeable content**
+  (tick 170). Ticks 152/164 widened the census from module code, to code plus
+  tests, to plus the shared migration/journey directories — all of it `app/app/`
+  and `app/tests/`. None of it watches `app/GOAIEZ-TRACKER-CAPABILITIES.md`,
+  which tick 162 measured as the **only** file a Track 1 merge of `track/site`
+  would actually deliver (the other five are on the never-merge list). And
+  OWNER ACTION 39 records a command — `CapabilitiesScaffoldCommand` — that
+  "rewrites unconditionally and deletes other tracks' hand-written lines," i.e.
+  any track running `module:scaffold` can silently delete this track's entire
+  mergeable output. Run every HOLD tick:
+
+  ```
+  git log --format='%h %ci %s' ^origin/main ^origin/track/site \
+    origin/track/money origin/track/pricebook origin/track/reviews \
+    origin/track/sixty origin/track/stages origin/track/ui \
+    -- app/GOAIEZ-TRACKER-CAPABILITIES.md app/GOAIEZ-MASTER-PLAN.md
+  ```
+
+  It must print nothing, or print only another track's merge **of `origin/main`**
+  (`5f435239` is `track/pricebook` merging main and changes nothing here — tick
+  147 NOTE 1; attribute with `git branch -r --contains <sha>` before naming a
+  track). Measured clean at tick 170: the tracker's only commits since the
+  merge-base are this track's three (`dce2f004`, `5e8f8b1c`, `5bb3a278`).
+  **The generalisation, third statement of it:** a census scoped to code paths
+  measures code, not the column. This track's column includes a document.
+
   ⚠️ **Another track's "zero readers/writers" is measured on its own branch**
   (tick 164, OWNER ACTION 47). `1aa65e7a` drops five `page_versions` booleans —
   `chat_installed form_capture_installed dni_installed seo_tags_installed
