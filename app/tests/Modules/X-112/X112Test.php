@@ -241,7 +241,7 @@ class X112Test extends TestCase
         $agency = Agency::create(['business_id' => $biz->id, 'agency_name' => 'Agency', 'agency_mode' => 'full_service']);
         $this->markupAction->handle($biz->id, $agency->id, 'seo_audit', 5000, 2000);
 
-        Event::assertDispatched(MarginComputed::class, function ($event) use ($biz, $agency) {
+        Event::assertDispatched(MarginComputed::class, function ($event) use ($biz) {
             return $event->businessId === $biz->id && $event->serviceType === 'seo_audit' && $event->retailMarkupCents === 2000;
         });
 
