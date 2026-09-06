@@ -1437,6 +1437,57 @@ Watch for: <the trap that applies, by name>
   reasoning: nothing is missing *to the action*. Then wave 102 is `G11-12`'s X-01 half, which still needs
   `EmailReplied` to carry a body and a sender name it does not have. The live proposal list stays
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ⚠️⚠️ **The mid-wave-death rule has a FOURTH shape — a dirty tree AND a commit on the tip at once — and the
+  two branches written above are each half-right, so acting on either alone loses work or repeats it.** Run 81
+  (wave 101) died on `Error: timeout waiting for response` / `AGY_EXIT=1` — **no quota line**, so the
+  `--coder claude` chain is not triggered — having **committed** item 1 (`efcd6ca1`, 06:51:22) and left items 2–4
+  in the working tree (`CMailTest.php` docblock 06:51:27, a new untracked `EmailIngestEventAction.php` 06:52:03,
+  and `state.py decided`'s two files 06:52:07), all inside the 90 seconds before it died. Re-dispatching verbatim
+  on the *dirty-tree* branch would re-brief a committed commit (the wave-87 shape); grading only the tip on the
+  *commits-on-the-tip* branch would have thrown away the wave's actual deliverable. **The two discriminators are
+  independent and both are one command** — `git log origin/track/<x>..HEAD` against the dispatch time, and
+  `git status --porcelain`. Run both, every time; the branches are not exclusive.
+  ⭐ **The dirty half still needs the run-65 check first, and it passed here for a reason worth stating:**
+  `git diff --name-only` named **no file under `app/app/`** — the only `app/**` survivor was *untracked*, so there
+  was no live mutation to strand and no revert item. An untracked new class cannot be a stranded mutation; a
+  modified one can.
+- ⚠️ **A new class under `app/Modules/` is invisible to the autoloader the moment it is written, so a brief that
+  asks for a test against one must make `composer dump-autoload` an item — and `grep -a` is the check.** Measured
+  at tick 202: `grep -a -c "EmailIngestEventAction" app/vendor/composer/autoload_classmap.php` → **0**, against
+  **1** for the sibling `EmailSendAction` in the same directory. `app/composer.json:39-41` is
+  `"classmap": ["app/Modules/"]`, so the map is built at dump time and nothing rebuilds it. This is the tick-158
+  trap moved **before** the test rather than after a merge: there four tests errored on a class nobody had broken,
+  here the test would never have run at all. The `-a` is not optional — that file is binary to `grep` (tick 159).
+  ⭐ **Its useful inverse: an untracked, unreferenced, un-classmapped new class is inert, which is what makes a
+  supervisor gate over a dirty tree honest here.** `grep -rn "EmailIngestEventAction" app/app app/tests` named only
+  its own declaration, so the working tree's test surface and the sha's are the same surface — and the pest object
+  proved it independently (below). That is the narrow exception to the tick-199 rule (*a gate on a dirty tree gates
+  nothing that can be pushed*): **state the reason each dirty path is inert, or do not push.**
+- ✅ **The `cmp` one-byte tell works on this column's OWN gate run, and that is when it is worth the most.** Wave
+  88b and 95 were caught by a **shared** `duration_ms`; at tick 202 the accepting direction did the work.
+  `cmp scratch/pest-raw-last.log scratch/w100-pest-raw.log` → `differ: byte 93, line 1` — the `duration_ms` offset
+  alone (`264805` vs `140626`, both six digits, so the files stay the same length) with
+  `tests 1860 · passed 1855 · assertions 7860` identical across both. Identical headline four **plus** a differing
+  `duration_ms` is exactly what an inert working-tree delta must produce, and it says in one command both *this is
+  my run, not a stale copy* and *nothing uncommitted moved the suite*. **Run `cmp` against the previous wave's
+  object on every supervisor gate**, not only when grading a coder's paste.
+- ⚠️ **`state.py decided` can be recorded for code that is not committed — the wave-86 orphan trap in prospect,
+  and it looks identical to the discharged kind.** Run 81's death left `2026-09-06T06:52:07 (R245) C-Mail — the
+  ingest is C-Mail's, the transport is external and deliberately absent` in `JOURNAL.md` **and** its ledger row in
+  `BUILD-STATE.json`, both unstaged, describing an action that exists only as an untracked file. Nothing shipped,
+  so nothing is orphaned *yet* — but the next wave's brief must (i) name **both** state files in the same commit
+  as the code, and (ii) say **do not re-run `state.py decided`**, because the row is already written and the ledger
+  is append-only (the wave-93 double-row lesson). A dead run's half-written ledger is the one state where the
+  standing rule *"a `JOURNAL.md` line with no matching commit is a `BLOCK`"* must not fire: the line has no commit
+  because the run died, not because it lied.
+- ⚠️ **A new action that writes before it validates is a half-write with no transaction, and no gate sees it
+  because the happy path is all any test exercises.** `EmailIngestEventAction::handle()` as run 81 left it calls
+  `MailEvent::create([...])` and only then
+  `MailDomain::where('business_id', $businessId)->findOrFail($mailDomainId)` — so an ingest naming a domain that
+  is not this business's persists the row and *then* throws. Pint passed, phpstan reported 0, `php -l` was clean,
+  and the class type-checks: **the whole gate stack is silent on statement order.** Read a new action's body for
+  what it does before its first guard, and note that the guard here is also the tenancy guard — `mail_events`
+  carries RLS, so the lookup is what proves the domain belongs to the caller.
 
 ## Style
 
