@@ -115,7 +115,8 @@ class X108Test extends TestCase
     }
 
     /**
-     * [G1-12] tokens only (P-160), the iframe boundary asserted
+     * [G1-12] refuses: card data touches our DOM; tokens only (P-160), the iframe boundary asserted
+     * ⛔ REFUSED: surveyed X-108 Actions, Models, and Ui and found no payment, card data, or iframe components; X-108 owns no surface that touches payment fields (likely handled by C-Billing or a payment module).
      */
     public function test_g1_12_token_iframe_boundary(): void
     {
@@ -321,6 +322,7 @@ class X108Test extends TestCase
 
     /**
      * [G2-49] named in the header
+     * ⛔ REFUSED: surveyed X-108 Ui/ and found no Header component; X-108 owns only Calendar and Waitlist UI, so the "header" subject must belong to another module.
      */
     public function test_g2_49_header(): void
     {
@@ -329,6 +331,7 @@ class X108Test extends TestCase
 
     /**
      * [G2-58] questions on the booking page
+     * ⛔ REFUSED: surveyed X-108 Models (Appointment, Waitlist) and migrations; found no fields or machinery for storing questions on the booking page.
      */
     public function test_g2_58_booking_questions(): void
     {
@@ -337,6 +340,7 @@ class X108Test extends TestCase
 
     /**
      * [G15-08] out-of-office is named in the header; X-10 skips an unavailable assignee
+     * ⛔ REFUSED: the first clause ("out-of-office is named in the header") is already asserted by sibling test_g2_13_out_of_office. The second clause explicitly belongs to X-10.
      */
     public function test_g15_08_skip_unavailable_assignee(): void
     {
@@ -460,6 +464,7 @@ class X108Test extends TestCase
 
     /**
      * [G19-20] 24h · 1h · 10min; one segment = one credit, a meter and never a fee
+     * ⛔ REFUSED: surveyed X-108 Events and Actions; X-108 dispatches AppointmentReminded (24h, 1h, 10min) but contains no metering, credit, or fee logic, which belongs to a billing module.
      */
     public function test_g19_20_reminder_meters(): void
     {
