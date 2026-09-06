@@ -6,9 +6,11 @@ namespace App\Modules\X199\Ui;
 
 use App\Modules\X199\Models\OverflowCharge;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout')]
 class Declines extends Component
 {
     #[Locked]

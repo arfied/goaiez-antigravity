@@ -6,6 +6,7 @@ namespace App\Modules\X199\Ui;
 
 use App\Modules\X199\Models\Invoice;
 use App\Support\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -13,6 +14,7 @@ use Livewire\Component;
  * Money Paid Today
  * Derives paid today from invoices updated today with status 'paid' or 'offline_recorded', summing paid_cents.
  */
+#[Layout('components.account.layout')]
 class MoneyPaidToday extends Component
 {
     #[Locked]
