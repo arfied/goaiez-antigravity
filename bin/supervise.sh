@@ -19,6 +19,20 @@ for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_docto
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
+# Shared gate log (Track 1 relay, 2026-09-06 16:0x). One TSV line per tool run:
+#   start_iso <TAB> end_iso <TAB> pid <TAB> rc <TAB> project <TAB> checkout <TAB> tool
+# The rc is RAW and never normalised — 128+N is the whole signal (143 SIGTERM,
+# 137 SIGKILL, 124 is timeout(1)'s own). `tool` matters because pint, phpstan and
+# pest are three populations and a kill hits whichever is running. No lock: an
+# append under PIPE_BUF to an O_APPEND file is atomic on Linux, and a flock here
+# would interact with the pest lock for nothing.
+GATE_RUNS=/home/goaiez/tmp/gate-runs.tsv
+log_gate() {  # $1 start_iso  $2 rc  $3 tool
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$(date -Is)" "$$" "$2" goaiez-antigravity "$(basename "$ROOT")" "$3" \
+    >> "$GATE_RUNS" 2>/dev/null || true
+}
+
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
@@ -106,8 +120,25 @@ if [ $want_doctor -eq 1 ]; then
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+# Piping a tool into `tail` throws its exit code away — `|| fail=1` was reading sed's,
+# which is always 0. Capture rc BEFORE the pipe (Track 1, 2026-09-06 16:0x): a KILLED
+# pint prints a bare `Terminated` and would otherwise be filed as a style red. rc >= 124
+# is a signal about the box, never a verdict about the code.
+_t0=$(date -Is)
+pint_out=$(./vendor/bin/pint --test 2>&1); pint_rc=$?
+log_gate "$_t0" "$pint_rc" pint
+printf '%s\n' "$pint_out" | tail -3 | sed 's/^/  /'
+if [ "$pint_rc" -ge 124 ]; then
+  echo "  ⛔ pint was KILLED or timed out (rc $pint_rc) — this is NOT a verdict"; fail=1
+elif [ "$pint_rc" -ne 0 ]; then fail=1; fi
+
+_t0=$(date -Is)
+stan_out=$(./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1); stan_rc=$?
+log_gate "$_t0" "$stan_rc" phpstan
+printf '%s\n' "$stan_out" | tail -4 | sed 's/^/  /'
+if [ "$stan_rc" -ge 124 ]; then
+  echo "  ⛔ phpstan was KILLED or timed out (rc $stan_rc) — this is NOT a verdict"; fail=1
+elif [ "$stan_rc" -ne 0 ]; then fail=1; fi
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (DB_DATABASE=goaiez_antig_stages_test, exported over phpunit.xml's $xml_db)"
@@ -150,7 +181,9 @@ if [ $want_tests -eq 1 ]; then
       fi
     fi
     if [ $skip_pest -eq 0 ]; then
+      _t0=$(date -Is)
       out=$(DB_DATABASE=$gate_db timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+      log_gate "$_t0" "$rc" pest
       [ $lock_held -eq 1 ] && flock -u 9
     else
       out=""; rc=0
