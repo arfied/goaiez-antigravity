@@ -130,7 +130,31 @@ if [ $want_tests -eq 1 ]; then
     out=""; rc=0; skip_pest=1
   else
     skip_pest=0
-    out=$(DB_DATABASE=$gate_db timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+    # (a2) Track 1, 2026-09-06 14:1x — serialise every suite on this box behind one advisory
+    #      lock. Two concurrent suites are what gives an agent a reason to reap a "stray" pest
+    #      (rc 137/143). Orthogonal to (a): that is a correctness guard, this is scheduling.
+    #      A lock-timeout is NOT a red suite — it means no test ran.
+    PEST_LOCK=/home/goaiez/tmp/pest.lock
+    lock_held=0
+    if command -v flock >/dev/null 2>&1; then
+      exec 9>>"$PEST_LOCK" 2>/dev/null && {
+        if ! flock -n 9; then
+          echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+        fi
+        flock -w 2400 9 && lock_held=1
+      }
+      if [ $lock_held -eq 0 ]; then
+        echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+        echo '{"tool":"pest","result":"lock-timeout"}' > /home/goaiez/tmp/last-pest-grs-antig-stages.json
+        fail=1; skip_pest=1
+      fi
+    fi
+    if [ $skip_pest -eq 0 ]; then
+      out=$(DB_DATABASE=$gate_db timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+      [ $lock_held -eq 1 ] && flock -u 9
+    else
+      out=""; rc=0
+    fi
   fi
   # (b) rc 124 is the 1800s timeout; (c) a zero-byte run is named, never printed as a blank.
   if [ "$skip_pest" -eq 1 ]; then
