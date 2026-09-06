@@ -530,6 +530,38 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   **and it is not confined to the shared directory either**. A claim about
   migrations that reads one path has measured one path.
 
+  ⛔ **The complement's silence is bounded by its own `grep -v` — it means "no
+  file outside the covered set", never "no file changed"** (tick 180). Its
+  output has now read "eleven files, the same eleven" for three consecutive
+  ticks, which invites exactly the wrong reading. Measured at tick 180:
+  `8bef2be1` added **four** files and the list did not move, because all four sit
+  under `app/app/Modules/` — one of the three prefixes the query strips. The
+  complement is a *completeness proof* for the three halves (tick 175) and is
+  therefore designed to go quiet on anything the halves already cover. Citing its
+  unchanged output as evidence that a sibling did nothing substitutes a
+  completeness proof for a content measurement.
+
+  This is why tick 169's pairing is **both** commands and never either: the
+  census and its complement answer "did anything land in our column, or anywhere
+  we are not watching"; `git show --stat <moved tip>` answers "what did that
+  commit actually do". At tick 180 they agreed — silence plus four files, all
+  attributable to money's own ruling-5 column — and **the agreement is the
+  result, not the silence.** Same family as tick 163's scoped-diff blind spot and
+  tick 178's split migration surface: a query's silence is bounded by its scope,
+  and the scope is never the claim. Corollary for the cache rule: run
+  `git show --stat` on **every** moved tip on a miss, unconditionally — the miss's
+  value comes from the paired stat, which the cache never covers.
+
+  ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
+  Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
+  positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
+  minutes later 458021 was gone and 517316 (pricebook) was in its place; only
+  372835 survived both ticks. The confirmation still holds — 517316 is readable
+  too, a third instance — but a tick reasoning from a previously recorded pid
+  list is reasoning from a stale pointer, the same defect as tick 146's unfetched
+  ref one layer down. Re-run `pgrep agy` every tick, and re-`readlink` every pid
+  it prints.
+
   ⚠️ **This track's ledger is untracked** (tick 175). `git ls-files
   .agents/supervisor/` returns one file. `REVIEWS.md` — 2.2 MB, 175 tick blocks —
   exists only in this working tree, and with no coder running the launcher writes
