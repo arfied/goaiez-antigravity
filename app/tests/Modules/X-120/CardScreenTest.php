@@ -144,7 +144,13 @@ class CardScreenTest extends TestCase
             ->assertSee('1111')
             ->assertDontSee('4242424242424242');
 
-        $this->assertSame(1, CardToken::where('business_id', $biz->id)->count(), 'the door stores nothing');
+        $this->assertSame(
+            0,
+            CardToken::where('business_id', $biz->id)
+                ->where('gateway_payment_method_id', '!=', 'tok_ctrl')
+                ->count(),
+            'the door stores nothing beyond the seeded control'
+        );
         $this->assertSame('', $screen->get('number'), 'the number is cleared before the page goes back');
     }
 }
