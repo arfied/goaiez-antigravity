@@ -34,4 +34,56 @@ final class InvoiceReader
             ->get(['description', 'quantity', 'subtotal_cents'])
             ->toArray();
     }
+
+    public function openForBusiness(int $businessId): Collection
+    {
+        return Invoice::where('business_id', $businessId)
+            ->whereNotIn('status', ['paid', 'draft'])
+            ->orderBy('due_date')
+            ->get();
+    }
+
+    public function openUnpaidForBusiness(int $businessId, array $excludeIds = []): Collection
+    {
+        return Invoice::where('business_id', $businessId)
+            ->whereNotIn('status', ['paid', 'draft'])
+            ->whereColumn('paid_cents', '<', 'total_cents')
+            ->whereNotIn('id', $excludeIds)
+            ->orderBy('due_date')
+            ->get();
+    }
+
+    public function openOverdueForBusiness(int $businessId, array $excludeIds = []): Collection
+    {
+        return Invoice::where('business_id', $businessId)
+            ->whereNotIn('status', ['paid', 'draft'])
+            ->whereDate('due_date', '<', today())
+            ->whereNotIn('id', $excludeIds)
+            ->orderBy('due_date')
+            ->get();
+    }
+
+    public function unpaidOverdueForBusiness(int $businessId): Collection
+    {
+        return Invoice::where('business_id', $businessId)
+            ->where('status', '!=', 'paid')
+            ->whereDate('due_date', '<', today())
+            ->orderBy('due_date')
+            ->get();
+    }
+
+    public function numbersById(int $businessId, array $ids)
+    {
+        return Invoice::where('business_id', $businessId)
+            ->whereIn('id', $ids)
+            ->pluck('invoice_number', 'id');
+    }
+
+    public function linesFor(int $businessId, int $invoiceId): Collection
+    {
+        return InvoiceLine::where('business_id', $businessId)
+            ->where('invoice_id', $invoiceId)
+            ->orderBy('id')
+            ->get();
+    }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Ui;
 
-use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Actions\ArPackageForCollectionsAction;
 use App\Modules\X211\Domain\NoResolutionAttemptException;
 use App\Modules\X211\Models\ArCollectionsPackage;
@@ -35,7 +35,7 @@ class CollectionsPackagePreview extends Component
         }
 
         try {
-            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
             $action->handle($businessId, $invoiceId, (int) $userId);
             $this->success = $invoice->invoice_number.' packaged for collections.';
         } catch (NoResolutionAttemptException $e) {
@@ -55,12 +55,7 @@ class CollectionsPackagePreview extends Component
         $packages = ArCollectionsPackage::where('business_id', $bizId)->latest('id')->get();
         $packagedIds = $packages->pluck('invoice_id')->all();
 
-        $candidates = Invoice::where('business_id', $bizId)
-            ->whereNotIn('status', ['paid', 'draft'])
-            ->whereDate('due_date', '<', today())
-            ->whereNotIn('id', $packagedIds)
-            ->orderBy('due_date')
-            ->get();
+        $candidates = app(InvoiceReader::class)->openOverdueForBusiness($bizId, $packagedIds);
 
         foreach ($candidates as $inv) {
             $inv->balance_cents = $inv->total_cents - $inv->paid_cents;

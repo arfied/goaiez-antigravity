@@ -7,8 +7,7 @@ namespace App\Modules\X211\Ui;
 use App\Modules\X121\Models\Conversation;
 use App\Modules\X121\Models\Message;
 use App\Modules\X121\Models\Person;
-use App\Modules\X199\Models\Invoice;
-use App\Modules\X199\Models\InvoiceLine;
+use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Actions\ArRecordReasonAction;
 use App\Modules\X211\Domain\ArEngine;
 use App\Modules\X211\Models\ArDunningAction;
@@ -68,10 +67,7 @@ class InvoiceThreadBeside extends Component
         abort_unless(auth()->check() && Tenancy::check(), 403);
         $bizId = Tenancy::idOrFail();
 
-        $invoices = Invoice::where('business_id', $bizId)
-            ->whereNotIn('status', ['paid', 'draft'])
-            ->orderBy('due_date')
-            ->get();
+        $invoices = app(InvoiceReader::class)->openForBusiness($bizId);
 
         $invoice = $invoices->firstWhere('id', $this->invoiceId) ?? $invoices->first();
 
@@ -84,7 +80,7 @@ class InvoiceThreadBeside extends Component
         if ($invoice) {
             $invoice->balance_cents = $invoice->total_cents - $invoice->paid_cents;
             $invoice->days_overdue = $invoice->due_date->isPast() ? (int) $invoice->due_date->diffInDays(today()) : 0;
-            $lines = InvoiceLine::where('business_id', $bizId)->where('invoice_id', $invoice->id)->orderBy('id')->get();
+            $lines = app(InvoiceReader::class)->linesFor($bizId, $invoice->id);
             $customer = $invoice->customer_id ? Person::where('business_id', $bizId)->find($invoice->customer_id) : null;
 
             if ($customer) {

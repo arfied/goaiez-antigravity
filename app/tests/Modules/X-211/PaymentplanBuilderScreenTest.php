@@ -97,4 +97,28 @@ class PaymentplanBuilderScreenTest extends TestCase
             ->call('offerPlan', 999999)
             ->assertSee("isn't in this account");
     }
+
+    public function test_invoice_with_paid_cents_equal_to_total_cents_is_not_offered_plan(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Paid', 'last_name' => 'Full']);
+        
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-PAID-1',
+            'total_cents' => 5000,
+            'paid_cents' => 5000,
+            'status' => 'issued',
+            'due_date' => now()->subDays(3),
+        ]);
+
+        Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
+            ->assertOk()
+            ->assertDontSee('INV-PAID-1');
+    }
 }

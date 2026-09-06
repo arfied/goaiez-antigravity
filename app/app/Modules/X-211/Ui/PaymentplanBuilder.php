@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Ui;
 
-use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Actions\ArOfferPlanAction;
 use App\Modules\X211\Domain\PlanPastThresholdException;
 use App\Modules\X211\Models\ArPlanTerm;
@@ -48,7 +48,7 @@ class PaymentplanBuilder extends Component
         }
 
         try {
-            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
             $plan = $action->handle($businessId, $invoiceId, $count, $frequency);
             $this->success = sprintf(
                 'Plan offered on %s: %d %s payments of %s.',
@@ -77,12 +77,7 @@ class PaymentplanBuilder extends Component
         $plans = PaymentPlan::where('business_id', $bizId)->latest('id')->get();
         $planned = $plans->pluck('invoice_id')->all();
 
-        $invoices = Invoice::where('business_id', $bizId)
-            ->whereNotIn('status', ['paid', 'draft'])
-            ->whereColumn('paid_cents', '<', 'total_cents')
-            ->whereNotIn('id', $planned)
-            ->orderBy('due_date')
-            ->get();
+        $invoices = app(InvoiceReader::class)->openUnpaidForBusiness($bizId, $planned);
 
         foreach ($invoices as $inv) {
             $inv->balance_cents = $inv->total_cents - $inv->paid_cents;
@@ -90,7 +85,7 @@ class PaymentplanBuilder extends Component
             $inv->preview_cents = (int) ceil($inv->balance_cents / $count);
         }
 
-        $numbers = Invoice::where('business_id', $bizId)->whereIn('id', $planned)->pluck('invoice_number', 'id');
+        $numbers = app(InvoiceReader::class)->numbersById($bizId, $planned);
 
         return view('x-211::paymentplan-builder', [
             'terms' => $terms,

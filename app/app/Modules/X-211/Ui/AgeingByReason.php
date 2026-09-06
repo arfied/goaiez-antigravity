@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X211\Ui;
 
-use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Actions\ArApplyLateFeeAction;
 use App\Modules\X211\Actions\ArLogOfflinePaymentAction;
 use App\Modules\X211\Actions\ArSetLateFeeTermAction;
@@ -71,7 +71,7 @@ class AgeingByReason extends Component
             return;
         }
         try {
-            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
             $res = $action->handle($businessId, $invoiceId, $fee);
             $this->success = sprintf('Late fee of %s applied to %s.', number_format($res['applied_fee_cents'] / 100, 2), $invoice->invoice_number);
             unset($this->feeCents[$invoiceId]);
@@ -106,7 +106,7 @@ class AgeingByReason extends Component
         try {
             $ref = $this->reference[$invoiceId];
 
-            Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
             $action->handle($businessId, $invoiceId, $amount, 'check', $ref);
             $this->success = 'Payment logged.';
@@ -125,11 +125,7 @@ class AgeingByReason extends Component
 
         $terms = ArPlanTerm::where('business_id', $bizId)->first();
 
-        $invoices = Invoice::where('business_id', $bizId)
-            ->where('status', '!=', 'paid')
-            ->whereDate('due_date', '<', today())
-            ->orderBy('due_date')
-            ->get();
+        $invoices = app(InvoiceReader::class)->unpaidOverdueForBusiness($bizId);
 
         $groups = [];
         $noReason = [];

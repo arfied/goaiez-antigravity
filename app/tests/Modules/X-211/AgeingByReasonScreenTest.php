@@ -119,6 +119,30 @@ class AgeingByReasonScreenTest extends TestCase
         $this->assertSame(1, OfflinePayment::where('business_id', $biz->id)->where('reference_number', 'CHK-123')->count());
     }
 
+    public function test_draft_overdue_invoice_appears_on_ageing_screen(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Draft', 'last_name' => 'Overdue']);
+        
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-DRAFT-1',
+            'total_cents' => 40000,
+            'paid_cents' => 0,
+            'status' => 'draft',
+            'due_date' => now()->subDays(2),
+        ]);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->assertSee('INV-DRAFT-1');
+    }
+
     /**
      * G1-71 — the ageing screen is the fee door: a fee with no matching term is refused on the page, the term is written on the page (P-193), and a fee inside the term lands on the receivable
      */

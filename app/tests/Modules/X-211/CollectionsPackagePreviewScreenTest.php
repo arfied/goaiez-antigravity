@@ -119,4 +119,28 @@ class CollectionsPackagePreviewScreenTest extends TestCase
             ->call('package', 999999)
             ->assertSee("isn't in this account");
     }
+
+    public function test_draft_overdue_invoice_is_not_a_collections_candidate(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Draft', 'last_name' => 'Overdue']);
+        
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-DRAFT-2',
+            'total_cents' => 40000,
+            'paid_cents' => 0,
+            'status' => 'draft',
+            'due_date' => now()->subDays(10),
+        ]);
+
+        Livewire::actingAs($owner)->test(CollectionsPackagePreview::class)
+            ->assertOk()
+            ->assertDontSee('INV-DRAFT-2');
+    }
 }
