@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\X163;
 
+use App\Modules\CAgent\Events\AgentRefused;
+use App\Modules\X163\Listeners\RecordPriceGap;
 use App\Modules\X163\Ui\ConfirmationScreen;
 use App\Modules\X163\Ui\DailyPricingDigest;
 use App\Modules\X163\Ui\Pricebook;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -19,9 +22,9 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Event::listen(
-            \App\Modules\CAgent\Events\AgentRefused::class,
-            \App\Modules\X163\Listeners\RecordPriceGap::class,
+        Event::listen(
+            AgentRefused::class,
+            RecordPriceGap::class,
         );
 
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');

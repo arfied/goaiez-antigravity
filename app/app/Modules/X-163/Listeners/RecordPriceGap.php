@@ -20,7 +20,7 @@ final class RecordPriceGap
             return;
         }
 
-        if (!Str::contains(strtolower($event->reason), 'pricebook')) {
+        if (! Str::contains(strtolower($event->reason), 'pricebook')) {
             return;
         }
 

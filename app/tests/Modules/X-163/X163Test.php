@@ -7,6 +7,7 @@ namespace Tests\Modules\X163;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Modules\CAgent\Actions\AgentAnswerAction;
+use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\X163\Actions\BookVersionAction;
 use App\Modules\X163\Actions\CalloutLookupAction;
 use App\Modules\X163\Actions\PriceConfirmAction;
@@ -324,7 +325,7 @@ class X163Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Gap Test Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $event = new \App\Modules\CAgent\Events\AgentRefused(
+        $event = new AgentRefused(
             $biz->id,
             'NO_FACT',
             'I do not know the pricebook rate for a drain unblock',
@@ -352,7 +353,7 @@ class X163Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'No Gap Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $event = new \App\Modules\CAgent\Events\AgentRefused(
+        $event = new AgentRefused(
             $biz->id,
             'NO_FACT',
             'I do not know the warranty duration',
@@ -362,7 +363,7 @@ class X163Test extends TestCase
         Event::dispatch($event);
         $this->assertEquals(0, PriceBookItem::where('business_id', $biz->id)->count());
 
-        $event2 = new \App\Modules\CAgent\Events\AgentRefused(
+        $event2 = new AgentRefused(
             $biz->id,
             'QUIET_HOURS',
             'It is too late to quote pricebook',
@@ -378,7 +379,7 @@ class X163Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Gap Quote Biz', 'currency' => 'USD']);
         \DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $event = new \App\Modules\CAgent\Events\AgentRefused(
+        $event = new AgentRefused(
             $biz->id,
             'NO_FACT',
             'I do not know the pricebook rate for a gap row',
