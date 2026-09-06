@@ -2,7 +2,14 @@
 
 namespace Tests\Modules\X184;
 
+use App\Modules\X184\Actions\PlanApproveCadenceAction;
+use App\Modules\X184\Actions\PlanProposeAction;
 use App\Modules\X184\Domain\PlanEngine;
+use App\Modules\X184\Events\ItemScheduled;
+use App\Modules\X184\Events\PlanCreated;
+use App\Modules\X184\Models\PlanItem;
+use App\Support\Tenancy;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class X184Test extends TestCase
@@ -23,19 +30,19 @@ class X184Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
 
-        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
-            $proposeAction = new \App\Modules\X184\Actions\PlanProposeAction();
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            $proposeAction = new PlanProposeAction;
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'Winter Promo', 'source_event' => 'Promo Launch'],
                 ['channel' => 'instagram', 'topic_theme' => 'Summer Sale', 'source_event' => 'Seasonal'],
             ]);
 
-            $approveAction = new \App\Modules\X184\Actions\PlanApproveCadenceAction();
+            $approveAction = new PlanApproveCadenceAction;
             $approvedPlan = $approveAction->approveCadence($biz->id, $plan->id);
 
             $this->assertTrue($approvedPlan->is_cadence_approved);
 
-            $items = \App\Modules\X184\Models\PlanItem::where('plan_id', $plan->id)->orderBy('id')->get();
+            $items = PlanItem::where('plan_id', $plan->id)->orderBy('id')->get();
             $this->assertCount(2, $items);
             $this->assertEquals('Winter Promo', $items[0]->topic_theme);
             $this->assertEquals('Summer Sale', $items[1]->topic_theme);
@@ -49,16 +56,16 @@ class X184Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
 
-        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
-            $proposeAction = new \App\Modules\X184\Actions\PlanProposeAction();
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            $proposeAction = new PlanProposeAction;
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'Winter Promo', 'source_event' => 'Promo Launch'],
             ]);
 
-            $approveAction = new \App\Modules\X184\Actions\PlanApproveCadenceAction();
+            $approveAction = new PlanApproveCadenceAction;
             $approveAction->approveCadence($biz->id, $plan->id);
 
-            $items = \App\Modules\X184\Models\PlanItem::where('plan_id', $plan->id)->get();
+            $items = PlanItem::where('plan_id', $plan->id)->get();
             $this->assertCount(1, $items);
             $this->assertFalse((bool) $items[0]->is_scheduled);
         });
@@ -71,24 +78,24 @@ class X184Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
 
-        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
-            \Illuminate\Support\Facades\Event::fake();
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            Event::fake();
 
-            $proposeAction = new \App\Modules\X184\Actions\PlanProposeAction();
+            $proposeAction = new PlanProposeAction;
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'T1', 'source_event' => 'E1'],
                 ['channel' => 'instagram', 'topic_theme' => 'T2', 'source_event' => 'E2'],
                 ['channel' => 'gbp', 'topic_theme' => 'T3', 'source_event' => 'E3'],
             ]);
 
-            $items = \App\Modules\X184\Models\PlanItem::where('plan_id', $plan->id)->get();
+            $items = PlanItem::where('plan_id', $plan->id)->get();
             $this->assertCount(3, $items);
             foreach ($items as $item) {
                 $this->assertFalse((bool) $item->is_scheduled);
             }
 
-            \Illuminate\Support\Facades\Event::assertDispatched(\App\Modules\X184\Events\PlanCreated::class);
-            \Illuminate\Support\Facades\Event::assertNotDispatched(\App\Modules\X184\Events\ItemScheduled::class);
+            Event::assertDispatched(PlanCreated::class);
+            Event::assertNotDispatched(ItemScheduled::class);
         });
     }
 
@@ -99,8 +106,8 @@ class X184Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
 
-        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
-            $proposeAction = new \App\Modules\X184\Actions\PlanProposeAction();
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            $proposeAction = new PlanProposeAction;
             $plan = $proposeAction->proposePlan($biz->id, '2026-W35', 3, [
                 ['channel' => 'facebook', 'topic_theme' => 'T1', 'source_event' => 'Trend1'],
                 ['channel' => 'facebook', 'topic_theme' => 'T2', 'source_event' => 'Trend2'],
@@ -111,7 +118,7 @@ class X184Test extends TestCase
 
             $this->assertEquals(3, $plan->posts_per_week_cadence);
 
-            $items = \App\Modules\X184\Models\PlanItem::where('plan_id', $plan->id)->get();
+            $items = PlanItem::where('plan_id', $plan->id)->get();
             $this->assertCount(5, $items);
         });
     }
