@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\X211;
 
 use App\Modules\X211\Console\DetectOverdueReceivablesCommand;
+use App\Modules\X211\Console\EvidenceRecoveryCommand;
+use App\Modules\X211\Console\RuntimeProofCommand;
 use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Listeners\ProcessOverdueReceivable;
 use App\Modules\X211\Ui\AgeingByReason;
@@ -43,8 +45,8 @@ final class ModuleServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 DetectOverdueReceivablesCommand::class,
-                \App\Modules\X211\Console\EvidenceRecoveryCommand::class,
-                \App\Modules\X211\Console\RuntimeProofCommand::class,
+                EvidenceRecoveryCommand::class,
+                RuntimeProofCommand::class,
             ]);
 
             $this->app->booted(function () {

@@ -36,6 +36,7 @@ final class EvidenceRecoveryCommand extends Command
         $queueDriver = config('queue.default');
         if ($queueDriver === 'sync') {
             $this->error('UNRESOLVED — queue driver is sync in this checkout');
+
             return self::FAILURE;
         }
 
@@ -65,14 +66,15 @@ final class EvidenceRecoveryCommand extends Command
         $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123');
         $payment = $gatewayEngine->capture($businessId, $plan->installment_amount_cents, 'tok_visa', 'idem_x211_'.time());
 
-        if (!str_starts_with((string)$payment->gateway_charge_id, 'ch_')) {
+        if (! str_starts_with((string) $payment->gateway_charge_id, 'ch_')) {
             $this->error('gateway_charge_id must start with ch_');
+
             return self::FAILURE;
         }
 
         $invoice2Res = $invoiceEngine->issueInvoice($businessId, $person->id, $lines);
         $invoice2 = $invoice2Res['invoice'];
-        
+
         $refusedWithoutResolution = false;
         try {
             $arEngine->packageForCollections($businessId, $invoice2->id, $user->id);
