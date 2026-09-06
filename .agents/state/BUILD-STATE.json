@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T05:15:18",
+ "updated": "2026-09-06T05:42:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -473,7 +473,7 @@
      "module": "X-103",
      "stage": "capability",
      "why": "The \u2464 is 'the review widget on the site; the plugin path is X-104\\'s'. 'grep -rniE \"(plugin\\|wordpress\\|shortcode\\|embed\\|widget\\|snippet\\|marketplace)\" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module \u2014 no column, no action, no engine method.",
-     "at": "2026-09-06T05:15:18"
+     "at": "2026-09-06T05:42:49"
     }
    ]
   },
@@ -490,10 +490,17 @@
    "unresolved": []
   },
   "X-108": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 7,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-109": {
    "status": "UNRESOLVED",
@@ -504,7 +511,7 @@
      "module": "X-109",
      "stage": "capability",
      "why": "ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.",
-     "at": "2026-09-06T05:15:18"
+     "at": "2026-09-06T05:42:49"
     }
    ]
   },
@@ -523,7 +530,7 @@
      "module": "X-111",
      "stage": "schema",
      "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
-     "at": "2026-09-06T05:15:18"
+     "at": "2026-09-06T05:42:49"
     }
    ]
   },
@@ -552,10 +559,17 @@
    "unresolved": []
   },
   "X-117": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 10,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-117",
+     "stage": "capability",
+     "why": "G17-31 \u2014 R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-118": {
    "status": "DONE",
@@ -788,7 +802,7 @@
      "module": "X-158",
      "stage": "capability",
      "why": "Read the module's migration. The 'videos' table has columns (id, business_id, title, demo_number, video_url, caption_track_url, transcript, is_rendered, timestamps) and 'video_views' table. There is no live-vs-replay column.",
-     "at": "2026-09-06T05:15:18"
+     "at": "2026-09-06T05:42:49"
     }
    ]
   },
@@ -867,7 +881,7 @@
      "module": "X-170",
      "stage": "capability",
      "why": "The \u2464 is 'cleared commission into the payroll export'. 'grep -rniE \"(payroll|export)\" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.",
-     "at": "2026-09-06T05:15:18"
+     "at": "2026-09-06T05:42:49"
     }
    ]
   },
@@ -935,7 +949,7 @@
      "module": "X-180",
      "stage": "capability",
      "why": "The \u2464 is 'ad PACKS as content are not fenced (P-128);  P-120 \u2014 every claim verifiable'. It states two separate laws over the single Action that exists (PackSeedAction.php), so asserting either half authors the other (P-210).",
-     "at": "2026-09-06T05:15:18"
+     "at": "2026-09-06T05:42:49"
     }
    ]
   },
@@ -952,16 +966,30 @@
    "unresolved": []
   },
   "X-183": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 29,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G20-15 \u2014 grep -inr \"G20-15\" app/ returns only the capability text; no link from a draft to a review",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-184": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 29,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-184",
+     "stage": "capability",
+     "why": "G9-16 \u2014 grep -rn \"fatigue\" app/app/Modules/X-184 returns only the capability text in capabilities.php and PlanEngine::refreshOnFatigue(bool) which takes the answer as its argument; no fatigue signal, no fatigue column, no content pack",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-185": {
    "status": "DONE",
@@ -1094,10 +1122,17 @@
    ]
   },
   "X-202": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 9,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-202",
+     "stage": "capability",
+     "why": "G12-04 \u2014 ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-203": {
    "status": "DONE",
@@ -1125,22 +1160,43 @@
    ]
   },
   "X-206": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 4,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-206",
+     "stage": "capability",
+     "why": "N-043 \u2014 CredentialFetchAction returns Crypt::decryptString, CredentialRevealAction returns 'secret' => $decrypted, and credential_reveals schema has no time-box column",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-207": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-207",
+     "stage": "capability",
+     "why": "N-016 \u2014 grep -rn 'getPriority' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:45:    public function getPriority(string $eventType): string; X207Engine::getPriority() maps three strings to 'minutes' and has no caller; there is no queue, no priority column, no delay to measure",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-208": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 16,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-208",
+     "stage": "capability",
+     "why": "N-020 \u2014 missing dependency: mail_pieces has id, business_id, recipient_address, postcard_format, cost_cents, status, refusal_reason, lob_api_key_source, timestamps \u2014 no promotion_id column and no offer flag.",
+     "at": "2026-09-06T05:42:49"
+    }
+   ]
   },
   "X-209": {
    "status": "DONE",
@@ -1157,7 +1213,7 @@
      "module": "X-210",
      "stage": "capability",
      "why": "The \u2464 is 'P-001 \u00b7 T468 \u2014 two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE \"(tier|package|padlock)\" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.",
-     "at": "2026-09-06T05:15:18"
+     "at": "2026-09-06T05:42:49"
     }
    ]
   },
@@ -1402,46 +1458,94 @@
    "at": "2026-09-05T17:11:31"
   },
   {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-117",
+   "stage": "capability",
+   "why": "G17-31 \u2014 R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G20-15 \u2014 grep -inr \"G20-15\" app/ returns only the capability text; no link from a draft to a review",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-184",
+   "stage": "capability",
+   "why": "G9-16 \u2014 grep -rn \"fatigue\" app/app/Modules/X-184 returns only the capability text in capabilities.php and PlanEngine::refreshOnFatigue(bool) which takes the answer as its argument; no fatigue signal, no fatigue column, no content pack",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-202",
+   "stage": "capability",
+   "why": "G12-04 \u2014 ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-206",
+   "stage": "capability",
+   "why": "N-043 \u2014 CredentialFetchAction returns Crypt::decryptString, CredentialRevealAction returns 'secret' => $decrypted, and credential_reveals schema has no time-box column",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-207",
+   "stage": "capability",
+   "why": "N-016 \u2014 grep -rn 'getPriority' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:45:    public function getPriority(string $eventType): string; X207Engine::getPriority() maps three strings to 'minutes' and has no caller; there is no queue, no priority column, no delay to measure",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-208",
+   "stage": "capability",
+   "why": "N-020 \u2014 missing dependency: mail_pieces has id, business_id, recipient_address, postcard_format, cost_cents, status, refusal_reason, lob_api_key_source, timestamps \u2014 no promotion_id column and no offer flag.",
+   "at": "2026-09-06T05:42:49"
+  },
+  {
    "module": "X-109",
    "stage": "capability",
    "why": "ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.",
-   "at": "2026-09-06T05:15:18"
+   "at": "2026-09-06T05:42:49"
   },
   {
    "module": "X-180",
    "stage": "capability",
    "why": "The \u2464 is 'ad PACKS as content are not fenced (P-128);  P-120 \u2014 every claim verifiable'. It states two separate laws over the single Action that exists (PackSeedAction.php), so asserting either half authors the other (P-210).",
-   "at": "2026-09-06T05:15:18"
+   "at": "2026-09-06T05:42:49"
   },
   {
    "module": "X-170",
    "stage": "capability",
    "why": "The \u2464 is 'cleared commission into the payroll export'. 'grep -rniE \"(payroll|export)\" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.",
-   "at": "2026-09-06T05:15:18"
+   "at": "2026-09-06T05:42:49"
   },
   {
    "module": "X-158",
    "stage": "capability",
    "why": "Read the module's migration. The 'videos' table has columns (id, business_id, title, demo_number, video_url, caption_track_url, transcript, is_rendered, timestamps) and 'video_views' table. There is no live-vs-replay column.",
-   "at": "2026-09-06T05:15:18"
+   "at": "2026-09-06T05:42:49"
   },
   {
    "module": "X-210",
    "stage": "capability",
    "why": "The \u2464 is 'P-001 \u00b7 T468 \u2014 two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE \"(tier|package|padlock)\" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.",
-   "at": "2026-09-06T05:15:18"
+   "at": "2026-09-06T05:42:49"
   },
   {
    "module": "X-103",
    "stage": "capability",
    "why": "The \u2464 is 'the review widget on the site; the plugin path is X-104\\'s'. 'grep -rniE \"(plugin\\|wordpress\\|shortcode\\|embed\\|widget\\|snippet\\|marketplace)\" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module \u2014 no column, no action, no engine method.",
-   "at": "2026-09-06T05:15:18"
+   "at": "2026-09-06T05:42:49"
   },
   {
    "module": "X-111",
    "stage": "schema",
    "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
-   "at": "2026-09-06T05:15:18"
+   "at": "2026-09-06T05:42:49"
   }
  ],
  "decisions": [
