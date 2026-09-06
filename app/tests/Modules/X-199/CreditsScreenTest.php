@@ -85,7 +85,15 @@ class CreditsScreenTest extends TestCase
         $issued['overflow_charge']->update(['status' => 'charged']);
         app(InvoiceEngine::class)->recordPayment($biz->id, $issued['invoice']->id);
 
+        app(InvoiceEngine::class)->issueInvoice(
+            $biz->id,
+            $ada->id,
+            [['description' => 'Second Invoice', 'quantity' => 1, 'unit_price_cents' => 1000]],
+            'net_30'
+        );
+
         Livewire::actingAs($owner)->test(Credits::class)
+            ->assertSee('Ada Lovelace')
             ->assertSee('reversed against the invoice')
             ->assertDontSee('covered by the card on file')
             ->call('setTerms', 999999)
@@ -124,8 +132,16 @@ class CreditsScreenTest extends TestCase
             'net_30'
         );
 
+        app(InvoiceEngine::class)->issueInvoice(
+            $biz->id,
+            $ada->id,
+            [['description' => 'Second Invoice', 'quantity' => 1, 'unit_price_cents' => 1000]],
+            'net_30'
+        );
+
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertOk()
+            ->assertSee('Ada Lovelace')
             ->assertSee('covered by the card on file; service never stopped')
             ->assertDontSee('the card did not absorb it and the invoice still stands');
     }
