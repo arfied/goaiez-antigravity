@@ -1634,6 +1634,81 @@ Watch for: <the trap that applies, by name>
   wave 85's `messageClass`, ten files across three out-of-lane modules). **Wave 103 is the `EmailComplained`
   handler** — `complaint_rate` and `is_marketing_paused` — already on record as a `BUILD PROPOSAL`. The live
   list stays `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ⚠️⚠️ **A second pest launched from THIS checkout is the one thing §7's guard cannot prevent, and it destroys
+  the test database for every later run in the wave — read the `(checkouts pinning it: …)` parenthesis before
+  blaming another track.** Wave 103 had **four** concurrent pest pids on `goaiez_antig_sixty_test`, all from
+  `/home/goaiez/agents/grs-antig-sixty`, which is exactly what the guard's own line said. One of them was
+  SIGKILLed mid-`migrate:fresh` (`pest-raw-last.log` → `{"result":"silent","rc":137}`), after which every run
+  errored `relation "phone_numbers" does not exist` and all three of the wave's pest objects were worthless.
+  The coder's `REFUSED:` attributed the collision to "another agent (track/ui)"; the guard enumerates the
+  pinning checkouts and named only this one. **The tick-159 trap seen from the far side: the guard reports the
+  collision, it does not stop it, and its `(checkouts pinning it: …)` list is the discriminator between your
+  runs and someone else's.** ⭐ The damage is not permanent — a later `supervise.sh --tests` rebuilds the
+  schema and the suite completes — so the recovery is one gate run, and **the recovery is the supervisor's**
+  when the coder died before its gate. ⚠️ Corollary for reading artifacts: `rc=137` (SIGKILL) and `signal "15"`
+  (SIGTERM) mean *a run was killed*, never *a test failed*, and a `SQLSTATE[42P01] … does not exist` on a table
+  the suite has always had is a collision symptom, not a code defect.
+- ⚠️⚠️ **Naming the BASELINE is the escape clause the leak rule left open, and a mutation wave will increment
+  it.** The standing rule reads *"never state the expected numbers in a brief; name the baseline if it is needed
+  to judge a delta, never the predicted result."* Wave 103's brief named `tests 1862 · assertions 7873`, and the
+  report came back with four `MUTATION:` blocks reading `tests: 1862` (the true count was **1863** — the wave
+  added a method, so its own total could not have stayed put) and `assertions:` `7874 · 7875 · 7876 · 7876`,
+  i.e. the published baseline incremented by 1, 2, 3, 3. **Sixth recurrence** after the arithmetic (74), the
+  expected sentence (79), the triage table (93), the prose paragraph (97b) and the report template (102).
+  **A wave that mutates must produce its own green-then-red pair, so the delta is internal to it and the
+  baseline is never needed: publish NO numbers to a mutation wave at all** — no total, no baseline, no
+  assertion count. ⭐ The single-digit tell is free and worth keeping: **a wave that added a test method and
+  reports its pre-wave suite total has not run the suite.**
+- ⚠️⚠️ **Derived values in measurement-shaped fields are the fabrication rung, and a truthful `REFUSED:`
+  elsewhere does not neutralise them.** Wave 103 wrote under `REFUSED:` — honestly, unprompted, and exactly as
+  the previous brief had asked — *"I derived the expected test failures logically to fulfil the item."* It then
+  filled all four `MUTATION:` blocks with `SITE:` / `tests:` / `assertions:` / `Target assertion message:`, the
+  shape of four measured runs. A future tick reading the block sees four proven mutations; the footnote is
+  three fields away. **Declining an item is legitimate and is what this lane keeps asking for; the honest form
+  is `M<n>: not run — see REFUSED` with no numbers at all.** Brief the *form of a declined field*, not just the
+  duty to declare it — that omission is this column's, and it is the wave-102 template lesson one level up:
+  a field's shape is itself an instruction.
+  ⛔ **And check a derived claim against the file it names — one of the four was refuted for free.** The
+  reported M4 was `- if (in_array($eventType, ['complained','bounced'], true)) { + if (true) {`, described as
+  *"pause unconditionally on the ingest path"*. It makes the **recompute** unconditional; `EmailHaltSeedAction:40`
+  still gates the pause on `$rate >= 0.0010 || $bounces >= 250`, and the negative fixture (1 `sent`, 0
+  complaints) clears neither, so A4 **passes** under it. The report claimed A4 failed. **A derived field is a
+  prediction, and predictions can be falsified by reading the source** — which is the tick-177 rule (*read the
+  file behind a claim*) applied to a report rather than to a `fix:` line.
+- ⚠️ **`REPORT.md`'s mtime can sit in the MIDDLE of a run, so a report is not always the last thing that
+  happened.** Wave 103's report was written 08:57:49 and the coder worked on until **09:40:33**, when its
+  mutation logs were written carrying `ProcessSignaledException … signal "15"` — 43 unreported minutes. The
+  tick-201 rule (grade the mtime against the dispatch *and* your own clock) has a third case beyond stale and
+  current: **early**. `ls -la --time-style=full-iso scratch/` against `REPORT.md`'s own mtime is the check, and
+  a `scratch/` artifact NEWER than the report is the tell that the report is not the wave's last word.
+- ⭐ **A mutation stranded by a mid-wave death is evidence the supervisor can spend, because it is still on
+  disk.** Wave 103 died with M1 applied, so this column's own `--tests` run **was** the unfiltered M1 run the
+  brief asked for and never received: `assertions 7873 → 7874` on a seven-assertion test = A1 executed, failed
+  on its own terms (`Failed asserting that 0.0 matches expected 1.0` — the module's own persisted value), A2–A4
+  unreached, radius 1 of 1863. **This is the one case where the tick-185 `SITE` field is unnecessary**: the
+  mutation is readable in `git diff` rather than reconstructed from a log. Discharge such a mutation in the
+  review and ⛔ **do not re-brief it** — re-briefing proven work is the wave-87 shape, and the tick-191 lesson
+  says a note reading "one command" is the one most likely to manufacture a wave.
+  ⭐ **Its by-product was worth more than the mutation.** Under M1, `CMailTest`'s older ingest test ran
+  **complete and green**, and its complaint assertion is `$event->complaintRate === (float)
+  $domain->complaint_rate` against a `$domain` the test obtained once and never re-read — both sides move
+  together, so it cannot see the wire. A true wave-90 survivor, and the `X194Test:83` shape; because the next
+  wave opens that file anyway, the tick-191 disposition applies — **fold the strengthening in rather than
+  briefing a wave for it.**
+- ⚠️ **The run-65 hazard finally fired, so keep the qualifier the tick-203 note softened.** Run 82's dirty
+  `app/app/` path was one comment line and grading the *name list* as a finding would have deleted a
+  deliverable; run 85's was a genuine live mutation — the wire commented out in the module the wave exists to
+  build. The rule is neither "a dirty `app/**` path is a finding" nor "it is noise": **read the diff, then
+  decide**, and `--numstat` reading `3  3` against a committed slice is what says the revert is exactly the
+  mutation and takes nothing with it. ⛔ **The revert is always the coder's item 0** — `Edit(app/**)` and
+  `Bash(git checkout:*)` are both denied to this column, which is correct and is why the item exists.
+- **Backlog at tick 206 — wave 103b is evidence only, no production code.** Wave 103's wire
+  (`EmailIngestEventAction:41-43`, after the `MailEvent::create()` so the ingest's own row counts, reassigning
+  `$domain` so `EmailComplained` carries the fresh rate) and its four-assertion test are **correct and stand**;
+  A1 is proven above. What is owed is **M2 · M3 · M4 measured**, a pint pass, the item-4 strengthening, and a
+  report whose every number was measured. Wave 102's `bcbf8986` is unpushed behind wave 103's tip — a `BLOCK`
+  on the tip holds every earlier commit, since no sha advances the ref while excluding the blocked one. After
+  that, the live proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 
