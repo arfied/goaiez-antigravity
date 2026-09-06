@@ -13,6 +13,8 @@ use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Actions\ConversationTakeoverAction;
 use App\Modules\X01\Actions\SearchGlobalAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\CMail\Actions\EmailIngestEventAction;
+use App\Modules\CMail\Actions\EmailDnsCheckAction;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
@@ -510,5 +512,38 @@ class X01Test extends TestCase
 
         $this->assertEquals($res1['conversation_id'], $res2['conversation_id'], 'The conversation id from the first ingest must equal the id from the second');
         $this->assertEquals(1, Conversation::where('person_id', $res1['person_id'])->count(), 'Conversation::count() for that person must be 1');
+    }
+
+    public function test_g11_12_email_reply_bridge(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Email Reply Bridge Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dnsAction = new EmailDnsCheckAction();
+        $domain = $dnsAction->handle($biz->id, 'reply.apex-air.com');
+
+        $ingestAction = new EmailIngestEventAction();
+        
+        $convUpdated = null;
+        Event::listen(\App\Modules\X01\Events\ConversationUpdated::class, function ($event) use (&$convUpdated) {
+            $convUpdated = $event;
+        });
+
+        // A1, A2
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj Reply', ['sender_name' => 'Reply Sender', 'body' => 'This is the reply body']);
+        
+        $convs = Conversation::where('business_id', $biz->id)->get();
+        
+        // A1: the reply lands as a conversation for the sender.
+        $this->assertEquals(1, $convs->count(), 'A1: The reply lands as a conversation for the sender');
+        
+        // A2: that conversation carries the reply's body, not some other string off the event.
+        $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
+        $this->assertEquals('This is the reply body', $convUpdated->messageSnippet, 'A2: That conversation carries the reply body');
+
+        // A3: a 'replied' ingest whose body is empty creates nothing.
+        $convsBefore = Conversation::where('business_id', $biz->id)->count();
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'empty@acme.com', 'Subj Empty', ['sender_name' => 'Empty Sender', 'body' => '']);
+        $this->assertEquals($convsBefore, Conversation::where('business_id', $biz->id)->count(), 'A3: A replied ingest whose body is empty creates nothing');
     }
 }

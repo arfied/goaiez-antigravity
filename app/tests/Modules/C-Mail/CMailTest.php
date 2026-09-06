@@ -519,7 +519,7 @@ class CMailTest extends TestCase
      * BUILD PROPOSAL: C-Mail — handle EmailComplained to write complaint_rate and is_marketing_paused (test anchor is a complaint rate crossing 0.10% pauses every marketing send).
      * ⛔ REFUSED: G11-11 — the capability's own text is "named in the header"; there is no clause to assert
      * ⛔ REFUSED: G11-12 (first half) — the capability's own text is "named in the header"; there is no clause to assert
-     * BUILD PROPOSAL: G11-12 (second half) — the live bridge from C-Mail to X-01 has not been built yet; both are owned by this lane (EmailSendAction, UnifiedInboxManager::ingestMessage)
+     * BUILT: G11-12 (second half) — the live bridge from C-Mail to X-01 is built (test lives in X-01/X01Test.php: test_g11_12_email_reply_bridge). However, the HTTP transport that would call the ingest in production still does not exist.
      * ⛔ REFUSED: G11-15 — the capability's own text is "named in the header"; there is no clause to assert
      * ⛔ REFUSED: G11-17 — the capability's own text is "named in the header"; there is no clause to assert
      * ⛔ REFUSED: G11-18 — the capability's own text is "= the row above; one spec"; it points at G11-17, which is itself "named in the header"; there is no clause to assert
@@ -548,7 +548,9 @@ class CMailTest extends TestCase
         });
 
         $ingestAction->handle($biz->id, $domain->id, 'complained', 'c1@acme.com', 'Subj 3');
-        Event::assertDispatched(EmailComplained::class);
+        Event::assertDispatched(EmailComplained::class, function ($event) use ($biz, $domain) {
+            return $event->businessId === $biz->id && $event->mailDomainId === $domain->id && $event->complaintRate === (float) $domain->complaint_rate;
+        });
 
         $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj 4');
         Event::assertDispatched(EmailReplied::class, function ($event) {

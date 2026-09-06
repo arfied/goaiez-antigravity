@@ -26,6 +26,7 @@ final class ModuleServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(WhatsappSessionOpened::class, WhatsappInboundListener::class);
+        Event::listen(\App\Modules\CMail\Events\EmailReplied::class, \App\Modules\X01\Listeners\EmailReplyInboundListener::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');

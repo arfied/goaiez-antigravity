@@ -40,7 +40,7 @@ final class EmailIngestEventAction
         match ($eventType) {
             'bounced', 'spam-trap' => Event::dispatch(new EmailBounced($businessId, $mailDomainId, $recipientEmail, $eventType)),
             'complained' => Event::dispatch(new EmailComplained($businessId, $mailDomainId, $domain->complaint_rate)),
-            'replied' => Event::dispatch(new EmailReplied($businessId, $mailDomainId, $recipientEmail, $subject)),
+            'replied' => Event::dispatch(new EmailReplied($businessId, $mailDomainId, $recipientEmail, $subject, $payload['sender_name'] ?? '', $payload['body'] ?? '')),
             default => null,
         };
     }
