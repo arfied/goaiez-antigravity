@@ -191,11 +191,28 @@ class CBillingTest extends TestCase
 
     /**
      * [G7-01] §45A — the 21-day timeline is the ONE ladder
-     * ⛔ REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\RevenueRecovery ignores parameters and returns a constant view.
+     * Asserting the 21-day dunning ladder via DunningAdvanceAction
      */
     public function test_g7_01_single_dunning_ladder(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G7-01 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $state9 = $this->dunningAction->handle($biz->id, 9);
+        $this->assertEquals('warning', $state9->status);
+        $this->assertTrue($state9->ai_enabled);
+        $this->assertTrue($state9->phone_answering);
+
+        $state20 = $this->dunningAction->handle($biz->id, 20);
+        $this->assertEquals('banner', $state20->status);
+        $this->assertTrue($state20->ai_enabled);
+        $this->assertTrue($state20->phone_answering);
+
+        $state21 = $this->dunningAction->handle($biz->id, 21);
+        $this->assertEquals('ai_off_voicemail_only', $state21->status);
+        $this->assertFalse($state21->ai_enabled);
+        $this->assertTrue($state21->voicemail_only);
+        $this->assertTrue($state21->phone_answering);
     }
 
     /**
