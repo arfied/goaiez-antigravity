@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T15:52:56",
+ "updated": "2026-09-06T16:07:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 311,
+   "violations": 312,
    "fails": "MERGE"
   },
   "anchor": {
@@ -1868,6 +1868,12 @@
    "module": "X-111",
    "chose": "R245: G1-29, G1-35, G4-24 and G21-02 are UNRESOLVED on X-111, not refused and not asserted \u2014 the module exposes no revenue reader, no package row and no Person or Conversation, so each names a missing dependency (rule 09). Reverses run 80's source-text negative greps, which passed on an empty iterator and, for G4-24, would fail if the capability were implemented. Supervisor ruling, REVIEWS.md REV-85.",
    "at": "2026-09-06T15:52:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-111",
+   "chose": "R245: a test is never renamed, re-annotated, hidden or split to move an instrument \u2014 run 81's G19-09 used a docblock @test, which PHPUnit 12.5 does not parse (no AnnotationParser; Registry.php:31 returns AttributeParser only), so the method was never collected and closed the id with a body PHPUnit never called. And when a quoted capability fifth field names another module's id, the id is elided and the elision marked, because the capability checker greps file text and cannot tell a quotation from an assertion \u2014 X-111's G4-47 clause was the sole thing holding G1-29 green while G1-29 is UNRESOLVED. Supervisor ruling, REVIEWS.md REV-86.",
+   "at": "2026-09-06T16:07:37",
    "ruling": "R245"
   }
  ],
