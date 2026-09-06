@@ -1101,6 +1101,38 @@ Watch for: <the trap that applies, by name>
   C-Agent side wire and `Owner: C-Agent` on all three. ⭐ **The brief withheld the sentences and handed over the
   four commands, and the coder copied the house form from `X01Test.php`'s own two lines** — `(grep for X is
   empty)` — which is the tick-187 leak rule and the wave-95 pattern-pointer both paying off in one wave.
+- ✅ **CLOSED at tick 191: the wave-79 X-137 mutation debt this file still listed as open.** The standing note
+  above reads *"the strengthened assertions were then never mutated, so nothing yet shows they are load-bearing
+  … the second half is one command."* It was already spent. `scratch/test-mut-w80-x137.log` line 1 (21:02,
+  one wave later) mutated `CallAttributeAction`'s `"Call from {$campaignSource}"` to `"Broken …"` and returned
+  `tests 7 · failed 4`, each failure carrying its own discriminating string — `-'Call from test_g311'
+  +'Broken test_g311'` and the same at `test_g813`, `source_g1817`, `source_g1824`, which is **exactly** the
+  four `whisper_text` assertions at `X137Test.php:104,120,136,152`, and the three survivors are the three
+  X-137 tests that assert on something else. A clean radius by the wave-87 rule. ⚠️ **Leaving a discharged
+  debt written as open is how a future tick manufactures a wave**, and this one had survived twelve ticks:
+  when a note says *"one command"*, the tick that reads it should check whether the command was already run
+  before briefing it. ⚠️ Read only **line 1** of that log — lines 2-21 are the wave's gate §7, the recorded
+  stale-tail trap, and its `tests 1720` belongs to no mutation.
+- ⚠️ **`X194Test.php:83` is a live round-trip and is deliberately NOT briefed — a scenery assertion sitting
+  beside a real one is not worth a wave.** `assertEquals('America/Chicago', $renderNullValue['timezone'])`
+  against a `locationTimezone: 'America/Chicago'` handed in at `:77` is the wave-90 defect this column
+  authored and refused four paragraphs apart. It is still there. It is also **harmless and redundant**: the
+  derived assertion two lines below it (`:85`, `Carbon::now('America/Chicago')->getOffsetString()`) is the
+  real one and wave 90's `g9-37` mutation proved it load-bearing. Briefing a wave whose content is *delete an
+  assertion* is the one shape the One Rule makes expensive to grade — the coder is right to refuse it and this
+  column would have to argue that a test it called scenery is safe to remove. **Record it, leave it, and fold
+  it into the first wave that touches that file for another reason.**
+- ✅ **The HOLD is verifiable in six commands, and a tick that holds should run them rather than inherit the
+  last tick's conclusion.** Measured at tick 191, all six agreeing with tick 190: `bash bin/supervise.sh`
+  (gates green, build stamp `20260829-0647` = `runtime_build`); `git status --porcelain` (clean but for wave
+  88's untracked root `REPORT.md`); `git rev-parse HEAD origin/track/sixty` (equal — nothing unpushed);
+  `grep -rn "assertTrue(true" <the thirteen test dirs> | wc -l` → **26**;
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` → **10**; and `grep -c` for `assertTrue(true` against
+  `⛔ REFUSED:`+`BUILD PROPOSAL:` **per file** — `C-Agent 12 : 8+4`, `X-01 10 : 10+2`, `C-Mail 1 : 8+3`,
+  `C-Whatsapp 1 : 1+1`, `X-66 1 : 1`, `X-194 1 : 6` — every file's verdict lines ≥ its stubs. That last one is
+  the per-id close done as arithmetic instead of as a 234-line read, and it is the cheap form of the tick-187
+  rule (*a claim that there is no work left is the one claim to check*). **It does not replace the per-id
+  sweep on the tick that first closes a pile; it is what re-confirms the close on every tick after.**
 
 ## Style
 
