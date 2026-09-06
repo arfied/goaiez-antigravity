@@ -198,13 +198,13 @@ class X198Test extends TestCase
         {
             public function charge(int $amountCents, string $source, string $currency = 'USD'): string
             {
-                return 'ch_stub_money60_000000000';
+                return 'ch_stub_money60_00000000000';
             }
         });
 
         $payment = $this->captureAction->handle($biz->id, 3000, 'tok_success', $idempotencyKey);
 
-        $this->assertEquals('ch_stub_money60_000000000', $payment->gateway_charge_id);
+        $this->assertEquals('ch_stub_money60_00000000000', $payment->gateway_charge_id);
         $this->assertEquals('captured', $payment->status);
 
         $count = Payment::where('business_id', $biz->id)->count();
@@ -222,13 +222,13 @@ class X198Test extends TestCase
         {
             public function charge(int $amountCents, string $source, string $currency = 'USD'): string
             {
-                return 'ch_stub_money61_000000000';
+                return 'ch_stub_money61_00000000000';
             }
         });
 
         $payment = $this->captureAction->handle($biz->id, 1000, 'tok_123', 'idemp_456');
 
-        $this->assertEquals('ch_stub_money61_000000000', $payment->gateway_charge_id);
+        $this->assertEquals('ch_stub_money61_00000000000', $payment->gateway_charge_id);
         $this->assertEquals('captured', $payment->status);
     }
 

@@ -77,7 +77,11 @@
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                         <x-ui.button size="default" wire:loading.attr="disabled" wire:target="recordPayment({{ $invoice->id }})" wire:click="recordPayment({{ $invoice->id }})">Record payment</x-ui.button>
-                                        <x-ui.button size="default" :href="$invoice->pdf_url" variant="quiet" target="_blank">Receipt</x-ui.button>
+                                        @if($invoice->pdf_url)
+                                            <x-ui.button size="default" :href="$invoice->pdf_url" variant="quiet" target="_blank">Receipt</x-ui.button>
+                                        @else
+                                            <x-ui.status-pill state="unknown" label="Receipt not available" />
+                                        @endif
                                     </td>
                                 </tr>
                                 @if(in_array($invoice->id, $expanded))

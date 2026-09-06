@@ -53,11 +53,19 @@
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-right tabular-nums">{{ number_format($invoice->paid_cents / 100, 2) }}</td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                         @if($invoice->status === 'paid')
-                                            <x-ui.button :href="$invoice->pdf_url" variant="quiet" size="default" target="_blank">Receipt</x-ui.button>
+                                            @if($invoice->pdf_url)
+                                                <x-ui.button :href="$invoice->pdf_url" variant="quiet" size="default" target="_blank">Receipt</x-ui.button>
+                                            @else
+                                                <x-ui.status-pill state="unknown" label="Receipt not available" />
+                                            @endif
                                         @elseif(in_array($invoice->status, ['issued', 'due', 'offline_recorded']))
                                             <x-ui.button size="default" wire:loading.attr="disabled" wire:target="recordPayment({{ $invoice->id }})" wire:click="recordPayment({{ $invoice->id }})">Record payment</x-ui.button>
                                         @elseif($invoice->status === 'draft')
-                                            <x-ui.button :href="$invoice->pdf_url" variant="quiet" size="default" target="_blank">Open PDF</x-ui.button>
+                                            @if($invoice->pdf_url)
+                                                <x-ui.button :href="$invoice->pdf_url" variant="quiet" size="default" target="_blank">Open PDF</x-ui.button>
+                                            @else
+                                                <x-ui.status-pill state="unknown" label="PDF not available" />
+                                            @endif
                                         @endif
                                     </td>
                                 </tr>
