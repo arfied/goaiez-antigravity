@@ -55,7 +55,6 @@ final class SiteEngine
                 'seo_tags_installed' => in_array('seo_tags', $blockTypes, true), // G9-04 full-stack site law
                 'schema_installed' => in_array('schema_markup', $blockTypes, true), // G9-04 full-stack site law
                 'ssl_enabled' => false, // set true only by the SSL provisioning step (J11)
-                'ssl_installed' => false, // set true only by the SSL provisioning step (J11)
             ]);
 
             $page->update([
