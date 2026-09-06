@@ -79,7 +79,16 @@ class SyncErrorRateScreenTest extends TestCase
         $screen->call('show', $run1Id)
             ->assertSee('inv_tx_r1_low');
 
+        $run4 = SyncRun::create([
+            'business_id' => $bA,
+            'connection_id' => $connA->id,
+            'records_synced' => 888,
+            'conflicts_count' => 0,
+            'status' => 'completed',
+        ]);
+
         $screen->call('show', $run3Id)
+            ->assertSee('888')
             ->assertSee('This run had no conflicts')
             ->assertDontSee('inv_tx_b_low');
 

@@ -29,6 +29,7 @@ class DisputeQueueScreenTest extends TestCase
         Tenancy::setUser($owner->id);
 
         $open = app(DisputeRecordAction::class)->handle($biz->id, 902, 85000, 'unrecognized_transaction');
+        $open2 = app(DisputeRecordAction::class)->handle($biz->id, 904, 1000);
         $won = app(DisputeRecordAction::class)->handle($biz->id, 903, 5000);
         app(DisputeDefenseEngine::class)->recordOutcome($biz->id, $won->id, 'won');
 
@@ -65,7 +66,9 @@ class DisputeQueueScreenTest extends TestCase
             ->assertSeeHtml('wire:click="outcome('.$open->id.', \'lost\')"')
             ->call('outcome', $open->id, 'lost')
             ->assertSee('Recorded: invoice #902 lost. Commission clawed back.')
+            ->assertSee('Invoice #904')
             ->assertDontSee('Invoice #902')
+            ->call('outcome', $open2->id, 'won')
             ->assertSee('No open disputes.')
             ->call('outcome', 999999, 'won')
             ->assertSee("isn't in this account")
