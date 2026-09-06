@@ -35,6 +35,9 @@ test('dunning sequence escalates before suspend', function () {
     expect($action->reason)->toContain('resolution attempt before any suspension');
 });
 
+/**
+ * [G1-74]
+ */
 test('payment with no reference and no photo is refused', function () {
     $business = Business::factory()->create();
     $customer = Person::create(['business_id' => $business->id]);

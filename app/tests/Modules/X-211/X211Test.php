@@ -150,6 +150,9 @@ class X211Test extends TestCase
         Event::assertDispatched(ArFeeApplied::class);
     }
 
+    /**
+     * [G1-61], [G1-70]
+     */
     public function test_g1_61_g1_70_plan_past_threshold_is_refused(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Threshold Tenant', 'currency' => 'USD']);
@@ -178,6 +181,9 @@ class X211Test extends TestCase
         $this->assertSame(0, PaymentPlan::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
     }
 
+    /**
+     * [G1-65]
+     */
     public function test_g1_65_package_for_collections_refused_without_resolution_attempt(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Col Tenant', 'currency' => 'USD']);
@@ -206,6 +212,9 @@ class X211Test extends TestCase
         $this->assertSame(0, ArCollectionsPackage::where('business_id', $biz->id)->where('invoice_id', $invoice->id)->count());
     }
 
+    /**
+     * [N-033]
+     */
     public function test_n_033_reason_recorded_routes_to_human_when_needed(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Human Tenant', 'currency' => 'USD']);
