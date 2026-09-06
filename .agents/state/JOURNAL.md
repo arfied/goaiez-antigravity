@@ -837,3 +837,5 @@
 - `2026-09-06T12:42:08` UNRESOLVED contract X-110 - page.loaded is declared @ingress at GOAIEZ-MASTER-PLAN.md:26301 and has no emitter by design; sealed ContractStage.php:195-206 builds its ingress exemption by regexing the compiled manifest.php, which carries no annotations (@ingress appears in 0 of 127 manifests), so the exemption at :551-554 is dead code.
 - `2026-09-06T13:01:03` (R245) X-157 — EdgeProvisionAction stays test-only: it mints zone_id and ssl_certificate_id with Str::random() and takes has_valid_ssl as an argument, so a production caller would green J11's ssl element off a fabricated certificate. EdgeProvisionRefusalTest asserts the class is unreachable from app/app/. --ruling R245
 - `2026-09-06T13:01:03` note: X-157 edge.provision (manifest.php:32) is provided by an action that simulates Cloudflare — no HTTP client, no credential, Str::random() for both vendor identifiers. Real edge provisioning stays UNRESOLVED under ruling 16's vendor line (no CDN credential).
+- `2026-09-06T13:28:40` UNRESOLVED capability X-103 - X-194 funnel visualization renderer
+- `2026-09-06T13:28:40` UNRESOLVED capability X-103 - X-195 marketplace app engine

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T13:01:03",
+ "updated": "2026-09-06T13:28:40",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -541,6 +541,18 @@
      "stage": "anchor",
      "why": "No third party exists. Owner ruling 16 makes the platform itself the publishing target. A module whose whole path is in-process has no vendor to ask, and the stage admits no vendorless module. Cite `site.publish` (line 31) in app/app/Modules/X-103/manifest.php.",
      "at": "2026-09-06T05:15:54"
+    },
+    {
+     "module": "X-103",
+     "stage": "capability",
+     "why": "X-194 funnel visualization renderer",
+     "at": "2026-09-06T13:28:40"
+    },
+    {
+     "module": "X-103",
+     "stage": "capability",
+     "why": "X-195 marketplace app engine",
+     "at": "2026-09-06T13:28:40"
     }
    ]
   },
@@ -1910,6 +1922,18 @@
    "stage": "contract",
    "why": "page.loaded is declared @ingress at GOAIEZ-MASTER-PLAN.md:26301 and has no emitter by design; sealed ContractStage.php:195-206 builds its ingress exemption by regexing the compiled manifest.php, which carries no annotations (@ingress appears in 0 of 127 manifests), so the exemption at :551-554 is dead code.",
    "at": "2026-09-06T12:42:08"
+  },
+  {
+   "module": "X-103",
+   "stage": "capability",
+   "why": "X-194 funnel visualization renderer",
+   "at": "2026-09-06T13:28:40"
+  },
+  {
+   "module": "X-103",
+   "stage": "capability",
+   "why": "X-195 marketplace app engine",
+   "at": "2026-09-06T13:28:40"
   }
  ],
  "decisions": [
