@@ -6,9 +6,13 @@ namespace Tests\Modules\CMail;
 
 use App\Modules\CMail\Actions\EmailDnsCheckAction;
 use App\Modules\CMail\Actions\EmailHaltSeedAction;
+use App\Modules\CMail\Actions\EmailIngestEventAction;
 use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Actions\EmailUnsubscribeAction;
 use App\Modules\CMail\Actions\EmailWarmupAction;
+use App\Modules\CMail\Events\EmailBounced;
+use App\Modules\CMail\Events\EmailComplained;
+use App\Modules\CMail\Events\EmailReplied;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
 use App\Modules\CMail\Models\MailDomain;
@@ -510,7 +514,9 @@ class CMailTest extends TestCase
     /**
      * ⛔ REFUSED: G11-06 — the capability's own text is "named in the header"; there is no clause to assert
      * BUILD PROPOSAL: G11-09 — a test send scored before the campaign has not been built yet; C-Mail is owned by this lane (EmailWarmupAction.php, EmailSendAction.php)
-     * BUILT: G11-10 — test_g11_10_pre_send_bounce_and_spam_trap_gate()
+     * BUILT: G11-10 — test_g11_10_pre_send_bounce_and_spam_trap_gate() (the gate reads a value nothing wrote until this wave)
+     * BUILT: C-Mail ingest event action. The HTTP transport is external and absent.
+     * BUILD PROPOSAL: C-Mail — handle EmailComplained to write complaint_rate and is_marketing_paused (test anchor is a complaint rate crossing 0.10% pauses every marketing send).
      * ⛔ REFUSED: G11-11 — the capability's own text is "named in the header"; there is no clause to assert
      * ⛔ REFUSED: G11-12 (first half) — the capability's own text is "named in the header"; there is no clause to assert
      * BUILD PROPOSAL: G11-12 (second half) — the live bridge from C-Mail to X-01 has not been built yet; both are owned by this lane (EmailSendAction, UnifiedInboxManager::ingestMessage)
@@ -521,6 +527,61 @@ class CMailTest extends TestCase
      * ⛔ REFUSED: G11-38 — the capability's own text is "named in the header"; there is no clause to assert
      * UNRESOLVED: G9-21 — primary-vs-spam placement per network requires an external seed service not owned by this tree (capabilities.php:37)
      */
+    public function test_ingest_event_action_dispatches_events_and_gates_marketing_sends(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ingest Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'ingest.apex-air.com');
+        $ingestAction = new EmailIngestEventAction;
+
+        Event::fake([EmailBounced::class, EmailComplained::class, EmailReplied::class]);
+
+        $ingestAction->handle($biz->id, $domain->id, 'bounced', 'b1@acme.com', 'Subj 1');
+        Event::assertDispatched(EmailBounced::class, function ($event) {
+            return $event->recipientEmail === 'b1@acme.com' && $event->bounceType === 'bounced';
+        });
+
+        $ingestAction->handle($biz->id, $domain->id, 'spam-trap', 's1@acme.com', 'Subj 2');
+        Event::assertDispatched(EmailBounced::class, function ($event) {
+            return $event->recipientEmail === 's1@acme.com' && $event->bounceType === 'spam-trap';
+        });
+
+        $ingestAction->handle($biz->id, $domain->id, 'complained', 'c1@acme.com', 'Subj 3');
+        Event::assertDispatched(EmailComplained::class);
+
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj 4');
+        Event::assertDispatched(EmailReplied::class, function ($event) {
+            return $event->fromEmail === 'r1@acme.com' && $event->subject === 'Subj 4';
+        });
+
+        Event::fake([EmailBounced::class, EmailComplained::class, EmailReplied::class]);
+        $ingestAction->handle($biz->id, $domain->id, 'delivered', 'd1@acme.com', 'Subj 5');
+        Event::assertNotDispatched(EmailBounced::class);
+        Event::assertNotDispatched(EmailComplained::class);
+        Event::assertNotDispatched(EmailReplied::class);
+
+        Event::fake([EmailSent::class]);
+
+        $refused = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'b1@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('refused_bounced_or_spam', $refused['status']);
+
+        $success = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'd1@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('processed', $success['status']);
+    }
+
     public function test_header_capabilities(): void
     {
         $this->assertTrue(true);
