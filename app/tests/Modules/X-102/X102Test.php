@@ -369,6 +369,7 @@ class X102Test extends TestCase
     /**
      * [G21-01] P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof. (Same class as the "just in time" webinar killed at G15-01.)
      */
+    #[Group('G21-01')]
     public function test_g21_01_no_manufactured_social_proof(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Social Proof', 'currency' => 'USD']);

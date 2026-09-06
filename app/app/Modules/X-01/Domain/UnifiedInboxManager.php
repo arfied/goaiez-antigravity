@@ -8,6 +8,7 @@ use App\Models\Conversation;
 use App\Modules\X01\Events\ContactCreated;
 use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
+use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
@@ -122,6 +123,39 @@ final class UnifiedInboxManager
                 'operator_name' => $operatorName,
                 'label' => 'Human takeover',
                 'is_active' => true,
+            ];
+        });
+    }
+
+    /**
+     * Release human takeover on a conversation (TEST ANCHOR).
+     */
+    public function releaseTakeover(int $businessId, int $conversationId): array
+    {
+        return DB::transaction(function () use ($businessId, $conversationId) {
+            $latch = TakeoverLatch::where('business_id', $businessId)
+                ->where('conversation_id', $conversationId)
+                ->where('is_active', true)
+                ->first();
+
+            if ($latch === null) {
+                throw TakeoverNotLatchedRefused::forConversation($conversationId);
+            }
+
+            $latch->update([
+                'is_active' => false,
+                'released_at' => now(),
+            ]);
+
+            Event::dispatch(new TakeoverReleased(
+                businessId: $businessId,
+                conversationId: $conversationId
+            ));
+
+            return [
+                'latch_id' => $latch->id,
+                'conversation_id' => $conversationId,
+                'is_active' => false,
             ];
         });
     }

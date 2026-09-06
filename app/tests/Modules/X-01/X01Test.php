@@ -7,18 +7,24 @@ namespace Tests\Modules\X01;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\User;
+use App\Modules\CMail\Actions\EmailDnsCheckAction;
+use App\Modules\CMail\Actions\EmailIngestEventAction;
 use App\Modules\X01\Actions\ContactCreateAction;
 use App\Modules\X01\Actions\ContactMergeAction;
 use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Actions\ConversationTakeoverAction;
+use App\Modules\X01\Actions\ConversationTakeoverReleaseAction;
 use App\Modules\X01\Actions\SearchGlobalAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Events\ContactCreated;
+use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
+use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
+use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X01\Ui\CustomersList;
 use App\Modules\X01\Ui\Thread;
@@ -392,7 +398,8 @@ class X01Test extends TestCase
     public function test_g11_41_thread_list_sort(): void
     {
         $admin = User::factory()->create();
-        $biz = TestCase::provisionTenant(['name' => 'Sort Biz']);
+        $biz = TestCase::provisionTenant(['name' => 'Sort Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $conv1 = Conversation::factory()->create([
             'business_id' => $biz->id,
@@ -490,6 +497,7 @@ class X01Test extends TestCase
 
     /**
      * [G19-22] positive half: every channel lands on ONE Conversation.
+     * (R245) listener returns early when the inbound WhatsApp message body is empty
      * Asserts against UnifiedInboxManager::ingestMessage() on real data.
      */
     public function test_g19_22_single_conversation_identity(): void
@@ -515,5 +523,71 @@ class X01Test extends TestCase
 
         $this->assertEquals($res1['conversation_id'], $res2['conversation_id'], 'The conversation id from the first ingest must equal the id from the second');
         $this->assertEquals(1, Conversation::where('person_id', $res1['person_id'])->count(), 'Conversation::count() for that person must be 1');
+    }
+
+    public function test_g11_12_email_reply_bridge(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Email Reply Bridge Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dnsAction = new EmailDnsCheckAction;
+        $domain = $dnsAction->handle($biz->id, 'reply.apex-air.com');
+
+        $ingestAction = new EmailIngestEventAction;
+
+        $convUpdated = null;
+        Event::listen(ConversationUpdated::class, function ($event) use (&$convUpdated) {
+            $convUpdated = $event;
+        });
+
+        // A1, A2
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj Reply', ['sender_name' => 'Reply Sender', 'body' => 'This is the reply body']);
+
+        $convs = Conversation::where('business_id', $biz->id)->get();
+
+        // A1: the reply lands as a conversation for the sender.
+        $this->assertEquals(1, $convs->count(), 'A1: The reply lands as a conversation for the sender');
+
+        // A2: that conversation carries the reply's body, not some other string off the event.
+        $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
+        $this->assertEquals('This is the reply body', $convUpdated->messageSnippet, 'A2: That conversation carries the reply body');
+
+        // A3: a 'replied' ingest whose body is empty creates nothing.
+        $convsBefore = Conversation::where('business_id', $biz->id)->count();
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'empty@acme.com', 'Subj Empty', ['sender_name' => 'Empty Sender', 'body' => '']);
+        $this->assertEquals($convsBefore, Conversation::where('business_id', $biz->id)->count(), 'A3: A replied ingest whose body is empty creates nothing');
+    }
+
+    public function test_takeover_release(): void
+    {
+        Event::fake([TakeoverStarted::class, TakeoverReleased::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Release Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+
+        $this->takeover->handle($biz->id, $c->id, 42, 'Operator Alice');
+
+        $action = new ConversationTakeoverReleaseAction($this->manager);
+        $action->handle($biz->id, $c->id);
+
+        $latch = TakeoverLatch::where('business_id', $biz->id)
+            ->where('conversation_id', $c->id)
+            ->first();
+
+        // 1. That the latch's state ended. Both columns the model casts, not one.
+        $this->assertFalse($latch->is_active);
+        $this->assertNotNull($latch->released_at);
+
+        // 2. That the ending was published — the event, with whatever you decided it carries.
+        Event::assertDispatched(TakeoverReleased::class, function ($event) use ($biz, $c) {
+            return $event->businessId === $biz->id && $event->conversationId === $c->id;
+        });
+
+        // 3. That the release is consulted by something other than the method that wrote it.
+        $this->expectException(TakeoverNotLatchedRefused::class);
+        $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
     }
 }
