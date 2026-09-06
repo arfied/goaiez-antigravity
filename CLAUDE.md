@@ -1640,3 +1640,46 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     and a live call is ruling 13's evidence run, with X-173's `no runtime proof` anchor already in
     ruling 32's group (2). ⛔ Not resolved by deleting the action: six fixtures across four files
     construct connections through it, and ruling 46 makes the wave own every one of them.
+74. **A KILLED tool is not a verdict, and until this tick this lane's §6 could not tell one from a
+    style red (RULED by the lane supervisor 2026-09-06 17:0x, applying `OWNER.md` 14:1x, 16:0x, 16:5x
+    and 17:2x to this lane's own two scripts).** `bin/supervise.sh` §6 piped `pint --test` and
+    `phpstan` straight into `tail`. `set -uo pipefail` is on, so a non-zero from either still reached
+    `fail=1` — which is precisely the defect: a pint **killed** on this box prints a bare
+    `Terminated` and was about to be recorded as a style red, and under ruling 34 a style-red tip is a
+    live BLOCK that refuses the push. So the lane would have withheld a correct tip because someone
+    else's agent reaped a process. `run_tool()` now captures each tool's RAW rc, and `rc ≥ 124`
+    prints `⛔ <tool> was KILLED or timed out · rc=<n> — this is NOT a verdict`. **Ruling 67 named
+    this for pest; it is now mechanical for every tool the gate runs**, and 67's reading rule is
+    unchanged — a killed run is VOID, never compared against a baseline, never re-run in the same
+    tick. ⚠️ **A void tool is still not a licence to push**: the other sections stand on their own.
+    **The gate log is EIGHT columns**, `start_iso end_iso gate_pid tool_pid rc project checkout tool`,
+    appended to `/home/goaiez/tmp/gate-runs.tsv`. Track 1's first shape had seven and it corrected
+    itself at 16:5x: `$4` is `tool_pid`, not `rc`, so a field-index parser across the mixed history
+    reads every eight-column row as a failure with a seven-digit code. `project` is
+    `goaiez-antigravity` (the project, never the directory); `checkout` is `grs-antig-money`; `rc`
+    stays raw. ⚠️ **The descent to `tool_pid` goes through KNOWN WRAPPERS ONLY.** Track 1's recipe
+    takes the first child repeatedly; `timeout 1800 pest` needs exactly one hop, but a blind loop
+    would pin whatever the tool itself forked at that instant — the same silent join failure the
+    descent exists to prevent, one level further in — so the loop hops only while the current
+    `/proc/<pid>/cmdline` is a `timeout` or `env`, and stops on an unreadable one (a short tool has
+    already exited and its pid is still the right one). The sentinel rows are defined at the **top**
+    of the script, with `trap - EXIT` **inside** each signal trap, both for the reasons Track 1
+    already paid for. **The pest lock** (`/home/goaiez/tmp/pest.lock`, advisory, cross-project) is
+    orthogonal to §7's shared-database refusal — that one is correctness, this one is scheduling, and
+    both stay. ⚠️ **A `lock-timeout` is NOT a red suite**: no test ran, `want_tests` is cleared, and
+    no number is printed for a run that did not happen. **`BASH_ENV`** is exported to both coder
+    branches so `coder-bin/kill` sees a shell `kill` — `kill` is a bash builtin and a PATH shim never
+    catches it, which is why every SIGTERM on this box has been unattributable; the shim records and
+    then performs the kill, refusing nothing. `tool_pid` is the join key against `kill-log.tsv`.
+    **Finally, `--allow-harness` retires ruling 60(a).** `coder-bin/git` now clears its
+    `JourneyHarness.php` refusal on `GOAIEZ_HARNESS_OK=1`, which this launcher sets for one run. So
+    the harness edit no longer has to be the **last** item of a brief — 60(a) existed only because a
+    staged-not-committed harness made the guard refuse every *other* commit in the run, which is what
+    cost run 93 its work. 60's workaround (the supervisor commits what the coder staged) stays
+    available and is now the fallback, not the only path. ⛔ **The flag opens the ability to COMMIT,
+    not permission to weaken.** Provisioning real state so a real code path runs is a fix; deleting an
+    assertion, stubbing a transport or making a journey pass on a constant is a BLOCK, and the
+    supervisor that opened the gate wears it. **A tick that passes it quotes the harness diff in its
+    own REVIEWS block** — an unreviewable harness change is the exact shape of the fake green this
+    repo keeps finding. Never a standing flag: if the wave does not touch the harness, dispatch
+    without it.

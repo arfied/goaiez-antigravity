@@ -7,6 +7,7 @@
 #   bash .agents/supervisor/launch-coder.sh --check         # liveness only, no launch
 #   bash .agents/supervisor/launch-coder.sh --coder claude   # quota fallback
 #   bash .agents/supervisor/launch-coder.sh --allow-merge    # opens GOAIEZ_MERGE_OK
+#   bash .agents/supervisor/launch-coder.sh --allow-harness  # opens GOAIEZ_HARNESS_OK
 #
 # Refuses to start if a coder is already running (never two in one tree).
 #
@@ -27,6 +28,18 @@ CODER="agy"
 # 12:2x). Default CLOSED, per dispatch, by hand of tick — never read from BRIEF.md,
 # which is rewritten every tick (the door ruling 26 closed on the push gate).
 ALLOW_MERGE=0
+# Harness gate (OWNER.md 17:2x, Track 1 answering site's twice-refused ask).
+# `coder-bin/git` keyed the JourneyHarness.php exemption to the checkout name
+# `grs-antig`, so the lane that OWNS a journey could not fix its own harness —
+# ruling 60's workaround (the supervisor commits what the coder staged) exists for
+# exactly that. The guard now also clears on GOAIEZ_HARNESS_OK=1, set for ONE run.
+# ⛔ It opens the ability to COMMIT, not permission to weaken: provisioning real
+# state so a real code path runs is a fix; deleting an assertion, stubbing a
+# transport or making a journey pass on a constant is a BLOCK, and the supervisor
+# that opened the gate wears it. A tick that passes this flag QUOTES the harness
+# diff in its own REVIEWS block — an unreviewable harness change is the exact shape
+# of the fake green this repo keeps finding. Never a standing flag.
+ALLOW_HARNESS=0
 
 # --check: report liveness and exit without launching anything. Used by the
 # unattended supervisor tick, whose allowlist has no ps/pgrep/kill.
@@ -51,7 +64,8 @@ while [ -n "${1:-}" ]; do
       esac
       shift 2 ;;
     --allow-merge) ALLOW_MERGE=1; shift ;;
-    *) echo "REFUSED: unknown argument '$1' (expected --check, --coder agy|claude, --allow-merge)"; exit 1 ;;
+    --allow-harness) ALLOW_HARNESS=1; shift ;;
+    *) echo "REFUSED: unknown argument '$1' (expected --check, --coder agy|claude, --allow-merge, --allow-harness)"; exit 1 ;;
   esac
 done
 
@@ -75,6 +89,13 @@ if [ "$ALLOW_MERGE" = 1 ]; then
   echo "merge gate: OPEN — --allow-merge passed by hand of tick -> GOAIEZ_MERGE_OK=$ALLOW_MERGE"
 else
   echo "merge gate: closed -> GOAIEZ_MERGE_OK=$ALLOW_MERGE"
+fi
+
+if [ "$ALLOW_HARNESS" = 1 ]; then
+  echo "harness gate: OPEN — --allow-harness passed by hand of tick -> GOAIEZ_HARNESS_OK=$ALLOW_HARNESS"
+  echo "  the REVIEWS block for this run MUST quote the JourneyHarness.php diff (OWNER.md 17:2x)"
+else
+  echo "harness gate: closed -> GOAIEZ_HARNESS_OK=$ALLOW_HARNESS"
 fi
 
 
@@ -108,17 +129,27 @@ while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] \
 # still named in the filename, which is the property the ruling is after.
 LOG="$LOGDIR/${CODER}-run${n}.log"
 
+# BASH_ENV (OWNER.md 16:0x, mechanism 2). `kill` is a bash BUILTIN, so a PATH shim
+# never sees it and every SIGTERM on this box has been unattributable. `coder-bin/
+# shell-init.sh` runs `enable -n kill`, which makes `kill` resolve through PATH to
+# `coder-bin/kill` — it RECORDS time · caller pid · target pid · both cwds · target
+# cmdline to /home/goaiez/tmp/kill-log.tsv and THEN performs the kill. It refuses
+# nothing: killing a pid you started is legitimate. Honest limits, in Track 1's own
+# words — it does not catch os.kill(), a kill(2) from a non-shell process, or a
+# shell that never sourced it. It moves `kill` from a rule to a mechanism for the
+# likely case. `tool_pid` in bin/supervise.sh's gate-runs.tsv is the join key.
 if [ "$CODER" = "claude" ]; then
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;/home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   MG=closed; [ "$ALLOW_MERGE" = 1 ] && MG=OPEN
-  echo "LAUNCHED run $n coder=$CODER merge-gate=$MG (pid $(cat "$PIDFILE")) log=$LOG"
+  HG=closed; [ "$ALLOW_HARNESS" = 1 ] && HG=OPEN
+  echo "LAUNCHED run $n coder=$CODER merge-gate=$MG harness-gate=$HG (pid $(cat "$PIDFILE")) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi

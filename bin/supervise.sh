@@ -19,6 +19,76 @@ for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_docto
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
+# ---------------------------------------------------------------------------
+# Shared gate log (OWNER.md 2026-09-06 16:0x, corrected to EIGHT columns 16:5x).
+#   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
+# `rc` is RAW — 128+N, so 143 SIGTERM, 137 SIGKILL, 124 timeout(1)'s own — because
+# the whole point is telling a kill from a verdict. `project` is the project, never
+# the directory; `checkout` is this worktree's basename. `tool_pid` is the join key
+# against coder-bin's kill-log.tsv. No lock: an append under PIPE_BUF to an O_APPEND
+# file is atomic on Linux, and a flock here would interact with the pest lock for
+# nothing. Consumers branch on NF — 24 seven-column rows predate this shape.
+GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+GATE_PROJECT="goaiez-antigravity"
+GATE_CHECKOUT="$(basename "$ROOT")"
+GATE_PID=$$
+log_gate() { # <start_iso> <end_iso> <tool_pid> <rc> <tool>
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$2" "$GATE_PID" "$3" "$4" "$GATE_PROJECT" "$GATE_CHECKOUT" "$5" \
+    >> "$GATE_LOG" 2>/dev/null || true
+}
+# Sentinel. Defined HERE, at the top, and not where the tools run: Track 1's first
+# copy sat beside the tools and recorded nothing at all for a gate killed two
+# seconds in. `trap - EXIT` goes INSIDE each signal trap, or the honest rc=143 row
+# is followed by a clean rc=0 row that hides it.
+GATE_START=$(date -Iseconds)
+log_gate "$GATE_START" "-" "-" "-" "gate"
+trap 'grc=$?; trap - EXIT; log_gate "$GATE_START" "$(date -Iseconds)" "-" "$grc" "gate"' EXIT
+trap 'trap - EXIT INT TERM; log_gate "$GATE_START" "$(date -Iseconds)" "-" 143 "gate"; exit 143' TERM
+trap 'trap - EXIT INT TERM; log_gate "$GATE_START" "$(date -Iseconds)" "-" 130 "gate"; exit 130' INT
+
+# Run one tool, capturing its output in $out and its RAW exit code in $rc, and log
+# a row. `out=$(cmd)` gives no pid, so the tool is backgrounded and the job's pid
+# recorded — then DESCENDED, because `timeout 1800 pest` makes `timeout` the job
+# and `php ./vendor/bin/pest` the process a killer actually sees in ps. Logging the
+# wrapper's pid fails the join in exactly the case the log exists for, silently.
+run_tool() { # <tool-name> <cmd...>
+  local tool="$1"; shift
+  local s tmp jobpid c
+  s=$(date -Iseconds)
+  tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!
+  TOOL_PID=$jobpid
+  sleep 1   # settle: pgrep before the fork returns nothing and pins the wrapper
+  # Descend only THROUGH KNOWN WRAPPERS. Descending blindly to the deepest first
+  # child would pin whatever the tool itself happened to fork at that instant.
+  for _ in 1 2 3; do
+    # A short tool (pint) can already be gone — its pid is still the right one.
+    [ -r "/proc/$TOOL_PID/cmdline" ] || break
+    case "$(tr '\0' ' ' < "/proc/$TOOL_PID/cmdline" 2>/dev/null)" in
+      *timeout\ *|*"/env "*|env\ *) ;;
+      *) break ;;
+    esac
+    c=$(pgrep -P "$TOOL_PID" 2>/dev/null | head -1)
+    [ -n "$c" ] || break
+    TOOL_PID=$c
+  done
+  wait "$jobpid"; rc=$?
+  out=$(cat "$tmp"); rm -f "$tmp"
+  log_gate "$s" "$(date -Iseconds)" "$TOOL_PID" "$rc" "$tool"
+}
+# A tool that died on a signal has returned no verdict. 124 is timeout(1)'s own,
+# 137 SIGKILL, 143 SIGTERM (ruling 67). Print it as a kill, count it as a failed
+# gate, and never read the output as a style or type result.
+tool_killed() { # <tool-name>
+  if [ "$rc" -ge 124 ]; then
+    echo "  ⛔ $1 was KILLED or timed out · rc=$rc — this is NOT a verdict"
+    return 0
+  fi
+  return 1
+}
+
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
@@ -100,8 +170,19 @@ if [ $want_doctor -eq 1 ]; then
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+# Both were piped straight into `tail`, which throws the exit code away: a KILLED
+# pint prints a bare `Terminated` and was about to be recorded as a style red
+# (OWNER.md 16:0x). rc is read first now, and a signal death says so.
+run_tool pint ./vendor/bin/pint --test
+if tool_killed pint; then fail=1; else
+  printf '%s\n' "$out" | tail -3 | sed 's/^/  /'
+  [ "$rc" -ne 0 ] && fail=1
+fi
+run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+if tool_killed phpstan; then fail=1; else
+  printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
+  [ "$rc" -ne 0 ] && fail=1
+fi
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
@@ -125,11 +206,36 @@ if [ $want_tests -eq 1 ]; then
     fail=1
     out=''; rc=0
   else
+  # Shared advisory lock (OWNER.md 14:1x). Two suites at once on this box is what
+  # gives an agent a reason to reap a "stray" pest, and it is cross-project by
+  # design: anything wrapping its suite in the same flock serialises with us. It is
+  # ORTHOGONAL to the shared-database refusal above — that one is correctness, this
+  # one is scheduling, and both stay. A lock-timeout is NOT a red suite: no test ran.
+  PEST_LOCK=/home/goaiez/tmp/pest.lock
+  lock_held=0
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>>"$PEST_LOCK" 2>/dev/null && {
+      if ! flock -n 9; then
+        echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+      fi
+      flock -w 2400 9 && lock_held=1
+    }
+    if [ $lock_held -eq 0 ]; then
+      echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+      echo '{"tool":"pest","result":"lock-timeout"}' > /home/goaiez/tmp/last-pest-money.json
+      fail=1; want_tests=0
+    fi
+  fi
+  if [ $want_tests -eq 1 ]; then
   # pest under a wall clock: a hung suite must say so, not hang the tick (OWNER.md 08:0x).
-  out=$(DB_DATABASE=goaiez_antig_money_test timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  run_tool pest env DB_DATABASE=goaiez_antig_money_test timeout 1800 ./vendor/bin/pest
+  flock -u 9 2>/dev/null
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
   [ $rc -ne 0 ] && fail=1
   [ $rc -eq 124 ] && echo "  ⛔ TIMEOUT: pest exceeded 1800s and was killed — the number below, if any, is partial"
+  # ruling 67: 137 is 128+9 (SIGKILL), 143 is 128+15 (SIGTERM). A killed suite did
+  # not fail — the run is VOID and is never compared against a baseline.
+  [ $rc -ge 128 ] && echo "  ⛔ KILLED: pest died on signal $((rc-128)) · rc=$rc — VOID, not a verdict (ruling 67). Do not re-run in the same tick."
   if [ -z "$out" ]; then
     echo "  ⛔ ZERO BYTES: pest produced no output · rc=$rc"
     echo "     (memory, or a missing Vite manifest — narrow with --filter, do not debug the code)"
@@ -148,7 +254,8 @@ if n>5: print("   … %d more" % (n-5))'
     echo "  (pest's last line is not the JSON summary · rc=$rc)"
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi
-  fi
+  fi   # want_tests, re-checked after the lock
+  fi   # busy
 fi
 
 bar "verdict"
