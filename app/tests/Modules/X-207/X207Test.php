@@ -13,6 +13,7 @@ use App\Modules\X207\Models\DeviceToken;
 use App\Modules\X207\Models\PushDelivery;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X207Test extends TestCase
@@ -113,7 +114,7 @@ class X207Test extends TestCase
      */
     public function test_push_broadcast_one_contract_no_egress(): void
     {
-        \Illuminate\Support\Facades\Http::fake();
+        Http::fake();
 
         $biz = TestCase::provisionTenant(['name' => 'Push Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -123,16 +124,16 @@ class X207Test extends TestCase
         $this->registerAction->handle($biz->id, 'web_token', 'web', 103);
 
         $payload = ['event_type' => 'test', 'deep_link' => '/test', 'badge' => 1];
-        
+
         $result = $this->broadcastAction->handle($biz->id, $payload);
         $this->assertEquals(3, $result['recipient_count']);
         $this->assertEquals(3, PushDelivery::where('business_id', $biz->id)->count());
-        
+
         $deliveries = PushDelivery::where('business_id', $biz->id)->orderBy('id')->get();
         $this->assertEquals($deliveries[0]->payload, $deliveries[1]->payload);
         $this->assertEquals($deliveries[1]->payload, $deliveries[2]->payload);
-        
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+
+        Http::assertNothingSent();
     }
 
     /**
@@ -142,22 +143,22 @@ class X207Test extends TestCase
     {
         $biz = TestCase::provisionTenant(['name' => 'Push Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         $device = $this->registerAction->handle($biz->id, 'retire_token', 'ios', 101);
         $this->retireAction->handle($biz->id, 'retire_token', 'token_expired');
-        
+
         $retiredDevice = DeviceToken::where('business_id', $biz->id)->find($device->id);
         $this->assertEquals('retired', $retiredDevice->status);
         $this->assertEquals('token_expired', $retiredDevice->retirement_reason);
-        
+
         Event::fake([SendRequested::class]);
-        
+
         $payload = ['event_type' => 'test', 'deep_link' => '/test', 'badge' => 1];
         $result = $this->sendAction->handle($biz->id, $device->id, $payload, true);
-        
+
         $this->assertEquals('refused_device_retired', $result['status']);
         $this->assertEquals(0, PushDelivery::where('business_id', $biz->id)->count());
-        
+
         Event::assertNotDispatched(SendRequested::class);
     }
 }
