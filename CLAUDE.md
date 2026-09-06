@@ -884,6 +884,75 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   ruling 5's catch-all) are invisible to all four surfaces, the third consecutive
   tick where only the paired stat prints a sibling's commit.
 
+  ✅ **RETRACTED at tick 193 — git holds the bound. The paired `--stat` DOES have
+  a readable absolute form: the remote-tracking REFLOG.** Tick 192 concluded the
+  stream's lower bound "exists only as a sha in this untracked ledger" and offered
+  `--since=<the last block's timestamp>` as the fallback. Both halves are wrong,
+  and the fallback is falsified on the very window it was written for.
+
+  **The fallback returns zero.** Tick 191's block closed at 03:32:54 (its push);
+  the window it did not see delivered stages' `99491fb0`/`e4bfb71b`, committer
+  date **03:22:24** — *ten minutes earlier than the block that missed them*. So:
+
+  ```
+  git log --since='2026-09-06 03:32:54' --format='%h %ci %s' ^origin/main <the six tips>
+      → nothing
+  git log --since='2026-09-06 03:00:00' … (control)
+      → 6 commits, including both
+  ```
+
+  The control is what makes the empty result a measurement and not a typo. The
+  cause is not clock skew (tick 192's guess): **the census's event is the PUSH,
+  and the committer date is not an observable of it.** Nothing orders the two.
+
+  **`git reflog show --date=iso refs/remotes/origin/track/<x>` is the push stream
+  itself**, sha and observation time, held by git and recoverable cold:
+
+  ```
+  99491fb0 …/stages@{2026-09-06 03:34:42}: update by push
+  f8661eef …/stages@{2026-09-06 03:16:48}: update by push     ← tick 192's hand-typed bound
+  ```
+
+  72 entries for stages, 36 for ui, back to 2026-09-02 — the whole life of this
+  census, no `gc.reflogExpire` override, default 90 days. `<ref>@{1}` *is* the
+  previous tip; `<ref>@{<date>}` resolves a date to the sha the ref held then,
+  which is sha-exact where `--since` is not. **Demonstrated on the ledger's own
+  claimed-lost evidence:** tick 190 declared sixty's `2c8a399a` (X-01) observable
+  exactly once and gone at sixty's next commit; `git log --stat 663b97c1..2c8a399a`
+  — both bounds read off the reflog, no ledger consulted — reprints it with its
+  stat. Nothing was ever lost.
+
+  So the operative rules change:
+
+  - **A lost bound is recovered from the reflog, never from `--since`.** Reach for
+    `<ref>@{N}` or `<ref>@{<date>}`; the time-bounded `git log` is retracted.
+  - **Keep recording the tip shas anyway** — cheap, and the ledger stays the
+    human-readable record. It is no longer the *only* copy, which is the point.
+  - **The reflog is a second, independent witness of the tick-177 cache check.**
+    A fetch that moves nothing writes no entry, so "no sibling reflog gained an
+    entry since the last tick's fetch" is the cache HIT, measured from git rather
+    than from a remembered table.
+
+  ⚠️ **Two caveats, both measured.** (1) `git rev-parse --git-common-dir` is
+  `/home/goaiez/agents/grs-antig/.git`, so `refs/remotes` and its reflogs are
+  **shared with Track 1 and every sibling worktree** — an entry may record another
+  track's fetch, not this tick's. That makes the bound earlier-or-equal, i.e.
+  safe: it never misses a window, it can only split one finer than this track's
+  cadence (stages@03:34:42 sits between ticks 191 and 192). (2) The push lag is
+  real and unbounded — stages 12 m 18 s, ui 18 m 21 s on its newest commit, and
+  **13 h 10 m** on its oldest: all fifteen of ui's X-110 commits (committer dates
+  2026-09-05 13:15:19 → 2026-09-06 02:06:39) arrived in the **single** push
+  observed at 02:25:00, proven because `git log 64789767 ^origin/main
+  ^origin/track/site -- <the X-110 paths>` — ui's previous push — prints nothing.
+  Never infer arrival order, batch size or a bound from committer dates.
+
+  Tenth statement of the section's law, and the first turned on a *remedy* rather
+  than a query: tick 192 correctly identified an unrecorded bound and then reached
+  for a substitute it did not measure. **A fallback asserted but never fired is
+  not a fallback** — same shape as tick 188's `1 + 2n` signature fitted to two
+  points, and tick 187's under-scoped command, both of which this ledger also
+  wrote itself. Fire the remedy on a real window before writing it down.
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
