@@ -913,3 +913,42 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     (`2026_09_06_000001_…`), so it predates the code it is quoted as proving. It
     is not evidence of the checkout path and is not to be cited as such; making
     the command honest is MONEY-73, not this wave.
+46. **A wave that deletes a code path owns every test that asserted it, and a
+    red suite is never an "expected" outcome (RULED by the lane supervisor
+    2026-09-06 12:2x, on MONEY-72's `e276a0f4`; briefed as MONEY-72b).**
+    Ruling 45 correctly removed the gateway call from
+    `X-198/Listeners/CaptureCheckedOutCart.php`, and MONEY-72 shipped that
+    change with **three existing tests left red** —
+    `tests/Modules/X-198/CheckoutCaptureSeamTest.php`'s whole file, which drives
+    `CartPayAction` and asserts the listener created a `Payment` row (`:39-43`,
+    `:87-89`) and promoted the order to `paid` (`:124-125`). The gate went
+    `981 · 974 · FAILED 2 · errors 5` → `982 · 972 · FAILED 4 · errors 6`, and
+    the coder's log called that *"failing tests … as expected by the rule
+    system"*. **It is not.** The contract's outcomes are a green gate or
+    `UNRESOLVED`; a red suite is neither, it is red in this checkout and in
+    every checkout that takes the merge (ruling 39's reasoning), and ruling 26
+    forbids pushing it. So, lane-wide: **before a wave removes or inverts a code
+    path, grep for every test that asserts it and list them in the brief** — the
+    seam's own test file is rarely the one the ruling names. Ruling 45 named
+    `CheckoutBlockScreenTest` and the map missed `CheckoutCaptureSeamTest`
+    entirely; that miss is the supervisor's, so it carries its own two
+    dispatches, not the original item's.
+    **The resolution is forward, never a revert** — 45's substance is right.
+    Each of the three tests is **inverted and kept**, per ruling 39's companion
+    lesson: (1) `test_the_checkout_seam_captures_once_and_waits_when_no_merchant_is_connected`
+    is renamed off the word "captures" and asserts **zero** `Payment` rows and
+    `pending_payment` for the connected half, keeping its no-merchant half
+    verbatim; (2) `test_an_unconfirmed_checkout_leaves_the_order_pending` keeps
+    its `pending_payment` assertion and inverts `assertNotNull($payment)` to a
+    zero count; (3) `test_a_confirmed_checkout_promotes_the_order_and_says_so`
+    is renamed off "confirmed"/"promotes" and its anonymous stub gains a
+    `public int $calls` counter asserted **zero** — ruling 45's own discipline,
+    a call count and not a row absence, because a row-absence assertion passes
+    for the wrong reason. ⛔ **No test is deleted**, ⛔ no assertion moves to a
+    file that does not already own it, and ⛔ before dropping the row-shape
+    assertions (`amount_cents`, `idempotency_key`) the coder proves `capture()`
+    still asserts them elsewhere and quotes the line — ruling 39's companion
+    lesson, which cost nothing at MONEY-67b only because the path was in fact
+    covered. ⚠️ The dead `use App\Modules\X117\Models\Order;` the removal left in
+    the listener is cleared in the same wave: `pint` and `phpstan` both pass
+    over an unused import, so neither gate can see it.
