@@ -19,6 +19,11 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Modules\CAgent\Events\AgentRefused::class,
+            \App\Modules\X163\Listeners\RecordPriceGap::class,
+        );
+
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');

@@ -11,7 +11,7 @@ use App\Support\Tenancy;
 use Carbon\Carbon;
 use Livewire\Component;
 
-// (R245) the daily digest lists SAMPLE refusals flagged on the item (§140.1); a NO_FACT refusal has no item and is not persisted this wave
+// (R245) the daily digest lists SAMPLE refusals flagged on the item (§140.1); a NO_FACT agent refusal about pricebook creates a price_cents=0, is_confirmed=false row so the owner sees the gap in the daily digest.
 // (R245) the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave
 class DailyPricingDigest extends Component
 {

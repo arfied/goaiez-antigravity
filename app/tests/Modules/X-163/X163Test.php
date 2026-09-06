@@ -318,4 +318,76 @@ class X163Test extends TestCase
         $this->assertEquals('quoted', $res['status']);
         $this->assertEquals('$150.00', $res['formatted_price']);
     }
+
+    public function test_an_agent_price_refusal_becomes_a_gap_the_owner_can_see(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $event = new \App\Modules\CAgent\Events\AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a drain unblock',
+            'drain unblock please'
+        );
+
+        Event::dispatch($event);
+
+        $items = PriceBookItem::where('business_id', $biz->id)->get();
+        $this->assertCount(1, $items);
+        $this->assertEquals(0, $items[0]->price_cents);
+        $this->assertFalse($items[0]->is_confirmed);
+        $this->assertEquals(1, $items[0]->refusal_count);
+        $this->assertNotNull($items[0]->refusal_flagged_at);
+
+        // Dispatch second time
+        Event::dispatch($event);
+        $items = PriceBookItem::where('business_id', $biz->id)->get();
+        $this->assertCount(1, $items);
+        $this->assertEquals(2, $items[0]->refusal_count);
+    }
+
+    public function test_an_agent_refusal_that_is_not_about_price_writes_nothing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Gap Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $event = new \App\Modules\CAgent\Events\AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the warranty duration',
+            'warranty duration'
+        );
+
+        Event::dispatch($event);
+        $this->assertEquals(0, PriceBookItem::where('business_id', $biz->id)->count());
+
+        $event2 = new \App\Modules\CAgent\Events\AgentRefused(
+            $biz->id,
+            'QUIET_HOURS',
+            'It is too late to quote pricebook',
+            'late quote'
+        );
+
+        Event::dispatch($event2);
+        $this->assertEquals(0, PriceBookItem::where('business_id', $biz->id)->count());
+    }
+
+    public function test_a_gap_row_is_never_quoted(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Quote Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $event = new \App\Modules\CAgent\Events\AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a gap row',
+            'gap row'
+        );
+        Event::dispatch($event);
+
+        $res = $this->lookup->handle($biz->id, 'gap row', 'customer');
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('UNCONFIRMED', $res['refusal_code']);
+    }
 }
