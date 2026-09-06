@@ -53,6 +53,18 @@ final class PricebookEngine
             ];
         }
 
+        if ($item->is_confirmed === false) {
+            $item->increment('refusal_count', 1, ['refusal_flagged_at' => Carbon::now()]);
+
+            Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'UNCONFIRMED'));
+
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'UNCONFIRMED',
+                'reason' => "Price for {$serviceName} is not confirmed and cannot be quoted",
+            ];
+        }
+
         return [
             'status' => 'quoted',
             'service_name' => $item->service_name,

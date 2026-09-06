@@ -281,4 +281,41 @@ class X163Test extends TestCase
         $entries = array_values($list->entries);
         $this->assertEquals('Real Service', $entries[0]->label);
     }
+
+    public function test_an_unconfirmed_price_is_never_quoted(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Unconfirmed Drain Unblock',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $res = $this->lookup->handle($biz->id, 'Unconfirmed Drain Unblock', 'customer');
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('UNCONFIRMED', $res['refusal_code']);
+        $this->assertStringNotContainsString('$150.00', json_encode($res));
+    }
+
+    public function test_a_confirmed_price_is_still_quoted(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Confirmed Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirmed Drain Unblock',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $res = $this->lookup->handle($biz->id, 'Confirmed Drain Unblock', 'customer');
+        $this->assertEquals('quoted', $res['status']);
+        $this->assertEquals('$150.00', $res['formatted_price']);
+    }
 }
