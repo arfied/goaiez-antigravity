@@ -12,3 +12,16 @@ test('capture persists real id', function () {
     expect($artifact['gateway_charge_id'])->toStartWith('ch_');
     expect($artifact['payment_status'])->toBe('captured');
 });
+
+test('pay link returns real url', function () {
+    $path = storage_path('app/evidence/x198/payment-link.json');
+    if (! file_exists($path)) {
+        $this->fail('Artifact missing. You must run php artisan x198:evidence-payment-link first.');
+    }
+
+    $artifact = json_decode(file_get_contents($path), true);
+
+    expect($artifact['provider_link_id'])->toStartWith('cs_');
+    expect($artifact['url'])->toStartWith('https://checkout.stripe.com');
+    expect($artifact['running_unit_tests'])->toBeFalse();
+});
