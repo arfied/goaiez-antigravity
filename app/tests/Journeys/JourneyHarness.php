@@ -15,6 +15,7 @@ use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
 use App\Modules\X113\Actions\StaffInviteAction;
 use App\Modules\X118\Ui\ProspectSignup;
+use App\Modules\X121\Actions\JobCreateAction;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
 use App\Modules\X162\Models\DispatchAssignment;
@@ -316,7 +317,13 @@ trait JourneyHarness
             ->first()->e164 ?? '+19015922708';
         $customerPhone = '+15550123';
 
+        $person = Person::firstOrCreate(
+            ['business_id' => $tenant['id'], 'phone' => $customerPhone],
+            ['first_name' => 'Journey Customer']
+        );
+
         DB::table('customers')->insertOrIgnore([
+            'id' => $person->id,
             'business_id' => $tenant['id'],
             'phone' => $customerPhone,
             'name' => 'Journey Customer',
@@ -387,16 +394,27 @@ trait JourneyHarness
 
     private function bookFromQuote(array $tenant, array $quote): array
     {
-        $id = DB::table('work_orders')->insertGetId([
-            'business_id' => $tenant['id'],
-            'price_cents' => $quote['amount'],
-            'status' => 'booked',
-            'title' => 'Drain Unblock',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $personId = DB::table('people')->where('business_id', $tenant['id'])->value('id');
+        if (! $personId) {
+            $personId = DB::table('people')->insertGetId([
+                'business_id' => $tenant['id'],
+                'first_name' => 'Journey',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        return ['status' => 'booked', 'job_id' => (string) $id];
+        $action = new JobCreateAction;
+        $res = $action->handle(
+            businessId: $tenant['id'],
+            personId: (int) $personId,
+            title: 'Drain Unblock',
+            priceCents: $quote['amount'] ?? 0
+        );
+
+        DB::table('work_orders')->where('id', $res['job_id'])->update(['status' => 'booked']);
+
+        return ['status' => 'booked', 'job_id' => (string) $res['job_id']];
     }
 
     /** ⭐ Proves the send passed ConsentService::decide(), not that it looked consented. */
@@ -624,13 +642,16 @@ trait JourneyHarness
             $roleId
         );
 
-        $job = Job::create([
-            'business_id' => $tenant['id'],
-            'person_id' => $person['id'],
-            'title' => 'Real Job',
-            'price_cents' => 10000,
-            'status' => 'committed',
-        ]);
+        $jobRes = (new JobCreateAction)->handle(
+            businessId: $tenant['id'],
+            personId: $person['id'],
+            title: 'Real Job',
+            priceCents: 10000
+        );
+        $jobId = $jobRes['job_id'];
+
+        DB::table('work_orders')->where('id', $jobId)->update(['status' => 'committed']);
+        $job = Job::find($jobId);
 
         DispatchAssignment::create([
             'business_id' => $tenant['id'],

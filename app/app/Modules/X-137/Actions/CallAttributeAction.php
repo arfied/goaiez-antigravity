@@ -20,8 +20,22 @@ final class CallAttributeAction
         string $visitorSessionToken,
         string $allocatedNumber,
         string $campaignSource = 'google_cpc',
-        int $ttlMinutes = 30
+        int $ttlMinutes = 30,
+        bool $offlineCampaign = false
     ): CallToken {
+        if ($offlineCampaign) {
+            $existing = CallToken::where('business_id', $businessId)
+                ->where('campaign_source', $campaignSource)
+                ->where('status', 'active')
+                ->where('expires_at', '>', Carbon::now())
+                ->latest('id')
+                ->first();
+
+            if ($existing !== null) {
+                $allocatedNumber = $existing->allocated_number;
+            }
+        }
+
         return CallToken::create([
             'business_id' => $businessId,
             'visitor_session_token' => $visitorSessionToken,

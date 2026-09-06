@@ -96,7 +96,30 @@ class X193Test extends TestCase
      */
     public function test_g10_31_alerts_never_wait(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G10-31 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $time3am = Carbon::parse('2026-08-30 03:00:00');
+
+        $webChatRes = $this->classifyAction->handle(
+            businessId: $biz->id,
+            callerType: 'web_chat_reply',
+            sendTime: $time3am
+        );
+
+        $this->assertEquals('send_immediately', $webChatRes['delivery_decision']);
+        $this->assertNull($webChatRes['held_until']);
+        $this->assertFalse($webChatRes['respects_quiet_hours']);
+
+        $alertRes = $this->classifyAction->handle(
+            businessId: $biz->id,
+            callerType: 'system_alert',
+            sendTime: $time3am
+        );
+
+        $this->assertEquals('send_immediately', $alertRes['delivery_decision']);
+        $this->assertNull($alertRes['held_until']);
+        $this->assertFalse($alertRes['respects_quiet_hours']);
     }
 
     /**
@@ -104,6 +127,35 @@ class X193Test extends TestCase
      */
     public function test_g10_38_caller_based_decision(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G10-38 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('notification_classes')->insert([
+            'business_id' => $biz->id,
+            'caller_type' => 'marketing_blast',
+            'classification' => 'marketing',
+            'respects_quiet_hours' => false,
+            'quiet_hours_start' => 21,
+            'quiet_hours_end' => 8,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $time3am = Carbon::parse('2026-08-30 03:00:00');
+
+        $res = $this->classifyAction->handle(
+            businessId: $biz->id,
+            callerType: 'marketing_blast',
+            sendTime: $time3am
+        );
+
+        $this->assertEquals('send_immediately', $res['delivery_decision']);
+        $this->assertNull($res['held_until']);
+
+        $count = DB::table('notification_classes')
+            ->where('business_id', $biz->id)
+            ->where('caller_type', 'marketing_blast')
+            ->count();
+        $this->assertEquals(1, $count);
     }
 }

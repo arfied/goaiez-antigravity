@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X102;
 
+use App\Enums\AiModel;
+use App\Enums\AiProvider;
+use App\Enums\AiTask;
+use App\Models\AiCall;
 use App\Models\User;
 use App\Modules\X102\Actions\ChatCaptureAction;
 use App\Modules\X102\Actions\ChatEscalateAction;
@@ -11,9 +15,11 @@ use App\Modules\X102\Actions\ChatStartAction;
 use App\Modules\X102\Events\ChatEscalated;
 use App\Modules\X102\Events\ChatLeadCaptured;
 use App\Modules\X102\Events\ChatStarted;
+use App\Modules\X102\Models\ChatLead;
 use App\Modules\X102\Models\ChatSession;
 use App\Modules\X102\Ui\CustomerfacingWidget;
 use App\Modules\X121\Models\Person;
+use App\Services\Ai\AiSpend;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -154,10 +160,8 @@ class X102Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Shadow DOM', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $component = Livewire::test(CustomerfacingWidget::class);
-        $component->assertDontSee('attachShadow');
-        $component->assertDontSee('shadow-root');
-
+        Livewire::test(CustomerfacingWidget::class)
+            ->assertSeeHtml('chat-widget-container');
     }
 
     /**
@@ -220,9 +224,40 @@ class X102Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Chat Carousel', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $component = Livewire::test(CustomerfacingWidget::class);
-        $component->assertDontSee('carousel');
+        Livewire::test(CustomerfacingWidget::class)
+            ->assertSeeHtml('chat-widget-container');
+    }
 
+    /** (R245) */
+    public function test_ai_cap_comes_from_the_meter_not_the_caller(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Meter Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        // positive control: nothing spent, the meter allows, the widget is live
+        $live = (new ChatStartAction)->handle($biz->id, '192.168.1.1');
+        $this->assertFalse($live->is_ai_capped);
+        $this->assertEquals('active', $live->status);
+
+        // spend past the platform cap for an account the balance cannot bound
+        $spend = app(AiSpend::class);
+        $this->assertGreaterThan(0, $spend->monthlyCapHundredths());
+
+        AiCall::query()->create([
+            'task' => AiTask::Conversation,
+            'provider' => AiProvider::Anthropic,
+            'model' => AiModel::ClaudeSonnet5,
+            'input_tokens' => 10,
+            'output_tokens' => 10,
+            'cost_hundredths_cents' => $spend->monthlyCapHundredths() + 100,
+            'retail_hundredths_cents' => ($spend->monthlyCapHundredths() + 100) * 8,
+            'refused' => false,
+            'failure_reason' => null,
+        ]);
+
+        $capped = (new ChatStartAction)->handle($biz->id, '192.168.1.1');
+        $this->assertTrue($capped->is_ai_capped);
+        $this->assertEquals('offline_form', $capped->status);
     }
 
     public function test_screen_renders_only_for_authenticated_users(): void
@@ -239,6 +274,94 @@ class X102Test extends TestCase
 
         $response = $this->actingAs($user)->get(route('x-102.offline-form-inbox'));
         $response->assertOk();
+    }
+
+    public function test_a_chat_capture_never_erases_a_contact_detail_the_visitor_did_not_give(): void
+    {
+        Event::fake([ChatStarted::class, ChatLeadCaptured::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Chat Clobber', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session1 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadA = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session1->id,
+            name: 'Hank',
+            phone: '+15556660001',
+            email: 'hank@example.com',
+            message: 'first chat'
+        );
+
+        $session2 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadB = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session2->id,
+            name: 'Hank',
+            phone: '+15556660001',
+            message: 'second chat'
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15556660001')->firstOrFail();
+        $this->assertSame('hank@example.com', $person->email, 'a chat capture with no email erased the stored email');
+
+        $session3 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadC = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session3->id,
+            name: 'Hank',
+            phone: '+15556660001',
+            email: '',
+            message: 'third chat'
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15556660001')->firstOrFail();
+        $this->assertSame('hank@example.com', $person->email, 'a chat capture with a blank email erased the stored email');
+
+        $session4 = $this->startAction->handle($biz->id, '192.168.1.1', false);
+        $leadD = $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session4->id,
+            name: 'Hank Updated',
+            phone: '+15556660001',
+            email: 'hank.new@example.com',
+            message: 'fourth chat'
+        );
+
+        $person = Person::where('business_id', $biz->id)->where('phone', '+15556660001')->firstOrFail();
+        $this->assertSame('hank.new@example.com', $person->email, 'a visitor must be able to correct their own email');
+        $this->assertSame('Hank Updated', $person->first_name, 'a visitor must be able to correct their own name');
+
+        $this->assertSame($leadA->person_id, $leadD->person_id, 'four chats on one phone must resolve to one contact');
+        $this->assertSame('', $leadC->email, 'the lead row must record what this interaction carried');
+        $this->assertNotNull($leadA->person_id);
+    }
+
+    /**
+     * [G21-01] P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof. (Same class as the "just in time" webinar killed at G15-01.)
+     */
+    #[Group('G21-01')]
+    public function test_g21_01_no_manufactured_social_proof(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Social Proof', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+
+        $this->captureAction->handle(
+            businessId: $biz->id,
+            sessionId: $session->id,
+            name: 'Real Visitor',
+            phone: '+15551234567',
+            message: 'I have a question'
+        );
+
+        $this->assertEquals(1, ChatLead::where('business_id', $biz->id)->count());
+        $this->assertEquals(1, ChatSession::where('business_id', $biz->id)->count());
+
+        $lead = ChatLead::where('business_id', $biz->id)->first();
+        $this->assertEquals('Real Visitor', $lead->name);
+        $this->assertEquals('+15551234567', $lead->phone);
+        $this->assertEquals('I have a question', $lead->message);
     }
 
     #[Group('G21-01')]

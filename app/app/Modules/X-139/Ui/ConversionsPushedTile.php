@@ -15,12 +15,17 @@ class ConversionsPushedTile extends Component
 
     public function render()
     {
-        $count = ($this->businessId > 0)
-            ? ConversionUpload::where('business_id', $this->businessId)->where('status', 'uploaded')->count()
-            : 0;
+        $count = 0;
+        $valueCents = 0;
+        if ($this->businessId > 0) {
+            $query = ConversionUpload::where('business_id', $this->businessId)->where('status', 'uploaded');
+            $count = $query->count();
+            $valueCents = (int) $query->sum('conversion_value_cents');
+        }
 
         return view('x-139::conversions-pushed-tile', [
             'count' => $count,
+            'value' => $valueCents / 100,
         ]);
     }
 }

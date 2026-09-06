@@ -7,6 +7,7 @@ namespace Tests\Modules\X82;
 use App\Modules\X82\Actions\AllowanceLookupAction;
 use App\Modules\X82\Actions\RateLookupAction;
 use App\Modules\X82\Actions\RateSetAction;
+use App\Modules\X82\Domain\X82Engine;
 use App\Modules\X82\Events\AllowanceGranted;
 use App\Modules\X82\Events\RateChanged;
 use App\Modules\X82\Models\Allowance;
@@ -115,6 +116,15 @@ class X82Test extends TestCase
      */
     public function test_rate_capabilities(): void
     {
-        $this->assertTrue(true);
+        $capabilities = array_keys(require app_path('Modules/X-82/capabilities.php'));
+        $doc = (new \ReflectionMethod($this, __FUNCTION__))->getDocComment();
+        preg_match_all('/\[(G[0-9]+-[0-9]+|N-[0-9]+)\]/', $doc, $matches);
+
+        $this->assertEqualsCanonicalizing($capabilities, $matches[1]);
+    }
+
+    public function test_engine_class_exists(): void
+    {
+        $this->assertTrue(class_exists(X82Engine::class));
     }
 }

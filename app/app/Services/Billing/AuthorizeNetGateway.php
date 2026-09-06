@@ -497,9 +497,11 @@ final class AuthorizeNetGateway
     {
         $name = self::PRODUCT_NAME.' — '.Plan::Base->label().', '.strtolower($selection->term->label());
 
-        return $selection->additionalLocations === 0
+        $name = $selection->additionalLocations === 0
             ? $name
             : $name.', '.($selection->additionalLocations + 1).' locations';
+
+        return $name;
     }
 
     /*
