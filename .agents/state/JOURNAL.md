@@ -799,3 +799,9 @@
 - `2026-09-06T05:10:29` note: X-193 quiet_hours_start exists — added by app/app/Modules/X-193/Database/migrations/2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php:12 (with quiet_hours_end at :13) and read by NotificationClassifyAction.php:44; the standing tests UNRESOLVED naming it missing is out of date
 - `2026-09-06T05:10:29` note: X-201 deadline_at exists — added by app/app/Modules/X-201/Database/migrations/2026_09_04_072843_add_deadline_at_to_disputes_table.php:12 and written by app/tests/Modules/X-201/N011Test.php:27; the standing tests UNRESOLVED naming it missing is out of date
 - `2026-09-06T05:33:51` note: merged origin/main fc8f0bab into track/reviews; conflicts resolved in app/app/Modules/X-103/Domain/SiteEngine.php, app/app/Modules/X-103/Models/PageVersion.php, app/tests/Modules/X-172/Screens/CustomerfacingPortalScreenTest.php; app/phpunit.xml restored from HEAD
+- `2026-09-06T08:11:25` UNRESOLVED tests X-137 - relation phone_numbers does not exist
+- `2026-09-06T08:11:25` UNRESOLVED tests X-201 - relation phone_numbers does not exist
+- `2026-09-06T08:11:45` note: merged origin/main 230a2c3a into track/reviews; automatic merge succeeded, duplicate key fixed in app/app/Modules/X-103/Domain/SiteEngine.php; per-track files restored from HEAD
+- `2026-09-06T08:25:57` X-137 -> DONE
+- `2026-09-06T08:25:57` note: X-137 phone_numbers UNRESOLVED withdrawn (REV-61): the creating migration is app/database/migrations/2026_08_09_142534_create_phone_numbers_table.php and the test database was simply unmigrated; not a missing dependency per rule 09
+- `2026-09-06T08:25:57` note: X-201 phone_numbers UNRESOLVED withdrawn (REV-61): same cause; X-201 remains UNRESOLVED on its standing deadline_at entry, which is untouched

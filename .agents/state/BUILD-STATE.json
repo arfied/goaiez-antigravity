@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T05:09:58",
+ "updated": "2026-09-06T08:25:57",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -657,7 +657,14 @@
    "status": "DONE",
    "wave": 13,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-137",
+     "stage": "tests",
+     "why": "relation phone_numbers does not exist",
+     "at": "2026-09-06T08:11:25"
+    }
+   ]
   },
   "X-138": {
    "status": "DONE",
@@ -1063,6 +1070,12 @@
      "stage": "tests",
      "why": "column deadline_at is missing from disputes and not named in the brief",
      "at": "2026-09-04T02:05:53"
+    },
+    {
+     "module": "X-201",
+     "stage": "tests",
+     "why": "relation phone_numbers does not exist",
+     "at": "2026-09-06T08:11:25"
     }
    ]
   },
@@ -1378,6 +1391,18 @@
    "stage": "capability",
    "why": "G16-28 \u2014 transcript conversion does not exist",
    "at": "2026-09-06T05:09:58"
+  },
+  {
+   "module": "X-137",
+   "stage": "tests",
+   "why": "relation phone_numbers does not exist",
+   "at": "2026-09-06T08:11:25"
+  },
+  {
+   "module": "X-201",
+   "stage": "tests",
+   "why": "relation phone_numbers does not exist",
+   "at": "2026-09-06T08:11:25"
   }
  ],
  "decisions": [
@@ -1600,6 +1625,18 @@
   {
    "at": "2026-09-06T05:33:51",
    "note": "merged origin/main fc8f0bab into track/reviews; conflicts resolved in app/app/Modules/X-103/Domain/SiteEngine.php, app/app/Modules/X-103/Models/PageVersion.php, app/tests/Modules/X-172/Screens/CustomerfacingPortalScreenTest.php; app/phpunit.xml restored from HEAD"
+  },
+  {
+   "at": "2026-09-06T08:11:45",
+   "note": "merged origin/main 230a2c3a into track/reviews; automatic merge succeeded, duplicate key fixed in app/app/Modules/X-103/Domain/SiteEngine.php; per-track files restored from HEAD"
+  },
+  {
+   "at": "2026-09-06T08:25:57",
+   "note": "X-137 phone_numbers UNRESOLVED withdrawn (REV-61): the creating migration is app/database/migrations/2026_08_09_142534_create_phone_numbers_table.php and the test database was simply unmigrated; not a missing dependency per rule 09"
+  },
+  {
+   "at": "2026-09-06T08:25:57",
+   "note": "X-201 phone_numbers UNRESOLVED withdrawn (REV-61): same cause; X-201 remains UNRESOLVED on its standing deadline_at entry, which is untouched"
   }
  ]
 }
