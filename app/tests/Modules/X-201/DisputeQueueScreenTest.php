@@ -69,7 +69,7 @@ class DisputeQueueScreenTest extends TestCase
             ->assertSee('Invoice #904')
             ->assertDontSee('Invoice #902')
             ->call('outcome', $open2->id, 'won')
-            ->assertSee('No open disputes.')
+            ->assertSee('no such webhook is received in this checkout, so nothing opens one and nothing compiles on a schedule')
             ->call('outcome', 999999, 'won')
             ->assertSee("isn't in this account")
             ->call('outcome', $won->id, 'maybe')
