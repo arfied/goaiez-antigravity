@@ -27,7 +27,6 @@ final class InvoiceDraftAction
                 'paid_cents' => 0,
                 'status' => 'draft',
                 'due_date' => now()->addDays($dueDays)->toDateString(),
-                'pdf_url' => 'https://cdn.goaiez.com/invoices/inv.pdf',
             ]);
 
             foreach ($lines as $line) {

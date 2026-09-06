@@ -63,7 +63,6 @@ final class InvoiceEngine
                 'paid_cents' => 0,
                 'status' => 'issued',
                 'due_date' => now()->addDays($dueDays)->toDateString(),
-                'pdf_url' => 'https://cdn.goaiez.com/invoices/inv.pdf',
             ]);
 
             foreach ($lines as $line) {
