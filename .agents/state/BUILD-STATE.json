@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T00:05:57",
+ "updated": "2026-09-06T01:21:00",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1480,6 +1480,24 @@
    "module": "X-175",
    "chose": "- (R245) supersedes the 2026-09-05T23:48:18 UNRESOLVED: the X-163 seam DOES exist in X-175, at Ui/StafffacingAssistantPanel.php:8 and :37 (PriceLookupAction->handle), which feeds isSamplePrice/verifiedAnswer into ask(); the engine being answer-agnostic is the design. N-075/N-077's price clause is already covered by StafffacingAssistantPanelTest::test_confirmed_price, ::test_sample_price_refused and ::test_not_in_pricebook. The prior line was an unmade decision recorded as a missing dependency (rule 09) and was the supervisor's wording.",
    "at": "2026-09-06T00:05:57",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-172",
+   "chose": "supersedes the 2026-09-05T08:35:23 UNRESOLVED: the named dependency app/tests/Modules/X-172/Screens/Fixtures.php arrived; generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "at": "2026-09-06T01:15:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "(b) a law assertion: X-171 reads no credit or cap store at all; assert that no path under app/Modules/X-171/ consults one, and the directory is non-empty.",
+   "at": "2026-09-06T01:16:27",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-172",
+   "chose": "G10-24 names refusal: a redline is SURFACED with a diff, never accepted",
+   "at": "2026-09-06T01:21:00",
    "ruling": "R245"
   }
  ],
