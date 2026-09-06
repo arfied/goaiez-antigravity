@@ -25,7 +25,28 @@ use Tests\TestCase;
 
 class X198Test extends TestCase
 {
-    private GatewayEngine $engine;
+    public function test_gateway_engine_capture_asserts_all_columns(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Capture Tenant', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->app->instance(\App\Modules\X198\Domain\StripeGatewayClient::class, new class
+        {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            {
+                return 'ch_stub_captured_id';
+            }
+        });
+
+        app(\App\Modules\X198\Domain\GatewayEngine::class)->connect($biz->id, 'stripe', 'acct_123');
+        $payment = app(\App\Modules\X198\Domain\GatewayEngine::class)->capture($biz->id, 24000, 'tok_fresh', 'x117-order-999');
+
+        $this->assertSame(24000, $payment->amount_cents);
+        $this->assertSame('x117-order-999', $payment->idempotency_key);
+        $this->assertSame('ch_stub_captured_id', $payment->gateway_charge_id);
+    }
+
+        private GatewayEngine $engine;
 
     private MerchantConnectAction $connectAction;
 
