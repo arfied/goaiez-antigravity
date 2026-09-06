@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T10:34:33",
+ "updated": "2026-09-06T10:57:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -685,10 +685,101 @@
    "unresolved": []
   },
   "X-113": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 18,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-15 \u2014 no time-off table and no date columns anywhere in the module; `staff_users` has (id, business_id, email, name, role_id, is_active, deactivated_at, coaching_notes, timestamps) and there is nothing to overlap",
+     "at": "2026-09-06T10:57:29"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-28 \u2014 the \u2464's own text is \"named in the header\" \u2014 there is no clause to assert, and naming one authors the \u2464 (P-210)",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-44 \u2014 no wellbeing column, no manager relation and no alert path; no Action sends anything",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G4-15 \u2014 same as G2-28 \u2014 the \u2464's own text is \"named in the header\"; there is no clause to assert (P-210)",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G4-35 \u2014 same as G2-28 \u2014 the \u2464's own text is \"named in the header\"; there is no clause to assert (P-210)",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G7-29 \u2014 there is no performance-review table and no scorecard; the subject \"the review's hard numbers\" greps nowhere in `app/app/Modules/X-113/` outside `capabilities.php`",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G9-36 \u2014 the \u2464 excludes itself from the platform; no interview or candidate table exists and none is wanted here",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G10-11 \u2014 no training table, no reminder path; `grep -rn training app/app/Modules/X-113/` returns only `capabilities.php`",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G10-15 \u2014 no documents table exists; `Ui/DocumentVault.php` is a Livewire `render()` shell over no store, and all `Ui/` is Track 2's under ruling 5",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G15-02 \u2014 `staff_users.coaching_notes` exists but **no Action reads or writes it** \u2014 `grep -rn coaching_notes app/app/Modules/X-113/` returns the migration alone, so nothing in the module decides positive-only and asserting it authors the \u2464",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G15-04 \u2014 no notification is sent anywhere in X-113; the account-class notification is another module's row",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G15-05 \u2014 no schedule, no quarter, no reminder column; the module has no scheduled work at all",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G17-03 \u2014 no asset, device or hardware table; `Person` is another module's model and greps nowhere in X-113",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G20-02 \u2014 no review-cycle table and no manager relation; nothing to nag about",
+     "at": "2026-09-06T10:57:37"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G21-08 \u2014 `routes.generated.php` declares four routes \u2014 `/staff`, `/roles`, `/permission-matrix`, `/document-vault` \u2014 and no `/pto`; no time-off table exists",
+     "at": "2026-09-06T10:57:37"
+    }
+   ]
   },
   "X-114": {
    "status": "DONE",
@@ -2635,6 +2726,96 @@
    "stage": "capability",
    "why": "G16-32 \u2014 no disclosure column and no output file; the \u2464 is a claim about a rendered artifact the module never produces, and its register description is STRIPPED \u2014 the same class as X-200's G15-29",
    "at": "2026-09-06T10:33:47"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-15 \u2014 no time-off table and no date columns anywhere in the module; `staff_users` has (id, business_id, email, name, role_id, is_active, deactivated_at, coaching_notes, timestamps) and there is nothing to overlap",
+   "at": "2026-09-06T10:57:29"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-28 \u2014 the \u2464's own text is \"named in the header\" \u2014 there is no clause to assert, and naming one authors the \u2464 (P-210)",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-44 \u2014 no wellbeing column, no manager relation and no alert path; no Action sends anything",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G4-15 \u2014 same as G2-28 \u2014 the \u2464's own text is \"named in the header\"; there is no clause to assert (P-210)",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G4-35 \u2014 same as G2-28 \u2014 the \u2464's own text is \"named in the header\"; there is no clause to assert (P-210)",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G7-29 \u2014 there is no performance-review table and no scorecard; the subject \"the review's hard numbers\" greps nowhere in `app/app/Modules/X-113/` outside `capabilities.php`",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G9-36 \u2014 the \u2464 excludes itself from the platform; no interview or candidate table exists and none is wanted here",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G10-11 \u2014 no training table, no reminder path; `grep -rn training app/app/Modules/X-113/` returns only `capabilities.php`",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G10-15 \u2014 no documents table exists; `Ui/DocumentVault.php` is a Livewire `render()` shell over no store, and all `Ui/` is Track 2's under ruling 5",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G15-02 \u2014 `staff_users.coaching_notes` exists but **no Action reads or writes it** \u2014 `grep -rn coaching_notes app/app/Modules/X-113/` returns the migration alone, so nothing in the module decides positive-only and asserting it authors the \u2464",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G15-04 \u2014 no notification is sent anywhere in X-113; the account-class notification is another module's row",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G15-05 \u2014 no schedule, no quarter, no reminder column; the module has no scheduled work at all",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G17-03 \u2014 no asset, device or hardware table; `Person` is another module's model and greps nowhere in X-113",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G20-02 \u2014 no review-cycle table and no manager relation; nothing to nag about",
+   "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G21-08 \u2014 `routes.generated.php` declares four routes \u2014 `/staff`, `/roles`, `/permission-matrix`, `/document-vault` \u2014 and no `/pto`; no time-off table exists",
+   "at": "2026-09-06T10:57:37"
   }
  ],
  "decisions": [

@@ -974,3 +974,18 @@
 - `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-23 — no audio analysis, no topic column, no timeline
 - `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G18-26 — no room, no token, no session table
 - `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-32 — no disclosure column and no output file; the ⑤ is a claim about a rendered artifact the module never produces, and its register description is STRIPPED — the same class as X-200's G15-29
+- `2026-09-06T10:57:29` UNRESOLVED capability X-113 - G2-15 — no time-off table and no date columns anywhere in the module; `staff_users` has (id, business_id, email, name, role_id, is_active, deactivated_at, coaching_notes, timestamps) and there is nothing to overlap
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G2-28 — the ⑤'s own text is "named in the header" — there is no clause to assert, and naming one authors the ⑤ (P-210)
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G2-44 — no wellbeing column, no manager relation and no alert path; no Action sends anything
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G4-15 — same as G2-28 — the ⑤'s own text is "named in the header"; there is no clause to assert (P-210)
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G4-35 — same as G2-28 — the ⑤'s own text is "named in the header"; there is no clause to assert (P-210)
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G7-29 — there is no performance-review table and no scorecard; the subject "the review's hard numbers" greps nowhere in `app/app/Modules/X-113/` outside `capabilities.php`
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G9-36 — the ⑤ excludes itself from the platform; no interview or candidate table exists and none is wanted here
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G10-11 — no training table, no reminder path; `grep -rn training app/app/Modules/X-113/` returns only `capabilities.php`
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G10-15 — no documents table exists; `Ui/DocumentVault.php` is a Livewire `render()` shell over no store, and all `Ui/` is Track 2's under ruling 5
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G15-02 — `staff_users.coaching_notes` exists but **no Action reads or writes it** — `grep -rn coaching_notes app/app/Modules/X-113/` returns the migration alone, so nothing in the module decides positive-only and asserting it authors the ⑤
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G15-04 — no notification is sent anywhere in X-113; the account-class notification is another module's row
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G15-05 — no schedule, no quarter, no reminder column; the module has no scheduled work at all
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G17-03 — no asset, device or hardware table; `Person` is another module's model and greps nowhere in X-113
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G20-02 — no review-cycle table and no manager relation; nothing to nag about
+- `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G21-08 — `routes.generated.php` declares four routes — `/staff`, `/roles`, `/permission-matrix`, `/document-vault` — and no `/pto`; no time-off table exists
