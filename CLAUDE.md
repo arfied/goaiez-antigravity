@@ -582,6 +582,20 @@ Watch for: <the trap that applies, by name>
   Rule 09 is the check: `UNRESOLVED` names a **missing dependency**, and nothing is missing
   here. Read the capability's own text before crediting an `UNRESOLVED` against it — a
   refusal id and a build id look identical in the doctor output that lists them.
+- ⚠️ **The arithmetic tell cannot see a deletion inside a *surviving* method — only the diff can.**
+  Wave 78's rule (add the numbers up) is what caught a deleted test; wave 83 defeated it without
+  trying. `2b7319c5` deleted `throw new \DomainException('[G13-24] …')` from `X137Engine` **and**
+  `'enforceG13_24'` from `test_header_capabilities`' method array, and **every number still agreed**:
+  `TESTS before 3 after 4` was exactly the one method added, `git show --stat` read
+  `32 insertions, 2 deletions`, the suite moved `1723 → 1724`, and doctor fell by the one row claimed.
+  A deleted *element of an array inside a method that survives* changes no method count, no suite
+  total and no stage. **So the `--stat` line is a first pass and never a last one**: read the diff of
+  any commit that touches a file holding asserted refusals, whatever its arithmetic says. Two
+  corroborating tells, both cheap: the deletion **bought nothing** — `CapabilityStage` closed the row
+  off the `#[Group]` attribute and the engine method is dead code called only by that one test — and
+  **the file's own convention contradicted it**, since the other five `enforce*` methods still throw,
+  including `enforceG13_19`, closed one wave earlier with its throw correctly left alone. *A closure
+  that also deletes something is two changes; grade them separately.*
 - ⚠️ **Mutation proves the assertions that existed when it ran, not the ones committed after
   it.** Wave 79 mutated `CallAttributeAction` at 20:39:40: seven X-137 tests, **one** red —
   the pre-existing anchor test — so all four new capability tests stayed green under a
@@ -591,6 +605,65 @@ Watch for: <the trap that applies, by name>
   assertions were then never mutated**, so nothing yet shows they are load-bearing. Read the
   mutation log's timestamp against the commits around it: a mutation that predates the fix it
   motivated is half a proof, and the second half is one command.
+- ⚠️ **A count that RISES can be the honest move, and a count that FELL can be the evasion — grade a
+  stage delta by the diff that caused it, never by its sign.** Wave 84 removed a `default =>` arm by
+  rewriting the `match` as a ternary: `boundary` fell, the hazard (*"the case nobody added"* still
+  lands silently on `Transactional`) was untouched, and the lint that named it stopped firing. Wave 85
+  reverted that same file to `match`/`default` and recorded the tension with `state.py unresolved`:
+  `boundary` **rose** `3 → 4`, and that rise is the correct wave. The standing rule — *"the blocker is
+  a count that rose without a report line saying why"* — is about the **report line**, not the
+  direction; a rise with a journalled reason is a lane choosing to keep a flag visible. Its mirror is
+  the whole `green by construction` ladder: every rung of that ladder made a number look better.
+- ⚠️ **Before a brief offers a type change as an option, measure whose modules it lands in.** Wave
+  85's §2 offered *"make `messageClass` an enum"* and *"record it `UNRESOLVED`"* as equal choices,
+  with a `grep -rn` for blast radius left to the coder. Measured at tick 177,
+  `grep -rln "messageClass" app/app` is **ten files** spanning `C-Reviews`, `X-186` and `X-217` —
+  four separate `SendRequested`/`ReviewRequested` event classes, and **none of those three modules is
+  in this lane's thirteen** (`OWNER.md` 2026-09-04 14:2x). The enum was never this lane's to take, so
+  only one of the two "equal" options existed. This is the routing filter — *intersect any pile with
+  this lane's own modules before briefing off it* — applied one level earlier, to the **options in a
+  brief** rather than to the targets in a backlog. A brief that lists an out-of-lane option as live
+  invites either an out-of-lane commit or a wasted `grep`.
+  ⚠️ **And it changes how the resulting `UNRESOLVED` grades.** Rule 09's test — *name the missing
+  thing and say who owns it* — passes here for a reason the record must state: the type is shared
+  with three modules outside the thirteen. Wave 81's bad `UNRESOLVED` and this good one are
+  distinguished by exactly that measurement, so run it before crediting or refusing either.
+- ⚠️⚠️ **A doctor `fix:` line is a suggestion from a checker that cannot see the law — read the source
+  it points at before briefing it, especially when following it would WIDEN something.**
+  `ContractStage.php:422-434` reports every provided action absent from `@agent_reachable` as *"does
+  not declare whether the agent may reach it"*, and its `fix:` reads *"add {$action} to
+  @agent_reachable, or declare '@agent_reachable none'."* At tick 177 I had wave 86 drafted as those
+  sixteen lane rows — one coherent set, four lane modules, `fails the COMMIT` band — and the plan
+  header stopped it. `GOAIEZ-MASTER-PLAN.md:26564` declares X-01's list as
+  `@agent_reachable conversation.read` under **`P-209`'s BACKFILL GATE**: *"DERIVED, never guessed:
+  read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is
+  NOT reachable**."* The manifest already matches the plan; the four "undeclared" X-01 actions are
+  `contact.create`, `contact.merge`, `conversation.takeover` and `search.global`, omitted **on
+  purpose**. Following the `fix:` would have added four data-changing actions to the agent's allow-list
+  — and since `ModuleScaffoldCommand.php:167` harvests the field from that header, it would have meant
+  editing the master plan to do it.
+  **The stage has two accepting states and the plan uses a third.** A *partial* allow-list satisfies
+  neither `in_array($action, …)` nor `in_array('none', …)`, and `none` would be a lie for a module that
+  reaches one action — so the stage cannot tell *"nobody decided"* from *"decided: not this one"*, which
+  is the whole distinction `P-209` draws. Rows ② and ③ below it both treat the list as an allow-list;
+  only ① treats it as a checklist. The plan sizes it: `grep -c "^@agent_reachable"` = 122,
+  `grep -c "agent_reachable none"` = 94, so **28 modules sit in the state ① cannot accept.**
+  That is the `the ⑤ names no refusal` shape — an `OWNER ACTION`, never a coder task. **Generalise it:
+  a `fix:` whose action is to add something to an allow-list, delete an assertion, or relax a
+  declaration is the one class of doctor row to verify against the law before briefing.** Third trap in
+  three weeks caught only by reading the file a `fix:` pointed at — after `G13-19`'s `UNRESOLVED`
+  (tick 176) and `CapabilityStage`'s predicate (tick 169).
+- ⚠️ **When every stage is closed to the lane, the work is the `assertTrue(true)` pile — and nobody had
+  ever counted it.** At tick 177 all eight stages were exhausted for the thirteen (`boundary` 1 row
+  journalled on purpose, `contract` the `OWNER ACTION` above, `citation`/`schema` entirely out-of-lane
+  — all 12 RLS tables are `X-121`'s — `capability` empty, `anchor`/`journey` credential-blocked). One
+  `grep -rn "assertTrue(true" <the thirteen test dirs>` returns **37 hits in 7 files**: `C-Agent` 16,
+  `X-01` 13, `X-66` 4, `C-Whatsapp` 2, `X-124`/`X-194`/`C-Mail` 1 each. This file already named two of
+  them individually — `CMailTest.php:397` and `X-01`'s `test_g2_76_unified_inbox_header` — across ten
+  waves, and neither was ever followed to the pile behind it. **A named instance is a sample; run the
+  `grep` that sizes it.** The work needs no credentials, changes no CHECK, sits wholly inside the
+  thirteen, and **moves no doctor count** — say that in the brief, or the wave gets graded on a number
+  that cannot move (the tick-171 lesson).
 
 ## Style
 
