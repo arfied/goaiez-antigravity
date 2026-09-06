@@ -8,6 +8,7 @@ use App\Modules\CMail\Actions\EmailDnsCheckAction;
 use App\Modules\CMail\Actions\EmailHaltSeedAction;
 use App\Modules\CMail\Actions\EmailSendAction;
 use App\Modules\CMail\Actions\EmailUnsubscribeAction;
+use Livewire\Livewire;
 use App\Modules\CMail\Actions\EmailWarmupAction;
 use App\Modules\CMail\Events\EmailSent;
 use App\Modules\CMail\Exceptions\ConstantWarmupQuantityRefused;
@@ -301,6 +302,26 @@ class CMailTest extends TestCase
     /**
      * [G4-08], [G7-40], [G10-28], [G11-03], [G11-20] DNS & DMARC
      */
+
+    /**
+     * [G11-03]
+     */
+    public function test_g11_03_dns_card_shows_records_with_copy_button_and_no_spf_instructions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'DNS Card Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->dnsAction->handle($biz->id, 'card.apex-air.com');
+
+        Livewire::test(\App\Modules\CMail\Ui\DnsCard::class)
+            ->assertSee('v=spf1 include:mail.tracksixty.com ~all')
+            ->assertSee('v=DKIM1')
+            ->assertSee('v=DMARC1; p=quarantine;')
+            ->assertSee('Copy') // copy affordance
+            ->assertDontSee('configure SPF', false)
+            ->assertDontSee('set up SPF', false);
+    }
+
     public function test_dns_dmarc_records(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'DNS Biz', 'currency' => 'USD']);
