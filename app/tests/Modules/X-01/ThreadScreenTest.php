@@ -88,11 +88,11 @@ class ThreadScreenTest extends TestCase
     }
 
     /**
-     * Test the release control on the thread screen.
-     * Proves the latch ended by trying to use replyWithTakeover() which is consulted
-     * by something other than the component that released it.
-     * Also includes a real GET to ensure the screen renders properly with a latched state.
-     * Note: TakeoverReleased still has no listener - this is left for Wave 108 (C-Agent).
+     * Verifies the release control in the thread screen unlatches an active takeover.
+     * Proves the latch is cleared by ensuring the unified inbox manager refuses 
+     * subsequent takeover replies, as it correctly reads the cleared state.
+     * Also confirms the real GET route renders the release control when latched, 
+     * and that the control vanishes once released.
      */
     public function test_thread_screen_release_takeover(): void
     {
@@ -140,7 +140,8 @@ class ThreadScreenTest extends TestCase
             // 2. The load-bearing assertion: release the takeover via component
             Livewire::test(Thread::class, ['customer' => $customer])
                 ->call('releaseTakeover')
-                ->assertSet('hasActiveTakeover', false);
+                ->assertSet('hasActiveTakeover', false)
+                ->assertDontSee('Release Takeover');
 
             // 3. Consulted by something other than the component: the manager
             // If the latch actually ended, replyWithTakeover will throw

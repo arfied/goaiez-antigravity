@@ -46,6 +46,10 @@ class Thread extends Component
         }
     }
 
+    /**
+     * Recomputed in render() on every lifecycle because Livewire re-renders after every action.
+     * Manual assignments (e.g. during releaseTakeover or sendReply) are redundant and immediately overwritten.
+     */
     public bool $hasActiveTakeover = false;
 
     public function releaseTakeover(ConversationTakeoverReleaseAction $action)
@@ -68,7 +72,6 @@ class Thread extends Component
             foreach ($latches as $latch) {
                 $action->handle(Tenancy::idOrFail(), $latch->conversation_id);
             }
-            $this->hasActiveTakeover = false;
         } catch (\Throwable $e) {
             $this->errorMessage = 'Could not release takeover: '.$e->getMessage();
         }
@@ -133,7 +136,6 @@ class Thread extends Component
             $this->replyText = '';
             $this->draftReply = null;
             $this->draftForMessageId = null;
-            $this->hasActiveTakeover = true;
         } catch (\Throwable $e) {
             $this->errorMessage = 'Could not send reply: '.$e->getMessage();
         }
