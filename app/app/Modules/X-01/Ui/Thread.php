@@ -35,7 +35,7 @@ class Thread extends Component
 
     public function mount(?Customer $customer = null)
     {
-        if (!$customer && request()->has('customer')) {
+        if (! $customer && request()->has('customer')) {
             $customer = Customer::find(request()->query('customer'));
         }
 
