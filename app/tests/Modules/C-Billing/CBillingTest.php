@@ -93,6 +93,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-01] & [G1-56] X-198's MOCK gateway is asserted unreachable from a live tenant (G1-34)
+     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no gateway implementation or MOCK configuration.
      */
     public function test_g1_01_mock_gateway_unreachable(): void
     {
@@ -101,6 +102,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-10] an unreconciled cent RAISES, asserted by injecting a one-cent difference
+     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no reconciliation process or mismatch detection.
      */
     public function test_g1_10_unreconciled_cent_raises(): void
     {
@@ -161,6 +163,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-33], [G1-42], [G1-49], [G1-59], [G4-39] exponential backoff with a hard attempt ceiling
+     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no retry mechanism or exponential backoff logic.
      */
     public function test_g1_33_exponential_backoff(): void
     {
@@ -169,6 +172,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-52], [G1-78], [G1-83] no refusal declared
+     * ⛔ REFUSED: surveyed Actions, Events, Models, Ui and found no gateway integration, Notice Before Charge, or credit block logic.
      */
     public function test_g1_52_assertions(): void
     {
@@ -187,6 +191,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G7-01] §45A — the 21-day timeline is the ONE ladder
+     * ⛔ REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\RevenueRecovery ignores parameters and returns a constant view.
      */
     public function test_g7_01_single_dunning_ladder(): void
     {
@@ -195,6 +200,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G9-31] MRR saved by the one dunning ladder (§45A)
+     * ⛔ REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\Mrr ignores parameters and returns a constant view.
      */
     public function test_g9_31_mrr_saved(): void
     {
@@ -234,6 +240,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G19-17] auto top-up is universal
+     * ⛔ REFUSED: the capability's own text declares a refusal; the $50/5,000 figures are dead and live in X-82.
      */
     public function test_g19_17_auto_topup(): void
     {
