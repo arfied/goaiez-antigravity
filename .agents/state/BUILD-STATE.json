@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T08:42:49",
+ "updated": "2026-09-06T10:16:39",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1603,6 +1603,18 @@
    "module": "X-103",
    "chose": "ssl_installed recorded on page_versions under the G9-04 site law, mirroring pixel_installed; the edge already serves SSL unconditionally (X-157 EdgeDeployAction) and only the version record lacked it",
    "at": "2026-09-06T04:49:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-129",
+   "chose": "R245: markTestSkipped is refused as an answer to a capability test in this lane; a refusal goes in REPORT.md under REFUSED with the test body left intact (REV-66)",
+   "at": "2026-09-06T09:58:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-112",
+   "chose": "R245: the no-generated-tests rule covers a generator in any language, not only PHP; write test bodies by hand in the file (REV-67)",
+   "at": "2026-09-06T10:16:39",
    "ruling": "R245"
   }
  ],
