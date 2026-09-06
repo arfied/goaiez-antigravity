@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T09:57:27",
+ "updated": "2026-09-06T10:11:00",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1399,10 +1399,137 @@
    "unresolved": []
   },
   "X-200": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G3-04 predictive pacing under the 3% abandonment ceiling \u2014 Domain/DialerEngine.php is an empty class body with two comment lines. No pacing computation, no dial rate, no abandonment counter; call_campaigns.abandonment_ceiling_pct is stored and never compared against anything.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G2-35 the scorecard is positive only \u2014 'is_positive_only' => true is a hardcoded literal in QaScoreAction; nothing in the system can make it false, so asserting it asserts a constant. The remaining clause of the \u2464 is the wallboard, which lives only in app/app/Modules/X-200/Ui/ \u2014 Track 2's under ruling 5.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G16-15 the wallboard \u2014 positive by construction \u2014 'is_positive_only' => true is a hardcoded literal in QaScoreAction; nothing in the system can make it false, so asserting it asserts a constant. The remaining clause of the \u2464 is the wallboard, which lives only in app/app/Modules/X-200/Ui/ \u2014 Track 2's under ruling 5.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-08 listen \u00b7 whisper \u00b7 barge on the seat \u00b7 REFUSES with BAD_STATE \u2014 no monitor, whisper or barge Action exists; the string BAD_STATE appears nowhere outside capabilities.php; dialer_seats carries only state.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-15 live queue state; the AI answers first \u2014 DialNextAction::dialNext() takes $seatId as an argument and selects nothing. There is no queue, no routing and no ordering.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-19 Twilio is corpus vocabulary \u2014 Infobip primary \u00b7 refuses: to treat Twilio as primary \u2014 neither string appears in X-200's Actions, Domain or Models, and CallRequested carries no transport. The subject is C-Telephony's (rulings 5 and 7).",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G2-26 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G2-37 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G9-38 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G13-02 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G5-09 coaching on the desk; the voice is X-197's \u00b7 REFUSES with BAD_STATE \u2014 no coaching path, no BAD_STATE, and the voice belongs to X-197.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G9-01 objection roll-up from the QA scorecards; rendered by X-194 \u2014 no aggregate over qa_scorecards; X-194 renders.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G11-25 named in the header \u2014 a closed set per campaign \u00b7 REFUSES with BAD_STATE \u2014 call_dispositions.disposition is a plain string column with no enum, no closed set and no BAD_STATE refusal path.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G16-11 the coaching library \u2014 positive examples \u2014 no library table.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-02 T677's next-action-not-a-ranking \u2014 qa_scorecards.coaching_note is a free string defaulted to a literal, and nothing in the module ranks or aggregates per person.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-13 T677's feedback-not-a-scoreboard \u2014 qa_scorecards.coaching_note is a free string defaulted to a literal, and nothing in the module ranks or aggregates per person.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-16 T677's coaching-signal-only \u2014 qa_scorecards.coaching_note is a free string defaulted to a literal, and nothing in the module ranks or aggregates per person.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-03 the agent desktop shows the record; the thread is X-01's \u2014 a Ui surface plus X-01.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-06 a wellbeing prompt on the desk \u2014 a Ui surface; no column.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G21-13 a closed deal on the wallboard and in the channel \u2014 Ui, and nothing links a disposition to a deal.",
+     "at": "2026-09-06T10:11:00"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G15-29 its register description is STRIPPED (P-206) and the \u2464 asserts an absence in the schema (no per-person negative output exists), which is a CHECK-shaped claim.",
+     "at": "2026-09-06T10:11:00"
+    }
+   ]
   },
   "X-201": {
    "status": "UNRESOLVED",
@@ -2136,6 +2263,132 @@
    "stage": "capability",
    "why": "G19-02 - The module has a nullable barcode string and nothing that generates, scans, syncs or rates.",
    "at": "2026-09-06T09:57:27"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G3-04 predictive pacing under the 3% abandonment ceiling \u2014 Domain/DialerEngine.php is an empty class body with two comment lines. No pacing computation, no dial rate, no abandonment counter; call_campaigns.abandonment_ceiling_pct is stored and never compared against anything.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G2-35 the scorecard is positive only \u2014 'is_positive_only' => true is a hardcoded literal in QaScoreAction; nothing in the system can make it false, so asserting it asserts a constant. The remaining clause of the \u2464 is the wallboard, which lives only in app/app/Modules/X-200/Ui/ \u2014 Track 2's under ruling 5.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G16-15 the wallboard \u2014 positive by construction \u2014 'is_positive_only' => true is a hardcoded literal in QaScoreAction; nothing in the system can make it false, so asserting it asserts a constant. The remaining clause of the \u2464 is the wallboard, which lives only in app/app/Modules/X-200/Ui/ \u2014 Track 2's under ruling 5.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-08 listen \u00b7 whisper \u00b7 barge on the seat \u00b7 REFUSES with BAD_STATE \u2014 no monitor, whisper or barge Action exists; the string BAD_STATE appears nowhere outside capabilities.php; dialer_seats carries only state.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-15 live queue state; the AI answers first \u2014 DialNextAction::dialNext() takes $seatId as an argument and selects nothing. There is no queue, no routing and no ordering.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-19 Twilio is corpus vocabulary \u2014 Infobip primary \u00b7 refuses: to treat Twilio as primary \u2014 neither string appears in X-200's Actions, Domain or Models, and CallRequested carries no transport. The subject is C-Telephony's (rulings 5 and 7).",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G2-26 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G2-37 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G9-38 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G13-02 the wallboard \u2014 grep -rl wallboard app/app/Modules/X-200/ returns only Ui/Wallboard.php, Ui/views/wallboard.blade.php and generated files; Ui/ is Track 2's under ruling 5, and no Domain query aggregates queue state.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G5-09 coaching on the desk; the voice is X-197's \u00b7 REFUSES with BAD_STATE \u2014 no coaching path, no BAD_STATE, and the voice belongs to X-197.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G9-01 objection roll-up from the QA scorecards; rendered by X-194 \u2014 no aggregate over qa_scorecards; X-194 renders.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G11-25 named in the header \u2014 a closed set per campaign \u00b7 REFUSES with BAD_STATE \u2014 call_dispositions.disposition is a plain string column with no enum, no closed set and no BAD_STATE refusal path.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G16-11 the coaching library \u2014 positive examples \u2014 no library table.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-02 T677's next-action-not-a-ranking \u2014 qa_scorecards.coaching_note is a free string defaulted to a literal, and nothing in the module ranks or aggregates per person.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-13 T677's feedback-not-a-scoreboard \u2014 qa_scorecards.coaching_note is a free string defaulted to a literal, and nothing in the module ranks or aggregates per person.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-16 T677's coaching-signal-only \u2014 qa_scorecards.coaching_note is a free string defaulted to a literal, and nothing in the module ranks or aggregates per person.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-03 the agent desktop shows the record; the thread is X-01's \u2014 a Ui surface plus X-01.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-06 a wellbeing prompt on the desk \u2014 a Ui surface; no column.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G21-13 a closed deal on the wallboard and in the channel \u2014 Ui, and nothing links a disposition to a deal.",
+   "at": "2026-09-06T10:11:00"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G15-29 its register description is STRIPPED (P-206) and the \u2464 asserts an absence in the schema (no per-person negative output exists), which is a CHECK-shaped claim.",
+   "at": "2026-09-06T10:11:00"
   }
  ],
  "decisions": [
