@@ -1009,3 +1009,42 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     Stripe call left in the command there is **no credential dependency and no
     `UNRESOLVED` path** — but ruling 39's sequence still binds: run the command
     FIRST, read the artifact, then write the assertions, all in ONE commit.
+49. **A wave that deletes a key from an artifact owns every READER of that key,
+    and a derived artifact outlives the source it was derived from (RULED by the
+    lane supervisor 2026-09-06 12:5x, on MONEY-73's `5dff7df7`; briefed as
+    MONEY-74).** Ruling 48 removed `gateway_charge_id` from
+    `evidence/X-117/checkout.json` and MONEY-73 executed that correctly — but
+    `X-117/Console/RuntimeProofCommand.php` **reads** the key twice, at `:32`
+    (guard: `! isset(...) || ! str_starts_with(..., 'ch_')` → FAILURE) and `:96`
+    (`'artifact_id' => $checkoutData['gateway_charge_id']`), so
+    `php artisan x117:runtime-proof` can now never succeed and fails describing
+    the artifact as malformed rather than naming what changed. **No gate can see
+    it:** no test references the command or its signature, so a green
+    `982 · 975` says nothing about it. ⚠️ **The decisive half is the derived
+    file.** `Doctor/Stages/TestAnchorStage.php:55` reads
+    `evidence/<id>/runtime-proof.json` and `:81-89` demands a vendor-issued
+    `artifact_id`; X-117's copy, dated 2026-09-05 12:07, still carries
+    `ch_3UCN2eFXLB0i1zXl1I413pEA` — the charge id ruling 45's correction traced
+    to a **direct `tok_visa` capture that touched no cart and no order**. So the
+    anchor stage was green on the very fabrication 48 was written to delete: 48
+    cleaned the source artifact and left the derived one, which is the file with
+    an actual consumer. So, lane-wide: **before a wave deletes an artifact key,
+    `grep -rn '<key>' app/app app/tests` for readers, and list every artifact
+    derived from the one being changed** — the tests that assert it (ruling 46)
+    are only the half a suite can show you. The resolution: the command stops
+    claiming a charge id and refuses with the real missing dependency named,
+    writing nothing; the stale `runtime-proof.json` is deleted so the stage
+    measures the truth; X-117's anchor moves to `no runtime proof` and joins
+    ruling 32's group (2), vendor-gated and reserved. ⛔ **Never substitute the
+    order id, order number or session token for `artifact_id`** — `:89` refuses
+    only ids prefixed `TEST|MOCK|FAKE|SAMPLE|DEMO`, so an integer order id sails
+    through and certifies the anchor with a number **this app minted**, which is
+    ruling 43's fiction planted in the one file the doctor trusts. ⛔ **No
+    in-suite test for the command:** its first guard is `runningUnitTests()` →
+    FAILURE, so any such test passes for the wrong reason (ruling 45's trap) —
+    the proof is a CLI run with its output quoted (ruling 13). ⚠️ **A doctor
+    count that rises for an honest reason is the correct outcome and is
+    recorded, never avoided.** ⚠️ The scoping miss is the **supervisor's** —
+    ruling 48 named `X117RuntimeProofTest` as the consumer and stopped — so per
+    ruling 46's precedent this is a new item with its own two dispatches, not a
+    charge against MONEY-73.
