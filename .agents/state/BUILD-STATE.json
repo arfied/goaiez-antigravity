@@ -1513,6 +1513,10 @@
   {
    "at": "2026-09-06T10:17:35",
    "note": "MONEY-67: success_url is config('app.url') if Stripe refuses a session without one - never a path to a route surfaces:generate has not mounted, because that moves ruling 36's lie to the page the customer lands on after paying (ruling 38)"
+  },
+  {
+   "at": "2026-09-06T11:39:45",
+   "note": "X-199 MONEY-70: a real invoice PDF is UNRESOLVED - this lane has no PDF generator and no mounted surface to serve one from (routing is Track 1's, ruling 20), so invoices.pdf_url stays null and the screens render a finished missing state rather than a link to a file that does not exist (ruling 43)"
   }
  ],
  "decisions": [
