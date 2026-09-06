@@ -54,7 +54,19 @@ fail=0
 # pgrep -P descent below is not optional. No lock: appends under PIPE_BUF to an
 # O_APPEND file are atomic, and a flock here would interact with the pest lock
 # for nothing.
-GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+# `tool` is a CLOSED vocabulary — exactly `gate | pint | phpstan | pest | doctor`
+# and nothing else (Track 1, OWNER.md 17:1x). The column exists to be grouped on,
+# and the shared file already held four spellings of this gate. `gate` covers both
+# sentinels; a consumer tells start from end by `rc` being `-`, not by two invented
+# tool names. Anything narrower than the five collapses to its family, so a
+# per-stage doctor run logs `doctor`, never `doctor-capability`.
+#
+# GATE_LOG is overridable so a test can never append to the shared file. The
+# sibling project's pre-push test ran the real hook with no-op stubs and wrote
+# twelve fabricated rows — eight columns, correct types, distinct `tool_pid`,
+# plausible `rc`, and the only tell was a `pest` row whose start and end were the
+# same second. Point any test that exercises this gate at a throwaway path.
+GATE_LOG=${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}
 GATE_PID=$$
 GATE_PROJECT=goaiez-antigravity
 GATE_CHECKOUT=$(basename "$ROOT")
@@ -69,8 +81,8 @@ gate_row() { # start end tool_pid rc tool
 # rc=143 row is followed by a clean rc=0 row from the EXIT trap, and the last
 # row reads green.
 GATE_START=$(date -Is)
-gate_row "$GATE_START" "-" "-" "-" "supervise.sh"
-gate_exit() { gate_row "$GATE_START" "$(date -Is)" "-" "${1:-0}" "supervise.sh"; }
+gate_row "$GATE_START" "-" "-" "-" "gate"
+gate_exit() { gate_row "$GATE_START" "$(date -Is)" "-" "${1:-0}" "gate"; }
 trap 'gate_exit $?' EXIT
 trap 'trap - EXIT; gate_exit 143; exit 143' TERM
 trap 'trap - EXIT; gate_exit 130; exit 130' INT
@@ -187,7 +199,7 @@ if [ $want_caps -eq 1 ]; then
   # closed fifteen violations and left that mark reading the pre-run number, so
   # the two disagreed and only this section could say which was true.
   bar "5b. capability stage  (measured here, not read from BUILD-STATE)"
-  run_tool "doctor-capability" "$PHP" artisan doctor --stage=capability
+  run_tool "doctor" "$PHP" artisan doctor --stage=capability
   printf '%s\n' "$GATE_OUT" | grep -E 'violation\(s\)|^ *(ok|FAIL) capability' | tail -3 | sed 's/^/  /'
   echo "  violation lines: $(printf '%s\n' "$GATE_OUT" | grep -c '^ *·')"
   if [ -n "$caps_mod" ]; then
