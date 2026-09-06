@@ -121,8 +121,8 @@ class X166Test extends TestCase
         $this->assertEquals(50.0, $jobsWithMargins[999]);
 
         // A job with no cost rows reports no margin (absent from array)
-        // and is not present carrying a 100% margin.
+        // and does not appear carrying any margin figure.
         $this->assertArrayNotHasKey($emptyJobId, $jobsWithMargins);
-        $this->assertNotContains(100.0, $jobsWithMargins);
+        $this->assertCount(1, $jobsWithMargins);
     }
 }
