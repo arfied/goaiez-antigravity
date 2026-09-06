@@ -1596,6 +1596,10 @@
   {
    "at": "2026-09-06T05:10:29",
    "note": "X-201 deadline_at exists \u2014 added by app/app/Modules/X-201/Database/migrations/2026_09_04_072843_add_deadline_at_to_disputes_table.php:12 and written by app/tests/Modules/X-201/N011Test.php:27; the standing tests UNRESOLVED naming it missing is out of date"
+  },
+  {
+   "at": "2026-09-06T05:33:51",
+   "note": "merged origin/main fc8f0bab into track/reviews; conflicts resolved in app/app/Modules/X-103/Domain/SiteEngine.php, app/app/Modules/X-103/Models/PageVersion.php, app/tests/Modules/X-172/Screens/CustomerfacingPortalScreenTest.php; app/phpunit.xml restored from HEAD"
   }
  ]
 }
