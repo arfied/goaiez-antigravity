@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T11:38:42",
+ "updated": "2026-09-06T11:59:41",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -499,6 +499,42 @@
      "stage": "capability",
      "why": "Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.",
      "at": "2026-09-06T05:42:49"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G2-04 \u2014 Google/Outlook calendars. grep -rniE 'google\\|outlook\\|ical\\|calendar_sync' app/app/Modules/X-108/ returns only capabilities.php:28; resources.calendar_type is a defaulted string no code reads. Its body asserts conference_link \u2014 G18-27's subject, so it is vacuous and a duplicate.",
+     "at": "2026-09-06T11:59:41"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G2-06 \u2014 the agent calls availability.request; time is looked up or refused (P-093). AvailabilityRequestAction::handle is a one-line pass-through to getAvailableSlots with no refusal path; the module's only refusal is on the booking seam, which G2-45 already credits. Missing dependency.",
+     "at": "2026-09-06T11:59:41"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G2-49 \u2014 bare named in the header \u2014 no subject at all. P-210. assertTrue(true).",
+     "at": "2026-09-06T11:59:41"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G2-58 \u2014 questions on the booking page. Only capabilities.php:49; no questions column in the migration. assertTrue(true).",
+     "at": "2026-09-06T11:59:41"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G15-08 \u2014 \u2026 X-10 skips an unavailable assignee \u2014 X-10's module, not this one. assertTrue(true). Missing dependency.",
+     "at": "2026-09-06T11:59:41"
+    },
+    {
+     "module": "X-108",
+     "stage": "capability",
+     "why": "G19-20 \u2014 24h \u00b7 1h \u00b7 10min; one segment = one credit, a meter and never a fee. Events/AppointmentReminded.php exists carrying reminderType, but nothing dispatches it, and segment\\|credit\\|meter greps only to capabilities.php:67. There is no meter. assertTrue(true).",
+     "at": "2026-09-06T11:59:41"
     }
    ]
   },
@@ -3094,6 +3130,42 @@
    "stage": "capability",
    "why": "G8-33 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
    "at": "2026-09-06T11:38:23"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G2-04 \u2014 Google/Outlook calendars. grep -rniE 'google\\|outlook\\|ical\\|calendar_sync' app/app/Modules/X-108/ returns only capabilities.php:28; resources.calendar_type is a defaulted string no code reads. Its body asserts conference_link \u2014 G18-27's subject, so it is vacuous and a duplicate.",
+   "at": "2026-09-06T11:59:41"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G2-06 \u2014 the agent calls availability.request; time is looked up or refused (P-093). AvailabilityRequestAction::handle is a one-line pass-through to getAvailableSlots with no refusal path; the module's only refusal is on the booking seam, which G2-45 already credits. Missing dependency.",
+   "at": "2026-09-06T11:59:41"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G2-49 \u2014 bare named in the header \u2014 no subject at all. P-210. assertTrue(true).",
+   "at": "2026-09-06T11:59:41"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G2-58 \u2014 questions on the booking page. Only capabilities.php:49; no questions column in the migration. assertTrue(true).",
+   "at": "2026-09-06T11:59:41"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G15-08 \u2014 \u2026 X-10 skips an unavailable assignee \u2014 X-10's module, not this one. assertTrue(true). Missing dependency.",
+   "at": "2026-09-06T11:59:41"
+  },
+  {
+   "module": "X-108",
+   "stage": "capability",
+   "why": "G19-20 \u2014 24h \u00b7 1h \u00b7 10min; one segment = one credit, a meter and never a fee. Events/AppointmentReminded.php exists carrying reminderType, but nothing dispatches it, and segment\\|credit\\|meter greps only to capabilities.php:67. There is no meter. assertTrue(true).",
+   "at": "2026-09-06T11:59:41"
   }
  ],
  "decisions": [
@@ -3197,6 +3269,12 @@
    "module": "X-176",
    "chose": "R245 \u2014 X-176's schema validator (SchemaRenderAction::validateSchema, 113-159, refusing SCHEMA_INVALID) and its entity-type inference (lines 27-40, over businesses.vertical, with no entityType argument) are the clauses this module decides; G8-32, G7-48, G12-03 and G16-25 are credited on the bodies that assert them and the other twelve rows carry no clause X-176 can assert \u2014 G8-14 and G8-15 take their answer as an argument or have no source at all, G8-30 greps nowhere outside capabilities.php, and the remaining nine are 'named in the header' (P-210) (S-114)",
    "at": "2026-09-06T11:38:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-108",
+   "chose": "G2-10, G2-12, G2-13, G2-45, G15-32, G17-27, G18-07, G18-27, G19-01",
+   "at": "2026-09-06T11:59:41",
    "ruling": "R245"
   }
  ],
