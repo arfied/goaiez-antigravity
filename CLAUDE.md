@@ -657,13 +657,43 @@ Watch for: <the trap that applies, by name>
   ever counted it.** At tick 177 all eight stages were exhausted for the thirteen (`boundary` 1 row
   journalled on purpose, `contract` the `OWNER ACTION` above, `citation`/`schema` entirely out-of-lane
   — all 12 RLS tables are `X-121`'s — `capability` empty, `anchor`/`journey` credential-blocked). One
-  `grep -rn "assertTrue(true" <the thirteen test dirs>` returns **37 hits in 7 files**: `C-Agent` 16,
-  `X-01` 13, `X-66` 4, `C-Whatsapp` 2, `X-124`/`X-194`/`C-Mail` 1 each. This file already named two of
+  `grep -rn "assertTrue(true" <the thirteen test dirs>` returns **36 hits in 7 files**: `C-Agent` 15
+  (⚠️ corrected from 16 at tick 178 — `grep -c` on `CAgentTest.php` is 15; the tick-177 total of 37 was
+  one high), `X-01` 13, `X-66` 4, `C-Whatsapp` 2, `X-124`/`X-194`/`C-Mail` 1 each. This file already named two of
   them individually — `CMailTest.php:397` and `X-01`'s `test_g2_76_unified_inbox_header` — across ten
   waves, and neither was ever followed to the pile behind it. **A named instance is a sample; run the
   `grep` that sizes it.** The work needs no credentials, changes no CHECK, sits wholly inside the
   thirteen, and **moves no doctor count** — say that in the brief, or the wave gets graded on a number
   that cannot move (the tick-171 lesson).
+- ⚠️ **A missing artifact is not evidence of fabrication when the filename is reused — check the mtime
+  ordering before reaching for the wave-74 verdict.** Wave 86's `RAW` read `assertions 6687 ·
+  duration_ms 93104`; the run covering the tip read `6689 · 93893`; wave 85's had been `6687 · 93731`;
+  and `grep -rl 93104 scratch/` was **empty**, so the object matched *no file on disk* — the shape of an
+  invented field. It was not. `REPORT.md` (23:11:45) was written **59 seconds before**
+  `scratch/pest-raw-last.log` (23:12:44, `duration 93893` ⇒ started 23:11:10) finished, so the coder
+  pasted a real intermediate run of its own wave that the shared filename then overwrote. The headline
+  four were identical across all three runs, as always. **The discriminator is the timeline —
+  `REPORT.md`'s mtime against the artifact's — not the absence of a matching file**, and a report that
+  predates its own gate cannot be quoting it. Wave-81's trap with the artifact gone: brief a per-wave
+  filename (`scratch/w<N>-pest-raw.log`) *and* tell the coder to write `REPORT.md` after the gate, which
+  the wave-86 brief failed to do though this file already prescribed the first half.
+- ⚠️ **A mutation SITE can be scenery even when the test is real — mutate the derivation, not the
+  literal.** Wave 86's `test_g19_08_ghost_risk_flag` sets up a `LeadScore` with `grade = 'F'` from the
+  test's own fixture (so the condition genuinely comes from outside the component) and asserts the badge
+  renders — a good test. But the mutation that "proved" it changed the badge **text** in the blade
+  (`Ghost Risk` → `No Risk`), which only re-proves the `assertSee`. Nothing yet shows
+  `$score === 'F'` in `Thread::mount()` is load-bearing: a `mount()` that set the flag unconditionally
+  would still pass, because there is **no negative case**. **Ask what the mutation touched, and require
+  a negative assertion for any flag** — one `assertDontSee` on a fixture without the condition. This is
+  the `green by construction` ladder's newest rung: `assertTrue(true)` → an id in a docblock → a
+  constant declared in the component → **a mutation aimed at the constant rather than the logic.**
+- ✅ **A positive authenticity test, for once: mutation logs reconcile by line ARITHMETIC across a
+  wave.** Wave 86's three logs declared `X01Test.php:321`, `:259` and `:317`; the pre-wave declarations
+  at `728334c1` were `259 / 313 / 321`, and the middle replacement adds a net **+4** lines above the
+  third. Each log's number is right for the file **as it stood at that log's own mtime**, and the +4
+  offset exists between exactly two of the three. A fabricated set has to reproduce a shift it cannot
+  see. Every other tell in this file catches a lie; this one credits the truth, and it costs one
+  `git show <pre-wave sha>:<file> | grep -n`.
 
 ## Style
 
