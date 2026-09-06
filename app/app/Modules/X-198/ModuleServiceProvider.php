@@ -31,6 +31,7 @@ final class ModuleServiceProvider extends ServiceProvider
             $this->commands([
                 Console\EvidenceChargeCommand::class,
                 Console\RuntimeProofCommand::class,
+                Console\EvidencePaymentLinkCommand::class,
             ]);
         }
 

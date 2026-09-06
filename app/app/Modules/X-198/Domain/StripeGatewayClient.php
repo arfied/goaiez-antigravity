@@ -59,6 +59,7 @@ final class StripeGatewayClient
                         'quantity' => 1,
                     ],
                 ],
+                'success_url' => config('app.url'),
             ]);
 
         if ($response->failed()) {
