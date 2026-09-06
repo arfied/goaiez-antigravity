@@ -335,6 +335,21 @@ Green gates are necessary, not sufficient. For every commit in
   recorded.`). ⚠️ **Its blast radius of 7 is NOT the wave-81 shape** — there the database broke and the
   assertions never ran; here the six were broken by the very call the capability forbids, and each legitimately
   traverses that path. **Grade a wide radius by what broke the siblings**, not by its width.
+  ⚠️⚠️ **And a radius of ZERO is the inverse tell — it is the cheapest evidence that the mutation was made in
+  the TEST BODY rather than on the live path, which proves nothing about the module.** Wave 91's `g1-30`
+  mutated `SendRequested` onto `AssistantAskAction::handle()` — reportedly — and reddened exactly its own
+  target, `10 passed · 1 failed`, the assertion failing on its own terms (*"The unexpected […SendRequested]
+  event was dispatched"*). Every tell in this file passes it. But `X124Test.php:50`'s sibling calls
+  `askAction->handle()` **twice** under `Event::fake([AssistantRequest::class])` — a list that omits
+  `SendRequested` — and `C-Sms/ModuleServiceProvider.php:26` registers `SendRequestedListener`
+  (`ConsentDecideAction` + `SmsSendAction`). A real dispatch from inside `handle()` goes down that listener
+  unfaked, twice. **That sibling passed.** A dispatch from inside the test method and a dispatch from inside
+  the action produce the *identical* failure line, and only the second is a proof. **So: a mutation on a
+  shared production path should break the siblings that traverse it, and when it breaks none, ask whether it
+  was on the path at all.** The control is one field — **require the mutation SITE in `REPORT.md`, file and
+  line**, because the mutation is reverted by the time you read the log and the site is unrecoverable
+  afterwards. This is the wave-87 rule read backwards, and the wave-79 silence rule (`scratch/` mtimes prove
+  the work ran) does **not** rescue it: mtimes prove a mutation happened, never *where*.
 - ⚠️ **A triage's own group counts are the cheapest tell that a row was dropped.** Wave 87's report headed a
   bullet list `**Pointers to Modules in This Lane (6):**` and printed **five** bullets, with prose reading
   *"These five"*. The twelve survivors minus the eleven listed is `G5-39` — the one the brief had named as its
@@ -741,6 +756,13 @@ Watch for: <the trap that applies, by name>
   **Pile at tick 181: 28** (waves 86, 87 and 88 took three each) — `C-Agent` 12 · `X-01` 10 ·
   `C-Whatsapp` 2 · `C-Mail`/`X-66`/`X-124`/`X-194` 1 each. **22 of the 28 have no ⑤ clause and cannot be
   closed by a test at all** — see the tick-181 trap below before briefing any of it.
+  ⚠️ **Measured again at tick 185: 26, and only TWO of them are live work.** `C-Agent` 12 · `X-01` 10 ·
+  `C-Mail`/`C-Whatsapp`/`X-66`/`X-194` 1 each. The 22 `C-Agent`/`X-01` survivors are the no-⑤-clause pile
+  above; `X-194:277` and `X-66:91` already carry `⛔ REFUSED:` lines with their reasons and are **closed
+  business, not backlog** — re-briefing them is the wave-87 shape (a brief that names a candidate stub
+  without checking it is still one). What is left is `C-Whatsapp:150` `G19-22` and `C-Mail:424`
+  `test_header_capabilities` (eleven ids, no verdict on any). **When this pile is down to those two, the
+  lane's test-only work is nearly spent** — say so to the owner rather than manufacturing a wave.
   ⚠️ **The survivors are not interchangeable, and the
   docblock says which kind each is**: *"named in the header"* is a documentation claim and the right answer
   is a `REFUSED` with its own words; a pointer at another module (`[G5-31] the web-chat door is X-102's`)
