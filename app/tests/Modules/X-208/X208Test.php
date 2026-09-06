@@ -89,7 +89,32 @@ class X208Test extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $this->assertTrue(true);
+        $engine = new \App\Modules\X208\Domain\X208Engine();
+        $this->assertEquals('refused', $engine->approveMail(false)['status']);
+        $this->assertEquals('approved', $engine->approveMail(true)['status']);
+    }
+
+    /**
+     * [N-019]
+     */
+    public function test_recall_mail(): void
+    {
+        $engine = new \App\Modules\X208\Domain\X208Engine();
+        $result = $engine->recallMail();
+        $this->assertEquals('refused', $result['status']);
+        $this->assertEquals('physical mail cannot be recalled', $result['reason']);
+    }
+
+    /**
+     * [N-020]
+     */
+    public function test_validate_promotion(): void
+    {
+        $engine = new \App\Modules\X208\Domain\X208Engine();
+        $this->assertEquals('ok', $engine->validatePromotion(true, 'PROMO-1')['status']);
+        $this->assertEquals('ok', $engine->validatePromotion(false, null)['status']);
+        $this->assertEquals('refused', $engine->validatePromotion(true, null)['status']);
+        $this->assertEquals('refused', $engine->validatePromotion(true, '')['status']);
     }
 
     /**
