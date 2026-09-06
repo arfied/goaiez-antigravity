@@ -233,4 +233,60 @@ class X167Test extends TestCase
         Event::assertDispatched(ReorderTriggered::class);
         $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count());
     }
+
+    /** [G1-64] */
+    public function test_g1_64_a_blanket_po_draws_down_no_autonomous_release(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $grepCommand = sprintf('grep -rniE "(Console|Jobs\\\\|Schedule|->cron|artisan\()" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs an autonomous release.');
+    }
+
+    /** [G6-40] */
+    public function test_g6_40_dead_stock_is_reported_never_auto_disposed(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $grepCommand = sprintf('grep -rniE "(delete\(|destroy\(|forceDelete\()" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php') && ! str_contains($line, 'cascadeOnDelete') && ! str_contains($line, 'nullOnDelete');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs an auto-dispose (delete).');
+    }
+
+    /** [G6-46] */
+    public function test_g6_46_no_autonomous_ordering_path_it_proposes(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $grepCommand = sprintf('grep -rniE "(Http::|curl_|Guzzle|file_get_contents\(\'http)" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php');
+        });
+
+        $this->assertEmpty($lines, 'No external purchase API call exists for autonomous ordering.');
+    }
+
+    /** [G6-51] */
+    public function test_g6_51_a_transfer_is_atomic_truck_to_truck_only(): void
+    {
+        $path = base_path('app/Modules/X-167');
+        $grepCommand = sprintf('grep -rniE "location_id" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php') && ! str_contains($line, 'manifest.php') && ! str_contains($line, 'groupBy') && ! str_contains($line, 'nullOnDelete') && ! str_contains($line, 'foreignId');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-167/ performs a location-to-location transfer by updating location_id.');
+    }
 }

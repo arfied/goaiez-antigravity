@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T11:47:36",
+ "updated": "2026-09-06T13:43:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -140,7 +140,7 @@
   },
   "11": {
    "track": "J6-J7 portal",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-172",
     "X-112",
@@ -216,7 +216,7 @@
   },
   "19": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-162",
     "X-165",
@@ -249,7 +249,7 @@
   },
   "22": {
    "track": "roster",
-   "status": "DONE",
+   "status": "BUILDING",
    "modules": [
     "X-16",
     "X-160",
@@ -819,10 +819,23 @@
    "unresolved": []
   },
   "X-167": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-76: missing Receipt model/action",
+     "at": "2026-09-06T13:39:44"
+    },
+    {
+     "module": "X-167",
+     "stage": "capability",
+     "why": "G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions",
+     "at": "2026-09-06T13:43:37"
+    }
+   ]
   },
   "X-168": {
    "status": "DONE",
@@ -837,30 +850,16 @@
    "unresolved": []
   },
   "X-171": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 19,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-171",
-     "stage": "tests",
-     "why": "G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves",
-     "at": "2026-09-05T23:49:19"
-    }
-   ]
+   "unresolved": []
   },
   "X-172": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-172",
-     "stage": "tests",
-     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-     "at": "2026-09-05T08:35:23"
-    }
-   ]
+   "unresolved": []
   },
   "X-173": {
    "status": "DONE",
@@ -869,23 +868,10 @@
    "unresolved": []
   },
   "X-175": {
-   "status": "UNRESOLVED",
+   "status": "BUILDING",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-175",
-     "stage": "capability",
-     "why": "N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup \u2014 no seam exists in this module",
-     "at": "2026-09-05T23:48:18"
-    },
-    {
-     "module": "X-175",
-     "stage": "tests",
-     "why": "N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo",
-     "at": "2026-09-05T23:48:57"
-    }
-   ]
+   "unresolved": []
   },
   "X-176": {
    "status": "DONE",
@@ -1355,12 +1341,6 @@
    "at": "2026-09-04T22:41:56"
   },
   {
-   "module": "X-172",
-   "stage": "tests",
-   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
-   "at": "2026-09-05T08:35:23"
-  },
-  {
    "module": "C-Sms",
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
@@ -1373,22 +1353,16 @@
    "at": "2026-09-05T17:11:31"
   },
   {
-   "module": "X-175",
+   "module": "X-167",
    "stage": "capability",
-   "why": "N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup \u2014 no seam exists in this module",
-   "at": "2026-09-05T23:48:18"
+   "why": "G1-76: missing Receipt model/action",
+   "at": "2026-09-06T13:39:44"
   },
   {
-   "module": "X-175",
-   "stage": "tests",
-   "why": "N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo",
-   "at": "2026-09-05T23:48:57"
-  },
-  {
-   "module": "X-171",
-   "stage": "tests",
-   "why": "G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves",
-   "at": "2026-09-05T23:49:19"
+   "module": "X-167",
+   "stage": "capability",
+   "why": "G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions",
+   "at": "2026-09-06T13:43:37"
   }
  ],
  "decisions": [
@@ -1565,6 +1539,36 @@
   {
    "at": "2026-09-05T17:42:54",
    "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
+  }
+ ],
+ "resolved": [
+  {
+   "module": "X-172",
+   "stage": "tests",
+   "was": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "why": "Main's surfaces:generate now emits the hook. Fixtures.php exists and mints a real token through PortalLinkAction; CustomerfacingPortalScreenTest does a real GET and a Livewire::test().",
+   "at": "2026-09-06T13:37:18"
+  },
+  {
+   "module": "X-175",
+   "stage": "tests",
+   "was": "N-175-01 requires a throttled-network fixture to assert the field surface works offline; no such fixture exists in the repo",
+   "why": "superseded by the decision recorded 2026-09-06T04:18:50 (a real throttled fixture, Http::fake throwing ConnectionException).",
+   "at": "2026-09-06T13:37:25"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "was": "N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup \u2014 no seam exists in this module",
+   "why": "The seam was built in PB-74 and recorded 2026-09-06T11:33:25.",
+   "at": "2026-09-06T13:37:32"
+  },
+  {
+   "module": "X-171",
+   "stage": "tests",
+   "was": "G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves",
+   "why": "superseded by the decision recorded 2026-09-06T11:47:36 (a whole offline session replayed, nothing lost and nothing doubled).",
+   "at": "2026-09-06T13:37:38"
   }
  ]
 }
