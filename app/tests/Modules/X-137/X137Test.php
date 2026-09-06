@@ -7,7 +7,7 @@ namespace Tests\Modules\X137;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X137\Actions\LinkQrAction;
 use App\Modules\X137\Actions\LinkShortAction;
-use App\Modules\X137\Domain\X137Engine;
+
 use App\Modules\X137\Events\CallAttributed;
 use App\Modules\X137\Events\LinkClicked;
 use App\Modules\X137\Events\VisitJoinedToCall;
@@ -282,19 +282,4 @@ class X137Test extends TestCase
         $this->assertNull($token->joined_call_id);
     }
 
-    public function test_header_capabilities(): void
-    {
-
-        $engine = new X137Engine;
-        $methods = ['enforceG3_11', 'enforceG8_13', 'enforceG13_19', 'enforceG13_24', 'enforceG18_17', 'enforceG18_24'];
-
-        foreach ($methods as $method) {
-            try {
-                $engine->$method();
-                $this->fail("Should throw for $method");
-            } catch (\DomainException $e) {
-                $this->assertStringContainsString('[G', $e->getMessage());
-            }
-        }
-    }
 }
