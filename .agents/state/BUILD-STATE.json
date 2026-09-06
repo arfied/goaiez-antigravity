@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T13:28:59",
+ "updated": "2026-09-06T15:57:11",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1870,6 +1870,18 @@
    "module": "X-198",
    "chose": "(R245) the reconciled figure comes from the row the gateway wrote: reconcilePayout drops its $actualCents parameter and reads payouts.amount_cents, because a discrepancy computed from two caller-supplied numbers is a comparison the app makes against itself and never against the processor (ruling 51, MONEY-75)",
    "at": "2026-09-06T13:28:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "(R245) N-009's exposure ledger returns null, not a figure: getExposure computed businessId * 100.0, a primary key printed as money (ruling 43), and no delivery or fulfilment store exists in X-117 or X-199 to supply the work-DELIVERED half \u2014 UNRESOLVED names that missing dependency and N009Test asserts null rather than certifying the fiction",
+   "at": "2026-09-06T15:36:54",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "(R245) getExposure's return type is standalone null, not ?float: a body of 'return null' makes float an unused member of the union at phpstan level 5, so the type the MONEY-79 brief dictated was an error the moment the ruling was obeyed \u2014 null is exact, phpstan-clean, and turns a restored fabrication into a TypeError at the boundary rather than a failed assertion (ruling 66, MONEY-79b)",
+   "at": "2026-09-06T15:57:11",
    "ruling": "R245"
   }
  ]
