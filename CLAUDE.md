@@ -818,6 +818,40 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   output), and now the halves' *unchanged* output: **a query's scope is not its
   claim, and neither is its absolute output.**
 
+  ⛔ **Half 1 has no reading for "SHRANK", and a shrink is exactly what a Track 1
+  merge produces** (tick 191). Tick 186 gave every surface three readings — grew
+  and attributable, grew and unaccounted, unchanged — and the set can also *fall*.
+  Half 1's bounds are two **exclusions**, `^origin/main ^origin/track/site`, so
+  its output drops whenever either bound advances or a sibling rewrites history.
+  **None of those three is "the sibling withdrew the work."**
+
+  Measured at tick 191 rather than argued. Adding `^origin/track/sixty` — exactly
+  what Track 1 merging sixty into `main` does to the bounds — takes half 1 from
+  **32 commits to 15**, and the 17 that vanish are precisely OWNER ACTION 45's 13
+  and 47's 4. Nothing about them changed: `git grep -l is_static
+  origin/track/sixty -- app/app/Modules/X-137` still returns
+  `Actions/CallAttributeAction.php` and
+  `Database/migrations/…_add_is_static_to_call_tokens.php` — another track's code
+  in this track's module, as tick 165 recorded. The merge does not resolve the
+  violation; it relocates it onto `main` permanently and silences the only
+  standing surface that reports it.
+
+  So the fourth reading, an attribution rule:
+
+  - **shrank** → attribute it to a **bound**, never to the sibling side. Compare
+    the recorded partition lists commit-by-commit and re-derive which bound moved.
+    A partition that empties because `origin/main` advanced is a violation that
+    **merged**, not one that was withdrawn.
+
+  Corollary, and it is the operative half: **an OWNER ACTION opened off half 1 is
+  never closed off half 1 going quiet.** Once `main` contains it, read the
+  standing evidence from the branch (`git grep` on the ref, per tick 163); the
+  census will not print it. Eighth statement of the section's law, from the one
+  angle the others did not use — 163/178/180/183/185/187 concern a query's
+  **pathspec** and 190 its **strip**; this concerns its **bounds**, the part a
+  tick does not write down, so their movement is invisible in a way a pathspec's
+  is not.
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
