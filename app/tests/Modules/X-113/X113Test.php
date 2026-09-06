@@ -48,8 +48,6 @@ class X113Test extends TestCase
      * grep -r 'rank' app/Modules/X-113/ finds no ranking field (§150.4) ·
      * a secure field reveal is role- AND job-scoped, and logged (P-198).
      * [G11-04]
-     * [G4-15]
-     * [G4-35]
      */
     public function test_anchor_immediate_deactivation_no_ranking_fields_and_scoped_secure_reveal(): void
     {
@@ -194,5 +192,126 @@ class X113Test extends TestCase
                 "StaffEngine must not have hiring method $name"
             );
         }
+    }
+
+    /**
+     * [G4-15]
+     * The permission row is the gate.
+     */
+    public function test_g4_15_permission_row_is_the_gate(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Staff Security Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $role = Role::create([
+            'business_id' => $biz->id,
+            'name' => 'Junior Technician',
+            'description' => 'Field tech without gate access',
+        ]);
+
+        $staff = $this->inviteAction->handle(
+            businessId: $biz->id,
+            email: 'tech_no_access@example.com',
+            name: 'No Access Bob',
+            roleId: $role->id
+        );
+
+        // In-scope reveal attempt -> REFUSED because no permission row
+        $refusedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('refused', $refusedRes['status']);
+        $this->assertEquals('INSUFFICIENT_ROLE_PERMISSIONS', $refusedRes['refusal_code']);
+
+        // Grant the permission to that role
+        RolePermission::create([
+            'business_id' => $biz->id,
+            'role_id' => $role->id,
+            'permission' => 'view_gate_access_code',
+        ]);
+
+        // Same call again -> REVEALED
+        $revealedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('revealed', $revealedRes['status']);
+        $this->assertEquals('GATE-CODE-4491', $revealedRes['value']);
+        $this->assertTrue($revealedRes['audit_logged']);
+    }
+
+    /**
+     * [G4-35]
+     * The role is what carries the grant.
+     */
+    public function test_g4_35_role_carries_the_grant(): void
+    {
+        Event::fake([RoleAssigned::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Staff Security Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $roleGranted = Role::create([
+            'business_id' => $biz->id,
+            'name' => 'Granted Role',
+            'description' => 'Role with gate access',
+        ]);
+        RolePermission::create([
+            'business_id' => $biz->id,
+            'role_id' => $roleGranted->id,
+            'permission' => 'view_gate_access_code',
+        ]);
+
+        $roleUngranted = Role::create([
+            'business_id' => $biz->id,
+            'name' => 'Ungranted Role',
+            'description' => 'Role without gate access',
+        ]);
+
+        $staff = $this->inviteAction->handle(
+            businessId: $biz->id,
+            email: 'tech_mover@example.com',
+            name: 'Mover Tech',
+            roleId: $roleGranted->id
+        );
+
+        // Put the staff user on the granted role, reveal in scope, assert revealed
+        $revealedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('revealed', $revealedRes['status']);
+
+        // Move them with RoleAssignAction to the ungranted role
+        $this->roleAction->handle(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            roleId: $roleUngranted->id
+        );
+
+        // Call revealField again with identical arguments -> REFUSED
+        $refusedRes = $this->revealAction->revealField(
+            businessId: $biz->id,
+            staffUserId: $staff->id,
+            targetJobId: 101,
+            assignedJobId: 101,
+            requiredPermission: 'view_gate_access_code',
+            secretFieldValue: 'GATE-CODE-4491'
+        );
+        $this->assertEquals('refused', $refusedRes['status']);
+        $this->assertEquals('INSUFFICIENT_ROLE_PERMISSIONS', $refusedRes['refusal_code']);
     }
 }
