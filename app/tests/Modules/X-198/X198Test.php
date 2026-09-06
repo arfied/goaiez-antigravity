@@ -426,4 +426,36 @@ class X198Test extends TestCase
         $this->assertInstanceOf(GatewayNotConfiguredException::class, $caught);
         $this->assertEquals(0, PaymentLink::count());
     }
+
+    public function test_a_pay_link_carries_the_payments_own_currency(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'CurrencyTenant', 'currency' => 'GBP']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1500,
+            'currency' => 'GBP',
+            'payment_token' => 'tok_pay_currency',
+            'idempotency_key' => 'idem_pay_currency',
+            'status' => 'failed',
+        ]);
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public string $seenCurrency = '';
+
+            public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
+            {
+                $this->seenCurrency = $currency;
+
+                return ['id' => 'cs_test_gbp', 'url' => 'https://checkout.stripe.com/pay/cs_test_gbp'];
+            }
+        });
+
+        $action = new PaymentLinkAction;
+        $action->handle($biz->id, $payment->id, 'Testing link');
+
+        $this->assertEquals('GBP', app(StripeGatewayClient::class)->seenCurrency);
+    }
 }

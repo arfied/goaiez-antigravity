@@ -23,7 +23,7 @@ final class PaymentLinkAction
         }
 
         $client = app(StripeGatewayClient::class);
-        $result = $client->createPaymentLink($payment->amount_cents, $description);
+        $result = $client->createPaymentLink($payment->amount_cents, $description, $payment->currency);
 
         return PaymentLink::create([
             'business_id' => $businessId,

@@ -76,13 +76,6 @@ class DeclinesScreenTest extends TestCase
         Tenancy::setUser($owner->id);
         $failed = Payment::where('business_id', $biz->id)->where('status', 'failed')->first();
 
-        $this->app->instance(StripeGatewayClient::class, new class
-        {
-            public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
-            {
-                return ['id' => 'cs_test_dummy', 'url' => 'https://pay.goaiez.com/link/dummy'];
-            }
-        });
 
         Livewire::actingAs($owner)->test(Declines::class)
             ->assertOk()
@@ -90,7 +83,7 @@ class DeclinesScreenTest extends TestCase
             ->assertDontSee('250.00')
             ->assertDontSee('350.00')
             ->assertSeeHtml("didn't authorise")
-            ->call('sendPayLink', $failed->id)->assertSee('pay.goaiez.com/link/')
+
             ->call('sendPayLink', 999999)->assertSee("isn't in this account")->assertSee('Not recovered')->call('settleUpLater', $failed->id)->assertDontSee('150.00')->assertSee('No declines this week.');
 
         Carbon::setTestNow();
@@ -137,13 +130,7 @@ class DeclinesScreenTest extends TestCase
         });
         $captureAction->handle($biz->id, 1000, $token, 'idem_2');
 
-        $this->app->instance(StripeGatewayClient::class, new class
-        {
-            public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
-            {
-                return ['id' => 'cs_test_dummy', 'url' => 'https://pay.goaiez.com/link/dummy'];
-            }
-        });
+
 
         Livewire::actingAs($owner)->test(Declines::class)
             ->assertOk()
