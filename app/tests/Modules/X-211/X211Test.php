@@ -98,6 +98,7 @@ class X211Test extends TestCase
 
     /**
      * [N-033], [G1-61], [G1-65], [G1-70], [G1-71], [G1-74] no refusal declared
+     * [N-037]
      */
     public function test_capability_assertions(): void
     {
