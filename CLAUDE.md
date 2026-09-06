@@ -3454,3 +3454,30 @@ slot and many writers, serialising the writers removes the corruption and keeps 
 substitution.** Tick 216 got this right by instinct ("adopted, not copied") and did not
 say why; the reason is worth more than the instance, because every lane is about to
 inherit main's version.
+
+## ✅ The returned-ref hazard has NEVER occurred — measured across all eight refs, not one (tick 221)
+
+Tick 220 recorded, correctly and honestly, that the reflog can see a ref that moved to a
+value and **back** — a state the tip table structurally cannot represent, so a cache HIT
+by value that is a MISS in fact — and then checked `origin/main` alone, stating it "as a
+capability of the instrument, not as a rule, until something fires it." One command
+settles it for the whole box, and the union form is *stronger* than the per-ref one
+because a repeat inside any single ref necessarily appears in the union:
+
+```
+git log -g --format='%h' <all eight refs> | sort | uniq -c | sort -rn | head
+      1 ff259930 · 1 fe3e858a · …        ← maximum count across 529 entries is 1
+```
+
+**No sha has ever been recorded twice, on any ref, since 2026-09-02**, so the tip table's
+identity has never once been a false HIT. ⛔ It is **not** a licence to skip tick 215's
+closing re-read: the case that actually bites is *arrival*, measured live at tick 220
+(reviews' `ed294b19` committed 14:49:41, pushed 15:03:39, three minutes after that tick's
+opening fetch), and no reflog census defends against a commit that did not exist yet.
+
+**The discipline is tick 193's, applied to the converse.** 193 ruled that *a fallback
+asserted but never fired is not a fallback*; the mirror is that **a hazard asserted and
+never measured is not a hazard** — it is an open question sitting in the ledger looking
+like a finding. Both are cheap to settle and neither settles itself. When a tick records
+an instrument's capability it cannot exercise, write the one command that would measure
+it; the next tick that has a quiet minute owes the population, not another restatement.
