@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T13:43:40",
+ "updated": "2026-09-06T14:24:35",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -485,6 +485,30 @@
      "stage": "capability",
      "why": "G11-40 \u2014 the header's first line \u2014 no subject whatsoever.",
      "at": "2026-09-06T12:20:34"
+    },
+    {
+     "module": "X-01",
+     "stage": "contract",
+     "why": "contact.create \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:32)",
+     "at": "2026-09-06T14:24:35"
+    },
+    {
+     "module": "X-01",
+     "stage": "contract",
+     "why": "contact.merge \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:33)",
+     "at": "2026-09-06T14:24:35"
+    },
+    {
+     "module": "X-01",
+     "stage": "contract",
+     "why": "conversation.takeover \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:35)",
+     "at": "2026-09-06T14:24:35"
+    },
+    {
+     "module": "X-01",
+     "stage": "contract",
+     "why": "search.global \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:36)",
+     "at": "2026-09-06T14:24:35"
     }
    ]
   },
@@ -897,6 +921,12 @@
      "stage": "capability",
      "why": "G15-28 \u2014 the register description is STRIPPED (P-206) \u2014 the \u2460 lives in the register, not in the file; the \u2464 names what doctor asserts, and writing a test to match it authors the \u2464",
      "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "contract",
+     "why": "consumes help.human_requested \u2014 nothing emits it (sealed in app/app/Modules/X-111/manifest.php:46)",
+     "at": "2026-09-06T14:24:35"
     }
    ]
   },
@@ -1061,6 +1091,18 @@
      "stage": "G1-82",
      "why": "pause/meter exists nowhere in the module",
      "at": "2026-09-06T12:41:12"
+    },
+    {
+     "module": "X-117",
+     "stage": "contract",
+     "why": "cart.build \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-117/manifest.php:32)",
+     "at": "2026-09-06T14:24:35"
+    },
+    {
+     "module": "X-117",
+     "stage": "contract",
+     "why": "order.cancel \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-117/manifest.php:34)",
+     "at": "2026-09-06T14:24:35"
     }
    ]
   },
@@ -1676,16 +1718,126 @@
    ]
   },
   "X-173": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 25,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "ECHO on clause 'a sync conflict goes UNKNOWN not STALE', missing decision logic (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16)",
+     "at": "2026-09-06T14:23:23"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-063 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-064 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-067 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-073 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-076 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-079 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-082 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-085 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    }
+   ]
   },
   "X-175": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 22,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-063 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-064 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-067 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-070 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-073 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-076 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:17"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-079 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:18"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-082 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:18"
+    },
+    {
+     "module": "X-175",
+     "stage": "capability",
+     "why": "N-085 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+     "at": "2026-09-06T14:24:18"
+    }
+   ]
   },
   "X-176": {
    "status": "UNRESOLVED",
@@ -3862,6 +4014,156 @@
    "stage": "capability",
    "why": "G15-29 \u2014 the register description is STRIPPED (P-206) \u2014 the 1 lives in the register, not in the file; the 5 names what doctor asserts, and writing a test to match it authors the 5",
    "at": "2026-09-06T13:43:35"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "ECHO on clause 'a sync conflict goes UNKNOWN not STALE', missing decision logic (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16)",
+   "at": "2026-09-06T14:23:23"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-063 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-064 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-067 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-073 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-076 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-079 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-082 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-085 \u2014 ECHO on clause 'a sync conflict goes UNKNOWN not STALE' (literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-063 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-064 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-067 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-070 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-073 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-076 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:17"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-079 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:18"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-082 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:18"
+  },
+  {
+   "module": "X-175",
+   "stage": "capability",
+   "why": "N-085 \u2014 ECHO on clause 'a price on site comes from X-163 or is refused' (literal at app/app/Modules/X-175/Domain/FieldAssistantEngine.php:29, decision logic missing)",
+   "at": "2026-09-06T14:24:18"
+  },
+  {
+   "module": "X-01",
+   "stage": "contract",
+   "why": "contact.create \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:32)",
+   "at": "2026-09-06T14:24:35"
+  },
+  {
+   "module": "X-01",
+   "stage": "contract",
+   "why": "contact.merge \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:33)",
+   "at": "2026-09-06T14:24:35"
+  },
+  {
+   "module": "X-01",
+   "stage": "contract",
+   "why": "conversation.takeover \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:35)",
+   "at": "2026-09-06T14:24:35"
+  },
+  {
+   "module": "X-01",
+   "stage": "contract",
+   "why": "search.global \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-01/manifest.php:36)",
+   "at": "2026-09-06T14:24:35"
+  },
+  {
+   "module": "X-117",
+   "stage": "contract",
+   "why": "cart.build \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-117/manifest.php:32)",
+   "at": "2026-09-06T14:24:35"
+  },
+  {
+   "module": "X-117",
+   "stage": "contract",
+   "why": "order.cancel \u2014 'does not declare whether the agent may reach it' (sealed in app/app/Modules/X-117/manifest.php:34)",
+   "at": "2026-09-06T14:24:35"
+  },
+  {
+   "module": "X-111",
+   "stage": "contract",
+   "why": "consumes help.human_requested \u2014 nothing emits it (sealed in app/app/Modules/X-111/manifest.php:46)",
+   "at": "2026-09-06T14:24:35"
   }
  ],
  "decisions": [
