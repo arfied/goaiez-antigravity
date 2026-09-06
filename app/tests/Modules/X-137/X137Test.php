@@ -7,7 +7,6 @@ namespace Tests\Modules\X137;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X137\Actions\LinkQrAction;
 use App\Modules\X137\Actions\LinkShortAction;
-use App\Modules\X137\Domain\X137Engine;
 use App\Modules\X137\Events\CallAttributed;
 use App\Modules\X137\Events\VisitJoinedToCall;
 use App\Modules\X137\Models\CallToken;
@@ -92,7 +91,7 @@ class X137Test extends TestCase
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         $token = $this->attributeAction->allocateToken(
             businessId: $biz->id,
             visitorSessionToken: 'sess_g311',
@@ -107,7 +106,7 @@ class X137Test extends TestCase
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         $token = $this->attributeAction->allocateToken(
             businessId: $biz->id,
             visitorSessionToken: 'sess_g813',
@@ -122,7 +121,7 @@ class X137Test extends TestCase
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         $token = $this->attributeAction->allocateToken(
             businessId: $biz->id,
             visitorSessionToken: 'sess_g1817',
@@ -137,7 +136,7 @@ class X137Test extends TestCase
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         $token = $this->attributeAction->allocateToken(
             businessId: $biz->id,
             visitorSessionToken: 'sess_g1824',
