@@ -830,3 +830,7 @@
 - `2026-09-05T21:20:14` UNRESOLVED capability C-Mail - G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.
 - `2026-09-05T21:41:25` note: X-137 G13-19 is resolved. Created test the_number_pool_every_visitor_gets_a_call_token testing the existing allocateToken logic.
 - `2026-09-05T21:42:57` note: C-Mail G11-03 is resolved. Implemented DnsCard to show records with copy button, avoiding instruction to configure SPF.
+- `2026-09-05T21:59:49` (R245) C-Mail — Added dkim_selector, dkim_public_key, spf_include to mail_domains for C-Mail DnsCard (R245)
+- `2026-09-05T22:04:06` (R245) X-137 — Added is_static column to call_tokens to support static numbers per offline campaign (R245)
+- `2026-09-05T22:20:29` UNRESOLVED capability C-Mail - G11-03: mail_domains.dkim_public_key has no producer — no keypair generator or provider integration exists in this tree; owned by whichever sending provider C-Mail is configured against
+- `2026-09-05T22:41:26` UNRESOLVED capability C-Sms - lint asks for enumeration on messageClass, the type is an open string domain, phpstan refuses the enumeration

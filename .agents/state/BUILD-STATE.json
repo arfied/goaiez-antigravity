@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T21:20:14",
+ "updated": "2026-09-05T22:41:26",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -419,6 +419,12 @@
      "stage": "capability",
      "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
      "at": "2026-09-05T21:20:14"
+    },
+    {
+     "module": "C-Mail",
+     "stage": "capability",
+     "why": "G11-03: mail_domains.dkim_public_key has no producer \u2014 no keypair generator or provider integration exists in this tree; owned by whichever sending provider C-Mail is configured against",
+     "at": "2026-09-05T22:20:29"
     }
    ]
   },
@@ -448,10 +454,17 @@
    ]
   },
   "C-Sms": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Sms",
+     "stage": "capability",
+     "why": "lint asks for enumeration on messageClass, the type is an open string domain, phpstan refuses the enumeration",
+     "at": "2026-09-05T22:41:26"
+    }
+   ]
   },
   "C-Telephony": {
    "status": "UNRESOLVED",
@@ -1494,6 +1507,18 @@
    "stage": "capability",
    "why": "G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.",
    "at": "2026-09-05T21:20:14"
+  },
+  {
+   "module": "C-Mail",
+   "stage": "capability",
+   "why": "G11-03: mail_domains.dkim_public_key has no producer \u2014 no keypair generator or provider integration exists in this tree; owned by whichever sending provider C-Mail is configured against",
+   "at": "2026-09-05T22:20:29"
+  },
+  {
+   "module": "C-Sms",
+   "stage": "capability",
+   "why": "lint asks for enumeration on messageClass, the type is an open string domain, phpstan refuses the enumeration",
+   "at": "2026-09-05T22:41:26"
   }
  ],
  "decisions": [
@@ -1591,6 +1616,18 @@
    "module": "X-103",
    "chose": "drop 5 unused boolean columns from page_versions because they have zero readers/writers",
    "at": "2026-09-05T18:10:57",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Mail",
+   "chose": "Added dkim_selector, dkim_public_key, spf_include to mail_domains for C-Mail DnsCard (R245)",
+   "at": "2026-09-05T21:59:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-137",
+   "chose": "Added is_static column to call_tokens to support static numbers per offline campaign (R245)",
+   "at": "2026-09-05T22:04:06",
    "ruling": "R245"
   }
  ],
