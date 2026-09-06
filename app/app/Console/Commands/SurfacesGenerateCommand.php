@@ -358,7 +358,7 @@ class SurfacesGenerateCommand extends Command
 
         $fixtureFile = base_path("tests/Modules/{$modId}/Screens/Fixtures.php");
         if (file_exists($fixtureFile)) {
-            $content .= "require_once __DIR__ . '/Fixtures.php';\n\n";
+            $content .= "require_once __DIR__.'/Fixtures.php';\n\n";
         }
 
         $content .= "class {$className}ScreenTest extends TestCase\n{\n";

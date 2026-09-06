@@ -14,8 +14,10 @@ use App\Modules\X201\Events\EvidenceCompiled;
 use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Models\DisputeOutcome;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X201Test extends TestCase
@@ -35,6 +37,24 @@ class X201Test extends TestCase
         $this->recordAction = new DisputeRecordAction($this->engine);
         $this->compileAction = new DisputeCompileAction($this->engine);
         $this->submitAction = new DisputeSubmitAction($this->engine);
+    }
+
+    public function test_dependency_deadline_at_exists(): void
+    {
+        $this->assertTrue(Schema::hasColumn('disputes', 'deadline_at'), 'disputes.deadline_at must exist');
+    }
+
+    public function test_dispute_cannot_be_submitted_after_deadline(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Dispute Deadline Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dispute = $this->recordAction->handle($biz->id, 999, 50000, 'unrecognized');
+        $dispute->update(['deadline_at' => Carbon::now()->subDay()]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Dispute deadline has passed');
+        $this->submitAction->handle($biz->id, $dispute->id);
     }
 
     /**
@@ -59,6 +79,7 @@ class X201Test extends TestCase
             chargebackAmountCents: $chargebackAmountCents,
             reason: 'unrecognized_transaction'
         );
+        $dispute->update(['deadline_at' => Carbon::now()->addDay()]); // valid deadline
 
         $this->assertEquals('opened', $dispute->status);
         Event::assertDispatched(DisputeOpened::class);

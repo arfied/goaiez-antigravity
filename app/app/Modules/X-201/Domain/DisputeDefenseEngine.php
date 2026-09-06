@@ -11,6 +11,7 @@ use App\Modules\X201\Events\EvidenceCompiled;
 use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Models\DisputeOutcome;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class DisputeDefenseEngine
@@ -68,6 +69,10 @@ final class DisputeDefenseEngine
     public function submit(int $businessId, int $disputeId): Dispute
     {
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
+
+        if ($dispute->deadline_at && Carbon::now()->isAfter($dispute->deadline_at)) {
+            throw new \Exception('Dispute deadline has passed');
+        }
 
         $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
 

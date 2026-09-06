@@ -55,7 +55,8 @@ final class SendRequestedListener
             $event->body,
             $event->messageClass,
             '12:00',
-            $decision['permit_id'] ?? 0
+            $decision['permit_id'] ?? 0,
+            'csms:'.$event->compositionId
         );
     }
 }
