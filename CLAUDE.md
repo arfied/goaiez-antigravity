@@ -3562,3 +3562,107 @@ when the older tip was recorded. The confirming pair is `--is-ancestor c987815c
 sha. ⛔ **Test the direction the timeline implies, and settle ancestry from the reflog**
 (ticks 220/221) — a single `--is-ancestor` answers the question you asked, which is not
 always the question you have.
+
+## ⛔ Commit order and arrival order are UNCORRELATED — three commits 51 s apart arrived in reverse (tick 223)
+
+Tick 220 established that a mid-tick tip move is **arrival**, not staleness, and that the
+closing re-read (tick 215) is therefore the only defence. It rested on two single-ref
+gaps (ui 12 m, reviews 14 m), where the *ordering* question could not arise. Tick 223
+supplies it. The opening `for-each-ref` showed **one** mover; the closing read showed
+**three**:
+
+| ref | sha | committed | arrived (reflog) | lag | at my opening fetch |
+| :-- | :-- | :-- | :-- | --: | :-- |
+| stages | `34290698` | **15:17:55** | **15:33:01** | 15 m 06 s | ⛔ unpushed |
+| reviews | `0d95189b` | 15:18:34 | 15:26:15 | 7 m 41 s | ✅ visible |
+| pricebook | `665d70dc` | 15:18:46 | 15:31:38 | 12 m 52 s | ⛔ unpushed |
+
+**Committed within 51 seconds of each other; arrived over seven minutes, in the opposite
+order.** Stages committed first and arrived last; pricebook committed last and arrived
+second. That is a total inversion, and it is the strongest available form of tick 193's
+caveat 2 — *never infer arrival order, batch size or a bound from committer dates.*
+
+⛔ **Two of the three did not exist on the remote when the tick fetched**, so no fetch
+discipline could have seen them, and this is the first tick where the arrivals were the
+**majority** of the movers. Skipping the closing read would have recorded one mover
+against a true three and left two paired `--stat`s unrun — and the paired stat is the one
+surface whose evidence nothing else reprints (tick 190). ✅ The reflog carries both
+timestamps, which is what makes the table a measurement rather than a reconstruction.
+
+## ⛔ Before briefing a wave that copies another lane's TECHNIQUE, measure whether the technique's precondition holds in this column (tick 223)
+
+`track/reviews` closed **60** capability violations in one wave across **seven** modules in
+four other lanes' columns (X-126 pricebook · X-128 X-206 stages · X-166 X-212 Track 1 ·
+X-211 money, plus **X-145** on plan §257.4's deferred list), by adding one docblock line
+per id: `[N-042] ⛔ REFUSED: php artisan why N-042 reports it is never DEFINED …`. Every
+commit is docblock-only, zero code, zero assertion — the credit *is* the id literal, which
+is exactly what `CapabilityStage` scans for.
+
+✅ **Verifiable and honest, so advisory only.** `php artisan why N-042` really does return
+`REFUSED — never DEFINED`; that is class A of the three-class split (a documented refusal
+naming a missing symbol), re-runnable by any lane. The deferred-list touch is tick 219's
+settled case — a refusal credit is the opposite of building the module. ⛔ No OWNER
+ACTION, no wave, never a parallel fix (182, 190, 194, 211, 219). One residue for Track 1:
+each refusal's *second* clause is a survey of a module the writing lane does not own, and a
+survey is unverifiable by construction — subordinate to a class-A ground here, so not an
+action.
+
+⛔ **The operative half: the technique does not transfer, and the reason is structural.**
+A tick reaching for backlog will try to close this lane's own capability red the same way.
+Measured this tick:
+
+- **`php artisan why` does not index G-### ids at all.** `why G6-17` returns *"No module
+  with the exact id 'G6-17'"* — a different answer from `never DEFINED`. Reviews' ground
+  is **N-id-only**.
+- **All thirteen of this lane's live capability violations are G-ids**: X-176 ×10
+  (`G3-34 G8-02 G8-03 G8-04 G8-16 G8-22 G8-23 G8-25 G8-30 G8-33`), X-103 ×2
+  (`G6-17 G6-20`), X-102 ×1 (`G16-21`). Zero N-ids.
+- **All thirteen already carry a filed `UNRESOLVED` naming a real missing dependency** (an
+  NLP/entity service, an IndexNow or Google Indexing credential, page-tree data, the
+  X-194/X-195 renderers). A docblock credit over those is **class 2** of the false-credit
+  catalogue — a comment-credit over a body that asserts nothing — for capabilities this
+  lane has measured as genuinely open. Count-chasing.
+- ⛔ X-176 is off the table regardless: tick 211's ruling that no site wave touches
+  `X176Test.php` while stages' `7577a8b7` is unmerged still binds.
+
+**RULED by the lane supervisor (tick 223): no wave, and the inapplicability is recorded
+with its measurement so the next tick does not rediscover it as backlog.** This is tick
+210's law (*before briefing a wave that produces X, grep for X*) moved one step earlier —
+from the wave's **output** to its **method**. A technique that worked in a sibling lane is
+a hypothesis about this lane, not a plan.
+
+⚠️ Second instance of tick 222's law the same tick, on a shared-state filing rather than a
+code commit: stages' `34290698` says *"file X-118, C-Reviews and C-Billing placeholder
+credits"* and its diff also transitions **X-112 and X-113** DONE→UNRESOLVED. Benign — none
+is ours — but **a commit's stated scope is not its diff's scope** held on first re-test.
+
+## ✅ Tick 217's doctor cache CHECKED, not just asserted (tick 223)
+
+Tick 217 ruled doctor's numbers cacheable on a provably unchanged tree; every tick since
+cited it. Tick 223 ran the live doctor anyway and got `boundary 6 · contract 87 ·
+citation 93 · schema 15 · capability 431 · anchor 137 · journey 5` — byte-identical to
+tick 216's cached set, across seven ticks whose only commits were `CLAUDE.md` supervisor
+notes. Tick 221's law (*a hazard asserted and never measured is not a hazard*) applies to
+a **cache** as much as to a hazard: it is cheap to fire once, and the firing is what turns
+an argument into a property.
+
+⚠️ Sharpening tick 219 with a live case: the JOURNAL now reads `capability` **392 → 357 →
+332** and those three *are* comparable — all three are reviews' own writes from one
+checkout, 33 minutes apart. The lines above them are not. **Nothing in the record marks
+the boundary**, which is precisely why 219's rule is "never diff two `stage <x> =` lines"
+rather than "diff them carefully": the missing field is provenance, and no careful reading
+recovers it.
+
+## Shell forms — refused at tick 223
+
+- ⛔ A literal `|` **inside a quoted grep pattern** is parsed as a shell pipe and refused as
+  *"contains multiple operations"* — a `grep -o` whose pattern opened with a markdown table
+  delimiter died though it is one command. Drop the `|` from the pattern, or use `-e`.
+- ⛔ A heredoc containing a brace-with-quote — `{"action": "FINISHED"}`, `\{0,150\}` — is
+  refused as *"Contains brace with quote character (expansion obfuscation)"*. ✅ Accepted
+  route: `Write` a temp file under `.agents/supervisor/`, then
+  `cat <tmp> >> .agents/supervisor/REVIEWS.md`. That is also the append discipline that
+  stops two lanes clobbering one file.
+- ⚠️ Doctor's stage lines carry a **leading space** (` FAIL capability …`), so a `^FAIL`
+  anchor matches nothing and returns **silently** — tick 209's false-silence family, caught
+  here only because the total was known to be non-empty. Anchor on ` FAIL ` or don't anchor.
