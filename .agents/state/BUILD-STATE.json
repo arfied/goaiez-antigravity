@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T00:19:02",
+ "updated": "2026-09-06T00:42:19",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1387,10 +1387,29 @@
    ]
   },
   "X-208": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 16,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-208",
+     "stage": "capability",
+     "why": "grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
+     "at": "2026-09-06T00:41:57"
+    },
+    {
+     "module": "X-208",
+     "stage": "capability",
+     "why": "N-019 \u2014 grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
+     "at": "2026-09-06T00:42:14"
+    },
+    {
+     "module": "X-208",
+     "stage": "capability",
+     "why": "N-020 \u2014 missing dependency: mail_pieces has id, business_id, recipient_address, postcard_format, cost_cents, status, refusal_reason, lob_api_key_source, timestamps \u2014 no promotion_id column and no offer flag.",
+     "at": "2026-09-06T00:42:19"
+    }
+   ]
   },
   "X-209": {
    "status": "DONE",
@@ -1931,6 +1950,24 @@
    "stage": "capability",
    "why": "N-016 \u2014 grep -rn 'getPriority' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:45:    public function getPriority(string $eventType): string; X207Engine::getPriority() maps three strings to 'minutes' and has no caller; there is no queue, no priority column, no delay to measure",
    "at": "2026-09-06T00:19:02"
+  },
+  {
+   "module": "X-208",
+   "stage": "capability",
+   "why": "grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
+   "at": "2026-09-06T00:41:57"
+  },
+  {
+   "module": "X-208",
+   "stage": "capability",
+   "why": "N-019 \u2014 grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
+   "at": "2026-09-06T00:42:14"
+  },
+  {
+   "module": "X-208",
+   "stage": "capability",
+   "why": "N-020 \u2014 missing dependency: mail_pieces has id, business_id, recipient_address, postcard_format, cost_cents, status, refusal_reason, lob_api_key_source, timestamps \u2014 no promotion_id column and no offer flag.",
+   "at": "2026-09-06T00:42:19"
   }
  ],
  "decisions": [
