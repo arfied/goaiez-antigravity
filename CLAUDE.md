@@ -3753,3 +3753,105 @@ money **16 m 48 s** (`a36e199f` committed 15:17:50, arrived 15:34:38). Tick 220'
 stands unchanged: on this box the lag is routinely longer than a tick, so the closing re-read
 defends against work that **did not exist yet** at the top of the tick, never against a stale
 fetch — and no earlier fetch is ever the remedy.
+
+## ✅ A census SHRINK can be the bound DELIVERING the thing you asked for — read the ref, never the silence (tick 225)
+
+Tick 191 gave half 1 its fourth reading — *shrank → attribute it to a **bound**, never to the
+sibling side* — and its corollary: **an OWNER/TRACK 1 ACTION opened off half 1 is never closed
+off half 1 going quiet.** Tick 218 fired the corollary once, on a violation that merged. Tick
+225 fires it on the opposite polarity, which is the reading the rule did not have.
+
+`origin/main` moved `05f9b768 → 3c60289d`, a Track 1 merge of `track/stages`, and half 1's two
+stages partitions went 1 → **0** each. Read as a withdrawal it would say stages backed out its
+X-176 rewrite. `git branch -r --contains 7577a8b7` → `origin/main`: it **merged**. Then the
+substance off the ref, per tick 191:
+
+```
+git diff --stat 05f9b768..3c60289d -- <the fourteen module paths>
+  app/tests/Modules/X-176/X176Test.php | 15 insertions(+), 89 deletions(-)
+```
+
+⛔ **The shrink was Track 1 doing what tick 211 asked it to do.** 211 ruled stages' X-176
+rewrite better than this lane's on measured grounds (`G8-14`'s `SchemaRenderAction::handle`
+takes `$commitId` as an argument and echoes it back — the third anti-seam tell; `G8-15` asserts
+the absence of a key nothing in the module can write), and ruled that **Track 1 takes stages'
+hunks**. It has. So the census going quiet was not "nothing to do" and not "a violation
+merged" — it was **an inbound resolution arriving**, and the lane's own next move (take main,
+resolve to main's side, retire the conflict on our side) is legible only from the ref.
+
+**RULED by the lane supervisor: take `origin/main` at `3c60289d`, resolving
+`app/tests/Modules/X-176/X176Test.php` to MAIN'S SIDE WHOLE**, because keeping this lane's copy
+re-presents a settled conflict to Track 1 a second time. ⚠️ **That is not the act tick 211
+forbade.** 211's prohibition ("no site wave touches `X176Test.php`") was against *writing* in
+the file while the competing rewrite was unmerged, and against deepening the conflict. Adopting
+the other side wholesale is the opposite act — it *removes* the conflict, and it is the same
+"take the incoming side whole" shape the coder guard's own `:58-63` harness exemption is built
+on. **A prohibition recorded as its remedy expires when the population changes** (tick 199);
+this one was recorded with its reason and survived, because the reason still names the right
+act.
+
+⚠️ **The correct consequence is a RISE.** Both id censuses were re-run rather than recalled:
+ours `G12-03 1 · G16-25 1 · G7-48 1 · G8-14 2 · G8-15 1 · G8-32 2`, main's the same minus
+`G8-14`/`G8-15`. Dropping two false credits leaves those two ids uncredited, and this lane's
+ten live X-176 filings do not include either — so `capability` rises by 2 in this column, which
+is the merge working (tick 209's inverted-success reading).
+
+⛔ **The filings go in the NEXT wave, and that is a ruling.** Tick 215: *a merge is a wave —
+never dispatch one carrying its own new code*, or a red is unattributable between the merge and
+the build. Sharper here: each filing's `why` must be measured at the **post-merge** source, and
+`state.py` has **no withdraw** (tick 210), so a `why` written against a *predicted* red list is
+unrepairable. Twenty-second statement of this section's law, and the first turned on a
+surface's **shrink** as a signal rather than as an artefact: a query's scope is not its claim,
+and neither is the *direction* of its delta.
+
+## ✅ The two-sided quadrant, exercised on a merge with an EMPTY dangerous cell (tick 225)
+
+Tick 215 built the quadrant after tick 211 predicted a merge's per-track outcome one-sidedly
+and was wrong on two of three files. Tick 225 is its second firing and the first where the
+dangerous cell (**ours ❌ / main ✅** — no driver, no conflict, no line in the merge output) is
+**empty**. Base `12447593`, `git config --get merge.ours.driver` → `true`:
+
+| path | ours | main | driver | outcome |
+| :-- | :--: | :--: | :--: | :-- |
+| `bin/supervise.sh` | ✅ | ✅ | **yes** | ours wins — keeps tick 216's *adapted* pest lock with the per-root result file, not main's one-slot `/home/goaiez/tmp/last-pest.json` (tick 220) |
+| `CLAUDE.md` · `BUILD-STATE.json` · `JOURNAL.md` · `launch-coder.sh` | ✅ | ❌ | n/a | ours kept |
+| `app/phpunit.xml` · `.claude/settings.json` | ❌ | ❌ | n/a | untouched — the uncommitted pin edit survives |
+| — | ❌ | ✅ | — | ⛔ **empty** |
+
+⛔ **An empty dangerous cell is a measurement, not a licence to skip the restore step**, because
+that cell is precisely the one that produces no signal of any kind. The brief keeps the full
+per-path check either way. Three further merge properties measured rather than assumed, each
+because a prior tick was bitten by assuming it:
+
+- **No classmap exposure** — `git diff --name-status <base> origin/main -- app/app/Modules`
+  returns zero `A` lines, so Track 1's classmap trap (tick 215) has no subject here.
+  `composer dump-autoload` is briefed anyway: it is free, and the alternative is an
+  unattributable red.
+- **`app/tests/Journeys/` untouched by main's range**, so J11 is neither advanced nor affected
+  and TRACK 1 ACTION 1 stands unchanged.
+- **`.agents/state/` clean in the working tree**, so the `merge=ours` driver — which *writes*
+  the paths it resolves — will not fail on a dirty row (tick 215's corollary).
+
+⚠️ And `--no-commit` is not optional: tick 212 dropped it, the merge auto-committed, and three
+per-track files landed in a commit nobody could amend. ✅ The coder guard now supports the
+charter's step 2 — `coder-bin/git:23-49` opens `git checkout HEAD -- <existing file paths>`
+under `GOAIEZ_MERGE_OK=1` with `MERGE_HEAD` present, literal `HEAD`, **files only, never a
+directory**. Re-read at source this tick; `:53`'s harness refusal is unchanged and still keyed
+to the checkout **directory name** `grs-antig`.
+
+## ✅ §1's `behind N` and the tip table agreed, and the agreement is arithmetic (tick 225)
+
+Tick 218 made §1 the fresher cross-witness after the two disagreed. Tick 225 is the confirming
+case and it is checkable rather than impressionistic: tick 224 read `behind 1`, main's paired
+range `05f9b768..3c60289d` is exactly **20** commits, and this tick's §1 reads `behind 21`.
+1 + 20 = 21. ⛔ Do the addition — "both moved, so they agree" is not the check; two independent
+readings of the same shared ref agree only when the numbers reconcile.
+
+⚠️ Also the second consecutive **null** closing re-read (tick 224 was the first). Nothing was in
+flight: the newest arrival on the box was stages' `ddfae7a7` at 15:38:45, before this tick's
+fetch. The check is not always-fires, and recording its quiet results is what keeps that true.
+
+⚠️ Second firing of tick 176's re-`pgrep` disambiguation: `pgrep agy` printed four pids, one
+(`1099892`) unreadable; a second `pgrep` seconds later showed it **gone** and a new pid
+(`1121761` → `…/grs-antig-ui`) in its place. The ALIVE→dead race, exactly as 176 described, and
+neither `ps -o user=` nor `stat -c %U` was needed — both are still refused here.
