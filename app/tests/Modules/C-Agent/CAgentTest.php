@@ -121,6 +121,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-15] = G5-31/32; one spec
+     * ⛔ REFUSED: G5-15 — the capability's own text is "= G5-31/32; one spec"; there is no clause to assert.
      */
     public function test_g5_15_omnichannel_spec(): void
     {
@@ -147,6 +148,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
+     * BUILD PROPOSAL: G5-31 — "the web-chat door" is unbuilt. Owner: X-102
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -155,6 +157,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
+     * BUILD PROPOSAL: G5-32 — "the voice door" is unbuilt. Owner: X-66
      */
     public function test_g5_32_voice_door(): void
     {
@@ -177,6 +180,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
+     * BUILD PROPOSAL: G5-37 — "the takeover latch" integration is unbuilt in C-Agent. Owner: X-01
      */
     public function test_g5_37_takeover_latch(): void
     {
@@ -203,6 +207,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-42] the research behind it is X-135's
+     * ⛔ REFUSED: G5-42 — points to X-135, which is owned outside this lane.
      */
     public function test_g5_42_research_contract(): void
     {
@@ -211,6 +216,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-43] the 100 authored profiles are the fixture (P-126)
+     * BUILD PROPOSAL: G5-43 — "the 100 authored profiles" fixture is unbuilt. Owner: C-Agent
      */
     public function test_g5_43_profile_fixtures(): void
     {

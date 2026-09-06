@@ -286,6 +286,7 @@ class X01Test extends TestCase
 
     /**
      * [G11-22] one polymorphic Conversation (X-121's) across every channel
+     * ⛔ REFUSED: G11-22 — points to X-121, which is owned outside this lane.
      */
     public function test_g11_22_polymorphic_conversation(): void
     {
