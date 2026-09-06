@@ -2,8 +2,6 @@
 
 namespace Tests\Modules\X138;
 
-use App\Models\User;
-use App\Models\Business;
 use App\Modules\X138\Ui\AttributionRow;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -67,7 +65,7 @@ class AttributionRowTest extends TestCase
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        
+
         Livewire::actingAs($user)
             ->test(AttributionRow::class, ['businessId' => $biz->id])
             ->assertSee('--');

@@ -2,8 +2,7 @@
 
 namespace Tests\Modules\X110;
 
-use App\Models\User;
-use App\Models\Business;
+use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
@@ -40,9 +39,9 @@ class AbandonedFormsTest extends TestCase
             'event_name' => 'form.abandoned',
             'payload' => [
                 'form_id' => 'signup_form',
-                'abandoned_field' => 'email'
+                'abandoned_field' => 'email',
             ],
-            'created_at' => now()
+            'created_at' => now(),
         ]);
 
         Livewire::actingAs($user)
@@ -52,7 +51,7 @@ class AbandonedFormsTest extends TestCase
             ->assertSee('email')
             ->assertSee('signup_form')
             ->assertSee('vis_123');
-            
+
         $otherBiz = TestCase::provisionTenant(['name' => 'Other Tenant']);
         $visit2 = Visit::create(['business_id' => $otherBiz->id, 'visitor_id' => 'vis_999', 'landing_page' => '/', 'created_at' => now()]);
         $session2 = Session::create(['business_id' => $otherBiz->id, 'visit_id' => $visit2->id, 'session_token' => 'tok2', 'started_at' => now(), 'created_at' => now()]);
@@ -62,11 +61,11 @@ class AbandonedFormsTest extends TestCase
             'event_name' => 'form.abandoned',
             'payload' => [
                 'form_id' => 'other_form',
-                'abandoned_field' => 'password'
+                'abandoned_field' => 'password',
             ],
-            'created_at' => now()
+            'created_at' => now(),
         ]);
-        
+
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->assertDontSee('vis_999');
@@ -77,11 +76,11 @@ class AbandonedFormsTest extends TestCase
             'event_name' => 'page.viewed',
             'payload' => [
                 'form_id' => 'wrong_form',
-                'abandoned_field' => 'wrong_field'
+                'abandoned_field' => 'wrong_field',
             ],
-            'created_at' => now()
+            'created_at' => now(),
         ]);
-        
+
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->assertDontSee('wrong_form');
@@ -101,9 +100,9 @@ class AbandonedFormsTest extends TestCase
             'event_name' => 'form.abandoned',
             'payload' => [
                 'form_id' => 'signup_form',
-                'abandoned_field' => 'email'
+                'abandoned_field' => 'email',
             ],
-            'created_at' => now()
+            'created_at' => now(),
         ]);
 
         Event::fake();
@@ -113,7 +112,7 @@ class AbandonedFormsTest extends TestCase
             ->call('recover', $event->id)
             ->assertSee('drafted (sending not wired yet)');
 
-        Event::assertNotDispatched(\App\Modules\CSms\Events\SendRequested::class);
+        Event::assertNotDispatched(SendRequested::class);
         Event::assertNotDispatched(\App\Modules\X127\Events\SendRequested::class);
         Event::assertNotDispatched(\App\Modules\X186\Events\SendRequested::class);
     }

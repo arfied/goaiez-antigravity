@@ -336,6 +336,50 @@ class UiReviewSeeder extends Seeder
             }
         }
 
+        if (DB::table('attribution_queries')->where('business_id', $businessId)->count() < 2) {
+            DB::table('attribution_queries')->insert([
+                [
+                    'business_id' => $businessId,
+                    'job_id' => 101,
+                    'job_value' => null,
+                    'touches' => json_encode([['source' => 'organic_search']]),
+                    'attribution_status' => 'single',
+                    'created_at' => now()->subDays(2),
+                    'updated_at' => now()->subDays(2),
+                ],
+                [
+                    'business_id' => $businessId,
+                    'job_id' => 102,
+                    'job_value' => 50000,
+                    'touches' => json_encode([['source' => 'google_cpc'], ['source' => 'direct']]),
+                    'attribution_status' => 'ambiguous',
+                    'created_at' => now()->subDays(1),
+                    'updated_at' => now()->subDays(1),
+                ],
+            ]);
+        }
+
+        if (PixelEvent::where('business_id', $businessId)->where('event_name', 'form.abandoned')->count() < 2) {
+            $sess1 = Session::where('business_id', $businessId)->first();
+            $sess2 = Session::where('business_id', $businessId)->skip(1)->first();
+            if ($sess1 && $sess2) {
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $sess1->id,
+                    'event_name' => 'form.abandoned',
+                    'payload' => ['form_id' => 'contact_form', 'abandoned_field' => 'email'],
+                    'created_at' => now()->subHours(2),
+                ]);
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $sess2->id,
+                    'event_name' => 'form.abandoned',
+                    'payload' => ['form_id' => 'quote_form', 'abandoned_field' => 'phone'],
+                    'created_at' => now()->subHours(1),
+                ]);
+            }
+        }
+
         app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());
         app(ProofNumbers::class)->recompute(ProofNumbers::ALL);
 
