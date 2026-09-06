@@ -128,7 +128,7 @@ class X171Test extends TestCase
         $output = shell_exec($grepCommand);
 
         $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
-            return !empty($line) && !str_contains($line, 'capabilities.php');
+            return ! empty($line) && ! str_contains($line, 'capabilities.php');
         });
 
         $this->assertEmpty($lines, 'No path under app/Modules/X-171/ should consult a credit, balance, or cap store.');
