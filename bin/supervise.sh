@@ -159,7 +159,23 @@ if [ $want_tests -eq 1 ]; then
     echo "  rerun when idle; this is not a code finding"
     fail=1
   else
+  PEST_LOCK=/home/goaiez/tmp/pest.lock
+  lock_held=1
+  : >> "$PEST_LOCK" 2>/dev/null || PEST_LOCK=
+  if [ -n "$PEST_LOCK" ] && command -v flock >/dev/null 2>&1; then
+    exec 9>>"$PEST_LOCK"
+    if ! flock -n 9; then
+      echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+      flock -w 2400 9 || lock_held=0
+    fi
+  fi
+  if [ $lock_held -eq 0 ]; then
+    echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+    echo '{"tool":"pest","result":"lock-timeout"}' > /home/goaiez/tmp/last-pest-grs-antig-pricebook.json
+    fail=1
+  else
   out=$(DB_DATABASE=$TEST_DB timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  flock -u 9 2>/dev/null
   printf '%s' "$out" | tail -1 > /home/goaiez/tmp/last-pest-$(basename "$(git rev-parse --show-toplevel)").json
   [ $rc -ne 0 ] && fail=1
   [ $rc -eq 124 ] && echo "  ⛔ TIMEOUT — pest passed 1800s and was killed (rc 124). The number below, if any, is partial."
@@ -181,6 +197,7 @@ if n>5: print("   … %d more" % (n-5))'
   else
     echo "  (pest printed no JSON summary line — rc $rc; raw tail:)"
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
+  fi
   fi
   fi
 fi
