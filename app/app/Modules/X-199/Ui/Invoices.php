@@ -13,13 +13,34 @@ class Invoices extends Component
     #[Locked]
     public int $businessId = 0;
 
+    #[Locked]
+    public bool $isSample = false;
+
+    #[Locked]
+    public ?string $loadError = null;
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId;
+    }
+
     public function render()
     {
-        $invoices = ($this->businessId > 0)
-            ? Invoice::where('business_id', $this->businessId)->get()
-            : collect();
+        if ($this->businessId === 0) {
+            return view('x-199::invoices', [
+                'totalCents' => 0,
+                'invoices' => collect(),
+            ]);
+        }
+
+        $invoices = Invoice::where('business_id', $this->businessId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $totalCents = $invoices->sum('total_cents');
 
         return view('x-199::invoices', [
+            'totalCents' => $totalCents,
             'invoices' => $invoices,
         ]);
     }
