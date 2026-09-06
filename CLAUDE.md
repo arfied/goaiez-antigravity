@@ -1437,3 +1437,28 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     name*. **So: every inherited follow-up is re-measured against the tree before it becomes a
     brief item, and a follow-up struck for being moot is recorded with its measurement, never
     silently dropped.** A supervisor's own ledger decays exactly like a merge does.
+65. **phpstan does not read `app/tests`, so ruling 58's seam detector is blind to half the seam,
+    and a class relocation resolved in the component and left in the test survives every gate
+    but the suite (RULED by the lane supervisor 2026-09-06 15:3x, on MONEY-78's `a36e199f`).**
+    `app/phpstan.neon:5-6` is `paths: - app/` — that is `app/app/`, and `app/tests/` is outside
+    it. When main deleted `X-121/Models/{Conversation,Message}` and relocated them to
+    `App\Models\` (ruling 58 shape (3)), `X-211/Ui/InvoiceThreadBeside.php:7-8` was corrected and
+    `tests/Modules/X-211/InvoiceThreadBesideScreenTest.php:8` was not. phpstan reports `0`, pint
+    `passed`, `php -l` clean, the classmap fine — and the test errors `Class
+    "App\Modules\X121\Models\Conversation" not found`, the lane's last self-owned red, carried
+    invisibly through three waves. **So: after any class move, the grep for readers covers
+    `app/tests` explicitly**, because the only gate that resolves a class across two files does
+    not look there. ⚠️ **The fix is not the import alone.** `App\Models\Conversation:53` is
+    `protected $guarded = ['id', 'business_id']` where the deleted X-121 model was not, so
+    `Conversation::create(['business_id' => …])` now **silently drops** that key and
+    `BelongsToTenant` fills it from `Tenancy` instead — a fixture that lands on the right tenant
+    by luck, and an isolation assertion that would pass for the wrong reason the day it stops.
+    Any fixture moved onto a guarded-tenant model sets `Tenancy` first and **asserts the created
+    row's `business_id`**. ⛔ **`person_id` is correct and never becomes `customer_id`:**
+    `conversations` carries both (`2026_07_30_111419:25` and X-121's reconcile migration
+    `2026_08_31_000007:21-23`), and the only production writer,
+    `X-01/Domain/UnifiedInboxManager.php:74-77`, writes `person_id` under `Tenancy::actingAs` —
+    so `InvoiceThreadBeside.php:87` and `ArEngine.php:228` read the live column and switching
+    them would be ruling 51's empty-forever screen. ⚠️ The generalisable half for every lane: a
+    lane that relocates a class breaks receiving lanes' **tests** silently, weeks later; that is
+    now TRACK 1 ACTION item 4's lesson, not just its instance.
