@@ -1808,6 +1808,10 @@
   {
    "at": "2026-09-06T04:55:20",
    "note": "the eight capability refusals reached the generated files by regeneration"
+  },
+  {
+   "at": "2026-09-06T06:10:38",
+   "note": "J11 ssl \u2014 JourneyHarness::publishSite() (line 667) creates a Page and calls SiteEngine::publish() and provisions no EdgeZone, so X-157/ModuleServiceProvider.php:73's SitePublished listener returns at :74 before EdgeDeployAction at :87 and ssl_installed keeps SiteEngine.php:57's honest false. The fix is one line in publishSite(), which owner ruling 1 does not open to this lane: publishSite() is a private helper, not a todo(). Filed as TRACK 1 ACTION 1."
   }
  ]
 }
