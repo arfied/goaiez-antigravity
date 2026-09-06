@@ -268,6 +268,44 @@ final class OwnerNav
             // language (`22`) — the label is what the person is about to do,
             // not the module it opens, so no "Support" and no "Tickets".
             OwnerNavItem::make('Ask us something', 'account.support', OwnerNavItem::GROUP_MORE),
+
+            // The list of forms people gave up on (X-110). Under More because it is
+            // a thing checked periodically rather than an everyday surface.
+            // ⚠️ THIS ENTRY IS THE WHOLE OF THE SCREEN'S REACHABILITY AND IT IS
+            // NOT OPTIONAL POLISH. Architecture/OwnerNavTest fails the build on
+            // an owner screen with neither a nav entry nor a written exclusion,
+            // and this is the only way a person can see these abandoned forms.
+            // A screen nobody can find is useless.
+            OwnerNavItem::make('Forms people gave up on', 'x-110.abandoned-forms', OwnerNavItem::GROUP_MORE),
+
+            // Verifying the tag installation (X-110). Under More on the same
+            // distinction — it is used during initial setup or troubleshooting,
+            // not every day.
+            // ⚠️ THIS ENTRY IS NOT NAVIGATION POLISH. Architecture/OwnerNavTest
+            // fails the build on an owner screen that lacks both a nav entry
+            // and an exclusion. This is the only place a tenant can confirm their
+            // tag is working. A screen nobody can reach would leave them guessing
+            // whether we are actually collecting their data.
+            OwnerNavItem::make('Is our tag working', 'x-110.install-verify', OwnerNavItem::GROUP_MORE),
+
+            // What their pages earn (X-138). Ruled to be under More deliberately,
+            // despite being potentially daily: the primary row is a design the
+            // owner has already seen, and re-cutting it is a nav question.
+            // ⚠️ THIS ENTRY IS THE ONLY DOOR TO THIS ATTRIBUTION DATA.
+            // Architecture/OwnerNavTest refuses to let an owner screen exist
+            // without a nav entry or a written exclusion, and it also refuses
+            // hand-written links between screens. A screen without a nav entry
+            // would be unreachable, leaving the revenue numbers hidden.
+            OwnerNavItem::make('What your pages earn', 'x-138.attribution-row', OwnerNavItem::GROUP_MORE),
+
+            // Where the business is listed (X-192). Placed under More because
+            // directory registrations are generally set and forgotten.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH. Architecture/OwnerNavTest
+            // fails the build on any owner screen with neither a nav entry nor
+            // a written exclusion. This is the canonical owner door for directory
+            // memberships, so a screen nobody can navigate to would leave the
+            // owner unable to manage their listings.
+            OwnerNavItem::make('Where you are listed', 'x-192.memberships-list', OwnerNavItem::GROUP_MORE),
         ];
     }
 
