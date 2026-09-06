@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T22:41:26",
+ "updated": "2026-09-05T23:07:57",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -492,10 +492,23 @@
    "unresolved": []
   },
   "X-01": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 6,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G11-41: app/app/Modules/X-01/Ui/CustomersList.php:51 does not sort the thread list by LTV. The LTV metric and logic are missing and owned by C-Billing.",
+     "at": "2026-09-05T23:07:57"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-16: app/app/Modules/X-01/Ui/views/thread.blade.php lacks 'Rep A is typing' presence. Broadcasting presence channel is missing, requiring WebSocket/Echo setup owned by C-Agent.",
+     "at": "2026-09-05T23:07:57"
+    }
+   ]
   },
   "X-07": {
    "status": "DONE",
@@ -1519,6 +1532,18 @@
    "stage": "capability",
    "why": "lint asks for enumeration on messageClass, the type is an open string domain, phpstan refuses the enumeration",
    "at": "2026-09-05T22:41:26"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G11-41: app/app/Modules/X-01/Ui/CustomersList.php:51 does not sort the thread list by LTV. The LTV metric and logic are missing and owned by C-Billing.",
+   "at": "2026-09-05T23:07:57"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-16: app/app/Modules/X-01/Ui/views/thread.blade.php lacks 'Rep A is typing' presence. Broadcasting presence channel is missing, requiring WebSocket/Echo setup owned by C-Agent.",
+   "at": "2026-09-05T23:07:57"
   }
  ],
  "decisions": [
