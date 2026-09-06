@@ -23,6 +23,9 @@ class X183Test extends TestCase
         $this->assertTrue($engine->noSamplePrices('real price $10'));
     }
 
+    /**
+     * [G12-29]
+     */
     public function test_g12_29_rejects_sample_prices()
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
@@ -56,6 +59,9 @@ class X183Test extends TestCase
         });
     }
 
+    /**
+     * [G2-11]
+     */
     public function test_g2_11_rejects_case_study_without_consent()
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
@@ -87,6 +93,9 @@ class X183Test extends TestCase
         });
     }
 
+    /**
+     * [G5-35]
+     */
     public function test_g5_35_enforces_real_data_double_consent()
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
@@ -118,6 +127,9 @@ class X183Test extends TestCase
         });
     }
 
+    /**
+     * [G6-04]
+     */
     public function test_g6_04_publishes_case_study_with_consent()
     {
         $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
