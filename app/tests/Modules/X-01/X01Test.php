@@ -257,7 +257,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-76] the unified inbox is the header's first line
-     * ⛔ REFUSED: surveyed Domain and Ui and found no seam or method for rendering the header's first line; no Header component exists
+     * ⛔ REFUSED: surveyed UnifiedInboxManager (ingestMessage, takeover, replyWithTakeover, scoreLead) and Ui/Thread (mount, draftAiReply, sendReply, render) and found no seam; app/app/Modules/X-01/Ui/ contains no Header component. The owner header lives in core at app/app/Support/Account/OwnerNav.php and orders the inbox fourth, contradicting the capability cross-lane.
      */
     public function test_g2_76_unified_inbox_header(): void
     {
