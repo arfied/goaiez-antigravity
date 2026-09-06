@@ -180,7 +180,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
-     * ⛔ REFUSED: G5-37 — the takeover latch is X-01's (R21)
+     * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt (HUMAN_TAKEOVER_LATCH is declared but unconsulted). Owner: C-Agent
      */
     public function test_g5_37_takeover_latch(): void
     {
@@ -319,6 +319,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G12-25] negative-sentiment handoff; the takeover latch is X-01's (R21)
+     * BUILD PROPOSAL: G12-25 (second half) — the C-Agent side wire for the takeover latch is unbuilt (HUMAN_TAKEOVER_LATCH is declared but unconsulted). Owner: C-Agent. The first half is closed by the test below asserting NEGATIVE_SENTIMENT_HANDOFF.
      */
     public function test_g12_25_negative_sentiment_handoff(): void
     {
