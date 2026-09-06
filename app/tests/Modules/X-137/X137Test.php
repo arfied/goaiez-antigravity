@@ -101,7 +101,7 @@ class X137Test extends TestCase
             allocatedNumber: '+15550000001',
             campaignSource: 'test_g311'
         );
-        $this->assertEquals('sess_g311', $token->visitor_session_token);
+        $this->assertEquals('Call from test_g311', $token->whisper_text);
     }
 
     #[Test]
@@ -117,7 +117,7 @@ class X137Test extends TestCase
             allocatedNumber: '+15550000002',
             campaignSource: 'test_g813'
         );
-        $this->assertEquals('sess_g813', $token->visitor_session_token);
+        $this->assertEquals('Call from test_g813', $token->whisper_text);
     }
 
     #[Test]
