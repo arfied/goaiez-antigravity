@@ -989,3 +989,15 @@
 - `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G17-03 — no asset, device or hardware table; `Person` is another module's model and greps nowhere in X-113
 - `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G20-02 — no review-cycle table and no manager relation; nothing to nag about
 - `2026-09-06T10:57:37` UNRESOLVED capability X-113 - G21-08 — `routes.generated.php` declares four routes — `/staff`, `/roles`, `/permission-matrix`, `/document-vault` — and no `/pto`; no time-off table exists
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G3-13 — the ⑤'s own text is "named in the header"; there is no clause to assert and naming one authors the ⑤ (P-210)
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G3-61 — same as G3-13 — the ⑤ is "named in the header"; no clause (P-210)
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G3-62 — the ⑤ is "= G3-61; one spec" and G3-61 itself carries no clause (P-210)
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G4-19 — the ⑤ is "named in the header"; no clause (P-210)
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G8-05 — the ⑤ is "named in the header"; no clause (P-210)
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G8-06 — the ⑤ is "= the row above; one spec" and G8-05 carries no clause (P-210)
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G8-11 — the ⑤ is "named in the header"; no clause (P-210)
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G8-34 — the ⑤ is "placement monitoring is named in the header" — no clause; and the only body under it asserts `is_active`, whose migration default is `true` (2026_08_30_000118_create_x191_link_tables.php:47), so the assertion reads a hardcoded literal, not a decision
+- `2026-09-06T11:18:16` UNRESOLVED capability X-191 - G12-14 — the ⑤ is "named in the header"; no clause (P-210)
+- `2026-09-06T11:18:17` UNRESOLVED capability X-191 - G12-15 — "a yes from the editor drafts through X-183's gate": grep -rniE 'editor|draft' app/app/Modules/X-191/ returns nothing outside capabilities.php; there is no editor-reply column and the draft gate is X-183's module, not this one
+- `2026-09-06T11:18:17` UNRESOLVED capability X-191 - G17-09 — the ⑤ is "named in the header"; no clause (P-210)
+- `2026-09-06T11:18:55` (R245) X-191 — R245 — X-191's follow-up ceiling (LinkPitchAction:72, over link_pitches.follow_up_count) and its page-fact gate (LinkPitchAction:37, over link_pitches.page_specific_fact) are the two clauses this module decides; G8-20, G8-21, G12-07, G17-06 and G11-34 are credited on the anchor body that asserts them and the other eleven rows carry no clause X-191 can assert (S-113)

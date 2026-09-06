@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T10:57:37",
+ "updated": "2026-09-06T11:18:55",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1555,10 +1555,77 @@
    ]
   },
   "X-191": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 30,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G3-13 \u2014 the \u2464's own text is \"named in the header\"; there is no clause to assert and naming one authors the \u2464 (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G3-61 \u2014 same as G3-13 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G3-62 \u2014 the \u2464 is \"= G3-61; one spec\" and G3-61 itself carries no clause (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G4-19 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G8-05 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G8-06 \u2014 the \u2464 is \"= the row above; one spec\" and G8-05 carries no clause (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G8-11 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G8-34 \u2014 the \u2464 is \"placement monitoring is named in the header\" \u2014 no clause; and the only body under it asserts `is_active`, whose migration default is `true` (2026_08_30_000118_create_x191_link_tables.php:47), so the assertion reads a hardcoded literal, not a decision",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G12-14 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:18:16"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G12-15 \u2014 \"a yes from the editor drafts through X-183's gate\": grep -rniE 'editor|draft' app/app/Modules/X-191/ returns nothing outside capabilities.php; there is no editor-reply column and the draft gate is X-183's module, not this one",
+     "at": "2026-09-06T11:18:17"
+    },
+    {
+     "module": "X-191",
+     "stage": "capability",
+     "why": "G17-09 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+     "at": "2026-09-06T11:18:17"
+    }
+   ]
   },
   "X-192": {
    "status": "DONE",
@@ -2816,6 +2883,72 @@
    "stage": "capability",
    "why": "G21-08 \u2014 `routes.generated.php` declares four routes \u2014 `/staff`, `/roles`, `/permission-matrix`, `/document-vault` \u2014 and no `/pto`; no time-off table exists",
    "at": "2026-09-06T10:57:37"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G3-13 \u2014 the \u2464's own text is \"named in the header\"; there is no clause to assert and naming one authors the \u2464 (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G3-61 \u2014 same as G3-13 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G3-62 \u2014 the \u2464 is \"= G3-61; one spec\" and G3-61 itself carries no clause (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G4-19 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G8-05 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G8-06 \u2014 the \u2464 is \"= the row above; one spec\" and G8-05 carries no clause (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G8-11 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G8-34 \u2014 the \u2464 is \"placement monitoring is named in the header\" \u2014 no clause; and the only body under it asserts `is_active`, whose migration default is `true` (2026_08_30_000118_create_x191_link_tables.php:47), so the assertion reads a hardcoded literal, not a decision",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G12-14 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:18:16"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G12-15 \u2014 \"a yes from the editor drafts through X-183's gate\": grep -rniE 'editor|draft' app/app/Modules/X-191/ returns nothing outside capabilities.php; there is no editor-reply column and the draft gate is X-183's module, not this one",
+   "at": "2026-09-06T11:18:17"
+  },
+  {
+   "module": "X-191",
+   "stage": "capability",
+   "why": "G17-09 \u2014 the \u2464 is \"named in the header\"; no clause (P-210)",
+   "at": "2026-09-06T11:18:17"
   }
  ],
  "decisions": [
@@ -2907,6 +3040,12 @@
    "module": "X-202",
    "chose": "R245: an id filed UNRESOLVED is never left credited by a docblock over an assertion-free test; the remedy is a real assertion or the removal of the comment (tick 444, REVIEWS.md)",
    "at": "2026-09-06T07:18:33",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-191",
+   "chose": "R245 \u2014 X-191's follow-up ceiling (LinkPitchAction:72, over link_pitches.follow_up_count) and its page-fact gate (LinkPitchAction:37, over link_pitches.page_specific_fact) are the two clauses this module decides; G8-20, G8-21, G12-07, G17-06 and G11-34 are credited on the anchor body that asserts them and the other eleven rows carry no clause X-191 can assert (S-113)",
+   "at": "2026-09-06T11:18:55",
    "ruling": "R245"
   }
  ],
