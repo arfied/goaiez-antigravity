@@ -6,7 +6,6 @@ namespace App\Modules\X198\Listeners;
 
 use App\Modules\X117\Events\CartCheckedOut;
 use App\Modules\X117\Models\Order;
-use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X198\Models\MerchantConnection;
 
 /**
@@ -26,4 +25,3 @@ final class CaptureCheckedOutCart
         // The token we have is only a nonce, not a Stripe-issued source token.
     }
 }
-

@@ -10,6 +10,8 @@ use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X117\Ui\CheckoutBlock;
+use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -97,20 +99,23 @@ class CheckoutBlockScreenTest extends TestCase
         $biz = self::provisionTenant();
         Tenancy::set($biz->id);
 
-        app(\App\Modules\X198\Domain\GatewayEngine::class)->connect($biz->id, 'stripe', 'acct_test_x117');
+        app(GatewayEngine::class)->connect($biz->id, 'stripe', 'acct_test_x117');
 
-        $client = new class {
+        $client = new class
+        {
             public int $calls = 0;
-            public function charge(int $amountCents, string $source, string $currency = 'USD'): string {
+
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            {
                 $this->calls++;
                 throw new \RuntimeException('Stripe client should not be called.');
             }
         };
 
-        $this->app->instance(\App\Modules\X198\Domain\StripeGatewayClient::class, $client);
+        $this->app->instance(StripeGatewayClient::class, $client);
 
         $filter = Sellable::create(['business_id' => $biz->id, 'name' => 'Test Item', 'sku' => 'TEST-1', 'inventory_quantity' => 1, 'unit_price_cents' => 1000, 'fulfilment_type' => 'physical']);
-        (new \App\Modules\X117\Actions\CartAddAction)->handle($biz->id, 'sess_x', $filter->id);
+        (new CartAddAction)->handle($biz->id, 'sess_x', $filter->id);
 
         $screen = Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_x']);
         $screen->call('authorise');
