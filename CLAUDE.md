@@ -14,10 +14,10 @@ you hold the coder to them. Your side of the arrangement is
 
 | Supervisor (you) | Coder (Antigravity) |
 | :--- | :--- |
-| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh` | Edits `app/**`, works `bin/state.py next`, commits |
+| Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh`, and `bin/state.py` (owner grant 2026-09-06 — `bin/**` is a BLOCK for every lane coder, so the tool itself could be maintained by nobody) | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Commits only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`) as `chore(supervisor): …` — the coder guard refuses those paths, so merge step 0 is the supervisor's (run 67, 2026-09-05). **Pushes only a sha it has gated and recorded in REVIEWS**, by explicit ref (`git push origin <sha>:main`), never a branch head, never `--force` (the owner opened the push 2026-09-05 06:4x). **Never:** migrate, touch a database, edit `app/**`, edit `.claude/settings.json` (the owner's file), run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push (the guard stays closed), edit sealed or generated files |
+| **Commits only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`, `bin/state.py`) as `chore(supervisor): …` — the coder guard refuses those paths, so merge step 0 is the supervisor's (run 67, 2026-09-05). **Pushes only a sha it has gated and recorded in REVIEWS**, by explicit ref (`git push origin <sha>:main`), never a branch head, never `--force` (the owner opened the push 2026-09-05 06:4x). **Never:** migrate, touch a database, edit `app/**`, edit `.claude/settings.json` (the owner's file), run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push (the guard stays closed), edit sealed or generated files |
 
 `.claude/settings.json` enforces your column. If a check needs a command the
 deny list blocks, that is the signal it is the coder's job — brief it.
@@ -62,6 +62,12 @@ Green gates are necessary, not sufficient. For every commit in
 - **Decisions are recorded, not just made.** Every `(R245)` in a module header
   has a matching `state.py decided` line in `JOURNAL.md`.
 - **`UNRESOLVED` names a missing dependency**, not an unmade decision (rule 09).
+  A withdrawal goes through `state.py resolve <id> <stage> --reason <why...>`
+  (added `c699a785`, 2026-09-06) and shows up in `JOURNAL.md` as `RESOLVED …
+  (was: <original why>)`. Read the reason: it must say what arrived, not that
+  the module was retried. `resolve` returns the module to **BUILDING**, never
+  `DONE` — a report that pairs a withdrawal with a `done` in the same breath and
+  no gate between them is the count-did-not-fall trap wearing a new hat.
 - **Generated files** (`app/Modules/*/manifest.php`, `capabilities.php`) changed
   only via regeneration — the commit that touches them also touches the plan or
   tracker, or the report says `module:scaffold` ran.
