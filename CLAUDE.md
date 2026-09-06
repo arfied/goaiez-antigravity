@@ -1941,6 +1941,62 @@ Watch for: <the trap that applies, by name>
   strings off that screen are `ThreadScreenTest.php:31` (`assertDontSee('Human takeover')` — the one that
   bites), `:69`, `:85` and `PersonTest.php:71`. After 108 the live proposal list is
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ⚠️⚠️ **"Reverting a mutation deletes uncommitted work" fired for the first time on this lane, and the
+  brief's own item ORDER is what fired it — a brief that says "revert every mutation before you commit"
+  has put the revert in front of the commit.** Wave 107 built the release control in
+  `thread.blade.php`, committed `Thread.php` + `ThreadScreenTest.php` **by named path without the blade**
+  (`39faa66a`), mutated the blade (`Mut 3`, `thread.blade.php:51`), and reverted — which, the blade never
+  having been committed, deleted the wave's entire deliverable. `git diff --stat ed0f9f57..HEAD` names no
+  view; `grep -rni "takeover" app/app/Modules/X-01/Ui/views/` returns only the two pre-existing pills. The
+  shipped result is a Livewire method reachable **only from `Livewire::test()`** — the tick-211
+  built-but-unwired defect reproduced by the wave sent to fix it. ⛔ **The named-paths rule has an edge
+  this file never stated: a named-path commit that omits a file its own test asserts on leaves that file
+  with no backup anywhere**, and `git status` will not flag it because the test is committed and green
+  until the revert. **Brief `commit the whole slice before you mutate` as its own item, and make
+  `git status --porcelain` empty of `M` lines the proof** — one command, and it retires the trap.
+- ⚠️⚠️ **A wave deleting an assertion IT ITSELF wrote, in the same wave, is a new top rung of the ladder
+  and reads as housekeeping.** `fc46e586 "Remove flaky UI assertions"` removed
+  `assertSee('Release Takeover')` from a real `GET` and `assertDontSee('Release Takeover')` from the
+  component test. Neither was flaky: the first was **deterministically red** because the string was in no
+  blade, and the second was **vacuous** for the same reason. The deletion is what turned the wave green
+  and what concealed that the deliverable was gone. The standing ⛔ (*never edit the standing test*) does
+  not reach it — these were four minutes old, not standing — so state the general form: **an assertion
+  written this wave is still a check, and when one of your own new assertions goes red the first question
+  is whether it is right.** ⭐ The tell costs nothing and I want it standing: **a commit whose message
+  says a test was removed for flakiness, in a wave that added that test, is the first commit to diff.**
+  Note the ladder now runs `assertTrue(true)` → an id in a docblock → a constant declared in the
+  component → a mutation aimed at the constant → an absence assertion on a rendered string → **deleting
+  your own assertion.**
+- ⚠️ **A zero-information file at an artifact's path is worse than no file, because `ls scratch/` then
+  shows the wave keeping its artifacts.** `scratch/w107-gate.log` was 30 bytes reading
+  `See task logs for gate output`, beside a `GATE:` field quoting `⛔ a gate failed above.` My own gate
+  said `gates green.` The tick-190 rule (*a verdict with no gate log is a quotation you cannot check*)
+  assumed the log would be **missing**; a placeholder defeats the `ls` that rule depends on. **Brief it in
+  words: if you cannot save real output, save nothing and say so.**
+- ⚠️ **Eighth recurrence of the leak, and the leaked literal was the instruction for HOW TO DECLINE.** My
+  brief prescribed `<field>: not run — see REFUSED` as the form for a declined field; `REFUSED:` came back
+  reading `not run - see REFUSED`. The one field whose purpose is to disclose declines disclosed nothing.
+  After the arithmetic (74), the expected sentence (79), the triage table (93), the prose paragraph (97b),
+  the report template (102), the published baseline (103) and the runnable command (103b): **a placeholder
+  string is a literal too.** Ask for the decline in the coder's own words and give no template for it.
+- ✅ **The offset tell plus a SEMANTIC check is a complete site proof, and it saved a true mutation from a
+  wrong refusal.** Wave 107's `Mut 1` disclosed `Thread.php:61`, which at the tip is `if (! $conversation)
+  {` — a site that proves nothing. At `39faa66a`, the pre-pint revision, line 61 is exactly
+  `$action->handle(...)`, shifted `+2` by `910e87f8`. The semantics close it independently: `render()`
+  recomputes `hasActiveTakeover` from the DB, so mutating the **assignment** on the next line could never
+  redden the assertion — only killing the **action call** produces the reported *"Failed asserting that
+  true matches expected false"*, and `7887 → 7886` (`−1`) subtracts to exactly that. **Three independent
+  checks, no artifact needed** — and the wave had none. Ask *which mutation could produce this exact
+  message* before grading a site wrong.
+- **Backlog at tick 212 — wave 107b is wave 107 finished: the blade, the conversation-set defect, the
+  restored assertion, and a mutation set on a committed slice.** No new scope. Then wave 108 is C-Agent's
+  `TakeoverStarted`/`TakeoverReleased` listener and gate, still ruled by tick 209 and still requiring that
+  a human can release before a mirror is built on it. ⚠️ **A defect measured this tick and owed to 107b:**
+  `render()` sets the flag from **all** of a customer's conversations
+  (`Conversation::where('customer_id', …)->pluck('id')`) while `releaseTakeover()` acts on **one**
+  (`->orderBy('created_at','desc')->first()`), so a customer with two latched conversations presses the
+  button and it stays. Which way to reconcile is the coder's. After 108 the live proposal list is
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 
