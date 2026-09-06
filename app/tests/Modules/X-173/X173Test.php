@@ -103,7 +103,7 @@ class X173Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $connection = $this->connectAction->connect($biz->id, 'xero', 'realm_xyz');
-        
+
         $transactions = [
             ['ref' => 'inv_tx_missing', 'description' => 'missing both'],
         ];
@@ -111,7 +111,7 @@ class X173Test extends TestCase
 
         $this->assertEquals(0, $syncResult['records_synced']);
         $this->assertEquals(1, $syncResult['conflicts_count']);
-        
+
         $conflict = AccountingSyncConflict::where('business_id', $biz->id)->where('transaction_ref', 'inv_tx_missing')->first();
         $this->assertEquals('uncategorised', $conflict->assigned_category);
         $this->assertTrue((bool) $conflict->flagged_for_review);
