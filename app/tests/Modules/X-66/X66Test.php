@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X66;
 
-use App\Models\User;
 use App\Modules\X66\Actions\VoiceAnswerAction;
 use App\Modules\X66\Actions\VoiceCoachAction;
 use App\Modules\X66\Actions\VoiceTransferAction;
@@ -13,10 +12,9 @@ use App\Modules\X66\Domain\VoiceSessionEngine;
 use App\Modules\X66\Events\CallAnswered;
 use App\Modules\X66\Events\CallRinging;
 use App\Modules\X66\Ui\Calls;
-use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Livewire\Livewire;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X66Test extends TestCase
@@ -142,19 +140,19 @@ class X66Test extends TestCase
      */
     public function test_g18_28_no_passive_enrolment_voiceprint_secure(): void
     {
-        \Illuminate\Support\Facades\Http::fake();
-        
+        Http::fake();
+
         $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
-        
+
         // Half (a): Assert no passive enrolment path exists on the real code surface
         $session = $this->engine->handleRing($biz->id, 'CA_SID_PASSIVE', '+15125550144', '+15125550100');
         $this->engine->handleAnswer($biz->id, $session->id);
         $this->engine->recordTurn($biz->id, $session->id, 1, 'caller', 'Hello');
-        
+
         // The real path makes no HTTP calls to enrol a voiceprint passively
-        \Illuminate\Support\Facades\Http::assertNothingSent();
-        
+        Http::assertNothingSent();
+
         // Half (b): voiceprint is a secure field
         $this->markTestIncomplete('UNRESOLVED: half (b) - there is no voiceprint column in this tree at all, and this lane owns it');
     }
