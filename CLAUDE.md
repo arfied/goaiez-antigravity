@@ -1173,3 +1173,43 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **inside another lane's test**, which is the most misattributable shape there is;
     Track 1 nearly filed six such errors against two innocent lanes (`OWNER.md` 14:0x).
     **A number that moves without a commit is not a number.**
+53. **A merge policy that does not name every conflicting path aborts, and the uncovered
+    path was `.gitignore` (RULED by the lane supervisor 2026-09-06 14:0x, on MONEY-76's
+    run 91).** The brief's resolution policy named four non-`app/**` paths and a rule for
+    `app/**`; the conflict set contained a fortieth path it did not cover, so the coder —
+    correctly, per the brief's own condition — ran `git merge --abort` and threw away a
+    39-path resolution it had already done right. **`.gitignore` takes `origin/main`'s
+    side whole:** money's side is `+4` (`.agents/supervisor/*`,
+    `!…/launch-coder.sh`), main's is `+7` — **the same two rules** plus two comments and
+    `scratch/`, a strict superset appended at the same EOF. Nothing of money's is lost,
+    and afterwards money's copy is identical to main's, so the reverse merge carries no
+    money-side hunk. ⛔ Not resolved by taking money's side (it drops `scratch/` and
+    re-opens the reverse-merge hunk six rulings were spent avoiding). **Standing:** every
+    merge brief carries a **default clause** — an uncovered conflicting path is resolved
+    by *reporting it and stopping with the merge still staged*, never by aborting and
+    never by guessing. ⚠️ `git merge --abort` is the one action with a history of
+    destroying this lane's ledger (2026-09-04 13:07); run 91 survived it only because
+    `c987815c` had committed the supervisor's files first.
+54. **Money's lane is EIGHT modules, and a whole-side pick on a two-sided file is not a
+    resolution (RULED by the lane supervisor 2026-09-06 14:0x, on run 91's conflict
+    list).** Ruling 52's `app/**` policy kept money's side for `X-117 X-198 X-199 X-211`
+    and gave *everything else* to main whole — written from ruling 5's superseded list.
+    **Ruling 20 widened this lane to X-199 · X-198 · X-120 · X-117 · X-201 · X-211 ·
+    C-Billing · X-173** and extended ruling 17's `Ui/` override to every screen of those
+    modules. Measured: C-Billing's four `Ui/views/` (+100 +61 +88 +47), X-120's
+    card-screen (+62), X-173's three (+40 +62 +48) and X-201's two (+52 +42) carry
+    **619 lines of this lane's own gated, pushed work**, against **one** generated
+    `<x-surface.sample-state …/>` line each on main — so all ten keep **money's** side.
+    ⚠️ **The harness inverts it:** money `+60`, main **`+387`**, so
+    `JourneyHarness.php` takes **main's copy as the base** and money's five J9/J12 methods
+    (`issueInvoice`, `payInvoice`, `invoiceStatus`, `makeOverdue`, `lastDunningAction` —
+    one contiguous region) are re-applied onto it; that is ruling 1's scope and ruling 6's
+    ownership exactly. ⚠️ `X-201/Domain/DisputeDefenseEngine.php` is genuinely two-sided —
+    both sides add **additive refusals to `submit()` at the same line** — so they
+    **compose**: money's `status !== 'compiled'` guard first, then main's deadline and
+    evidence-completeness guards. ⛔ Dropping either is the One Rule. **Standing rule:** a
+    conflict means both sides changed the file, so `--ours`/`--theirs` on a whole file is
+    a resolution only when one side is measurably a superset or measurably empty —
+    **measure `git diff <base> HEAD --stat -- <path>` against
+    `git diff <base> origin/main --stat -- <path>` before assigning any path a side**, and
+    where both carry substance, resolve per hunk and keep both.
