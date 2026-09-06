@@ -136,7 +136,12 @@ if [ "$MODE" = status ]; then
   orph=""
   for d in /proc/[0-9]*; do
     p=${d#/proc/}
-    read -r comm < "$d/comm" 2>/dev/null || continue
+    # 2>/dev/null on `read` does NOT silence a failed *redirect* — bash reports
+    # "No such file or directory" itself, and a pid that exits mid-scan is the
+    # normal case, not a finding. Seen 2026-09-06 06:5x on pid 2000446. Test the
+    # file first; the race can still lose, hence the `|| continue` as well.
+    [ -r "$d/comm" ] || continue
+    { read -r comm < "$d/comm"; } 2>/dev/null || continue
     case "$comm" in php*) ;; *) continue ;; esac
     c=$(readlink "$d/cwd" 2>/dev/null) || continue
     case "$c" in "$PWD"|"$PWD"/*) ;; *) continue ;; esac
@@ -198,6 +203,22 @@ if [ .agents/supervisor/REVIEWS.md -nt .agents/supervisor/KICKOFF.md ]; then
   exit 1
 fi
 
+
+# ── Run 68, 2026-09-06 04:4x. The supervisor committed cc6bda58, then kept
+# editing bin/supervise.sh and this file, then dispatched over the dirty tree.
+# The coder's next commit swept both in: d625bae5 "chore(X-199): fix customer_id
+# table in seeder, with person" carries 37 lines of supervisor gate logic, and
+# because supervise.sh §2 only ever looked at HEAD~1..HEAD it reported "none".
+# The coder is not at fault for a file it never opened — the dispatch is. A
+# supervisor-owned path that is dirty at dispatch WILL end up in a coder commit,
+# so refuse here rather than discover it two commits later.
+dirty_sup=$(git status --porcelain -- .agents/supervisor/launch-coder.sh bin CLAUDE.md .claude 2>/dev/null)
+if [ -n "$dirty_sup" ]; then
+  echo "REFUSED: supervisor-owned files are uncommitted — commit them as chore(supervisor) first."
+  printf '%s\n' "$dirty_sup" | sed 's/^/         /'
+  echo "         (BRIEF.md, REVIEWS.md, KICKOFF.md and .tick-* are mailbox files and are not checked here.)"
+  exit 1
+fi
 
 # Snapshot the supervisor's uncommitted files before every dispatch (a coder
 # reset/checkout/stash wiped them once, 2026-09-02 15:31).
