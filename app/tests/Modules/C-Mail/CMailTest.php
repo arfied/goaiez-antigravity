@@ -417,7 +417,18 @@ class CMailTest extends TestCase
     }
 
     /**
-     * [G9-21], [G11-06], [G11-09], [G11-10], [G11-11], [G11-12], [G11-15], [G11-17], [G11-18], [G11-29], [G11-38]
+     * ⛔ REFUSED: G11-06 — the capability's own text is "named in the header"; there is no clause to assert
+     * BUILD PROPOSAL: G11-09 — a test send scored before the campaign has not been built yet; C-Mail is owned by this lane (EmailWarmupAction.php, EmailSendAction.php)
+     * BUILD PROPOSAL: G11-10 — the pre-send bounce and spam-trap gate has not been built yet; C-Mail is owned by this lane (EmailSendAction::handle():26)
+     * ⛔ REFUSED: G11-11 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-12 (first half) — the capability's own text is "named in the header"; there is no clause to assert
+     * BUILD PROPOSAL: G11-12 (second half) — the live bridge from C-Mail to X-01 has not been built yet; both are owned by this lane (EmailSendAction, UnifiedInboxManager::ingestMessage)
+     * ⛔ REFUSED: G11-15 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-17 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-18 — the capability's own text is "= the row above; one spec"; it points at G11-17, which is itself "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-29 — the capability's own text is "named in the header"; there is no clause to assert
+     * ⛔ REFUSED: G11-38 — the capability's own text is "named in the header"; there is no clause to assert
+     * UNRESOLVED: G9-21 — primary-vs-spam placement per network requires an external seed service not owned by this tree (capabilities.php:37)
      */
     public function test_header_capabilities(): void
     {

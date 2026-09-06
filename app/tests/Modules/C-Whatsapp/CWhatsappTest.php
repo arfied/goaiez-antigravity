@@ -145,7 +145,7 @@ class CWhatsappTest extends TestCase
     /**
      * [G19-22] GBP through Zernio; every channel lands on ONE Conversation
      * ⛔ REFUSED: G19-22 (Zernio half) — GBP runs through Zernio
-     * ⛔ REFUSED: G19-22 (positive half) — every channel lands on ONE Conversation (No live path from C-Whatsapp to X-01; identity tested in X01Test)
+     * BUILD PROPOSAL: G19-22 (positive half) — the live bridge from C-Whatsapp to X-01 has not been built yet; both are owned by this lane (WhatsappEngine::recordInbound, UnifiedInboxManager::ingestMessage:26)
      */
     public function test_g19_22_single_conversation(): void
     {

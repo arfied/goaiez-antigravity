@@ -842,3 +842,5 @@
 - `2026-09-06T00:22:53` UNRESOLVED capability X-66 - G18-28 half (b): 'the voiceprint is a secure field'. Checked app/app/Modules/X-66/capabilities.php:43 and models. There is no voiceprint column in this tree at all, and THIS LANE OWNS IT.
 - `2026-09-06T01:27:10` UNRESOLVED capability X-194 - App\Models\Location owns location timezones, X-194 cannot read it
 - `2026-09-06T01:50:34` UNRESOLVED capability X-124 - X-111 owns escalation target
+- `2026-09-06T02:41:02` UNRESOLVED integrity C-Mail - G9-21 (C-Mail: capabilities.php:37): external seed service for primary-vs-spam placement per network
+- `2026-09-06T02:41:10` UNRESOLVED capability C-Mail - G9-21 (capabilities.php:37): external seed service for primary-vs-spam placement per network is an external dependency not owned by this tree

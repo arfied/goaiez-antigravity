@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T01:50:34",
+ "updated": "2026-09-06T02:41:10",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -425,6 +425,18 @@
      "stage": "capability",
      "why": "G11-03: mail_domains.dkim_public_key has no producer \u2014 no keypair generator or provider integration exists in this tree; owned by whichever sending provider C-Mail is configured against",
      "at": "2026-09-05T22:20:29"
+    },
+    {
+     "module": "C-Mail",
+     "stage": "integrity",
+     "why": "G9-21 (C-Mail: capabilities.php:37): external seed service for primary-vs-spam placement per network",
+     "at": "2026-09-06T02:41:02"
+    },
+    {
+     "module": "C-Mail",
+     "stage": "capability",
+     "why": "G9-21 (capabilities.php:37): external seed service for primary-vs-spam placement per network is an external dependency not owned by this tree",
+     "at": "2026-09-06T02:41:10"
     }
    ]
   },
@@ -1607,6 +1619,18 @@
    "stage": "capability",
    "why": "X-111 owns escalation target",
    "at": "2026-09-06T01:50:34"
+  },
+  {
+   "module": "C-Mail",
+   "stage": "integrity",
+   "why": "G9-21 (C-Mail: capabilities.php:37): external seed service for primary-vs-spam placement per network",
+   "at": "2026-09-06T02:41:02"
+  },
+  {
+   "module": "C-Mail",
+   "stage": "capability",
+   "why": "G9-21 (capabilities.php:37): external seed service for primary-vs-spam placement per network is an external dependency not owned by this tree",
+   "at": "2026-09-06T02:41:10"
   }
  ],
  "decisions": [
