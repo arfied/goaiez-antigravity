@@ -23,7 +23,11 @@
 @endforeach
 </ul>
 @endif
-<p class="text-sm text-ink-2">Deadline: waiting on the gateway&#039;s chargeback webhook; inside 48 hours of it a person is raised whatever the state.</p>
+@if($d->deadline_at)
+<p class="text-sm text-ink-2">Deadline: {{ $d->deadline_at->format('j M Y') }}. Nothing watches this clock yet, so no one is raised as it nears.</p>
+@else
+<p class="text-sm text-ink-2">Deadline: none yet. The gateway's chargeback webhook sets it, and no such webhook reaches this checkout.</p>
+@endif
 @if($d->is_open)
 <form wire:submit="addNote({{ $d->id }})" class="mt-3 flex flex-wrap items-center gap-2">
 <input type="text" wire:model="note.{{ $d->id }}" placeholder="What only you know about this job" class="border rounded px-2 py-1 w-64">

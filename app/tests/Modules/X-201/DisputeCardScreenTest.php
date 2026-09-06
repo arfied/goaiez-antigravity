@@ -11,6 +11,7 @@ use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Ui\DisputeCard;
 use App\Support\Tenancy;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -41,7 +42,7 @@ class DisputeCardScreenTest extends TestCase
             ->assertSee('850.00')
             ->assertSee('unrecognized_transaction')
             ->assertSee('0 evidence items')
-            ->assertSee("waiting on the gateway's chargeback webhook")
+            ->assertSee("The gateway's chargeback webhook sets it, and no such webhook reaches this checkout.")
             ->assertSee('Invoice #903')
             ->assertSee('lost')
             ->assertDontSee('Invoice #777')
@@ -86,5 +87,26 @@ class DisputeCardScreenTest extends TestCase
             ->assertOk()
             ->assertSee('no such webhook is received in this checkout, so no bundle exists to add to yet')
             ->assertSee('You compile the bundle from the dispute queue and add what only you know.');
+    }
+
+    public function test_a_dispute_carrying_a_deadline_says_nothing_watches_that_clock()
+    {
+        Carbon::setTestNow('2026-09-10 09:00:00');
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $dispute = app(DisputeRecordAction::class)->handle($biz->id, 905, 42000, 'product_not_received');
+        Dispute::whereKey($dispute->id)->update(['deadline_at' => Carbon::now()->addDays(10)]);
+
+        Livewire::actingAs($owner)->test(DisputeCard::class)
+            ->assertOk()
+            ->assertSee('Deadline: 20 Sep 2026.')
+            ->assertSee('Nothing watches this clock yet, so no one is raised as it nears.')
+            ->assertDontSee('no such webhook reaches this checkout');
+
+        Carbon::setTestNow();
     }
 }
