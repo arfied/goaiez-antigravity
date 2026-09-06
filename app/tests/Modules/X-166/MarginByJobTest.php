@@ -129,4 +129,29 @@ class MarginByJobTest extends TestCase
             ->call('toggle', $cost->id)
             ->assertSee('50.00');
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([JobCosted::class, MarginBelowThreshold::class]);
+
+        app(JobCostAction::class)->handle(
+            businessId: $biz->id,
+            jobId: 999,
+            priceBookVersion: 'v2.1',
+            laborCostCents: 10000,
+            materialsCostCents: 10000,
+            overheadCostCents: 10000,
+            revenueCents: 81123
+        );
+
+        $this->actingAs($user);
+        $this->get(route('x-166.margin-by-job'))->assertOk()->assertSee('811.23');
+    }
 }

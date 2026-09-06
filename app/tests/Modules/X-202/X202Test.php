@@ -240,14 +240,6 @@ class X202Test extends TestCase
     }
 
     /**
-     * [G12-04] approval granted the publish action fires
-     */
-    public function test_g12_04_approval_granted_publish(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G12-09] thirty graphics, one decision
      */
     public function test_g12_09_batch_decision(): void

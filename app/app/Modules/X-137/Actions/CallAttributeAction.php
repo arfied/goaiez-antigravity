@@ -8,10 +8,60 @@ use App\Modules\X137\Events\CallAttributed;
 use App\Modules\X137\Events\VisitJoinedToCall;
 use App\Modules\X137\Models\CallToken;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
 final class CallAttributeAction
 {
+    /**
+     * Allocate a DNI call token from the business pool.
+     */
+    public function allocateFromPool(
+        int $businessId,
+        string $visitorSessionToken,
+        string $campaignSource = 'google_cpc',
+        int $ttlMinutes = 30
+    ): CallToken {
+        $poolNumbers = DB::table('dni_pool_numbers')
+            ->where('business_id', $businessId)
+            ->pluck('phone_number')
+            ->toArray();
+
+        $activeTokens = CallToken::where('business_id', $businessId)
+            ->where('status', 'active')
+            ->where('expires_at', '>', Carbon::now())
+            ->whereIn('allocated_number', $poolNumbers)
+            ->pluck('allocated_number')
+            ->toArray();
+
+        $availableNumbers = array_diff($poolNumbers, $activeTokens);
+
+        if (empty($availableNumbers)) {
+            $setting = DB::table('dni_pool_settings')->where('business_id', $businessId)->first();
+
+            if ($setting === null) {
+                throw new \DomainException('BUSINESS_NOT_CONFIGURED_FOR_DNI');
+            }
+
+            $fallback = $setting->fallback_number;
+
+            return CallToken::create([
+                'business_id' => $businessId,
+                'visitor_session_token' => $visitorSessionToken,
+                'allocated_number' => $fallback,
+                'campaign_source' => $campaignSource,
+                'whisper_text' => "Call from {$campaignSource}",
+                'expires_at' => Carbon::now()->addMinutes($ttlMinutes),
+                'status' => 'unattributed',
+                'is_static' => false,
+            ]);
+        }
+
+        $allocatedNumber = array_values($availableNumbers)[0];
+
+        return $this->allocateToken($businessId, $visitorSessionToken, $allocatedNumber, $campaignSource, $ttlMinutes, false);
+    }
+
     /**
      * Allocate a DNI call token for a visitor (G3-11, G8-13, G13-19).
      */
@@ -24,6 +74,20 @@ final class CallAttributeAction
         bool $offlineCampaign = false
     ): CallToken {
         if ($offlineCampaign) {
+            $conflicting = CallToken::where('business_id', $businessId)
+                ->where('allocated_number', $allocatedNumber)
+                ->where('status', 'active')
+                ->where(function ($query) {
+                    $query->whereNull('expires_at')
+                        ->orWhere('expires_at', '>', Carbon::now());
+                })
+                ->where('campaign_source', '!=', $campaignSource)
+                ->first();
+
+            if ($conflicting !== null) {
+                throw new \DomainException('NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN');
+            }
+
             $existing = CallToken::where('business_id', $businessId)
                 ->where('campaign_source', $campaignSource)
                 ->where('status', 'active')
@@ -56,6 +120,20 @@ final class CallAttributeAction
         string $allocatedNumber,
         string $campaignSource
     ): CallToken {
+        $conflicting = CallToken::where('business_id', $businessId)
+            ->where('allocated_number', $allocatedNumber)
+            ->where('status', 'active')
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', Carbon::now());
+            })
+            ->where('campaign_source', '!=', $campaignSource)
+            ->first();
+
+        if ($conflicting !== null) {
+            throw new \DomainException('NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN');
+        }
+
         return CallToken::create([
             'business_id' => $businessId,
             'visitor_session_token' => null,

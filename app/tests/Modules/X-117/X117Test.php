@@ -10,6 +10,7 @@ use App\Modules\X117\Actions\OrderCancelAction;
 use App\Modules\X117\Domain\CheckoutEngine;
 use App\Modules\X117\Events\InventoryUpdated;
 use App\Modules\X117\Models\Order;
+use App\Modules\X117\Models\OrderLine;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
@@ -196,9 +197,96 @@ class X117Test extends TestCase
      * ⛔ REFUSED: G1-81: doctor asserts no platform-scope path.
      * ⛔ REFUSED: G1-82: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for pausing meters.
      * ⛔ REFUSED: G17-31: doctor asserts no conversion path.
+     * [G1-73], [G1-75], [G1-81], [G1-82] no refusal declared
      */
     public function test_no_refusal_declared(): void
     {
         $this->assertTrue(true);
+    }
+
+    /** [G18-29] */
+    public function test_g18_29_lifecycle_stops_at_money(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Checkout Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Physical Item',
+            'sku' => 'PHY-001',
+            'inventory_quantity' => 5,
+            'unit_price_cents' => 1500,
+            'fulfilment_type' => 'physical',
+        ]);
+
+        $res = $this->checkoutAction->handle(
+            businessId: $biz->id,
+            sellableId: $sellable->id,
+            quantity: 1,
+            freshAuthToken: 'auth_tok_'.uniqid()
+        );
+
+        $this->assertEquals('paid', $res['status']);
+
+        $order = Order::findOrFail($res['order_id']);
+        $this->assertEquals('paid', $order->status);
+
+        $orderLine = OrderLine::where('order_id', $order->id)->firstOrFail();
+
+        $this->assertContains($order->status, ['paid', 'cancelled', 'sold_out']);
+
+        $this->cancelAction->handle($biz->id, $order->id);
+        $order->refresh();
+        $this->assertEquals('cancelled', $order->status);
+
+        $allNames = array_merge(
+            array_keys($res),
+            array_keys($order->getAttributes()),
+            array_keys($orderLine->getAttributes()),
+            array_keys($sellable->getAttributes())
+        );
+
+        foreach ($allNames as $name) {
+            $this->assertDoesNotMatchRegularExpression(
+                '/(will_call|willcall|pickup|pick_up|driver|courier|shipment|waybill|tracking_number|delivery|dispatched_at)/i',
+                $name
+            );
+        }
+
+        $this->assertContains('status', $allNames);
+        $this->assertContains('total_cents', $allNames);
+        $this->assertContains('order_number', $allNames);
+        $this->assertGreaterThanOrEqual(18, count($allNames));
+
+        $sellableKeys = array_keys($sellable->getAttributes());
+        $orderKeys = array_keys($order->getAttributes());
+        $orderLineKeys = array_keys($orderLine->getAttributes());
+
+        $this->assertContains('fulfilment_type', $sellableKeys);
+        $this->assertNotContains('fulfilment_type', $orderKeys);
+        $this->assertNotContains('fulfilment_type', $orderLineKeys);
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-117')));
+        $files = [];
+        $controlCount = 0;
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && ! in_array($file->getBasename(), ['capabilities.php', 'manifest.php'])) {
+                $files[] = $file->getPathname();
+                if (preg_match('/Order|Cart|Sellable|Checkout/', $file->getBasename())) {
+                    $controlCount++;
+                }
+            }
+        }
+
+        $this->assertGreaterThanOrEqual(14, count($files));
+        $this->assertGreaterThanOrEqual(6, $controlCount);
+
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            $this->assertDoesNotMatchRegularExpression(
+                '/\b(will_call|willcall|pickup|pick_up|driver|courier|shipment|waybill|tracking_number|delivery_window|ready_for_pickup)\b/i',
+                $content
+            );
+        }
     }
 }

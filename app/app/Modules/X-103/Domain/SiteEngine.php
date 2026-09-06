@@ -48,7 +48,6 @@ final class SiteEngine
                 'commit_id' => $commitId,
                 'content_blocks' => $contentBlocks,
                 'pixel_installed' => in_array('pixel_script', $blockTypes, true), // G9-04 full-stack site law
-                'ssl_installed' => true, // G9-04 full-stack site law
                 'chat_installed' => in_array('chat_widget', $blockTypes, true), // G9-04 full-stack site law
                 'form_capture_installed' => in_array('form_capture', $blockTypes, true), // G9-04 full-stack site law
                 'dni_installed' => in_array('dni_script', $blockTypes, true), // G9-04 full-stack site law

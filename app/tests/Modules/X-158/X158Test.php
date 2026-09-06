@@ -32,6 +32,8 @@ class X158Test extends TestCase
      * every rendered video has a caption track;
      * the transcript of a demo video contains the demo number as digits;
      * a watch past 50% writes video.watched with depth
+     * [G3-25]
+     * [G9-30]
      */
     public function test_anchor_captions_present_demo_number_digits_and_watch_past_50_percent(): void
     {
@@ -42,7 +44,7 @@ class X158Test extends TestCase
 
         $demoNumber = 1042;
 
-        // 1. Render demo proposal video (TEST ANCHOR & G16-02, G16-30)
+        // 1. Render demo proposal video (TEST ANCHOR)
         $video = $this->renderAction->renderVideo(
             businessId: $biz->id,
             title: 'Automated Lead Qualification Demo',
@@ -50,7 +52,7 @@ class X158Test extends TestCase
         );
 
         $this->assertNotNull($video);
-        $this->assertNotEmpty($video->caption_track_url, 'Every rendered video has a caption track (TEST ANCHOR & G16-02)');
+        $this->assertNotEmpty($video->caption_track_url, 'Every rendered video has a caption track (TEST ANCHOR)');
         $this->assertStringContainsString((string) $demoNumber, $video->transcript, 'Transcript of demo video contains demo number as digits (TEST ANCHOR)');
         Event::assertDispatched(VideoRendered::class);
 
@@ -65,7 +67,7 @@ class X158Test extends TestCase
         $this->assertFalse($shortView->passed_50_percent);
         Event::assertNotDispatched(VideoWatched::class);
 
-        // 3. Playback past 50% (75% depth) -> writes view row and dispatches video.watched with depth (TEST ANCHOR & G3-25, G9-30)
+        // 3. Playback past 50% (75% depth) -> writes view row and dispatches video.watched with depth (TEST ANCHOR)
         $deepView = $this->hostAction->recordView(
             businessId: $biz->id,
             videoId: $video->id,
@@ -85,13 +87,5 @@ class X158Test extends TestCase
         $savedView = VideoView::where('business_id', $biz->id)->where('viewer_session_id', 'sess_user_002')->first();
         $this->assertNotNull($savedView);
         $this->assertTrue($savedView->passed_50_percent);
-    }
-
-    /**
-     * [G3-22], [G3-25], [G3-46], [G5-02], [G5-52], [G8-37], [G9-30], [G11-27], [G12-06], [G12-22], [G12-23], [G12-24], [G12-34], [G12-37], [G16-02], [G16-06], [G16-14], [G16-22], [G16-23], [G16-30], [G18-26], [G16-32]
-     */
-    public function test_video_capabilities(): void
-    {
-        $this->assertTrue(true);
     }
 }

@@ -48,6 +48,25 @@ class SyncFailureRateTest extends TestCase
             ->assertSee('No sync conflicts. Every device mutation replayed cleanly.');
     }
 
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        Event::fake([SyncConflict::class, JobCompleted::class]);
+
+        $user = User::factory()->withSecondFactor()->create(['role' => UserRole::SuperAdmin]);
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+
+        $action = app(ReplayOfflineSyncAction::class);
+        $deviceId = '259.99';
+
+        $action->replayMutation($biz->id, 'mut_conflict', $deviceId, 'job.completed', ['job_id' => 1, 'tech_id' => $user->id], 1, 2);
+
+        $this->actingAs($user)
+            ->get(route('x-171.sync-failure-rate.admin'))
+            ->assertOk()
+            ->assertSee('259.99');
+    }
+
     public function test_conflicts_and_processed_mutate_stats(): void
     {
         Event::fake([SyncConflict::class, JobCompleted::class]);

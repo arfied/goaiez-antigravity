@@ -165,7 +165,8 @@ class X102Test extends TestCase
     }
 
     /**
-     * [G13-15] the pixel triggers; the chat answers grounded
+     * [G13-15] an ungrounded question is refused; a grounded question's answer contains the fact
+     * // exit-intent trigger is filed UNRESOLVED (07:40:19, already in JOURNAL.md)
      */
     public function test_g13_15_grounded_answers(): void
     {
@@ -181,6 +182,38 @@ class X102Test extends TestCase
         $res2 = $this->escalateAction->answerQuestion($biz->id, 'what are your hours?', $fact);
         $this->assertEquals('answered', $res2['status']);
         $this->assertTrue(str_contains($res2['answer'], $fact));
+    }
+
+    /**
+     * [G13-15] an ungrounded question receives a hardcoded refusal string containing no numbers
+     */
+    public function test_g13_15_ungrounded_price_refuses(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Price Refusal', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->escalateAction->answerQuestion($biz->id, 'how much does the premium plan cost?', null);
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_GROUNDING_FACT', $res['refusal_code']);
+        $this->assertDoesNotMatchRegularExpression('/[\d$€£¥]/', $res['answer']);
+    }
+
+    /**
+     * [G13-15] given a grounding fact containing a specific figure, the answered path echoes that figure and no other number
+     */
+    public function test_g13_15_grounded_price_echoes_fact_without_invention(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Grounded Price Echo', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $fact = 'The premium plan costs 79.';
+        $res = $this->escalateAction->answerQuestion($biz->id, 'how much does the premium plan cost?', $fact);
+
+        $this->assertEquals('answered', $res['status']);
+
+        preg_match_all('/\d+/', $res['answer'], $matches);
+        $this->assertEquals(['79'], $matches[0]);
     }
 
     /**
@@ -216,9 +249,6 @@ class X102Test extends TestCase
         Event::assertDispatched(ChatEscalated::class);
     }
 
-    /**
-     * [G16-21] carousels rendered in the chat
-     */
     public function test_g16_21_chat_carousels(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Chat Carousel', 'currency' => 'USD']);
@@ -339,6 +369,7 @@ class X102Test extends TestCase
     /**
      * [G21-01] P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof. (Same class as the "just in time" webinar killed at G15-01.)
      */
+    #[Group('G21-01')]
     public function test_g21_01_no_manufactured_social_proof(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Social Proof', 'currency' => 'USD']);
