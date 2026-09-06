@@ -95,7 +95,7 @@ class DailyPricingDigestTest extends TestCase
         PriceBookItem::create([
             'business_id' => $biz->id,
             'service_name' => 'Digest Seam',
-            'price_cents' => 10000,
+            'price_cents' => 33488,
             'is_sample' => false,
             'is_confirmed' => false,
             'refusal_count' => 477,
@@ -103,6 +103,6 @@ class DailyPricingDigestTest extends TestCase
         ]);
 
         $this->actingAs($owner);
-        $this->get(route('x-163.daily-pricing-digest'))->assertOk()->assertSee('477');
+        $this->get(route('x-163.daily-pricing-digest'))->assertOk()->assertSee('334.88');
     }
 }

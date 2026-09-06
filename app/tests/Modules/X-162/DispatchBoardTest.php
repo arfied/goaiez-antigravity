@@ -104,4 +104,38 @@ class DispatchBoardTest extends TestCase
             'job_id' => $jobId,
         ]);
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $jobId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Dispatch Seam Job',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DispatchAssignment::create([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'tech_id' => 1,
+            'status' => 'en_route',
+            'en_route_at' => Carbon::now(),
+            'is_sample' => false,
+        ]);
+
+        EtaPrediction::create([
+            'business_id' => $biz->id,
+            'job_id' => $jobId,
+            'estimated_arrival_at' => Carbon::now()->addMinutes(718),
+            'eta_minutes' => 718,
+            'notification_sent_at' => Carbon::now(),
+        ]);
+
+        $this->actingAs($owner);
+        $this->get(route('x-162.dispatch-board'))->assertOk()->assertSee('718');
+    }
 }

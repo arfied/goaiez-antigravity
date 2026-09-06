@@ -118,4 +118,23 @@ class MapTest extends TestCase
             ->assertSeeInOrder(['Second stop', 'First stop'])
             ->assertSee('Unassigned');
     }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $firstId = DB::table('work_orders')->insertGetId([
+            'business_id' => $biz->id,
+            'title' => 'Map Seam Stop',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        app(RouteOptimiseAction::class)->handle($biz->id, 7, [$firstId], 257.7);
+
+        $this->actingAs($owner);
+        $this->get(route('x-162.map'))->assertOk()->assertSee('257.7');
+    }
 }
