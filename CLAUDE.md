@@ -613,3 +613,32 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     to make a generated string resolve is the annotation-driven change §298
     prohibits and would leave two events with one meaning; ruling 29's "build the
     emitter first" is already satisfied. Record `UNRESOLVED` with the reason.
+33. **A test that seeds rows against a `startOfWeek()` filter is a boundary bomb
+    unless the clock is frozen through the READ (RULED by the lane supervisor,
+    2026-09-06 09:1x, on MONEY-63's `edf53c97`).** `X-199/Ui/Declines.php:56`
+    filters `created_at >= now()->startOfWeek()`. MONEY-63's new test seeded the
+    literal `2026-09-06 10:00`/`10:05`, then cleared `Carbon::setTestNow()`
+    **before** the Livewire render, so the component computed `startOfWeek()`
+    from the real clock: green on Sunday 2026-09-06, red from Monday 00:00 when
+    both rows fall out of the window. The pre-existing `test_declines_screen` had
+    the same defect through `now()->subDay()` at `:39`. So, lane-wide: **a test
+    that seeds rows against a `startOfWeek()`/`startOfDay()` filter derives its
+    timestamps from `now()->startOfWeek()` and keeps the clock frozen through the
+    render**, clearing it only as the method's last line. A literal date, or a
+    relative offset with the clock cleared before the assertion, is green in the
+    same second and red across a boundary (556–558) and is refused at review.
+    ⚠️ Controlling the clock for the *writes* is not controlling it — MONEY-63
+    used `setTestNow()` correctly for both `capture()` calls and still shipped the
+    bomb. ⚠️ `$time2 = $time1->copy()->addMinutes(5)`: `addMinutes` mutates in
+    place, and two rows in the same second fail `Declines.php:66`'s strict `>`.
+34. **`pint` red on the tip is a BLOCK, and it is the inverse of the usual hazard
+    (measured 09:1x).** `bin/supervise.sh` §6 runs `./vendor/bin/pint --test` from
+    `app/` against the **working tree**. The familiar trap is a coder's
+    uncommitted pint fix making the gate green on the tree and red on the sha;
+    MONEY-63 hit the other side — `git diff --stat HEAD -- app/` was empty, so
+    §6's `result":"fail"` on `tests/Modules/X-199/DeclinesScreenTest.php` was red
+    on `edf53c97` itself. Ruling 26 forbids pushing a sha under a live BLOCK, and
+    a style-red tip is a red gate Track 1 did not author. **Check `git diff --stat
+    HEAD -- app/` alongside §6 every time**: empty means §6's verdict is the
+    sha's. The fix is one file — `./vendor/bin/pint <that path>`, never the tree,
+    since another lane's file is not this lane's to reformat.
