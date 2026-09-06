@@ -54,6 +54,7 @@ class DeclinesTest extends TestCase
 
         // 1. Data assertion + 3. Tenant isolation
         Livewire::test(Declines::class, ['businessId' => $biz->id])
+            ->assertSee('1 declined')
             ->assertSee('$880.00')
             ->assertSee('REF-DEC-001')
             ->assertDontSee('REF-DEC-002-ISOLATED')
@@ -63,6 +64,7 @@ class DeclinesTest extends TestCase
         // 2. Empty state
         OverflowCharge::where('business_id', $biz->id)->delete();
         Livewire::test(Declines::class, ['businessId' => $biz->id])
+            ->assertSee('0 declined')
             ->assertSee('$0.00')
             ->assertSee('No payments have been declined or reversed');
     }

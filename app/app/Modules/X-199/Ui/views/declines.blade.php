@@ -16,7 +16,11 @@
             @else
                 <div class="mb-4">
                     <p class="text-3xl font-display font-bold text-ink">${{ number_format($totalDeclined / 100, 2) }}</p>
-                    <p class="text-xs text-ink-2">Declined</p>
+                    <div class="flex items-center gap-1">
+                        <p class="text-xs text-ink-2">Declined</p>
+                        <p class="text-xs text-ink-2">&middot;</p>
+                        <p class="text-xs text-ink-2">{{ $charges->count() }} declined</p>
+                    </div>
                 </div>
                 @if($charges->isEmpty())
                     <x-ui.empty-state icon="✅" heading="No declines">
