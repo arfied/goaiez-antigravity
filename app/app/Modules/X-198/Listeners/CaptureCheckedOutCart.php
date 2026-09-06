@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\X198\Listeners;
 
 use App\Modules\X117\Events\CartCheckedOut;
-use App\Modules\X117\Models\Order;
 use App\Modules\X198\Models\MerchantConnection;
 
 /**
