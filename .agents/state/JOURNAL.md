@@ -864,3 +864,17 @@
 - `2026-09-06T16:31:25` UNRESOLVED G16-30 X-158 - X-158 exposes no script path from five questions.
 - `2026-09-06T16:31:25` UNRESOLVED G16-32 X-158 - renderVideo returns a URL string; nothing renders a frame and no output file exists to assert against.
 - `2026-09-06T16:32:44` (R245) X-158 — X-158's twenty-one open ids split fifteen REFUSE and six UNRESOLVED, none assertable — the module's surface is a video row, a view row, a render action, a host action and an empty domain class, and no ⑤ in the twenty-one names a refusal that surface can be held to. Supervisor ruling (REV-87).
+- `2026-09-06T16:49:22` stage capability = 297
+- `2026-09-06T16:53:39` stage capability = 290
+- `2026-09-06T16:53:47` (R245) X-200 — X-200's twenty-one open ids split: four ASSERT, three REFUSE (empty assertions that only restate the surface), and fourteen UNRESOLVED naming absent surface (such as no coaching surface, no scoreboard, no deals surface). Supervisor ruling.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G5-09 — X-200 exposes no coaching desk surface and X-197 is missing.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G9-01 — X-200 exposes no objection roll-up surface and X-194 is missing.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G11-25 — X-200 exposes no named header surface or closed set per campaign.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G16-11 — X-200 exposes no coaching library surface.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-03 — X-200 exposes no agent desktop record and X-01 is missing.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-06 — X-200 exposes no wellbeing prompt on the desk.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-08 — X-200 exposes no listen, whisper, or barge surface.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-15 — X-200 exposes no live queue state surface.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-19 — X-200 exposes no Twilio or Infobip primary surface.
+- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G21-13 — X-200 exposes no closed deal on the wallboard or channel surface.
+- `2026-09-06T17:13:02` (R245) X-200 — (R245) X-200 — 11 ASSERT, 0 REFUSE, 10 UNRESOLVED of twenty-one; capability ids are never deleted from the generated capabilities.php and never marked by editing it — a refusal is a test, an UNRESOLVED is state.py unresolved (REV-89)
