@@ -884,3 +884,11 @@
 - `2026-09-06T07:18:29` (R245) X-108 — R245: an id filed UNRESOLVED is never left credited by a docblock over an assertion-free test; the remedy is a real assertion or the removal of the comment (tick 444, REVIEWS.md)
 - `2026-09-06T07:18:33` (R245) X-117 — R245: an id filed UNRESOLVED is never left credited by a docblock over an assertion-free test; the remedy is a real assertion or the removal of the comment (tick 444, REVIEWS.md)
 - `2026-09-06T07:18:33` (R245) X-202 — R245: an id filed UNRESOLVED is never left credited by a docblock over an assertion-free test; the remedy is a real assertion or the removal of the comment (tick 444, REVIEWS.md)
+- `2026-09-06T08:50:49` UNRESOLVED capability X-138 - G13-04 no URL, slug or utm column in either table; no Action creates a link
+- `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G13-21 no short-linker in the module
+- `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G13-23 no QR encoder, column or Action
+- `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G13-33 grep -rn 'shortLinkFor' app/app/Modules/X-138/ returns nothing; the base driver is another module's
+- `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G17-24 both halves absent, per the two rows above
+- `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G13-06 there is no action log; touches arrives as an argument to queryJobAttribution()
+- `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G4-25 the ⑤ hands the term to X-195 — asserting it here authors another module's row (P-210)
+- `2026-09-06T08:50:54` UNRESOLVED capability X-138 - G9-34 prose about the header; there is no behaviour to assert (P-210)

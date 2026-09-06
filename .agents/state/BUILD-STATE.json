@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T07:18:33",
+ "updated": "2026-09-06T08:50:54",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -686,10 +686,59 @@
    "unresolved": []
   },
   "X-138": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 21,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-04 no URL, slug or utm column in either table; no Action creates a link",
+     "at": "2026-09-06T08:50:49"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-21 no short-linker in the module",
+     "at": "2026-09-06T08:50:54"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-23 no QR encoder, column or Action",
+     "at": "2026-09-06T08:50:54"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-33 grep -rn 'shortLinkFor' app/app/Modules/X-138/ returns nothing; the base driver is another module's",
+     "at": "2026-09-06T08:50:54"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G17-24 both halves absent, per the two rows above",
+     "at": "2026-09-06T08:50:54"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-06 there is no action log; touches arrives as an argument to queryJobAttribution()",
+     "at": "2026-09-06T08:50:54"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G4-25 the \u2464 hands the term to X-195 \u2014 asserting it here authors another module's row (P-210)",
+     "at": "2026-09-06T08:50:54"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G9-34 prose about the header; there is no behaviour to assert (P-210)",
+     "at": "2026-09-06T08:50:54"
+    }
+   ]
   },
   "X-139": {
    "status": "DONE",
@@ -1546,6 +1595,54 @@
    "stage": "schema",
    "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
    "at": "2026-09-06T05:42:49"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-04 no URL, slug or utm column in either table; no Action creates a link",
+   "at": "2026-09-06T08:50:49"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-21 no short-linker in the module",
+   "at": "2026-09-06T08:50:54"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-23 no QR encoder, column or Action",
+   "at": "2026-09-06T08:50:54"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-33 grep -rn 'shortLinkFor' app/app/Modules/X-138/ returns nothing; the base driver is another module's",
+   "at": "2026-09-06T08:50:54"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G17-24 both halves absent, per the two rows above",
+   "at": "2026-09-06T08:50:54"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-06 there is no action log; touches arrives as an argument to queryJobAttribution()",
+   "at": "2026-09-06T08:50:54"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G4-25 the \u2464 hands the term to X-195 \u2014 asserting it here authors another module's row (P-210)",
+   "at": "2026-09-06T08:50:54"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G9-34 prose about the header; there is no behaviour to assert (P-210)",
+   "at": "2026-09-06T08:50:54"
   }
  ],
  "decisions": [
