@@ -183,7 +183,6 @@ class X01Test extends TestCase
         $this->assertEquals('A', $score->grade);
     }
 
-
     /**
      * [G2-38] the grade is a lead_score; the data is X-134's and carries confidence (P-147)
      */
@@ -220,7 +219,6 @@ class X01Test extends TestCase
         $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('person_id', $other->id)->count(), 'the refused person has no lead_score at all');
         $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('lead_rating', 101)->count(), 'no row anywhere carries the refused rating');
     }
-
 
     /**
      * [G2-61] split: the score is a lead_score; the lookalike-seed half is FENCED (§44 · P-128)
