@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T01:21:00",
+ "updated": "2026-09-06T04:18:50",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1498,6 +1498,18 @@
    "module": "X-172",
    "chose": "G10-24 names refusal: a redline is SURFACED with a diff, never accepted",
    "at": "2026-09-06T01:21:00",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "G4-26 is proven as a law over the module directory. Supersedes UNRESOLVED 2026-09-05T23:49:19.",
+   "at": "2026-09-06T04:18:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-175",
+   "chose": "N-175-01 is asserted on a real throttled fixture using Http::fake throwing ConnectionException. Supersedes UNRESOLVED 2026-09-05T23:48:57.",
+   "at": "2026-09-06T04:18:50",
    "ruling": "R245"
   }
  ],

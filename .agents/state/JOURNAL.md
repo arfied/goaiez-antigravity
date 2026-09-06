@@ -783,3 +783,5 @@
 - `2026-09-06T01:15:49` (R245) X-172 — supersedes the 2026-09-05T08:35:23 UNRESOLVED: the named dependency app/tests/Modules/X-172/Screens/Fixtures.php arrived; generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
 - `2026-09-06T01:16:27` (R245) X-171 — (b) a law assertion: X-171 reads no credit or cap store at all; assert that no path under app/Modules/X-171/ consults one, and the directory is non-empty.
 - `2026-09-06T01:21:00` (R245) X-172 — G10-24 names refusal: a redline is SURFACED with a diff, never accepted
+- `2026-09-06T04:18:42` (R245) X-171 — G4-26 is proven as a law over the module directory. Supersedes UNRESOLVED 2026-09-05T23:49:19.
+- `2026-09-06T04:18:50` (R245) X-175 — N-175-01 is asserted on a real throttled fixture using Http::fake throwing ConnectionException. Supersedes UNRESOLVED 2026-09-05T23:48:57.
