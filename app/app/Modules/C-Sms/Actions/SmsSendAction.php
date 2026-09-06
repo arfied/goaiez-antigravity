@@ -16,6 +16,7 @@ use App\Services\Consent\ConsentService;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 final class SmsSendAction
 {
@@ -45,10 +46,9 @@ final class SmsSendAction
             ];
         }
 
-        $purposeEnum = match ($messageClass) {
-            'marketing' => OutreachPurpose::Marketing,
-            'transactional', 'opted_in', 'attested', 'customer_initiated' => OutreachPurpose::Transactional,
-        };
+        $purposeEnum = $messageClass === 'marketing'
+            ? OutreachPurpose::Marketing
+            : OutreachPurpose::Transactional;
 
         $decision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
 
@@ -102,7 +102,7 @@ final class SmsSendAction
         }
 
         $permit = $decision->permit;
-        $key = SendKey::for($permit, 'csms:'.\Illuminate\Support\Str::uuid()->toString());
+        $key = SendKey::for($permit, 'csms:'.Str::uuid()->toString());
 
         $message = OutboundMessage::for(
             permit: $permit,
