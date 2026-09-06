@@ -36,7 +36,12 @@ final class CardPresentAction
             throw new CardNumberInvalidException('The name on the card is needed; nothing was stored.');
         }
 
-        $brand = match ($digits[0]) {
+        $first = $digits[0];
+        if (! in_array($first, ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], true)) {
+            throw new CardNumberInvalidException('That card number does not check out; nothing was stored.');
+        }
+
+        $brand = match ($first) {
             '4' => 'visa',
             '5' => 'mastercard',
             '3' => 'amex',
