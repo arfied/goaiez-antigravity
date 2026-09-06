@@ -249,7 +249,7 @@ class X102Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
-        $action = app(\App\Modules\X102\Actions\ChatStartAction::class);
+        $action = app(ChatStartAction::class);
         $session = $action->handle($biz->id, '192.168.1.1', false);
 
         // The strongest structural fact: ChatStartAction creates a blank active session
