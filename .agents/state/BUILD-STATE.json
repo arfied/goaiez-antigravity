@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T12:42:08",
+ "updated": "2026-09-06T13:01:03",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2074,6 +2074,12 @@
    "chose": "re-credited G7-48 to existing assertion that deploy valid html contains application/ld+json and refuses invalid without it --ruling R245",
    "at": "2026-09-06T11:21:12",
    "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "EdgeProvisionAction stays test-only: it mints zone_id and ssl_certificate_id with Str::random() and takes has_valid_ssl as an argument, so a production caller would green J11's ssl element off a fabricated certificate. EdgeProvisionRefusalTest asserts the class is unreachable from app/app/. --ruling R245",
+   "at": "2026-09-06T13:01:03",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -2104,6 +2110,10 @@
   {
    "at": "2026-09-06T06:31:33",
    "note": "X-137 G18-17 \u2014 the whisper's two-leg assertion needs a real Infobip voice bridge: present on the agent leg, absent on the caller leg. The transport is C-Telephony (track sixty, ruling 5) and the credential is the owner's. X137Test.php:161 asserts whisper_text on the model, which is the most this lane can assert without the bridge."
+  },
+  {
+   "at": "2026-09-06T13:01:03",
+   "note": "X-157 edge.provision (manifest.php:32) is provided by an action that simulates Cloudflare \u2014 no HTTP client, no credential, Str::random() for both vendor identifiers. Real edge provisioning stays UNRESOLVED under ruling 16's vendor line (no CDN credential)."
   }
  ]
 }
