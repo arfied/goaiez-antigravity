@@ -215,8 +215,4 @@ final class PixelEngine
         ];
     }
 
-    public function enforceG902SingleDatabase(): bool
-    {
-        return true;
-    }
 }
