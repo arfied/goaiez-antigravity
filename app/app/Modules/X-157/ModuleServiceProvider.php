@@ -53,6 +53,27 @@ final class ModuleServiceProvider extends ServiceProvider
             return response($html, 200)->header('Content-Type', 'text/html');
         })->whereNumber('business');
 
+        Route::get('/sites/{business}/{deploy_hash}/dni', function (string $business, string $deployHash, Request $request) {
+            $businessId = (int) $business;
+            Tenancy::set($businessId);
+
+            $deployment = Deployment::where('business_id', $businessId)->where('deploy_hash', $deployHash)->firstOrFail();
+            abort_if($deployment->status !== 'deployed', 404);
+
+            $zone = $deployment->edgeZone;
+            abort_if($zone === null || ! $zone->has_valid_ssl, 404);
+
+            $token = app(\App\Modules\X137\Actions\CallAttributeAction::class)->allocateFromPool(
+                businessId: $businessId,
+                visitorSessionToken: $request->input('visitor_session_token', '')
+            );
+
+            return response()->json([
+                'number' => $token->allocated_number,
+                'status' => $token->status,
+            ]);
+        })->whereNumber('business');
+
         Route::post('/sites/{business}/{deploy_hash}/forms/{form}', function (string $business, string $deployHash, string $form, Request $request) {
             $businessId = (int) $business;
             Tenancy::set($businessId);

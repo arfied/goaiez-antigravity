@@ -38,7 +38,12 @@ final class CallAttributeAction
 
         if (empty($availableNumbers)) {
             $setting = DB::table('dni_pool_settings')->where('business_id', $businessId)->first();
-            $fallback = $setting ? $setting->fallback_number : '+10000000000';
+            
+            if ($setting === null) {
+                throw new \DomainException('BUSINESS_NOT_CONFIGURED_FOR_DNI');
+            }
+
+            $fallback = $setting->fallback_number;
 
             return CallToken::create([
                 'business_id' => $businessId,
