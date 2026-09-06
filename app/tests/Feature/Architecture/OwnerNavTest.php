@@ -9,6 +9,27 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Layout;
 
 /**
+ * ⚠️ THESE FOUR SCREENS ARE SAMPLES — THEY RENDER `<x-surface.sample-state>`
+ * AND DO NOT BELONG IN THE NAV.
+ * We hold them in a separate list rather than `$exclusions` because a written
+ * state-fact rots: the day somebody finishes the screen, the exclusion
+ * sentence becomes false and nothing anywhere objects.
+ * By asserting that every route in this list still renders "not built yet",
+ * the test intentionally goes RED the moment a screen improves. That failure
+ * is the design, not a broken test — it forces the developer to remove the
+ * route from here and add it to `OwnerNav` as a real screen.
+ */
+function sampleStateRoutes(): array
+{
+    return [
+        'x-110.cooling',
+        'x-110.visitors-live',
+        'x-110.tag-version-per',
+        'x-138.roi-dashboard',
+    ];
+}
+
+/**
  * @see \App\Modules\X110\Ui\views\pixel-install.blade.php
  * @see \App\Modules\X110\Ui\views\widget-install.blade.php
  *
@@ -33,25 +54,7 @@ test('every owner screen route has nav or exclusion', function () {
         'x192.memberships' => 'A second registration of the same component (X192\Ui\MembershipsList) from the module\'s hand-written routes.php at /memberships under [web,auth] — with no tenant.role, unlike the canonical owner door x-192.memberships-list. Two routes, one screen; raised to Track 1.',
     ];
 
-    /**
-     * ⚠️ THESE SIX SCREENS ARE SAMPLES — THEY RENDER `<x-surface.sample-state>`
-     * AND DO NOT BELONG IN THE NAV.
-     * We hold them in a separate list rather than `$exclusions` because a written
-     * state-fact rots: the day somebody finishes the screen, the exclusion
-     * sentence becomes false and nothing anywhere objects.
-     * By asserting that every route in this list still renders "not built yet",
-     * the test intentionally goes RED the moment a screen improves. That failure
-     * is the design, not a broken test — it forces the developer to remove the
-     * route from here and add it to `OwnerNav` as a real screen.
-     */
-    $sampleState = [
-        'x-110.cooling',
-        'x-110.visitors-live',
-        'x-110.tag-version-per',
-        'x-138.roi-dashboard',
-        'x-199.invoices',
-        'x-199.credits',
-    ];
+    $sampleState = sampleStateRoutes();
 
     $navRoutes = collect(OwnerNav::all())->pluck('route')->all();
     $alsoCurrentFor = [];
@@ -125,14 +128,7 @@ test('every sample-state exclusion is still a sample', function () {
         'name' => 'Test Business',
     ]);
 
-    $sampleState = [
-        'x-110.cooling',
-        'x-110.visitors-live',
-        'x-110.tag-version-per',
-        'x-138.roi-dashboard',
-        'x-199.invoices',
-        'x-199.credits',
-    ];
+    $sampleState = sampleStateRoutes();
 
     foreach ($sampleState as $route) {
         $url = route($route);

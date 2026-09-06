@@ -306,6 +306,28 @@ final class OwnerNav
             // memberships, so a screen nobody can navigate to would leave the
             // owner unable to manage their listings.
             OwnerNavItem::make('Where you are listed', 'x-192.memberships-list', OwnerNavItem::GROUP_MORE),
+
+            // Invoices the owner has sent (X-199). Under More because dealing
+            // with past billing is typically periodic, not a daily task.
+            // ⚠️ THIS ENTRY EXITS THE SCREEN FROM A WRONG MEASUREMENT.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen was held
+            // in SAMPLE_STATE, but its `$isSample` flag is dead — it defaults to
+            // false and nothing ever writes it, so the sample banner is unreachable
+            // by construction. A screen that never renders the banner is not a
+            // sample state, and leaving it out of the nav makes it unreachable.
+            OwnerNavItem::make('Invoices you sent', 'x-199.invoices', OwnerNavItem::GROUP_MORE),
+
+            // Credit the owner has extended to customers (X-199). Under More on
+            // the same distinction as the invoices screen: it is a financial
+            // ledger checked when necessary.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH. Like the invoices door,
+            // this route was wrongly listed as a sample state despite the
+            // `$isSample` property being dead and unwritable. Since the screen
+            // is a fully working generated view that never renders the banner
+            // on a real `GET`, it owes a nav entry. A screen nobody can find
+            // would leave every extended credit invisible to the funder.
+            OwnerNavItem::make("Credit you've extended", 'x-199.credits', OwnerNavItem::GROUP_MORE),
         ];
     }
 
