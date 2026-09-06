@@ -192,7 +192,7 @@ class X117Test extends TestCase
     }
 
     /**
-     * [G1-73], [G1-75], [G1-81], [G1-82], [G17-31] no refusal declared
+     * [G1-73], [G1-75], [G1-81], [G1-82] no refusal declared
      */
     public function test_no_refusal_declared(): void
     {
