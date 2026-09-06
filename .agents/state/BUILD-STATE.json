@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T16:31:06",
+ "updated": "2026-09-06T16:52:20",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1177,6 +1177,12 @@
      "stage": "capability",
      "why": "no seam for Event schema from X-108s calendar; grep for X-108 or calendar returned nothing, and app/app/Modules/X-176/Actions/SchemaRenderAction.php:17-26 has no event parameter, lacking a read dependency on X-108",
      "at": "2026-09-06T16:31:06"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "G8-14 needs an offer catalog for a business and X-163 exposes no catalog-shaped read - X-163/Actions/PriceLookupAction.php:13, X-163/Actions/PriceRangeAction.php:11, X-163/Actions/PriceConfirmAction.php:14, and X-163/Actions/PriceQuoteAction.php:15 are all per-service or per-quote, so X-157/Actions/EdgeDeployAction.php:170 has nothing to pass as productOffers and SchemaRenderAction.php:53 stays dead in production",
+     "at": "2026-09-06T16:52:20"
     }
    ]
   },
@@ -1958,6 +1964,12 @@
    "stage": "capability",
    "why": "no seam for Event schema from X-108s calendar; grep for X-108 or calendar returned nothing, and app/app/Modules/X-176/Actions/SchemaRenderAction.php:17-26 has no event parameter, lacking a read dependency on X-108",
    "at": "2026-09-06T16:31:06"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "G8-14 needs an offer catalog for a business and X-163 exposes no catalog-shaped read - X-163/Actions/PriceLookupAction.php:13, X-163/Actions/PriceRangeAction.php:11, X-163/Actions/PriceConfirmAction.php:14, and X-163/Actions/PriceQuoteAction.php:15 are all per-service or per-quote, so X-157/Actions/EdgeDeployAction.php:170 has nothing to pass as productOffers and SchemaRenderAction.php:53 stays dead in production",
+   "at": "2026-09-06T16:52:20"
   }
  ],
  "decisions": [
@@ -2162,6 +2174,14 @@
   {
    "at": "2026-09-06T13:01:03",
    "note": "X-157 edge.provision (manifest.php:32) is provided by an action that simulates Cloudflare \u2014 no HTTP client, no credential, Str::random() for both vendor identifiers. Real edge provisioning stays UNRESOLVED under ruling 16's vendor line (no CDN credential)."
+  },
+  {
+   "at": "2026-09-06T16:51:57",
+   "note": "X-176 CORRECTION to the G8-14 capability filing of 2026-09-06T16:31:03: its why names a missing read dependency on X-163 or X-119, but both modules exist and are fully built - app/app/Modules/X-163/Models/PriceBookItem.php, PriceBookVersion.php and Events/VersionBumped.php are present with migrations. The blocked thing is not the pricebook. See the SITE-110 measurement below."
+  },
+  {
+   "at": "2026-09-06T16:51:57",
+   "note": "X-176 CORRECTION to the G8-15 capability filing of 2026-09-06T16:31:06: its why implies X-108 is absent, but app/app/Modules/X-108 is fully built with Models/Appointment.php and Events/AppointmentBooked.php and a migration. The blocked thing is not the calendar module."
   }
  ]
 }
