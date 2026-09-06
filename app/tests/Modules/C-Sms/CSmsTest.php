@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CSms;
 
+use App\Contracts\MessageSender;
 use App\Modules\CSms\Actions\SmsComposeAction;
 use App\Modules\CSms\Actions\SmsHaltAction;
 use App\Modules\CSms\Actions\SmsSendAction;
@@ -31,7 +32,7 @@ class CSmsTest extends TestCase
         parent::setUp();
         $this->composer = new SmsComposer(new ConsentService);
         $this->compose = new SmsComposeAction($this->composer);
-        $this->send = new SmsSendAction($this->composer);
+        $this->send = new SmsSendAction(app(MessageSender::class), $this->composer);
         $this->halt = new SmsHaltAction($this->composer);
     }
 
@@ -146,9 +147,15 @@ class CSmsTest extends TestCase
      */
     public function test_g19_18_159_char_discipline(): void
     {
-        $body = 'Quick text https://g.ez/abc';
-        $calc = $this->compose->handle($body);
-        $this->assertEquals(1, $calc['segments']);
+        // 160 characters is 1 segment
+        $body160 = str_repeat('a', 160);
+        $calc160 = $this->compose->handle($body160);
+        $this->assertEquals(1, $calc160['segments']);
+
+        // 161 characters is 2 segments
+        $body161 = str_repeat('a', 161);
+        $calc161 = $this->compose->handle($body161);
+        $this->assertEquals(2, $calc161['segments']);
     }
 
     public function test_marketing_send_to_opted_in_recipient_is_not_refused(): void

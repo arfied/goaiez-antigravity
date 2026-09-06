@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T04:21:16",
+ "updated": "2026-09-06T05:15:18",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -403,10 +403,17 @@
    ]
   },
   "C-Sms": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 5,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "C-Sms",
+     "stage": "capability",
+     "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+     "at": "2026-09-05T11:22:12"
+    }
+   ]
   },
   "C-Telephony": {
    "status": "DONE",
@@ -427,117 +434,9 @@
    "unresolved": [
     {
      "module": "X-01",
-     "stage": "capability",
-     "why": "G2-16 \u2014 no presence system exists; grep -rni 'typing|presence' app/app/Modules/X-01 returns only capabilities.php:28, the capability text. There is no presence event, no broadcast channel, no typing column and no listener, so any assertion here would author the \u2464 (P-210).",
-     "at": "2026-09-05T09:37:15"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G19-08 \u2014 no ghost-risk system exists; grep -rn 'ghost' app/app/Modules/X-01 app/app/Models returns capabilities.php:76 and three identical x-surface.sample-state boilerplate paragraphs in Ui/views. No model, column, action or flag, and nothing is 'flagged before a send is wasted'.",
-     "at": "2026-09-05T09:37:16"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
-     "at": "2026-09-05T09:57:00"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
-     "at": "2026-09-05T09:57:00"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
-     "at": "2026-09-05T09:57:00"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
-     "at": "2026-09-05T09:57:00"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
-     "at": "2026-09-05T09:57:00"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
-     "at": "2026-09-05T09:57:00"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast.  is a  with no interface \u2014 it does not implement , so nothing leaves the process.",
-     "at": "2026-09-05T09:57:00"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
-     "at": "2026-09-05T09:57:09"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
-     "at": "2026-09-05T09:57:09"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
-     "at": "2026-09-05T09:57:09"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
-     "at": "2026-09-05T09:57:09"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
-     "at": "2026-09-05T09:57:09"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
-     "at": "2026-09-05T09:57:09"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast. Events/ConversationUpdated.php is a 'final class ConversationUpdated' with no interface \u2014 it does not implement ShouldBroadcast, so nothing leaves the process.",
-     "at": "2026-09-05T09:57:09"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "Refused G2-25. D1 is a design system (surface is blades/Livewire, Track 2). The 5 'honest counter' hits are all in app/app/Services/Ops/ (PlatformHealthSignal.php, PlatformHealth.php, etc.) - which is 9371's platform-health levelling rule, a different system from X-01's tenant inbox, and platform ops besides. No glassmorph/god mode hits anywhere.",
-     "at": "2026-09-05T10:30:04"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G2-25 \u2014 no marker set separates the two designs anywhere in the tree; grep -rnwi 'glassmorphism\\|god-mode' app/app/Modules app/resources/views returns nothing, so no honest assertion exists",
-     "at": "2026-09-05T12:48:11"
-    },
-    {
-     "module": "X-01",
-     "stage": "capability",
-     "why": "G19-15 \u2014 no polling or broadcasting system exists; grep -rn 'wire:poll\\|broadcast\\|Echo\\|dispatch(' app/app/Modules/X-01 returns only internal events and component dispatches, so no honest assertion exists",
-     "at": "2026-09-05T12:48:18"
+     "stage": "tests",
+     "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+     "at": "2026-09-05T17:11:31"
     }
    ]
   },
@@ -574,7 +473,7 @@
      "module": "X-103",
      "stage": "capability",
      "why": "The \u2464 is 'the review widget on the site; the plugin path is X-104\\'s'. 'grep -rniE \"(plugin\\|wordpress\\|shortcode\\|embed\\|widget\\|snippet\\|marketplace)\" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module \u2014 no column, no action, no engine method.",
-     "at": "2026-09-06T04:21:16"
+     "at": "2026-09-06T05:15:18"
     }
    ]
   },
@@ -591,47 +490,10 @@
    "unresolved": []
   },
   "X-108": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 7,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-108",
-     "stage": "capability",
-     "why": "G19-20 \u2014 no reminder system exists; grep -rn 'AppointmentReminded' app/app app/tests returns only the class declaration, so there is no 24h/1h/10min ladder, no scheduler and no credit meter to assert on",
-     "at": "2026-09-05T08:29:23"
-    },
-    {
-     "module": "X-108",
-     "stage": "capability",
-     "why": "G1-12 \u2014 X-108 has no payment surface; grep -rn 'iframe|card|token' app/app/Modules/X-108 returns only the capability text and one blade class attribute. The card/iframe boundary is X-120's and belongs to track money (ruling 5)",
-     "at": "2026-09-05T08:29:26"
-    },
-    {
-     "module": "X-108",
-     "stage": "capability",
-     "why": "G2-58 \u2014 no booking-questions column in migration 2026_08_30_000021 and no action reads one; the booking page is Track 2's (ruling 5)",
-     "at": "2026-09-05T08:29:31"
-    },
-    {
-     "module": "X-108",
-     "stage": "capability",
-     "why": "G2-49: NoShowDetected exists as a class. However, the event class exists with no dispatcher, nothing sets an appointment to a no-show state, and the marketing-defer arm the spec asks to assert in the same test has no reminder to follow \u2014 G19-20, its partner in the one spec at plan:31675, is already UNRESOLVED for that reason.",
-     "at": "2026-09-05T10:13:52"
-    },
-    {
-     "module": "X-108",
-     "stage": "capability",
-     "why": "G15-08: The out-of-office half is built and asserted: SchedulingEngine.php:167-169 throws SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule') on the booking door, and test_g2_13_out_of_office (X108Test.php:211) asserts both the availability door and that refusal message. Nothing is missing there. The \"X-10 skips an unavailable assignee\" half has no reader \u2014 `grep -rn \"X-108\\|Appointment\\|availability\\|assignee\" app/app/Modules/X-10 --include=*.php` returned nothing (exit code 1). The two-way sync half needs staff_calendar_links (X-209) and X-206's credential, neither of which this track owns or can create; `grep -rn \"staff_calendar_links\" app/app app/database --include=*.php` returned only X-209 migration/model/manifest lines.",
-     "at": "2026-09-05T10:14:06"
-    },
-    {
-     "module": "X-108",
-     "stage": "capability",
-     "why": "Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.",
-     "at": "2026-09-05T10:30:04"
-    }
-   ]
+   "unresolved": []
   },
   "X-109": {
    "status": "UNRESOLVED",
@@ -642,7 +504,7 @@
      "module": "X-109",
      "stage": "capability",
      "why": "ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.",
-     "at": "2026-09-06T04:21:16"
+     "at": "2026-09-06T05:15:18"
     }
    ]
   },
@@ -661,7 +523,7 @@
      "module": "X-111",
      "stage": "schema",
      "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
-     "at": "2026-09-06T04:21:16"
+     "at": "2026-09-06T05:15:18"
     }
    ]
   },
@@ -690,65 +552,10 @@
    "unresolved": []
   },
   "X-117": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 10,
    "intent": "SERVE",
-   "unresolved": [
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G6-02 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists. The card-vault surface belongs to X-120 (track money).",
-     "at": "2026-09-05T13:11:29"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G7-10 \u2014 no bundle system exists in X-117; grep -rnwi 'bundle' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists.",
-     "at": "2026-09-05T13:11:29"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G1-15 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
-     "at": "2026-09-05T13:11:29"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G1-39 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
-     "at": "2026-09-05T13:11:33"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G1-73 \u2014 fires only on a milestone the CUSTOMER accepted, never an internal status change; grep -rniE 'milestone' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of milestones is not implemented here",
-     "at": "2026-09-05T13:27:15"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G1-75 \u2014 a pricing STRUCTURE, not a promotion; grep -rniE 'structure|promotion' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pricing structures or promotions is not implemented here",
-     "at": "2026-09-05T13:27:15"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G1-81 \u2014 issuer_scope=tenant (R190) \u2014 a tenant gifts their customer; grep -rniE 'issuer|gift' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of gift cards or issuer scope is not implemented here",
-     "at": "2026-09-05T13:27:15"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G1-82 \u2014 pause STOPS the meter; grep -rniE 'pause|meter' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pausing or metering is not implemented here",
-     "at": "2026-09-05T13:27:15"
-    },
-    {
-     "module": "X-117",
-     "stage": "capability",
-     "why": "G17-31 \u2014 R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here",
-     "at": "2026-09-05T13:27:15"
-    }
-   ]
+   "unresolved": []
   },
   "X-118": {
    "status": "DONE",
@@ -981,7 +788,7 @@
      "module": "X-158",
      "stage": "capability",
      "why": "Read the module's migration. The 'videos' table has columns (id, business_id, title, demo_number, video_url, caption_track_url, transcript, is_rendered, timestamps) and 'video_views' table. There is no live-vs-replay column.",
-     "at": "2026-09-06T04:21:16"
+     "at": "2026-09-06T05:15:18"
     }
    ]
   },
@@ -1060,7 +867,7 @@
      "module": "X-170",
      "stage": "capability",
      "why": "The \u2464 is 'cleared commission into the payroll export'. 'grep -rniE \"(payroll|export)\" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.",
-     "at": "2026-09-06T04:21:16"
+     "at": "2026-09-06T05:15:18"
     }
    ]
   },
@@ -1071,10 +878,17 @@
    "unresolved": []
   },
   "X-172": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-172",
+     "stage": "tests",
+     "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+     "at": "2026-09-05T08:35:23"
+    }
+   ]
   },
   "X-173": {
    "status": "DONE",
@@ -1121,7 +935,7 @@
      "module": "X-180",
      "stage": "capability",
      "why": "The \u2464 is 'ad PACKS as content are not fenced (P-128);  P-120 \u2014 every claim verifiable'. It states two separate laws over the single Action that exists (PackSeedAction.php), so asserting either half authors the other (P-210).",
-     "at": "2026-09-06T04:21:16"
+     "at": "2026-09-06T05:15:18"
     }
    ]
   },
@@ -1138,90 +952,16 @@
    "unresolved": []
   },
   "X-183": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 29,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G12-02: ContentGateAction::evaluateGate() implements no grounding check; grep -rn 'grounding' app/app/Modules/X-183 returns only the docblock and capabilities.php",
-     "at": "2026-09-05T15:51:12"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G13-29: ContentGateAction::evaluateGate() implements no citation check; grep -rn 'citation' app/app/Modules/X-183 returns only capabilities.php",
-     "at": "2026-09-05T15:51:15"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G5-11 \u2014 grep -inr \"G5-11\" app/ returns only the capability text; no comment model, no escalation path",
-     "at": "2026-09-05T23:57:08"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G7-24 \u2014 grep -inr \"G7-24\" app/ returns only the capability text; nothing marks a draft human or AI",
-     "at": "2026-09-05T23:57:13"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G8-39 \u2014 grep -inr \"G8-39\" app/ returns only the capability text; no grounding check \u2014 same absence as G12-02",
-     "at": "2026-09-05T23:57:13"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G9-17 \u2014 grep -inr \"G9-17\" app/ returns only the capability text; nothing marks a draft a summary",
-     "at": "2026-09-05T23:57:13"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G9-22 \u2014 grep -inr \"G9-22\" app/ returns only the capability text; no extraction, no provenance column",
-     "at": "2026-09-05T23:57:13"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G12-05 \u2014 grep -inr \"G12-05\" app/ returns only the capability text; no builder/plugin publish target in the module",
-     "at": "2026-09-05T23:57:13"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G16-03 \u2014 grep -inr \"G16-03\" app/ returns only the capability text; content_drafts has no content-type column so the gate cannot distinguish long-form, and no honest assertion exists",
-     "at": "2026-09-05T23:57:13"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G16-28 \u2014 grep -inr \"G16-28\" app/ returns only the capability text; nothing marks a draft a transcript",
-     "at": "2026-09-05T23:57:14"
-    },
-    {
-     "module": "X-183",
-     "stage": "capability",
-     "why": "G20-15 \u2014 grep -inr \"G20-15\" app/ returns only the capability text; no link from a draft to a review",
-     "at": "2026-09-05T23:57:14"
-    }
-   ]
+   "unresolved": []
   },
   "X-184": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 29,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-184",
-     "stage": "capability",
-     "why": "G9-16 \u2014 grep -rn \"fatigue\" app/app/Modules/X-184 returns only the capability text in capabilities.php and PlanEngine::refreshOnFatigue(bool) which takes the answer as its argument; no fatigue signal, no fatigue column, no content pack",
-     "at": "2026-09-06T00:07:51"
-    }
-   ]
+   "unresolved": []
   },
   "X-185": {
    "status": "DONE",
@@ -1245,12 +985,6 @@
      "stage": "capability",
      "why": "no action enrols a person into a campaign",
      "at": "2026-09-04T22:41:56"
-    },
-    {
-     "module": "X-186",
-     "stage": "capability",
-     "why": "The \u2464 is 'Q-012 \u2014 = G3-37; doorway pages'. 'grep -rniE \"(doorway|page|publish)\" app/app/Modules/X-186' only returns capabilities.php:31. X-186 is campaigns and cannot publish a page.",
-     "at": "2026-09-06T04:21:16"
     }
    ]
   },
@@ -1360,23 +1094,10 @@
    ]
   },
   "X-202": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 9,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-202",
-     "stage": "capability",
-     "why": "G7-09 \u2014 no unopened/viewed signal and no nudge channel exists; approval_items has no opened_at column and grep -rn 'nudge' app/app/Modules/X-202 finds only the capability text",
-     "at": "2026-09-05T08:16:05"
-    },
-    {
-     "module": "X-202",
-     "stage": "capability",
-     "why": "G12-04 \u2014 ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)",
-     "at": "2026-09-05T08:16:08"
-    }
-   ]
+   "unresolved": []
   },
   "X-203": {
    "status": "DONE",
@@ -1404,67 +1125,22 @@
    ]
   },
   "X-206": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 4,
    "intent": "RECOVER",
-   "unresolved": [
-    {
-     "module": "X-206",
-     "stage": "capability",
-     "why": "N-043 \u2014 CredentialFetchAction returns Crypt::decryptString, CredentialRevealAction returns 'secret' => $decrypted, and credential_reveals schema has no time-box column",
-     "at": "2026-09-06T01:02:06"
-    }
-   ]
+   "unresolved": []
   },
   "X-207": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": [
-    {
-     "module": "X-207",
-     "stage": "capability",
-     "why": "N-013 \u2014 grep -rn 'X207Engine' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:7:final class X207Engine; no Action, no provider, no test calls it. PushSendAction takes bool $hasPushConsent and never reaches X-204's ConsentService. No counter, no ceiling column.",
-     "at": "2026-09-06T00:18:54"
-    },
-    {
-     "module": "X-207",
-     "stage": "capability",
-     "why": "N-014 \u2014 grep -rn 'validateQuietHours' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:27:    public function validateQuietHours(bool $inQuietHours): array; validateQuietHours takes the answer; the migration has no quiet-hours column on any of the three tables; the class that would carry the window is X-193's, whose own quiet_hours_start column is already filed missing",
-     "at": "2026-09-06T00:18:58"
-    },
-    {
-     "module": "X-207",
-     "stage": "capability",
-     "why": "N-016 \u2014 grep -rn 'getPriority' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:45:    public function getPriority(string $eventType): string; X207Engine::getPriority() maps three strings to 'minutes' and has no caller; there is no queue, no priority column, no delay to measure",
-     "at": "2026-09-06T00:19:02"
-    }
-   ]
+   "unresolved": []
   },
   "X-208": {
-   "status": "UNRESOLVED",
+   "status": "DONE",
    "wave": 16,
    "intent": "INFORM",
-   "unresolved": [
-    {
-     "module": "X-208",
-     "stage": "capability",
-     "why": "grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
-     "at": "2026-09-06T00:41:57"
-    },
-    {
-     "module": "X-208",
-     "stage": "capability",
-     "why": "N-019 \u2014 grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
-     "at": "2026-09-06T00:42:14"
-    },
-    {
-     "module": "X-208",
-     "stage": "capability",
-     "why": "N-020 \u2014 missing dependency: mail_pieces has id, business_id, recipient_address, postcard_format, cost_cents, status, refusal_reason, lob_api_key_source, timestamps \u2014 no promotion_id column and no offer flag.",
-     "at": "2026-09-06T00:42:19"
-    }
-   ]
+   "unresolved": []
   },
   "X-209": {
    "status": "DONE",
@@ -1481,7 +1157,7 @@
      "module": "X-210",
      "stage": "capability",
      "why": "The \u2464 is 'P-001 \u00b7 T468 \u2014 two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE \"(tier|package|padlock)\" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.",
-     "at": "2026-09-06T04:21:16"
+     "at": "2026-09-06T05:15:18"
     }
    ]
   },
@@ -1708,382 +1384,64 @@
    "at": "2026-09-04T22:41:56"
   },
   {
-   "module": "X-202",
-   "stage": "capability",
-   "why": "G7-09 \u2014 no unopened/viewed signal and no nudge channel exists; approval_items has no opened_at column and grep -rn 'nudge' app/app/Modules/X-202 finds only the capability text",
-   "at": "2026-09-05T08:16:05"
+   "module": "X-172",
+   "stage": "tests",
+   "why": "generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook",
+   "at": "2026-09-05T08:35:23"
   },
   {
-   "module": "X-202",
+   "module": "C-Sms",
    "stage": "capability",
-   "why": "G12-04 \u2014 ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)",
-   "at": "2026-09-05T08:16:08"
-  },
-  {
-   "module": "X-108",
-   "stage": "capability",
-   "why": "G19-20 \u2014 no reminder system exists; grep -rn 'AppointmentReminded' app/app app/tests returns only the class declaration, so there is no 24h/1h/10min ladder, no scheduler and no credit meter to assert on",
-   "at": "2026-09-05T08:29:23"
-  },
-  {
-   "module": "X-108",
-   "stage": "capability",
-   "why": "G1-12 \u2014 X-108 has no payment surface; grep -rn 'iframe|card|token' app/app/Modules/X-108 returns only the capability text and one blade class attribute. The card/iframe boundary is X-120's and belongs to track money (ruling 5)",
-   "at": "2026-09-05T08:29:26"
-  },
-  {
-   "module": "X-108",
-   "stage": "capability",
-   "why": "G2-58 \u2014 no booking-questions column in migration 2026_08_30_000021 and no action reads one; the booking page is Track 2's (ruling 5)",
-   "at": "2026-09-05T08:29:31"
+   "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
+   "at": "2026-09-05T11:22:12"
   },
   {
    "module": "X-01",
-   "stage": "capability",
-   "why": "G2-16 \u2014 no presence system exists; grep -rni 'typing|presence' app/app/Modules/X-01 returns only capabilities.php:28, the capability text. There is no presence event, no broadcast channel, no typing column and no listener, so any assertion here would author the \u2464 (P-210).",
-   "at": "2026-09-05T09:37:15"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G19-08 \u2014 no ghost-risk system exists; grep -rn 'ghost' app/app/Modules/X-01 app/app/Models returns capabilities.php:76 and three identical x-surface.sample-state boilerplate paragraphs in Ui/views. No model, column, action or flag, and nothing is 'flagged before a send is wasted'.",
-   "at": "2026-09-05T09:37:16"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
-   "at": "2026-09-05T09:57:00"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
-   "at": "2026-09-05T09:57:00"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
-   "at": "2026-09-05T09:57:00"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
-   "at": "2026-09-05T09:57:00"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
-   "at": "2026-09-05T09:57:00"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
-   "at": "2026-09-05T09:57:00"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast.  is a  with no interface \u2014 it does not implement , so nothing leaves the process.",
-   "at": "2026-09-05T09:57:00"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-23 \u2014 grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists",
-   "at": "2026-09-05T09:57:09"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-36 \u2014 grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist",
-   "at": "2026-09-05T09:57:09"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-42 \u2014 grep hit blade files and capabilities.php/manifest.php. It did not hit LeadRatingOutOfRangeRefused, but noting that LeadRatingOutOfRangeRefused and the 0..100 rating check in scoreLead is NOT a lead cap \u2014 it is a range guard on one score's value, it is already tested at X01Test.php:212-213, and it caps nothing about lead volume. No lead volume cap exists.",
-   "at": "2026-09-05T09:57:09"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G5-13 \u2014 grep hit blade files and capabilities.php, no AI summarization/bullet system exists",
-   "at": "2026-09-05T09:57:09"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G9-10 \u2014 grep hit blade files and capabilities.php, no bulk actions or CSV export system exists",
-   "at": "2026-09-05T09:57:09"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G11-41 \u2014 grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module",
-   "at": "2026-09-05T09:57:09"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G19-15 \u2014 grep found nothing (exit code 1). The transport would be a broadcast. Events/ConversationUpdated.php is a 'final class ConversationUpdated' with no interface \u2014 it does not implement ShouldBroadcast, so nothing leaves the process.",
-   "at": "2026-09-05T09:57:09"
-  },
-  {
-   "module": "X-108",
-   "stage": "capability",
-   "why": "G2-49: NoShowDetected exists as a class. However, the event class exists with no dispatcher, nothing sets an appointment to a no-show state, and the marketing-defer arm the spec asks to assert in the same test has no reminder to follow \u2014 G19-20, its partner in the one spec at plan:31675, is already UNRESOLVED for that reason.",
-   "at": "2026-09-05T10:13:52"
-  },
-  {
-   "module": "X-108",
-   "stage": "capability",
-   "why": "G15-08: The out-of-office half is built and asserted: SchedulingEngine.php:167-169 throws SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule') on the booking door, and test_g2_13_out_of_office (X108Test.php:211) asserts both the availability door and that refusal message. Nothing is missing there. The \"X-10 skips an unavailable assignee\" half has no reader \u2014 `grep -rn \"X-108\\|Appointment\\|availability\\|assignee\" app/app/Modules/X-10 --include=*.php` returned nothing (exit code 1). The two-way sync half needs staff_calendar_links (X-209) and X-206's credential, neither of which this track owns or can create; `grep -rn \"staff_calendar_links\" app/app app/database --include=*.php` returned only X-209 migration/model/manifest lines.",
-   "at": "2026-09-05T10:14:06"
-  },
-  {
-   "module": "X-108",
-   "stage": "capability",
-   "why": "Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.",
-   "at": "2026-09-05T10:30:04"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "Refused G2-25. D1 is a design system (surface is blades/Livewire, Track 2). The 5 'honest counter' hits are all in app/app/Services/Ops/ (PlatformHealthSignal.php, PlatformHealth.php, etc.) - which is 9371's platform-health levelling rule, a different system from X-01's tenant inbox, and platform ops besides. No glassmorph/god mode hits anywhere.",
-   "at": "2026-09-05T10:30:04"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G2-25 \u2014 no marker set separates the two designs anywhere in the tree; grep -rnwi 'glassmorphism\\|god-mode' app/app/Modules app/resources/views returns nothing, so no honest assertion exists",
-   "at": "2026-09-05T12:48:11"
-  },
-  {
-   "module": "X-01",
-   "stage": "capability",
-   "why": "G19-15 \u2014 no polling or broadcasting system exists; grep -rn 'wire:poll\\|broadcast\\|Echo\\|dispatch(' app/app/Modules/X-01 returns only internal events and component dispatches, so no honest assertion exists",
-   "at": "2026-09-05T12:48:18"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G6-02 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists. The card-vault surface belongs to X-120 (track money).",
-   "at": "2026-09-05T13:11:29"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G7-10 \u2014 no bundle system exists in X-117; grep -rnwi 'bundle' app/app/Modules/X-117 returns only the capability text, so no honest assertion exists.",
-   "at": "2026-09-05T13:11:29"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G1-15 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
-   "at": "2026-09-05T13:11:29"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G1-39 \u2014 no token/card surface exists in X-117; grep -rnwiE 'token|card|vault' app/app/Modules/X-117 returns only the capability text. The card-vault surface that would allow attempting a second charge on a stored token with no new consent belongs to X-120 (track money).",
-   "at": "2026-09-05T13:11:33"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G1-73 \u2014 fires only on a milestone the CUSTOMER accepted, never an internal status change; grep -rniE 'milestone' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of milestones is not implemented here",
-   "at": "2026-09-05T13:27:15"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G1-75 \u2014 a pricing STRUCTURE, not a promotion; grep -rniE 'structure|promotion' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pricing structures or promotions is not implemented here",
-   "at": "2026-09-05T13:27:15"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G1-81 \u2014 issuer_scope=tenant (R190) \u2014 a tenant gifts their customer; grep -rniE 'issuer|gift' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of gift cards or issuer scope is not implemented here",
-   "at": "2026-09-05T13:27:15"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G1-82 \u2014 pause STOPS the meter; grep -rniE 'pause|meter' app/app/Modules/X-117/ returns nothing, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of pausing or metering is not implemented here",
-   "at": "2026-09-05T13:27:15"
-  },
-  {
-   "module": "X-117",
-   "stage": "capability",
-   "why": "G17-31 \u2014 R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here",
-   "at": "2026-09-05T13:27:15"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G12-02: ContentGateAction::evaluateGate() implements no grounding check; grep -rn 'grounding' app/app/Modules/X-183 returns only the docblock and capabilities.php",
-   "at": "2026-09-05T15:51:12"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G13-29: ContentGateAction::evaluateGate() implements no citation check; grep -rn 'citation' app/app/Modules/X-183 returns only capabilities.php",
-   "at": "2026-09-05T15:51:15"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G5-11 \u2014 grep -inr \"G5-11\" app/ returns only the capability text; no comment model, no escalation path",
-   "at": "2026-09-05T23:57:08"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G7-24 \u2014 grep -inr \"G7-24\" app/ returns only the capability text; nothing marks a draft human or AI",
-   "at": "2026-09-05T23:57:13"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G8-39 \u2014 grep -inr \"G8-39\" app/ returns only the capability text; no grounding check \u2014 same absence as G12-02",
-   "at": "2026-09-05T23:57:13"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G9-17 \u2014 grep -inr \"G9-17\" app/ returns only the capability text; nothing marks a draft a summary",
-   "at": "2026-09-05T23:57:13"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G9-22 \u2014 grep -inr \"G9-22\" app/ returns only the capability text; no extraction, no provenance column",
-   "at": "2026-09-05T23:57:13"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G12-05 \u2014 grep -inr \"G12-05\" app/ returns only the capability text; no builder/plugin publish target in the module",
-   "at": "2026-09-05T23:57:13"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G16-03 \u2014 grep -inr \"G16-03\" app/ returns only the capability text; content_drafts has no content-type column so the gate cannot distinguish long-form, and no honest assertion exists",
-   "at": "2026-09-05T23:57:13"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G16-28 \u2014 grep -inr \"G16-28\" app/ returns only the capability text; nothing marks a draft a transcript",
-   "at": "2026-09-05T23:57:14"
-  },
-  {
-   "module": "X-183",
-   "stage": "capability",
-   "why": "G20-15 \u2014 grep -inr \"G20-15\" app/ returns only the capability text; no link from a draft to a review",
-   "at": "2026-09-05T23:57:14"
-  },
-  {
-   "module": "X-184",
-   "stage": "capability",
-   "why": "G9-16 \u2014 grep -rn \"fatigue\" app/app/Modules/X-184 returns only the capability text in capabilities.php and PlanEngine::refreshOnFatigue(bool) which takes the answer as its argument; no fatigue signal, no fatigue column, no content pack",
-   "at": "2026-09-06T00:07:51"
-  },
-  {
-   "module": "X-207",
-   "stage": "capability",
-   "why": "N-013 \u2014 grep -rn 'X207Engine' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:7:final class X207Engine; no Action, no provider, no test calls it. PushSendAction takes bool $hasPushConsent and never reaches X-204's ConsentService. No counter, no ceiling column.",
-   "at": "2026-09-06T00:18:54"
-  },
-  {
-   "module": "X-207",
-   "stage": "capability",
-   "why": "N-014 \u2014 grep -rn 'validateQuietHours' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:27:    public function validateQuietHours(bool $inQuietHours): array; validateQuietHours takes the answer; the migration has no quiet-hours column on any of the three tables; the class that would carry the window is X-193's, whose own quiet_hours_start column is already filed missing",
-   "at": "2026-09-06T00:18:58"
-  },
-  {
-   "module": "X-207",
-   "stage": "capability",
-   "why": "N-016 \u2014 grep -rn 'getPriority' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:45:    public function getPriority(string $eventType): string; X207Engine::getPriority() maps three strings to 'minutes' and has no caller; there is no queue, no priority column, no delay to measure",
-   "at": "2026-09-06T00:19:02"
-  },
-  {
-   "module": "X-208",
-   "stage": "capability",
-   "why": "grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
-   "at": "2026-09-06T00:41:57"
-  },
-  {
-   "module": "X-208",
-   "stage": "capability",
-   "why": "N-019 \u2014 grep -rn 'X208Engine' app/app app/tests returns only app/app/Modules/X-208/Domain/X208Engine.php:7:final class X208Engine \u2014 no caller, no recall path, no recalled status value, nothing to assert.",
-   "at": "2026-09-06T00:42:14"
-  },
-  {
-   "module": "X-208",
-   "stage": "capability",
-   "why": "N-020 \u2014 missing dependency: mail_pieces has id, business_id, recipient_address, postcard_format, cost_cents, status, refusal_reason, lob_api_key_source, timestamps \u2014 no promotion_id column and no offer flag.",
-   "at": "2026-09-06T00:42:19"
-  },
-  {
-   "module": "X-206",
-   "stage": "capability",
-   "why": "N-043 \u2014 CredentialFetchAction returns Crypt::decryptString, CredentialRevealAction returns 'secret' => $decrypted, and credential_reveals schema has no time-box column",
-   "at": "2026-09-06T01:02:06"
+   "stage": "tests",
+   "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
+   "at": "2026-09-05T17:11:31"
   },
   {
    "module": "X-109",
    "stage": "capability",
    "why": "ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.",
-   "at": "2026-09-06T04:21:16"
-  },
-  {
-   "module": "X-186",
-   "stage": "capability",
-   "why": "The \u2464 is 'Q-012 \u2014 = G3-37; doorway pages'. 'grep -rniE \"(doorway|page|publish)\" app/app/Modules/X-186' only returns capabilities.php:31. X-186 is campaigns and cannot publish a page.",
-   "at": "2026-09-06T04:21:16"
+   "at": "2026-09-06T05:15:18"
   },
   {
    "module": "X-180",
    "stage": "capability",
    "why": "The \u2464 is 'ad PACKS as content are not fenced (P-128);  P-120 \u2014 every claim verifiable'. It states two separate laws over the single Action that exists (PackSeedAction.php), so asserting either half authors the other (P-210).",
-   "at": "2026-09-06T04:21:16"
+   "at": "2026-09-06T05:15:18"
   },
   {
    "module": "X-170",
    "stage": "capability",
    "why": "The \u2464 is 'cleared commission into the payroll export'. 'grep -rniE \"(payroll|export)\" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.",
-   "at": "2026-09-06T04:21:16"
+   "at": "2026-09-06T05:15:18"
   },
   {
    "module": "X-158",
    "stage": "capability",
    "why": "Read the module's migration. The 'videos' table has columns (id, business_id, title, demo_number, video_url, caption_track_url, transcript, is_rendered, timestamps) and 'video_views' table. There is no live-vs-replay column.",
-   "at": "2026-09-06T04:21:16"
+   "at": "2026-09-06T05:15:18"
   },
   {
    "module": "X-210",
    "stage": "capability",
    "why": "The \u2464 is 'P-001 \u00b7 T468 \u2014 two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE \"(tier|package|padlock)\" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.",
-   "at": "2026-09-06T04:21:16"
+   "at": "2026-09-06T05:15:18"
   },
   {
    "module": "X-103",
    "stage": "capability",
    "why": "The \u2464 is 'the review widget on the site; the plugin path is X-104\\'s'. 'grep -rniE \"(plugin\\|wordpress\\|shortcode\\|embed\\|widget\\|snippet\\|marketplace)\" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module \u2014 no column, no action, no engine method.",
-   "at": "2026-09-06T04:21:16"
+   "at": "2026-09-06T05:15:18"
   },
   {
    "module": "X-111",
    "stage": "schema",
    "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
-   "at": "2026-09-06T04:21:16"
+   "at": "2026-09-06T05:15:18"
   }
  ],
  "decisions": [
@@ -2106,27 +1464,57 @@
    "ruling": "R245"
   },
   {
-   "module": "X-202",
-   "chose": "a non-terminal approval persists its comment, appended and timestamped; status stays pending and decided_at stays null (R245)",
-   "at": "2026-09-05T07:59:40",
-   "ruling": "R245"
-  },
-  {
    "module": "C-Agent",
    "chose": "Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)",
    "at": "2026-09-05T07:37:41",
    "ruling": "R245"
   },
   {
-   "module": "X-150",
-   "chose": "N-150 was cited in ProviderEngine.php but appears nowhere in the package; the citation stage's own fix string offers 'state the FACT instead of the id', so the exception message now names junk-value rejection and tier bounding directly. Commit 07e20fb1. citation 94 -> 93.",
-   "at": "2026-09-05T12:05:48",
+   "module": "C-Agent",
+   "chose": "agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured \u2014 owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands",
+   "at": "2026-09-05T08:12:23",
    "ruling": "R245"
   },
   {
-   "module": "X-205",
-   "chose": "(R245) Made affiliate_code unique composite with business_id, dropping global unique index affiliates_affiliate_code_unique to allow different tenants to use the same affiliate code, avoiding cross-tenant collisions.",
-   "at": "2026-09-05T13:27:36",
+   "module": "X-82",
+   "chose": "RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)",
+   "at": "2026-09-05T08:35:16",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)",
+   "at": "2026-09-05T09:47:06",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)",
+   "at": "2026-09-05T10:13:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)",
+   "at": "2026-09-05T10:15:15",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Sms",
+   "chose": "C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)",
+   "at": "2026-09-05T10:55:53",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-121",
+   "chose": "JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)",
+   "at": "2026-09-05T13:46:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)",
+   "at": "2026-09-05T16:22:13",
    "ruling": "R245"
   }
  ],
@@ -2136,76 +1524,28 @@
    "note": "bootstrap-done"
   },
   {
-   "at": "2026-09-05T08:17:09",
-   "note": "app/app/Modules/X-209/Domain/X209Engine.php + DeskEngine.php have zero callers; X209Engine's seven methods return hard-coded refusal strings restating the capability text (P-210 closed loop), DeskEngine is an empty class. Recorded under ruling 47, not built."
+   "at": "2026-09-05T12:14:55",
+   "note": "J10: owner ruling 2026-09-05 \u2014 the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production"
   },
   {
-   "at": "2026-09-05T08:53:57",
-   "note": "X-108 G17-27 \u2014 offered slots carry an ISO-8601 start_time/end_time with an explicit offset (tested), but the same payload ships formatted_window, a server-rendered 'g:i A' wall clock in the app timezone (SchedulingEngine.php:75, asserted at X108Test.php:63-69,113,193). A customer in another timezone reads the server's clock. Dropping the field or moving the render to the client is Track 2's under ruling 5."
+   "at": "2026-09-05T17:33:50",
+   "note": "X-172 generated screen test renders through Fixtures::token() (run 101)"
   },
   {
-   "at": "2026-09-05T09:07:07",
-   "note": "X-193 \u2014 the 'quiet_hours_start is missing' UNRESOLVED (tests stage) is superseded: migration 2026_09_04_072838 arrived with the b445d2f1 take and adds quiet_hours_start + quiet_hours_end; NotificationClassifyAction reads both. The G10-31/G10-38 stubs are now buildable."
+   "at": "2026-09-05T17:42:53",
+   "note": "X-193 quiet_hours_start: answered \u2014 migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main"
   },
   {
-   "at": "2026-09-05T09:08:07",
-   "note": "X-193 \u2014 NotificationClassifyAction infers classification and respects_quiet_hours from a str_contains() ladder over caller_type inside firstOrCreate's defaults (Actions/NotificationClassifyAction.php:28-41). Two consequences: a caller named 'chatty_promo' classifies operational because it contains 'chat', and the defaults are frozen at first write so no later policy change reaches an existing notification_classes row. Recorded, not fixed \u2014 a rewrite is a behaviour change outside S-67."
+   "at": "2026-09-05T17:42:54",
+   "note": "X-201 deadline_at: answered \u2014 migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main"
   },
   {
-   "at": "2026-09-05T09:18:25",
-   "note": "X-127 \u2014 N-127-01 pins current behaviour: TenantzeroProofAction:21 compares published_value to the recomputed value with === on raw strings, so a one-cent drift pulls the claim and a pulled claim (published_value null) can never re-verify. Recorded as the intended reading of 'match to the digit', not changed."
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Reviews messageClass: answered \u2014 ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)"
   },
   {
-   "at": "2026-09-05T09:18:25",
-   "note": "X-127 \u2014 N-127-03 has no application-side mutation: published_metrics and tenant_zero_config are FORCE ROW LEVEL SECURITY with a tenant_isolation policy on current_setting('app.business_id') (migration 2026_08_30_000050:41-49), and PublishedMetric is a plain Model with no TenantScoped trait. The load-bearing proof is the in-test positive control (same query, 1 row under tenant B, 0 under tenant A), not a mutation."
-  },
-  {
-   "at": "2026-09-05T09:37:20",
-   "note": "X-01 \u2014 G11-23 pins current behaviour: UnifiedInboxManager:70-75 keys Conversation::firstOrCreate on person_id alone, so all four channels land on one row (the cell's 'one polymorphic Conversation') and the channel column freezes at the first message's channel. A consumer reading conversation.channel as 'the channel this thread is on now' reads the wrong value from the second message onward. Recorded, not changed \u2014 a rewrite is a behaviour change outside S-69."
-  },
-  {
-   "at": "2026-09-05T09:56:22",
-   "note": "X-01 \u2014 G11-40 pins the header's first line (GOAIEZ-MASTER-PLAN.md:26556), which names FIVE channels including WhatsApp, against AccountInbox::$channels = ['sms','email','voice','chat'] (Ui/Account/Inbox.php:11), which names four. WhatsApp already threads correctly because UnifiedInboxManager::ingestMessage validates the $channel argument not at all \u2014 no enum, no list, no guard \u2014 so any string threads and freezes into conversations.channel at first write. The consequence is the other way round from the gap: a typo'd channel ('smss') is accepted silently and becomes the conversation's channel forever. Recorded, not fixed \u2014 adding validation or a fifth list entry is a behaviour change outside S-70, and the list lives in a Track 2 file (ruling 5)."
-  },
-  {
-   "at": "2026-09-05T10:14:11",
-   "note": "X-108 The merged view has three inputs; the spec names five. The spec says \"calendar + travel + blackout + capacity, merged before the offer\" and asks for the refusal `availability_unknown` \"asserted by making the calendar sync fail mid-request\". `getAvailableSlots` merges capacity, locks and blackouts; there is no travel time and no calendar sync in this module, so there is nothing that can fail mid-request and the `availability_unknown` refusal cannot be asserted from this track at all (unassertable, not unwritten)."
-  },
-  {
-   "at": "2026-09-05T10:14:15",
-   "note": "X-108 G2-10's other half is parked, not deferred. The plan marks it RE-HOME\u2192G15 and F-14 classifies the seven staff-surveillance-shaped lines \u2014 G2-10 among them \u2014 as \"classified and parked for the owner at turn 32\". This wave asserts the calendar half only and deliberately asserts nothing about the hiring half in either direction."
-  },
-  {
-   "at": "2026-09-05T10:14:20",
-   "note": "X-01 the seven X-01 capability refusals recorded at 2026-09-05T09:57:00 are a duplicate first pass of the same seven at 09:57:09; the 09:57:00 G19-15 entry lost the identifiers `Events/ConversationUpdated.php`, `final class ConversationUpdated` and `ShouldBroadcast` to shell command substitution (backticks inside double quotes); the 09:57:09 pass is the correct record for all seven."
-  },
-  {
-   "at": "2026-09-05T10:30:04",
-   "note": "X-01 The spec's second half (GOAIEZ-MASTER-PLAN.md:31512) is asserted ('one thread, three Message rows' was already covered by test_g11_22_polymorphic_conversation, test_g11_23_omnichannel_spec, and test_g11_40_header_line), but the first was not. 'No table holding a message, thread or contact outside the twelve nouns' had no test until this wave. It uses a mechanical rule (the violator's name ends with _messages/conversations/threads/contacts), which is why contact_tags is out by that rule rather than by exception."
-  },
-  {
-   "at": "2026-09-05T10:30:04",
-   "note": "X-01 Real offenders found by the sweep (g2_76 grep): outreach_messages (app/database/migrations/2026_07_30_081926_create_outreach_messages_table.php), triage_conversations (app/database/migrations/2026_08_13_161545_create_triage_conversations_table.php), inbound_messages (app/database/migrations/2026_08_09_043337_create_inbound_messages_table.php), and support_messages (app/database/migrations/2026_08_13_200424_create_support_messages_table.php)."
-  },
-  {
-   "at": "2026-09-05T11:03:33",
-   "note": "CORRECTION to the 2026-09-05T10:30 G2-76 violator note (REVIEWS.md tick 348 note 1): triage_conversations is created by app/database/migrations/2026_07_30_081928_create_triage_conversations_table.php, and support_messages by app/database/migrations/2026_08_12_065625_create_support_desk_tables.php. The two filenames recorded earlier do not exist. outreach_messages (2026_07_30_081926) and inbound_messages (2026_08_09_043337) were recorded correctly."
-  },
-  {
-   "at": "2026-09-05T11:07:32",
-   "note": "S-73 stage analysis: the capability stage counts \"names no refusal\" from app/app/Doctor/Stages/CapabilityStage.php:99; recording UNRESOLVED does not lower it; the stage this track can actually move is citation 94 (and boundary/contract/schema) because they are fixable by system changes in owned modules."
-  },
-  {
-   "at": "2026-09-05T13:10:24",
-   "note": "G11-41 the two 09:57 rows are a duplicate of each other, they answer the VIP/LTV half, S-79's 0c66b6c1 answers the plain sort-order half at X01Test.php:372 against app/app/Modules/X-01/Ui/CustomersList.php:47, and the id is now half-tested and half-unresolved"
-  },
-  {
-   "at": "2026-09-05T13:26:39",
-   "note": "G1-15 and G1-39 were filed UNRESOLVED at 2026-09-05T13:11:29 and 13:11:33 on the reason 'no token/card surface exists in X-117'; that reason is wrong. CheckoutEngine.php:63-69 holds the FRESH_AUTH_REQUIRED refusal arm, checkout() takes a required string $freshAuthToken, orders.auth_token exists at migration 2026_08_30_000029:48, and X117Test.php:92 test_g1_15_fresh_authorization_event_required asserts the refusal and passes. The -w in grep -rnwiE 'token|card|vault' cannot match auth_token or freshAuthToken, which is why the filing was made. Both ids are TESTED, not unresolved."
-  },
-  {
-   "at": "2026-09-05T13:45:55",
-   "note": "G1-73, G1-75, G1-81 and G1-82 were filed UNRESOLVED at 2026-09-05T13:27:15 with the words 'returns nothing'; each of those four greps returns exactly one line, its own capabilities.php entry (capabilities.php:46, :49, :52, :55). The filings stand \u2014 the only match in every case is the capability text, so no system exists behind any of the four \u2014 but the honest phrasing is the one used for G7-10 and G17-31, 'returns only the capability text'. Recorded so the ledger is not read as a stronger negative than the grep supports."
+   "at": "2026-09-05T17:42:54",
+   "note": "C-Sms TrialEligibility: answered by owner ruling 2026-09-05 \u2014 the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)"
   }
  ]
 }

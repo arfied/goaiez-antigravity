@@ -322,7 +322,7 @@ final class AuthorizeNetApi
                 ],
             ],
             'validationMode' => $this->isProduction() ? 'liveMode' : 'testMode',
-        ], $businessId);
+        ], $businessId, null, ['E00039']);
 
         $id = $this->stringAt($body, 'customerPaymentProfileId');
 
@@ -488,9 +488,49 @@ final class AuthorizeNetApi
 
         $body = $this->send('ARBCreateSubscriptionRequest', [
             'subscription' => $subscription,
-        ], $businessId);
+        ], $businessId, null, ['E00012']);
 
         $id = $this->stringAt($body, 'subscriptionId');
+
+        $messages = is_array($body['messages'] ?? null) ? $body['messages'] : [];
+        $resultCode = $messages['resultCode'] ?? null;
+        if ($resultCode === 'Error') {
+            // E00012 was allowed by assertOk, meaning this request returned a duplicate error.
+            if ($id !== null) {
+                return $id;
+            }
+
+            // Otherwise, we have to look it up
+            $listBody = $this->send('ARBGetSubscriptionListRequest', [
+                'searchType' => 'subscriptionActive',
+                'sorting' => [
+                    'orderBy' => 'id',
+                    'orderDescending' => 'true',
+                ],
+                'paging' => [
+                    'limit' => '1000',
+                    'offset' => '1',
+                ],
+            ], $businessId);
+
+            $details = is_array($listBody['subscriptionDetails'] ?? null) ? $listBody['subscriptionDetails'] : [];
+
+            foreach ($details as $detail) {
+                if (is_array($detail)
+                    && $this->stringAt($detail, 'customerProfileId') === $customerProfileId
+                    && $this->stringAt($detail, 'customerPaymentProfileId') === $customerPaymentProfileId
+                    && str_starts_with((string) $this->stringAt($detail, 'name'), $subscription['name'])
+                    && in_array($this->stringAt($detail, 'status'), ['active', 'suspended'], true)
+                ) {
+                    $existingId = $this->stringAt($detail, 'id');
+                    if ($existingId !== null) {
+                        return $existingId;
+                    }
+                }
+            }
+
+            throw AuthorizeNetRequestFailed::fromResult(['E00012']);
+        }
 
         if ($id === null) {
             throw AuthorizeNetRequestFailed::unreadable();
@@ -833,7 +873,7 @@ final class AuthorizeNetApi
      *
      * @throws AuthorizeNetRequestFailed
      */
-    private function send(string $request, array $payload, int $businessId, ?string $refId = null): array
+    private function send(string $request, array $payload, int $businessId, ?string $refId = null, array $allowedErrorCodes = []): array
     {
         $url = $this->url();
 
@@ -894,7 +934,7 @@ final class AuthorizeNetApi
             throw AuthorizeNetRequestFailed::unreadable();
         }
 
-        $this->assertOk($body, $url, $businessId);
+        $this->assertOk($body, $url, $businessId, $allowedErrorCodes);
 
         return $body;
     }
@@ -960,10 +1000,11 @@ final class AuthorizeNetApi
      * ⚠️ The 200-is-not-success check.
      *
      * @param  array<string, mixed>  $body
+     * @param  list<string>  $allowedErrorCodes
      *
      * @throws AuthorizeNetRequestFailed
      */
-    private function assertOk(array $body, string $url, int $businessId): void
+    private function assertOk(array $body, string $url, int $businessId, array $allowedErrorCodes = []): void
     {
         $messages = is_array($body['messages'] ?? null) ? $body['messages'] : [];
 
@@ -984,6 +1025,10 @@ final class AuthorizeNetApi
                 // rejected. See AuthorizeNetRequestFailed.
                 $codes[] = $message['code'];
             }
+        }
+
+        if ($codes !== [] && count(array_diff($codes, $allowedErrorCodes)) === 0) {
+            return;
         }
 
         $failure = AuthorizeNetRequestFailed::fromResult($codes);

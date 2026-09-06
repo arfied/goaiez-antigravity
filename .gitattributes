@@ -1,0 +1,8 @@
+app/phpunit.xml merge=ours
+CLAUDE.md merge=ours
+bin/supervise.sh merge=ours
+.claude/settings.json merge=ours
+.agents/rules/10-supervisor.md merge=ours
+.agents/supervisor/launch-coder.sh merge=ours
+.agents/state/BUILD-STATE.json merge=ours
+.agents/state/JOURNAL.md merge=ours

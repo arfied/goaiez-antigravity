@@ -1,152 +1,3 @@
-- `2026-08-30T02:05:15` state initialised
-- `2026-08-30T02:05:26` note: bootstrap-done
-- `2026-08-30T02:05:26` selftest: sound
-- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
-- `2026-08-30T02:05:26` X-123 -> DONE
-- `2026-08-30T02:05:26` X-122 -> DONE
-- `2026-08-30T02:05:26` X-126 -> DONE
-- `2026-08-30T02:05:26` X-119 -> DONE
-- `2026-08-30T02:05:26` seal observed deadbeef00000000
-- `2026-08-30T02:12:17` note: bootstrap-done
-- `2026-08-30T02:12:17` selftest: sound
-- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
-- `2026-08-30T02:12:17` X-123 -> DONE
-- `2026-08-30T02:12:17` X-122 -> DONE
-- `2026-08-30T02:12:17` X-126 -> DONE
-- `2026-08-30T02:12:17` X-119 -> DONE
-- `2026-08-30T02:12:17` X-128 -> DONE
-- `2026-08-30T02:12:17` C-Ai -> DONE
-- `2026-08-30T02:12:17` X-219 -> DONE
-- `2026-08-30T02:12:17` X-220 -> DONE
-- `2026-08-30T02:12:18` X-204 -> DONE
-- `2026-08-30T02:12:18` X-206 -> DONE
-- `2026-08-30T02:12:18` C-Telephony -> DONE
-- `2026-08-30T02:12:18` C-Sms -> DONE
-- `2026-08-30T02:12:18` C-Agent -> DONE
-- `2026-08-30T02:12:18` X-66 -> DONE
-- `2026-08-30T02:12:18` X-188 -> DONE
-- `2026-08-30T02:12:18` X-153 -> DONE
-- `2026-08-30T02:12:18` X-01 -> DONE
-- `2026-08-30T02:12:18` X-118 -> DONE
-- `2026-08-30T02:12:18` X-163 -> DONE
-- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
-- `2026-08-30T02:12:18` X-108 -> DONE
-- `2026-08-30T02:12:18` C-Reviews -> DONE
-- `2026-08-30T02:12:18` X-181 -> DONE
-- `2026-08-30T02:12:18` X-110 -> DONE
-- `2026-08-30T02:12:18` C-Billing -> DONE
-- `2026-08-30T02:12:18` X-199 -> DONE
-- `2026-08-30T02:12:18` X-211 -> DONE
-- `2026-08-30T02:12:18` X-202 -> DONE
-- `2026-08-30T02:12:18` X-117 -> DONE
-- `2026-08-30T02:12:18` X-198 -> DONE
-- `2026-08-30T02:12:18` X-172 -> DONE
-- `2026-08-30T02:12:18` X-112 -> DONE
-- `2026-08-30T02:12:18` X-166 -> DONE
-- `2026-08-30T02:12:18` X-157 -> DONE
-- `2026-08-30T02:12:18` X-178 -> DONE
-- `2026-08-30T02:12:18` X-103 -> DONE
-- `2026-08-30T02:12:18` X-102 -> DONE
-- `2026-08-30T02:12:18` X-155 -> DONE
-- `2026-08-30T02:12:19` X-137 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
-- `2026-08-30T02:12:19` X-212 -> DONE
-- `2026-08-30T02:12:19` X-203 -> DONE
-- `2026-08-30T02:12:19` C-Mail -> DONE
-- `2026-08-30T02:12:19` C-Whatsapp -> DONE
-- `2026-08-30T02:12:19` X-147 -> DONE
-- `2026-08-30T02:12:19` X-207 -> DONE
-- `2026-08-30T02:12:19` X-193 -> DONE
-- `2026-08-30T02:12:19` X-208 -> DONE
-- `2026-08-30T02:12:19` X-125 -> DONE
-- `2026-08-30T02:12:19` X-127 -> DONE
-- `2026-08-30T02:12:19` X-149 -> DONE
-- `2026-08-30T02:12:19` X-170 -> DONE
-- `2026-08-30T02:12:19` X-201 -> DONE
-- `2026-08-30T02:12:19` X-10 -> DONE
-- `2026-08-30T02:12:19` X-113 -> DONE
-- `2026-08-30T02:12:19` X-124 -> DONE
-- `2026-08-30T02:12:19` X-143 -> DONE
-- `2026-08-30T02:12:19` X-151 -> DONE
-- `2026-08-30T02:12:19` X-162 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
-- `2026-08-30T02:12:19` X-171 -> DONE
-- `2026-08-30T02:12:19` X-189 -> DONE
-- `2026-08-30T02:12:19` X-214 -> DONE
-- `2026-08-30T02:12:19` X-215 -> DONE
-- `2026-08-30T02:12:19` X-07 -> DONE
-- `2026-08-30T02:12:19` X-104 -> DONE
-- `2026-08-30T02:12:19` X-111 -> DONE
-- `2026-08-30T02:12:19` X-129 -> DONE
-- `2026-08-30T02:12:19` X-138 -> DONE
-- `2026-08-30T02:12:20` X-139 -> DONE
-- `2026-08-30T02:12:20` X-145 -> DONE
-- `2026-08-30T02:12:20` X-148 -> DONE
-- `2026-08-30T02:12:20` X-150 -> DONE
-- `2026-08-30T02:12:20` X-16 -> DONE
-- `2026-08-30T02:12:20` X-160 -> DONE
-- `2026-08-30T02:12:20` X-167 -> DONE
-- `2026-08-30T02:12:20` X-168 -> DONE
-- `2026-08-30T02:12:20` X-175 -> DONE
-- `2026-08-30T02:12:20` X-177 -> DONE
-- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
-- `2026-08-30T02:12:20` X-194 -> DONE
-- `2026-08-30T02:12:20` X-195 -> DONE
-- `2026-08-30T02:12:20` X-197 -> DONE
-- `2026-08-30T02:12:20` X-209 -> DONE
-- `2026-08-30T02:12:20` X-82 -> DONE
-- `2026-08-30T02:12:20` X-08 -> DONE
-- `2026-08-30T02:12:20` X-120 -> DONE
-- `2026-08-30T02:12:20` X-136 -> DONE
-- `2026-08-30T02:12:20` X-141 -> DONE
-- `2026-08-30T02:12:20` X-142 -> DONE
-- `2026-08-30T02:12:20` X-156 -> DONE
-- `2026-08-30T02:12:20` X-173 -> DONE
-- `2026-08-30T02:12:20` X-213 -> DONE
-- `2026-08-30T02:12:20` X-105 -> DONE
-- `2026-08-30T02:12:20` X-109 -> DONE
-- `2026-08-30T02:12:21` X-114 -> DONE
-- `2026-08-30T02:12:21` X-116 -> DONE
-- `2026-08-30T02:12:21` X-130 -> DONE
-- `2026-08-30T02:12:21` X-131 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
-- `2026-08-30T02:12:21` X-134 -> DONE
-- `2026-08-30T02:12:21` X-135 -> DONE
-- `2026-08-30T02:12:21` X-140 -> DONE
-- `2026-08-30T02:12:21` X-144 -> DONE
-- `2026-08-30T02:12:21` X-154 -> DONE
-- `2026-08-30T02:12:21` X-158 -> DONE
-- `2026-08-30T02:12:21` X-159 -> DONE
-- `2026-08-30T02:12:21` X-161 -> DONE
-- `2026-08-30T02:12:21` X-179 -> DONE
-- `2026-08-30T02:12:21` X-182 -> DONE
-- `2026-08-30T02:12:21` X-183 -> DONE
-- `2026-08-30T02:12:21` X-184 -> DONE
-- `2026-08-30T02:12:21` X-185 -> DONE
-- `2026-08-30T02:12:21` X-186 -> DONE
-- `2026-08-30T02:12:21` X-190 -> DONE
-- `2026-08-30T02:12:21` X-191 -> DONE
-- `2026-08-30T02:12:21` X-192 -> DONE
-- `2026-08-30T02:12:21` X-196 -> DONE
-- `2026-08-30T02:12:21` X-200 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
-- `2026-08-30T02:12:21` X-210 -> DONE
-- `2026-08-30T02:12:21` X-217 -> DONE
-- `2026-08-30T02:12:21` X-218 -> DONE
-- `2026-08-30T02:12:21` journey J1 -> green
-- `2026-08-30T02:12:21` journey J2 -> green
-- `2026-08-30T02:12:22` journey J3 -> green
-- `2026-08-30T02:12:22` journey J4 -> green
-- `2026-08-30T02:12:22` journey J5 -> green
-- `2026-08-30T02:12:22` journey J6 -> green
-- `2026-08-30T02:12:22` journey J7 -> green
-- `2026-08-30T02:12:22` journey J8 -> green
-- `2026-08-30T02:12:22` journey J9 -> green
-- `2026-08-30T02:12:22` journey J10 -> green
-- `2026-08-30T02:12:22` journey J11 -> green
-- `2026-08-30T02:12:22` journey J12 -> green
-- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
-- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-29T14:30:24` seal observed f1e73d9fc181eb1c
 - `2026-08-29T14:31:11` selftest: sound
 - `2026-08-29T14:37:58` note: bootstrap-done
@@ -419,6 +270,155 @@
 - `2026-08-29T16:43:19` journey J10 -> green
 - `2026-08-29T16:43:19` journey J11 -> green
 - `2026-08-29T16:43:19` journey J12 -> green
+- `2026-08-30T02:05:15` state initialised
+- `2026-08-30T02:05:26` note: bootstrap-done
+- `2026-08-30T02:05:26` selftest: sound
+- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
+- `2026-08-30T02:05:26` X-123 -> DONE
+- `2026-08-30T02:05:26` X-122 -> DONE
+- `2026-08-30T02:05:26` X-126 -> DONE
+- `2026-08-30T02:05:26` X-119 -> DONE
+- `2026-08-30T02:05:26` seal observed deadbeef00000000
+- `2026-08-30T02:12:17` note: bootstrap-done
+- `2026-08-30T02:12:17` selftest: sound
+- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
+- `2026-08-30T02:12:17` X-123 -> DONE
+- `2026-08-30T02:12:17` X-122 -> DONE
+- `2026-08-30T02:12:17` X-126 -> DONE
+- `2026-08-30T02:12:17` X-119 -> DONE
+- `2026-08-30T02:12:17` X-128 -> DONE
+- `2026-08-30T02:12:17` C-Ai -> DONE
+- `2026-08-30T02:12:17` X-219 -> DONE
+- `2026-08-30T02:12:17` X-220 -> DONE
+- `2026-08-30T02:12:18` X-204 -> DONE
+- `2026-08-30T02:12:18` X-206 -> DONE
+- `2026-08-30T02:12:18` C-Telephony -> DONE
+- `2026-08-30T02:12:18` C-Sms -> DONE
+- `2026-08-30T02:12:18` C-Agent -> DONE
+- `2026-08-30T02:12:18` X-66 -> DONE
+- `2026-08-30T02:12:18` X-188 -> DONE
+- `2026-08-30T02:12:18` X-153 -> DONE
+- `2026-08-30T02:12:18` X-01 -> DONE
+- `2026-08-30T02:12:18` X-118 -> DONE
+- `2026-08-30T02:12:18` X-163 -> DONE
+- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
+- `2026-08-30T02:12:18` X-108 -> DONE
+- `2026-08-30T02:12:18` C-Reviews -> DONE
+- `2026-08-30T02:12:18` X-181 -> DONE
+- `2026-08-30T02:12:18` X-110 -> DONE
+- `2026-08-30T02:12:18` C-Billing -> DONE
+- `2026-08-30T02:12:18` X-199 -> DONE
+- `2026-08-30T02:12:18` X-211 -> DONE
+- `2026-08-30T02:12:18` X-202 -> DONE
+- `2026-08-30T02:12:18` X-117 -> DONE
+- `2026-08-30T02:12:18` X-198 -> DONE
+- `2026-08-30T02:12:18` X-172 -> DONE
+- `2026-08-30T02:12:18` X-112 -> DONE
+- `2026-08-30T02:12:18` X-166 -> DONE
+- `2026-08-30T02:12:18` X-157 -> DONE
+- `2026-08-30T02:12:18` X-178 -> DONE
+- `2026-08-30T02:12:18` X-103 -> DONE
+- `2026-08-30T02:12:18` X-102 -> DONE
+- `2026-08-30T02:12:18` X-155 -> DONE
+- `2026-08-30T02:12:19` X-137 -> DONE
+- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
+- `2026-08-30T02:12:19` X-212 -> DONE
+- `2026-08-30T02:12:19` X-203 -> DONE
+- `2026-08-30T02:12:19` C-Mail -> DONE
+- `2026-08-30T02:12:19` C-Whatsapp -> DONE
+- `2026-08-30T02:12:19` X-147 -> DONE
+- `2026-08-30T02:12:19` X-207 -> DONE
+- `2026-08-30T02:12:19` X-193 -> DONE
+- `2026-08-30T02:12:19` X-208 -> DONE
+- `2026-08-30T02:12:19` X-125 -> DONE
+- `2026-08-30T02:12:19` X-127 -> DONE
+- `2026-08-30T02:12:19` X-149 -> DONE
+- `2026-08-30T02:12:19` X-170 -> DONE
+- `2026-08-30T02:12:19` X-201 -> DONE
+- `2026-08-30T02:12:19` X-10 -> DONE
+- `2026-08-30T02:12:19` X-113 -> DONE
+- `2026-08-30T02:12:19` X-124 -> DONE
+- `2026-08-30T02:12:19` X-143 -> DONE
+- `2026-08-30T02:12:19` X-151 -> DONE
+- `2026-08-30T02:12:19` X-162 -> DONE
+- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
+- `2026-08-30T02:12:19` X-171 -> DONE
+- `2026-08-30T02:12:19` X-189 -> DONE
+- `2026-08-30T02:12:19` X-214 -> DONE
+- `2026-08-30T02:12:19` X-215 -> DONE
+- `2026-08-30T02:12:19` X-07 -> DONE
+- `2026-08-30T02:12:19` X-104 -> DONE
+- `2026-08-30T02:12:19` X-111 -> DONE
+- `2026-08-30T02:12:19` X-129 -> DONE
+- `2026-08-30T02:12:19` X-138 -> DONE
+- `2026-08-30T02:12:20` X-139 -> DONE
+- `2026-08-30T02:12:20` X-145 -> DONE
+- `2026-08-30T02:12:20` X-148 -> DONE
+- `2026-08-30T02:12:20` X-150 -> DONE
+- `2026-08-30T02:12:20` X-16 -> DONE
+- `2026-08-30T02:12:20` X-160 -> DONE
+- `2026-08-30T02:12:20` X-167 -> DONE
+- `2026-08-30T02:12:20` X-168 -> DONE
+- `2026-08-30T02:12:20` X-175 -> DONE
+- `2026-08-30T02:12:20` X-177 -> DONE
+- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
+- `2026-08-30T02:12:20` X-194 -> DONE
+- `2026-08-30T02:12:20` X-195 -> DONE
+- `2026-08-30T02:12:20` X-197 -> DONE
+- `2026-08-30T02:12:20` X-209 -> DONE
+- `2026-08-30T02:12:20` X-82 -> DONE
+- `2026-08-30T02:12:20` X-08 -> DONE
+- `2026-08-30T02:12:20` X-120 -> DONE
+- `2026-08-30T02:12:20` X-136 -> DONE
+- `2026-08-30T02:12:20` X-141 -> DONE
+- `2026-08-30T02:12:20` X-142 -> DONE
+- `2026-08-30T02:12:20` X-156 -> DONE
+- `2026-08-30T02:12:20` X-173 -> DONE
+- `2026-08-30T02:12:20` X-213 -> DONE
+- `2026-08-30T02:12:20` X-105 -> DONE
+- `2026-08-30T02:12:20` X-109 -> DONE
+- `2026-08-30T02:12:21` X-114 -> DONE
+- `2026-08-30T02:12:21` X-116 -> DONE
+- `2026-08-30T02:12:21` X-130 -> DONE
+- `2026-08-30T02:12:21` X-131 -> DONE
+- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
+- `2026-08-30T02:12:21` X-134 -> DONE
+- `2026-08-30T02:12:21` X-135 -> DONE
+- `2026-08-30T02:12:21` X-140 -> DONE
+- `2026-08-30T02:12:21` X-144 -> DONE
+- `2026-08-30T02:12:21` X-154 -> DONE
+- `2026-08-30T02:12:21` X-158 -> DONE
+- `2026-08-30T02:12:21` X-159 -> DONE
+- `2026-08-30T02:12:21` X-161 -> DONE
+- `2026-08-30T02:12:21` X-179 -> DONE
+- `2026-08-30T02:12:21` X-182 -> DONE
+- `2026-08-30T02:12:21` X-183 -> DONE
+- `2026-08-30T02:12:21` X-184 -> DONE
+- `2026-08-30T02:12:21` X-185 -> DONE
+- `2026-08-30T02:12:21` X-186 -> DONE
+- `2026-08-30T02:12:21` X-190 -> DONE
+- `2026-08-30T02:12:21` X-191 -> DONE
+- `2026-08-30T02:12:21` X-192 -> DONE
+- `2026-08-30T02:12:21` X-196 -> DONE
+- `2026-08-30T02:12:21` X-200 -> DONE
+- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
+- `2026-08-30T02:12:21` X-210 -> DONE
+- `2026-08-30T02:12:21` X-217 -> DONE
+- `2026-08-30T02:12:21` X-218 -> DONE
+- `2026-08-30T02:12:21` journey J1 -> green
+- `2026-08-30T02:12:21` journey J2 -> green
+- `2026-08-30T02:12:22` journey J3 -> green
+- `2026-08-30T02:12:22` journey J4 -> green
+- `2026-08-30T02:12:22` journey J5 -> green
+- `2026-08-30T02:12:22` journey J6 -> green
+- `2026-08-30T02:12:22` journey J7 -> green
+- `2026-08-30T02:12:22` journey J8 -> green
+- `2026-08-30T02:12:22` journey J9 -> green
+- `2026-08-30T02:12:22` journey J10 -> green
+- `2026-08-30T02:12:22` journey J11 -> green
+- `2026-08-30T02:12:22` journey J12 -> green
+- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
+- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-31T04:18:42` UNRESOLVED schema X-121 - 12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per §150.4 and §259
 - `2026-08-31T04:24:07` stage integrity = 0
 - `2026-08-31T04:24:07` stage boundary = 0
@@ -751,88 +751,22 @@
 - `2026-09-04T02:05:53` UNRESOLVED tests X-201 - column deadline_at is missing from disputes and not named in the brief
 - `2026-09-04T07:55:55` UNRESOLVED tests C-Reviews - ReviewRequested event lacks messageClass so the module cannot express the send class (marketing) without a legacy change
 - `2026-09-04T08:05:31` UNRESOLVED contract C-Reviews - send.requested correctly emitted by multiple modules per the master plan rule (R231), but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.
-- `2026-09-04T11:49:20` (R245) X-205 — (R245) SaleAttributionRefused — a sale whose referral click is outside the 90-day cookie (or missing) is refused; missing visitor ID bypasses check
-- `2026-09-04T15:49:06` (R245) X-125 — flow_id is a non-nullable FK; removed ?? from run->flow->name to match run->flow->trigger_event
-- `2026-09-04T15:49:06` (R245) X-125 — runs status-pill mapping: success -> ok, error -> alert, simulated -> unknown, default -> unknown
-- `2026-09-04T15:49:06` (R245) X-125 — runs skeleton test skipped: wire:init fires before assertion, manual ready=false proves the if/else not the state
-- `2026-09-04T16:03:59` (R245) X-194 — ViewListAction uses ->lazy() instead of ->get() because ->get() is forbidden by the anchor grep rule, and ->lazy() returns a LazyCollection which supports isEmpty() correctly in blade without violating the One Rule.
-- `2026-09-04T16:04:02` (R245) X-125 — empty state ships with no action because the only useful destination has no route until Track 1's generator lands.
-- `2026-09-04T16:37:45` (R245) X-194 — any-view-it empty state ships with no action because it is only reachable when no view is selected (e.g. viewId is 0) and the user must select an existing view.
-- `2026-09-04T16:38:02` (R245) X-194 — Keep both unreachable catches in SavedViewsList as declared defence in depth, each with a one-line comment explaining why no test reaches it.
-- `2026-09-04T16:59:30` (R245) X-124 — Centralised IRREVERSIBLE actions list as a constant on AssistantExecuteAction because it ensures both preview and execute actions read from a single source of truth.
-- `2026-09-04T16:59:33` (R245) X-124 — Wired PreviewCard component for 3 states (ready reversible, ready irreversible, error) with tests, matching TodaysRecommendationStrip pattern.
-- `2026-09-04T18:39:18` (R245) X-124 — AssistantPreviewAction is final, so Mockery cannot mock it to throw an exception, making the error state untestable. Fallback taken: removed try/catch and error state.
-- `2026-09-04T19:01:20` (R245) X-124 — Kept TodaysRecommendationStrip catch as defence in depth, documented unreachability, and renamed test since per-test transactions cannot simulate connection failure without breaking the suite.
-- `2026-09-04T19:17:56` (R245) X-142 — Empty state heading reads 'No tokens yet.', body reads 'Tokens give external systems access to your account.'
-- `2026-09-04T19:17:56` (R245) X-142 — Token registry token name is rendered as a bold h2
-- `2026-09-04T19:17:56` (R245) X-142 — Token registry list renders with a border-rule container and --radius-card rounded corners
-- `2026-09-04T19:17:56` (R245) X-142 — Token registry role scope is rendered directly as text without extra labeling
-- `2026-09-04T19:18:02` UNRESOLVED error X-142 - not reachable from Livewire::test (unreachable error branch)
-- `2026-09-04T19:18:02` UNRESOLVED loading X-142 - not reachable from Livewire::test (wire:init fires before the assertion — your own X-125 decision)
-- `2026-09-04T19:18:02` UNRESOLVED SAMPLE X-142 - not reachable from Livewire::test (no sample marker on mcp_tokens; adding a column is refused)
-- `2026-09-04T19:36:15` note: X-142 returned to DONE: the three 2026-09-04T19:18:02 unresolved records were coverage facts about Livewire::test reach, not missing dependencies (ruling 48, bin/state.py:9). They stay in the arrays because state.py has no withdraw; the status is the field of record.
-- `2026-09-04T19:36:15` X-142 -> DONE
-- `2026-09-04T19:38:02` (R245) X-142 — renders event_filter column, events cast is ignored as dead
-- `2026-09-04T19:38:02` (R245) X-142 — empty state wording uses standard x-ui.empty-state pattern with no action button
-- `2026-09-04T19:38:02` (R245) X-142 — is_active cast to boolean added to WebhookSubscription model
-- `2026-09-04T19:59:21` (R245) X-142 — ConnectYourAi connected state renders token_name and role_scope, asserting DontSee token_hash
-- `2026-09-04T19:59:21` (R245) X-142 — ConnectYourAi empty state renders sentence 'Connect an AI to get started.'
-- `2026-09-04T20:19:11` (R245) X-142 — (R245) X-142 — McpTokenAction::issue writes the permissions array directly; the model's array cast does the encoding
-- `2026-09-04T20:19:15` (R245) X-142 — (R245) X-142 — G4-02 is proven by revoke refusing a token id under a business id that does not own it; a second tenant cannot prove it because mcp_tokens is FORCE RLS
-- `2026-09-04T20:19:21` (R245) X-142 — (R245) X-142 — ConnectYourAi lists only tokens where is_revoked is false; that scope is what distinguishes it from McpTokenRegistry, which lists every token ever issued
-- `2026-09-04T20:37:59` (R245) C-Mail — G3-18 and G11-16 are proven by the day's spend carrying across sends via warmup_calendars.sent_today and by an uncapped send on a domain with no calendar row; the schedule ladder is data the send path never reads
-- `2026-09-04T20:37:59` (R245) C-Mail — G11-37's refusal has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called
-- `2026-09-04T20:50:45` (R245) C-Mail — G1-43's category-confirmation half has no mechanism in the module and none is invented this wave; recorded as REPORT.md prose, state.py unresolved not called
-- `2026-09-04T20:50:45` (R245) C-Mail — EmailUnsubscribeAction writes the preference through X204\Domain\ConsentService::suppress with channel email, mirroring C-Sms's SmsComposer; the mail_events row stays as the event log, not the preference store
-- `2026-09-04T20:50:45` (R245) C-Mail — EmailSendAction passes ConsentService::decide only for marketing sends, so a conversational or transactional send is never gated; that scoping is how an unsubscribed recipient still receives the invoice, which is G1-43's refusal clause
-- `2026-09-04T22:29:12` (R245) C-Mail — G15-31: a caller-supplied schedule with min === max is refused with WARMUP_CONSTANT_QUANTITY rather than silently jittered
-- `2026-09-04T22:29:12` (R245) C-Mail — G15-31: the published warm-up ladder is the midpoint of a +/-20% range; the stored quantity is drawn inside it, so no two domains share a schedule
 - `2026-09-04T22:41:56` UNRESOLVED capability X-186 - no action enrols a person into a campaign
-- `2026-09-04T22:51:42` (R245) C-Mail — G11-05: a fired seed sets is_marketing_paused only and is never cleared; 'never the thread' is EmailSendAction's existing sendType === 'marketing' guard, so no second flag, column or send-type argument is introduced
-- `2026-09-04T22:51:42` (R245) C-Mail — G11-05: the R17 halt seeds are evaluated by EmailHaltSeedAction over counted mail_events rows; the complaint seed is complained/sent >= 0.0010 and the bounce seed is a bounced count >= 250, both INCLUSIVE at the boundary, because a domain sitting exactly on R17's number is at the limit and G4-08 puts deliverability first; the rejected alternative was a strict > , which lets a domain park permanently at exactly the seed
-- `2026-09-04T23:10:49` (R245) X-01 — G2-38: the lead grade is derived from lead_rating inside UnifiedInboxManager::scoreLead on an inclusive ladder (>=80 A, >=60 B, >=40 C, >=20 D, else F) and the caller-supplied $grade parameter is removed; the rejected alternative was keeping it, which is what made X01Test's assertEquals('A', grade) read back its own argument
-- `2026-09-04T23:10:49` (R245) X-01 — G2-38: a lead_rating outside 0..100 is refused with LEAD_RATING_OUT_OF_RANGE before updateOrCreate rather than clamped, so a refused rating leaves no row; the confidence half of P-147 is NOT in this wave because lead_scores has no source column and no migration is written here
-- `2026-09-04T23:29:30` (R245) X-108 — G2-12: SchedulingEngine::getAvailableSlots reads availability_rules and treats is_blackout=true rows as SUBTRACTIVE overlays on the standard [9,11,14,16] ladder, matched on Carbon dayOfWeekIso (1=Monday..7=Sunday, the migration's own convention) over a half-open [start_time, end_time) hour window; the rejected alternative was making is_blackout=false rows the authoritative positive availability window, which would return zero slots for every tenant alive today because no tenant has a single row, reddening five live assertions in X108Test
-- `2026-09-04T23:29:34` (R245) X-108 — G2-12: a blackout applies to the whole business and resource_id is ignored, and the holiday-override half of G2-12/G18-07 is NOT built because availability_rules has day_of_week and no date column, so a one-off dated holiday has nowhere to be stored; no migration is written in this wave
-- `2026-09-04T23:49:10` (R245) X-202 — G10-34: an intermediate approval records current_step and nothing else; rejected per-step attribution to decision_comment because it would overwrite the audit trail as there is no table for it
-- `2026-09-04T23:49:10` (R245) X-202 — G10-34: ApprovalDecided does NOT fire on an intermediate approval; rejected firing per step with a step field on the event because it adds a required constructor parameter that fatals existing call sites
-- `2026-09-04T23:49:10` (R245) X-202 — G10-34: an item with no chain decides in one hop; rejected requiring a chain for every item because it would redden tests and break live tenants
-- `2026-09-04T23:49:10` (R245) X-202 — G10-34: an approval short of the last step advances the chain and leaves the item pending while rejection is terminal; rejected letting any step approve outright because it makes steps_count decorative
-- `2026-09-05T01:39:03` (R245) X-108 — rejected interval overlap between the two-hour slot and the rule because it would change the meaning of every rule already stored and contradict the existing test_g2_12_blackout_calendar fixtures and the module's TEST ANCHOR
-- `2026-09-05T01:57:53` (R245) X-108 — interval overlap is adopted for appointments and slot_locks (concrete rows with real start/end timestamps) and remains rejected for availability_rules blackout rows (S-39's (R245), weekly recurrence, a stored meaning that would change)
-- `2026-09-05T01:57:57` (R245) X-108 — G15-32 negative architecture assertion uses needles pay, wage, salary, rate, compensation, earning, payout over live schema; positive control uses affiliates table to ensure needle hits a real money column
-- `2026-09-05T02:07:23` (R245) X-108 — waitlist backfill scopes candidates to the cancelled appointment's date using preferred_date; this is a distinct question from slot availability (S-39/S-40). Member priority now ranks within the matched day rather than globally.
-- `2026-09-05T02:19:30` (R245) X-108 — The booking door refuses a window the availability door already excludes, using the same half-open predicate. This is a fourth, separate question: S-39 decided blackout semantics for availability_rules, S-40 adopted interval overlap for appointments/slot_locks in the availability door, and S-41 decided which waitlisted person gets a freed slot. The rejected strict reading (equality with the four canonical slots) was discarded because three existing call sites book non-slot windows. None of the earlier three decisions is reopened or overturned.
-- `2026-09-05T02:41:46` (R245) X-108 — the booking door now refuses a blacked-out window on the same predicate as the availability door; the known limit is that isBlackedOut() reads the start hour only, so a booking starting before a blackout and running into it is not refused — matching X108Test.php:231-244, which pins that behaviour for the availability door; the rejected alternative is a finer overlap-based blackout check, refused because it would make the two doors disagree in the opposite direction and is new semantics rather than precision; the slot-lock arm stays UNRESOLVED and S-39's, S-40's, S-41's and S-42's decisions are untouched
-- `2026-09-05T03:04:07` (R245) X-108 — offer-not-door: the VIP filter narrows $offeredSlots (offer policy) while settled arms continue out of $availableSlots (capacity). A non-member booking 09:00 is evidence, not a bug. Rejected symmetry with S-42/S-43 because VIP is offer policy, not capacity. Consequence: non-member can book the window withheld from them. This closes the door-disagreement series. The slot-lock arm stays UNRESOLVED. S-39, S-40, S-41, S-42, S-43 are untouched.
-- `2026-09-05T03:20:06` (R245) X-125 — Use a backed enum cast for FlowRun status and exhaustive match to fix boundary violation. Rejected: match (true), array lookup (teach checker to be noise), reusing AutomationRunStatus (different table's lifecycle). Consequence: a flow_runs row with a status outside the three cases now throws when the Runs screen renders its pill, where it used to show a grey Unknown pill.
-- `2026-09-05T03:43:33` (R245) X-01 — The scaffold DOES harvest @agent_reachable and X-01 manifest is not stale; the defect is in ContractStage.php:423 which does not support a mix of reachable and unreachable actions. Stopped per branch (c).
-- `2026-09-05T03:43:41` (R245) X-121 — schema 13 is recorded, not fixed: 11 of 12 tables are deliberate PLATFORM_EXEMPTIONS in X-121's 2026_08_31_000001 migration (platform STOPs with a NULL business_id, worker queues, global triage); operator_alerts has 16 console writers outside Tenancy::actingAs() and belongs on that list. X-121 is Track 1's (ruling 8) and UNRESOLVED on the owner's runtime rebundle.
+- `2026-09-05T03:56:25` (R245) X-205 — affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded
 - `2026-09-05T03:56:25` (R245) X-82 — agency.wholesale_discount_bp retired: P-008 states two discounts, not one off-retail rate; seeded agency.usage_discount_bp=4000 and agency.voice_discount_bp=2500; no platform_fee key until it has a reader
 - `2026-09-05T03:56:25` (R245) X-82 — plan.limited.price.monthly_cents, plan.limited.price.annual_cents removed from withheld(): no Limited tier in this plan (P-001); plan.base.cost_cap.monthly_additional_location_cents removed: P-003/P-010 and no reader
-- `2026-09-05T03:56:25` (R245) X-205 — affiliate.rate_monthly_bp=4000 and affiliate.rate_annual_bp=4000 per P-009 (40% of subscription, lifetime, nothing on usage); affiliate.cookie_days=90 and affiliate.minimum_payout_cents=5000 by the supervisor under the owner's delegation of 2026-09-05; all four leave withheld() and are seeded
-- `2026-09-05T04:00:02` (R245) X-01 — replyWithTakeover now refuses with TakeoverNotLatchedRefused when no active latch exists, instead of inventing an operator named Staff Member and labelling the reply a human takeover. Rejected alternative: return the reply unlabelled with no operator name, refused because a caller reading formatted_reply would send an unlabelled message where it expected a labelled one, which is the same fail open in the other direction. Blast radius zero: the only caller in the tree is X01Test.php line 94, which runs after a real takeover.
-- `2026-09-05T04:00:07` (R245) X-01 — the takeover latch has no release door, is_active and released_at have a writer and no un-writer, AgentEvalSuite line 430 makes it a permanently silenced thread, and a release path is new surface and stays UNRESOLVED.
-- `2026-09-05T04:12:41` (R245) X-200 — G18-25 clause one is built at CallDisposeAction line 25 and was already exercised by the anchor under the wrong id G18-01, the new test pins the untested direction a certain voicemail is not upgraded, and mutation A proves it covers ground the anchor does not.
-- `2026-09-05T04:12:44` (R245) X-200 — the 3 percent abandonment ceiling is a column with no arithmetic, abandonment_ceiling_pct is written by the migration and the only reader renders CallCampaign rows without computing a rate, disposeCall has no abandoned path, and a rate and a ceiling check are new surface and stays UNRESOLVED.
-- `2026-09-05T04:30:12` (R245) X-200 — disposeCall was the only door in X-200 that did not validate the campaign and seat ids it was handed, dialNext and logout and scoreCall all use findOrFail on the same ids, the row was written before the seat lookup so a foreign seat left the real seat in dialing forever and told nobody, and the fix adopts the module existing findOrFail idiom rather than a named refusal class because three sibling doors already read that way.
-- `2026-09-05T04:50:19` (R245) X-200 — dialNext refuses a paused campaign
-- `2026-09-05T05:09:58` (R245) X-215 — sign action refuses requests that are not pending
-- `2026-09-05T05:18:33` (R245) X-215 — the already-signed direction is closed by the pending guard rather than by a second guard of its own, a separate ALREADY_SIGNED refusal code was rejected because not-pending already describes it and two codes for one state invites callers to branch on the wrong one, and the blast radius is zero because the only callers of sign() are the three methods in X215Test.php
-- `2026-09-05T05:34:26` (R245) X-215 — the void guard keys on $doc->status rather than $request->status because after a successful sign both read 'signed', so no test can tell them apart, and the document is the subject of the void call. The rejected alternative was throwing an exception (the X-200 idiom) rather than returning a refusal array, because DocSignAction returns an array and keeping the module consistent is safer. The blast radius is one line: X215Test.php:146, which voids a pending document.
-- `2026-09-05T05:51:46` (R245) X-215 — the remind guard keys on request->status because remind is given a requestId and loads only the request, the document is not in scope and loading it would be a new dependency for no gain; SIGNATURE_REQUEST_NOT_PENDING is reused rather than a new REMINDER_REFUSED because the code names the state, S-54 already rejected two codes for one state, and a caller that branches on the code should not have to know which action produced it. The rejected alternative was adding 'reminded' => true to the success path, or a reminded_at column, neither was written because a key no assertion reads is untested code and the action does not send anything today. The blast radius is zero callers: grep -rn 'DocRemindAction|remindAction|reminder_sent' returns only the action's own two lines inside X-215 and its test.
-- `2026-09-05T06:11:10` note: --help
-- `2026-09-05T06:11:18` note: app/app/Modules/X-215/Actions/DocCommentAction.php DocCommentAction::addCommentAndReissue() has no state check, so a comment on a signed or voided document re-issues it with 'status' => 'sent' and silently re-opens a finished contract. deferred module, recorded under ruling 47, not built
-- `2026-09-05T06:11:18` note: app/app/Modules/X-215/Actions/DocRemindAction.php DocRemindAction returns 'reminder_sent' and sends nothing — no mail, no event, no queued job, no column. deferred module, recorded under ruling 47, not built
 - `2026-09-05T07:37:41` (R245) C-Agent — Tenancy::applyToDatabase swallows 25P02 and never rolls back the caller's transaction; bfe94205's rollBack removed; the run-77 deadlock does not reproduce without the queue worker (run 88 measurement)
 - `2026-09-05T07:46:15` C-Agent -> DONE
 - `2026-09-05T07:59:40` (R245) X-202 — a non-terminal approval persists its comment, appended and timestamped; status stays pending and decided_at stays null (R245)
+- `2026-09-05T08:12:23` (R245) C-Agent — agent chat tasks (ReviewAnalysis, Moderation, ReplyGeneration, Conversation) run on gpt-4o-mini until an Anthropic key is configured — owner ruling 2026-09-05 08:4x (R245); revert to the Claude defaults when the key lands
 - `2026-09-05T08:16:05` UNRESOLVED capability X-202 - G7-09 — no unopened/viewed signal and no nudge channel exists; approval_items has no opened_at column and grep -rn 'nudge' app/app/Modules/X-202 finds only the capability text
 - `2026-09-05T08:16:08` UNRESOLVED capability X-202 - G12-04 — ApprovalDecided has zero listeners outside X-202's own test; the publish side is X-103/X-157 and belongs to track site (ruling 5)
 - `2026-09-05T08:17:09` note: app/app/Modules/X-209/Domain/X209Engine.php + DeskEngine.php have zero callers; X209Engine's seven methods return hard-coded refusal strings restating the capability text (P-210 closed loop), DeskEngine is an empty class. Recorded under ruling 47, not built.
 - `2026-09-05T08:29:23` UNRESOLVED capability X-108 - G19-20 — no reminder system exists; grep -rn 'AppointmentReminded' app/app app/tests returns only the class declaration, so there is no 24h/1h/10min ladder, no scheduler and no credit meter to assert on
 - `2026-09-05T08:29:26` UNRESOLVED capability X-108 - G1-12 — X-108 has no payment surface; grep -rn 'iframe|card|token' app/app/Modules/X-108 returns only the capability text and one blade class attribute. The card/iframe boundary is X-120's and belongs to track money (ruling 5)
 - `2026-09-05T08:29:31` UNRESOLVED capability X-108 - G2-58 — no booking-questions column in migration 2026_08_30_000021 and no action reads one; the booking page is Track 2's (ruling 5)
+- `2026-09-05T08:35:16` (R245) X-82 — RateRegistryView on the tenant surface admits Owner/Manager (and SuperAdmin/OpsAdmin); the admin surface route is separate (run 90b, R245)
+- `2026-09-05T08:35:23` UNRESOLVED tests X-172 - generated screen test cannot mint a portal token (route x-172.customerfacing-portal/{token}); the module's own portal test is the coverage; needs a generator fixture hook
 - `2026-09-05T08:53:57` note: X-108 G17-27 — offered slots carry an ISO-8601 start_time/end_time with an explicit offset (tested), but the same payload ships formatted_window, a server-rendered 'g:i A' wall clock in the app timezone (SchedulingEngine.php:75, asserted at X108Test.php:63-69,113,193). A customer in another timezone reads the server's clock. Dropping the field or moving the render to the client is Track 2's under ruling 5.
 - `2026-09-05T09:07:07` note: X-193 — the 'quiet_hours_start is missing' UNRESOLVED (tests stage) is superseded: migration 2026_09_04_072838 arrived with the b445d2f1 take and adds quiet_hours_start + quiet_hours_end; NotificationClassifyAction reads both. The G10-31/G10-38 stubs are now buildable.
 - `2026-09-05T09:08:07` note: X-193 — NotificationClassifyAction infers classification and respects_quiet_hours from a str_contains() ladder over caller_type inside firstOrCreate's defaults (Actions/NotificationClassifyAction.php:28-41). Two consequences: a caller named 'chatty_promo' classifies operational because it contains 'chat', and the defaults are frozen at first write so no later policy change reaches an existing notification_classes row. Recorded, not fixed — a rewrite is a behaviour change outside S-67.
@@ -841,6 +775,7 @@
 - `2026-09-05T09:37:15` UNRESOLVED capability X-01 - G2-16 — no presence system exists; grep -rni 'typing|presence' app/app/Modules/X-01 returns only capabilities.php:28, the capability text. There is no presence event, no broadcast channel, no typing column and no listener, so any assertion here would author the ⑤ (P-210).
 - `2026-09-05T09:37:16` UNRESOLVED capability X-01 - G19-08 — no ghost-risk system exists; grep -rn 'ghost' app/app/Modules/X-01 app/app/Models returns capabilities.php:76 and three identical x-surface.sample-state boilerplate paragraphs in Ui/views. No model, column, action or flag, and nothing is 'flagged before a send is wasted'.
 - `2026-09-05T09:37:20` note: X-01 — G11-23 pins current behaviour: UnifiedInboxManager:70-75 keys Conversation::firstOrCreate on person_id alone, so all four channels land on one row (the cell's 'one polymorphic Conversation') and the channel column freezes at the first message's channel. A consumer reading conversation.channel as 'the channel this thread is on now' reads the wrong value from the second message onward. Recorded, not changed — a rewrite is a behaviour change outside S-69.
+- `2026-09-05T09:47:06` (R245) C-Billing — a duplicate payment profile (E00039) is reused by the id the vendor returns, never re-created (run 92, R245)
 - `2026-09-05T09:56:22` note: X-01 — G11-40 pins the header's first line (GOAIEZ-MASTER-PLAN.md:26556), which names FIVE channels including WhatsApp, against AccountInbox::$channels = ['sms','email','voice','chat'] (Ui/Account/Inbox.php:11), which names four. WhatsApp already threads correctly because UnifiedInboxManager::ingestMessage validates the $channel argument not at all — no enum, no list, no guard — so any string threads and freezes into conversations.channel at first write. The consequence is the other way round from the gap: a typo'd channel ('smss') is accepted silently and becomes the conversation's channel forever. Recorded, not fixed — adding validation or a fifth list entry is a behaviour change outside S-70, and the list lives in a Track 2 file (ruling 5).
 - `2026-09-05T09:57:00` UNRESOLVED capability X-01 - G2-23 — grep hit blade files and capabilities.php/manifest.php, no real writer or logging/audit column exists
 - `2026-09-05T09:57:00` UNRESOLVED capability X-01 - G2-36 — grep hit ContactMergeAction sourcePersonId variables, no UTM/source/campaign tracking systems exist
@@ -857,18 +792,23 @@
 - `2026-09-05T09:57:09` UNRESOLVED capability X-01 - G11-41 — grep hit Ui/CustomersList.php (Track 2) and capabilities.php, no VIP/LTV/lifetime sorting logic exists in this module
 - `2026-09-05T09:57:09` UNRESOLVED capability X-01 - G19-15 — grep found nothing (exit code 1). The transport would be a broadcast. Events/ConversationUpdated.php is a 'final class ConversationUpdated' with no interface — it does not implement ShouldBroadcast, so nothing leaves the process.
 - `2026-09-05T10:13:52` UNRESOLVED capability X-108 - G2-49: NoShowDetected exists as a class. However, the event class exists with no dispatcher, nothing sets an appointment to a no-show state, and the marketing-defer arm the spec asks to assert in the same test has no reminder to follow — G19-20, its partner in the one spec at plan:31675, is already UNRESOLVED for that reason.
+- `2026-09-05T10:13:56` (R245) C-Agent — the inbound agent turn consults X-126's fact gate before the model; a price question with no confirmed fact is refused NO_FACT (P-092, run 93, R245)
 - `2026-09-05T10:14:06` UNRESOLVED capability X-108 - G15-08: The out-of-office half is built and asserted: SchedulingEngine.php:167-169 throws SlotUnavailableRefused('the scheduler has not confirmed this window: it falls in an out-of-office rule') on the booking door, and test_g2_13_out_of_office (X108Test.php:211) asserts both the availability door and that refusal message. Nothing is missing there. The "X-10 skips an unavailable assignee" half has no reader — `grep -rn "X-108\|Appointment\|availability\|assignee" app/app/Modules/X-10 --include=*.php` returned nothing (exit code 1). The two-way sync half needs staff_calendar_links (X-209) and X-206's credential, neither of which this track owns or can create; `grep -rn "staff_calendar_links" app/app app/database --include=*.php` returned only X-209 migration/model/manifest lines.
 - `2026-09-05T10:14:11` note: X-108 The merged view has three inputs; the spec names five. The spec says "calendar + travel + blackout + capacity, merged before the offer" and asks for the refusal `availability_unknown` "asserted by making the calendar sync fail mid-request". `getAvailableSlots` merges capacity, locks and blackouts; there is no travel time and no calendar sync in this module, so there is nothing that can fail mid-request and the `availability_unknown` refusal cannot be asserted from this track at all (unassertable, not unwritten).
 - `2026-09-05T10:14:15` note: X-108 G2-10's other half is parked, not deferred. The plan marks it RE-HOME→G15 and F-14 classifies the seven staff-surveillance-shaped lines — G2-10 among them — as "classified and parked for the owner at turn 32". This wave asserts the calendar half only and deliberately asserts nothing about the hiring half in either direction.
 - `2026-09-05T10:14:20` note: X-01 the seven X-01 capability refusals recorded at 2026-09-05T09:57:00 are a duplicate first pass of the same seven at 09:57:09; the 09:57:00 G19-15 entry lost the identifiers `Events/ConversationUpdated.php`, `final class ConversationUpdated` and `ShouldBroadcast` to shell command substitution (backticks inside double quotes); the 09:57:09 pass is the correct record for all seven.
+- `2026-09-05T10:15:15` (R245) C-Agent — one fact key for a service price: price.<slug>; the agent parses it generically; no per-service special cases (run 93b, R245)
 - `2026-09-05T10:30:04` UNRESOLVED capability X-108 - Refused G1-12. The only grep hit for iframe/token in X-108 is the capability text itself. The card surface lives in X-120 (e.g. CardToken, CardStoreAction, etc.). Grep returned hits like app/app/Modules/X-120/Actions/CardStoreAction.php:27: $token = CardToken::create([... This track owns neither X-120 nor any view.
 - `2026-09-05T10:30:04` UNRESOLVED capability X-01 - Refused G2-25. D1 is a design system (surface is blades/Livewire, Track 2). The 5 'honest counter' hits are all in app/app/Services/Ops/ (PlatformHealthSignal.php, PlatformHealth.php, etc.) - which is 9371's platform-health levelling rule, a different system from X-01's tenant inbox, and platform ops besides. No glassmorph/god mode hits anywhere.
 - `2026-09-05T10:30:04` note: X-01 The spec's second half (GOAIEZ-MASTER-PLAN.md:31512) is asserted ('one thread, three Message rows' was already covered by test_g11_22_polymorphic_conversation, test_g11_23_omnichannel_spec, and test_g11_40_header_line), but the first was not. 'No table holding a message, thread or contact outside the twelve nouns' had no test until this wave. It uses a mechanical rule (the violator's name ends with _messages/conversations/threads/contacts), which is why contact_tags is out by that rule rather than by exception.
 - `2026-09-05T10:30:04` note: X-01 Real offenders found by the sweep (g2_76 grep): outreach_messages (app/database/migrations/2026_07_30_081926_create_outreach_messages_table.php), triage_conversations (app/database/migrations/2026_08_13_161545_create_triage_conversations_table.php), inbound_messages (app/database/migrations/2026_08_09_043337_create_inbound_messages_table.php), and support_messages (app/database/migrations/2026_08_13_200424_create_support_messages_table.php).
+- `2026-09-05T10:55:53` (R245) C-Sms — C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)
 - `2026-09-05T11:03:33` note: CORRECTION to the 2026-09-05T10:30 G2-76 violator note (REVIEWS.md tick 348 note 1): triage_conversations is created by app/database/migrations/2026_07_30_081928_create_triage_conversations_table.php, and support_messages by app/database/migrations/2026_08_12_065625_create_support_desk_tables.php. The two filenames recorded earlier do not exist. outreach_messages (2026_07_30_081926) and inbound_messages (2026_08_09_043337) were recorded correctly.
 - `2026-09-05T11:07:32` note: S-73 stage analysis: the capability stage counts "names no refusal" from app/app/Doctor/Stages/CapabilityStage.php:99; recording UNRESOLVED does not lower it; the stage this track can actually move is citation 94 (and boundary/contract/schema) because they are fixable by system changes in owned modules.
 - `2026-09-05T11:17:06-0500` note: CORRECTION: the S-73 claim "the stage this track can actually move is citation 94" is wrong. CitationStage::comments() (line 215) counts any line with a 20+ character single-quoted string, so generated capabilities.php rows are in the corpus; six ids (N-063 N-064 N-067 N-073 N-076 N-085) exist in no GOAIEZ-*.md and sit in the same nine generated capabilities.php files — up to 54 of the 94, unfixable from here.
+- `2026-09-05T11:22:12` UNRESOLVED capability C-Sms - TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant
 - `2026-09-05T12:05:48` (R245) X-150 — N-150 was cited in ProviderEngine.php but appears nowhere in the package; the citation stage's own fix string offers 'state the FACT instead of the id', so the exception message now names junk-value rejection and tier bounding directly. Commit 07e20fb1. citation 94 -> 93.
+- `2026-09-05T12:14:55` note: J10: owner ruling 2026-09-05 — the journey funds its tenant and loads the registers as test setup; TrialEligibility stands in production
 - `2026-09-05T12:48:11` UNRESOLVED capability X-01 - G2-25 — no marker set separates the two designs anywhere in the tree; grep -rnwi 'glassmorphism\|god-mode' app/app/Modules app/resources/views returns nothing, so no honest assertion exists
 - `2026-09-05T12:48:18` UNRESOLVED capability X-01 - G19-15 — no polling or broadcasting system exists; grep -rn 'wire:poll\|broadcast\|Echo\|dispatch(' app/app/Modules/X-01 returns only internal events and component dispatches, so no honest assertion exists
 - `2026-09-05T13:10:24` note: G11-41 the two 09:57 rows are a duplicate of each other, they answer the VIP/LTV half, S-79's 0c66b6c1 answers the plain sort-order half at X01Test.php:372 against app/app/Modules/X-01/Ui/CustomersList.php:47, and the id is now half-tested and half-unresolved
@@ -884,8 +824,16 @@
 - `2026-09-05T13:27:15` UNRESOLVED capability X-117 - G17-31 — R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here
 - `2026-09-05T13:27:36` (R245) X-205 — (R245) Made affiliate_code unique composite with business_id, dropping global unique index affiliates_affiliate_code_unique to allow different tenants to use the same affiliate code, avoiding cross-tenant collisions.
 - `2026-09-05T13:45:55` note: G1-73, G1-75, G1-81 and G1-82 were filed UNRESOLVED at 2026-09-05T13:27:15 with the words 'returns nothing'; each of those four greps returns exactly one line, its own capabilities.php entry (capabilities.php:46, :49, :52, :55). The filings stand — the only match in every case is the capability text, so no system exists behind any of the four — but the honest phrasing is the one used for G7-10 and G17-31, 'returns only the capability text'. Recorded so the ledger is not read as a stronger negative than the grep supports.
+- `2026-09-05T13:46:19` (R245) X-121 — JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)
 - `2026-09-05T15:51:12` UNRESOLVED capability X-183 - G12-02: ContentGateAction::evaluateGate() implements no grounding check; grep -rn 'grounding' app/app/Modules/X-183 returns only the docblock and capabilities.php
 - `2026-09-05T15:51:15` UNRESOLVED capability X-183 - G13-29: ContentGateAction::evaluateGate() implements no citation check; grep -rn 'citation' app/app/Modules/X-183 returns only capabilities.php
+- `2026-09-05T16:22:13` (R245) C-Billing — a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)
+- `2026-09-05T17:11:31` UNRESOLVED tests X-01 - four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold
+- `2026-09-05T17:33:50` note: X-172 generated screen test renders through Fixtures::token() (run 101)
+- `2026-09-05T17:42:53` note: X-193 quiet_hours_start: answered — migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main
+- `2026-09-05T17:42:54` note: X-201 deadline_at: answered — migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main
+- `2026-09-05T17:42:54` note: C-Reviews messageClass: answered — ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)
+- `2026-09-05T17:42:54` note: C-Sms TrialEligibility: answered by owner ruling 2026-09-05 — the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)
 - `2026-09-05T23:57:08` UNRESOLVED capability X-183 - G5-11 — grep -inr "G5-11" app/ returns only the capability text; no comment model, no escalation path
 - `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G7-24 — grep -inr "G7-24" app/ returns only the capability text; nothing marks a draft human or AI
 - `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G8-39 — grep -inr "G8-39" app/ returns only the capability text; no grounding check — same absence as G12-02
@@ -911,3 +859,10 @@
 - `2026-09-06T04:21:16` UNRESOLVED capability X-210 - The ⑤ is 'P-001 · T468 — two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE "(tier|package|padlock)" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.
 - `2026-09-06T04:21:16` UNRESOLVED capability X-103 - The ⑤ is 'the review widget on the site; the plugin path is X-104\'s'. 'grep -rniE "(plugin\|wordpress\|shortcode\|embed\|widget\|snippet\|marketplace)" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module — no column, no action, no engine method.
 - `2026-09-06T04:21:16` UNRESOLVED schema X-111 - 2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.
+- `2026-09-06T05:15:18` UNRESOLVED capability X-109 - ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.
+- `2026-09-06T05:15:18` UNRESOLVED capability X-180 - The ⑤ is 'ad PACKS as content are not fenced (P-128);  P-120 — every claim verifiable'. It states two separate laws over the single Action that exists (PackSeedAction.php), so asserting either half authors the other (P-210).
+- `2026-09-06T05:15:18` UNRESOLVED capability X-170 - The ⑤ is 'cleared commission into the payroll export'. 'grep -rniE "(payroll|export)" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.
+- `2026-09-06T05:15:18` UNRESOLVED capability X-158 - Read the module's migration. The 'videos' table has columns (id, business_id, title, demo_number, video_url, caption_track_url, transcript, is_rendered, timestamps) and 'video_views' table. There is no live-vs-replay column.
+- `2026-09-06T05:15:18` UNRESOLVED capability X-210 - The ⑤ is 'P-001 · T468 — two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE "(tier|package|padlock)" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.
+- `2026-09-06T05:15:18` UNRESOLVED capability X-103 - The ⑤ is 'the review widget on the site; the plugin path is X-104\'s'. 'grep -rniE "(plugin\|wordpress\|shortcode\|embed\|widget\|snippet\|marketplace)" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module — no column, no action, no engine method.
+- `2026-09-06T05:15:18` UNRESOLVED schema X-111 - 2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.

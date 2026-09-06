@@ -16,5 +16,8 @@ __pycache__/
 *.pyc
 
 # per-track supervisor mailbox — never merged, never shared (owner ruling 2026-09-04)
+# the supervisor's mailbox is working-tree only — main ignores it, and a merge that
+# writes one track's copies over another's destroys the verdict record.
 .agents/supervisor/*
 !.agents/supervisor/launch-coder.sh
+scratch/

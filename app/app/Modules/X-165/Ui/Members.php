@@ -4,23 +4,44 @@ declare(strict_types=1);
 
 namespace App\Modules\X165\Ui;
 
+use App\Enums\UserRole;
+use App\Modules\X165\Actions\MembershipRenewAction;
+use App\Modules\X165\Actions\RenewalReminderAction;
 use App\Modules\X165\Models\Membership;
+use App\Modules\X165\Models\MembershipPlan;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class Members extends Component
 {
     #[Locked]
-    public int $businessId = 0;
+    public int $businessId;
+
+    public function mount()
+    {
+        abort_unless(auth()->check() && (auth()->user()->hasRole(UserRole::Owner, UserRole::Manager)), 403);
+        $this->businessId = Tenancy::id();
+    }
+
+    public function renew(int $membershipId)
+    {
+        app(MembershipRenewAction::class)->handle($this->businessId, $membershipId);
+    }
+
+    public function remind(int $membershipId)
+    {
+        app(RenewalReminderAction::class)->sendReminderIfDue($this->businessId, $membershipId, now());
+    }
 
     public function render()
     {
-        $members = ($this->businessId > 0)
-            ? Membership::where('business_id', $this->businessId)->get()
-            : collect();
+        $memberships = Membership::where('business_id', $this->businessId)->get();
+        $planNames = MembershipPlan::whereIn('id', $memberships->pluck('plan_id')->unique())->get()->keyBy('id')->map->name;
 
         return view('x-165::members', [
-            'members' => $members,
+            'memberships' => $memberships,
+            'planNames' => $planNames,
         ]);
     }
 }
