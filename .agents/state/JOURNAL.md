@@ -812,3 +812,4 @@
 - `2026-09-05T18:10:57` (R245) X-103 — drop 5 unused boolean columns from page_versions because they have zero readers/writers
 - `2026-09-05T18:51:18` X-193 -> DONE
 - `2026-09-05T18:51:18` X-201 -> DONE
+- `2026-09-05T19:32:25` UNRESOLVED capability X-186 - G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)

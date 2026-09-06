@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T18:51:18",
+ "updated": "2026-09-05T19:32:25",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -981,6 +981,12 @@
      "stage": "capability",
      "why": "no action enrols a person into a campaign",
      "at": "2026-09-04T22:41:56"
+    },
+    {
+     "module": "X-186",
+     "stage": "capability",
+     "why": "G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)",
+     "at": "2026-09-05T19:32:25"
     }
    ]
   },
@@ -1431,6 +1437,12 @@
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
    "at": "2026-09-05T11:22:12"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "why": "G3-55 is a cross reference to G3-37 owned by X-140 (checked app/app/Modules/X-186/capabilities.php:31 and app/app/Modules/X-140/capabilities.php:25)",
+   "at": "2026-09-05T19:32:25"
   }
  ],
  "decisions": [
