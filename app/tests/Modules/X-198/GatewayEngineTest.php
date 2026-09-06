@@ -10,5 +10,5 @@ test('capture persists real id', function () {
 
     expect($artifact['gateway_charge_id'])->not->toBeNull();
     expect($artifact['gateway_charge_id'])->toStartWith('ch_');
-    expect($artifact['payment_status'])->toBe('pending');
+    expect($artifact['payment_status'])->toBe('captured');
 });
