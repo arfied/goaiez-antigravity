@@ -152,9 +152,29 @@ Watch for: <the trap that applies, by name>
   a real assertion (good work, kept) but X-132 appears nowhere in the 742, so
   the wave could not move a number and the brief should have said so. The two
   capability findings that stages can actually clear are `specced but no test
-  names this id` (87 of them; fixed by a test whose *name* carries the id, over
-  real system) and nothing else — `the ⑤ names no refusal` edits
-  `capabilities.php` prose and is Track 1's under ruling 15/40.
+  names this id` (fixed by a test over real system, in a file that carries the
+  id — see the next trap for the exact form) and nothing else — `the ⑤ names no
+  refusal` edits `capabilities.php` prose and is Track 1's under ruling 15/40.
+- **⛔ The capability checker greps FILE CONTENTS for the LITERAL id, not method
+  names.** `CapabilityStage::testedIds()` (`app/app/Doctor/Stages/CapabilityStage.php:279-292`)
+  runs `preg_match_all('/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/', $f->getContents())`
+  over every `*.php` under `tests/Modules/<id>/`. No `i` modifier. So `G12-29`
+  counts and `test_g12_29_…` does **not** — S-87 wrote four real, mutation-proven
+  tests named that way and `capability` held at 400. The house form is a docblock,
+  `* [G13-18]` (`X132Test.php:80`, `X111Test.php:101`).
+  **It cuts both ways: the id anywhere in that directory credits it, including in
+  a comment saying it is NOT tested.** So an id filed `UNRESOLVED` must never be
+  written into its own module's test directory — that silently deletes the
+  finding with nothing asserting it, and is a `BLOCK`. Brief it every time.
+- **An `UNRESOLVED` filing does not lower a count.** It is a record, not a fix;
+  the finding stays red. Say the expected number in the brief so the wave is not
+  read as a fix that did not land.
+- **No background waiter, on either side.** S-87's coder left
+  `wait_and_write.sh` — `while true; sleep 5` polling a log, with `\$` escaped so
+  its `break` was unreachable — running after its work finished at 15:54. The
+  8h `--print-timeout` killed it at ~23:48: **7h54m and 45 supervisor ticks on a
+  finished wave.** Track 5 lost 7.5h and 44 ticks to the identical defect
+  (`tail -f /dev/null`, its run 53). Every kickoff names this rule.
 - **`state.py` owns `BUILD-STATE.json`.** A hand edit there is a `BLOCK`; so is
   a `JOURNAL.md` line with no matching commit.
 - **`BUILDING` is not progress.** On 2026-08-31 13:04:41 twelve modules flipped
