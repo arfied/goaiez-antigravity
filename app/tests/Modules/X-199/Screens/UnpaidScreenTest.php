@@ -18,7 +18,11 @@ class UnpaidScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-199.unpaid'))->assertOk();
+        $this->get(route('x-199.unpaid'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Unpaid Invoices</h1>', false);
 
         Livewire::test(Unpaid::class)->assertOk();
     }

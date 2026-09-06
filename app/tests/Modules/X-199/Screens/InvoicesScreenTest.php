@@ -18,7 +18,11 @@ class InvoicesScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-199.invoices'))->assertOk();
+        $this->get(route('x-199.invoices'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Customer Invoices</h1>', false);
 
         Livewire::test(Invoices::class)->assertOk();
     }

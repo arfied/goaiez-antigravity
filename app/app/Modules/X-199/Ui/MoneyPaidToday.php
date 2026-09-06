@@ -14,7 +14,7 @@ use Livewire\Component;
  * Money Paid Today
  * Derives paid today from invoices updated today with status 'paid' or 'offline_recorded', summing paid_cents.
  */
-#[Layout('components.account.layout')]
+#[Layout('components.account.layout', ['heading' => 'Happened Today'])]
 class MoneyPaidToday extends Component
 {
     #[Locked]

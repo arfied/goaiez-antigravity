@@ -18,7 +18,11 @@ class CreditsScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-199.credits'))->assertOk();
+        $this->get(route('x-199.credits'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Credit Balances &amp; Terms</h1>', false);
 
         Livewire::test(Credits::class)->assertOk();
     }
