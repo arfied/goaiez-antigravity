@@ -98,7 +98,7 @@ class X211Test extends TestCase
 
     /**
      * [N-033], [G1-61], [G1-65], [G1-70], [G1-71], [G1-74] no refusal declared
-     * [N-037]
+     * [N-037] ⛔ REFUSED: `php artisan why N-037` reports it is never DEFINED. a fee with no matching TERM is refused. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_capability_assertions(): void
     {
