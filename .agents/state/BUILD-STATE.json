@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T05:07:39",
+ "updated": "2026-09-06T05:49:30",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -526,10 +526,17 @@
    "unresolved": []
   },
   "X-120": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 24,
    "intent": "OBSERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-120",
+     "stage": "doctor",
+     "why": "Missing plan update: Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
+     "at": "2026-09-06T05:49:30"
+    }
+   ]
   },
   "X-121": {
    "status": "UNRESOLVED",
@@ -1083,6 +1090,12 @@
      "stage": "capability",
      "why": "the \u2464 cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine \u2014 measured MONEY-51.",
      "at": "2026-09-06T05:07:39"
+    },
+    {
+     "module": "X-211",
+     "stage": "doctor",
+     "why": "Missing plan update: Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
+     "at": "2026-09-06T05:49:26"
     }
    ]
   },
@@ -1245,6 +1258,18 @@
    "stage": "capability",
    "why": "the \u2464 cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine \u2014 measured MONEY-51.",
    "at": "2026-09-06T05:07:39"
+  },
+  {
+   "module": "X-211",
+   "stage": "doctor",
+   "why": "Missing plan update: Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
+   "at": "2026-09-06T05:49:26"
+  },
+  {
+   "module": "X-120",
+   "stage": "doctor",
+   "why": "Missing plan update: Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
+   "at": "2026-09-06T05:49:30"
   }
  ],
  "notes": [
@@ -1399,6 +1424,10 @@
   {
    "at": "2026-09-06T05:19:19",
    "note": "MONEY-52: carried the five literal capability ids (N-033, G1-61, G1-65, G1-70, G1-74) onto the X-211 tests that prove them, restoring capability to 349; paired every negative screen assertion in X-211 with a positive control."
+  },
+  {
+   "at": "2026-09-06T05:49:35",
+   "note": "Completed the MONEY-53 sweep. Audited 17 negatives across X-199 tests. 15 were already paired with seeded controls; added controls for 2 in CreditsScreenTest. Verified UnpaidScreenTest mutation fails negative assertion correctly. Marked X-211 and X-120 gaps as unresolved due to frozen plan."
   }
  ],
  "decisions": [
