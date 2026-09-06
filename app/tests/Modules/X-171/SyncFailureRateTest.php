@@ -14,6 +14,7 @@ use App\Modules\X171\Models\DeviceSyncQueue;
 use App\Modules\X171\Ui\SyncFailureRate;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -46,6 +47,27 @@ class SyncFailureRateTest extends TestCase
             ->assertOk()
             ->assertSee('No device mutations yet.')
             ->assertSee('No sync conflicts. Every device mutation replayed cleanly.');
+    }
+
+    public function test_seeded_row_reaches_the_page(): void
+    {
+        Event::fake([SyncConflict::class, JobCompleted::class]);
+
+        $owner = User::factory()->role(UserRole::Owner)->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $action = app(ReplayOfflineSyncAction::class);
+        $deviceId = '259.99';
+
+        $action->replayMutation($biz->id, 'mut_conflict', $deviceId, 'job.completed', ['job_id' => 1, 'tech_id' => $owner->id], 1, 2);
+
+        Gate::before(fn () => true);
+
+        $this->actingAs($owner)
+            ->get(route('x-171.sync-failure-rate.admin'))
+            ->assertOk()
+            ->assertSee('259.99');
     }
 
     public function test_conflicts_and_processed_mutate_stats(): void
