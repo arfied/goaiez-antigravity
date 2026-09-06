@@ -681,19 +681,29 @@ trait JourneyHarness
             [['type' => 'hero']]
         );
 
-        $version = PageVersion::findOrFail($published['version_id']);
-        $blocks = json_encode($version->content_blocks ?? []);
+        $deployment = \App\Modules\X157\Models\Deployment::where('business_id', $tenant['id'])
+            ->where('page_id', $page->id)
+            ->latest()
+            ->first();
+
+        $response = $this->get("/sites/{$tenant['id']}/{$deployment->deploy_hash}");
+        $html = (string) $response->getContent();
+
+        $zoneRow = $deployment->edgeZone;
+        $zoneRow->update(['has_valid_ssl' => false]);
+        $withoutSsl = $this->get("/sites/{$tenant['id']}/{$deployment->deploy_hash}");
+        $zoneRow->update(['has_valid_ssl' => true]);
 
         return [
             'deploy_id' => $published['commit_id'],
             'features' => [
-                'pixel' => (bool) $version->pixel_installed,
-                'chat' => str_contains($blocks, 'chat_widget'),
-                'form_capture' => str_contains($blocks, 'form_capture'),
-                'dni' => str_contains($blocks, 'dni_script'),
-                'seo' => str_contains($blocks, 'seo_tags'),
-                'schema' => str_contains($blocks, 'schema_markup'),
-                'ssl' => isset($version->ssl_installed) ? (bool) $version->ssl_installed : false,
+                'pixel' => str_contains($html, 'x110-pixel'),
+                'chat' => str_contains($html, 'chat-widget-container'),
+                'form_capture' => str_contains($html, 'form-capture-x155'),
+                'dni' => str_contains($html, 'dni-pool-x137'),
+                'seo' => str_contains($html, 'seo-meta-x176'),
+                'schema' => str_contains($html, 'application/ld+json'),
+                'ssl' => $response->status() === 200 && $withoutSsl->status() === 404,
             ],
         ];
     }
