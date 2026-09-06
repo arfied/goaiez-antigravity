@@ -49,7 +49,7 @@ class CheckoutBlockScreenTest extends TestCase
         $this->assertSame(1, $filter->fresh()->inventory_quantity);
 
         $screen->call('authorise')
-            ->assertSee('this authorisation pays once');
+            ->assertSee('waiting on a card-entry surface that is not connected yet');
 
         $token = $screen->get('authToken');
 
@@ -90,5 +90,37 @@ class CheckoutBlockScreenTest extends TestCase
         Tenancy::set($bizB->id);
         $this->assertSame(1, Cart::where('business_id', $bizB->id)->count());
         $this->assertSame(0, Order::where('business_id', $bizB->id)->count());
+    }
+
+    public function test_merchant_connection_does_not_trigger_gateway_call()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        app(\App\Modules\X198\Domain\GatewayEngine::class)->connect($biz->id, 'stripe', 'acct_test_x117');
+
+        $client = new class {
+            public int $calls = 0;
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string {
+                $this->calls++;
+                throw new \RuntimeException('Stripe client should not be called.');
+            }
+        };
+
+        $this->app->instance(\App\Modules\X198\Domain\StripeGatewayClient::class, $client);
+
+        $filter = Sellable::create(['business_id' => $biz->id, 'name' => 'Test Item', 'sku' => 'TEST-1', 'inventory_quantity' => 1, 'unit_price_cents' => 1000, 'fulfilment_type' => 'physical']);
+        (new \App\Modules\X117\Actions\CartAddAction)->handle($biz->id, 'sess_x', $filter->id);
+
+        $screen = Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_x']);
+        $screen->call('authorise');
+        $screen->call('pay')
+            ->assertSee('waiting on a card-entry surface');
+
+        $this->assertSame(0, $client->calls);
+
+        $order = Order::where('business_id', $biz->id)->first();
+        $this->assertNotNull($order);
+        $this->assertSame('pending_payment', $order->status);
     }
 }
