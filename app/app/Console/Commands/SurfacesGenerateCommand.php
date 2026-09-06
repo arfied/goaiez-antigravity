@@ -356,6 +356,11 @@ class SurfacesGenerateCommand extends Command
 
         $content = "<?php\n\ndeclare(strict_types=1);\n\nnamespace Tests\Modules\\".str_replace('-', '', $modId)."\Screens;\n\n{$importsStr}\n";
 
+        $fixtureFile = base_path("tests/Modules/{$modId}/Screens/Fixtures.php");
+        if (file_exists($fixtureFile)) {
+            $content .= "require_once __DIR__ . '/Fixtures.php';\n\n";
+        }
+
         $content .= "class {$className}ScreenTest extends TestCase\n{\n";
 
         $provisioningStr = '';
@@ -372,7 +377,12 @@ class SurfacesGenerateCommand extends Command
                 foreach ($routeArgsArray as $argStr) {
                     if (preg_match('/\'(.*)\'\s*=>\s*\$(.*)/', $argStr, $m)) {
                         $pName = $m[2];
-                        $provisioningStr .= "        \$$pName = 1;\n";
+                        $fixtureFile = base_path("tests/Modules/{$modId}/Screens/Fixtures.php");
+                        if (file_exists($fixtureFile) && str_contains(file_get_contents($fixtureFile), "function {$pName}(")) {
+                            $provisioningStr .= "        \$$pName = Fixtures::{$pName}(\$biz);\n";
+                        } else {
+                            $provisioningStr .= "        \$$pName = 1;\n";
+                        }
                     }
                 }
             }

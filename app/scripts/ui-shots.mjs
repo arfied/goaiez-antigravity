@@ -294,6 +294,7 @@ function waitForServer(url) {
         
         // Screens to capture
         const screens = [
+            { name: 'account-tracking', path: '/account/tracking' },
             { name: 'account-home', path: '/home' },
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },
@@ -391,6 +392,7 @@ function waitForServer(url) {
         await mobilePage.waitForLoadState('networkidle');
 
         const mobileScreens = [
+            { name: 'account-tracking', path: '/account/tracking' },
             { name: 'account-home', path: '/home' },
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },

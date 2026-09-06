@@ -1,152 +1,3 @@
-- `2026-08-30T02:05:15` state initialised
-- `2026-08-30T02:05:26` note: bootstrap-done
-- `2026-08-30T02:05:26` selftest: sound
-- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
-- `2026-08-30T02:05:26` X-123 -> DONE
-- `2026-08-30T02:05:26` X-122 -> DONE
-- `2026-08-30T02:05:26` X-126 -> DONE
-- `2026-08-30T02:05:26` X-119 -> DONE
-- `2026-08-30T02:05:26` seal observed deadbeef00000000
-- `2026-08-30T02:12:17` note: bootstrap-done
-- `2026-08-30T02:12:17` selftest: sound
-- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
-- `2026-08-30T02:12:17` X-123 -> DONE
-- `2026-08-30T02:12:17` X-122 -> DONE
-- `2026-08-30T02:12:17` X-126 -> DONE
-- `2026-08-30T02:12:17` X-119 -> DONE
-- `2026-08-30T02:12:17` X-128 -> DONE
-- `2026-08-30T02:12:17` C-Ai -> DONE
-- `2026-08-30T02:12:17` X-219 -> DONE
-- `2026-08-30T02:12:17` X-220 -> DONE
-- `2026-08-30T02:12:18` X-204 -> DONE
-- `2026-08-30T02:12:18` X-206 -> DONE
-- `2026-08-30T02:12:18` C-Telephony -> DONE
-- `2026-08-30T02:12:18` C-Sms -> DONE
-- `2026-08-30T02:12:18` C-Agent -> DONE
-- `2026-08-30T02:12:18` X-66 -> DONE
-- `2026-08-30T02:12:18` X-188 -> DONE
-- `2026-08-30T02:12:18` X-153 -> DONE
-- `2026-08-30T02:12:18` X-01 -> DONE
-- `2026-08-30T02:12:18` X-118 -> DONE
-- `2026-08-30T02:12:18` X-163 -> DONE
-- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
-- `2026-08-30T02:12:18` X-108 -> DONE
-- `2026-08-30T02:12:18` C-Reviews -> DONE
-- `2026-08-30T02:12:18` X-181 -> DONE
-- `2026-08-30T02:12:18` X-110 -> DONE
-- `2026-08-30T02:12:18` C-Billing -> DONE
-- `2026-08-30T02:12:18` X-199 -> DONE
-- `2026-08-30T02:12:18` X-211 -> DONE
-- `2026-08-30T02:12:18` X-202 -> DONE
-- `2026-08-30T02:12:18` X-117 -> DONE
-- `2026-08-30T02:12:18` X-198 -> DONE
-- `2026-08-30T02:12:18` X-172 -> DONE
-- `2026-08-30T02:12:18` X-112 -> DONE
-- `2026-08-30T02:12:18` X-166 -> DONE
-- `2026-08-30T02:12:18` X-157 -> DONE
-- `2026-08-30T02:12:18` X-178 -> DONE
-- `2026-08-30T02:12:18` X-103 -> DONE
-- `2026-08-30T02:12:18` X-102 -> DONE
-- `2026-08-30T02:12:18` X-155 -> DONE
-- `2026-08-30T02:12:19` X-137 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
-- `2026-08-30T02:12:19` X-212 -> DONE
-- `2026-08-30T02:12:19` X-203 -> DONE
-- `2026-08-30T02:12:19` C-Mail -> DONE
-- `2026-08-30T02:12:19` C-Whatsapp -> DONE
-- `2026-08-30T02:12:19` X-147 -> DONE
-- `2026-08-30T02:12:19` X-207 -> DONE
-- `2026-08-30T02:12:19` X-193 -> DONE
-- `2026-08-30T02:12:19` X-208 -> DONE
-- `2026-08-30T02:12:19` X-125 -> DONE
-- `2026-08-30T02:12:19` X-127 -> DONE
-- `2026-08-30T02:12:19` X-149 -> DONE
-- `2026-08-30T02:12:19` X-170 -> DONE
-- `2026-08-30T02:12:19` X-201 -> DONE
-- `2026-08-30T02:12:19` X-10 -> DONE
-- `2026-08-30T02:12:19` X-113 -> DONE
-- `2026-08-30T02:12:19` X-124 -> DONE
-- `2026-08-30T02:12:19` X-143 -> DONE
-- `2026-08-30T02:12:19` X-151 -> DONE
-- `2026-08-30T02:12:19` X-162 -> DONE
-- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
-- `2026-08-30T02:12:19` X-171 -> DONE
-- `2026-08-30T02:12:19` X-189 -> DONE
-- `2026-08-30T02:12:19` X-214 -> DONE
-- `2026-08-30T02:12:19` X-215 -> DONE
-- `2026-08-30T02:12:19` X-07 -> DONE
-- `2026-08-30T02:12:19` X-104 -> DONE
-- `2026-08-30T02:12:19` X-111 -> DONE
-- `2026-08-30T02:12:19` X-129 -> DONE
-- `2026-08-30T02:12:19` X-138 -> DONE
-- `2026-08-30T02:12:20` X-139 -> DONE
-- `2026-08-30T02:12:20` X-145 -> DONE
-- `2026-08-30T02:12:20` X-148 -> DONE
-- `2026-08-30T02:12:20` X-150 -> DONE
-- `2026-08-30T02:12:20` X-16 -> DONE
-- `2026-08-30T02:12:20` X-160 -> DONE
-- `2026-08-30T02:12:20` X-167 -> DONE
-- `2026-08-30T02:12:20` X-168 -> DONE
-- `2026-08-30T02:12:20` X-175 -> DONE
-- `2026-08-30T02:12:20` X-177 -> DONE
-- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
-- `2026-08-30T02:12:20` X-194 -> DONE
-- `2026-08-30T02:12:20` X-195 -> DONE
-- `2026-08-30T02:12:20` X-197 -> DONE
-- `2026-08-30T02:12:20` X-209 -> DONE
-- `2026-08-30T02:12:20` X-82 -> DONE
-- `2026-08-30T02:12:20` X-08 -> DONE
-- `2026-08-30T02:12:20` X-120 -> DONE
-- `2026-08-30T02:12:20` X-136 -> DONE
-- `2026-08-30T02:12:20` X-141 -> DONE
-- `2026-08-30T02:12:20` X-142 -> DONE
-- `2026-08-30T02:12:20` X-156 -> DONE
-- `2026-08-30T02:12:20` X-173 -> DONE
-- `2026-08-30T02:12:20` X-213 -> DONE
-- `2026-08-30T02:12:20` X-105 -> DONE
-- `2026-08-30T02:12:20` X-109 -> DONE
-- `2026-08-30T02:12:21` X-114 -> DONE
-- `2026-08-30T02:12:21` X-116 -> DONE
-- `2026-08-30T02:12:21` X-130 -> DONE
-- `2026-08-30T02:12:21` X-131 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
-- `2026-08-30T02:12:21` X-134 -> DONE
-- `2026-08-30T02:12:21` X-135 -> DONE
-- `2026-08-30T02:12:21` X-140 -> DONE
-- `2026-08-30T02:12:21` X-144 -> DONE
-- `2026-08-30T02:12:21` X-154 -> DONE
-- `2026-08-30T02:12:21` X-158 -> DONE
-- `2026-08-30T02:12:21` X-159 -> DONE
-- `2026-08-30T02:12:21` X-161 -> DONE
-- `2026-08-30T02:12:21` X-179 -> DONE
-- `2026-08-30T02:12:21` X-182 -> DONE
-- `2026-08-30T02:12:21` X-183 -> DONE
-- `2026-08-30T02:12:21` X-184 -> DONE
-- `2026-08-30T02:12:21` X-185 -> DONE
-- `2026-08-30T02:12:21` X-186 -> DONE
-- `2026-08-30T02:12:21` X-190 -> DONE
-- `2026-08-30T02:12:21` X-191 -> DONE
-- `2026-08-30T02:12:21` X-192 -> DONE
-- `2026-08-30T02:12:21` X-196 -> DONE
-- `2026-08-30T02:12:21` X-200 -> DONE
-- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
-- `2026-08-30T02:12:21` X-210 -> DONE
-- `2026-08-30T02:12:21` X-217 -> DONE
-- `2026-08-30T02:12:21` X-218 -> DONE
-- `2026-08-30T02:12:21` journey J1 -> green
-- `2026-08-30T02:12:21` journey J2 -> green
-- `2026-08-30T02:12:22` journey J3 -> green
-- `2026-08-30T02:12:22` journey J4 -> green
-- `2026-08-30T02:12:22` journey J5 -> green
-- `2026-08-30T02:12:22` journey J6 -> green
-- `2026-08-30T02:12:22` journey J7 -> green
-- `2026-08-30T02:12:22` journey J8 -> green
-- `2026-08-30T02:12:22` journey J9 -> green
-- `2026-08-30T02:12:22` journey J10 -> green
-- `2026-08-30T02:12:22` journey J11 -> green
-- `2026-08-30T02:12:22` journey J12 -> green
-- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
-- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-29T14:30:24` seal observed f1e73d9fc181eb1c
 - `2026-08-29T14:31:11` selftest: sound
 - `2026-08-29T14:37:58` note: bootstrap-done
@@ -419,6 +270,155 @@
 - `2026-08-29T16:43:19` journey J10 -> green
 - `2026-08-29T16:43:19` journey J11 -> green
 - `2026-08-29T16:43:19` journey J12 -> green
+- `2026-08-30T02:05:15` state initialised
+- `2026-08-30T02:05:26` note: bootstrap-done
+- `2026-08-30T02:05:26` selftest: sound
+- `2026-08-30T02:05:26` UNRESOLVED schema X-121 - canonical jobs noun undecided
+- `2026-08-30T02:05:26` X-123 -> DONE
+- `2026-08-30T02:05:26` X-122 -> DONE
+- `2026-08-30T02:05:26` X-126 -> DONE
+- `2026-08-30T02:05:26` X-119 -> DONE
+- `2026-08-30T02:05:26` seal observed deadbeef00000000
+- `2026-08-30T02:12:17` note: bootstrap-done
+- `2026-08-30T02:12:17` selftest: sound
+- `2026-08-30T02:12:17` UNRESOLVED schema X-121 - test
+- `2026-08-30T02:12:17` X-123 -> DONE
+- `2026-08-30T02:12:17` X-122 -> DONE
+- `2026-08-30T02:12:17` X-126 -> DONE
+- `2026-08-30T02:12:17` X-119 -> DONE
+- `2026-08-30T02:12:17` X-128 -> DONE
+- `2026-08-30T02:12:17` C-Ai -> DONE
+- `2026-08-30T02:12:17` X-219 -> DONE
+- `2026-08-30T02:12:17` X-220 -> DONE
+- `2026-08-30T02:12:18` X-204 -> DONE
+- `2026-08-30T02:12:18` X-206 -> DONE
+- `2026-08-30T02:12:18` C-Telephony -> DONE
+- `2026-08-30T02:12:18` C-Sms -> DONE
+- `2026-08-30T02:12:18` C-Agent -> DONE
+- `2026-08-30T02:12:18` X-66 -> DONE
+- `2026-08-30T02:12:18` X-188 -> DONE
+- `2026-08-30T02:12:18` X-153 -> DONE
+- `2026-08-30T02:12:18` X-01 -> DONE
+- `2026-08-30T02:12:18` X-118 -> DONE
+- `2026-08-30T02:12:18` X-163 -> DONE
+- `2026-08-30T02:12:18` UNRESOLVED schema X-164 - test
+- `2026-08-30T02:12:18` X-108 -> DONE
+- `2026-08-30T02:12:18` C-Reviews -> DONE
+- `2026-08-30T02:12:18` X-181 -> DONE
+- `2026-08-30T02:12:18` X-110 -> DONE
+- `2026-08-30T02:12:18` C-Billing -> DONE
+- `2026-08-30T02:12:18` X-199 -> DONE
+- `2026-08-30T02:12:18` X-211 -> DONE
+- `2026-08-30T02:12:18` X-202 -> DONE
+- `2026-08-30T02:12:18` X-117 -> DONE
+- `2026-08-30T02:12:18` X-198 -> DONE
+- `2026-08-30T02:12:18` X-172 -> DONE
+- `2026-08-30T02:12:18` X-112 -> DONE
+- `2026-08-30T02:12:18` X-166 -> DONE
+- `2026-08-30T02:12:18` X-157 -> DONE
+- `2026-08-30T02:12:18` X-178 -> DONE
+- `2026-08-30T02:12:18` X-103 -> DONE
+- `2026-08-30T02:12:18` X-102 -> DONE
+- `2026-08-30T02:12:18` X-155 -> DONE
+- `2026-08-30T02:12:19` X-137 -> DONE
+- `2026-08-30T02:12:19` UNRESOLVED schema X-176 - test
+- `2026-08-30T02:12:19` X-212 -> DONE
+- `2026-08-30T02:12:19` X-203 -> DONE
+- `2026-08-30T02:12:19` C-Mail -> DONE
+- `2026-08-30T02:12:19` C-Whatsapp -> DONE
+- `2026-08-30T02:12:19` X-147 -> DONE
+- `2026-08-30T02:12:19` X-207 -> DONE
+- `2026-08-30T02:12:19` X-193 -> DONE
+- `2026-08-30T02:12:19` X-208 -> DONE
+- `2026-08-30T02:12:19` X-125 -> DONE
+- `2026-08-30T02:12:19` X-127 -> DONE
+- `2026-08-30T02:12:19` X-149 -> DONE
+- `2026-08-30T02:12:19` X-170 -> DONE
+- `2026-08-30T02:12:19` X-201 -> DONE
+- `2026-08-30T02:12:19` X-10 -> DONE
+- `2026-08-30T02:12:19` X-113 -> DONE
+- `2026-08-30T02:12:19` X-124 -> DONE
+- `2026-08-30T02:12:19` X-143 -> DONE
+- `2026-08-30T02:12:19` X-151 -> DONE
+- `2026-08-30T02:12:19` X-162 -> DONE
+- `2026-08-30T02:12:19` UNRESOLVED schema X-165 - test
+- `2026-08-30T02:12:19` X-171 -> DONE
+- `2026-08-30T02:12:19` X-189 -> DONE
+- `2026-08-30T02:12:19` X-214 -> DONE
+- `2026-08-30T02:12:19` X-215 -> DONE
+- `2026-08-30T02:12:19` X-07 -> DONE
+- `2026-08-30T02:12:19` X-104 -> DONE
+- `2026-08-30T02:12:19` X-111 -> DONE
+- `2026-08-30T02:12:19` X-129 -> DONE
+- `2026-08-30T02:12:19` X-138 -> DONE
+- `2026-08-30T02:12:20` X-139 -> DONE
+- `2026-08-30T02:12:20` X-145 -> DONE
+- `2026-08-30T02:12:20` X-148 -> DONE
+- `2026-08-30T02:12:20` X-150 -> DONE
+- `2026-08-30T02:12:20` X-16 -> DONE
+- `2026-08-30T02:12:20` X-160 -> DONE
+- `2026-08-30T02:12:20` X-167 -> DONE
+- `2026-08-30T02:12:20` X-168 -> DONE
+- `2026-08-30T02:12:20` X-175 -> DONE
+- `2026-08-30T02:12:20` X-177 -> DONE
+- `2026-08-30T02:12:20` UNRESOLVED schema X-180 - test
+- `2026-08-30T02:12:20` X-194 -> DONE
+- `2026-08-30T02:12:20` X-195 -> DONE
+- `2026-08-30T02:12:20` X-197 -> DONE
+- `2026-08-30T02:12:20` X-209 -> DONE
+- `2026-08-30T02:12:20` X-82 -> DONE
+- `2026-08-30T02:12:20` X-08 -> DONE
+- `2026-08-30T02:12:20` X-120 -> DONE
+- `2026-08-30T02:12:20` X-136 -> DONE
+- `2026-08-30T02:12:20` X-141 -> DONE
+- `2026-08-30T02:12:20` X-142 -> DONE
+- `2026-08-30T02:12:20` X-156 -> DONE
+- `2026-08-30T02:12:20` X-173 -> DONE
+- `2026-08-30T02:12:20` X-213 -> DONE
+- `2026-08-30T02:12:20` X-105 -> DONE
+- `2026-08-30T02:12:20` X-109 -> DONE
+- `2026-08-30T02:12:21` X-114 -> DONE
+- `2026-08-30T02:12:21` X-116 -> DONE
+- `2026-08-30T02:12:21` X-130 -> DONE
+- `2026-08-30T02:12:21` X-131 -> DONE
+- `2026-08-30T02:12:21` UNRESOLVED schema X-132 - test
+- `2026-08-30T02:12:21` X-134 -> DONE
+- `2026-08-30T02:12:21` X-135 -> DONE
+- `2026-08-30T02:12:21` X-140 -> DONE
+- `2026-08-30T02:12:21` X-144 -> DONE
+- `2026-08-30T02:12:21` X-154 -> DONE
+- `2026-08-30T02:12:21` X-158 -> DONE
+- `2026-08-30T02:12:21` X-159 -> DONE
+- `2026-08-30T02:12:21` X-161 -> DONE
+- `2026-08-30T02:12:21` X-179 -> DONE
+- `2026-08-30T02:12:21` X-182 -> DONE
+- `2026-08-30T02:12:21` X-183 -> DONE
+- `2026-08-30T02:12:21` X-184 -> DONE
+- `2026-08-30T02:12:21` X-185 -> DONE
+- `2026-08-30T02:12:21` X-186 -> DONE
+- `2026-08-30T02:12:21` X-190 -> DONE
+- `2026-08-30T02:12:21` X-191 -> DONE
+- `2026-08-30T02:12:21` X-192 -> DONE
+- `2026-08-30T02:12:21` X-196 -> DONE
+- `2026-08-30T02:12:21` X-200 -> DONE
+- `2026-08-30T02:12:21` UNRESOLVED schema X-205 - test
+- `2026-08-30T02:12:21` X-210 -> DONE
+- `2026-08-30T02:12:21` X-217 -> DONE
+- `2026-08-30T02:12:21` X-218 -> DONE
+- `2026-08-30T02:12:21` journey J1 -> green
+- `2026-08-30T02:12:21` journey J2 -> green
+- `2026-08-30T02:12:22` journey J3 -> green
+- `2026-08-30T02:12:22` journey J4 -> green
+- `2026-08-30T02:12:22` journey J5 -> green
+- `2026-08-30T02:12:22` journey J6 -> green
+- `2026-08-30T02:12:22` journey J7 -> green
+- `2026-08-30T02:12:22` journey J8 -> green
+- `2026-08-30T02:12:22` journey J9 -> green
+- `2026-08-30T02:12:22` journey J10 -> green
+- `2026-08-30T02:12:22` journey J11 -> green
+- `2026-08-30T02:12:22` journey J12 -> green
+- `2026-08-30T02:53:49` (R245) X-121 — work_orders as the canonical noun; Laravel keeps jobs
+- `2026-08-30T03:21:18` note: bootstrap-done
 - `2026-08-31T04:18:42` UNRESOLVED schema X-121 - 12 per-person ranking columns across legacy tables and SWITCH+CONTRACT deployment ordering require separate phased release per §150.4 and §259
 - `2026-08-31T04:24:07` stage integrity = 0
 - `2026-08-31T04:24:07` stage boundary = 0
@@ -769,6 +769,11 @@
 - `2026-09-05T13:46:19` (R245) X-121 — JobCreateAction is the one create path for work_orders; job.created is emitted here and nowhere else (run 96, R245)
 - `2026-09-05T16:22:13` (R245) C-Billing — a duplicate ARB subscription (E00012) is reused, never re-created; the existing id comes from the vendor (run 97, R245)
 - `2026-09-05T17:11:31` UNRESOLVED tests X-01 - four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) — the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold
+- `2026-09-05T17:33:50` note: X-172 generated screen test renders through Fixtures::token() (run 101)
+- `2026-09-05T17:42:53` note: X-193 quiet_hours_start: answered — migration 2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php on main
+- `2026-09-05T17:42:54` note: X-201 deadline_at: answered — migration 2026_09_04_072843_add_deadline_at_to_disputes_table.php on main
+- `2026-09-05T17:42:54` note: C-Reviews messageClass: answered — ReviewRequested carries messageClass since the reviews merge (c3ed23ed); the C-Sms listener consumes send.requested (run 94)
+- `2026-09-05T17:42:54` note: C-Sms TrialEligibility: answered by owner ruling 2026-09-05 — the journey funds its tenant as test setup; TrialEligibility stands in production (J10 green since run 96b)
 - `2026-09-05T18:31:13` (R245) X-163 — removed test_n_062_assertion(): the merge's capabilities.php regeneration dropped N-062 from X-163 (owner ruling 18, misattribution fixed by Track 1), so the hardcoded true answers no assertion.
 - `2026-09-05T23:48:18` UNRESOLVED capability X-175 - N-075/N-077 say a price on site comes from X-163; FieldAssistantEngine::ask() takes verifiedAnswer from its caller and performs no X-163 lookup — no seam exists in this module
 - `2026-09-05T23:48:50` (R245) X-168 — removed test_n_062_capabilities(): N-062 is not a key in X-168/capabilities.php (grep -c = 0), so the assertTrue(true) answered no cell; same shape as the X-163 removal of 2026-09-05T18:31:13, owner ruling 18 (R245)
