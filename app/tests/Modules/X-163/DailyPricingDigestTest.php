@@ -157,6 +157,7 @@ class DailyPricingDigestTest extends TestCase
             'is_confirmed' => false,
         ]);
     }
+
     public function test_a_gap_from_an_earlier_day_is_still_in_the_digest(): void
     {
         $owner = User::factory()->create();

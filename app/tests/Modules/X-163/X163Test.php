@@ -21,6 +21,7 @@ use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\LocationBook;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\Pricebook;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -427,6 +428,7 @@ class X163Test extends TestCase
         $goodItem->refresh();
         $this->assertTrue($goodItem->is_confirmed);
     }
+
     public function test_a_price_from_another_business_is_never_confirmed(): void
     {
         $a = TestCase::provisionTenant(['name' => 'Biz A', 'currency' => 'USD']);
@@ -442,7 +444,7 @@ class X163Test extends TestCase
 
         \DB::statement("SET app.business_id = '{$a->id}'");
 
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
         app(PriceConfirmAction::class)->handle($a->id, $bItem->id);
     }
 
@@ -463,7 +465,7 @@ class X163Test extends TestCase
 
         try {
             app(PriceConfirmAction::class)->handle($a->id, $bItem->id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
             // caught
         }
 
