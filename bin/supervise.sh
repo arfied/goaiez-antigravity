@@ -44,7 +44,14 @@ fail=0
 # and every Track 1 row becomes a seven-digit failure code.
 # No lock: appends under PIPE_BUF to an O_APPEND file are atomic on Linux, and a flock
 # here would interact with the pest lock for nothing.
-GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+# Overridable so a TEST can never write into the shared log (sibling project, 28c52305,
+# 2026-09-06): their pre-push test executes the real hook with instant no-op stubs, and
+# once the hook logged, the test began appending rows for tools that never ran — twelve
+# of them, well-formed, eight-column, correctly typed and invented. A diagnostic log that
+# records its own harness is worse than no log: the fabrications have the shape of the
+# evidence. No test here touches this script today (grepped across all eight checkouts);
+# this is the preventive, because nothing in the schema would object if one did.
+GATE_LOG=${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}
 log_gate() {                     # log_gate <tool> <start_iso> <rc> [tool_pid]
   printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
     "$2" "$(date -Is)" "$$" "${4:--}" "$3" "goaiez-antigravity" "$(basename "$ROOT")" "$1" \
