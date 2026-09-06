@@ -1456,6 +1456,10 @@
   {
    "at": "2026-09-06T06:08:23",
    "note": "MONEY-54 completed: audited 14 assertDontSee calls across X-198 and X-120. 8 were paired already. 6 missing controls were added to CardScreenTest. Mutation proven on ReconciliationDiscrepancies. Unresolved manifest gaps recorded."
+  },
+  {
+   "at": "2026-09-06T06:19:18",
+   "note": "Recorded MONEY-54b (restored counting assertion invariant, scoped control) and MONEY-55 (paired all X-173, X-201, X-117 negatives with controls)."
   }
  ],
  "decisions": [
