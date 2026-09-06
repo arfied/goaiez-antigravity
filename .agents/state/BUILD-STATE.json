@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T06:51:32",
+ "updated": "2026-09-06T07:21:58",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1797,6 +1797,12 @@
    "module": "X-157",
    "chose": "route seam",
    "at": "2026-09-06T06:51:32",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-157",
+   "chose": "a DNI number is per-visitor and per-request, so it cannot be baked into deploy-time static HTML \u2014 one stored file serves every visitor. It is allocated at request time by GET /sites/{business}/{deploy_hash}/dni, a sibling of the existing form route, behind the same deployed and has_valid_ssl guards, and the exhausted path is a refusal rather than a placeholder number.",
+   "at": "2026-09-06T07:21:58",
    "ruling": "R245"
   }
  ],

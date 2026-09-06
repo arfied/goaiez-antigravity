@@ -806,3 +806,4 @@
 - `2026-09-06T06:31:33` note: X-137 G18-17 — the whisper's two-leg assertion needs a real Infobip voice bridge: present on the agent leg, absent on the caller leg. The transport is C-Telephony (track sixty, ruling 5) and the credential is the owner's. X137Test.php:161 asserts whisper_text on the model, which is the most this lane can assert without the bridge.
 - `2026-09-06T06:31:39` (R245) X-137 — A per-business DNI number pool is implemented under app/app/Modules/X-137/Database/migrations/.
 - `2026-09-06T06:51:32` (R245) X-157 — route seam
+- `2026-09-06T07:21:58` (R245) X-157 — a DNI number is per-visitor and per-request, so it cannot be baked into deploy-time static HTML — one stored file serves every visitor. It is allocated at request time by GET /sites/{business}/{deploy_hash}/dni, a sibling of the existing form route, behind the same deployed and has_valid_ssl guards, and the exhausted path is a refusal rather than a placeholder number.
