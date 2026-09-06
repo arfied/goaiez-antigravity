@@ -209,7 +209,7 @@ class X137Test extends TestCase
     public function test_header_capabilities(): void
     {
         $engine = new X137Engine;
-        $methods = ['enforceG3_11', 'enforceG8_13', 'enforceG13_19', 'enforceG18_17', 'enforceG18_24'];
+        $methods = ['enforceG3_11', 'enforceG8_13', 'enforceG13_19', 'enforceG13_24', 'enforceG18_17', 'enforceG18_24'];
 
         foreach ($methods as $method) {
             try {

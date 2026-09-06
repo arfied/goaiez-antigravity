@@ -21,7 +21,10 @@ final class X137Engine
         throw new \DomainException('[G13-19] the number pool — every visitor gets a call token');
     }
 
-    public function enforceG13_24(): void {}
+    public function enforceG13_24(): void
+    {
+        throw new \DomainException('[G13-24] a static number per offline campaign');
+    }
 
     public function enforceG18_17(): void
     {
