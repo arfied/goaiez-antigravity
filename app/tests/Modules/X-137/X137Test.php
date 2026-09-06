@@ -16,9 +16,9 @@ use App\Modules\X137\Models\LinkClick;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X137Test extends TestCase
@@ -280,7 +280,6 @@ class X137Test extends TestCase
         $token->refresh();
         $this->assertEquals('active', $token->status);
         $this->assertNull($token->joined_call_id);
-    }
     }
 
     public function test_header_capabilities(): void
