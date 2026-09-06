@@ -4084,3 +4084,67 @@ process itself and this seat cannot see where it is configured (`ls` on `/home/g
 coder-bin/` is blocked, `command -v` is refused). That is an unknown, not a hazard — tick 221's
 law that *a hazard asserted and never measured is not a hazard*, applied in the direction that
 closes one.
+
+## ✅ TRACK 1 ACTION 1 is CLOSED — `--allow-harness` exists (tick 228)
+
+Carried since tick 195, re-opened at 212, closed by Track 1's 17:2x ruling. `coder-bin/git:65` now
+also clears the harness refusal on `GOAIEZ_HARNESS_OK=1`; `launch-coder.sh --allow-harness` sets it
+**for one run**, parallel to `--allow-merge`. Verified at source, not read off the message (tick
+196), and the guard is in no repository so it needed no merge (tick 218). `:53`'s directory-name
+exemption is unchanged beside it and `:76`'s never-list still carries `app/app/Doctor/`,
+`seals.json`, `.claude/`, `bin/state.py`, `app/phpunit.xml` — **the opening is one file wide.**
+
+- **The retry cap was not spent on this.** The cap stops an item while its *cause* stands; the cause
+  was a guard clause and its owner removed it. A new item gets its own two dispatches.
+- ⛔ **It opens the ability to COMMIT, not permission to WEAKEN**, and the supervisor that opens the
+  gate **quotes the harness diff in its own REVIEWS block**. Provisioning real state so a real code
+  path runs is a fix; deleting an assertion, stubbing a transport, or making a journey pass on a
+  constant is a BLOCK that this seat wears. Open it for the run that needs it, never standing.
+- ⚠️ Fourth firing of tick 215's law (*before recording a problem as having no remedy, read a
+  sibling lane's supervisor commits*) — but this one closed by the lane **asking with a mechanism
+  rather than a message**. Tick 217 read the guard's source and converted eleven ticks of "the guard
+  refuses it" into a named line and two concrete remedies; Track 1 implemented the second verbatim.
+  **A refusal recorded by its message is a complaint; a refusal recorded by its mechanism is an ask.**
+
+## ⛔ A report item phrased as a RELATIVE REF has no stated evaluation time (tick 228)
+
+SITE-110's §5 answered `git diff --name-only HEAD~1 HEAD` with the *previous* commit's three files,
+because the wave ran it before making its own commit. The output was pasted faithfully; the request
+was wrong. A relative ref pair changes meaning the instant a commit lands, and a report carries no
+timestamp — so the same command, file and wave give two answers and nothing on the page says which.
+
+It matters because that item is **the One Rule's primary evidence**: read literally it said the wave
+had touched `CLAUDE.md` and `bin/supervise.sh`, which is a BLOCK on its face.
+
+⛔ **Ask for `git show --stat HEAD` AFTER the commit, and say the commit precedes the report.**
+Twenty-third statement of this section's law, turned on an evidence item's **evaluation time** — the
+one input a pasted output cannot carry, because a relative ref resolves silently against whatever
+moment held it. Same family as tick 215 (*an evidence block a wave pastes is a claim*), one step
+further in: here re-running the identical command is what gives the different answer.
+
+## ⛔ The dangerous merge quadrant is NON-EMPTY — first time since tick 215 built it (tick 228)
+
+`origin/main` at `3629f634` is 9 commits ahead with **zero `app/**`**: `CLAUDE.md`,
+`bin/supervise.sh`, `launch-coder.sh`, `.claude/settings.json`, and two **new** files
+`.claude/hooks/drive_hook.py`, `.claude/hooks/no-piped-gate-tool.py`.
+
+Ticks 215 and 225 measured the **ours ❌ / main ✅** cell empty and both said that is a measurement,
+never a licence to skip the restore step, *because that cell produces no signal of any kind*. It is
+now occupied: this lane has never changed `.claude/settings.json` and has no `.claude/hooks/` at
+all, so a merge takes all three **silently** — no driver, no conflict, no line in the merge output.
+`c3263613` is on its face a hardening (a hook refusing a piped gate tool — the agent-layer form of
+the §6 rc hole this lane closed at tick 227) and is still Track 1's supervisor configuration
+arriving unannounced, which is OWNER ACTION 37's shape.
+
+When the merge is briefed: `--no-commit` **always** (tick 212), the restore step names those three
+paths **explicitly**, and the settings diff is read by quoting both the `allow` and `deny` lists in
+full — never by narrating the hunk, which is how tick 212 got the direction backwards.
+
+## ✅ The reflog is the cheaper MID-TICK MISS detector, not only the HIT witness (tick 228)
+
+Tick 220 introduced `git log -g` on the remote refs as a cache-**HIT** witness. At tick 228 it fired
+the other way: the opening `for-each-ref` read `origin/main 3c60289d`, and the reflog then printed
+`origin/main@{17:03:25} 3629f634 update by push` — an arrival **after this tick's own fetch**. The
+whole opening census was void and re-run (main is the one ref that excludes in all four surfaces —
+tick 198). The tip table carries no times; the reflog carries both commit and arrival times, so it
+is what turns "the table looks the same" into a measurement. Run it early, not only at the close.

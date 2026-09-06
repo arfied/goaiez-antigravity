@@ -19,13 +19,23 @@ PIDFILE=".agents/supervisor/coder.pid"
 
 CODER=agy
 ALLOW_MERGE=0
+ALLOW_HARNESS=0
 STATUS_ONLY=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --coder) CODER="${2:?--coder takes agy or claude}"; shift 2;;
     --allow-merge) ALLOW_MERGE=1; shift;;   # opens the shared coder guard's merge gate (GOAIEZ_MERGE_OK=1) for THIS run only; the guard added it 2026-09-05 13:27
+    # opens the shared coder guard's JourneyHarness.php gate (GOAIEZ_HARNESS_OK=1) for THIS
+    # run only. Added 2026-09-06 17:2x on Track 1's ruling: coder-bin/git:53 keyed the harness
+    # exemption to the checkout NAME `grs-antig`, so the lane that owns a journey could not fix
+    # its own harness — this lane spent two dispatches on J11 and correctly refused a third.
+    # ⛔ It opens the ability to COMMIT, not permission to WEAKEN. Provisioning real state so a
+    # real code path runs is a fix; deleting an assertion or stubbing a transport is a BLOCK,
+    # and the supervisor that opens the gate quotes the harness diff in REVIEWS.md.
+    # Open it for the run that needs it, never as a standing flag.
+    --allow-harness) ALLOW_HARNESS=1; shift;;
     --status) STATUS_ONLY=1; shift;;
-    *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --allow-merge, --status)"; exit 1;;
+    *) echo "REFUSED: unknown argument $1 (takes only --coder agy|claude, --allow-merge, --allow-harness, --status)"; exit 1;;
   esac
 done
 case "$CODER" in agy|claude) ;; *) echo "REFUSED: --coder must be agy or claude"; exit 1;; esac
@@ -86,15 +96,15 @@ if [ "$CODER" = claude ]; then
   # which denies app/**) out of the coder's permissions; the guard and the seal
   # are what bind it, not that file. Bounded by `timeout 8h` like agy's
   # --print-timeout.
-  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;/home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh;/home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) GOAIEZ_PUSH_OK=$PUSH_OK log=$LOG"
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) GOAIEZ_PUSH_OK=$PUSH_OK log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi
