@@ -1764,6 +1764,70 @@ Watch for: <the trap that applies, by name>
   already closed, and this column has authored a false absence in each direction once already. The live
   proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, now **6** rows (was 8 at tick 200; waves
   100–103 closed the two C-Mail ones).
+- ⚠️⚠️ **A grep recorded in THIS FILE as evidence of absence is a claim with a shelf life, and the one that
+  survived longest was defeated by letter CASE.** Since tick 187 this file has carried
+  `grep -rn "Chat\|Voice\|X-102\|X-66\|takeover" app/app/Modules/C-Agent --include=*.php | grep -v
+  capabilities.php` → **empty**, and waves 95 and 96 quoted it into two docblocks as *"(grep for takeover is
+  empty)"*. Re-run at tick 209 with `-i`, it is not empty:
+  `app/app/Modules/C-Agent/Models/AgentRefusal.php:30` is `'HUMAN_TAKEOVER_LATCH'`, inside C-Agent's own
+  `VALID_REFUSAL_CODES` array, and `grep -rn "HUMAN_TAKEOVER_LATCH" app/app app/tests` returns **that
+  declaration and nothing else** — no emitter, no assertion. `takeover` does not match `TAKEOVER`. This is the
+  tick-200 rule (*grep a noun's stem, not one of its inflections*) with **case** as the liar rather than an
+  inflection, and it is worse than that one because the silence was **written down as settled** and cited by
+  three waves without re-running. **Re-run a cited grep before citing it, and never cite a case-sensitive grep
+  as absence when the subject could be a constant.** ⛔ It cost wave 104 a `BLOCK`: the coder refused `G5-37` as
+  *"C-Agent has none"*, which is the wave-95 false absence with my own recorded command as its source.
+- ⚠️ **A pointer capability's verdict must be consistent with its siblings in the SAME FILE, and an
+  unexplained split is the tell.** `CAgentTest.php:151`/`:160` carry `BUILD PROPOSAL … Owner: C-Agent` for
+  *"the web-chat door is X-102's"* and *"the voice door is X-66's"*; wave 104 wrote `⛔ REFUSED` for *"the
+  takeover latch is X-01's (R21)"* three comment lines below, identical grammar, no reason given. ⭐ **The
+  cheapest disambiguator for this shape is a capability that carries the SAME clause beside a live half.**
+  `capabilities.php:85` is `'negative-sentiment handoff; the takeover latch is X-01\'s (R21)'`, and
+  `test_g12_25_negative_sentiment_handoff` really asserts `AgentAnswerAction` returns
+  `refusal_code 'NEGATIVE_SENTIMENT_HANDOFF'` — **the line immediately above `HUMAN_TAKEOVER_LATCH` in the
+  same array.** Two sibling refusal codes, one emitted and asserted, one declared and dead. A clause that is a
+  mere ownership disclaimer on one row cannot be a live obligation on the row next to it. **Before verdicting a
+  pointer, grep the clause's own words across `capabilities.php` and see what company it keeps.**
+- ✅ **`supervise.sh` §1 pins the mutated FILE, free, on every mutation run — the tick-185 `SITE` field is only
+  needed for the LINE.** `w104-mut-1.log:7` reads `M app/app/Modules/C-Mail/Actions/EmailHaltSeedAction.php`,
+  `1 uncommitted path(s)`; `w104-mut-2.log:7` names `EmailSendAction.php`. The rule that the site is
+  unrecoverable *"because the mutation is reverted by the time you read the log"* is true of the line and false
+  of the file, **provided the mutation is run through `supervise.sh` rather than through a bare pest**. A
+  test-body mutation would have named the test file. Brief mutation runs through the gate script for this
+  reason alone.
+- ✅✅ **An `if (false && …)` mutation SELF-PINS through phpstan, line and semantics, from a tool the coder did
+  not author.** `w104-mut-2.log:104` §6 —
+  `EmailSendAction.php`, line **37**, `booleanAnd.leftAlwaysFalse` **and** `booleanAnd.alwaysFalse` — against a
+  disclosed `SITE: …EmailSendAction.php:37` with `+ if (false && $domain->is_marketing_paused && …)`. Nothing
+  else in the gate was asked to report it. **Prefer the `false &&` form whenever a mutation's site must be
+  provable**, and read §6 on a mutation run as evidence rather than as a gate.
+- ✅ **An `assertions` delta you can predict PER TEST needs no artifact — that is the answer to a
+  measurement-shaped field whose log was overwritten.** Wave 104's M2 object was lost to
+  `pest-raw-last.log`'s reuse, so `"assertions":7872` was the coder's word. Derived independently before the
+  report was opened: −3 on the target (6 assertions, fails at A3a), −4 on
+  `test_anchor_warmup_allowance_queueing_and_complaint_marketing_pause` (10 assertions, fails at the 6th), −0
+  on `test_g11_05_…` (fails at its 7th and last) ⇒ `7879 − 7 = 7872`, exact. M1's `7868` reconciled the same
+  way (−4, −6, −1 = −11) **and** had its artifact. **Three greps convert a coder's-word field into a verified
+  one**, and the prediction must be made before reading the field (tick-171).
+- ⭐ **Measure every field BEFORE opening `REPORT.md` — kept deliberately since tick 201, and tick 209 is the
+  wave where it paid.** The M2 prediction, the `HUMAN_TAKEOVER_LATCH` grep and the `G12-25` comparator were all
+  in hand before the report's item-2 paragraph was read, so none of them could have been argued into or out of
+  by it. It costs nothing: every field is a command that must be run anyway.
+- **Backlog at tick 209 — wave 105 is the `G5-37`/`G12-25` verdict correction plus the seam ruling; no
+  production code.** **RULED by the lane supervisor: the takeover latch's *store* is X-01's and its
+  *consultation* is C-Agent's**, because C-Agent is the only module that decides whether the agent speaks and
+  `AgentRefusal::VALID_REFUSAL_CODES` already declares `HUMAN_TAKEOVER_LATCH`; C-Agent implements the identical
+  gate shape for `UNDER_18` (`AgentAnswerAction:28-42`, `G10-37`) and for `NEGATIVE_SENTIMENT_HANDOFF`. Both
+  modules are in the thirteen, so the seam is this column's. **Mechanism, ruled: the receiver owns the
+  listener** — C-Agent listens for X-01's `TakeoverStarted` and holds its own state; never a `use` of X-01's
+  `TakeoverLatch` (`BoundaryStage`'s own text, which is the whole law here since tick 194 showed the stage
+  never fires). ⛔ **The build wave has an X-01 prerequisite and must not paper over it:**
+  `UnifiedInboxManager::takeover()` dispatches `TakeoverStarted` and there is **no release path at all** —
+  `takeover_latches` carries `is_active` and `released_at`, nothing clears either, and there is no
+  `TakeoverReleased` event (`grep -rn "TakeoverStarted" app/app app/tests` → one dispatcher, **zero
+  listeners**). A C-Agent mirror driven by `TakeoverStarted` alone latches forever. So the order is: wave 105
+  the verdicts and the `decided` row, then X-01's release half, then C-Agent's listener and gate. The live
+  proposal list stays `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 
