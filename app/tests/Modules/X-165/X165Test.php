@@ -122,85 +122,124 @@ class X165Test extends TestCase
         $this->assertContains('plan_id', $attributes);
     }
 
-    /**
+        /**
      * [N-063]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - returns served_person_id
      */
-    public function test_n_063_refused(): void
+    public function test_n_063_priority_scheduling_has_key(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertArrayHasKey('served_person_id', $res);
     }
 
-    /**
+        /**
      * [N-064]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - priority_applied is true for members
      */
-    public function test_n_064_refused(): void
+    public function test_n_064_priority_scheduling_applied(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
+        $this->startAction->handle($biz->id, $plan->id, 88);
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertTrue($res['priority_applied']);
     }
 
-    /**
+        /**
      * [N-067]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - served_person_id matches member
      */
-    public function test_n_067_refused(): void
+    public function test_n_067_priority_scheduling_served(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
+        $this->startAction->handle($biz->id, $plan->id, 88);
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertEquals(88, $res['served_person_id']);
     }
 
-    /**
+        /**
      * [N-070]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - decision_log contains explanation
      */
-    public function test_n_070_refused(): void
+    public function test_n_070_priority_scheduling_log(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
+        $this->startAction->handle($biz->id, $plan->id, 88);
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertStringContainsString('membership priority', $res['decision_log']);
     }
 
-    /**
+        /**
      * [N-073]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - served_person_id is one of the passed ids
      */
-    public function test_n_073_refused(): void
+    public function test_n_073_priority_scheduling_valid_id(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertContains($res['served_person_id'], [99, 88]);
     }
 
-    /**
+        /**
      * [N-076]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - priority_applied is false if neither is member
      */
-    public function test_n_076_refused(): void
+    public function test_n_076_priority_scheduling_not_applied_for_non_members(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertFalse($res['priority_applied']);
     }
 
-    /**
+        /**
      * [N-079]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - priority_applied is true for members (repeat of N-064)
      */
-    public function test_n_079_refused(): void
+    public function test_n_079_priority_scheduling_applied_repeat(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
+        $this->startAction->handle($biz->id, $plan->id, 88);
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertTrue($res['priority_applied']);
     }
 
-    /**
+        /**
      * [N-082]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - served_person_id matches member (repeat of N-067)
      */
-    public function test_n_082_refused(): void
+    public function test_n_082_priority_scheduling_served_repeat(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
+        $this->startAction->handle($biz->id, $plan->id, 88);
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertEquals(88, $res['served_person_id']);
     }
 
-    /**
+        /**
      * [N-085]
-     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     * Asserting clause 2: priority scheduling MUST BE REAL - decision_log contains explanation (repeat of N-070)
      */
-    public function test_n_085_refused(): void
+    public function test_n_085_priority_scheduling_log_repeat(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
+        $this->startAction->handle($biz->id, $plan->id, 88);
+        $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertStringContainsString('membership priority', $res['decision_log']);
     }
 
     /**
