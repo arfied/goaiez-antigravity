@@ -1880,6 +1880,67 @@ Watch for: <the trap that applies, by name>
   the row does not exist at all) — nothing in the suite distinguishes them today, and a test whose only
   witness is the release method's own return value proves that the method returns what it returns. After 107
   the live proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ✅✅ **The complete mutation form scales past a pair: FOUR mutations, four distinct subtractions, every
+  assertion shown to execute and each reddened on its own terms — wave 106 is the target shape now.** A
+  four-assertion test green at `assertions 7883`; M1 (`:146` `'is_active' => false`) → `7880`, **−3**, A1 fails
+  first; M2 (`:147` `'released_at' => now()`) → `7881`, **−2**; M3 (`:150` the `Event::dispatch`) → `7882`,
+  **−1**; M4 (`:170` `->where('is_active', true)` in the *other* method) → `7883`, **−0**, A1–A3 all pass and
+  only the `expectException` verification fails. It reconciles in both directions: green's four are three
+  `assert*` calls plus the **satisfied** `expectException`, which is why M4 costs nothing while still being
+  red. Wave 101c's pair was the previous best. **Ask for a set and let the coder size it**; the union, not any
+  single log, is the proof.
+- ⭐ **A disclosed `SITE` is EXACT with no offset whenever the mutated file is the module file and pint touched
+  only the test — so an offset is a fact about which file pint reformatted, not about honesty.** Wave 106's
+  four sites read exactly against the committed `UnifiedInboxManager.php`, while the same wave's *test*
+  declarations sit `+3` (`551` in the logs, `554` committed) because `ed0f9f57` hoisted three inline FQNs to
+  `use` lines. **Both readings were right at once, in one wave.** The offset tell (tick 188, wave 88b, wave
+  102) is a rescue for the shifted file and must not become an expectation for the unshifted one — before
+  doubting an exact site, ask whether pint's commit named that file at all. ⭐ And the same `+3` appears
+  independently in the wave's own two pest objects: the green run prints `test_g2_76_unified_inbox_header` at
+  line `265` and the post-pint gate at `268`, so **the shift is visible without opening a single PHP file.**
+- ⚠️ **The tick-172 §6 misread is now a defect the CODER reproduces, which retires the reading of it as
+  anyone's carelessness.** Wave 106's `GATE:` field read `{"tool":"pint","result":"passed","errors":0}` —
+  pint's object has no `errors` key, and the `0` is phpstan's, sitting on the same §6 line. Harmless (pint
+  genuinely passed and the artifact says so), but this column misread that exact line at tick 172 and a
+  different agent has now merged the two objects the same way. **The one-line layout is the defect.** Brief the
+  field as *pint's own object, copied whole and alone* — and when reading it yourself, find pint's own
+  `"result"` before the first `}`.
+- ⚠️ **A per-wave GREEN copy is not a per-wave FINAL copy, and a wave can keep one without the other.** Wave
+  106 saved `w106-pest-raw-green.log` (11:45, the baseline run) and then quoted `RAW` out of the shared
+  `scratch/pest-raw-last.log`. Correct here — verified byte-for-byte, mtimes strictly increasing — but the
+  shared filename is the wave-88b/95 hazard and this is the shape where it hides best, because the wave *looks*
+  like it kept per-wave artifacts. **A mutating wave produces two objects worth naming**, so ask for both:
+  `w<N>-pest-raw-green.log` and `w<N>-pest-raw.log`, each copied only after its own `supervise.sh` has exited.
+- ⚠️ **A brief's numbered requirements coming back as the test's COMMENTS is the leak rule's mildest form and
+  its most durable.** Wave 106's test carries *"Both columns the model casts, not one."* / *"with whatever you
+  decided it carries."* / *"consulted by something other than the method that wrote it"* — my brief's three
+  items, verbatim, now in the file. Nothing was answered for the coder; all three shapes were withheld and
+  chosen freely, so this is not the tick-171 defect proper. It is worse in one respect: `REPORT.md` is
+  overwritten every wave and the test file is **permanent**, so a reader six weeks out meets an *instruction*
+  where a *finding* belongs. **Brief it in words: comments describe what the assertion proves, not what was
+  asked for.**
+- ⚠️⚠️ **A mechanism built and proven is not a mechanism wired — and the wave that proves it is exactly the
+  wave least likely to notice, because every mutation it runs reaches the code through its own test.** Wave 106
+  delivered `releaseTakeover()` with a four-mutation proof, and `grep -rn "takeover" app/app/Modules/X-01/Ui -i`
+  shows **nothing in the UI calls it**: `Thread.php:86` sets a latch implicitly on every operator reply,
+  `Person.php:52` reads it for a pill, and no path ends one. So the pill never clears in production and
+  `TakeoverReleased` has a dispatcher no production path reaches. This is the tick-184 dead-class rule
+  (*`grep` the class name across `app/app` before briefing a test against it*) applied **after** the build
+  instead of before it, and the tick-204 radius rule is what makes it invisible: *radius 1 is forced when only
+  one test can reach the code* is a true and reassuring sentence that means the same thing as *nothing else
+  calls it*. **When a wave's radius is forced, ask why — "only the test reaches it" and "production cannot
+  reach it" are the same measurement.**
+- **Backlog at tick 211 — RULED: wave 107 is X-01's UI release control, and C-Agent's listener moves to wave
+  108.** This reorders tick 209's plan on the finding above. The reason is asymmetric: `TakeoverStarted` **is**
+  dispatched from a real production path (`Thread.php:86`), `TakeoverReleased` is **not**, so a C-Agent
+  listener built now would gate on an event that never fires outside the suite — decision 272's write-only
+  shape with an event in place of a table — and tick 209's *"a C-Agent mirror driven by `TakeoverStarted` alone
+  latches forever"* hazard survives wave 106 untouched until a human can release. Both modules are in the
+  thirteen, so the ordering is this column's. ⚠️ Wave 107 carries **no** C-Agent work: a blade change is the
+  wave-97 markup hazard and earns its own wave with its own string grep. The four standing assertions that read
+  strings off that screen are `ThreadScreenTest.php:31` (`assertDontSee('Human takeover')` — the one that
+  bites), `:69`, `:85` and `PersonTest.php:71`. After 108 the live proposal list is
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 
