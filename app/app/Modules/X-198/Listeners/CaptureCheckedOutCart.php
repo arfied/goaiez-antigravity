@@ -9,6 +9,11 @@ use App\Modules\X117\Models\Order;
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X198\Models\MerchantConnection;
 
+/**
+ * This listener makes no gateway call and leaves the order at pending_payment.
+ * It still has a job the day a real token arrives from a connected card-entry surface
+ * (citing ruling 45).
+ */
 final class CaptureCheckedOutCart
 {
     public function handle(CartCheckedOut $event): void
@@ -17,15 +22,8 @@ final class CaptureCheckedOutCart
             return;
         }
 
-        $payment = app(GatewayEngine::class)->capture(
-            $event->businessId,
-            $event->totalCents,
-            $event->authToken,
-            'x117-order-'.$event->orderId
-        );
-
-        if ($payment->gateway_charge_id !== null) {
-            Order::whereKey($event->orderId)->update(['status' => 'paid']);
-        }
+        // We make no gateway call here because there is no payment instrument to send yet.
+        // The token we have is only a nonce, not a Stripe-issued source token.
     }
 }
+
