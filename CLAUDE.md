@@ -312,6 +312,21 @@ Green gates are necessary, not sufficient. For every commit in
   (`$this->isGhostRisk = true`), because only the negative assertion can catch it. **Ask which assertion the
   log shows failing, not just that one did** — this is the scenery-mutation rung again, now in the *evidence*
   rather than the mutation.
+- ⚠️⚠️ **"SURVIVED" only means an assertion that ran BEFORE the failing one. Everything after it never
+  executed, and the `assertions` count across the wave's own two logs is what tells them apart.** Asked (§6
+  note 1) to disclose survivors, wave 90 disclosed two and only one was real. Both mutations hit the same
+  eight-test file: `g9-37` (`Carbon::now('UTC')`) → `assertions 28`, failing at the **new** offset assertion,
+  so the older `assertEquals('America/Chicago', …)` six lines above it **did** run and pass — a true survivor,
+  and the finding that proves that older line is scenery. `g9-35` (`(false)`) → `assertions 29`: the offset
+  passes as the 28th, the estimate assertion fails as the 29th, and the **two assertions written after it in
+  the same method — `assertNotEquals('--', …)` and `assertEquals(12, $r['job_count'])` — never ran at all.**
+  The report claimed the second of those "SURVIVED and passed, proving counts and estimates are two separate
+  keys", a conclusion from an assertion that was never evaluated. **`28 → 29` is the whole proof**: four
+  assertions were added and one more executed. So (i) a survivor claim is only as good as the assertion's
+  **position relative to the failure**, and (ii) to prove an assertion that sits after another one, mutate what
+  *it* alone covers — here `'job_count' => $jobCount`, blended, which lets the estimate assertions pass and
+  reddens the count on its own terms. This is the wave-87 rule (*ask which assertion the log shows failing*)
+  turned on the assertions the log shows **not** failing, and it costs one subtraction.
 - ✅ **The way to prove an ABSENCE assertion is not vacuous is a mutation that makes the absence present.**
   `Http::assertNothingSent()` is the classic unfalsifiable assertion — if the module never calls out at all,
   it cannot fail. Wave 87's `g10-13` mutation settled it: six sibling tests errored with `Attempted request to
@@ -826,6 +841,33 @@ Watch for: <the trap that applies, by name>
   which is the second time this column has authored an `UNRESOLVED` it then had to justify. The coder
   disclosed the ownership honestly instead of hiding it; credit that, and put the justification in the
   brief that asks for it, not in the review that receives it.
+- ⚠️⚠️ **A brief can prescribe the very rung it refuses four paragraphs earlier — apply the round-trip test to
+  the assertions you ASK for, not only to the ones you grade.** Wave 90's brief §2 refused
+  `assertEquals('America/Chicago', $r['timezone'])` in as many words — *"a round-trip of the test's own
+  argument … no change to the module short of deleting the array key could ever redden it"* — and then §3
+  asked for `assertEquals(12, $renderWithValue['job_count'])` against a `renderView` whose `:41` is
+  `'job_count' => $jobCount`, handed in by the same call six lines above. **Identical defect, same file, one
+  section apart, and the coder delivered exactly what was asked.** The rung is not the value's *source* (the
+  wave-82 rule, "the expected value came from the same file") — a fixture value is fine — it is that
+  **the module did nothing to it in between**. One question catches both: *what did the code under test do to
+  this value?* If the answer is "returned it", the assertion is scenery whatever its expected value is. Do not
+  grade the coder for it; it is this column's, and the fix belongs in the next brief as item 0.
+- ⚠️ **A `⛔ REFUSED:` docblock line without its reason loses the reason — `REPORT.md` is overwritten every
+  wave and the test file is the only durable record.** Wave 89b wrote `⛔ REFUSED: no test can close a
+  documentation claim`; wave 90 wrote `⛔ REFUSED: G4-20`, six bare ids, with three genuinely distinct reasons
+  (a capability whose own text says it is a lint not a capability row; four empty header claims; two pointers
+  at `X-121`'s and `X-10`'s property) recorded **only** in a `REPORT.md` that the next wave overwrites. The
+  brief asked for the reasons *in the report*, which is where it went wrong. **Ask for `⛔ REFUSED: <id> — <its
+  own words>` in the file**, and treat a bare-id refusal as an id in a docblock — the tick-169 rung.
+- ⚠️ **A class with no production caller cannot carry a capability, and the module directory hides that.**
+  Measured at tick 184: `app/app/Modules/X-124/Domain/AssistantEngine.php` implements all three of the ids in
+  `test_help_and_escalation`'s docblock — `internal_only`, `escalated → X-111`, `generated_help_registry` — in
+  twenty lines of literal returns, and `grep -rn "AssistantEngine" app/app app/tests` names **only its own
+  declaration** (the X-175 hits are a different class). A test against it would go green, close nothing, and
+  pass every tell in this file except this one. It is the wave-83 dead-`enforce*`-method shape *before* the
+  test is written rather than after. **`grep` the class name across `app/app` and `app/tests` before briefing
+  a test against any `Domain/*Engine.php`**, and if the only hit is the declaration, the capability's real
+  subject is whatever the module's Actions actually run.
 
 ## Style
 
