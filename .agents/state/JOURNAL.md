@@ -842,3 +842,5 @@
 - `2026-09-06T14:13:58` (R245) C-Reviews — R245: the anti-padding belt is scoped to -- app/tests/, because the instrument's own search string necessarily appears in the decision record that defines it — an unscoped git diff | grep -c '^+.*assertTrue(true)' reported two additions on run 74, and both were the text of the rule itself. Never let a grep instrument's literal string sit in prose the same grep will sweep.
 - `2026-09-06T14:33:33` (R245) X-141 — R245: the N-### capability ids are closed by refusal, not assertion — `php artisan why N-063` reports the id is never DEFINED, and its ⑤ is boilerplate identical across every N row and across X-141, X-147 and X-173, naming three other modules. Same ground as N-010 on X-198 (REV-78). Refused on X-141, X-147, X-173.
 - `2026-09-06T14:33:41` stage capability = 392
+- `2026-09-06T14:49:31` (R245) X-143 — R245: the N-### capability ids on X-143, X-175, X-130 and X-150 are closed by refusal, not assertion — php artisan why reports each id is never DEFINED and its ⑤ is scaffolding boilerplate. Same ground as X-141/X-147/X-173 in run 76 (REV-80, REV-81).
+- `2026-09-06T14:49:38` stage capability = 357
