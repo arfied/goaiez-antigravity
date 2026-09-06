@@ -52,6 +52,8 @@ class UnpaidTest extends TestCase
             ]);
         });
 
+        Tenancy::set((int) $biz->id);
+
         // 1. Data assertion + 3. Tenant isolation
         Livewire::test(Unpaid::class, ['businessId' => $biz->id])
             ->assertSee('1 unpaid')
