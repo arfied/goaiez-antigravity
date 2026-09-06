@@ -2684,3 +2684,96 @@ which SITE-104 closes. The lane's four standing reds, none of them buildable her
 209) plus one new `state.py status` line per filing. And per tick 210, a filing
 must **not** also be recorded as `decided` — they are a partition, not a pair, and
 `state.py` has no withdraw.
+
+## ⛔ J11 is invisible to BOTH `doctor` and `state.py` — only §7 ever sees it (tick 213)
+
+The charter records `JOURNEYS n/12 green` as a hand mark. Measured at tick 213, the
+exposure is one surface wider than that. The live doctor's `journey` stage reports
+**5** violations and **not one of them is J11** — they are missed-call-textback,
+day-one, review-invite, dunning-by-reason and cancel, every one another lane's
+real-transport journey. J11 appears **only** as `✗ FAILURE
+a_published_site_carries_all_seven` in `supervise.sh` §7's pest run, while
+`state.py status` reports `JOURNEYS 12/12 green`.
+
+So this lane's one goal has its truth in exactly one place in the whole programme,
+and the two surfaces a reader reaches for first both report it green or silent.
+⛔ **Never read J11's state off `php artisan doctor` or `state.py`. Only
+`bash bin/supervise.sh --tests` §7 counts**, and every brief says so.
+
+## ⛔ `EdgeProvisionAction` FABRICATES vendor ids — it is a loaded gun aimed at J11, and it is safe only because nothing calls it (tick 213)
+
+`app/app/Modules/X-157/Actions/EdgeProvisionAction.php`, twenty-five lines, this
+lane's module under ruling 5:
+
+```php
+public function handle(int $businessId, string $domainName, bool $issueSsl = true): EdgeZone
+    'zone_id'            => 'cf_zone_'.Str::random(12),
+    'has_valid_ssl'      => $issueSsl,
+    'ssl_certificate_id' => $issueSsl ? 'cert_cf_'.Str::random(16) : null,
+```
+
+No HTTP client, no credential, no Cloudflare call. It **invents** a vendor zone id
+and a vendor certificate id, and takes the SSL verdict `bool $issueSsl` **as an
+argument** — the "method takes the answer as its argument" anti-seam tell with a
+manufactured vendor artifact id on top. `TestAnchorStage:112-128` bans
+`Str::random`/`uniqid`/`fake()` near an artifact-id field; this is that pattern in
+**production code**.
+
+⛔ **Harmless for exactly one reason: nothing calls it.** Measured — `grep -rn
+'EdgeProvisionAction' app/app --include=*.php` returns **one** hit, its own class
+declaration. The only callers are `SslDerivedTest`, `X157Test` and `X176Test`,
+which use it as a fixture. `edge.provision` sits in `manifest.php:32`'s `provides`
+and is reachable from nothing.
+
+**Why it is the lane's sharpest live hazard.** Tick 212 established the chain:
+`X-157/ModuleServiceProvider.php:100-107` deploys only when an `EdgeZone` with
+`has_valid_ssl = true` exists, the harness provisions none, so
+`EdgeDeployAction`'s honest derivation never runs and J11's `ssl` is red. The most
+natural "fix" anyone will reach for — wire `EdgeProvisionAction` into the publish
+path — turns `ssl` green off a `Str::random()` certificate that verifies nothing.
+That is tick 146/198/199's fake-green **one layer up from the column**: not a
+`->default(true)`, not an `'ssl_installed' => true` literal, but a fabricated
+vendor record making a real-looking derivation return a predetermined answer.
+⛔ **Nothing in any diff would show a literal** — same family as tick 199's
+missing-`$casts`, visible only as an absence.
+
+✅ **RULED (tick 213): the action stays test-only and the refusal is made
+LOAD-BEARING by a test** (SITE-105), because a prohibition living only in this
+untracked ledger is one well-meaning wave away from being undone — tick 199's law
+that a prohibition recorded as its remedy expires when the population changes,
+here with no check behind it at all. ⛔ **Never change its signature**: three test
+files call `handle($id, $domain, true)` and one is `X176Test.php`, ruled
+untouchable at tick 211 while stages' competing rewrite is unmerged.
+
+## ⛔ Two of this lane's own `state.py` entries are malformed — and re-filing them is tick 210's mistake made deliberately (tick 213)
+
+Live `state.py status` carries two X-102 entries whose reason sits in the **stage**
+field and whose `why` is **empty** — a positional-argument slip in an earlier wave
+(`"stage": "the renderer is X-102/Ui/, Track 2's under ruling 5…"` and `"stage":
+"exit-intent trigger does not exist"`). Neither can satisfy rule 09 on its face and
+neither will ever line up with a doctor stage.
+
+⛔ **RULED: no wave re-files them.** `state.py` has no withdraw (`:162-166` appends
+to both lists), so a correction *adds* rows rather than fixing any — and
+decisively, **there is no live violation behind either**: X-102's entire live red
+is `capability · G16-21` and `anchor · no runtime proof`, both already filed
+correctly. Re-filing writes two rows against nothing. They stay as permanent noise,
+recorded here so the next tick does not rediscover them as backlog. The remedy is
+argument validation in `bin/state.py` — shared tooling, a TRACK 1 ACTION.
+
+⚠️ `.claude/settings.json` now *allows* this seat `Edit`/`Write` on `bin/state.py`
+(the loosening filed as TRACK 1 ACTION 9). **Do not use it.** Using a grant this
+lane has formally asked to have reverted is "patch the thing that is refusing you"
+one step removed.
+
+## Shell forms — refused at tick 213
+
+- ⛔ `git diff <a>..<b> <c>..<d> -- <path>` — **refused** with git's own `usage:`
+  block. The tick-207 note that "two ranges in one call" is accepted is wrong for
+  `git diff`; issue one range per call. (It is `git log` that takes several ranges.)
+- ⛔ `<cmd> > <file> 2>&1; echo "rc=$?"` — *"contains multiple operations"*, the
+  same refusal already recorded for a trailing status echo. Redirection alone is
+  accepted **when the shell is at the checkout root** (tick 197).
+- ⛔ `grep -nE '<pat>' <file> | grep -vE '^\s*$'` — the second `grep -v` in a pipe
+  *"requires approval"*. Pipe into `head`/`sort`/`uniq -c` instead, or narrow the
+  first pattern.
