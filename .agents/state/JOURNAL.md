@@ -895,3 +895,4 @@
 - `2026-09-05T23:57:13` UNRESOLVED capability X-183 - G16-03 — grep -inr "G16-03" app/ returns only the capability text; content_drafts has no content-type column so the gate cannot distinguish long-form, and no honest assertion exists
 - `2026-09-05T23:57:14` UNRESOLVED capability X-183 - G16-28 — grep -inr "G16-28" app/ returns only the capability text; nothing marks a draft a transcript
 - `2026-09-05T23:57:14` UNRESOLVED capability X-183 - G20-15 — grep -inr "G20-15" app/ returns only the capability text; no link from a draft to a review
+- `2026-09-06T00:07:51` UNRESOLVED capability X-184 - G9-16 — grep -rn "fatigue" app/app/Modules/X-184 returns only the capability text in capabilities.php and PlanEngine::refreshOnFatigue(bool) which takes the answer as its argument; no fatigue signal, no fatigue column, no content pack
