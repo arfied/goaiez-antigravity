@@ -1030,3 +1030,10 @@
 - `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G11-23 — = the row above; one spec. It carries no independent clause, and one assertion may not honestly credit two rows.
 - `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G11-40 — the header's first line — no subject whatsoever.
 - `2026-09-06T12:20:40` (R245) X-01 — R245 — the clauses X-01 decides are UnifiedInboxManager::ingestMessage's identity resolution (:37-69, one Person per phone-or-email, back-filling the missing identifier), its single-conversation-per-person seam with the channel frozen at the first message (:72-77), and scoreLead's grade bands and out-of-range refusal (:155-198) — and the eight filed rows carry no clause X-01 can assert.
+- `2026-09-06T12:40:48` (R245) X-117 — R245 — the clauses X-117 decides are CheckoutEngine::checkout's pessimistic-lock inventory seam and its FRESH_AUTH_REQUIRED refusal (:52-70), its integer minor-unit total (:75), and buildCart's caller-supplied expiry window (:34) — and the six filed rows name subjects (upsell/token, bundle, milestone, price lookup/refusal, issuer_scope, pause/meter) that exist nowhere in the module.
+- `2026-09-06T12:41:07` UNRESOLVED G6-02 X-117 - upsell/token exists nowhere in the module
+- `2026-09-06T12:41:12` UNRESOLVED G7-10 X-117 - bundle exists nowhere in the module
+- `2026-09-06T12:41:12` UNRESOLVED G1-73 X-117 - milestone exists nowhere in the module
+- `2026-09-06T12:41:12` UNRESOLVED G1-75 X-117 - price lookup-or-refusal exists nowhere in the module
+- `2026-09-06T12:41:12` UNRESOLVED G1-81 X-117 - issuer_scope exists nowhere in the module
+- `2026-09-06T12:41:12` UNRESOLVED G1-82 X-117 - pause/meter exists nowhere in the module

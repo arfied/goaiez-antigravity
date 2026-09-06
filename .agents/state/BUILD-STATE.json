@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T12:20:40",
+ "updated": "2026-09-06T12:41:12",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -887,6 +887,42 @@
      "stage": "capability",
      "why": "G17-31 \u2014 R204: ONE currency; grep -rniE 'currency|conversion' app/app/Modules/X-117/ returns nothing outside of capabilities, and X117Test.php and the module's Actions hold no test or code carrying the id, so no honest assertion exists because the concept of multi-currency conversion or landed cost is not implemented here",
      "at": "2026-09-06T05:42:49"
+    },
+    {
+     "module": "X-117",
+     "stage": "G6-02",
+     "why": "upsell/token exists nowhere in the module",
+     "at": "2026-09-06T12:41:07"
+    },
+    {
+     "module": "X-117",
+     "stage": "G7-10",
+     "why": "bundle exists nowhere in the module",
+     "at": "2026-09-06T12:41:12"
+    },
+    {
+     "module": "X-117",
+     "stage": "G1-73",
+     "why": "milestone exists nowhere in the module",
+     "at": "2026-09-06T12:41:12"
+    },
+    {
+     "module": "X-117",
+     "stage": "G1-75",
+     "why": "price lookup-or-refusal exists nowhere in the module",
+     "at": "2026-09-06T12:41:12"
+    },
+    {
+     "module": "X-117",
+     "stage": "G1-81",
+     "why": "issuer_scope exists nowhere in the module",
+     "at": "2026-09-06T12:41:12"
+    },
+    {
+     "module": "X-117",
+     "stage": "G1-82",
+     "why": "pause/meter exists nowhere in the module",
+     "at": "2026-09-06T12:41:12"
     }
    ]
   },
@@ -3262,6 +3298,42 @@
    "stage": "capability",
    "why": "G11-40 \u2014 the header's first line \u2014 no subject whatsoever.",
    "at": "2026-09-06T12:20:34"
+  },
+  {
+   "module": "X-117",
+   "stage": "G6-02",
+   "why": "upsell/token exists nowhere in the module",
+   "at": "2026-09-06T12:41:07"
+  },
+  {
+   "module": "X-117",
+   "stage": "G7-10",
+   "why": "bundle exists nowhere in the module",
+   "at": "2026-09-06T12:41:12"
+  },
+  {
+   "module": "X-117",
+   "stage": "G1-73",
+   "why": "milestone exists nowhere in the module",
+   "at": "2026-09-06T12:41:12"
+  },
+  {
+   "module": "X-117",
+   "stage": "G1-75",
+   "why": "price lookup-or-refusal exists nowhere in the module",
+   "at": "2026-09-06T12:41:12"
+  },
+  {
+   "module": "X-117",
+   "stage": "G1-81",
+   "why": "issuer_scope exists nowhere in the module",
+   "at": "2026-09-06T12:41:12"
+  },
+  {
+   "module": "X-117",
+   "stage": "G1-82",
+   "why": "pause/meter exists nowhere in the module",
+   "at": "2026-09-06T12:41:12"
   }
  ],
  "decisions": [
@@ -3377,6 +3449,12 @@
    "module": "X-01",
    "chose": "R245 \u2014 the clauses X-01 decides are UnifiedInboxManager::ingestMessage's identity resolution (:37-69, one Person per phone-or-email, back-filling the missing identifier), its single-conversation-per-person seam with the channel frozen at the first message (:72-77), and scoreLead's grade bands and out-of-range refusal (:155-198) \u2014 and the eight filed rows carry no clause X-01 can assert.",
    "at": "2026-09-06T12:20:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "R245 \u2014 the clauses X-117 decides are CheckoutEngine::checkout's pessimistic-lock inventory seam and its FRESH_AUTH_REQUIRED refusal (:52-70), its integer minor-unit total (:75), and buildCart's caller-supplied expiry window (:34) \u2014 and the six filed rows name subjects (upsell/token, bundle, milestone, price lookup/refusal, issuer_scope, pause/meter) that exist nowhere in the module.",
+   "at": "2026-09-06T12:40:48",
    "ruling": "R245"
   }
  ],
