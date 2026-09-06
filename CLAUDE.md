@@ -3666,3 +3666,90 @@ recovers it.
 - ⚠️ Doctor's stage lines carry a **leading space** (` FAIL capability …`), so a `^FAIL`
   anchor matches nothing and returns **silently** — tick 209's false-silence family, caught
   here only because the total was known to be non-empty. Anchor on ` FAIL ` or don't anchor.
+
+## ⛔ A CONFORMANCE COUNT over N modules cannot tell a missing loader from an empty payload (tick 224)
+
+Money's ruling 64 is a real finding well stated: *a generated file inside a module tree is
+inert until that module's provider loads it.* Twelve `Route [x-199.*] not defined` errors had
+been carried for four ticks as a missing `surfaces:generate` run; the generator had already
+run, and that lane's own merge resolution had dropped main's `loadRoutesFrom` line from the
+two providers it had edited most.
+
+Per tick 223's law the **precondition was measured here, not the technique copied**. All
+seven owned modules carry a `routes.generated.php`:
+
+```
+X-155 1 · X-176 1 · X-102 1 · X-137 1 · X-157 1 · X-110 1     <- grep -c loadRoutesFrom
+X-103 0
+```
+
+**Six of seven already load theirs.** The seventh reads 0 and is **not a defect**:
+`app/app/Modules/X-103/routes.generated.php` is one line long and its whole content is
+`<?php` — zero routes, nothing to load, nothing inert. Consistent with ruling 16's design:
+X-103 is the publishing engine (`site.publish`, manifest:31) and *serving* is X-157's
+`GET /sites/{business}/{deploy_hash}`, whose 15-line routes file its provider loads at `:32`.
+**RULED: no wave** — the work is already done in six modules and has no subject in the
+seventh.
+
+⛔ **The operative half.** The count returned six 1s and one 0, and *the 0 was the legitimate
+member*. A tick reading the count as the finding would have briefed a line loading an empty
+file — a no-op commit that looks like progress, which a later `grep -c` then scores as 7/7
+conformant. **The disconfirming read is the payload, not the loader.** One `cat` of a
+one-line file decided it.
+
+Twenty-first statement of this section's law, and the first turned on a **conformance count
+over a set**: 163/178/180/183/185/187 concern a query's *pathspec*, 190 its *strip*, 191 its
+*bounds moving*, 192/193 its *unrecorded bounds*, 194 its *configuration*, 196 its *width*,
+207 its *expected output*, 208 the *evidence request*, 209 its *resolution context*, 210 the
+fault's *scope in time*, 215 the *cache key's identity*, 219 the record's *provenance*, 220
+the key's *update mechanism*. This concerns the **denominator's members not being alike** —
+the one dimension a ratio structurally cannot carry, because reducing a set to a fraction is
+exactly the operation that discards it. Same family as tick 181's *an unchanged count proves
+no NET loss* and tick 189's *a count that aggregates opposite verdicts is not a reading*.
+
+✅ **The technique-transfer test has TWO failure modes; record which one fired.** Tick 223
+measured a technique whose precondition was **absent** here (reviews' `php artisan why …
+never DEFINED` ground is N-id-only; all thirteen of this lane's open capability ids are
+G-ids). Tick 224 measured one whose precondition was **already satisfied**. Both end in "no
+wave" and they are different verdicts — *cannot work here* versus *already done here* — and
+the second is likelier to be skipped, because the technique plainly applies. A future tick
+re-reading "no wave" needs to know whether the door is shut or the room is empty.
+
+⚠️ Ruling 64's second half independently derives this lane's own standing law — *"every
+inherited follow-up is re-measured against the tree before it becomes a brief item … a
+supervisor's own ledger decays exactly like a merge does"* — after two of that lane's four
+inherited follow-ups proved false when measured (`requestCharge()` exists nowhere;
+`config/features.php` arrived with the merge). That is ticks 196/207/210/211 reached from
+another lane's evidence. Convergent derivation is the strongest confirmation this
+arrangement can produce; note it when it happens.
+
+## ⚠️ A THIRD malformed `state.py` record, and it is a different defect from tick 213's two (tick 224)
+
+Tick 213 ruled on two X-102 entries whose reason sat in the **stage** field with an empty
+`why` — a positional-argument slip. A third exists and is well formed in that respect:
+
+```
+{"module": "X-155", "stage": "events",
+ "why": "Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction"}
+```
+
+The `why` names a real dependency; the defect is that **`events` is not one of doctor's
+stages**, so the record can never line up with a violation. Same disposition as tick 213's
+two and for the same two reasons: `state.py` has **no withdraw** (`:162-166` appends to both
+lists), and **no live violation stands behind it** — X-155's entire live red is `capability
+G13-05` and `anchor`, both already filed under their proper stage names. ⛔ No re-file; the
+remedy is argument validation in the shared `bin/state.py`, already a TRACK 1 ACTION.
+Recorded so the next tick does not rediscover it as backlog.
+
+## ✅ The closing tip re-read's NULL result, and the arrival lag's fourth branch (tick 224)
+
+Ticks 215, 218, 220 and 223 each caught a mid-tick arrival on the closing `for-each-ref`;
+tick 224 is the first quiet one, and the negative case is worth recording so the check is not
+read as always-fires. The reflog says why: the newest arrival on the whole box was money's
+`a36e199f` at **15:34:38**, before this tick's fetch. Nothing was in flight.
+
+⚠️ The lag holds its shape across four branches now — ui 12 m, reviews 14 m, stages 15 m,
+money **16 m 48 s** (`a36e199f` committed 15:17:50, arrived 15:34:38). Tick 220's reading
+stands unchanged: on this box the lag is routinely longer than a tick, so the closing re-read
+defends against work that **did not exist yet** at the top of the tick, never against a stale
+fetch — and no earlier fetch is ever the remedy.
