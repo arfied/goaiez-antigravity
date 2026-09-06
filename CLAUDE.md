@@ -678,6 +678,61 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   its claim** — and here the under-scoped query was one this ledger wrote itself,
   two ticks earlier.
 
+  ⛔ **Half 1's standing set is TWO populations with OPPOSITE verdicts, and the
+  aggregate count cannot tell them apart** (tick 189). Tick 186 made half 1 a
+  delta and ticks 185/187 gave X-110 its two-command test, but the set itself was
+  never partitioned. One command does it, attribution included — add `--source`
+  and `%S`:
+
+  ```
+  git log --format='COMMIT %h %S %s' --name-only ^origin/main ^origin/track/site \
+    <the six sibling tips> -- <the fourteen module paths>
+  ```
+
+  Measured at tick 189 over the same 32 commits ticks 186–188 counted as one
+  number:
+
+  - **ui / X-110 — 15** (`4a40eb49 f54cd348 b69abd65 5f129d61 69b67224 3dfcb662
+    43b3475f e69fcf92 888de702 9be60c04 12b6afb4 2e8e697a 8289a5ea 221e7ccc
+    3014d8a1`) — SANCTIONED; every file is `X-110/Ui/**` or
+    `app/tests/Modules/X-110/AbandonedFormsTest.php`, absent here.
+  - **sixty / X-137 — 10** and **X-102 — 3** — OWNER ACTION 45.
+  - **sixty / X-103 — 4** (`8560ce8a e4cab02e 531fcd39 322df696`) — the
+    add-then-drop ssl pair, tick 163 / OWNER ACTION 47.
+  - money, pricebook, reviews, stages: **zero**. X-157, X-155, X-176: **zero**.
+
+  15 sanctioned + 17 violating = 32. A delta of **+1** therefore means either
+  "sanctioned ui traffic, run tick 187's two commands" or "OWNER ACTION 45
+  advancing", and nothing but `--source` attribution separates them. Same error
+  shape as tick 188's FINDING 1, one surface over: **a count that aggregates
+  opposite verdicts is not a reading.** Take half 1's delta per partition, never
+  on the total.
+
+  ⛔ **File-disjointness is a CONFLICT test, not a CORRECTNESS test** (tick 189).
+  Tick 185's confirmation (2) and tick 187's tests-half command both certify ui's
+  X-110 traffic by showing its files are disjoint from this track's. That is
+  sound for its actual claim — Track 1 gets no textual conflict — and it says
+  nothing about whether ui's edits redden this track's tests. Measured: this
+  checkout owns `app/tests/Modules/X-110/Screens/AbandonedFormsScreenTest.php`, a
+  *generated* screen test doing a real `GET route('x-110.abandoned-forms')` **and**
+  `Livewire::test(AbandonedForms::class)` on the exact class ui rewrites in four
+  of its fifteen commits; and `InstallVerifyTest.php:35,50,79` renders
+  `install-verify.blade.php`, which ui's `43b3475f` edits. Zero shared files, full
+  execution coupling.
+
+  Both measured harmless *this* time, and the margins are the finding.
+  `43b3475f` deletes an `<x-surface.sample-state>` banner that none of that
+  test's six assertions names. And `AbandonedForms.php` is a **221-byte stub**
+  here — untouched since `8d75cf9c`, 2026-08-30 — whose ui replacement declares
+  `mount(int $businessId = 0)`; **that default is the only reason**
+  `Livewire::test(AbandonedForms::class)` with no arguments still mounts after a
+  merge. Make the parameter required and this track's generated screen test goes
+  red with no file in common and no conflict to warn anyone. So tick 187's two
+  commands stand as written — what they certify is narrower than "sanctioned".
+  Whenever half 1's ui partition grows, also grep this track's
+  `app/tests/Modules/X-110/` for the edited class or view and read the
+  assertions.
+
   ⚠️ `app/database/seeders/` is a watch item, not a fourth half (tick 185). Ui's
   `3dfcb662` added `UiReviewSeeder.php` and it entered the complement as one of
   its two new files. It is the same *shape* as `app/database/migrations` — a
