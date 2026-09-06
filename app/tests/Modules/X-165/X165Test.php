@@ -131,6 +131,7 @@ class X165Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertArrayHasKey('served_person_id', $res);
     }
 
@@ -145,6 +146,7 @@ class X165Test extends TestCase
         $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
         $this->startAction->handle($biz->id, $plan->id, 88);
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertTrue($res['priority_applied']);
     }
 
@@ -159,6 +161,7 @@ class X165Test extends TestCase
         $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
         $this->startAction->handle($biz->id, $plan->id, 88);
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertEquals(88, $res['served_person_id']);
     }
 
@@ -173,6 +176,7 @@ class X165Test extends TestCase
         $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
         $this->startAction->handle($biz->id, $plan->id, 88);
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertStringContainsString('membership priority', $res['decision_log']);
     }
 
@@ -185,6 +189,7 @@ class X165Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertContains($res['served_person_id'], [99, 88]);
     }
 
@@ -197,6 +202,7 @@ class X165Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Test 165', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertFalse($res['priority_applied']);
     }
 
@@ -211,6 +217,7 @@ class X165Test extends TestCase
         $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
         $this->startAction->handle($biz->id, $plan->id, 88);
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertTrue($res['priority_applied']);
     }
 
@@ -225,6 +232,7 @@ class X165Test extends TestCase
         $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
         $this->startAction->handle($biz->id, $plan->id, 88);
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertEquals(88, $res['served_person_id']);
     }
 
@@ -239,6 +247,7 @@ class X165Test extends TestCase
         $plan = $this->planAction->handle($biz->id, 'Gold', 29900);
         $this->startAction->handle($biz->id, $plan->id, 88);
         $res = $this->scheduleAction->scheduleWindow($biz->id, '2026-09-01 09:00-11:00', 99, 88);
+        $this->assertNotNull($res);
         $this->assertStringContainsString('membership priority', $res['decision_log']);
     }
 
