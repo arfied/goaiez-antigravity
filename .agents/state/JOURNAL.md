@@ -848,3 +848,4 @@
 - `2026-09-06T05:03:36` (R245) X-01 — listener returns early when the inbound WhatsApp message body is empty, because a session-window ping is not a message
 - `2026-09-06T06:52:07` (R245) C-Mail — the ingest is C-Mail's, the transport is external and deliberately absent
 - `2026-09-06T08:20:35` (R245) X-01 — Registered EmailReplyInboundListener to ingest C-Mail EmailReplied events into the X-01 unified inbox, mapping the event sender and body to ingestMessage parameters.
+- `2026-09-06T08:51:38` (R245) C-Mail — recomputing complaint_rate on complained and bounced events because those are the types EmailHaltSeedAction counts to derive the rate and enforce the R17 seeds

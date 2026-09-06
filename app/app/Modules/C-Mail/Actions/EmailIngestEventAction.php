@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Event;
 /**
  * Ingest inbound mail events (R245).
  * The ingest is C-Mail's. The transport is external and deliberately absent.
+ * (R245) C-Mail — recomputing complaint_rate on complained and bounced events because those are the types EmailHaltSeedAction counts to derive the rate and enforce the R17 seeds.
  */
 final class EmailIngestEventAction
 {
@@ -36,6 +37,10 @@ final class EmailIngestEventAction
             'subject' => $subject,
             'payload' => $payload,
         ]);
+
+        if (in_array($eventType, ['complained', 'bounced'], true)) {
+            $domain = (new EmailHaltSeedAction)->handle($businessId, $mailDomainId);
+        }
 
         match ($eventType) {
             'bounced', 'spam-trap' => Event::dispatch(new EmailBounced($businessId, $mailDomainId, $recipientEmail, $eventType)),

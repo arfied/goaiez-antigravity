@@ -516,7 +516,7 @@ class CMailTest extends TestCase
      * BUILD PROPOSAL: G11-09 — a test send scored before the campaign has not been built yet; C-Mail is owned by this lane (EmailWarmupAction.php, EmailSendAction.php)
      * BUILT: G11-10 — test_g11_10_pre_send_bounce_and_spam_trap_gate() (the gate reads a value nothing wrote until this wave)
      * BUILT: C-Mail ingest event action. The HTTP transport is external and absent.
-     * BUILD PROPOSAL: C-Mail — handle EmailComplained to write complaint_rate and is_marketing_paused (test anchor is a complaint rate crossing 0.10% pauses every marketing send).
+     * BUILT: C-Mail — handle EmailComplained to write complaint_rate and is_marketing_paused (test anchor is a complaint rate crossing 0.10% pauses every marketing send). The HTTP transport that would call the ingest in production still does not exist.
      * ⛔ REFUSED: G11-11 — the capability's own text is "named in the header"; there is no clause to assert
      * ⛔ REFUSED: G11-12 (first half) — the capability's own text is "named in the header"; there is no clause to assert
      * BUILT: G11-12 (second half) — the live bridge from C-Mail to X-01 is built (test lives in X-01/X01Test.php: test_g11_12_email_reply_bridge). However, the HTTP transport that would call the ingest in production still does not exist.
@@ -582,6 +582,67 @@ class CMailTest extends TestCase
             sendType: 'marketing'
         );
         $this->assertSame('processed', $success['status']);
+    }
+
+    public function test_complaint_recomputes_rate_and_pauses_marketing(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Complaint Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'complaint.apex-air.com');
+
+        // Create 1 sent event so the rate denominator is > 0
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domain->id,
+            'event_type' => 'sent',
+            'send_type' => 'marketing',
+            'recipient_email' => 'sent@acme.com',
+            'subject' => 'Prior send',
+        ]);
+
+        $ingestAction = new EmailIngestEventAction;
+        $ingestAction->handle($biz->id, $domain->id, 'complained', 'sent@acme.com', 'Prior send');
+
+        // A1 - Re-read the row from the database
+        $freshDomain = MailDomain::where('business_id', $biz->id)->findOrFail($domain->id);
+        $this->assertEquals(1.0, $freshDomain->complaint_rate, 'A1: complaint rate should be recomputed and persisted');
+
+        // A2 - is_marketing_paused is true
+        $this->assertTrue($freshDomain->is_marketing_paused, 'A2: is_marketing_paused should be true');
+
+        // A3 - a marketing send is refused because of the pause
+        // Use a clean email so it doesn't trigger the bounce/spam-trap gate
+        $refusedSend = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: 'clean@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('refused_paused', $refusedSend['status'], 'A3: send should be refused due to pause');
+        $this->assertSame('MARKETING_SENDS_PAUSED_COMPLAINT_RATE', $refusedSend['refusal_code'], 'A3: correct refusal code');
+
+        // A4 - The negative case
+        $domainNegative = $this->dnsAction->handle($biz->id, 'negative.apex-air.com');
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domainNegative->id,
+            'event_type' => 'sent',
+            'send_type' => 'marketing',
+            'recipient_email' => 'sent-neg@acme.com',
+            'subject' => 'Prior send',
+        ]);
+
+        $acceptedSend = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domainNegative->id,
+            recipientEmail: 'clean-neg@acme.com',
+            subject: 'New Mktg',
+            sendType: 'marketing'
+        );
+        $this->assertSame('processed', $acceptedSend['status'], 'A4: send should be processed when not paused');
+        $this->assertFalse(MailDomain::where('business_id', $biz->id)->findOrFail($domainNegative->id)->is_marketing_paused, 'A4: domain is not paused');
     }
 
     public function test_header_capabilities(): void
