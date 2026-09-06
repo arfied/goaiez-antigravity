@@ -382,20 +382,20 @@ class UiReviewSeeder extends Seeder
 
         if (! DB::table('ad_connections')->where('business_id', $businessId)->exists()) {
             DB::table('ad_connections')->insert([
-                ['business_id' => $businessId, 'platform' => 'google', 'is_connected' => true, 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'platform' => 'facebook', 'is_connected' => false, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'platform' => 'google', 'account_id' => 'act_google_1', 'is_connected' => true, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'platform' => 'facebook', 'account_id' => 'act_facebook_1', 'is_connected' => false, 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
 
         if (! DB::table('conversion_uploads')->where('business_id', $businessId)->exists()) {
             DB::table('conversion_uploads')->insert([
-                ['business_id' => $businessId, 'status' => 'uploaded', 'conversion_value_cents' => 20000000, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'status' => 'uploaded', 'conversion_value_cents' => 25778900, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'status' => 'rejected', 'conversion_value_cents' => null, 'rejection_reason' => 'Invalid click ID', 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'status' => 'rejected', 'conversion_value_cents' => null, 'rejection_reason' => 'Duplicate conversion', 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'status' => 'rejected', 'conversion_value_cents' => null, 'rejection_reason' => 'Too old', 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'status' => 'rejected', 'conversion_value_cents' => null, 'rejection_reason' => 'Unverified', 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'status' => 'rejected', 'conversion_value_cents' => null, 'rejection_reason' => 'Mismatch', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 101, 'status' => 'uploaded', 'conversion_value_cents' => 20000000, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 102, 'status' => 'uploaded', 'conversion_value_cents' => 25778900, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 103, 'status' => 'rejected', 'conversion_value_cents' => 1000, 'rejection_reason' => 'Invalid click ID', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 104, 'status' => 'rejected', 'conversion_value_cents' => 2000, 'rejection_reason' => 'Duplicate conversion', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 105, 'status' => 'rejected', 'conversion_value_cents' => 3000, 'rejection_reason' => 'Too old', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 106, 'status' => 'rejected', 'conversion_value_cents' => 4000, 'rejection_reason' => 'Unverified', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 107, 'status' => 'rejected', 'conversion_value_cents' => 5000, 'rejection_reason' => 'Mismatch', 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
 
