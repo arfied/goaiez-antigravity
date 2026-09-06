@@ -19,19 +19,70 @@ for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_docto
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
-# Shared gate log (Track 1 relay, 2026-09-06 16:0x). One TSV line per tool run:
-#   start_iso <TAB> end_iso <TAB> pid <TAB> rc <TAB> project <TAB> checkout <TAB> tool
+# Shared gate log (Track 1 relay 2026-09-06 16:0x, CORRECTED by Track 1 16:5x —
+# the seven-column shape they first sent gained a column and is now final at EIGHT):
+#   start_iso <TAB> end_iso <TAB> gate_pid <TAB> tool_pid <TAB> rc <TAB> project <TAB> checkout <TAB> tool
+# Nothing in a row announces its own width, so a field-index parser is silently
+# wrong across the mix: in a 7-column row $4 is rc, in an 8-column row $4 is the
+# tool_pid. Any consumer branches on NF. History stays mixed; no row is migrated.
 # The rc is RAW and never normalised — 128+N is the whole signal (143 SIGTERM,
 # 137 SIGKILL, 124 is timeout(1)'s own). `tool` matters because pint, phpstan and
-# pest are three populations and a kill hits whichever is running. No lock: an
-# append under PIPE_BUF to an O_APPEND file is atomic on Linux, and a flock here
-# would interact with the pest lock for nothing.
+# pest are three populations and a kill hits whichever is running. `project` is
+# the project, never the directory; `checkout` is the directory basename.
+# No lock: an append under PIPE_BUF to an O_APPEND file is atomic on Linux, and a
+# flock here would interact with the pest lock for nothing.
 GATE_RUNS=/home/goaiez/tmp/gate-runs.tsv
-log_gate() {  # $1 start_iso  $2 rc  $3 tool
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-    "$1" "$(date -Is)" "$$" "$2" goaiez-antigravity "$(basename "$ROOT")" "$3" \
+log_gate() {  # $1 start_iso  $2 tool_pid  $3 rc  $4 tool
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$(date -Is)" "$$" "$2" "$3" goaiez-antigravity "$(basename "$ROOT")" "$4" \
     >> "$GATE_RUNS" 2>/dev/null || true
 }
+
+# Runs one gate tool and captures BOTH its output and the pid a killer would see.
+# `out=$(cmd)` yields no pid at all, so the tool is backgrounded into a temp file
+# and its pid taken from $!. Through a wrapper — `timeout 1800 pest` — the job is
+# `timeout` and the process in ps is pest, so descend one level with `pgrep -P`;
+# logging the wrapper's pid makes the join against kill-log.tsv fail in exactly
+# the case the log exists for, silently. The descent is attempted ONLY for a
+# wrapped command: phpstan forks workers, and a worker pid is not the tool.
+# `test -d /proc/N` and not `kill -0` — the BASH_ENV shim routes `kill` through
+# coder-bin, and a liveness probe must not enter the kill log.
+# Sets TOOL_OUT and TOOL_RC.
+run_tool() {  # $1 tool-name  $2.. the command
+  local tool="$1"; shift
+  local t0 tmp jobpid tpid child descend i
+  t0=$(date -Is)
+  tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX") || tmp="$ROOT/.agents/supervisor/.gate-tool.$$"
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!; tpid=$jobpid
+  descend=0; case " $* " in *" timeout "*) descend=1 ;; esac
+  if [ $descend -eq 1 ]; then
+    i=0
+    while [ $i -lt 10 ]; do
+      child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)
+      [ -n "$child" ] && { tpid="$child"; break; }
+      test -d /proc/"$jobpid" || break
+      sleep 0.2; i=$((i + 1))
+    done
+  fi
+  wait "$jobpid"; TOOL_RC=$?
+  log_gate "$t0" "$tpid" "$TOOL_RC" "$tool"
+  TOOL_OUT=$(cat "$tmp"); rm -f "$tmp"
+}
+
+# Gate sentinel (Track 1 16:5x). A start row with rc `-` and an end row from an
+# EXIT trap, so a gate killed at the wrapper is distinguishable from one that
+# never ran at all. Two defects Track 1 already paid for and this copy avoids:
+# the sentinel is defined HERE, at the top, not where the tools run (a gate
+# killed two seconds in recorded nothing); and `trap - EXIT` fires INSIDE each
+# signal trap (otherwise the honest rc=143 row is followed by a clean rc=0 row
+# that hides it). The gate's own rows carry `-` in the tool_pid column.
+GATE_T0=$(date -Is)
+log_gate "$GATE_T0" - - supervise.sh
+_gate_exit() { log_gate "$GATE_T0" - "$1" supervise.sh; }
+trap '_gate_rc=$?; _gate_exit "$_gate_rc"' EXIT
+trap 'trap - EXIT; _gate_exit 143; exit 143' TERM
+trap 'trap - EXIT; _gate_exit 130; exit 130' INT
 
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
@@ -124,17 +175,15 @@ bar "6. style + static analysis"
 # which is always 0. Capture rc BEFORE the pipe (Track 1, 2026-09-06 16:0x): a KILLED
 # pint prints a bare `Terminated` and would otherwise be filed as a style red. rc >= 124
 # is a signal about the box, never a verdict about the code.
-_t0=$(date -Is)
-pint_out=$(./vendor/bin/pint --test 2>&1); pint_rc=$?
-log_gate "$_t0" "$pint_rc" pint
+run_tool pint ./vendor/bin/pint --test
+pint_out=$TOOL_OUT; pint_rc=$TOOL_RC
 printf '%s\n' "$pint_out" | tail -3 | sed 's/^/  /'
 if [ "$pint_rc" -ge 124 ]; then
   echo "  ⛔ pint was KILLED or timed out (rc $pint_rc) — this is NOT a verdict"; fail=1
 elif [ "$pint_rc" -ne 0 ]; then fail=1; fi
 
-_t0=$(date -Is)
-stan_out=$(./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1); stan_rc=$?
-log_gate "$_t0" "$stan_rc" phpstan
+run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+stan_out=$TOOL_OUT; stan_rc=$TOOL_RC
 printf '%s\n' "$stan_out" | tail -4 | sed 's/^/  /'
 if [ "$stan_rc" -ge 124 ]; then
   echo "  ⛔ phpstan was KILLED or timed out (rc $stan_rc) — this is NOT a verdict"; fail=1
@@ -181,9 +230,8 @@ if [ $want_tests -eq 1 ]; then
       fi
     fi
     if [ $skip_pest -eq 0 ]; then
-      _t0=$(date -Is)
-      out=$(DB_DATABASE=$gate_db timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
-      log_gate "$_t0" "$rc" pest
+      run_tool pest env DB_DATABASE="$gate_db" timeout 1800 ./vendor/bin/pest
+      out=$TOOL_OUT; rc=$TOOL_RC
       [ $lock_held -eq 1 ] && flock -u 9
     else
       out=""; rc=0
