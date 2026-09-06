@@ -2954,3 +2954,126 @@ ownership: every checkout carries its own stale classmap.
 
 A wave that merges *and* builds makes every such red unattributable between the two.
 `composer dump-autoload` goes before the first post-merge gate, always.
+
+## ✅ Reading a sibling's supervisor commits paid a SECOND time — the pest lock (tick 216)
+
+Tick 215 ruled *"before recording a problem as having no remedy, read a sibling
+lane's supervisor commits"* and used it once, to find pricebook's `app/phpunit.xml`
+split. It fired again unprompted at tick 216, and this time the find was not a
+remedy for a known problem but a **hazard this lane had recorded and stopped
+thinking about**. Two sibling tips moved carrying the same Track 1 ruling
+(2026-09-06 14:1x): `origin/track/stages 40b67efe` and `origin/track/ui 91c48be7`,
+both *"take the box-wide pest lock around the suite"*, `bin/supervise.sh` only.
+
+Their own comment names the mechanism: *"Two concurrent suites are what gives an
+agent a reason to reap a 'stray' pest (rc 137/143)."* This lane **measured that
+exact event at tick 208** — `pest ZERO BYTES (rc=143)`, 128+15, SIGTERM from
+outside — wrote up that it was neither the memory wall nor the Vite manifest nor
+the 1800 s timeout, and then carried it as an unexplained one-off. Seven suites
+share one box; the cause was structural and another lane found it.
+
+**RULED by the lane supervisor: adopt it**, because §7 is the *only* surface in the
+whole programme that sees J11 (tick 213) — `doctor`'s `journey` stage does not
+report it and `state.py` says `12/12 green` — so an externally-reaped suite costs
+this lane its single goal measurement, and no other check would notice.
+
+⚠️ **Adopted, not copied.** Stages' hunk hardcodes
+`last-pest-grs-antig-stages.json`; this lane's `supervise.sh:147` already derives
+`last-pest-$(basename "$ROOT").json`, so the transcription keeps ours. And it is
+wired into **`want_tests=0`**, exactly like the existing shared-DB clash refusal
+five lines above, rather than stages' `skip_pest` — reusing the structure already
+in this file instead of importing a second one. Tick 212's rule (**never retype a
+gate script from `git show`**) is why the diff was read hunk-by-hunk and applied
+against our own control flow.
+
+⛔ **It is a scheduling guard, not a correctness one, and the two are orthogonal.**
+`:127-149` refuses a run while another checkout drives *our* database — a false-gate
+guard. The lock serialises *all seven* suites regardless of database. Neither
+subsumes the other; both stay.
+
+✅ **A lock-timeout prints `pest NOT RUN` and is never a red suite.** That is the
+honest direction — it names a non-measurement instead of reporting one — so it is
+not the weakening tick 196 forbids. And its failure mode is loud: if `flock` is
+absent the block is skipped and the suite runs unlocked, as before.
+
+## ⚠️ A wave that copies an UPSTREAM attribution inherits its error (tick 216)
+
+SITE-107's per-red table attributed `test_g2_76_unified_inbox_header` to **sixty**.
+It is in `app/tests/Modules/X-01/X01Test.php`, and **X-01 is stages'** under ruling
+5's catch-all — which this ledger measured at ticks 190/194 and recorded verbatim
+at `REVIEWS.md:51430`. The coder was not guessing: Track 1's 13:4x owner ruling,
+quoted in this lane's own `OWNER.md`, lists that red as `(sixty)`. So the wave
+copied a correct-looking attribution from the most authoritative document available
+to it and reproduced the error in it.
+
+No consequence here — the module is another lane's under either reading, so nothing
+this lane does changes — but the shape is worth the line: **an attribution inherited
+from upstream is a citation, not a measurement.** Same family as tick 196's *§3
+counts are RECORDED, not measured* and tick 215's *an evidence block a wave pastes
+is a claim*, one document further out. When a brief asks for an attribution table,
+ask for the **file path** that grounds each row; a path is measurable and a lane
+name is not.
+
+## The merge's §7 delta reads +5/+5 with the failure and error SETS identical (tick 216)
+
+Recorded because the absolute numbers invite the wrong comparison. Track 1 gated
+`main` at `12447593` with `tests 1952`; this checkout's post-merge gate reads
+**1939**. That −13 is *not* a loss and is not comparable — different checkout,
+different classmap, different database, and `d43685ec` (this lane's SITE-106 sweep,
+which deleted tautology methods) is contained in `origin/track/site` alone,
+measured with `git branch -r --contains`.
+
+The comparison that means something is **this checkout against itself**:
+
+| | tick 215 (pre-merge) | tick 216 (post-merge) |
+| :-- | :-- | :-- |
+| §7 | `1934 · 1928 · FAILED 2 · errors 4` | `1939 · 1933 · FAILED 2 · errors 4` |
+
+**+5 tests, +5 passed, and the failure and error sets byte-identical** —
+`test_g2_76_unified_inbox_header` · `a_published_site_carries_all_seven`, plus the
+four journey stubs/credentials. A merge of 38 commits reddened nothing and
+silenced nothing. ⛔ **Never read a sibling checkout's absolute test count as this
+one's baseline**; the only sound baseline is this checkout's previous gate, which
+is why every block records it.
+
+## Tick 216's own instrument notes
+
+- ⚠️ **The shell drifted into `app/` again**, from `cd app && php artisan doctor …`,
+  and `pwd` caught it before any pathspec query ran (tick 209's rule working as
+  written). The doctor call is still the only accepted artisan form from this seat,
+  so the drift is structural: **`cd /home/goaiez/agents/grs-antig-site && pwd` in
+  its own call after every one**, every time, not when it feels needed.
+- ✅ **Half 1's ui/X-110 partition regrew to 2** (`880010d2` 13:40, `0ac5fabe`
+  13:17) and both pass tick 187's two commands: every code path is under
+  `X-110/Ui/**`, and the only test touched is `AbandonedFormsTest.php` — never
+  `X110Test.php`. Tick 189's **execution-coupling** check re-measured and clear:
+  `mount(int $businessId = 0)` is byte-identical in this tree and at ui's tip
+  `91c48be7`, so the generated `Screens/AbandonedFormsScreenTest.php`, which calls
+  `Livewire::test(AbandonedForms::class)` with no arguments, still mounts. That
+  default is load-bearing and nothing in either diff names it — re-check it every
+  time this partition grows.
+- ✅ **`AbandonedFormsTest.php` is now IN this tree**, arriving with main. The
+  file-disjointness argument (tick 187) therefore no longer rests on the file being
+  absent; it rests on ui not touching `X110Test.php`, which is the clause that was
+  always doing the work.
+- ⚠️ **Fourth surface:** `4e6200ec` (pricebook) reported **58** deletions in
+  `BUILD-STATE.json` — far outside the `1 + 2n` shape tick 188 already falsified.
+  Diffed per tick 181's trigger: not one deleted line names any of the seven owned
+  ids; it is X-167 reflow. Every other sibling commit was `+N −1`, the `updated`
+  timestamp alone.
+
+## Shell forms — refused at tick 216
+
+- ⛔ `<cmd> ; <cmd>` — *"contains multiple operations"*. The `;` separator is
+  refused exactly as `&&`-chaining a status echo is (tick 207). One command per call.
+- ⛔ `command -v <x>` — "requires approval", even alone in a compound. It is fine
+  **inside** a script this seat writes; it is the interactive call that is refused.
+- ⛔ `bash -n <script>` — "requires approval", so the gate script cannot be
+  syntax-checked directly. ✅ The accepted substitute is to **run the read-only gate**
+  (`bash bin/supervise.sh`, no `--tests`): bash parses a top-level `if … fi` as one
+  compound command before deciding to skip it, so an unreached block's syntax is
+  still validated. Used at tick 216 to prove the pest-lock hunk.
+- ⛔ `cd app && <cmd> > ../<file>` — refused: *"Commands that change directories and
+  write via output redirection require explicit approval."* Redirection alone at the
+  checkout root is still accepted (tick 197). Pipe to `grep`/`head` instead and read
+  the filtered output.

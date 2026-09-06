@@ -149,8 +149,30 @@ if [ $want_tests -eq 1 ]; then
   fi
 fi
 if [ $want_tests -eq 1 ]; then
+  # Track 1 ruling 2026-09-06 14:1x, adopted from track/stages 40b67efe and track/ui 91c48be7.
+  # Serialise every suite on this box behind ONE advisory lock. Two concurrent suites are what
+  # gives an agent a reason to reap a "stray" pest (rc 137/143 — this lane saw exactly that at
+  # tick 208). Orthogonal to the clash refusal above: that is a correctness guard on OUR
+  # database, this is scheduling across all seven checkouts.
+  # ⛔ A lock-timeout is NOT a red suite — it means no test ran, and it says so.
+  PEST_LOCK=/home/goaiez/tmp/pest.lock
+  lock_held=0
+  if command -v flock >/dev/null 2>&1; then
+    if exec 9>>"$PEST_LOCK" 2>/dev/null; then
+      flock -n 9 || echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+      flock -w 2400 9 && lock_held=1
+    fi
+    if [ $lock_held -eq 0 ]; then
+      echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+      echo '{"tool":"pest","result":"lock-timeout"}' > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"
+      fail=1; want_tests=0
+    fi
+  fi
+fi
+if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
   out=$(timeout 1800 env DB_DATABASE="$TRACK_DB" ./vendor/bin/pest 2>&1); rc=$?
+  [ "${lock_held:-0}" -eq 1 ] && flock -u 9
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
