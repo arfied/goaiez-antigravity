@@ -119,6 +119,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/'], 'https://new.com');
         $res = $this->migrateAction->cutover($biz->id, 'new.com', ['https://old.com/'], ['https://old.com/' => 301]);
+        $this->assertNotNull($res);
         $this->assertTrue($res['migrated']);
     }
 
@@ -132,6 +133,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/'], 'https://new.com');
         $res = $this->migrateAction->cutover($biz->id, 'new.com', ['https://old.com/'], ['https://old.com/' => 404]);
+        $this->assertNotNull($res);
         $this->assertEquals('refused', $res['status']);
     }
 
@@ -145,6 +147,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/bad'], 'https://new.com');
         $res = $this->migrateAction->cutover($biz->id, 'new.com', ['https://old.com/bad'], ['https://old.com/bad' => 404]);
+        $this->assertNotNull($res);
         $this->assertContains('https://old.com/bad', $res['blocked_urls']);
     }
 
@@ -158,6 +161,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/1', 'https://old.com/2'], 'https://new.com');
         $count = RedirectMap::where('business_id', $biz->id)->count();
+        $this->assertNotNull($count);
         $this->assertEquals(2, $count);
     }
 
@@ -172,6 +176,7 @@ class X129Test extends TestCase
         $this->buildAction->build($biz->id, ['https://old.com/1'], 'https://new.com');
         $this->buildAction->build($biz->id, ['https://old.com/1'], 'https://new.com');
         $count = RedirectMap::where('business_id', $biz->id)->count();
+        $this->assertNotNull($count);
         $this->assertEquals(1, $count);
     }
 
@@ -184,6 +189,7 @@ class X129Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Legacy Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
         $res = $this->buildAction->build($biz->id, ['https://old.com/1'], 'https://new.com');
+        $this->assertNotNull($res);
         $this->assertEquals('redirects_built', $res['status']);
     }
 
@@ -197,6 +203,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/'], 'https://new.com');
         $res = $this->migrateAction->cutover($biz->id, 'new.com', ['https://old.com/'], ['https://old.com/' => 301]);
+        $this->assertNotNull($res);
         $this->assertTrue($res['migrated']);
     }
 
@@ -210,6 +217,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/'], 'https://new.com');
         $res = $this->migrateAction->cutover($biz->id, 'new.com', ['https://old.com/'], ['https://old.com/' => 404]);
+        $this->assertNotNull($res);
         $this->assertEquals('refused', $res['status']);
     }
 
@@ -223,6 +231,7 @@ class X129Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
         $this->buildAction->build($biz->id, ['https://old.com/bad'], 'https://new.com');
         $res = $this->migrateAction->cutover($biz->id, 'new.com', ['https://old.com/bad'], ['https://old.com/bad' => 404]);
+        $this->assertNotNull($res);
         $this->assertContains('https://old.com/bad', $res['blocked_urls']);
     }
 
