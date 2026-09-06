@@ -18,7 +18,7 @@
     <div wire:loading><x-ui.skeleton label="Reading the ledger…" /></div>
 
     @if(count($connections) === 0)
-        <x-ui.empty-state heading="No ledger connected yet.">Connect one below; the AI then proposes the chart of accounts here for confirmation and never guesses silently.</x-ui.empty-state>
+        <x-ui.empty-state heading="No ledger connected yet.">Connecting waits on OAuth credentials for QuickBooks, Xero and Sage; none exist in this checkout, so the Connect button below names what it is waiting on and connects nothing. When the credentials are granted the chart of accounts is proposed here for confirmation.</x-ui.empty-state>
     @else
         <ul>
             @foreach($connections as $conn)
