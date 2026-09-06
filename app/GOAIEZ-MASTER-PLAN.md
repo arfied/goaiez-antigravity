@@ -548,7 +548,7 @@ because the plan is where every owner ruling has landed.
 ### D · SENDING
 | ID | Law | Source · supersedes |
 | :--- | :--- | :--- |
-| **P-060** | **R70 — the sending law: `SendRefusalReason`'s 20 cases are the ENTIRE set; a gate not named there does not exist; `platformFloorRefusal()` fails closed** | R70 |
+| **P-060** | **R70 — the sending law: `SendRefusalReason`'s 20 cases are the ENTIRE set; a gate not named there does not exist; `platformFloorRefusal()` fails closed** | R70 | — 2026-09-04 amendment: 21 cases since e737094 (MessageTooLong); the law stands, the count moved.
 | **P-061** | **Transactional is blocked by nothing but STOP; responses run 24/7 (R23); the missed-call text-back fires on the RING (R80)** | R70 · R23 · R80 |
 | **P-062** | **Four notification classes — marketing · transactional · conversational · account — decided from the CALLER, never the content (X-193); `account` bypasses everything; account/billing mail cannot be switched off** | §125.8 · §17.1 |
 | **P-063** | **Quiet hours apply to MARKETING class only** — the window is data *(the federal floor per R70; state overlays as data — the plan builds the switch, not the rule, Law 122)*; web chat, missed-call, client alerts and internal alerts never wait | §137 · R70 · §102.1 · §126.5 |
@@ -25256,10 +25256,10 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 ### X-121 `EntityGraph` — the twelve canonical nouns every module reads and writes
 
 `@module X-121` `@intent RECOVER`
-**WHAT** `Business · Person · Conversation · Message · Job · Review · Campaign · Asset · LedgerEntry · Fact · Site · Number` — one table each, RLS FORCEd, **field-level history** ("John changed Status from Warm to Closed at 14:02"), version restore, Redis on high-read tables, global update propagation, one polymorphic `Conversation` across sms · whatsapp · web_chat · voice · email. ⛔ *No module may create a private table for a noun on this list.*
+**WHAT** `Business · Person · Conversation · Message · Job · Review · Campaign · Asset · LedgerEntry · Fact · Site · Number` — one table each, RLS FORCEd, **field-level history** ("John changed Status from Warm to Closed at 14:02"), version restore, Redis on high-read tables, global update propagation, one polymorphic `Conversation` across sms · whatsapp · web_chat · voice · email. ⛔ *No module may create a private table for a noun on this list.* (R245) people.consent_state string NOT NULL default 'UNPERMITTED'
 **WIZARD** *(operator-side — §118.1: the tenant never sees it)* **inferred at install:** RLS FORCEd on every noun table *(not a choice)* · cache tier from the plan's traffic band · the twelve nouns from W2's pinned list. **confirmed once by the operator:** history retention window *(default 24 months, `platform_settings`)*. **tenant-facing: none.**
 **AUTOPILOT** *(operator posture)* Redis invalidates **inline on write** *(same transaction — never a queue that can lag)* · RLS is FORCEd on every noun table and never optional · history rows are append-only · restore is an action with a `compensable` reversal class · thresholds *(cache TTLs · history retention)* live in `platform_settings`
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EntityGraph/**` · `database/migrations/*_spine_entity_*` · the `Fact` model with `source_page` + `source_version` · **must not touch** any other module's migration · **W2 Entity lands every schema change** — a squad opens a request, the warden lands it · runtime proof = insert a `Person` from two channels and show ONE `Conversation` row joining them
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EntityGraph/**` · `database/migrations/*_spine_entity_*` · the `Fact` model with `source_page` + `source_version` · **must not touch** any other module's migration · **W2 Entity lands every schema change** — a squad opens a request, the warden lands it · runtime proof = insert a `Person` from two channels and show ONE `Conversation` row joining them
 **SCREENS** none tenant-facing · operator: **entity history viewer** *(who changed what, when — X-111 renders it from `@renders entity_history_viewer · when_x111_renders` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides`)*
 
@@ -25276,7 +25276,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **WHAT** each module publishes actions *(id · label · typed params · returns · permission · **reversal class: reversible · compensable · terminal** · plain-English `preview`)*. Every invocation immutably logged *(timestamp · IP + MaxMind geo · user · actor_type)*, strict JSON-schema validation *(a missing field is refused, never defaulted)*, HMAC-SHA256 on every outbound webhook, gateway idempotency via a `refId` hash. **~2,900 actions, 30 verbs; the FORMAT is specced here, the instances are generated per module.**
 **WIZARD** *(operator-side)* **inferred:** the manifest schema version · the 30 verbs · the three reversal classes · MaxMind key from config. **confirmed once:** *(trigger: at deploy — operator only)* who receives the audit-trail export *(default: the operator on call)*. **tenant-facing: none** — *a tenant's own actions appear in their activity log, which X-111 renders; nothing to set up.*
 **AUTOPILOT** *(operator posture)* manifests load on boot — ⛔ **an unregistered action cannot run**; a manifest that fails schema validation fails the build, not the request · naming convention lint · dependency locking · the audit trail exports to PDF on demand *(who approved what, when)*
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/ActionRegistry/**` · the manifest schema · the `ActionInvocation` model · **W1 Manifest approves every module's manifest before that module writes code** *(Law 1)* · **W6 Contract** owns action signatures — a signature change is a warden request · runtime proof = one manifest registered, one invocation logged with `actor_type`, one refusal logged with its reason string
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/ActionRegistry/**` · the manifest schema · the `ActionInvocation` model · **W1 Manifest approves every module's manifest before that module writes code** *(Law 1)* · **W6 Contract** owns action signatures — a signature change is a warden request · runtime proof = one manifest registered, one invocation logged with `actor_type`, one refusal logged with its reason string
 **SCREENS** none tenant-facing · operator: **the action log** *(searchable; refusals first — the most valuable rows on the page)*
 **DECLARATIONS** `@renders action_log` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides action.invoke · action.preview · action.reverse · manifest.register · audit.export` · `@emits action.invoked · action.refused · action.reversed` · `@consumes capability.decided` *(X-126)* · `@owns_table action_manifests · action_invocations · action_reversals`
@@ -25293,10 +25293,10 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **WHAT** typed events, any module subscribes; **dead-letter queue at 10 consecutive failures + the tenant emailed**; exponential backoff 1 · 5 · 30 min; leaky-bucket throttling *(⛔ queue the spike, never drop it)*; Horizon auto-scales on queue depth; webhook brokering with a request inspector and "Test Webhook"; Zapier/Make native apps ride the same catalogue.
 **WIZARD** *(operator-side)* **inferred:** DLQ threshold 10 · backoff 1/5/30 min · Horizon scale trigger from the plan's tier *(default 5,000 queued)* · the DLQ notification address = the tenant owner's verified email *(never asked)*. **confirmed once:** nothing. **tenant-facing: none** — ⚠️ *the webhook SUBSCRIPTION screen belongs to X-142, not the bus.*
 **AUTOPILOT** *(operator posture)* self-scaling · self-retrying · self-quarantining · ⭐⭐ **THE LAW: invalidation is INLINE, same transaction; notification is async** — *a lagging queue lets the agent quote last month's price on a live call* · DLQ threshold, backoff ladder, scale trigger *(default 5,000 queued)* all in `platform_settings`
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EventBus/**` · the event base class *(⛔ **public events carry primitives or DTOs only — never an internal model**, §95.2.1)* · Horizon config · the DLQ table · **must not touch** any subscriber · runtime proof = publish one event, show its `event_log` row, its subscriber's invocation, and one forced failure landing in the DLQ with the email sent
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/EventBus/**` · the event base class *(⛔ **public events carry primitives or DTOs only — never an internal model**, §95.2.1)* · Horizon config · the DLQ table · **must not touch** any subscriber · runtime proof = publish one event, show its `event_log` row, its subscriber's invocation, and one forced failure landing in the DLQ with the email sent
 **SCREENS** none tenant-facing · operator: **the DLQ + request inspector** *(replay a dead-lettered event = an action, `compensable`)*
 **DECLARATIONS** `@renders dlq_request_inspector` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides event.publish · event.replay · webhook.test` · `@agent_reachable none` · `@emits event.published · event.failed · event.dead_lettered` · `@consumes `*` ⭐⭐ *(2026-08-27 — **the WILDCARD, declared.** `X-123` is the EventBus: it consumes every event by nature. Was the prose "everything — it is the transport", which parses EMPTY. ⛔ **The wildcard is legal for the four SPINE modules only, NAMED not patterned** — `X-123` `X-125` `X-207` `X-156`.)* · `@owns_table event_log · event_subscriptions · dead_letters`
+`@provides event.publish · event.replay · webhook.test` · `@agent_reachable none` · `@emits event.published · event.failed · event.dead_lettered` · `@consumes `*` · consent.decided` ⭐⭐ *(2026-08-27 — **the WILDCARD, declared.** `X-123` is the EventBus: it consumes every event by nature. Was the prose "everything — it is the transport", which parses EMPTY. ⛔ **The wildcard is legal for the four SPINE modules only, NAMED not patterned** — `X-123` `X-125` `X-207` `X-156`.)* · `@owns_table event_log · event_subscriptions · dead_letters` · `@reads_table businesses · users`
 
 @agent_reachable `webhook.test` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 **NEEDS / HAS** needs: a worker and the scheduler running *(the M-95 class)* · has: Horizon heartbeat + last scheduler tick
@@ -25310,7 +25310,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 **WHAT** evaluates on every action: **no `Fact` → no skill** *(the agent never invents a price, a time or a link because this refuses first)* · per-plan rate ceilings and hard limits *(one runaway tenant cannot bankrupt the shared provider account)* · resource throttling · policy enforcement · agency config inheritance cascading to sub-tenants. ⛔ **RC-1c: for any send to a customer the gate DEFERS to `ConsentService` (1,708 lines) — two systems deciding whether a message may send is a compliance breach. The gate handles grounding; consent handles permission.**
 **WIZARD** *(operator-side)* **inferred:** every per-plan ceiling from the rate registry *(Law 126 — never typed here)* · the agency→sub-tenant inheritance chain from the account tree. **confirmed once:** nothing. **tenant-facing: none** — *the tenant meets the gate only as a plain-English refusal in the assistant.*
 **AUTOPILOT** *(operator posture)* ⛔ **fails CLOSED** · every refusal carries a plain-English reason the assistant can read aloud *(EXPLAIN mode)* · ceilings per plan are data · **R25 applies above the gate: a ceiling reached raises an alert and degrades to the working path; the gate never silences the phone**
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/CapabilityGate/**` · **must not touch** `ConsentService`, `SendPermit`, `SendRefusalReason` *(R70: the 20 cases are the entire set)* · runtime proof = one refusal for a missing `Fact` with its reason string; one customer send that shows the gate calling `ConsentService` and NOT deciding itself
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/CapabilityGate/**` · **must not touch** `ConsentService`, `SendPermit`, `SendRefusalReason` *(R70: the 20 cases are the entire set)* · runtime proof = one refusal for a missing `Fact` with its reason string; one customer send that shows the gate calling `ConsentService` and NOT deciding itself
 **SCREENS** none tenant-facing *(the assistant surfaces refusals as "I'm refusing to quote your callout fee — two taps and I can")* · operator: **refusal analytics** *(the agent's refusal rate is the early-warning metric)*
 **DECLARATIONS** `@renders refusal_analytics` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides capability.check` · `@emits capability.decided · capability.refused` · `@consumes fact.invalidated · consent.decided` · `@owns_table capability_policies · capability_decisions`
@@ -25330,7 +25330,7 @@ Adopted as the standard for every header, including the spine: **WIZARD = inferr
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **WIZARD** *(operator-side)* **inferred:** everything — it reads annotations. **confirmed once:** nothing. **tenant-facing: none.**
 **AUTOPILOT** *(operator posture)* runs at build and at the wave gate — ⛔ **not at runtime**; the matrix is regenerated, never edited; **zero orphans is the wave-gate condition**
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/IntegrationMatrix/**` · the `goaiez:matrix` and `deploy:check` commands · the annotation parser *(§95)* · **must not touch** any module it measures · runtime proof = a deliberately orphaned event in a scratch module fails the build with the module and line named
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Spine/IntegrationMatrix/**` · the `goaiez:matrix` and `deploy:check` commands · the annotation parser *(§95)* · **must not touch** any module it measures · runtime proof = a deliberately orphaned event in a scratch module fails the build with the module and line named
 **SCREENS** none tenant-facing · operator: **the matrix view** *(the seams, with owner · direction · invalidation rule; §118.7's six seams pinned)*
 **DECLARATIONS** `@provides matrix.generate · deploy.check` · `@emits seam.violated · orphan.detected` · `@consumes` the annotation graph · `@owns_table integration_matrix` *(generated, rebuilt on every run)*
 **NEEDS / HAS** needs: zero orphans on the last run · has: the last matrix result
@@ -25534,7 +25534,7 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent RECOVER` under `§227.2`** — ⛔ ~~escalates and PROPOSES; it does not act alone~~ **STRUCK by `R235`** — ⭐ **it ACTS on a bad situation from minute one; it escalates only when the AI ITSELF cannot proceed**; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Services/Telephony/**` *(Contracts · Adapters · Roster · Routing · Normalisers · Health)* · **`@visibility public` = `CarrierAdapter` + `CapabilityRouter` ONLY; every adapter and normaliser is `internal`** *(what keeps the leak impossible)* · **must not touch** any channel module, `ConsentService`, `SendPermit` · runtime proof = one send routed to Infobip with the carrier's receipt and segment count; one forced 429 showing failover to the next account on the SAME carrier; one forged webhook rejected by `SignatureVerifier`
 **SCREENS** none tenant-facing · operator: **the carrier roster + health board** *(status · latency p50 · cost · cold windows)* · the failover log *(every hop, with EXPLAIN's "why did this text come from a different number?")*
 **DECLARATIONS** `@renders carrier_roster_health · failover_log` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides carrier.send · carrier.call · carrier.provision · carrier.health` · `@emits carrier.selected · carrier.failed_over · carrier.degraded · carrier.receipt` · `@consumes send.requested · call.requested · number.needed` · `@owns_table carrier_roster · carrier_bindings · carrier_health · carrier_receipts`
+`@provides carrier.send · carrier.call · carrier.provision · carrier.health` · `@emits carrier.selected · carrier.failed_over · carrier.degraded · carrier.receipt` · `@consumes send.requested · call.requested · number.needed · consent.decided` · `@owns_table carrier_roster · carrier_bindings · carrier_health · carrier_receipts`
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs: Infobip credentials valid · ≥1 ACTIVE adapter · health check green within the cadence · has: from the roster and the last health run
@@ -25585,7 +25585,7 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent INFORM` under `§227.2`** — factual, expected, safe; ⛔ ~~the ceiling is what this module may reach on measured clean runs, never set~~ **STRUCK by `R235`** — ⭐⭐ **`ships:` = `ceiling:`; there are no "measured clean runs" to earn. It acts from minute one**)***SWARM** owns `app/Modules/Channels/Whatsapp/**` + the existing namespace annotated in place · the window tracker · the template registry · **must not touch** the engine or consent · runtime proof = one message inside the window sent free-form, one outside sent as an approved template, both on the same Conversation
 **SCREENS** tenant: the thread *(shared)* · template status card · operator: template approval queue
 **DECLARATIONS** `@renders thread · template_status_card · template_approval_queue` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides whatsapp.send · whatsapp.connect · template.submit` · `@emits whatsapp.sent · whatsapp.session_opened · template.approved` · `@consumes message.received · send.requested · notification.classified` · `@owns_table whatsapp_templates · whatsapp_sessions`
+`@provides whatsapp.send · whatsapp.connect · template.submit` · `@emits whatsapp.sent · whatsapp.session_opened · template.approved` · `@consumes message.received · send.requested · notification.classified · consent.decided` · `@owns_table whatsapp_templates · whatsapp_sessions`
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs: a connected number · ≥1 approved template · has: from those rows
@@ -25653,7 +25653,7 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent GROW` under `§227.2`** — ⛔ ⛔ ~~**PROPOSES ONLY, ALWAYS, ON DAY ONE**~~ *(STRUCK by `R235` — it ACTS from minute one)* — earned up the ladder, never set; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Modules/Channels/NotificationClasses/**` · the class field on every send-capable manifest *(W1 Manifest enforces presence)* · **must not touch** the senders or `ConsentService` *(it feeds them)* · runtime proof = the same text body sent by a marketing action and by a conversational reply at 22:00 — one waits, one goes, both logged with their class
 **SCREENS** none tenant-facing · operator: sends-by-class · quiet-hour holds
 **DECLARATIONS** `@renders sendsbyclass · quiethour_holds` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides notification.classify` · `@emits notification.classified` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · `send.requested` · `@owns_table notification_classes` *(the four classes and their windows, as data)*
+`@provides notification.classify` · `@emits notification.classified` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · `send.requested` · `@owns_table notification_classes` *(notification_classes carries quiet_hours_start/quiet_hours_end)
 
 @agent_reachable `notification.classify` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 **NEEDS / HAS** needs: every send-capable manifest declares a class · has: `doctor` count of undeclared = 0
@@ -25670,9 +25670,9 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent GROW` under `§227.2`** — ⛔ ⛔ ~~**PROPOSES ONLY, ALWAYS, ON DAY ONE**~~ *(STRUCK by `R235` — it ACTS from minute one)* — earned up the ladder, never set; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** **SQ-1, in two waves:** the AI-seat path *(rung ③ + AMD + dispositions + callbacks)* in **wave 1** beside the channels; the human desk, wallboards and QA in **wave 3** with surfaces. Owns `app/Modules/Channels/CallCenter/**` · **must not touch** the telephony engine *(it calls `carrier.call`)*, C-Agent, `ConsentService`, X-188 · skills: the common set + WebRTC/SIP softphone *(Telnyx/SignalWire adapters earn their place here)* · AMD tuning · real-time dashboards · runtime proof = one predictive campaign of 1,000 simulated calls never exceeding the ceiling; one AMD-uncertain call routed to a human seat with the recording; one callback firing on time onto the original Conversation
 **SCREENS** tenant: **the agent desktop** *(the record · the script the AI wrote from `Fact` · dispositions · transfer)* · **the campaign board** *(lists · mode · pacing · results)* · **the wallboard** · the QA scorecard · customer-facing: none *(a called person sees only the tenant's tracked number)* · operator: abandonment and complaint rates per tenant
 **DECLARATIONS** `@renders agent_desktop · campaign_board · wallboard · qa_scorecard · customerfacing_none · abandonment_complaint_rates` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides campaign.start · campaign.pause · dial.next · call.dispose · callback.schedule · seat.login · seat.logout · qa.score` · `@emits `call.requested` ⭐ *(2026-08-27 — §235 group ④ GENUINELY MISSING: consumed and emitted by nobody; emitter derived from noun ownership)* · call.dialed · call.connected · call.disposed · callback.due · seat.state_changed · abandon.ceiling_near` · `
+`@provides campaign.start · campaign.pause · dial.next · call.dispose · callback.schedule · seat.login · seat.logout · qa.score` · `@emits `call.requested` ⭐ *(2026-08-27 — §235 group ④ GENUINELY MISSING: consumed and emitted by nobody; emitter derived from noun ownership)* · call.dialed · call.connected · call.disposed · callback.due · seat.state_changed · abandon.ceiling_near` · `@consumes capability.decided` · `@owns_table callcenter_campaigns · callcenter_seats · qa_scorecards`
 
-@agent_reachable `qa.score` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
+@agent_reachable `qa.score` · `campaign.start` · `campaign.pause` · `dial.next` · `call.dispose` · `callback.schedule` · `seat.login` · `seat.logout` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 `@ingress carrier.call <vendor>` ⭐ *(2026-08-27 — **§235's own prescription, applied for the first time.** §235 classified these and a later line CLAIMED "13 @ingress · 5 @scheduled WITH OWNERS" were done; **measured: 0 of 41 had ever reached a module header.** An ingress event has no emitter BY DESIGN; an unowned scheduled event is a cron job nobody notices has stopped.)*
 @consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · carrier.call` results · `carrier.selected` · `person.updated` · `consent.decided` · `message.received` *(a reply stops the ladder)* · `@owns_table dial_campaigns · dial_lists · dial_attempts · dispositions · callbacks · seats · qa_scorecards`
 **NEEDS / HAS** needs: ≥1 seat *(human logged in or the AI seat allowed)* · a list with ≥1 callable Person · a caller-ID number · a disposition set · has: from those rows; the completeness model says *"your list has 40 people and no seat is online — turn the AI seat on?"*
@@ -25781,7 +25781,7 @@ tenant asks → X-124 decides the MODE
 **WHAT** self-hosted STT/TTS/LLM on LiveKit · Groq-node integration · **cost routing between managed and self-hosted** · **model warm-pooling — the feature, not an optimisation** *(a cold self-hosted model is 3 s, not 200 ms)*. ⭐⭐⭐ Voice sells at 7¢/min full minutes; managed ≈ 4–5¢, self-hosted 1–2¢ at volume: **at 5¢ the product earns 29%, at 2¢ it earns 71% — the difference is this module** *(§18F: 7¢ only works self-orchestrated)*.
 **WIZARD** *(operator-side)* **inferred:** the pool size from concurrent-call history · the GPU host from config. **confirmed once:** nothing. **tenant-facing: none.**
 **AUTOPILOT** *(operator posture)* routes to self-hosted when the pool is warm and latency is in budget; **falls back to managed instantly when it is not**; the pool pre-warms on the tenant's call-volume curve; `voice.selfhosted_degraded` alerts the operator, never the tenant
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Voice/SelfHosted/**` · the warm-pool controller · the route selector · **must not touch** X-66's dialogue logic or the telephony adapters · runtime proof = one call routed self-hosted with its stage trace and its cost row; one cold-pool call that fell back to managed with no audible gap
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** owns `app/Modules/Voice/SelfHosted/**` · the warm-pool controller · the route selector · **must not touch** X-66's dialogue logic or the telephony adapters · runtime proof = one call routed self-hosted with its stage trace and its cost row; one cold-pool call that fell back to managed with no audible gap
 **SCREENS** none tenant-facing · operator: **the margin board** *(minutes by route · $/min measured · pool warmth)*
 **DECLARATIONS** `@renders margin_board` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides voice.route` · `@emits voice.route_selected · voice.selfhosted_degraded` · `@consumes call.requested · carrier.selected` · `@owns_table voice_routes · voice_pool_state · voice_cost_samples`
@@ -26026,7 +26026,7 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent GROW` under `§227.2`** — ⛔ ⛔ ~~**PROPOSES ONLY, ALWAYS, ON DAY ONE**~~ *(STRUCK by `R235` — it ACTS from minute one)* — earned up the ladder, never set; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Modules/Acquisition/Extension/**` + the extension repo · **must not touch** any tenant session or data · runtime proof = one badge scan → one Person; one rate-limit warning → the extension stopped with the abort logged
 **SCREENS** operator: the extension popup *(what it saw · what it sent)* · none tenant-facing
 **DECLARATIONS** `@renders extension_popup` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides extension.inject · extension.scan` · `@emits extension.triggered · prospect.injected · extension.aborted` · `
+`@provides extension.inject · extension.scan` · `@emits extension.triggered · prospect.injected · extension.aborted`
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 `@ingress operator.action <human>` ⭐ *(2026-08-27 — **§235's own prescription, applied for the first time.** §235 classified these and a later line CLAIMED "13 @ingress · 5 @scheduled WITH OWNERS" were done; **measured: 0 of 41 had ever reached a module header.** An ingress event has no emitter BY DESIGN; an unowned scheduled event is a cron job nobody notices has stopped.)*
@@ -26064,10 +26064,10 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent GROW` under `§227.2`** — ⛔ ⛔ ~~**PROPOSES ONLY, ALWAYS, ON DAY ONE**~~ *(STRUCK by `R235` — it ACTS from minute one)* — earned up the ladder, never set; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Modules/Acquisition/Research/**` · the research task in the router's task table *(Tier 2, its own timeout and cost line)* · **must not touch** X-136's scoring or X-105's sending · runtime proof = one scored prospect → one research run with its `ai_calls` cost → one icebreaker citing a URL that resolves
 **SCREENS** operator: the research dossier per prospect · none tenant-facing
 **DECLARATIONS** `@renders research_dossier_per` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides research.run · icebreaker.generate` · `@emits research.completed · icebreaker.generated · signal.found` · `
+`@provides research.run · icebreaker.generate` · `@emits research.completed · icebreaker.generated · signal.found · prospect.scored`
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
-`@ingress prospect.scored <api>` ⭐ *(2026-08-27 — **§235's own prescription, applied for the first time.** §235 classified these and a later line CLAIMED "13 @ingress · 5 @scheduled WITH OWNERS" were done; **measured: 0 of 41 had ever reached a module header.** An ingress event has no emitter BY DESIGN; an unowned scheduled event is a cron job nobody notices has stopped.)*
+
 @consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · prospect.enriched · prospect.scored` · `@owns_table research_runs · icebreakers · prospect_signals`
 **NEEDS / HAS** needs: a scored prospect · the task's budget line · has: run count and cost this period
 **TEST ANCHOR** *an unscored prospect never triggers a research call — asserted by counting `ai_calls` rows tagged `research` against `prospect.scored` events; every icebreaker row carries a `source_url` that returns 200 at generation time*
@@ -26229,7 +26229,7 @@ tenant asks → X-124 decides the MODE
 **DECLARATIONS** `@renders memberships_list` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
 `@provides membership.rank · membership.build · citation.verify` · `@emits membership.recommended · profile.built · citation.verified` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · business.discovered · territory.changed` · `@owns_table directory_memberships · citations` · ⭐ **D3 2026-08-27: `memberships` → `directory_memberships`** — *TITLE COLLISION: X-165 = recurring SERVICE PLANS; X-192 = chamber and directory memberships*
 
-@agent_reachable `citation.verify` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
+@agent_reachable `citation.verify` · `membership.rank` · `membership.build` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 **NEEDS / HAS** needs: a territory · has: ranked list freshness
 **TEST ANCHOR** *a directory with `noindex` never appears above an indexed one in the ranking and carries a "Google can't see this" note; no membership is purchased without an approval action row*
 
@@ -26450,7 +26450,7 @@ tenant asks → X-124 decides the MODE
  `ships: L2 · ceiling: L2`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent GROW` under `§227.2`** — ⛔ ⛔ ~~**PROPOSES ONLY, ALWAYS, ON DAY ONE**~~ *(STRUCK by `R235` — it ACTS from minute one)* — earned up the ladder, never set; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Modules/Surfaces/Builder/**` · the site fork · the publish path · the `@renders `none` ⛔ *(2026-08-27 — **this field previously contained a SWARM paragraph, not a declaration.** Its text — "on-page contract for X-143 · must not touch the template library after fork" — is BUILD GUIDANCE and belongs in `**SWARM**`, not in `@renders`. ⭐ **A declaration line must contain ONLY declarations:** the prose here made a parser read `site.published` as a RENDERED BLOCK. `X-103` is a publisher and renders no tenant-facing block.)*
 **SWARM (continued)** on-page contract for X-143 · **must not touch** the template library after fork, the Fact store *(it emits `site.published`)* · runtime proof = one publish → `site.published` and the affected Facts invalidated in one commit; one renderer fix reaching two forked sites with zero visual diff
 **SCREENS** tenant: **Website — builder · pages · SEO · migration** · operator: publish failures
-**DECLARATIONS** `@provides site.build · site.publish · page.create · funnel.build` · `@emits `approval.requested` ⭐⭐⭐ *(2026-08-27 — **the `send.requested` shape, applied to approvals.** `X-202` is the ONE queue every L1 decision lands in, from all 122 modules. It cannot learn five `*.proposed` names one at a time — **that would mean a code change in `X-202` every time a module gains a proposal.** So every PROPOSING module emits this, exactly as every SENDING module emits `send.requested`. ⛔ This module was identified as a proposer because it already emits a `*.proposed` event — measured, not assumed.)* · page.published · site.published · funnel.completed · optimiser.proposed` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · template.generated · design.changed · template.matched` · `@owns_table pages · page_versions · funnels · site_forks` *(`sites` is X-121's)*
+**DECLARATIONS** `@provides site.build · site.publish · page.create · funnel.build` · `@emits `approval.requested · page.published · site.published · funnel.completed · optimiser.proposed` ⭐⭐⭐ *(2026-08-27 — **the `send.requested` shape, applied to approvals.** `X-202` is the ONE queue every L1 decision lands in, from all 122 modules. It cannot learn five `*.proposed` names one at a time — **that would mean a code change in `X-202` every time a module gains a proposal.** So every PROPOSING module emits this, exactly as every SENDING module emits `send.requested`. ⛔ This module was identified as a proposer because it already emits a `*.proposed` event — measured, not assumed.)* · `@consumes `capability.decided · template.generated · design.changed · template.matched` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · `@owns_table pages · page_versions · funnels · site_forks` *(`sites` is X-121's)*
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs: a matched template · a verified domain or the default subdomain · has: published page count
@@ -26997,7 +26997,7 @@ tenant asks → X-124 decides the MODE
  `ships: L2 · ceiling: L2`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent GROW` under `§227.2`** — ⛔ ⛔ ~~**PROPOSES ONLY, ALWAYS, ON DAY ONE**~~ *(STRUCK by `R235` — it ACTS from minute one)* — earned up the ladder, never set; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Modules/Reputation/Reviews/**` + the existing `Reviews/` namespace annotated in place *(the triage split verified present in legacy — kept, not rebuilt)* · the reply composer *(compose-time gated)* · **must not touch** X-111's ticketing *(it creates tickets through the action)* · runtime proof = one 5★ → public link sent; one 2★ → ticket with `sla_due_at`, zero public reply; one ambiguous review → an inbox draft, unpublished
 **SCREENS** tenant: **Reviews & QA — requests · the QA report · tickets · loss alerts** *(§58)* · customer-facing: the review request and the public link · operator: none
 **DECLARATIONS** `@renders reviews_qa_requests · qa_report · tickets · loss_alerts` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides review.request · review.reply · review.sync · qa.ticket` · `@emits review.requested · review.received · reply.published · win.first` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · job.completed · payment.captured · ticket.resolved · gbp.suspended` · `@owns_table review_requests · review_replies · qa_settings · ⛔ **P-163 FIX 2026-08-27: reviews moved to `@reads_table` — X-121 owns the canonical nouns**
+`@provides review.request · review.reply · review.sync · qa.ticket` · `@emits review.requested · review.received · reply.published · win.first · send.requested · csat.requested` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · job.completed · payment.captured · ticket.resolved · gbp.suspended` · `@owns_table review_requests · review_replies · qa_settings · ⛔ **P-163 FIX 2026-08-27: reviews moved to `@reads_table reviews · people · qa_tickets` — X-121 owns the canonical nouns**
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs: ≥1 connected review profile · a ticket recipient · has: connections + the two confirmations
@@ -27149,7 +27149,7 @@ tenant asks → X-124 decides the MODE
  `ships: L3 · ceiling: L3`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)* *(**ships-at is `@intent RECOVER` under `§227.2`** — ⛔ ~~escalates and PROPOSES; it does not act alone~~ **STRUCK by `R235`** — ⭐ **it ACTS on a bad situation from minute one; it escalates only when the AI ITSELF cannot proceed**; the ceiling is what this module may reach on measured clean runs, never set)***SWARM** owns `app/Modules/Money/Disputes/**` · **must not touch** X-198 *(consumes)*, the suspension state *(requests it through R83's action)* · runtime proof = one simulated chargeback → one evidence bundle with the named artifacts → one submission record → one outcome
 **SCREENS** tenant: the dispute card · operator: the dispute queue
 **DECLARATIONS** `@renders dispute_card · dispute_queue` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides dispute.compile · dispute.submit · dispute.record` · `@emits dispute.opened · evidence.compiled · dispute.resolved · dispute.lost` · `@consumes chargeback.received · invoice.paid · call.completed · signature.captured` · `@owns_table disputes · dispute_evidence · dispute_outcomes`
+`@provides dispute.compile · dispute.submit · dispute.record` · `@emits dispute.opened · evidence.compiled · dispute.resolved · dispute.lost` · `@consumes chargeback.received · invoice.paid · call.completed · signature.captured` · `@owns_table disputes · dispute_evidence · dispute_outcomes · dispute_audits` *(disputes carries deadline_at)
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs: a connected gateway · has: open disputes
@@ -27509,7 +27509,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G5-06 | AI Auto-Tagging | ENH | X-114 | image tagging on the `Asset` |
 | G5-07 | AI Form Generator | ENH | X-155 | describing the form is the wizard |
 | G5-08 | AI Generation | ENH | X-178 | named in the header |
-| G5-09 | AI Roleplay | ENH | X-200 | coaching on the desk; the voice is X-197's |
+| G5-09 | AI Roleplay | ENH | X-200 | coaching on the desk; the voice is X-197's  · ⛔ **REFUSES with BAD_STATE** |
 | G5-10 | AI Safety & Prompt Injection Defense | ENH | C-Agent | untrusted text is DATA, never instruction; red evals are build-failing (P-102) |
 | G5-11 | AI Sentiment Parsing | ENH | X-183 | a negative comment on a draft; the escalation is the *ApprovalDesk* question |
 | G5-12 | AI Subject Line Split Testing | ENH | X-186 | still one mixed campaign (P-074) |
@@ -27865,7 +27865,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G10-21 | Immutable Storage | ENH | X-122 | append-only action log; ⚠️ QLDB is corpus vocabulary — one database (§22) |
 | G10-22 | Latency Guardrails | ENH | C-Ai | TTFT demotion in the model waterfall |
 | G10-23 | Legal & Privacy Engine | ⛔ **KILLED** | — | **P-167 · Law 122** — eight EMPTY admin slots, nothing authored, no generated ToS or privacy copy |
-| G10-24 | Legally Binding Signatures | ENH | X-172 | the signature pad lives in the customer portal; see F-19 |
+| G10-24 | Legally Binding Signatures | ENH | X-172 | the signature pad lives in the customer portal; see F-19 · refuses: a redline is SURFACED with a diff, never accepted |
 | G10-25 | List Scrubbing | ENH | X-186 | scrubbed against suppression fresh as of each send · refuses: to send without scrubbing against a fresh suppression list |
 | G10-26 | Non-Standard Terms | ENH | X-202 | a term outside the standard routes for a decision |
 | G10-27 | Policy Enforcement | **RE-HOME→G15** | X-169 | expense policy |
@@ -27915,7 +27915,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G11-22 | Omni-Channel Inbox Sync | ENH | X-01 | one polymorphic `Conversation` (X-121's) across every channel |
 | G11-23 | Omni-Channel Messaging | ENH | X-01 | = the row above; one spec |
 | G11-24 | Omnichannel Campaigns | ENH | X-186 | named in the header; ⛔ every send from there is Marketing class from the CALLER · refuses: a send whose caller did not declare Marketing class — the class comes from the caller, never from the channel |
-| G11-25 | One-Click Dispositions | ENH | X-200 | named in the header — a closed set per campaign |
+| G11-25 | One-Click Dispositions | ENH | X-200 | named in the header — a closed set per campaign  · ⛔ **REFUSES with BAD_STATE** |
 | G11-26 | Payload Validation | ENH | X-122 | strict JSON-schema validation; a missing field is refused, never defaulted |
 | G11-27 | Promo Email Draft | **RE-HOME→G16** | X-158 | episode promo — spec with the video pass (turn 32) |
 | G11-28 | Reply Interception | ENH | X-186 | named in the header — any reply stops the sequence (P-075) |
@@ -28117,7 +28117,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G13-35 | UTM Harvesting | ENH | X-155 | hidden fields write straight to the entities, no staging table |
 | G13-36 | View Tracking | ENH | X-199 | invoice opened → the alert names an action |
 | G13-37 | Widget Rage-Click Detection | ENH | X-102 | the widget offers help instead of watching them fail |
-| G13-38 | Zero-Party Data Collection | ENH | X-119 | a volunteered detail becomes a `Fact` with its source |
+| G13-38 | Zero-Party Data Collection | ENH | X-119 | a volunteered detail becomes a `Fact` with its source · refuses: an inference |
 
 **G13 COUNT:** 38 = **36 enhancement** + 0 re-homed + 2 killed + **0 unmapped** · ⭐ **ratio 95%**
 
@@ -28228,7 +28228,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G18-05 | Feature Gating & FOMO | ⛔ **KILLED** | — | **P-001 · T468 — two packages, and everything we ship, as we ship it, at the price you joined at.** There is no locked tier to show a padlock for |
 | G18-06 | Gamification Breaks | ENH | X-200 | a wellbeing prompt on the desk — the positive side of §150.4 |
 | G18-07 | Holiday Overrides | ENH | X-108 | blackouts and holiday overrides are named in the header |
-| G18-08 | Live Call Coaching | ENH | X-200 | listen · whisper · barge on the seat |
+| G18-08 | Live Call Coaching | ENH | X-200 | listen · whisper · barge on the seat  · ⛔ **REFUSES with BAD_STATE** |
 | G18-09 | LiveKit Voice Engine | ENH | X-197 | named in the header; ⚠️ **ElevenLabs is corpus vocabulary — the 7¢ minute only works self-orchestrated** (§18F) |
 | G18-10 | Local Caller ID | ENH | X-188 | the tenant's own registered numbers by area code |
 | G18-11 | Local Presence | ENH | X-188 | = Local Caller ID; one spec. ⚠️ rotation is bounded by P-065's per-number complaint monitoring |
@@ -28322,7 +28322,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G21-10 | Slack Integration | ENH | X-124 | the assistant answering in-thread from the generated help registry |
 | G21-11 | Slack Integration | ENH | X-202 | approve or deny without opening the CRM |
 | G21-12 | Slack Integration | ENH | X-123 | a comment event pinging the right person |
-| G21-13 | Slack Sync | ENH | X-200 | a closed deal on the wallboard and in the channel |
+| G21-13 | Slack Sync | ENH | X-200 | a closed deal on the wallboard and in the channel  · ⛔ **REFUSES with BAD_STATE** |
 | G21-14 | Ticket Deflection | ENH | X-111 | the help card offered before the ticket is submitted |
 
 **G21 COUNT:** 14 = **12 enhancement** + 1 re-homed + 1 killed + **0 unmapped** · ⭐ **ratio 93%**
@@ -28844,10 +28844,10 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 **WHAT** ⭐⭐ **The single decider of whether a message may be sent to a person on a channel. Every sender asks; no sender decides.** Returns GRANT or **exactly one of P-060's twenty refusal reasons — a refusal without a code fails the build**, and `platformFloorRefusal()` fails closed, so an unknown state refuses. Owns the **permit** *(immutable, provenance-carrying — lifts are recorded, never deleted)*, the **suppression list**, the **`ImportAttestation`**, and the **compliance-register slots**. **The three lanes:** a campaign declares its lane and this module reads it — Lane 1 transactional *(nothing blocks but STOP)* · Lane 2 marketing-to-phones *(basis + window + 10DLC)* · Lane 3 cold B2B email *(CAN-SPAM shape)*. ⛔ **It does not send, compose, schedule, or hold campaign logic — a policy engine that starts sending is the thing that would block the spine (§168.4).** ⛔ **The registers (DNC · litigator · reassigned-number) are PROVIDER SLOTS, DEFAULT OFF, on the tenant's own credentials; NOT ENABLED is indistinguishable from never existing (P-066).** ⛔ **An import is not consent — every contact path routes through `ImportAttestation` exactly as a CSV does, and the tenant's attestation IS the consent record (P-069).**
 **WIZARD** *(operator-side — §118.1: the tenant never sees it)* **inferred at install:** the twenty refusal codes from P-060's closed set · the three lanes from each campaign's manifest · the quiet-hours window as data *(P-063 — marketing class only)*. **confirmed once by the operator:** which register providers exist as slots *(every one DEFAULT OFF)*. **tenant-facing: none** — what the tenant sees is the do-not-text list, which is X-01's screen rendering this module's suppressions.
 **AUTOPILOT** *(operator posture)* STOP suppresses **on receipt, before the next send, always** · suppression is checked **fresh as of each send**, never at campaign build · a permit is immutable and carries its provenance · **a register that is OFF is never consulted and never delays a send** · every decision writes an `ActionInvocation`.
- `ships: n/a · ceiling: n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** **SQ-0 · WAVE 0, with the spine.** Owns `app/Modules/Spine/Consent/**`. **`@visibility public` = `ConsentService::decide()` ONLY** — every register adapter, lane evaluator and suppression matcher is `internal`. **Must not touch** any sender, `C-Sms`/`C-Mail`/`X-186` code, or X-193's classes *(it reads them)*. **Safe-update path: additive only — a new refusal code is a new closed-enum member plus its test; a code is never renumbered, and the set of twenty changes only on the owner's word (P-060).** Skills: Postgres RLS + FORCE · closed-enum modelling · Pest contract tests · ≤12 a seat. **Runtime proof =** one real send refused with its code in the trace and **nothing on the wire**; one `STOP` received and the very next queued send to that person refused with its code; one contact write with no attestation refused **at the write**.
+ `ships: n/a` · `@ceiling n/a` *(operator posture — `P-195`'s ladder governs actions toward a CUSTOMER)***SWARM** **SQ-0 · WAVE 0, with the spine.** Owns `app/Modules/Spine/Consent/**`. **`@visibility public` = `ConsentService::decide()` ONLY** — every register adapter, lane evaluator and suppression matcher is `internal`. **Must not touch** any sender, `C-Sms`/`C-Mail`/`X-186` code, or X-193's classes *(it reads them)*. **Safe-update path: additive only — a new refusal code is a new closed-enum member plus its test; a code is never renumbered, and the set of twenty changes only on the owner's word (P-060).** Skills: Postgres RLS + FORCE · closed-enum modelling · Pest contract tests · ≤12 a seat. **Runtime proof =** one real send refused with its code in the trace and **nothing on the wire**; one `STOP` received and the very next queued send to that person refused with its code; one contact write with no attestation refused **at the write**.
 **SCREENS** operator: **refusals by reason today** *(the twenty, as a bar — the fastest read of what the platform is actually blocking)* · register slot states. tenant: none of its own.
 **DECLARATIONS** `@renders refusals_by_reason · register_slot_states` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides consent.decide · consent.suppress · consent.lift · attestation.record · register.check` · `@agent_reachable none` · `@emits consent.decided · permit.granted · suppression.added · attestation.recorded` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · message.received` *(STOP)* · `contact.created · campaign.scheduled` · `@owns_table send_permits · suppressions · import_attestations · compliance_registers`
+`@provides consent.decide · consent.suppress · consent.lift · attestation.record · register.check` · `@agent_reachable none` · `@emits consent.decided · permit.granted · attestation.recorded · suppression.added` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · message.received` *(STOP)* · `contact.created · campaign.scheduled` · `@owns_table send_permits · suppressions · import_attestations · compliance_registers`
 
 @agent_reachable `register.check` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 **NEEDS / HAS** needs: the lane declared on every campaign · an `ImportAttestation` on every contact write · has: permits decided today · **refusals by reason, against P-060's twenty**
@@ -33536,7 +33536,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 **SWARM** `SQ-11` *(money)* · **W2** *(it needs `X-163` and `X-117`)*. Owns `app/Modules/Money/Promotions/**`.
 **SCREENS** the promotion builder *(with the margin warning inline)* · active promotions · redemptions · **the earned-vs-given panel** · the targeting preview.
 **DECLARATIONS** `@renders promotion_builder · active_promotions · redemptions · earnedvsgiven_panel · targeting_preview` *(derived from SCREENS, 2026-08-27 — names only; the JSON schema each block carries is turn 69's)*
-`@provides promotion.create · promotion.validate · promotion.apply · promotion.propose_targets` · `@emits promotion.created · promotion.redeemed · promotion.expired · promotion.cap_reached · promotion.velocity_alert` · ``@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · `cart.checkout`` ⭐ *(2026-08-27, owner-confirmed — a promotion is APPLIED at checkout. ⛔ NOT `campaign.sent` — campaigns DISTRIBUTE a promotion; they do not trigger one.)* · @owns_table promotions · promotion_redemptions · promotion_scopes`
+`@provides promotion.create · promotion.validate · promotion.apply · promotion.propose_targets` · `@emits promotion.created · promotion.redeemed · promotion.expired · promotion.cap_reached · promotion.velocity_alert` · `@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · `cart.checkout` ⭐ *(2026-08-27, owner-confirmed — a promotion is APPLIED at checkout. ⛔ NOT `campaign.sent` — campaigns DISTRIBUTE a promotion; they do not trigger one.)*` · `@owns_table promotions · promotion_redemptions · promotion_scopes`
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 **NEEDS / HAS** needs **`X-163`** *(prices AND costs)* · **`X-117`** *(checkout)* · **`X-204`** *(any distribution is a SEND)* · **`X-138`** *(attribution)* · **`C-Agent`** *(honouring it in conversation)* · **`X-202`** *(the proposal lands there)*. **Has:** active promotions · redemption counts · ⭐ **revenue attributed vs discount given — the only number that says whether it worked.**
@@ -35263,7 +35263,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 
 @agent_reachable none ⛔ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **every action here spends, sends, deletes or changes config. NONE is agent-reachable.** Silence would FAIL OPEN, so this declares the closed default explicitly.)*
 `@scheduled campaign.scheduled <minutely> @owner X-186` ⭐ *(2026-08-27 — **§235's own prescription, applied for the first time.** §235 classified these and a later line CLAIMED "13 @ingress · 5 @scheduled WITH OWNERS" were done; **measured: 0 of 41 had ever reached a module header.** An ingress event has no emitter BY DESIGN; an unowned scheduled event is a cron job nobody notices has stopped.)*
-@consumes `capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · entity.state_changed · signal.detected · form.abandoned · message.received · campaign.scheduled` · `@owns_table campaign_steps · campaign_runs` · `@reads_table · ⛔ **P-163 FIX 2026-08-27: campaigns moved to `@reads_table` — X-121 owns the canonical nouns**
+@consumes `suppression.added · capability.decided` ⭐⭐⭐ *(**`R235` `N-235-04` 2026-08-27 — THE GATE THAT MAKES SHIPPING-ON SAFE.** `R235` turned 102 autopilots ON; **`X-126`'s gate is what supervises them.** ⛔⛔ ***No grounding `Fact` → no skill*** — an agent action invoked without grounding is REFUSED with `NO_FACT`, so the autopilot **cannot invent a price, a time or a link.** ⭐ *This is what "AI watching AI" means mechanically — **autonomy without the gate is nothing watching anything.***)* · entity.state_changed · signal.detected · form.abandoned · message.received · campaign.scheduled` · `@owns_table campaign_steps · campaign_runs` · `@reads_table · ⛔ **P-163 FIX 2026-08-27: campaigns moved to `@reads_table` — X-121 owns the canonical nouns**
 > ⛔ *X-121 owns `campaigns` — P-163. The earlier claim was wrong.*
 **NEEDS / HAS** needs `X-204` · `X-121` · `X-210`; has sent, replied, stopped, and **incrementality against the holdout** *(§215)*.
 **TEST ANCHOR** ⛔⛔ **every `send.requested` from this module carries `class = marketing`** · ⛔⛔ **a reply on ANY channel stops every pending step for that `Person` within one cycle** · ⛔ **an open `RECOVER` suppresses the whole sequence** *(P-205)*.
@@ -35525,7 +35525,7 @@ The owner's instruction: *"allocate the necessary weight, but enforce that it re
 | **`N-007`** | the evidence bundle assembles itself | ⭐⭐ **call logs, transcripts, signatures, delivery receipts, the invoice AND the consent record — asserted present before submission** |
 | **`N-008`** | it accepts `chargeback.received` from **any** gateway | ⛔ **`doctor` asserts no gateway name appears in the dispute logic** *(P-197)* |
 | **`N-009`** | the exposure ledger | **money taken vs work DELIVERED**, per tenant |
-| **`N-010`** | ⛔ **the refund verb does not exist here** | *a dispute is defended or conceded; a refund is `X-198`'s and it is `L1`* |
+| **`N-010`** | ⛔ **the verb does not exist here** | *a dispute is defended or conceded; money back is X-198's and it is L1* |
 | **`N-011`** | deadlines are a clock, not a hope | ⛔ **a dispute inside 48h of its deadline RAISES to a human regardless of state** |
 
 ### ⭐ `X-207 PushEngine` — **the one owned channel** · 5 rows
@@ -37656,7 +37656,7 @@ mkdir -p app/Modules/X126 && mv app/Modules/X-126/Gate app/Modules/X126/Gate
 `ships: L2 · ceiling: L2`** ⭐⭐⭐ *(**`R235` 2026-08-27 — EVERY AUTOPILOT SHIPS ON.** The owner overruled the `L1 PROPOSE` default: *"ALL AI ON, by my law. The client can turn it off if they want. All autopilots on, with AI watching them."* ⛔ **`ships:` now EQUALS `ceiling:` — this acts from minute one.** The ladder survives as a DESCRIPTION of what the action is, **never as a gate on when it may run.** ⭐ Safety is `X-126`'s capability gate — **no grounding Fact, no skill** — not a human approving.)*
 @provides `influencer.discover` · `influencer.outreach` · `influencer.deal` · `influencer.deliverable`
 
-@agent_reachable `influencer.discover` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
+@agent_reachable `influencer.discover` · `influencer.outreach` · `influencer.deal` · `influencer.deliverable` ⭐ *(`P-209`'s BACKFILL GATE, 2026-08-27 — **DERIVED, never guessed**: read-shaped and proposal actions only. **Anything that spends, sends, deletes or changes config is NOT reachable** — the agent proposes it through the approval desk.)*
 @emits `send.requested` · `influencer.engaged` · `influencer.delivered`
 @consumes `prospect.scored` · `content.created` · `capability.decided`
 @owns_table `influencer_profiles` · `influencer_deals` · `deliverables`
@@ -39267,3 +39267,186 @@ full minutes.** ⭐ **MMS = 1 credit.** ⭐ **AI credit $50.** ⭐ **1 SMS = 1 S
 ⭐⭐⭐ 730 IN SCOPE. Zero questions open.**
 ⭐ **Agency sees everything** *(cost, markup, margin, impersonation — always
 logged)*. ⛔ **Their client sees the agency's price only.**
+## 257 ⭐⭐⭐ THE FEATURE RE-CUT — THREE MODULES MINTED · FOURTEEN DEFERRED · EVERY UNOWNED CAPABILITY ASSIGNED *(owner rulings 2026-09-04 · appended by the coder on the supervisor's brief, run 68)*
+
+> **LIVE.** The owner ruled on 2026-09-04: no screen is deleted; every capability has an owner; the product is organised by FEATURE (the navigation in `config/features.php`), not by module. Three modules are minted below in the §169.1 shape. Fourteen modules are DEFERRED — headers, capabilities, screens and tests kept, hidden from navigation, no lane builds them until the core ships. The three-week clock starts Monday 8 September 2026.
+
+## 257.1 ⭐⭐ X-221 `AdsAdvisor` — THE FULL HEADER *(minted 2026-09-04 · G14 · SQ-12 · W3)*
+
+`@module X-221` `@intent GROW`
+
+**WHAT** ⭐⭐ **The ads advisor: plans campaigns, writes ad copy and creative variants, analyses performance reports and coaches optimisation through the omni chat — and NEVER touches a live campaign.** Reports arrive three ways, all read-only: (1) upload/export of a Google, Bing or Meta report file; (2) the GA4 Data API with the tenant's own service-account credential (campaign traffic by UTM, no approval programme); (3) a Google Ads report scheduled by the tenant into a Google Sheet, read through the Sheets API; Meta Insights through a Business Manager system-user token on the tenant's own ad account. Nothing is deployed, paused, bid or synced on any ad network by this module — the owner's ruling; the Google Ads and Meta Marketing write APIs are not integrated.
+**WIZARD** *(tenant-facing)* connect a report source *(upload · GA4 property · a Sheet · a Meta ad account)* · name the goal *(calls · forms · bookings)* · the budget the tenant actually spends. **inferred:** the trades and service areas from X-16/X-130. **confirmed once:** the goal.
+**AUTOPILOT** *(advisory posture — `ships: advice` · `@ceiling a written plan`)* a weekly findings note *(wasted spend · dayparting · audience decay · negative-keyword and negative-audience lists exported as CSV for the tenant to upload)* · every finding cites the report row it came from · **no action toward any ad network, ever.**
+**SWARM** **SQ-12 · W3.** Owns `app/Modules/X-221/**`, `@owns_table ad_report_imports · ad_findings · ad_plans`. **Must not touch** X-186 sends, X-110 pixel writes, any vendor write endpoint.
+**SCREENS** tenant: **findings this week** · report sources · campaign plan · exported lists. operator: none.
+**DECLARATIONS** `@renders findings_this_week · report_sources · campaign_plan · exported_lists`
+`@provides ads.import_report · ads.analyse · ads.plan · ads.export_list` · `@agent_reachable ads.analyse · ads.plan` · `@emits ads.finding.recorded · ads.plan.written` · `@consumes pixel.event (X-110) · signal.detected (X-136)`
+**NEEDS / HAS** needs: a report source connected · has: findings by week · plans by campaign
+**TEST ANCHOR** *`grep -rE 'googleads|graph.facebook.com/.*/(adsets|campaigns|ads)' app/Modules/X-221/` returns nothing but the read-only insights path; a finding with no `report_row_ref` fails to save; `Http::fake` is absent from `tests/Modules/X-221/`.*
+
+## 257.2 ⭐⭐ X-222 `LegalDesk` — THE FULL HEADER *(minted 2026-09-04 · G10 · SQ-0 · W2)*
+
+`@module X-222` `@intent PROTECT`
+
+**WHAT** ⭐⭐ **The legal and privacy engine: DMCA takedown requests, privacy requests (access · erasure · portability — extending the legacy data-requests desk), policy pages per tenant, retention rules.** Reads X-204's consent state; **writes nothing to any send path.** Every request has a statutory clock and the desk shows the clock, never a status word alone.
+**WIZARD** *(tenant-facing)* the tenant's legal entity, contact for notices, jurisdictions served. **inferred:** retention defaults per noun from the plan. **confirmed once:** the policy pages' publish state.
+**AUTOPILOT** *(operator posture — `ships: n/a` · `@ceiling n/a`)* a privacy request opens a ticket with its deadline · a takedown request pulls the asset from public surfaces within the statutory window and records the action · retention runs as a scheduled job that **proposes** deletions through the approval desk (X-202) and never deletes on its own.
+**SWARM** **SQ-0 · W2.** Owns `app/Modules/X-222/**`, `@owns_table legal_requests · policy_pages · retention_rules`. **Must not touch** X-204 decisions, any sender, X-121 history rows.
+**SCREENS** tenant: **requests with their clocks** · policy pages · retention rules. operator: **requests across tenants, oldest clock first.**
+**DECLARATIONS** `@renders legal_requests · policy_pages · retention_rules · requests_by_clock`
+`@provides legal.request.open · legal.takedown · legal.policy.publish · legal.retention.propose` · `@agent_reachable legal.policy.publish` · `@emits legal.request.opened · legal.takedown.executed · legal.retention.proposed` · `@consumes consent.decided (X-204)`
+**NEEDS / HAS** needs: a legal contact on the tenant · has: open requests by clock
+**TEST ANCHOR** *a request saved without a `deadline_at` fails; a retention run in a test never issues a DELETE — it emits `legal.retention.proposed` and X-202 holds it; a takedown removes the asset from every `@renders` public surface, asserted by a real GET returning 404.*
+
+## 257.3 ⭐⭐ X-223 `WarmupEngine` — THE FULL HEADER *(minted 2026-09-04 · G11 · SQ-1 · W2)*
+
+`@module X-223` `@intent GROW`
+
+**WHAT** ⭐⭐ **The email warm-up engine the tracker already names: a seed audience of platform-owned mailboxes, auto-reply simulation, important-tagging, and cross-platform sync of the warm-up state per sending domain.** Sits beside C-Mail (the transport) and **never sends outside its seed list.** A domain's warm-up state is data C-Mail reads before it accepts a bulk send.
+**WIZARD** *(tenant-facing)* the sending domain · the daily ramp the tenant accepts. **inferred:** the ramp schedule from the domain's age. **confirmed once:** the ramp.
+**AUTOPILOT** *(`ships: seed mail only` · `@ceiling the ramp`)* sends to seeds on the ramp · replies and tags from the seed side · records bounce and placement per day · **halts the ramp on a bounce spike and tells the tenant.**
+**SWARM** **SQ-1 · W2.** Owns `app/Modules/X-223/**`, `@owns_table warmup_domains · warmup_seeds · warmup_days`. **Must not touch** X-186 campaigns, X-204, any tenant contact row.
+**SCREENS** tenant: **warm-up per domain** *(day · sent · placed · bounced)*. operator: seed pool health.
+**DECLARATIONS** `@renders warmup_per_domain · seed_pool_health`
+`@provides warmup.start · warmup.state · warmup.halt` · `@agent_reachable warmup.state` · `@emits warmup.day.recorded · warmup.halted` · `@consumes mail.delivered · mail.bounced (C-Mail)`
+**NEEDS / HAS** needs: a verified sending domain · has: warm-up state per domain
+**TEST ANCHOR** *a warm-up send whose recipient is not in `warmup_seeds` is refused before C-Mail is reached, asserted; C-Mail refuses a bulk send on a domain whose warm-up state is below the ramp — the refusal carries a P-060 code.*
+
+## 257.4 ⛔ DEFERRED MODULES *(owner ruling 2026-09-04 — kept, hidden, unbuilt until the core ships)*
+
+| Module | What it is | Ruling |
+| :--- | :--- | :--- |
+| `X-200` | human-seat call center | DEFERRED |
+| `X-158` | video engine | DEFERRED |
+| `X-159` | site-audit video | DEFERRED |
+| `X-114` | media studio | DEFERRED |
+| `X-144` | AI visibility tracker | DEFERRED |
+| `X-197` | self-hosted voice | DEFERRED |
+| `X-147` | RCS | DEFERRED |
+| `X-143` | WebMCP | DEFERRED |
+| `X-141` | what-if replay | DEFERRED |
+| `X-145` | decisioning studio | DEFERRED |
+| `X-213` | vision QA | DEFERRED |
+| `X-208` | direct mail | DEFERRED |
+| `X-215` | document signing | DEFERRED |
+| `X-214` | surcharging | DEFERRED |
+
+Deferred also: the e-commerce logistics rows *(3PL · FBA · drop-shipping · FIFO/LIFO · pick path · pick-and-pack · split fulfilment · weight/box)* and the search-infra rows in §257.5 — **cart, checkout, storefront (X-117) and inventory (X-167) stay IN.** Kept by the same ruling despite their size: `X-104` WordPressPlugin and `X-196` ChromeExtension.
+
+## 257.5 ⭐ EVERY UNOWNED CAPABILITY, ASSIGNED *(the Parent column in the tracker follows this table)*
+
+| # | Capability | Goes to | Why |
+| :--- | :--- | :--- | :--- |
+| **G1-06** | Auto-Recharge | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-07** | Auto-Reply Simulation | X-223 | auto-reply simulation (warm-up) |
+| **G1-09** | Automated Dunning Ladders | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-17** | Countdown Dunning | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-21** | Dynamic Tax Calculations | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-27** | Important Tagging | X-223 | important tagging (warm-up) |
+| **G1-37** | Multi-Stripe Account Support | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-44** | Proration Handling | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-48** | Smart Dunning Pauses | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-50** | SMS Dunning | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-53** | Subscription Overrides | — | killed by owner law (§45A dunning timeline etc.) |
+| **G1-54** | Tax Jurisdiction Mapping | — | killed by owner law (§45A dunning timeline etc.) |
+| **G3-37** | Localized Spintax Pages | X-140 | localized programmatic pages — ConversationToContent |
+| **G3-40** | Omnipresence | X-185 | omnipresence = GrowthLoop cadence across channels |
+| **G3-45** | Real-Time Interception | X-136 | real-time interception = a signal that informs |
+| **G3-49** | Scraper Ad Audience Sync | X-221 | scraper audience → CSV export for ad platforms |
+| **G3-55** | Spintax Generation | X-186 | spintax renders per SEND in the email/campaign engine (boss 2026-09-04: "spin text is for the email engine"), never on pages |
+| **G4-04** | Auto-Scaling | X-203 | auto-scaling = resiliency desk |
+| **G4-27** | Offline Mode | X-171 | offline mode = tech mobile is offline-first |
+| **G7-17** | Custom Blacklists | X-204 | custom blacklists = consent suppression lists |
+| **G7-20** | Event Hijacking | X-136 | event hijacking = local event signals |
+| **G7-36** | Refresh Automation | X-151 | refresh automation = fetch engine schedules |
+| **G9-06** | Anomaly Detection | X-111 | anomaly detection = operator alerts |
+| **G9-39** | Volume Decay | X-07 | volume decay = forecaster |
+| **G9-40** | Win-Rate Correlation | X-07 | win-rate correlation = forecaster |
+| **G10-06** | Automated DMCA Takedown | X-222 | DMCA takedown |
+| **G10-23** | Legal & Privacy Engine | X-222 | legal & privacy engine |
+| **G11-08** | Cross-Platform Sync | X-223 | cross-platform warm-up sync |
+| **G11-30** | Seed Audience | X-223 | seed audience |
+| **G13-09** | Conversion Zone Tracking | X-110 | conversion zone tracking = pixel |
+| **G13-13** | Dwell Time Filtering | X-110 | dwell-time filtering = pixel |
+| **G13-32** | Session Replay | X-110 | session replay = pixel (X-141 is what-if replay, different) |
+| **G14-01** | Ad Blindness Prevention | X-221 | ad-blindness rotation plan |
+| **G14-02** | Ad Comment Moderation | — | ad comment moderation — SUPERSEDED |
+| **G14-03** | Addressable Geo-Fencing | X-221 | addressable geo-fence plan |
+| **G14-04** | Audience Decay Detection | X-221 | audience decay detection from reports |
+| **G14-05** | Audience Rotation | X-221 | audience rotation plan |
+| **G14-06** | Automated Pausing | — | requires live platform control — stays SUPERSEDED |
+| **G14-07** | Automated Rules Engine | — | automated rules on the network — SUPERSEDED |
+| **G14-08** | Automated Split Testing | X-221 | split-test PLAN (not execution) |
+| **G14-09** | Budget Detection | X-221 | budget detection from reports |
+| **G14-10** | Budget Shifting | X-221 | budget-shift recommendation |
+| **G14-11** | Click Farm Prevention | X-221 | click-farm signals from reports |
+| **G14-12** | Competitor Blocking | X-221 | competitor-blocking advice |
+| **G14-13** | Conversion-Based Routing | — | conversion-based routing on the network — SUPERSEDED |
+| **G14-14** | Copy Generation | X-221 | copy generation — advisory |
+| **G14-15** | Copy vs. Creative Analysis | X-221 | copy vs creative analysis from imported reports |
+| **G14-16** | CRM Audience Sync | X-221 | CRM audience lists exported for upload |
+| **G14-17** | Cross-Sell Retargeting | X-221 | cross-sell retargeting plan |
+| **G14-18** | CTR Tracking | X-221 | CTR tracking from imported reports |
+| **G14-19** | Dayparting Analysis | X-221 | dayparting analysis from reports |
+| **G14-20** | Device Bid Adjustments | — | device bid adjustments — SUPERSEDED |
+| **G14-21** | Dynamic Retargeting | X-221 | dynamic retargeting plan |
+| **G14-22** | Impression Share Maximization | — | impression-share maximisation — SUPERSEDED |
+| **G14-23** | Instant Deployment | — | instant deployment — SUPERSEDED |
+| **G14-24** | Localized Ad Variations | X-221 | localized ad variations |
+| **G14-25** | LTV-Based Bidding | — | LTV-based bidding — SUPERSEDED |
+| **G14-26** | Meta/Facebook Ads Sync | — | Meta/Facebook Ads API sync — SUPERSEDED |
+| **G14-27** | Multi-Tier Generation | X-221 | multi-tier generation |
+| **G14-28** | Negative Lookalikes | X-221 | negative lookalike lists, exported as CSV |
+| **G14-29** | One-Click Campaigns | — | one-click campaigns on the network — SUPERSEDED |
+| **G14-30** | Price Testing | X-221 | price-test plan |
+| **G14-31** | Revival Testing | X-221 | revival-test plan |
+| **G14-32** | Sequential Retargeting | X-221 | sequential retargeting plan |
+| **G14-33** | Switch-and-Save Campaigns | X-221 | switch-and-save campaign plan |
+| **G14-34** | Visual Pin Drop | X-221 | visual pin-drop geo plan |
+| **G14-35** | Wasted Spend Prevention | X-221 | wasted-spend findings, as advice |
+| **G14-36** | Weather Overlays | X-221 | weather overlay advice |
+| **G14-37** | Weather-Triggered Bids | X-221 | weather-trigger advice |
+| **G14-38** | Win-Back Lookalikes | X-221 | win-back lookalike lists exported |
+| **G15-01** | "Just in Time" Webinars | X-158 | JIT webinars = video engine |
+| **G15-07** | Multi-State Taxation | X-199 | multi-state taxation = invoicing tax |
+| **G16-18** | Photo EXIF Injection | X-189 | photo EXIF injection = image overlay |
+| **G16-26** | Video View Retargeting | X-221 | video-view retargeting list export |
+| **G17-14** | Historical Re-targeting | X-221 | historical retargeting list export |
+| **G17-22** | Polygon Drawing | X-16 | polygon drawing = service-area on the maps harvester |
+| **G18-05** | Feature Gating & FOMO | X-210 | feature gating & FOMO = promotion engine |
+| **G18-25** | Whisper Mode | X-66 | whisper mode = voice agent |
+| **G19-03** | Carrier Route Detection | C-Telephony | carrier route detection |
+| **G21-01** | Live Chat Injection | X-102 | live chat injection = web chat |
+| **G1-80** | Stripe Metered Billing Sync and authorize.net | C-Billing | Stripe/Authorize.Net metered billing sync |
+| **G2-78** | Knockout Questions | X-109 | knockout questions = form outreach |
+| **G3-67** | Hiring Manager Extraction | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G4-53** | GraphQL Optimization | X-122 | GraphQL optimisation = action registry API |
+| **G4-56** | Time Travel | X-161 | time travel = demo sandbox |
+| **G6-36** | 3PL Integration | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-37** | Amazon FBA Sync | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-41** | Drop-Shipping Workflows | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-42** | FIFO/LIFO Tracking | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-44** | Pick Path Optimization | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-45** | Pick-and-Pack Validation | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-50** | Split Fulfillment | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G6-52** | Weight/Box Math | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G8-41** | Auto-Destruction | X-161 | auto-destruction = demo sandbox |
+| **G8-42** | ElasticSearch Indexing | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G9-41** | ClickHouse Warehouse | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G12-40** | One-Click Job Board Syndication | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G15-12** | 9-Box Grid Matrix | — | HR — shelved by the boss |
+| **G15-14** | AI Resume Parsing | — | HR — shelved by the boss |
+| **G15-16** | Benefits Enrollment | — | HR — shelved by the boss |
+| **G15-17** | Bereavement/Jury Duty | — | HR — shelved by the boss |
+| **G15-18** | Compensation Modeling | — | HR — shelved by the boss |
+| **G15-19** | Diversity Tracking - EEO | — | HR — shelved by the boss |
+| **G15-20** | Exit Interview Funnel | — | HR — shelved by the boss |
+| **G15-23** | Garnishment Handling | — | HR — shelved by the boss |
+| **G15-24** | Mandatory PTO Suggestion | — | HR — shelved by the boss |
+| **G15-27** | Offer Letter Generation | — | HR — shelved by the boss |
+| **G15-30** | PIP Enforcer | — | HR — shelved by the boss |
+| **G15-33** | Unlimited PTO Tracking | — | HR — shelved by the boss |
+| **G15-34** | W-2 Pre-Flight | — | HR — shelved by the boss |
+| **G17-30** | Candidate Nurture Drips | — | e-commerce logistics — DEFERRED for the future (boss 2026-09-04); cart, checkout, storefront and inventory (X-167) stay IN |
+| **G18-29** | Will-Call/Pickup Routing | X-117 | will-call / pickup routing = commerce fulfilment |

@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="commission injection" screen="commissions" />
     <div class="commissions-view p-4">
         <h3 class="text-lg font-bold">Staff Commissions</h3>
         @if($commissions->isEmpty())

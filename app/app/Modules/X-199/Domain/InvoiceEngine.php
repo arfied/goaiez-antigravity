@@ -6,6 +6,7 @@ namespace App\Modules\X199\Domain;
 
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X199\Events\InvoiceIssued;
+use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
 use App\Modules\X199\Events\LimitExceeded;
 use App\Modules\X199\Events\OverflowCharged;
@@ -205,6 +206,28 @@ final class InvoiceEngine
                 'paid_cents' => $invoice->paid_cents,
                 'reversed_overflow_charges' => $reversedCharges,
             ];
+        });
+    }
+
+    public function markOverdue(int $businessId, int $invoiceId): void
+    {
+        DB::transaction(function () use ($businessId, $invoiceId) {
+            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+
+            if ($invoice->status !== 'issued') {
+                return;
+            }
+
+            $invoice->update(['status' => 'overdue']);
+
+            // Calculate days overdue based on due_date (just 1 if it's forced by harness)
+            $daysOverdue = max(1, now()->diffInDays($invoice->due_date));
+
+            Event::dispatch(new InvoiceOverdue(
+                businessId: $businessId,
+                invoiceId: $invoice->id,
+                daysOverdue: $daysOverdue
+            ));
         });
     }
 }

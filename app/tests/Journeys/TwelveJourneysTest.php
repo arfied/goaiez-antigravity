@@ -4,7 +4,30 @@ declare(strict_types=1);
 
 namespace Tests\Journeys;
 
+use App\Enums\CapturedBy;
+use App\Enums\CaptureSurface;
+use App\Enums\ConsentType;
+use App\Enums\CreditKind;
+use App\Enums\CreditProduct;
+use App\Enums\OutreachChannel;
+use App\Enums\Plan;
+use App\Models\Business;
+use App\Models\Customer;
+use App\Models\User;
+use App\Modules\X111\Models\Subscription;
+use App\Modules\X121\Models\Person;
+use App\Services\Billing\AuthorizeNetGateway;
+use App\Services\Billing\CreditLedger;
+use App\Services\Billing\Subscriptions;
+use App\Services\Config\DefaultsRegistry;
+use App\Services\Consent\ConsentCapture;
+use App\Services\Consent\ConsentService;
+use App\Support\CardholderName;
+use App\Support\HashedIp;
+use App\Support\PlatformCredentials;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -48,9 +71,146 @@ final class TwelveJourneysTest extends TestCase
     //   journeys pass while touching nothing.
     use JourneyHarness;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Http::allowStrayRequests();
+    }
+
     // ═══════════════════════════════════════════════════════════════════
     // ① THE WHOLE PRODUCT IN SIXTY SECONDS
     // ═══════════════════════════════════════════════════════════════════
+
+    private function subscribedTenant(array $tenant): array
+    {
+        $loginId = PlatformCredentials::get('authorize_net_api_login_id');
+        $clientKey = PlatformCredentials::get('authorize_net_public_client_key');
+
+        if (! $clientKey) {
+            throw new \RuntimeException('UNRESOLVED — authorize_net_public_client_key is missing');
+        }
+
+        $business = Business::find($tenant['id']);
+
+        $req = [
+            'securePaymentContainerRequest' => [
+                'merchantAuthentication' => [
+                    'name' => $loginId,
+                    'clientKey' => $clientKey,
+                ],
+                'data' => [
+                    'type' => 'TOKEN',
+                    'id' => '12345678-90ab-cdef-1234-567890abcdef',
+                    'token' => [
+                        'cardNumber' => '4007000000027',
+                        'expirationDate' => '2030-12',
+                        'cardCode' => '123',
+                        'zip' => '90210',
+                        'fullName' => 'Test User',
+                    ],
+                ],
+            ],
+        ];
+
+        $res = Http::post('https://apitest.authorize.net/xml/v1/request.api', $req);
+        $json = json_decode(trim($res->body(), "\xEF\xBB\xBF"), true);
+        if (($json['messages']['resultCode'] ?? '') !== 'Ok') {
+            $msg = $json['messages']['message'][0]['text'] ?? 'Unknown refusal';
+            throw new \RuntimeException("UNRESOLVED — Sandbox refused nonce creation: {$msg}");
+        }
+        $opaqueDataValue = $json['opaqueData']['dataValue'];
+
+        $user = User::where('id', $business->owner_user_id)->first();
+        if (! $user) {
+            $user = User::factory()->create();
+            $business->owner_user_id = $user->id;
+            $business->save();
+        }
+
+        $this->actingAs($user);
+
+        $gateway = app(AuthorizeNetGateway::class);
+        $cardholder = CardholderName::fromInput('Test', 'User');
+
+        try {
+            $sub = $gateway->subscribe($business, 'test@example.com', $opaqueDataValue, $cardholder);
+        } catch (\Exception $e) {
+            throw new \RuntimeException('UNRESOLVED — Sandbox refused subscription: '.$e->getMessage());
+        }
+
+        return ['business' => $business, 'subscription_id' => $sub->authorize_net_subscription_id];
+    }
+
+    private function personWithConsentedNumber(array $tenant): array
+    {
+        $phone = '+1555012'.rand(1000, 9999);
+        $person = Person::create([
+            'business_id' => $tenant['id'],
+            'first_name' => 'Review Person',
+            'phone' => $phone,
+        ]);
+
+        $locationId = DB::table('locations')->where('business_id', $tenant['id'])->value('id');
+        if (! $locationId) {
+            $locationId = DB::table('locations')->insertGetId([
+                'business_id' => $tenant['id'],
+                'name' => 'HQ',
+                'timezone' => 'America/Chicago',
+            ]);
+        } else {
+            DB::table('locations')->where('id', $locationId)->update(['timezone' => 'America/Chicago']);
+        }
+
+        $customer = Customer::forceCreate([
+            'id' => $person->id,
+            'business_id' => $tenant['id'],
+            'location_id' => $locationId,
+            'phone' => $phone,
+            'name' => 'Review Person',
+            'region_code' => 'TX',
+        ]);
+
+        $capture = new ConsentCapture(
+            CapturedBy::Platform,
+            CaptureSurface::FeedbackPage,
+            ConsentType::ExpressWritten,
+            'v1.0',
+            'web',
+            [
+                'url' => 'https://example.com',
+                'ip_hash' => HashedIp::hash('127.0.0.1'),
+                'user_agent' => 'test',
+            ]
+        );
+        app(ConsentService::class)->record($customer, OutreachChannel::Sms, $capture, 'journey fixture');
+
+        return $person->toArray();
+    }
+
+    private function fundedTenant(): array
+    {
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_start', '21:00', 'test');
+        app(DefaultsRegistry::class)->set('messaging.quiet_hours_end', '08:00', 'test');
+        $this->travelTo('2026-09-02 18:00:00');
+
+        $tenant = $this->tenantWithLiveNumber();
+        $allowance = (int) app(DefaultsRegistry::class)->entitlement(Plan::Base, 'credits.monthly_grant.sms');
+
+        $this->subscribedTenant($tenant);
+
+        if (! app(Subscriptions::class)->isEntitled(Business::find($tenant['id']))) {
+            $status = Subscription::where('business_id', $tenant['id'])->value('status');
+            throw new \RuntimeException('UNRESOLVED — '.$status);
+        }
+
+        Tenancy::set($tenant['id']);
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Grant, $allowance, 'journey fixture (owner ruling 2026-09-05)');
+        app(CreditLedger::class)->record(CreditProduct::Sms, CreditKind::Purchase, 10000, 'journey fixture topup');
+
+        loadEveryRequiredRegister(OutreachChannel::Sms);
+
+        return $tenant;
+    }
 
     #[Test]
     public function a_missed_call_becomes_a_consented_text_back(): void
@@ -64,6 +224,7 @@ final class TwelveJourneysTest extends TestCase
         // returns immediately and the work is queued, which is exactly why a
         // sync-driver run would prove nothing.
         $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+15550123');
+        $this->drainQueueOnce();
 
         $message = $this->waitForOutbound($tenant, to: '+15550123', timeoutSeconds: 90);
         $elapsedMs = (int) ((microtime(true) - $started) * 1000);
@@ -351,13 +512,14 @@ final class TwelveJourneysTest extends TestCase
     {
         $this->assertQueueIsNotSync();
 
-        $tenant = $this->tenantWithLiveNumber();
-        $person = $this->personWithPendingSteps($tenant, count: 0);
+        $tenant = $this->fundedTenant();
+        $person = $this->personWithConsentedNumber($tenant);
 
         $this->completeJob($tenant, $person);
         $this->drainQueue();
 
         $invites = $this->reviewInvitesFor($person);
+
         $this->assertCount(1, $invites, 'A completed job must ask ONCE — not zero, not twice.');
 
         // ⭐ Completing a second job must NOT produce a second invite inside the
@@ -451,12 +613,16 @@ final class TwelveJourneysTest extends TestCase
 
     private function drainQueueOnce(): void
     {
-        $this->artisan('queue:work --once --stop-when-empty');
+        if ($job = app('queue')->pop()) {
+            $job->fire();
+        }
     }
 
     private function drainQueue(): void
     {
-        $this->artisan('queue:work --stop-when-empty');
+        while ($job = app('queue')->pop()) {
+            $job->fire();
+        }
     }
 
     private function pendingStepsFor(array $person): int

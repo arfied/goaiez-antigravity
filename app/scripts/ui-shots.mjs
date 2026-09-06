@@ -7,9 +7,9 @@ import http from 'http';
 import net from 'net';
 
 
-const summaryLines = [];
 let onlyRegex = null;
 const onlyArg = process.argv.find(arg => arg.startsWith('--only='));
+const freshArg = process.argv.includes('--fresh');
 if (onlyArg) {
     onlyRegex = new RegExp(onlyArg.split('=')[1]);
 }
@@ -42,8 +42,6 @@ async function runAxe(page, name, outputDir) {
             counts[v.impact]++;
         }
     });
-    const summaryLine = `${name}  critical ${counts.critical}  serious ${counts.serious}  moderate ${counts.moderate}  minor ${counts.minor}`;
-    summaryLines.push(summaryLine);
 }
 
 function getFreePort() {
@@ -99,12 +97,72 @@ function waitForServer(url) {
         const page = await context.newPage();
         
         const outputDir = path.resolve('storage/app/ui-review');
-        if (!onlyRegex) {
-            if (fs.existsSync(outputDir)) {
-                fs.rmSync(outputDir, { recursive: true, force: true });
-            }
+        if (!fs.existsSync(outputDir)) {
             fs.mkdirSync(outputDir, { recursive: true });
-        } else if (fs.existsSync(outputDir)) {
+        }
+
+        const lockPath = path.join(outputDir, '.rig.lock');
+        try {
+            const fd = fs.openSync(lockPath, 'wx');
+            fs.writeSync(fd, JSON.stringify({ pid: process.pid, started: new Date().toISOString() }));
+            fs.closeSync(fd);
+        } catch (e) {
+            if (e.code === 'EEXIST') {
+                let lockContent;
+                try {
+                    lockContent = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+                } catch (err) {
+                    lockContent = { pid: -1, started: 'unknown' };
+                }
+                let holderAlive = false;
+                try {
+                    process.kill(lockContent.pid, 0);
+                    holderAlive = true;
+                } catch (err) {
+                    if (err.code === 'EPERM') {
+                        holderAlive = true;
+                    }
+                }
+                if (holderAlive) {
+                    console.error(`REFUSED: a rig run is already active (pid ${lockContent.pid}, started ${lockContent.started})`);
+                    process.exit(1);
+                } else {
+                    console.log(`stale lock from pid ${lockContent.pid}, taking it over`);
+                    fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, started: new Date().toISOString() }));
+                }
+            } else {
+                throw e;
+            }
+        }
+
+        const cleanupLock = () => {
+            if (fs.existsSync(lockPath)) {
+                try {
+                    const lockContent = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+                    if (lockContent.pid === process.pid) {
+                        fs.unlinkSync(lockPath);
+                    }
+                } catch (err) {}
+            }
+        };
+        process.on('exit', cleanupLock);
+
+        if (freshArg) {
+            const prevDir = outputDir + '.prev';
+            if (fs.existsSync(prevDir)) {
+                fs.renameSync(prevDir, prevDir + '.' + Date.now());
+            }
+            fs.renameSync(outputDir, prevDir);
+            fs.mkdirSync(outputDir, { recursive: true });
+            fs.writeFileSync(lockPath, JSON.stringify({ pid: process.pid, started: new Date().toISOString() }));
+        }
+
+        let fileCountBefore = 0;
+        if (fs.existsSync(outputDir)) {
+            fileCountBefore = fs.readdirSync(outputDir).filter(f => f.endsWith('.png')).length;
+        }
+
+        if (onlyRegex && fs.existsSync(outputDir)) {
             const files = fs.readdirSync(outputDir);
             for (const file of files) {
                 if (file.endsWith('.png') || file.endsWith('.html')) {
@@ -126,8 +184,6 @@ function waitForServer(url) {
                     }
                 }
             }
-        } else {
-            fs.mkdirSync(outputDir, { recursive: true });
         }
         
         // Unauthenticated screens
@@ -216,9 +272,12 @@ function waitForServer(url) {
 
         // Login
         await page.fill('#password-email', 'owner2@business.com');
-        await page.fill('#password', 'password');
-        await page.click('form:has(#password) button[type="submit"]');
-        await page.waitForLoadState('networkidle');
+            await page.fill('#password', 'password');
+            await Promise.all([
+                page.waitForNavigation(),
+                page.click('form:has(#password) button[type="submit"]')
+            ]);
+            await page.waitForLoadState('networkidle');
         
         // Assert login succeeded
         if (page.url().endsWith('/login')) {
@@ -235,14 +294,16 @@ function waitForServer(url) {
         
         // Screens to capture
         const screens = [
+            { name: 'account-tracking', path: '/account/tracking' },
             { name: 'account-home', path: '/home' },
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },
-            { name: 'website-builder', path: '/advanced/website-builder' },
+            { name: 'advanced-website-builder', path: '/advanced/website-builder' },
             { name: 'account-inbox', path: '/account/inbox' },
             { name: 'account-customers', path: '/account/customers' },
             { name: 'account-messages', path: '/account/messages' },
             { name: 'account-plan', path: '/account/plan' },
+            { name: 'account-credit', path: '/account/credit' },
             { name: 'account-support', path: '/account/support' },
             { name: 'account-connections', path: '/account/connections' },
             { name: 'advanced-home', path: '/advanced' },
@@ -254,7 +315,13 @@ function waitForServer(url) {
             { name: 'advanced-reports', path: '/advanced/reports' },
             { name: 'advanced-voice', path: '/advanced/voice' },
             { name: 'advanced-integrations', path: '/advanced/integrations' },
-            { name: 'advanced-settings', path: '/advanced/settings' }
+            { name: 'advanced-settings', path: '/advanced/settings' },
+            { name: 'advanced-defense', path: '/advanced/defense' },
+            { name: 'advanced-changes', path: '/advanced/changes' },
+            { name: 'advanced-credits', path: '/advanced/credits' },
+            { name: 'advanced-segments', path: '/advanced/segments' },
+            { name: 'advanced-rank-tracker', path: '/advanced/rank-tracker' },
+            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' }
         ];
         for (const screen of screens) {
             if (!shouldCapture(screen.name)) continue;
@@ -325,10 +392,14 @@ function waitForServer(url) {
         await mobilePage.waitForLoadState('networkidle');
 
         const mobileScreens = [
+            { name: 'account-tracking', path: '/account/tracking' },
             { name: 'account-home', path: '/home' },
             { name: 'account-settings', path: '/account' },
             { name: 'memberships', path: '/memberships' },
             { name: 'account-inbox', path: '/account/inbox' },
+            { name: 'account-customers', path: '/account/customers' },
+            { name: 'account-plan', path: '/account/plan' },
+            { name: 'account-credit', path: '/account/credit' },
             { name: 'advanced-home', path: '/advanced' },
             { name: 'advanced-website-builder', path: '/advanced/website-builder' },
             { name: 'advanced-citations', path: '/advanced/citations' },
@@ -336,7 +407,16 @@ function waitForServer(url) {
             { name: 'advanced-broadcasts', path: '/advanced/broadcasts' },
             { name: 'advanced-voice', path: '/advanced/voice' },
             { name: 'advanced-integrations', path: '/advanced/integrations' },
-            { name: 'advanced-settings', path: '/advanced/settings' }
+            { name: 'advanced-settings', path: '/advanced/settings' },
+            { name: 'advanced-defense', path: '/advanced/defense' },
+            { name: 'advanced-changes', path: '/advanced/changes' },
+            { name: 'advanced-credits', path: '/advanced/credits' },
+            { name: 'advanced-segments', path: '/advanced/segments' },
+            { name: 'advanced-rank-tracker', path: '/advanced/rank-tracker' },
+            { name: 'advanced-broadcast-composer', path: '/advanced/broadcasts/compose' },
+            { name: 'advanced-posts', path: '/advanced/posts' },
+            { name: 'advanced-competitors', path: '/advanced/competitors' },
+            { name: 'advanced-reports', path: '/advanced/reports' }
         ];
 
         for (const screen of mobileScreens) {
@@ -500,8 +580,237 @@ function waitForServer(url) {
         }
         await staffBrowser.close();
 
-        fs.writeFileSync(path.join(outputDir, 'axe', 'SUMMARY.txt'), summaryLines.join('\n') + '\n');
+        console.log("Capturing validation states...");
 
+        async function captureValidationStates(context, suffix, width, height) {
+            const page = await context.newPage();
+            await page.setViewportSize({ width, height });
+
+            if (shouldCapture('invalid-login-empty' + suffix)) {
+                await page.goto(`${baseUrl}/login`);
+                await page.waitForLoadState('networkidle');
+                await page.click('form:has(#password) button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-login-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-login-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-login-wrong' + suffix)) {
+                await page.goto(`${baseUrl}/login`);
+                await page.waitForLoadState('networkidle');
+                await page.fill('#password-email', 'owner@business.com');
+                await page.fill('#password', 'wrongpass');
+                await page.click('form:has(#password) button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-login-wrong${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-login-wrong${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('error-429' + suffix)) {
+                execSync('php artisan cache:clear', { stdio: 'inherit' });
+                await page.goto(`${baseUrl}/f/review-business-2`);
+                await page.waitForLoadState('networkidle');
+                for (let i = 0; i < 6; i++) {
+                    await page.click('form button[type="submit"]');
+                    await page.waitForLoadState('networkidle');
+                }
+                await page.screenshot({ path: path.join(outputDir, `error-429${suffix}.png`), fullPage: true });
+                await runAxe(page, `error-429${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-feedback-empty' + suffix)) {
+                execSync('php artisan cache:clear', { stdio: 'inherit' });
+                await page.goto(`${baseUrl}/f/review-business-2`);
+                await page.waitForLoadState('networkidle');
+                await page.click('form button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-feedback-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-feedback-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-feedback-rating' + suffix)) {
+                execSync('php artisan cache:clear', { stdio: 'inherit' });
+                await page.goto(`${baseUrl}/f/review-business-2`);
+                await page.waitForLoadState('networkidle');
+                await page.click('label[for="rating-5"]');
+                await page.click('form button[type="submit"]');
+                await page.waitForLoadState('networkidle');
+                await page.screenshot({ path: path.join(outputDir, `invalid-feedback-rating${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-feedback-rating${suffix}`, outputDir);
+            }
+
+            // owner2 login
+            await page.goto(`${baseUrl}/login`);
+            await page.waitForLoadState('networkidle');
+            await page.fill('#password-email', 'owner2@business.com');
+            await page.fill('#password', 'password');
+            await Promise.all([
+                page.waitForNavigation(),
+                page.click('form:has(#password) button[type="submit"]')
+            ]);
+            await page.waitForLoadState('networkidle');
+
+            if (shouldCapture('invalid-support-empty' + suffix)) {
+                await page.goto(`${baseUrl}/account/support`);
+                await page.waitForLoadState('networkidle');
+                await page.click('button:has-text("Send")');
+                await page.waitForLoadState('networkidle');
+                // Support form might take a moment to show validation error from livewire
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-support-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-support-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-settings-replies-empty' + suffix)) {
+                await page.goto(`${baseUrl}/account`);
+                await page.waitForLoadState('networkidle');
+                await page.click('button:has-text("Save this example")');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-settings-replies-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-settings-replies-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-website-builder-empty' + suffix)) {
+                await page.goto(`${baseUrl}/advanced/website-builder`);
+                await page.waitForLoadState('networkidle');
+                 await page.click('button:has-text("Generate Page")');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-website-builder-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-website-builder-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('account-inbox-thread' + suffix)) {
+                await page.goto(`${baseUrl}/account/inbox`);
+                await page.waitForLoadState('networkidle');
+                await page.click('ul.space-y-3 li:nth-child(1) button');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `account-inbox-thread${suffix}.png`), fullPage: true });
+                await runAxe(page, `account-inbox-thread${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('advanced-website-builder-mobile' + suffix)) {
+                await page.goto(`${baseUrl}/advanced/website-builder`);
+                await page.waitForLoadState('networkidle');
+                await page.click('button:has-text("Mobile Mockup")');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.waitForTimeout(250);
+                await page.screenshot({ path: path.join(outputDir, `advanced-website-builder-mobile${suffix}.png`), fullPage: true });
+                await runAxe(page, `advanced-website-builder-mobile${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('account-customer-profile' + suffix)) {
+                await page.goto(`${baseUrl}/account/customers`);
+                await page.waitForLoadState('networkidle');
+                await page.click('ul.space-y-3 li:nth-child(1) a[data-customer]');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `account-customer-profile${suffix}.png`), fullPage: true });
+                await runAxe(page, `account-customer-profile${suffix}`, outputDir);
+            }
+
+            // setup logout and login as setup@business.com
+            await page.goto(`${baseUrl}/logout`); // if there's a logout route, or just clear cookies
+            await context.clearCookies();
+
+            await page.goto(`${baseUrl}/login`);
+            await page.waitForLoadState('networkidle');
+            await page.fill('#password-email', 'setup@business.com');
+            await page.fill('#password', 'password');
+            await Promise.all([
+                page.waitForNavigation(),
+                page.click('form:has(#password) button[type="submit"]')
+            ]);
+            await page.waitForLoadState('networkidle');
+
+            if (shouldCapture('invalid-setup-find-business-empty' + suffix)) {
+                await page.goto(`${baseUrl}/setup/find-business`);
+                await page.waitForLoadState('networkidle');
+                 await page.click('button:has-text("Find it")');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-setup-find-business-empty${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-setup-find-business-empty${suffix}`, outputDir);
+            }
+
+            if (shouldCapture('invalid-setup-find-business-wrong' + suffix)) {
+                await page.goto(`${baseUrl}/setup/find-business`);
+                await page.waitForLoadState('networkidle');
+                await page.fill('#pasted-url', 'not-a-url');
+                 await page.click('button:has-text("Find it")');
+                await page.waitForLoadState('networkidle');
+                await page.waitForTimeout(500);
+                await page.screenshot({ path: path.join(outputDir, `invalid-setup-find-business-wrong${suffix}.png`), fullPage: true });
+                await runAxe(page, `invalid-setup-find-business-wrong${suffix}`, outputDir);
+            }
+            
+            await page.close();
+        }
+
+        const valBrowser = await chromium.launch();
+        const valContext1 = await valBrowser.newContext();
+        await captureValidationStates(valContext1, '', 1280, 720);
+        await valContext1.close();
+        
+        const valContext2 = await valBrowser.newContext();
+        await captureValidationStates(valContext2, '@390', 390, 844);
+        await valContext2.close();
+        
+        await valBrowser.close();
+
+        console.log("Capturing light color-scheme...");
+
+        const lightBrowser = await chromium.launch();
+        for (const [suffix, width, height] of [['', 1280, 720], ['@390', 390, 844]]) {
+            const lightContext = await lightBrowser.newContext({
+                colorScheme: 'light',
+                viewport: { width, height },
+            });
+            const lightPage = await lightContext.newPage();
+
+            console.log('light pass matchMedia dark =', await lightPage.evaluate(
+                () => window.matchMedia('(prefers-color-scheme: dark)').matches));
+
+            for (const [name, url] of [['home-light', '/'], ['login-light', '/login']]) {
+                if (!shouldCapture(name + suffix)) continue;
+                await lightPage.goto(`${baseUrl}${url}`);
+                await lightPage.waitForLoadState('networkidle');
+                await lightPage.screenshot({ path: path.join(outputDir, `${name}${suffix}.png`), fullPage: true });
+                await runAxe(lightPage, `${name}${suffix}`, outputDir);
+            }
+
+            await lightContext.close();
+        }
+        await lightBrowser.close();
+
+
+        const axeDir = path.join(outputDir, 'axe');
+        if (fs.existsSync(axeDir)) {
+            const axeFiles = fs.readdirSync(axeDir).filter(f => f.endsWith('.json'));
+            const newSummaryLines = [];
+            for (const file of axeFiles) {
+                const name = file.replace(/\.json$/, "");
+                const content = JSON.parse(fs.readFileSync(path.join(axeDir, file), 'utf8'));
+                const counts = { critical: 0, serious: 0, moderate: 0, minor: 0 };
+                content.forEach(v => {
+                    if (counts[v.impact] !== undefined) {
+                        counts[v.impact]++;
+                    }
+                });
+                newSummaryLines.push(`${name}  critical ${counts.critical}  serious ${counts.serious}  moderate ${counts.moderate}  minor ${counts.minor}`);
+            }
+            newSummaryLines.sort();
+            fs.writeFileSync(path.join(axeDir, 'SUMMARY.txt'), newSummaryLines.join('\n') + '\n');
+        }
+
+        if (!freshArg) {
+            const fileCountAfter = fs.readdirSync(outputDir).filter(f => f.endsWith('.png')).length;
+            console.log(`File count before: ${fileCountBefore}, after: ${fileCountAfter}`);
+        }
     } finally {
         console.log("Stopping server...");
         serverProcess.kill();

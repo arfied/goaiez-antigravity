@@ -8,7 +8,9 @@ use App\Modules\X149\Actions\EvalGateAction;
 use App\Modules\X149\Actions\EvalRunAction;
 use App\Modules\X149\Actions\TrackQualitySeriesAction;
 use App\Modules\X149\Events\PromptChanged;
+use App\Modules\X149\Models\EvalRun;
 use App\Modules\X149\Models\EvalSet;
+use App\Modules\X149\Models\QualitySeries;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -105,6 +107,25 @@ class X149Test extends TestCase
      */
     public function test_g5_04_single_database(): void
     {
-        $this->assertTrue(true);
+        $drivers = collect(config('database.connections'))->pluck('driver')->all();
+        $this->assertNotContains('clickhouse', $drivers);
+
+        $this->assertNull((new EvalRun)->getConnectionName());
+        $this->assertNull((new EvalSet)->getConnectionName());
+        $this->assertNull((new QualitySeries)->getConnectionName());
+
+        $biz = self::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $action = new TrackQualitySeriesAction;
+        $series = $action->record($biz->id, 0.1, 0.2);
+
+        $row = DB::connection(config('database.default'))
+            ->table('quality_series')
+            ->where('id', $series->id)
+            ->first();
+
+        $this->assertNotNull($row);
+        $this->assertEquals($biz->id, $row->business_id);
     }
 }

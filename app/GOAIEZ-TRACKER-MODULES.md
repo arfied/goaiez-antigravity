@@ -30,7 +30,7 @@
 | X-111 | ops & agency | SQ-12 | W3 | §118 → §119 → §131 → §132 → §150 → §151 | §159 | **§164** | ✅ | ✅ | ☐ | ☐ |
 | X-112 | ops & agency | SQ-12 | W3 | §132 → §150 | §133 | **§164** | ✅ | ✅ | ☐ | ☐ |
 | X-113 | ops & agency | SQ-12 | W3 | §150 → §151 | — | **§164** | ✅ | ✅ | ☐ | ☐ |
-| X-114 | demo | SQ-10+SQ-2 | W3 | §131 → §151 | — | **§162** | ✅ | ✅ | ☐ | ☐ |
+| X-114 | demo | ⏸ DEFERRED · SQ-10+SQ-2 | W3 | §131 → §151 | — | **§162** | ✅ | ✅ | ☐ | ☐ |
 | X-116 | surfaces & builder | SQ-5/6 | W3 | §25 → §131 → §135 → §151 | §25A, §116 | **§162** | ✅ | ✅ | ☐ | ☐ |
 | X-117 | merchant & invoicing | SQ-11 | W2 | §25 → §135 → §138 → §139 | §25A, §134, §143 | **§163** | ✅ | ✅ | ☐ | ☐ |
 | X-118 | onboarding | SQ-12 | W2 (with the assistant) | §150 | — | **§164** | ✅ | ✅ | ☐ | ☐ |
@@ -54,12 +54,12 @@
 | X-138 | pixel & attribution | SQ-4 | W2 | §49 → §126 → §132 | §30, §35, §40, §112, §113 | **§162** | ✅ | ✅ | ☐ | ☐ |
 | X-139 | pixel & attribution | SQ-4 | W2 | §49 → §132 | §29A, §44 | **§162** | ✅ | ✅ | ☐ | ☐ |
 | X-140 | SEO & visibility | SQ-9 | W3 | §142 | §35, §156 | **§164** | ✅ | ✅ | ☐ | ☐ |
-| X-141 | pixel & attribution | SQ-4 | W2 | §49 → §132 | §35, §40 | **§162** | ✅ | ✅ | ☐ | ☐ |
+| X-141 | pixel & attribution | ⏸ DEFERRED · SQ-4 | W2 | §49 → §132 | §35, §40 | **§162** | ✅ | ✅ | ☐ | ☐ |
 | X-142 | spine | SQ-0 | W0 | §14 → §118 → §150 | §35 | **§157** | ✅ | ✅ | ☐ | ☐ |
-| X-143 | spine | SQ-0 | W0 | §14 → §150 | — | **§157** | ✅ | ✅ | ☐ | ☐ |
-| X-144 | SEO & visibility | SQ-9 | W3 | §142 → §148 | — | **§164** | ✅ | ☐ | ☐ | ☐ |
-| X-145 | spine | SQ-0 | W0 | §14 → §150 | §40, §159 | **§157** | ✅ | ✅ | ☐ | ☐ |
-| X-147 | telephony & channels | SQ-1 | W1 | §125 | §159 | **§159** | ✅ | ✅ | ☐ | ☐ |
+| X-143 | spine | ⏸ DEFERRED · SQ-0 | W0 | §14 → §150 | — | **§157** | ✅ | ✅ | ☐ | ☐ |
+| X-144 | SEO & visibility | ⏸ DEFERRED · SQ-9 | W3 | §142 → §148 | — | **§164** | ✅ | ☐ | ☐ | ☐ |
+| X-145 | spine | ⏸ DEFERRED · SQ-0 | W0 | §14 → §150 | §40, §159 | **§157** | ✅ | ✅ | ☐ | ☐ |
+| X-147 | telephony & channels | ⏸ DEFERRED · SQ-1 | W1 | §125 | §159 | **§159** | ✅ | ✅ | ☐ | ☐ |
 | X-148 | AI core | SQ-2 | W1 | §126 → §127 | — | **§161** | ✅ | ✅ | ☐ | ☐ |
 | X-149 | AI core | SQ-2 | W1 | §127 | §17 | **§161** | ✅ | ✅ | ☐ | ☐ |
 | X-150 | acquisition | SQ-4 | W2 | §128 | §18A, §18B, §21, §35 | **§161** | ✅ | ✅ | ☐ | ☐ |
@@ -69,8 +69,8 @@
 | X-155 | surfaces & builder | SQ-5/6 | W3 | §135 | §22, §23, §25A, §27, §134 | **§162** | ✅ | ✅ | ☐ | ☐ |
 | X-156 | acquisition | SQ-4 | W2 | §129 | §23, §28, §30A, §108 | **§161** | ✅ | ✅ | ☐ | ☐ |
 | X-157 | surfaces & builder | SQ-5/6 | W3 | §135 | §25A, §27, §33, §110, §113 | **§162** | ✅ | ✅ | ☐ | ☐ |
-| X-158 | demo | SQ-10+SQ-2 | W3 | §131 | §27, §33, §39 | **§162** | ✅ | ✅ | ☐ | ☐ |
-| X-159 | demo | SQ-10+SQ-2 | W3 | §131 | §27 | **§162** | ✅ | ✅ | ☐ | ☐ |
+| X-158 | demo | ⏸ DEFERRED · SQ-10+SQ-2 | W3 | §131 | §27, §33, §39 | **§162** | ✅ | ✅ | ☐ | ☐ |
+| X-159 | demo | ⏸ DEFERRED · SQ-10+SQ-2 | W3 | §131 | §27 | **§162** | ✅ | ✅ | ☐ | ☐ |
 | X-160 | AI core | SQ-2 | W1 | — | §28, §33 | **§161** | ✅ | ✅ | ☐ | ☐ |
 | X-161 | AI core | SQ-2 | W1 | §131 | §28 | **§161** | ✅ | ✅ | ☐ | ☐ |
 | X-162 | CRM & pipeline | SQ-7 | W2 | §29 → §136 → §141 → §142 | §30, §40, §145 | **§163** | ✅ | ✅ | ☐ | ☐ |
@@ -106,10 +106,10 @@
 | X-194 | conversational | SQ-3 | W2 | §119 | §113, §159 | **§158** | ✅ | ✅ | ☐ | ☐ |
 | X-195 | ops & agency | SQ-12 | W3 | §150 | — | **§164** | ✅ | ✅ | ☐ | ☐ |
 | X-196 | acquisition | SQ-4 | W2 | §128 → §129 | — | **§161** | ✅ | ✅ | ☐ | ☐ |
-| X-197 | voice | SQ-1+SQ-2 | W1 | §126 | §120, §156, §159 | **§161** | ✅ | ✅ | ☐ | ☐ |
+| X-197 | voice | ⏸ DEFERRED · SQ-1+SQ-2 | W1 | §126 | §120, §156, §159 | **§161** | ✅ | ✅ | ☐ | ☐ |
 | X-198 | merchant & invoicing | SQ-11 | W2 | §127 → §138 → §140 → §141 → §150 | §113, §133, §143, §144, §146, §147, §156 | **§163** | ✅ | ✅ | ☐ | ☐ |
 | X-199 | merchant & invoicing | SQ-11 | W2 | §138 → §139 → §141 → §149 → §150 | §143, §144 | **§163** | ✅ | ☐ | ☐ | ☐ |
-| X-200 | telephony & channels | SQ-1 | W1 (AI seat) · W3 (desk) | — | §156, §159, §160 | **§159** | ✅ | ✅ | ☐ | ☐ |
+| X-200 | telephony & channels | ⏸ DEFERRED · SQ-1 | W1 (AI seat) · W3 (desk) | — | §156, §159, §160 | **§159** | ✅ | ✅ | ☐ | ☐ |
 | X-201 | money | SQ-11 | W2 | — | §156 | **§164** | ✅ | ☐ | ☐ | ☐ |
 | **X-202** | ops & agency | SQ-12 | **W2** *(its consumers X-164 · C-Billing are W2)* | — | **§166.0 (T677 mint)** | **§166** | ☐ | ☐ | ☐ | ☐ |
 | **X-203** | ops & agency | SQ-12 | **W3** *(the DR practice starts at W0; the desk that shows it is W3)* | — | **§166.0 (T677 mint)** | **§166** | ☐ | ☐ | ☐ | ☐ |
@@ -117,14 +117,14 @@
 | **X-205** | ops & agency | SQ-12 | **W3** | — | **§167.0 (T677 mint)** | **§167** | ☐ | ✅ | ☐ | ☐ |
 | **X-206** `CredentialVault` | **spine** | **SQ-0** | **W0** | — | **§174 (T677 mint)** | **§174** | ☐ | ☐ | ☐ | ☐ |
 | **X-207** `PushEngine` | channels | **SQ-1** | **W1** | — | **§184A (T677 mint)** | **§184A** | ✅ | ✅ | ☐ | ☐ |
-| **X-208** `DirectMail` | channels | **SQ-1** | **W3** | — | **§185 (T677 mint)** | **§185** | ☐ | ✅ | ☐ | ☐ |
+| **X-208** `DirectMail` | channels | ⏸ DEFERRED · **SQ-1** | **W3** | — | **§185 (T677 mint)** | **§185** | ☐ | ✅ | ☐ | ☐ |
 | **X-209** `StaffDesk` | staff | **SQ-2** | **W2** | — | **§191 (T677 mint)** | **§191** | ✅ | ✅ | ☐ | ☐ |
 | **X-210** `PromotionEngine` | money | **SQ-11** | **W2** | — | **§214 (T677 mint)** | **§214** | ✅ | ✅ | ☐ | ☐ |
 | **X-211** `Receivables` | money | **SQ-11** | **W2** | — | **§216 (T677 mint)** | **§216** | ✅ | ✅ | ☐ | ☐ |
 | **X-212** `MigrationIn` | onboarding | **SQ-13** | **W3** | — | **§218 (T677 mint)** | **§218** | ✅ | ✅ | ☐ | ☐ |
-| **X-213** `VisionQA` | quality | **SQ-12** | **W3** | — | **R207 (owner mint)** | **R207** | ✅ | ✅ | ☐ | ☐ | ⭐ **RUNTIME visual QA on TENANT output (R218) — not build-time; the harness covers that** |
-| **X-214** `Surcharging` | money | **SQ-11** | **W2** | — | **R209 (owner mint)** | **R209** | ✅ | ✅ | ☐ | ☐ | ⛔ **ceiling = the LOWER of 3% and the merchant's own effective rate; debit never surcharged** |
-| **X-215** `DocumentSigning` | docs | **SQ-7** | **W2** | — | **R213 (owner mint)** | **R213** | ✅ | ✅ | ☐ | ☐ | ⭐ **the signature binds a HASH of the rendered document; provider is a driver + config row** |
+| **X-213** `VisionQA` | quality | ⏸ DEFERRED · **SQ-12** | **W3** | — | **R207 (owner mint)** | **R207** | ✅ | ✅ | ☐ | ☐ | ⭐ **RUNTIME visual QA on TENANT output (R218) — not build-time; the harness covers that** |
+| **X-214** `Surcharging` | money | ⏸ DEFERRED · **SQ-11** | **W2** | — | **R209 (owner mint)** | **R209** | ✅ | ✅ | ☐ | ☐ | ⛔ **ceiling = the LOWER of 3% and the merchant's own effective rate; debit never surcharged** |
+| **X-215** `DocumentSigning` | docs | ⏸ DEFERRED · **SQ-7** | **W2** | — | **R213 (owner mint)** | **R213** | ✅ | ✅ | ☐ | ☐ | ⭐ **the signature binds a HASH of the rendered document; provider is a driver + config row** |
 
 ## ⭐ THE WAVE PLAN, CHECKED AGAINST Q-085 *(T674)*
 - **W0** ⭐⭐⭐ *(**12** — +X-204 · +X-206 · +**the UI kit (A-4)** · +**the rollback mechanism (A-7)**)*: X-121 · X-122 · X-123 · X-126 · X-128 · X-142 · X-143 · X-145 · **X-204 · X-206 · UI-KIT · ROLLBACK**. Wave 0 gates everything and is now 3x its original size — work moved earlier so it is not repeated ninety times later.
@@ -157,3 +157,9 @@
 ⭐ **`X-216` was SKIPPED, deliberately** — *the mint took the next free numbers `X-217`/`X-218` while `X-127` was already reserved by name in `§5`.* ⛔ **The gap is intentional and recorded here so nobody "fixes" it by renumbering.**
 
 **Roster: 122 modules · ceiling `X-218` · next free `X-219` (and `X-216` remains a deliberate gap).**
+| **X-221** | AdsAdvisor | GROW | G14 | SQ-12 · W3 | Finished **§257.1** | HDR ✅ | CAPS ☐ | SITE ☐ | OMNI ☐ |
+| **X-222** | LegalDesk | PROTECT | G10 | SQ-0 · W2 | Finished **§257.2** | HDR ✅ | CAPS ☐ | SITE ☐ | OMNI ☐ |
+| **X-223** | WarmupEngine | GROW | G11 | SQ-1 · W2 | Finished **§257.3** | HDR ✅ | CAPS ☐ | SITE ☐ | OMNI ☐ |
+| **X-221** | AdsAdvisor | GROW | G14 | SQ-12 · W3 | Finished **§257.1** | HDR ✅ | CAPS ☐ | SITE ☐ | OMNI ☐ |
+| **X-222** | LegalDesk | PROTECT | G10 | SQ-0 · W2 | Finished **§257.2** | HDR ✅ | CAPS ☐ | SITE ☐ | OMNI ☐ |
+| **X-223** | WarmupEngine | GROW | G11 | SQ-1 · W2 | Finished **§257.3** | HDR ✅ | CAPS ☐ | SITE ☐ | OMNI ☐ |

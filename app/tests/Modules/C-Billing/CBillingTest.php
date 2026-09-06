@@ -10,6 +10,8 @@ use App\Modules\CBilling\Actions\LedgerExplainAction;
 use App\Modules\CBilling\Actions\LedgerGrantAction;
 use App\Modules\CBilling\Actions\TopupChargeAction;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
+use App\Modules\CBilling\Events\LedgerPeriodClosed;
+use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\TrialLimit;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -52,10 +54,7 @@ class CBillingTest extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         // Initial balance $100.00 = 1,000,000 hundredths of a cent
-        TrialLimit::create([
-            'business_id' => $biz->id,
-            'current_balance_hundredths_cents' => 1000000,
-        ]);
+        $this->grantAction->handle($biz->id, 1000000, 'setup', 'Setup grant');
 
         // 1. Two concurrent debits produce two rows and a correct final balance
         $entry1 = $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1 ($1.50)');
@@ -95,6 +94,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-01] & [G1-56] X-198's MOCK gateway is asserted unreachable from a live tenant (G1-34)
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway implementation or MOCK configuration.
      */
     public function test_g1_01_mock_gateway_unreachable(): void
     {
@@ -103,6 +103,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-10] an unreconciled cent RAISES, asserted by injecting a one-cent difference
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no reconciliation process or mismatch detection.
      */
     public function test_g1_10_unreconciled_cent_raises(): void
     {
@@ -127,9 +128,14 @@ class CBillingTest extends TestCase
         $res1 = $this->topupAction->handle($biz->id, 6000); // $60
         $this->assertEquals('charged', $res1['status']);
 
-        $res2 = $this->topupAction->handle($biz->id, 5000); // +$50 = $110 > $100 ceiling
-        $this->assertEquals('refused', $res2['status']);
-        $this->assertEquals('DAILY_TOPUP_CEILING_EXCEEDED', $res2['refusal_code']);
+        $beforeCount = CreditLedgerEntry::where('business_id', $biz->id)->count();
+        try {
+            $this->topupAction->handle($biz->id, 5000); // +$50 = $110 > $100 ceiling
+            $this->fail('Expected exception');
+        } catch (\DomainException $e) {
+            $this->assertEquals('REFUSAL: Daily top-up ceiling exceeded', $e->getMessage());
+        }
+        $this->assertEquals($beforeCount, CreditLedgerEntry::where('business_id', $biz->id)->count());
     }
 
     /**
@@ -158,6 +164,7 @@ class CBillingTest extends TestCase
 
     /**
      * [G1-33], [G1-42], [G1-49], [G1-59], [G4-39] exponential backoff with a hard attempt ceiling
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no retry mechanism or exponential backoff logic.
      */
     public function test_g1_33_exponential_backoff(): void
     {
@@ -165,11 +172,25 @@ class CBillingTest extends TestCase
     }
 
     /**
-     * [G1-52], [G1-78], [G1-83] no refusal declared
+     * [G1-78], [G1-83] no refusal declared
+     * ⛔ REFUSED: surveyed Actions, Database, Domain, Events, Models, Ui and found no gateway integration, Notice Before Charge, or credit block logic.
+     *
+     * [G1-52] the ledger is the source; the gateway receives period totals, never per-event usage
      */
-    public function test_g1_52_assertions(): void
+    public function test_g1_52_ledger_is_source(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Ledger Source Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $grant = $this->grantAction->handle($biz->id, 5000, 'grant_1', 'Grant $0.50');
+        $this->assertEquals(5000, $grant->balance_after_hundredths_cents);
+
+        $debit = $this->debitAction->handle($biz->id, 1000, 'debit_1', 'Debit $0.10');
+        $this->assertEquals(4000, $debit->balance_after_hundredths_cents);
+
+        $event = new LedgerPeriodClosed($biz->id, 4000, '2026-09-30');
+        $this->assertEquals(4000, $event->closingBalanceHundredthsCents);
+        $this->assertObjectNotHasProperty('events', $event, 'Gateway receives period totals, never per-event usage');
     }
 
     /**
@@ -184,14 +205,33 @@ class CBillingTest extends TestCase
 
     /**
      * [G7-01] §45A — the 21-day timeline is the ONE ladder
+     * Asserting the 21-day dunning ladder via DunningAdvanceAction
      */
     public function test_g7_01_single_dunning_ladder(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'G7-01 Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $state9 = $this->dunningAction->handle($biz->id, 9);
+        $this->assertEquals('warning', $state9->status);
+        $this->assertTrue($state9->ai_enabled);
+        $this->assertTrue($state9->phone_answering);
+
+        $state20 = $this->dunningAction->handle($biz->id, 20);
+        $this->assertEquals('banner', $state20->status);
+        $this->assertTrue($state20->ai_enabled);
+        $this->assertTrue($state20->phone_answering);
+
+        $state21 = $this->dunningAction->handle($biz->id, 21);
+        $this->assertEquals('ai_off_voicemail_only', $state21->status);
+        $this->assertFalse($state21->ai_enabled);
+        $this->assertTrue($state21->voicemail_only);
+        $this->assertTrue($state21->phone_answering);
     }
 
     /**
      * [G9-31] MRR saved by the one dunning ladder (§45A)
+     * ⛔ REFUSED: a seam that ignores its parameters and returns a constant is a stub; Ui\Mrr ignores parameters and returns a constant view.
      */
     public function test_g9_31_mrr_saved(): void
     {
@@ -231,9 +271,42 @@ class CBillingTest extends TestCase
 
     /**
      * [G19-17] auto top-up is universal
+     * ⛔ REFUSED: the capability's own text declares a refusal; the $50/5,000 figures are dead and live in X-82.
      */
     public function test_g19_17_auto_topup(): void
     {
         $this->assertTrue(true);
+    }
+
+    public function test_debit_refuses_no_ledger_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Ledger Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $beforeCount = CreditLedgerEntry::where('business_id', $biz->id)->count();
+        try {
+            $this->debitAction->handle($biz->id, 5000, 'ref_1', 'Debit 1');
+            $this->fail('Expected exception');
+        } catch (\DomainException $e) {
+            $this->assertEquals('REFUSAL: Ledger not found', $e->getMessage());
+        }
+        $this->assertEquals($beforeCount, CreditLedgerEntry::where('business_id', $biz->id)->count());
+    }
+
+    public function test_debit_refuses_insufficient_balance(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Insufficient Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->grantAction->handle($biz->id, 10000, 'setup', 'Setup grant'); // .00
+
+        $beforeCount = CreditLedgerEntry::where('business_id', $biz->id)->count();
+        try {
+            $this->debitAction->handle($biz->id, 15000, 'ref_1', 'Debit 1');
+            $this->fail('Expected exception');
+        } catch (\DomainException $e) {
+            $this->assertEquals('REFUSAL: Insufficient balance', $e->getMessage());
+        }
+        $this->assertEquals($beforeCount, CreditLedgerEntry::where('business_id', $biz->id)->count());
     }
 }

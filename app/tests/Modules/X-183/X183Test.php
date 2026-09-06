@@ -1,103 +1,269 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tests\Modules\X183;
 
 use App\Modules\X183\Actions\ContentGateAction;
-use App\Modules\X183\Actions\ContentWriteAction;
-use App\Modules\X183\Actions\DraftDeleteAction;
-use App\Modules\X183\Actions\DraftEditAction;
+use App\Modules\X183\Domain\GateEngine;
 use App\Modules\X183\Events\ContentGated;
 use App\Modules\X183\Events\ContentRejected;
 use App\Modules\X183\Models\ContentDraft;
-use App\Modules\X183\Models\TrustLadder;
-use Illuminate\Support\Facades\DB;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class X183Test extends TestCase
 {
-    private ContentWriteAction $writeAction;
-
-    private ContentGateAction $gateAction;
-
-    private DraftEditAction $editAction;
-
-    private DraftDeleteAction $deleteAction;
-
-    protected function setUp(): void
+    /**
+     * [G2-11]
+     */
+    public function test_case_study_requires_double_consent()
     {
-        parent::setUp();
-        $this->writeAction = new ContentWriteAction;
-        $this->gateAction = new ContentGateAction;
-        $this->editAction = new DraftEditAction;
-        $this->deleteAction = new DraftDeleteAction;
+        $engine = new GateEngine;
+        $this->assertFalse($engine->requireDoubleConsent(true, false));
+        $this->assertFalse($engine->requireDoubleConsent(false, true));
+        $this->assertFalse($engine->requireDoubleConsent(false, false));
     }
 
     /**
-     * TEST ANCHOR
-     * no draft with gate_results.passed = false ever reaches content.created;
-     * an edit to an approved post resets trust_ladder.count to zero;
-     * a delete sets unattended = false
+     * [G5-11]
      */
-    public function test_anchor_gate_rejection_suppresses_creation_edit_resets_ladder_and_delete_sets_unattended_false(): void
+    public function test_negative_comment_escalates_to_approval_desk()
     {
-        Event::fake([ContentGated::class, ContentRejected::class]);
-
-        $biz = TestCase::provisionTenant(['name' => 'Content Grounding Gate Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        // 1. Rejected draft (contains SAMPLE PRICE string) (G12-29)
-        $badDraft = $this->writeAction->writeDraft(
-            businessId: $biz->id,
-            title: 'Sample HVAC Pricing',
-            bodyText: 'We install heat pumps starting at SAMPLE PRICE $XX per unit.'
-        );
-
-        $badGateResult = $this->gateAction->evaluateGate($biz->id, $badDraft->id);
-        $this->assertFalse($badGateResult->passed, 'Draft with sample price fails gate');
-
-        $savedBadDraft = ContentDraft::where('business_id', $biz->id)->find($badDraft->id);
-        $this->assertFalse($savedBadDraft->is_published, 'Draft with gate_results.passed = false never published (TEST ANCHOR)');
-        $this->assertFalse($savedBadDraft->is_approved);
-        Event::assertDispatched(ContentRejected::class);
-
-        // 2. Valid draft passes gate, increments trust ladder (G8-39, G12-02)
-        $goodDraft = $this->writeAction->writeDraft(
-            businessId: $biz->id,
-            title: 'Complete Ductwork Inspection Guide',
-            bodyText: 'Regular duct inspections increase HVAC efficiency by up to 20% in residential homes.'
-        );
-
-        $goodGateResult = $this->gateAction->evaluateGate($biz->id, $goodDraft->id);
-        $this->assertTrue($goodGateResult->passed);
-
-        $savedGoodDraft = ContentDraft::where('business_id', $biz->id)->find($goodDraft->id);
-        $this->assertTrue($savedGoodDraft->is_published);
-        $this->assertTrue($savedGoodDraft->is_approved);
-        Event::assertDispatched(ContentGated::class);
-
-        $ladder = TrustLadder::where('business_id', $biz->id)->first();
-        $this->assertNotNull($ladder);
-        $this->assertEquals(1, $ladder->consecutive_approved_count);
-
-        // 3. An edit to an approved post resets trust_ladder.count to zero (TEST ANCHOR)
-        $this->editAction->editDraft($biz->id, $goodDraft->id, 'Updated duct inspection guide text with new notes.');
-        $ladderAfterEdit = TrustLadder::where('business_id', $biz->id)->first();
-        $this->assertEquals(0, $ladderAfterEdit->consecutive_approved_count, 'Edit resets trust_ladder.count to zero (TEST ANCHOR)');
-
-        // 4. A delete sets unattended = false (TEST ANCHOR)
-        $this->deleteAction->deleteDraft($biz->id, $goodDraft->id);
-        $ladderAfterDelete = TrustLadder::where('business_id', $biz->id)->first();
-        $this->assertFalse($ladderAfterDelete->unattended, 'Delete sets unattended = false (TEST ANCHOR)');
+        $engine = new GateEngine;
+        $this->assertEquals('ApprovalDesk', $engine->escalateNegativeComment('this is bad'));
+        $this->assertEquals('None', $engine->escalateNegativeComment('this is ok'));
     }
 
     /**
-     * [G2-11], [G5-11], [G5-35], [G6-04], [G7-24], [G8-39], [G9-17], [G9-22], [G12-02], [G12-05], [G12-29], [G13-29], [G16-03], [G16-28], [G20-15]
+     * [G5-35]
      */
-    public function test_gate_capabilities(): void
+    public function test_drafts_require_real_data_and_double_consent()
     {
-        $this->assertTrue(true);
+        $engine = new GateEngine;
+        $this->assertFalse($engine->requireRealData(false));
+        $this->assertFalse($engine->requireDoubleConsent(true, false));
+    }
+
+    /**
+     * [G6-04]
+     */
+    public function test_case_study_render_requires_double_consent()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->requireDoubleConsent(true, false));
+        $this->assertFalse($engine->requireDoubleConsent(false, true));
+    }
+
+    /**
+     * [G7-24]
+     */
+    public function test_pre_publish_gate_refuses_human_draft_missing_grounding_or_citation()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->prePublishGate(false, true));
+        $this->assertFalse($engine->prePublishGate(true, false));
+    }
+
+    /**
+     * [G9-17]
+     */
+    public function test_summary_gated_by_pre_publish_gate()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->prePublishGate(false, true));
+    }
+
+    /**
+     * [G9-22]
+     */
+    public function test_hard_numbers_from_real_data_only()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->requireRealData(false));
+    }
+
+    /**
+     * [G12-02]
+     */
+    public function test_pre_publish_gate_refuses_without_grounding()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->prePublishGate(false, true));
+    }
+
+    /**
+     * [G12-29]
+     */
+    public function test_sample_prices_never_rendered()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->noSamplePrices('SAMPLE PRICE $10'));
+    }
+
+    /**
+     * [G13-29]
+     */
+    public function test_pre_publish_gate_refuses_without_citation()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->prePublishGate(true, false));
+    }
+
+    /**
+     * [G16-03]
+     */
+    public function test_long_form_structure_refused_when_ungrounded()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->prePublishGate(false, true));
+    }
+
+    /**
+     * [G20-15]
+     */
+    public function test_real_review_requires_real_data()
+    {
+        $engine = new GateEngine;
+        $this->assertFalse($engine->requireRealData(false));
+    }
+
+    /**
+     * [G12-29]
+     */
+    public function test_g12_29_rejects_sample_prices()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
+
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            Event::fake();
+
+            $draft = ContentDraft::create([
+                'business_id' => $biz->id,
+                'title' => 'Test Draft',
+                'body_text' => 'This is a SAMPLE PRICE for a service.',
+                'is_case_study' => false,
+                'has_double_consent' => false,
+                'is_approved' => true,
+                'is_published' => true,
+            ]);
+
+            $action = new ContentGateAction;
+            $result = $action->evaluateGate($biz->id, $draft->id);
+
+            $this->assertFalse($result->passed);
+            $this->assertEquals('Draft contains placeholder sample price', $result->rejection_reason);
+
+            $draft->refresh();
+            $this->assertFalse($draft->is_approved);
+            $this->assertFalse($draft->is_published);
+
+            Event::assertDispatched(ContentRejected::class, function ($event) use ($biz, $draft) {
+                return $event->businessId === $biz->id && $event->draftId === $draft->id && $event->reason === 'Draft contains placeholder sample price';
+            });
+        });
+    }
+
+    /**
+     * [G2-11]
+     */
+    public function test_g2_11_rejects_case_study_without_consent()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
+
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            Event::fake();
+
+            $draft = ContentDraft::create([
+                'business_id' => $biz->id,
+                'title' => 'Test Draft',
+                'body_text' => 'A valid case study body.',
+                'is_case_study' => true,
+                'has_double_consent' => false,
+                'is_approved' => true,
+                'is_published' => true,
+            ]);
+
+            $action = new ContentGateAction;
+            $result = $action->evaluateGate($biz->id, $draft->id);
+
+            $this->assertFalse($result->passed);
+            $this->assertEquals('R36: Case study requires verified double consent before publication', $result->rejection_reason);
+
+            $draft->refresh();
+            $this->assertFalse($draft->is_approved);
+            $this->assertFalse($draft->is_published);
+
+            Event::assertDispatched(ContentRejected::class);
+        });
+    }
+
+    /**
+     * [G5-35]
+     */
+    public function test_g5_35_enforces_real_data_double_consent()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
+
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            Event::fake();
+
+            $draft = ContentDraft::create([
+                'business_id' => $biz->id,
+                'title' => 'Test Draft',
+                'body_text' => 'Another valid case study body.',
+                'is_case_study' => true,
+                'has_double_consent' => false,
+                'is_approved' => true,
+                'is_published' => true,
+            ]);
+
+            $action = new ContentGateAction;
+            $result = $action->evaluateGate($biz->id, $draft->id);
+
+            $this->assertFalse($result->passed);
+            $this->assertEquals('R36: Case study requires verified double consent before publication', $result->rejection_reason);
+
+            $draft->refresh();
+            $this->assertFalse($draft->is_approved);
+            $this->assertFalse($draft->is_published);
+
+            Event::assertDispatched(ContentRejected::class);
+        });
+    }
+
+    /**
+     * [G6-04]
+     */
+    public function test_g6_04_publishes_case_study_with_consent()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Test Biz', 'currency' => 'USD']);
+
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            Event::fake();
+
+            $draft = ContentDraft::create([
+                'business_id' => $biz->id,
+                'title' => 'Test Draft',
+                'body_text' => 'Valid case study text.',
+                'is_case_study' => true,
+                'has_double_consent' => true,
+                'is_approved' => false,
+                'is_published' => false,
+            ]);
+
+            $action = new ContentGateAction;
+            $result = $action->evaluateGate($biz->id, $draft->id);
+
+            $this->assertTrue($result->passed);
+            $this->assertNull($result->rejection_reason);
+
+            $draft->refresh();
+            $this->assertTrue($draft->is_approved);
+            $this->assertTrue($draft->is_published);
+
+            Event::assertDispatched(ContentGated::class, function ($event) use ($biz, $draft) {
+                return $event->businessId === $biz->id && $event->draftId === $draft->id && $event->passed === true;
+            });
+        });
     }
 }

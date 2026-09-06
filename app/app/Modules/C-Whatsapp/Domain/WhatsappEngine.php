@@ -9,15 +9,20 @@ use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
 use App\Modules\CWhatsapp\Models\WhatsappTemplate;
+use App\Modules\X204\Domain\ConsentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class WhatsappEngine
 {
+    public function __construct(
+        private readonly ConsentService $consentService
+    ) {}
+
     /**
      * Inbound message opens/extends 24-hour conversational window.
      */
-    public function recordInbound(int $businessId, string $recipientPhone): WhatsappSession
+    public function recordInbound(int $businessId, string $recipientPhone, string $body = '', string $senderName = ''): WhatsappSession
     {
         $session = WhatsappSession::updateOrCreate(
             ['business_id' => $businessId, 'recipient_phone' => $recipientPhone],
@@ -28,7 +33,7 @@ final class WhatsappEngine
             ]
         );
 
-        Event::dispatch(new WhatsappSessionOpened($businessId, $session->id, $recipientPhone));
+        Event::dispatch(new WhatsappSessionOpened($businessId, $session->id, $recipientPhone, $body, $senderName));
 
         return $session;
     }
@@ -40,8 +45,20 @@ final class WhatsappEngine
         int $businessId,
         string $recipientPhone,
         string $messageText,
-        ?string $templateName = null
+        ?string $templateName = null,
+        string $class = 'transactional'
     ): array {
+        $decision = $this->consentService->decide($businessId, $recipientPhone, 'whatsapp', $class);
+        if (! $decision['granted']) {
+            $reason = $decision['reason'];
+
+            return [
+                'status' => 'refused',
+                'refusal_code' => $reason,
+                'message' => 'Send suppressed due to consent check: '.$decision['reason'],
+            ];
+        }
+
         $session = WhatsappSession::where('business_id', $businessId)
             ->where('recipient_phone', $recipientPhone)
             ->first();

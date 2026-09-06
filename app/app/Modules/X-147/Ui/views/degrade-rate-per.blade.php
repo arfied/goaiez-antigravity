@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="rich media" screen="degrade_rate_per" />
     <div class="rcs-degrade-view p-4">
         <h3 class="text-lg font-bold">RCS vs SMS Degradation Metrics</h3>
         @if($caps->isEmpty())

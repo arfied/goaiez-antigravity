@@ -22,6 +22,9 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
+    'R245' => 'C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)',
+
+    // status: SPECCED
     'G3-54' => 'spinning text to evade carrier A2P filtering conflicts with P-064\'s 10DLC path — owner question',
 
     // status: SPECCED

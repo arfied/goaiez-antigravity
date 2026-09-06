@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="⭐⭐⭐ **[AMENDED T677" screen="card_screen" />
     <h1 class="text-xl font-semibold mb-4">Payment Methods</h1>
 
     @if($error)

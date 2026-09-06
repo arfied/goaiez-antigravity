@@ -4,23 +4,79 @@ declare(strict_types=1);
 
 namespace App\Modules\X167\Ui;
 
+use App\Enums\UserRole;
+use App\Modules\X167\Actions\ReorderProposeAction;
 use App\Modules\X167\Models\StockItem;
+use App\Modules\X167\Models\StockLocation;
+use App\Support\Tenancy;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class StockByVan extends Component
 {
     #[Locked]
-    public int $businessId = 0;
+    public int $businessId;
+
+    public array $proposed = [];
+
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
+        $this->businessId = Tenancy::id();
+    }
+
+    public function proposeRestock(int $itemId): void
+    {
+        $item = StockItem::where('business_id', $this->businessId)->findOrFail($itemId);
+
+        $po = app(ReorderProposeAction::class)->handle(
+            $this->businessId,
+            null,
+            [[
+                'stock_item_id' => $item->id,
+                'sku' => $item->sku,
+                'name' => $item->name,
+                'qty' => (float) $item->reorder_point,
+                'unit' => $item->unit,
+            ]],
+            0
+        );
+
+        $this->proposed[$item->id] = $po->po_number;
+    }
 
     public function render()
     {
-        $items = ($this->businessId > 0)
-            ? StockItem::where('business_id', $this->businessId)->get()
-            : collect();
+        $locations = StockLocation::where('business_id', $this->businessId)
+            ->orderBy('name')
+            ->get()
+            ->keyBy('id');
+
+        $itemsGrouped = StockItem::where('business_id', $this->businessId)
+            ->orderBy('name')
+            ->get()
+            ->groupBy('location_id');
+
+        $qty = [];
+        $point = [];
+        $low = [];
+
+        foreach ($itemsGrouped as $locId => $locItems) {
+            foreach ($locItems as $item) {
+                $q = (float) $item->quantity;
+                $p = (float) $item->reorder_point;
+                $qty[$item->id] = number_format($q, 2, '.', '').' '.$item->unit;
+                $point[$item->id] = number_format($p, 2, '.', '').' '.$item->unit;
+                $low[$item->id] = $q <= $p;
+            }
+        }
 
         return view('x-167::stock-by-van', [
-            'items' => $items,
+            'locations' => $locations,
+            'itemsGrouped' => $itemsGrouped,
+            'qty' => $qty,
+            'point' => $point,
+            'low' => $low,
         ]);
     }
 }

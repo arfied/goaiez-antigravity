@@ -112,11 +112,12 @@
                         type="text"
                         wire:model="name"
                         maxlength="{{ $nameLimit }}"
-                        class="mt-1 w-full rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-base text-ink"
+                        class="mt-1 w-full rounded-[--radius-field] border {{ $errors->has('name') ? 'border-alert' : 'border-rule' }} bg-paper px-3 py-2 text-base text-ink"
+                        @error('name') aria-invalid="true" @enderror
                     />
 
                     @error('name')
-                        <p class="mt-1 text-sm text-ink">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-alert" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -130,11 +131,12 @@
                         rows="4"
                         wire:model="body"
                         maxlength="{{ $bodyLimit }}"
-                        class="mt-1 w-full rounded-[--radius-field] border border-rule bg-paper px-3 py-2 text-base text-ink"
+                        class="mt-1 w-full rounded-[--radius-field] border {{ $errors->has('body') ? 'border-alert' : 'border-rule' }} bg-paper px-3 py-2 text-base text-ink"
+                        @error('body') aria-invalid="true" @enderror
                     ></textarea>
 
                     @error('body')
-                        <p class="mt-1 text-sm text-ink">{{ $message }}</p>
+                        <p class="mt-1 text-sm text-alert" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
 

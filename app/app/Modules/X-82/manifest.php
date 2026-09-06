@@ -36,6 +36,7 @@ return [
     'emits' => [
         'rate.changed',
         'allowance.granted',
+        'country.detected',
     ],
     'consumes' => [
         'subscription.renewed',
@@ -58,5 +59,7 @@ return [
     'agent_reachable' => [
         'rate.lookup',
         'allowance.lookup',
+        'rate.set',
+        'none',
     ],
 ];

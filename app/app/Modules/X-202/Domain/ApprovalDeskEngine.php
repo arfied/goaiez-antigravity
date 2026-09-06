@@ -8,6 +8,7 @@ use App\Modules\X202\Events\ApprovalDecided;
 use App\Modules\X202\Events\ApprovalEscalated;
 use App\Modules\X202\Events\ApprovalExpired;
 use App\Modules\X202\Events\ApprovalRaised;
+use App\Modules\X202\Models\ApprovalChain;
 use App\Modules\X202\Models\ApprovalItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -76,12 +77,49 @@ final class ApprovalDeskEngine
         return DB::transaction(function () use ($businessId, $approvalItemId, $decision, $userId, $comment) {
             $item = ApprovalItem::where('business_id', $businessId)->findOrFail($approvalItemId);
 
-            $item->update([
+            $chain = $item->approval_chain_id !== null
+                ? ApprovalChain::where('business_id', $businessId)->find($item->approval_chain_id)
+                : null;
+            $stepsCount = $chain->steps_count ?? 1;
+
+            $newComment = null;
+            if ($comment !== null) {
+                $timestamp = now()->toIso8601String();
+                $newLine = "[{$timestamp}] {$comment}";
+                $newComment = $item->decision_comment
+                    ? $item->decision_comment."\n".$newLine
+                    : $newLine;
+            }
+
+            // A sequential chain advances one desk per approval; only the last step decides,
+            // and ApprovalDecided fires only on the step that sets a terminal status (R245).
+            if ($decision === 'approved' && $item->current_step < $stepsCount) {
+                $updates = ['current_step' => $item->current_step + 1];
+
+                if ($newComment !== null) {
+                    $updates['decision_comment'] = $newComment;
+                }
+
+                $item->update($updates);
+
+                return [
+                    'approval_item_id' => $item->id,
+                    'status' => 'pending',
+                    'current_step' => $item->current_step,
+                ];
+            }
+
+            $updates = [
                 'status' => $decision,
                 'decided_by_user_id' => $userId,
                 'decided_at' => now(),
-                'decision_comment' => $comment,
-            ]);
+            ];
+
+            if ($newComment !== null) {
+                $updates['decision_comment'] = $newComment;
+            }
+
+            $item->update($updates);
 
             Event::dispatch(new ApprovalDecided(
                 businessId: $businessId,
@@ -92,6 +130,7 @@ final class ApprovalDeskEngine
             return [
                 'approval_item_id' => $item->id,
                 'status' => $decision,
+                'current_step' => $item->current_step,
                 'decided_at' => $item->decided_at->toIso8601String(),
             ];
         });

@@ -4,19 +4,35 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X01;
 
+use App\Models\Conversation;
+use App\Models\Customer;
+use App\Models\User;
+use App\Modules\CMail\Actions\EmailDnsCheckAction;
+use App\Modules\CMail\Actions\EmailIngestEventAction;
 use App\Modules\X01\Actions\ContactCreateAction;
 use App\Modules\X01\Actions\ContactMergeAction;
 use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Actions\ConversationTakeoverAction;
+use App\Modules\X01\Actions\ConversationTakeoverReleaseAction;
 use App\Modules\X01\Actions\SearchGlobalAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Events\ContactCreated;
+use App\Modules\X01\Events\ConversationUpdated;
+use App\Modules\X01\Events\LeadScored;
+use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\X01\Events\TakeoverStarted;
+use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
+use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
+use App\Modules\X01\Models\LeadScore;
+use App\Modules\X01\Models\TakeoverLatch;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
-use App\Modules\X121\Models\Conversation;
+use App\Modules\X01\Ui\CustomersList;
+use App\Modules\X01\Ui\Thread;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X01Test extends TestCase
@@ -119,6 +135,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-16] "Rep A is typing" presence on the shared thread
+     * BUILD PROPOSAL: G2-16 — "Rep A is typing" presence on the shared thread is unbuilt (grep for typing/presence is empty). Owner: X-01
      */
     public function test_g2_16_rep_presence(): void
     {
@@ -139,6 +156,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-23] named in the header
+     * ⛔ REFUSED: G2-23 — the capability's own text is "named in the header"; there is no clause to assert
      */
     public function test_g2_23_header(): void
     {
@@ -147,6 +165,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-25] D1: MASTER = Honest Counter for the tenant app; God-Mode/glassmorphism is console-only
+     * ⛔ REFUSED: G2-25 — the capability's own text is "D1: MASTER = Honest Counter for the tenant app; God-Mode/glassmorphism is console-only"; there is no clause to assert
      */
     public function test_g2_25_honest_counter(): void
     {
@@ -162,7 +181,7 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Scored Lead', '+15125550166');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 85, 'A');
+        $score = $this->manager->scoreLead($biz->id, $p->id, 85);
 
         $this->assertEquals(85, $score->lead_rating);
         $this->assertEquals('A', $score->grade);
@@ -170,6 +189,7 @@ class X01Test extends TestCase
 
     /**
      * [G2-36] named in the header; the UTM itself is X-138's
+     * ⛔ REFUSED: G2-36 — the capability's own text is "named in the header; the UTM itself is X-138's"; there is no clause to assert, and it points to X-138 which is owned outside this lane
      */
     public function test_g2_36_utm_header(): void
     {
@@ -185,13 +205,37 @@ class X01Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $p = $this->createContact->handle($biz->id, 'Graded Lead', '+15125550155');
-        $score = $this->manager->scoreLead($biz->id, $p->id, 92, 'A');
+        $score = $this->manager->scoreLead($biz->id, $p->id, 92);
 
         $this->assertGreaterThan(0.9, $score->confidence);
+
+        $atBand = $this->manager->scoreLead($biz->id, $p->id, 80);
+        $this->assertSame('A', $atBand->grade, '80 is the inclusive floor of the A band');
+
+        $underBand = $this->manager->scoreLead($biz->id, $p->id, 79);
+        $this->assertSame('B', $underBand->grade, '79 is one below the A band and grades B');
+
+        $floor = $this->manager->scoreLead($biz->id, $p->id, 0);
+        $this->assertSame('F', $floor->grade, 'a zero rating grades F, it does not default to A');
+
+        $other = $this->createContact->handle($biz->id, 'Never Scored', '+15125550157');
+        $before = LeadScore::where('business_id', $biz->id)->count();
+
+        try {
+            $this->manager->scoreLead($biz->id, $other->id, 101);
+            $this->fail('a rating above 100 must be refused');
+        } catch (LeadRatingOutOfRangeRefused $e) {
+            $this->assertSame('LEAD_RATING_OUT_OF_RANGE', LeadRatingOutOfRangeRefused::REFUSAL_CODE);
+        }
+
+        $this->assertSame($before, LeadScore::where('business_id', $biz->id)->count(), 'a refused rating creates no row');
+        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('person_id', $other->id)->count(), 'the refused person has no lead_score at all');
+        $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('lead_rating', 101)->count(), 'no row anywhere carries the refused rating');
     }
 
     /**
      * [G2-42] named in the header
+     * ⛔ REFUSED: G2-42 — the capability's own text is "named in the header"; there is no clause to assert
      */
     public function test_g2_42_header(): void
     {
@@ -203,15 +247,45 @@ class X01Test extends TestCase
      */
     public function test_g2_61_fenced_lookalike(): void
     {
-        $this->assertTrue(true);
+        Http::fake();
+        Event::fake([LeadScored::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Fence Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $p = $this->createContact->handle($biz->id, 'Fence Lead', '+15125550156');
+
+        $score = $this->manager->scoreLead($biz->id, $p->id, 95);
+
+        $this->assertSame('A', $score->grade, 'the score half of the split is a lead_score');
+        Event::assertDispatched(LeadScored::class);
+        Http::assertNothingSent();
     }
 
     /**
      * [G2-76] the unified inbox is the header's first line
+     * ⛔ REFUSED: G2-76 — the capability's own text is "the unified inbox is the header's first line"; there is no clause to assert
      */
     public function test_g2_76_unified_inbox_header(): void
     {
-        $this->assertTrue(true);
+        $files = array_merge(
+            glob(database_path('migrations/*.php')) ?: [],
+            glob(app_path('Modules/*/Database/migrations/*.php')) ?: []
+        );
+
+        $violators = [];
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            if (preg_match_all('/Schema::create\(\s*\'([^\']+)\'/i', $content, $matches)) {
+                foreach ($matches[1] as $table) {
+                    if (preg_match('/_(messages|conversations|threads|contacts)$/i', $table)) {
+                        $violators[] = $table;
+                    }
+                }
+            }
+        }
+        $violators = array_unique($violators);
+
+        $this->assertEmpty($violators, 'No table outside the twelve nouns may hold a message, thread, or contact. Found violators: '.implode(', ', $violators));
     }
 
     /**
@@ -219,11 +293,16 @@ class X01Test extends TestCase
      */
     public function test_g5_13_three_bullet_head(): void
     {
-        $this->assertTrue(true);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Live Biz']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Bullet Head', 'phone' => '+15551234567', 'email' => 'bullet@example.com']);
+        $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
+        $response->assertSee('Bullet Head', false)->assertSee('+15551234567', false)->assertSee('bullet@example.com', false);
     }
 
     /**
      * [G9-10] named in the header (moved there from X-121)
+     * ⛔ REFUSED: G9-10 — the capability's own text is "named in the header (moved there from X-121)"; there is no clause to assert
      */
     public function test_g9_10_header_transfer(): void
     {
@@ -232,6 +311,7 @@ class X01Test extends TestCase
 
     /**
      * [G11-22] one polymorphic Conversation (X-121's) across every channel
+     * ⛔ REFUSED: G11-22 — points to X-121, which is owned outside this lane.
      */
     public function test_g11_22_polymorphic_conversation(): void
     {
@@ -246,26 +326,131 @@ class X01Test extends TestCase
 
     /**
      * [G11-23] = the row above; one spec
+     * ⛔ REFUSED: G11-23 — the capability's own text is "= the row above; one spec"; there is no clause to assert
      */
     public function test_g11_23_omnichannel_spec(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Omni Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $smsRes = $this->manager->ingestMessage($biz->id, 'sms', '+15125550177', 'Omni Person', 'sms msg');
+
+        $person = Person::where('business_id', $biz->id)->find($smsRes['person_id']);
+        $person->update(['email' => 'omni@example.com']);
+
+        $voiceRes = $this->manager->ingestMessage($biz->id, 'voice', '+15125550177', 'Omni Person', 'voice msg');
+        $chatRes = $this->manager->ingestMessage($biz->id, 'chat', '+15125550177', 'Omni Person', 'chat msg');
+        $emailRes = $this->manager->ingestMessage($biz->id, 'email', 'omni@example.com', 'Omni Person', 'email msg');
+
+        $this->assertEquals($smsRes['person_id'], $voiceRes['person_id'], 'voice channel broken');
+        $this->assertEquals($smsRes['person_id'], $chatRes['person_id'], 'chat channel broken');
+        $this->assertEquals($smsRes['person_id'], $emailRes['person_id'], 'email channel broken');
+
+        $this->assertEquals($smsRes['conversation_id'], $voiceRes['conversation_id']);
+        $this->assertEquals($smsRes['conversation_id'], $chatRes['conversation_id']);
+        $this->assertEquals($smsRes['conversation_id'], $emailRes['conversation_id']);
+
+        $count = Conversation::where('business_id', $biz->id)->where('person_id', $smsRes['person_id'])->count();
+        $this->assertEquals(1, $count);
+
+        $conv = Conversation::find($smsRes['conversation_id']);
+        $this->assertInstanceOf(Conversation::class, $conv);
+
+        // The channel is frozen at the first message's channel ('sms')
+        $this->assertEquals('sms', $conv->channel);
     }
 
     /**
      * [G11-40] the header's first line
+     * ⛔ REFUSED: G11-40 — the capability's own text is "the header's first line"; there is no clause to assert
      */
     public function test_g11_40_header_line(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Header Line Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $smsRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550188',
+            senderName: 'Fifth Channel User',
+            body: 'First sms'
+        );
+
+        $waRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550188',
+            senderName: 'Fifth Channel User',
+            body: 'Second whatsapp'
+        );
+
+        $this->assertEquals($smsRes['person_id'], $waRes['person_id']);
+        $this->assertEquals($smsRes['conversation_id'], $waRes['conversation_id'], 'WhatsApp is the header\'s fifth channel and must land in the same timeline');
+        $this->assertEquals(1, Conversation::where('business_id', $biz->id)->where('person_id', $smsRes['person_id'])->count());
+        $this->assertEquals('whatsapp', $waRes['channel']);
     }
 
     /**
      * [G11-41] sort order on the thread list; the LTV is C-Billing's
+     * ⛔ REFUSED: G11-41 (second half) — "the LTV is C-Billing's" points to C-Billing which is owned outside this lane
      */
     public function test_g11_41_thread_list_sort(): void
     {
-        $this->assertTrue(true);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Sort Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $conv1 = Conversation::factory()->create([
+            'business_id' => $biz->id,
+            'subject' => 'Subject A - inserted first, oldest update',
+            'created_at' => now()->subDays(5),
+            'updated_at' => now()->subDays(5),
+        ]);
+
+        $conv2 = Conversation::factory()->create([
+            'business_id' => $biz->id,
+            'subject' => 'Subject B - inserted second, newest update',
+            'created_at' => now()->subDays(3),
+            'updated_at' => now()->subDays(1),
+        ]);
+
+        $conv3 = Conversation::factory()->create([
+            'business_id' => $biz->id,
+            'subject' => 'Subject C - inserted third, middle update',
+            'created_at' => now()->subDays(2),
+            'updated_at' => now()->subDays(3),
+        ]);
+
+        $response = Livewire::actingAs($admin)->test(Thread::class);
+
+        // 1. It renders. One conversation's subject is on the page.
+        $response->assertSee($conv1->subject);
+
+        // 2. It is ordered. assertSeeInOrder over three subjects, newest activity first.
+        $response->assertSeeInOrder([
+            $conv2->subject,
+            $conv3->subject,
+            $conv1->subject,
+        ]);
+    }
+
+    /** the customers list is newest-first (kept from main at the sixty merge) */
+    public function test_customers_list_newest_first(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sort Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p1 = Person::create(['business_id' => $biz->id, 'first_name' => 'P1']);
+        $p2 = Person::create(['business_id' => $biz->id, 'first_name' => 'P2']);
+        $p3 = Person::create(['business_id' => $biz->id, 'first_name' => 'P3']);
+
+        Livewire::test(CustomersList::class, ['businessId' => $biz->id])
+            ->assertViewHas('persons', function ($persons) use ($p1, $p2, $p3) {
+                $ids = $persons->pluck('id')->toArray();
+
+                return $ids === [$p3->id, $p2->id, $p1->id];
+            });
     }
 
     /**
@@ -273,7 +458,18 @@ class X01Test extends TestCase
      */
     public function test_g19_08_ghost_risk_flag(): void
     {
-        $this->assertTrue(true);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
+        $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
+        $response->assertSee('Ghost Risk', false);
+
+        // Negative case
+        $customer2 = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Goody']);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer2->id, 'lead_rating' => 90, 'grade' => 'A', 'confidence' => 0.9, 'signals' => []]);
+        $response2 = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer2]);
+        $response2->assertDontSee('Ghost Risk', false);
     }
 
     /**
@@ -281,6 +477,117 @@ class X01Test extends TestCase
      */
     public function test_g19_15_thread_live_update(): void
     {
-        $this->assertTrue(true);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Live Biz']);
+        $response = $this->actingAs($admin)->get('/app/x-01/thread');
+        $response->assertSee('wire:poll.10s', false);
+    }
+
+    public function test_takeover_reply_refuses_when_no_latch_is_active(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Render Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+
+        $this->expectException(TakeoverNotLatchedRefused::class);
+        $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
+    }
+
+    /**
+     * [G19-22] positive half: every channel lands on ONE Conversation.
+     * (R245) listener returns early when the inbound WhatsApp message body is empty
+     * Asserts against UnifiedInboxManager::ingestMessage() on real data.
+     */
+    public function test_g19_22_single_conversation_identity(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Single Conv Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res1 = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'whatsapp',
+            identifier: '+15125550199',
+            senderName: 'John Doe',
+            body: 'Hello from WhatsApp'
+        );
+
+        $res2 = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550199',
+            senderName: 'John Doe',
+            body: 'Hello from SMS'
+        );
+
+        $this->assertEquals($res1['conversation_id'], $res2['conversation_id'], 'The conversation id from the first ingest must equal the id from the second');
+        $this->assertEquals(1, Conversation::where('person_id', $res1['person_id'])->count(), 'Conversation::count() for that person must be 1');
+    }
+
+    public function test_g11_12_email_reply_bridge(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Email Reply Bridge Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $dnsAction = new EmailDnsCheckAction;
+        $domain = $dnsAction->handle($biz->id, 'reply.apex-air.com');
+
+        $ingestAction = new EmailIngestEventAction;
+
+        $convUpdated = null;
+        Event::listen(ConversationUpdated::class, function ($event) use (&$convUpdated) {
+            $convUpdated = $event;
+        });
+
+        // A1, A2
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj Reply', ['sender_name' => 'Reply Sender', 'body' => 'This is the reply body']);
+
+        $convs = Conversation::where('business_id', $biz->id)->get();
+
+        // A1: the reply lands as a conversation for the sender.
+        $this->assertEquals(1, $convs->count(), 'A1: The reply lands as a conversation for the sender');
+
+        // A2: that conversation carries the reply's body, not some other string off the event.
+        $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
+        $this->assertEquals('This is the reply body', $convUpdated->messageSnippet, 'A2: That conversation carries the reply body');
+
+        // A3: a 'replied' ingest whose body is empty creates nothing.
+        $convsBefore = Conversation::where('business_id', $biz->id)->count();
+        $ingestAction->handle($biz->id, $domain->id, 'replied', 'empty@acme.com', 'Subj Empty', ['sender_name' => 'Empty Sender', 'body' => '']);
+        $this->assertEquals($convsBefore, Conversation::where('business_id', $biz->id)->count(), 'A3: A replied ingest whose body is empty creates nothing');
+    }
+
+    public function test_takeover_release(): void
+    {
+        Event::fake([TakeoverStarted::class, TakeoverReleased::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Release Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+
+        $this->takeover->handle($biz->id, $c->id, 42, 'Operator Alice');
+
+        $action = new ConversationTakeoverReleaseAction($this->manager);
+        $action->handle($biz->id, $c->id);
+
+        $latch = TakeoverLatch::where('business_id', $biz->id)
+            ->where('conversation_id', $c->id)
+            ->first();
+
+        // 1. That the latch's state ended. Both columns the model casts, not one.
+        $this->assertFalse($latch->is_active);
+        $this->assertNotNull($latch->released_at);
+
+        // 2. That the ending was published — the event, with whatever you decided it carries.
+        Event::assertDispatched(TakeoverReleased::class, function ($event) use ($biz, $c) {
+            return $event->businessId === $biz->id && $event->conversationId === $c->id;
+        });
+
+        // 3. That the release is consulted by something other than the method that wrote it.
+        $this->expectException(TakeoverNotLatchedRefused::class);
+        $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
     }
 }

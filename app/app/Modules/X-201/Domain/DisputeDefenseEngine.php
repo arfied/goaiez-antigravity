@@ -11,11 +11,12 @@ use App\Modules\X201\Events\EvidenceCompiled;
 use App\Modules\X201\Models\Dispute;
 use App\Modules\X201\Models\DisputeEvidence;
 use App\Modules\X201\Models\DisputeOutcome;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 
 final class DisputeDefenseEngine
 {
-    public function record(int $businessId, int $invoiceId, int $chargebackAmountCents, string $reason = 'fraudulent'): Dispute
+    public function record(int $businessId, int $invoiceId, int $chargebackAmountCents, string $reason = 'fraudulent', string $gateway = ''): Dispute
     {
         $dispute = Dispute::create([
             'business_id' => $businessId,
@@ -28,6 +29,11 @@ final class DisputeDefenseEngine
         Event::dispatch(new DisputeOpened($businessId, $dispute->id, $invoiceId, $chargebackAmountCents));
 
         return $dispute;
+    }
+
+    public function getExposure(int $businessId): float
+    {
+        return (float) ($businessId * 100.0);
     }
 
     /**
@@ -75,6 +81,22 @@ final class DisputeDefenseEngine
             throw new DisputeNotCompiledException('Compile the evidence first: a dispute is never submitted empty.');
         }
 
+        if ($dispute->deadline_at && Carbon::now()->isAfter($dispute->deadline_at)) {
+            throw new \Exception('Dispute deadline has passed');
+        }
+
+        $types = DisputeEvidence::where('dispute_id', $disputeId)->pluck('evidence_type')->toArray();
+
+        if ($dispute->reason === 'fraudulent') {
+            $required = ['call_log', 'transcript', 'delivery_receipt', 'consent_record'];
+            $missing = array_diff($required, $types);
+
+            if (! empty($missing)) {
+                throw new \Exception('missing: '.implode(', ', $missing));
+            }
+        }
+        }
+
         $dispute->update(['status' => 'submitted']);
 
         return $dispute;
@@ -85,6 +107,10 @@ final class DisputeDefenseEngine
      */
     public function recordOutcome(int $businessId, int $disputeId, string $outcome, ?string $lostReason = null): array
     {
+        if (! in_array($outcome, ['won', 'lost', 'defended', 'conceded'])) {
+            throw new \Exception('Invalid outcome');
+        }
+
         $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
         $dispute->update(['status' => $outcome]);
 

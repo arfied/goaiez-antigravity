@@ -26,9 +26,15 @@ final class ChatCaptureAction
             $session = ChatSession::where('business_id', $businessId)->findOrFail($sessionId);
 
             // 1. Form submission creates the Person (TEST ANCHOR)
+            // A detail that is blank or whitespace was not given (R245, 2026-09-05).
+            $contactEmail = is_string($email) && trim($email) === '' ? null : $email;
+
             $person = Person::updateOrCreate(
                 ['business_id' => $businessId, 'phone' => $phone],
-                ['first_name' => $name, 'email' => $email]
+                array_filter([
+                    'first_name' => $name,
+                    'email' => $contactEmail,
+                ], fn ($v) => $v !== null)
             );
 
             $lead = ChatLead::create([

@@ -1,0 +1,10 @@
+--- app/app/Events/Voice/CallMissed.php
++++ app/app/Events/Voice/CallMissed.php
+@@ -48,6 +48,7 @@
+      */
+     public function __construct(public readonly Call $call)
+     {
++        \Illuminate\Support\Facades\Log::info("CallMissed event constructed for call " . $call->id);
+         $this->businessId = $call->business_id;
+     }
+ 

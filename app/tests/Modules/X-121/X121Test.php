@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X121;
 
+use App\Models\Conversation;
 use App\Modules\X121\Actions\EntityHistoryAction;
 use App\Modules\X121\Actions\EntityReadAction;
 use App\Modules\X121\Actions\EntityRestoreAction;
@@ -332,5 +333,14 @@ class X121Test extends TestCase
         ]);
 
         $this->assertNull($job->person_id);
+    }
+
+    public function test_legacy_model_refuses_unscoped_write(): void
+    {
+        $this->expectException(\Exception::class);
+        Conversation::create([
+            'channel' => 'sms',
+            'status' => 'open',
+        ]);
     }
 }

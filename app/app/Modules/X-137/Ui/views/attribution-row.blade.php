@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="dynamic number insertion" screen="attribution_row" />
     <div class="attribution-row-view p-4">
         <h3 class="text-lg font-bold">Call Attribution Feed</h3>
         @if($tokens->isEmpty())

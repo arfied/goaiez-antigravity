@@ -4,15 +4,27 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X110;
 
+use App\Enums\ShortLinkPurpose;
+use App\Models\ShortLinkClick;
+use App\Modules\X102\Actions\ChatContextRefreshAction;
+use App\Modules\X102\Actions\ChatStartAction;
+use App\Modules\X102\Models\ChatSession;
 use App\Modules\X110\Actions\PixelEventsAction;
 use App\Modules\X110\Actions\PixelInstallAction;
 use App\Modules\X110\Actions\PixelVerifyAction;
 use App\Modules\X110\Domain\PixelEngine;
 use App\Modules\X110\Events\FormAbandoned;
 use App\Modules\X110\Events\VisitStarted;
+use App\Modules\X110\Models\CwvSample;
+use App\Modules\X110\Models\IdentityLink;
 use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
+use App\Services\ShortLinks\ShortLinks;
+use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X110Test extends TestCase
@@ -107,7 +119,31 @@ class X110Test extends TestCase
      */
     public function test_g9_02_single_database(): void
     {
-        $this->assertTrue(true);
+        $this->assertFalse(array_key_exists('clickhouse', config('database.connections')));
+
+        $this->assertNull((new PixelEvent)->getConnectionName());
+        $this->assertNull((new Visit)->getConnectionName());
+        $this->assertNull((new Session)->getConnectionName());
+        $this->assertNull((new CwvSample)->getConnectionName());
+        $this->assertNull((new IdentityLink)->getConnectionName());
+
+        $biz = TestCase::provisionTenant(['name' => 'Single DB Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_xyz_789');
+        $this->eventAction->handle(
+            businessId: $biz->id,
+            sessionId: $v['session_id'],
+            eventName: 'custom_event',
+            payload: ['foo' => 'bar']
+        );
+
+        $readEvent = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'custom_event')
+            ->first();
+
+        $this->assertNotNull($readEvent);
+        $this->assertEquals('custom_event', $readEvent->event_name);
     }
 
     /**
@@ -127,7 +163,42 @@ class X110Test extends TestCase
      */
     public function test_g13_12_chat_page_context(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Chat Context Biz']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_chat_1', 'google', 'cpc', 'spring', '/hvac-repair');
+
+        $context = $this->engine->pageContextForSession($biz->id, $v['session_token']);
+        $this->assertEquals('/hvac-repair', $context['landing_page']);
+        $this->assertEquals('google', $context['utm_source']);
+        $this->assertEquals('/hvac-repair', $context['current_page']);
+
+        $chatStart = new ChatStartAction($this->engine);
+        $chatRefresh = new ChatContextRefreshAction($this->engine);
+
+        $session = $chatStart->handle($biz->id, '192.168.1.1', false, $v['session_token']);
+        $this->assertEquals($v['session_token'], $session->pixel_session_token);
+        $this->assertEquals('/hvac-repair', $session->page_context['current_page']);
+
+        $this->eventAction->handle($biz->id, $v['session_id'], 'page_view', ['url' => '/hvac-repair']);
+        $this->eventAction->handle($biz->id, $v['session_id'], 'page_view', ['url' => '/hvac-repair/pricing']);
+
+        $chatRefresh->handle($session);
+
+        $fresh = ChatSession::find($session->id)->fresh();
+        $this->assertEquals('/hvac-repair/pricing', $fresh->page_context['current_page']);
+        $this->assertEquals('/hvac-repair', $fresh->page_context['landing_page']);
+
+        $sessionNoToken = $chatStart->handle($biz->id, '192.168.1.1', false, null);
+        $this->assertNull($sessionNoToken->pixel_session_token);
+        $this->assertNull($sessionNoToken->page_context);
+
+        $otherBiz = TestCase::provisionTenant(['name' => 'Other Biz']);
+        DB::statement("SET app.business_id = '{$otherBiz->id}'");
+        $otherVisit = $this->engine->recordVisit($otherBiz->id, 'vis_other_1');
+
+        $badContext = $this->engine->pageContextForSession($biz->id, $otherVisit['session_token']);
+        $this->assertNull($badContext);
     }
 
     /**
@@ -135,7 +206,31 @@ class X110Test extends TestCase
      */
     public function test_g13_27_tenant_tags(): void
     {
-        $this->assertTrue(true);
+        Http::fake();
+
+        $biz = TestCase::provisionTenant(['name' => 'Ads Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_ads_1');
+
+        $this->eventAction->handle(
+            businessId: $biz->id,
+            sessionId: $v['session_id'],
+            eventName: 'tag.fired',
+            payload: [
+                'tag_id' => 'GTM-XXXXXXX',
+                'script_name' => 'google_tag_manager',
+            ]
+        );
+
+        $readEvent = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'tag.fired')
+            ->first();
+
+        $this->assertNotNull($readEvent);
+        $this->assertEquals('GTM-XXXXXXX', $readEvent->payload['tag_id']);
+
+        Http::assertNothingSent();
     }
 
     /**
@@ -143,7 +238,37 @@ class X110Test extends TestCase
      */
     public function test_g13_28_redirect_hop(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Hop Biz']);
+        Tenancy::set($biz->id);
+
+        $links = app(ShortLinks::class);
+        $link = $links->mint('https://target.example.com', ShortLinkPurpose::ReviewInvite);
+
+        $domain = $links->domain();
+
+        // 1. The click is recorded before the visitor leaves
+        $response = $this->get("https://{$domain}/{$link->token}");
+        $response->assertRedirect('https://target.example.com');
+
+        Tenancy::set($biz->id);
+
+        $click = ShortLinkClick::where('short_link_id', $link->id)->first();
+        $this->assertNotNull($click);
+        $this->assertEquals($link->id, $click->short_link_id);
+
+        // 2. A dead link is indistinguishable from one that never existed
+        $links->revoke($link);
+        $responseDead = $this->get("https://{$domain}/{$link->token}");
+        $responseNeverExisted = $this->get("https://{$domain}/neverexisted");
+
+        $this->assertEquals($responseNeverExisted->status(), $responseDead->status());
+        $this->assertEquals($responseNeverExisted->content(), $responseDead->content());
+
+        Tenancy::set($biz->id);
+
+        // 3. A dead link is still not a hit
+        $clicksAfter = ShortLinkClick::where('short_link_id', $link->id)->count();
+        $this->assertEquals(1, $clicksAfter);
     }
 
     /**
@@ -159,5 +284,97 @@ class X110Test extends TestCase
 
         $this->assertEquals('rage_click.detected', $evt->event_name);
         $this->assertEquals(6, $evt->payload['clicks']);
+    }
+
+    /**
+     * [G13-09] §44 · P-128 — geo-fenced ad serving; we have no device-location source and X-139 uploads completed JOBS, not store visits
+     */
+    public function test_g13_09_no_geo_fenced_ad_serving(): void
+    {
+        Http::fake();
+
+        $biz = TestCase::provisionTenant(['name' => 'Geo Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_geo_1');
+
+        $this->eventAction->handle(
+            businessId: $biz->id,
+            sessionId: $v['session_id'],
+            eventName: 'store.visited',
+            payload: [
+                'location_id' => 'LOC-123',
+                'device_id' => 'DEV-456',
+            ]
+        );
+
+        $readEvent = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'store.visited')
+            ->first();
+
+        $this->assertNotNull($readEvent);
+        $this->assertEquals('LOC-123', $readEvent->payload['location_id']);
+
+        Http::assertNothingSent();
+    }
+
+    /**
+     * [G13-13] §44 · P-128 — a filter on ad delivery is ad management
+     */
+    public function test_g13_13_no_ad_delivery_filter(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Form Biz 1']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v1 = $this->engine->recordVisit($biz->id, 'vis_form_1');
+        $this->eventAction->handle($biz->id, $v1['session_id'], 'form.abandoned', [
+            'form_id' => 'form_A',
+            'abandoned_field' => 'email',
+        ]);
+        $this->eventAction->handle($biz->id, $v1['session_id'], 'form.abandoned', [
+            'form_id' => 'form_A',
+            'abandoned_field' => 'phone',
+        ]);
+
+        $otherBiz = TestCase::provisionTenant(['name' => 'Form Biz 2']);
+        DB::statement("SET app.business_id = '{$otherBiz->id}'");
+        $v2 = $this->engine->recordVisit($otherBiz->id, 'vis_form_2');
+        $this->eventAction->handle($otherBiz->id, $v2['session_id'], 'form.abandoned', [
+            'form_id' => 'form_A',
+            'abandoned_field' => 'name',
+        ]);
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+        $result = $this->engine->abandonPointsForForm($biz->id, 'form_A');
+        $this->assertEquals(2, $result['total']);
+        $this->assertCount(2, $result['points']);
+        $fields = array_column($result['points'], 'field');
+        $this->assertContains('email', $fields);
+        $this->assertContains('phone', $fields);
+        $this->assertNotContains('name', $fields);
+    }
+
+    /**
+     * [G13-32] E3's property law is first-party only with NO session recording — a watch-the-user replay needs the owner's word before it can be specced. Owner question
+     */
+    public function test_g13_32_no_session_recording(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Rage Biz 2']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $v = $this->engine->recordVisit($biz->id, 'vis_rage_2');
+        $this->engine->recordRageClick($biz->id, $v['session_id'], 'button#checkout', 4);
+
+        $event = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'rage_click.detected')
+            ->first();
+
+        $this->assertNotNull($event);
+        $this->assertEquals(['element' => 'button#checkout', 'clicks' => 4], $event->payload);
+
+        $count = PixelEvent::where('business_id', $biz->id)
+            ->where('event_name', 'rage_click.detected')
+            ->count();
+        $this->assertEquals(1, $count);
     }
 }

@@ -14,6 +14,7 @@ use App\Support\CardholderName;
 use App\Support\Money;
 use App\Support\PlanSelection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Sleep;
 use RuntimeException;
 
 /**
@@ -241,22 +242,39 @@ final class AuthorizeNetGateway
 
         $schedule = $this->paymentSchedule($selection);
 
-        $subscriptionId = $this->api->createSubscription(
-            businessId: $business->id,
-            name: $this->subscriptionName($selection),
-            amountMinorUnits: $schedule['amountMinorUnits'],
-            intervalLength: $schedule['intervalLength'],
-            intervalUnit: $schedule['intervalUnit'],
-            // ARB's `startDate` is `YYYY-MM-DD` — a calendar day with no time
-            // and no zone. Formatting it anywhere else would invite a
-            // `toIso8601String()`, which the vendor rejects.
-            startDate: $startsOn->toDateString(),
-            totalOccurrences: $schedule['totalOccurrences'],
-            customerProfileId: $profile['customerProfileId'],
-            customerPaymentProfileId: $profile['customerPaymentProfileId'],
-            trialOccurrences: $schedule['trialOccurrences'],
-            trialAmountMinorUnits: $schedule['trialAmountMinorUnits'],
-        );
+        $attempts = 0;
+        while (true) {
+            $attempts++;
+            try {
+                $subscriptionId = $this->api->createSubscription(
+                    businessId: $business->id,
+                    name: $this->subscriptionName($selection),
+                    amountMinorUnits: $schedule['amountMinorUnits'],
+                    intervalLength: $schedule['intervalLength'],
+                    intervalUnit: $schedule['intervalUnit'],
+                    // ARB's `startDate` is `YYYY-MM-DD` — a calendar day with no time
+                    // and no zone. Formatting it anywhere else would invite a
+                    // `toIso8601String()`, which the vendor rejects.
+                    startDate: $startsOn->toDateString(),
+                    totalOccurrences: $schedule['totalOccurrences'],
+                    customerProfileId: $profile['customerProfileId'],
+                    customerPaymentProfileId: $profile['customerPaymentProfileId'],
+                    trialOccurrences: $schedule['trialOccurrences'],
+                    trialAmountMinorUnits: $schedule['trialAmountMinorUnits'],
+                );
+                break;
+            } catch (AuthorizeNetRequestFailed $e) {
+                // E00040: "The record cannot be found." Authorize.Net sometimes rejects ARBCreateSubscriptionRequest
+                // right after createCustomerPaymentProfileRequest due to propagation delay across their infrastructure.
+                // We retry up to 3 attempts, 2 seconds apart.
+                if ($e->reason === 'E00040' && $attempts <= 3) {
+                    Sleep::for(2)->seconds();
+
+                    continue;
+                }
+                throw $e;
+            }
+        }
 
         $this->subscriptions->startAuthorizeNetSubscription(
             $business,
@@ -479,9 +497,11 @@ final class AuthorizeNetGateway
     {
         $name = self::PRODUCT_NAME.' — '.Plan::Base->label().', '.strtolower($selection->term->label());
 
-        return $selection->additionalLocations === 0
+        $name = $selection->additionalLocations === 0
             ? $name
             : $name.', '.($selection->additionalLocations + 1).' locations';
+
+        return $name;
     }
 
     /*

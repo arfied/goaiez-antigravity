@@ -15,5 +15,6 @@ class ChatSession extends Model
     protected $casts = [
         'rage_clicks_count' => 'integer',
         'is_ai_capped' => 'boolean',
+        'page_context' => 'array',
     ];
 }

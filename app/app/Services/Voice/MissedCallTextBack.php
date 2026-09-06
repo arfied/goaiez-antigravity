@@ -17,6 +17,7 @@ use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
 use App\Services\Messaging\Outbound\SendOutcome;
 use App\Support\Identifier;
+use Illuminate\Support\Facades\Log;
 use LogicException;
 
 /**
@@ -322,6 +323,8 @@ final class MissedCallTextBack
                 ],
             );
         }
+
+        Log::error('TextBack outcome: '.json_encode($outcome));
 
         return $outcome;
     }

@@ -18,6 +18,11 @@ use App\Models\ReviewHubPage;
 use App\Models\Subscription;
 use App\Models\TriageConversation;
 use App\Models\User;
+use App\Modules\X110\Models\PixelEvent;
+use App\Modules\X110\Models\Session;
+use App\Modules\X110\Models\Visit;
+use App\Modules\X124\Models\AssistantRecommendation;
+use App\Modules\X124\Models\AssistantSession;
 use App\Services\Proof\ProofNumbers;
 use App\Services\TenantProvisioner;
 use App\Support\Tenancy;
@@ -223,7 +228,6 @@ class UiReviewSeeder extends Seeder
                     Message::factory()->create([
                         'conversation_id' => $conv->id,
                         'created_at' => now()->subDays($days)->addMinutes($j * 5),
-                        'updated_at' => now()->subDays($days)->addMinutes($j * 5),
                     ]);
                 }
             }
@@ -247,11 +251,11 @@ class UiReviewSeeder extends Seeder
             }
         }
 
-        if (Review::where('is_platform', false)->count() < 4) {
+        if (Review::where('location_id', $location->id)->where('status', 'pending')->count() < 4) {
             // 4 reviews (one unhappy)
             for ($i = 0; $i < 3; $i++) {
                 $days = rand(1, 30);
-                Review::factory()->fromGoogle()->create([
+                Review::factory()->create([
                     'location_id' => $location->id,
                     'rating' => 5,
                     'created_at' => now()->subDays($days),
@@ -259,7 +263,7 @@ class UiReviewSeeder extends Seeder
                 ]);
             }
             $days = rand(1, 30);
-            Review::factory()->fromGoogle()->create([
+            Review::factory()->create([
                 'location_id' => $location->id,
                 'rating' => 1,
                 'created_at' => now()->subDays($days),
@@ -295,14 +299,132 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-        if (! DB::table('invoices')->where('business_id', $businessId)->exists()) {
+        if (AssistantRecommendation::where('business_id', $businessId)->count() === 0) {
+            $asess = AssistantSession::create(['business_id' => $businessId, 'session_token' => 'asess_1']);
+            AssistantRecommendation::create([
+                'business_id' => $businessId,
+                'session_id' => $asess->id,
+                'title' => '14 missed calls, no text-back template — turn it on?',
+                'action_key' => 'enable_text_back',
+                'status' => 'active',
+            ]);
+        }
+
+        if (Visit::where('business_id', $businessId)->count() === 0) {
+            for ($v = 1; $v <= 3; $v++) {
+                $visit = Visit::create([
+                    'business_id' => $businessId,
+                    'visitor_id' => 'vis_'.$v,
+                    'ip_hash' => 'hash'.$v,
+                    'user_agent' => 'Mozilla',
+                    'landing_page' => '/',
+                ]);
+                $session = Session::create([
+                    'business_id' => $businessId,
+                    'visit_id' => $visit->id,
+                    'session_token' => 'sess_tok_'.$v,
+                    'started_at' => now()->startOfDay(),
+                    'ended_at' => now()->startOfDay()->addMinutes(5),
+                ]);
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $session->id,
+                    'event_name' => 'pageview',
+                    'payload' => ['url' => '/'],
+                    'created_at' => now(),
+                ]);
+            }
+        }
+
+        if (DB::table('attribution_queries')->where('business_id', $businessId)->count() < 2) {
+            DB::table('attribution_queries')->insert([
+                [
+                    'business_id' => $businessId,
+                    'job_id' => 101,
+                    'job_value' => null,
+                    'touches' => json_encode([['source' => 'organic_search']]),
+                    'attribution_status' => 'single',
+                    'created_at' => now()->subDays(2),
+                    'updated_at' => now()->subDays(2),
+                ],
+                [
+                    'business_id' => $businessId,
+                    'job_id' => 102,
+                    'job_value' => 50000,
+                    'touches' => json_encode([['source' => 'google_cpc'], ['source' => 'direct']]),
+                    'attribution_status' => 'ambiguous',
+                    'created_at' => now()->subDays(1),
+                    'updated_at' => now()->subDays(1),
+                ],
+            ]);
+        }
+
+        if (PixelEvent::where('business_id', $businessId)->where('event_name', 'form.abandoned')->count() < 2) {
+            $sess1 = Session::where('business_id', $businessId)->first();
+            $sess2 = Session::where('business_id', $businessId)->skip(1)->first();
+            if ($sess1 && $sess2) {
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $sess1->id,
+                    'event_name' => 'form.abandoned',
+                    'payload' => ['form_id' => 'contact_form', 'abandoned_field' => 'email'],
+                    'created_at' => now()->subHours(2),
+                ]);
+                PixelEvent::create([
+                    'business_id' => $businessId,
+                    'session_id' => $sess2->id,
+                    'event_name' => 'form.abandoned',
+                    'payload' => ['form_id' => 'quote_form', 'abandoned_field' => 'phone'],
+                    'created_at' => now()->subHours(1),
+                ]);
+            }
+        }
+
+        if (! DB::table('ad_connections')->where('business_id', $businessId)->exists()) {
+            DB::table('ad_connections')->insert([
+                ['business_id' => $businessId, 'platform' => 'google', 'account_id' => 'act_google_1', 'is_connected' => true, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'platform' => 'facebook', 'account_id' => 'act_facebook_1', 'is_connected' => false, 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+
+        if (! DB::table('conversion_uploads')->where('business_id', $businessId)->exists()) {
+            DB::table('conversion_uploads')->insert([
+                ['business_id' => $businessId, 'job_id' => 101, 'status' => 'uploaded', 'conversion_value_cents' => 20000000, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 102, 'status' => 'uploaded', 'conversion_value_cents' => 25778900, 'rejection_reason' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 103, 'status' => 'rejected', 'conversion_value_cents' => 1000, 'rejection_reason' => 'Invalid click ID', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 104, 'status' => 'rejected', 'conversion_value_cents' => 2000, 'rejection_reason' => 'Duplicate conversion', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 105, 'status' => 'rejected', 'conversion_value_cents' => 3000, 'rejection_reason' => 'Too old', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 106, 'status' => 'rejected', 'conversion_value_cents' => 4000, 'rejection_reason' => 'Unverified', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'job_id' => 107, 'status' => 'rejected', 'conversion_value_cents' => 5000, 'rejection_reason' => 'Mismatch', 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+        if (! DB::table('invoices')->where('business_id', $businessId)->where('invoice_number', 'INV-REV-U1')->exists()) {
+            $customerId = DB::table('people')->where('business_id', $businessId)->value('id');
+            if (! $customerId) {
+                $customerId = DB::table('people')->insertGetId(['business_id' => $businessId, 'first_name' => 'Review', 'last_name' => 'Customer', 'email' => 'rev@ex.com', 'phone' => '+15551234567', 'created_at' => now(), 'updated_at' => now()]);
+            }
             DB::table('invoices')->insert([
-                ['business_id' => $businessId, 'invoice_number' => 'INV-001', 'total_cents' => 10000, 'paid_cents' => 10000, 'status' => 'paid', 'due_date' => now()->subDays(10), 'created_at' => now(), 'updated_at' => now()],
-                ['business_id' => $businessId, 'invoice_number' => 'INV-002', 'total_cents' => 5000, 'paid_cents' => 0, 'status' => 'overdue', 'due_date' => now()->subDays(5), 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_number' => 'INV-REV-U1', 'total_cents' => 389200, 'paid_cents' => 100000, 'status' => 'due', 'due_date' => now()->addDays(5)->toDateString(), 'pdf_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_number' => 'INV-REV-U2', 'total_cents' => 178900, 'paid_cents' => 0, 'status' => 'issued', 'due_date' => now()->addDays(15)->toDateString(), 'pdf_url' => null, 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_number' => 'INV-REV-PAID', 'total_cents' => 100000, 'paid_cents' => 100000, 'status' => 'paid', 'due_date' => now()->subDays(5)->toDateString(), 'pdf_url' => null, 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+
+        if (! DB::table('overflow_charges')->where('business_id', $businessId)->where('reference_id', 'REF-REV-001')->exists()) {
+            $customerId = DB::table('people')->where('business_id', $businessId)->value('id');
+            if (! $customerId) {
+                $customerId = DB::table('people')->insertGetId(['business_id' => $businessId, 'first_name' => 'Review', 'last_name' => 'Customer', 'email' => 'rev@ex.com', 'phone' => '+15551234567', 'created_at' => now(), 'updated_at' => now()]);
+            }
+            $invoiceId = DB::table('invoices')->where('business_id', $businessId)->value('id') ?? 1;
+            DB::table('overflow_charges')->insert([
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_id' => $invoiceId, 'charge_type' => 'overflow_reversed', 'amount_cents' => 84520, 'card_token' => 'tok_1', 'reference_id' => 'REF-REV-001', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_id' => $invoiceId, 'charge_type' => 'overflow_reversed', 'amount_cents' => 31950, 'card_token' => 'tok_2', 'reference_id' => 'REF-REV-002', 'created_at' => now(), 'updated_at' => now()],
+                ['business_id' => $businessId, 'customer_id' => $customerId, 'invoice_id' => $invoiceId, 'charge_type' => 'overflow_charged', 'amount_cents' => 10000, 'card_token' => 'tok_3', 'reference_id' => 'REF-CHG-NOT', 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
 
         app(ProofNumbers::class)->recompute(ProofNumbers::monthOf());
         app(ProofNumbers::class)->recompute(ProofNumbers::ALL);
+
     }
 }

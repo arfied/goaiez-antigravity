@@ -11,7 +11,7 @@ final class PlanProposeAction
     public function handle(
         int $businessId,
         string $name,
-        int $priceCents = 19900,
+        int $priceCents,
         int $intervalMonths = 12,
         int $reminderDays = 7
     ): MembershipPlan {

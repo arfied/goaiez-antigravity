@@ -12,6 +12,7 @@ use App\Modules\X167\Events\InventoryConsumed;
 use App\Modules\X167\Events\PoSent;
 use App\Modules\X167\Events\ReorderTriggered;
 use App\Modules\X167\Events\StockLow;
+use App\Modules\X167\Models\PurchaseOrder;
 use App\Modules\X167\Models\StockItem;
 use App\Modules\X167\Models\StockLocation;
 use App\Modules\X167\Models\Supplier;
@@ -43,6 +44,8 @@ class X167Test extends TestCase
      * a fractional consumption of 2.5 m on a 10 m spool leaves 7.5 m;
      * no PO is emailed without an approval action row;
      * a cancelled unfulfilled order restores its decrement
+     * [G6-14]
+     * [G1-58]
      */
     public function test_anchor_fractional_stock_po_approval_and_cancellation_restoration(): void
     {
@@ -141,13 +144,93 @@ class X167Test extends TestCase
         $this->assertTrue($approvedSend['sent']);
 
         Event::assertDispatched(PoSent::class);
+
+        $po->refresh();
+        $this->assertEquals('sent', $po->status);
+        $this->assertEquals('act_approv_9981', $po->approved_action_id);
     }
 
-    /**
-     * [G1-58], [G2-24], [G6-08], [G6-14], [G6-18], [G6-22], [G6-24], [G17-15], [G19-02], [G1-64], [G1-76], [G1-79], [G6-39], [G6-40], [G6-43], [G6-46], [G6-47], [G6-48], [G6-49], [G6-51]
-     */
-    public function test_inventory_capabilities(): void
+    public function test_reorder_trigger_and_clamp(): void
     {
-        $this->assertTrue(true);
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $van = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Service Van 04',
+            'type' => 'van',
+        ]);
+
+        $spool = StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $van->id,
+            'sku' => 'COPPER-10M-SPOOL-2',
+            'barcode' => '784920192832',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 10.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        // Consume below reorder_point (3.0)
+        $this->adjustAction->handle(
+            businessId: $biz->id,
+            stockItemId: $spool->id,
+            quantityDelta: 8.0,
+            isCancellation: false
+        );
+
+        Event::assertDispatched(StockLow::class);
+        Event::assertDispatched(ReorderTriggered::class);
+
+        // Consume more than on hand
+        $this->adjustAction->handle(
+            businessId: $biz->id,
+            stockItemId: $spool->id,
+            quantityDelta: 5.0,
+            isCancellation: false
+        );
+
+        $spool->refresh();
+        $this->assertEquals(0.0, (float) $spool->quantity);
+    }
+
+    /** [G6-48] */
+    public function test_g6_48_a_low_stock_alert_never_places_an_order(): void
+    {
+        Event::fake([InventoryConsumed::class, ReorderTriggered::class, StockLow::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Inventory & Stock Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $van = StockLocation::create([
+            'business_id' => $biz->id,
+            'name' => 'Service Van 04',
+            'type' => 'van',
+        ]);
+
+        $spool = StockItem::create([
+            'business_id' => $biz->id,
+            'location_id' => $van->id,
+            'sku' => 'COPPER-10M-SPOOL-3',
+            'barcode' => '784920192833',
+            'name' => '3/8" Copper Refrigerant Line',
+            'quantity' => 10.0,
+            'unit' => 'm',
+            'reorder_point' => 3.0,
+        ]);
+
+        $this->adjustAction->handle(
+            businessId: $biz->id,
+            stockItemId: $spool->id,
+            quantityDelta: 8.0,
+            isCancellation: false
+        );
+
+        Event::assertDispatched(StockLow::class);
+        Event::assertDispatched(ReorderTriggered::class);
+        $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count());
     }
 }

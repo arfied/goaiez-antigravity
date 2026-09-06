@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X103;
 
+use App\Modules\CReviews\Models\ReviewRequest;
+use App\Modules\CSms\Events\SendRequested;
 use App\Modules\X103\Actions\FunnelBuildAction;
 use App\Modules\X103\Actions\PageCreateAction;
 use App\Modules\X103\Actions\SiteBuildAction;
 use App\Modules\X103\Actions\SitePublishAction;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Events\ApprovalRequested;
+use App\Modules\X103\Events\PagePublished;
+use App\Modules\X103\Events\SitePublished;
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
+use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Models\InvoiceLine;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X103Test extends TestCase
@@ -82,6 +90,20 @@ class X103Test extends TestCase
         Event::assertDispatched(ApprovalRequested::class);
     }
 
+    public function test_anchor_site_published_shares_commit_id(): void
+    {
+        Event::fake([PagePublished::class, SitePublished::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Site Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'home', 'Homepage', false);
+        $pubRes = $this->publishAction->handle($biz->id, $page->id, ['hero' => 'Top HVAC Services']);
+
+        Event::assertDispatched(SitePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id'] && $e->versionId === $pubRes['version_id']);
+        Event::assertDispatched(PagePublished::class, fn ($e) => $e->commitId === $pubRes['commit_id'] && $e->versionId === $pubRes['version_id']);
+    }
+
     /**
      * [G6-11], [G7-16], [G16-07], [G19-07] Short Linker, Device Routing, Custom Slug, Click Cap & Expiry
      */
@@ -108,11 +130,199 @@ class X103Test extends TestCase
         $this->assertEquals('/promo/desktop', $desktopRoute['destination_url']);
     }
 
-    /**
-     * [G6-15], [G6-16], [G6-17], [G6-20], [G6-27], [G6-32], [G7-18], [G9-04], [G12-39]
-     */
-    public function test_header_capabilities(): void
+    public function test_g9_04_every_built_page_version_carries_the_pixel(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Pixel Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'pixel', 'Pixel', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertTrue($version->pixel_installed);
+    }
+
+    /** (R245) */
+    public function test_g9_04_a_published_version_carries_the_three_site_law_flags(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Law Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'law', 'Law', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertTrue($version->pixel_installed);
+        $this->assertTrue($version->chat_installed);
+        $this->assertTrue($version->form_capture_installed);
+        $this->assertTrue($version->dni_installed);
+        $this->assertSame([
+            ['type' => 'pixel_script'],
+            ['type' => 'chat_widget'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni_script'],
+            ['type' => 'seo_tags'],
+            ['type' => 'schema_markup'],
+        ], $version->content_blocks);
+    }
+
+    /**
+     * G12-39
+     */
+    public function test_g12_39_the_review_widget_is_not_yet_on_the_built_site(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Widget Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'widget', 'Widget', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, [
+            ['type' => 'chat'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni'],
+        ]);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertIsArray($version->content_blocks);
+        $types = array_column($version->content_blocks, 'type');
+        $this->assertContains('chat', $types);
+        $this->assertContains('form_capture', $types);
+        $this->assertContains('dni', $types);
+
+        $hasReviewWidget = false;
+        foreach ($version->content_blocks as $block) {
+            if (isset($block['type']) && in_array($block['type'], ['review_widget', 'review-widget'], true)) {
+                $hasReviewWidget = true;
+                break;
+            }
+        }
+        $this->assertFalse($hasReviewWidget);
+    }
+
+    /** (R245) */
+    public function test_g6_15_header_first_line(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-15', $caps);
+    }
+
+    /** [G6-16] (R245) */
+    public function test_g6_16_header_tenant_offer(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Offer Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'offer', 'Offer', false);
+
+        $blocks = [
+            ['type' => 'offer', 'text' => '20% off'],
+            ['type' => 'chat'],
+        ];
+        $res = $this->publishAction->handle($biz->id, $page->id, $blocks);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertEquals($blocks, array_slice($version->content_blocks, 0, count($blocks)));
+        $this->assertEquals([
+            ['type' => 'pixel_script'],
+            ['type' => 'chat_widget'],
+            ['type' => 'form_capture'],
+            ['type' => 'dni_script'],
+            ['type' => 'seo_tags'],
+            ['type' => 'schema_markup'],
+        ], array_slice($version->content_blocks, count($blocks)));
+    }
+
+    /** (R245) */
+    public function test_g6_17_header_x194(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-17', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-194')));
+    }
+
+    /** (R245) */
+    public function test_g6_20_header_x195(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-20', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-195')));
+    }
+
+    /** [G6-27] (R245) */
+    public function test_g6_27_header_c_sms(): void
+    {
+        Http::fake();
+        Event::fake([SendRequested::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'SMS Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'sms-page', 'SMS Page', false);
+        $this->publishAction->handle($biz->id, $page->id, []);
+
+        Http::assertNothingSent();
+        Event::assertNotDispatched(SendRequested::class);
+    }
+
+    /** (R245) */
+    public function test_g6_32_header_x199(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G6-32', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/X-199')));
+
+        $biz = TestCase::provisionTenant(['name' => 'Invoice Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'invoice-page', 'Invoice Page', false);
+        $this->publishAction->handle($biz->id, $page->id, [
+            ['type' => 'offer', 'text' => '20% off'],
+        ]);
+
+        $this->assertSame(0, Invoice::count());
+        $this->assertSame(0, InvoiceLine::count());
+    }
+
+    /** (R245) */
+    public function test_g7_18_header_c_reviews(): void
+    {
+        $caps = require app_path('Modules/X-103/capabilities.php');
+        $this->assertArrayHasKey('G7-18', $caps);
+        $this->assertTrue(is_dir(app_path('Modules/C-Reviews')));
+
+        $biz = TestCase::provisionTenant(['name' => 'Review Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $page = $this->pageAction->handle($biz->id, 'review-page', 'Review Page', false);
+        $res = $this->publishAction->handle($biz->id, $page->id, []);
+
+        $version = PageVersion::where('business_id', $biz->id)->find($res['version_id']);
+        $this->assertNotContains('review_widget', array_column($version->content_blocks, 'type'));
+        $this->assertSame(0, ReviewRequest::count());
+    }
+
+    public function test_page_create_and_site_publish_resolve_from_container(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Container Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $pageAction = app(PageCreateAction::class);
+        $publishAction = app(SitePublishAction::class);
+
+        $page = $pageAction->handle($biz->id, 'builder-test', 'Builder Title', false);
+
+        $this->assertInstanceOf(Page::class, $page);
+        $this->assertEquals('builder-test', $page->slug);
+        $this->assertFalse($page->is_published);
+
+        $res = $publishAction->handle($biz->id, $page->id, ['block1' => 'content']);
+
+        $this->assertIsArray($res);
+        $this->assertArrayHasKey('status', $res);
+        $this->assertArrayHasKey('page_id', $res);
+        $this->assertArrayHasKey('version_id', $res);
+        $this->assertArrayHasKey('commit_id', $res);
+        $this->assertArrayHasKey('facts_invalidation_commit_id', $res);
+        $this->assertEquals('published', $res['status']);
+        $this->assertEquals($page->id, $res['page_id']);
     }
 }

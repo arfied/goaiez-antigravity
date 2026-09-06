@@ -24,6 +24,15 @@ final class DocSignAction
         $request = SignatureRequest::where('business_id', $businessId)->findOrFail($requestId);
         $doc = SignableDocument::where('business_id', $businessId)->findOrFail($request->document_id);
 
+        if ($request->status !== 'pending') {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'SIGNATURE_REQUEST_NOT_PENDING',
+                'message' => 'A signature request that is not pending cannot be signed',
+                'signed' => false,
+            ];
+        }
+
         $contentToVerify = $currentRenderedContent ?? $doc->content_body;
         $currentHash = hash('sha256', $contentToVerify);
 

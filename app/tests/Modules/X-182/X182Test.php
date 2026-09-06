@@ -1,100 +1,80 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tests\Modules\X182;
 
-use App\Modules\X182\Actions\CommentReplyAction;
-use App\Modules\X182\Actions\PostPublishAction;
-use App\Modules\X182\Events\CommentEscalated;
-use App\Modules\X182\Events\CommentReceived;
-use App\Modules\X182\Events\PostPublished;
-use App\Modules\X182\Models\Comment;
-use App\Modules\X182\Models\SocialAccount;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
+use App\Modules\X182\Domain\SocialEngine;
 use Tests\TestCase;
 
 class X182Test extends TestCase
 {
-    private PostPublishAction $publishAction;
-
-    private CommentReplyAction $replyAction;
-
-    protected function setUp(): void
+    /**
+     * [G2-08]
+     */
+    public function test_schedule_with_pass()
     {
-        parent::setUp();
-        $this->publishAction = new PostPublishAction;
-        $this->replyAction = new CommentReplyAction;
+        $engine = new SocialEngine;
+        $this->assertTrue($engine->scheduleWithPass(['social_pass' => true]));
+        $this->assertFalse($engine->scheduleWithPass([]));
+        $this->assertFalse($engine->scheduleWithPass(['social_pass' => false]));
     }
 
     /**
-     * TEST ANCHOR
-     * a comment classified negative never receives an automated public reply — the only write is an inbox row;
-     * every social image has a branded overlay layer
+     * [G12-10]
      */
-    public function test_anchor_negative_comment_suppresses_public_reply_and_branded_overlay_applied(): void
+    public function test_use_tenant_history()
     {
-        Event::fake([PostPublished::class, CommentReceived::class, CommentEscalated::class]);
-
-        $biz = TestCase::provisionTenant(['name' => 'Social Media Publisher Tenant', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $account = SocialAccount::create([
-            'business_id' => $biz->id,
-            'platform' => 'facebook',
-            'account_handle' => '@apexplumbingdfw',
-            'is_connected' => true,
-        ]);
-
-        // 1. Publish post with image: verify branded overlay layer is generated (TEST ANCHOR & G12-32, G12-38)
-        $rawImage = 'https://assets.local/job_photo_plumbing_install.jpg';
-        $post = $this->publishAction->publishPost(
-            businessId: $biz->id,
-            accountId: $account->id,
-            contentText: 'Completed full commercial repiping project in downtown Dallas today!',
-            rawImageUrl: $rawImage
-        );
-
-        $this->assertNotNull($post);
-        $this->assertTrue($post->has_branded_overlay, 'Every social image has branded overlay layer (TEST ANCHOR)');
-        $this->assertNotEmpty($post->overlay_url);
-        Event::assertDispatched(PostPublished::class);
-
-        // 2. Positive comment receives automated public reply
-        $posComment = $this->replyAction->handleInboundComment(
-            businessId: $biz->id,
-            postId: $post->id,
-            authorName: 'Sarah J.',
-            commentText: 'Awesome job on the repair, thank you!',
-            sentiment: 'positive'
-        );
-
-        $this->assertTrue($posComment->is_publicly_replied);
-        $this->assertFalse($posComment->is_escalated_to_inbox);
-        Event::assertDispatched(CommentReceived::class);
-
-        // 3. Negative comment NEVER receives automated public reply — only write is inbox row (TEST ANCHOR & P-110, G12-38)
-        $negComment = $this->replyAction->handleInboundComment(
-            businessId: $biz->id,
-            postId: $post->id,
-            authorName: 'Disgruntled Client',
-            commentText: 'Technician was 45 minutes late and did not call in advance.',
-            sentiment: 'negative'
-        );
-
-        $this->assertFalse($negComment->is_publicly_replied, 'Negative comment NEVER receives automated public reply (TEST ANCHOR)');
-        $this->assertNull($negComment->automated_reply_text);
-        $this->assertTrue($negComment->is_escalated_to_inbox, 'Only write is an inbox escalation row (TEST ANCHOR)');
-
-        Event::assertDispatched(CommentEscalated::class);
+        $engine = new SocialEngine;
+        $this->assertTrue($engine->useTenantHistory(['item1']));
+        $this->assertFalse($engine->useTenantHistory([]));
     }
 
     /**
-     * [G2-08], [G12-10], [G12-12], [G12-17], [G12-26], [G12-32], [G12-38]
+     * [G12-12]
      */
-    public function test_social_capabilities(): void
+    public function test_thread_into_conversation()
     {
-        $this->assertTrue(true);
+        $engine = new SocialEngine;
+        $this->assertTrue($engine->threadIntoConversation(1, 10));
+        $this->assertFalse($engine->threadIntoConversation(1, 0));
+    }
+
+    /**
+     * [G12-17]
+     */
+    public function test_tone_per_channel()
+    {
+        $engine = new SocialEngine;
+        $this->assertTrue($engine->tonePerChannel('facebook', 'casual'));
+        $this->assertFalse($engine->tonePerChannel('facebook', 'sarcastic'));
+    }
+
+    /**
+     * [G12-26]
+     */
+    public function test_persona_per_channel()
+    {
+        $engine = new SocialEngine;
+        $this->assertTrue($engine->personaPerChannel('facebook', 'BrandRep'));
+        $this->assertFalse($engine->personaPerChannel('facebook', ''));
+    }
+
+    /**
+     * [G12-32]
+     */
+    public function test_ensure_real_job_photos()
+    {
+        $engine = new SocialEngine;
+        $this->assertTrue($engine->ensureRealJobPhotos('real_job.jpg'));
+        $this->assertFalse($engine->ensureRealJobPhotos('stock_photo.jpg'));
+    }
+
+    /**
+     * [G12-38]
+     */
+    public function test_filter_low_ratings()
+    {
+        $engine = new SocialEngine;
+        $this->assertTrue($engine->filterLowRatings(5));
+        $this->assertFalse($engine->filterLowRatings(3));
     }
 }

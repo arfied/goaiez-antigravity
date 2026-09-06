@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\X112\Ui;
 
 use App\Modules\X112\Models\AgencyClient;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.layouts.agency')]
 class AgencyConsole extends Component
 {
     #[Locked]

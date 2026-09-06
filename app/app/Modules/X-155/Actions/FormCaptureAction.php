@@ -8,6 +8,7 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X155\Events\FormCaptured;
 use App\Modules\X155\Models\FormDefinition;
 use App\Modules\X155\Models\FormSubmission;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -22,27 +23,87 @@ final class FormCaptureAction
         ?string $ipAddress = null,
         ?string $userTimezone = null
     ): array {
+        // P-148 (GOAIEZ-MASTER-PLAN.md:625, row 30484): an under-18 signal at ingest
+        // prevents the contact row. Asserted at the write, not at the reply.
+        if ($this->isUnderEighteen($payload)) {
+            return [
+                'status' => 'rejected',
+                'reason' => 'under_18',
+            ];
+        }
+
         $validation = $this->validator->handle($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone);
 
         if (! $validation['is_valid']) {
-            return [
-                'status' => 'rejected',
-                'reason' => $validation['reason'],
-            ];
+            // G3-64 / G13-05: a SPAM rejection is stored and flagged, never discarded
+            // (GOAIEZ-MASTER-PLAN.md:31363). An incomplete step is not spam and is not stored.
+            if ($validation['is_spam'] !== true) {
+                return [
+                    'status' => 'rejected',
+                    'reason' => $validation['reason'],
+                    'step' => $validation['step'] ?? null,
+                    'missing' => $validation['missing'] ?? [],
+                ];
+            }
+
+            return DB::transaction(function () use ($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone, $validation) {
+                $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
+
+                $person = Person::firstOrNew([
+                    'business_id' => $businessId,
+                    'phone' => $payload['phone'] ?? '+15550000000',
+                ]);
+                // A submission judged spam never rewrites a contact the business already has (R245, 2026-09-05).
+                if (! $person->exists) {
+                    $person->fill([
+                        'first_name' => $this->given($payload['first_name'] ?? null)
+                            ?? $this->given($payload['name'] ?? null)
+                            ?? 'Visitor',
+                        'email' => $this->given($payload['email'] ?? null),
+                    ]);
+                    $person->save();
+                }
+
+                $submission = FormSubmission::create([
+                    'business_id' => $businessId,
+                    'form_definition_id' => $form->id,
+                    'person_id' => $person->id,
+                    'payload' => $payload,
+                    'ip_address' => $ipAddress,
+                    'user_timezone' => $userTimezone,
+                    'is_spam' => true,
+                    'spam_reason' => $validation['reason'],
+                ]);
+
+                return [
+                    'status' => 'rejected',
+                    'reason' => $validation['reason'],
+                    'submission_id' => $submission->id,
+                    'person_id' => $person->id,
+                ];
+            });
         }
 
         return DB::transaction(function () use ($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone) {
             $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
             // Direct entity writing (G2-20, G13-35): forms write straight to Person entity, no intermediate buffer
-            $phone = $payload['phone'] ?? '+15550000000';
-            $firstName = $payload['first_name'] ?? ($payload['name'] ?? 'Visitor');
-            $email = $payload['email'] ?? null;
+            $phone = $this->given($payload['phone'] ?? null);
 
-            $person = Person::updateOrCreate(
-                ['business_id' => $businessId, 'phone' => $phone],
-                ['first_name' => $firstName, 'email' => $email]
-            );
+            // A submission that carries no phone gets its own contact, never a shared one (R245, 2026-09-05).
+            $person = $phone === null
+                ? new Person(['business_id' => $businessId])
+                : Person::firstOrNew(['business_id' => $businessId, 'phone' => $phone]);
+            // Only write the fields the payload actually carried (R245, 2026-09-05).
+            $person->fill(array_filter([
+                'first_name' => $this->given($payload['first_name'] ?? ($payload['name'] ?? null)),
+                'email' => $this->given($payload['email'] ?? null),
+            ], fn ($v) => $v !== null));
+
+            if (! $person->exists) {
+                $person->first_name ??= 'Visitor';
+            }
+            $person->save();
 
             // Every submission row references a Person id (TEST ANCHOR)
             $submission = FormSubmission::create([
@@ -68,5 +129,35 @@ final class FormCaptureAction
                 'person_id' => $person->id,
             ];
         });
+    }
+
+    private function isUnderEighteen(array $payload): bool
+    {
+        if (isset($payload['age']) && is_numeric($payload['age']) && $payload['age'] < 18) {
+            return true;
+        }
+
+        foreach (['date_of_birth', 'dob'] as $key) {
+            if (! empty($payload[$key])) {
+                try {
+                    $dob = Carbon::parse($payload[$key]);
+                    if ($dob->diffInYears(now()) < 18) {
+                        return true;
+                    }
+                } catch (\Exception $e) {
+                    // unparseable value is not a signal
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * A payload value that is blank or whitespace was not given (R245, 2026-09-05).
+     */
+    private function given(mixed $value): mixed
+    {
+        return is_string($value) && trim($value) === '' ? null : $value;
     }
 }

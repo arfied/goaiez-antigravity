@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="C-Billing" screen="revenue_recovery" />
     <h1>Revenue recovery</h1>
 
     <x-ui.attention-card state="attention" heading="One account at a time">

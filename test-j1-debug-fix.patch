@@ -1,0 +1,23 @@
+--- app/tests/Journeys/TwelveJourneysTest.php
++++ app/tests/Journeys/TwelveJourneysTest.php
+@@ -65,13 +65,15 @@
+         $this->postCarrierWebhook($tenant, event: 'call.missed', from: '+12622164033');
+ 
+-        $customer = \App\Models\Customer::where('phone', '+12622164033')->first();
+-        \Illuminate\Support\Facades\Log::info("Customer after webhook: " . json_encode($customer));
+-        if ($customer) {
+-            $consent = \App\Models\ConsentRecord::where('customer_id', $customer->id)->first();
+-            \Illuminate\Support\Facades\Log::info("Consent after webhook: " . json_encode($consent));
+-            if (!$consent) { \Illuminate\Support\Facades\Log::error("NO CONSENT RECORD!"); }
+-        }
++        \App\Support\Tenancy::actingAs($tenant['id'], function() {
++            $customer = \App\Models\Customer::where('phone', '+12622164033')->first();
++            \Illuminate\Support\Facades\Log::info("Customer after webhook: " . json_encode($customer));
++            if ($customer) {
++                $consent = \App\Models\ConsentRecord::where('customer_id', $customer->id)->first();
++                \Illuminate\Support\Facades\Log::info("Consent after webhook: " . json_encode($consent));
++                if (!$consent) { \Illuminate\Support\Facades\Log::error("NO CONSENT RECORD!"); }
++            }
++        });
+ 
+         $message = $this->waitForOutbound($tenant, to: '+12622164033', timeoutSeconds: 90);

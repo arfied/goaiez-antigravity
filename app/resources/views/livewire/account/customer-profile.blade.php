@@ -48,8 +48,9 @@
             standing suppression rather than the trail, so it agrees with the
             Never-contact control below. The panel at the bottom is the history.
         --}}
-        <p class="mt-2 text-sm text-ink" data-consent-badge>{{ $consentBadge->label() }}</p>
-
+        <p class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $consentBadge->stopped !== [] ? 'bg-alert-bg text-alert' : ($consentBadge->agreed !== [] ? 'bg-ok-bg text-ok' : 'bg-paper text-ink-2 border border-rule') }}" data-consent-badge>
+            {{ $consentBadge->label() }}
+        </p>
         @if ($customer->tags)
             <p class="mt-2 flex flex-wrap gap-2" data-tags>
                 @foreach ($customer->tags as $tag)
@@ -83,9 +84,10 @@
             code (numbers port), not from the business's own address. A guessed
             jurisdiction produces confident compliance with the wrong statute.
         --}}
-        <details class="mt-3">
-            <summary class="flex min-h-11 cursor-pointer items-center text-base font-medium text-ink underline">
+        <details class="mt-3 group">
+            <summary class="flex min-h-11 cursor-pointer items-center text-base font-medium text-ink underline [&::-webkit-details-marker]:hidden">
                 Edit name, tags and state
+                <svg class="ml-2 h-4 w-4 text-ink-2 transition-transform group-open:-rotate-180" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
             </summary>
             <form wire:submit="saveDetails" class="mt-2 space-y-3">
                 <div>

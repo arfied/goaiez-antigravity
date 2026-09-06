@@ -17,4 +17,9 @@ class RcsCapability extends Model
         'degraded_count' => 'integer',
         'last_checked_at' => 'datetime',
     ];
+
+    public function logDegrade(): void
+    {
+        $this->increment('degraded_count');
+    }
 }

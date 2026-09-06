@@ -12,6 +12,7 @@ use App\Modules\X202\Events\ApprovalDecided;
 use App\Modules\X202\Events\ApprovalEscalated;
 use App\Modules\X202\Events\ApprovalExpired;
 use App\Modules\X202\Events\ApprovalRaised;
+use App\Modules\X202\Models\ApprovalChain;
 use App\Modules\X202\Models\ApprovalItem;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -160,7 +161,34 @@ class X202Test extends TestCase
      */
     public function test_g10_26_custom_term_route(): void
     {
-        $this->assertTrue(true);
+        Event::fake([ApprovalRaised::class, ApprovalDecided::class, ApprovalExpired::class, ApprovalEscalated::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Custom Term Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $item = $this->enqueueAction->handle(
+            businessId: $biz->id,
+            itemType: 'bespoke_msa_clause',
+            subject: 'Special MSA for Enterprise Client',
+            payload: ['clause' => 'Net 90']
+        );
+
+        $this->assertEquals('enqueued', $item['status']);
+        Event::assertDispatched(ApprovalRaised::class, function ($e) use ($item) {
+            return $e->itemType === 'bespoke_msa_clause' && $e->approvalItemId === $item['approval_item_id'];
+        });
+
+        $dec = $this->decideAction->handle($biz->id, $item['approval_item_id'], 'approved');
+        $this->assertEquals('approved', $dec['status']);
+
+        $badItem = $this->enqueueAction->handle(
+            businessId: $biz->id,
+            itemType: 'bespoke_msa_clause_bad',
+            subject: 'Bad MSA',
+            payload: ['error_only' => true]
+        );
+        $this->assertEquals('refused', $badItem['status']);
+        $this->assertEquals('INVALID_APPROVAL_PAYLOAD', $badItem['refusal_code']);
+        $this->assertSame(0, ApprovalItem::where('item_type', 'bespoke_msa_clause_bad')->count());
     }
 
     /**
@@ -168,15 +196,47 @@ class X202Test extends TestCase
      */
     public function test_g10_34_multistage_sequential_approval(): void
     {
-        $this->assertTrue(true);
-    }
+        Event::fake([ApprovalRaised::class, ApprovalDecided::class, ApprovalExpired::class, ApprovalEscalated::class]);
 
-    /**
-     * [G12-04] approval granted the publish action fires
-     */
-    public function test_g12_04_approval_granted_publish(): void
-    {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Chain Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $solo = $this->engine->enqueue($biz->id, 'creative', 'One-hop asset', ['asset_id' => 1]);
+        $soloDec = $this->decideAction->handle($biz->id, $solo['approval_item_id'], 'approved');
+        $this->assertSame('approved', $soloDec['status'], 'an item with no chain still decides in a single hop');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 1);
+
+        $chain = ApprovalChain::create([
+            'business_id' => $biz->id,
+            'name' => 'Three-desk sequential',
+            'steps_count' => 3,
+            'chain_config' => ['steps' => ['designer', 'manager', 'owner']],
+        ]);
+
+        $chained = $this->engine->enqueue($biz->id, 'creative', 'Chained asset', ['asset_id' => 2]);
+        ApprovalItem::where('id', $chained['approval_item_id'])->update(['approval_chain_id' => $chain->id]);
+
+        $step1 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved');
+        $this->assertSame('pending', $step1['status'], 'step 1 of 3 does not decide the item');
+        $this->assertSame(2, $step1['current_step'], 'an approval at step 1 advances the chain to step 2');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 1);
+
+        $step2 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved');
+        $this->assertSame('pending', $step2['status'], 'step 2 of 3 does not decide it either');
+        $this->assertSame(3, $step2['current_step'], 'an approval at step 2 advances the chain to step 3');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 1);
+
+        $step3 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved');
+        $this->assertSame('approved', $step3['status'], 'the last step of the chain is the one that approves');
+        $this->assertSame('approved', ApprovalItem::find($chained['approval_item_id'])->status, 'the terminal status reaches the row');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 2);
+
+        $rej = $this->engine->enqueue($biz->id, 'creative', 'Rejected at step 1', ['asset_id' => 3]);
+        ApprovalItem::where('id', $rej['approval_item_id'])->update(['approval_chain_id' => $chain->id]);
+        $rejDec = $this->decideAction->handle($biz->id, $rej['approval_item_id'], 'rejected', null, 'Off-brand');
+        $this->assertSame('rejected', $rejDec['status'], 'a rejection ends the chain at the step it arrives on');
+        $this->assertSame(1, ApprovalItem::find($rej['approval_item_id'])->current_step, 'a rejection does not advance the chain');
+        Event::assertDispatchedTimes(ApprovalDecided::class, 3);
     }
 
     /**
@@ -184,7 +244,21 @@ class X202Test extends TestCase
      */
     public function test_g12_09_batch_decision(): void
     {
-        $this->assertTrue(true);
+        Event::fake([ApprovalRaised::class, ApprovalDecided::class, ApprovalExpired::class, ApprovalEscalated::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Batch Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $id1 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 1', ['a' => 1])['approval_item_id'];
+        $id2 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 2', ['a' => 2])['approval_item_id'];
+        $id3 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 3', ['a' => 3])['approval_item_id'];
+        $id4 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 4', ['a' => 4])['approval_item_id'];
+        $id5 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 5', ['a' => 5], 'L1', true)['approval_item_id'];
+
+        $res = $this->engine->batchApprove($biz->id, [$id1, $id2, $id3, $id4, $id5]);
+
+        $this->assertSame(4, $res['approved_count']);
+        $this->assertSame([$id5], $res['skipped_l1_forever_ids']);
+        Event::assertDispatchedTimes(ApprovalDecided::class, 4);
     }
 
     /**
@@ -192,7 +266,49 @@ class X202Test extends TestCase
      */
     public function test_g16_24_timestamp_comment(): void
     {
-        $this->assertTrue(true);
+        Event::fake([ApprovalRaised::class, ApprovalDecided::class, ApprovalExpired::class, ApprovalEscalated::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Comment Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $chain = ApprovalChain::create([
+            'business_id' => $biz->id,
+            'name' => 'Three-desk sequential',
+            'steps_count' => 3,
+            'chain_config' => ['steps' => ['designer', 'manager', 'owner']],
+        ]);
+
+        $chained = $this->engine->enqueue($biz->id, 'creative', 'Chained asset with comments', ['asset_id' => 10]);
+        ApprovalItem::where('id', $chained['approval_item_id'])->update(['approval_chain_id' => $chain->id]);
+
+        $step1 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved', null, 'fine by me, over to legal');
+        $this->assertSame('pending', $step1['status']);
+
+        $itemFresh = ApprovalItem::find($chained['approval_item_id']);
+        $this->assertSame('pending', $itemFresh->status);
+        $this->assertNull($itemFresh->decided_at);
+        $this->assertStringContainsString('fine by me, over to legal', $itemFresh->decision_comment);
+
+        $step2 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved', null, 'looks ok');
+        $this->assertSame('pending', $step2['status']);
+
+        $itemFresh2 = ApprovalItem::find($chained['approval_item_id']);
+        $this->assertSame('pending', $itemFresh2->status);
+        $this->assertNull($itemFresh2->decided_at);
+        $this->assertStringContainsString('fine by me, over to legal', $itemFresh2->decision_comment);
+        $this->assertStringContainsString('looks ok', $itemFresh2->decision_comment);
+
+        $step3 = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved', null, 'approved to go');
+        $this->assertSame('approved', $step3['status']);
+
+        $itemFresh3 = ApprovalItem::find($chained['approval_item_id']);
+        $this->assertSame('approved', $itemFresh3->status);
+        $this->assertNotNull($itemFresh3->decided_at);
+        $this->assertStringContainsString('fine by me, over to legal', $itemFresh3->decision_comment);
+        $this->assertStringContainsString('looks ok', $itemFresh3->decision_comment);
+        $this->assertStringContainsString('approved to go', $itemFresh3->decision_comment);
+
+        Event::assertDispatchedTimes(ApprovalDecided::class, 1);
     }
 
     /**
@@ -223,10 +339,26 @@ class X202Test extends TestCase
 
     /**
      * [G21-07] two buttons, no login
+     * UNRESOLVED — no route consumes magic_url
      */
     public function test_g21_07_no_login_two_buttons(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Token Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $item1 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 1', ['a' => 1]);
+        $item2 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 2', ['a' => 2]);
+        $item3 = $this->enqueueAction->handle($biz->id, 'creative', 'Item 3', ['a' => 3]);
+
+        $tokens = array_unique([$item1['item']->magic_token, $item2['item']->magic_token, $item3['item']->magic_token]);
+
+        $this->assertCount(3, $tokens);
+        $this->assertSame(32, strlen($item1['item']->magic_token));
+        $this->assertSame(32, strlen($item2['item']->magic_token));
+        $this->assertSame(32, strlen($item3['item']->magic_token));
+
+        $retrieved = ApprovalItem::where('magic_token', $item2['item']->magic_token)->first();
+        $this->assertSame($item2['approval_item_id'], $retrieved->id);
     }
 
     /**
@@ -234,6 +366,14 @@ class X202Test extends TestCase
      */
     public function test_g21_11_approve_deny_without_crm(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'CRM Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $item = $this->enqueueAction->handle($biz->id, 'creative', 'Item', ['a' => 1]);
+        $dec = $this->decideAction->handle($biz->id, $item['approval_item_id'], 'approved', null, null);
+
+        $this->assertSame('approved', $dec['status']);
+        $fresh = ApprovalItem::find($item['approval_item_id']);
+        $this->assertNull($fresh->decided_by_user_id);
     }
 }

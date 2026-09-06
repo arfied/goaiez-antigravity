@@ -1,4 +1,5 @@
 <div>
+    <x-surface.sample-state module="receives `chargeback.received` from X-198 for **any gateway**" screen="dispute_queue" />
 <h1>Dispute queue</h1>
 <x-ui.attention-card state="attention" heading="One account at a time">the operator queue across accounts waits on OWNER ACTION 15; below is this account's open disputes.</x-ui.attention-card>
 @if($error) <x-ui.error-panel heading="We couldn't act on that dispute">{{ $error }}</x-ui.error-panel> @endif

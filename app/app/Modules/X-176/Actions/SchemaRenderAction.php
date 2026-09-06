@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X176\Actions;
 
+use App\Models\Business;
 use App\Modules\X176\Events\SchemaPublished;
 use App\Modules\X176\Models\SchemaSnapshot;
 use Illuminate\Support\Facades\Event;
@@ -18,15 +19,35 @@ final class SchemaRenderAction
         int $pageId,
         string $businessName,
         string $commitId,
-        ?string $entityType = 'LocalBusiness',
-        ?array $productOffers = null
+        string $domainName,
+        ?string $entityType = null,
+        ?array $productOffers = null,
+        ?array $videos = null
     ): array {
+        if ($entityType === null) {
+            $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
+            /** (R245) */
+            $map = [
+                'hvac' => 'HVACBusiness',
+                'dental' => 'Dentist',
+                'salon' => 'BeautySalon',
+                'legal' => 'LegalService',
+                'auto' => 'AutoRepair',
+                'medical' => 'MedicalClinic',
+                'plumbing' => 'Plumber',
+            ];
+            $entityType = $map[$vertical] ?? 'LocalBusiness';
+        }
+
+        $canonical = app(SeoRenderAction::class)
+            ->handle($businessId, $pageId, $businessName, $commitId, $domainName)['canonical'];
+
         // Build valid schema.org structure (G8-32)
         $jsonLd = [
             '@context' => 'https://schema.org',
-            '@type' => $entityType ?? 'LocalBusiness',
+            '@type' => $entityType,
             'name' => $businessName,
-            'url' => "https://example.com/pages/{$pageId}",
+            'url' => $canonical,
         ];
 
         if (! empty($productOffers)) {
@@ -40,9 +61,27 @@ final class SchemaRenderAction
                         '@type' => 'Service',
                         'name' => $p['name'],
                     ],
-                    'price' => $p['price'],
+                    'price' => $p['price'] ?? null,
                     'priceCurrency' => 'USD',
                 ], $productOffers),
+            ];
+        }
+
+        if (! empty($videos)) {
+            // VideoObject injected on publish (TEST ANCHOR, G16-25)
+            $jsonLd['video'] = array_map(fn ($v) => [
+                '@type' => 'VideoObject',
+                'name' => $v['name'] ?? null,
+                'contentUrl' => $v['contentUrl'] ?? null,
+                'uploadDate' => $v['uploadDate'] ?? null,
+            ], $videos);
+        }
+
+        $isValid = $this->validateSchema($jsonLd);
+        if (! $isValid) {
+            return [
+                'status' => 'refused',
+                'refusal_code' => 'SCHEMA_INVALID',
             ];
         }
 
@@ -52,7 +91,7 @@ final class SchemaRenderAction
                 'entity_type' => $entityType,
                 'json_ld' => $jsonLd,
                 'commit_id' => $commitId, // Shared commit ID with Fact (TEST ANCHOR)
-                'is_valid_schema' => true,
+                'is_valid_schema' => $isValid,
             ]
         );
 
@@ -69,5 +108,53 @@ final class SchemaRenderAction
             'commit_id' => $commitId,
             'json_ld' => $jsonLd,
         ];
+    }
+
+    private function validateSchema(array $schema): bool
+    {
+        if (($schema['@context'] ?? '') !== 'https://schema.org') {
+            return false;
+        }
+        if (empty($schema['@type']) || empty($schema['name']) || empty($schema['url'])) {
+            return false;
+        }
+        if (! is_string($schema['@type']) || ! is_string($schema['name']) || ! is_string($schema['url'])) {
+            return false;
+        }
+        if (isset($schema['hasOfferCatalog'])) {
+            $catalog = $schema['hasOfferCatalog'];
+            if (($catalog['@type'] ?? '') !== 'OfferCatalog') {
+                return false;
+            }
+            if (! isset($catalog['itemListElement']) || ! is_array($catalog['itemListElement'])) {
+                return false;
+            }
+            foreach ($catalog['itemListElement'] as $item) {
+                if (($item['@type'] ?? '') !== 'Offer' || ($item['itemOffered']['@type'] ?? '') !== 'Service') {
+                    return false;
+                }
+                if (! array_key_exists('price', $item) || $item['price'] === null || ! isset($item['priceCurrency'])) {
+                    return false;
+                }
+            }
+        }
+
+        if (isset($schema['video'])) {
+            if (! is_array($schema['video'])) {
+                return false;
+            }
+            foreach ($schema['video'] as $item) {
+                if (($item['@type'] ?? '') !== 'VideoObject') {
+                    return false;
+                }
+                foreach (['name', 'contentUrl', 'uploadDate'] as $k) {
+                    if (! isset($item[$k]) || ! is_string($item[$k]) || $item[$k] === '') {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }

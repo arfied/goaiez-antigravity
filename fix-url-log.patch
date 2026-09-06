@@ -1,0 +1,10 @@
+--- app/app/Services/Voice/InfobipVoiceProvider.php
++++ app/app/Services/Voice/InfobipVoiceProvider.php
+@@ -321,6 +321,7 @@
+     private function baseUrl(): ?string
+     {
+         $base = config('services.infobip.base_url');
++        \Illuminate\Support\Facades\Log::info("InfobipVoiceProvider baseUrl config is: " . var_export($base, true));
+ 
+         if (! is_string($base) || trim($base) === '') {
+             return null;
