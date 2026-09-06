@@ -105,4 +105,67 @@ class X185Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /** [G3-40] */
+    public function test_g3_40_sequential_retargeting_is_ad_management(): void
+    {
+        Event::fake([SequenceStopped::class, CampaignReplied::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'G3-40 Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $seq = $this->createAction->createSequence(
+            businessId: $biz->id,
+            name: 'G3-40 Sequence',
+            steps: [
+                ['channel' => 'sms', 'template_variant' => 'quick_nudge', 'delay_hours' => 1],
+            ],
+            frozenElements: []
+        );
+        $this->assertTrue($seq->is_active);
+
+        $this->stopAction->stopSequence($biz->id, $seq->id);
+        $seq->refresh();
+        $this->assertFalse($seq->is_active);
+        Event::assertDispatched(CampaignReplied::class);
+        Event::assertDispatched(SequenceStopped::class);
+
+        $step = $seq->steps()->first();
+        $keys = array_keys($step->getAttributes());
+        $this->assertContains('channel', $keys);
+        $this->assertContains('template_variant', $keys);
+        $this->assertContains('delay_hours', $keys);
+        $this->assertContains('step_number', $keys);
+        $this->assertContains('business_id', $keys);
+
+        $nameRegex = '/(retarget|retargeting|remarketing|lookalike|custom_audience|seed_audience|audience|audiences|adset|ad_set|ad_spend|adwords|cpc|cpm|pixel_id|impressions)/i';
+        foreach ($keys as $key) {
+            $this->assertDoesNotMatchRegularExpression($nameRegex, $key);
+        }
+        $this->assertGreaterThanOrEqual(7, count($keys));
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-185')));
+        $files = [];
+        $controlCount = 0;
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                $filename = $file->getFilename();
+                if ($filename === 'capabilities.php' || $filename === 'manifest.php') {
+                    continue;
+                }
+                $files[] = $file->getPathname();
+                if (preg_match('/Sequence|Campaign|ContentPack/', $filename)) {
+                    $controlCount++;
+                }
+            }
+        }
+        $this->assertGreaterThanOrEqual(19, count($files));
+
+        $contentRegex = '/\b(retarget|retargeting|remarketing|lookalike|custom_audience|seed_audience|audience|audiences|adset|ad_set|ad_spend|adwords|cpc|cpm|pixel_id|impressions)\b/i';
+        foreach ($files as $filePath) {
+            $content = file_get_contents($filePath);
+            $this->assertDoesNotMatchRegularExpression($contentRegex, $content);
+        }
+        $this->assertGreaterThanOrEqual(5, $controlCount);
+    }
 }
