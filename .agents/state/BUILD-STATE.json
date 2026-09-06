@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T11:37:00",
+ "updated": "2026-09-06T11:57:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1639,6 +1639,12 @@
    "module": "C-Reviews",
    "chose": "R245 (procedure, amending the 11:18 line): before writing a refusal check three places \u2014 the module source, the capability's own sentence in capabilities.php, and the test file itself for a sibling test naming the id; the id grep is sufficient evidence of a seam and never necessary evidence, so refuse only when the sentence has no seam (REV-71)",
    "at": "2026-09-06T11:37:00",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-112",
+   "chose": "R245: UNRESOLVED may never be written against a module without an ls of that module in the same breath; the classification means 'the dependency is absent' and an absent module is a one-command claim, so ungrounded it parks real capabilities behind a blocker that does not exist (REV-72)",
+   "at": "2026-09-06T11:57:49",
    "ruling": "R245"
   }
  ],
