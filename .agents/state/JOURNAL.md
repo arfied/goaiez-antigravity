@@ -834,3 +834,6 @@
 - `2026-09-05T22:04:06` (R245) X-137 — Added is_static column to call_tokens to support static numbers per offline campaign (R245)
 - `2026-09-05T22:20:29` UNRESOLVED capability C-Mail - G11-03: mail_domains.dkim_public_key has no producer — no keypair generator or provider integration exists in this tree; owned by whichever sending provider C-Mail is configured against
 - `2026-09-05T22:41:26` UNRESOLVED capability C-Sms - lint asks for enumeration on messageClass, the type is an open string domain, phpstan refuses the enumeration
+- `2026-09-05T23:07:57` UNRESOLVED capability X-01 - G11-41: app/app/Modules/X-01/Ui/CustomersList.php:51 does not sort the thread list by LTV. The LTV metric and logic are missing and owned by C-Billing.
+- `2026-09-05T23:07:57` UNRESOLVED capability X-01 - G2-16: app/app/Modules/X-01/Ui/views/thread.blade.php lacks 'Rep A is typing' presence. Broadcasting presence channel is missing, requiring WebSocket/Echo setup owned by C-Agent.
+- `2026-09-05T23:10:17-05:00` note: Correcting previous entry from 2026-09-05T22:41:26: it was recorded as 'UNRESOLVED capability C-Sms' but is actually a 'boundary' lint (messageClass enum).

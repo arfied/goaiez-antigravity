@@ -1,9 +1,15 @@
 <div>
     <x-surface.sample-state module="**one Conversation per Person, every channel** — SMS, email, voice transcripts, web chat, WhatsApp in ONE timeline; contact de-duplication; record and screen pop; CRM logging and injection; field-level history; tagging and auto-categorisation; custom fields; bulk actions and exports *(moved here from X-121)*; conversational global search; lead transparency and hidden scoring; lead caps; ghost-risk; the preference centre. ⛔ **P18: `app/Livewire/Account/Inbox.php` exists but its scope was never verified — if it is a mail reader wearing the name, this is a build, not a wiring job, and it is replaced.**" screen="thread" />
-    <div class="flex flex-col h-full bg-paper rounded-[--radius-card] border border-rule shadow-[--shadow-card] mt-4">
+    <div wire:poll.10s class="flex flex-col h-full bg-paper rounded-[--radius-card] border border-rule shadow-[--shadow-card] mt-4">
         <div class="px-4 py-4 border-b border-rule flex justify-between items-center bg-card rounded-t-[--radius-card]">
-            <h3 class="font-display font-semibold text-ink text-lg flex items-center gap-2">
+                                                <h3 class="font-display font-semibold text-ink text-lg flex items-center gap-2">
                 Conversation
+                @if($customer)
+                    <span class="text-sm font-normal text-ink-2 ml-4 bullet-head">&bull; {{ $customer->name }} &bull; {{ $customer->phone }} &bull; {{ $customer->email }}</span>
+                    @if($isGhostRisk)
+                        <span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded ghost-risk-flag">Ghost Risk</span>
+                    @endif
+                @endif
             </h3>
             
             <div wire:loading class="text-sm text-ink-3">Loading...</div>

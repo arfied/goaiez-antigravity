@@ -258,7 +258,11 @@ class X01Test extends TestCase
      */
     public function test_g5_13_three_bullet_head(): void
     {
-        $this->assertTrue(true);
+        $admin = \App\Models\User::factory()->create();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Live Biz']);
+        $customer = \App\Models\Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Bullet Head', 'phone' => '+15551234567', 'email' => 'bullet@example.com']);
+        $response = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X01\Ui\Thread::class, ['customer' => $customer]);
+        $response->assertSee('Bullet Head', false)->assertSee('+15551234567', false)->assertSee('bullet@example.com', false);
     }
 
     /**
@@ -312,7 +316,12 @@ class X01Test extends TestCase
      */
     public function test_g19_08_ghost_risk_flag(): void
     {
-        $this->assertTrue(true);
+        $admin = \App\Models\User::factory()->create();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Ghost Biz']);
+        $customer = \App\Models\Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
+        \App\Modules\X01\Models\LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
+        $response = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X01\Ui\Thread::class, ['customer' => $customer]);
+        $response->assertSee('Ghost Risk', false);
     }
 
     /**
@@ -320,7 +329,10 @@ class X01Test extends TestCase
      */
     public function test_g19_15_thread_live_update(): void
     {
-        $this->assertTrue(true);
+        $admin = \App\Models\User::factory()->create();
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Live Biz']);
+        $response = $this->actingAs($admin)->get('/app/x-01/thread');
+        $response->assertSee('wire:poll.10s', false);
     }
 
     public function test_takeover_reply_refuses_when_no_latch_is_active(): void

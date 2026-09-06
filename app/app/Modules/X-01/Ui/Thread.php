@@ -28,9 +28,15 @@ class Thread extends Component
 
     public ?string $errorMessage = null;
 
-    public function mount(?Customer $customer = null)
+    public bool $isGhostRisk = false;
+
+        public function mount(?Customer $customer = null)
     {
         $this->customer = $customer;
+        if ($this->customer) {
+            $score = \App\Modules\X01\Models\LeadScore::where('person_id', $this->customer->id)->value('grade');
+            $this->isGhostRisk = ($score === 'F');
+        }
     }
 
     public function draftAiReply(int $messageId, AgentDraftAction $draftAction)
