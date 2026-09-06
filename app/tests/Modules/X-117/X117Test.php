@@ -115,7 +115,7 @@ class X117Test extends TestCase
     }
 
     /**
-     * [G6-02] post-charge upsell on the tokenised card
+     * ⛔ REFUSED: G6-02: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for upsells.
      */
     public function test_g6_02_upsell_token(): void
     {
@@ -144,7 +144,7 @@ class X117Test extends TestCase
     }
 
     /**
-     * [G7-10] bundle allocation on the Sellable
+     * ⛔ REFUSED: G7-10: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for bundle allocations.
      */
     public function test_g7_10_bundle_allocation(): void
     {
@@ -191,7 +191,11 @@ class X117Test extends TestCase
     }
 
     /**
-     * [G1-73], [G1-75], [G1-81], [G1-82], [G17-31] no refusal declared
+     * ⛔ REFUSED: G1-73: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for milestones.
+     * ⛔ REFUSED: G1-75: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for pricing structures or promotions; the price is looked up or REFUSED (P-092).
+     * ⛔ REFUSED: G1-81: doctor asserts no platform-scope path.
+     * ⛔ REFUSED: G1-82: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for pausing meters.
+     * ⛔ REFUSED: G17-31: doctor asserts no conversion path.
      */
     public function test_no_refusal_declared(): void
     {
