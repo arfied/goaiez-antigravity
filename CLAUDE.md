@@ -552,6 +552,41 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   `git show --stat` on **every** moved tip on a miss, unconditionally — the miss's
   value comes from the paired stat, which the cache never covers.
 
+  ✅ **Half 3 is LIVE, and the complement's signal is its DELTA, never its list**
+  (tick 182). Ticks 162–181 all read half 3 as "`5f435239` alone, a merge that
+  changes nothing here", and tick 175 proved it clean a second way — the
+  complement's eleven files did not include `app/GOAIEZ-TRACKER-CAPABILITIES.md`
+  at all. Both readings were arguments from absence. At tick 182 `track/pricebook`
+  wrote `dcd5b1f2` ("Update X-172 G10-24 to name refusal"), and **both methods
+  named it in the same tick**: half 3 printed the commit, and the complement grew
+  **11 → 13** with exactly the two files it touched (`GOAIEZ-MASTER-PLAN.md`,
+  `GOAIEZ-TRACKER-CAPABILITIES.md`).
+
+  So the two are a check and its completeness proof, not a restatement — half 3
+  answers "did a sibling write our document?", the complement answers "is there a
+  surface no half watches?", and the pairing is what separates a benign co-edit
+  from an unwatched gap. Which means the complement's **eleven-file stability was
+  never a property of the query**; the list grows the same tick a sibling touches
+  anything outside the three stripped prefixes. Read it as a delta against the
+  previous tick's recorded list, which is why the list is recorded verbatim in
+  every block:
+
+  - **grew, and a half names the new file** → benign co-edit on a covered
+    surface; read the commit, the halves already had it (tick 182).
+  - **grew, and no half names it** → an uncovered surface. This, and only this,
+    is when a fourth half is warranted (tick 175).
+  - **unchanged** → proves nothing alone (tick 180). Cite the halves.
+
+  `dcd5b1f2` measured clean: +3 −3, one row (G10-24) replaced by itself plus a
+  `· refuses:` clause. This track's tracker rows are in **G3/G8/G13/G16/G18**;
+  G10 is hundreds of lines away, so Track 1 gets no textual conflict and this
+  track's only mergeable content (tick 162) is intact. ⚠️ Note separately that
+  pricebook owns X-163/X-119/X-126 under ruling 5 and wrote **X-172** (Track 1's,
+  including its *generated* `capabilities.php`) and **X-171** (stages'). That is
+  OWNER ACTION 45's shape one lane over, outside this track's column and
+  degrading nothing here — **advisory to Track 1, not a new OWNER ACTION**, and
+  never a parallel fix.
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
