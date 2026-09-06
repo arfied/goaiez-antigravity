@@ -8,6 +8,7 @@ use App\Models\Conversation;
 use App\Models\Customer;
 use App\Modules\CAgent\Actions\AgentDraftAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X01\Models\LeadScore;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -28,9 +29,15 @@ class Thread extends Component
 
     public ?string $errorMessage = null;
 
+    public bool $isGhostRisk = false;
+
     public function mount(?Customer $customer = null)
     {
         $this->customer = $customer;
+        if ($this->customer) {
+            $score = LeadScore::where('person_id', $this->customer->id)->value('grade');
+            $this->isGhostRisk = ($score === 'F');
+        }
     }
 
     public function draftAiReply(int $messageId, AgentDraftAction $draftAction)
@@ -104,7 +111,10 @@ class Thread extends Component
         }
 
         $conversations = ($this->businessId > 0 || Tenancy::check())
-            ? Conversation::where('business_id', Tenancy::idOrFail())->get()
+            ? Conversation::where('business_id', Tenancy::idOrFail())
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('id', 'desc')
+                ->get()
             : collect();
 
         $messages = collect();
