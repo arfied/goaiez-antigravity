@@ -1,0 +1,92 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Modules\X137;
+
+use App\Modules\X137\Actions\CallAttributeAction;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+class PoolExhaustionTest extends TestCase
+{
+    private CallAttributeAction $attributeAction;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->attributeAction = new CallAttributeAction();
+    }
+
+    public function test_pool_exhaustion_renders_fallback_and_is_unattributed(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Exhaustion Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '+15550001001'],
+            ['business_id' => $biz->id, 'phone_number' => '+15550001002'],
+        ]);
+
+        DB::table('dni_pool_settings')->insert([
+            'business_id' => $biz->id,
+            'fallback_number' => '+15559999999',
+        ]);
+
+        $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+        $t2 = $this->attributeAction->allocateFromPool($biz->id, 'v2', 'src');
+        $t3 = $this->attributeAction->allocateFromPool($biz->id, 'v3', 'src');
+
+        $this->assertEquals('active', $t1->status);
+        $this->assertEquals('active', $t2->status);
+        $this->assertEquals('unattributed', $t3->status);
+        $this->assertEquals('+15559999999', $t3->allocated_number);
+    }
+
+    public function test_pool_exhaustion_never_reuses_token(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Exhaustion Tenant 2', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '+15550001003'],
+        ]);
+
+        $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+        $t2 = $this->attributeAction->allocateFromPool($biz->id, 'v2', 'src');
+
+        $this->assertNotEquals($t1->allocated_number, $t2->allocated_number);
+    }
+
+    public function test_number_returns_to_availability_when_expired_or_joined(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Exhaustion Tenant 3', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            ['business_id' => $biz->id, 'phone_number' => '+15550001004'],
+        ]);
+
+        $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
+        $this->assertEquals('+15550001004', $t1->allocated_number);
+
+        // Mark as joined
+        $t1->update(['status' => 'joined', 'joined_call_id' => 999]);
+
+        $t2 = $this->attributeAction->allocateFromPool($biz->id, 'v2', 'src');
+        $this->assertEquals('+15550001004', $t2->allocated_number);
+        $this->assertEquals('active', $t2->status);
+    }
+
+    public function test_offline_campaign_number_cannot_be_assigned_to_second_live_campaign(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Offline Campaign Refusal', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->attributeAction->allocateStaticToken($biz->id, '+15554440000', 'print_ad');
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN');
+        $this->attributeAction->allocateStaticToken($biz->id, '+15554440000', 'radio_spot');
+    }
+}
