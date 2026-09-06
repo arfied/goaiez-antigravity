@@ -77,4 +77,47 @@ class DeclinesScreenTest extends TestCase
             ->call('sendPayLink', $failed->id)->assertSee('pay.goaiez.com/link/')
             ->call('sendPayLink', 999999)->assertSee("isn't in this account")->assertSee('Not recovered')->call('settleUpLater', $failed->id)->assertDontSee('150.00')->assertSee('No declines this week.');
     }
+
+    public function test_a_decline_recovered_on_the_same_token_is_counted_as_recovered(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        app(\App\Modules\X198\Actions\MerchantConnectAction::class)->handle($biz->id, 'stripe', 'acct_test');
+
+        $this->app->instance(\App\Modules\X198\Domain\StripeGatewayClient::class, new class {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string {
+                throw new \RuntimeException('Stripe charge failed: card_declined');
+            }
+        });
+
+        $captureAction = app(\App\Modules\X198\Actions\PaymentCaptureAction::class);
+        $token = 'tok_recovery';
+
+        $time1 = \Carbon\Carbon::parse('2026-09-06 10:00:00');
+        \Carbon\Carbon::setTestNow($time1);
+        try {
+            $captureAction->handle($biz->id, 1000, $token, 'idem_1');
+        } catch (\RuntimeException $e) {}
+
+        $time2 = \Carbon\Carbon::parse('2026-09-06 10:05:00');
+        \Carbon\Carbon::setTestNow($time2);
+        
+        $this->app->instance(\App\Modules\X198\Domain\StripeGatewayClient::class, new class {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string {
+                return 'ch_success_recovery';
+            }
+        });
+        $captureAction->handle($biz->id, 1000, $token, 'idem_2');
+
+        \Carbon\Carbon::setTestNow();
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->assertOk()
+            ->assertSee('10.00')
+            ->assertSee('Recovered ' . $time2->format('M j, g:i A'));
+    }
 }
