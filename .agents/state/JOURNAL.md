@@ -807,3 +807,4 @@
 - `2026-09-06T14:05:28` (R245) X-167 — G6-24: bounded out by X-167 scope (a van and a storage unit, not a warehouse)
 - `2026-09-06T14:17:54` (R245) X-166 — N-048: margin is proven by refusal (the module reads no invoiced source) plus a collected-figure test; the collected amount is supplied by the caller, and the money lane owns the payments source (R245)
 - `2026-09-06T14:44:17` (R245) X-163 — a NO_FACT agent refusal about pricebook creates a price_cents=0, is_confirmed=false row so the owner sees the gap in the daily digest.
+- `2026-09-06T15:17:11` (R245) X-163 — R245: the daily pricing digest lists every unconfirmed flagged gap until it is priced, newest refusal first — the day window silently hid an unpriced gap at midnight (PB-86)
