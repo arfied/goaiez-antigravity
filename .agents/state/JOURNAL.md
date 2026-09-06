@@ -795,3 +795,6 @@
 - `2026-09-06T13:37:38` RESOLVED tests X-171 - superseded by the decision recorded 2026-09-06T11:47:36 (a whole offline session replayed, nothing lost and nothing doubled). (was: G4-26 says 'offline-first is the premise' which states a premise, not a behaviour; ReplayOfflineSyncAction handles offline replay and conflicts, but the premise itself has no separate behavioural assertion beyond what the test anchor already proves)
 - `2026-09-06T13:39:44` UNRESOLVED capability X-167 - G1-76: missing Receipt model/action
 - `2026-09-06T13:43:37` UNRESOLVED capability X-167 - G1-79, G6-39, G6-43, G6-47, G6-49: missing Receipt, Job completion reconcile, Kit, Refund, Serial models/actions
+- `2026-09-06T14:02:09` X-171 -> DONE
+- `2026-09-06T14:02:09` X-172 -> DONE
+- `2026-09-06T14:02:09` X-175 -> DONE
