@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T10:54:58",
+ "updated": "2026-09-06T11:05:08",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1802,6 +1802,12 @@
    "module": "X-198",
    "chose": "(R245) a column that stores a provider-issued string is text and a stub that returns a short one tests nothing: payment_links.url was varchar(255) and a live Stripe Checkout URL is 422 characters, invisible to four passing tests because every stub returned the same 44-character fiction - the column is text, at least one double returns a 400+ character URL, and the widening is a NEW migration because an edited one never reaches goaiez_antig_money (ruling 41)",
    "at": "2026-09-06T10:54:58",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) a test double returns a value of the real thing's SHAPE and SIZE, read from this lane's evidence artifacts and never invented: the pay-link doubles returned a 42-character /pay/ URL while Stripe issues 477 characters on /c/pay/, and DeclinesScreenTest asserted that never-issued shape on the screen, so the blade's handling of a real URL was untested as well as the column (ruling 41 part 2, MONEY-69)",
+   "at": "2026-09-06T11:05:08",
    "ruling": "R245"
   }
  ]
