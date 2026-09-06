@@ -10,8 +10,10 @@ use App\Modules\X175\Domain\FieldAssistantEngine;
 use App\Modules\X175\Events\AssistantSuggested;
 use App\Modules\X175\Events\UpsellPrompted;
 use App\Modules\X175\Models\FieldSuggestion;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X175Test extends TestCase
@@ -102,7 +104,7 @@ class X175Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Field Tech Assistant Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \Illuminate\Support\Facades\Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('offline'));
+        Http::fake(fn () => throw new ConnectionException('offline'));
 
         $techPersonId = 882;
         $jobId = 9104;
@@ -121,6 +123,6 @@ class X175Test extends TestCase
         $this->assertEquals('answered', $verifiedResult['status']);
         $this->assertEquals($verifiedAnswer, $verifiedResult['response']);
 
-        \Illuminate\Support\Facades\Http::assertNothingSent();
+        Http::assertNothingSent();
     }
 }
