@@ -1395,6 +1395,10 @@
   {
    "at": "2026-09-06T05:07:34",
    "note": "Converted logOfflinePayment to throw UnreferencedPaymentException before any writes when reference and photo_path are blank."
+  },
+  {
+   "at": "2026-09-06T05:19:19",
+   "note": "MONEY-52: carried the five literal capability ids (N-033, G1-61, G1-65, G1-70, G1-74) onto the X-211 tests that prove them, restoring capability to 349; paired every negative screen assertion in X-211 with a positive control."
   }
  ],
  "decisions": [

@@ -575,3 +575,4 @@
 - `2026-09-06T05:07:30` (R245) X-211 — logOfflinePayment now refuses input it used to accept, naming G1-74, N-033 and UnreferencedPaymentException
 - `2026-09-06T05:07:34` note: Converted logOfflinePayment to throw UnreferencedPaymentException before any writes when reference and photo_path are blank.
 - `2026-09-06T05:07:39` UNRESOLVED capability X-211 - the ⑤ cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine — measured MONEY-51.
+- `2026-09-06T05:19:19` note: MONEY-52: carried the five literal capability ids (N-033, G1-61, G1-65, G1-70, G1-74) onto the X-211 tests that prove them, restoring capability to 349; paired every negative screen assertion in X-211 with a positive control.
