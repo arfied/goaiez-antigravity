@@ -308,6 +308,35 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   Measured at tick 176: four pids, one unreadable (`358881`); a second `pgrep`
   seconds later printed two, and it was gone. Same race as the launcher's
   `--status` ALIVE→dead, one layer up in the supervisor's own check.
+
+  ✅ **Positive confirmation at tick 179**: two live `agy` pids, **both**
+  readable, both in sibling checkouts (`372835` → `…/grs-antig-stages`, `458021`
+  → `…/grs-antig-sixty`). The tick-176 reasoning above rests on `goaiez`'s own
+  processes having readable cwds; these are two of them, measured.
+
+  ⛔ **`coder.pid` liveness is a TWO-part check, because the pid space has
+  wrapped** (tick 179). Case (a) of the tick prompt — "if `coder.pid` is alive,
+  print `coder running` and stop" — reads a number written hours earlier, and on
+  this box that number is no longer unique. Measured at tick 179: the recorded
+  `.agents/supervisor/coder.pid` is **3325593** (written 2026-09-05 19:33), while
+  every live pid now allocates around 3.7–4.9 ×10⁵ — this supervisor **494678**,
+  the two live sibling coders **372835** and **458021**. The counter has passed
+  its maximum and is reissuing low numbers, so 3325593 will eventually be handed
+  to an unrelated process and case (a) would park this track on a stranger.
+  Check both:
+
+  ```
+  readlink /proc/<coder.pid>/cwd    # empty / exit 1 = gone
+  pgrep agy                          # the pid absent = gone
+  ```
+
+  A pid that is **alive but whose cwd is not this checkout** is a recycled pid,
+  not the coder — resume the tick. A pid whose cwd **is** this checkout and that
+  `launch-coder.sh` did not start is the one-writer BLOCK. Same `readlink`, two
+  opposite verdicts, and the cwd is the only thing that separates them; the
+  number alone decides nothing. ⚠️ `cat /proc/sys/kernel/pid_max` is refused
+  here (working-directory guard) and is not needed — the wrap is measured
+  directly from the live pids, which is the cheaper reading anyway.
 - **A HOLD tick checks four things, not three.** The three documented re-openers
   (an owner answer, a Track 1 merge of a sealed-file fix, a regeneration that
   moves a count) all watch `main`. The fourth watches the *other tracks*: is a
