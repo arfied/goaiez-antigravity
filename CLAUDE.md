@@ -3943,3 +3943,144 @@ the six are **X-104, X-105, X-109, X-116, X-123, X-131**.
 writes both, the JOURNAL is one line per action with the module named explicitly, and the JSON is
 the only one of the two whose adjacency is meaningless. Grepping the hunk would have opened a
 finding against a sibling for touching X-103.
+
+## ⛔ "The module has no read path" is NOT "the dependency is missing" — my own brief's branch (a) conflated them, and rule 09 is the casualty (tick 227)
+
+SITE-109 filed `G8-14` and `G8-15` as `UNRESOLVED capability X-176`, honestly and exactly as
+briefed. The filings are wrong, and the defect is **mine**. My brief defined the branch that
+decides a filing as:
+
+> **(a) No read path** — the module receives the thing as an argument, or nothing reaches it at
+> all. Then the capability cannot be asserted here and step 3's filing is correct.
+
+Every command in that branch points **inside `app/app/Modules/X-176/`**. None of them asks the
+question rule 09 actually turns on — *does the thing the row names exist?* Measured this tick, in
+one `ls` each:
+
+```
+app/app/Modules/X-108/  Actions/{AppointmentBook,AppointmentCancel,AvailabilityRequest,WaitlistJoin}Action.php
+                        Models/{Appointment,AvailabilityRule,Resource,SlotLock,Waitlist}.php
+                        Events/{AppointmentBooked,AppointmentReminded,NoShowDetected,SlotLocked}.php
+app/app/Modules/X-163/  Actions/{PriceLookup,PriceQuote,PriceConfirm,PriceRange,BookVersion,CalloutLookup}Action.php
+                        Models/{PriceBookItem,PriceBookVersion,CalloutFee,LocationBook}.php
+                        Events/{PricebookUpdated,PriceConfirmed,VersionBumped,PriceRefusalFlagged}.php
+```
+
+X-163 and X-119 and X-108 are **fully built**, with migrations, models, actions and events.
+`PriceBookVersion` and `VersionBumped` are precisely G8-14's *"invalidated in the same commit"*
+half. So both `why` strings name, as the missing dependency, a module that is present — the exact
+thing rule 09 exists to forbid, and `state.py` has **no withdraw**.
+
+⛔ **The generalisation, and it is the one the brief needed.** A capability row names a
+relationship between two modules. A query scoped to **one** of them can only ever measure one
+side of it, and "no read path here" is a fact about the *reader*, never about the *referent*.
+Tick 208 ruled that an enumerated evidence request is where the regression sits; this is that law
+on a **branch condition** rather than an evidence list — the branch was exhaustive over the wrong
+domain, so both arms led to the same wrong place and the coder could not have escaped it by
+measuring more carefully. Fifteenth-plus statement of the section's law, turned on a brief for the
+second time: **a query's scope is not its claim, and a branch's scope is not its verdict.**
+
+✅ **Per the standing rule, a defect my own brief caused is a NEW item with its own two
+dispatches** — SITE-109 spent none of them. And per tick 26, correcting a filing's `why` is a
+`state.py note`, **never** a `resolve` (which is module+stage-granular, deletes every record for
+the pair and returns the module to `BUILDING`).
+
+## ⛔ The renderer EXISTS and has no caller — "no read path" was measured on the wrong side of the seam (tick 227)
+
+The sharper half of the same finding, and it inverts the wave's conclusion. `SchemaRenderAction`
+already implements G8-14 end to end:
+
+```
+:53-66   if (! empty($productOffers)) { $jsonLd['hasOfferCatalog'] = ['@type' => 'OfferCatalog', … 'Offer' … ] }
+:124-133 the validator — refuses a catalog whose @type is not OfferCatalog, or an item that is not Offer/Service
+```
+
+And the **only** caller of X-176 outside the module is this lane's own
+`X-157/Actions/EdgeDeployAction.php:170-177`, which passes `videos:` **and never
+`productOffers`** — so the parameter defaults to `null`, `! empty()` is false, and the whole
+branch is dead in production. It fires from tests alone.
+
+So X-176 is not missing a renderer; the **deploy path never populates it**. That is a build item
+wholly inside this lane's column (X-176 and X-157 are both ours under rulings 5 and 17), not a
+dependency filing. ⚠️ It is also a near relative of the false-credit catalogue: a capability whose
+code exists, whose test passes by handing the action its answer as an argument, and whose
+production path never executes it. The test proves the renderer; nothing proves the seam.
+
+⛔ **Before filing a capability as blocked, ask which side of the seam is missing.** A grep of the
+module answers "does this module read X"; it cannot answer "is this capability reachable", and the
+two differ exactly when the module is a *callee*.
+
+## ⛔ §6 could never fail this gate — for a style red OR for a kill (tick 227)
+
+Track 1's 16:0x relay asked every lane to check its own §6. Ours had the identical hole, and it
+had it for this lane's entire life:
+
+```
+./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
+```
+
+`||` binds to the **pipeline**, whose status is `sed`'s, which is always 0. So a style red never
+set `fail`, and neither would a killed pint (which prints a bare `Terminated`). Fixed by capturing
+rc before any pipe, with `rc >= 124` reported as *"KILLED or timed out — this is NOT a verdict"*
+rather than as a style red.
+
+⚠️ **This is a check that could not fail, in the gate this lane uses to decide every verdict** —
+the a-lint-that-matches-nothing shape, one level up, in the instrument rather than in the code.
+Tick 208 recorded pint going `passed → fail`, which is why the hole was invisible: the *reporting*
+was always right, only the **exit status** was lost, so §6 has been informative and non-binding at
+the same time. ⛔ A section that prints the right answer is not the same as a section that gates
+on it — check both, and the cheap test is whether the verdict line moves.
+
+## ✅ The gate log is on Track 1's CORRECTED eight-column shape; stages is still on seven (tick 227)
+
+Track 1's 14:0x relay gave a seven-column shape and its 16:5x message corrected it to eight,
+inserting `tool_pid` at position 4. Both shapes are live in `/home/goaiez/tmp/gate-runs.tsv` and
+**nothing in a row announces its own width**, so a field-index parser is silently wrong across the
+mix in the column that carries the whole point. Measured at tick 227, rows 34-41: `track/stages`
+is still writing seven (`…1348873<TAB>0<TAB>goaiez-antigravity…`), `track/reviews` eight. This
+lane now writes eight, verified on its own rows 57-60:
+
+```
+16:46:49  16:46:49  1387874  -        -  goaiez-antigravity  grs-antig-site  gate-start
+16:46:53  16:46:53  1387874  1388549  0  goaiez-antigravity  grs-antig-site  pint
+16:46:53  16:46:54  1387874  1388597  0  goaiez-antigravity  grs-antig-site  phpstan
+16:46:49  16:46:54  1387874  -        1  goaiez-antigravity  grs-antig-site  gate-end
+```
+
+`1388549 ≠ 1387874` is the measurement that matters: the `pgrep -P` descent really resolved the
+tool's own pid, not the gate's. ⛔ Logging a wrapper's pid breaks the join against `kill-log.tsv`
+in exactly the case the log exists for — `timeout 1800 env … pest` makes `timeout` the job and
+pest the process a killer sees. This lane saw that kill at tick 208 (`rc=143`) and could attribute
+it to nothing; that is what the join is for.
+
+⚠️ Adopted, not copied (tick 216): the `project` column is `goaiez-antigravity`, never the
+directory — Track 1's own writer put the directory in both and split its traffic on any group-by.
+
+## ⚠️ A report can invent a mechanism for an absence it observed correctly (tick 227)
+
+SITE-109's §7 read *"(Not run. Script aborted early at §2 because app/phpunit.xml is modified in
+the working tree, which is expected.)"* The **fact** is right — §7 did not run. The **mechanism is
+fabricated**: `bin/supervise.sh` does not abort at §2, and this seat's own run the same minute
+printed §2, §2a, §2b, §2c, §3, §4, §6 and a verdict. §7 was absent because *the brief itself* ruled
+`--tests` off for a wave that edits nothing pest reads.
+
+Harmless here and worth the line: the coder had the right observation and reached for a cause it
+had not measured — tick 209's own failure, one seat over, and the same shape as tick 192's
+asserted-but-never-fired fallback. ⛔ **A report states what it ran and what it observed; a cause
+is a measurement like any other.** The brief already asks §7 to be quoted even when it reads "not
+run"; it now also says *say that the brief turned it off, and do not explain an absence you did
+not measure.*
+
+## ⚠️ `pint --test` prints only `{"tool":"pint","result":"passed"}` — terse, and NOT a stub (tick 227)
+
+Checked because a single-line JSON output from a tool that normally prints a banner and a table
+looks exactly like a constant-green shim, which would fake-green the whole style gate. It is not
+one: `app/vendor/laravel/pint/builds/pint` is a genuine 22 MB Box phar dated 2026-08-10, and
+**tick 208 recorded §6 going `passed` → `fail` on exactly the two files that wave edited**. A
+reporter that distinguishes pass from fail on real input is a reporter, not a stub.
+
+⛔ The residual is named honestly rather than left as an alarm: the JSON is emitted by the pint
+process itself and this seat cannot see where it is configured (`ls` on `/home/goaiez/agents/
+coder-bin/` is blocked, `command -v` is refused). That is an unknown, not a hazard — tick 221's
+law that *a hazard asserted and never measured is not a hazard*, applied in the direction that
+closes one.

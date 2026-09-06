@@ -25,6 +25,57 @@ for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_docto
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
+# ── Shared gate log (Track 1 relay 2026-09-06 16:0x, CORRECTED 16:5x to EIGHT columns).
+#   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
+# ⛔ Track 1's first relay gave a SEVEN-column shape and every lane built to it, so the file
+# is mixed and nothing in a row announces its own width: read $4 as rc and an 8-col row shows
+# a seven-digit pid, read $5 as rc and a 7-col row shows the project name. Any consumer
+# branches on NF. We write 8.
+# `project` is the PROJECT (goaiez-antigravity), `checkout` the directory basename — Track 1's
+# own writer put the directory in both and split its traffic on any group-by.
+# `rc` is RAW, never normalised: 128+N is the whole signal (143 SIGTERM, 137 SIGKILL, 124 is
+# timeout(1)'s own). `tool` matters because pint, phpstan and pest are three populations and a
+# kill hits whichever is running.
+# No lock: an append under PIPE_BUF to an O_APPEND file is atomic on Linux, and a flock here
+# would interact with the pest lock for nothing.
+GATE_RUNS=/home/goaiez/tmp/gate-runs.tsv
+log_gate() {  # $1 start_iso  $2 rc  $3 tool  $4 tool_pid
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$(date -Is)" "$$" "${4:--}" "$2" goaiez-antigravity "$(basename "$ROOT")" "$3" \
+    >> "$GATE_RUNS" 2>/dev/null || true
+}
+
+# run_tool <tool> <cmd...> — sets tool_out and tool_rc, logs one row with the REAL tool pid.
+# ⛔ `out=$(cmd)` gives no pid, so the command is backgrounded and waited on. The `pgrep -P`
+# descent is not optional where anything wraps the tool: `timeout 1800 pest` makes `timeout`
+# the job and pest the process a killer sees, so logging the wrapper's pid would break the
+# join against kill-log.tsv in exactly the case the log exists for — silently.
+run_tool() {
+  local tool="$1"; shift
+  local t0 tmp jobpid child
+  t0=$(date -Is)
+  tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!
+  tool_pid=$jobpid
+  child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)
+  [ -n "$child" ] && tool_pid=$child
+  wait "$jobpid"; tool_rc=$?
+  tool_out=$(cat "$tmp"); rm -f "$tmp"
+  log_gate "$t0" "$tool_rc" "$tool" "$tool_pid"
+}
+
+# Gate sentinel: a start row (rc `-`) and an end row from an EXIT trap, so a gate killed at
+# the wrapper is distinguishable from one that never ran. ⛔ Defined HERE, at the top — Track 1
+# put theirs where the tools run and recorded nothing for a gate killed two seconds in. And
+# `trap - EXIT` goes INSIDE the signal traps: theirs wrote rc=143 and then rc=0, so the last
+# row read clean and the honest row was hidden by a later one.
+GATE_T0=$(date -Is)
+log_gate "$GATE_T0" - gate-start
+trap 'log_gate "$GATE_T0" "$fail" gate-end' EXIT
+trap 'log_gate "$GATE_T0" 143 gate-signal; trap - EXIT; exit 143' TERM
+trap 'log_gate "$GATE_T0" 130 gate-signal; trap - EXIT; exit 130' INT
+
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
@@ -119,8 +170,22 @@ if [ $want_doctor -eq 1 ]; then
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+# ⛔ These two lines used to pipe straight into `tail | sed`, so `|| fail=1` was reading SED's
+# status, which is always 0 — §6 could never fail the gate, for a style red OR for a kill.
+# (Track 1 hit the same hole: a KILLED pint prints a bare `Terminated` and was about to be
+# filed as "pint failed".) Capture rc BEFORE any pipe. rc >= 124 is a statement about the box,
+# never a verdict about the code — say so and do not call it a style red.
+run_tool pint ./vendor/bin/pint --test
+printf '%s\n' "$tool_out" | tail -3 | sed 's/^/  /'
+if [ "$tool_rc" -ge 124 ]; then
+  echo "  ⛔ pint was KILLED or timed out (rc $tool_rc) — this is NOT a verdict"; fail=1
+elif [ "$tool_rc" -ne 0 ]; then fail=1; fi
+
+run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+printf '%s\n' "$tool_out" | tail -4 | sed 's/^/  /'
+if [ "$tool_rc" -ge 124 ]; then
+  echo "  ⛔ phpstan was KILLED or timed out (rc $tool_rc) — this is NOT a verdict"; fail=1
+elif [ "$tool_rc" -ne 0 ]; then fail=1; fi
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (exported DB_DATABASE → $TRACK_DB;  app/phpunit.xml pins $xml_db)"
@@ -171,7 +236,12 @@ if [ $want_tests -eq 1 ]; then
 fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
-  out=$(timeout 1800 env DB_DATABASE="$TRACK_DB" ./vendor/bin/pest 2>&1); rc=$?
+  # run_tool logs the pid of pest ITSELF, not of the `timeout` wrapper — `env` execs pest in
+  # the same process, so timeout's only child IS the pest process. Logging the wrapper would
+  # break the join against kill-log.tsv in exactly the case this lane saw at tick 208
+  # (rc=143, SIGTERM from outside, attributable to nothing).
+  run_tool pest timeout 1800 env DB_DATABASE="$TRACK_DB" ./vendor/bin/pest
+  out="$tool_out"; rc=$tool_rc
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
