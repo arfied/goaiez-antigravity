@@ -38,7 +38,7 @@
 <x-ui.button size="default" wire:click="approve({{ $d->id }})" wire:loading.attr="disabled" wire:target="approve({{ $d->id }})">Approve the submission</x-ui.button>
 @endif
 @if($d->status === 'submitted')
-<p class="text-sm text-ink-2">Submitted; the bundle is sealed and the gateway's decision comes back through the queue.</p>
+<p class="text-sm text-ink-2">Submitted; the bundle is sealed. Record the gateway's decision yourself from the dispute queue when it reaches you.</p>
 @endif
 </li>
 @endforeach

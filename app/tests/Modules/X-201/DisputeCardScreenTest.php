@@ -64,6 +64,7 @@ class DisputeCardScreenTest extends TestCase
             ->call('approve', $open->id)
             ->assertSee('Submitted the defence for invoice #902')
             ->assertSee('submitted')
+            ->assertSee("Record the gateway's decision yourself from the dispute queue when it reaches you.")
             ->set('note.'.$open->id, 'One more thing')
             ->call('addNote', $open->id)
             ->assertSee('already submitted')
