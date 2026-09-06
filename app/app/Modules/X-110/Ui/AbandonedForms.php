@@ -87,7 +87,7 @@ class AbandonedForms extends Component
         arsort($fieldCounts);
         $topKiller = count($fieldCounts) > 0 ? key($fieldCounts) : null;
         $killerCount = $topKiller ? $fieldCounts[$topKiller] : 0;
-        
+
         $hasClearLeader = false;
         if (count($fieldCounts) === 1) {
             $hasClearLeader = true;
