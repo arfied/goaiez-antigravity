@@ -20,6 +20,7 @@ use App\Modules\X111\Models\TenantTicket;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X111Test extends TestCase
@@ -205,5 +206,73 @@ class X111Test extends TestCase
         }
 
         $this->assertGreaterThanOrEqual(8, $controlCount);
+    }
+
+    private function assertFilesDoNotContain(string $pattern): void
+    {
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-111')));
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && ! in_array($file->getBasename(), ['capabilities.php', 'manifest.php'])) {
+                $content = file_get_contents($file->getPathname());
+                $this->assertDoesNotMatchRegularExpression("/$pattern/i", $content, "File {$file->getPathname()} matched forbidden term $pattern");
+            }
+        }
+    }
+
+    /** [G1-29] [G1-35] */
+    public function test_g1_29_and_g1_35_mrr_blends_refused(): void
+    {
+        $this->assertFilesDoNotContain('\b(mrr|booked|collected)\b');
+    }
+
+    /** [G4-24] */
+    public function test_g4_24_two_packages_no_99_tier(): void
+    {
+        $this->assertFilesDoNotContain('\b(99|999|tier|tiers|package|packages)\b');
+    }
+
+    /** [G5-18] */
+    public function test_g5_18_human_reply_escalates(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Human Escalate', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ticket = $this->ticketAction->handle($biz->id, 'HUMAN', 'human_escalation');
+        $this->assertEquals('human_requested', $ticket->source);
+        $this->assertEquals('human_escalation', $ticket->category);
+        $this->assertEquals('open', $ticket->status);
+    }
+
+    /** [G7-33] */
+    public function test_g7_33_spend_ceiling_alerts_never_stops_phone(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Ceiling', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $alert = $this->alertAction->handle($biz->id, 'warning', 'Spend ceiling reached');
+        $this->assertEquals('warning', $alert->severity);
+        $this->assertStringContainsString('Spend ceiling reached', $alert->action_verb_message);
+
+        $this->assertFilesDoNotContain('\b(phone|answering|stop_phone|halt_telephony)\b');
+    }
+
+    /** [G19-09] */
+    public function test_g19_09_compromise_halt_is_security_stop(): void
+    {
+        $this->assertFilesDoNotContain('\b(balance|zero_balance|credit|credit_cap)\b');
+    }
+
+    /** [G21-02] */
+    public function test_g21_02_fuzzy_merged_tickets(): void
+    {
+        $this->assertFilesDoNotContain('\b(fuzzy|merged|merge_tickets)\b');
+    }
+
+    /** [G15-28] */
+    public function test_g15_28_no_pay_field_exposed(): void
+    {
+        $this->assertFilesDoNotContain('\b(pay|wage|wages)\b');
+        $this->assertFalse(Schema::hasColumn('operator_alerts', 'pay'));
+        $this->assertFalse(Schema::hasColumn('tenant_tickets', 'pay'));
     }
 }
