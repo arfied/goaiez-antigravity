@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T05:49:30",
+ "updated": "2026-09-06T06:08:18",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -535,6 +535,12 @@
      "stage": "doctor",
      "why": "Missing plan update: Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
      "at": "2026-09-06T05:49:30"
+    },
+    {
+     "module": "X-120",
+     "stage": "doctor",
+     "why": "the emitter exists \u2014 Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85; the gap is a NAME in the generated manifest, truncated out of the harvest by the backtick in X-199's @emits line at source/GOAIEZ-MASTER-PLAN.md:26670. Ruling 29 forbids this lane editing that text; ruling 32 forbids minting a second event class to make the string resolve.",
+     "at": "2026-09-06T06:08:15"
     }
    ]
   },
@@ -1096,6 +1102,12 @@
      "stage": "doctor",
      "why": "Missing plan update: Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
      "at": "2026-09-06T05:49:26"
+    },
+    {
+     "module": "X-211",
+     "stage": "doctor",
+     "why": "the emitter exists \u2014 Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65 under due_date < today AND status = 'issued' AND due_notified_at IS NULL, which IS 'went overdue, once'; the gap is a NAME truncated out of the generated manifest by the same backtick. Rulings 29 and 32.",
+     "at": "2026-09-06T06:08:18"
     }
    ]
   },
@@ -1270,6 +1282,18 @@
    "stage": "doctor",
    "why": "Missing plan update: Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85, but the frozen plan GOAIEZ-MASTER-PLAN.md does not reflect this name.",
    "at": "2026-09-06T05:49:30"
+  },
+  {
+   "module": "X-120",
+   "stage": "doctor",
+   "why": "the emitter exists \u2014 Events/LimitExceeded.php is dispatched at Domain/InvoiceEngine.php:85; the gap is a NAME in the generated manifest, truncated out of the harvest by the backtick in X-199's @emits line at source/GOAIEZ-MASTER-PLAN.md:26670. Ruling 29 forbids this lane editing that text; ruling 32 forbids minting a second event class to make the string resolve.",
+   "at": "2026-09-06T06:08:15"
+  },
+  {
+   "module": "X-211",
+   "stage": "doctor",
+   "why": "the emitter exists \u2014 Events/InvoiceDue.php is dispatched at Console/MarkInvoicesDueCommand.php:65 under due_date < today AND status = 'issued' AND due_notified_at IS NULL, which IS 'went overdue, once'; the gap is a NAME truncated out of the generated manifest by the same backtick. Rulings 29 and 32.",
+   "at": "2026-09-06T06:08:18"
   }
  ],
  "notes": [
@@ -1428,6 +1452,10 @@
   {
    "at": "2026-09-06T05:49:35",
    "note": "Completed the MONEY-53 sweep. Audited 17 negatives across X-199 tests. 15 were already paired with seeded controls; added controls for 2 in CreditsScreenTest. Verified UnpaidScreenTest mutation fails negative assertion correctly. Marked X-211 and X-120 gaps as unresolved due to frozen plan."
+  },
+  {
+   "at": "2026-09-06T06:08:23",
+   "note": "MONEY-54 completed: audited 14 assertDontSee calls across X-198 and X-120. 8 were paired already. 6 missing controls were added to CardScreenTest. Mutation proven on ReconciliationDiscrepancies. Unresolved manifest gaps recorded."
   }
  ],
  "decisions": [
