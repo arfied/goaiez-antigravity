@@ -2243,3 +2243,86 @@ six more banned anywhere near an artifact-id field (`:43-46`, `:112-128`). So th
 blocking half is **specifically the external artifact id**, and under ruling 16
 X-157 has none *by design* — a `deploy_hash` is the self-minted id `:90` exists to
 reject.
+
+## ⛔ RETRACTED at tick 210 — the seven anchor entries were ALREADY FILED, TWICE. A common-mode fault's blast radius is every query made in its window (tick 210)
+
+The table immediately above says `anchor … ⛔ seven, **none** filed`, and the line
+under it says *"`state.py status` carries no `anchor` line for this lane."* Both
+were false when written. Measured at tick 210 against `git show HEAD:` — i.e. the
+**committed** state file, at a HEAD that predates run 116 entirely:
+
+- **Set A — 7 entries**, one per owned id, `why` = *"no vendor credential for a
+  real-transport anchor run; evidence/ artifacts may only come from a real run
+  (CLAUDE.md forbids the simulation harness)"*.
+- **Set B — 6 entries**, richly reasoned and **citing live line numbers**: X-102
+  and X-110 *"the third party is the browser … a browser mints no message-id,
+  call-sid or charge-id"*; X-103 and X-155 *"no third party exists"* under ruling
+  16; X-137 *"the vendor belongs to another lane"*; and X-176 —
+  *"index.request (manifest:33) requires a public domain to serve the IndexNow key
+  (plugin:12-18) which this lane lacks, and the protocol mints no captureable id
+  as it responds with bare HTTP statuses (plugin:34-36)."*
+
+A ∪ B covers all seven. **Set B's X-176 entry is SITE-101's entire finding,
+already filed, with plugin line citations the wave did not reproduce.** So the
+wave re-derived from scratch a measurement the lane had already made and recorded
+better — and its output is a redundant third set.
+
+⚠️ **Why tick 209 got it wrong, and the part that generalises.** Tick 209 is the
+tick that *discovered* its own shell had drifted into `app/` and ruled `pwd` opens
+every census. It then re-ran the **census** and did not re-run the other queries it
+had already made in the same drifted window. `app/bin` does not exist (measured),
+so `python3 bin/state.py status` cannot run from `app/` — the most likely cause,
+though not isolated, and the effect is measured regardless: the claim was false at
+the moment it was written.
+
+⛔ **RULED: when a common-mode tooling fault is found, every measurement taken in
+that window is void until re-run — not just the family the fault was noticed in.**
+Tick 209 wrote *"corroboration from sibling queries proves nothing"* about a
+mis-scoped shell and then trusted a sibling query from the same shell. A drifted
+shell is not a census bug; it is a **session** bug, and its blast radius is the
+session, not the query family.
+
+Eighteenth statement of this section's law, and the first where the void query was
+**not** a census surface at all. 163/178/180/183/185/187 concern a query's
+*pathspec*, 190 its *strip*, 191 its *bounds moving*, 192/193 its *unrecorded
+bounds*, 194 its *configuration*, 196 its *width*, 207 its *expected output*, 208
+the *evidence request*, 209 its *resolution context*. This concerns the fault's
+**scope in time**: the one dimension along which a fault is invisible to any
+re-reading of the query itself.
+
+⛔ **Standing consequence — a brief may not name a lane's red list from a prior
+tick's table.** Tick 209's ruling ("a brief may name an absolute stage count only
+if it was measured in the same tick") was written about *numbers*; this extends it
+to the **list**. The closed-list table above is now known to contain a false row,
+so every other row in it inherits the doubt. Re-measure the red list from a live
+`php artisan doctor` before briefing any wave against it.
+
+## ⚠️ `state.py decided` for a missing dependency inflates a shared count (tick 210)
+
+Run 116 filed each of the seven both as `unresolved` *and* as `decided … --ruling
+R245`, because the brief asked for both. `state.py`'s own docstring (`:21-26`)
+splits them the other way: UNRESOLVED is **only** for a missing dependency,
+`decided` is for *"where the plan does not decide, the agent decides and BUILDS."*
+"Chat provider credential missing" is a missing dependency and nothing was built,
+so the seven `decided` rows would have taken §3's `R245 : 34 decision(s) made and
+built` to 41 — seven of which are neither decisions nor built, in a file all seven
+lanes share and Track 1 cherry-picks.
+
+⛔ **A brief that asks for a filing must not also ask for a `decided` line about
+the same fact.** The two commands are a partition, not a pair. `state.py` has
+**no withdraw** (`:162-166` appends to both the per-module and the flat list), so
+the only remedy is to not write it.
+
+## A wave whose entire output is already in the tree is the tick-195 shape again (tick 210)
+
+Tick 195: *"a blocked item's substance can be deliverable somewhere the block does
+not reach … the ledger tracked the blocked path rather than the claim."* Tick 210
+is its converse and the third firing of the family (with tick 196 retiring tick
+82's diagnosis, and tick 207 retracting the X-137 divergence): the ledger tracked
+**"unfiled"** rather than reading the record, and dispatched a wave to produce what
+was already there.
+
+All three were caught the same way — by re-measuring a standing claim before
+building on it — and all three were the lane's own bookkeeping, not a sibling's.
+**Before briefing a wave that produces a RECORD, grep for the record.** It is one
+command and it is the whole check.
