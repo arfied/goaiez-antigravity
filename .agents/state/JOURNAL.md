@@ -812,4 +812,6 @@
 - `2026-09-06T07:44:23` (R245) X-155 — FormReleaseAction clears is_spam and spam_reason, and emits FormCaptured event --ruling R245
 - `2026-09-06T08:07:09` (R245) X-102 — built refusal for ungrounded price questions per P-092, using existing 'refused' status and NO_GROUNDING_FACT code in ChatEscalateAction --ruling R245
 - `2026-09-06T08:07:09` (R245) X-155 — changed FormReleaseAction to be a no-op returning 'already_released' when submission is not spam, rather than throwing InvalidArgumentException --ruling R245
-- `2026-09-06T08:07:17` UNRESOLVED events X-155 - Track 2 Ui/ tenant inbox listener for FormCaptured
+- `2026-09-06T08:07:17` UNRESOLVED events X-155 - Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction
+- `2026-09-06T10:42:27` UNRESOLVED capability X-102 - no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's
+- `2026-09-06T10:42:36` (R245) X-102 — the assertable half of P-092 is on the answered path, not the refused one, because the refused answer is a constant string and the answered one echoes its input by value --ruling R245

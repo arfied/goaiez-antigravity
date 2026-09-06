@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T08:07:17",
+ "updated": "2026-09-06T10:42:36",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -504,6 +504,12 @@
      "stage": "exit-intent trigger does not exist",
      "why": "",
      "at": "2026-09-06T07:40:19"
+    },
+    {
+     "module": "X-102",
+     "stage": "capability",
+     "why": "no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's",
+     "at": "2026-09-06T10:42:27"
     }
    ]
   },
@@ -914,7 +920,7 @@
     {
      "module": "X-155",
      "stage": "events",
-     "why": "Track 2 Ui/ tenant inbox listener for FormCaptured",
+     "why": "Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction",
      "at": "2026-09-06T08:07:17"
     }
    ]
@@ -1740,8 +1746,14 @@
   {
    "module": "X-155",
    "stage": "events",
-   "why": "Track 2 Ui/ tenant inbox listener for FormCaptured",
+   "why": "Track 2 Ui/ tenant inbox listener for FormCaptured and missing caller of FormReleaseAction",
    "at": "2026-09-06T08:07:17"
+  },
+  {
+   "module": "X-102",
+   "stage": "capability",
+   "why": "no path in X-102 distinguishes a price question from any other; the price source that would ground one is X-119's",
+   "at": "2026-09-06T10:42:27"
   }
  ],
  "decisions": [
@@ -1857,6 +1869,12 @@
    "module": "X-155",
    "chose": "changed FormReleaseAction to be a no-op returning 'already_released' when submission is not spam, rather than throwing InvalidArgumentException --ruling R245",
    "at": "2026-09-06T08:07:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "the assertable half of P-092 is on the answered path, not the refused one, because the refused answer is a constant string and the answered one echoes its input by value --ruling R245",
+   "at": "2026-09-06T10:42:36",
    "ruling": "R245"
   }
  ],
