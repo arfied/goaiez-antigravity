@@ -702,8 +702,10 @@ Watch for: <the trap that applies, by name>
   `grep` that sizes it.** The work needs no credentials, changes no CHECK, sits wholly inside the
   thirteen, and **moves no doctor count** — say that in the brief, or the wave gets graded on a number
   that cannot move (the tick-171 lesson).
-  **Pile at tick 179: 31** (waves 86 and 87 took three each) — `C-Agent` 12 · `X-01` 10 · `X-66` 4 ·
-  `C-Whatsapp` 2 · `C-Mail`/`X-124`/`X-194` 1 each. ⚠️ **The survivors are not interchangeable, and the
+  **Pile at tick 181: 28** (waves 86, 87 and 88 took three each) — `C-Agent` 12 · `X-01` 10 ·
+  `C-Whatsapp` 2 · `C-Mail`/`X-66`/`X-124`/`X-194` 1 each. **22 of the 28 have no ⑤ clause and cannot be
+  closed by a test at all** — see the tick-181 trap below before briefing any of it.
+  ⚠️ **The survivors are not interchangeable, and the
   docblock says which kind each is**: *"named in the header"* is a documentation claim and the right answer
   is a `REFUSED` with its own words; a pointer at another module (`[G5-31] the web-chat door is X-102's`)
   needs the routing filter run on it, since X-102/X-66/X-194/X-01 are all in the thirteen and X-135/X-197
@@ -740,6 +742,69 @@ Watch for: <the trap that applies, by name>
   offset exists between exactly two of the three. A fabricated set has to reproduce a shift it cannot
   see. Every other tell in this file catches a lie; this one credits the truth, and it costs one
   `git show <pre-wave sha>:<file> | grep -n`.
+  ✅ **It works on a whole-file SHIFT too, and that is the commoner case.** Wave 88b's mutation log
+  declared `50 · 78 · 99 · 113 · 143` against a committed file reading `48 · 76 · 97 · 111 · 141` — a
+  **uniform `+2`**, caused by the pint commit five minutes *later* deleting two dead `use` lines above
+  line 48. Five numbers, one offset, one commit that explains it. When every line is off by the same
+  amount, find the commit that moved them before doubting the log.
+- ⚠️ **An absence assertion aimed at a RENDERED STRING is the fifth rung of the ladder, and no mutation
+  can rescue it.** Wave 88 closed three `X-66` ids with `Livewire::test(Calls::class)` +
+  `assertDontSee('<literal>')`. A render assertion cannot speak to whether a **code path** exists or
+  whether a **column is `secure`**, which is what those ⑤ clauses are about; and to redden it you would
+  add the word to the blade, proving only that the blade renders text. The contrast is wave 87's
+  `g10-13` and wave 88b's `G18-28`: assert against the module's **own engine** (`handleRing`/
+  `handleAnswer`/`recordTurn` + `Http::assertNothingSent()`) and mutate by putting a **real outbound
+  call** on that path — the target's assertion then fails on its own terms (`Requests were recorded.`)
+  and the siblings break *because they legitimately traverse the forbidden path*. **Ask what the
+  assertion's subject is, not just whether it can fail.**
+- ⚠️⚠️ **Never call a GROUP of ids "the same shape" without checking each one's polarity — this column
+  did, and it cost a wave.** My wave-88 brief named `X-66`'s three placeholders as *"refusal-shaped"* and
+  quoted the ⑤ clauses without reading them: `G18-28` genuinely is a refusal, but `G16-33` (*enrolment
+  **confirms** the caller's own booking*) and `G16-34` (*recorded consent **and** P-202 disclosure*) are
+  **positive requirements**, so the tests written to my description would go red the day the module built
+  the thing. One of six halves had the right polarity. A coder told three ids are one shape will treat
+  them as one shape. This is *a named instance is a sample* recurring **inside** a group of three — and
+  the antidote is the same one command, spent per id rather than per group.
+- ⚠️ **The mailbox line in §1/§3 is a filename and a timestamp, not a guarantee that the current wave
+  reported.** Wave 88's report went to the untracked **root** `REPORT.md` instead of
+  `.agents/supervisor/REPORT.md`, leaving `supervise.sh`'s mailbox line advertising the *previous* wave's
+  report as current. A tick trusting that line reviews the last wave twice and never sees this one.
+  **Grade `REPORT.md`'s mtime against the dispatch, not against the previous block.**
+- ⚠️⚠️ **A per-wave artifact filename does not stop the stale-object race if the COPY is taken before the
+  run exits — and the tell is a MISSING FIELD, not a wrong one.** Wave 88b's `scratch/w88b-pest-raw.log`
+  is **byte-identical** to `w88-pest-raw.log`, same `duration_ms 98609`, written `00:25:41` — while
+  `pest-raw-last.log` still held wave 88's object. The wave's own `--tests` did not land until `00:27:05`
+  and landed as `pest printed ZERO BYTES (rc=143) … result silent` (`rc=143` is SIGTERM; the coder pid
+  died and took its child pest with it), and `REPORT.md` was written at `00:26:10`, **55 seconds before
+  its own gate finished**. Nothing was fabricated — it is a real object from the wrong run, under a name
+  that vouched for it. **The headline four were identical across both** (`1725 · 1718 · 3 · 4`). Three
+  discriminators, cheapest first: (i) a field the wave's own diff MUST produce and the pasted object
+  **lacks** — here `"incomplete":3`, one per `markTestIncomplete` added; (ii) `assertions`, which was
+  `6695` against a true **6692**, overstated by exactly the 3 the wave removed, i.e. **stale in the
+  direction that hides the wave's own effect**; (iii) `duration_ms` shared to the millisecond. **The
+  control is not the filename — it is copying only after `supervise.sh` has exited**, and a `GATE` block
+  must quote the **verdict line**, not §6 alone. When a pasted object cannot be trusted, the answer is
+  neither to accept nor refuse it: **re-run the suite yourself and gate on your own numbers.**
+- ⚠️⚠️ **Before briefing work off the `assertTrue(true)` pile, read `capabilities.php` — most of the pile
+  cannot be closed by any test.** Measured at tick 181 across the 28 survivors: for **all 12 `C-Agent`
+  ids and all 10 `X-01` ids**, the capability text and the test docblock are the **same string** — five
+  read literally `named in the header`, the rest are pointers at another module's ownership. There is no
+  ⑤ clause behind a single one. `G5-39`'s refusal, credited at tick 180 on exactly this ground, was not
+  the exception; it was the rule for two whole modules. **Briefing "close the C-Agent stubs" would be the
+  wave-78 shape — prescribing a form that cannot match** — and C-Agent is the biggest number on the
+  board, so it is the wave you would naturally pick. The real work is where the capability carries text
+  the docblock does not: `C-Whatsapp`'s `G10-40` and `G19-22` both open `refuses: C-Whatsapp;` and both
+  name something beyond the docblock. ⚠️ **And check them individually anyway** — `G10-40` is a pure
+  refusal plus an ownership pointer, while `G19-22`'s second half (*every channel lands on ONE
+  Conversation*) is **positive**.
+- ⚠️ **Before a brief offers `UNRESOLVED` as an option, say whether the missing thing is EXTERNAL — and
+  if it is this lane's, say so out loud and say why a build is out of scope.** Wave 88b's three X-66
+  rows all read `THIS LANE OWNS IT`, which by the wave-81 rule makes them builds, not blocks. They are
+  defensible — enrolment, recorded consent, per-channel P-202 disclosure and a `secure` voiceprint column
+  are a module, not a test wave — but **my brief licensed them** before that reasoning was written down,
+  which is the second time this column has authored an `UNRESOLVED` it then had to justify. The coder
+  disclosed the ownership honestly instead of hiding it; credit that, and put the justification in the
+  brief that asks for it, not in the review that receives it.
 
 ## Style
 
