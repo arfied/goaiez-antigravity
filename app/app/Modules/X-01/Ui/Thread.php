@@ -40,6 +40,31 @@ class Thread extends Component
         }
     }
 
+    public bool $hasActiveTakeover = false;
+
+    public function releaseTakeover(\App\Modules\X01\Actions\ConversationTakeoverReleaseAction $action)
+    {
+        if (! $this->customer) {
+            return;
+        }
+
+        $this->errorMessage = null;
+        try {
+            $conversation = Conversation::where('customer_id', $this->customer->id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if (! $conversation) {
+                return;
+            }
+
+            $action->handle(Tenancy::idOrFail(), $conversation->id);
+            $this->hasActiveTakeover = false;
+        } catch (\Throwable $e) {
+            $this->errorMessage = 'Could not release takeover: '.$e->getMessage();
+        }
+    }
+
     public function draftAiReply(int $messageId, AgentDraftAction $draftAction)
     {
         $this->errorMessage = null;
@@ -99,6 +124,7 @@ class Thread extends Component
             $this->replyText = '';
             $this->draftReply = null;
             $this->draftForMessageId = null;
+            $this->hasActiveTakeover = true;
         } catch (\Throwable $e) {
             $this->errorMessage = 'Could not send reply: '.$e->getMessage();
         }
@@ -127,6 +153,10 @@ class Thread extends Component
                 ->select('messages.*', 'conversations.channel')
                 ->orderBy('messages.created_at', 'asc')
                 ->get();
+                
+            $this->hasActiveTakeover = \App\Modules\X01\Models\TakeoverLatch::whereIn('conversation_id', $conversationIds)
+                ->where('is_active', true)
+                ->exists();
         }
 
         return view('x-01::thread', [
