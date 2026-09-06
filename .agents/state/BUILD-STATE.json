@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T14:38:12",
+ "updated": "2026-09-06T14:59:57",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -931,10 +931,71 @@
    ]
   },
   "X-112": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 11,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G2-67, G9-09 \u2014 credited by app/tests/Modules/X-112/X112Test.php:134, whose body is assertTrue(true); the docblock refuses them as \"the agency's weekly client report; rendered by X-194\" and names AgencyEngine::renderWeeklyReport() as missing \u2014 grep -rn \"renderWeeklyReport\" app/app returns no output.",
+     "at": "2026-09-06T14:59:22"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G4-09 \u2014 credited by app/tests/Modules/X-112/X112Test.php:144, whose body is assertTrue(true); the docblock refuses them as \"named in the header; a sub-tenant may narrow, never widen\" and names AgencyEngine::enforceSubtenantScope() as missing \u2014 grep -rn \"enforceSubtenantScope\" app/app returns no output.",
+     "at": "2026-09-06T14:59:26"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G4-22 \u2014 credited by app/tests/Modules/X-112/X112Test.php:154, whose body is assertTrue(true); the docblock refuses them as \"the agency's client sees results without a password\" and names AgencyEngine::getPublicResults() as missing \u2014 grep -rn \"getPublicResults\" app/app returns no output.",
+     "at": "2026-09-06T14:59:30"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G7-05, G7-06, G7-07, G7-44 \u2014 credited by app/tests/Modules/X-112/X112Test.php:164, whose body is assertTrue(true); the docblock refuses them as \"named in the header\" and names AgencyEngine::getHeaderConfig() as missing \u2014 grep -rn \"getHeaderConfig\" app/app returns no output.",
+     "at": "2026-09-06T14:59:34"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G7-13 \u2014 credited by app/tests/Modules/X-112/X112Test.php:191, whose body is assertTrue(true); the docblock refuses them as \"task visibility per client\" and names AgencyEngine::getTasksForClient() as missing \u2014 grep -rn \"getTasksForClient\" app/app returns no output.",
+     "at": "2026-09-06T14:59:37"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G7-19 \u2014 credited by app/tests/Modules/X-112/X112Test.php:201, whose body is assertTrue(true); the docblock refuses them as \"a Loom on the client dashboard; the asset is X-114's\" and names AgencyEngine::getDashboardAssets() as missing \u2014 grep -rn \"getDashboardAssets\" app/app returns no output.",
+     "at": "2026-09-06T14:59:41"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G7-31 \u2014 credited by app/tests/Modules/X-112/X112Test.php:259, whose body is assertTrue(true); the docblock refuses them as \"named in the header; the Twilio figures are corpus vocabulary \u2014 Infobip, rates from X-82\" and names AgencyEngine::getInfobipRates() as missing \u2014 grep -rn \"getInfobipRates\" app/app returns no output.",
+     "at": "2026-09-06T14:59:45"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G9-32 \u2014 credited by app/tests/Modules/X-112/X112Test.php:269, whose body is assertTrue(true); the docblock refuses them as \"client health on the agency dashboard; the score is X-08's\" and names AgencyEngine::getClientHealthScore() as missing \u2014 grep -rn \"getClientHealthScore\" app/app returns no output.",
+     "at": "2026-09-06T14:59:49"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G16-10 \u2014 credited by app/tests/Modules/X-112/X112Test.php:279, whose body is assertTrue(true); the docblock refuses them as \"agency announcements are named in the header; an un-dismissible popup is not a notification class we have (P-062)\" and names AgencyEngine::getAnnouncements() as missing \u2014 grep -rn \"getAnnouncements\" app/app returns no output.",
+     "at": "2026-09-06T14:59:53"
+    },
+    {
+     "module": "X-112",
+     "stage": "capability",
+     "why": "G19-21 \u2014 credited by app/tests/Modules/X-112/X112Test.php:289, whose body is assertTrue(true); the docblock refuses them as \"the account manager told before the client leaves; the score is X-08's\" and names AgencyEngine::notifyAccountManager() as missing \u2014 grep -rn \"notifyAccountManager\" app/app returns no output.",
+     "at": "2026-09-06T14:59:57"
+    }
+   ]
   },
   "X-113": {
    "status": "UNRESOLVED",
@@ -1805,6 +1866,30 @@
      "stage": "capability",
      "why": "G15-13 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'an uncertain OCR goes to a REVIEW QUEUE, never to a ledger' names a system this module does not own (grep -rni \"ocr\" app/app/Modules/X-173/ returns only the capability file itself).",
      "at": "2026-09-06T14:38:12"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-069 \u2014 clause 1 of 3 is asserted by app/tests/Modules/X-173/AccountingTest.php:25 as of S-122; clause 2 'a sync conflict goes UNKNOWN, never STALE (\u00a7192)' is the clause already filed as an ECHO under N-085 (its only code is the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, which has no callers); clause 3 'the payroll export ships hours and commission-earned ONLY (P-204)' names a payroll export this module does not own \u2014 grep -rn \"payroll\" app/app/Modules/X-173/ returns only the capability definitions in app/app/Modules/X-173/capabilities.php.",
+     "at": "2026-09-06T14:58:15"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-070 \u2014 clause 1 of 3 is asserted by app/tests/Modules/X-173/AccountingTest.php:25 as of S-122; clause 2 'a sync conflict goes UNKNOWN, never STALE (\u00a7192)' is the clause already filed as an ECHO under N-085 (its only code is the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, which has no callers); clause 3 'the payroll export ships hours and commission-earned ONLY (P-204)' names a payroll export this module does not own \u2014 grep -rn \"payroll\" app/app/Modules/X-173/ returns only the capability definitions in app/app/Modules/X-173/capabilities.php.",
+     "at": "2026-09-06T14:58:22"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "N-071 \u2014 clause 1 of 3 is asserted by app/tests/Modules/X-173/AccountingTest.php:25 as of S-122; clause 2 'a sync conflict goes UNKNOWN, never STALE (\u00a7192)' is the clause already filed as an ECHO under N-085 (its only code is the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, which has no callers); clause 3 'the payroll export ships hours and commission-earned ONLY (P-204)' names a payroll export this module does not own \u2014 grep -rn \"payroll\" app/app/Modules/X-173/ returns only the capability definitions in app/app/Modules/X-173/capabilities.php.",
+     "at": "2026-09-06T14:58:25"
+    },
+    {
+     "module": "X-173",
+     "stage": "capability",
+     "why": "G1-03, G1-77, G15-13, G15-22, G15-25, G15-26 \u2014 credited by a second surface at app/tests/Modules/X-173/X173Test.php:84, whose body is assertTrue(true); G1-03 is honestly proven by app/tests/Modules/X-173/AccountingTest.php:20, and the other five are already filed against AccountingTest as false credits.",
+     "at": "2026-09-06T14:58:37"
     }
    ]
   },
@@ -4224,6 +4309,90 @@
    "stage": "capability",
    "why": "G15-13 \u2014 credited by app/tests/Modules/X-173/AccountingTest.php:20, whose body was assertTrue(true) until S-122; the \u2464 clause 'an uncertain OCR goes to a REVIEW QUEUE, never to a ledger' names a system this module does not own (grep -rni \"ocr\" app/app/Modules/X-173/ returns only the capability file itself).",
    "at": "2026-09-06T14:38:12"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-069 \u2014 clause 1 of 3 is asserted by app/tests/Modules/X-173/AccountingTest.php:25 as of S-122; clause 2 'a sync conflict goes UNKNOWN, never STALE (\u00a7192)' is the clause already filed as an ECHO under N-085 (its only code is the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, which has no callers); clause 3 'the payroll export ships hours and commission-earned ONLY (P-204)' names a payroll export this module does not own \u2014 grep -rn \"payroll\" app/app/Modules/X-173/ returns only the capability definitions in app/app/Modules/X-173/capabilities.php.",
+   "at": "2026-09-06T14:58:15"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-070 \u2014 clause 1 of 3 is asserted by app/tests/Modules/X-173/AccountingTest.php:25 as of S-122; clause 2 'a sync conflict goes UNKNOWN, never STALE (\u00a7192)' is the clause already filed as an ECHO under N-085 (its only code is the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, which has no callers); clause 3 'the payroll export ships hours and commission-earned ONLY (P-204)' names a payroll export this module does not own \u2014 grep -rn \"payroll\" app/app/Modules/X-173/ returns only the capability definitions in app/app/Modules/X-173/capabilities.php.",
+   "at": "2026-09-06T14:58:22"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "N-071 \u2014 clause 1 of 3 is asserted by app/tests/Modules/X-173/AccountingTest.php:25 as of S-122; clause 2 'a sync conflict goes UNKNOWN, never STALE (\u00a7192)' is the clause already filed as an ECHO under N-085 (its only code is the literal at app/app/Modules/X-173/Domain/AccountingEngine.php:16, which has no callers); clause 3 'the payroll export ships hours and commission-earned ONLY (P-204)' names a payroll export this module does not own \u2014 grep -rn \"payroll\" app/app/Modules/X-173/ returns only the capability definitions in app/app/Modules/X-173/capabilities.php.",
+   "at": "2026-09-06T14:58:25"
+  },
+  {
+   "module": "X-173",
+   "stage": "capability",
+   "why": "G1-03, G1-77, G15-13, G15-22, G15-25, G15-26 \u2014 credited by a second surface at app/tests/Modules/X-173/X173Test.php:84, whose body is assertTrue(true); G1-03 is honestly proven by app/tests/Modules/X-173/AccountingTest.php:20, and the other five are already filed against AccountingTest as false credits.",
+   "at": "2026-09-06T14:58:37"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G2-67, G9-09 \u2014 credited by app/tests/Modules/X-112/X112Test.php:134, whose body is assertTrue(true); the docblock refuses them as \"the agency's weekly client report; rendered by X-194\" and names AgencyEngine::renderWeeklyReport() as missing \u2014 grep -rn \"renderWeeklyReport\" app/app returns no output.",
+   "at": "2026-09-06T14:59:22"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G4-09 \u2014 credited by app/tests/Modules/X-112/X112Test.php:144, whose body is assertTrue(true); the docblock refuses them as \"named in the header; a sub-tenant may narrow, never widen\" and names AgencyEngine::enforceSubtenantScope() as missing \u2014 grep -rn \"enforceSubtenantScope\" app/app returns no output.",
+   "at": "2026-09-06T14:59:26"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G4-22 \u2014 credited by app/tests/Modules/X-112/X112Test.php:154, whose body is assertTrue(true); the docblock refuses them as \"the agency's client sees results without a password\" and names AgencyEngine::getPublicResults() as missing \u2014 grep -rn \"getPublicResults\" app/app returns no output.",
+   "at": "2026-09-06T14:59:30"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G7-05, G7-06, G7-07, G7-44 \u2014 credited by app/tests/Modules/X-112/X112Test.php:164, whose body is assertTrue(true); the docblock refuses them as \"named in the header\" and names AgencyEngine::getHeaderConfig() as missing \u2014 grep -rn \"getHeaderConfig\" app/app returns no output.",
+   "at": "2026-09-06T14:59:34"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G7-13 \u2014 credited by app/tests/Modules/X-112/X112Test.php:191, whose body is assertTrue(true); the docblock refuses them as \"task visibility per client\" and names AgencyEngine::getTasksForClient() as missing \u2014 grep -rn \"getTasksForClient\" app/app returns no output.",
+   "at": "2026-09-06T14:59:37"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G7-19 \u2014 credited by app/tests/Modules/X-112/X112Test.php:201, whose body is assertTrue(true); the docblock refuses them as \"a Loom on the client dashboard; the asset is X-114's\" and names AgencyEngine::getDashboardAssets() as missing \u2014 grep -rn \"getDashboardAssets\" app/app returns no output.",
+   "at": "2026-09-06T14:59:41"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G7-31 \u2014 credited by app/tests/Modules/X-112/X112Test.php:259, whose body is assertTrue(true); the docblock refuses them as \"named in the header; the Twilio figures are corpus vocabulary \u2014 Infobip, rates from X-82\" and names AgencyEngine::getInfobipRates() as missing \u2014 grep -rn \"getInfobipRates\" app/app returns no output.",
+   "at": "2026-09-06T14:59:45"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G9-32 \u2014 credited by app/tests/Modules/X-112/X112Test.php:269, whose body is assertTrue(true); the docblock refuses them as \"client health on the agency dashboard; the score is X-08's\" and names AgencyEngine::getClientHealthScore() as missing \u2014 grep -rn \"getClientHealthScore\" app/app returns no output.",
+   "at": "2026-09-06T14:59:49"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G16-10 \u2014 credited by app/tests/Modules/X-112/X112Test.php:279, whose body is assertTrue(true); the docblock refuses them as \"agency announcements are named in the header; an un-dismissible popup is not a notification class we have (P-062)\" and names AgencyEngine::getAnnouncements() as missing \u2014 grep -rn \"getAnnouncements\" app/app returns no output.",
+   "at": "2026-09-06T14:59:53"
+  },
+  {
+   "module": "X-112",
+   "stage": "capability",
+   "why": "G19-21 \u2014 credited by app/tests/Modules/X-112/X112Test.php:289, whose body is assertTrue(true); the docblock refuses them as \"the account manager told before the client leaves; the score is X-08's\" and names AgencyEngine::notifyAccountManager() as missing \u2014 grep -rn \"notifyAccountManager\" app/app returns no output.",
+   "at": "2026-09-06T14:59:57"
   }
  ],
  "decisions": [
