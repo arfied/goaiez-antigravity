@@ -128,42 +128,44 @@ class X01Test extends TestCase
     }
 
     /**
-     * [G2-16] "Rep A is typing" presence on the shared thread
-     * BUILD PROPOSAL: G2-16 — "Rep A is typing" presence on the shared thread is unbuilt (grep for typing/presence is empty). Owner: X-01
-     */
-    public function test_g2_16_rep_presence(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G2-18] named in the header; one Person (P-163)
      */
-    public function test_g2_18_one_person_aggregate(): void
+    public function test_g2_18_ingest_merges_identifiers_and_creates_new_persons(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Aggregate Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $p = $this->createContact->handle($biz->id, 'Single Aggregate Person', '+15125550177');
-        $this->assertEquals('Single Aggregate Person', $p->first_name);
-    }
+        $smsRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550177',
+            senderName: 'Single Aggregate Person',
+            body: 'Hello SMS'
+        );
 
-    /**
-     * [G2-23] named in the header
-     * ⛔ REFUSED: G2-23 — the capability's own text is "named in the header"; there is no clause to assert
-     */
-    public function test_g2_23_header(): void
-    {
-        $this->assertTrue(true);
-    }
+        $person = Person::where('business_id', $biz->id)->find($smsRes['person_id']);
+        $person->update(['email' => 'aggregate@example.com']);
 
-    /**
-     * [G2-25] D1: MASTER = Honest Counter for the tenant app; God-Mode/glassmorphism is console-only
-     * ⛔ REFUSED: G2-25 — the capability's own text is "D1: MASTER = Honest Counter for the tenant app; God-Mode/glassmorphism is console-only"; there is no clause to assert
-     */
-    public function test_g2_25_honest_counter(): void
-    {
-        $this->assertTrue(true);
+        $emailRes = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'email',
+            identifier: 'aggregate@example.com',
+            senderName: 'Single Aggregate Person',
+            body: 'Hello Email'
+        );
+
+        $this->assertEquals($smsRes['person_id'], $emailRes['person_id']);
+        $this->assertEquals(1, Person::where('business_id', $biz->id)->count());
+
+        $otherSms = $this->manager->ingestMessage(
+            businessId: $biz->id,
+            channel: 'sms',
+            identifier: '+15125550999',
+            senderName: 'Another Person',
+            body: 'Hello Other'
+        );
+
+        $this->assertNotEquals($smsRes['person_id'], $otherSms['person_id']);
     }
 
     /**
@@ -181,14 +183,6 @@ class X01Test extends TestCase
         $this->assertEquals('A', $score->grade);
     }
 
-    /**
-     * [G2-36] named in the header; the UTM itself is X-138's
-     * ⛔ REFUSED: G2-36 — the capability's own text is "named in the header; the UTM itself is X-138's"; there is no clause to assert, and it points to X-138 which is owned outside this lane
-     */
-    public function test_g2_36_utm_header(): void
-    {
-        $this->assertTrue(true);
-    }
 
     /**
      * [G2-38] the grade is a lead_score; the data is X-134's and carries confidence (P-147)
@@ -227,14 +221,6 @@ class X01Test extends TestCase
         $this->assertSame(0, LeadScore::where('business_id', $biz->id)->where('lead_rating', 101)->count(), 'no row anywhere carries the refused rating');
     }
 
-    /**
-     * [G2-42] named in the header
-     * ⛔ REFUSED: G2-42 — the capability's own text is "named in the header"; there is no clause to assert
-     */
-    public function test_g2_42_header(): void
-    {
-        $this->assertTrue(true);
-    }
 
     /**
      * [G2-61] split: the score is a lead_score; the lookalike-seed half is FENCED (§44 · P-128)
@@ -295,34 +281,9 @@ class X01Test extends TestCase
     }
 
     /**
-     * [G9-10] named in the header (moved there from X-121)
-     * ⛔ REFUSED: G9-10 — the capability's own text is "named in the header (moved there from X-121)"; there is no clause to assert
-     */
-    public function test_g9_10_header_transfer(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G11-22] one polymorphic Conversation (X-121's) across every channel
-     * ⛔ REFUSED: G11-22 — points to X-121, which is owned outside this lane.
      */
-    public function test_g11_22_polymorphic_conversation(): void
-    {
-        $biz = TestCase::provisionTenant(['name' => 'Poly Biz', 'currency' => 'USD']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-
-        $p = $this->createContact->handle($biz->id, 'Poly User', '+15125550144');
-        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'voice', 'status' => 'open']);
-
-        $this->assertEquals('voice', $c->channel);
-    }
-
-    /**
-     * [G11-23] = the row above; one spec
-     * ⛔ REFUSED: G11-23 — the capability's own text is "= the row above; one spec"; there is no clause to assert
-     */
-    public function test_g11_23_omnichannel_spec(): void
+    public function test_g11_22_one_conversation_across_every_channel(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Omni Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -355,10 +316,9 @@ class X01Test extends TestCase
     }
 
     /**
-     * [G11-40] the header's first line
-     * ⛔ REFUSED: G11-40 — the capability's own text is "the header's first line"; there is no clause to assert
+     * the header's first line
      */
-    public function test_g11_40_header_line(): void
+    public function test_whatsapp_is_the_fifth_channel_on_one_timeline(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Header Line Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
