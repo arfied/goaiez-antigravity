@@ -86,13 +86,13 @@ class X128Test extends TestCase
 
     /**
      * [N-049] integration matrix and deploy check
-     * [N-050]
-     * [N-051]
-     * [N-053]
-     * [N-054]
-     * [N-055]
-     * [N-057]
-     * [N-060]
+     * [N-050] ⛔ REFUSED: `php artisan why N-050` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-051] ⛔ REFUSED: `php artisan why N-051` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-053] ⛔ REFUSED: `php artisan why N-053` reports it is never DEFINED. it reads every module's declarations and FAILS THE BUILD on a consumed event with no origin. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-054] ⛔ REFUSED: `php artisan why N-054` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-055] ⛔ REFUSED: `php artisan why N-055` reports it is never DEFINED. it reads every module's declarations and FAILS THE BUILD on a consumed event with no origin. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-057] ⛔ REFUSED: `php artisan why N-057` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-060] ⛔ REFUSED: `php artisan why N-060` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_049_deploy_check(): void
     {
