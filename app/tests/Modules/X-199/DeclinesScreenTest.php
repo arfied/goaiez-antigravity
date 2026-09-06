@@ -76,7 +76,6 @@ class DeclinesScreenTest extends TestCase
         Tenancy::setUser($owner->id);
         $failed = Payment::where('business_id', $biz->id)->where('status', 'failed')->first();
 
-
         Livewire::actingAs($owner)->test(Declines::class)
             ->assertOk()
             ->assertSee('150.00')
@@ -129,8 +128,6 @@ class DeclinesScreenTest extends TestCase
             }
         });
         $captureAction->handle($biz->id, 1000, $token, 'idem_2');
-
-
 
         Livewire::actingAs($owner)->test(Declines::class)
             ->assertOk()
