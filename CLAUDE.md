@@ -116,6 +116,19 @@ Watch for: <the trap that applies, by name>
 - **`app/CLAUDE.md` and `app/AGENTS.md` are Laravel Boost boilerplate**, not
   the contract. The contract is the root `AGENTS.md`. Do not cite the `app/`
   copies.
+- **Test a guard with an input that is SAFE WHEN THE GUARD IS ABSENT** (2026-09-06, the sibling
+  project's phrasing of a probe of ours). Proving the anti-pipe hook live with `pest | tail` would
+  have run an unlocked suite to demonstrate that something stops it — a positive control that is
+  dangerous in exactly the case it is meant to detect. The probe used instead was
+  `echo "./vendor/bin/pest" | cat`: it matches the needle, so it is conclusive when the guard fires,
+  and it is a harmless echo when the guard is dead. Design every guard probe that way.
+- **A refusal message can drift from the pattern in the same file, and every behavioural test still
+  passes** (2026-09-06). The anti-pipe hook's needle was widened to five tools while its deny text
+  still named `php artisan test` — a command this repo does not run. Positive controls assert
+  deny/allow; **no arm asserts on the message**, so the drift is invisible to them. The reader who
+  hits such a refusal goes looking for a command they never wrote, concludes the guard is misfiring,
+  and removes it. Whenever a pattern is widened, re-read the text that explains it: same file, two
+  sources of truth, only one of them tested.
 - **A merged class is unloadable until the classmap is rebuilt (2026-09-06, run 110).** `app/composer.json`
   declares `"classmap": ["app/Modules/"]`, and module directories (`C-Mail`, `X-01`) do not match their
   namespaces (`CMail`, `X01`), so PSR-4 cannot resolve them at all — only a generated classmap can. Any

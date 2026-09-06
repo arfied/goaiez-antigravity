@@ -47,13 +47,45 @@ SEPARATOR = re.compile(r";|&&|\|\||\n")
 # --filter regex carrying alternation is not mistaken for one.
 QUOTED = re.compile(r"\"[^\"]*\"|'[^']*'")
 
+# Wrappers a real invocation may carry before the command word.
+ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
+WRAPPERS = {"nohup", "time", "bash", "sh", "php", "env", "exec", "command"}
+
 
 def pipes_a_test_run(command: str) -> bool:
-    """True when a `artisan test` invocation is piped into something."""
-    for match in INVOCATION.finditer(command):
-        statement = SEPARATOR.split(command[match.end():])[0]
+    """True when a gate tool is INVOKED and piped into something.
 
-        if "|" in QUOTED.sub("", statement):
+    Command position, not mention. Widening the needle from one tool to five
+    made the first version match a tool's *path* anywhere in the line, so
+    reading a gate script with sed or grep and paging the output was refused —
+    the guard blocked reading the very file it guards (measured 2026-09-06,
+    twice in two minutes, the second time while writing this fix). A guard that
+    blocks reading the thing it guards gets removed, and then it guards nothing.
+    """
+    for statement in SEPARATOR.split(command):
+        stripped = QUOTED.sub("", statement)
+        if "|" not in stripped:
+            continue
+
+        # Peel the wrappers a real invocation carries: env assignments,
+        # nohup/time, `timeout 1800`, bash/sh, php.
+        words = stripped.split()
+        while words:
+            head = words[0]
+            if ASSIGNMENT.match(head) or head in WRAPPERS:
+                words.pop(0)
+            elif head == "timeout" and len(words) > 1:
+                words.pop(0)
+                while words and (words[0].startswith("-") or words[0][0].isdigit()):
+                    words.pop(0)
+            else:
+                break
+
+        # Two words, not one: `php artisan test` peels `php` and the needle for
+        # it is `artisan\s+test`, which the bare word `artisan` cannot match.
+        # Checking only words[0] silently un-denied the original arm the whole
+        # hook was written for (caught by the arm table, 2026-09-06).
+        if words and INVOCATION.search(" ".join(words[:2])):
             return True
 
     return False
