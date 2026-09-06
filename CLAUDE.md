@@ -237,6 +237,32 @@ Watch for: <the trap that applies, by name>
   ~99-id gap across the thirteen is real: those ids are green at doctor on a comment alone — the
   `green by construction` shape. Strengthening `CapabilityStage` is a **CHECK** change and therefore
   an `OWNER ACTION`, never a coder task and never this column's.
+- ⚠️ **A PHP method name can never satisfy `CapabilityStage` — so "carry the id in the test NAME" is
+  an impossible instruction, and this column wrote it.** The regex at `CapabilityStage.php:287` is
+  `/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/`: a **literal hyphen**, case-sensitive. A PHP identifier cannot
+  contain `-`, so no `function` name matches, ever. Wave 78's brief printed
+  `public function g1_43_refuses_...` as the worked example and said *"that is what makes it count"*;
+  the coder applied it to three C-Mail files and four new X-137 tests and **not one of the seven is
+  visible to the stage** — `--full-doctor` totalled `745` at ticks 167, 169 and 170, `capability`
+  pinned at `399` across all three. The only carriers the predicate can see are a **string, an
+  attribute argument, or a comment**; `#[Group('G3-11')]` is the one that is machine-readable and not
+  a comment (`app/vendor/phpunit/phpunit/src/Framework/Attributes/Group.php` exists). ⚠️ **It also
+  came within one file of raising the count**: the rename deleted the `// G11-05:` / `// G1-43:` /
+  `// G15-31:` comments that were those three files' *only* hyphenated ids, and C-Mail held at `22/0`
+  purely because `CMailTest.php` carries all 22 independently and `testedIds` unions the directory.
+  **Generalise past capability: before briefing work that must satisfy a checker, read the checker's
+  predicate and confirm the *form* you are prescribing can match it.** This is the tick-169 lesson —
+  a measurement rule that is not the checker's rule — recurring one layer down, in the *shape of the
+  fix* rather than the *choice of target*, and it cost the second wave in a row.
+- ⚠️ **§2 of `supervise.sh` cannot see a deleted assertion; only reading the diff can.** Wave 78's
+  `feat(X-137): close capabilities …` also removed `test_header_capabilities`, six asserted
+  `DomainException` refusals, leaving `X137Engine` with zero coverage — and `REPORT.md` said
+  `REFUSED: none this wave`. §2 reported `none` for forbidden paths and was correct: the file was an
+  ordinary test file. **The tell was the arithmetic.** `1716 → 1719` is `+3` against a `COMMITS` line
+  claiming **four** new tests; four added minus one deleted. The wave-74 rule (add the numbers up) is
+  what surfaced it, so it pays in the honest direction too — there the sum exposed a fabrication, here
+  a truthful sum exposed an omission. **Diff every commit whose test delta disagrees with its own
+  claim, and treat `git show --stat` line counts as the cheap first pass.**
 - **`JOURNEYS n/12 green` in `state.py status` is a hand mark**
   (`state.py journey Jn green`), not a test result. All twelve were marked
   green on 2026-08-29/30 before any harness that could pass existed, and the
