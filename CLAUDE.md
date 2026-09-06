@@ -852,6 +852,38 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   tick does not write down, so their movement is invisible in a way a pathspec's
   is not.
 
+  ⛔ **The paired `--stat` is the ONE census surface with no readable absolute
+  form, so its lower bound lives in prose alone** (tick 192). Tick 186 made every
+  half a standing set whose *delta* needs the ledger's previous value; tick 190
+  made the paired `--stat` an event stream, observable once. Both look like the
+  same dependence on `REVIEWS.md`; they are not. Every half can be re-run **cold**
+  — its bounds are refs (`^origin/main ^origin/track/site` plus six tips) that git
+  holds, so a tick that lost this ledger entirely still reads 32 · 11 · 2 commits
+  and 15 files and finds every violation they ever reported. The paired stat's
+  absolute equivalent is `git log --stat ^origin/main <the six tips>`, measured at
+  tick 192: **297 commits (293 non-merge) over 253 files**, against the halves'
+  **45** commits and the complement's **15** files. ~250 commits are reachable
+  only through a delta whose lower bound is *a sha typed into a REVIEWS block* —
+  and this ledger is untracked with no snapshot backstop while no coder runs (tick
+  175). **The one surface whose evidence cannot be recovered by re-running it is
+  the one whose only bound has no backup.**
+
+  - **Record the tip shas in every block, every tick, hit or miss.** Tick 177's
+    cache rule makes them look redundant on a hit; they are not there for the
+    cache, they are the *next miss's lower bound*.
+  - **If a bound is ever lost, bound by TIME, not sha** — every block is dated, so
+    `git log --since='<the last block's timestamp>' --stat ^origin/main <the six
+    tips>` re-derives the window. Weaker (clock skew; a rewrite moves committer
+    dates) and re-derivable, which is the point.
+
+  Ninth statement of the section's law, from the one angle left: 163/178/180/183/
+  185/187 concern a query's **pathspec**, 190 its **strip**, 191 its **bounds
+  moving**; this concerns its bounds being **unrecorded** — the only one of the
+  four that no amount of re-running repairs. Measured against a live firing:
+  stages' `99491fb0`/`e4bfb71b` (X-122, X-111 tests, +97 −0, stages' own under
+  ruling 5's catch-all) are invisible to all four surfaces, the third consecutive
+  tick where only the paired stat prints a sibling's commit.
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
