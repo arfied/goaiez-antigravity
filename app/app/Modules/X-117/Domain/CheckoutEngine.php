@@ -110,7 +110,7 @@ final class CheckoutEngine
             ));
 
             return [
-                'status' => 'pending_payment',
+                'status' => $order->refresh()->status,
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
                 'total_cents' => $totalCents,
@@ -245,7 +245,7 @@ final class CheckoutEngine
             $cart->delete();
 
             return [
-                'status' => 'pending_payment',
+                'status' => $order->refresh()->status,
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
                 'total_cents' => $totalCents,
