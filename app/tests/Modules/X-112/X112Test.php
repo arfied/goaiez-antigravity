@@ -242,7 +242,7 @@ class X112Test extends TestCase
         $this->markupAction->handle($biz->id, $agency->id, 'seo_audit', 5000, 2000);
 
         Event::assertDispatched(MarginComputed::class, function ($event) use ($biz) {
-            return $event->businessId === $biz->id && $event->serviceType === 'seo_audit' && $event->retailMarkupCents === 2000;
+            return $event->businessId === $biz->id && $event->serviceType === 'seo_audit' && $event->marginCents === 2000;
         });
 
         $agencyRates = $this->engine->getAgencyFacingRates($biz->id, $agency->id);
