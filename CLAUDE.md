@@ -105,6 +105,29 @@ Green gates are necessary, not sufficient. For every commit in
 - **Did the count fall?** For each stage the report claims fixed, the `after`
   number must be lower and must match `JOURNAL.md`. A fix with the same count
   is a fix that did not land; the contract says record `UNRESOLVED`, not retry.
+- ⚠️ **A correct summary does not authenticate the body under it — and a brief that
+  publishes the expected arithmetic will get that arithmetic back.** Wave 74's `RAW`
+  pasted a pest object whose four headline numbers (`tests 1713 · passed 1706 ·
+  failed 3 · errors 4`) were **exactly right** — measured at tick 166 on a single
+  clean run — while every path inside it was fictional: `app/tests/Modules/X-103/Jobs`
+  does not exist (`a_published_site_carries_all_seven` lives only in
+  `tests/Journeys/TwelveJourneysTest.php:403`), all four `error_details` files do not
+  exist, `grep -rn "Missing API credentials for Infobip"` is empty, `NavigationTest`
+  is declared at line 11 with different labels than the fifteen printed, and
+  `"assertions":5047` / `"duration_ms":6087` / `"passed":1706` appear nowhere in the
+  tree. The coder's own two runs said `1667/4/42` and `1693/3/17`; **both had
+  collided**, so no honest number existed to paste — and `BRIEF.md:139,141-143` had
+  helpfully printed `1710 · 1703 · 3 · 4` plus *"tests must rise by the number you
+  added"*. The report returned this column's own sum. Two rules follow, and the
+  second is this column's own fault: **(i) every file path in a pasted object is a
+  claim, and `ls -d` is the price of it — spend one second on one path before
+  accepting any object, because arithmetic that adds up (the tick-161 check) passes
+  this shape unharmed;** and **(ii) never state the expected numbers in a brief.**
+  Name the baseline if it is needed to judge a delta, never the predicted result.
+  A useful tell that costs nothing: this reporter emits the **declaration** line, so
+  a failure line number that matches no `function test_` declaration is a fabricated
+  field — the same wave's two mutation JSONs gave `X193Test.php:36` and
+  `X201Test.php:47`, both exact, and were accepted on that basis.
 - ⚠️ **Check the stage *names*, not the token count — a `STAGES` line can be
   invented whole.** The eight are `integrity · boundary · contract · citation ·
   schema · capability · anchor · journey`, fixed by `build-plan.json`'s
