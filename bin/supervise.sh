@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
-# The supervisor's read-only gate.  Changes nothing.  Safe at any time.
+# The supervisor's read-only gate.  Reads the tree and changes nothing in it.
+# Safe at any time.  With --tests it writes exactly one artifact, the raw pest
+# output, to scratch/pest-raw-last.log (gitignored) — see §7.
 #
 #   bash bin/supervise.sh                # guard · tree · state · integrity · pint · phpstan
 #   bash bin/supervise.sh --tests        # + pest, against phpunit.xml's database
@@ -229,6 +231,15 @@ if [ $want_tests -eq 1 ]; then
     fail=1
   fi
   [ $rc -ne 0 ] && fail=1
+  # ⚠️ PERSIST THE RAW OBJECT. Until 2026-09-05 (tick 167) this script captured
+  # `out` into a variable, printed a 12-row window of it, and dropped the rest —
+  # while telling the reader "the complete list is the JSON object on the LAST
+  # LINE of the raw pest output", which by then existed nowhere on disk. Wave 75
+  # was asked for that object and had to run a SECOND 95-second pest to get it.
+  # Two pest runs is the collision shape this checkout keeps paying for, and the
+  # brief that demanded it was the supervisor's. One file removes the reason.
+  mkdir -p "$ROOT/scratch"
+  printf '%s\n' "$out" > "$ROOT/scratch/pest-raw-last.log"
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     # ⚠️ THIS BLOCK LIED FOR TWO WAVES AND THE FIX IS WHY IT LOOKS LIKE THIS.
     # Until 2026-09-05 (tick 161) the summary printed only tests/passed/errors and
@@ -256,6 +267,8 @@ if len(rows)>12:
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi
+  echo "  raw pest output → scratch/pest-raw-last.log — its LAST LINE is the complete object."
+  echo "  Paste from that file. Do NOT run a second pest to obtain it."
 fi
 
 bar "verdict"
