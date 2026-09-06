@@ -6,6 +6,7 @@ namespace App\Modules\X157;
 
 use App\Models\Business;
 use App\Modules\X103\Events\SitePublished;
+use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X155\Actions\FormCaptureAction;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Models\Deployment;
@@ -63,7 +64,7 @@ final class ModuleServiceProvider extends ServiceProvider
             $zone = $deployment->edgeZone;
             abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
-            $token = app(\App\Modules\X137\Actions\CallAttributeAction::class)->allocateFromPool(
+            $token = app(CallAttributeAction::class)->allocateFromPool(
                 businessId: $businessId,
                 visitorSessionToken: $request->input('visitor_session_token', '')
             );

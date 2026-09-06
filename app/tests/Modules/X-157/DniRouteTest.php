@@ -46,7 +46,7 @@ class DniRouteTest extends TestCase
         ]);
 
         $response = $this->getJson("/sites/{$this->business->id}/test_hash/dni?visitor_session_token=token1");
-        
+
         $response->assertStatus(200);
         $response->assertJson([
             'number' => '+15551234567',
