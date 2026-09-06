@@ -53,7 +53,7 @@ final class PricebookEngine
             ];
         }
 
-        if ($item->is_confirmed === false) {
+        if ($item->is_confirmed === false && in_array($channel, ['customer', 'sms', 'voice', 'chat', 'web'], true)) {
             $item->increment('refusal_count', 1, ['refusal_flagged_at' => Carbon::now()]);
 
             Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'UNCONFIRMED'));
