@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T09:56:37",
+ "updated": "2026-09-06T10:17:35",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1505,6 +1505,14 @@
   {
    "at": "2026-09-06T09:56:37",
    "note": "MONEY-66: the real-transport evidence run for a pay link is sequenced as MONEY-67 under ruling 13 - a console command outside runningUnitTests() writing an artifact the test asserts; the suite's no-live-calls guard stands"
+  },
+  {
+   "at": "2026-09-06T10:17:35",
+   "note": "MONEY-65: no event is minted for a deferral - nothing consumes it and the frozen plan declares none (rulings 29, 32)"
+  },
+  {
+   "at": "2026-09-06T10:17:35",
+   "note": "MONEY-67: success_url is config('app.url') if Stripe refuses a session without one - never a path to a route surfaces:generate has not mounted, because that moves ruling 36's lie to the page the customer lands on after paying (ruling 38)"
   }
  ],
  "decisions": [
@@ -1770,6 +1778,18 @@
    "module": "X-198",
    "chose": "(R245) a pay link is a real provider object persisted on X-198's own payment_links table keyed by (business_id, payment_id): the unique pair is the idempotency, a second click returns the first link and makes no provider call, and a locally-generated token is never stored because a fabricated URL under a decline is the screen lying about how to collect real money",
    "at": "2026-09-06T09:56:37",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "(R245) settle up later is a durable deferral in X-199's own decline_deferrals table, not a column on X-198's payments and not Livewire component state: a hide that a remount undoes is the button lying, and payments' vocabulary is the gateway's alone (MONEY-65, recorded in full)",
+   "at": "2026-09-06T10:17:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) a value a money screen sends to the provider carries the persisted row's own currency and never a method default: PaymentLinkAction passes payment->currency, every StripeGatewayClient method takes its currency from the row it acts on, and the proving test seeds a non-USD payment and asserts the currency the client received (ruling 37)",
+   "at": "2026-09-06T10:17:35",
    "ruling": "R245"
   }
  ]
