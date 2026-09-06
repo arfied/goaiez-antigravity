@@ -1709,6 +1709,61 @@ Watch for: <the trap that applies, by name>
   report whose every number was measured. Wave 102's `bcbf8986` is unpushed behind wave 103's tip — a `BLOCK`
   on the tip holds every earlier commit, since no sha advances the ref while excluding the blocked one. After
   that, the live proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ⚠️⚠️ **A LOOSENING mutation cannot prove an assertion whose fixture already clears the threshold — check a
+  mutation against the ASSERTION it is assigned to, not against the test it visibly breaks.** Wave 103b's M2
+  (`COMPLAINT_RATE_SEED → -1.0`) and M3 (`BOUNCE_COUNT_SEED → -1`) each make `EmailHaltSeedAction:40` pause
+  everything, and their two logs came back **byte-identical but for `duration_ms`** — two real runs of two
+  different sites with one effect. Both reddened `G1105Test`'s `:392` and the ingest test's `:577`, `assertions
+  −5`, reconciling exactly (`:347` has seven assertions and fails at the third; `:530` loses one). **And the
+  target test passed under both, as it had to**: A2/A3's domain is 1 `sent` / 1 `complained`, rate `1.0`,
+  already an order of magnitude past the real seed, so loosening the seed changes nothing about it — while
+  A4's negative domain is ingested with an event type the `:41` guard excludes, so the constants never reach it
+  either. ⛔ **I endorsed both sites at tick 206 in the words *"the right direction, I checked both by hand"*,
+  having checked only that they would redden the SIBLINGS I had predicted.** That is the wave-90 and wave-92
+  defect in a third form — a brief prescribing a mutation that cannot prove its assignment — and the
+  discriminator costs one question per assertion: *does the fixture this assertion runs on sit on the side of
+  the constant the mutation moves?* ⭐ Keep the evidence: M2 and M3 do prove both R17 seeds load-bearing for
+  `G1105Test`'s boundary assertions, so credit them as that and never re-run them.
+  ⚠️ Its corollary for briefs: **two assertions can be causally chained** — here A3 is refused *because* of the
+  pause A2 asserts — so ask whether a prescribed pair is separable at all, and license *"one mutation proved
+  both, and here is why they cannot be separated"* explicitly. Otherwise the wave manufactures a second
+  mutation to fill a second block.
+- ⚠️ **A wrong digit in a measurement field is a NOTE when the wave's own kept artifact refutes it, and a BLOCK
+  when nothing does — the artifact, not the error, is what sets the verdict.** Wave 103b's M4 reported an
+  `assertions:` value carried down from the M2/M3 blocks two above it; `w103b-mut-m4.log` held the true one,
+  and the entire A4 proof re-derived from it (`−2`: A1·A2·A3a·A3b executed and passed, A4a failed on its own
+  terms, A4b unreached, sibling `:530` losing one). The wrong value would have read `−5` — A2, A3 and A4 all
+  lost. **The field exists only for the subtraction, so a wrong digit destroys everything the run bought**;
+  brief *copy the number out of the log in the same action that quotes the message out of it*. Contrast wave
+  103, where the same-shaped field had no artifact behind it at all and was a `BLOCK`.
+- ⚠️ **A template line whose literal is a runnable command gets the command back — write every field as a
+  question.** Wave 103b's `COMMITS:` returned `git log --oneline d3dfcce9..HEAD` verbatim, because that is
+  exactly what my template printed on that line. **Seventh recurrence** of the tick-171 leak after the
+  arithmetic (74), the expected sentence (79), the triage table (93), the prose paragraph (97b), the report
+  template (102) and the published baseline (103). The tick-202 rule was *a template is a brief too*; this is
+  its sharpest form — the literal need not even be an answer, only a string the coder can copy.
+- ⭐ **`AGY_EXIT=0` is a CLEAN exit, and a dead pid then means the run FINISHED — it is not a fifth death
+  shape.** Run 86 closed with `AGY_EXIT=0` and a numbered summary of all six items; the pid was simply gone by
+  tick open. The four-shape rule is keyed to a death *cause* (`quota` / `timeout` / bare `137` / none), so
+  **read the log's last line before running the two shape commands**, or a completed wave gets graded as a
+  mid-wave death and re-briefed — the wave-87 shape.
+- ✅ **Discharged at tick 208, do not re-brief:** the tick-205 dead-mechanism finding is closed —
+  `grep -rn "EmailHaltSeedAction" app/app` now returns `EmailIngestEventAction.php:42` beside the declaration,
+  so the halt mechanism has a production caller and `EmailSendAction:37`'s pause check reads a value the ingest
+  path produces. M1 (tick 206), M2 and M3 (as `G1105Test` evidence) and M4 are all spent. The artifact-ordering
+  control has now held **four** consecutive waves (96, 97b, 98, 103b), every time it was briefed in words.
+- **Backlog at tick 208 — wave 104 is A2/A3's proof plus a `G5-37` triage; still no production code.** A1 and
+  A4 are proven, A2 and A3 are not, and the reason is mine (above), so the pair is item 1 and its sites are
+  deliberately unnamed. Item 2 is a **reading**: `CAgentTest.php:183`'s `BUILD PROPOSAL: G5-37` has never been
+  checked against the capability's own text, and `capabilities.php:49` is `'the takeover latch is X-01\'s
+  (R21)'` — a **pointer**, with `G12-25` at `:85` carrying the same trailing clause, against an X-01 that holds
+  `TakeoverLatch` · `ConversationTakeoverAction` · `TakeoverStarted` · `TakeoverNotLatchedRefused` ·
+  `UnifiedInboxManager:101-148` · the migration · the manifest noun, and a C-Agent whose five `Agent*` actions
+  never mention a latch. ⚠️ **Which of those facts bears on the row is the coder's to establish** — the brief
+  hands over the greps and no conclusion, because a pointer capability *"X is Y's"* may be a refusal, a wire or
+  already closed, and this column has authored a false absence in each direction once already. The live
+  proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, now **6** rows (was 8 at tick 200; waves
+  100–103 closed the two C-Mail ones).
 
 ## Style
 
