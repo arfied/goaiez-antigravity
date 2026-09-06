@@ -1799,3 +1799,127 @@ OAuth credential) — rule 09 satisfied. If it does not hold, the lane has a bui
 item and says so. **The generalisation:** "a vendor exists" and "the vendor mints
 an artifact id" are two claims, and only the second is what the anchor stage asks
 for. Six of this lane's seven anchor entries turn on that distinction.
+
+## ✅ The tick-146 `ssl_installed` prohibition is SATISFIED IN SUBSTANCE on `main` — read it before refusing SITE-92 (tick 199)
+
+Since tick 146 this file has said, in three places, **never fix J11's `ssl` by
+adding an `ssl_installed` column**. That prohibition was always about a *specific
+defect*, and a tick reading the sentence without its reason will now refuse the
+fix Track 1 has asked this lane for. Measured on `origin/main` at `230a2c3a`:
+
+```
+X-103/…/2026_09_05_220831_add_ssl_installed_to_page_versions_in_x103.php:15  ->default(true)
+X-103/…/2026_09_06_053000_ssl_installed_defaults_false_in_x103.php:16        ->default(false)->change()
+                                                                     :19     UPDATE page_versions SET ssl_installed = false
+X-103/Domain/SiteEngine.php:57  'ssl_installed' => false, // set true only by the SSL provisioning step (J11)
+tests/Journeys/JourneyHarness.php:693  'ssl' => isset(…) ? (bool) $version->ssl_installed : false,
+```
+
+Sixty's three drop migrations are **gone** from `main` (Track 1's 05:1x ruling), so
+the column exists; Track 1's `cd1640bb` gave it a real writer that writes **false**;
+and the harness now reads its **value**, not its presence. What tick 146 forbade was
+*a constant-`true` column existing only to be read* — a value nothing could
+falsify. That is no longer what is there. **RULED: the lane writes `true` derived
+from `EdgeZone.has_valid_ssl`, never a literal and never a default**, because that
+is the truth source ruling 16 names and the one `X157Test.php:604` already proves
+with a real 200/404 pair. Flip `has_valid_ssl` false and the column must follow;
+that falsifiability is the whole difference between the seam and the defect.
+
+⛔ The prohibition's *live* half stands unchanged: a literal `'ssl_installed' =>
+true`, or a `->default(true)` with no writer, is still the fake-green and is still
+refused. **Keep the reason attached to the rule.** A prohibition recorded as its
+remedy ("never add that column") rather than as its defect ("never make J11's one
+real element read a value nothing can falsify") expires silently the moment the
+population changes — which is what happened here, one merge later.
+
+## ⛔ A missing CAST is a fake-green with no literal anywhere in the diff (tick 199)
+
+`origin/main:app/app/Modules/X-103/Models/PageVersion.php` casts five columns —
+`content_blocks pixel_installed chat_installed form_capture_installed
+dni_installed` — and **not `ssl_installed`**. PDO_PGSQL does not natively convert
+`boolean`, so an uncast attribute can arrive as the string `'f'`, and
+**`(bool) 'f'` is `true`**. `JourneyHarness.php:693` is exactly that cast. If the
+driver on this box behaves that way, J11's `ssl` element reads green off a column
+holding false — with no literal, no default, and nothing in any diff to point at.
+
+Every fake-green this ledger has caught so far was visible as a *value* in a diff
+(sixty's `->default(true)`, reviews' `'ssl_installed' => true`). This one is
+visible only as an **absence**, in a file neither branch touched. When a check
+reads a database column through a PHP cast, the column's `$casts` entry is part of
+the assertion — grep the model, not just the writer.
+
+⚠️ **It is a measurement, not a conclusion.** The driver's behaviour is the wave's
+to establish, and the fix lands only if the measurement shows the uncast value is
+truthy-when-false, with a test that fails without the cast. Same discipline as tick
+198's IndexNow reading: the supervisor's reading of one file is the brief, never
+the implementation.
+
+## Half 1 is down to ONE commit, and 31 of the 32 left by a BOUND (tick 199)
+
+Tick 198 was the first tick where half 1 shrank and grew at once; tick 199 is the
+completion of that shrink. Per partition (`--source`/`%S`, never the total):
+
+- **reviews / X-103 — 1** (`ab051c0a`), unchanged.
+- **ui / X-110 — 0** (was 15) · **sixty / X-137 X-102 X-103 — 0** (was 17).
+
+`origin/main` gained ui at `27f7ad94` and sixty at `7815e337`, so both partitions
+fell out of `^origin/main`. **Attribute to the bound, never to the sibling side**
+(tick 191) — nothing was withdrawn, it merged, exactly as tick 195 predicted for
+sixty. The lane is 3 ahead of a `main` that is 209 ahead of it.
+
+## Reviews' `ab051c0a` is not a fake-green any more — it is a `migrate` breaker (tick 199)
+
+TRACK 1 ACTION 2, re-measured against the *new* `main` and upgraded. Reviews'
+`2026_09_06_000001_add_ssl_installed_to_page_versions.php` was read in full and has
+**no `hasColumn` guard**. `main` already adds the same column at
+`2026_09_05_220831`. Filenames sort together across every registered path, so a
+`main` that merges reviews runs **220831 add → 000001 add → 053000 default-false**
+and the second add is a duplicate column: `migrate` fails on a fresh database, for
+every lane, not just this one's journey.
+
+That is the same filename-ordering argument reaching its **third different
+verdict** as the population changed — tick 163 (add-then-drop, settled), tick 198
+(add-drop-add, fake-green), tick 199 (add-add, broken). ⛔ **Never read a migration
+pair as settled without re-checking for a third file from a third branch**, and
+re-run the reading whenever `main` moves; the argument is sound each time and the
+answer changes anyway.
+
+For the merge: `SiteEngine.php` **will** conflict textually (reviews' `:48
+=> true` against main's `:57 => false`) — the good case, main's side wins.
+`JourneyHarness.php:693` is byte-identical on both refs and conflicts with nothing.
+Reviews' `PageVersion.php:18 'ssl_installed' => 'boolean'` is an *addition* main
+lacks and is the one line worth keeping — see the cast finding above.
+
+## One writer outranks case (d)'s ordering (tick 199)
+
+The tick prompt says case (d) — an `OWNER.md` newer than the last REVIEWS block —
+beats (a)-(c). `OWNER.md` landed at 05:29, two minutes after tick 198 dispatched
+run 105, so both were true at once. **RULED: record the answers and the rulings in
+the same tick, hold the DISPATCH for the next one.** `launch-coder.sh` refuses a
+concurrent run anyway, and a block that says "dispatched" without a `LAUNCHED` line
+is a claim, not a dispatch. `BRIEF.md` is not overwritten either — it is the
+running wave's live instruction sheet, and the next tick's case (b) is where the
+new brief belongs. Case (d) governs what gets *written*; it does not suspend one
+writer per checkout.
+
+⚠️ **A supervisor commit is also a write.** This tick's `CLAUDE.md` notes were
+left **uncommitted** while run 105 held the checkout: a path-scoped `git commit --
+CLAUDE.md` races the coder's own commit on `.git/index.lock`, and corrupting the
+coder's commit to save two minutes is a bad trade. Commit the notes at the next
+tick, when the writer is gone. The exposure is the run-27 clobber with the
+launcher's `sup-snap-*` (taken at 05:27:33, before these edits) as the only
+backstop — which is the standing exposure of an untracked ledger, not a new one.
+
+## SITE-92 — ruled at tick 199, to be dispatched by the next tick's case (b)
+
+0. Push per run 105's own `push:` line (that brief owns step 0).
+1. **Take main** at `230a2c3a` — `git fetch --no-write-fetch-head origin && git
+   merge --no-ff origin/main`, then restore this lane's per-track paths from HEAD,
+   `app/phpunit.xml` line 34 **first**.
+2. **Measure** the `PageVersion` cast question above; fix only if the measurement
+   holds, with a test that fails without the cast.
+3. **The SSL step** — `ssl_installed` written from `EdgeZone.has_valid_ssl` on the
+   provisioning/publish path, with a test that flips it false and asserts both the
+   column and J11's element follow. ⛔ Never a literal, never a default.
+
+`JourneyHarness.php` is not touched; it stays TRACK 1 ACTION 1.
