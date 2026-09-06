@@ -11,11 +11,12 @@ final class InvoiceNumber
     public static function next(int $businessId): string
     {
         $lastInvoice = Invoice::where('business_id', $businessId)
+            ->where('invoice_number', '~', '^INV-[0-9]{6}$')
+            ->orderByDesc('invoice_number')
             ->lockForUpdate()
-            ->orderByDesc('id')
             ->first();
 
-        if ($lastInvoice && str_starts_with($lastInvoice->invoice_number, 'INV-')) {
+        if ($lastInvoice) {
             $lastNumber = (int) substr($lastInvoice->invoice_number, 4);
             $nextNumber = $lastNumber + 1;
         } else {

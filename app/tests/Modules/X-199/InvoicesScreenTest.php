@@ -64,7 +64,7 @@ class InvoicesScreenTest extends TestCase
             ->assertOk()
             ->assertSeeInOrder([$inv2->invoice_number, $inv1->invoice_number])
             ->assertSee('John Doe')
-            ->assertDontSee($invOther->invoice_number)
+            ->assertDontSee('Jane Doe')
             ->assertDontSee('777.00')
             ->call('toggleExpanded', $inv1->id)
             ->assertSee('Item 1')

@@ -3,6 +3,7 @@
 use App\Models\Business;
 use App\Modules\X121\Models\Person;
 use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X199\Models\Invoice;
 use App\Support\Tenancy;
 
 test('two invoices issued for the same business get consecutive numbers, and the second is greater than the first', function () {
@@ -75,4 +76,47 @@ test('two businesses number independently', function () {
     });
 
     expect($firstB['invoice']->invoice_number)->toBe('INV-000001');
+});
+test('a legacy invoice does not reset the counter', function () {
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    $engine = app(InvoiceEngine::class);
+
+    Tenancy::actingAs((int) $business->id, function () use ($engine, $business, $customer, &$inv3) {
+        $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'First', 'quantity' => 1, 'unit_price_cents' => 100]],
+            'net_30'
+        );
+
+        $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Second', 'quantity' => 1, 'unit_price_cents' => 100]],
+            'net_30'
+        );
+
+        // Insert legacy directly
+        Invoice::create([
+            'business_id' => $business->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-LEGACY',
+            'status' => 'issued',
+            'due_date' => now()->addDays(30),
+            'total_cents' => 100,
+        ]);
+
+        $third = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Third', 'quantity' => 1, 'unit_price_cents' => 100]],
+            'net_30'
+        );
+
+        $inv3 = $third['invoice']->invoice_number;
+    });
+
+    expect($inv3)->toBe('INV-000003');
 });
