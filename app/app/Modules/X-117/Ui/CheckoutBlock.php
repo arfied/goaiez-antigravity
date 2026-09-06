@@ -43,7 +43,7 @@ class CheckoutBlock extends Component
         $this->waiting = null;
 
         $this->authToken = 'auth_'.Str::random(20);
-        $this->authorised = sprintf('Authorised at %s — this authorisation pays once.', now()->format('H:i:s'));
+        $this->authorised = sprintf('Authorised at %s — the order will be placed and is waiting on a card-entry surface that is not connected yet.', now()->format('H:i:s'));
     }
 
     public function pay(CartPayAction $action): void
@@ -64,7 +64,7 @@ class CheckoutBlock extends Component
             if ($r['status'] === 'paid') {
                 $this->success = sprintf('Paid — order %s. The charge landed at the gateway.', $r['order_number']);
             } elseif ($r['status'] === 'pending_payment') {
-                $this->success = sprintf('Pending — order %s. The order was placed, stock came off, and the charge is waiting on the gateway.', $r['order_number']);
+                $this->waiting = sprintf('Pending — order %s. The order was placed, stock came off, and it is waiting on a card-entry surface.', $r['order_number']);
             } else {
                 $this->error = $r['message'] ?? 'Payment failed.';
             }

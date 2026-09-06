@@ -14,6 +14,10 @@
         <p>{{ $success }}</p>
     @endif
     
+    @if($waiting)
+        <x-ui.status-pill state="unknown" :label="$waiting" />
+    @endif
+    
     <div wire:loading><x-ui.skeleton label="Reading the cart…" /></div>
 
     <h2>To pay</h2>
