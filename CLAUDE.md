@@ -442,6 +442,36 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   `--name-only` output — `5f435239` shows no files here, which is why half 3 must
   still be read on its own (it prints that merge; this query does not).
 
+  ✅ **The tip table is the census's cache key — a static tick is two commands,
+  not six** (tick 177). Every census query is a pure function of the nine
+  `refs/remotes/origin` refs: halves 1, 2 and 3 and the complement all take
+  `^origin/main ^origin/track/site` plus the six sibling tips as their entire
+  input, and the `.agents/state/` direction check names its refs explicitly.
+  **None of them reads HEAD or the working tree.** So if the `for-each-ref`
+  table is identical to the previous tick's recorded table, all five results are
+  provably identical too, and re-running them measures nothing. Cite the prior
+  tick's values and move on.
+
+  Two refinements, both measured at tick 177 rather than argued:
+
+  - **This track's own tip moving does not break the cache.** `origin/track/site`
+    appears only as an *exclusion* (`^origin/track/site`), so advancing it can
+    only shrink census output, never add to it — and when the new commit is a
+    supervisor-notes commit (`f93adab0`→`002883a4`, `CLAUDE.md` only) it touches
+    no censused path and changes nothing at all. Tick 177 ran all three halves
+    anyway and got byte-identical output to tick 176, which is what makes this a
+    measurement.
+  - **The cache covers the refs, not the checkout.** `git status --short`,
+    `python3 bin/state.py next`, `git diff --stat HEAD -- .agents/state/` and the
+    one-writer check are NOT functions of the remote refs — a writer in this
+    checkout moves them with every tip frozen. Those four run every tick,
+    unconditionally.
+
+  This is not the stale-pointer trap (tick 146): the `git fetch
+  --no-write-fetch-head` still happens first, every tick. What is cached is the
+  *derivation* from the refs, never the refs themselves. A HOLD tick that
+  measured eight unmoved tips has already measured the census.
+
   ⚠️ **This track's ledger is untracked** (tick 175). `git ls-files
   .agents/supervisor/` returns one file. `REVIEWS.md` — 2.2 MB, 175 tick blocks —
   exists only in this working tree, and with no coder running the launcher writes
