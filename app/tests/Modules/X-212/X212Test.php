@@ -87,6 +87,7 @@ class X212Test extends TestCase
 
     /**
      * [N-004], [N-038], [N-040], [G4-54]
+     * [N-042]
      */
     public function test_header_capabilities(): void
     {
