@@ -46,7 +46,6 @@ final class AccountingSyncAction
 
         foreach ($transactions as $tx) {
             $ref = $tx['ref'] ?? ('tx_'.bin2hex(random_bytes(4)));
-            $desc = $tx['description'] ?? '';
             $confidence = array_key_exists('confidence', $tx) ? (float) $tx['confidence'] : 0.0;
             $suggested = $tx['category'] ?? 'uncategorised';
 

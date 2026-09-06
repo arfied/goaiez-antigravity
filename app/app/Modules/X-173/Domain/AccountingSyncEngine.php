@@ -14,7 +14,7 @@ final class AccountingSyncEngine
     private const CONFIDENCE_THRESHOLD = 0.85;
 
     /**
-     * Resolves accounting category from transaction description.
+     * Returns the caller's suggested category when the caller's confidence clears the threshold.
      * Category below confidence threshold posts to 'uncategorised' with review flag, NEVER to a guessed code (TEST ANCHOR & G1-03).
      */
     public function inferCategory(float $inferredConfidence, string $suggestedCategory): array
