@@ -96,14 +96,28 @@ class CardScreenTest extends TestCase
         Tenancy::set($biz->id);
         Tenancy::setUser($owner->id);
 
+        CardToken::create([
+            'business_id' => $biz->id,
+            'gateway_payment_method_id' => 'tok_ctrl',
+            'gateway_customer_id' => 'cus_ctrl',
+            'brand' => 'Visa',
+            'last_four' => '1111',
+            'exp_month' => 12,
+            'exp_year' => now()->year + 1,
+            'is_default' => true,
+        ]);
+
         $screen = Livewire::actingAs($owner)->test(CardScreen::class)
             ->call('addCard')
             ->assertSee('waiting on Stripe tokenisation')
             ->assertSeeHtml('autocomplete="cc-number"')
             ->assertSeeHtml('autocomplete="cc-exp-month"')
             ->assertSeeHtml('autocomplete="cc-name"')
+            ->assertSee('1111')
             ->assertDontSeeHtml('cvv')
+            ->assertSee('1111')
             ->assertDontSeeHtml('cvc')
+            ->assertSee('1111')
             ->assertDontSeeHtml('CVV')
             ->set('number', '4242 4242 4242 4242')
             ->set('expMonth', '1')
@@ -111,7 +125,9 @@ class CardScreenTest extends TestCase
             ->set('name', 'A Plumber')
             ->call('present')
             ->assertSee('expired 01/2020')
+            ->assertSee('1111')
             ->assertDontSee('4242424242424242')
+            ->assertSee('1111')
             ->assertDontSee('4242 4242 4242 4242')
             ->set('number', '4242424242424241')
             ->set('expMonth', '12')
@@ -125,9 +141,10 @@ class CardScreenTest extends TestCase
             ->call('present')
             ->assertSee('Waiting on Stripe tokenisation: the visa ending 4242')
             ->assertSee('A Plumber')
+            ->assertSee('1111')
             ->assertDontSee('4242424242424242');
 
-        $this->assertSame(0, CardToken::where('business_id', $biz->id)->count(), 'the door stores nothing');
+        $this->assertSame(1, CardToken::where('business_id', $biz->id)->count(), 'the door stores nothing');
         $this->assertSame('', $screen->get('number'), 'the number is cleared before the page goes back');
     }
 }
