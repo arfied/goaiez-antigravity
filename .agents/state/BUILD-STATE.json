@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T04:42:01",
+ "updated": "2026-09-06T05:07:39",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1077,6 +1077,12 @@
      "stage": "capability",
      "why": "engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71",
      "at": "2026-09-04T15:22:06"
+    },
+    {
+     "module": "X-211",
+     "stage": "capability",
+     "why": "the \u2464 cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine \u2014 measured MONEY-51.",
+     "at": "2026-09-06T05:07:39"
     }
    ]
   },
@@ -1233,6 +1239,12 @@
    "stage": "capability",
    "why": "engine lacks the term/threshold refusals \u2014 N-033, G1-61, G1-71",
    "at": "2026-09-04T15:22:06"
+  },
+  {
+   "module": "X-211",
+   "stage": "capability",
+   "why": "the \u2464 cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine \u2014 measured MONEY-51.",
+   "at": "2026-09-06T05:07:39"
   }
  ],
  "notes": [
@@ -1379,6 +1391,10 @@
   {
    "at": "2026-09-06T04:42:01",
    "note": "Converted all four Ui/ files in X-211 to read invoices through X-199's InvoiceReader. Added tests for draft exclusion/inclusion logic."
+  },
+  {
+   "at": "2026-09-06T05:07:34",
+   "note": "Converted logOfflinePayment to throw UnreferencedPaymentException before any writes when reference and photo_path are blank."
   }
  ],
  "decisions": [
@@ -1548,6 +1564,12 @@
    "module": "X-199",
    "chose": "the X-211 screens read invoices only through X-199's InvoiceReader; X-211 owns no query against invoices or invoice_lines",
    "at": "2026-09-06T04:42:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-211",
+   "chose": "logOfflinePayment now refuses input it used to accept, naming G1-74, N-033 and UnreferencedPaymentException",
+   "at": "2026-09-06T05:07:30",
    "ruling": "R245"
   }
  ]

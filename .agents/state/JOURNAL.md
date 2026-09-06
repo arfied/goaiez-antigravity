@@ -572,3 +572,6 @@
 - `2026-09-06T04:24:08` note: 
 - `2026-09-06T04:42:01` (R245) X-199 — the X-211 screens read invoices only through X-199's InvoiceReader; X-211 owns no query against invoices or invoice_lines
 - `2026-09-06T04:42:01` note: Converted all four Ui/ files in X-211 to read invoices through X-199's InvoiceReader. Added tests for draft exclusion/inclusion logic.
+- `2026-09-06T05:07:30` (R245) X-211 — logOfflinePayment now refuses input it used to accept, naming G1-74, N-033 and UnreferencedPaymentException
+- `2026-09-06T05:07:34` note: Converted logOfflinePayment to throw UnreferencedPaymentException before any writes when reference and photo_path are blank.
+- `2026-09-06T05:07:39` UNRESOLVED capability X-211 - the ⑤ cells for these ids live in generated capabilities.php, harvested from GOAIEZ-MASTER-PLAN.md, which ruling 29 freezes pending OWNER ACTION 25; the refusals themselves are built and tested in X-211's engine — measured MONEY-51.
