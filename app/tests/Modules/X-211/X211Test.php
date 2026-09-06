@@ -148,4 +148,77 @@ class X211Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_sweep_dispatches_aroverdue_for_qualifying_invoice_and_not_when_escalated(): void
+    {
+        Event::fake([\App\Modules\X211\Events\ArOverdue::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Sweep Tenant', 'currency' => 'USD']);
+        // Assign an owner_user_id so the command can find it during the chunk sweep
+        $user = \App\Models\User::factory()->create();
+        $biz->update(['owner_user_id' => $user->id]);
+
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Sweep', 'last_name' => 'Client']);
+
+        $invoice1 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-SWP-001',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        $invoice2 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-SWP-002',
+            'total_cents' => 20000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        // escalate invoice2
+        \App\Modules\X211\Models\ArDunningAction::create([
+            'business_id' => $biz->id,
+            'invoice_id' => $invoice2->id,
+            'action' => 'escalate_to_human',
+            'reason' => 'Silence',
+        ]);
+
+        \Illuminate\Support\Facades\Artisan::call('x211:detect-overdue');
+
+        Event::assertDispatched(\App\Modules\X211\Events\ArOverdue::class, function ($event) use ($invoice1) {
+            return $event->invoiceId === $invoice1->id;
+        });
+
+        Event::assertNotDispatched(\App\Modules\X211\Events\ArOverdue::class, function ($event) use ($invoice2) {
+            return $event->invoiceId === $invoice2->id;
+        });
+    }
+
+    public function test_arengine_refuses_invoice_from_another_business(): void
+    {
+        $biz1 = TestCase::provisionTenant(['name' => 'Biz 1', 'currency' => 'USD']);
+        $biz2 = TestCase::provisionTenant(['name' => 'Biz 2', 'currency' => 'USD']);
+        
+        DB::statement("SET app.business_id = '{$biz1->id}'");
+        $customer = Person::create(['business_id' => $biz1->id, 'first_name' => 'Biz', 'last_name' => 'One']);
+        $invoice1 = Invoice::create([
+            'business_id' => $biz1->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-BIZ1-001',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5)->toDateString(),
+        ]);
+
+        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->lateFeeAction->handle($biz2->id, $invoice1->id, 100);
+    }
 }

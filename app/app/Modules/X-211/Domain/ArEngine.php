@@ -6,8 +6,7 @@ namespace App\Modules\X211\Domain;
 
 use App\Modules\X121\Models\Conversation;
 use App\Modules\X121\Models\Message;
-use App\Modules\X199\Models\Invoice;
-use App\Modules\X199\Models\InvoiceLine;
+use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Events\ArEscalatedToHuman;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArLateFeeTermSet;
@@ -46,7 +45,7 @@ final class ArEngine
     public function applyLateFee(int $businessId, int $invoiceId, int $feeCents): array
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $feeCents) {
-            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
             // G1-71: a fee with no matching TERM in the agreement is refused — the term is the tenant's
             // ar_plan_terms row (P-193: a ROW, never a literal), null means the agreement names no late fee.
@@ -114,7 +113,7 @@ final class ArEngine
     public function offerPlan(int $businessId, int $invoiceId, int $installmentsCount = 3, string $frequency = 'monthly'): PaymentPlan
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $installmentsCount, $frequency) {
-            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
             if ($installmentsCount < 2) {
                 throw new \InvalidArgumentException('A plan is at least two payments.');
@@ -179,7 +178,7 @@ final class ArEngine
                 'reference_number' => $reference,
             ]);
 
-            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
             $newPaid = $invoice->paid_cents + $amountCents;
             $status = ($newPaid >= $invoice->total_cents) ? 'paid' : 'issued';
             $invoice->update(['paid_cents' => $newPaid, 'status' => $status]);
@@ -204,7 +203,7 @@ final class ArEngine
     public function packageForCollections(int $businessId, int $invoiceId, ?int $packagedByUserId = null): array
     {
         return DB::transaction(function () use ($businessId, $invoiceId, $packagedByUserId) {
-            $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
             $attempted = ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
                 || PaymentPlan::where('business_id', $businessId)->where('invoice_id', $invoiceId)->exists()
@@ -226,8 +225,7 @@ final class ArEngine
                 'paid_cents' => (int) $invoice->paid_cents,
                 'balance_cents' => (int) ($invoice->total_cents - $invoice->paid_cents),
                 'due_date' => $invoice->due_date->toDateString(),
-                'lines' => InvoiceLine::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
-                    ->get(['description', 'quantity', 'subtotal_cents'])->toArray(),
+                'lines' => app(InvoiceReader::class)->linesForInvoice($businessId, $invoiceId),
                 'payments' => OfflinePayment::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
                     ->get(['amount_cents', 'payment_method', 'reference_number', 'created_at'])->toArray(),
                 'actions' => ArDunningAction::where('business_id', $businessId)->where('invoice_id', $invoiceId)->orderBy('id')
@@ -276,7 +274,7 @@ final class ArEngine
         }
 
         return DB::transaction(function () use ($businessId, $invoiceId, $reasonCode, $label) {
-            Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
+            app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
 
             $recorded = ArDunningAction::create([
                 'business_id' => $businessId,

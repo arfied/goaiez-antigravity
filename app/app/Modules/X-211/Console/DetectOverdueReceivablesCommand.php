@@ -6,7 +6,7 @@ namespace App\Modules\X211\Console;
 
 use App\Models\Business;
 use App\Models\User;
-use App\Modules\X199\Models\Invoice;
+use App\Modules\X199\Domain\InvoiceReader;
 use App\Modules\X211\Events\ArOverdue;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Support\Tenancy;
@@ -56,9 +56,7 @@ final class DetectOverdueReceivablesCommand extends Command
 
         foreach ($businesses as $business) {
             $dispatched += Tenancy::actingAs((int) $business->id, function () use ($business) {
-                $overdueInvoices = Invoice::where('due_date', '<', now()->toDateString())
-                    ->where('status', 'issued')
-                    ->get();
+                $overdueInvoices = app(InvoiceReader::class)->overdueIssued();
 
                 $localDispatched = 0;
                 foreach ($overdueInvoices as $invoice) {
