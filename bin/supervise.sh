@@ -80,6 +80,20 @@ bar "2c. debug debris in app code (dump/dd/var_dump)"
 dbg=$(grep -rnE '\b(dump|dd|var_dump)\(' "$APP/app" --include='*.php' 2>/dev/null | grep -vE ':[0-9]+:\s*(\*|//)' | grep -v '@allow-dump' | head -5)
 if [ -n "$dbg" ]; then printf '%s\n' "$dbg" | sed 's/^/  ⛔ /'; fail=1; else echo "  none"; fi
 
+bar "2d. shared coder guard parses  (/home/goaiez/agents/coder-bin/git — all seven lanes' git)"
+GUARD=/home/goaiez/agents/coder-bin/git
+# The guard is a supervisor-maintained file (owner grant in .claude/settings.json) and it is
+# on every coder's PATH in every checkout. A syntax error in it does not fail closed — it
+# breaks `git` itself for every lane at once. Check it on every gate; it costs nothing.
+if [ ! -f "$GUARD" ]; then
+  echo "  ⛔ MISSING — coder runs would get the real git with no guard at all"; fail=1
+elif bash -n "$GUARD" 2>/tmp/guard-parse.$$; then
+  echo "  parses · $(wc -l <"$GUARD") lines · md5 $(md5sum "$GUARD" | cut -c1-12)"
+  rm -f /tmp/guard-parse.$$
+else
+  sed 's/^/  ⛔ /' /tmp/guard-parse.$$; rm -f /tmp/guard-parse.$$; fail=1
+fi
+
 bar "3. build state"
 python3 "$ROOT/bin/state.py" status 2>&1 | head -30 | sed 's/^/  /'
 python3 "$ROOT/bin/state.py" next 2>&1 | head -20 | sed 's/^/  /'
@@ -105,8 +119,27 @@ if [ $want_doctor -eq 1 ]; then
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+# A KILLED TOOL IS NOT A FAILED TOOL (2026-09-06, from the sibling project's 13900).
+# Piping straight into `tail` threw away the exit code and the shell's own report of
+# the signal: their gate logged "Pint failed — push aborted" when Pint had been
+# SIGTERMed, because a killed process prints a bare `Terminated` that no signal-9
+# pattern matches. §7 below already reads rc for pest; §6 did not, and had the same
+# hole. rc >= 124 is timeout (124) or a signal (128+n: 137 = KILL, 143 = TERM).
+run_tool() {                     # run_tool <label> <cmd...>
+  local label="$1"; shift
+  local out rc
+  out=$("$@" 2>&1); rc=$?
+  printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
+  if [ $rc -ne 0 ]; then
+    if [ $rc -ge 124 ] || printf '%s' "$out" | grep -qiE 'terminated|killed|signaled|signal "?[0-9]+"?'; then
+      echo "  ⛔ $label was KILLED or timed out (rc=$rc) — this is NOT a $label verdict."
+      echo "     No number from this run. Re-run it; if it repeats, find what is signalling."
+    fi
+    fail=1
+  fi
+}
+run_tool pint    ./vendor/bin/pint --test
+run_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"

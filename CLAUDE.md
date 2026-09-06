@@ -210,10 +210,25 @@ Procedure (the coder runs it, the supervisor reviews the merge commit):
    no uncommitted note can be lost (run 27 clobbered them with a blanket checkout; the launcher's
    pre-run snapshot under /home/goaiez/tmp/sup-snap-* is the recovery path).
 1. `git merge --no-ff --no-commit origin/track/<x>`.
-2. Restore ONLY per-track paths the merge actually changed:
-   `git diff --name-only HEAD MERGE_HEAD -- <per-track paths>` → for each,
-   `git checkout HEAD -- <that path>`. NEVER a blanket checkout of the
-   supervisor directory.
+2. Restore ONLY per-track paths the merge actually changed. Measure from the
+   **index**, `git diff --cached --stat`, not from `git diff HEAD MERGE_HEAD` —
+   the latter lists files only *our* side changed since the base, which the
+   merge already resolved to ours (run 112: `bin/supervise.sh` differed there
+   and was absent from the index). For each, `git checkout HEAD -- <that path>`,
+   one command per path. NEVER a blanket checkout of the supervisor directory.
+   **The shared coder guard refused this outright until 2026-09-06 15:1x**, which
+   made this very step unrunnable and stopped run 112 — `coder-bin/git` now allows
+   `git checkout HEAD -- <existing file path>` only when `GOAIEZ_MERGE_OK=1` and
+   `MERGE_HEAD` is present, and refuses a directory argument by construction, so
+   run 27's blanket clobber cannot be typed. `restore` and `switch` stay refused.
+   `supervise.sh` §2d `bash -n`s that guard on every gate: it is on all seven
+   lanes' PATH, and a syntax error in it does not fail closed, it breaks `git`
+   everywhere at once.
+   ⚠️ **Restore before anything reads a database.** A merged `app/phpunit.xml`
+   carries the *other lane's* test database (run 112: `goaiez_antig_stages_test`),
+   so a suite, a doctor stage or a `state.py status` run before the restore
+   measures the wrong tree — `capability 372` read off the staged `BUILD-STATE.json`
+   was stages' number, not main's.
 3. Commit `merge: track/<x> — <scope>`; proof in the report:
    `git diff HEAD~1 HEAD --stat -- <per-track paths>` prints nothing.
 4. Rebuild if lockfiles/assets moved; full gate on the merge commit; the
