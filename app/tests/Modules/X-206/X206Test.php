@@ -158,8 +158,7 @@ class X206Test extends TestCase
         $this->assertStringNotContainsString($secret, $row->key_hint);
 
         $revealRow = CredentialReveal::where('credential_id', $cred->id)->first();
-        if ($revealRow) {
-            $this->assertStringNotContainsString($secret, json_encode($revealRow->toArray()));
-        }
+        $this->assertNotNull($revealRow, 'a permitted reveal writes its own audit row');
+        $this->assertStringNotContainsString($secret, json_encode($revealRow->toArray()));
     }
 }
