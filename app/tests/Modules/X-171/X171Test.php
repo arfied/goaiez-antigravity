@@ -114,4 +114,23 @@ class X171Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /**
+     * [G4-27]
+     * nothing hard-stops at a cap: the phone keeps answering and auto top-up is universal. A widget that downgrades on zero credits is the failure this law exists to prevent
+     */
+    public function test_g4_27_offline_mode(): void
+    {
+        $path = base_path('app/Modules/X-171');
+        $this->assertTrue(is_dir($path) && count(scandir($path)) > 2, 'X-171 module directory must exist and be non-empty');
+
+        $grepCommand = sprintf('grep -rniE "\b(credit|balance|cap)\b" %s', escapeshellarg($path));
+        $output = shell_exec($grepCommand);
+
+        $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
+            return ! empty($line) && ! str_contains($line, 'capabilities.php');
+        });
+
+        $this->assertEmpty($lines, 'No path under app/Modules/X-171/ should consult a credit, balance, or cap store.');
+    }
 }

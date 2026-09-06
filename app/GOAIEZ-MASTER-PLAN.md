@@ -27865,7 +27865,7 @@ G1 classified 61 lines against three modules. This turn classified 247 against *
 | G10-21 | Immutable Storage | ENH | X-122 | append-only action log; ⚠️ QLDB is corpus vocabulary — one database (§22) |
 | G10-22 | Latency Guardrails | ENH | C-Ai | TTFT demotion in the model waterfall |
 | G10-23 | Legal & Privacy Engine | ⛔ **KILLED** | — | **P-167 · Law 122** — eight EMPTY admin slots, nothing authored, no generated ToS or privacy copy |
-| G10-24 | Legally Binding Signatures | ENH | X-172 | the signature pad lives in the customer portal; see F-19 |
+| G10-24 | Legally Binding Signatures | ENH | X-172 | the signature pad lives in the customer portal; see F-19 · refuses: a redline is SURFACED with a diff, never accepted |
 | G10-25 | List Scrubbing | ENH | X-186 | scrubbed against suppression fresh as of each send · refuses: to send without scrubbing against a fresh suppression list |
 | G10-26 | Non-Standard Terms | ENH | X-202 | a term outside the standard routes for a decision |
 | G10-27 | Policy Enforcement | **RE-HOME→G15** | X-169 | expense policy |
