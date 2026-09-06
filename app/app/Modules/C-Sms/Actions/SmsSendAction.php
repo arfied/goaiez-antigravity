@@ -16,7 +16,6 @@ use App\Services\Consent\ConsentService;
 use App\Services\Messaging\Outbound\OutboundMessage;
 use App\Services\Messaging\Outbound\SendKey;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 final class SmsSendAction
 {
@@ -31,7 +30,8 @@ final class SmsSendAction
         string $body,
         string $messageClass = 'transactional',
         string $recipientLocalTime = '12:00',
-        int $permitId = 0
+        int $permitId = 0,
+        string $occasion = ''
     ): array {
         if ($permitId === 0) {
             return $this->composer->send($businessId, $recipientPhone, $body, $messageClass, $recipientLocalTime);
@@ -46,9 +46,10 @@ final class SmsSendAction
             ];
         }
 
-        $purposeEnum = $messageClass === 'marketing'
-            ? OutreachPurpose::Marketing
-            : OutreachPurpose::Transactional;
+        $purposeEnum = match ($messageClass) {
+            'marketing' => OutreachPurpose::Marketing,
+            default => OutreachPurpose::Transactional,
+        };
 
         $decision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
 
@@ -102,7 +103,10 @@ final class SmsSendAction
         }
 
         $permit = $decision->permit;
-        $key = SendKey::for($permit, 'csms:'.Str::uuid()->toString());
+        if ($occasion === '') {
+            throw new \InvalidArgumentException('SmsSendAction requires a deterministic occasion');
+        }
+        $key = SendKey::for($permit, $occasion);
 
         $message = OutboundMessage::for(
             permit: $permit,
