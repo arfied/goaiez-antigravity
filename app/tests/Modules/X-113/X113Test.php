@@ -9,10 +9,12 @@ use App\Modules\X113\Actions\SecureFieldRevealAction;
 use App\Modules\X113\Actions\StaffAuthenticateCheckAction;
 use App\Modules\X113\Actions\StaffDeactivateAction;
 use App\Modules\X113\Actions\StaffInviteAction;
+use App\Modules\X113\Domain\StaffEngine;
 use App\Modules\X113\Events\RoleAssigned;
 use App\Modules\X113\Events\StaffDeactivated;
 use App\Modules\X113\Models\Role;
 use App\Modules\X113\Models\RolePermission;
+use App\Modules\X113\Models\StaffUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -134,20 +136,20 @@ class X113Test extends TestCase
     public function test_g7_29_g15_02_positive_only_scorecard_and_no_ranking_surface(): void
     {
         $this->assertTrue(Schema::hasColumn('staff_users', 'coaching_notes'), 'staff_users must have coaching_notes for positive feedback');
-        
-        foreach (['score','rating','ranking','grade','points','percentile','stack_rank','performance_score'] as $col) {
+
+        foreach (['score', 'rating', 'ranking', 'grade', 'points', 'percentile', 'stack_rank', 'performance_score'] as $col) {
             $this->assertFalse(Schema::hasColumn('staff_users', $col), "staff_users must not have $col");
         }
-        
+
         $classes = [
-            \App\Modules\X113\Domain\StaffEngine::class,
-            \App\Modules\X113\Actions\StaffInviteAction::class,
-            \App\Modules\X113\Actions\StaffDeactivateAction::class,
-            \App\Modules\X113\Actions\RoleAssignAction::class,
-            \App\Modules\X113\Actions\StaffAuthenticateCheckAction::class,
-            \App\Modules\X113\Actions\SecureFieldRevealAction::class,
+            StaffEngine::class,
+            StaffInviteAction::class,
+            StaffDeactivateAction::class,
+            RoleAssignAction::class,
+            StaffAuthenticateCheckAction::class,
+            SecureFieldRevealAction::class,
         ];
-        
+
         foreach ($classes as $class) {
             $reflection = new \ReflectionClass($class);
             foreach ($reflection->getMethods() as $method) {
@@ -169,11 +171,11 @@ class X113Test extends TestCase
         foreach (['interview', 'candidate', 'applicant', 'scorecard'] as $col) {
             $this->assertFalse(Schema::hasColumn('staff_users', $col), "staff_users must not have hiring column $col");
         }
-        
+
         $models = [
-            \App\Modules\X113\Models\Role::class,
-            \App\Modules\X113\Models\RolePermission::class,
-            \App\Modules\X113\Models\StaffUser::class,
+            Role::class,
+            RolePermission::class,
+            StaffUser::class,
         ];
         foreach ($models as $modelClass) {
             $model = new $modelClass;
@@ -183,8 +185,8 @@ class X113Test extends TestCase
                 "Model $modelClass must not own a hiring table"
             );
         }
-        
-        $reflection = new \ReflectionClass(\App\Modules\X113\Domain\StaffEngine::class);
+
+        $reflection = new \ReflectionClass(StaffEngine::class);
         foreach ($reflection->getMethods() as $method) {
             $name = strtolower($method->getName());
             $this->assertFalse(
