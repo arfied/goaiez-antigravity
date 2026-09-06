@@ -198,13 +198,13 @@ class X198Test extends TestCase
         {
             public function charge(int $amountCents, string $source, string $currency = 'USD'): string
             {
-                return 'ch_stub_money60';
+                return 'ch_stub_money60_000000000';
             }
         });
 
         $payment = $this->captureAction->handle($biz->id, 3000, 'tok_success', $idempotencyKey);
 
-        $this->assertEquals('ch_stub_money60', $payment->gateway_charge_id);
+        $this->assertEquals('ch_stub_money60_000000000', $payment->gateway_charge_id);
         $this->assertEquals('captured', $payment->status);
 
         $count = Payment::where('business_id', $biz->id)->count();
@@ -222,13 +222,13 @@ class X198Test extends TestCase
         {
             public function charge(int $amountCents, string $source, string $currency = 'USD'): string
             {
-                return 'ch_stub_money61';
+                return 'ch_stub_money61_000000000';
             }
         });
 
         $payment = $this->captureAction->handle($biz->id, 1000, 'tok_123', 'idemp_456');
 
-        $this->assertEquals('ch_stub_money61', $payment->gateway_charge_id);
+        $this->assertEquals('ch_stub_money61_000000000', $payment->gateway_charge_id);
         $this->assertEquals('captured', $payment->status);
     }
 
@@ -358,8 +358,9 @@ class X198Test extends TestCase
             public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
             {
                 $this->calls++;
+                $id = 'cs_test_abc' . str_repeat('0', 55);
 
-                return ['id' => 'cs_test_abc', 'url' => 'https://checkout.stripe.com/pay/cs_test_abc'];
+                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380)];
             }
         });
 
@@ -449,8 +450,9 @@ class X198Test extends TestCase
             public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
             {
                 $this->seenCurrency = $currency;
+                $id = 'cs_test_gbp' . str_repeat('0', 55);
 
-                return ['id' => 'cs_test_gbp', 'url' => 'https://checkout.stripe.com/pay/cs_test_gbp'];
+                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380)];
             }
         });
 

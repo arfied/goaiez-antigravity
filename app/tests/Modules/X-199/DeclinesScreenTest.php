@@ -124,7 +124,7 @@ class DeclinesScreenTest extends TestCase
         {
             public function charge(int $amountCents, string $source, string $currency = 'USD'): string
             {
-                return 'ch_success_recovery';
+                return 'ch_success_recovery00000000';
             }
         });
         $captureAction->handle($biz->id, 1000, $token, 'idem_2');
@@ -259,16 +259,20 @@ class DeclinesScreenTest extends TestCase
         {
             public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
             {
-                return ['id' => 'cs_test_remount', 'url' => 'https://checkout.stripe.com/pay/cs_test_remount'];
+                $id = 'cs_test_remount' . str_repeat('0', 51);
+                return ['id' => $id, 'url' => 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380)];
             }
         });
 
-        Livewire::actingAs($owner)->test(Declines::class)
-            ->call('sendPayLink', $payment->id)
-            ->assertSee('https://checkout.stripe.com/pay/cs_test_remount');
+        $id = 'cs_test_remount' . str_repeat('0', 51);
+        $url = 'https://checkout.stripe.com/c/pay/' . $id . '#fid' . str_repeat('a', 380);
 
         Livewire::actingAs($owner)->test(Declines::class)
-            ->assertSee('https://checkout.stripe.com/pay/cs_test_remount');
+            ->call('sendPayLink', $payment->id)
+            ->assertSee($url);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->assertSee($url);
 
         Carbon::setTestNow();
     }
