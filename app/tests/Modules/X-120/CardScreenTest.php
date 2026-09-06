@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Modules\X120\Models\CardToken;
 use App\Modules\X120\Ui\CardScreen;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -156,7 +157,7 @@ class CardScreenTest extends TestCase
 
     public function test_card_screen_filters_expiring_cards_correctly(): void
     {
-        \Carbon\Carbon::setTestNow(\Carbon\Carbon::parse('2026-09-06 12:00:00'));
+        Carbon::setTestNow(Carbon::parse('2026-09-06 12:00:00'));
         $now = now();
 
         $biz = self::provisionTenant();
@@ -204,6 +205,6 @@ class CardScreenTest extends TestCase
                 && $cards->contains(fn ($c) => $c->id === $soonCard->id)
                 && ! $cards->contains(fn ($c) => $c->id === $farCard->id));
 
-        \Carbon\Carbon::setTestNow();
+        Carbon::setTestNow();
     }
 }

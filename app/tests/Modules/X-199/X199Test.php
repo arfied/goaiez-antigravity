@@ -12,8 +12,10 @@ use App\Modules\X199\Actions\InvoiceRecordOfflineAction;
 use App\Modules\X199\Actions\TermsSetAction;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Events\InvoiceIssued;
+use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
 use App\Modules\X199\Models\Invoice;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -163,7 +165,7 @@ class X199Test extends TestCase
 
     public function test_invoice_overdue_reports_real_age(): void
     {
-        \Carbon\Carbon::setTestNow(\Carbon\Carbon::parse('2026-09-06 12:00:00'));
+        Carbon::setTestNow(Carbon::parse('2026-09-06 12:00:00'));
 
         $biz = TestCase::provisionTenant(['name' => 'Overdue Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
@@ -195,19 +197,19 @@ class X199Test extends TestCase
             'due_date' => now()->subDays(3)->toDateString(),
         ]);
 
-        Event::fake([\App\Modules\X199\Events\InvoiceOverdue::class]);
+        Event::fake([InvoiceOverdue::class]);
 
         $this->engine->markOverdue($biz->id, $invoice1->id);
         $this->engine->markOverdue($biz->id, $invoice2->id);
 
-        Event::assertDispatched(\App\Modules\X199\Events\InvoiceOverdue::class, function ($event) use ($invoice1) {
+        Event::assertDispatched(InvoiceOverdue::class, function ($event) use ($invoice1) {
             return $event->invoiceId === $invoice1->id && $event->daysOverdue === 45;
         });
 
-        Event::assertDispatched(\App\Modules\X199\Events\InvoiceOverdue::class, function ($event) use ($invoice2) {
+        Event::assertDispatched(InvoiceOverdue::class, function ($event) use ($invoice2) {
             return $event->invoiceId === $invoice2->id && $event->daysOverdue === 3;
         });
 
-        \Carbon\Carbon::setTestNow();
+        Carbon::setTestNow();
     }
 }
