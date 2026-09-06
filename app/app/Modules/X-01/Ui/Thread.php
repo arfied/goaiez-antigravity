@@ -8,6 +8,7 @@ use App\Models\Conversation;
 use App\Models\Customer;
 use App\Modules\CAgent\Actions\AgentDraftAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X01\Models\LeadScore;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -30,11 +31,11 @@ class Thread extends Component
 
     public bool $isGhostRisk = false;
 
-        public function mount(?Customer $customer = null)
+    public function mount(?Customer $customer = null)
     {
         $this->customer = $customer;
         if ($this->customer) {
-            $score = \App\Modules\X01\Models\LeadScore::where('person_id', $this->customer->id)->value('grade');
+            $score = LeadScore::where('person_id', $this->customer->id)->value('grade');
             $this->isGhostRisk = ($score === 'F');
         }
     }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Modules\X01;
 
 use App\Models\Conversation;
+use App\Models\Customer;
+use App\Models\User;
 use App\Modules\X01\Actions\ContactCreateAction;
 use App\Modules\X01\Actions\ContactMergeAction;
 use App\Modules\X01\Actions\ConversationReadAction;
@@ -18,10 +20,12 @@ use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
 use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Models\LeadScore;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
+use App\Modules\X01\Ui\Thread;
 use App\Modules\X121\Models\Person;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class X01Test extends TestCase
@@ -258,10 +262,10 @@ class X01Test extends TestCase
      */
     public function test_g5_13_three_bullet_head(): void
     {
-        $admin = \App\Models\User::factory()->create();
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Live Biz']);
-        $customer = \App\Models\Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Bullet Head', 'phone' => '+15551234567', 'email' => 'bullet@example.com']);
-        $response = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X01\Ui\Thread::class, ['customer' => $customer]);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Live Biz']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Bullet Head', 'phone' => '+15551234567', 'email' => 'bullet@example.com']);
+        $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
         $response->assertSee('Bullet Head', false)->assertSee('+15551234567', false)->assertSee('bullet@example.com', false);
     }
 
@@ -316,11 +320,11 @@ class X01Test extends TestCase
      */
     public function test_g19_08_ghost_risk_flag(): void
     {
-        $admin = \App\Models\User::factory()->create();
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Ghost Biz']);
-        $customer = \App\Models\Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
-        \App\Modules\X01\Models\LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
-        $response = \Livewire\Livewire::actingAs($admin)->test(\App\Modules\X01\Ui\Thread::class, ['customer' => $customer]);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Ghost Biz']);
+        $customer = Customer::factory()->create(['business_id' => $biz->id, 'name' => 'Ghosty']);
+        LeadScore::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'lead_rating' => 10, 'grade' => 'F', 'confidence' => 0.9, 'signals' => []]);
+        $response = Livewire::actingAs($admin)->test(Thread::class, ['customer' => $customer]);
         $response->assertSee('Ghost Risk', false);
     }
 
@@ -329,8 +333,8 @@ class X01Test extends TestCase
      */
     public function test_g19_15_thread_live_update(): void
     {
-        $admin = \App\Models\User::factory()->create();
-        $biz = \Tests\TestCase::provisionTenant(['name' => 'Live Biz']);
+        $admin = User::factory()->create();
+        $biz = TestCase::provisionTenant(['name' => 'Live Biz']);
         $response = $this->actingAs($admin)->get('/app/x-01/thread');
         $response->assertSee('wire:poll.10s', false);
     }
