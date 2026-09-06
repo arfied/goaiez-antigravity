@@ -982,6 +982,16 @@ Watch for: <the trap that applies, by name>
   G5-42 · G5-43`** (six, wave 95), and after that the lane's test-only work really is spent. Both errors are
   the same one: **a count or a claim taken off a `grep` window by eye rather than derived per id.** Two ticks
   in a row, in the very block written to retire that habit.
+  ✅ **Closed at tick 189: wave 95 verdicted all six, so the lane's test-only work IS now spent** — every
+  `assertTrue(true)` id in the thirteen carries a verdict, and all eight stages are closed to this lane
+  (`integrity 0`; `boundary 6` with the one lane row journalled on purpose; `contract 87` the `@agent_reachable`
+  `OWNER ACTION`; `citation 94` and `schema 15` wholly out-of-lane, all 12 RLS tables being `X-121`'s;
+  `capability 393` with no `specced but no test names this id` row left for the thirteen; `anchor 138` and
+  `journey 6` credential-blocked). **`OWNER ACTION 1` at tick 189 asks whether build waves are in scope and
+  which of the ten standing proposals to take first.** Until that ruling lands the honest tick is a `HOLD`, not
+  a manufactured wave — and `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` is the live list, ten rows, which
+  beats any table copied into this file. ⚠️ Three of those ten (`G5-31 · G5-32 · G5-37`) name the wrong owner
+  until wave 96 lands; read them after that commit, not before.
 - ⚠️⚠️ **`grep` the SUBJECT of a capability, not only its performer — a hit in the right module is a candidate,
   never an answer.** Tick 187 recorded that `G11-41`'s *"sort order on the thread list"* **exists**, on the
   strength of three `orderBy` calls in `X-01`: `Ui/Thread.php:72`, `:125`, `Ui/CustomersList.php:47`. Measured
@@ -998,6 +1008,41 @@ Watch for: <the trap that applies, by name>
   only by reading the file behind a claim. ✅ **The brief is what saved it**: §3b handed over the three `orderBy`
   lines and said *"which of those, **if any**, is the thread list is yours to establish."* Hand over the
   measurement, keep the "if any", and a wrong measurement of yours can still produce a right verdict.
+  ⚠️⚠️ **And run it in the ABSENCE direction too — one tick later the coder made the mirror of my error, and a
+  false absence is the worse of the two because it is self-suppressing.** Wave 95 verdicted `C-Agent`'s six
+  unverdicted stubs and wrote four `BUILD PROPOSAL:` lines; three assert that things the tree plainly holds are
+  unbuilt, and each inverts **both** halves of the field — the missing thing and its owner. `G5-31` *"the
+  web-chat door is unbuilt. Owner: X-102"* against an X-102 that has `ChatStartAction` · `ChatCaptureAction` ·
+  `ChatEscalateAction` · `ChatSession` · `ChatLead` · `customerfacing-widget.blade.php` and its own chat
+  migration; `G5-32` *"the voice door … Owner: X-66"* against `VoiceAnswerAction` · `VoiceCoachAction` ·
+  `VoiceTransferAction` · `VoiceVoicemailTranscribeAction`; `G5-37` *"… Owner: X-01"* against
+  `Models/TakeoverLatch.php`, the `takeover_latches` migration, `ConversationTakeoverAction`, `TakeoverStarted`
+  and `Ui/Thread.php:86` calling `$manager->takeover()`. **The gap is real and the sentence is not**:
+  `grep -rn "Chat\|Voice\|X-102\|X-66\|takeover" app/app/Modules/C-Agent --include=*.php | grep -v capabilities.php`
+  is **empty** and C-Agent's whole action surface is five `Agent*` files, so what is missing is the **C-Agent →
+  X-10x wire, which C-Agent owns** — the reverse of every line. `G5-37` is the tell that the coder knows the
+  distinction: it alone scopes the absence correctly (*"integration … in C-Agent"*) and still hands the owner
+  away. **A pointer capability of the form `X is Y's` is answered by looking inside Y**, and if Y has it the
+  finding is about the wire, not the thing. ⚠️ I ran the wave-72 check before refusing it: `door` is not a term
+  of art — `grep -rn "door" app/app/Modules/*/capabilities.php` is five rows, four `doorway pages` and one
+  `HMAC-verified door`, none of them a reading under which those shipped actions are not the door.
+  **Why a BLOCK for three comment lines:** `REPORT.md` is overwritten every wave, so the docblock is the durable
+  record (the wave-90/92 rule), and a false absence there points the build at modules that need nothing while
+  burying the one that is owed. ✅ **Grade the rest of such a wave separately** — wave 95's out-of-lane half was
+  right (`G5-42`→X-135, `G11-22`→X-121, both correctly `⛔ REFUSED` with no shape handed over), `G5-43` was
+  right, and six of the ten `BUILD PROPOSAL` lines already in the tree are the correct house pattern. **The
+  defect was exactly three lines; `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` sizes the population before
+  you brief an audit**, and it said no wider audit was warranted.
+⚠️ **A per-wave artifact filename is still not the control — measured a second time, and the copy raced again.**
+  `scratch/w95-pest-raw.log` is byte-identical to `w94-pest-raw.log`, `duration_ms 143634` in both, and **two
+  independent 143-second runs cannot share a millisecond.** The mtimes name the cause: the copy was taken
+  `03:22:16` and `scratch/pest-raw-last.log` was not rewritten until `03:22:42`. This is the wave-88b race with
+  the filename fix in place and not helping, because *the control was never the filename — it is copying only
+  after `supervise.sh` has exited*, and the brief that introduced the filename never said so. ✅ **It cost
+  nothing here, and the reason is worth keeping**: the diff added zero tests and zero assertions, so
+  `assertions 6702` could not have moved, and `w95-gate.log` §7 — written by the wave's own run — independently
+  gave the same headline four. **A stale object is only material when the wave's own diff should have changed a
+  field in it.** Brief the ordering, not the filename.
 - **Backlog, measured at tick 186 (superseded, kept for the lesson).** The `assertTrue(true)` pile is **25**; the 22 `C-Agent`/`X-01` survivors
   have no ⑤ clause (tick 181) and `X-194:277` / `X-66:91` are closed business. What is left is
   `C-Mail:424 test_header_capabilities`, eleven ids under one docblock. **Triaged per id, never as a group**
