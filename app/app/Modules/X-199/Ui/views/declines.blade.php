@@ -45,7 +45,7 @@
                                     <p class="mt-1">
                                         <x-ui.status-pill state="attention" label="Not recovered" />
                                         @if($decline->deferred)
-                                            <x-ui.status-pill state="neutral" label="Deferred" />
+                                            <x-ui.status-pill state="unknown" label="Deferred" />
                                         @endif
                                     </p>
                                 @endif
