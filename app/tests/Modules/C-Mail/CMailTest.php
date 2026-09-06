@@ -633,6 +633,8 @@ class CMailTest extends TestCase
             'recipient_email' => 'sent-neg@acme.com',
             'subject' => 'Prior send',
         ]);
+        
+        $ingestAction->handle($biz->id, $domainNegative->id, 'replied', 'sent-neg@acme.com', 'Prior send');
 
         $acceptedSend = $this->sendAction->handle(
             businessId: $biz->id,
