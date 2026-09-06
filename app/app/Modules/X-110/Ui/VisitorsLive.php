@@ -57,7 +57,8 @@ class VisitorsLive extends Component
                     ->orderByDesc('pixel_events.created_at')
                     ->limit(5)
                     ->select('pixel_events.event_name', 'pixel_events.created_at')
-                    ->get();
+                    ->get()
+                    ->map(fn (PixelEvent $e) => ['label' => self::eventLabel((string) $e->event_name), 'at' => $e->created_at]);
             }
         } catch (\Exception $e) {
             return view('x-110::visitors-live', ['loadError' => $e->getMessage()]);
@@ -69,5 +70,18 @@ class VisitorsLive extends Component
             'openVisitorEvents' => $openVisitorEvents,
             'loadError' => null,
         ]);
+    }
+
+    private static function eventLabel(string $raw): string
+    {
+        return [
+            'pageview' => 'Viewed a page',
+            'page_view' => 'Viewed a page',
+            'page.viewed' => 'Viewed a page',
+            'form.abandoned' => 'Left a form unfinished',
+            'rage_click.detected' => 'Clicked the same thing repeatedly',
+            'tag.fired' => 'Tag fired',
+            'custom_event' => 'Custom event',
+        ][$raw] ?? ucfirst(str_replace(['.', '_'], ' ', $raw));
     }
 }
