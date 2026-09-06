@@ -260,11 +260,26 @@ LOG="/home/goaiez/tmp/${CODER}-${TRACK}-run${n}.log"
 # `timeout -k` on both branches: TERM first, then KILL 60s later if the coder
 # ignores it. Without -k a coder blocked in an unkillable child survives its own
 # timeout, which is the run 67 failure with one extra step.
+#
+# BASH_ENV (Track 1, OWNER.md 2026-09-06 16:0x, item 2). `killall` and `pkill`
+# are already refused by the coder-bin shims, but `kill` is a bash *builtin*, so
+# a PATH shim never sees it. shell-init.sh runs `enable -n kill`, which makes
+# `kill` resolve through PATH to coder-bin/kill — that shim RECORDS
+# `time · caller pid · target pid · caller cwd · target cwd · target cmdline` to
+# /home/goaiez/tmp/kill-log.tsv and THEN performs the kill. It refuses nothing:
+# killing a pid you started is legitimate; the point is attribution. Every
+# environmental cause of the SIGTERM epidemic (both crons, all eight
+# supervise.sh scripts, LVE, OOM) is eliminated, so what is left is a deliberate
+# kill from an agent and this is the only way to see whose.
+# ⚠️ Honest limits: it does not catch os.kill(), a kill(2) from a non-shell
+# process, or a shell that never sourced BASH_ENV.
+KILL_SHIM_ENV=/home/goaiez/agents/coder-bin/shell-init.sh
 echo "timeouts: print=$PRINT_TIMEOUT hard=$HARD_TIMEOUT"
+echo "kill attribution: BASH_ENV=$KILL_SHIM_ENV ($([ -f "$KILL_SHIM_ENV" ] && echo present || echo MISSING))"
 if [ "$CODER" = claude ]; then
-  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout -k 60 '"$HARD_TIMEOUT"' /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV='"$KILL_SHIM_ENV"'; timeout -k 60 '"$HARD_TIMEOUT"' /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout -k 60 '"$HARD_TIMEOUT"' /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout '"$PRINT_TIMEOUT"' < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV='"$KILL_SHIM_ENV"'; timeout -k 60 '"$HARD_TIMEOUT"' /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout '"$PRINT_TIMEOUT"' < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 

@@ -180,18 +180,45 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | :--- | :--- | :--- |
 | UI-43 | the six components still rendering the staff console — X-110 `Cooling`, `InstallVerify`, `Today`, `VisitorsLive`, `TagVersionPer`; X-138 `RoiDashboard` | closed, pushed `f5966661` |
 | UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
-| **UI-45** | **the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen** | **in flight** |
-| UI-46 | `Architecture/OwnerNavTest`, which `OwnerNav.php:65`/`:102` and `layout.blade.php:15` all name and which does not exist | next |
+| UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
+| **UI-46** | **`Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry or a written exclusion · the two unguarded `->diffForHumans()` calls on a nullable column** | **in flight** |
+| UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"* — and the ten-call-site exclusion list it needs | next |
 
-**UI-45 and UI-46 were one row until 2026-09-06 15:1x.** RULED at `REVIEWS.md`
-2026-09-06 15:1x: `OwnerNavTest` is an architecture test that fails the build, it
-shares no measurement with the copy pass, and the comments specify **two** assertions
-— a reachability half and a *"refuses a hand-written link from one owner screen to
-another"* half. Written literally, that second half reds `cooling.blade.php:14`,
-`abandoned-forms.blade.php:13` and `visitors-live.blade.php:14`, which all carry the
-house `<x-ui.empty-state action= href=>` pattern that UI-30 and UI-36 shipped. It
-needs its own wave and its own ruling. ⛔ The `OwnerNavTest` comments are **not to be
-softened** meanwhile — the gap is in the SYSTEM, not the CHECK.
+**UI-45 and UI-46 were one row until 2026-09-06 15:1x; UI-46 and UI-47 were one row
+until 16:1x.** `OwnerNavTest` is an architecture test that fails the build, it shares
+no measurement with the copy pass, and the comments specify **two** assertions — a
+reachability half and a *"refuses a hand-written link from one owner screen to
+another"* half.
+
+⚠️ **The 15:1x block was wrong on one point of fact and 16:1x corrects it.** It said
+the second half, written literally, reds `cooling.blade.php:14`,
+`abandoned-forms.blade.php:13` and `visitors-live.blade.php:14`. **It does not.** The
+exception clause is written down in the tree, twice, and neither copy is in
+`OwnerNav.php`, which is why it was missed:
+
+- `pixel-install.blade.php:128–131` — *"AN INVITATION OUT OF AN EMPTY STATE, WHICH IS
+  THE ONE SHAPE `Architecture/OwnerNavTest` ADMITS — the customers list's link into
+  Import, for its reason"*
+- `widget-install.blade.php:88–91` — *"`OwnerNavTest` refuses a cross-link between
+  owner screens and the exception it admits is an empty state's invitation"*
+
+All three of those screens carry `<x-ui.empty-state action= href=>`, which is
+**verbatim the one shape the specification admits**. UI-30 and UI-36 shipped the
+admitted shape and were right to.
+
+**The half still gets its own wave, for a better reason (RULED 16:1x).** The corpus it
+must rule on is **ten** call sites, not three: `home.blade.php:101,106,111` (a
+three-tile row into inbox, customers and website), `customers.blade.php:35` (the import
+link the spec names as admitted), `customer-profile.blade.php:26` and `:167` (a
+breadcrumb and a merge-survivor link), `pixel-install.blade.php:137,143`. The tree
+writes an admission for **two** shapes and is silent on the rest, so writing the half
+blind means either a red build or an allowlist invented at the keyboard.
+
+⛔ The `OwnerNavTest` comments are **not to be softened** meanwhile — in
+`OwnerNav.php`, `layout.blade.php`, `routes/web.php`, `texting.blade.php`,
+`activity.blade.php`, `inbox.blade.php`, `plan.blade.php`, `reply-queue.blade.php`,
+`messages.blade.php`, `connections.blade.php`, `widget-install.blade.php` or
+`pixel-install.blade.php`. The gap is in the SYSTEM, not the CHECK.
 
 ✅ **The Week 2 scoping question is answered** (RULED, `REVIEWS.md` 2026-09-06 15:1x).
 **"Proven" means:** renders in the *owner* shell (`assertSee('Your account')`,

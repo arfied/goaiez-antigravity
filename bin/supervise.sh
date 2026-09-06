@@ -32,6 +32,50 @@ done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
+# ── The shared gate log (Track 1, OWNER.md 2026-09-06 16:0x, item 3).
+#
+# One TSV line per tool run, across every checkout and both projects on this box.
+# ⛔ The rc is written RAW and is never normalised to 0/1 — the raw value IS the
+# signal: 143 SIGTERM, 137 SIGKILL, 124 `timeout(1)`'s own, anything else the
+# tool's own verdict. `tool` matters because pint, phpstan and pest are three
+# populations and a kill lands on whichever happens to be running.
+# ⚠️ NO LOCK, deliberately. An O_APPEND write under PIPE_BUF is atomic on Linux,
+# and a flock here would interact with the pest lock below for nothing.
+GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+log_gate() {  # <start_iso> <end_iso> <pid> <rc> <tool>
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$2" "$3" "$4" "goaiez-antigravity" "$(basename "$ROOT")" "$5" \
+    >> "$GATE_LOG" 2>/dev/null || true
+}
+
+# ── Run one gate tool and read ITS OWN exit code.
+#
+# ⛔⛔ NEVER `tool 2>&1 | tail -3 | sed … || fail=1`. That was lines 127–128 until
+# 2026-09-06 16:1x and it was DECORATIVE: `||` binds to the pipeline, `sed` is
+# last, `sed` always exits 0, so `fail=1` never fired once in the life of this
+# gate — a genuinely red pint or phpstan has never failed §6. (`set -o pipefail`
+# does not save it: pipefail sets the pipeline's status from the *rightmost
+# failing* command, and there was none.) Track 1 found the same hole on their
+# side from the other end: a KILLED Pint prints a bare `Terminated`, which reads
+# exactly like a style red and was about to be recorded as one.
+gate_tool() {  # <tool-name> <cmd...>
+  local label="$1"; shift
+  local start end out rc
+  start=$(date -Iseconds)
+  out=$("$@" 2>&1); rc=$?
+  end=$(date -Iseconds)
+  printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
+  log_gate "$start" "$end" "$$" "$rc" "$label"
+  if [ "$rc" -eq 124 ] || [ "$rc" -gt 128 ]; then
+    echo "  ⛔ $label was KILLED or timed out (rc=$rc) — this is NOT a verdict."
+    echo "     Do not report it as a style or analysis failure. Re-run it."
+    fail=1
+  elif [ "$rc" -ne 0 ]; then
+    echo "  ⛔ $label FAILED (rc=$rc) — a real verdict."
+    fail=1
+  fi
+}
+
 bar "0. database guard  (allowlist: .env=$LANE_DB · phpunit.xml=$LANE_TEST_DB)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
@@ -124,8 +168,8 @@ if [ $want_doctor -eq 1 ]; then
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+gate_tool pint ./vendor/bin/pint --test
+gate_tool phpstan ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
@@ -167,8 +211,11 @@ if [ $want_tests -eq 1 ]; then
   if [ -n "$live" ]; then
     echo "  ⛔ REFUSED — a pest is already running in this checkout against $xml_db:$live"
     echo "     Two suites on one database deadlock and write nothing (run 67, 2026-09-06)."
-    echo "     Wait for it, or have the owner kill exactly those pids. ⛔ Never pkill -f pest:"
-    echo "     sibling tracks match the same pattern. Their cwd is what identifies them."
+    echo "     Wait for it. NEVER kill a suite you did not start — it is another checkout's gate,"
+    echo "     and a killed gate reports as a failed one (a killed Pint prints a bare 'Terminated')."
+    echo "     If it is genuinely stranded, report it and stop; the owner decides."
+    echo "     ⛔ Never pkill -f pest: sibling tracks match the same pattern. Their cwd is what"
+    echo "     identifies them — and matching is not a licence."
     exit 1
   fi
 
@@ -221,6 +268,7 @@ if [ $want_tests -eq 1 ]; then
   # ⏱ Time the run. Without this the rc alone cannot tell a real deadline from a
   # kill that arrived in seconds, and 7c below guessed wrong for a whole wave.
   pest_t0=$(date +%s)
+  pest_start_iso=$(date -Iseconds)
   if [ $lock_held -eq 0 ]; then
     # ⚠️ A lock-timeout is NOT a red suite — NO TEST RAN. Never take a number
     # from a run that did not happen. The JSON below carries result
@@ -238,6 +286,10 @@ if [ $want_tests -eq 1 ]; then
     flock -u 9 2>/dev/null
   fi
   pest_elapsed=$(( $(date +%s) - pest_t0 ))
+  # The shared gate log. Raw rc — a `lock-timeout` writes rc 0 above and is
+  # logged as `pest-not-run`, so it can never be counted as a suite that ran.
+  [ $lock_held -eq 0 ] && log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$rc" "pest-not-run" \
+                       || log_gate "$pest_start_iso" "$(date -Iseconds)" "$$" "$rc" "pest"
   out=$(cat "$pest_log")
   [ $rc -ne 0 ] && fail=1
   [ $lock_held -eq 0 ] && fail=1
