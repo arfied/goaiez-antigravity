@@ -89,9 +89,9 @@ class ThreadScreenTest extends TestCase
 
     /**
      * Verifies the release control in the thread screen unlatches an active takeover.
-     * Proves the latch is cleared by ensuring the unified inbox manager refuses 
+     * Proves the latch is cleared by ensuring the unified inbox manager refuses
      * subsequent takeover replies, as it correctly reads the cleared state.
-     * Also confirms the real GET route renders the release control when latched, 
+     * Also confirms the real GET route renders the release control when latched,
      * and that the control vanishes once released.
      */
     public function test_thread_screen_release_takeover(): void
