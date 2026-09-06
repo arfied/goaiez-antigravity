@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T15:38:28",
+ "updated": "2026-09-06T15:59:53",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -611,16 +611,30 @@
    ]
   },
   "X-104": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 20,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-104",
+     "stage": "capability",
+     "why": "docblock: bare list [G3-60],[G6-26],[G6-34],[G6-35],[G7-46],[G8-38],[G19-16], line 76. Command: ls -R app/app/Modules/X-104; grep -rn \"class \\|function \" app/app/Modules/X-104 --include=*.php | cut -c1-160 . Raw output showed Actions, Models, Ui directories and classes like PluginActivateAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-104/Actions/PluginActivateAction.php:16 public function activate. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:59:46"
+    }
+   ]
   },
   "X-105": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 26,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-105",
+     "stage": "capability",
+     "why": "docblock: bare id list [G1-25],[G1-26],[G3-07],[G3-09],[G3-17],[G3-21],[G3-30],[G3-38],[G3-43],[G5-20],[G5-27],[G11-35],[G17-02],[G19-19],[G20-10], line 107. Command `ls -R app/app/Modules/X-105; grep -rn \"class \\|function \" app/app/Modules/X-105 --include=*.php | cut -c1-160` shows the module has real code outside capabilities.php (e.g. Models/OutreachLadder.php, Actions/OutreachStartAction.php). What to assert: app/app/Modules/X-105/Actions/OutreachStartAction.php:19 public function startLadder. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:59:22"
+    }
+   ]
   },
   "X-108": {
    "status": "UNRESOLVED",
@@ -681,6 +695,12 @@
      "stage": "capability",
      "why": "ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.",
      "at": "2026-09-06T05:42:49"
+    },
+    {
+     "module": "X-109",
+     "stage": "capability",
+     "why": "docblock: bare list [G3-06],[G3-12],[G3-31],[G3-36],[G3-52], line 104. Command: ls -R app/app/Modules/X-109; grep -rn \"class \\|function \" app/app/Modules/X-109 --include=*.php | cut -c1-160 . Raw output showed Actions, Domain, Models directories and classes like FormSubmitAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-109/Actions/FormSubmitAction.php:20 public function submitForm. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:59:46"
     }
    ]
   },
@@ -1162,10 +1182,17 @@
    "unresolved": []
   },
   "X-116": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 26,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-116",
+     "stage": "capability",
+     "why": "docblock: bare list [G6-03],[G6-12],[G6-23],[G6-28],[G6-29],[G6-30],[G8-19],[G8-35], line 99. Command: ls -R app/app/Modules/X-116; grep -rn \"class \\|function \" app/app/Modules/X-116 --include=*.php | cut -c1-160 . Raw output showed Actions, Domain, Models directories and classes like TemplateGenerateAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-116/Actions/FunnelInstantiateAction.php:11 public function instantiateShape. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:59:46"
+    }
+   ]
   },
   "X-117": {
    "status": "UNRESOLVED",
@@ -1284,10 +1311,17 @@
    "unresolved": []
   },
   "X-123": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 1,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-123",
+     "stage": "capability",
+     "why": "docblock: [G4-50] they ride the same catalogue; the catalogue is X-122s, line 230. Command: grep -rni catalogue app/app/Modules/X-123 app/app/Modules/X-122 app/tests/Modules/X-123 app/tests/Modules/X-122 and grep -rni catalog on the same. Output shows Action Catalog in X-122 UI, and test provisioning Catalog Tenant in X-122. X-123 docblock explicitly defers to X-122 by stating the catalogue is X-122s. It is X-122s job. A - documented refusal naming where the thing lives.",
+     "at": "2026-09-06T15:59:53"
+    }
+   ]
   },
   "X-124": {
    "status": "DONE",
@@ -1339,10 +1373,17 @@
    "unresolved": []
   },
   "X-131": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 27,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-131",
+     "stage": "capability",
+     "why": "docblock: bare list [G5-29],[G13-34], line 82. Command: ls -R app/app/Modules/X-131; grep -rn \"class \\|function \" app/app/Modules/X-131 --include=*.php | cut -c1-160 . Raw output showed Actions, Domain, Models directories and classes like InterestInferAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-131/Actions/InterestInferAction.php:18 public function infer. Body cannot fail. No refusal is declared. B - silent false credit.",
+     "at": "2026-09-06T15:59:53"
+    }
+   ]
   },
   "X-132": {
    "status": "DONE",
@@ -4712,6 +4753,42 @@
    "stage": "capability",
    "why": "docblock: '[G21-03] the scripted response to a failure, with its own state', line 124. Body cannot fail. No refusal is declared. B - silent false credit.",
    "at": "2026-09-06T15:38:28"
+  },
+  {
+   "module": "X-105",
+   "stage": "capability",
+   "why": "docblock: bare id list [G1-25],[G1-26],[G3-07],[G3-09],[G3-17],[G3-21],[G3-30],[G3-38],[G3-43],[G5-20],[G5-27],[G11-35],[G17-02],[G19-19],[G20-10], line 107. Command `ls -R app/app/Modules/X-105; grep -rn \"class \\|function \" app/app/Modules/X-105 --include=*.php | cut -c1-160` shows the module has real code outside capabilities.php (e.g. Models/OutreachLadder.php, Actions/OutreachStartAction.php). What to assert: app/app/Modules/X-105/Actions/OutreachStartAction.php:19 public function startLadder. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:59:22"
+  },
+  {
+   "module": "X-116",
+   "stage": "capability",
+   "why": "docblock: bare list [G6-03],[G6-12],[G6-23],[G6-28],[G6-29],[G6-30],[G8-19],[G8-35], line 99. Command: ls -R app/app/Modules/X-116; grep -rn \"class \\|function \" app/app/Modules/X-116 --include=*.php | cut -c1-160 . Raw output showed Actions, Domain, Models directories and classes like TemplateGenerateAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-116/Actions/FunnelInstantiateAction.php:11 public function instantiateShape. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:59:46"
+  },
+  {
+   "module": "X-104",
+   "stage": "capability",
+   "why": "docblock: bare list [G3-60],[G6-26],[G6-34],[G6-35],[G7-46],[G8-38],[G19-16], line 76. Command: ls -R app/app/Modules/X-104; grep -rn \"class \\|function \" app/app/Modules/X-104 --include=*.php | cut -c1-160 . Raw output showed Actions, Models, Ui directories and classes like PluginActivateAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-104/Actions/PluginActivateAction.php:16 public function activate. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:59:46"
+  },
+  {
+   "module": "X-109",
+   "stage": "capability",
+   "why": "docblock: bare list [G3-06],[G3-12],[G3-31],[G3-36],[G3-52], line 104. Command: ls -R app/app/Modules/X-109; grep -rn \"class \\|function \" app/app/Modules/X-109 --include=*.php | cut -c1-160 . Raw output showed Actions, Domain, Models directories and classes like FormSubmitAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-109/Actions/FormSubmitAction.php:20 public function submitForm. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:59:46"
+  },
+  {
+   "module": "X-131",
+   "stage": "capability",
+   "why": "docblock: bare list [G5-29],[G13-34], line 82. Command: ls -R app/app/Modules/X-131; grep -rn \"class \\|function \" app/app/Modules/X-131 --include=*.php | cut -c1-160 . Raw output showed Actions, Domain, Models directories and classes like InterestInferAction.php. The module has real code outside capabilities.php. What to assert: app/app/Modules/X-131/Actions/InterestInferAction.php:18 public function infer. Body cannot fail. No refusal is declared. B - silent false credit.",
+   "at": "2026-09-06T15:59:53"
+  },
+  {
+   "module": "X-123",
+   "stage": "capability",
+   "why": "docblock: [G4-50] they ride the same catalogue; the catalogue is X-122s, line 230. Command: grep -rni catalogue app/app/Modules/X-123 app/app/Modules/X-122 app/tests/Modules/X-123 app/tests/Modules/X-122 and grep -rni catalog on the same. Output shows Action Catalog in X-122 UI, and test provisioning Catalog Tenant in X-122. X-123 docblock explicitly defers to X-122 by stating the catalogue is X-122s. It is X-122s job. A - documented refusal naming where the thing lives.",
+   "at": "2026-09-06T15:59:53"
   }
  ],
  "decisions": [
@@ -4880,6 +4957,14 @@
   {
    "at": "2026-09-06T15:36:54",
    "note": "CORRECTION to the 2026-09-06T15:16:52 UNRESOLVED capability X-118 G4-38 filing (S-124): that record's why says the clause is 'genuinely unbuildable'. It is not. app/app/Modules/X-118/capabilities.php:37 is TWO clauses \u2014 'SAMPLE \u2192 real on conversion' and 'the 79.99 figure is dead (money-number law)' \u2014 and only the second is dead. grep -rniE 'sample|conversion' app/app/Modules/X-118 --include=*.php --include=*.blade.php returns 7 hits on x-surface.sample-state across X-118's blade views, so clause 1 has a live surface and IS assertable by a later wave. G4-38 reclassifies A -> B. The original record stands as a record that the id is credited by a body that cannot fail; only its reason is corrected."
+  },
+  {
+   "at": "2026-09-06T15:57:18",
+   "note": "CORRECTION to the 2026-09-06T15:36:54 note on X-118 G4-38: that note records the money figure as 79.99. The real figure at app/app/Modules/X-118/capabilities.php:37 is 179.99, written with a currency sign the shell removed - a dollar-one inside a double-quoted argument in the S-125 brief was expanded away before state.py saw the string. The finding is unchanged and stands: that row is two clauses, clause 2 (the 179.99 figure) is dead under the money-number law, and clause 1 (SAMPLE to real on conversion) is live and assertable by a later wave. Only the numeral is repaired."
+  },
+  {
+   "at": "2026-09-06T15:57:28",
+   "note": "ADDENDUM to the 2026-09-06T15:38:28 UNRESOLVED capability X-198 filing for N-010 (S-125): the class B stands - the body at app/tests/Modules/X-198/X198Test.php:126 cannot fail and declares no refusal. But N-010 is not uncredited. app/tests/Modules/X-201/N010Test.php:14 test_n_010_no_refund_verb asserts it for real against a provisioned tenant. X-198 carries the echo, X-201 carries the honest assertion. A wave acting on the original record alone would build a duplicate N-010 assertion in X-198. Read X-201 first."
   }
  ]
 }
