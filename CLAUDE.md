@@ -953,6 +953,52 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   points, and tick 187's under-scoped command, both of which this ledger also
   wrote itself. Fire the remedy on a real window before writing it down.
 
+  ⛔ **"Observable exactly once" was a property of the QUERY, never of the commit
+  — and the note tick 190 built on it undercounted by five** (tick 194). Tick 190
+  declared sixty's `2c8a399a` (X-01) visible to the paired `--stat` alone and gone
+  at sixty's next commit; tick 193 retracted the *lost* half via the reflog. The
+  *event-stream* half is wrong too, and for a cheaper reason than the reflog: the
+  paired `--stat` is a delta **because it was written as a delta**. Point a
+  standing query at the same module — the census's own bounds, minus the
+  `^origin/track/site` exclusion, plus that module's paths:
+
+  ```
+  git log --format='COMMIT %h %S %ci %s' --name-only ^origin/main <the six tips> \
+    -- app/tests/Modules/X-01 app/app/Modules/X-01
+  ```
+
+  Measured cold at tick 194 — no ledger, no reflog — it prints **six** commits,
+  `eb05df1a` (2026-09-05 23:10:25) → `5faf1f48` (2026-09-06 03:19:20). `2c8a399a`
+  is the *fourth* of them and still prints, four sixty commits after tick 190 said
+  it would be gone. So the paired `--stat` is not the only surface that *can* see
+  another track's column; it is the only standing surface **configured** to. A
+  commit outside this track's seven ids is **unwatched, not unobservable** (tick
+  183's distinction, now shown to cut the other way as well): one ad-hoc query
+  with the same bounds reprints its entire history at will.
+
+  What survives of tick 190's writing rule is weaker and still worth keeping —
+  write the paired stat's hits down because nothing will *remind* you of them, the
+  halves never reprint them. What replaces the lost half is a measurement rule:
+  **when a paired `--stat` surfaces a commit in another track's column, run the
+  ad-hoc standing query on that module before characterising it.** Tick 190 called
+  it one commit; it was one of six. Same discipline tick 185 requires before
+  calling half 1's output a violation, one surface over. Eleventh statement of the
+  section's law, and the second turned on this ledger's own instrument rather than
+  on git's.
+
+  ⚠️ **Corrected sixty/X-01 note (supersedes tick 190's).** Six commits, 23:10:25
+  → 03:19:20, spanning **code and tests**, not tests alone: `eb05df1a` and
+  `b9ca817d` write `app/app/Modules/X-01/Ui/Thread.php` and
+  `Ui/views/thread.blade.php`; `fae700c8` is a `build(C-Agent,X-01)` implementing
+  three refusal capabilities; `9d745a59`, `2c8a399a`, `5faf1f48` are `X01Test.php`.
+  X-01 is **stages'** under ruling 5's catch-all, and `Ui/`+views are **Track 2's**
+  under the same ruling — the identical double-assignment tick 185 found inside
+  X-110, here across two other tracks' columns at once. **No merge exposure for
+  Track 1**: the same query shows stages has written `X01Test.php` zero times in
+  its unmerged range, so there is no textual conflict — the exposure is ownership,
+  not merge. Still advisory to Track 1, still **no OWNER ACTION here and never a
+  parallel fix** (tick 182's pricebook/X-172 precedent).
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
