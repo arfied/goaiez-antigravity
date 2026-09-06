@@ -385,6 +385,48 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   **The generalisation, third statement of it:** a census scoped to code paths
   measures code, not the column. This track's column includes a document.
 
+  ✅ **The three halves are provably complete — stop widening reactively and
+  measure the complement instead** (tick 175). Ticks 152, 164 and 170 each added
+  a census half *after* a surface went unwatched. The completeness question is
+  answerable in one command: enumerate the whole other-track changed-file set and
+  subtract what is already covered.
+
+  ```
+  git log --format= --name-only ^origin/main ^origin/track/site \
+    origin/track/money origin/track/pricebook origin/track/reviews \
+    origin/track/sixty origin/track/stages origin/track/ui \
+    | sort -u | grep -v -E '^(app/app/Modules/|app/tests/Modules/|\.agents/)'
+  ```
+
+  It printed **eleven** files on 2026-09-06. Three migrations and both
+  `app/tests/Journeys/` files are half 2; `app/phpunit.xml`, `bin/supervise.sh`,
+  `CLAUDE.md` and `.claude/settings.json` are the never-merge per-track list.
+  `app/GOAIEZ-TRACKER-CAPABILITIES.md` does **not** appear at all, which confirms
+  half 3's clean reading by a second, independent method. Only **two** files sit
+  outside every half, and both measured clean:
+  - `app/tests/Feature/Architecture/SchedulingTest.php` — money's `cb321225` and
+    `66831555` each append **one** line to the `schedulingOverlapWindows()` data
+    table (`x211:detect-overdue`, `x199:mark-due`), zero deletions, no assertion
+    weakened, no exclusion added. X-199/X-211 are money's under ruling 5.
+  - `.gitignore` — money's `043a28f9` adds `.agents/supervisor/*` with
+    `!launch-coder.sh`. That is **OWNER ACTION 37's remedy**, not a hazard: it is
+    exactly this checkout's existing state (`git ls-files .agents/supervisor/`
+    returns `launch-coder.sh` alone). If Track 1 merges money, 37 stops
+    reproducing for every track that fast-forwards.
+
+  Re-run the complement whenever a new surface is suspected; do not bolt on a
+  fourth half without it. ⚠️ Note the exclusion of merge commits from
+  `--name-only` output — `5f435239` shows no files here, which is why half 3 must
+  still be read on its own (it prints that merge; this query does not).
+
+  ⚠️ **This track's ledger is untracked** (tick 175). `git ls-files
+  .agents/supervisor/` returns one file. `REVIEWS.md` — 2.2 MB, 175 tick blocks —
+  exists only in this working tree, and with no coder running the launcher writes
+  no `/home/goaiez/tmp/sup-snap-*` snapshot either. That is by design (the mailbox
+  is per-track and never merges) and it is also the run-27 clobber's exposure with
+  no backstop: never `git checkout`/`restore`/`clean` anything under
+  `.agents/supervisor/`.
+
   ⚠️ **Another track's "zero readers/writers" is measured on its own branch**
   (tick 164, OWNER ACTION 47). `1aa65e7a` drops five `page_versions` booleans —
   `chat_installed form_capture_installed dni_installed seo_tags_installed
