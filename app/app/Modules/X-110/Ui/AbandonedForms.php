@@ -86,12 +86,24 @@ class AbandonedForms extends Component
 
         arsort($fieldCounts);
         $topKiller = count($fieldCounts) > 0 ? key($fieldCounts) : null;
+        $killerCount = $topKiller ? $fieldCounts[$topKiller] : 0;
+        
+        $hasClearLeader = false;
+        if (count($fieldCounts) === 1) {
+            $hasClearLeader = true;
+        } elseif (count($fieldCounts) > 1) {
+            $counts = array_values($fieldCounts);
+            if ($counts[0] > $counts[1]) {
+                $hasClearLeader = true;
+            }
+        }
 
         return view('x-110::abandoned-forms', [
             'loadError' => null,
             'abandonments' => $abandonments,
             'topKiller' => $topKiller,
-            'killerCount' => $topKiller ? $fieldCounts[$topKiller] : 0,
+            'killerCount' => $killerCount,
+            'hasClearLeader' => $hasClearLeader,
         ]);
     }
 }

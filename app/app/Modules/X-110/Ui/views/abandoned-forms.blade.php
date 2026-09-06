@@ -17,7 +17,7 @@
             <div class="space-y-6">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-bold text-ink">Abandoned Forms</h2>
-                    @if ($topKiller)
+                    @if ($topKiller && $hasClearLeader)
                         <p class="text-sm text-ink-2">Highest friction: <span class="font-medium text-ink">'{{ $topKiller }}'</span> kills the most submissions ({{ $killerCount }}).</p>
                     @endif
                 </div>
