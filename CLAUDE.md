@@ -4148,3 +4148,108 @@ the other way: the opening `for-each-ref` read `origin/main 3c60289d`, and the r
 whole opening census was void and re-run (main is the one ref that excludes in all four surfaces —
 tick 198). The tip table carries no times; the reflog carries both commit and arrival times, so it
 is what turns "the table looks the same" into a measurement. Run it early, not only at the close.
+
+## ✅ J11's `ssl` is GREEN — and the same tick found the other SIX elements CANNOT FAIL (tick 229)
+
+`71c9168b` gave `publishSite()` a provisioned `EdgeZone` (three lines: one import, one
+`EdgeProvisionAction->handle($id, $domain, true)` before `SiteEngine::publish()`). The listener at
+`X-157/ModuleServiceProvider:98-106` stops returning early, `EdgeDeployAction:35-36` derives
+`ssl_installed` from `$zone->has_valid_ssl`, and `JourneyHarness:696` reads a value that is now
+written. §7: `1924 · 1919 · FAILED 1 · errors 4` against tick 226's `1924 · 1918 · FAILED 2` —
+total unmoved, passed +1, FAILED −1, exactly one test flipped and it is J11.
+
+✅ **Not the fake-green family, by tick 199's discriminator.** The fixture's `true` is an *input to
+a real derivation*, not a value nothing can falsify: flip it and the listener's
+`where('has_valid_ssl', true)` filters the zone out and the column stays `false`. Both directions
+are proven independently by `SslDerivedTest` (column false **and** a real `GET` 404). And tick 213's
+prohibition held — `grep -rn 'EdgeProvisionAction' app/app` still returns **one** hit, its own class
+declaration; the fabricated `cf_zone_`/`cert_cf_` ids never reach production.
+
+⛔ **The finding is the other six.** `SiteEngine::publish():30-42` **unconditionally appends** every
+one of `pixel_script chat_widget form_capture dni_script seo_tags schema_markup` when absent, so
+`content_blocks` always holds all six and every remaining J11 read is a constant —
+`str_contains($blocks, 'chat_widget')` and the four like it, plus `pixel_installed`, which `:50`
+computes as `in_array('pixel_script', $blockTypes)`. **Six of seven elements have never been able to
+fail.** So the lane's history does not read *"six pass, one is broken"*; it reads **"six cannot
+fail, and the one that could, did."**
+
+⚠️ `publish()` is not the defect — G9-04's site law says every site carries all seven and appending
+them is that law implemented. The defect is that **J11 asserts the enforcement by reading the
+enforcer's own output, one step downstream, inside the same transaction.** The journey proves that
+`publish()` appends what `publish()` appends.
+
+⛔ **Why fifteen ticks of fake-green hunting walked past it: it is produced by a LOOP in production
+code, not by a literal.** Every fake-green this ledger has caught was visible as a *value* — sixty's
+`->default(true)`, reviews' `'ssl_installed' => true` — or, once, as an *absence* (tick 199's
+missing `$casts`). This one is visible only as **control flow in a third module**, so no diff of the
+journey, the harness or the reader could ever show it. **When an assertion reads a column, grep the
+writer for an unconditional path that sets it** — the reader's own file can never answer whether the
+value it reads is derived or manufactured.
+
+✅ **Owner ruling 16 is exactly the fix and the served path is provably falsifiable.** J11 must
+verify the seven on the served HTTP response; that path is a different derivation (block type →
+renderer → HTML marker), and this lane already holds tests proving the served output *can* lack the
+markers — `X157Test.php:219-221`, `:259`, `:297-300` are `assertStringNotContainsString` on
+`chat-widget-container`, `form-capture-x155`, `dni-pool-x137`, `x110-pixel`. `content_blocks` can
+never produce that. The whole template is green at `X157Test.php:604-651`.
+
+⛔ **RULED (tick 229): the conversion wave passes if J11 asserts the served output for all seven —
+whether J11 is then GREEN or RED is the measurement, not the pass condition.** A journey that goes
+from green-on-constants to red-on-truth has improved, and the red is the next wave's subject. The
+one forbidden resolution is softening an assertion to keep the green. Leaving six constant-green
+assertions in this lane's stated goal is what this seat refused reviews' `ssl_installed` literal for
+at tick 198, and a lane cannot hold others to a standard it exempts itself from.
+
+## ⛔ §2 has a FOURTH reading, and it expires by itself (tick 229)
+
+Tick 196 gave §2 three readings, tick 207 added the presence check. A run whose harness gate this
+seat opened prints **two** paths — `⛔ app/phpunit.xml` and `⛔ app/tests/Journeys/JourneyHarness.php`
+— where the standing rule says *any second path is a real BLOCK*. The exception, stated narrowly:
+
+> a second path is a real BLOCK **unless it is the path this seat opened the gate for with
+> `--allow-harness` and quoted in the REVIEWS block that reviews that run.**
+
+⚠️ **It expires with no one doing anything**, which is the part worth writing down: §2 reads
+*uncommitted + last commit*, and `--allow-harness` is per-run, so the harness line vanishes the
+moment any other commit becomes HEAD. A tick that sees it on a run whose gate it did not open is
+reading a real BLOCK. Same family as tick 207 — an expected line is a presence check, and here the
+*expectation itself* has a lifetime of exactly one commit.
+
+## ⛔ A merge of `main` is UNCOMMITTABLE by any coder whenever main's range touches `.claude/` (tick 229)
+
+Tick 228 recorded main's dangerous quadrant (ours ❌ / main ✅) going non-empty and predicted a
+**silent take**. Read at source, it is worse and simpler — a **hard stop**:
+
+- `coder-bin/git:76` refuses any commit staging `\.claude/`; a merge commit stages the whole merge.
+- Neither exemption reaches it: `:65` (`--allow-harness`) and `:70-75` (the take-only merge clause)
+  both clear **`HARNESS` only**.
+- An **existing** never-list file is recoverable — `:34-45` permits `git checkout HEAD -- <existing
+  file paths>` under `GOAIEZ_MERGE_OK=1`.
+- ⛔ A **new** one arriving in the merge has no route at all: `checkout HEAD --` fails inside git
+  (HEAD knows no such path) and `git rm --cached` is refused **by name** at `:22` for `.claude/*`.
+  `origin/main 3629f634` adds two — `.claude/hooks/drive_hook.py`, `no-piped-gate-tool.py`.
+
+**RULED: the merge is deferred, never attempted** — briefing it spends a dispatch on a guaranteed
+guard refusal, and main's range carries **zero `app/**`**, so nothing this lane needs is behind it.
+Filed as a TRACK 1 ACTION with the ask shaped on the precedent three lines above it in the same
+file: exempt `.claude/` under `GOAIEZ_MERGE_OK=1` when the staged blob equals `MERGE_HEAD`'s.
+
+⚠️ The generalisation for the quadrant table (ticks 215/225/228): **the ours ❌ / main ✅ cell has two
+sub-cases, and only one of them is the silent take.** A path `main` *modified* is taken silently and
+is restorable; a path `main` *added* is taken silently and is **irremovable** by any lane-side
+mechanism. `git diff --name-status <base> origin/main -- <the per-track paths>` separates them in
+one command — read the `A` lines, not just the file list.
+
+## ⚠️ Two briefing defects of this seat's own, both in one brief (tick 229)
+
+- **A stale §7 baseline.** The SITE-111 brief's pass condition quoted `tests 1939 · passed 1933`,
+  which was tick 225's *pre-merge* gate, superseded by tick 226's `1924 · 1918`. Tick 209's law — *a
+  brief may name an absolute count only if it was measured in the same tick* — was written about
+  doctor stage counts and applies verbatim to §7's. Broken in the same brief that enforced it
+  elsewhere. No consequence; the coder reported its own numbers.
+- **"Prove the negative control still holds"** labelled a *regression check*. Running
+  `SslDerivedTest` and `X157Test` green shows the change did not redden them. The negative control
+  for that change is "does J11 go red if the provisioning is removed", which was neither run nor
+  asked for. The substantive protection is real and lives inside `SslDerivedTest`'s both-directions
+  body — but **a regression check labelled a negative control is a claim about a stronger property
+  than it measures**, and a later tick reading the report's heading would inherit the overclaim.
