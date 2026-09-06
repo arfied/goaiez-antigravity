@@ -1053,6 +1053,54 @@ Watch for: <the trap that applies, by name>
   has no bridge; `G9-21` (*primary-vs-spam placement per network*) needs real mailbox providers and is the one
   candidate for a genuinely **external** `UNRESOLVED`. **After that wave the lane's test-only work is spent** —
   what remains in lane is build work with proposals already on record, and that needs an owner ruling.
+- ✅ **The artifact-ordering control works, and wave 96 is the measurement that shows it — brief the ordering
+  every wave, because it is an instruction the coder cannot infer from the filename.** After two waves of the
+  race (88b, 95), the wave-96 brief said in words *copy only after `supervise.sh` has fully exited, then write
+  `REPORT.md`*, and the mtimes came back `pest-raw-last.log 03:41:08 → w96-pest-raw.log 03:41:13 →
+  REPORT.md 03:41:38` — strictly increasing for the first time, with `duration_ms 204446` distinct from wave
+  95's `143634`. Two independent runs no longer share a millisecond. **The fix was one sentence of ordering in
+  the brief; the filename never mattered.**
+- ⚠️ **A `GATE:` verdict line with no gate log on disk is a quotation you cannot check — re-run the gate
+  yourself rather than grading it either way.** Wave 96 quoted `⛔ a gate failed above.` correctly and wrote
+  **no `w96-gate.log`**, breaking a run of per-wave gate artifacts that `w91`–`w95` all kept. Nothing was
+  wrong: `bash bin/supervise.sh` at tick 190 returned §6 `{"tool":"pint","result":"passed"}
+  {"tool":"phpstan","result":"passed","errors":0}` and the verdict `gates green`, so the coder's red was §7's
+  standing seven under `--tests`, exactly as briefed. **But the tick-172 misread is only cheap to avoid when
+  the log exists** — read pint's own `result` field *from an artifact*, and when there is no artifact the one
+  command is your own gate run. Ask for the gate log by name in the brief alongside the pest object; the two
+  have always travelled together and only one of them was ever named.
+- ⚠️ **`DOCTOR:` is the anti-stale-doctor control and drifts silently into §4's integrity line.** Rule 10 asks
+  for doctor's **first** line, `goaiez doctor · build <stamp>`; wave 96 filed `ok integrity 0ms clean`, which is
+  the line *after* it and carries no stamp. Harmless here — I read §4 myself and
+  `goaiez doctor · build 20260829-0647` matches `runtime_build in BUILD-STATE: 20260829-0647` — but a report
+  with no stamp cannot answer the stale-checker question at all, which is the entire reason the field exists.
+  **A field that silently degrades into a neighbouring line of the same output is worth naming in the brief by
+  its content (`build <stamp>`), not by its position (`the first line`).**
+- ⚠️ **`N violation(s).` is the only number a `--full-doctor` yields, and a report that answers it with the §3
+  carry-over has not answered it.** The wave-96 brief asked for the total against a `capability 393` baseline;
+  `REPORT.md` closed with *"Capability remained at 393"* — true, and unmovable by a docblock diff, but it is
+  §3's carry-over restated, not a measurement (the tick-171 rule). ✅ The `STAGES` line itself was an **exact**
+  quote of §3, name-for-name and number-for-number, which is the wave-71 check passing. **Measured by this
+  column at tick 190: `735 violation(s).`** — down from `740` at tick 171, spanning waves 72–96 and
+  attributable to none of them singly. When you want a total, say `--full-doctor`'s total in those words and
+  name the command, because every other number on the board is a carry-over that reads like one.
+- ✅ **Backlog CLOSED, verified per id at tick 190 — 26 stubs, 26 verdicts, checked one at a time.** This is the
+  tick-187 rule (*a claim that there is no work left is the one claim to check per id*) honoured rather than
+  recorded: `grep -n -B7 "assertTrue(true"` across the six files shows every stub's own docblock carrying a
+  `⛔ REFUSED:` or `BUILD PROPOSAL:` line — `C-Agent` 12, `X-01` 10, and `C-Mail:435` / `C-Whatsapp:152` /
+  `X-66:91` / `X-194:277` carrying grouped verdicts for their docblocks' ids. **Both prior group claims about
+  this pile were wrong** (tick 181 and tick 187, in opposite directions), so the per-id sweep is the only form
+  of this claim worth writing down. The lane's test-only work is genuinely spent; what remains is the ten
+  `BUILD PROPOSAL` rows, and `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` is their live list.
+- ✅ **Wave 96 also settles the false-absence correction: three greps, three inversions, all four facts hold.**
+  `X-102` has `ChatStartAction · ChatCaptureAction · ChatEscalateAction · ChatSession · ChatLead ·
+  customerfacing-widget.blade.php`; `X-66/Actions/` is four `Voice*Action.php`; `X-01` has `TakeoverLatch ·
+  ConversationTakeoverAction · TakeoverStarted` and the migration; and
+  `grep -rn "Chat\|Voice\|X-102\|X-66\|takeover" app/app/Modules/C-Agent --include=*.php | grep -v
+  capabilities.php` is **empty** against a C-Agent surface of five `Agent*` files. The corrected lines name the
+  C-Agent side wire and `Owner: C-Agent` on all three. ⭐ **The brief withheld the sentences and handed over the
+  four commands, and the coder copied the house form from `X01Test.php`'s own two lines** — `(grep for X is
+  empty)` — which is the tick-187 leak rule and the wave-95 pattern-pointer both paying off in one wave.
 
 ## Style
 
