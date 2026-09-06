@@ -654,6 +654,35 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   second clause it is **unwatched, not uncovered**. If X-157 or X-103 ever gains
   a seeder, half 2's pathspec is where it goes.
 
+  ⛔ **Every half's output is a STANDING SET, not a per-tick event — the signal
+  is its delta, exactly as for the complement** (tick 186). Tick 182 established
+  the delta reading for the complement and tick 185 exercised it; the halves were
+  left phrased as "it must print nothing", which is only true while they are
+  empty. Half 1 stopped being empty at tick 185. Its pathspec bounds are
+  `^origin/main ^origin/track/site` — a *cumulative* range — so those eight ui
+  X-110 commits will print at every tick until Track 1 merges ui or `main` moves.
+  Measured at tick 186: two sibling tips moved (`sixty dbd421ef→15cb193e`,
+  `stages 3bc45b36→3f1173fa`), a cache miss, and half 1 printed the **same
+  thirty-one commits byte-for-byte**. A tick reading "half 1 printed" as this
+  tick's news would have re-run tick 185's whole three-confirmation X-110
+  analysis over zero new commits, every tick, forever.
+
+  So all four census queries take the same three readings, and the recorded
+  verbatim output in each block is what makes them possible:
+
+  - **grew, and the new commits are attributable** → read them (tick 185's
+    `Ui/` sub-path test for half 1; the charter's OUT list for the complement).
+  - **grew, and nothing accounts for them** → the finding.
+  - **unchanged** → nothing happened on that surface this tick, whatever its
+    absolute output. Cite the prior tick's reading and move on.
+
+  This is why every block records the halves' commit lists and the complement's
+  file list in full: a delta needs a previous value, and the ledger is the only
+  place it lives. Fifth statement of the same law — tick 180 (the complement's
+  silence), 182 (its growth), 183 (growth outside the halves), 185 (half 1's
+  output), and now the halves' *unchanged* output: **a query's scope is not its
+  claim, and neither is its absolute output.**
+
   ⛔ **The `pgrep agy` set is per-tick state; never carry it forward** (tick 180).
   Tick 179 recorded 372835 (stages) and 458021 (sixty) and used them as its
   positive confirmation that `goaiez`'s own coders have readable cwds. Thirteen
