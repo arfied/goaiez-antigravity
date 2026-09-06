@@ -72,6 +72,8 @@ class AbandonedFormsTest extends TestCase
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->assertDontSee('vis_999');
 
+        Tenancy::set((int) $biz->id);
+
         $event3 = PixelEvent::create([
             'business_id' => $biz->id,
             'session_id' => $session->id,
