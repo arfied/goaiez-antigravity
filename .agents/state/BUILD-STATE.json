@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T18:58:29",
+ "updated": "2026-09-05T19:19:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -480,6 +480,12 @@
      "stage": "capability",
      "why": "G16-21: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
      "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-102",
+     "stage": "anchor",
+     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+     "at": "2026-09-05T19:19:40"
     }
    ]
   },
@@ -493,6 +499,12 @@
      "stage": "contract",
      "why": "approval.requested correctly emitted by multiple proposing modules per the master plan rule (same shape as send.requested), but sealed ContractStage.php lacks an exemption and unconditionally fails.",
      "at": "2026-09-05T18:22:27"
+    },
+    {
+     "module": "X-103",
+     "stage": "anchor",
+     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+     "at": "2026-09-05T19:19:40"
     }
    ]
   },
@@ -530,6 +542,24 @@
      "stage": "capability",
      "why": "G13-09: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
      "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-110",
+     "stage": "anchor",
+     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+     "at": "2026-09-05T19:19:40"
+    },
+    {
+     "module": "X-110",
+     "stage": "contract",
+     "why": "ContractStage:423-428 passes a provided action only if it is in @agent_reachable or the list is literally 'none', so X-110's deliberate partial allowlist under P-209 reports every correctly-excluded action as silence (OWNER ACTION 38)",
+     "at": "2026-09-05T19:19:49"
+    },
+    {
+     "module": "X-110",
+     "stage": "contract",
+     "why": "ContractStage:199 regexes the compiled manifest for @ingress, and ModuleScaffoldCommand::parseHeaders() never harvests that field, so X-110's declared @ingress page.loaded <browser> (plan 26301) cannot reach the manifest and the exemption at :552 never fires (OWNER ACTION 36)",
+     "at": "2026-09-05T19:19:49"
     }
    ]
   },
@@ -705,6 +735,18 @@
      "stage": "capability",
      "why": "G18-17: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
      "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-137",
+     "stage": "anchor",
+     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+     "at": "2026-09-05T19:19:40"
+    },
+    {
+     "module": "X-137",
+     "stage": "contract",
+     "why": "message.sent is declared by C-Sms at GOAIEZ-MASTER-PLAN.md:25554 but ModuleScaffoldCommand::field() truncates the list at the first token, so C-Sms/manifest.php:36-38 emits only send.requested (OWNER ACTION 41)",
+     "at": "2026-09-05T19:19:49"
     }
    ]
   },
@@ -814,6 +856,12 @@
      "stage": "capability",
      "why": "G13-05: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
      "at": "2026-09-05T18:58:29"
+    },
+    {
+     "module": "X-155",
+     "stage": "anchor",
+     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+     "at": "2026-09-05T19:19:40"
     }
    ]
   },
@@ -824,10 +872,23 @@
    "unresolved": []
   },
   "X-157": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-157",
+     "stage": "anchor",
+     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+     "at": "2026-09-05T19:19:40"
+    },
+    {
+     "module": "X-157",
+     "stage": "journey",
+     "why": "publishSite():693 reads $version->ssl_installed, a property nothing writes (OWNER ACTION 28)",
+     "at": "2026-09-05T19:19:43"
+    }
+   ]
   },
   "X-158": {
    "status": "DONE",
@@ -939,10 +1000,17 @@
    "unresolved": []
   },
   "X-176": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 13,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-176",
+     "stage": "anchor",
+     "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+     "at": "2026-09-05T19:19:40"
+    }
+   ]
   },
   "X-177": {
    "status": "DONE",
@@ -1488,6 +1556,72 @@
    "stage": "capability",
    "why": "G13-05: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)",
    "at": "2026-09-05T18:58:29"
+  },
+  {
+   "module": "X-157",
+   "stage": "anchor",
+   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+   "at": "2026-09-05T19:19:40"
+  },
+  {
+   "module": "X-110",
+   "stage": "anchor",
+   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+   "at": "2026-09-05T19:19:40"
+  },
+  {
+   "module": "X-102",
+   "stage": "anchor",
+   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+   "at": "2026-09-05T19:19:40"
+  },
+  {
+   "module": "X-155",
+   "stage": "anchor",
+   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+   "at": "2026-09-05T19:19:40"
+  },
+  {
+   "module": "X-137",
+   "stage": "anchor",
+   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+   "at": "2026-09-05T19:19:40"
+  },
+  {
+   "module": "X-176",
+   "stage": "anchor",
+   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+   "at": "2026-09-05T19:19:40"
+  },
+  {
+   "module": "X-103",
+   "stage": "anchor",
+   "why": "no vendor credential for a real-transport anchor run; evidence/ artifacts may only come from a real run (CLAUDE.md forbids the simulation harness)",
+   "at": "2026-09-05T19:19:40"
+  },
+  {
+   "module": "X-157",
+   "stage": "journey",
+   "why": "publishSite():693 reads $version->ssl_installed, a property nothing writes (OWNER ACTION 28)",
+   "at": "2026-09-05T19:19:43"
+  },
+  {
+   "module": "X-137",
+   "stage": "contract",
+   "why": "message.sent is declared by C-Sms at GOAIEZ-MASTER-PLAN.md:25554 but ModuleScaffoldCommand::field() truncates the list at the first token, so C-Sms/manifest.php:36-38 emits only send.requested (OWNER ACTION 41)",
+   "at": "2026-09-05T19:19:49"
+  },
+  {
+   "module": "X-110",
+   "stage": "contract",
+   "why": "ContractStage:423-428 passes a provided action only if it is in @agent_reachable or the list is literally 'none', so X-110's deliberate partial allowlist under P-209 reports every correctly-excluded action as silence (OWNER ACTION 38)",
+   "at": "2026-09-05T19:19:49"
+  },
+  {
+   "module": "X-110",
+   "stage": "contract",
+   "why": "ContractStage:199 regexes the compiled manifest for @ingress, and ModuleScaffoldCommand::parseHeaders() never harvests that field, so X-110's declared @ingress page.loaded <browser> (plan 26301) cannot reach the manifest and the exemption at :552 never fires (OWNER ACTION 36)",
+   "at": "2026-09-05T19:19:49"
   }
  ],
  "decisions": [
