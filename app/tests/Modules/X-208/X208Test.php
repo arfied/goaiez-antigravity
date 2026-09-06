@@ -7,6 +7,7 @@ namespace Tests\Modules\X208;
 use App\Modules\X208\Actions\MailComposeAction;
 use App\Modules\X208\Actions\MailProposeAction;
 use App\Modules\X208\Actions\MailSendAction;
+use App\Modules\X208\Domain\X208Engine;
 use App\Modules\X208\Events\ApprovalRequested;
 use App\Modules\X208\Models\MailPiece;
 use Illuminate\Support\Facades\DB;
@@ -89,7 +90,7 @@ class X208Test extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $engine = new \App\Modules\X208\Domain\X208Engine();
+        $engine = new X208Engine;
         $this->assertEquals('refused', $engine->approveMail(false)['status']);
         $this->assertEquals('approved', $engine->approveMail(true)['status']);
     }
@@ -99,7 +100,7 @@ class X208Test extends TestCase
      */
     public function test_recall_mail(): void
     {
-        $engine = new \App\Modules\X208\Domain\X208Engine();
+        $engine = new X208Engine;
         $result = $engine->recallMail();
         $this->assertEquals('refused', $result['status']);
         $this->assertEquals('physical mail cannot be recalled', $result['reason']);
@@ -110,7 +111,7 @@ class X208Test extends TestCase
      */
     public function test_validate_promotion(): void
     {
-        $engine = new \App\Modules\X208\Domain\X208Engine();
+        $engine = new X208Engine;
         $this->assertEquals('ok', $engine->validatePromotion(true, 'PROMO-1')['status']);
         $this->assertEquals('ok', $engine->validatePromotion(false, null)['status']);
         $this->assertEquals('refused', $engine->validatePromotion(true, null)['status']);

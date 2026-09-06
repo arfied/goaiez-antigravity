@@ -8,6 +8,7 @@ use App\Modules\X207\Actions\PushBroadcastAction;
 use App\Modules\X207\Actions\PushRegisterDeviceAction;
 use App\Modules\X207\Actions\PushRetireDeviceAction;
 use App\Modules\X207\Actions\PushSendAction;
+use App\Modules\X207\Domain\X207Engine;
 use App\Modules\X207\Events\SendRequested;
 use App\Modules\X207\Models\DeviceToken;
 use App\Modules\X207\Models\PushDelivery;
@@ -107,7 +108,7 @@ class X207Test extends TestCase
      */
     public function test_header_capabilities(): void
     {
-        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $engine = new X207Engine;
         $this->assertEquals('refused', $engine->checkConsent(false)['status']);
         $this->assertEquals('ok', $engine->checkConsent(true)['status']);
 
@@ -122,7 +123,7 @@ class X207Test extends TestCase
      */
     public function test_cadence_ceiling(): void
     {
-        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $engine = new X207Engine;
         $this->assertEquals('ok', $engine->validateCadence(0, 3)['status']);
         $this->assertEquals('refused', $engine->validateCadence(3, 3)['status']);
         $this->assertEquals('refused', $engine->validateCadence(4, 3)['status']);
@@ -133,7 +134,7 @@ class X207Test extends TestCase
      */
     public function test_quiet_hours(): void
     {
-        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $engine = new X207Engine;
         $this->assertEquals('ok', $engine->validateQuietHours(false)['status']);
         $this->assertEquals('refused', $engine->validateQuietHours(true)['status']);
     }
@@ -143,7 +144,7 @@ class X207Test extends TestCase
      */
     public function test_get_priority(): void
     {
-        $engine = new \App\Modules\X207\Domain\X207Engine();
+        $engine = new X207Engine;
         $this->assertEquals('minutes', $engine->getPriority('review_naming_employee'));
         $this->assertEquals('minutes', $engine->getPriority('recover_escalation'));
         $this->assertEquals('minutes', $engine->getPriority('money_event'));
