@@ -323,7 +323,7 @@ class X198Test extends TestCase
         {
             public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
             {
-                return ['id' => 'cs_test_123', 'url' => 'https://checkout.stripe.com/pay/cs_test_123'];
+                return ['id' => 'cs_test_123', 'url' => 'https://checkout.stripe.com/c/pay/cs_test_123#fid'.str_repeat('a', 380)];
             }
         });
 
@@ -332,7 +332,8 @@ class X198Test extends TestCase
 
         $this->assertNotNull($link);
         $this->assertEquals('cs_test_123', $link->provider_link_id);
-        $this->assertEquals('https://checkout.stripe.com/pay/cs_test_123', $link->url);
+        $this->assertEquals('https://checkout.stripe.com/c/pay/cs_test_123#fid'.str_repeat('a', 380), $link->url);
+        $this->assertGreaterThan(400, strlen($link->url));
 
         $this->assertEquals(1, PaymentLink::where('business_id', $biz->id)->where('payment_id', $payment->id)->count());
     }
