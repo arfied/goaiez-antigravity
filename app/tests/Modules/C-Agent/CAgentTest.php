@@ -15,9 +15,9 @@ use App\Modules\CAgent\Actions\AgentExtractTasksAction;
 use App\Modules\CAgent\Actions\AgentTeachAction;
 use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
+use App\Modules\CAgent\Models\AgentInstruction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
-use App\Modules\CAgent\Models\AgentInstruction;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
 use App\Support\Tenancy;
@@ -228,7 +228,7 @@ class CAgentTest extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $this->teach->handle($biz->id, 'header.contract', 'Always be polite');
-        
+
         $instruction = AgentInstruction::where('business_id', $biz->id)->where('instruction_key', 'header.contract')->first();
         $this->assertNotNull($instruction);
         $this->assertEquals('Always be polite', $instruction->instruction_text);
