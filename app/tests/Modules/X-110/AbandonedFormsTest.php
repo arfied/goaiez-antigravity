@@ -53,18 +53,20 @@ class AbandonedFormsTest extends TestCase
             ->assertSee('vis_123');
 
         $otherBiz = TestCase::provisionTenant(['name' => 'Other Tenant']);
-        $visit2 = Visit::create(['business_id' => $otherBiz->id, 'visitor_id' => 'vis_999', 'landing_page' => '/', 'created_at' => now()]);
-        $session2 = Session::create(['business_id' => $otherBiz->id, 'visit_id' => $visit2->id, 'session_token' => 'tok2', 'started_at' => now(), 'created_at' => now()]);
-        $event2 = PixelEvent::create([
-            'business_id' => $otherBiz->id,
-            'session_id' => $session2->id,
-            'event_name' => 'form.abandoned',
-            'payload' => [
-                'form_id' => 'other_form',
-                'abandoned_field' => 'password',
-            ],
-            'created_at' => now(),
-        ]);
+        Tenancy::actingAs($otherBiz->id, function () use ($otherBiz) {
+            $visit2 = Visit::create(['business_id' => $otherBiz->id, 'visitor_id' => 'vis_999', 'landing_page' => '/', 'created_at' => now()]);
+            $session2 = Session::create(['business_id' => $otherBiz->id, 'visit_id' => $visit2->id, 'session_token' => 'tok2', 'started_at' => now(), 'created_at' => now()]);
+            $event2 = PixelEvent::create([
+                'business_id' => $otherBiz->id,
+                'session_id' => $session2->id,
+                'event_name' => 'form.abandoned',
+                'payload' => [
+                    'form_id' => 'other_form',
+                    'abandoned_field' => 'password',
+                ],
+                'created_at' => now(),
+            ]);
+        });
 
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
@@ -110,7 +112,7 @@ class AbandonedFormsTest extends TestCase
         Livewire::actingAs($user)
             ->test(AbandonedForms::class, ['businessId' => $biz->id])
             ->call('recover', $event->id)
-            ->assertSee('drafted (sending not wired yet)');
+            ->assertSee('Drafted (sending not wired yet)');
 
         Event::assertNotDispatched(SendRequested::class);
         Event::assertNotDispatched(\App\Modules\X127\Events\SendRequested::class);
