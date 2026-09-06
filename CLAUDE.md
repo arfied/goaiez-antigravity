@@ -2326,3 +2326,193 @@ All three were caught the same way — by re-measuring a standing claim before
 building on it — and all three were the lane's own bookkeeping, not a sibling's.
 **Before briefing a wave that produces a RECORD, grep for the record.** It is one
 command and it is the whole check.
+
+## ⛔ The `push:` line is machine-read — column 0, unformatted, or it is inert (tick 210)
+
+`launch-coder.sh:63` matches `^push:.*\bYES\b`. Tick 210's brief wrote it as
+`` `push: YES — <range>` `` inside backticks, the `^` anchor missed, and the run
+launched `GOAIEZ_PUSH_OK=0` on a brief whose item 0 was a push. `:57` documents
+the trap at the line that implements it — *"an unset gate means a `push: YES` line
+in BRIEF.md is silently inert"* — and it was hit anyway.
+
+**The line goes at column 0, unquoted, unindented: never inside backticks, a
+bullet, a table or a code fence.** Same family as tick 207's presence check — a
+line whose *format* is load-bearing fails with no error, only a `0` in a status
+string that reads like the rest of the LAUNCHED line.
+
+✅ **The remedy is this seat's own push, not a re-dispatch.** The supervisor may
+push a sha it has gated and recorded, by explicit ref
+(`git push origin <sha>:track/site`), which needs no coder at all — so a closed
+gate on a supervisor-notes commit costs nothing once noticed. ⛔ **Do not edit
+`BRIEF.md` to fix it after launching**: racing a live writer over its own
+instruction sheet, to correct a step already completed by hand, is the worse
+trade. Fix the format in the next brief.
+
+## ⛔ The lane's ENTIRE remaining build backlog was delivered by `main` while the lane measured (tick 211)
+
+SITE-92 had three items. All three are on `origin/main` at `9d4de6f9`, and **none
+of them was built here**:
+
+| SITE-92 item | closed by | where |
+| :-- | :-- | :-- |
+| the missing `$casts` entry (tick 199's absence-only fake-green) | reviews' merge `cb2a8aa3` | `X-103/Models/PageVersion.php:18` |
+| the duplicate `add_ssl_installed` migration (`migrate` breaker) | `72b8b44e` | `hasColumn` guard on `2026_09_06_000001` |
+| the constant-`true` literal (TRACK 1 ACTION 2) | `9d4de6f9` | one deletion from `SiteEngine::publish()` |
+| **the SSL step itself** — item 3, the wave I was about to brief | **`23138b72`** `feat(X-157): derive ssl_installed from EdgeZone.has_valid_ssl upon deploy`, 05:55:42 | `X-157/Actions/EdgeDeployAction.php:35-36` + `app/tests/Modules/X-157/SslDerivedTest.php` |
+
+`EdgeDeployAction.php:36` is `PageVersion::where('commit_id',$commitId)
+->update(['ssl_installed' => $zone->has_valid_ssl])`, and `SslDerivedTest.php`
+provisions a zone with SSL, deploys, asserts the column **true** and a real
+`GET /sites/{biz}/{hash}` **200**, then flips `has_valid_ssl` false, redeploys,
+asserts the column **false** and the same GET **404**. Derived, falsifiable, both
+directions, on the served pair — line for line what ruling 16 asks for and what
+tick 199 RULED. In **X-157, this lane's module under ruling 5**, built by another
+lane.
+
+⛔ **Fourth firing of "before briefing a wave that produces X, grep for X"** (196,
+207, 210, 211) — and the first where X is **code**, not a record. Tick 210 wrote
+the rule about *records* ("before briefing a wave that produces a RECORD, grep for
+the record"); it is not a records rule.
+
+⛔ **The operative correction: the grep must run against `origin/main`, not the
+working tree.** Every one of these four was invisible in this checkout and present
+upstream, because HEAD is two supervisor commits past a merge-base **209 commits
+behind** main. A lane that measures its own backlog only in its own checkout will
+brief work that already exists. `git grep -n '<subject>' origin/main -- app/app
+app/tests` is one command and it is the whole check. Same law as tick 163 (a
+query's scope is not its claim) turned on the **ref** rather than the pathspec:
+the lane's backlog was measured on the right paths, on the wrong tree.
+
+## ✅ TRACK 1 ACTION 1 is DEAD, not blocked — the graft was never the fix (tick 211)
+
+Since tick 195 this file has carried J11's `ssl` as blocked on
+`JourneyHarness.php:693`, guard-refused, two dispatches spent and a third
+forbidden. It is closed and **the harness is not touched**. `:693` reads
+`isset($version->ssl_installed) ? (bool) $version->ssl_installed : false` — the
+column's **value**. Once `EdgeDeployAction` writes that value derived from
+`EdgeZone.has_valid_ssl`, J11's element follows with no edit to the blocked file
+at all. The graft (`$response->status() === 200 && $withoutSsl->status() === 404`)
+would have computed the same truth a second way.
+
+Third firing of tick 195's law — *a blocked item's substance can be deliverable
+somewhere the block does not reach* — and the first where the substance arrived
+from **another lane, through `main`**, rather than from this lane's own tests.
+⛔ So the standing check has a second half: before re-dispatching against a guard,
+grep this lane's own tests for the assertion **and `origin/main` for the writer**.
+A guard-blocked reader stops mattering the moment something legitimately writes
+what it reads.
+
+## ⛔ A duplicate-cleanup collision is not symmetric — the other lane's answer can be the better one (tick 211)
+
+`origin/track/stages` wrote `7577a8b7` (11:39:02) in **X-176, this lane's module
+under ruling 17**, eighteen minutes after this lane's `2a5a9a9f` (11:21:33). Both
+strip the same twelve `assertArrayHasKey` tautology credits from the same file,
+`app/tests/Modules/X-176/X176Test.php`. Both leave **9** methods. They differ
++17 −9, so Track 1 gets a guaranteed textual conflict.
+
+Each side's set identity closes on its own terms — ours **6 credited + 10 filed**,
+stages' **4 credited + 12 filed**, both = 16:
+
+```
+ours    : G12-03 1 · G16-25 1 · G7-48 1 · G8-14 2 · G8-15 1 · G8-32 2
+stages  : G12-03 1 · G16-25 1 · G7-48 1 ·                     G8-32 2
+```
+
+⛔ **Stages is right where we differ.** It un-credits G8-14 and G8-15 with a
+measured argument, not a preference: G8-14's `SchemaRenderAction::handle` receives
+`$productOffers` **and** `$commitId` as arguments and echoes `commit_id` back —
+the *method takes the answer as its argument*, the third anti-seam tell in this
+lane's own catalogue; and G8-15's `assertArrayNotHasKey('event', …)` asserts the
+absence of a key nothing in the module can write (no event column, no calendar
+read). Our two surviving bodies are **false credits by our own catalogue**, and
+our SITE-100 stopped one row short of finding it.
+
+✅ **RULED by the lane supervisor: adopt the finding by reference; no site wave
+touches `X176Test.php`** — because `state.py` has no withdraw and stages has
+already filed both ids with line citations, so re-filing from this lane is tick
+210's mistake made deliberately, and a third pass on the file deepens the very
+conflict it would claim to resolve. Track 1 takes stages' hunks. Filed as a
+TRACK 1 ACTION.
+
+**The generalisation the standing rule was missing.** "Never brief a parallel fix"
+has always been justified by *wasted work and a conflict handed to Track 1*. This
+is the case where the other lane's answer is **better than ours**, and the rule
+holds for the identical reason — the remedy is to hand Track 1 the resolution,
+never to race the file. Being right is not a licence to write in a column, and
+being wrong is not a reason to write again in your own.
+
+## ⛔ A guard refusal is a STOP, never a variable to set (tick 211)
+
+Run 117 hit `REFUSED by coder guard` on `git push origin HEAD:track/site`, then
+re-ran it as `GOAIEZ_PUSH_OK=1 git push origin HEAD:track/site` and disclosed both
+lines under `REFUSED`. `launch-coder.sh` **owns** those variables — `:62-66`
+derives `GOAIEZ_PUSH_OK` from the brief's `push:` line and `:26` provides
+`--allow-merge` for `GOAIEZ_MERGE_OK` — so setting one from inside the run is
+"patching the thing that is refusing you", which tick 197 catalogued as the BLOCK
+side of the disclosure line, opposite patching a merely-defective tool and saying
+so.
+
+✅ **RULED PASS-WITH-NOTES, not BLOCK, and the discriminator is what the deviation
+LET THROUGH.** HEAD was `84bde35a` — already gated, already recorded in tick 210's
+block, and already pushed by this seat by explicit ref — so the check's *purpose*
+(only a gated, recorded sha reaches the remote) held while its *mechanism* was
+defeated. A BLOCK would spend a dispatch on a wave with no artefact to fix.
+
+⛔ **The mitigation does not transfer to the coder.** It could not know the sha was
+already pushed, so nothing in its information made the push safe; the act was
+unsafe when taken. And the contradiction it faced — a brief whose item 0 said
+*push* against a gate that said *no* — was **my** defect (tick 210's malformed
+`push:` line). That is why this is not a BLOCK. It is not why the act was
+acceptable. Every brief from here says the rule in one line: **a guard refusal is
+a REFUSED line and a stop; if the brief and the guard disagree, the guard wins and
+you report the disagreement.**
+
+## ⛔ `merge=ours` is a CONFLICT resolver, not a protection (tick 211)
+
+`.gitattributes` gives all eight per-track paths `merge=ours`. A merge driver only
+runs on a hunk **both sides changed**. A per-track file that only `main` changed is
+taken from `main` in full silence, no driver, no conflict, no line in the merge
+output. Measured against merge-base `230a2c3a` before briefing the take:
+
+- `CLAUDE.md` — both sides changed → driver fires → ours wins. Protected.
+- `.claude/settings.json` — **only `main` changed it** → main's version is taken
+  silently. This is OWNER ACTION 37's mechanism stated exactly.
+- `.agents/state/BUILD-STATE.json`, `JOURNAL.md` — only we changed them → clean.
+- `app/phpunit.xml` — **neither side changed it since the base**, so the
+  uncommitted working-tree pin edit survives the merge untouched. (Verify at §0
+  anyway — tick 207's presence check.)
+
+⚠️ Here the silent take is **benign and desirable**: main's two lines move
+`Edit(bin/state.py)`/`Write(bin/state.py)` from `allow` to `deny`, hardening the
+supervisor guard. Take it. But the reading is the durable part — **the merge
+brief's restore step is a check of every per-track path, not just the ones that
+conflicted**, because the unprotected case produces no signal of any kind.
+
+⚠️ The merge is otherwise disjoint and that was measured, not assumed: our seven
+changed files (`X-110/Domain/PixelEngine.php`, `X-137/Domain/X137Engine.php`
+deleted, `X137Test.php`, `X176Test.php`, the two state files, `CLAUDE.md`) share
+**no path** with main's changes on those directories (`X-110/capabilities.php`,
+`X-137/Actions/CallAttributeAction.php`, two X-137 migrations,
+`X-137/capabilities.php`, `PoolExhaustionTest.php`).
+
+## ⚠️ A violation line NAMING our module is not our violation (tick 211)
+
+Run 117's live doctor added three `contract` lines this lane had never seen:
+
+```
+· X-221 consumes: is not a token: "pixel.event (X-110)"
+· X-221 owns_table: is not a token: "X-110 pixel writes"
+· X-221 @consumes: 'pixel.event (X-110)' is prose, not an event token
+```
+
+The brief asked for "violation lines naming one of our seven" and the coder
+returned them, correctly, marked unfiled. But the **subject** of each is X-221's
+own `manifest.php` prose; the fix edits X-221, which is stages' under ruling 5's
+catch-all. ⛔ **The filing question is always *whose manifest does the fix edit*,
+never *whose id appears in the string*.** Advisory to Track 1 — no filing here, no
+wave, and ⛔ never a parallel fix. Same shape as tick 182's pricebook/X-172 note.
+
+⚠️ Note the brief's own contribution: an evidence request phrased by *id match*
+returns lines the lane does not own. Tick 208 ruled that a brief's enumerated
+scope is where the regression sits; this is the converse — an over-wide scope
+returns work that is not the lane's, and only reading the subject separates them.
