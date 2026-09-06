@@ -10,6 +10,7 @@ test('capture persists real id', function () {
 
     expect($artifact['gateway_charge_id'])->not->toBeNull();
     expect($artifact['gateway_charge_id'])->toStartWith('ch_');
+    expect(strlen($artifact['gateway_charge_id']))->toBe(27);
     expect($artifact['payment_status'])->toBe('captured');
 });
 
@@ -23,5 +24,6 @@ test('pay link returns real url', function () {
 
     expect($artifact['provider_link_id'])->toStartWith('cs_');
     expect($artifact['url'])->toStartWith('https://checkout.stripe.com');
+    expect(strlen($artifact['url']))->toBeGreaterThan(400);
     expect($artifact['running_unit_tests'])->toBeFalse();
 });
