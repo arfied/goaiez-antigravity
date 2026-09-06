@@ -807,3 +807,6 @@
 - `2026-09-06T06:31:39` (R245) X-137 — A per-business DNI number pool is implemented under app/app/Modules/X-137/Database/migrations/.
 - `2026-09-06T06:51:32` (R245) X-157 — route seam
 - `2026-09-06T07:21:58` (R245) X-157 — a DNI number is per-visitor and per-request, so it cannot be baked into deploy-time static HTML — one stored file serves every visitor. It is allocated at request time by GET /sites/{business}/{deploy_hash}/dni, a sibling of the existing form route, behind the same deployed and has_valid_ssl guards, and the exhausted path is a refusal rather than a placeholder number.
+- `2026-09-06T07:39:31` UNRESOLVED the renderer is X-102/Ui/, Track 2's under ruling 5; this lane cannot assert a rendering it may not build X-102 - 
+- `2026-09-06T07:40:19` UNRESOLVED exit-intent trigger does not exist X-102 - 
+- `2026-09-06T07:44:23` (R245) X-155 — FormReleaseAction clears is_spam and spam_reason, and emits FormCaptured event --ruling R245

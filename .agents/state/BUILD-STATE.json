@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T07:21:58",
+ "updated": "2026-09-06T07:44:23",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -492,6 +492,18 @@
      "stage": "anchor",
      "why": "The third party is the browser. The chat widget executes on the visitor's page; a browser mints no message-id, call-sid or charge-id. Cite `chat.start` in app/app/Modules/X-102/manifest.php.",
      "at": "2026-09-06T05:15:50"
+    },
+    {
+     "module": "X-102",
+     "stage": "the renderer is X-102/Ui/, Track 2's under ruling 5; this lane cannot assert a rendering it may not build",
+     "why": "",
+     "at": "2026-09-06T07:39:31"
+    },
+    {
+     "module": "X-102",
+     "stage": "exit-intent trigger does not exist",
+     "why": "",
+     "at": "2026-09-06T07:40:19"
     }
    ]
   },
@@ -1706,6 +1718,18 @@
    "stage": "anchor",
    "why": "X-176's index.request (manifest:33) requires a public domain to serve the IndexNow key (plugin:12-18) which this lane lacks, and the protocol mints no captureable id as it responds with bare HTTP statuses (plugin:34-36).",
    "at": "2026-09-06T05:28:31"
+  },
+  {
+   "module": "X-102",
+   "stage": "the renderer is X-102/Ui/, Track 2's under ruling 5; this lane cannot assert a rendering it may not build",
+   "why": "",
+   "at": "2026-09-06T07:39:31"
+  },
+  {
+   "module": "X-102",
+   "stage": "exit-intent trigger does not exist",
+   "why": "",
+   "at": "2026-09-06T07:40:19"
   }
  ],
  "decisions": [
@@ -1803,6 +1827,12 @@
    "module": "X-157",
    "chose": "a DNI number is per-visitor and per-request, so it cannot be baked into deploy-time static HTML \u2014 one stored file serves every visitor. It is allocated at request time by GET /sites/{business}/{deploy_hash}/dni, a sibling of the existing form route, behind the same deployed and has_valid_ssl guards, and the exhausted path is a refusal rather than a placeholder number.",
    "at": "2026-09-06T07:21:58",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "FormReleaseAction clears is_spam and spam_reason, and emits FormCaptured event --ruling R245",
+   "at": "2026-09-06T07:44:23",
    "ruling": "R245"
   }
  ],

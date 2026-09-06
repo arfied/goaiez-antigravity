@@ -302,6 +302,60 @@ class X155Test extends TestCase
     /**
      * [G3-64] & [G13-05] spam and bot filtering
      */
+
+    /**
+     * [G13-05] the tenant can see and release it
+     */
+    public function test_g13_05_tenant_can_release_it(): void
+    {
+
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'G13-05 Release']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Release Form',
+            'slug' => 'release-form',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $res = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bot',
+                'phone' => '+15553330001',
+                'website_url' => 'http://spam.ru',
+            ],
+            ipAddress: '194.55.22.1'
+        );
+
+        $this->assertEquals('rejected', $res['status']);
+        $submissionId = $res['submission_id'];
+
+        $row = FormSubmission::find($submissionId);
+        $this->assertTrue($row->is_spam);
+
+        Event::assertNotDispatched(FormCaptured::class);
+
+        // the release
+        $releaseAction = new \App\Modules\X155\Actions\FormReleaseAction();
+        $releaseRes = $releaseAction->handle($biz->id, $submissionId);
+
+        $this->assertEquals('released', $releaseRes['status']);
+
+        $rowFresh = FormSubmission::find($submissionId);
+        $this->assertFalse($rowFresh->is_spam);
+        $this->assertNull($rowFresh->spam_reason);
+
+        // downstream reader now sees it
+        Event::assertDispatched(FormCaptured::class, function ($event) use ($submissionId) {
+            return $event->submissionId === $submissionId;
+        });
+    }
     public function test_g3_64_bot_filtering(): void
     {
         Event::fake([FormCaptured::class, FormSpamRejected::class]);

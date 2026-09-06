@@ -216,9 +216,6 @@ class X102Test extends TestCase
         Event::assertDispatched(ChatEscalated::class);
     }
 
-    /**
-     * [G16-21] carousels rendered in the chat
-     */
     public function test_g16_21_chat_carousels(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Chat Carousel', 'currency' => 'USD']);
