@@ -105,4 +105,26 @@ class DailyPricingDigestTest extends TestCase
         $this->actingAs($owner);
         $this->get(route('x-163.daily-pricing-digest'))->assertOk()->assertSee('334.88');
     }
+
+    public function test_an_agent_price_gap_appears_in_the_owners_digest(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $event = new \App\Modules\CAgent\Events\AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a drain unblock',
+            'drain unblock'
+        );
+        \Illuminate\Support\Facades\Event::dispatch($event);
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->assertOk()
+            ->assertSee('drain unblock')
+            ->assertSee('1 refusals')
+            ->assertSee('1 pricing questions we could not answer today');
+    }
 }
