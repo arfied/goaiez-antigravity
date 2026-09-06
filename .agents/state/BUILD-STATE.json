@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T18:23:01",
+ "updated": "2026-09-06T18:40:48",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 277,
+   "violations": 275,
    "fails": "MERGE"
   },
   "anchor": {
@@ -1376,6 +1376,54 @@
      "stage": "capability",
      "why": "G21-13 \u2014 X-200 exposes no closed deal on the wallboard or channel surface.",
      "at": "2026-09-06T17:12:41"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G5-09 - coaching on the desk is absent from AgentDesktop",
+     "at": "2026-09-06T18:40:22"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G9-01 - objection roll-up is absent from the module",
+     "at": "2026-09-06T18:40:22"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G11-25 - named in the header closed set per campaign is absent and no BAD_STATE exists",
+     "at": "2026-09-06T18:40:22"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G16-11 - the coaching library is absent from the module",
+     "at": "2026-09-06T18:40:22"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-03 - the agent desktop shows no customer record or thread",
+     "at": "2026-09-06T18:40:22"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-06 - wellbeing prompt is absent from AgentDesktop",
+     "at": "2026-09-06T18:40:22"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-08 - listen/whisper/barge actions do not exist on the seat",
+     "at": "2026-09-06T18:40:22"
+    },
+    {
+     "module": "X-200",
+     "stage": "capability",
+     "why": "G18-15 - the AI answers first has no surface because DialNextAction takes an explicit seatId",
+     "at": "2026-09-06T18:40:22"
     }
    ]
   },
@@ -2034,6 +2082,54 @@
    "stage": "capability",
    "why": "G17-24 - out of module; QR codes and short links are in X-137",
    "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G5-09 - coaching on the desk is absent from AgentDesktop",
+   "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G9-01 - objection roll-up is absent from the module",
+   "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G11-25 - named in the header closed set per campaign is absent and no BAD_STATE exists",
+   "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G16-11 - the coaching library is absent from the module",
+   "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-03 - the agent desktop shows no customer record or thread",
+   "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-06 - wellbeing prompt is absent from AgentDesktop",
+   "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-08 - listen/whisper/barge actions do not exist on the seat",
+   "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-200",
+   "stage": "capability",
+   "why": "G18-15 - the AI answers first has no surface because DialNextAction takes an explicit seatId",
+   "at": "2026-09-06T18:40:22"
   }
  ],
  "decisions": [
@@ -2485,6 +2581,12 @@
    "module": "X-138",
    "chose": "(R245) X-138 - 0 ASSERT, 0 REFUSE, 8 UNRESOLVED of eight; an id whose entire surface lives in another module is UNRESOLVED naming the cross-module gap, not an assertion against that module's classes from this one's test directory (REV-92)",
    "at": "2026-09-06T18:23:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-200",
+   "chose": "2 ASSERT, 0 REFUSE, 8 UNRESOLVED of ten; an id whose \u2464 names a specific vendor as forbidden may be closed by an absence assertion over this module's tree naming that one vendor, and a two-halved \u2464 is closed on the local half only when that half can break alone (REV-93)",
+   "at": "2026-09-06T18:40:48",
    "ruling": "R245"
   }
  ],

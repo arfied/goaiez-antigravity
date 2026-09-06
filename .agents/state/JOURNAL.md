@@ -867,16 +867,6 @@
 - `2026-09-06T16:49:22` stage capability = 297
 - `2026-09-06T16:53:39` stage capability = 290
 - `2026-09-06T16:53:47` (R245) X-200 — X-200's twenty-one open ids split: four ASSERT, three REFUSE (empty assertions that only restate the surface), and fourteen UNRESOLVED naming absent surface (such as no coaching surface, no scoreboard, no deals surface). Supervisor ruling.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G5-09 — X-200 exposes no coaching desk surface and X-197 is missing.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G9-01 — X-200 exposes no objection roll-up surface and X-194 is missing.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G11-25 — X-200 exposes no named header surface or closed set per campaign.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G16-11 — X-200 exposes no coaching library surface.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-03 — X-200 exposes no agent desktop record and X-01 is missing.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-06 — X-200 exposes no wellbeing prompt on the desk.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-08 — X-200 exposes no listen, whisper, or barge surface.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-15 — X-200 exposes no live queue state surface.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G18-19 — X-200 exposes no Twilio or Infobip primary surface.
-- `2026-09-06T17:12:41` UNRESOLVED capability X-200 - G21-13 — X-200 exposes no closed deal on the wallboard or channel surface.
 - `2026-09-06T17:13:02` (R245) X-200 — (R245) X-200 — 11 ASSERT, 0 REFUSE, 10 UNRESOLVED of twenty-one; capability ids are never deleted from the generated capabilities.php and never marked by editing it — a refusal is a test, an UNRESOLVED is state.py unresolved (REV-89)
 - `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-47 - missing idempotency key on restoreStockFromCancellation
 - `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-49 - missing serial column on stock_items
@@ -915,3 +905,13 @@
 - `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G17-24 - out of module; QR codes and short links are in X-137
 - `2026-09-06T18:23:01` (R245) X-138 — (R245) X-138 - 0 ASSERT, 0 REFUSE, 8 UNRESOLVED of eight; an id whose entire surface lives in another module is UNRESOLVED naming the cross-module gap, not an assertion against that module's classes from this one's test directory (REV-92)
 - `2026-09-06T18:25:19` stage capability = 277
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G5-09 - coaching on the desk is absent from AgentDesktop
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G9-01 - objection roll-up is absent from the module
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G11-25 - named in the header closed set per campaign is absent and no BAD_STATE exists
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G16-11 - the coaching library is absent from the module
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G18-03 - the agent desktop shows no customer record or thread
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G18-06 - wellbeing prompt is absent from AgentDesktop
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G18-08 - listen/whisper/barge actions do not exist on the seat
+- `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G18-15 - the AI answers first has no surface because DialNextAction takes an explicit seatId
+- `2026-09-06T18:40:48` (R245) X-200 — 2 ASSERT, 0 REFUSE, 8 UNRESOLVED of ten; an id whose ⑤ names a specific vendor as forbidden may be closed by an absence assertion over this module's tree naming that one vendor, and a two-halved ⑤ is closed on the local half only when that half can break alone (REV-93)
+- `2026-09-06T18:42:17` stage capability = 275
