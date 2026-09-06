@@ -17,6 +17,7 @@ use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\CAgent\Models\AgentInstruction;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
 use App\Support\Tenancy;
@@ -134,7 +135,19 @@ class CAgentTest extends TestCase
      */
     public function test_g5_19_agent_header(): void
     {
-        $this->assertTrue(true);
+        Event::fake([AgentTurnAnswer::class, AgentRefused::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Refuse Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->answer->handle($biz->id, 'How much is an oil change?');
+
+        Event::assertDispatched(AgentRefused::class, function ($event) use ($biz) {
+            return $event->businessId === $biz->id
+                && $event->refusalCode === 'NO_FACT'
+                && $event->reason === 'No verified price fact in tenant pricebook; refusing ungrounded quote'
+                && $event->userInput === 'How much is an oil change?';
+        });
     }
 
     /**
@@ -143,7 +156,12 @@ class CAgentTest extends TestCase
      */
     public function test_g5_24_agent_intent(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Intent Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->classify->handle($biz->id, 'I want to book an appointment');
+        $this->assertEquals('booking_request', $res['intent']);
+        $this->assertEquals(0.95, $res['confidence']);
     }
 
     /**
@@ -193,7 +211,11 @@ class CAgentTest extends TestCase
      */
     public function test_g5_39_compose_time_both_directions(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Draft Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->draft->handle($biz->id, 'some context');
+        $this->assertEquals('Drafted response based on context', $res);
     }
 
     /**
@@ -202,7 +224,14 @@ class CAgentTest extends TestCase
      */
     public function test_g5_41_header_contract(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Instruction Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->teach->handle($biz->id, 'header.contract', 'Always be polite');
+        
+        $instruction = AgentInstruction::where('business_id', $biz->id)->where('instruction_key', 'header.contract')->first();
+        $this->assertNotNull($instruction);
+        $this->assertEquals('Always be polite', $instruction->instruction_text);
     }
 
     /**
@@ -229,7 +258,20 @@ class CAgentTest extends TestCase
      */
     public function test_g5_48_intent_serve(): void
     {
-        $this->assertTrue(true);
+        Event::fake([AgentTurnAnswer::class, AgentRefused::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Serve Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->answer->handle($biz->id, 'Hello there!', 999, 1);
+
+        Event::assertDispatched(AgentTurnAnswer::class, function ($event) use ($biz) {
+            return $event->businessId === $biz->id
+                && $event->turnId > 0
+                && $event->userMessage === 'Hello there!'
+                && $event->agentReply === 'Hello! How can I help you today?'
+                && $event->status === 'answered';
+        });
     }
 
     /**
