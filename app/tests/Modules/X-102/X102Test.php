@@ -246,7 +246,15 @@ class X102Test extends TestCase
     {
         // P-120 — the claim law. Scripted messages posing as other attendees is manufactured social proof.
         // It is satisfied by that logic being ABSENT, asserted in a test.
-        $this->assertTrue(true, 'The system refuses manufactured social proof via scripted attendees.');
+        $biz = TestCase::provisionTenant(['name' => 'Chat Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $action = app(\App\Modules\X102\Actions\ChatStartAction::class);
+        $session = $action->handle($biz->id, '192.168.1.1', false);
+
+        // The strongest structural fact: ChatStartAction creates a blank active session
+        // with no injected attendees. A mutation adding them crashes.
+        $this->assertEquals('active', $session->status);
+        $this->assertArrayNotHasKey('attendees', $session->toArray());
     }
 }
-
