@@ -287,19 +287,47 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
        app/app/Modules/X-103
   ```
 
-  It must print nothing. On 2026-09-05 it printed five `track/sixty` commits in
-  X-103 — correct on the merits, invisible to this track for three hours
-  (OWNER ACTION 43). **Verify the substance before calling it a violation**, and
-  never brief a duplicate cleanup: two branches fixing one finding in one module
-  hands Track 1 a conflict.
+  It must print nothing. On 2026-09-05 it printed five commits in X-103,
+  invisible to this track for three hours (OWNER ACTION 43). **Verify the
+  substance before calling it a violation**, and never brief a duplicate
+  cleanup: two branches fixing one finding in one module hands Track 1 a
+  conflict.
+
+  ⚠️ **Two things that query gets wrong on its own** (tick 147):
+
+  1. **It lists merges that changed nothing here.** One of the five,
+     `5f435239`, is `track/pricebook` merging `origin/main`; its diff on the
+     seven owned paths is empty. Only four were `track/sixty`. Attribute each
+     hit with `git branch -r --contains <sha>` before naming a track.
+  2. **`git diff origin/main origin/track/<x>` measures staleness, not edits.**
+     Against `main` it showed 471 deleted lines in X-110/Ui and two deleted
+     X-103 event classes — none of which any track deleted; `main` gained them
+     on 2026-09-04 and those branches simply predate them. **Diff against
+     `git merge-base origin/main origin/track/<x>`**, or the branch's own
+     `git log -- <file>` is empty while main's is not. That is the
+     verify-the-bound-not-the-direction trap (tick 144 NOTE 1).
 - **J11's `ssl` is a name mismatch, not a credential gap** (tick 146).
   `JourneyHarness.php:693` reads `$version->ssl_installed`; X-103 writes
   `ssl_enabled`; the names have never matched, and `isset()` turns the missing
   attribute into a silent `false`. ⛔ **Never fix it by adding an `ssl_installed`
-  column** — that is a constant-`true` column existing only to be read, and
-  `track/sixty` added and reverted exactly that in 23 minutes. The fix is
-  OWNER ACTION 28's graft: `ssl` comes from the served 200/404 pair off
+  column** — that is a constant-`true` column existing only to be read. The fix
+  is OWNER ACTION 28's graft: `ssl` comes from the served 200/404 pair off
   `EdgeZone.has_valid_ssl`, per ruling 16.
+
+  ⛔ **That column is live on `origin/track/sixty` right now** (tick 147 —
+  correcting tick 146, which recorded it as "added and reverted in 23
+  minutes"). Three of `322df696`'s four pieces were reverted; **the migration
+  was not.** `2026_09_05_220831_add_ssl_installed_to_page_versions_in_x103.php`
+  is still a net addition over sixty's merge-base and adds
+  `page_versions.ssl_installed boolean default true`. `531fcd39`'s message says
+  "drop constant ssl_installed column"; its diff is one line out of
+  `SiteEngine`, not a drop migration. The whole tree has **one** reader of that
+  name — `JourneyHarness.php:693` — and no writer, so the day sixty merges,
+  every `page_versions` row takes `true` from the column default and J11's
+  `ssl` element goes green with nothing having installed SSL. **OWNER ACTION 28
+  must not be closed by that merge.** Re-check with
+  `git diff $(git merge-base origin/main origin/track/sixty) origin/track/sixty
+  -- app/app/Modules/X-103` before ever reading a green `ssl`.
 - Shared files: `.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written
   by every track through `state.py`. **This track pushes unrebased** (ruling
   15, 2026-09-04): the `reference-transaction` guard refuses every
