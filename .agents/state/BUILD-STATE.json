@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T11:59:41",
+ "updated": "2026-09-06T12:20:40",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -437,6 +437,54 @@
      "stage": "tests",
      "why": "four legacy message tables outside the twelve nouns (outreach_messages, triage_conversations, inbound_messages, support_messages) \u2014 the G2-76 lint is right, main's schema is not migrated; the sixty lane proposes the fold",
      "at": "2026-09-05T17:11:31"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-16 \u2014 grep -rniE 'typing\\|presence' app/app/Modules/X-01/ returns only capabilities.php:28. Unbuilt. Missing dependency.",
+     "at": "2026-09-06T12:20:27"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-23 \u2014 bare P-210 \u2014 no subject at all.",
+     "at": "2026-09-06T12:20:34"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-25 \u2014 grep -rniE 'honest.?counter\\|god.?mode\\|glassmorph' app/app/Modules/X-01/ returns only capabilities.php:37; the subject is a console surface Track 2 owns.",
+     "at": "2026-09-06T12:20:34"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-36 \u2014 P-210, and its only subject belongs to X-138.",
+     "at": "2026-09-06T12:20:34"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G2-42 \u2014 bare P-210.",
+     "at": "2026-09-06T12:20:34"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G9-10 \u2014 bare P-210.",
+     "at": "2026-09-06T12:20:34"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G11-23 \u2014 = the row above; one spec. It carries no independent clause, and one assertion may not honestly credit two rows.",
+     "at": "2026-09-06T12:20:34"
+    },
+    {
+     "module": "X-01",
+     "stage": "capability",
+     "why": "G11-40 \u2014 the header's first line \u2014 no subject whatsoever.",
+     "at": "2026-09-06T12:20:34"
     }
    ]
   },
@@ -3166,6 +3214,54 @@
    "stage": "capability",
    "why": "G19-20 \u2014 24h \u00b7 1h \u00b7 10min; one segment = one credit, a meter and never a fee. Events/AppointmentReminded.php exists carrying reminderType, but nothing dispatches it, and segment\\|credit\\|meter greps only to capabilities.php:67. There is no meter. assertTrue(true).",
    "at": "2026-09-06T11:59:41"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-16 \u2014 grep -rniE 'typing\\|presence' app/app/Modules/X-01/ returns only capabilities.php:28. Unbuilt. Missing dependency.",
+   "at": "2026-09-06T12:20:27"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-23 \u2014 bare P-210 \u2014 no subject at all.",
+   "at": "2026-09-06T12:20:34"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-25 \u2014 grep -rniE 'honest.?counter\\|god.?mode\\|glassmorph' app/app/Modules/X-01/ returns only capabilities.php:37; the subject is a console surface Track 2 owns.",
+   "at": "2026-09-06T12:20:34"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-36 \u2014 P-210, and its only subject belongs to X-138.",
+   "at": "2026-09-06T12:20:34"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G2-42 \u2014 bare P-210.",
+   "at": "2026-09-06T12:20:34"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G9-10 \u2014 bare P-210.",
+   "at": "2026-09-06T12:20:34"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G11-23 \u2014 = the row above; one spec. It carries no independent clause, and one assertion may not honestly credit two rows.",
+   "at": "2026-09-06T12:20:34"
+  },
+  {
+   "module": "X-01",
+   "stage": "capability",
+   "why": "G11-40 \u2014 the header's first line \u2014 no subject whatsoever.",
+   "at": "2026-09-06T12:20:34"
   }
  ],
  "decisions": [
@@ -3275,6 +3371,12 @@
    "module": "X-108",
    "chose": "G2-10, G2-12, G2-13, G2-45, G15-32, G17-27, G18-07, G18-27, G19-01",
    "at": "2026-09-06T11:59:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-01",
+   "chose": "R245 \u2014 the clauses X-01 decides are UnifiedInboxManager::ingestMessage's identity resolution (:37-69, one Person per phone-or-email, back-filling the missing identifier), its single-conversation-per-person seam with the channel frozen at the first message (:72-77), and scoreLead's grade bands and out-of-range refusal (:155-198) \u2014 and the eight filed rows carry no clause X-01 can assert.",
+   "at": "2026-09-06T12:20:40",
    "ruling": "R245"
   }
  ],

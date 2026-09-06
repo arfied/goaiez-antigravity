@@ -1021,3 +1021,12 @@
 - `2026-09-06T11:59:41` UNRESOLVED capability X-108 - G15-08 — … X-10 skips an unavailable assignee — X-10's module, not this one. assertTrue(true). Missing dependency.
 - `2026-09-06T11:59:41` UNRESOLVED capability X-108 - G19-20 — 24h · 1h · 10min; one segment = one credit, a meter and never a fee. Events/AppointmentReminded.php exists carrying reminderType, but nothing dispatches it, and segment\|credit\|meter greps only to capabilities.php:67. There is no meter. assertTrue(true).
 - `2026-09-06T11:59:41` (R245) X-108 — G2-10, G2-12, G2-13, G2-45, G15-32, G17-27, G18-07, G18-27, G19-01
+- `2026-09-06T12:20:27` UNRESOLVED capability X-01 - G2-16 — grep -rniE 'typing\|presence' app/app/Modules/X-01/ returns only capabilities.php:28. Unbuilt. Missing dependency.
+- `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G2-23 — bare P-210 — no subject at all.
+- `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G2-25 — grep -rniE 'honest.?counter\|god.?mode\|glassmorph' app/app/Modules/X-01/ returns only capabilities.php:37; the subject is a console surface Track 2 owns.
+- `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G2-36 — P-210, and its only subject belongs to X-138.
+- `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G2-42 — bare P-210.
+- `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G9-10 — bare P-210.
+- `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G11-23 — = the row above; one spec. It carries no independent clause, and one assertion may not honestly credit two rows.
+- `2026-09-06T12:20:34` UNRESOLVED capability X-01 - G11-40 — the header's first line — no subject whatsoever.
+- `2026-09-06T12:20:40` (R245) X-01 — R245 — the clauses X-01 decides are UnifiedInboxManager::ingestMessage's identity resolution (:37-69, one Person per phone-or-email, back-filling the missing identifier), its single-conversation-per-person seam with the channel frozen at the first message (:72-77), and scoreLead's grade bands and out-of-range refusal (:155-198) — and the eight filed rows carry no clause X-01 can assert.
