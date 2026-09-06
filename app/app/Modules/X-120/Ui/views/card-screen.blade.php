@@ -48,7 +48,7 @@
         @endif
         @if($adding)
             <form wire:submit="present" class="flex flex-col gap-2 max-w-sm">
-                <p class="text-sm text-ink-2">The number never leaves this form: storing it is waiting on Stripe tokenisation. We ask for the number, the expiry and the name — nothing else, ever.</p>
+                <p class="text-sm text-ink-2">The number reaches our system once so we can check it, but it is never stored, and is never sent on to anyone until Stripe returns a token. We ask for the number, the expiry and the name — nothing else, ever.</p>
                 <input type="text" wire:model="number" inputmode="numeric" autocomplete="cc-number" placeholder="Card number" class="border rounded px-2 py-1">
                 <div class="flex gap-2">
                     <input type="text" wire:model="expMonth" inputmode="numeric" autocomplete="cc-exp-month" placeholder="MM" class="border rounded px-2 py-1 w-16">
