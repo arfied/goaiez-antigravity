@@ -61,7 +61,7 @@ final class ChatEscalateAction
 
         return [
             'status' => 'answered',
-            'answer' => "Based on verified facts: {$groundingFact} 500",
+            'answer' => "Based on verified facts: {$groundingFact}",
         ];
     }
 }
