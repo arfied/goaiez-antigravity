@@ -74,13 +74,13 @@ final class CallAttributeAction
                 ->where('status', 'active')
                 ->where(function ($query) {
                     $query->whereNull('expires_at')
-                          ->orWhere('expires_at', '>', Carbon::now());
+                        ->orWhere('expires_at', '>', Carbon::now());
                 })
                 ->where('campaign_source', '!=', $campaignSource)
                 ->first();
 
             if ($conflicting !== null) {
-                throw new \DomainException("NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN");
+                throw new \DomainException('NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN');
             }
 
             $existing = CallToken::where('business_id', $businessId)
@@ -120,13 +120,13 @@ final class CallAttributeAction
             ->where('status', 'active')
             ->where(function ($query) {
                 $query->whereNull('expires_at')
-                      ->orWhere('expires_at', '>', Carbon::now());
+                    ->orWhere('expires_at', '>', Carbon::now());
             })
             ->where('campaign_source', '!=', $campaignSource)
             ->first();
 
         if ($conflicting !== null) {
-            throw new \DomainException("NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN");
+            throw new \DomainException('NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN');
         }
 
         return CallToken::create([

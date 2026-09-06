@@ -15,7 +15,7 @@ class PoolExhaustionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->attributeAction = new CallAttributeAction();
+        $this->attributeAction = new CallAttributeAction;
     }
 
     public function test_pool_exhaustion_renders_fallback_and_is_unattributed(): void
