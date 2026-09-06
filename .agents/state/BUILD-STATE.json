@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T00:07:51",
+ "updated": "2026-09-06T00:19:02",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1362,10 +1362,29 @@
    "unresolved": []
   },
   "X-207": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 15,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-207",
+     "stage": "capability",
+     "why": "N-013 \u2014 grep -rn 'X207Engine' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:7:final class X207Engine; no Action, no provider, no test calls it. PushSendAction takes bool $hasPushConsent and never reaches X-204's ConsentService. No counter, no ceiling column.",
+     "at": "2026-09-06T00:18:54"
+    },
+    {
+     "module": "X-207",
+     "stage": "capability",
+     "why": "N-014 \u2014 grep -rn 'validateQuietHours' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:27:    public function validateQuietHours(bool $inQuietHours): array; validateQuietHours takes the answer; the migration has no quiet-hours column on any of the three tables; the class that would carry the window is X-193's, whose own quiet_hours_start column is already filed missing",
+     "at": "2026-09-06T00:18:58"
+    },
+    {
+     "module": "X-207",
+     "stage": "capability",
+     "why": "N-016 \u2014 grep -rn 'getPriority' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:45:    public function getPriority(string $eventType): string; X207Engine::getPriority() maps three strings to 'minutes' and has no caller; there is no queue, no priority column, no delay to measure",
+     "at": "2026-09-06T00:19:02"
+    }
+   ]
   },
   "X-208": {
    "status": "DONE",
@@ -1894,6 +1913,24 @@
    "stage": "capability",
    "why": "G9-16 \u2014 grep -rn \"fatigue\" app/app/Modules/X-184 returns only the capability text in capabilities.php and PlanEngine::refreshOnFatigue(bool) which takes the answer as its argument; no fatigue signal, no fatigue column, no content pack",
    "at": "2026-09-06T00:07:51"
+  },
+  {
+   "module": "X-207",
+   "stage": "capability",
+   "why": "N-013 \u2014 grep -rn 'X207Engine' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:7:final class X207Engine; no Action, no provider, no test calls it. PushSendAction takes bool $hasPushConsent and never reaches X-204's ConsentService. No counter, no ceiling column.",
+   "at": "2026-09-06T00:18:54"
+  },
+  {
+   "module": "X-207",
+   "stage": "capability",
+   "why": "N-014 \u2014 grep -rn 'validateQuietHours' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:27:    public function validateQuietHours(bool $inQuietHours): array; validateQuietHours takes the answer; the migration has no quiet-hours column on any of the three tables; the class that would carry the window is X-193's, whose own quiet_hours_start column is already filed missing",
+   "at": "2026-09-06T00:18:58"
+  },
+  {
+   "module": "X-207",
+   "stage": "capability",
+   "why": "N-016 \u2014 grep -rn 'getPriority' app/app app/tests returns only app/app/Modules/X-207/Domain/X207Engine.php:45:    public function getPriority(string $eventType): string; X207Engine::getPriority() maps three strings to 'minutes' and has no caller; there is no queue, no priority column, no delay to measure",
+   "at": "2026-09-06T00:19:02"
   }
  ],
  "decisions": [
