@@ -141,21 +141,56 @@ if [ $want_tests -eq 1 ]; then
   # in one tick, the third dying on the 1800s timeout with zero bytes. No pest of
   # ours has started yet at this point in the script, so any pest whose cwd is
   # under $ROOT is a stray and the run must not begin.
+  #
+  # Report the AGE and the PARENT of every pest we refuse over (REV-62,
+  # 2026-09-06). The first cut of this guard printed a bare pid, which reads as a
+  # permanent wall: run 57 closed with no number at all because its brief had no
+  # way to say "this clears by itself in six minutes". A pest whose PPid is 1 was
+  # orphaned by a killed gate, and if its parent process is `timeout` it is still
+  # inside the 1800s budget that will reap it. That is a WAIT, not a kill.
   busy=""
+  reap=""
+  nokill=""
+  now_s=$(date +%s)
   for other in /home/goaiez/agents/*/app/phpunit.xml /home/goaiez/public_html/*/app/phpunit.xml; do
     [ -f "$other" ] || continue
     oroot=$(dirname "$(dirname "$other")")
     grep -q 'goaiez_antig_reviews_test' "$other" 2>/dev/null || continue
     for pid in $(pgrep -f 'vendor/bin/pest' 2>/dev/null); do
       cwd=$(readlink -f "/proc/$pid/cwd" 2>/dev/null) || continue
-      case "$cwd" in "$oroot"*) busy="$busy $oroot(pid $pid)";; esac
+      case "$cwd" in "$oroot"*) ;; *) continue;; esac
+      # /proc/<pid> carries the process start time as its own mtime.
+      comm=$(cat "/proc/$pid/comm" 2>/dev/null)
+      ppid=$(awk '/^PPid:/{print $2}' "/proc/$pid/status" 2>/dev/null)
+      st=$(stat -c %Y "/proc/$pid" 2>/dev/null)
+      age="?"; [ -n "$st" ] && age=$(( now_s - st ))
+      orph=""; [ "$ppid" = "1" ] && orph=" ORPHANED"
+      busy="$busy
+       $oroot pid $pid ($comm, age ${age}s, ppid ${ppid:-?})$orph"
+      if [ "$ppid" = "1" ] && [ "$age" != "?" ]; then
+        if [ "$comm" = "timeout" ]; then
+          reap="$reap
+       pid $pid self-reaps in $(( 1800 - age ))s (its own timeout 1800 budget)"
+        else
+          nokill="$nokill $pid"
+        fi
+      fi
     done
   done
   if [ -n "$busy" ]; then
     echo "  ⛔ REFUSED — a checkout pinned on goaiez_antig_reviews_test has pest live:$busy"
-    echo "     Wait for it to finish; a second run truncates the tables under both."
-    echo "     If the pid is under THIS checkout it is a stray from a killed gate:"
-    echo "     confirm with ls -l /proc/<pid>/cwd, then kill that ONE pid by number."
+    echo "     A second run truncates the tables under both. This step will not start."
+    if [ -n "$reap" ]; then
+      echo "     ORPHANED but still parented by \`timeout\` — it reaps ITSELF. Do not kill it:$reap"
+      echo "     Wait that long, re-run this gate, and say in the report that it refused and for how long."
+    fi
+    if [ -n "$nokill" ]; then
+      echo "     Orphaned with NO timeout parent (pid(s):$nokill) — nothing will ever reap these."
+      echo "     Killing a pest is the SUPERVISOR's call, never the coder's. Report the pid and stop."
+    fi
+    if [ -z "$reap" ] && [ -z "$nokill" ]; then
+      echo "     Not orphaned — this is a live gate in another checkout. Wait for it."
+    fi
     fail=1
     bar "verdict"
     echo "  ⛔ a gate failed above."
