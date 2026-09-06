@@ -7,15 +7,16 @@ namespace Tests\Modules\X01;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\User;
+use App\Modules\CMail\Actions\EmailDnsCheckAction;
+use App\Modules\CMail\Actions\EmailIngestEventAction;
 use App\Modules\X01\Actions\ContactCreateAction;
 use App\Modules\X01\Actions\ContactMergeAction;
 use App\Modules\X01\Actions\ConversationReadAction;
 use App\Modules\X01\Actions\ConversationTakeoverAction;
 use App\Modules\X01\Actions\SearchGlobalAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
-use App\Modules\CMail\Actions\EmailIngestEventAction;
-use App\Modules\CMail\Actions\EmailDnsCheckAction;
 use App\Modules\X01\Events\ContactCreated;
+use App\Modules\X01\Events\ConversationUpdated;
 use App\Modules\X01\Events\LeadScored;
 use App\Modules\X01\Events\TakeoverStarted;
 use App\Modules\X01\Exceptions\LeadRatingOutOfRangeRefused;
@@ -519,24 +520,24 @@ class X01Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Email Reply Bridge Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $dnsAction = new EmailDnsCheckAction();
+        $dnsAction = new EmailDnsCheckAction;
         $domain = $dnsAction->handle($biz->id, 'reply.apex-air.com');
 
-        $ingestAction = new EmailIngestEventAction();
-        
+        $ingestAction = new EmailIngestEventAction;
+
         $convUpdated = null;
-        Event::listen(\App\Modules\X01\Events\ConversationUpdated::class, function ($event) use (&$convUpdated) {
+        Event::listen(ConversationUpdated::class, function ($event) use (&$convUpdated) {
             $convUpdated = $event;
         });
 
         // A1, A2
         $ingestAction->handle($biz->id, $domain->id, 'replied', 'r1@acme.com', 'Subj Reply', ['sender_name' => 'Reply Sender', 'body' => 'This is the reply body']);
-        
+
         $convs = Conversation::where('business_id', $biz->id)->get();
-        
+
         // A1: the reply lands as a conversation for the sender.
         $this->assertEquals(1, $convs->count(), 'A1: The reply lands as a conversation for the sender');
-        
+
         // A2: that conversation carries the reply's body, not some other string off the event.
         $this->assertNotNull($convUpdated, 'ConversationUpdated event should have been dispatched');
         $this->assertEquals('This is the reply body', $convUpdated->messageSnippet, 'A2: That conversation carries the reply body');

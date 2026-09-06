@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\X01;
 
+use App\Modules\CMail\Events\EmailReplied;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
+use App\Modules\X01\Listeners\EmailReplyInboundListener;
 use App\Modules\X01\Listeners\WhatsappInboundListener;
 use App\Modules\X01\Ui\Account\Inbox as AccountInbox;
 use App\Modules\X01\Ui\CustomersList;
@@ -26,7 +28,7 @@ final class ModuleServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(WhatsappSessionOpened::class, WhatsappInboundListener::class);
-        Event::listen(\App\Modules\CMail\Events\EmailReplied::class, \App\Modules\X01\Listeners\EmailReplyInboundListener::class);
+        Event::listen(EmailReplied::class, EmailReplyInboundListener::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
