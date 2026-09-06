@@ -835,3 +835,34 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ruling 36's — *what is actually at the other end of the string this screen
     prints?* — and its new corollary is **"does it even vary?"**: a column whose
     every row holds one hardcoded value is a fiction that no per-row test can see.
+44. **A fabricated URL with no reader is still a fiction, and dropping it is
+    cheapest while nothing consumes it (RULED by the lane supervisor 2026-09-06
+    11:5x, briefed as MONEY-71).** `X-211/Domain/ArEngine.php:245` mints
+    `"https://cdn.goaiez.com/collections/bundle_{$invoice->invoice_number}.zip"`,
+    persists it on `ar_collections_packages.bundle_url`, returns it at `:266` and
+    carries it into `Events\ArPackaged`'s non-nullable
+    `public readonly string $collectionsBundleUrl`. **Nothing zips anything**, and
+    the string is read by **no screen and no listener** — `grep -rn bundle_url`
+    over `X-211/Ui/` is empty and `ArPackaged` has no registered consumer. So it
+    is ruling 43's fabrication *and* decision 272's write-only table at once. Two
+    things distinguish it from 43 and both **lower** the harm, which is why this
+    is a wave and not a hotfix: it **varies** per invoice (43's corollary is
+    satisfied), and no owner is ever sent to it, because
+    `collections-package-preview.blade.php` renders `$package->contents` — the
+    real invoice number, balance, lines, payments, actions and message count —
+    and already carries its finished waiting state at `:18` ("No collections
+    agency is connected yet"). ⛔ The resolution is **not** to build a zip: this
+    lane has no storage surface and no mounted route to serve one from, which is
+    ruling 43's blocker exactly. It is: stop minting it, leave the nullable column
+    null, keep the result key with a null value, **drop the event property**, and
+    invert `X211Test.php:109`'s `assertStringContainsString('.zip', …)` to
+    `assertNull` so coverage is kept rather than deleted (ruling 39's companion
+    lesson). ⚠️ **The event property is dropped rather than made nullable because
+    today it has no consumer — an always-null field on a published event
+    propagates the fiction to every future listener at the one moment removing it
+    costs nothing.** Dropping a constructor parameter is not minting or renaming
+    an event, so rulings 29 and 32 are untouched; the `@emits` name does not move.
+    ⚠️ This wave **supersedes the addendum's proposed MONEY-71** (C-Billing's
+    `refunded`/`chargeback`): C-Billing `Domain/` is Track 1's by ruling 5, so
+    that wave's first move may not be money's work at all, while X-211's `Domain/`
+    is wholly this lane's.
