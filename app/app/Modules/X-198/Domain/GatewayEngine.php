@@ -64,47 +64,66 @@ final class GatewayEngine
         string $idempotencyKey,
         string $currency = 'USD'
     ): Payment {
-        return DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
-            // Idempotency check: duplicated ref charges once (G17-04, G1-23)
-            $existing = Payment::where('business_id', $businessId)
-                ->where('idempotency_key', $idempotencyKey)
-                ->first();
+        try {
+            return DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
+                // Idempotency check: duplicated ref charges once (G17-04, G1-23)
+                $existing = Payment::where('business_id', $businessId)
+                    ->where('idempotency_key', $idempotencyKey)
+                    ->where('status', '!=', 'failed')
+                    ->first();
 
-            if ($existing !== null) {
-                return $existing;
-            }
+                if ($existing !== null) {
+                    return $existing;
+                }
 
-            $connection = MerchantConnection::where('business_id', $businessId)->first();
+                $connection = MerchantConnection::where('business_id', $businessId)->first();
 
-            if ($connection === null || ! $connection->is_connected) {
-                throw new \InvalidArgumentException('Gateway connection is absent; payment capture refused before external request');
-            }
+                if ($connection === null || ! $connection->is_connected) {
+                    throw new \InvalidArgumentException('Gateway connection is absent; payment capture refused before external request');
+                }
 
-            $gatewayChargeId = null;
-            if ($connection->gateway_name === 'stripe') {
-                $gatewayChargeId = app(StripeGatewayClient::class)->charge($amountCents, $paymentToken, $currency);
-            }
+                $gatewayChargeId = null;
+                if ($connection->gateway_name === 'stripe') {
+                    $gatewayChargeId = app(StripeGatewayClient::class)->charge($amountCents, $paymentToken, $currency);
+                }
 
-            $payment = Payment::create([
-                'business_id' => $businessId,
-                'merchant_connection_id' => $connection->id,
-                'gateway_charge_id' => $gatewayChargeId,
-                'amount_cents' => $amountCents,
-                'currency' => $currency,
-                'payment_token' => $paymentToken,
-                'idempotency_key' => $idempotencyKey,
-                'status' => 'pending',
-            ]);
+                $payment = Payment::create([
+                    'business_id' => $businessId,
+                    'merchant_connection_id' => $connection->id,
+                    'gateway_charge_id' => $gatewayChargeId,
+                    'amount_cents' => $amountCents,
+                    'currency' => $currency,
+                    'payment_token' => $paymentToken,
+                    'idempotency_key' => $idempotencyKey,
+                    'status' => 'pending',
+                ]);
 
-            Event::dispatch(new PaymentCaptured(
-                businessId: $businessId,
-                paymentId: $payment->id,
-                gatewayChargeId: $payment->gateway_charge_id,
-                amountCents: $amountCents
-            ));
+                Event::dispatch(new PaymentCaptured(
+                    businessId: $businessId,
+                    paymentId: $payment->id,
+                    gatewayChargeId: $payment->gateway_charge_id,
+                    amountCents: $amountCents
+                ));
 
-            return $payment;
-        });
+                return $payment;
+            });
+        } catch (\RuntimeException $e) {
+            DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
+                $connection = MerchantConnection::where('business_id', $businessId)->first();
+                Payment::create([
+                    'business_id' => $businessId,
+                    'merchant_connection_id' => $connection?->id,
+                    'gateway_charge_id' => null,
+                    'amount_cents' => $amountCents,
+                    'currency' => $currency,
+                    'payment_token' => $paymentToken,
+                    'idempotency_key' => $idempotencyKey,
+                    'status' => 'failed',
+                ]);
+            });
+
+            throw $e;
+        }
     }
 
     /**

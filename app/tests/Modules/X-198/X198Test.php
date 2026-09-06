@@ -9,6 +9,7 @@ use App\Modules\X198\Actions\PaymentCaptureAction;
 use App\Modules\X198\Actions\PaymentLinkAction;
 use App\Modules\X198\Actions\PayoutReconcileAction;
 use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
 use App\Modules\X198\Events\ReconciliationDiscrepancy;
@@ -134,5 +135,76 @@ class X198Test extends TestCase
 
         $after = file_exists($proofPath) ? file_get_contents($proofPath) : null;
         $this->assertSame($before, $after);
+    }
+
+    public function test_a_declined_charge_leaves_a_failed_payment_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Failed Row Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            {
+                throw new \RuntimeException('Stripe charge failed: card_declined');
+            }
+        });
+
+        $caught = false;
+        try {
+            $this->captureAction->handle($biz->id, 2000, 'tok_decline', 'idem_decline_1');
+        } catch (\RuntimeException $e) {
+            $caught = true;
+            $this->assertEquals('Stripe charge failed: card_declined', $e->getMessage());
+        }
+
+        $this->assertTrue($caught, 'Expected RuntimeException was not thrown.');
+
+        $payment = Payment::where('business_id', $biz->id)->first();
+        $this->assertNotNull($payment);
+        $this->assertEquals('failed', $payment->status);
+        $this->assertNull($payment->gateway_charge_id);
+    }
+
+    public function test_a_retry_after_a_decline_is_not_short_circuited_by_idempotency(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Retry Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            {
+                throw new \RuntimeException('Stripe charge failed: card_declined');
+            }
+        });
+
+        $idempotencyKey = 'idem_retry_1';
+
+        try {
+            $this->captureAction->handle($biz->id, 3000, 'tok_decline', $idempotencyKey);
+        } catch (\RuntimeException $e) {
+            // Expected
+        }
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            {
+                return 'ch_stub_money60';
+            }
+        });
+
+        $payment = $this->captureAction->handle($biz->id, 3000, 'tok_success', $idempotencyKey);
+
+        $this->assertEquals('ch_stub_money60', $payment->gateway_charge_id);
+        $this->assertEquals('pending', $payment->status);
+
+        $count = Payment::where('business_id', $biz->id)->count();
+        $this->assertEquals(2, $count, 'Expected two rows: one failed and one charged.');
     }
 }
