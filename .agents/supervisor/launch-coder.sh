@@ -22,10 +22,29 @@ if [ "${1:-}" = "--status" ]; then
   exit 0
 fi
 
-# --allow-merge: opens the merge gate for THIS launch only (see the gate below).
-# Pass it when, and only when, the brief's item is a merge from origin/main.
+# Flags, in any order:
+#   --allow-merge      opens the merge gate for THIS launch only (see the gate below).
+#                      Pass it when, and only when, the brief's item is a merge from
+#                      origin/main.
+#   --coder agy|claude which coder runs the KICKOFF. Default agy (Antigravity).
+#                      OWNER RULING 2026-09-05 17:1x: `claude` is the fallback after a
+#                      SECOND consecutive "Individual quota reached" death, passed by
+#                      hand-of-tick and recorded as `coder=claude` in the REVIEWS block
+#                      that carries the LAUNCHED line. Never automatic.
 ALLOW_MERGE=0
-if [ "${1:-}" = "--allow-merge" ]; then ALLOW_MERGE=1; shift; fi
+CODER=agy
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --allow-merge) ALLOW_MERGE=1; shift;;
+    --coder) CODER="${2:-}"; shift 2 || { echo "REFUSED: --coder needs a value (agy|claude)"; exit 1; };;
+    --coder=*) CODER="${1#--coder=}"; shift;;
+    *) echo "REFUSED: unknown argument '$1' (expected --allow-merge, --coder agy|claude, --status)"; exit 1;;
+  esac
+done
+case "$CODER" in
+  agy|claude) ;;
+  *) echo "REFUSED: --coder must be agy or claude, not '$CODER'"; exit 1;;
+esac
 
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
@@ -45,8 +64,10 @@ echo "snapshot: $SNAP"
 
 n=1
 TRACK=$(basename "$PWD")
-while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
-LOG="/home/goaiez/tmp/agy-${TRACK}-run${n}.log"
+# Probe BOTH coders' log names so a run number is never reused across a fallback.
+while [ -e "/home/goaiez/tmp/agy-${TRACK}-run${n}.log" ] \
+   || [ -e "/home/goaiez/tmp/claude-${TRACK}-run${n}.log" ]; do n=$((n+1)); done
+LOG="/home/goaiez/tmp/${CODER}-${TRACK}-run${n}.log"
 
 # Push gate — WIRED SHUT. OWNER RULING 2026-09-05 14:0x: the coder never
 # pushes; the supervisor runs every push for this lane by explicit ref, on a sha
@@ -71,12 +92,23 @@ MERGE_OK=0
 if [ "${ALLOW_MERGE:-0}" = 1 ]; then MERGE_OK=1; fi
 if [ "$MERGE_OK" = 1 ]; then echo "merge gate: OPEN (--allow-merge)"; else echo "merge gate: closed"; fi
 
-nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+# Both branches export the same two gates and the same PATH: coder-bin/git binds
+# `claude` exactly as it binds `agy`, and so does the seal. The only differences are
+# the binary, its flags and the log name.
+#
+# `--setting-sources user` on the claude branch is load-bearing: without it the coder
+# would inherit THIS checkout's supervisor `.claude/settings.json`, which denies
+# `app/**` — the coder's own column — and the run would refuse its whole brief.
+if [ "$CODER" = claude ]; then
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+else
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+fi
 echo $! > "$PIDFILE"
 
 sleep 2
 if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) log=$LOG"
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi
