@@ -47,14 +47,15 @@ final class EvidenceCheckoutCommand extends Command
         $checkoutEngine->addToCart($businessId, $sessionToken, $sellable->id, 1);
 
         $gatewayEngine->connect($businessId, 'stripe', 'acct_tenant_stripe_123');
-        $payment = $gatewayEngine->capture($businessId, 4500, 'tok_visa', 'idem_x117_'.time());
 
         $checkoutRes = $checkoutEngine->checkoutCart($businessId, $sessionToken, 'auth_x117_'.time());
 
         $data = [
-            'gateway_charge_id' => $payment->gateway_charge_id,
             'order_id' => $checkoutRes['order_id'],
             'order_status' => $checkoutRes['status'],
+            'merchant_connected' => \App\Modules\X198\Models\MerchantConnection::where('business_id', $businessId)->where('is_connected', true)->exists(),
+            'payments_written' => \App\Modules\X198\Models\Payment::where('business_id', $businessId)->count(),
+            'waiting_on' => 'a browser-side Stripe Elements / publishable-key card-entry surface (X-120 CardVault\'s, parked behind a contract by ruling 20)',
             'amount_cents' => 4500,
             'queue_driver' => config('queue.default'),
             'database' => config('database.connections.'.config('database.default').'.database', 'goaiez_antig_money'),
@@ -67,7 +68,7 @@ final class EvidenceCheckoutCommand extends Command
         File::ensureDirectoryExists(dirname($path));
         File::put($path, json_encode($data, JSON_PRETTY_PRINT));
 
-        $this->info($payment->gateway_charge_id);
+        $this->info("{$checkoutRes['order_id']} {$checkoutRes['status']}");
 
         return self::SUCCESS;
     }
