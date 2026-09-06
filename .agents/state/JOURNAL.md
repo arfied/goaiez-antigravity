@@ -810,3 +810,5 @@
 - `2026-09-05T17:48:23` (R245) X-103 — drop constant-true ssl_enabled column from page_versions because it has zero readers and was a duplicate of ssl_installed
 - `2026-09-05T17:50:38` stage journey = 6
 - `2026-09-05T18:10:57` (R245) X-103 — drop 5 unused boolean columns from page_versions because they have zero readers/writers
+- `2026-09-05T18:51:18` X-193 -> DONE
+- `2026-09-05T18:51:18` X-201 -> DONE
