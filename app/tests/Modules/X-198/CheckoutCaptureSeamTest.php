@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class CheckoutCaptureSeamTest extends TestCase
 {
-    public function test_the_checkout_seam_captures_once_and_waits_when_no_merchant_is_connected(): void
+    public function test_the_checkout_seam_makes_no_gateway_call_with_or_without_a_merchant(): void
     {
         $biz = self::provisionTenant();
         Tenancy::set($biz->id);
@@ -37,11 +37,8 @@ class CheckoutCaptureSeamTest extends TestCase
         $checkoutResult = app(CartPayAction::class)->handle($biz->id, 'sess_1', 'tok_fresh');
         $orderId = $checkoutResult['order_id'];
 
-        $this->assertSame(1, Payment::where('business_id', $biz->id)->count());
-        $payment = Payment::where('business_id', $biz->id)->first();
-        $this->assertSame(24000, $payment->amount_cents);
-        $this->assertSame('x117-order-'.$orderId, $payment->idempotency_key);
-        $this->assertNull($payment->gateway_charge_id);
+        $this->assertSame(0, Payment::where('business_id', $biz->id)->count());
+        $this->assertSame('pending_payment', Order::whereKey($orderId)->first()->status);
 
         $biz2 = self::provisionTenant();
         Tenancy::set($biz2->id);
@@ -85,24 +82,24 @@ class CheckoutCaptureSeamTest extends TestCase
         $orderId = $checkoutResult['order_id'];
 
         $this->assertSame('pending_payment', Order::whereKey($orderId)->first()->status);
-
-        $payment = Payment::where('business_id', $biz->id)->first();
-        $this->assertNotNull($payment);
-        $this->assertNull($payment->gateway_charge_id);
+        $this->assertSame(0, Payment::where('business_id', $biz->id)->count());
     }
 
-    public function test_a_confirmed_checkout_promotes_the_order_and_says_so(): void
+    public function test_a_connected_stripe_merchant_still_gets_no_gateway_call(): void
     {
         $biz = self::provisionTenant();
         Tenancy::set($biz->id);
 
-        $this->app->instance(StripeGatewayClient::class, new class
+        $client = new class
         {
+            public int $calls = 0;
             public function charge(int $amountCents, string $source, string $currency = 'USD'): string
             {
-                return 'ch_stub_money58';
+                $this->calls++;
+                return 'ch_stub_money5812345678901';
             }
-        });
+        };
+        $this->app->instance(StripeGatewayClient::class, $client);
 
         app(GatewayEngine::class)->connect($biz->id, 'stripe', 'acct_stub');
 
@@ -120,9 +117,9 @@ class CheckoutCaptureSeamTest extends TestCase
         $checkoutResult = app(CartPayAction::class)->handle($biz->id, 'sess_1', 'tok_fresh');
         $orderId = $checkoutResult['order_id'];
 
-        $this->assertSame('ch_stub_money58', Payment::where('business_id', $biz->id)->first()->gateway_charge_id);
-        $this->assertSame('paid', Order::whereKey($orderId)->first()->status);
-        $this->assertSame('paid', $checkoutResult['status']);
-        $this->assertSame(1, Payment::where('business_id', $biz->id)->count());
+        $this->assertSame(0, $client->calls);
+        $this->assertSame(0, Payment::where('business_id', $biz->id)->count());
+        $this->assertSame('pending_payment', Order::whereKey($orderId)->first()->status);
+        $this->assertSame('pending_payment', $checkoutResult['status']);
     }
 }
