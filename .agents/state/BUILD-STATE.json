@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T00:22:53",
+ "updated": "2026-09-06T01:27:10",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1094,10 +1094,17 @@
    ]
   },
   "X-194": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 23,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-194",
+     "stage": "capability",
+     "why": "App\\Models\\Location owns location timezones, X-194 cannot read it",
+     "at": "2026-09-06T01:27:10"
+    }
+   ]
   },
   "X-195": {
    "status": "DONE",
@@ -1581,6 +1588,12 @@
    "stage": "capability",
    "why": "G18-28 half (b): 'the voiceprint is a secure field'. Checked app/app/Modules/X-66/capabilities.php:43 and models. There is no voiceprint column in this tree at all, and THIS LANE OWNS IT.",
    "at": "2026-09-06T00:22:53"
+  },
+  {
+   "module": "X-194",
+   "stage": "capability",
+   "why": "App\\Models\\Location owns location timezones, X-194 cannot read it",
+   "at": "2026-09-06T01:27:10"
   }
  ],
  "decisions": [
