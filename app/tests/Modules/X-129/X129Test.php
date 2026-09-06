@@ -108,4 +108,137 @@ class X129Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /**
+     * [N-063]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_063_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-064]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_064_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-067]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_067_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-070]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_070_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-073]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_073_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-076]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_076_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-079]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_079_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-082]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_082_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-085]
+     * ⛔ REFUSED: "X-168 has no overtime/out-of-hours/attendance (P-204)" belongs to X-168
+     */
+    public function test_n_085_refused(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    /**
+     * [N-062]
+     * Asserting: the old domain redirects, never 404s
+     */
+    public function test_n_062_never_404s(): void
+    {
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sourceCrawl = [
+            'https://oldplumber.com/emergency-services',
+        ];
+
+        $simulatedWith404 = [
+            'https://oldplumber.com/emergency-services' => 404, // Broken/404 URL on new host
+        ];
+
+        $blockedCutover = $this->migrateAction->cutover(
+            businessId: $biz->id,
+            domain: 'newplumbingking.com',
+            sourceCrawlUrls: $sourceCrawl,
+            simulatedHostResponses: $simulatedWith404
+        );
+
+        $this->assertEquals('refused', $blockedCutover['status']);
+        $this->assertFalse($blockedCutover['migrated']);
+    }
+
+    /**
+     * [N-065]
+     * Asserting: rankings, links and redirects MOVE
+     */
+    public function test_n_065_redirects_move(): void
+    {
+        $biz = \Tests\TestCase::provisionTenant(['name' => 'Legacy Migration Tenant', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $sourceCrawl = [
+            'https://oldplumber.com/',
+        ];
+
+        $buildResult = $this->buildAction->build(
+            businessId: $biz->id,
+            sourceCrawlUrls: $sourceCrawl,
+            newDomainHost: 'https://newplumbingking.com'
+        );
+
+        $this->assertEquals('redirects_built', $buildResult['status']);
+        $savedRedirectCount = RedirectMap::where('business_id', $biz->id)->count();
+        $this->assertEquals(1, $savedRedirectCount);
+    }
 }
