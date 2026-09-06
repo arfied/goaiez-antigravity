@@ -18,6 +18,47 @@ for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_docto
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
+# SHARED GATE LOG (2026-09-06, shape agreed with the sibling project). One TSV line
+# per tool run, appended at exit, so a death correlates against what else was running
+# in that minute and the next kill is attributable instead of argued about.
+# EIGHT columns, in this order:
+#   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
+# rc is the RAW code and is the whole point: 128+N — 143 SIGTERM, 137 SIGKILL, 124 is
+# timeout(1)'s own. Never normalise it to 0/1.
+# **tool_pid is the join key, gate_pid only groups a run's rows** (sibling project,
+# 2026-09-06, from our own first sample: one gate_pid appeared on both the pint and
+# the phpstan row, which is what proved it useless as a key). `coder-bin/kill` records
+# the TARGET pid, and an agent killing a suite kills the *tool* — pest is what looks
+# stray in `ps`, not the wrapper. Joining kill-log on gate_pid would fail silently in
+# exactly the case this log exists to answer. Both pids cost one `$!` and neither is
+# recoverable afterwards.
+# No lock: appends under PIPE_BUF to an O_APPEND file are atomic on Linux, and a flock
+# here would interact with the pest lock for nothing.
+GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+log_gate() {                     # log_gate <tool> <start_iso> <rc> [tool_pid]
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$2" "$(date -Is)" "$$" "${4:--}" "$3" "grs-antig" "$(basename "$ROOT")" "$1" \
+    >> "$GATE_LOG" 2>/dev/null || true
+}
+# Defined here, at the top, deliberately: a gate killed during sections 0-5 must
+# still leave a start row. Defining it at section 6 recorded nothing for a gate
+# killed two seconds in — measured, 2026-09-06 16:16.
+# A KILLED GATE MUST NOT BE SILENT (sibling project, 2026-09-06). log_gate appends at
+# tool exit, so a tool killed mid-run still lands its row with rc 143 — but a kill
+# aimed at the WRAPPER leaves no row at all, indistinguishable from a gate that never
+# started. Two sentinels fix it for the cost of two lines: a start row with rc `-`,
+# and an end row from an EXIT trap. A start with no matching end is a killed gate.
+GATE_STARTED=$(date -Is)
+log_gate gate "$GATE_STARTED" - "$$"
+trap 'log_gate gate "$GATE_STARTED" "${fail:-?}" "$$"' EXIT
+# `trap - EXIT` first: without it the EXIT trap fires after the signal trap's `exit`
+# and appends a SECOND end row carrying $fail — measured 2026-09-06 16:2x, a killed
+# gate wrote rc=143 then rc=0, and a reader taking the last row would call a killed
+# gate clean. That is the same defect class this log exists to catch.
+trap 'trap - EXIT; log_gate gate "$GATE_STARTED" 143 "$$"; exit 143' TERM
+trap 'trap - EXIT; log_gate gate "$GATE_STARTED" 130 "$$"; exit 130' INT
+
+
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
 xml_db=$(grep -oE 'name="DB_DATABASE" value="[^"]*"' "$APP/phpunit.xml" 2>/dev/null | sed -E 's/.*value="([^"]*)"/\1/')
@@ -125,26 +166,22 @@ bar "6. style + static analysis"
 # SIGTERMed, because a killed process prints a bare `Terminated` that no signal-9
 # pattern matches. §7 below already reads rc for pest; §6 did not, and had the same
 # hole. rc >= 124 is timeout (124) or a signal (128+n: 137 = KILL, 143 = TERM).
-# SHARED GATE LOG (2026-09-06, shape agreed with the sibling project). One TSV line
-# per tool run, appended at exit, so a death correlates against what else was running
-# in that minute and the next kill is attributable instead of argued about.
-#   start_iso <TAB> end_iso <TAB> pid <TAB> rc <TAB> project <TAB> checkout <TAB> tool
-# rc is the RAW code and is the whole point: 128+N — 143 SIGTERM, 137 SIGKILL, 124 is
-# timeout(1)'s own. Never normalise it to 0/1. `pid` is the gate's pid, which is the
-# correlator; the tool is its child. No lock: appends under PIPE_BUF to an O_APPEND
-# file are atomic on Linux, and a flock here would interact with the pest lock for
-# nothing.
-GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
-log_gate() {                     # log_gate <tool> <start_iso> <rc>
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-    "$2" "$(date -Is)" "$$" "$3" "grs-antig" "$(basename "$ROOT")" "$1" >> "$GATE_LOG" 2>/dev/null || true
-}
 run_tool() {                     # run_tool <label> <cmd...>
   local label="$1"; shift
-  local out rc started
+  local out rc started tmp tpid child jobpid
   started=$(date -Is)
-  out=$("$@" 2>&1); rc=$?
-  log_gate "$label" "$started" "$rc"
+  # Run in the background solely to capture the TOOL's pid. An agent killing a
+  # suite kills the tool — that is the pid it sees in `ps` — so the tool pid is the
+  # join key against kill-log.tsv; the gate pid only groups a run's rows. Neither is
+  # recoverable after the fact (sibling project, 2026-09-06).
+  tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!; tpid=$jobpid
+  child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)  # through a `timeout` wrapper
+  [ -n "$child" ] && tpid=$child
+  wait "$jobpid"; rc=$?
+  out=$(cat "$tmp"); rm -f "$tmp"
+  log_gate "$label" "$started" "$rc" "$tpid"
   printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
   if [ $rc -ne 0 ]; then
     if [ $rc -ge 124 ] || printf '%s' "$out" | grep -qiE 'terminated|killed|signaled|signal "?[0-9]+"?'; then
@@ -212,8 +249,8 @@ fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
   pest_started=$(date -Is)
-  out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
-  log_gate pest "$pest_started" "$rc"
+  ptmp=$(mktemp "${TMPDIR:-/tmp}/pest-XXXXXX"); timeout 1800 ./vendor/bin/pest > "$ptmp" 2>&1 & pjob=$!; pest_pid=$(pgrep -P "$pjob" 2>/dev/null | head -1); pest_pid=${pest_pid:-$pjob}; wait "$pjob"; rc=$?; out=$(cat "$ptmp"); rm -f "$ptmp"
+  log_gate pest "$pest_started" "$rc" "${pest_pid:--}"
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
