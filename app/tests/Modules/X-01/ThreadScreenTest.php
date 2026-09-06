@@ -9,6 +9,8 @@ use App\Models\Conversation;
 use App\Models\Customer;
 use App\Models\Message;
 use App\Models\User;
+use App\Modules\X01\Domain\UnifiedInboxManager;
+use App\Modules\X01\Exceptions\TakeoverNotLatchedRefused;
 use App\Modules\X01\Ui\Thread;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
@@ -105,9 +107,9 @@ class ThreadScreenTest extends TestCase
             Tenancy::setUser($owner->id);
             $customer = Customer::factory()->create([
                 'name' => 'Release Customer',
-                'phone' => '+1512555' . rand(1000, 9999)
+                'phone' => '+1512555'.rand(1000, 9999),
             ]);
-            
+
             $conversation = Conversation::factory()->create([
                 'customer_id' => $customer->id,
                 'channel' => 'sms',
@@ -121,7 +123,7 @@ class ThreadScreenTest extends TestCase
                 'sender_id' => (string) $customer->id,
                 'body' => 'I need help',
             ]);
-            
+
             // Send reply to latch it
             Livewire::test(Thread::class, ['customer' => $customer])
                 ->set('replyText', 'I am here')
@@ -143,8 +145,8 @@ class ThreadScreenTest extends TestCase
 
             // 3. Consulted by something other than the component: the manager
             // If the latch actually ended, replyWithTakeover will throw
-            $manager = app(\App\Modules\X01\Domain\UnifiedInboxManager::class);
-            $this->expectException(\App\Modules\X01\Exceptions\TakeoverNotLatchedRefused::class);
+            $manager = app(UnifiedInboxManager::class);
+            $this->expectException(TakeoverNotLatchedRefused::class);
             $manager->replyWithTakeover($conversation->business_id, $conversation->id, 'another reply');
         });
     }

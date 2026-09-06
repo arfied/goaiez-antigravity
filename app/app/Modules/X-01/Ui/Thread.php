@@ -7,8 +7,10 @@ namespace App\Modules\X01\Ui;
 use App\Models\Conversation;
 use App\Models\Customer;
 use App\Modules\CAgent\Actions\AgentDraftAction;
+use App\Modules\X01\Actions\ConversationTakeoverReleaseAction;
 use App\Modules\X01\Domain\UnifiedInboxManager;
 use App\Modules\X01\Models\LeadScore;
+use App\Modules\X01\Models\TakeoverLatch;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
@@ -42,7 +44,7 @@ class Thread extends Component
 
     public bool $hasActiveTakeover = false;
 
-    public function releaseTakeover(\App\Modules\X01\Actions\ConversationTakeoverReleaseAction $action)
+    public function releaseTakeover(ConversationTakeoverReleaseAction $action)
     {
         if (! $this->customer) {
             return;
@@ -153,8 +155,8 @@ class Thread extends Component
                 ->select('messages.*', 'conversations.channel')
                 ->orderBy('messages.created_at', 'asc')
                 ->get();
-                
-            $this->hasActiveTakeover = \App\Modules\X01\Models\TakeoverLatch::whereIn('conversation_id', $conversationIds)
+
+            $this->hasActiveTakeover = TakeoverLatch::whereIn('conversation_id', $conversationIds)
                 ->where('is_active', true)
                 ->exists();
         }
