@@ -805,3 +805,4 @@
 - `2026-09-06T14:05:28` UNRESOLVED capability X-167 - G6-08: missing barcode library
 - `2026-09-06T14:05:28` (R245) X-167 — G6-18: bounded out by X-167 scope (a van and a storage unit, not a warehouse)
 - `2026-09-06T14:05:28` (R245) X-167 — G6-24: bounded out by X-167 scope (a van and a storage unit, not a warehouse)
+- `2026-09-06T14:17:54` (R245) X-166 — N-048: margin is proven by refusal (the module reads no invoiced source) plus a collected-figure test; the collected amount is supplied by the caller, and the money lane owns the payments source (R245)
