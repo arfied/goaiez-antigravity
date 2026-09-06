@@ -6,7 +6,9 @@ namespace Tests\Modules\X139\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X139\Models\ConversionUpload;
 use App\Modules\X139\Ui\RejectionRate;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -43,15 +45,15 @@ class RejectionRateScreenTest extends TestCase
         Livewire::test(RejectionRate::class, ['businessId' => $biz->id])
             ->assertSee('Rejected Conversions: 0 (0.0% Rate)');
 
-        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
-            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            ConversionUpload::forceCreate([
                 'business_id' => $biz->id,
                 'job_id' => 101,
                 'conversion_value_cents' => 10000,
                 'gclid_or_fbc' => 'gclid_1',
                 'status' => 'uploaded',
             ]);
-            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+            ConversionUpload::forceCreate([
                 'business_id' => $biz->id,
                 'job_id' => 102,
                 'conversion_value_cents' => 10000,
@@ -59,7 +61,7 @@ class RejectionRateScreenTest extends TestCase
                 'status' => 'rejected',
                 'rejection_reason' => 'Invalid click ID',
             ]);
-            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+            ConversionUpload::forceCreate([
                 'business_id' => $biz->id,
                 'job_id' => 103,
                 'conversion_value_cents' => 10000,
@@ -70,7 +72,7 @@ class RejectionRateScreenTest extends TestCase
         });
 
         $this->actingAs($owner);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
         Livewire::test(RejectionRate::class, ['businessId' => $biz->id])
             ->assertSee('Rejected Conversions: 2 (66.7% Rate)')

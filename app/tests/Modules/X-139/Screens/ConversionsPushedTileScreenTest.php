@@ -6,7 +6,9 @@ namespace Tests\Modules\X139\Screens;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Modules\X139\Models\ConversionUpload;
 use App\Modules\X139\Ui\ConversionsPushedTile;
+use App\Support\Tenancy;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -43,22 +45,22 @@ class ConversionsPushedTileScreenTest extends TestCase
         Livewire::test(ConversionsPushedTile::class, ['businessId' => $biz->id])
             ->assertSee('Uploaded Conversions: 0 ($0.00)');
 
-        \App\Support\Tenancy::actingAs($biz->id, function () use ($biz) {
-            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+        Tenancy::actingAs($biz->id, function () use ($biz) {
+            ConversionUpload::forceCreate([
                 'business_id' => $biz->id,
                 'job_id' => 101,
                 'conversion_value_cents' => 45678900,
                 'gclid_or_fbc' => 'gclid_1',
                 'status' => 'uploaded',
             ]);
-            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+            ConversionUpload::forceCreate([
                 'business_id' => $biz->id,
                 'job_id' => 102,
                 'conversion_value_cents' => 100000,
                 'gclid_or_fbc' => 'gclid_2',
                 'status' => 'uploaded',
             ]);
-            \App\Modules\X139\Models\ConversionUpload::forceCreate([
+            ConversionUpload::forceCreate([
                 'business_id' => $biz->id,
                 'job_id' => 103,
                 'conversion_value_cents' => 500000,
@@ -68,7 +70,7 @@ class ConversionsPushedTileScreenTest extends TestCase
         });
 
         $this->actingAs($owner);
-        \App\Support\Tenancy::set((int) $biz->id);
+        Tenancy::set((int) $biz->id);
 
         // 456789.00 + 1000.00 = 457789.00
         Livewire::test(ConversionsPushedTile::class, ['businessId' => $biz->id])

@@ -22,11 +22,11 @@ class RejectionRate extends Component
         if ($this->businessId > 0) {
             $query = ConversionUpload::where('business_id', $this->businessId);
             $totalCount = $query->count();
-            
+
             $rejectedQuery = clone $query;
             $rejectedQuery->where('status', 'rejected');
             $rejectedCount = $rejectedQuery->count();
-            
+
             $reasons = $rejectedQuery->whereNotNull('rejection_reason')->pluck('rejection_reason');
         }
 
