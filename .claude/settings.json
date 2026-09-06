@@ -32,9 +32,7 @@
       "Bash(bash .agents/supervisor/launch-coder.sh:*)",
       "Bash(git push origin:*)",
       "Bash(git commit:*)",
-      "Bash(git add:*)",
-      "Edit(//home/goaiez/agents/supervisor-tick.sh)",
-      "Edit(//home/goaiez/agents/coder-bin/git)"
+      "Bash(git add:*)"
     ],
     "deny": [
       "NotebookEdit",
