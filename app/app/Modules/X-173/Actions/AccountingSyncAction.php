@@ -47,10 +47,10 @@ final class AccountingSyncAction
         foreach ($transactions as $tx) {
             $ref = $tx['ref'] ?? ('tx_'.bin2hex(random_bytes(4)));
             $desc = $tx['description'] ?? '';
-            $confidence = (float) ($tx['confidence'] ?? 0.95);
-            $suggested = $tx['category'] ?? 'Job Revenue';
+            $confidence = array_key_exists('confidence', $tx) ? (float) $tx['confidence'] : 0.0;
+            $suggested  = $tx['category'] ?? 'uncategorised';
 
-            $inference = $this->engine->inferCategory($desc, $confidence, $suggested);
+            $inference = $this->engine->inferCategory($confidence, $suggested);
 
             if ($inference['is_low_confidence']) {
                 $conflictsCount++;

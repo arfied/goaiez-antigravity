@@ -96,4 +96,25 @@ class X173Test extends TestCase
         $this->assertNull($persisted->access_token);
         $this->assertStringNotContainsString('token_oauth_', (string) $persisted->access_token);
     }
+
+    public function test_missing_keys_take_refusal_path(): void
+    {
+        $biz = TestCase::provisionTenant();
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $connection = $this->connectAction->connect($biz->id, 'xero', 'realm_xyz');
+        
+        $transactions = [
+            ['ref' => 'inv_tx_missing', 'description' => 'missing both'],
+        ];
+        $syncResult = $this->syncAction->syncTransactions($biz->id, $connection->id, $transactions);
+
+        $this->assertEquals(0, $syncResult['records_synced']);
+        $this->assertEquals(1, $syncResult['conflicts_count']);
+        
+        $conflict = AccountingSyncConflict::where('business_id', $biz->id)->where('transaction_ref', 'inv_tx_missing')->first();
+        $this->assertEquals('uncategorised', $conflict->assigned_category);
+        $this->assertTrue((bool) $conflict->flagged_for_review);
+        $this->assertEquals('open', $conflict->status);
+    }
 }

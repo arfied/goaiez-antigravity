@@ -17,7 +17,7 @@ final class AccountingSyncEngine
      * Resolves accounting category from transaction description.
      * Category below confidence threshold posts to 'uncategorised' with review flag, NEVER to a guessed code (TEST ANCHOR & G1-03).
      */
-    public function inferCategory(string $description, float $inferredConfidence, string $suggestedCategory): array
+    public function inferCategory(float $inferredConfidence, string $suggestedCategory): array
     {
         if ($inferredConfidence < self::CONFIDENCE_THRESHOLD) {
             return [
