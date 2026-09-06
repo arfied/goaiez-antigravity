@@ -117,8 +117,19 @@ class PaymentplanBuilderScreenTest extends TestCase
             'due_date' => now()->subDays(3),
         ]);
 
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-UNPAID-1',
+            'total_cents' => 5000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(3),
+        ]);
+
         Livewire::actingAs($owner)->test(PaymentplanBuilder::class)
             ->assertOk()
+            ->assertSee('INV-UNPAID-1')
             ->assertDontSee('INV-PAID-1');
     }
 }

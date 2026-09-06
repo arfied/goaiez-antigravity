@@ -139,8 +139,19 @@ class CollectionsPackagePreviewScreenTest extends TestCase
             'due_date' => now()->subDays(10),
         ]);
 
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-ISSUED-1',
+            'total_cents' => 40000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(10),
+        ]);
+
         Livewire::actingAs($owner)->test(CollectionsPackagePreview::class)
             ->assertOk()
+            ->assertSee('INV-ISSUED-1')
             ->assertDontSee('INV-DRAFT-2');
     }
 }
