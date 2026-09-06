@@ -51,8 +51,10 @@ class AttributionRowTest extends TestCase
             ->assertDontSee('No attribution data yet')
             ->assertSee('This job earned')
             ->assertSee('$7,340.00')
-            ->assertSee('google_cpc')
-            ->assertSee('organic_search')
+            ->assertSee('Google ad')
+            ->assertDontSee('google_cpc')
+            ->assertSee('Google search')
+            ->assertDontSee('organic_search')
             ->assertSee('Summer Promo')
             ->assertSee('$123.45')
             ->assertSee('$9,999.00');
@@ -69,6 +71,35 @@ class AttributionRowTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(AttributionRow::class, ['businessId' => $biz->id])
-            ->assertSee('--');
+            ->assertSee('This job has no value recorded yet')
+            ->assertDontSee('--');
+    }
+
+    public function test_route_renders_attribution_row()
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Attribution Tenant 2']);
+        $user = $biz->owner;
+        Tenancy::set((int) $biz->id);
+
+        DB::table('attribution_queries')->insert([
+            'business_id' => $biz->id,
+            'job_id' => 9001,
+            'job_value' => null,
+            'touches' => json_encode([['source' => 'organic_search']]),
+            'attribution_status' => 'single',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('x-138.attribution-row'))
+            ->assertOk()
+            ->assertSee('Google search')
+            ->assertSee('One source')
+            ->assertSee('no value recorded yet')
+            ->assertDontSee('organic_search')
+            ->assertDontSee('SINGLE')
+            ->assertDontSee('single')
+            ->assertDontSee('--');
     }
 }

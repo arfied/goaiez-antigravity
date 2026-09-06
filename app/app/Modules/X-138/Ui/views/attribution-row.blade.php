@@ -12,24 +12,45 @@
                     @foreach($queries as $q)
                         @php
                             $touches = is_string($q->touches) ? json_decode($q->touches, true) : (array)$q->touches;
-                            $value = $q->job_value !== null ? '$' . number_format($q->job_value / 100, 2) : '--';
+                            $value = $q->job_value !== null ? '$' . number_format($q->job_value / 100, 2) : null;
                             $jobLabel = $q->job_id ? "Job #{$q->job_id}" : "Unknown job";
+                            
+                            $humanizeSource = function($src) {
+                                return match($src) {
+                                    'organic_search' => 'Google search',
+                                    'google_cpc' => 'Google ad',
+                                    'direct' => 'Typed in directly',
+                                    default => ucfirst(str_replace('_', ' ', $src ?? 'unknown'))
+                                };
+                            };
+                            $humanizeStatus = function($status) {
+                                $lower = strtolower($status ?? '');
+                                return match($lower) {
+                                    'single' => 'One source',
+                                    'ambiguous' => 'More than one source',
+                                    default => ucfirst(str_replace('_', ' ', $lower))
+                                };
+                            };
                         @endphp
                         <x-ui.row class="p-4 flex items-center justify-between">
                             <div class="flex-1">
                                 <p class="font-medium text-ink">
                                     <span class="text-ink-2">{{ $jobLabel }} &mdash;</span> 
-                                    This job earned {{ $value }}
+                                    @if($value !== null)
+                                        This job earned {{ $value }}
+                                    @else
+                                        This job has no value recorded yet
+                                    @endif
                                 </p>
                                 <div class="text-sm text-ink-2 mt-1">
                                     @foreach($touches as $t)
-                                        <div class="truncate">{{ $t['source'] ?? 'Unknown source' }}</div>
+                                        <div class="truncate">{{ $humanizeSource($t['source'] ?? 'unknown') }}</div>
                                     @endforeach
                                 </div>
                             </div>
                             <div class="ml-4">
                                 <span class="text-xs px-2 py-1 rounded bg-paper border border-rule text-ink-2 uppercase tracking-wide">
-                                    {{ $q->attribution_status }}
+                                    {{ $humanizeStatus($q->attribution_status) }}
                                 </span>
                             </div>
                         </x-ui.row>
