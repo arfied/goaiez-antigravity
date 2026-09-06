@@ -841,3 +841,4 @@
 - `2026-09-06T00:22:43` UNRESOLVED capability X-66 - G16-34: 'the tenant OWN voice only, recorded consent; P-202 disclosure on every message, asserted per channel'. Checked app/app/Modules/X-66/capabilities.php:40 and the module code surface. Recorded consent plus P-202 disclosure per channel is missing, and THIS LANE OWNS IT.
 - `2026-09-06T00:22:53` UNRESOLVED capability X-66 - G18-28 half (b): 'the voiceprint is a secure field'. Checked app/app/Modules/X-66/capabilities.php:43 and models. There is no voiceprint column in this tree at all, and THIS LANE OWNS IT.
 - `2026-09-06T01:27:10` UNRESOLVED capability X-194 - App\Models\Location owns location timezones, X-194 cannot read it
+- `2026-09-06T01:50:34` UNRESOLVED capability X-124 - X-111 owns escalation target

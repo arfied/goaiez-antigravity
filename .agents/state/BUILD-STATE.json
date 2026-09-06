@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T01:27:10",
+ "updated": "2026-09-06T01:50:34",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -657,10 +657,17 @@
    "unresolved": []
   },
   "X-124": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 18,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-124",
+     "stage": "capability",
+     "why": "X-111 owns escalation target",
+     "at": "2026-09-06T01:50:34"
+    }
+   ]
   },
   "X-125": {
    "status": "DONE",
@@ -1594,6 +1601,12 @@
    "stage": "capability",
    "why": "App\\Models\\Location owns location timezones, X-194 cannot read it",
    "at": "2026-09-06T01:27:10"
+  },
+  {
+   "module": "X-124",
+   "stage": "capability",
+   "why": "X-111 owns escalation target",
+   "at": "2026-09-06T01:50:34"
   }
  ],
  "decisions": [

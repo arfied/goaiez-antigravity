@@ -265,12 +265,12 @@ class X194Test extends TestCase
     /**
      * [G4-20], [G8-10], [G9-11], [G9-23], [G9-26], [G9-35], [G9-37], [G13-17]
      *
-     * ⛔ REFUSED: G4-20
-     * ⛔ REFUSED: G8-10
-     * ⛔ REFUSED: G9-11
-     * ⛔ REFUSED: G9-23
-     * ⛔ REFUSED: G9-26
-     * ⛔ REFUSED: G13-17
+     * ⛔ REFUSED: G4-20 — a house standard enforced by lint, not a capability row
+     * ⛔ REFUSED: G8-10 — named in the header; the JSONB column is X-121's (out of this lane)
+     * ⛔ REFUSED: G9-11 — named in the header
+     * ⛔ REFUSED: G9-23 — named in the header
+     * ⛔ REFUSED: G9-26 — named in the header (report.pdf)
+     * ⛔ REFUSED: G13-17 — revenue on the territory map; the polygons are X-10's (out of this lane)
      */
     public function test_reporting_capabilities(): void
     {
