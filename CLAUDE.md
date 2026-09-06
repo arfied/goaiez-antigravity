@@ -376,6 +376,37 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   Before calling any count moved, confirm the file actually changed —
   `git diff --stat HEAD -- .agents/state/` printing nothing means no count moved,
   whatever the grep says.
+- **What a Track 1 merge of `track/site` would actually deliver: one file**
+  (tick 162). Measured against the merge-base `261347f5`, this track's twelve
+  unmerged commits touch **six** files — `.agents/state/BUILD-STATE.json`,
+  `.agents/state/JOURNAL.md`, `.agents/supervisor/launch-coder.sh`, `CLAUDE.md`,
+  `bin/supervise.sh`, `app/GOAIEZ-TRACKER-CAPABILITIES.md` — and the **first
+  five are on the charter's never-merge per-track list**. The only mergeable
+  content is 14 lines of the capability tracker (seven rows: G3-11, G8-13,
+  G13-05, G13-15, G13-24, G16-21, G18-17, each given the plan's written
+  refusal/assertion). Zero `app/app/**`, zero `app/tests/**`. So "twelve commits
+  unmerged" is not twelve commits of stranded product — do not brief or escalate
+  it as one. This track's state records reach `main` by **cherry-pick** (ruling
+  15), a separate mechanism from the merge, and neither has happened.
+  ⚠️ `git merge-tree --write-tree --name-only` is **refused in this session**;
+  the substitute is `git merge-base` then `git diff --stat <base> <branch>`,
+  which is also the only form that measures edits rather than staleness.
+- **Track 7's tracker rows and sixty's X-137 tests are complementary, not
+  duplicate** (tick 162, de-escalating OWNER ACTION 45).
+  `git diff --name-only 2bd2b926 origin/track/sixty --
+  app/GOAIEZ-TRACKER-CAPABILITIES.md` prints **nothing**: sixty's `68030f03`
+  ("close capabilities G3-11, G8-13, G18-17, G18-24") touches only
+  `app/tests/Modules/X-137/`. Track 7 wrote the *specification rows*, sixty
+  wrote the *tests* for four of the same ids, in different files — Track 1 gets
+  no textual conflict. The overlap is still worth the owner's eye, but it is not
+  the two-branches-one-finding conflict 45 was opened as.
+- **The root `error_log` is a deleted scratch script, not a writer** (tick 162).
+  Its whole 485 bytes are one event, `2026-09-05 21:02:31 UTC` (16:02 local,
+  matching its mtime): a `test2.php` at the checkout root run without
+  `vendor/autoload.php`. That file no longer exists and left no tracked change,
+  and 16:02 predates this track's 17:57–21:22 commit range. It is untracked
+  clutter under OWNER ACTION 34's tree note, not a one-writer BLOCK — that rule
+  is about `agy` processes with `cwd` here.
 - SMS/mail drivers stay `log` in tests. A vendor send happens only in a
   journey on the real transport, with the owner's credentials.
 
