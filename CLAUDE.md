@@ -646,6 +646,38 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   themselves: **every census query's scope is not its claim, in both
   directions.**
 
+  ⛔ **That sub-path test covers ONE half of the column — the tests half needs a
+  FILE-DISJOINTNESS test, not a sub-path one** (tick 187). The command tick 185
+  distilled is `git diff --stat <old>..<new> -- app/app/Modules/X-110`, which is
+  `app/app/` only; **half 1's pathspec has covered `app/tests/Modules/` since tick
+  152**, added precisely because a module's column is its code *and* its tests. So
+  the distilled test prints clean on a ui commit that edits this track's
+  capability spec file, and the violation passes unseen. The `Ui/` filter cannot
+  be carried across either: ruling 5's Track 2 grant (`all Ui/`, views, Livewire)
+  is a **code-path** grant, and measured at tick 187 this checkout's
+  `app/tests/Modules/X-110/` holds `CoolingTest.php`, `InstallVerifyTest.php`,
+  `Screens/`, `TodayTest.php`, `VisitorsLiveTest.php`, `X110Test.php` — **no `Ui/`
+  subdirectory**, and no ruling creates one. On the tests half the question is not
+  *which subdirectory* but *which file*. So the X-110 delta test is **two
+  commands, one per half**:
+
+  ```
+  git diff --stat <old>..<new> -- app/app/Modules/X-110
+  git log --format='COMMIT %h %s' --name-only <old>..<new> -- app/tests/Modules/X-110
+  ```
+
+  Code: every path under `X-110/Ui/`. Tests: every file one ui owns. Measured over
+  ui's whole unmerged range at tick 187 — **nine** commits touch the tests path
+  (`3014d8a1` 13:15 → `5f129d61` 02:04) and every one touches
+  `AbandonedFormsTest.php` and nothing else, a file absent from this checkout;
+  **zero touch `X110Test.php`**. That is tick 185's confirmation (2) re-measured
+  by filename rather than inferred, and it is the shape the next delta must
+  reproduce. A ui commit touching `X110Test.php` is a violation whatever it says —
+  it is exactly the textual conflict for Track 1 that 185 certified was absent.
+  Sixth statement of the law (163, 178, 180, 183, 185): **a query's scope is not
+  its claim** — and here the under-scoped query was one this ledger wrote itself,
+  two ticks earlier.
+
   ⚠️ `app/database/seeders/` is a watch item, not a fourth half (tick 185). Ui's
   `3dfcb662` added `UiReviewSeeder.php` and it entered the complement as one of
   its two new files. It is the same *shape* as `app/database/migrations` — a
