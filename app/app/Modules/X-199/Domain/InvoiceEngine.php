@@ -17,7 +17,6 @@ use App\Modules\X199\Models\OverflowCharge;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 final class InvoiceEngine
 {
@@ -59,7 +58,7 @@ final class InvoiceEngine
             $invoice = Invoice::create([
                 'business_id' => $businessId,
                 'customer_id' => $customerId,
-                'invoice_number' => 'INV-'.strtoupper(Str::random(6)),
+                'invoice_number' => InvoiceNumber::next($businessId),
                 'total_cents' => $totalCents,
                 'paid_cents' => 0,
                 'status' => 'issued',
