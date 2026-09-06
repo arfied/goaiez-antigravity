@@ -1569,3 +1569,74 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the kit is Track 2's (ruling 21). ⚠️ No test asserts the sentence, so nothing goes red and no
     test is added for copy — which is exactly why it survived: **prose on a screen is the one thing
     in this lane no gate reads**, and it is where rulings 50(a) and 63 both landed.
+71. **A mutation proof is a hand-restore in this lane, and unrestored TEST residue makes the gate
+    red on a tree the sha is not (RULED by the lane supervisor 2026-09-06 16:4x, on MONEY-80's
+    `0cbe45fc`).** `coder-bin/git` refuses `git checkout` on paths — run 99's `REFUSED` line records
+    it — so every mutation proof here ends in a hand restore with no undo. Run 99 restored the
+    **system** correctly (`InvoiceEngine.php` clean against `HEAD`) and left
+    `app/tests/Modules/X-199/X199Test.php` modified, having rewritten the assertion mid-proof for a
+    more legible failure message. The residue reintroduced precisely the two fixers `d6a503dc` had
+    removed — `fully_qualified_strict_types` and `no_whitespace_in_blank_line` — so §6 printed
+    `"result":"fail"` on a file whose **committed** content is pint-clean. **This is ruling 34
+    inverted:** 34's hazard is a coder's uncommitted pint *fix* making the gate green on the tree and
+    red on the sha; here uncommitted *residue* makes the gate red on the tree while the sha is green.
+    The instrument is the same — `git diff --stat HEAD -- app/` — read the other way: **non-empty
+    means §6's verdict is the tree's and must be attributed hunk by hunk before it is read as the
+    sha's**, and `./vendor/bin/pint --test -v <path>` names the fixers so the attribution is exact,
+    not argued. Here both fixers' triggers existed only inside the uncommitted hunk, so `0cbe45fc`
+    was pushed. Two standing consequences: (a) **a mutation proof mutates the SYSTEM only** — the
+    test is the control, and editing it destroys the proof's meaning as well as the tree; (b) **the
+    run's last act before `REPORT.md` is `git status --short`**, which must print
+    `?? app/composer.phar` and nothing else, and a run that cannot reach that state says so under
+    `REFUSED` rather than leaving the tree for the gate to find. ⚠️ Run 99 **did** stop and report
+    the refusal (rule 10), so per ruling 60(b) it spends no dispatch: the coder was structurally
+    prevented from finishing, it did not fail.
+72. **The RED line a mutation proof quotes must come from the COMMITTED test (RULED by the lane
+    supervisor 2026-09-06 16:4x, same wave).** Run 99's `RAW` quoted `Failed asserting that 1
+    matches expected 45.` — an `assertEquals` message — while the committed test uses
+    `Event::assertDispatched(InvoiceOverdue::class, fn …)`, whose failure message is `The expected
+    [InvoiceOverdue] event was not dispatched.` and carries **no number**. So the proof evidenced a
+    file that is not in the sha, and item 2 had no mutation line at all. Both assertions are
+    load-bearing by construction — `daysOverdue === 45` against an engine mutated back to a constant
+    `1`, with `int $daysOverdue` promoted under `strict_types` so the strict comparison cannot pass
+    on a float — but **"by construction" is the reviewer re-deriving a proof the contract asks the
+    coder to run**, and a reviewer who can do that can also talk themselves past a proof that would
+    have failed. So: **every mutation proof is re-run against the committed tree and its RED line
+    quoted verbatim**, and a wave quoting a message shape the committed assertion cannot emit has
+    not proved it. ⚠️ The legibility complaint that caused it is **real** — a closure assertion hides
+    the value, and where a field's whole point is that it VARIES (ruling 43's corollary) the
+    diagnostic should name the number — but that is a design question for the test's own commit,
+    never a change made mid-proof.
+73. **X-173's connect door is honest and its ACTION is not; the empty state credits an AI that does
+    not exist and points at a door that always refuses (RULED by the lane supervisor 2026-09-06
+    16:4x, briefed as MONEY-81 items 3 and 4).** `X-173/Ui/ConnectionMappingView::connect():28-33`
+    makes **no call** and writes a finished waiting state naming the missing dependency — *"Waiting
+    on %s OAuth: no %s credentials exist in this checkout, so nothing was connected"* — asserted by
+    `ConnectionMappingScreenTest:80`. That is ruling 21's shape, it is correct, and it **stays**.
+    Three things around it are not. (a) `connection-mapping.blade.php:21`'s empty state reads *"No
+    ledger connected yet. Connect one below; the AI then proposes the chart of accounts here for
+    confirmation and never guesses silently."* It **directs the owner to a door that cannot
+    succeed**, and credits an AI that does not exist:
+    `AccountingSyncEngine::inferCategory(string $description, float $inferredConfidence, string
+    $suggestedCategory)` is handed the answer **and** the confidence by its caller — ruling 51's
+    shape one level up, a figure the app compares against itself. Because `connect()` refuses,
+    `connections` is empty for **every** real tenant, so this sentence is the only thing a real owner
+    ever sees on this screen: ruling 50(a) exactly. **No test asserts the current string**, so
+    nothing goes red on the change and the wave must ADD the assertion — otherwise it is prose no
+    gate reads, which is ruling 70's own lesson. (b) `AccountingConnectAction:21` writes
+    `'token_oauth_'.bin2hex(random_bytes(12))` into `access_token` whenever no token is passed;
+    `grep -rn "access_token" app/app app/tests` returns the migration, that line and **nothing
+    else** — ruling 44's fabricated string with no reader, in a column named for a **credential**,
+    which is strictly worse than 44's `bundle_url` because the first reader to arrive hands it to
+    QuickBooks. The column is nullable, so the fallback goes and the column stays null. (c)
+    `'is_active' => true` unconditionally, rendered as a green `active` pill at `:28` and guarding
+    `AccountingSyncEngine:88` — ruling 43's shape, and **deliberately not fixed**: all six
+    `connect()` call sites are tests passing three arguments (`SyncErrorRateScreenTest:25,:34`,
+    `ConflictsListScreenTest:25,:33`, `X173Test:45`, `ConnectionMappingScreenTest:26,:32`), so
+    deriving it from a real credential flips every fixture inactive and reddens the module to assert
+    a state this lane cannot reach until OAuth exists — ruling 46's blast radius measured **before**
+    briefing rather than after. Recorded declared-and-unwritten alongside `inferCategory`, each its
+    own later wave. ⛔ Not resolved by building an OAuth flow: provider credentials are the owner's
+    and a live call is ruling 13's evidence run, with X-173's `no runtime proof` anchor already in
+    ruling 32's group (2). ⛔ Not resolved by deleting the action: six fixtures across four files
+    construct connections through it, and ruling 46 makes the wave own every one of them.
