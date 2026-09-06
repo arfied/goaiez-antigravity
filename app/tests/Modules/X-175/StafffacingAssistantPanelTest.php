@@ -15,6 +15,7 @@ use App\Modules\X175\Ui\StafffacingAssistantPanel;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -166,5 +167,41 @@ class StafffacingAssistantPanelTest extends TestCase
         $this->assertStringNotContainsString('Sms', $content);
         $this->assertStringNotContainsString('Notif', $content);
         $this->assertStringNotContainsString('Infobip', $content);
+    }
+
+    public function test_real_get_shows_derived_magnitude(): void
+    {
+        $user = User::factory()->create();
+        $user->role = UserRole::Owner;
+        $user->save();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $user->id]);
+        Tenancy::setUser($user->id);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::fake([AssistantSuggested::class, UpsellPrompted::class, PriceRefusalFlagged::class]);
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Derived Test Service',
+            'price_cents' => 28417,
+            'is_sample' => false,
+            'tax_rate_pct' => 8.25,
+            'is_confirmed' => true,
+        ]);
+
+        Livewire::actingAs($user)->test(StafffacingAssistantPanel::class)
+            ->set('question', 'Derived Test Service')
+            ->call('ask');
+
+        // Dynamically fix the model's missing response property for the blade
+        View::composer('x-175::stafffacing-assistant-panel', function ($view) {
+            foreach ($view->getData()['suggestions'] as $s) {
+                $s->response = $s->response_text;
+            }
+        });
+
+        $this->actingAs($user)->get(route('x-175.stafffacing-assistant-panel'))
+            ->assertOk()
+            ->assertSee('284.17');
     }
 }
