@@ -260,6 +260,6 @@ class X200Test extends TestCase
         $seat = $this->loginAction->login($biz->id, 'Agent John', isAi: false);
 
         $this->assertSame(100, $this->qaAction->scoreCall($biz->id, $seat->id, 2001, 150)->qa_rating);
-        $this->assertSame(0,   $this->qaAction->scoreCall($biz->id, $seat->id, 2002, -5)->qa_rating);
+        $this->assertSame(0, $this->qaAction->scoreCall($biz->id, $seat->id, 2002, -5)->qa_rating);
     }
 }
