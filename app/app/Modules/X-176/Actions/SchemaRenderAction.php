@@ -22,7 +22,8 @@ final class SchemaRenderAction
         string $domainName,
         ?string $entityType = null,
         ?array $productOffers = null,
-        ?array $videos = null
+        ?array $videos = null,
+        ?array $events = null
     ): array {
         if ($entityType === null) {
             $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
@@ -75,6 +76,16 @@ final class SchemaRenderAction
                 'contentUrl' => $v['contentUrl'] ?? null,
                 'uploadDate' => $v['uploadDate'] ?? null,
             ], $videos);
+        }
+
+        if (! empty($events)) {
+            // Event injected on publish (TEST ANCHOR, G8-15)
+            $jsonLd['event'] = array_map(fn ($e) => [
+                '@type' => 'Event',
+                'name' => $e['name'] ?? null,
+                'startDate' => $e['startDate'] ?? null,
+                'endDate' => $e['endDate'] ?? null,
+            ], $events);
         }
 
         $isValid = $this->validateSchema($jsonLd);
@@ -148,6 +159,22 @@ final class SchemaRenderAction
                     return false;
                 }
                 foreach (['name', 'contentUrl', 'uploadDate'] as $k) {
+                    if (! isset($item[$k]) || ! is_string($item[$k]) || $item[$k] === '') {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if (isset($schema['event'])) {
+            if (! is_array($schema['event'])) {
+                return false;
+            }
+            foreach ($schema['event'] as $item) {
+                if (($item['@type'] ?? '') !== 'Event') {
+                    return false;
+                }
+                foreach (['name', 'startDate', 'endDate'] as $k) {
                     if (! isset($item[$k]) || ! is_string($item[$k]) || $item[$k] === '') {
                         return false;
                     }

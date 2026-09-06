@@ -99,6 +99,19 @@ final class EdgeDeployAction
 
             // Compile HTML artifact to local storage
             $videos = [];
+            $events = [];
+
+            $appointments = \App\Modules\X108\Models\Appointment::where('business_id', $businessId)
+                ->where('start_time', '>=', now())
+                ->get();
+            foreach ($appointments as $apt) {
+                $events[] = [
+                    'name' => (string) ($apt->service_name ?? 'Appointment'),
+                    'startDate' => $apt->start_time?->toIso8601String(),
+                    'endDate' => $apt->end_time?->toIso8601String(),
+                ];
+            }
+
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
             $html .= "</head><body>\n";
@@ -173,7 +186,8 @@ final class EdgeDeployAction
                     $businessName,
                     $commitId,
                     $zone->domain_name,
-                    videos: $videos ?: null
+                    videos: $videos ?: null,
+                    events: $events ?: null
                 );
 
                 if (isset($schemaResult['json_ld'])) {
