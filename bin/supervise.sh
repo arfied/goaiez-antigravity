@@ -5,6 +5,7 @@
 #   bash bin/supervise.sh                # guard · tree · state · integrity · pint · phpstan
 #   bash bin/supervise.sh --tests        # + pest, against phpunit.xml's database
 #   bash bin/supervise.sh --full-doctor  # + all eight doctor stages
+#   bash bin/supervise.sh --caps [X-nnn] # + the capability stage, whole and per-module
 #
 # Exit 2 = a database points at production. Exit 1 = a gate failed. Exit 0 =
 # gates green, which is necessary and not sufficient: now read the diff.
@@ -31,10 +32,71 @@ if [ -z "$PHP" ]; then
   done
   PHP="${PHP:-php}"
 fi
-want_tests=0; want_doctor=0
-for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
+want_tests=0; want_doctor=0; want_caps=0; caps_mod=""
+for a in "$@"; do case "$a" in
+  --tests) want_tests=1;;
+  --full-doctor) want_doctor=1;;
+  --caps) want_caps=1;;
+  X-*) caps_mod="$a"; want_caps=1;;
+esac; done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
+
+# ── shared gate log (Track 1, OWNER.md 2026-09-06 16:0x, corrected 16:5x) ──────
+# EIGHT columns, in this order, and the rc is RAW — 124 is timeout(1)'s own,
+# 137 SIGKILL, 143 SIGTERM. A normalised 0/1 throws away the entire signal.
+#
+#   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
+#
+# `project` is the project (goaiez-antigravity), `checkout` this directory's
+# basename. `tool_pid` is the join key against kill-log.tsv and must be the
+# process a killer sees in `ps` — through `timeout` that is the CHILD, so the
+# pgrep -P descent below is not optional. No lock: appends under PIPE_BUF to an
+# O_APPEND file are atomic, and a flock here would interact with the pest lock
+# for nothing.
+GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+GATE_PID=$$
+GATE_PROJECT=goaiez-antigravity
+GATE_CHECKOUT=$(basename "$ROOT")
+gate_row() { # start end tool_pid rc tool
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$2" "$GATE_PID" "$3" "$4" "$GATE_PROJECT" "$GATE_CHECKOUT" "$5" \
+    >> "$GATE_LOG" 2>/dev/null || true
+}
+# The sentinel is defined HERE, at the top, and not where the tools run: Track 1
+# put theirs beside the tools and recorded nothing at all for a gate killed two
+# seconds in. `trap - EXIT` goes INSIDE each signal trap — without it the honest
+# rc=143 row is followed by a clean rc=0 row from the EXIT trap, and the last
+# row reads green.
+GATE_START=$(date -Is)
+gate_row "$GATE_START" "-" "-" "-" "supervise.sh"
+gate_exit() { gate_row "$GATE_START" "$(date -Is)" "-" "${1:-0}" "supervise.sh"; }
+trap 'gate_exit $?' EXIT
+trap 'trap - EXIT; gate_exit 143; exit 143' TERM
+trap 'trap - EXIT; gate_exit 130; exit 130' INT
+
+# Run one gate tool, capture its rc and the pid a killer would see, log a row.
+# Sets GATE_OUT and GATE_RC.  Never pipes the tool: a pipeline hides which side
+# died, and a KILLED tool must not read as a verdict.
+run_tool() { # label cmd...
+  local label=$1; shift
+  local start end tmp jobpid tpid child
+  start=$(date -Is)
+  tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX") || tmp=/tmp/gate-$$-$RANDOM
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!; tpid=$jobpid
+  child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)
+  [ -n "$child" ] && tpid=$child
+  wait "$jobpid"; GATE_RC=$?
+  end=$(date -Is)
+  GATE_OUT=$(cat "$tmp" 2>/dev/null); rm -f "$tmp"
+  gate_row "$start" "$end" "$tpid" "$GATE_RC" "$label"
+  if [ "$GATE_RC" -eq 124 ] || [ "$GATE_RC" -ge 128 ]; then
+    echo "  ⛔ $label was KILLED or timed out (rc=$GATE_RC) — this is NOT a verdict"
+    return 0
+  fi
+  return 0
+}
 
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
@@ -119,10 +181,32 @@ if [ $want_doctor -eq 1 ]; then
   "$PHP" artisan doctor 2>&1 | tail -30 | sed 's/^/  /'
 fi
 
+if [ $want_caps -eq 1 ]; then
+  # The supervisor's own instrument for the capability count. §3's STAGES line
+  # comes from BUILD-STATE.json, which is a HAND MARK (`state.py stage`) — run 83
+  # closed fifteen violations and left that mark reading the pre-run number, so
+  # the two disagreed and only this section could say which was true.
+  bar "5b. capability stage  (measured here, not read from BUILD-STATE)"
+  run_tool "doctor-capability" "$PHP" artisan doctor --stage=capability
+  printf '%s\n' "$GATE_OUT" | grep -E 'violation\(s\)|^ *(ok|FAIL) capability' | tail -3 | sed 's/^/  /'
+  echo "  violation lines: $(printf '%s\n' "$GATE_OUT" | grep -c '^ *·')"
+  if [ -n "$caps_mod" ]; then
+    echo "  $caps_mod:"
+    printf '%s\n' "$GATE_OUT" | grep -F "$caps_mod" | sed 's/^/    /'
+    echo "  $caps_mod lines: $(printf '%s\n' "$GATE_OUT" | grep -cF "$caps_mod")"
+  fi
+fi
+
 bar "6. style + static analysis"
 echo "  php: $(command -v "$PHP") — $("$PHP" -v 2>&1 | head -1)"
-"$PHP" ./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-"$PHP" ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+# Not piped into `tail` any more (Track 1, OWNER.md 2026-09-06 16:0x): a KILLED
+# pint prints a bare `Terminated` and was about to be recorded as a style red.
+run_tool "pint" "$PHP" ./vendor/bin/pint --test
+printf '%s\n' "$GATE_OUT" | tail -3 | sed 's/^/  /'
+[ "$GATE_RC" -ne 0 ] && fail=1
+run_tool "phpstan" "$PHP" ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+printf '%s\n' "$GATE_OUT" | tail -4 | sed 's/^/  /'
+[ "$GATE_RC" -ne 0 ] && fail=1
 
 if [ $want_tests -eq 1 ]; then
   # The DB_DATABASE= export on the next line overrides phpunit.xml's $xml_db pin
@@ -217,8 +301,17 @@ if [ $want_tests -eq 1 ]; then
     fi
   fi
   if [ $want_tests -eq 1 ]; then
-  out=$(timeout 1800 env DB_DATABASE=goaiez_antig_reviews_test "$PHP" ./vendor/bin/pest 2>&1); rc=$?
+  # Through run_tool, not $(…): command substitution gives no pid, and pest is
+  # the tool that actually gets killed on this box. The pgrep -P descent inside
+  # run_tool is what makes the logged pid `php ./vendor/bin/pest` rather than the
+  # `timeout` wrapper — log the wrapper and the join against kill-log.tsv fails
+  # in exactly the case the log exists for.
+  run_tool "pest" timeout 1800 env DB_DATABASE=goaiez_antig_reviews_test "$PHP" ./vendor/bin/pest
+  out=$GATE_OUT; rc=$GATE_RC
   flock -u 9 2>/dev/null || true
+  if [ "$rc" -ge 128 ]; then
+    echo "  ⛔ pest was KILLED (rc=$rc) — NOT a red suite. Do not take a number from this run."
+  fi
   # Track-scoped: /home/goaiez/tmp is shared by every worktree, and an unscoped
   # last-pest.json means one track reads another track's run as its own.
   printf '%s' "$out" | tail -1 > "/home/goaiez/tmp/last-pest-$(basename "$ROOT").json"

@@ -103,10 +103,18 @@ if [ "$MERGE_OK" = 1 ]; then echo "merge gate: OPEN (--allow-merge)"; else echo 
 # `--setting-sources user` on the claude branch is load-bearing: without it the coder
 # would inherit THIS checkout's supervisor `.claude/settings.json`, which denies
 # `app/**` — the coder's own column — and the run would refuse its whole brief.
+#
+# BASH_ENV (Track 1, OWNER.md 2026-09-06 16:0x) makes `kill` ATTRIBUTABLE. `kill` is a
+# bash builtin, so the coder-bin PATH shim never sees it; `enable -n kill` in
+# shell-init.sh disables the builtin so `kill` resolves through PATH, where
+# coder-bin/kill records caller/target to /home/goaiez/tmp/kill-log.tsv and THEN
+# performs the kill — it refuses nothing. It does not catch os.kill(), a kill(2) from
+# a non-shell process, or a shell that never sourced it; it moves the likely case from
+# a rule to a mechanism. A missing shell-init.sh is silently ignored by bash.
 if [ "$CODER" = claude ]; then
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
