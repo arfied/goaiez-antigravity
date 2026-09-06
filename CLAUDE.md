@@ -1388,6 +1388,55 @@ Watch for: <the trap that applies, by name>
   wave 81's bad `UNRESOLVED` (a card this lane simply had not built) and wave 85's good one (a type shared
   with three out-of-lane modules): **the test is whether the absent thing is what the capability asks you to
   build.**
+- ⚠️⚠️ **Read `REPORT.md`'s mtime AGAIN at gate time — a tick can race a run's last write, and a dead pid plus
+  a stale-looking report is then indistinguishable from a run that died without one.** At tick 201 the pid was
+  dead and `.agents/supervisor/REPORT.md` read `06:10` (the *previous* wave's) at tick open, which is the
+  three-branch rule's *clean tree + commits on the tip* signature exactly; I graded the whole wave from
+  artifacts on that basis. `supervise.sh` §3's mailbox line then printed `REPORT.md 2026-09-06 06:40:19` —
+  written between my first `ls` and my gate run. The agy log's `Error: timeout waiting for response` /
+  `AGY_EXIT=1` arrived *after* the deliverable landed; the run completed and only its harness timed out. The
+  wave-88 rule says grade the mtime against the **dispatch**; this is its other half — **grade it against your
+  own tick's clock too**, and §3's mailbox line gives it to you for free on a command you already run.
+  ⭐ **Keep the accidental ordering on purpose: measure every field BEFORE reading the report.** Nothing in
+  that tick's findings could have been seeded by it, which is the tick-171 leak rule honoured by sequence
+  rather than by discipline — and it costs nothing, because every field is a command you must run anyway.
+- ⭐ **A failure message that carries the module's own WRITES pins the mutation site, exactly as a render
+  message does — so `assertDatabaseMissing` joins `assertSeeInOrder` in the tick-185 exception.** Tick 185
+  requires the `SITE` field because a test-body mutation and a live-path one produce identical failure lines.
+  Wave 100's log settles it without the field: `Found similar results:` listed three rows, the third being a
+  `sent` `mail_events` row for the refused recipient — and only `EmailSendAction::handle():85` writes a `sent`
+  row — **while the fixture row was still present in the same list**, which excludes the one test-body
+  mutation that could produce the same failure (deleting the fixture). Gate open + fixture present + module's
+  own row written ⇒ live path. The disclosed field then agreed (line 60, `if ($hasBounceOrSpam) {`, exact).
+  **Ask first whether a failure message carries the module's output or only the test's expectation**; when it
+  carries the output, the `SITE` field is corroboration rather than the only evidence.
+- ⚠️ **A value your code gates on is not live until something WRITES it — grep the writers, not just the
+  readers.** Decision 272's shape is *a table with writers and no reader*; this is its mirror and it is easier
+  to miss, because the gate's test is green and its mutation is clean. `grep -rn "MailEvent::create\|'event_type'
+  =>" app/app` gives C-Mail exactly `sent`, `queued`, `unsubscribed` — **nothing writes `bounced`, `complained`
+  or `replied`**, so wave 100's gate and `EmailHaltSeedAction:33` are two readers of a value no code produces.
+  That is the honest state of a gate whose feed is external and is not a defect; but `REPORT.md` is overwritten
+  every wave, so **the docblock must say what is still absent**, or a future tick reads a green
+  `test_g11_10_…` as a working bounce gate.
+- ⚠️ **A newly invented column value is `green by construction` arriving through a STRING MISMATCH — a rung the
+  assertion ladder does not otherwise have.** Wave 100's gate queries `whereIn('event_type', ['bounced',
+  'spam-trap'])` while the migration's own vocabulary comment
+  (`2026_08_30_000043_create_c_mail_tables.php:47`) reads `// sent, queued, bounced, complained, replied`.
+  `spam-trap` appears nowhere else in the tree but the capability text. The test passes, the mutation is
+  sound, and the day an ingest writes `spam_trap` the gate silently never fires. Nothing in the ladder catches
+  it, because no assertion is weak — the *vocabulary* is. **When a wave gates on a string value, check it
+  against the column's documented vocabulary and make the comment the durable record.** (`unsubscribed`, a
+  fourth undocumented value, was already drifting before that wave.)
+- **Backlog at tick 201 — wave 101 is C-Mail's inbound event ingest.** RULED this tick, superseding tick 200's
+  plan of `G11-12`'s bridge: `grep -rn "EmailBounced\|EmailComplained\|EmailReplied" app/app app/tests` names
+  **only the three declarations**, and C-Mail's five Actions (`DnsCheck · HaltSeed · Send · Unsubscribe ·
+  Warmup`) include no ingest. So the bridge's missing dispatcher, wave 100's missing writer,
+  `EmailHaltSeedAction:33`'s writerless `bounced` reader and the empty `ComplaintbounceBoard` (15 lines, a
+  bare `render()`, never touches `MailEvent`) are **one absent piece, not four**. The action is in lane; the
+  HTTP transport needs a vendor account and is reserved — and takes **no `UNRESOLVED`**, by wave 100's item-4
+  reasoning: nothing is missing *to the action*. Then wave 102 is `G11-12`'s X-01 half, which still needs
+  `EmailReplied` to carry a body and a sender name it does not have. The live proposal list stays
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 
