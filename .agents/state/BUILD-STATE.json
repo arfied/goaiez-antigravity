@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T16:21:16",
+ "updated": "2026-09-06T18:14:20",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5000,6 +5000,12 @@
    "module": "X-200",
    "chose": "R245 \u2014 X200Test already asserts the 3.0% ceiling, positive-only scorecards, clamps, AI parity, and uncertain AMD at lines 107-108, 117, 222-223, 248, and 262-263, and the 21 remaining ids are UNRESOLVED because they name a UI surface, another module's system, or a clause with no code.",
    "at": "2026-09-06T13:43:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-123",
+   "chose": "the none sentinel is the empty declaration on both sides of the agent_reachable comparison. The plan writes it as the bare word none and a generated manifest writes it as the array member none, and they are the same statement - no action in this module is agent-reachable. A manifest is MANIFEST-GRANTS-MORE only when it names a member that is neither none nor in the plan list. Read one-sidedly the census reports 83 of 127 manifests granting what the plan denies; read correctly it is 3 - X-123 webhook.test, X-175 field.ask, X-82 rate.set.",
+   "at": "2026-09-06T18:13:37",
    "ruling": "R245"
   }
  ],
