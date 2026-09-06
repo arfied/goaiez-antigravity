@@ -1988,7 +1988,75 @@ Watch for: <the trap that applies, by name>
   true matches expected false"*, and `7887 → 7886` (`−1`) subtracts to exactly that. **Three independent
   checks, no artifact needed** — and the wave had none. Ask *which mutation could produce this exact
   message* before grading a site wrong.
-- **Backlog at tick 212 — wave 107b is wave 107 finished: the blade, the conversation-set defect, the
+- ⚠️⚠️ **§6 reads the WORKING TREE, so a pint fix made and never committed leaves the tip pint-red while
+  every later gate prints `passed` — the tick-199 rule with the dirt in the *fixed* direction.** Wave 107b's
+  coder ran pint after its last commit, pint spaced the negation in `Thread.php`'s `mount()`, and the fix
+  stayed uncommitted. `w107b-mut-3.log` §6 then read `{"tool":"pint","result":"passed"}` and **so did my own
+  gate**, both over a tree carrying the uncommitted fix, while
+  `git show <tip>:app/app/Modules/X-01/Ui/Thread.php` still had `if (!$customer`. The only artifact telling
+  the truth was `w107b-mut-2.log`'s §6 — taken *before* the fix — naming the fixers
+  `unary_operator_spaces` + `not_operator_with_successor_space`. Tick 199 is *a gate on a dirty tree gates
+  nothing*; this is its inverse and it is worse, because a dirty tree usually makes a gate look **worse**
+  than the sha and here it made it look **better**. **Reading pint's own `result` field correctly (tick 172)
+  does not save you if you read it from a run whose tree is not the sha.** The one command is
+  `git show <sha>:<path>`, and it is cheap.
+  ⚠️ Corollary for briefs: *"run pint after your last commit"* is only half the item — **the fix must be
+  committed**, and the standing rule already said item 0 is *the first thing to fix and the LAST thing to
+  check*. Fifth pint-red wave on this lane, and the first where the fix existed and simply never shipped.
+- ⭐⭐ **A property that `render()` recomputes cannot be proven by any assertion on it, and a mutation of the
+  assignment survives at radius ZERO — which is the tick-185 red flag reading as a genuine finding.**
+  `Thread.php`'s `releaseTakeover():71` and `sendReply():136` both assign `$this->hasActiveTakeover`, and
+  `render():166-168` reassigns it from a `TakeoverLatch` query whenever `$this->customer` is set — and
+  Livewire re-renders after every `call()`. Wave 107b's stranded `Mut 3` flipped `:71` and **the suite did not
+  move**: `failed 1`, the standing inherited lint alone. Tick 185 says a radius of zero is the cheapest
+  evidence a mutation was made in the test body; **it is not, when the mutation is readable in `git diff`
+  rather than reconstructed from a log** (tick 205). So the discriminator for a zero radius is *can I see the
+  site myself* — if yes, zero radius is a **survival**, and a survival on an assignment nothing can observe
+  is a dead-code finding. ✅ The assertions still prove the right thing, because the value they read is
+  recomputed from the row the release actually cleared; **grade the dead line and the live assertion
+  separately**, or a real proof gets thrown out with two unreachable statements.
+- ⚠️ **A mutation that reddens a test's FIRST assertion proves that one and buries the rest — and the
+  subtraction says so before you know what the site was.** Wave 107b's `Mut 2` came back `−4` on a
+  four-assertion test with *"Failed asserting that false matches expected true"* at the declaration line, so
+  A1 failed and A2/A3/A4 never ran. That is the wave-92 requirement failing in the *earliest* position rather
+  than a middle one, and it is the commonest way a mutation set ends up proving one assertion four times.
+  ⭐ The reconciliation also pins a counting rule worth keeping: **a satisfied `expectException` does not
+  count as an assertion** — a test whose body is three `assert*` calls plus an `expectException` reads as
+  four green and subtracts as four, which is how `−4` resolved to "failed at A1" rather than "failed at A2".
+- ⚠️ **An `assertSee` on a literal that lives ONLY in the blade and the test cannot tell a conditional from
+  an unconditional render — and the assertion that can is the one the previous wave deleted as "flaky".**
+  `grep -rn "Release Takeover" app/` returns the blade, its compiled Blade cache and one `assertSee`. So the
+  positive assertion passes against a view that emits the button with no `@if` at all; only
+  `assertDontSee` on an unlatched fixture speaks to the flag. This is the wave-86 rule (*require a negative
+  assertion for any flag*) meeting the wave-107 rung (*deleting your own assertion*): **the deleted negative
+  was the load-bearing half, and deleting it is what left the positive as scenery.** ⛔ My brief left it open
+  — *"decide what it should assert, or drop it deliberately and say why"* — and with the wave dying before
+  its report it was neither. **An open question in a brief is answered by silence more often than by a
+  choice; rule it or drop it.**
+- ⚠️ **Brief prose landing in a test's COMMENTS, second occurrence in two waves.** Wave 107b's docblock
+  carries my wave-106 sentence *"consulted by something other than the component that released it"* verbatim.
+  Recorded at tick 211 as a lesson and reproduced immediately, which retires reading it as a one-off: the
+  fix is not to notice it in review but to **brief it in words** — comments say what the assertion proves,
+  not what was asked for. The test file outlives every `REPORT.md`.
+- ✅ **Shape 4 again (run 91), and the four-shape rule held with no surprises.** `timeout waiting for
+  response` / `AGY_EXIT=1`, **no quota line** ⇒ no `--coder claude` chain; one commit on the tip after the
+  dispatch **and** a dirty tree; `ls scratch/` showed two mutation logs, so the run reached its mutation item
+  and the missing report is a death, not a refusal (tick 210). ⭐ And the run-65 tell fired **positive and
+  genuinely**: `git diff` on the one `app/app/` path held a live mutation *and* a pint fix in the same file,
+  so the revert is surgical and `git checkout` on the path would have destroyed the fix. Tick 203 softened
+  that tell to *"a prompt to read the diff, not a finding"*; keep the softening and keep reading the diff —
+  here it was both.
+- **Backlog at tick 213 — wave 107c finishes 107b; wave 108 is unchanged.** 107c is the pint fix committed
+  (the whole push blocker), the surgical revert of the stranded `Mut 3`, the litter, `assertDontSee`
+  restored, a deliberate resolution of the two dead `hasActiveTakeover` assignments, and mutations for the
+  assertions from the real `GET` onward. **`Mut 2` and `Mut 3` are both spent — do not re-brief either**
+  (tick 191: a note reading "one command" is the one most likely to manufacture a wave, and `Mut 3`'s run was
+  mine). ⛔ Wave 107b's tick-212 defect is **closed**: `releaseTakeover()` now loops every active latch over
+  the same conversation set `render()` reads. Then wave 108 is C-Agent's `TakeoverStarted`/`TakeoverReleased`
+  listener and gate, still ruled by tick 209 and still requiring a human release path first — which 107b
+  built and 107c finishes. The live proposal list stays `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- **Backlog at tick 212 (superseded by tick 213, kept for the defect it names) — wave 107b is wave 107
+  finished: the blade, the conversation-set defect, the
   restored assertion, and a mutation set on a committed slice.** No new scope. Then wave 108 is C-Agent's
   `TakeoverStarted`/`TakeoverReleased` listener and gate, still ruled by tick 209 and still requiring that
   a human can release before a mirror is built on it. ⚠️ **A defect measured this tick and owed to 107b:**
