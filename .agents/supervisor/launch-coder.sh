@@ -65,6 +65,11 @@ coder_alive() {
   [ -n "$want" ] || return 1
   kill -0 "$want" 2>/dev/null || return 1
   for pid in $(pgrep -f '/home/goaiez/\.local/bin/(agy|claude)' 2>/dev/null || true); do
+    # ⚠️ pgrep -f matches the WRAPPER too: `bash -c '… /home/goaiez/.local/bin/agy …'`
+    # carries the binary path in its own argv. Without this skip the walk starts at
+    # `want` itself, `q == want` fires on hop 0, and the function can never report a
+    # stale waiter — inert, and wrong in the one direction that matters.
+    [ "$pid" = "$want" ] && continue
     q="$pid"
     hops=0
     while [ -n "$q" ] && [ "$q" != "1" ] && [ "$q" != "0" ] && [ "$hops" -lt 64 ]; do
@@ -118,7 +123,13 @@ if [ "$CODER" = "claude" ]; then
   # (which denies app/**) out of the coder's permissions.
   nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  # `timeout -k 60 3h` bounds the run. agy's own --print-timeout does NOT: run 54
+  # finished its wave, wrote REPORT.md at 04:42, and then sat alive indefinitely
+  # parked on a `tail -f` it never reaped — and `kill` is outside this supervisor's
+  # column, so an unbounded parked coder stalls every following tick on case (a)
+  # until a human intervenes (44 ticks, in another lane). Tracks 2 and 7 already
+  # wrap agy this way; this lane did not. 3h is well past any wave here.
+  nohup bash -c 'export PATH=/home/goaiez/agents/coder-bin:$PATH; timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
