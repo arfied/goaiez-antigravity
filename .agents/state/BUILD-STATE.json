@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T15:57:11",
+ "updated": "2026-09-06T17:13:43",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1537,6 +1537,10 @@
   {
    "at": "2026-09-06T16:18:41",
    "note": "dead invoice.overdue seam: per ruling 59, this lane already chose x211:detect-overdue -> ArOverdue -> ProcessOverdueReceivable over the InvoiceOverdue chain, so wiring a second overdue path would give X-211 two paths writing two stores."
+  },
+  {
+   "at": "2026-09-06T17:13:43",
+   "note": "X-173 MONEY-82: X-173's sync path has no production caller \u2014 grep for syncTransactions over app/app and app/tests returns the definition and twelve test lines only; the module has no Console/ directory and no scheduler entry. So sync_runs and accounting_sync_conflicts are written only by tests and both X-173 screens are empty forever for every real tenant (decision 272, ruling 51). The missing dependency is the ledger OAuth credential \u2014 AccountingConnectAction's door refuses by design (ruling 73) \u2014 and the fetch that would follow it. UNRESOLVED."
   }
  ],
  "decisions": [
@@ -1886,6 +1890,12 @@
    "module": "X-201",
    "chose": "(R245) getExposure's return type is standalone null, not ?float: a body of 'return null' makes float an unused member of the union at phpstan level 5, so the type the MONEY-79 brief dictated was an error the moment the ruling was obeyed \u2014 null is exact, phpstan-clean, and turns a restored fabrication into a TypeError at the boundary rather than a failed assertion (ruling 66, MONEY-79b)",
    "at": "2026-09-06T15:57:11",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "(R245) an accounting line that carries no confidence is not a confident line: syncTransactions defaulted an absent tx['confidence'] to 0.95, above the 0.85 threshold, and an absent tx['category'] to the literal 'Job Revenue', so the least-informative ledger line took the confident branch and was posted to a guessed code \u2014 the exact outcome the TEST ANCHOR at AccountingSyncAction:26 forbids. Absence is now 0.0 and 'uncategorised', and inferCategory drops the $description parameter it never read (ruling 69's shape: fix the arithmetic, record the dead seam)",
+   "at": "2026-09-06T17:13:43",
    "ruling": "R245"
   }
  ]
