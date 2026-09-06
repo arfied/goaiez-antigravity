@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Modules\CWhatsapp;
 
+use App\Models\Conversation;
 use App\Modules\CWhatsapp\Actions\TemplateSubmitAction;
 use App\Modules\CWhatsapp\Actions\WhatsappConnectAction;
 use App\Modules\CWhatsapp\Actions\WhatsappSendAction;
@@ -12,6 +13,7 @@ use App\Modules\CWhatsapp\Events\TemplateApproved;
 use App\Modules\CWhatsapp\Events\WhatsappSent;
 use App\Modules\CWhatsapp\Events\WhatsappSessionOpened;
 use App\Modules\CWhatsapp\Models\WhatsappSession;
+use App\Modules\X121\Models\Person;
 use App\Modules\X204\Domain\ConsentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -154,12 +156,12 @@ class CWhatsappTest extends TestCase
         $customerPhone = '+15550001111';
 
         $this->engine->recordInbound($biz->id, $customerPhone, 'Hello there!', 'John Doe');
-        
-        $person = \App\Modules\X121\Models\Person::where('phone', $customerPhone)->first();
-        $this->assertEquals(1, \App\Models\Conversation::where('person_id', $person->id)->count());
+
+        $person = Person::where('phone', $customerPhone)->first();
+        $this->assertEquals(1, Conversation::where('person_id', $person->id)->count());
 
         $this->engine->recordInbound($biz->id, $customerPhone, 'Are you there?', 'John Doe');
-        
-        $this->assertEquals(1, \App\Models\Conversation::where('person_id', $person->id)->count());
+
+        $this->assertEquals(1, Conversation::where('person_id', $person->id)->count());
     }
 }
