@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T16:52:20",
+ "updated": "2026-09-06T18:22:45",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2140,6 +2140,18 @@
    "chose": "EdgeProvisionAction stays test-only: it mints zone_id and ssl_certificate_id with Str::random() and takes has_valid_ssl as an argument, so a production caller would green J11's ssl element off a fabricated certificate. EdgeProvisionRefusalTest asserts the class is unreachable from app/app/. --ruling R245",
    "at": "2026-09-06T13:01:03",
    "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "Event schema is rendered from X-108's appointments, passed by EdgeDeployAction on the same seam as videos --ruling R245",
+   "at": "2026-09-06T18:00:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "Hyper-Local schema is rendered from Business.address, passed by EdgeDeployAction on the same seam as videos and events --ruling R245",
+   "at": "2026-09-06T18:22:45",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -2186,6 +2198,14 @@
   {
    "at": "2026-09-06T17:32:43",
    "note": "X-157 journey: the 2026-09-05 filing is superseded \u2014 EdgeDeployAction:35-36 writes ssl_installed derived from EdgeZone.has_valid_ssl, and JourneyHarness publishSite provisions the zone (71c9168b), so J11 ssl went green at tick 229; SITE-112 moves all seven elements to the served HTTP response per owner ruling 16"
+  },
+  {
+   "at": "2026-09-06T18:00:55",
+   "note": "X-176 G8-15 is BUILT, superseding the UNRESOLVED capability filing of 2026-09-06T16:31:06 and its correction \u2014 X-108 is fully built and the gap was a missing seam, not a missing dependency (rule 09)"
+  },
+  {
+   "at": "2026-09-06T18:22:48",
+   "note": "X-176 G8-22 is BUILT, superseding the UNRESOLVED capability filing \u2014 Business.address is present on the core model and the gap was a missing seam, not a missing dependency (rule 09)"
   }
  ]
 }
