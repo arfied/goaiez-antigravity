@@ -15,7 +15,6 @@ use App\Modules\X175\Ui\StafffacingAssistantPanel;
 use App\Support\Tenancy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\View;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -192,13 +191,6 @@ class StafffacingAssistantPanelTest extends TestCase
         Livewire::actingAs($user)->test(StafffacingAssistantPanel::class)
             ->set('question', 'Derived Test Service')
             ->call('ask');
-
-        // Dynamically fix the model's missing response property for the blade
-        View::composer('x-175::stafffacing-assistant-panel', function ($view) {
-            foreach ($view->getData()['suggestions'] as $s) {
-                $s->response = $s->response_text;
-            }
-        });
 
         $this->actingAs($user)->get(route('x-175.stafffacing-assistant-panel'))
             ->assertOk()

@@ -785,3 +785,4 @@
 - `2026-09-06T01:21:00` (R245) X-172 — G10-24 names refusal: a redline is SURFACED with a diff, never accepted
 - `2026-09-06T04:18:42` (R245) X-171 — G4-26 is proven as a law over the module directory. Supersedes UNRESOLVED 2026-09-05T23:49:19.
 - `2026-09-06T04:18:50` (R245) X-175 — N-175-01 is asserted on a real throttled fixture using Http::fake throwing ConnectionException. Supersedes UNRESOLVED 2026-09-05T23:48:57.
+- `2026-09-06T10:24:21` (R245) X-175 — a test may not supply data the screen fails to read for itself
