@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-05T15:32:08",
+ "updated": "2026-09-06T05:09:58",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -912,10 +912,29 @@
    "unresolved": []
   },
   "X-183": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 29,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G8-39 \u2014 top-ranking analysis does not exist",
+     "at": "2026-09-06T05:09:58"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G12-05 \u2014 builder or plugin handoff does not exist",
+     "at": "2026-09-06T05:09:58"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G16-28 \u2014 transcript conversion does not exist",
+     "at": "2026-09-06T05:09:58"
+    }
+   ]
   },
   "X-184": {
    "status": "DONE",
@@ -1341,6 +1360,24 @@
    "stage": "anchor",
    "why": "AdvanceOutreachStageAction does not exist, so the board offers no control to advance a stage; halt and demo-request are the only two writes the module's actions expose",
    "at": "2026-09-05T14:58:53"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G8-39 \u2014 top-ranking analysis does not exist",
+   "at": "2026-09-06T05:09:58"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G12-05 \u2014 builder or plugin handoff does not exist",
+   "at": "2026-09-06T05:09:58"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G16-28 \u2014 transcript conversion does not exist",
+   "at": "2026-09-06T05:09:58"
   }
  ],
  "decisions": [
@@ -1511,6 +1548,12 @@
    "chose": "Built the ExtensionPopup screen using existing UI components like empty-state, row-list, and row, supporting both empty and active states with scan and inject actions.",
    "at": "2026-09-05T15:32:08",
    "ruling": "R245"
+  },
+  {
+   "module": "X-103",
+   "chose": "ssl_installed recorded on page_versions under the G9-04 site law, mirroring pixel_installed; the edge already serves SSL unconditionally (X-157 EdgeDeployAction) and only the version record lacked it",
+   "at": "2026-09-06T04:49:53",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1541,6 +1584,10 @@
   {
    "at": "2026-09-04T14:48:31",
    "note": "C-Reviews loss-alert CSAT rule is csat_score < 7, the same threshold QaReport uses; the 2026-09-04T14:29:46 decided line's '< 3' misstated it"
+  },
+  {
+   "at": "2026-09-06T04:50:20",
+   "note": "X-121 create path for work_orders now exists (JobCreateAction); JourneyHarness completeJob line 645 calls it, so the C-Reviews completeJob dependency in the UNRESOLVED list is satisfied. The journey now stops on a missing authorize_net_public_client_key instead, which is an owner item."
   }
  ]
 }

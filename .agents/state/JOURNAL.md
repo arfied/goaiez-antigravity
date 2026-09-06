@@ -791,3 +791,8 @@
 - `2026-09-05T14:38:01` UNRESOLVED AdvanceOutreachStageAction does not exist, so the board does not offer a control to advance a stage X-105 - 
 - `2026-09-05T14:58:53` UNRESOLVED anchor X-105 - AdvanceOutreachStageAction does not exist, so the board offers no control to advance a stage; halt and demo-request are the only two writes the module's actions expose
 - `2026-09-05T15:32:08` (R245) X-196 — Built the ExtensionPopup screen using existing UI components like empty-state, row-list, and row, supporting both empty and active states with scan and inject actions.
+- `2026-09-06T04:49:53` (R245) X-103 — ssl_installed recorded on page_versions under the G9-04 site law, mirroring pixel_installed; the edge already serves SSL unconditionally (X-157 EdgeDeployAction) and only the version record lacked it
+- `2026-09-06T04:50:20` note: X-121 create path for work_orders now exists (JobCreateAction); JourneyHarness completeJob line 645 calls it, so the C-Reviews completeJob dependency in the UNRESOLVED list is satisfied. The journey now stops on a missing authorize_net_public_client_key instead, which is an owner item.
+- `2026-09-06T05:09:58` UNRESOLVED capability X-183 - G8-39 — top-ranking analysis does not exist
+- `2026-09-06T05:09:58` UNRESOLVED capability X-183 - G12-05 — builder or plugin handoff does not exist
+- `2026-09-06T05:09:58` UNRESOLVED capability X-183 - G16-28 — transcript conversion does not exist
