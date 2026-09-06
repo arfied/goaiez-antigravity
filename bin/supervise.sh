@@ -5,6 +5,7 @@
 #   bash bin/supervise.sh                # guard · tree · state · integrity · pint · phpstan
 #   bash bin/supervise.sh --tests        # + pest, against phpunit.xml's database
 #   bash bin/supervise.sh --full-doctor  # + all eight doctor stages
+#   bash bin/supervise.sh --tests --filter X-199   # narrow the suite (see 7b)
 #
 # Exit 2 = a database points at production. Exit 1 = a gate failed. Exit 0 =
 # gates green, which is necessary and not sufficient: now read the diff.
@@ -13,8 +14,16 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
-want_tests=0; want_doctor=0
-for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
+want_tests=0; want_doctor=0; pest_filter=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --tests) want_tests=1;;
+    --full-doctor) want_doctor=1;;
+    --filter) pest_filter="${2:-}"; shift;;
+    --filter=*) pest_filter="${1#--filter=}";;
+  esac
+  shift
+done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
@@ -132,7 +141,12 @@ if [ $want_tests -eq 1 ]; then
   for d in /proc/[0-9]*; do
     p=${d#/proc/}
     [ "$p" = "$$" ] && continue
-    read -r comm < "$d/comm" 2>/dev/null || continue
+    # ⚠️ `read … < "$d/comm" 2>/dev/null` does NOT silence this: bash reports a
+    # failed *redirect* itself, before the command's stderr exists. A pid that
+    # exits mid-scan then prints "No such file or directory" into the gate
+    # output (seen 2026-09-06 08:1x). Test the file first.
+    [ -r "$d/comm" ] || continue
+    read -r comm < "$d/comm" || continue
     case "$comm" in php*) ;; *) continue ;; esac
     [ "$(readlink "$d/cwd" 2>/dev/null)" = "$APP" ] || continue
     grep -qa 'vendor/bin/pest' "$d/cmdline" 2>/dev/null && live="$live $p"
@@ -149,15 +163,39 @@ if [ $want_tests -eq 1 ]; then
   # fire while it is blocked in a child that never returns — the run 67 shape.
   # Override for a wave that genuinely needs longer, declared in its brief.
   pest_timeout=${GOAIEZ_PEST_TIMEOUT:-30m}
-  out=$(timeout -k 30 "$pest_timeout" ./vendor/bin/pest 2>&1); rc=$?
+
+  # ⛔ NEVER `out=$(timeout … pest)`. A command substitution only yields its
+  # value when the child exits normally; when `timeout` kills pest, the shell
+  # discards everything pest had already written and `$out` comes back EMPTY.
+  # That is the whole of the "ZERO BYTES" epidemic — runs 67, 68 and 69 plus
+  # three supervisor gates all read `rc=124/137/143 · 0 bytes` and were read as
+  # a silent suite, when in fact the suite had been printing for thirty minutes
+  # and the capture threw it away. Measured 2026-09-06 08:4x on 87027f75 with
+  # nothing else on the box. Write to a file, then read the file back: the
+  # bytes survive the kill, and the last line before the deadline names the
+  # test that is actually slow.
+  # ⚠️ Inside the checkout, NOT $TMPDIR. `/home/goaiez/tmp` is unreadable to the
+  # supervisor session (ls/find/tail are all blocked there), so a log written
+  # into it is a log nobody who needs it can open. Gitignored via .tick-*.
+  pest_log="$ROOT/.agents/supervisor/.tick-pest.log"
+  : > "$pest_log"
+  if [ -n "$pest_filter" ]; then
+    echo "  narrowed: --filter $pest_filter"
+    timeout -k 30 "$pest_timeout" ./vendor/bin/pest --filter "$pest_filter" > "$pest_log" 2>&1; rc=$?
+  else
+    timeout -k 30 "$pest_timeout" ./vendor/bin/pest > "$pest_log" 2>&1; rc=$?
+  fi
+  out=$(cat "$pest_log")
   [ $rc -ne 0 ] && fail=1
 
   # 7c. Say the rc out loud, and name zero bytes for what it is rather than
   # letting a silent run read as a pass.
-  bytes=$(printf '%s' "$out" | wc -c)
+  bytes=$(wc -c < "$pest_log" | tr -d ' ')
   echo "  pest rc=$rc · ${bytes} bytes of output"
-  if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then
-    echo "  ⛔ TIMED OUT after $pest_timeout (rc=$rc) — killed, not failed. Narrow with --filter."
+  if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ] || [ "$rc" -eq 143 ]; then
+    echo "  ⛔ TIMED OUT after $pest_timeout (rc=$rc) — killed, not failed."
+    echo "     Partial output survives in $pest_log — its last lines name the slow test."
+    echo "     Narrow it: bash bin/supervise.sh --tests --filter <expr>"
   fi
   if [ "$bytes" -eq 0 ]; then
     echo "  ⛔ ZERO BYTES. Do not debug the code — narrow it with --filter and the real"
@@ -174,6 +212,14 @@ for e in (d.get("error_details") or [])[:5]:
     print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
 n=len(d.get("error_details") or [])
 if n>5: print("   … %d more" % (n-5))'
+    # A pest run can end `result failed` with `errors: None` — an ASSERTION that
+    # did not hold is a failure, not an error, and carries no error_details. The
+    # 08:0x version printed only the one-line summary there and said nothing
+    # about which assertion, which is how run 69 reached review unmeasured.
+    if printf '%s' "$out" | grep -q '^ *FAILED\|Failed asserting'; then
+      echo "  --- failures ---"
+      printf '%s\n' "$out" | grep -A4 'FAILED\|Failed asserting' | head -24 | sed 's/^/  /'
+    fi
   else
     printf '%s\n' "$out" | tail -12 | sed 's/^/  /'
   fi
