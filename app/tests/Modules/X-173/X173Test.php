@@ -9,6 +9,7 @@ use App\Modules\X173\Actions\AccountingMapAction;
 use App\Modules\X173\Actions\AccountingSyncAction;
 use App\Modules\X173\Events\AccountingSynced;
 use App\Modules\X173\Events\CategoryInferred;
+use App\Modules\X173\Models\AccountingConnection;
 use App\Modules\X173\Models\AccountingSyncConflict;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -85,12 +86,13 @@ class X173Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
     public function test_accounting_connect_stores_no_credential_without_token(): void
     {
         $biz = TestCase::provisionTenant();
         $connection = $this->connectAction->connect($biz->id, 'xero', 'realm_xyz');
-        
-        $persisted = \App\Modules\X173\Models\AccountingConnection::find($connection->id);
+
+        $persisted = AccountingConnection::find($connection->id);
         $this->assertNull($persisted->access_token);
         $this->assertStringNotContainsString('token_oauth_', (string) $persisted->access_token);
     }

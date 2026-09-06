@@ -85,6 +85,7 @@ class ConnectionMappingScreenTest extends TestCase
         $this->assertSame(1, AccountingConnection::where('business_id', $bizB->id)->count());
         $this->assertSame(1, AccountMapping::where('business_id', $bizB->id)->where('internal_category', 'Parts')->count());
     }
+
     public function test_connection_mapping_empty_state_names_oauth_and_claims_no_ai()
     {
         $biz = self::provisionTenant();
