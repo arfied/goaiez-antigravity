@@ -126,12 +126,7 @@ class X66Test extends TestCase
      */
     public function test_g16_33_enrolment_confirms_own_booking(): void
     {
-        $admin = User::factory()->create();
-        $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-        Tenancy::set($biz->id);
-        $component = Livewire::actingAs($admin)->test(Calls::class);
-        $component->assertDontSee('Enrolment:', false);
+        $this->markTestIncomplete('UNRESOLVED: enrolment confirming a caller\'s own booking is not built in X-66, and this lane owns it');
     }
 
     /**
@@ -139,12 +134,7 @@ class X66Test extends TestCase
      */
     public function test_g16_34_tenant_voice_and_disclosure(): void
     {
-        $admin = User::factory()->create();
-        $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
-        DB::statement("SET app.business_id = '{$biz->id}'");
-        Tenancy::set($biz->id);
-        $component = Livewire::actingAs($admin)->test(Calls::class);
-        $component->assertDontSee('recorded consent', false);
+        $this->markTestIncomplete('UNRESOLVED: recorded consent and P-202 disclosure on every message is not built in X-66, and this lane owns it');
     }
 
     /**
@@ -152,12 +142,20 @@ class X66Test extends TestCase
      */
     public function test_g18_28_no_passive_enrolment_voiceprint_secure(): void
     {
-        $admin = User::factory()->create();
+        \Illuminate\Support\Facades\Http::fake();
+        
         $biz = TestCase::provisionTenant(['name' => 'Voice Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
-        Tenancy::set($biz->id);
-        $component = Livewire::actingAs($admin)->test(Calls::class);
-        $component->assertDontSee('passive enrolment', false);
-        $component->assertDontSee('voiceprint', false);
+        
+        // Half (a): Assert no passive enrolment path exists on the real code surface
+        $session = $this->engine->handleRing($biz->id, 'CA_SID_PASSIVE', '+15125550144', '+15125550100');
+        $this->engine->handleAnswer($biz->id, $session->id);
+        $this->engine->recordTurn($biz->id, $session->id, 1, 'caller', 'Hello');
+        
+        // The real path makes no HTTP calls to enrol a voiceprint passively
+        \Illuminate\Support\Facades\Http::assertNothingSent();
+        
+        // Half (b): voiceprint is a secure field
+        $this->markTestIncomplete('UNRESOLVED: half (b) - there is no voiceprint column in this tree at all, and this lane owns it');
     }
 }
