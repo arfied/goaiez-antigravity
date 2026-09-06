@@ -1,4 +1,4 @@
-@props(['title' => 'Your account', 'nav' => true, 'maxWidth' => 'max-w-5xl'])
+@props(['title' => 'Your account', 'heading' => null, 'nav' => true, 'maxWidth' => 'max-w-5xl'])
 
 {{--
     The shell for the owner's own screens.
@@ -48,6 +48,9 @@
     @endif
 
     <main id="main" class="mx-auto w-full {{ $maxWidth }} px-4 py-10 sm:py-16">
+        @if ($heading)
+            <h1 class="sr-only">{{ $heading }}</h1>
+        @endif
         {{ $slot }}
     </main>
     <x-toaster-hub />
