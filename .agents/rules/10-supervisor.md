@@ -47,7 +47,10 @@ STATUS    : wave closed | stopped: RUNTIME|SEAL|FINISHED|STARVED | brief item do
 COMMITS   : <git log --oneline origin/main..HEAD, pasted>
 MODULES   : X-nnn DONE · X-nnn UNRESOLVED (<what is missing>)
 STAGES    : <stage> <before> → <after>   (one line per stage touched, from doctor)
-TESTS     : <file>  grep -c 'test(\|it('  before <n> after <m>
+TESTS     : <file>  grep -c 'function test\|test(\|it('  before <n> after <m>
+            (⚠️ 2026-09-05: this repo's module tests are PHPUnit method style, so the
+             Pest-only 'test(\|it(' returned 2 on a nine-test file. Name the command
+             you actually ran, whatever it is — the count and the command must agree.)
 DECIDED   : (R245) <one line each, as recorded with state.py decided>
 UNRESOLVED: <stage> <where> — <what is missing>
 REFUSED   : <brief items that would change a CHECK, with the reason> | none

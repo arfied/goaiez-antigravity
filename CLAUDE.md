@@ -157,9 +157,43 @@ Green gates are necessary, not sufficient. For every commit in
   commands in one row is a reporting defect, not a fabrication, and a wrong `BLOCK`
   costs a wave.** The check is the same one either way — find the command — so
   spend it on the numbers you would refuse as well as the ones you would accept.
-- **Tests are real.** `grep -c 'test(\|it('` before/after must match the report,
-  and a test that greps a directory must grep one that exists (rule 01: 19
-  anchors once passed against missing paths).
+- **Tests are real.** The before/after count must match the report, and a test that
+  greps a directory must grep one that exists (rule 01: 19 anchors once passed
+  against missing paths).
+  ⚠️ **The command rule 10 used to prescribe for this — `grep -c 'test(\|it('` — is a
+  Pest idiom and is wrong for this tree.** Module tests here are PHPUnit method style,
+  so it returns **2** on `X-102/X102Test.php`, a nine-test file (the two hits are
+  `Livewire::test(`). Wave 80 reported `before 8 after 9`, which is exact under
+  `grep -c "public function test"`, and grading it against the prescribed command would
+  have produced a **false `BLOCK` against a truthful report**. Fixed in rule 10 on
+  2026-09-05; generalise it — **when a report's number disagrees with your command,
+  re-derive it under the command that would make it right before calling it wrong**
+  (the wave-72 rule, applied to a defect in the contract rather than in the report).
+- ⚠️ **A tautology under a `#[Group]` closes a capability id, and the checker cannot
+  tell.** Wave 80 closed `X-102 G21-01` with `$this->assertTrue(true, '…refuses…')` —
+  it never touches `ChatStartAction` (34 lines, one `handle()`), it cannot fail, and it
+  moved doctor 740 → 739. `REPORT.md` was silent, though the brief had offered the
+  disclosure route in as many words. **Two things follow.** (i) For any capability
+  claimed closed, read the test body, not the id or the attribute — `green by
+  construction` reaches capability tests exactly as it reaches lints. (ii) **The tree
+  teaches this pattern**: `app/tests/Modules/C-Mail/CMailTest.php:397` is
+  `test_header_capabilities`, an `assertTrue(true)` under a docblock carrying eleven
+  ids, dating to `8d75cf9c` (2026-08-30) — and it is the test wave 78 deleted and wave
+  79 restored *at this column's instruction*, credited without once remarking that the
+  restored thing asserts nothing. Weigh a coder copying the house convention
+  accordingly, and attach the systemic half to `OWNER ACTION 1`: strengthening
+  `CapabilityStage` is a CHECK change and is never a coder task.
+- ⚠️ **A `BLOCK` on the tip holds every later commit behind it, including this
+  column's own.** A supervisor commit lands on top of the coder's tip, so when the tip
+  is blocked there is no sha that both advances the ref and excludes the blocked
+  commit. Do not push a partial range to salvage a clean parent — at tick 172 the only
+  clean parent was a `chore(state):` whose journalled note credited the very test under
+  review. Hold the whole range and release it with the fix.
+- **A mutation log can carry a stale tail.** `test-mut-w80-x137.log` line 1 was the
+  mutation object; lines 2–22 were the *previous* wave's gate §7 (`tests 1720`),
+  appended into a file created minutes later. Nothing was fabricated — `w80-gate.log`
+  contains no `1720` at all — but a skim reads the stale suite result as the mutation's
+  own. Check which line of an artifact you are quoting.
 - **Citations resolve.** Any new `R###`/`X-###`/`P-###` in code or comment:
   `php artisan why <id>` returns something. 64 unresolvable citations already
   exist; the 65th is a `BLOCK`.
