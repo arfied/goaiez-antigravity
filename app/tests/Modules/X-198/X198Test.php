@@ -15,8 +15,10 @@ use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
 use App\Modules\X198\Events\ReconciliationDiscrepancy;
 use App\Modules\X198\Models\Payment;
+use App\Modules\X198\Models\PaymentLink;
 use App\Modules\X198\Models\Payout;
 use App\Modules\X198\Models\ReconciliationRun;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -302,5 +304,126 @@ class X198Test extends TestCase
         }
 
         $this->assertEquals(1, Payment::where('business_id', $biz->id)->where('status', 'failed')->count());
+    }
+
+    public function test_a_pay_link_is_persisted_against_the_payment(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'PayLink', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1500,
+            'payment_token' => 'tok_pay',
+            'idempotency_key' => 'idem_pay_1',
+            'status' => 'failed',
+        ]);
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
+            {
+                return ['id' => 'cs_test_123', 'url' => 'https://checkout.stripe.com/pay/cs_test_123'];
+            }
+        });
+
+        $action = new PaymentLinkAction;
+        $link = $action->handle($biz->id, $payment->id, 'Testing link');
+
+        $this->assertNotNull($link);
+        $this->assertEquals('cs_test_123', $link->provider_link_id);
+        $this->assertEquals('https://checkout.stripe.com/pay/cs_test_123', $link->url);
+
+        $this->assertEquals(1, PaymentLink::where('business_id', $biz->id)->where('payment_id', $payment->id)->count());
+    }
+
+    public function test_a_second_pay_link_request_reuses_the_first(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'ReusesPayLink', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1500,
+            'payment_token' => 'tok_pay_2',
+            'idempotency_key' => 'idem_pay_2',
+            'status' => 'failed',
+        ]);
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public int $calls = 0;
+
+            public function createPaymentLink(int $amountCents, string $description, string $currency = 'USD'): array
+            {
+                $this->calls++;
+
+                return ['id' => 'cs_test_abc', 'url' => 'https://checkout.stripe.com/pay/cs_test_abc'];
+            }
+        });
+
+        $action = new PaymentLinkAction;
+        $action->handle($biz->id, $payment->id, 'First click');
+        $action->handle($biz->id, $payment->id, 'Second click');
+
+        $this->assertEquals(1, PaymentLink::where('business_id', $biz->id)->where('payment_id', $payment->id)->count());
+        $stub = app(StripeGatewayClient::class);
+        $this->assertEquals(1, $stub->calls);
+    }
+
+    public function test_a_pay_link_for_another_accounts_payment_is_refused(): void
+    {
+        $biz1 = TestCase::provisionTenant(['name' => 'Biz1', 'currency' => 'USD']);
+        $biz2 = TestCase::provisionTenant(['name' => 'Biz2', 'currency' => 'USD']);
+
+        DB::statement("SET app.business_id = '{$biz1->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz1->id,
+            'amount_cents' => 1500,
+            'payment_token' => 'tok_pay_3',
+            'idempotency_key' => 'idem_pay_3',
+            'status' => 'failed',
+        ]);
+
+        DB::statement("SET app.business_id = '{$biz2->id}'");
+
+        $action = new PaymentLinkAction;
+        $caught = null;
+        try {
+            $action->handle($biz2->id, $payment->id, 'Testing link');
+        } catch (\Throwable $e) {
+            $caught = $e;
+        }
+
+        $this->assertInstanceOf(ModelNotFoundException::class, $caught);
+        $this->assertEquals(0, PaymentLink::count());
+    }
+
+    public function test_no_pay_link_row_survives_a_missing_key(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'MissingKey', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $payment = Payment::create([
+            'business_id' => $biz->id,
+            'amount_cents' => 1500,
+            'payment_token' => 'tok_pay_4',
+            'idempotency_key' => 'idem_pay_4',
+            'status' => 'failed',
+        ]);
+
+        config()->set('credentials.stripe_secret', null);
+
+        $action = new PaymentLinkAction;
+        $caught = null;
+        try {
+            $action->handle($biz->id, $payment->id, 'Testing link');
+        } catch (\Throwable $e) {
+            $caught = $e;
+        }
+
+        $this->assertInstanceOf(GatewayNotConfiguredException::class, $caught);
+        $this->assertEquals(0, PaymentLink::count());
     }
 }
