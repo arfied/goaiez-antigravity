@@ -6,7 +6,7 @@
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading where money lands…" /></div>
 @if($connections->isEmpty())
-<x-ui.empty-state heading="No merchant account connected yet.">Connect a gateway on the connect card; every payment and payout lands here the moment it does.</x-ui.empty-state>
+<x-ui.empty-state heading="No merchant account connected yet.">Connect a gateway on the connect card; payments land now, payouts wait on the same import.</x-ui.empty-state>
 @else
 <ul class="space-y-4">
 @foreach($connections as $conn)

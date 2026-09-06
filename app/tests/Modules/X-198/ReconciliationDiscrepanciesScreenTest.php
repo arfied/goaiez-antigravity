@@ -75,4 +75,17 @@ class ReconciliationDiscrepanciesScreenTest extends TestCase
 
         $this->assertSame(2, ReconciliationRun::where('business_id', $biz->id)->count());
     }
+
+    public function test_the_empty_screen_says_payouts_are_not_imported_yet()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(ReconciliationDiscrepancies::class)
+            ->assertOk()
+            ->assertSee('No payouts have been imported yet.')
+            ->assertSee('not connected yet');
+    }
 }

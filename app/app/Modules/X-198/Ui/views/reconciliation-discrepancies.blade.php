@@ -5,7 +5,7 @@
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the runs…" /></div>
 @if($runs->isEmpty())
-<x-ui.empty-state heading="Every payout reconciled to the cent.">Nightly reconciliation writes a row here the moment a payout and its payments disagree.</x-ui.empty-state>
+<x-ui.empty-state heading="No payouts have been imported yet.">Reconciliation compares what the processor paid out against what we expected. Importing payouts from the gateway is not connected yet, so there is nothing to compare — this screen fills in the moment it is.</x-ui.empty-state>
 @else
 <ul class="space-y-4">
 @foreach($runs as $run)
