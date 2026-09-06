@@ -15,6 +15,8 @@ use Livewire\Component;
 // (R245) the daily pricing digest is a screen rendered on demand from the refusal flags; no scheduled send this wave
 class DailyPricingDigest extends Component
 {
+    public array $refusals = [];
+
     public function mount(): void
     {
         abort_unless(auth()->check() && auth()->user()->hasRole(UserRole::Owner, UserRole::Manager), 403);
@@ -25,7 +27,13 @@ class DailyPricingDigest extends Component
     public function confirm(int $itemId)
     {
         $businessId = Tenancy::id();
-        app(PriceConfirmAction::class)->handle($businessId, $itemId);
+        $result = app(PriceConfirmAction::class)->handle($businessId, $itemId);
+
+        if (isset($result['refusal_code']) && $result['refusal_code'] === 'FILL_ME') {
+            $this->refusals[$itemId] = true;
+        } else {
+            unset($this->refusals[$itemId]);
+        }
     }
 
     public function render()

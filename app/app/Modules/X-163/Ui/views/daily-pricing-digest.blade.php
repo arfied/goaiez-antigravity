@@ -22,6 +22,9 @@
                             <h3 class="text-base font-medium text-ink flex items-center gap-2">
                                 {{ $item->service_name }}
                                 <x-ui.status-pill state="alert" label="{{ $item->refusal_count }} refusals" />
+                                @if(isset($refusals[$item->id]))
+                                    <span class="text-sm text-alert font-medium bg-alert-bg px-2 py-0.5 rounded">Needs a price</span>
+                                @endif
                             </h3>
                             <p class="text-sm text-ink-2 mt-1">Last refused: {{ $item->refusal_flagged_at->format('H:i') }} &middot; ${{ number_format($item->price_cents / 100, 2) }}</p>
                         </div>

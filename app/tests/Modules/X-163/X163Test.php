@@ -391,4 +391,40 @@ class X163Test extends TestCase
         $this->assertEquals('refused', $res['status']);
         $this->assertEquals('UNCONFIRMED', $res['refusal_code']);
     }
+
+    public function test_a_confirmed_price_action_refuses_a_zero_amount(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Zero Confirm Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $zeroItem = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Zero Price Service',
+            'price_cents' => 0,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $action = app(\App\Modules\X163\Actions\PriceConfirmAction::class);
+        $result = $action->handle($biz->id, $zeroItem->id);
+
+        $this->assertEquals('FILL_ME', $result['refusal_code'] ?? null);
+
+        $zeroItem->refresh();
+        $this->assertFalse($zeroItem->is_confirmed);
+
+        $goodItem = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Good Price Service',
+            'price_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $resultGood = $action->handle($biz->id, $goodItem->id);
+        $this->assertArrayNotHasKey('refusal_code', $resultGood);
+        
+        $goodItem->refresh();
+        $this->assertTrue($goodItem->is_confirmed);
+    }
 }
