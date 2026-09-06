@@ -954,3 +954,23 @@
 - `2026-09-06T10:11:00` UNRESOLVED capability X-200 - G18-06 a wellbeing prompt on the desk — a Ui surface; no column.
 - `2026-09-06T10:11:00` UNRESOLVED capability X-200 - G21-13 a closed deal on the wallboard and in the channel — Ui, and nothing links a disposition to a deal.
 - `2026-09-06T10:11:00` UNRESOLVED capability X-200 - G15-29 its register description is STRIPPED (P-206) and the ⑤ asserts an absence in the schema (no per-person negative output exists), which is a CHECK-shaped claim.
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-02 — caption_track_url is a sidecar .vtt URL, which is the opposite of burned-in captions, and videos has no duration or cut column, so there is no 90-second cut for anything to be burned onto
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-30 — There is no script, no question set and no statistics check anywhere in the module — and the transcript VideoRenderAction:30 writes is a hardcoded literal containing the invented figure "35% more missed calls". The system does the opposite of the ⑤ it is credited with.
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G3-22 — no name, Fact or provenance column on videos or video_views; the subject is another module's row
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G3-46 — videos.video_url is a plain CDN string; no short-link table, no token, no expiry column
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G5-02 — no episode table and no resource column; the row is a spec-later placeholder
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G5-52 — the string tone greps nowhere in app/app/Modules/X-158/ outside capabilities.php
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G8-37 — no show-notes column and no rewrite path
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G11-27 — no episode table, no promo path
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G12-06 — no notes column; the player is a Ui surface (Track 2, ruling 5)
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G12-22 — no episode table
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G12-23 — transcript is written as a hardcoded literal by renderVideo(); nothing transcribes and there is no notes column
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G12-24 — no slide table, no summariser
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G12-34 — VideoEngine — the class the header says isolates transcript parsing — is an empty class body; nothing reads transcript back
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G12-37 — no thread; the thread is X-01's
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-06 — no pack table and no fence; naming this authors the ⑤ (P-210)
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-14 — Conversation is X-01's — a missing dependency, and a grep in this module does not return the subject
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-22 — no cut, clip or segment column anywhere in the schema
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-23 — no audio analysis, no topic column, no timeline
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G18-26 — no room, no token, no session table
+- `2026-09-06T10:33:47` UNRESOLVED capability X-158 - G16-32 — no disclosure column and no output file; the ⑤ is a claim about a rendered artifact the module never produces, and its register description is STRIPPED — the same class as X-200's G15-29
