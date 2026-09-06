@@ -116,6 +116,16 @@ Watch for: <the trap that applies, by name>
 - **`app/CLAUDE.md` and `app/AGENTS.md` are Laravel Boost boilerplate**, not
   the contract. The contract is the root `AGENTS.md`. Do not cite the `app/`
   copies.
+- **Never report an intention as a state.** Every expensive defect of 2026-09-06 is this one shape: the
+  instrument reports what was *meant* and everything downstream reads it as measured. "Pint failed" when
+  Pint was killed. "They match ours" about a message never sent — the sibling measured the file while I
+  quoted my intention. And the sharpest, from the sibling: a `cp … .bak` written as the first line of a
+  compound command that a permission layer then refused **whole**, reported to their user as "the backup
+  exists" because the `cp` had been *written*, not checked. Their user tried to restore from it; it was
+  not there, and the only real backup predated a fix they had applied by hand, so restoring would have
+  silently reverted their work. **A refused compound is partial work that looks like completed work, and
+  the last command anyone suspects is the read-only one.** After any refused or killed call, `ls` the file,
+  `grep` the line, read the rc — state a fact only after measuring it.
 - **Test a guard with an input that is SAFE WHEN THE GUARD IS ABSENT** (2026-09-06, the sibling
   project's phrasing of a probe of ours). Proving the anti-pipe hook live with `pest | tail` would
   have run an unlocked suite to demonstrate that something stops it — a positive control that is
