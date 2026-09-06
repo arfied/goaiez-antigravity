@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X137;
 
 use App\Modules\X137\Actions\CallAttributeAction;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -52,6 +53,11 @@ class PoolExhaustionTest extends TestCase
             ['business_id' => $biz->id, 'phone_number' => '+15550001003'],
         ]);
 
+        DB::table('dni_pool_settings')->insert([
+            'business_id' => $biz->id,
+            'fallback_number' => '+15559999999',
+        ]);
+
         $t1 = $this->attributeAction->allocateFromPool($biz->id, 'v1', 'src');
         $t2 = $this->attributeAction->allocateFromPool($biz->id, 'v2', 'src');
 
@@ -88,5 +94,39 @@ class PoolExhaustionTest extends TestCase
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN');
         $this->attributeAction->allocateStaticToken($biz->id, '+15554440000', 'radio_spot');
+    }
+
+    public function test_cannot_insert_duplicate_pool_number(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Dup Number Refusal', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_numbers')->insert([
+            'business_id' => $biz->id,
+            'phone_number' => '+15559990001',
+        ]);
+
+        $this->expectException(QueryException::class);
+        DB::table('dni_pool_numbers')->insert([
+            'business_id' => $biz->id,
+            'phone_number' => '+15559990001',
+        ]);
+    }
+
+    public function test_cannot_insert_duplicate_pool_settings(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Dup Settings Refusal', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        DB::table('dni_pool_settings')->insert([
+            'business_id' => $biz->id,
+            'fallback_number' => '+15558880000',
+        ]);
+
+        $this->expectException(QueryException::class);
+        DB::table('dni_pool_settings')->insert([
+            'business_id' => $biz->id,
+            'fallback_number' => '+15558880001',
+        ]);
     }
 }

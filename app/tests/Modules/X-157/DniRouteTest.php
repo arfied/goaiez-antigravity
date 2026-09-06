@@ -14,6 +14,12 @@ class DniRouteTest extends TestCase
 {
     use RefreshesTenantDatabase;
 
+    private Business $business;
+
+    private EdgeZone $zone;
+
+    private Deployment $deployment;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -101,6 +107,7 @@ class DniRouteTest extends TestCase
     {
         // No pool settings, no numbers
         $response = $this->getJson("/sites/{$this->business->id}/test_hash/dni?visitor_session_token=token1");
-        $response->assertStatus(500); // Because it throws a DomainException
+        $response->assertStatus(409);
+        $response->assertJson(['error' => 'BUSINESS_NOT_CONFIGURED_FOR_DNI']);
     }
 }

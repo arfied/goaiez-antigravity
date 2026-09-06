@@ -64,10 +64,14 @@ final class ModuleServiceProvider extends ServiceProvider
             $zone = $deployment->edgeZone;
             abort_if($zone === null || ! $zone->has_valid_ssl, 404);
 
-            $token = app(CallAttributeAction::class)->allocateFromPool(
-                businessId: $businessId,
-                visitorSessionToken: $request->input('visitor_session_token', '')
-            );
+            try {
+                $token = app(CallAttributeAction::class)->allocateFromPool(
+                    businessId: $businessId,
+                    visitorSessionToken: $request->input('visitor_session_token', '')
+                );
+            } catch (\DomainException $e) {
+                return response()->json(['error' => $e->getMessage()], 409);
+            }
 
             return response()->json([
                 'number' => $token->allocated_number,
