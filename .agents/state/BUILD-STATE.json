@@ -1710,6 +1710,10 @@
   {
    "at": "2026-09-05T17:33:50",
    "note": "X-172 generated screen test renders through Fixtures::token() (run 101)"
+  },
+  {
+   "at": "2026-09-05T19:34:11",
+   "note": "X-157 anchor: the missing dependency is not a vendor credential \u2014 owner ruling 16 makes the platform itself the publishing target (GET /sites/{deploy_hash} from local storage), so X-157 has no third party to issue an artifact_id and TestAnchorStage:88-95 accepts none that is self-minted; the stage cannot be satisfied by any honest run of a vendorless module (OWNER ACTION 42)"
   }
  ]
 }
