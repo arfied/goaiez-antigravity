@@ -199,6 +199,25 @@ Watch for: <the trap that applies, by name>
   `supervise.sh` exits 2 if either points at production. Never brief a change
   to either value, and treat any diff to `phpunit.xml` or `.env.example`'s
   `DB_` lines as a `BLOCK` until explained.
+- ⚠️ **A backlog is not a work queue until it is filtered by the owner's rulings — and sorting it
+  by size points straight at the modules no lane may touch.** Wave 76's `capability` measurement
+  (220 `(module, id)` pairs with no test) put `X-221` at the top with 31, and `X-221` is one of the
+  **three minted on main** — with `X-222`, `X-223` — that `OWNER.md` ruling 6 forbids scaffolding on
+  a track branch. Three more of its top ten (`X-147`, `X-143`, `X-141`) are on ruling 3's **fourteen
+  DEFERRED modules** (`X-200 X-158 X-159 X-114 X-144 X-197 X-147 X-143 X-141 X-145 X-213 X-208
+  X-215 X-214`) that no lane builds. **Before briefing work off any measured pile, intersect it with
+  this lane's own modules** — `OWNER.md` 2026-09-04 14:2x gives sixty **Inbox · Calls & Voice**:
+  `X-01 · C-Sms · C-Mail · C-Whatsapp · X-102 · C-Agent · X-124 · X-194 · X-66 · C-Telephony ·
+  X-188 · X-153 · X-137`. The measurement was not wrong; the filter is the step after it.
+- ⚠️ **A coder-written measurement script cannot be re-run by this column — verify by re-deriving
+  rows, not by trusting the total.** `python3 scratch/*.py` is outside the allow list (only
+  `python3 bin/state.py next|status|report` is granted), so a total produced by such a script is
+  unverifiable here **by construction**. The answer is not to accept it and not to refuse it:
+  re-derive several rows by hand with `grep`, and **record which field you could not reproduce.** At
+  tick 168 five of ten rows came out exact (`X-221` 31, `X-183` 15, `X-129` 11, `X-165` 11, `X-173`
+  8) and the total `220` did not — the block says so in those words. A method exact on five
+  independently checked rows is a method; a total nobody can re-run is still a total nobody can
+  re-run, and the ledger should not blur the two.
 - **`JOURNEYS n/12 green` in `state.py status` is a hand mark**
   (`state.py journey Jn green`), not a test result. All twelve were marked
   green on 2026-08-29/30 before any harness that could pass existed, and the
