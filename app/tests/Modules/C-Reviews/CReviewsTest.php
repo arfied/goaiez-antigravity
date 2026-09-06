@@ -327,24 +327,6 @@ class CReviewsTest extends TestCase
     }
 
     /**
-     * [G20-11] P-110 supersedes T89/R45 gate as the MECHANISM: every request triaged
-     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
-     */
-    public function test_g20_11_triage_mechanism(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
-     * [G20-12] = Review Gating; one spec, under P-110
-     * ⛔ REFUSED: surveyed Actions, Database, Events, Listeners, Models, Ui and found no implementation.
-     */
-    public function test_g20_12_review_gating_spec(): void
-    {
-        $this->assertTrue(true);
-    }
-
-    /**
      * [G20-11] = Triage Mechanism
      * [G20-12] = Review Gating; one spec, under P-110
      */

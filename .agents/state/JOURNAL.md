@@ -811,3 +811,4 @@
 - `2026-09-06T10:16:39` (R245) X-112 — R245: the no-generated-tests rule covers a generator in any language, not only PHP; write test bodies by hand in the file (REV-67)
 - `2026-09-06T10:38:47` (R245) C-Agent — R245: a seam that ignores its parameters and returns a constant is a stub, and a capability test against it is a refusal, not an assertion; asserting the constant is a change-detector on a string literal (REV-68)
 - `2026-09-06T10:59:01` (R245) C-Billing — R245: a refusal must name every directory in the module derived from ls, not a remembered list, and must be checked against a grep for the capability id in the module's own source; an id appearing in an implementation docblock proves the seam exists (REV-69)
+- `2026-09-06T11:18:26` (R245) C-Reviews — the id grep is sufficient evidence of a seam and never necessary evidence

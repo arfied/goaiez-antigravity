@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T10:59:01",
+ "updated": "2026-09-06T11:18:26",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1627,6 +1627,12 @@
    "module": "C-Billing",
    "chose": "R245: a refusal must name every directory in the module derived from ls, not a remembered list, and must be checked against a grep for the capability id in the module's own source; an id appearing in an implementation docblock proves the seam exists (REV-69)",
    "at": "2026-09-06T10:59:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "the id grep is sufficient evidence of a seam and never necessary evidence",
+   "at": "2026-09-06T11:18:26",
    "ruling": "R245"
   }
  ],
