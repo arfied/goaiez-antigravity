@@ -14,7 +14,7 @@
     <div wire:loading><x-ui.skeleton label="Reading the conflicts…" /></div>
 
     @if(count($conflicts) === 0)
-        <x-ui.empty-state heading="No conflicts.">No line has ever been synced.</x-ui.empty-state>
+        <x-ui.empty-state heading="No line has ever been synced.">A conflict appears here only after a sync run, and no sync has run: syncing waits on a connected ledger, and connecting waits on QuickBooks, Xero or Sage OAuth credentials that do not exist in this checkout.</x-ui.empty-state>
     @else
         <ul>
             @foreach($conflicts as $c)
