@@ -6,7 +6,7 @@
     <div wire:loading><x-ui.skeleton label="Reading the sync runs…" /></div>
 
     @if(count($runs) === 0)
-        <x-ui.empty-state heading="No sync has run yet.">There is no nightly anything.</x-ui.empty-state>
+        <x-ui.empty-state heading="No sync has run yet.">Nothing syncs on a schedule: a run happens only when a connected ledger is synced, and connecting waits on QuickBooks, Xero or Sage OAuth credentials that do not exist in this checkout.</x-ui.empty-state>
     @else
         <p>This ledger: {{ $seen }} lines seen · {{ $conflicts }} conflicts · {{ $overall === null ? 'nothing synced yet' : round($overall * 100).'% conflicts' }}</p>
         

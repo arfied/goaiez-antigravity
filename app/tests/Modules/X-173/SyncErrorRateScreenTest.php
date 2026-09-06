@@ -103,6 +103,6 @@ class SyncErrorRateScreenTest extends TestCase
 
         Livewire::test(SyncErrorRateView::class)
             ->assertOk()
-            ->assertSee('There is no nightly anything.');
+            ->assertSee('Nothing syncs on a schedule: a run happens only when a connected ledger is synced');
     }
 }
