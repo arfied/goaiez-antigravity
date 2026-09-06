@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T14:49:31",
+ "updated": "2026-09-06T15:06:26",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 357,
+   "violations": 332,
    "fails": "MERGE"
   },
   "anchor": {
@@ -1813,6 +1813,12 @@
    "module": "X-143",
    "chose": "R245: the N-### capability ids on X-143, X-175, X-130 and X-150 are closed by refusal, not assertion \u2014 php artisan why reports each id is never DEFINED and its \u2464 is scaffolding boilerplate. Same ground as X-141/X-147/X-173 in run 76 (REV-80, REV-81).",
    "at": "2026-09-06T14:49:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-126",
+   "chose": "R245: the N-### capability ids on X-126, X-128, X-145, X-166, X-206, X-211 and X-212 are closed by refusal, not assertion \u2014 php artisan why reports each id is never DEFINED. Same ground as X-143/X-175/X-130/X-150 in run 77.",
+   "at": "2026-09-06T15:06:26",
    "ruling": "R245"
   }
  ],

@@ -844,3 +844,5 @@
 - `2026-09-06T14:33:41` stage capability = 392
 - `2026-09-06T14:49:31` (R245) X-143 — R245: the N-### capability ids on X-143, X-175, X-130 and X-150 are closed by refusal, not assertion — php artisan why reports each id is never DEFINED and its ⑤ is scaffolding boilerplate. Same ground as X-141/X-147/X-173 in run 76 (REV-80, REV-81).
 - `2026-09-06T14:49:38` stage capability = 357
+- `2026-09-06T15:06:26` (R245) X-126 — R245: the N-### capability ids on X-126, X-128, X-145, X-166, X-206, X-211 and X-212 are closed by refusal, not assertion — php artisan why reports each id is never DEFINED. Same ground as X-143/X-175/X-130/X-150 in run 77.
+- `2026-09-06T15:06:31` stage capability = 332
