@@ -273,6 +273,23 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   is unmoved" read off a ref last refreshed hours ago is an argument from a stale
   pointer, not a measurement. `git fetch --no-write-fetch-head --quiet origin`
   first — that flag is what avoids the root-owned `FETCH_HEAD` trap.
+- **The one-writer check is two commands here** (tick 154). The loop this file
+  prints above the divider (`for p in /proc/[0-9]*; …`) is Track 1's and is
+  refused in this session (`Contains simple_expansion`). Use instead:
+
+  ```
+  pgrep agy
+  readlink /proc/<pid>/cwd          # once per pid printed
+  readlink /proc/<coder.pid>/cwd    # empty output = the recorded coder is gone
+  ```
+
+  ⚠️ **`ls -l /proc/<pid>/cwd` is refused** — `ls` follows the symlink into
+  another checkout and trips the working-directory guard. `readlink` reads only
+  the link text and is accepted, which also makes it the way to see the *other*
+  tracks' coders without reading a file outside this checkout (tick 152 recorded
+  that as unobservable; it is not). `pgrep -a` works but dumps whole KICKOFF
+  cmdlines — ~30 KB — so use bare `pgrep agy` for pids. A pid whose `cwd` is this
+  checkout and that `launch-coder.sh` did not start is a BLOCK, as above.
 - **A HOLD tick checks four things, not three.** The three documented re-openers
   (an owner answer, a Track 1 merge of a sealed-file fix, a regeneration that
   moves a count) all watch `main`. The fourth watches the *other tracks*: is a
