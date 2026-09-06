@@ -975,6 +975,29 @@ Watch for: <the trap that applies, by name>
   and **`G11-41`'s sort half is the first genuinely assertable id in this pile**. Then `C-Agent`'s remaining
   eight. **After that the lane's test-only work really is spent**, and what remains is build work with
   proposals on record — say so to the owner rather than manufacturing a wave.
+  ⚠️⚠️ **Two of that block's own claims were wrong, and wave 94 disproved the more dangerous one.** (i)
+  **`G11-41` is NOT assertable — it is a build proposal**, and the reasoning I used to call it assertable is the
+  new trap below. (ii) **`C-Agent` carries SIX verdicted stubs, not four** — add `G5-48` and `G5-51`, both
+  already `⛔ REFUSED`. So the live pile after wave 94 is exactly **`C-Agent`'s `G5-15 · G5-31 · G5-32 · G5-37 ·
+  G5-42 · G5-43`** (six, wave 95), and after that the lane's test-only work really is spent. Both errors are
+  the same one: **a count or a claim taken off a `grep` window by eye rather than derived per id.** Two ticks
+  in a row, in the very block written to retire that habit.
+- ⚠️⚠️ **`grep` the SUBJECT of a capability, not only its performer — a hit in the right module is a candidate,
+  never an answer.** Tick 187 recorded that `G11-41`'s *"sort order on the thread list"* **exists**, on the
+  strength of three `orderBy` calls in `X-01`: `Ui/Thread.php:72`, `:125`, `Ui/CustomersList.php:47`. Measured
+  at tick 188, **none of them orders a thread list.** `:72` is inside `sendReply()`, picking the most recent
+  conversation to send *into*; `:125` orders **messages within one customer's thread**, ascending; `:47` orders
+  **customers**, `id desc`. The real thread list is `$conversations` at `Thread.php:113-115` —
+  `Conversation::where('business_id', …)->get()`, **no ordering at all** — and `thread.blade.php:33-36` never
+  iterates it: `Select a conversation. {{ $conversations->count() }} found.` **There is no thread list rendered,
+  so there is no sort order on one**, and the coder's `BUILD PROPOSAL` is right against my note. Had I briefed
+  it as assertable, the wave would have produced a green ordering test against the wrong list — a new rung of
+  the ladder, authored by this column. **The one command is `grep` for the capability's noun** (*thread list*),
+  not for the mechanism you expect to implement it (`orderBy`). This is the tick-184 dead-`Engine` rule turned
+  on the **subject** of a capability rather than on its performer, and it is the third trap in four ticks caught
+  only by reading the file behind a claim. ✅ **The brief is what saved it**: §3b handed over the three `orderBy`
+  lines and said *"which of those, **if any**, is the thread list is yours to establish."* Hand over the
+  measurement, keep the "if any", and a wrong measurement of yours can still produce a right verdict.
 - **Backlog, measured at tick 186 (superseded, kept for the lesson).** The `assertTrue(true)` pile is **25**; the 22 `C-Agent`/`X-01` survivors
   have no ⑤ clause (tick 181) and `X-194:277` / `X-66:91` are closed business. What is left is
   `C-Mail:424 test_header_capabilities`, eleven ids under one docblock. **Triaged per id, never as a group**
