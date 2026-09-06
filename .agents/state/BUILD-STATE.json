@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T18:20:36",
+ "updated": "2026-09-06T18:42:11",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1545,6 +1545,10 @@
   {
    "at": "2026-09-06T18:20:36",
    "note": "X-120 MONEY-83: VaultEngine was an empty class whose only content was a comment claiming to encapsulate PCI CDE operations and ensure CVV is never persisted. It had no member, no reader and no citation in the plan, the manifest or capabilities. The guarantee is real and is enforced by absence \u2014 no PAN or CVV column exists, CardStoreAction takes neither, and X120Test:36 and CardScreenTest:118,:122 assert it \u2014 so the class stated a guarantee it did not hold. Deleted (ruling 43's shape in a comment); real card tokenisation stays UNRESOLVED behind Stripe Elements and a publishable key (rulings 20, 45)."
+  },
+  {
+   "at": "2026-09-06T18:42:11",
+   "note": "X-201 MONEY-84: disputes has no production writer \u2014 DisputeDefenseEngine::record() behind DisputeRecordAction is the only path that creates one, and grep -rn DisputeRecordAction over app/app and app/tests returns five test files and no production caller. The seam that would call it is X-198's Events/ChargebackReceived.php, which is dispatched by nothing and consumed by nothing (grep returns only its own declaration), and app/app/Services/Billing/StripeWebhooks.php's charge.dispute.funds_withdrawn handler is Track 1's platform-billing clawback, not a tenant merchant dispute. So both X-201 screens are empty forever for every real tenant (decision 272, ruling 51). The missing dependency is the gateway chargeback webhook, which is a live vendor call reserved to the owner under ruling 13. UNRESOLVED."
   }
  ],
  "decisions": [
@@ -1906,6 +1910,12 @@
    "module": "X-173",
    "chose": "(R245) an empty state names what it waits on, not merely what has not happened: X-173's two empty states were made true by MONEY-82 and still named no dependency, and one of them carried the supervisor's own reviewer-facing sentence, so both now name the ledger OAuth credential that AccountingConnectAction's door refuses for (rulings 50(a), 73)",
    "at": "2026-09-06T18:20:36",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "(R245) X-201's two empty states name the gateway chargeback webhook they wait on, and the page no longer claims work nobody does: the queue said the evidence compiles within the hour and the card said the bundle compiles itself, while DisputeCompileAction's only caller is DisputeQueue::compile(), a button the owner clicks. Nothing compiles on a schedule, so the copy says a bundle is compiled from the queue by hand (rulings 50(a), 21, 43)",
+   "at": "2026-09-06T18:42:11",
    "ruling": "R245"
   }
  ]
