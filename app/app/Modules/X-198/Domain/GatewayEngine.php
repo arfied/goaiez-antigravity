@@ -15,6 +15,14 @@ use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * payments.status vocabulary:
+ * - captured — a non-null gateway charge id came back (R245, MONEY-61)
+ * - awaiting_processor — no adapter was asked; also the column default (R245, MONEY-61)
+ * - failed — the gateway was reached and refused (R245, MONEY-60)
+ * - refunded / chargeback — declared in the original migration's :35 comment, written by no code today
+ * - a missing key writes nothing (R245, MONEY-62)
+ */
 final class GatewayEngine
 {
     public function applyForSubMerchant(int $businessId, int $connectionId): array
@@ -109,6 +117,8 @@ final class GatewayEngine
 
                 return $payment;
             });
+        } catch (GatewayNotConfiguredException $e) {
+            throw $e;
         } catch (\RuntimeException $e) {
             DB::transaction(function () use ($businessId, $amountCents, $paymentToken, $idempotencyKey, $currency) {
                 $connection = MerchantConnection::where('business_id', $businessId)->first();

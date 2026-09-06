@@ -13,7 +13,7 @@ final class StripeGatewayClient
     {
         $secret = config('credentials.stripe_secret');
         if (empty($secret)) {
-            throw new RuntimeException('Missing stripe_secret');
+            throw new GatewayNotConfiguredException('Missing stripe_secret');
         }
 
         $response = Http::withToken($secret)

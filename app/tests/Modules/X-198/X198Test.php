@@ -9,6 +9,7 @@ use App\Modules\X198\Actions\PaymentCaptureAction;
 use App\Modules\X198\Actions\PaymentLinkAction;
 use App\Modules\X198\Actions\PayoutReconcileAction;
 use App\Modules\X198\Domain\GatewayEngine;
+use App\Modules\X198\Domain\GatewayNotConfiguredException;
 use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Events\PaymentCaptured;
 use App\Modules\X198\Events\PayoutReconciled;
@@ -245,5 +246,61 @@ class X198Test extends TestCase
 
         $row = DB::table('payments')->find($id);
         $this->assertEquals('awaiting_processor', $row->status);
+    }
+
+    public function test_a_missing_gateway_key_is_not_a_decline(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'No Key Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
+
+        config()->set('credentials.stripe_secret', null);
+
+        $caught = null;
+        try {
+            $this->captureAction->handle($biz->id, 1000, 'tok_123', 'idemp_456');
+        } catch (\Throwable $e) {
+            $caught = $e;
+        }
+
+        $this->assertInstanceOf(GatewayNotConfiguredException::class, $caught);
+        $this->assertEquals(0, Payment::where('business_id', $biz->id)->count(), 'A box with no key writes no payment row.');
+    }
+
+    public function test_a_gateway_refusal_still_writes_a_failed_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Discrimination Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_x');
+
+        config()->set('credentials.stripe_secret', null);
+
+        try {
+            $this->captureAction->handle($biz->id, 1000, 'tok_123', 'idemp_456');
+        } catch (\Throwable $e) {
+            // Missing key
+        }
+
+        $this->assertEquals(0, Payment::where('business_id', $biz->id)->count());
+
+        config()->set('credentials.stripe_secret', 'sk_test_123');
+
+        $this->app->instance(StripeGatewayClient::class, new class
+        {
+            public function charge(int $amountCents, string $source, string $currency = 'USD'): string
+            {
+                throw new \RuntimeException('Stripe charge failed: simulated refusal');
+            }
+        });
+
+        try {
+            $this->captureAction->handle($biz->id, 2000, 'tok_456', 'idemp_789');
+        } catch (\Throwable $e) {
+            // Refusal
+        }
+
+        $this->assertEquals(1, Payment::where('business_id', $biz->id)->where('status', 'failed')->count());
     }
 }
