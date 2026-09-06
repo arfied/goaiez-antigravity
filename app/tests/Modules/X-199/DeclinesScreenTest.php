@@ -9,6 +9,7 @@ use App\Modules\X198\Actions\MerchantConnectAction;
 use App\Modules\X198\Actions\PaymentCaptureAction;
 use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Models\Payment;
+use App\Modules\X199\Models\DeclineDeferral;
 use App\Modules\X199\Ui\Declines;
 use App\Support\Tenancy;
 use Carbon\Carbon;
@@ -187,7 +188,7 @@ class DeclinesScreenTest extends TestCase
             'created_at' => $base,
         ]);
 
-        \App\Modules\X199\Models\DeclineDeferral::create([
+        DeclineDeferral::create([
             'business_id' => $biz->id,
             'payment_id' => $payment->id,
         ]);
@@ -229,7 +230,7 @@ class DeclinesScreenTest extends TestCase
             ->call('settleUpLater', $payment->id)
             ->assertSee("isn't in this account");
 
-        $this->assertEquals(0, \App\Modules\X199\Models\DeclineDeferral::count());
+        $this->assertEquals(0, DeclineDeferral::count());
 
         Carbon::setTestNow();
     }

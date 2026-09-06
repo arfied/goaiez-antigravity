@@ -59,7 +59,7 @@ class Declines extends Component
 
         if (! $this->showAll) {
             $query->where('created_at', '>=', now()->startOfWeek());
-            
+
             $deferredPaymentIds = DeclineDeferral::where('business_id', Tenancy::id())
                 ->pluck('payment_id');
             $query->whereNotIn('id', $deferredPaymentIds);
@@ -80,7 +80,7 @@ class Declines extends Component
             if ($recovered) {
                 $recoveredCounts++;
             }
-            
+
             $decline->deferred = DeclineDeferral::where('business_id', Tenancy::id())
                 ->where('payment_id', $decline->id)
                 ->exists();
