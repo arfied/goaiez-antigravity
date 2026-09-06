@@ -398,7 +398,7 @@ class UiReviewSeeder extends Seeder
                 ['business_id' => $businessId, 'job_id' => 107, 'status' => 'rejected', 'conversion_value_cents' => 5000, 'rejection_reason' => 'Mismatch', 'created_at' => now(), 'updated_at' => now()],
             ]);
         }
-        if (! DB::table('invoices')->where('business_id', $businessId)->exists()) {
+        if (! DB::table('invoices')->where('business_id', $businessId)->where('invoice_number', 'INV-REV-U1')->exists()) {
             $customerId = DB::table('people')->where('business_id', $businessId)->value('id');
             if (! $customerId) {
                 $customerId = DB::table('people')->insertGetId(['business_id' => $businessId, 'first_name' => 'Review', 'last_name' => 'Customer', 'email' => 'rev@ex.com', 'phone' => '+15551234567', 'created_at' => now(), 'updated_at' => now()]);
@@ -410,7 +410,7 @@ class UiReviewSeeder extends Seeder
             ]);
         }
 
-        if (! DB::table('overflow_charges')->where('business_id', $businessId)->exists()) {
+        if (! DB::table('overflow_charges')->where('business_id', $businessId)->where('reference_id', 'REF-REV-001')->exists()) {
             $customerId = DB::table('people')->where('business_id', $businessId)->value('id');
             if (! $customerId) {
                 $customerId = DB::table('people')->insertGetId(['business_id' => $businessId, 'first_name' => 'Review', 'last_name' => 'Customer', 'email' => 'rev@ex.com', 'phone' => '+15551234567', 'created_at' => now(), 'updated_at' => now()]);
