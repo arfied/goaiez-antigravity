@@ -87,6 +87,8 @@ class UnpaidScreenTest extends TestCase
             ->assertDontSee('covered by the card on file; service never stopped')
             ->assertDontSee($invOther->invoice_number)
             ->assertDontSee('777.00')
+            ->assertSee('Receipt not available')
+            ->assertDontSee('cdn.goaiez.com')
             ->assertSee('Not overdue')
             ->call('recordPayment', 999999)
             ->assertSee("isn't in this account")

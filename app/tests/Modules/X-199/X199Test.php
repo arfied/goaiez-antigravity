@@ -150,7 +150,7 @@ class X199Test extends TestCase
         $lines = [['description' => 'Pipe Inspection', 'quantity' => 1, 'unit_price_cents' => 9900]];
 
         $res = $this->issueAction->handle($biz->id, $customer->id, $lines);
-        $this->assertNotEmpty($res['invoice']->pdf_url);
+        $this->assertNull($res['invoice']->pdf_url);
     }
 
     /**

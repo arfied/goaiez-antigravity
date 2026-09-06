@@ -66,6 +66,8 @@ class InvoicesScreenTest extends TestCase
             ->assertSee('John Doe')
             ->assertDontSee('Jane Doe')
             ->assertDontSee('777.00')
+            ->assertSee('Receipt not available')
+            ->assertDontSee('cdn.goaiez.com')
             ->call('toggleExpanded', $inv1->id)
             ->assertSee('Item 1')
             ->call('recordPayment', $inv2->id)
