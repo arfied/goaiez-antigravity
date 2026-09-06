@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T12:41:12",
+ "updated": "2026-09-06T13:20:55",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -759,6 +759,144 @@
      "stage": "capability",
      "why": "G15-28 \u2014 the \u2464 names a doctor assertion (doctor asserts no pay field); satisfying it would change a CHECK, which is the One Rule, and the module has no roles or pay column to assert over",
      "at": "2026-09-06T09:22:09"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-05 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-28 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-33 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-05 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210) and the export row is X-122's log, not X-111's",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G17-17 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-31 \u2014 the \u2464 says \"the mechanism is X-123's\"; X-111 has only the screen",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G5-17 \u2014 the help registry generates itself from X-122; X-111 has no help row and ResolveTicketAction only sets status='resolved'",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-19 \u2014 same X-122 help registry; X-111 has no search and no help topic",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-40 \u2014 the ban half exists (OpsBanAction), the mass token.revoke half does not: grep -rniE 'token.revoke|revoke' app/app/Modules/X-142 returns only manifest.php:36 and capabilities.php:25, both prose, no code",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G1-29 \u2014 booked vs COLLECTED MRR is money's ledger; X-111 has no money table and no amount column",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G1-35 \u2014 booked vs COLLECTED MRR is money's ledger; X-111 has no money table and no amount column",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G21-14 \u2014 a help card offered before submit is a UI surface; views and Livewire are Track 2's (ruling 5)",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-24 \u2014 no throttle, no limit, no tier: grep -rniE 'throttle|tier|limit' app/app/Modules/X-111 returns only capability prose",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-36 \u2014 no auto-healing supervisor exists in the module",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-41 \u2014 no T443 delete-list runner exists in the module",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-47 \u2014 no SOP table and no edit-history column on any of the four tables",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-20 \u2014 no fleet-wide roll-up: OpsEngine has three methods and none aggregates across businesses",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G9-28 \u2014 no api-traffic table and no endpoint column in migration 2026_08_30_000067",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G19-09 \u2014 no halt of any kind exists in X-111; there is nothing to prove is not the credit cap",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G21-02 \u2014 tenant_tickets has id, business_id, source, category, full_transcript, sla_due_at, status, timestamps \u2014 no person_id, no conversation_id, and no merge code",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G5-38 \u2014 createHumanTicket($businessId, $fullTranscript, $category) stores the caller's category verbatim; there is no categorisation seam, only a parameter",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G7-33 \u2014 no spend-ceiling producer exists: grep -rn \"OpsAlertAction\" app/app returns only X-111's own files, so the alert has no ceiling to fire from, and \"never stops the phone answering\" is C-Telephony's surface",
+     "at": "2026-09-06T13:20:55"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G15-28 \u2014 the register description is STRIPPED (P-206) \u2014 the \u2460 lives in the register, not in the file; the \u2464 names what doctor asserts, and writing a test to match it authors the \u2464",
+     "at": "2026-09-06T13:20:55"
     }
    ]
   },
@@ -3334,6 +3472,144 @@
    "stage": "G1-82",
    "why": "pause/meter exists nowhere in the module",
    "at": "2026-09-06T12:41:12"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-05 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-28 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-33 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-05 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210) and the export row is X-122's log, not X-111's",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G17-17 \u2014 the \u2464 reads only \"named in the header\"; there is no clause, and asserting the header would author the \u2464 (P-210)",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-31 \u2014 the \u2464 says \"the mechanism is X-123's\"; X-111 has only the screen",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G5-17 \u2014 the help registry generates itself from X-122; X-111 has no help row and ResolveTicketAction only sets status='resolved'",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-19 \u2014 same X-122 help registry; X-111 has no search and no help topic",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-40 \u2014 the ban half exists (OpsBanAction), the mass token.revoke half does not: grep -rniE 'token.revoke|revoke' app/app/Modules/X-142 returns only manifest.php:36 and capabilities.php:25, both prose, no code",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G1-29 \u2014 booked vs COLLECTED MRR is money's ledger; X-111 has no money table and no amount column",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G1-35 \u2014 booked vs COLLECTED MRR is money's ledger; X-111 has no money table and no amount column",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G21-14 \u2014 a help card offered before submit is a UI surface; views and Livewire are Track 2's (ruling 5)",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-24 \u2014 no throttle, no limit, no tier: grep -rniE 'throttle|tier|limit' app/app/Modules/X-111 returns only capability prose",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-36 \u2014 no auto-healing supervisor exists in the module",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-41 \u2014 no T443 delete-list runner exists in the module",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-47 \u2014 no SOP table and no edit-history column on any of the four tables",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-20 \u2014 no fleet-wide roll-up: OpsEngine has three methods and none aggregates across businesses",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G9-28 \u2014 no api-traffic table and no endpoint column in migration 2026_08_30_000067",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G19-09 \u2014 no halt of any kind exists in X-111; there is nothing to prove is not the credit cap",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G21-02 \u2014 tenant_tickets has id, business_id, source, category, full_transcript, sla_due_at, status, timestamps \u2014 no person_id, no conversation_id, and no merge code",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G5-38 \u2014 createHumanTicket($businessId, $fullTranscript, $category) stores the caller's category verbatim; there is no categorisation seam, only a parameter",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G7-33 \u2014 no spend-ceiling producer exists: grep -rn \"OpsAlertAction\" app/app returns only X-111's own files, so the alert has no ceiling to fire from, and \"never stops the phone answering\" is C-Telephony's surface",
+   "at": "2026-09-06T13:20:55"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G15-28 \u2014 the register description is STRIPPED (P-206) \u2014 the \u2460 lives in the register, not in the file; the \u2464 names what doctor asserts, and writing a test to match it authors the \u2464",
+   "at": "2026-09-06T13:20:55"
   }
  ],
  "decisions": [
@@ -3455,6 +3731,12 @@
    "module": "X-117",
    "chose": "R245 \u2014 the clauses X-117 decides are CheckoutEngine::checkout's pessimistic-lock inventory seam and its FRESH_AUTH_REQUIRED refusal (:52-70), its integer minor-unit total (:75), and buildCart's caller-supplied expiry window (:34) \u2014 and the six filed rows name subjects (upsell/token, bundle, milestone, price lookup/refusal, issuer_scope, pause/meter) that exist nowhere in the module.",
    "at": "2026-09-06T12:40:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-111",
+   "chose": "R245 \u2014 the one clause X-111 decides that is not already credited is OpsEngine::createHumanTicket's escalation signal (:62), which freezes TicketOpened's source to the literal 'human_requested' whatever category the caller files the ticket under \u2014 and the 23 filed rows name subjects with no code, no column, or another module's system.",
+   "at": "2026-09-06T13:20:55",
    "ruling": "R245"
   }
  ],

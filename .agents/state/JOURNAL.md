@@ -1037,3 +1037,27 @@
 - `2026-09-06T12:41:12` UNRESOLVED G1-75 X-117 - price lookup-or-refusal exists nowhere in the module
 - `2026-09-06T12:41:12` UNRESOLVED G1-81 X-117 - issuer_scope exists nowhere in the module
 - `2026-09-06T12:41:12` UNRESOLVED G1-82 X-117 - pause/meter exists nowhere in the module
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-05 — the ⑤ reads only "named in the header"; there is no clause, and asserting the header would author the ⑤ (P-210)
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-28 — the ⑤ reads only "named in the header"; there is no clause, and asserting the header would author the ⑤ (P-210)
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-33 — the ⑤ reads only "named in the header"; there is no clause, and asserting the header would author the ⑤ (P-210)
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G9-05 — the ⑤ reads only "named in the header"; there is no clause, and asserting the header would author the ⑤ (P-210) and the export row is X-122's log, not X-111's
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G17-17 — the ⑤ reads only "named in the header"; there is no clause, and asserting the header would author the ⑤ (P-210)
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-31 — the ⑤ says "the mechanism is X-123's"; X-111 has only the screen
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G5-17 — the help registry generates itself from X-122; X-111 has no help row and ResolveTicketAction only sets status='resolved'
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G9-19 — same X-122 help registry; X-111 has no search and no help topic
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-40 — the ban half exists (OpsBanAction), the mass token.revoke half does not: grep -rniE 'token.revoke|revoke' app/app/Modules/X-142 returns only manifest.php:36 and capabilities.php:25, both prose, no code
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G1-29 — booked vs COLLECTED MRR is money's ledger; X-111 has no money table and no amount column
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G1-35 — booked vs COLLECTED MRR is money's ledger; X-111 has no money table and no amount column
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G21-14 — a help card offered before submit is a UI surface; views and Livewire are Track 2's (ruling 5)
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-24 — no throttle, no limit, no tier: grep -rniE 'throttle|tier|limit' app/app/Modules/X-111 returns only capability prose
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-36 — no auto-healing supervisor exists in the module
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-41 — no T443 delete-list runner exists in the module
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G4-47 — no SOP table and no edit-history column on any of the four tables
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G9-20 — no fleet-wide roll-up: OpsEngine has three methods and none aggregates across businesses
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G9-28 — no api-traffic table and no endpoint column in migration 2026_08_30_000067
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G19-09 — no halt of any kind exists in X-111; there is nothing to prove is not the credit cap
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G21-02 — tenant_tickets has id, business_id, source, category, full_transcript, sla_due_at, status, timestamps — no person_id, no conversation_id, and no merge code
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G5-38 — createHumanTicket($businessId, $fullTranscript, $category) stores the caller's category verbatim; there is no categorisation seam, only a parameter
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G7-33 — no spend-ceiling producer exists: grep -rn "OpsAlertAction" app/app returns only X-111's own files, so the alert has no ceiling to fire from, and "never stops the phone answering" is C-Telephony's surface
+- `2026-09-06T13:20:55` UNRESOLVED capability X-111 - G15-28 — the register description is STRIPPED (P-206) — the ① lives in the register, not in the file; the ⑤ names what doctor asserts, and writing a test to match it authors the ⑤
+- `2026-09-06T13:20:55` (R245) X-111 — R245 — the one clause X-111 decides that is not already credited is OpsEngine::createHumanTicket's escalation signal (:62), which freezes TicketOpened's source to the literal 'human_requested' whatever category the caller files the ticket under — and the 23 filed rows name subjects with no code, no column, or another module's system.
