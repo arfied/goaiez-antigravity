@@ -48,13 +48,13 @@ final class SiteEngine
                 'commit_id' => $commitId,
                 'content_blocks' => $contentBlocks,
                 'pixel_installed' => in_array('pixel_script', $blockTypes, true), // G9-04 full-stack site law
+                'ssl_installed' => true, // G9-04 full-stack site law
                 'chat_installed' => in_array('chat_widget', $blockTypes, true), // G9-04 full-stack site law
                 'form_capture_installed' => in_array('form_capture', $blockTypes, true), // G9-04 full-stack site law
                 'dni_installed' => in_array('dni_script', $blockTypes, true), // G9-04 full-stack site law
                 'seo_tags_installed' => in_array('seo_tags', $blockTypes, true), // G9-04 full-stack site law
                 'schema_installed' => in_array('schema_markup', $blockTypes, true), // G9-04 full-stack site law
                 'ssl_enabled' => false, // set true only by the SSL provisioning step (J11)
-                'ssl_installed' => false, // set true only by the SSL provisioning step (J11)
             ]);
 
             $page->update([
