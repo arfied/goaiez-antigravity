@@ -284,7 +284,10 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     origin/track/sixty origin/track/stages origin/track/ui \
     -- app/app/Modules/X-157 app/app/Modules/X-110 app/app/Modules/X-102 \
        app/app/Modules/X-155 app/app/Modules/X-137 app/app/Modules/X-176 \
-       app/app/Modules/X-103
+       app/app/Modules/X-103 \
+       app/tests/Modules/X-157 app/tests/Modules/X-110 app/tests/Modules/X-102 \
+       app/tests/Modules/X-155 app/tests/Modules/X-137 app/tests/Modules/X-176 \
+       app/tests/Modules/X-103
   ```
 
   It must print nothing. On 2026-09-05 it printed five commits in X-103,
@@ -292,6 +295,18 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   substance before calling it a violation**, and never brief a duplicate
   cleanup: two branches fixing one finding in one module hands Track 1 a
   conflict.
+
+  ⛔ **The `app/tests/Modules/<id>` half of that path list was missing until
+  tick 152, and it hid a live violation for half an hour.** A module's column is
+  its code *and* its tests: `track/sixty` added four tests to
+  `app/tests/Modules/X-137/X137Test.php` between 20:12 and 20:40 on 2026-09-05
+  (`68030f03` `abaf4e6b` `7f097d45`, plus `d3b35fcb` pint) closing capabilities
+  **G3-11, G8-13, G18-17, G18-24** — four of the exact ids this track carries as
+  `UNRESOLVED` under OWNER ACTION 39 — and wrote X-137 `UNRESOLVED` lines into
+  the shared `JOURNAL.md`/`BUILD-STATE.json` (`4e0478d5`). The seven `app/app/`
+  paths printed nothing the whole time. That is OWNER ACTION 45. **`app/app/`
+  is never the whole column** — the same blind spot applies to any track
+  reasoning from module paths alone.
 
   ⚠️ **Two things that query gets wrong on its own** (tick 147):
 
@@ -334,6 +349,16 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   non-fast-forward update for a coder, so Track 1 integrates by cherry-pick
   and resolves the harness hunk per ruling 13. Never edit either state file
   by hand.
+- **The stable unresolved count is `state.py status`'s printed entry list, not a
+  grep of the JSON** (tick 152). `grep -c '"why"' .agents/state/BUILD-STATE.json`
+  returns **70** on a file that holds **35** entries — each entry is serialised
+  twice, once per-module and once in the flat list. Ticks 149–151 recorded "35"
+  against that grep and were right about the number by luck of a different
+  reading; the reproducible measure is
+  `python3 bin/state.py status | grep -cE '^  (contract|tests|capability|anchor|journey|schema|citation|integrity|boundary) '`.
+  Before calling any count moved, confirm the file actually changed —
+  `git diff --stat HEAD -- .agents/state/` printing nothing means no count moved,
+  whatever the grep says.
 - SMS/mail drivers stay `log` in tests. A vendor send happens only in a
   journey on the real transport, with the owner's credentials.
 
