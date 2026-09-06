@@ -20,6 +20,9 @@ class MoneyPaidTodayTest extends TestCase
 
     public function test_money_paid_today(): void
     {
+        $base = \Carbon\Carbon::now()->startOfWeek()->copy()->addDays(6);
+        \Carbon\Carbon::setTestNow($base);
+
         $biz = TestCase::provisionTenant(['name' => 'Money Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
@@ -32,21 +35,25 @@ class MoneyPaidTodayTest extends TestCase
             'total_cents' => 12500,
             'paid_cents' => 12500,
             'status' => 'paid',
-            'due_date' => now()->toDateString(),
-            'updated_at' => now(),
-            'created_at' => now(),
+            'paid_at' => $base,
+            'due_date' => $base->copy()->toDateString(),
+            'updated_at' => $base,
+            'created_at' => $base,
         ]);
 
-        Livewire::test(MoneyPaidToday::class, ['businessId' => $biz->id])
-            ->assertSee('$125.00')
+        $owner = User::findOrFail($biz->owner_user_id);
+        Livewire::actingAs($owner)->test(MoneyPaidToday::class, ['businessId' => $biz->id])
+            ->assertSee('125.00')
             ->assertSee('INV-TEST-001');
 
         Invoice::where('business_id', $biz->id)->delete();
 
         // empty state
-        Livewire::test(MoneyPaidToday::class, ['businessId' => $biz->id])
-            ->assertSee('$0.00')
-            ->assertSee('No invoices have been paid today');
+        Livewire::actingAs($owner)->test(MoneyPaidToday::class, ['businessId' => $biz->id])
+            ->assertSee('0.00')
+            ->assertSee('No paid invoices today.');
+
+        \Carbon\Carbon::setTestNow();
     }
 
     public function test_home_renders_money_paid(): void
