@@ -10,7 +10,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-#[Layout('components.account.layout')]
+#[Layout('components.account.layout', ['heading' => 'Page Earnings'])]
 class AttributionRow extends Component
 {
     #[Locked]
