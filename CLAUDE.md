@@ -1404,3 +1404,36 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     known "instrument string in prose inflates the count" hazard: there a dictated docblock fed
     a grep instrument, here a screen's honest copy does, and it will recur on any module whose
     screen explains what it does not do.
+64. **A generated file inside a module tree is inert until that module's provider loads it,
+    and an inherited follow-up is a claim about names that goes stale like any other (RULED
+    by the lane supervisor 2026-09-06 15:0x, briefed as MONEY-78).** Twelve of the thirteen
+    errors on the gated tip `80c13ce5` were `Route [x-199.*] not defined`, carried for four
+    ticks as **TRACK 1 ACTION 2 — "`surfaces:generate` for money's twelve screens"**. It had
+    already run. `app/app/Modules/X-199/routes.generated.php` (5 routes) and
+    `X-211/routes.generated.php` (4) arrived with the `12447593` merge, correctly named and
+    correctly gated (`->middleware(['web','auth','tenant.role'])`), and **nothing reads
+    them**: `grep -c loadRoutesFrom` is **1** for X-198, X-117, X-120, X-173 and X-201 and
+    **0** for X-199 and X-211 — the two providers this lane edited most, so ruling 54 kept
+    money's side and main's added loader line went with it. **Ruling 58 shape (2), the fourth
+    distinct defect that merge produced in a file git never asked about**, and the one that
+    hid longest because its symptom names another lane's command. ⛔ The fix is **not**
+    running `surfaces:generate` (Track 1's, ruling 20 — it rewrites
+    `config/surfaces.generated.php` and other lanes' files) and **not** hand-writing a route:
+    it is one line per provider, `$this->loadRoutesFrom(__DIR__.'/routes.generated.php')`,
+    copied from `X-112/ModuleServiceProvider.php:23`. The file is inside money's own module
+    tree, so ruling 59 makes it money's regardless of who last touched it. It also delivers
+    ruling 20's definition of done — *routed, gated, real GET test* — for nine screens at
+    once, because `tests/Modules/X-19*/Screens/*` already call
+    `$this->get(route('x-199.declines'))->assertOk()` and already pass through
+    `provisionTenant()`, which sets `Tenancy` at `tests/TestCase.php:177`.
+    ⚠️ **The second half is the generalisable one.** Of MONEY-78's four inherited follow-ups,
+    **two were false when measured**: `requestCharge()` exists nowhere in this tree (rulings
+    22/23 listed it on 2026-09-05 when *main's* engine had it; money kept its own X-198 at
+    the merge and the name went, while `EvidenceChargeCommand:52` calls `capture()` and is
+    proven by `evidence/j9/charge.json`), and `config/features.php` **arrived with the merge**
+    already carrying the `Money` feature and all nine of this lane's modules, so ruling 21
+    step 5 was satisfied by another lane's file. Building either would have been ruling 56's
+    mistake — minting a method to satisfy a caller — with, in the first case, the *same method
+    name*. **So: every inherited follow-up is re-measured against the tree before it becomes a
+    brief item, and a follow-up struck for being moot is recorded with its measurement, never
+    silently dropped.** A supervisor's own ledger decays exactly like a merge does.
