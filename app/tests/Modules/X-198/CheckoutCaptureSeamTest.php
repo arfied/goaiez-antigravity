@@ -93,9 +93,11 @@ class CheckoutCaptureSeamTest extends TestCase
         $client = new class
         {
             public int $calls = 0;
+
             public function charge(int $amountCents, string $source, string $currency = 'USD'): string
             {
                 $this->calls++;
+
                 return 'ch_stub_money5812345678901';
             }
         };
