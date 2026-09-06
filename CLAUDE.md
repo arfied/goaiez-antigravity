@@ -890,6 +890,55 @@ Watch for: <the trap that applies, by name>
   test is written rather than after. **`grep` the class name across `app/app` and `app/tests` before briefing
   a test against any `Domain/*Engine.php`**, and if the only hit is the declaration, the capability's real
   subject is whatever the module's Actions actually run.
+- ✅ **A disclosed mutation SITE is what lets you verify the EXPLANATION for a zero radius, which is the half
+  the failure line can never give you.** Wave 92 re-mutated `G1-30` at `AssistantAskAction.php:21` — the first
+  statement of `handle()`, a **better** site than the `:65` my brief named, since `:65` sits behind two early
+  returns — and the sibling at `X124Test.php:50` *still* passed at radius 1/11. Wave 91's identical radius was
+  the tick-185 red flag; this one is fine, and the site is the whole difference: with it I could read
+  `SendRequestedListener::handle()` and confirm the coder's reason — `messageClass 't' → 'transactional'`,
+  `ConsentDecideAction` refuses, the `Customer` lookup on `recipientPhone '+1'` finds nothing, `return` — so a
+  real dispatch down that unfaked listener is **survivable**, and no other suite test asserts on
+  `SendRequested`. Nothing *could* have broken. **A passing sibling disclosed and explained beats a widened
+  `Event::fake` list**, and that is what to ask for. ⚠️ **Its limit: the site is still the coder's word**,
+  because the mutation is reverted before you read the log. The field buys you a checkable explanation, never
+  a proof of location — do not let it grow into one.
+- ⚠️ **Check a mutation you are about to PRESCRIBE against every assertion in the test you are asking for, not
+  just the first.** My wave-92 §3a asked for two assertions — conversation identity, then
+  `Conversation::count() === 1` — and named one mutation that breaks **both**, so the second was unprovable by
+  construction the moment I wrote it. Under the mutation the identity assertion failed and the count assertion
+  **never ran** (`assertions 6702 → 6690`). This is the wave-90 defect — a brief prescribing a rung it refuses
+  four paragraphs earlier — recurring on assertion **position** rather than on the expected value, and the
+  wave-90 subtraction rule is what surfaces it. The fix is always a second mutation that lets the earlier
+  assertions pass: here, leave the `firstOrCreate` alone and add a raw duplicate row for the same person after
+  it, so the returned id is unchanged and only the count reddens.
+- ⚠️ **A brief's two branches are wrong when the tree has three — and `(TEST ANCHOR)` in a docblock is the tell
+  that the third exists.** Wave 92's §3 offered *"if the behaviour is there"* and *"if it is not there"*.
+  `UnifiedInboxManager::ingestMessage` was a third state: **the behaviour is there and nothing in production
+  calls the method** (`grep -rn "ingestMessage" app/app app/tests` → its own declaration and `X01Test.php`,
+  nothing else). The coder answered both at once — a real identity test against the manager, the capability
+  `REFUSED` for want of the C-Whatsapp → X-01 bridge — and got it right unprompted. **Write the third branch
+  yourself when you name a method whose docblock already says `(TEST ANCHOR)`.** And grade what the resulting
+  test is worth: the mutation was on the module file, so it proves `firstOrCreate`'s semantics, but **its
+  radius of 2 is two tests that both reach the method only as tests** — real module logic, characterized, and
+  no evidence at all about a live path. That is not the wave-87 shape; do not credit it as one.
+- ⚠️ **A lane-owned gap written `⛔ REFUSED:` in a docblock is the right ACTIONS with the wrong durable LABEL.**
+  Wave 92 ran no `state.py unresolved` and filed a build proposal — exactly what the wave-81 rule governs — and
+  then wrote `⛔ REFUSED: G19-22 (positive half) — … No live path from C-Whatsapp to X-01` into
+  `CWhatsappTest.php`. `REPORT.md` is overwritten every wave, so in six weeks that line reads *"this capability
+  cannot be tested"* when the truth is *"this lane has not built the bridge yet."* **The wave-90 lesson applied
+  to itself: the docblock is the record, so the docblock must carry the distinction** — `⛔ REFUSED` for a
+  pointer at something outside the checkout, and words naming the unbuilt thing and its owner for anything
+  this lane owns. Nothing needs reverting when the ledger is clean; it is one line in the next brief.
+- **Backlog, measured at tick 186.** The `assertTrue(true)` pile is **25**; the 22 `C-Agent`/`X-01` survivors
+  have no ⑤ clause (tick 181) and `X-194:277` / `X-66:91` are closed business. What is left is
+  `C-Mail:424 test_header_capabilities`, eleven ids under one docblock. **Triaged per id, never as a group**
+  (the wave-88 lesson): `G11-06 · G11-11 · G11-15 · G11-17 · G11-29 · G11-38` read literally
+  `named in the header` and `G11-18` is `= the row above` pointing at one of them — seven refusals with no
+  clause; `G11-10` carries the eleven's only explicit `refuses:` clause and is the live target; `G11-09` is
+  positive; `G11-12` is two halves of opposite kinds whose second lands on the same X-01 `Conversation` that
+  has no bridge; `G9-21` (*primary-vs-spam placement per network*) needs real mailbox providers and is the one
+  candidate for a genuinely **external** `UNRESOLVED`. **After that wave the lane's test-only work is spent** —
+  what remains in lane is build work with proposals already on record, and that needs an owner ruling.
 
 ## Style
 
