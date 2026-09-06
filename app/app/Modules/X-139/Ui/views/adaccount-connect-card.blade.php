@@ -6,7 +6,7 @@
         @else
             <ul>
                 @foreach($connections as $c)
-                    <li>{{ $c->platform }}: {{ $c->account_id }}</li>
+                    <li>{{ $c->platform }}: {{ $c->account_id }} ({{ $c->is_connected ? 'Connected' : 'Disconnected' }})</li>
                 @endforeach
             </ul>
         @endif
