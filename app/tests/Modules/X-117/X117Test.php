@@ -200,9 +200,5 @@ class X117Test extends TestCase
     public function test_no_refusal_declared(): void
     {
         $this->assertTrue(true);
-        $this->assertTrue(true);
-        $this->assertTrue(true);
-        $this->assertTrue(true);
-        $this->assertTrue(true);
     }
 }
