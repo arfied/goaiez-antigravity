@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T17:53:12",
+ "updated": "2026-09-06T18:23:01",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -547,10 +547,71 @@
    "unresolved": []
   },
   "X-113": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 18,
    "intent": "SERVE",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-15 - missing time-off requests surface",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-28 - missing SLA alert surface",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-44 - missing wellbeing alert to a manager surface",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G10-11 - missing mandatory-training reminders surface",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G10-15 - missing employee-document store",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G15-04 - missing anniversary bot / automated greeting surface",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G15-05 - missing quarterly-reminder surface",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G17-03 - missing device/asset staff link",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G20-02 - missing performance review nagging surface",
+     "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G21-08 - missing time-off workflow surface",
+     "at": "2026-09-06T18:21:04"
+    }
+   ]
   },
   "X-114": {
    "status": "DONE",
@@ -699,10 +760,59 @@
    ]
   },
   "X-138": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 21,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G4-25 - UTM hygiene surface is absent; X-138 has no UTM code",
+     "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G9-34 - names no refusal at all, just a flagship designation",
+     "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-04 - out of module; short links are in X-137",
+     "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-06 - absent action-log read; queryJobAttribution accepts touches as a parameter",
+     "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-21 - out of module; short links are in X-137",
+     "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-23 - out of module; QR codes are in X-137",
+     "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-33 - out of module; short domain is in X-137",
+     "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G17-24 - out of module; QR codes and short links are in X-137",
+     "at": "2026-09-06T18:22:53"
+    }
+   ]
   },
   "X-139": {
    "status": "DONE",
@@ -1816,6 +1926,114 @@
    "stage": "capability",
    "why": "G6-43 - missing kit decrement surface",
    "at": "2026-09-06T17:31:54"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-15 - missing time-off requests surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-28 - missing SLA alert surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-44 - missing wellbeing alert to a manager surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G10-11 - missing mandatory-training reminders surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G10-15 - missing employee-document store",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G15-04 - missing anniversary bot / automated greeting surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G15-05 - missing quarterly-reminder surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G17-03 - missing device/asset staff link",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G20-02 - missing performance review nagging surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G21-08 - missing time-off workflow surface",
+   "at": "2026-09-06T18:21:04"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G4-25 - UTM hygiene surface is absent; X-138 has no UTM code",
+   "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G9-34 - names no refusal at all, just a flagship designation",
+   "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-04 - out of module; short links are in X-137",
+   "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-06 - absent action-log read; queryJobAttribution accepts touches as a parameter",
+   "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-21 - out of module; short links are in X-137",
+   "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-23 - out of module; QR codes are in X-137",
+   "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-33 - out of module; short domain is in X-137",
+   "at": "2026-09-06T18:22:53"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G17-24 - out of module; QR codes and short links are in X-137",
+   "at": "2026-09-06T18:22:53"
   }
  ],
  "decisions": [
@@ -2255,6 +2473,18 @@
    "module": "X-113",
    "chose": "5 ASSERT, 0 REFUSE, 10 UNRESOLVED of fifteen; an absence assertion carries no exclusion list unless a real existing name forces one, and an id whose surface does not exist is UNRESOLVED even when a nearby chokepoint would go red (REV-91)",
    "at": "2026-09-06T17:53:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-113",
+   "chose": "(R245) X-113 - G4-15 and G4-35 moved off the anchor onto tests that reach the INSUFFICIENT_ROLE_PERMISSIONS branch; two ids on one test need two distinct failure modes when the ids name distinct things (REV-92)",
+   "at": "2026-09-06T18:21:39",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-138",
+   "chose": "(R245) X-138 - 0 ASSERT, 0 REFUSE, 8 UNRESOLVED of eight; an id whose entire surface lives in another module is UNRESOLVED naming the cross-module gap, not an assertion against that module's classes from this one's test directory (REV-92)",
+   "at": "2026-09-06T18:23:01",
    "ruling": "R245"
   }
  ],

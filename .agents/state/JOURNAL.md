@@ -894,3 +894,23 @@
 - `2026-09-06T17:32:43` (R245) X-167 — (R245) 4 ASSERT, 0 REFUSE, 13 UNRESOLVED of seventeen; an id may be attached to an existing test only when that test would go red if the id's promise broke - a docblock tag that cannot fail closes the checker and covers nothing (REV-90)
 - `2026-09-06T17:53:12` (R245) X-113 — 5 ASSERT, 0 REFUSE, 10 UNRESOLVED of fifteen; an absence assertion carries no exclusion list unless a real existing name forces one, and an id whose surface does not exist is UNRESOLVED even when a nearby chokepoint would go red (REV-91)
 - `2026-09-06T18:00:05` stage capability = 277
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G2-15 - missing time-off requests surface
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G2-28 - missing SLA alert surface
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G2-44 - missing wellbeing alert to a manager surface
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G10-11 - missing mandatory-training reminders surface
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G10-15 - missing employee-document store
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G15-04 - missing anniversary bot / automated greeting surface
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G15-05 - missing quarterly-reminder surface
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G17-03 - missing device/asset staff link
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G20-02 - missing performance review nagging surface
+- `2026-09-06T18:21:04` UNRESOLVED capability X-113 - G21-08 - missing time-off workflow surface
+- `2026-09-06T18:21:39` (R245) X-113 — (R245) X-113 - G4-15 and G4-35 moved off the anchor onto tests that reach the INSUFFICIENT_ROLE_PERMISSIONS branch; two ids on one test need two distinct failure modes when the ids name distinct things (REV-92)
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G4-25 - UTM hygiene surface is absent; X-138 has no UTM code
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G9-34 - names no refusal at all, just a flagship designation
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G13-04 - out of module; short links are in X-137
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G13-06 - absent action-log read; queryJobAttribution accepts touches as a parameter
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G13-21 - out of module; short links are in X-137
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G13-23 - out of module; QR codes are in X-137
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G13-33 - out of module; short domain is in X-137
+- `2026-09-06T18:22:53` UNRESOLVED capability X-138 - G17-24 - out of module; QR codes and short links are in X-137
+- `2026-09-06T18:23:01` (R245) X-138 — (R245) X-138 - 0 ASSERT, 0 REFUSE, 8 UNRESOLVED of eight; an id whose entire surface lives in another module is UNRESOLVED naming the cross-module gap, not an assertion against that module's classes from this one's test directory (REV-92)
