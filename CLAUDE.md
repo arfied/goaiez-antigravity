@@ -788,3 +788,50 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     37 whether it was the *right* object, 41 whether we can **store** the answer.
     The supervisor approved `string('url')` at MONEY-66 review; the miss is the
     reviewer's as much as the coder's.
+42. **A gate that overlaps any other pest on `goaiez_antig_money_test` is VOID,
+    and the supervisor's own run is the measurement (RULED by the lane
+    supervisor 2026-09-06 11:3x, on MONEY-69's `d546c1a1`).** Run 82's report
+    quoted `981 · passed 973 · FAILED 2 · errors 6`; the supervisor's gate on the
+    **same sha** printed `981 · passed 974 · FAILED 2 · errors 5` — MONEY-68's
+    baseline exactly. The tell is the *shape* of the extra error, never the count:
+    two journeys that fail with `JOURNEY HARNESS NOT IMPLEMENTED` in the clean run
+    instead died on `SQLSTATE[42P01] … relation "users" does not exist`. A missing
+    `users` table in a suite that `migrate:fresh`es **once per process** (fact 17)
+    is a second pest dropping the schema under the first — here, §D's mutation
+    proof running alongside §E's gate. So: (1) a brief's mutation-proof step and
+    its gate step are **serial, never overlapping**, and the report says which ran
+    first; (2) a reported `errors`/`passed` figure is never taken as the sha's —
+    the supervisor re-gates and *its* numbers go in the verdict block; (3) an
+    `errors` rise whose new members are `relation … does not exist` is read as
+    concurrency and re-measured, **not** as a regression to bisect. ⚠️ Ruling 24's
+    gate hunk refuses a concurrent pest in *another checkout* pinning this
+    database; it cannot see a second pest in **this** one, which is the case that
+    actually fired. ⚠️ The inverse also bit here: the report's red `pint` was
+    pre-`d546c1a1` and the coder never re-gated after fixing it — **a gate run
+    before the wave's last commit describes a sha that was never reviewed.**
+43. **A persisted constant is worse than a per-mount fabrication, and
+    `invoices.pdf_url` is one (RULED by the lane supervisor 2026-09-06 11:3x,
+    briefed as MONEY-70).** `InvoiceEngine.php:66` and
+    `InvoiceDraftAction.php:30` both write the literal
+    `https://cdn.goaiez.com/invoices/inv.pdf` — **the same string for every
+    invoice of every tenant** — and `invoices.blade.php:56,:60` and
+    `unpaid.blade.php:80` render it as a live `<a href target="_blank">` labelled
+    **"Receipt"** and **"Open PDF"**. Nothing generates a PDF, nothing stores one,
+    no provider is called, and the URL does not even vary by invoice, so every
+    owner who clicks it is sent to the same non-existent file. `X199Test.php:153`'s
+    `assertNotEmpty($res['invoice']->pdf_url)` is the assertion that **certifies**
+    the fiction — it is green precisely because the constant is there. This is
+    ruling 36 one level down and strictly worse than the `Str::random` pay link 36
+    removed: that one at least died with the mount, while this is durable, shared
+    and indistinguishable from a real value in the database. ⛔ The resolution is
+    **not** to mint a per-invoice fake URL, and **not** to point it at a route
+    (routing is Track 1's, ruling 20 — that is ruling 38's prohibition exactly).
+    It is: **stop writing it**, leave the nullable column null, render the missing
+    state as a *finished* state (ruling 21) instead of a dead link, and record
+    `UNRESOLVED` naming the real missing dependency — there is no PDF generator in
+    this lane and no mounted surface to serve one from. The test inverts rather
+    than disappears (`assertNull`), so ruling 39's companion lesson is satisfied:
+    coverage of that path is kept, not deleted. ⚠️ The generalised question stays
+    ruling 36's — *what is actually at the other end of the string this screen
+    prints?* — and its new corollary is **"does it even vary?"**: a column whose
+    every row holds one hardcoded value is a fiction that no per-row test can see.
