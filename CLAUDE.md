@@ -1213,3 +1213,67 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **measure `git diff <base> HEAD --stat -- <path>` against
     `git diff <base> origin/main --stat -- <path>` before assigning any path a side**, and
     where both carry substance, resolve per hunk and keep both.
+55. **A "both sides" hunk merge is not finished until `php -l` passes, and no merge brief
+    had ever asked for one (RULED by the lane supervisor 2026-09-06 14:2x, on MONEY-76b's
+    run 92).** Ruling 54 told the coder to compose two `submit()` refusals in
+    `X-201/Domain/DisputeDefenseEngine.php`; the composition was **correct** — money's
+    `status !== 'compiled'` at `:80`, main's deadline at `:84`, main's
+    evidence-completeness at `:88-97`, all three intact — and the delivery carried a
+    **stray `}` at `:98`**, closing `submit()` early and leaving
+    `$dispute->update(['status' => 'submitted'])` outside any function. **Nothing in the
+    merge pipeline can see it:** `git merge` does not parse PHP, `git add` does not,
+    `git commit` does not, and the report's own conflict list records the resolution as
+    done. The gate's §2b is the first witness — and by then the supervisor has committed
+    the merge, because steps 2–5 of the merge checklist all passed. So: **every merge brief
+    ends with `php -l` over every path resolved by hand**, named in the report with its
+    `No syntax errors detected` line quoted. ⚠️ This is ruling 47 one layer up: there the
+    tell was a commit message naming a hex problem, here a hand-composed hunk with no lint,
+    and both come from a coder assembling PHP structurally rather than editing it.
+    ⚠️ Recorded, not avoided: the merge commit `978041fc` was made **before** the gate ran
+    and therefore ships the parse error. Committing was still right — ruling 53 forbids the
+    abort, and 1571 paths of correct resolution are not thrown away for one brace.
+56. **"Already implemented in main" is a claim about NAMES, and a merge that splits a
+    caller from its callee must be checked against the module it KEPT (RULED by the lane
+    supervisor 2026-09-06 14:2x, on the same run).** The report read
+    `JourneyHarness.php -> kept origin/main (all 5 methods already implemented in main)`.
+    All five names were present; three called an API the merged tree does not expose,
+    because ruling 54 correctly kept **money's** `X-198`/`X-199`/`X-211` while the harness
+    took **main's** side — a caller and a callee placed on opposite sides of one seam by
+    construction. Measured: `payInvoice` passes **six** arguments to a **five**-parameter
+    `GatewayEngine::capture()` (`:68-74`) and then calls **`requestCharge()`, which does not
+    exist here**; `makeOverdue` dispatches X-199's `InvoiceOverdue`, which
+    `X-211/Listeners/ProcessOverdueReceivable.php:16` does not handle (it handles
+    `ArOverdue`, dispatched by `x211:detect-overdue`); `lastDunningAction` reads
+    `receivable_states.last_action`/`last_reason`, **written by no code** — their only other
+    occurrence is the migration declaring them (`2026_09_04_000000:12-13`), decision 272 and
+    ruling 51 exactly. **RULED: the harness resolves PER METHOD.** `payInvoice`,
+    `makeOverdue` and `lastDunningAction` take money's copy; `issueInvoice` and
+    `invoiceStatus` keep **main's**, because main's differences there are fixture plumbing
+    adapted to the merged schema (`Person::firstOrCreate` with `first_name`, terms
+    `due_on_receipt`) and a one-line simplification — an owner's choice under ruling 6, not
+    a Track 1 override. ⛔ `requestCharge()` is **not** a gap to fill: rulings 22/23 have
+    listed `EvidenceChargeCommand → requestCharge()` as a post-merge follow-up (MONEY-78)
+    since 19:0x, and minting a gateway method to satisfy a test harness inverts the
+    dependency. ⚠️ **The arity half is the silent one** — six arguments against five is a
+    fatal that `php -l`, `pint` and the classmap all pass over. ⚠️ **The scoping miss is the
+    supervisor's:** the addendum's harness check was `grep -c "private function"` against
+    main's count, which is **31 on both sides** and passed while three methods were broken.
+    **A count is not a seam check.** So, standing: when a merge assigns a **caller or test**
+    to one side and the **module it exercises** to the other, the brief names the seam and
+    every called method is grepped against the kept module, **arity included**. Per the
+    ruling 46/49/50 precedent this is a new item with its own two dispatches.
+57. **`payInvoice` and `invoiceStatus` have no caller, and J9 does not run through the
+    harness (measured 14:2x).** `grep -rn "payInvoice\|invoiceStatus" app/tests` returns
+    only their own definitions. J9
+    (`TwelveJourneysTest.php:485-508`) reads `storage/app/evidence/j9/charge.json` and
+    asserts on the artifact — ruling 13's shape — so main's two fatals in `payInvoice` are
+    **latent**, surfacing as a phpstan `Call to an undefined method …::requestCharge()` the
+    moment ruling 55's brace is fixed and phpstan stops bailing. The live half is **J12**,
+    and there main's side is worse for a third reason: `TwelveJourneysTest.php:580` writes
+    `'artifact_id' => $chase['id']`, and main's `lastDunningAction` returns a two-key
+    literal with **no `id`**, so the journey would write an empty `artifact_id` **while
+    staying green** — ruling 49's `artifact_id` hazard arriving from the other direction.
+    Money's `$action->toArray()` carries it. ⚠️ Post-merge gate baseline, for the next
+    tick to measure against: `tests 2044 · passed 2011 · FAILED 9 · errors 24`, taken on a
+    tree that does not parse, so the X-201 group inflates `errors` and the number is a
+    ceiling, not a baseline.
