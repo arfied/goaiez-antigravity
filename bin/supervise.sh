@@ -90,7 +90,15 @@ echo "  runtime_build in BUILD-STATE: $(python3 -c "import json;print(json.load(
 
 if [ $want_doctor -eq 1 ]; then
   bar "5. all eight stages  (non-zero exit on any red stage is by design)"
-  php artisan doctor 2>&1 | tail -30 | sed 's/^/  /'
+  # `tail -30` alone drops the eight per-stage lines off the top — measured
+  # 2026-09-06 04:4x, when the only stage numbers left in the output were
+  # `integrity` and `journey`. The stage summary IS the thing being gated, so
+  # pull those lines out by name first, then the tail for the detail.
+  doc=$(php artisan doctor 2>&1)
+  printf '%s\n' "$doc" | grep -E '^\s*(ok|FAIL|WARN)\s+\w+' | sed 's/^/  /'
+  printf '%s\n' "$doc" | grep -E '[0-9]+ violation\(s\)\.' | sed 's/^/  /'
+  echo "  --- detail (last 30 lines) ---"
+  printf '%s\n' "$doc" | tail -30 | sed 's/^/  /'
 fi
 
 bar "6. style + static analysis"
@@ -99,8 +107,53 @@ bar "6. style + static analysis"
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
-  out=$(./vendor/bin/pest 2>&1); rc=$?
+
+  # 7a. Refuse a SECOND suite against this one database.
+  #
+  # Run 67 (2026-09-06 02:5x) started a second `supervise.sh --tests` while the
+  # first was still going; the two deadlocked on $xml_db and wrote nothing for
+  # 76 minutes, while the coder's log said it was waiting on the shot rig. A
+  # brief saying "one test process at a time" is not enough — the tool has to
+  # refuse it.
+  #
+  # ⚠️ Scoped by /proc cwd, NEVER by name. Sibling tracks (grs-antig-sixty,
+  # grs-antig-stages) run their own pest on this box and match every name
+  # pattern there is; comparing the process's cwd to *this* $APP cannot reach
+  # them. This only ever reports — killing anything is the owner's.
+  live=""
+  for p in $( { pgrep -f 'vendor/bin/pest' 2>/dev/null || true; } ); do
+    [ "$p" = "$$" ] && continue
+    cwd=$(readlink -f "/proc/$p/cwd" 2>/dev/null) || continue
+    [ "$cwd" = "$APP" ] && live="$live $p"
+  done
+  if [ -n "$live" ]; then
+    echo "  ⛔ REFUSED — a pest is already running in this checkout against $xml_db:$live"
+    echo "     Two suites on one database deadlock and write nothing (run 67, 2026-09-06)."
+    echo "     Wait for it, or have the owner kill exactly those pids. ⛔ Never pkill -f pest:"
+    echo "     sibling tracks match the same pattern. Their cwd is what identifies them."
+    exit 1
+  fi
+
+  # 7b. A hard deadline. agy's own --print-timeout is COOPERATIVE and cannot
+  # fire while it is blocked in a child that never returns — the run 67 shape.
+  # Override for a wave that genuinely needs longer, declared in its brief.
+  pest_timeout=${GOAIEZ_PEST_TIMEOUT:-30m}
+  out=$(timeout -k 30 "$pest_timeout" ./vendor/bin/pest 2>&1); rc=$?
   [ $rc -ne 0 ] && fail=1
+
+  # 7c. Say the rc out loud, and name zero bytes for what it is rather than
+  # letting a silent run read as a pass.
+  bytes=$(printf '%s' "$out" | wc -c)
+  echo "  pest rc=$rc · ${bytes} bytes of output"
+  if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then
+    echo "  ⛔ TIMED OUT after $pest_timeout (rc=$rc) — killed, not failed. Narrow with --filter."
+  fi
+  if [ "$bytes" -eq 0 ]; then
+    echo "  ⛔ ZERO BYTES. Do not debug the code — narrow it with --filter and the real"
+    echo "     exception appears immediately. Usual causes: memory_limit, a missing Vite"
+    echo "     manifest (npm run build), or the run was killed from outside."
+  fi
+
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
