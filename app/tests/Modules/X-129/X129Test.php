@@ -109,7 +109,7 @@ class X129Test extends TestCase
         $this->assertTrue(true);
     }
 
-        /**
+    /**
      * [N-063]
      * Asserting clause 1: tenant never left on empty domain - cutover allowed when all URLs answer
      */
@@ -123,7 +123,7 @@ class X129Test extends TestCase
         $this->assertTrue($res['migrated']);
     }
 
-        /**
+    /**
      * [N-064]
      * Asserting clause 1: tenant never left on empty domain - cutover refused if one URL 404s
      */
@@ -137,7 +137,7 @@ class X129Test extends TestCase
         $this->assertEquals('refused', $res['status']);
     }
 
-        /**
+    /**
      * [N-067]
      * Asserting clause 1: tenant never left on empty domain - refusal names the offending URL
      */
@@ -151,7 +151,7 @@ class X129Test extends TestCase
         $this->assertContains('https://old.com/bad', $res['blocked_urls']);
     }
 
-        /**
+    /**
      * [N-070]
      * Asserting clause 1: tenant never left on empty domain - two source URLs produce two redirect rows
      */
@@ -165,7 +165,7 @@ class X129Test extends TestCase
         $this->assertEquals(2, $count);
     }
 
-        /**
+    /**
      * [N-073]
      * Asserting clause 1: tenant never left on empty domain - build is idempotent (replayed twice, one result)
      */
@@ -180,7 +180,7 @@ class X129Test extends TestCase
         $this->assertEquals(1, $count);
     }
 
-            /**
+    /**
      * [N-076]
      * Asserting clause 1: tenant never left on empty domain - build action returns redirects_built status
      */
@@ -193,7 +193,7 @@ class X129Test extends TestCase
         $this->assertEquals('redirects_built', $res['status']);
     }
 
-        /**
+    /**
      * [N-079]
      * Asserting clause 1: tenant never left on empty domain - cutover allowed when all URLs answer (repeat of N-063)
      */
@@ -207,7 +207,7 @@ class X129Test extends TestCase
         $this->assertTrue($res['migrated']);
     }
 
-        /**
+    /**
      * [N-082]
      * Asserting clause 1: tenant never left on empty domain - cutover refused if one URL 404s (repeat of N-064)
      */
@@ -221,7 +221,7 @@ class X129Test extends TestCase
         $this->assertEquals('refused', $res['status']);
     }
 
-        /**
+    /**
      * [N-085]
      * Asserting clause 1: tenant never left on empty domain - refusal names the offending URL (repeat of N-067)
      */

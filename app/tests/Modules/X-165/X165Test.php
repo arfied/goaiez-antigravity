@@ -122,7 +122,7 @@ class X165Test extends TestCase
         $this->assertContains('plan_id', $attributes);
     }
 
-        /**
+    /**
      * [N-063]
      * Asserting clause 2: priority scheduling MUST BE REAL - returns served_person_id
      */
@@ -135,7 +135,7 @@ class X165Test extends TestCase
         $this->assertArrayHasKey('served_person_id', $res);
     }
 
-        /**
+    /**
      * [N-064]
      * Asserting clause 2: priority scheduling MUST BE REAL - priority_applied is true for members
      */
@@ -150,7 +150,7 @@ class X165Test extends TestCase
         $this->assertTrue($res['priority_applied']);
     }
 
-        /**
+    /**
      * [N-067]
      * Asserting clause 2: priority scheduling MUST BE REAL - served_person_id matches member
      */
@@ -165,7 +165,7 @@ class X165Test extends TestCase
         $this->assertEquals(88, $res['served_person_id']);
     }
 
-        /**
+    /**
      * [N-070]
      * Asserting clause 2: priority scheduling MUST BE REAL - decision_log contains explanation
      */
@@ -180,7 +180,7 @@ class X165Test extends TestCase
         $this->assertStringContainsString('membership priority', $res['decision_log']);
     }
 
-        /**
+    /**
      * [N-073]
      * Asserting clause 2: priority scheduling MUST BE REAL - served_person_id is one of the passed ids
      */
@@ -193,7 +193,7 @@ class X165Test extends TestCase
         $this->assertContains($res['served_person_id'], [99, 88]);
     }
 
-        /**
+    /**
      * [N-076]
      * Asserting clause 2: priority scheduling MUST BE REAL - priority_applied is false if neither is member
      */
@@ -206,7 +206,7 @@ class X165Test extends TestCase
         $this->assertFalse($res['priority_applied']);
     }
 
-        /**
+    /**
      * [N-079]
      * Asserting clause 2: priority scheduling MUST BE REAL - priority_applied is true for members (repeat of N-064)
      */
@@ -221,7 +221,7 @@ class X165Test extends TestCase
         $this->assertTrue($res['priority_applied']);
     }
 
-        /**
+    /**
      * [N-082]
      * Asserting clause 2: priority scheduling MUST BE REAL - served_person_id matches member (repeat of N-067)
      */
@@ -236,7 +236,7 @@ class X165Test extends TestCase
         $this->assertEquals(88, $res['served_person_id']);
     }
 
-        /**
+    /**
      * [N-085]
      * Asserting clause 2: priority scheduling MUST BE REAL - decision_log contains explanation (repeat of N-070)
      */
