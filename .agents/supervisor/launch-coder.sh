@@ -31,14 +31,30 @@ fi
 #                      SECOND consecutive "Individual quota reached" death, passed by
 #                      hand-of-tick and recorded as `coder=claude` in the REVIEWS block
 #                      that carries the LAUNCHED line. Never automatic.
+#   --allow-harness    opens the JourneyHarness.php commit gate for THIS launch only
+#                      (Track 1 ruling, OWNER.md 2026-09-06 17:2x). coder-bin/git keyed
+#                      the harness exemption to the checkout name `grs-antig`, so the
+#                      lane that owns a journey could not fix its own harness; it now
+#                      also clears on GOAIEZ_HARNESS_OK=1, which only this launcher
+#                      sets, for one run, exactly parallel to --allow-merge.
+#                      ⛔ IT OPENS THE ABILITY TO COMMIT, NOT PERMISSION TO WEAKEN.
+#                      Provisioning real state so a real code path runs is a fix;
+#                      deleting an assertion, stubbing a transport, or passing a
+#                      journey on a constant is a BLOCK and the supervisor that opened
+#                      the gate wears it. The supervisor that passes this flag QUOTES
+#                      the harness diff in its own REVIEWS.md block — an unreviewable
+#                      harness change is the exact shape of the fake green this repo
+#                      keeps finding. Never a standing flag.
 ALLOW_MERGE=0
+ALLOW_HARNESS=0
 CODER=agy
 while [ $# -gt 0 ]; do
   case "$1" in
     --allow-merge) ALLOW_MERGE=1; shift;;
+    --allow-harness) ALLOW_HARNESS=1; shift;;
     --coder) CODER="${2:-}"; shift 2 || { echo "REFUSED: --coder needs a value (agy|claude)"; exit 1; };;
     --coder=*) CODER="${1#--coder=}"; shift;;
-    *) echo "REFUSED: unknown argument '$1' (expected --allow-merge, --coder agy|claude, --status)"; exit 1;;
+    *) echo "REFUSED: unknown argument '$1' (expected --allow-merge, --allow-harness, --coder agy|claude, --status)"; exit 1;;
   esac
 done
 case "$CODER" in
@@ -96,6 +112,13 @@ MERGE_OK=0
 if [ "${ALLOW_MERGE:-0}" = 1 ]; then MERGE_OK=1; fi
 if [ "$MERGE_OK" = 1 ]; then echo "merge gate: OPEN (--allow-merge)"; else echo "merge gate: closed"; fi
 
+# Harness gate — Track 1 ruling, OWNER.md 2026-09-06 17:2x. Same shape as the
+# merge gate and for the same reason: an explicit act at dispatch, never derived
+# from BRIEF.md, which this supervisor rewrites every tick.
+HARNESS_OK=0
+if [ "${ALLOW_HARNESS:-0}" = 1 ]; then HARNESS_OK=1; fi
+if [ "$HARNESS_OK" = 1 ]; then echo "harness gate: OPEN (--allow-harness) — quote the harness diff in REVIEWS.md"; else echo "harness gate: closed"; fi
+
 # Both branches export the same two gates and the same PATH: coder-bin/git binds
 # `claude` exactly as it binds `agy`, and so does the seal. The only differences are
 # the binary, its flags and the log name.
@@ -112,9 +135,9 @@ if [ "$MERGE_OK" = 1 ]; then echo "merge gate: OPEN (--allow-merge)"; else echo 
 # a non-shell process, or a shell that never sourced it; it moves the likely case from
 # a rule to a mechanism. A missing shell-init.sh is silently ignored by bash.
 if [ "$CODER" = claude ]; then
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export GOAIEZ_HARNESS_OK='"$HARNESS_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_PUSH_OK='"$PUSH_OK"'; export GOAIEZ_MERGE_OK='"$MERGE_OK"'; export GOAIEZ_HARNESS_OK='"$HARNESS_OK"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
