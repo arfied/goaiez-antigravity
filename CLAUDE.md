@@ -163,16 +163,31 @@ each, in this order:
 | UI-28 | customers list · person · appointments | closed |
 | UI-29 | content week · broadcast composer · do-not-text list | closed |
 | UI-30 | COOLING · install & verify · live visitors | closed |
-| **UI-36** | **abandoned forms (X-110) · attribution row (X-138)** | **the last Week 1 wave — in flight** |
+| UI-36 | abandoned forms (X-110) · attribution row (X-138) | closed |
 
 UI-31 was the number originally reserved for that last wave; UI-31…UI-35 were spent
 on the merge, the displaced tree and the report-shape blocks, so the wave carries
 UI-36's number and nothing was skipped.
 
+✅ **Week 1 closed and pushed 2026-09-06 14:0x** (`a920a88b..91c48be7`), after UI-42
+took `boundary` back to 6.
+
 **Week 2 (15–19 Sep)** — every remaining capability and shell screen in these
 modules, proven. **Week 3 (22–26 Sep)** — the stand-alone deliverable, then final
-merge. When Week 1 closes, the next tick's backlog item is Week 2, scoped one wave
-at a time; it is not a single wave.
+merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
+
+| wave | scope | state |
+| :--- | :--- | :--- |
+| UI-43 | the six components still rendering the staff console — X-110 `Cooling`, `InstallVerify`, `Today`, `VisitorsLive`, `TagVersionPer`; X-138 `RoiDashboard` | closed, pushed `f5966661` |
+| **UI-44** | **the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>`** | **in flight** |
+| UI-45 | the copy pass (`cooling`'s raw `vis_N`, `VisitorsLiveTest:76–81`'s raw `v-123`/`google`/`page_view`) · `advanced-segments`, the fourteenth `moderate` screen · `OwnerNavTest`, which the account layout's comment names and which does not exist | next |
+
+⚠️ **A Week 2 scoping question I owe an answer to, not a coder item.** Four of UI-43's
+six screens carry `<x-surface.sample-state>`'s *"Sample — this screen is planned in …
+and not built yet"*, and `x-110-tag-version-per` is a heading with **no query behind
+it at all**. Those are shells with no capability under them; opening them in the
+owner's shell was right, but "proven" for Week 2 has to mean more than a shell that
+renders.
 
 ⛔ **Taking `origin/main` is never a coder item on this track.** The coder guard
 refuses it by design — the merge stages `JourneyHarness.php`, a CHECK. The
