@@ -672,6 +672,28 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   that branch's own merge-base", never "does it differ from HEAD"** — tick 147
   NOTE 1's verify-the-bound-not-the-direction trap, third surface it has bitten.
   Measured clean at tick 173: no branch is below `main`'s 14.
+
+  ⛔ **An unchanged count proves no NET loss, never no loss** (tick 181). The
+  fourth-surface test is a *count*, and tick 180 established that a query's
+  silence is bounded by its scope — a count is bounded the same way, one step
+  further in. Sixty's `580e7693` ("record UNRESOLVED dependency on core
+  Locations") was the first sibling commit to **delete** lines from the shared
+  state file: `--stat` reads `16 insertions(+), 3 deletions(-)`, and the owned-id
+  count stayed **25**. Those two facts together are consistent with two different
+  worlds — no deletion of ours, or a deletion of ours plus an equal addition —
+  and the count cannot separate them. Reading the diff can, and did: all three
+  deletions sit inside X-194's own block (the `updated` timestamp,
+  `"status": "DONE"` → `UNRESOLVED`, and `"unresolved": []` expanded to one
+  entry). Nothing of this track's was touched.
+
+  So the pairing tick 169 established for tips and tick 180 restated for the
+  complement applies here too, in its third form: **when a shared-surface commit
+  reports any deletions, read its diff — the count is the screen, the diff is the
+  measurement.** A commit with `0 deletions(-)` needs no diff, which keeps this
+  cheap: the deletion figure in `--stat` is the trigger. Same family as tick 163's
+  scoped-diff blind spot, tick 178's split migration surface and tick 180's
+  bounded complement — every one of them a query whose scope was mistaken for its
+  claim.
 - **The stable unresolved count is `state.py status`'s printed entry list, not a
   grep of the JSON** (tick 152). `grep -c '"why"' .agents/state/BUILD-STATE.json`
   returns **70** on a file that holds **35** entries — each entry is serialised
