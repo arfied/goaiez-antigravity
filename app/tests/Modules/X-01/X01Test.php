@@ -547,4 +547,37 @@ class X01Test extends TestCase
         $ingestAction->handle($biz->id, $domain->id, 'replied', 'empty@acme.com', 'Subj Empty', ['sender_name' => 'Empty Sender', 'body' => '']);
         $this->assertEquals($convsBefore, Conversation::where('business_id', $biz->id)->count(), 'A3: A replied ingest whose body is empty creates nothing');
     }
+
+    public function test_takeover_release(): void
+    {
+        Event::fake([TakeoverStarted::class, \App\Modules\X01\Events\TakeoverReleased::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Release Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $p = $this->createContact->handle($biz->id, 'Alice Bob', '+15125550188');
+        $c = Conversation::create(['business_id' => $biz->id, 'person_id' => $p->id, 'channel' => 'sms', 'status' => 'open']);
+
+        $this->takeover->handle($biz->id, $c->id, 42, 'Operator Alice');
+
+        $action = new \App\Modules\X01\Actions\ConversationTakeoverReleaseAction($this->manager);
+        $action->handle($biz->id, $c->id);
+
+        $latch = \App\Modules\X01\Models\TakeoverLatch::where('business_id', $biz->id)
+            ->where('conversation_id', $c->id)
+            ->first();
+
+        // 1. That the latch's state ended. Both columns the model casts, not one.
+        $this->assertFalse($latch->is_active);
+        $this->assertNotNull($latch->released_at);
+
+        // 2. That the ending was published — the event, with whatever you decided it carries.
+        Event::assertDispatched(\App\Modules\X01\Events\TakeoverReleased::class, function ($event) use ($biz, $c) {
+            return $event->businessId === $biz->id && $event->conversationId === $c->id;
+        });
+
+        // 3. That the release is consulted by something other than the method that wrote it.
+        $this->expectException(TakeoverNotLatchedRefused::class);
+        $this->manager->replyWithTakeover($biz->id, $c->id, 'anything');
+    }
 }
