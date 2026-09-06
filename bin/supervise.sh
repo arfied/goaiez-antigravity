@@ -192,18 +192,55 @@ if [ $want_tests -eq 1 ]; then
   # into it is a log nobody who needs it can open. Gitignored via .tick-*.
   pest_log="$ROOT/.agents/supervisor/.tick-pest.log"
   : > "$pest_log"
+
+  # 7b2. The BOX-WIDE suite lock (Track 1, OWNER.md 2026-09-06 14:1x).
+  #
+  # 7a above is a CORRECTNESS guard — it refuses a second suite against *our*
+  # database. This is a SCHEDULING one, and it is orthogonal: it serialises
+  # against every other track and every sibling project on this box that takes
+  # the same advisory lock. Two suites at once is not merely slow; it is what
+  # gives some other agent a reason to reap a "stray" pest. Track 1 lost three
+  # gates to that on 2026-09-06 (one rc=137, two rc=143), and this track's own
+  # run-77 gate died `rc=137 · 0 bytes · 23s` — far below any cap.
+  #
+  # ⛔ Never kill the holder to get the lock. Wait, or report the timeout.
+  PEST_LOCK=/home/goaiez/tmp/pest.lock
+  lock_held=0
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>>"$PEST_LOCK" 2>/dev/null && {
+      if ! flock -n 9; then
+        echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+      fi
+      flock -w 2400 9 && lock_held=1
+    }
+  else
+    # No flock on this box: behave exactly as before rather than refusing.
+    lock_held=1
+  fi
+
   # ⏱ Time the run. Without this the rc alone cannot tell a real deadline from a
   # kill that arrived in seconds, and 7c below guessed wrong for a whole wave.
   pest_t0=$(date +%s)
-  if [ -n "$pest_filter" ]; then
+  if [ $lock_held -eq 0 ]; then
+    # ⚠️ A lock-timeout is NOT a red suite — NO TEST RAN. Never take a number
+    # from a run that did not happen. The JSON below carries result
+    # `lock-timeout` and no counts, so 7d prints `tests None … result
+    # lock-timeout` rather than anything that could be mistaken for a gate.
+    echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+    echo '{"tool":"pest","result":"lock-timeout"}' > "$pest_log"
+    rc=0
+  elif [ -n "$pest_filter" ]; then
     echo "  narrowed: --filter $pest_filter"
     timeout -k 30 "$pest_timeout" ./vendor/bin/pest --filter "$pest_filter" > "$pest_log" 2>&1; rc=$?
+    flock -u 9 2>/dev/null
   else
     timeout -k 30 "$pest_timeout" ./vendor/bin/pest > "$pest_log" 2>&1; rc=$?
+    flock -u 9 2>/dev/null
   fi
   pest_elapsed=$(( $(date +%s) - pest_t0 ))
   out=$(cat "$pest_log")
   [ $rc -ne 0 ] && fail=1
+  [ $lock_held -eq 0 ] && fail=1
 
   # The cap in seconds, so "did the deadline actually arrive?" is arithmetic
   # rather than an assumption. Accepts the `30m` / `600s` / `600` forms.
