@@ -96,7 +96,7 @@ class X200Test extends TestCase
             disposition: 'voicemail',
             isUncertainAmd: true // Uncertain AMD
         );
-        $this->assertEquals('answered', $disp->disposition, 'Uncertain AMD is treated as human answered call (§18C.4)');
+        $this->assertEquals('answered', $disp->disposition, 'Uncertain AMD is treated as human answered call (G18-01, §18C.4)');
 
         // 6. QA Scorecards: AI seat scored identically to human; scorecards positive only (T677)
         $humanQa = $this->qaAction->scoreCall($biz->id, $humanSeat->id, 1001, 92, 'Great empathy shown');
