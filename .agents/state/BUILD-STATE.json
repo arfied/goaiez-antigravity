@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T13:14:19",
+ "updated": "2026-09-06T13:30:42",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1663,6 +1663,102 @@
    "module": "X-118",
    "chose": "G4-45 refused: no .connect action or hub logic in X-118; the capability's own sentence names X-122 as owner (R245)",
    "at": "2026-09-06T13:14:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "G1-05 refused: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for jobs or AI structuring lines (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "G1-31 refused: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for HTML fallbacks or template branding; pdf_url is hardcoded (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "G1-40 refused: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for link shorteners or URL generation (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "G1-51 refused: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for Stripe or gateway-agnostic integrations (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "G1-60 refused: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for channel choices on existing links (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "G13-36 refused: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for InvoiceOpened events or alerts (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "G21-04 refused: Surveyed app/Modules/X-199 Actions, Domain, Models, Events, Listeners, Ui and found no seam for seats, cards, and cancels on a unified summary screen (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G6-02 refused: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for upsells (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G7-10 refused: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for bundle allocations (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G1-73 refused: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for milestones (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G1-75 refused: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for pricing structures or promotions; the price is looked up or REFUSED (P-092) (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G1-81 refused: doctor asserts no platform-scope path (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G1-82 refused: Surveyed app/Modules/X-117 Actions, Domain, Models, Events, Ui and found no seam for pausing meters (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "G17-31 refused: doctor asserts no conversion path (R245)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "R245: the ranking instrument for remaining capability work is the bare-body count minus the refusal-marker count, never the bare count alone, because a marked refusal keeps its bare body permanently and a bare count therefore ranks finished modules as the largest remaining work (REV-77)",
+   "at": "2026-09-06T13:30:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Reviews",
+   "chose": "R245: state.py decided records get their own named commit at the end of every run, after the code commit, because run 72's records were written seventeen seconds after its commit and shipped uncommitted (REV-77)",
+   "at": "2026-09-06T13:30:42",
    "ruling": "R245"
   }
  ],
