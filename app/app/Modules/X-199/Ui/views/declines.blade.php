@@ -57,10 +57,10 @@
                                 <x-ui.button size="default" variant="secondary" wire:loading.attr="disabled" wire:target="settleUpLater({{ $decline->id }})" wire:click="settleUpLater({{ $decline->id }})" class="sm:mt-0 sm:w-auto mt-3">Settle up later</x-ui.button>
                                 @endif
                             </div>
-                            @if(isset($payLinks[$decline->id]))
+                            @if($decline->pay_link)
                             <div class="p-4 bg-gray-50 border-t border-rule">
                                 <p class="text-base">Pay link ready — send it by text or email:</p>
-                                <a href="{{ $payLinks[$decline->id] }}" class="break-all underline text-base">{{ $payLinks[$decline->id] }}</a>
+                                <a href="{{ $decline->pay_link->url }}" class="break-all underline text-base">{{ $decline->pay_link->url }}</a>
                             </div>
                             @endif
                         </div>

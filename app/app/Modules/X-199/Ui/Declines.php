@@ -6,6 +6,7 @@ namespace App\Modules\X199\Ui;
 
 use App\Modules\X198\Actions\PaymentLinkAction;
 use App\Modules\X198\Models\Payment;
+use App\Modules\X198\Models\PaymentLink;
 use App\Modules\X199\Actions\DeferDeclineAction;
 use App\Modules\X199\Models\DeclineDeferral;
 use App\Support\Tenancy;
@@ -16,17 +17,13 @@ class Declines extends Component
 {
     public bool $showAll = false;
 
-    public array $payLinks = [];
-
     public ?string $error = null;
 
     public function sendPayLink(int $paymentId, PaymentLinkAction $action): void
     {
         $this->error = null;
         try {
-            $payment = Payment::where('business_id', Tenancy::idOrFail())->findOrFail($paymentId);
-            $result = $action->handle(Tenancy::idOrFail(), $payment->amount_cents, 'Payment for declined transaction');
-            $this->payLinks[$paymentId] = $result['payment_url'];
+            $action->handle(Tenancy::idOrFail(), $paymentId, 'Payment for declined transaction');
         } catch (ModelNotFoundException) {
             $this->error = "That attempt isn't in this account any more — reload the list.";
         } catch (\Throwable $e) {
@@ -66,6 +63,12 @@ class Declines extends Component
         }
 
         $declines = $query->get();
+        $declineIds = $declines->pluck('id');
+
+        $paymentLinks = PaymentLink::where('business_id', Tenancy::id())
+            ->whereIn('payment_id', $declineIds)
+            ->get()
+            ->keyBy('payment_id');
 
         $recoveredCounts = 0;
         foreach ($declines as $decline) {
@@ -84,6 +87,8 @@ class Declines extends Component
             $decline->deferred = DeclineDeferral::where('business_id', Tenancy::id())
                 ->where('payment_id', $decline->id)
                 ->exists();
+
+            $decline->pay_link = $paymentLinks->get($decline->id);
         }
 
         return view('x-199::declines', [
