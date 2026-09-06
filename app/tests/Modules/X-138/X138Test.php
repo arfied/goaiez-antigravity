@@ -10,6 +10,7 @@ use App\Modules\X138\Events\AttributionAmbiguous;
 use App\Modules\X138\Events\JobAttributed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X138Test extends TestCase
@@ -92,7 +93,6 @@ class X138Test extends TestCase
         $this->assertEquals(4.0, $roiResult['roi_multiple']);
     }
 
-
     /**
      * [G9-14]
      */
@@ -101,13 +101,17 @@ class X138Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Ad Spend Tenant']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
+        Http::fake();
+
         $result = $this->roiAction->computeCampaignRoi($biz->id, 'spend_campaign', 60000, 10000);
-        
+
         $this->assertDatabaseHas('roi_snapshots', [
             'id' => $result['snapshot_id'],
             'ad_spend_cents' => 60000,
             'business_id' => $biz->id,
         ]);
+
+        Http::assertNothingSent();
     }
 
     /**
@@ -119,13 +123,15 @@ class X138Test extends TestCase
         DB::statement("SET app.business_id = '{$biz->id}'");
 
         $result = $this->roiAction->computeCampaignRoi($biz->id, 'revenue_campaign', 10000, 250000);
-        
+
         $this->assertDatabaseHas('roi_snapshots', [
             'id' => $result['snapshot_id'],
             'campaign_name' => 'revenue_campaign',
             'closed_revenue_cents' => 250000,
             'business_id' => $biz->id,
         ]);
+
+        $this->assertEquals(25.0, $result['roi_multiple']);
     }
 
     /**
@@ -140,18 +146,23 @@ class X138Test extends TestCase
             ['source' => 'organic_search', 'timestamp' => '2026-08-20T10:00:00Z', 'utm_campaign' => 'fall_cleaning'],
         ];
 
+        Event::fake([JobAttributed::class]);
+
         $result = $this->queryAction->queryJobAttribution(
             businessId: $biz->id,
             jobId: 777,
             qualifyingTouches: $touches,
             jobValueCents: 85000 // offline close value
         );
-        
+
         $this->assertDatabaseHas('attribution_queries', [
             'id' => $result['query_id'],
             'job_value' => 85000,
             'touches' => json_encode($touches),
+            'attribution_status' => 'single',
         ]);
+
+        Event::assertDispatched(JobAttributed::class, fn ($e) => $e->touchSource === 'organic_search' && $e->jobId === 777);
     }
 
     /**
