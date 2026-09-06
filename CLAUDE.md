@@ -462,6 +462,31 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   non-fast-forward update for a coder, so Track 1 integrates by cherry-pick
   and resolves the harness hunk per ruling 13. Never edit either state file
   by hand.
+
+  ⚠️ **`.agents/state/` is the fourth shared surface, and it is NOT a census
+  half** (tick 173). The three halves each must print nothing (or one attributed
+  non-edit); a census over `.agents/state/` prints **sixty-plus** commits from
+  every branch and always will, because every track writes it through `state.py`
+  by design. Watching it for silence would manufacture a permanent false
+  positive. What it *can* hide is another track deleting this track's entries —
+  the `module:scaffold` shape of OWNER ACTION 39, one directory over.
+
+  ⛔ **Measure that direction-correctly or you reproduce the staleness trap.**
+  A raw count per ref is not the measurement:
+  `git grep -c -E '"X-(157|110|102|155|137|176|103)"' <ref> --
+  .agents/state/BUILD-STATE.json` returned HEAD **58** · `origin/main` **14** ·
+  `origin/track/sixty` **25** · `origin/track/money` **16** · `pricebook` **14** ·
+  `stages` **14** on 2026-09-06. Read against HEAD that says every other branch
+  has dropped forty-odd of this track's lines; nobody dropped anything. HEAD is
+  ahead, sixty added eleven (its `4e0478d5` X-137 lines, already OWNER ACTION
+  45), and **money's two extra `"module": "X-103"` entries are lines `main`
+  itself later removed** in `a5f29715` ("close the answered UNRESOLVED entries,
+  run 102") — money predates the closure and still carries them. Confirmed by
+  `git log origin/main..origin/track/money -- .agents/state/BUILD-STATE.json`:
+  twenty commits, not one naming X-103. **The test is "did the count fall below
+  that branch's own merge-base", never "does it differ from HEAD"** — tick 147
+  NOTE 1's verify-the-bound-not-the-direction trap, third surface it has bitten.
+  Measured clean at tick 173: no branch is below `main`'s 14.
 - **The stable unresolved count is `state.py status`'s printed entry list, not a
   grep of the JSON** (tick 152). `grep -c '"why"' .agents/state/BUILD-STATE.json`
   returns **70** on a file that holds **35** entries — each entry is serialised
