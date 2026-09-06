@@ -133,7 +133,7 @@ class X167Test extends TestCase
         $this->assertEquals('refused', $unapprovedSend['status']);
         $this->assertEquals('PO_APPROVAL_REQUIRED', $unapprovedSend['refusal_code']);
         $this->assertFalse($unapprovedSend['sent']);
-        
+
         $po->refresh();
         $this->assertEquals('proposed', $po->status);
         $this->assertNull($po->approved_action_id);
@@ -261,20 +261,20 @@ class X167Test extends TestCase
      */
     public function test_g6_51_no_location_transfer_path_exists(): void
     {
-        $this->assertFalse(Schema::hasColumn('stock_items', 'transfer_id'), "stock_items must not have transfer_id");
-        $this->assertFalse(Schema::hasColumn('stock_locations', 'transfer_status'), "stock_locations must not have transfer_status");
-        
+        $this->assertFalse(Schema::hasColumn('stock_items', 'transfer_id'), 'stock_items must not have transfer_id');
+        $this->assertFalse(Schema::hasColumn('stock_locations', 'transfer_status'), 'stock_locations must not have transfer_status');
+
         $methods = get_class_methods(InventoryEngine::class);
         foreach ($methods as $method) {
-            $this->assertStringStartsNotWith('transfer', $method, "InventoryEngine must not have transfer methods");
+            $this->assertStringStartsNotWith('transfer', $method, 'InventoryEngine must not have transfer methods');
         }
-        
+
         $actions = [
             StockAdjustAction::class,
             ReorderProposeAction::class,
             PoGenerateAction::class,
         ];
-        
+
         foreach ($actions as $actionClass) {
             $methods = get_class_methods($actionClass);
             foreach ($methods as $method) {
