@@ -234,7 +234,14 @@ class CAgentTest extends TestCase
      */
     public function test_g5_53_stop_belongs_to_consent_service(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Consent Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->classify->handle($biz->id, 'STOP');
+        $this->assertEquals('general_inquiry', $res['intent']);
+
+        $resAnswer = $this->answer->handle($biz->id, 'STOP');
+        $this->assertNotEquals('handoff', $resAnswer['status']);
     }
 
     /**
@@ -242,7 +249,17 @@ class CAgentTest extends TestCase
      */
     public function test_g10_08_compose_time_moderation(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Mod Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Http::preventStrayRequests();
+        Http::fake();
+
+        $res = $this->answer->handle($biz->id, 'I am 16 years old');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('UNDER_18', $res['refusal_code']);
+        Http::assertNothingSent();
     }
 
     /**
@@ -250,7 +267,16 @@ class CAgentTest extends TestCase
      */
     public function test_g10_13_no_llm_in_send_path(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Send Path Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Http::preventStrayRequests();
+        Http::fake();
+
+        $res = $this->answer->handle($biz->id, 'just a regular message');
+
+        $this->assertEquals('answered', $res['status']);
+        Http::assertNothingSent();
     }
 
     /**
