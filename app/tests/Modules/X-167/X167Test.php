@@ -18,6 +18,7 @@ use App\Modules\X167\Models\StockLocation;
 use App\Modules\X167\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class X167Test extends TestCase
@@ -46,6 +47,8 @@ class X167Test extends TestCase
      * a cancelled unfulfilled order restores its decrement
      * [G6-14]
      * [G1-58]
+     * [G6-46] doctor asserts NO autonomous ordering path - it PROPOSES; L1, MONEY
+     * [G1-64] a blanket PO draws down; doctor asserts no autonomous release
      */
     public function test_anchor_fractional_stock_po_approval_and_cancellation_restoration(): void
     {
@@ -130,6 +133,10 @@ class X167Test extends TestCase
         $this->assertEquals('refused', $unapprovedSend['status']);
         $this->assertEquals('PO_APPROVAL_REQUIRED', $unapprovedSend['refusal_code']);
         $this->assertFalse($unapprovedSend['sent']);
+        
+        $po->refresh();
+        $this->assertEquals('proposed', $po->status);
+        $this->assertNull($po->approved_action_id);
 
         Event::assertNotDispatched(PoSent::class);
 
@@ -232,5 +239,49 @@ class X167Test extends TestCase
         Event::assertDispatched(StockLow::class);
         Event::assertDispatched(ReorderTriggered::class);
         $this->assertSame(0, PurchaseOrder::where('business_id', $biz->id)->count());
+    }
+
+    /**
+     * [G6-40] dead stock is REPORTED, never auto-disposed
+     * Asserts the absence of disposal columns and methods.
+     */
+    public function test_g6_40_no_auto_disposal_path_exists(): void
+    {
+        foreach (['disposed_at', 'written_off_at', 'disposal_id', 'auto_disposed'] as $col) {
+            $this->assertFalse(Schema::hasColumn('stock_items', $col), "stock_items must not have $col");
+        }
+        $this->assertFalse(method_exists(InventoryEngine::class, 'disposeStock'), 'InventoryEngine must not have disposeStock');
+        $this->assertFalse(method_exists(InventoryEngine::class, 'writeOffStock'), 'InventoryEngine must not have writeOffStock');
+    }
+
+    /**
+     * [G6-51] TRUCK-to-truck only; doctor asserts no location-to-location path
+     * Asserts the absence of transfer paths (methods and columns).
+     * This asserts the R201/R203 half of the clause only, as the atomicity half has no surface to test.
+     */
+    public function test_g6_51_no_location_transfer_path_exists(): void
+    {
+        $this->assertFalse(Schema::hasColumn('stock_items', 'transfer_id'), "stock_items must not have transfer_id");
+        $this->assertFalse(Schema::hasColumn('stock_locations', 'transfer_status'), "stock_locations must not have transfer_status");
+        
+        $methods = get_class_methods(InventoryEngine::class);
+        foreach ($methods as $method) {
+            $this->assertStringStartsNotWith('transfer', $method, "InventoryEngine must not have transfer methods");
+        }
+        
+        $actions = [
+            StockAdjustAction::class,
+            ReorderProposeAction::class,
+            PoGenerateAction::class,
+        ];
+        
+        foreach ($actions as $actionClass) {
+            $methods = get_class_methods($actionClass);
+            foreach ($methods as $method) {
+                if ($method !== 'handle' && $method !== '__construct' && $method !== 'send') {
+                    $this->assertStringStartsNotWith('transfer', $method, "$actionClass must not have transfer methods");
+                }
+            }
+        }
     }
 }
