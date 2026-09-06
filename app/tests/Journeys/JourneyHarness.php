@@ -9,7 +9,6 @@ use App\Models\Business;
 use App\Models\User;
 use App\Modules\X103\Domain\SiteEngine;
 use App\Modules\X103\Models\Page;
-use App\Modules\X103\Models\PageVersion;
 use App\Modules\X112\Domain\AgencyEngine;
 use App\Modules\X112\Models\Agency;
 use App\Modules\X112\Models\Markup;
@@ -19,6 +18,7 @@ use App\Modules\X121\Actions\JobCreateAction;
 use App\Modules\X121\Models\Job;
 use App\Modules\X121\Models\Person;
 use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X157\Models\Deployment;
 use App\Modules\X162\Models\DispatchAssignment;
 use App\Modules\X163\Actions\PriceConfirmAction;
 use App\Modules\X163\Models\PriceBookItem;
@@ -681,7 +681,7 @@ trait JourneyHarness
             [['type' => 'hero']]
         );
 
-        $deployment = \App\Modules\X157\Models\Deployment::where('business_id', $tenant['id'])
+        $deployment = Deployment::where('business_id', $tenant['id'])
             ->where('page_id', $page->id)
             ->latest()
             ->first();
