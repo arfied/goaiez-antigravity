@@ -99,6 +99,28 @@ class X175Test extends TestCase
      */
     public function test_n_175_capabilities(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Field Tech Assistant Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        \Illuminate\Support\Facades\Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('offline'));
+
+        $techPersonId = 882;
+        $jobId = 9104;
+        $techQuery = 'What is the torque spec for Carrier 24VNA9 compressor mounting bolts?';
+        $verifiedAnswer = 'Torque to 18 ft-lbs in star pattern';
+
+        $verifiedResult = $this->askAction->handle(
+            businessId: $biz->id,
+            jobId: $jobId,
+            techPersonId: $techPersonId,
+            queryText: $techQuery,
+            isSamplePrice: false,
+            verifiedAnswer: $verifiedAnswer
+        );
+
+        $this->assertEquals('answered', $verifiedResult['status']);
+        $this->assertEquals($verifiedAnswer, $verifiedResult['response']);
+
+        \Illuminate\Support\Facades\Http::assertNothingSent();
     }
 }
