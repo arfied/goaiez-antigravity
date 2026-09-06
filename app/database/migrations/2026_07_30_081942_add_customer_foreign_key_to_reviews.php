@@ -17,13 +17,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('reviews', function (Blueprint $table): void {
-            $table->foreign('customer_id')
-                ->references('id')->on('customers')
-                ->nullOnDelete();
+        try {
+            Schema::table('reviews', function (Blueprint $table): void {
+                $table->foreign('customer_id')
+                    ->references('id')->on('customers')
+                    ->nullOnDelete();
 
-            $table->index('customer_id');
-        });
+                $table->index('customer_id');
+            });
+        } catch (\Illuminate\Database\QueryException $e) {
+            if (!str_contains($e->getMessage(), 'already exists') && $e->getCode() !== '42710') {
+                throw $e;
+            }
+        }
     }
 
     public function down(): void
