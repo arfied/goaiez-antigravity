@@ -114,7 +114,6 @@ class X108Test extends TestCase
         );
     }
 
-
     /**
      * the agent calls availability.request; time is looked up or refused (P-093)
      */
@@ -300,8 +299,6 @@ class X108Test extends TestCase
         $this->book->handle($biz->id, 'Consultation', $date.' 10:30:00', $date.' 11:30:00');
     }
 
-
-
     /**
      * [G17-27] slots localised to the customer's browser
      */
@@ -427,7 +424,6 @@ class X108Test extends TestCase
         $this->assertSame($rightEntry->id, $cancelRes['waitlist_id']);
         $this->assertSame('pending', $wrongEntry->fresh()->status);
     }
-
 
     /**
      * [G15-32] ⑤ R188 — work not pay; doctor asserts no pay field
