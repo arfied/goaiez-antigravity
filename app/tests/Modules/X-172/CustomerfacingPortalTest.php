@@ -149,7 +149,7 @@ class CustomerfacingPortalTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $plan = app(PlanProposeAction::class)->handle($biz->id, 'Gold Plan');
+        $plan = app(PlanProposeAction::class)->handle($biz->id, 'Gold Plan', 19900);
         app(MembershipStartAction::class)->handle($biz->id, $plan->id, $personId);
 
         $token = 'member_tok_'.uniqid();

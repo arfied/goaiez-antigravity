@@ -251,4 +251,34 @@ class X163Test extends TestCase
 
         $this->assertEquals(0, PriceBookItem::where('business_id', $biz->id)->count());
     }
+
+    public function test_pricebook_list_filters_samples(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sample Filter Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Real Service',
+            'price_cents' => 10000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Sample Service',
+            'price_cents' => 20000,
+            'is_sample' => true,
+            'is_confirmed' => true,
+            'confirmed_at' => now(),
+        ]);
+
+        $list = app(\App\Services\Assistant\PriceBook::class)->list();
+        $this->assertCount(1, $list->entries);
+
+        $entries = array_values($list->entries);
+        $this->assertEquals('Real Service', $entries[0]->label);
+    }
 }

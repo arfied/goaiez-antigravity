@@ -16,9 +16,9 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * One priced line on a business's list — T176 P5, R13's skill 4.
  *
- * ⛔ **READ AND WRITTEN ONLY THROUGH {@see PriceBook}, AND A CHOKEPOINT LINT
- * HOLDS THAT** (`tests/Feature/Architecture/PricesTest.php`). The reason is the
- * review-before-live gate rather than tidiness: `confirmed_at` is a nullable
+ * ⛔ **NO LONGER THE PRICEBOOK OF RECORD**. `PriceBook` now reads and writes
+ * `price_book_items` instead of this table.
+ * The review-before-live gate rather than tidiness: `confirmed_at` is a nullable
  * column, so **any second reader is one forgotten `where` away from quoting a
  * figure nobody has reviewed** — and the failure is silent, because an
  * unconfirmed row looks exactly like a confirmed one on the way out of the

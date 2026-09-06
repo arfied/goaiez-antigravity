@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 return [
     // status: SPECCED
-    'G10-24' => 'the signature pad lives in the customer portal; see F-19',
+    'G10-24' => 'the signature pad lives in the customer portal; see F-19 · refuses: a redline is SURFACED with a diff, never accepted',
 
     // status: SPECCED
     'G10-32' => 'a clause comment from the customer; the decision routes to X-202',

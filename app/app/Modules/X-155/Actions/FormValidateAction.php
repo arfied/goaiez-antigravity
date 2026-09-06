@@ -42,6 +42,36 @@ final class FormValidateAction
             ];
         }
 
+        // 3. Multi-step logic (G2-17), narrowed by the adaptive rule (G5-30):
+        //    a step the answers do not reach is never enforced.
+        $steps = (new FormAdaptiveStepsAction)->handle($form, $payload);
+
+        foreach ($steps as $step) {
+            $required = $step['required'] ?? [];
+
+            if (! is_array($required) || $required === []) {
+                continue;
+            }
+
+            $missing = [];
+
+            foreach ($required as $field) {
+                if (! array_key_exists($field, $payload) || $payload[$field] === null || $payload[$field] === '') {
+                    $missing[] = $field;
+                }
+            }
+
+            if ($missing !== []) {
+                return [
+                    'is_valid' => false,
+                    'is_spam' => false,
+                    'reason' => 'incomplete_step',
+                    'step' => $step['step'] ?? null,
+                    'missing' => $missing,
+                ];
+            }
+        }
+
         return [
             'is_valid' => true,
             'is_spam' => false,
