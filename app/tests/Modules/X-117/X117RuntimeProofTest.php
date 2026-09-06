@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class X117RuntimeProofTest extends TestCase
 {
-    public function test_checkout_reaches_a_real_charge_id(): void
+    public function test_the_checkout_artifact_records_a_pending_order_and_no_payment(): void
     {
         $path = storage_path('app/evidence/X-117/checkout.json');
         $this->assertFileExists($path);
