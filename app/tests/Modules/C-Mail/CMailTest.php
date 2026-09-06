@@ -417,9 +417,100 @@ class CMailTest extends TestCase
     }
 
     /**
+     * [G11-10] pre-send bounce and spam-trap gate
+     */
+    #[Group('G11-10')]
+    public function test_g11_10_pre_send_bounce_and_spam_trap_gate(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Bounce Gate Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $domain = $this->dnsAction->handle($biz->id, 'bounce-gate.apex-air.com');
+
+        $bouncedEmail = 'bounced@acme.com';
+        $spamTrapEmail = 'spamtrap@acme.com';
+        $cleanEmail = 'clean@acme.com';
+
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domain->id,
+            'event_type' => 'bounced',
+            'recipient_email' => $bouncedEmail,
+            'subject' => 'Prior send',
+        ]);
+
+        MailEvent::create([
+            'business_id' => $biz->id,
+            'mail_domain_id' => $domain->id,
+            'event_type' => 'spam-trap',
+            'recipient_email' => $spamTrapEmail,
+            'subject' => 'Prior send',
+        ]);
+
+        Event::fake([EmailSent::class]);
+
+        // (a) Refusal for bounced
+        $refusedBounce = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: $bouncedEmail,
+            subject: 'New Campaign',
+            sendType: 'marketing'
+        );
+        $this->assertDatabaseMissing('mail_events', [
+            'business_id' => $biz->id,
+            'recipient_email' => $bouncedEmail,
+            'subject' => 'New Campaign',
+            'event_type' => 'sent',
+        ]);
+        Event::assertNotDispatched(function (EmailSent $event) use ($bouncedEmail) {
+            return $event->recipientEmail === $bouncedEmail;
+        });
+        $this->assertSame('refused_bounced_or_spam', $refusedBounce['status']);
+
+        // (a) Refusal for spam-trap
+        $refusedSpam = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: $spamTrapEmail,
+            subject: 'New Campaign',
+            sendType: 'marketing'
+        );
+        $this->assertDatabaseMissing('mail_events', [
+            'business_id' => $biz->id,
+            'recipient_email' => $spamTrapEmail,
+            'subject' => 'New Campaign',
+            'event_type' => 'sent',
+        ]);
+        Event::assertNotDispatched(function (EmailSent $event) use ($spamTrapEmail) {
+            return $event->recipientEmail === $spamTrapEmail;
+        });
+        $this->assertSame('refused_bounced_or_spam', $refusedSpam['status']);
+
+        // (b) Positive control
+        $success = $this->sendAction->handle(
+            businessId: $biz->id,
+            mailDomainId: $domain->id,
+            recipientEmail: $cleanEmail,
+            subject: 'New Campaign',
+            sendType: 'marketing'
+        );
+        $this->assertDatabaseHas('mail_events', [
+            'business_id' => $biz->id,
+            'recipient_email' => $cleanEmail,
+            'subject' => 'New Campaign',
+            'event_type' => 'sent',
+        ]);
+        Event::assertDispatched(function (EmailSent $event) use ($cleanEmail) {
+            return $event->recipientEmail === $cleanEmail;
+        });
+        $this->assertSame('processed', $success['status']);
+    }
+
+    /**
      * ⛔ REFUSED: G11-06 — the capability's own text is "named in the header"; there is no clause to assert
      * BUILD PROPOSAL: G11-09 — a test send scored before the campaign has not been built yet; C-Mail is owned by this lane (EmailWarmupAction.php, EmailSendAction.php)
-     * BUILD PROPOSAL: G11-10 — the pre-send bounce and spam-trap gate has not been built yet; C-Mail is owned by this lane (EmailSendAction::handle():26)
+     * BUILT: G11-10 — test_g11_10_pre_send_bounce_and_spam_trap_gate()
      * ⛔ REFUSED: G11-11 — the capability's own text is "named in the header"; there is no clause to assert
      * ⛔ REFUSED: G11-12 (first half) — the capability's own text is "named in the header"; there is no clause to assert
      * BUILD PROPOSAL: G11-12 (second half) — the live bridge from C-Mail to X-01 has not been built yet; both are owned by this lane (EmailSendAction, UnifiedInboxManager::ingestMessage)
