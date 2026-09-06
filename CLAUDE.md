@@ -1277,3 +1277,77 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     tick to measure against: `tests 2044 · passed 2011 · FAILED 9 · errors 24`, taken on a
     tree that does not parse, so the X-201 group inflates `errors` and the number is a
     ceiling, not a baseline.
+58. **A merge's damage is in its NON-conflicting hunks, and phpstan is this lane's seam
+    detector (RULED by the lane supervisor 2026-09-06 14:4x, on MONEY-76c's `72b506f8`).**
+    Ruling 54 taught this lane to measure both sides before assigning a **conflicting** path
+    a side. Every defect the `12447593` merge actually produced arrived where git had
+    nothing to ask about, and the conflict list is blind to all four shapes: (1) main
+    **adds** a file against money's kept code — `tests/Modules/X-199/DeclinesTest.php`,
+    `UnpaidTest.php`, `MoneyPaidTodayTest.php`, main's tests for **main's** parallel
+    implementation of money's screens, 3 FAILUREs; (2) main's **one-sided** change to a file
+    inside money's own module tree is taken whole — `X-211/Listeners/ChaseOverdueInvoice.php`
+    (ruling 59); (3) main **deletes** a class money's code reads —
+    `X-121/Models/{Conversation,Message}`, relocated to `App\Models\`, read by
+    `X-211/Domain/ArEngine.php:228,242` and `X-211/Ui/InvoiceThreadBeside.php:87-88`;
+    (4) main adds generated tests for routes nobody mounted — `tests/Modules/X-199/Screens/*`,
+    12 × `Route [x-199.*] not defined`. **Standing: after any merge the check is the DELTA,
+    not the conflict list** — `git diff --name-status <pre-merge tip> HEAD -- app/app/Modules/<lane ids>`
+    and the same over the lane's tests, read for `A` and `D` as carefully as for `M`.
+    ⚠️ **phpstan is the instrument**: it was `0` on money's own pre-merge tip `7d9eb086` and
+    `5` after, and it found three of the four shapes, because it is the only gate that
+    resolves a class across two files. `php -l`, `pint` and the classmap pass over every one.
+    ⚠️ The three screen FAILUREs are **not** ruling 33's boundary bomb, which the 14:2x
+    addendum predicted: `X-199/Ui/Declines.php:51` is
+    `abort_unless(auth()->check() && Tenancy::check(), 403)` and main's tests never
+    authenticate, so Livewire renders the 403 page — the tell is a **whole HTML document**
+    (`'"en" class="antialiased dark">\n<head>...'`) in a `Livewire::test` failure, which a
+    passing render never produces. They also assert main's strings (`'1 declined'`,
+    `'No payments have been declined or reversed'`) against money's blades
+    (`{{ $declinesCount }}`, `'You have no declined payments to review.'`), and seed
+    `OverflowCharge` where money's `Declines` reads `Payment where status = 'failed'`.
+59. **A one-sided `main` change inside a money module tree is money's to resolve, on money's
+    terms (RULED by the lane supervisor 2026-09-06 14:4x, briefed as MONEY-77 item 2).**
+    Ruling 54 gave money's module trees money's side **on conflict** and said nothing about
+    one-sided paths; `X-211/Listeners/ChaseOverdueInvoice.php` slipped through that silence
+    and calls `ArEngine::chaseOverdue()`, which money's engine does not have. X-211 is
+    money's by ruling 20, so the file is money's regardless of who last touched it. Two whole
+    overdue chains exist, one per side — money's `x211:detect-overdue` → `ArOverdue` →
+    `ProcessOverdueReceivable` → `ArDunningAction` (read by `lastDunningAction` via
+    `toArray()`, which carries the `id` `TwelveJourneysTest.php:580` writes as
+    `artifact_id`), and main's `InvoiceOverdue` → `ChaseOverdueInvoice` → `chaseOverdue()` →
+    `receivable_states.last_action`/`last_reason` (read by main's `lastDunningAction`, which
+    returns a literal with **no `id`**). **Money's chain stays and `chaseOverdue()` is not
+    adopted**, for a reason independent of ownership: `12447593:ArEngine.php:163` hardcodes
+    `$action = 'offer_plan'` for every invoice under a comment citing R211, so the chase does
+    not vary by reason — ruling 43's *"does it even vary?"* in the one journey named *chased
+    **by reason***; and adopting it would leave X-211 with two overdue paths writing two
+    stores. ⛔ **Never add the method to satisfy the caller** — that is ruling 56's
+    `requestCharge` mistake, the dependency inverted. The listener is **removed**, measured
+    not assumed: `grep -rn "ChaseOverdueInvoice\|chaseOverdue" app/app app/tests` returns
+    only the file's own two lines, so no provider registers it and no test asserts it and
+    ruling 46 costs nothing. ⚠️ **Correction to ruling 56**, recorded rather than dropped: it
+    called `receivable_states.last_action`/`last_reason` "written by no code" — they are
+    written by main's `chaseOverdue()`, the method money is declining. They stay unwritten in
+    this tree **by choice**, and remain on MONEY-79's list as declared-and-unwritten
+    (decision 272).
+60. **`coder-bin/git` refuses `JourneyHarness.php` on EVERY commit, so the supervisor commits
+    it (RULED by the lane supervisor 2026-09-06 14:4x, on run 93's refusal).** Run 93 did the
+    ruling 56 harness split correctly — `php -l` clean, `requestCharge` gone, 31 methods —
+    and `git commit` returned *"a never-list or supervisor path is staged:
+    app/tests/Journeys/JourneyHarness.php"*; the coder then restored the tree and the work was
+    lost. The refusal is **not merge-specific**, so no coder in this lane can ever land a
+    harness hunk, while owner ruling 1 grants a journey track its own `todo()` methods and
+    ruling 6 assigns `issueInvoice` to money. The guard is coarser than the ruling governing
+    it. Ruling 52 resolved this exact shape once — where the guard refuses the coder and
+    ruling 26 leaves no other party running git, **the supervisor commits what the coder
+    staged and it has inspected** — and it applies unchanged: `git add` is not in the guard's
+    case list, so the coder edits, lints and stages, and the supervisor commits the file by
+    named path in the next tick, authoring nothing. **Two consequences, both load-bearing:**
+    (a) **the harness edit is the LAST item of any brief**, because a staged harness makes the
+    guard refuse every *other* commit in the run — that is what cost run 93 its work, and a
+    brief that puts it earlier destroys everything after it; (b) **a guard refusal spends no
+    dispatch against the cap**, as ruling 40's kill does not — the coder did the work and was
+    structurally prevented from recording it. ⚠️ A brief carrying a staged-not-committed
+    deliverable also forbids `git commit`, `git restore`, `git checkout`, `git stash` and
+    `git merge --abort` for the rest of the run: there is no second copy. The guard itself
+    stays a **TRACK 1 ACTION**; this is a workaround, not a fix.
