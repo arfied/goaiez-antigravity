@@ -591,3 +591,6 @@
 - `2026-09-06T07:09:42` (R245) X-198 — (R245) For X-117 and X-198: The order an unconfirmed checkout creates is pending_payment. Only a non-null gateway_charge_id promotes it to paid. Tested in test_an_unconfirmed_checkout_leaves_the_order_pending.
 - `2026-09-06T07:29:07` (R245) X-117 — (R245) the value checkout returns is read from the row after the checkout event, so a synchronous listener's promotion is visible to the caller
 - `2026-09-06T07:29:07` note: MONEY-59 owns the orders.status migration default
+- `2026-09-06T07:48:46` (R245) X-117 — (R245) an orders row written without an explicit status defaults to pending_payment, not paid; sold_out and refused are envelope statuses that never reach the row
+- `2026-09-06T07:48:50` note: the  comment at 2026_08_30_000029_create_x117_sellables_tables.php:46 is superseded but left byte-for-byte alone because that file is applied on every database in the programme
+- `2026-09-06T07:48:55` note: the superseded comment at 2026_08_30_000029_create_x117_sellables_tables.php:46 is left alone because that file is applied on every database in the programme
