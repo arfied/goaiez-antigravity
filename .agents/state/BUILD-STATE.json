@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T08:22:40",
+ "updated": "2026-09-06T08:46:24",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1726,6 +1726,12 @@
    "module": "X-198",
    "chose": "(R245) payments.status defaults to awaiting_processor, not captured: a row that does not say what happened to the money has not had money taken.",
    "at": "2026-09-06T08:22:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "(R245) a missing gateway key writes no payment row at all: StripeGatewayClient throws before any HTTP request exists, so nothing is known about the money, and a non-failed row would be honoured by capture()'s idempotency check and silently block the retry after the key is fixed",
+   "at": "2026-09-06T08:46:24",
    "ruling": "R245"
   }
  ]
