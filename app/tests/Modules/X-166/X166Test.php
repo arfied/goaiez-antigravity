@@ -109,7 +109,7 @@ class X166Test extends TestCase
 
         // A job with cost rows appears in the report and carries a margin figure
         $jobsWithMargins = array_column($report, 'gross_margin_pct', 'job_id');
-        
+
         $this->assertArrayHasKey(999, $jobsWithMargins);
         $this->assertEquals(50.0, $jobsWithMargins[999]);
 

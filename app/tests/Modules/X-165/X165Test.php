@@ -116,7 +116,7 @@ class X165Test extends TestCase
 
         $membership = $this->startAction->handle($biz->id, $plan->id, 99);
         $attributes = array_keys($membership->getAttributes());
-        
+
         $this->assertNotContains('price', $attributes);
         $this->assertNotContains('price_cents', $attributes);
         $this->assertContains('plan_id', $attributes);
