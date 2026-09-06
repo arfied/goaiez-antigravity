@@ -1500,3 +1500,72 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     there is no output at all and the signal is the exit code. ⚠️ Distinguish from ruling 40's
     kill too: that is a dead *coder* with a 0-byte run log, this is a dead *pest* inside a live
     gate — neither spends a dispatch, but only 40 calls for a continuation brief.
+68. **Carbon 3 returns a SIGNED `diffInDays`, so `$future->diffInDays(now())` is NEGATIVE, and two
+    of this lane's uses are inverted — one of them produces a constant (RULED by the lane
+    supervisor 2026-09-06 16:0x, briefed as MONEY-80 items 1 and 2).**
+    `app/vendor/nesbot/carbon/src/Carbon/Traits/Difference.php:254` is
+    `diffInDays($date = null, bool $absolute = false, …): float` — Carbon **3.13.2**
+    (`composer.lock:3695`) flipped `$absolute` to `false` from Carbon 2's `true`, so the call
+    returns `$date − $this` **signed** and the receiver order decides the sign.
+    (1) `X-199/Domain/InvoiceEngine.php:224`'s `max(1, now()->diffInDays($invoice->due_date))`
+    makes the inner term **`−45.0`** for an invoice 45 days overdue, so `max()` returns **`1`** and
+    `InvoiceOverdue::daysOverdue` is **always exactly 1**, for every overdue invoice at every age —
+    ruling 43's *"does it even vary?"* in the one field whose entire purpose is to vary, with the
+    comment above it (*"just 1 if it's forced by harness"*) showing the constant was seen and
+    rationalised rather than measured. It is also a latent `TypeError`: a due_date in the **future**
+    makes the term positive, `max()` returns a `float`, and the constructor's `int $daysOverdue`
+    under `declare(strict_types=1)` refuses it.
+    (2) `X-120/Ui/CardScreen.php:90`'s `$expDate->isPast() || $expDate->diffInDays($now) <= 30`
+    scores a card expiring 2029-12-31 at ≈ **`−1211`**, so **every card on file** is in
+    `$expiringCards` and `card-screen.blade.php:15-19` renders a **"Card Expiring Soon"**
+    attention-card for each — the owner is warned about every card forever and the one real signal
+    is lost. `X-120/Actions/CardExpiringScanAction.php:27` passes `false` explicitly *and* has the
+    receiver the right way round, so today **the screen and the scan disagree about the same card**;
+    the fix copies the action's shape so the two agree by construction.
+    **Measured clean and out of scope:** `Unpaid.php:93`, `AgeingByReason.php:137`,
+    `InvoiceThreadBeside.php:82`, `CollectionsPackagePreview.php:62` and
+    `DetectOverdueReceivablesCommand.php:68` all call `$due_date->diffInDays(<later>)`, which is
+    positive, and the two X-211 screens are fed by `InvoiceReader::unpaidOverdueForBusiness()`
+    (`:70` `whereDate('due_date','<',today())`), so no not-yet-due row can reach them and print a
+    negative age. Six sites read, four correct. ⚠️ **Ruling 46's sweep:**
+    `grep -rn "markOverdue" app/app app/tests` returns **only its own definition**, and
+    `CardScreenTest.php:63`'s `assertSee('Card Expiring Soon')` **stays green** after the fix
+    because its second fixture card is genuinely expired (`exp_year => now()->year - 1`) and
+    satisfies `isPast()` alone — it has been passing for the wrong reason and cannot see the bug,
+    which is why each item adds a **new** method rather than editing that one. ⚠️ The
+    generalisable half is cross-lane and is **TRACK 1 ACTION 8**: the Carbon 2 → 3 upgrade made
+    every call written against the old semantics silently sign-wrong, and `phpstan` cannot see it
+    because the type is `float` either way.
+69. **`invoice.overdue` has a declared emitter, a declared consumer and no dispatcher, and this
+    corrects ruling 32's second half (RULED by the lane supervisor 2026-09-06 16:0x).**
+    `X-199/manifest.php:41` declares `@emits invoice.overdue` against `X-211/manifest.php:46`'s
+    consume. Ruling 32 attributed that name to `Events/InvoiceDue.php` (dispatched by
+    `MarkInvoicesDueCommand:65`) and recorded the gap as a manifest-truncation artifact. **That was
+    wrong by one class:** `X-199/Events/InvoiceOverdue.php` exists, matches the declared name
+    exactly, and its only dispatcher is the caller-less `markOverdue()` — so the seam is real in
+    name and dead in fact, decision 272 with **both** ends declared. ⛔ **It is not wired and
+    `markOverdue` is not deleted.** Ruling 59 already chose between the two overdue chains and kept
+    money's `x211:detect-overdue` → `ArOverdue` → `ProcessOverdueReceivable` → `ArDunningAction`
+    precisely so X-211 would not have two overdue paths writing two stores; giving `InvoiceOverdue`
+    a caller now rebuilds the chain 59 declined. Deleting it instead removes the only class that
+    could ever satisfy X-199's own generated `@emits` line, and ruling 29 forbids this lane touching
+    the plan that line is harvested from. So: **fix the arithmetic so nothing in the tree carries a
+    fabricated number, and record the dead seam `UNRESOLVED`** naming ruling 59's choice as the
+    reason. ⚠️ This is ruling 44's reasoning with the sign reversed — 44 dropped a fabricated
+    *string* that had no reader; here the field is a real quantity computed wrongly, one line makes
+    it true, and an always-1 number is a fiction whether or not a listener reads it today.
+70. **A screen that tells the customer where their card number went must be true about it (RULED by
+    the lane supervisor 2026-09-06 16:0x, briefed as MONEY-80 item 3).**
+    `X-120/Ui/views/card-screen.blade.php:51` reads *"The number never leaves this form: storing it
+    is waiting on Stripe tokenisation."* `wire:model="number"` binds it to a **public property of a
+    server-side Livewire component**, read by `present()` at `CardScreen.php:64`, so the PAN travels
+    over the wire into PHP on submit — it leaves the form on the first round trip. The rest of the
+    sentence is true and stays: `present()` clears `$this->number` in its `finally`, nothing is
+    persisted, and the three-fields promise holds. This is ruling 50(a) at the lane's highest
+    stakes — a waiting state describing machinery as working in a way it does not, about a card
+    number, to the person typing it. ⛔ **The fix is the sentence, not the form.** Browser-side
+    tokenisation (Stripe Elements, a publishable key) is X-120's dependency, parked behind a
+    contract by ruling 20 and recorded by ruling 45; hand-writing a card-entry door is P-196's and
+    the kit is Track 2's (ruling 21). ⚠️ No test asserts the sentence, so nothing goes red and no
+    test is added for copy — which is exactly why it survived: **prose on a screen is the one thing
+    in this lane no gate reads**, and it is where rulings 50(a) and 63 both landed.
