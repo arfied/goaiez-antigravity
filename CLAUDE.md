@@ -200,6 +200,69 @@ Green gates are necessary, not sufficient. For every commit in
 - **Decisions are recorded, not just made.** Every `(R245)` in a module header
   has a matching `state.py decided` line in `JOURNAL.md`.
 - **`UNRESOLVED` names a missing dependency**, not an unmade decision (rule 09).
+  ⚠️ **And not unbuilt work in this lane's own module either — rule 09's three ✅ rows are all
+  *external*** (a table another module owns, a credential that does not exist, a transport nobody has
+  built). Wave 81 recorded `UNRESOLVED capability C-Mail — G11-03` because `dns-card.blade.php` is a
+  four-line stub; but `MailDomain`, `EmailDnsCheckAction`, the `c-mail.dns-card` route and a screen
+  test all exist, so **nothing was missing — the card was merely not built**, which `N-245-03` says to
+  build. ⚠️ **The brief licensed it**: *"If nothing performs a positive capability, `UNRESOLVED` with
+  the file and line you actually looked at"* is correct only when the performer belongs to another
+  module or an absent transport. Before crediting an `UNRESOLVED`, name the thing that is missing and
+  say **who owns it**; if the answer is this lane, it is a build, not a block. This is the wave-79
+  refusal-capability trap's mirror — there an `UNRESOLVED` for want of an implementation the
+  capability's own text said must be *absent*, here one for want of an implementation this lane owns.
+- ⚠️ **A mutation that throws *inside* the code under test proves the code path, not the assertion.**
+  Wave 81 closed `X-102 G21-01` with `assertEquals('active', …)` plus
+  `assertArrayNotHasKey('attendees', $session->toArray())`, and mutated by adding `attendees` to the
+  `create()` array in `ChatStartAction::handle()`. The insert threw `SQLSTATE[42703]` *inside*
+  `handle()`, so **neither assertion was ever evaluated** — and the same mutation errored **four**
+  X-102 tests, three of which say nothing about attendees. What went red was the database. The tell is
+  the blast radius: a targeted mutation reddens the tests whose assertions it breaks and no others
+  (wave 80's X-137 mutation reddened exactly its four). `toArray()` returns table columns, so an
+  `assertArrayNotHasKey` on one is unfalsifiable in both directions — it cannot fail while the column
+  is absent and cannot be reached once it is present. **Check that the mutation lets the assertion
+  execute and fail on its own terms**, and read a `MUTATION` field's red line for *where* it was
+  thrown, not just that it was red.
+- ⚠️ **`scratch/pest-raw-last.log` is one filename shared by every wave, and the reporter can lose a
+  race with its own gate.** Wave 81's `REPORT.md` (21:22:17) pasted the object wave 80's gate wrote at
+  21:04:26, because wave 81's gate did not rewrite the file until 21:22:35 — **eighteen seconds after
+  the report was written**. Nothing was fabricated and the object was real output; it was the previous
+  run's. **The headline four numbers will not tell you** — `1721 · 1714 · 3 · 4` were identical across
+  both runs. The tell is the two fields nobody quotes: `assertions` `6668` vs `6669` (the `+1` this
+  very wave added) and `duration_ms` `93706` vs `93402`. **Two independent 93-second runs cannot share
+  a `duration_ms`.** Compare `REPORT.md`'s `RAW` against `scratch/pest-raw-last.log`'s own mtime before
+  quoting either, and brief a per-wave filename. This is the stale-artifact trap one level up: there a
+  stale *tail* inside a log, here a stale *whole object* from a filename that outlives its wave.
+- ⚠️ **Never cite a log for a section it does not contain — `--full-doctor` logs are truncated.**
+  A wave-81 brief of this column's told the coder to derive its target *"from `scratch/w81-doctor.log`'s
+  own `capability` section"*. That file is 9738 bytes and has **no capability section**:
+  `grep -n "specced but no test" scratch/w81-doctor.log` returns nothing, and its only stage lines are
+  `ok integrity` and `FAIL journey`. The untruncated log is the one the coder is told to keep
+  separately (`w80-doctor-raw.log`, 142852 bytes, per-stage rows at lines 3/16/191/380/411/1198/1475).
+  The coder, unable to derive anything, picked an id out of `capabilities.php` that **doctor does not
+  report at all**. This is the `.agents/plan/` shape committed in a brief: *`ls -d` on the path, and
+  `grep` for the section, before naming either as a source.*
+- ⚠️ **§6 prints pint and phpstan on ONE line, and phpstan's `"result":"passed"` is what trails it.**
+  Read pint's own `result` field. This column recorded *"§6 pint `passed`"* at tick 172 while
+  `w80-gate.log` §6 said `{"tool":"pint","result":"fail",…,"fixers":["single_blank_line_at_eof"]}` on
+  `X102Test.php` — and wave 81 then shipped the same file pint-red again on
+  `fully_qualified_strict_types` (an inline `\App\Modules\…::class` FQN in a test). Two consecutive
+  waves red, one misread. A pint failure on a test file is not a `BLOCK` — no assertion moves — but
+  `supervise.sh` ends `⛔ a gate failed above.`, and **a gate-red sha is not a gated sha, so it holds
+  the push exactly as a `BLOCK` would.** It costs one command; make it item 0.
+- ⚠️ **This lane's `capability` queue is two ids, and neither is C-Mail.** Filtering
+  `w80-doctor-raw.log`'s capability section to `OWNER.md`'s thirteen *and* to the one violation shape a
+  test can close gives exactly `X-137 G13-19` and `X-137 G13-24` (`specced but no test names this id`).
+  **Every other lane-owned capability row is `the ⑤ names no refusal`** — a defect in the text of the
+  generated, sealed `capabilities.php`, unfixable by any test and an `OWNER ACTION` shape. So before
+  briefing capability work, run
+  `grep "specced but no test names this id" <untruncated doctor log> | grep -E "· (X-01|C-Sms|…) ·"`;
+  if it is empty, `capability` has nothing left for this lane and the wave belongs to another stage.
+  ⚠️ **`G13-19`'s existing `UNRESOLVED` is disproved by the file it names**: it reads *"no pool
+  allocation logic found in `CallAttributeAction.php`"*, and that file's
+  `allocateToken(...): CallToken` carries the docblock *"Allocate a DNI call token for a visitor
+  (G3-11, G8-13, G13-19)"*. `X137Test.php` already calls it in five tests under four other `#[Group]`
+  ids and simply never names `G13-19`. Re-read the cited file before crediting any `UNRESOLVED`.
 - **Generated files** (`app/Modules/*/manifest.php`, `capabilities.php`) changed
   only via regeneration — the commit that touches them also touches the plan or
   tracker, or the report says `module:scaffold` ran.
