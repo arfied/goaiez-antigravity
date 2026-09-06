@@ -5059,6 +5059,10 @@
   {
    "at": "2026-09-06T17:07:22",
    "note": "MEASUREMENT not a filing. contract 87 decomposes into 49 + 13 + 13 + 6 + 4 + 2. 19 of them are in the three NOT_STARTED shells. The REGEN / PLAN-SILENT / PLAN-DENIES split of the 42 is 0 REGEN, 6 PLAN-SILENT, 36 PLAN-DENIES. The ABSENT / EMITTED-UNDECLARED split of the 13 is 12 ABSENT, 1 EMITTED-UNDECLARED. ContractStage reads agent_reachable from the generated manifest.php via ManifestReader line 180 and never from any file a lane may edit."
+  },
+  {
+   "at": "2026-09-06T17:32:53",
+   "note": "CORRECTION to the 17:07:22 note. The nothing-emits-it split is 13 ABSENT and 0 EMITTED-UNDECLARED, not 12 and 1. The any.event row cited X-110 today.blade.php line 18, which reads received any events yet - the unquoted dot in the grep pattern matched a space. The only other hit is X-156 manifest.php line 41 and it sits under consumes, not emits. The 87 decomposition and the 42-row split are unaffected."
   }
  ]
 }
