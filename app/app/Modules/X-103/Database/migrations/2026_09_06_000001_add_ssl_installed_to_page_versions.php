@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('page_versions', function (Blueprint $table): void {
-            if (!Schema::hasColumn('page_versions', 'ssl_installed')) {
+            if (! Schema::hasColumn('page_versions', 'ssl_installed')) {
                 $table->boolean('ssl_installed')->default(true);
             }
         });
