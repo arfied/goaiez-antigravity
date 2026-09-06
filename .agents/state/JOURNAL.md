@@ -828,3 +828,5 @@
 - `2026-09-05T21:02:33` stage journey = 6
 - `2026-09-05T21:18:49` note: X-102: Replaced G21-01 tautology with structural assertion of absent attendees, mutated to prove load-bearing
 - `2026-09-05T21:20:14` UNRESOLVED capability C-Mail - G11-03: Nothing performs it: app/app/Modules/C-Mail/Ui/views/dns-card.blade.php:1-4 is a stub and Ui/DnsCard.php:11-14 does not show records.
+- `2026-09-05T21:41:25` note: X-137 G13-19 is resolved. Created test the_number_pool_every_visitor_gets_a_call_token testing the existing allocateToken logic.
+- `2026-09-05T21:42:57` note: C-Mail G11-03 is resolved. Implemented DnsCard to show records with copy button, avoiding instruction to configure SPF.

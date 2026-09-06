@@ -1658,6 +1658,14 @@
   {
    "at": "2026-09-05T21:18:49",
    "note": "X-102: Replaced G21-01 tautology with structural assertion of absent attendees, mutated to prove load-bearing"
+  },
+  {
+   "at": "2026-09-05T21:41:25",
+   "note": "X-137 G13-19 is resolved. Created test the_number_pool_every_visitor_gets_a_call_token testing the existing allocateToken logic."
+  },
+  {
+   "at": "2026-09-05T21:42:57",
+   "note": "C-Mail G11-03 is resolved. Implemented DnsCard to show records with copy button, avoiding instruction to configure SPF."
   }
  ]
 }
