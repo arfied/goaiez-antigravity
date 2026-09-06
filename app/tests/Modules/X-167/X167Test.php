@@ -238,7 +238,7 @@ class X167Test extends TestCase
     public function test_g1_64_a_blanket_po_draws_down_no_autonomous_release(): void
     {
         $path = base_path('app/Modules/X-167');
-        $grepCommand = sprintf('grep -rniE "(Console|Jobs\\\\|Schedule|->cron|artisan\()" %s', escapeshellarg($path));
+        $grepCommand = sprintf('grep -rniE "(Console|Jobs\\\\\\\\|Schedule|->cron|artisan\()" %s', escapeshellarg($path));
         $output = shell_exec($grepCommand);
 
         $lines = array_filter(explode("\n", $output ?? ''), function ($line) {
