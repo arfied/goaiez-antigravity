@@ -133,7 +133,8 @@ class ThreadScreenTest extends TestCase
 
         // 1. A real GET to prove it renders
         $this->get(route('x-01.thread', ['customer' => $customer->id]))
-            ->assertOk();
+            ->assertOk()
+            ->assertSee('Release Takeover');
 
         Tenancy::actingAs($biz->id, function () use ($customer, $conversation) {
             // 2. The load-bearing assertion: release the takeover via component

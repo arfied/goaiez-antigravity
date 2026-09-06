@@ -35,6 +35,10 @@ class Thread extends Component
 
     public function mount(?Customer $customer = null)
     {
+        if (!$customer && request()->has('customer')) {
+            $customer = Customer::find(request()->query('customer'));
+        }
+
         $this->customer = $customer;
         if ($this->customer) {
             $score = LeadScore::where('person_id', $this->customer->id)->value('grade');
@@ -52,15 +56,18 @@ class Thread extends Component
 
         $this->errorMessage = null;
         try {
-            $conversation = Conversation::where('customer_id', $this->customer->id)
-                ->orderBy('created_at', 'desc')
-                ->first();
+            $conversationIds = Conversation::where('customer_id', $this->customer->id)->pluck('id');
+            $latches = TakeoverLatch::whereIn('conversation_id', $conversationIds)
+                ->where('is_active', true)
+                ->get();
 
-            if (! $conversation) {
+            if ($latches->isEmpty()) {
                 return;
             }
 
-            $action->handle(Tenancy::idOrFail(), $conversation->id);
+            foreach ($latches as $latch) {
+                $action->handle(Tenancy::idOrFail(), $latch->conversation_id);
+            }
             $this->hasActiveTakeover = false;
         } catch (\Throwable $e) {
             $this->errorMessage = 'Could not release takeover: '.$e->getMessage();
