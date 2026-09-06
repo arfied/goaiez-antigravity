@@ -40,8 +40,8 @@ class AttributionRowTest extends TestCase
         DB::table('roi_snapshots')->insert([
             'business_id' => $biz->id,
             'campaign_name' => 'Summer Promo',
-            'ad_spend_cents' => 50000,
-            'closed_revenue_cents' => 734000,
+            'ad_spend_cents' => 12345,
+            'closed_revenue_cents' => 999900,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -54,7 +54,8 @@ class AttributionRowTest extends TestCase
             ->assertSee('google_cpc')
             ->assertSee('organic_search')
             ->assertSee('Summer Promo')
-            ->assertSee('$500.00');
+            ->assertSee('$123.45')
+            ->assertSee('$9,999.00');
 
         DB::table('attribution_queries')->insert([
             'business_id' => $biz->id,
