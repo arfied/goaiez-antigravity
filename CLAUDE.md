@@ -1923,3 +1923,117 @@ backstop — which is the standing exposure of an untracked ledger, not a new on
    column and J11's element follow. ⛔ Never a literal, never a default.
 
 `JourneyHarness.php` is not touched; it stays TRACK 1 ACTION 1.
+
+## ⛔ A gate line reclassified as "noise" is a PRESENCE CHECK, and its silence is the signal (tick 207)
+
+Tick 196 ruled `supervise.sh` §2's `⛔ app/phpunit.xml` permanent noise and gave
+it two readings — *one known path is noise, any second path is a real BLOCK* —
+and every brief since repeated it. It has a **third**, and this tick is how the
+lane found out. §2 printed **`none`**, and that is precisely how the working-tree
+pin edit's disappearance announced itself: the absence of the ⛔, not any ⛔.
+
+| | tick 206 gate, 10:34 | tick 207 gate, 10:51 |
+| :-- | :-- | :-- |
+| §0 `app/phpunit.xml` | `goaiez_antig_site_test` | **`goaiez_antig_test`** |
+| §1 working tree | ` M app/phpunit.xml` | *(absent)* |
+| §2 forbidden paths | `⛔ app/phpunit.xml` | **`none`** |
+
+So §2 reads three ways: **`⛔ app/phpunit.xml` alone** → expected, the edit is
+alive · **any second path** → a real BLOCK, unchanged · **`none`** → ⛔ the edit
+is gone, re-brief it.
+
+**The general form is worth more than the instance.** A rule that tells a reader
+to ignore an expected line trains them to skip the one line whose absence reports
+the loss of the thing that produces it. Before writing "X is known noise", ask
+what X's *absence* would mean; if the answer is "the thing X reports is gone",
+the line is a presence check and the rule needs the third branch. Fourteenth
+statement of this section's law — 163/178/180/183/185/187 concern a query's
+*pathspec*, 190 its *strip*, 191 its *bounds*, 192/193 its *unrecorded bounds*,
+194 its *configuration*, 196 its *width*; this concerns a query's **expected
+output**, and it is the first turned on the lane's own gate rather than on git.
+
+⚠️ The proximate cause was almost certainly a **blanket `git checkout <sha> --
+app/`** used to revert a mutation: it takes `app/phpunit.xml` back to its
+committed value in the working tree, and a named-path commit then leaves the
+collateral silent and uncommitted. This ledger has forbidden blanket checkouts of
+`app/app/Modules` since tick 196 and never said `app/` itself. **Every brief now
+says: never `git checkout`/`git restore` a directory — named files only.** It is
+also the standing evidence for TRACK 1 ACTION 3 (the working-tree-only remedy
+does not survive a coder run; the durable fix is the commit neither seat can
+make).
+
+## ✅ RETRACTED at tick 207 — the X-137 divergence tick 195 filed is CLOSED
+
+Tick 195 recorded, and this file carried for a day, "the known divergence to open
+[the next X-137 wave] on": that this lane's tracker rows specify refusals
+(G3-11/G8-13 pool exhaustion → static fallback + `unattributed`, ⛔ never a reused
+token; G13-24 no second live campaign) which sixty's `X137Test.php` does not
+assert — *"nothing greps `exhaust`, and its static test asserts only the happy
+path."* That grep now returns a file which did not exist when it was written:
+`app/tests/Modules/X-137/PoolExhaustionTest.php`, six methods, every clause on a
+real seam —
+
+- `test_pool_exhaustion_renders_fallback_and_is_unattributed` — two-number pool
+  plus a configured `fallback_number`, three allocations, asserts the third is
+  `unattributed` **and** carries the fallback. Both halves.
+- `test_pool_exhaustion_never_reuses_token` — one-number pool, two allocations,
+  `assertNotEquals` on the allocated numbers.
+- `test_offline_campaign_number_cannot_be_assigned_to_second_live_campaign` —
+  expects `DomainException NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN`, and
+  `CallAttributeAction::allocateToken:76-89` really derives it from a conflict
+  query, not a literal.
+
+⚠️ The boolean-argument tell was checked before accepting it: `allocateToken`
+takes `bool $offlineCampaign` and the test passes `true`, but the flag gates two
+real queries (the conflict refusal, then a reuse lookup that rewrites the
+allocated number). Per the catalogue's discriminator — **what the code decides** —
+it is a mode selector over derived logic, not the answer. No finding.
+
+**The retraction matters more than the closure.** A tick reaching for backlog
+would have briefed a wave to build what is already built — the duplicate-cleanup
+shape this lane forbids in other lanes' columns and must equally forbid in its
+own history. Same law as tick 196 retiring tick 82's diagnosis: **re-measure a
+standing diagnosis before building on it; the bounds being unmoved only preserves
+a *correct* measurement.** It also softens TRACK 1 ACTION 6 — the objection to
+reviews' `X-137 -> DONE` is now procedural (another lane marked this lane's
+module complete without this lane's gate), not substantive.
+
+## `CapabilityStage` indexes `tests/Modules/{module}` ONLY — an `app/app/` stub is not a carrier (tick 207)
+
+Measured at `app/app/Doctor/Stages/CapabilityStage.php`: `:269`/`:297` read
+`app/Modules/{id}/capabilities.php` for the id list and the refusal regex, and
+`:281-287` scan `base_path("tests/Modules/{$module}")` with
+`/\b(G\d+-\d+|N-\d+(?:-\d+)?)\b/` for the credits. **Nothing under
+`app/app/Modules/**` is scanned for credits.** Two consequences, both used to
+size SITE-99 before briefing it:
+
+- A `Domain/<X>Engine.php` full of `throw new \DomainException('[G3-11] …')` is
+  **not** crediting anything, however many ids its strings contain. Deleting it
+  cannot move `capability`.
+- The regex needs the hyphen: `enforceG3_11` does **not** match `\bG3-11\b`, and
+  a bare `'[G'` matches nothing. So a `test_header_capabilities()` whose body
+  names only `enforceG*` methods carries **zero** ids — the real carriers are the
+  `[G13-24]` docblocks and `#[Group('G13-24')]` attributes on the other methods.
+
+⚠️ **Still verify with a full before/after `php artisan doctor` and diff EVERY
+stage line, not just `capability`** — another stage may index what this one does
+not, and the arithmetic above is a reading of one file. That is the brief's stop
+condition: any stage count that *rises* means the deleted text was a carrier
+after all.
+
+## Shell forms — refused at tick 207
+
+- ⛔ `grep -n '<pat>' /home/goaiez/tmp/agy-…-runN.log` — **blocked**: "may only
+  search for patterns in files from the allowed working directories." `grep -c`
+  on the same path is refused for the same reason. A run log outside the checkout
+  is not greppable from this seat; derive what you need from `REPORT.md`, from
+  the gate output written *inside* `.agents/supervisor/`, and from the previous
+  tick's recorded gate file — which is how this tick attributed the pin revert.
+- ⛔ `for r in …; do … "$r"; done` — *"Contains simple_expansion"*. Already
+  recorded; it recurs whenever a per-ref loop looks convenient. Issue the calls
+  individually, or fold the refs into one `git log`/`git diff` invocation.
+- ⛔ `<cmd>; echo "exit=$?"` and `python3 bin/state.py --help` — "requires
+  approval". Split the command; do not chain a status echo.
+- ✅ `git diff <a>..<b> <c>..<d> -- <path>` accepts two ranges in one call, which
+  is the accepted substitute for the refused loop when checking several siblings'
+  shared-state deletions at once.
