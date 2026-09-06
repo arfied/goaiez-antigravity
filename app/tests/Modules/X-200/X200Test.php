@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X200;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use App\Modules\X200\Actions\CallbackScheduleAction;
 use App\Modules\X200\Actions\CallDisposeAction;
 use App\Modules\X200\Actions\CampaignPauseAction;
@@ -14,11 +16,14 @@ use App\Modules\X200\Actions\SeatLoginAction;
 use App\Modules\X200\Actions\SeatLogoutAction;
 use App\Modules\X200\Events\CallRequested;
 use App\Modules\X200\Models\CallDisposition;
+use App\Modules\X200\Ui\Wallboard;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use InvalidArgumentException;
+use Livewire\Livewire;
+use Symfony\Component\Process\Process;
 use Tests\TestCase;
 
 class X200Test extends TestCase
@@ -324,22 +329,27 @@ class X200Test extends TestCase
      */
     public function test_g18_19_twilio_is_absent(): void
     {
-        $process = new \Symfony\Component\Process\Process(['grep', '-ri', 'twilio', app_path('Modules/X-200')]);
+        $process = new Process(['grep', '-ri', 'twilio', app_path('Modules/X-200')]);
         $process->run();
-        
+
         $output = $process->getOutput();
         $lines = explode("\n", trim($output));
         $offending = array_filter($lines, function ($line) {
-            if ($line === '') return false;
+            if ($line === '') {
+                return false;
+            }
             // Ignore the capabilities file where the rule is stated
-            if (str_contains($line, 'capabilities.php')) return false;
+            if (str_contains($line, 'capabilities.php')) {
+                return false;
+            }
+
             return true;
         });
-        
-        $this->assertEmpty($offending, 'Twilio is forbidden in the X-200 module (Infobip primary). Found: ' . implode("\n", $offending));
-        
+
+        $this->assertEmpty($offending, 'Twilio is forbidden in the X-200 module (Infobip primary). Found: '.implode("\n", $offending));
+
         // Also assert CallRequested carries no provider
-        $reflection = new \ReflectionClass(\App\Modules\X200\Events\CallRequested::class);
+        $reflection = new \ReflectionClass(CallRequested::class);
         $this->assertFalse($reflection->hasProperty('provider'), 'CallRequested must not carry a provider');
         $this->assertFalse($reflection->hasProperty('transport'), 'CallRequested must not carry a transport');
     }
@@ -349,7 +359,7 @@ class X200Test extends TestCase
      */
     public function test_g21_13_a_closed_deal_appears_on_the_wallboard(): void
     {
-        $owner = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Owner]);
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
         $biz = TestCase::provisionTenant(['name' => 'Wallboard Tenant', 'currency' => 'USD', 'owner_user_id' => $owner->id]);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
@@ -368,7 +378,7 @@ class X200Test extends TestCase
         $this->actingAs($owner);
         $this->get(route('x-200.wallboard'))->assertOk();
 
-        $component = \Livewire\Livewire::test(\App\Modules\X200\Ui\Wallboard::class, ['businessId' => $biz->id]);
+        $component = Livewire::test(Wallboard::class, ['businessId' => $biz->id]);
         $dispositions = $component->viewData('dispositions');
         $this->assertTrue($dispositions->contains('disposition', 'sale_won'), 'Wallboard must render the closed deal');
     }
