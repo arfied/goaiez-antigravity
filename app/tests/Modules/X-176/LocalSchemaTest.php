@@ -88,4 +88,112 @@ final class LocalSchemaTest extends TestCase
 
         $this->assertStringNotContainsString('"@type":"PostalAddress"', $html);
     }
+
+    /** (R245) */
+    public function test_rendered_schema_serves_partial_address_without_postal_address_node(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant 3',
+        ]);
+        $biz->update(['address' => [
+            'city' => 'Testville',
+        ]]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'local3.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_local3',
+            businessName: 'Local Biz 3'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertStringContainsString('application/ld+json', $html);
+        $this->assertStringNotContainsString('"@type":"PostalAddress"', $html);
+    }
+
+    /** (R245) */
+    public function test_rendered_schema_contains_geo_when_lat_lng_are_numeric(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant 4',
+        ]);
+        $biz->update(['address' => [
+            'line1' => '123 Test St',
+            'city' => 'Testville',
+            'region' => 'TX',
+            'postal_code' => '73301',
+            'country' => 'US',
+            'lat' => 30.2672,
+            'lng' => -97.7431,
+        ]]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'local4.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_local4',
+            businessName: 'Local Biz 4'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $expectedGeoJson = json_encode([
+            '@type' => 'GeoCoordinates',
+            'latitude' => 30.2672,
+            'longitude' => -97.7431,
+        ], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+
+        $expectedGeoSubstring = substr($expectedGeoJson, 1, -1);
+        $this->assertStringContainsString($expectedGeoSubstring, $html);
+    }
+
+    /** (R245) */
+    public function test_rendered_schema_has_no_geo_when_lat_is_non_numeric(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant 5',
+        ]);
+        $biz->update(['address' => [
+            'line1' => '123 Test St',
+            'city' => 'Testville',
+            'region' => 'TX',
+            'postal_code' => '73301',
+            'country' => 'US',
+            'lat' => 'invalid',
+            'lng' => -97.7431,
+        ]]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'local5.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_local5',
+            businessName: 'Local Biz 5'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertStringContainsString('application/ld+json', $html);
+        $this->assertStringNotContainsString('"@type":"GeoCoordinates"', $html);
+    }
 }

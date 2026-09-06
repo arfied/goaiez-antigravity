@@ -199,6 +199,19 @@ final class EdgeDeployAction
                 if (isset($schemaResult['json_ld'])) {
                     $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)."\n</script>\n";
                 }
+
+                $page = \App\Modules\X103\Models\Page::find($pageId);
+                if ($page) {
+                    $llmsTxtContent = app(\App\Modules\X176\Actions\LlmsTxtRenderAction::class)->handle(
+                        $businessName,
+                        $page->title,
+                        $page->slug,
+                        is_array($version->content_blocks) ? $version->content_blocks : []
+                    );
+                    if (Storage::disk('local')->put("sites/{$deployHash}.llms.txt", $llmsTxtContent) === false) {
+                        throw new \RuntimeException("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
+                    }
+                }
             }
 
             $html .= '</body></html>';

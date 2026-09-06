@@ -91,16 +91,25 @@ final class SchemaRenderAction
 
         if (! empty($address)) {
             // LocalBusiness address schema (TEST ANCHOR, G8-22)
-            $jsonLd['address'] = [
-                '@type' => 'PostalAddress',
-                'streetAddress' => $address['line1'] ?? null,
-                'addressLocality' => $address['city'] ?? null,
-                'addressRegion' => $address['region'] ?? null,
-                'postalCode' => $address['postal_code'] ?? null,
-                'addressCountry' => $address['country'] ?? null,
-            ];
+            $isAddressValid = true;
+            foreach (['line1', 'city', 'region', 'postal_code', 'country'] as $key) {
+                if (!isset($address[$key]) || !is_string($address[$key]) || $address[$key] === '') {
+                    $isAddressValid = false;
+                    break;
+                }
+            }
+            if ($isAddressValid) {
+                $jsonLd['address'] = [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => $address['line1'],
+                    'addressLocality' => $address['city'],
+                    'addressRegion' => $address['region'],
+                    'postalCode' => $address['postal_code'],
+                    'addressCountry' => $address['country'],
+                ];
+            }
 
-            if (isset($address['lat'], $address['lng'])) {
+            if (isset($address['lat'], $address['lng']) && is_numeric($address['lat']) && is_numeric($address['lng'])) {
                 $jsonLd['geo'] = [
                     '@type' => 'GeoCoordinates',
                     'latitude' => $address['lat'],
