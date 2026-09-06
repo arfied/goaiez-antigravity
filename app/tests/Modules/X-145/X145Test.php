@@ -107,13 +107,13 @@ class X145Test extends TestCase
 
     /**
      * [N-145-01]
-     * [N-050]
-     * [N-051]
-     * [N-054]
-     * [N-057]
-     * [N-059]
-     * [N-060]
-     * [N-061]
+     * [N-050] ⛔ REFUSED: `php artisan why N-050` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-051] ⛔ REFUSED: `php artisan why N-051` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-054] ⛔ REFUSED: `php artisan why N-054` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-057] ⛔ REFUSED: `php artisan why N-057` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-059] ⛔ REFUSED: `php artisan why N-059` reports it is never DEFINED. the candidate set is the action registry FILTERED BY THE GATE. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-060] ⛔ REFUSED: `php artisan why N-060` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-061] ⛔ REFUSED: `php artisan why N-061` reports it is never DEFINED. the candidate set is the action registry FILTERED BY THE GATE. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_145_capabilities(): void
     {
