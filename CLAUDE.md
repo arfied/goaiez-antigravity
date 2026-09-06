@@ -346,20 +346,42 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   is OWNER ACTION 28's graft: `ssl` comes from the served 200/404 pair off
   `EdgeZone.has_valid_ssl`, per ruling 16.
 
-  ⛔ **That column is live on `origin/track/sixty` right now** (tick 147 —
-  correcting tick 146, which recorded it as "added and reverted in 23
-  minutes"). Three of `322df696`'s four pieces were reverted; **the migration
-  was not.** `2026_09_05_220831_add_ssl_installed_to_page_versions_in_x103.php`
-  is still a net addition over sixty's merge-base and adds
-  `page_versions.ssl_installed boolean default true`. `531fcd39`'s message says
-  "drop constant ssl_installed column"; its diff is one line out of
-  `SiteEngine`, not a drop migration. The whole tree has **one** reader of that
-  name — `JourneyHarness.php:693` — and no writer, so the day sixty merges,
-  every `page_versions` row takes `true` from the column default and J11's
-  `ssl` element goes green with nothing having installed SSL. **OWNER ACTION 28
-  must not be closed by that merge.** Re-check with
-  `git diff $(git merge-base origin/main origin/track/sixty) origin/track/sixty
-  -- app/app/Modules/X-103` before ever reading a green `ssl`.
+  ✅ **`track/sixty` does NOT fake-green it — tick 163 retracts ticks 147/162.**
+  Sixty adds `…220831_add_ssl_installed_to_page_versions_in_x103.php` (`+column
+  default true`) **and drops it again** in
+  `app/database/migrations/2026_09_05_223339_drop_ssl_installed_from_page_versions.php`.
+  `223339 > 220831`, the migrator sorts all registered paths together by
+  filename, so it is add-then-drop and the column does not exist after
+  `migrate`. `isset($version->ssl_installed)` stays false and J11's `ssl` stays
+  **red for the right reason**. `git grep -n ssl_installed origin/track/sixty --
+  app` is the whole picture: two migrations, one reader
+  (`JourneyHarness.php:672` on that branch), **no writer anywhere**.
+
+  ⛔ **Why ticks 147 and 162 got it backwards — the scoped-diff blind spot,
+  again.** Both measured `git diff <merge-base> origin/track/sixty --
+  app/app/Modules/X-103` and concluded "`531fcd39`'s diff is one line out of
+  `SiteEngine`, not a drop migration." `531fcd39` is **three** files
+  (`git show --stat 531fcd39`); the drop migration is one of them and it lives
+  under **`app/database/migrations/`**, outside the module path the diff was
+  scoped to. This is the same failure as the `app/tests/Modules` blind spot
+  (tick 152): **a module's footprint is not confined to its module directory** —
+  X-103 writes migrations to the app-level path too. Scope a claim-of-absence to
+  a path and you have measured the path, not the claim. Prefer `git grep` on the
+  ref, or `git show --stat <sha>`, before asserting a commit did not do what its
+  message says. Tick 162 inherited 147's conclusion without re-measuring because
+  the bounds were unmoved — but the bounds being unmoved only preserves a
+  *correct* measurement.
+
+  Residual, minor: that drop migration's `down()` re-adds the column, so a
+  rollback past it restores a constant-`true` column with a reader and no
+  writer. Not a blocker; note it if a rollback is ever briefed.
+
+  OWNER ACTION 28's graft is still the fix and is unaffected: `ssl` comes from
+  the served 200/404 pair off `EdgeZone.has_valid_ssl` (ruling 16). That truth
+  source already exists in this track's column — `EdgeProvisionAction.php:19`
+  writes `has_valid_ssl`, and `X-157/ModuleServiceProvider.php:48` already
+  `abort_if(… ! $zone->has_valid_ssl, 404)` on the serving path, which is
+  exactly the 200/404 pair ruling 16 asks J11 to read.
 - Shared files: `.agents/state/JOURNAL.md` and `BUILD-STATE.json` are written
   by every track through `state.py`. **This track pushes unrebased** (ruling
   15, 2026-09-04): the `reference-transaction` guard refuses every
