@@ -13,13 +13,13 @@ use Tests\TestCase;
 final class G1531Test extends TestCase
 {
     #[Test]
-    public function refuses_constant_quantity_for_warmup(): void
+    public function g15_31_refuses_constant_quantity_for_warmup(): void
     {
-        // G15-31: every quantity is a RANGE plus jitter — a constant is the signature · refuses: a constant quantity
-        $businessId = 111;
-        
+        $business = self::provisionTenant();
+        $businessId = $business->id;
+
         Tenancy::actingAs($businessId, function () use ($businessId) {
-            $action = new EmailWarmupAction();
+            $action = new EmailWarmupAction;
 
             $schedule = [
                 'day_1' => ['min' => 50, 'max' => 50, 'quantity' => 50],

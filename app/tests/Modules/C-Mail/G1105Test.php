@@ -13,9 +13,8 @@ use Tests\TestCase;
 final class G1105Test extends TestCase
 {
     #[Test]
-    public function halts_marketing_when_complaint_rate_reaches_seed(): void
+    public function g11_05_halts_marketing_when_complaint_rate_reaches_seed(): void
     {
-        // G11-05: R17 halt seeds — 0.10% complaint or 250 bounces
         $business = self::provisionTenant();
         $businessId = $business->id;
 
@@ -33,19 +32,19 @@ final class G1105Test extends TestCase
                 'mail_domain_id' => $domain->id,
                 'event_type' => 'sent',
                 'recipient_email' => 't@example.com',
-                'subject' => 'test'
+                'subject' => 'test',
             ]);
         }
-        
+
         MailEvent::create([
             'business_id' => $businessId,
             'mail_domain_id' => $domain->id,
             'event_type' => 'complained',
             'recipient_email' => 't@example.com',
-            'subject' => 'test'
+            'subject' => 'test',
         ]);
 
-        $action = new EmailHaltSeedAction();
+        $action = new EmailHaltSeedAction;
         $updatedDomain = $action->handle($businessId, $domain->id);
 
         $this->assertTrue($updatedDomain->is_marketing_paused);

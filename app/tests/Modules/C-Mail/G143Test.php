@@ -13,9 +13,8 @@ use Tests\TestCase;
 final class G143Test extends TestCase
 {
     #[Test]
-    public function refuses_marketing_but_delivers_invoice_when_unsubscribed(): void
+    public function g1_43_refuses_marketing_but_delivers_invoice_when_unsubscribed(): void
     {
-        // G1-43: refuses: unsubscribing from marketing and then completing a job still delivers the invoice
         $business = self::provisionTenant();
         $businessId = $business->id;
 
@@ -26,9 +25,9 @@ final class G143Test extends TestCase
             'complaint_rate' => 0.0,
         ]);
 
-        $consentService = new ConsentService();
+        $consentService = new ConsentService;
         $recipientEmail = 'test@example.com';
-        
+
         // Unsubscribe from marketing (add suppression)
         $consentService->suppress($businessId, $recipientEmail, 'email');
 
