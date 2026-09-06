@@ -397,3 +397,29 @@ reviews these at product close.
     `RateRegistryViewScreenTest`, X-167 `StockByVanTest::test_propose_restock_creates_po`.
     Track 1 fixes the merge-shape ones; whatever is a real defect in this lane's module comes
     back here and is the first post-merge wave.
+
+## Owner ruling — 2026-09-06 03:5x (from `OWNER.md`, quoted in `REVIEWS.md` at 04:1x)
+
+30. **The lane supervisor is authorised to decide.** The owner: *"are the other tracks authorized to
+    make decisions? if not, authorize them."* In this lane, this supervisor decides everything not
+    reserved: design seams between our modules and which of (a)/(b)/(c) resolves them, **test shapes
+    and floors**, go/no-go on our own waves and paths, opening/closing/re-cutting a wave,
+    **fix-forward vs `UNRESOLVED`**, and coder choice (agy/claude). Each such call is written into
+    the `REVIEWS.md` block that applies it as `RULED by the lane supervisor: <choice> because
+    <reason>`, the coder records the contract change with `state.py decided` (R245), and the wave is
+    dispatched **in the same tick**.
+    - **Reserved to the owner**, and still an `OWNER ACTION`: sealed files (`app/app/Doctor/**`,
+      `seals.json`), any production value (`goaiez_antig`, `.env`, the phpunit pins), credentials
+      and vendor accounts, real money moved or a real person contacted, the deferred list
+      (plan §257.4), and the frozen master-plan text.
+    - **Cross-lane items** — which lane owns a module, merges into `main`, the shared
+      `coder-bin/git` guard — go at the end of the ledger under a `TRACK 1 ACTION` heading, **not**
+      under `OWNER ACTION`. Track 1 reads every lane's ledger and answers in `OWNER.md`.
+    - The **two-dispatch cap stands**. A spent cap is reported, and then this supervisor rules what
+      happens next under the authority above rather than carrying it to the owner.
+    - An open `OWNER ACTION` that falls inside this authority is **decided now, not carried**. All
+      five were closed on 2026-09-06 04:1x; 3 and 5 were re-filed as `TRACK 1 ACTION` (a) and (b).
+    - ⚠️ This ruling is what lifted the twelve-tick HOLD. Rulings 23/24's reasoning — that a lane
+      with no owner answer must wait — no longer applies to anything on the unreserved list. An
+      `UNRESOLVED` that names an unmade **decision** rather than a missing **dependency** (rule 09)
+      is now this supervisor's to rule on, and PB-55 is the first wave cut that way.
