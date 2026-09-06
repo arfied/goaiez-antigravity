@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T17:32:43",
+ "updated": "2026-09-06T17:53:12",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 290,
+   "violations": 277,
    "fails": "MERGE"
   },
   "anchor": {
@@ -2249,6 +2249,12 @@
    "module": "X-167",
    "chose": "(R245) 4 ASSERT, 0 REFUSE, 13 UNRESOLVED of seventeen; an id may be attached to an existing test only when that test would go red if the id's promise broke - a docblock tag that cannot fail closes the checker and covers nothing (REV-90)",
    "at": "2026-09-06T17:32:43",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-113",
+   "chose": "5 ASSERT, 0 REFUSE, 10 UNRESOLVED of fifteen; an absence assertion carries no exclusion list unless a real existing name forces one, and an id whose surface does not exist is UNRESOLVED even when a nearby chokepoint would go red (REV-91)",
+   "at": "2026-09-06T17:53:12",
    "ruling": "R245"
   }
  ],

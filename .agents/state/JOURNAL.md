@@ -892,3 +892,5 @@
 - `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-39 - missing job completion reconciliation surface
 - `2026-09-06T17:31:54` UNRESOLVED capability X-167 - G6-43 - missing kit decrement surface
 - `2026-09-06T17:32:43` (R245) X-167 — (R245) 4 ASSERT, 0 REFUSE, 13 UNRESOLVED of seventeen; an id may be attached to an existing test only when that test would go red if the id's promise broke - a docblock tag that cannot fail closes the checker and covers nothing (REV-90)
+- `2026-09-06T17:53:12` (R245) X-113 — 5 ASSERT, 0 REFUSE, 10 UNRESOLVED of fifteen; an absence assertion carries no exclusion list unless a real existing name forces one, and an id whose surface does not exist is UNRESOLVED even when a nearby chokepoint would go red (REV-91)
+- `2026-09-06T18:00:05` stage capability = 277
