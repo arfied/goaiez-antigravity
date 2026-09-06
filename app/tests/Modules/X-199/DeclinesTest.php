@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X199;
 
 use App\Models\User;
+use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\OverflowCharge;
 use App\Modules\X199\Ui\Declines;
 use App\Support\Tenancy;
@@ -24,10 +25,22 @@ class DeclinesTest extends TestCase
         Tenancy::set((int) $biz->id);
         $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
 
+        $invoice1 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-DEC-001',
+            'total_cents' => 88000,
+            'paid_cents' => 0,
+            'status' => 'due',
+            'due_date' => now()->toDateString(),
+            'updated_at' => now(),
+            'created_at' => now(),
+        ]);
+
         OverflowCharge::create([
             'business_id' => $biz->id,
             'customer_id' => $customer->id,
-            'invoice_id' => 1,
+            'invoice_id' => $invoice1->id,
             'charge_type' => 'overflow_reversed',
             'amount_cents' => 88000,
             'card_token' => 'tok_placeholder',
@@ -39,10 +52,22 @@ class DeclinesTest extends TestCase
         $otherBiz = TestCase::provisionTenant(['name' => 'Declines Tenant 2']);
         Tenancy::actingAs($otherBiz->id, function () use ($otherBiz) {
             $otherCustomer = PersonFactory::new()->create(['business_id' => $otherBiz->id]);
+            $invoice2 = Invoice::create([
+                'business_id' => $otherBiz->id,
+                'customer_id' => $otherCustomer->id,
+                'invoice_number' => 'INV-DEC-002-ISOLATED',
+                'total_cents' => 11000,
+                'paid_cents' => 0,
+                'status' => 'due',
+                'due_date' => now()->toDateString(),
+                'updated_at' => now(),
+                'created_at' => now(),
+            ]);
+
             OverflowCharge::create([
                 'business_id' => $otherBiz->id,
                 'customer_id' => $otherCustomer->id,
-                'invoice_id' => 2,
+                'invoice_id' => $invoice2->id,
                 'charge_type' => 'overflow_reversed',
                 'amount_cents' => 11000,
                 'card_token' => 'tok_placeholder2',
@@ -51,6 +76,8 @@ class DeclinesTest extends TestCase
                 'created_at' => now(),
             ]);
         });
+
+        Tenancy::set((int) $biz->id);
 
         // 1. Data assertion + 3. Tenant isolation
         Livewire::test(Declines::class, ['businessId' => $biz->id])
