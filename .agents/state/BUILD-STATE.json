@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T13:28:40",
+ "updated": "2026-09-06T16:31:06",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1165,6 +1165,18 @@
      "stage": "capability",
      "why": "an NLP or entity extraction service to identify semantic entities (G8-33)",
      "at": "2026-09-06T11:21:02"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "no seam for product schema from the pricebook and no same-commit invalidation; app/app/Modules/X-176/Actions/SchemaRenderAction.php:24 receives productOffers as an argument, lacking a read dependency on X-163 or X-119",
+     "at": "2026-09-06T16:31:03"
+    },
+    {
+     "module": "X-176",
+     "stage": "capability",
+     "why": "no seam for Event schema from X-108s calendar; grep for X-108 or calendar returned nothing, and app/app/Modules/X-176/Actions/SchemaRenderAction.php:17-26 has no event parameter, lacking a read dependency on X-108",
+     "at": "2026-09-06T16:31:06"
     }
    ]
   },
@@ -1934,6 +1946,18 @@
    "stage": "capability",
    "why": "X-195 marketplace app engine",
    "at": "2026-09-06T13:28:40"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "no seam for product schema from the pricebook and no same-commit invalidation; app/app/Modules/X-176/Actions/SchemaRenderAction.php:24 receives productOffers as an argument, lacking a read dependency on X-163 or X-119",
+   "at": "2026-09-06T16:31:03"
+  },
+  {
+   "module": "X-176",
+   "stage": "capability",
+   "why": "no seam for Event schema from X-108s calendar; grep for X-108 or calendar returned nothing, and app/app/Modules/X-176/Actions/SchemaRenderAction.php:17-26 has no event parameter, lacking a read dependency on X-108",
+   "at": "2026-09-06T16:31:06"
   }
  ],
  "decisions": [

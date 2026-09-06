@@ -839,3 +839,5 @@
 - `2026-09-06T13:01:03` note: X-157 edge.provision (manifest.php:32) is provided by an action that simulates Cloudflare — no HTTP client, no credential, Str::random() for both vendor identifiers. Real edge provisioning stays UNRESOLVED under ruling 16's vendor line (no CDN credential).
 - `2026-09-06T13:28:40` UNRESOLVED capability X-103 - X-194 funnel visualization renderer
 - `2026-09-06T13:28:40` UNRESOLVED capability X-103 - X-195 marketplace app engine
+- `2026-09-06T16:31:03` UNRESOLVED capability X-176 - no seam for product schema from the pricebook and no same-commit invalidation; app/app/Modules/X-176/Actions/SchemaRenderAction.php:24 receives productOffers as an argument, lacking a read dependency on X-163 or X-119
+- `2026-09-06T16:31:06` UNRESOLVED capability X-176 - no seam for Event schema from X-108s calendar; grep for X-108 or calendar returned nothing, and app/app/Modules/X-176/Actions/SchemaRenderAction.php:17-26 has no event parameter, lacking a read dependency on X-108
