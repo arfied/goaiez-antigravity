@@ -25,7 +25,6 @@ test('it marks invoices due and dispatches event only once', function () {
             'paid_cents' => 0,
             'status' => 'issued',
             'due_date' => now()->subDays(5)->toDateString(),
-            'pdf_url' => 'https://cdn.goaiez.com/invoices/inv.pdf',
         ]);
 
         $notDueInvoice = Invoice::create([
@@ -36,7 +35,6 @@ test('it marks invoices due and dispatches event only once', function () {
             'paid_cents' => 0,
             'status' => 'issued',
             'due_date' => now()->addDays(5)->toDateString(),
-            'pdf_url' => 'https://cdn.goaiez.com/invoices/inv.pdf',
         ]);
 
         // First run

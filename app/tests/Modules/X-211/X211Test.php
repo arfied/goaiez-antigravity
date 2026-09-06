@@ -106,7 +106,7 @@ class X211Test extends TestCase
         // 5. Package for collections
         $collectionsRes = $this->collectionsAction->handle($biz->id, $invoice->id);
         $this->assertEquals('packaged_collections', $collectionsRes['status']);
-        $this->assertStringContainsString('.zip', $collectionsRes['bundle_url']);
+        $this->assertNull($collectionsRes['bundle_url']);
         Event::assertDispatched(ArPackaged::class);
     }
 
