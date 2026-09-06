@@ -1351,3 +1351,56 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     deliverable also forbids `git commit`, `git restore`, `git checkout`, `git stash` and
     `git merge --abort` for the rest of the run: there is no second copy. The guard itself
     stays a **TRACK 1 ACTION**; this is a workaround, not a fix.
+61. **A count rendered as a bare number is asserted with `assertViewHas`, and a wave that
+    adapts another side's test never deletes its negative assertions (RULED by the lane
+    supervisor 2026-09-06 14:5x, on MONEY-77's `9dda8974`).** Adapting main's X-199 screen
+    tests to money's components turned `assertSee('1 declined')` into **`assertSee('1')`** and
+    `assertSee('0 declined')` into **`assertSee('0')`**, in both `DeclinesTest` and
+    `UnpaidTest`. Those assertions measure **nothing**: a Livewire render carries a
+    `wire:snapshot` checksum, `grid-cols-2`, `mt-1`, `bg-gray-50` and a formatted date, so every
+    digit is on the page whatever the data is. The empty-state one is the proof — it exists to
+    show `$declinesCount` fell to **0** and it passes unchanged if the count renders **1**.
+    That is ruling 45/50(b)'s "passes for the wrong reason" landing in the one assertion the
+    test exists for. `declines.blade.php:8` renders `{{ $declinesCount }}` and `Declines.php:96`
+    passes it to the view, so the instrument is `assertViewHas('declinesCount', N)` — assert the
+    view data, or a string long enough to be unique, never a bare digit. ⛔ Separately,
+    **`assertDontSee('tok_placeholder')` was deleted** from `DeclinesTest` — a *negative*
+    assertion that the card token never reaches the page, which money's blade satisfies for
+    free. Deleting it is the One Rule's "deleted … assertion", and **the tell was inside the
+    wave itself: `UnpaidTest` kept the identical line.** ⚠️ `assertSee('REF-DEC-001')` and
+    `assertDontSee('REF-DEC-002-ISOLATED')` **were** correctly dropped — money's `Declines`
+    reads `Payment`, which carries no `reference_id` — and isolation survives on
+    `assertDontSee('110.00')`, the other tenant's amount. The cap charge is the coder's, not the
+    supervisor's: run 94's kickoff said in terms *"keep every existing row and `assertDontSee`"*.
+62. **Composing two refusals is a question about ORDER, and the test of the outer refusal must
+    satisfy the inner one (RULED by the lane supervisor 2026-09-06 14:5x, on
+    `test_dispute_cannot_be_submitted_after_deadline`).** Ruling 54 composed money's
+    `status !== 'compiled'` guard with main's deadline guard in
+    `X-201/Domain/DisputeDefenseEngine::submit()`. Both are intact and correct, and the
+    composition **reddened main's test**: a dispute from `recordAction->handle()` is never
+    compiled, so `:80` throws `DisputeNotCompiledException` before `:84` is reached and
+    `expectExceptionMessage('Dispute deadline has passed')` never matches. **The order stands** —
+    a dispute that was never compiled is not "past its deadline", it is empty, and reporting the
+    deadline for an empty dispute is the misleading message. ⛔ The guards are **not** reordered
+    and neither is dropped (ruling 54); the **test** is fixed, by compiling the dispute before
+    setting the past deadline, so both refusals stay reachable and it finally asserts what its
+    name says. ⚠️ This is ruling 58 shape (1) with a delay fuse: main's test against money's
+    engine, red **because of this merge**, so it would redden `main` on the push exactly as the
+    three screen tests would have. The scoping miss is the supervisor's — ruling 54 composed the
+    guards and never asked which existing test drove them — so it carries its own two
+    dispatches.
+63. **A lint that scans a module directory for a business noun collides with prose; the module
+    rewords its own file and never narrows the lint (RULED by the lane supervisor 2026-09-06
+    14:5x, on `test_n_010_no_refund_verb`).** `N010Test.php:14` `strtolower`s **every file**
+    under `app/Modules/X-201` via `File::allFiles()` and refuses the substring `refund`. The
+    single hit is money's own `X-201/Ui/views/dispute-card.blade.php:4`, whose prose reads
+    *"There is no refund on this card: a dispute is defended, and a refund is the gateway
+    account's."* — a sentence that **agrees** with N-010 and is counted as violating it, because
+    a substring scan cannot tell an offered capability from a paragraph denying it. Money rewords
+    its own blade, keeping the owner-facing meaning. ⛔ **The lint is never narrowed to PHP-only
+    and the sentence is never deleted** — editing a CHECK to get past it is the One Rule, the
+    lint is Track 1's, and the owner needs the explanation. That the instrument should exclude
+    `Ui/views/` is a **TRACK 1 ACTION**, not this lane's edit. ⚠️ This is the mirror of the
+    known "instrument string in prose inflates the count" hazard: there a dictated docblock fed
+    a grep instrument, here a screen's honest copy does, and it will recur on any module whose
+    screen explains what it does not do.
