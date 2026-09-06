@@ -95,7 +95,6 @@ final class DisputeDefenseEngine
                 throw new \Exception('missing: '.implode(', ', $missing));
             }
         }
-        }
 
         $dispute->update(['status' => 'submitted']);
 
