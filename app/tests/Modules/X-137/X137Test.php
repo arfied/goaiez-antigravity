@@ -7,7 +7,6 @@ namespace Tests\Modules\X137;
 use App\Modules\X137\Actions\CallAttributeAction;
 use App\Modules\X137\Actions\LinkQrAction;
 use App\Modules\X137\Actions\LinkShortAction;
-
 use App\Modules\X137\Events\CallAttributed;
 use App\Modules\X137\Events\LinkClicked;
 use App\Modules\X137\Events\VisitJoinedToCall;
@@ -281,5 +280,4 @@ class X137Test extends TestCase
         $this->assertEquals('active', $token->status);
         $this->assertNull($token->joined_call_id);
     }
-
 }

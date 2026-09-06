@@ -214,5 +214,4 @@ final class PixelEngine
             'current_page' => $latestPageView ? ($latestPageView->payload['url'] ?? $visit->landing_page) : $visit->landing_page,
         ];
     }
-
 }
