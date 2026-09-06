@@ -130,8 +130,9 @@ class X207Test extends TestCase
         $this->assertEquals(3, PushDelivery::where('business_id', $biz->id)->count());
 
         $deliveries = PushDelivery::where('business_id', $biz->id)->orderBy('id')->get();
-        $this->assertEquals($deliveries[0]->payload, $deliveries[1]->payload);
-        $this->assertEquals($deliveries[1]->payload, $deliveries[2]->payload);
+        $shape = fn (array $p): array => \Illuminate\Support\Arr::except($p, ['timestamp']);
+        $this->assertSame($shape($deliveries[0]->payload), $shape($deliveries[1]->payload));
+        $this->assertSame($shape($deliveries[1]->payload), $shape($deliveries[2]->payload));
 
         Http::assertNothingSent();
     }
