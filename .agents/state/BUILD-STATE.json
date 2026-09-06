@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T15:34:02",
+ "updated": "2026-09-06T15:52:56",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -31,7 +31,7 @@
    "fails": "MERGE"
   },
   "capability": {
-   "violations": 308,
+   "violations": 311,
    "fails": "MERGE"
   },
   "anchor": {
@@ -224,7 +224,7 @@
   },
   "20": {
    "track": "roster",
-   "status": "BUILDING",
+   "status": "DONE",
    "modules": [
     "X-215",
     "X-07",
@@ -516,10 +516,29 @@
    "unresolved": []
   },
   "X-111": {
-   "status": "BUILDING",
+   "status": "UNRESOLVED",
    "wave": 20,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G1-29 and G1-35 require booked and collected as two distinct MRR numbers; X-111 exposes no revenue reader \u2014 its models are OperatorAlert, TenantTicket, IpBan, ManualQueue",
+     "at": "2026-09-06T15:51:29"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G4-24 requires two surviving packages and no 99/999 tier; X-111 exposes no package or pricing surface",
+     "at": "2026-09-06T15:51:29"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G21-02 requires one Person and one Conversation after a fuzzy merge; neither noun exists in X-111 and it exposes no ticket-merge path",
+     "at": "2026-09-06T15:51:29"
+    }
+   ]
   },
   "X-112": {
    "status": "DONE",
@@ -1428,6 +1447,24 @@
    "stage": "tests",
    "why": "G2-76: The test test_g2_76_unified_inbox_header asserts structural table naming (no _messages suffix) while the capability text is 'the unified inbox is the header's first line'. The module was never specced to enforce this table naming rule.",
    "at": "2026-09-06T08:42:49"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G1-29 and G1-35 require booked and collected as two distinct MRR numbers; X-111 exposes no revenue reader \u2014 its models are OperatorAlert, TenantTicket, IpBan, ManualQueue",
+   "at": "2026-09-06T15:51:29"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G4-24 requires two surviving packages and no 99/999 tier; X-111 exposes no package or pricing surface",
+   "at": "2026-09-06T15:51:29"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G21-02 requires one Person and one Conversation after a fuzzy merge; neither noun exists in X-111 and it exposes no ticket-merge path",
+   "at": "2026-09-06T15:51:29"
   }
  ],
  "decisions": [
@@ -1825,6 +1862,12 @@
    "module": "X-111",
    "chose": "R245: X-111's sixteen restated capability ids are closed by refusal, not assertion \u2014 each \u2464 restates the \u2460 or assigns the mechanism to another module (X-122, X-123, X-142) and carries no clause to assert. Precedent: C-Mail G11-06, CMailTest.php:515. The other eight \u2464 lines carry real refusal clauses and are asserted with real bodies in the same run.",
    "at": "2026-09-06T15:34:02",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-111",
+   "chose": "R245: G1-29, G1-35, G4-24 and G21-02 are UNRESOLVED on X-111, not refused and not asserted \u2014 the module exposes no revenue reader, no package row and no Person or Conversation, so each names a missing dependency (rule 09). Reverses run 80's source-text negative greps, which passed on an empty iterator and, for G4-24, would fail if the capability were implemented. Supervisor ruling, REVIEWS.md REV-85.",
+   "at": "2026-09-06T15:52:56",
    "ruling": "R245"
   }
  ],

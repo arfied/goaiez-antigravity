@@ -850,3 +850,8 @@
 - `2026-09-06T15:31:28` RESOLVED capability X-111 - testing (was: G1-29 missing dependency on MRR module (X-192))
 - `2026-09-06T15:34:02` (R245) X-111 — R245: X-111's sixteen restated capability ids are closed by refusal, not assertion — each ⑤ restates the ① or assigns the mechanism to another module (X-122, X-123, X-142) and carries no clause to assert. Precedent: C-Mail G11-06, CMailTest.php:515. The other eight ⑤ lines carry real refusal clauses and are asserted with real bodies in the same run.
 - `2026-09-06T15:34:02` stage capability = 308
+- `2026-09-06T15:51:29` UNRESOLVED capability X-111 - G1-29 and G1-35 require booked and collected as two distinct MRR numbers; X-111 exposes no revenue reader — its models are OperatorAlert, TenantTicket, IpBan, ManualQueue
+- `2026-09-06T15:51:29` UNRESOLVED capability X-111 - G4-24 requires two surviving packages and no 99/999 tier; X-111 exposes no package or pricing surface
+- `2026-09-06T15:51:29` UNRESOLVED capability X-111 - G21-02 requires one Person and one Conversation after a fuzzy merge; neither noun exists in X-111 and it exposes no ticket-merge path
+- `2026-09-06T15:52:56` (R245) X-111 — R245: G1-29, G1-35, G4-24 and G21-02 are UNRESOLVED on X-111, not refused and not asserted — the module exposes no revenue reader, no package row and no Person or Conversation, so each names a missing dependency (rule 09). Reverses run 80's source-text negative greps, which passed on an empty iterator and, for G4-24, would fail if the capability were implemented. Supervisor ruling, REVIEWS.md REV-85.
+- `2026-09-06T15:52:56` stage capability = 311
