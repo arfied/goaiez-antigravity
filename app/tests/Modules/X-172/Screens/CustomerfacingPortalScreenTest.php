@@ -10,7 +10,7 @@ use App\Modules\X172\Ui\CustomerfacingPortal;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-require_once __DIR__.'/Fixtures.php';
+require_once __DIR__ . '/Fixtures.php';
 
 class CustomerfacingPortalScreenTest extends TestCase
 {
