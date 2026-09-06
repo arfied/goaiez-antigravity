@@ -23,7 +23,7 @@ final class SendRequestedListener
     {
         $consentState = match ($event->messageClass) {
             'marketing' => 'opted_in',
-            default => 'transactional',
+            'transactional', 'opted_in', 'attested', 'customer_initiated' => 'transactional',
         };
 
         $decision = $this->decideAction->handle(
@@ -38,7 +38,7 @@ final class SendRequestedListener
             if ($customer) {
                 $purposeEnum = match ($event->messageClass) {
                     'marketing' => OutreachPurpose::Marketing,
-                    default => OutreachPurpose::Transactional,
+                    'transactional', 'opted_in', 'attested', 'customer_initiated' => OutreachPurpose::Transactional,
                 };
                 $legacyDecision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
                 if ($legacyDecision->isGranted()) {

@@ -47,7 +47,7 @@ final class SmsSendAction
 
         $purposeEnum = match ($messageClass) {
             'marketing' => OutreachPurpose::Marketing,
-            default => OutreachPurpose::Transactional,
+            'transactional', 'opted_in', 'attested', 'customer_initiated' => OutreachPurpose::Transactional,
         };
 
         $decision = app(ConsentService::class)->decide($customer, OutreachChannel::Sms, $purposeEnum);
@@ -61,7 +61,21 @@ final class SmsSendAction
                     SendRefusalReason::GlobalHalt,
                     SendRefusalReason::InsufficientCredit,
                     SendRefusalReason::ChannelUnavailable => true,
-                    default => false,
+                    SendRefusalReason::Archived,
+                    SendRefusalReason::Deleted,
+                    SendRefusalReason::MergedAway,
+                    SendRefusalReason::NoIdentifier,
+                    SendRefusalReason::UnparseableIdentifier,
+                    SendRefusalReason::CallerMismatch,
+                    SendRefusalReason::OptedOut,
+                    SendRefusalReason::DoNotCall,
+                    SendRefusalReason::Litigator,
+                    SendRefusalReason::NumberReassigned,
+                    SendRefusalReason::NoConsentRecord,
+                    SendRefusalReason::StateUnknown,
+                    SendRefusalReason::QuietHours,
+                    SendRefusalReason::ConsentTooWeakForState,
+                    SendRefusalReason::MessageTooLong => false,
                 };
 
                 if (! $isInfrastructure) {
@@ -88,7 +102,7 @@ final class SmsSendAction
         }
 
         $permit = $decision->permit;
-        $key = SendKey::for($permit, 'csms:'.uniqid());
+        $key = SendKey::for($permit, 'csms:'.\Illuminate\Support\Str::uuid()->toString());
 
         $message = OutboundMessage::for(
             permit: $permit,
