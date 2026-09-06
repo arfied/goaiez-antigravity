@@ -148,7 +148,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * BUILD PROPOSAL: G5-31 — "the web-chat door" is unbuilt. Owner: X-102
+     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt (grep for Chat/X-102 is empty). Owner: C-Agent
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -157,7 +157,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
-     * BUILD PROPOSAL: G5-32 — "the voice door" is unbuilt. Owner: X-66
+     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt (grep for Voice/X-66 is empty). Owner: C-Agent
      */
     public function test_g5_32_voice_door(): void
     {
@@ -180,7 +180,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
-     * BUILD PROPOSAL: G5-37 — "the takeover latch" integration is unbuilt in C-Agent. Owner: X-01
+     * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt (grep for takeover is empty). Owner: C-Agent
      */
     public function test_g5_37_takeover_latch(): void
     {
