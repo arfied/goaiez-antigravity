@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T04:24:08",
+ "updated": "2026-09-06T04:42:01",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1375,6 +1375,10 @@
   {
    "at": "2026-09-06T04:24:08",
    "note": ""
+  },
+  {
+   "at": "2026-09-06T04:42:01",
+   "note": "Converted all four Ui/ files in X-211 to read invoices through X-199's InvoiceReader. Added tests for draft exclusion/inclusion logic."
   }
  ],
  "decisions": [
@@ -1538,6 +1542,12 @@
    "module": "X-199",
    "chose": "X-199 owns reads of invoices; X-211 consumes and asks",
    "at": "2026-09-06T04:24:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "the X-211 screens read invoices only through X-199's InvoiceReader; X-211 owns no query against invoices or invoice_lines",
+   "at": "2026-09-06T04:42:01",
    "ruling": "R245"
   }
  ]

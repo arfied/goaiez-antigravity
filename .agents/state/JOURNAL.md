@@ -570,3 +570,5 @@
 - `2026-09-05T12:47:45` note: X-173 anchor UNRESOLVED — needs a QuickBooks or Xero credential that does not exist in this checkout.
 - `2026-09-06T04:24:08` (R245) X-199 — X-199 owns reads of invoices; X-211 consumes and asks
 - `2026-09-06T04:24:08` note: 
+- `2026-09-06T04:42:01` (R245) X-199 — the X-211 screens read invoices only through X-199's InvoiceReader; X-211 owns no query against invoices or invoice_lines
+- `2026-09-06T04:42:01` note: Converted all four Ui/ files in X-211 to read invoices through X-199's InvoiceReader. Added tests for draft exclusion/inclusion logic.
