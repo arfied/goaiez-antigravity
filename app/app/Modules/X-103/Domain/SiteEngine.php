@@ -45,6 +45,7 @@ final class SiteEngine
                 'commit_id' => $commitId,
                 'content_blocks' => $contentBlocks,
                 'pixel_installed' => true, // G9-04 full-stack site law
+                'ssl_installed' => true, // G9-04 full-stack site law
                 'ssl_enabled' => true,
             ]);
 
