@@ -179,4 +179,64 @@ class X171Test extends TestCase
         }
         $this->assertGreaterThanOrEqual(3, $controlMatches);
     }
+
+    public function test_g4_26_a_whole_offline_session_replays_with_nothing_lost_and_nothing_doubled(): void
+    {
+        Event::fake([JobCompleted::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Mobile Field Tech Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $jobId = 505;
+        $techId = 12;
+        $deviceId = 'tablet_tech_truck_2';
+
+        $mutations = [
+            ['id' => 'mut_sess_1', 'action' => 'job.update_notes', 'version' => 4],
+            ['id' => 'mut_sess_2', 'action' => 'job.add_photo', 'version' => 5],
+            ['id' => 'mut_sess_3', 'action' => 'job.completed', 'version' => 6],
+            ['id' => 'mut_sess_4', 'action' => 'job.add_signature', 'version' => 7],
+        ];
+
+        $emittedTotal = 0;
+
+        // Pass one
+        foreach ($mutations as $mut) {
+            $res = $this->syncAction->replayMutation(
+                businessId: $biz->id,
+                clientMutationId: $mut['id'],
+                deviceId: $deviceId,
+                actionName: $mut['action'],
+                payload: ['job_id' => $jobId, 'tech_id' => $techId],
+                clientVersion: $mut['version'],
+                currentServerVersion: 4
+            );
+            $this->assertEquals('processed', $res['status']);
+            $this->assertEquals(1, $res['emitted_new_events']);
+            $emittedTotal += $res['emitted_new_events'];
+        }
+
+        // Pass two
+        foreach ($mutations as $mut) {
+            $res = $this->syncAction->replayMutation(
+                businessId: $biz->id,
+                clientMutationId: $mut['id'],
+                deviceId: $deviceId,
+                actionName: $mut['action'],
+                payload: ['job_id' => $jobId, 'tech_id' => $techId],
+                clientVersion: $mut['version'],
+                currentServerVersion: 4
+            );
+            $this->assertEquals('already_processed', $res['status']);
+            $this->assertEquals(0, $res['emitted_new_events']);
+            $emittedTotal += $res['emitted_new_events'];
+        }
+
+        $this->assertEquals(4, DeviceSyncQueue::where('business_id', $biz->id)->where('device_id', $deviceId)->count());
+        $this->assertEquals(4, DeviceSyncQueue::where('business_id', $biz->id)->where('device_id', $deviceId)->where('status', 'processed')->count());
+        $this->assertEquals(0, DeviceSyncConflict::where('business_id', $biz->id)->count());
+
+        Event::assertDispatchedTimes(JobCompleted::class, 1);
+        $this->assertEquals(4, $emittedTotal);
+    }
 }

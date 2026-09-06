@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T11:33:25",
+ "updated": "2026-09-06T11:47:36",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1528,6 +1528,12 @@
    "module": "X-175",
    "chose": "a price on the field surface comes from X-163's lookup or is refused; verifiedAnswer never carries a price. Supersedes UNRESOLVED capability X-175.",
    "at": "2026-09-06T11:33:25",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-171",
+   "chose": "offline-first is proven behaviourally by a whole offline session replaying with nothing lost and nothing doubled, not only by the structural no-network grep. Supersedes UNRESOLVED tests X-171.",
+   "at": "2026-09-06T11:47:36",
    "ruling": "R245"
   }
  ],

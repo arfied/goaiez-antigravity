@@ -788,3 +788,4 @@
 - `2026-09-06T10:24:21` (R245) X-175 — a test may not supply data the screen fails to read for itself
 - `2026-09-06T11:06:40` (R245) X-171 — a magnitude is derived from the column the screen formats, never written into a name string
 - `2026-09-06T11:33:25` (R245) X-175 — a price on the field surface comes from X-163's lookup or is refused; verifiedAnswer never carries a price. Supersedes UNRESOLVED capability X-175.
+- `2026-09-06T11:47:36` (R245) X-171 — offline-first is proven behaviourally by a whole offline session replaying with nothing lost and nothing doubled, not only by the structural no-network grep. Supersedes UNRESOLVED tests X-171.
