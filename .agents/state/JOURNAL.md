@@ -846,3 +846,4 @@
 - `2026-09-06T02:41:10` UNRESOLVED capability C-Mail - G9-21 (capabilities.php:37): external seed service for primary-vs-spam placement per network is an external dependency not owned by this tree
 - `2026-09-06T04:18:44` (R245) X-01 — R245: the thread list ships ordered and read-only; the per-row action waits for the selected-conversation re-cut that arrives with surfaces:generate mounting
 - `2026-09-06T05:03:36` (R245) X-01 — listener returns early when the inbound WhatsApp message body is empty, because a session-window ping is not a message
+- `2026-09-06T06:52:07` (R245) C-Mail — the ingest is C-Mail's, the transport is external and deliberately absent
