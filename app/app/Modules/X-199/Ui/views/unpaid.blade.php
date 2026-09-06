@@ -16,7 +16,11 @@
             @else
                 <div class="mb-4">
                     <p class="text-3xl font-display font-bold text-ink">${{ number_format($totalOutstanding / 100, 2) }}</p>
-                    <p class="text-xs text-ink-2">Outstanding</p>
+                    <div class="flex items-center gap-1">
+                        <p class="text-xs text-ink-2">Outstanding</p>
+                        <p class="text-xs text-ink-2">&middot;</p>
+                        <p class="text-xs text-ink-2">{{ $invoices->count() }} unpaid</p>
+                    </div>
                 </div>
                 @if($invoices->isEmpty())
                     <x-ui.empty-state icon="📄" heading="No unpaid invoices">

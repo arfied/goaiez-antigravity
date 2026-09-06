@@ -54,14 +54,17 @@ class UnpaidTest extends TestCase
 
         // 1. Data assertion + 3. Tenant isolation
         Livewire::test(Unpaid::class, ['businessId' => $biz->id])
+            ->assertSee('1 unpaid')
             ->assertSee('$300.00')
             ->assertSee('INV-UNP-001')
             ->assertDontSee('INV-UNP-002-ISOLATED')
-            ->assertDontSee('$999.00');
+            ->assertDontSee('$999.00')
+            ->assertDontSee('tok_placeholder');
 
         // 2. Empty state
         Invoice::where('business_id', $biz->id)->delete();
         Livewire::test(Unpaid::class, ['businessId' => $biz->id])
+            ->assertSee('0 unpaid')
             ->assertSee('$0.00')
             ->assertSee('All issued invoices have been paid');
     }
