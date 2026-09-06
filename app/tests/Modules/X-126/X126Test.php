@@ -87,13 +87,13 @@ class X126Test extends TestCase
 
     /**
      * [N-126-01] capability arbiter decision evaluation
-     * [N-049]
-     * [N-050]
-     * [N-051]
-     * [N-052]
-     * [N-054]
-     * [N-057]
-     * [N-060]
+     * [N-049] ⛔ REFUSED: `php artisan why N-049` reports it is never DEFINED. NO Fact → NO SKILL, on EVERY action, with no bypass path. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-050] ⛔ REFUSED: `php artisan why N-050` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-051] ⛔ REFUSED: `php artisan why N-051` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-052] ⛔ REFUSED: `php artisan why N-052` reports it is never DEFINED. NO Fact → NO SKILL, on EVERY action, with no bypass path. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-054] ⛔ REFUSED: `php artisan why N-054` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-057] ⛔ REFUSED: `php artisan why N-057` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
+     * [N-060] ⛔ REFUSED: `php artisan why N-060` reports it is never DEFINED. no Fact → no skill, every action, no bypass. Nothing to assert. (R245, REV-81/REV-83)
      */
     public function test_n_126_01_decision_evaluation(): void
     {
