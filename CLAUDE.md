@@ -1336,3 +1336,128 @@ cap are not delegable.
 8. **X-121 is the spine and belongs to Track 1.** Pricebook: `bookFromQuote()`
    records `UNRESOLVED — X-121 exposes no create path` (option b); the raw
    insert is not accepted.
+
+## The lane supervisor is AUTHORIZED to decide (2026-09-06 03:5x, owner via Track 1)
+
+The owner asked "are the other tracks authorized to make decisions? if not,
+authorize them." They are, effective tick 195. **This supersedes the parts of
+this file that route every judgement call to an OWNER ACTION.**
+
+- **You decide, in this lane, everything not reserved:** design seams between
+  this lane's modules, test shapes and floors, go/no-go on this lane's own waves
+  and paths, open/close/re-cut a wave, fix-forward vs `UNRESOLVED`, coder choice.
+  Write it in the REVIEWS block that applies it as
+  `RULED by the lane supervisor: <choice> because <reason>`, have the coder
+  record a contract change with `state.py decided` (R245), and **dispatch in the
+  same tick**. An open OWNER ACTION inside this authority is decided now, not
+  carried.
+- **Reserved to the owner** (still an OWNER ACTION): sealed files
+  (`app/app/Doctor/**`, `seals.json`), any production value (`goaiez_antig`,
+  `.env`, phpunit pins), credentials and vendor accounts, real money moved or a
+  real person contacted, the deferred list (plan §257.4), the frozen master plan
+  text.
+- **Cross-lane items** — which lane owns a module, merges into `main`, the shared
+  coder guard — go at the end of the OWNER ACTION block under a `TRACK 1 ACTION`
+  heading. Track 1 reads every lane's ledger and answers in `OWNER.md`.
+- The two-dispatch cap stands; a spent cap is **reported**, then you rule what
+  happens next under item 1. The One Rule and the cap remain non-delegable.
+
+⛔ **"Reserved" is decided by the item's substance, not by its keyword.** Tick 195
+applied this to the phpunit pin: reserved-item 2's "phpunit pins" guards a pin
+pointing at a **production value**, and SITE-88 moves this lane's pin *away* from
+a shared database toward its own. Reading the keyword alone would have refused a
+fix Track 1 had asked for in writing the same night. Conversely a "small" edit to
+`app/app/Doctor/**` is reserved however trivial it looks.
+
+**Ledger after tick 195's re-read (item 5):** fifteen open OWNER ACTIONS became
+**three** — 36 and 38 (sealed `ContractStage`), 42 (vendor credential; the "say
+exactly what you need" answer is written out in that tick's block). Closed by
+Track 1's answer: 45, 47, 43. Closed under lane authority: 28, 34. Moved to
+`TRACK 1 ACTION`: 37, 39, 40, 41, 46, 48. 44 was already retracted at tick 163.
+
+### OWNER ACTION 45's answer changes how half 1 READS, not just its status
+
+Track 1 ruled X-137 and X-102 stay in this column, sixty's commits **stand and
+arrive with the `track/sixty` merge**, and sixty opens no further wave in either.
+So half 1's sixty partition (17 commits) is **inbound work this lane inherits at
+merge — not a violation**. Two consequences for the standing query:
+
+- Tick 189's partition rule still applies, but the two populations are now
+  *sanctioned ui traffic* and *inbound sixty work*, and **neither is a finding**.
+  Half 1 currently has no violating partition at all.
+- Per tick 191, that sixty partition will **shrink to zero when `main` gains
+  sixty**, and that is a **bound moving**, not a withdrawal. Do not read the
+  shrink as resolution and do not re-open 45 off it.
+
+After that merge this lane reviews X-137/X-102 as its own and opens any fix as a
+site wave. ⚠️ The known divergence to open it on: this lane's tracker rows specify
+refusals (G3-11/G8-13 pool exhaustion → static fallback + `unattributed`, never a
+reused token; G13-24 no second live campaign) that sixty's `X137Test.php` does not
+assert — nothing greps `exhaust`, and its static test asserts only the happy path.
+A lint that matches nothing, in prose.
+
+## `app/phpunit.xml` has NEVER carried a site pin — the "restore" remedy has no source
+
+Track 1's 21:3x note prescribes `git show <your pin commit>:app/phpunit.xml >
+app/phpunit.xml`. There is no such commit. `git log --oneline -- app/phpunit.xml`
+returns **seven** commits, all predating the tracks; `bbdda1ef` is where
+`goaiez_antig_test` entered and `goaiez_antig_site_test` has never appeared in the
+file's history. So the merge did not *overwrite* this lane's pin — there was never
+one, which is also why `merge=ours` had nothing to fire on. **The fix is an edit
+to a new value, not a restore**, and the note's diagnosis ("your side had not
+changed the file since the base") is right for the wrong reason: the side never
+changed it at all.
+
+⛔ **It is a CODER item, and the deny list is the proof.** The supervisor attempted
+the edit at tick 195 and `.claude/settings.json` refused — *"File is in a directory
+that is denied by your permission settings."* That is this file's own rule firing:
+a check the deny list blocks is the signal it is the coder's job. Track 1's
+"commit it as chore(supervisor)" therefore cannot be executed from this seat; it
+goes out as a coder wave committing `chore(testing)`.
+
+**Blast radius, measured: nil for the gate.** `bin/supervise.sh:132` seeds
+`shared="$ROOT"` unconditionally and its scan loop skips `$co = $ROOT`, so this
+checkout's own pin is never read by the clash detector — repinning cannot make the
+gate refuse itself. The gate has always exported `TRACK_DB` over the pin. What
+changes is only the **hand-run** path: a bare `./vendor/bin/pest` or `php artisan
+test` here stops writing Track 1's schema. That is the path that produced their
+pids 857496 and 2948588, and each occurrence cost Track 1 a refused gate.
+
+**Standing instruction:** every merge brief this lane writes ends with a restore
+step — after any merge of `origin/main`, re-check `app/phpunit.xml` line 34 and
+re-pin if `main`'s copy won. Three notes have now had to say this (07:2x, 21:3x,
+tick 195).
+
+## OWNER ACTION 28's substance was already delivered — in a file the guard permits
+
+Ruling 16 asks J11 to verify the seven on the **published HTTP output**, with
+`ssl` from the served 200/404 pair. That is already proven in this lane's own
+column: `app/tests/Modules/X-157/X157Test.php:604`,
+`test_the_published_route_carries_all_seven_elements()` publishes, deploys, does a
+real `GET /sites/{business}/{deploy_hash}`, asserts 200, asserts all six markers
+on the body (`x110-pixel`, `chat-widget-container`, `form-capture-x155`,
+`dni-pool-x137`, `seo-meta-x176`, `application/ld+json`), then flips
+`has_valid_ssl` false, re-GETs, `assertStatus(404)`, flips back. Line-for-line the
+graft's `'ssl' => $response->status() === 200 && $withoutSsl->status() === 404`.
+Corroborated at `:396`, `:366` and `:1537`.
+
+So **28 is not a build item and never was after that test landed** — the residue
+is that `JourneyHarness.php:693` still reads `isset($version->ssl_installed)`, a
+column nothing writes and which sixty's add-then-drop pair (tick 163) guarantees
+absent after `migrate`. J11's `ssl` is red **for the right reason**; only the
+graft turns it green, and `coder-bin/git` refuses to stage that file
+unconditionally even though owner ruling 1 explicitly permits a journey track to
+implement its own journeys' `todo()` methods. **The guard is refusing the edit the
+ruling grants** — a cross-lane item by ruling item 3's own example, filed as
+TRACK 1 ACTION 1, with two dispatches spent and a third forbidden.
+
+⛔ Standing since tick 146 and unchanged: **never close it by adding an
+`ssl_installed` column.** A constant-`true` column existing only to be read would
+fake-green the one element ruling 16 exists to make real.
+
+**The generalisation worth keeping:** a blocked item's *substance* can be
+deliverable somewhere the block does not reach. Twelve ticks carried 28 as an open
+build item while the assertions it wanted had already been green in
+`X157Test.php` — because the ledger tracked the blocked path rather than the
+claim. Before re-dispatching against a guard, grep this lane's own tests for the
+assertion the blocked file was going to make.
