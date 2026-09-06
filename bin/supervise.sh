@@ -192,23 +192,57 @@ if [ $want_tests -eq 1 ]; then
   # into it is a log nobody who needs it can open. Gitignored via .tick-*.
   pest_log="$ROOT/.agents/supervisor/.tick-pest.log"
   : > "$pest_log"
+  # ⏱ Time the run. Without this the rc alone cannot tell a real deadline from a
+  # kill that arrived in seconds, and 7c below guessed wrong for a whole wave.
+  pest_t0=$(date +%s)
   if [ -n "$pest_filter" ]; then
     echo "  narrowed: --filter $pest_filter"
     timeout -k 30 "$pest_timeout" ./vendor/bin/pest --filter "$pest_filter" > "$pest_log" 2>&1; rc=$?
   else
     timeout -k 30 "$pest_timeout" ./vendor/bin/pest > "$pest_log" 2>&1; rc=$?
   fi
+  pest_elapsed=$(( $(date +%s) - pest_t0 ))
   out=$(cat "$pest_log")
   [ $rc -ne 0 ] && fail=1
 
-  # 7c. Say the rc out loud, and name zero bytes for what it is rather than
-  # letting a silent run read as a pass.
+  # The cap in seconds, so "did the deadline actually arrive?" is arithmetic
+  # rather than an assumption. Accepts the `30m` / `600s` / `600` forms.
+  case "$pest_timeout" in
+    *h) pest_cap=$(( ${pest_timeout%h} * 3600 )) ;;
+    *m) pest_cap=$(( ${pest_timeout%m} * 60 )) ;;
+    *s) pest_cap=${pest_timeout%s} ;;
+    *)  pest_cap=$pest_timeout ;;
+  esac
+
+  # 7c. Say the rc and the elapsed time out loud, and name zero bytes for what it
+  # is rather than letting a silent run read as a pass.
+  #
+  # ⛔ rc ∈ {124,137,143} IS NOT A TIMEOUT ON ITS OWN. Until 2026-09-06 11:5x this
+  # block printed "TIMED OUT after 30m" for any of the three, and run 72 believed
+  # it twice inside a run that was twelve minutes old — two thirty-minute
+  # deadlines that could not both have fitted, on a suite that had in fact
+  # finished in 101s and written a complete result to $pest_log. The report came
+  # back `stopped: RUNTIME` on a wave that was green. Only `timeout` can produce
+  # 124; 137/143 far below the cap is something else killing pest — the OOM
+  # killer, the launcher's own cap, or a hand. Decide by the clock, and when the
+  # log still ends in a complete pest JSON, say so: the measurement survived and
+  # the wave can be gated on it.
   bytes=$(wc -c < "$pest_log" | tr -d ' ')
-  echo "  pest rc=$rc · ${bytes} bytes of output"
+  echo "  pest rc=$rc · ${bytes} bytes of output · ${pest_elapsed}s elapsed (cap ${pest_timeout})"
   if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ] || [ "$rc" -eq 143 ]; then
-    echo "  ⛔ TIMED OUT after $pest_timeout (rc=$rc) — killed, not failed."
-    echo "     Partial output survives in $pest_log — its last lines name the slow test."
-    echo "     Narrow it: bash bin/supervise.sh --tests --filter <expr>"
+    if [ "$rc" -eq 124 ] || [ "$pest_elapsed" -ge $(( pest_cap * 9 / 10 )) ]; then
+      echo "  ⛔ TIMED OUT after ${pest_elapsed}s of a ${pest_timeout} cap (rc=$rc) — killed, not failed."
+      echo "     Partial output survives in $pest_log — its last lines name the slow test."
+      echo "     Narrow it: bash bin/supervise.sh --tests --filter <expr>"
+    else
+      echo "  ⚠️ KILLED FROM OUTSIDE after ${pest_elapsed}s — this is NOT the ${pest_timeout} timeout."
+      echo "     rc=$rc arriving this far below the cap is the OOM killer, the launcher's"
+      echo "     own cap, or a hand — not \`timeout\`. Do not report it as a timeout."
+      if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
+        echo "     ✅ $pest_log still ends in a COMPLETE pest result — the suite finished"
+        echo "        and the numbers below are a real measurement. Gate on them."
+      fi
+    fi
   fi
   if [ "$bytes" -eq 0 ]; then
     echo "  ⛔ ZERO BYTES. Do not debug the code — narrow it with --filter and the real"
