@@ -132,6 +132,18 @@ Watch for: <the trap that applies, by name>
   dangerous in exactly the case it is meant to detect. The probe used instead was
   `echo "./vendor/bin/pest" | cat`: it matches the needle, so it is conclusive when the guard fires,
   and it is a harmless echo when the guard is dead. Design every guard probe that way.
+- **After building anything that measures, its FIRST output is data you do not trust** (2026-09-06;
+  the phrasing arrived from the sibling project, but it has now been reproduced here three times in one
+  day and is written down on our own evidence, not on theirs). A new instrument's first run is the one
+  reading nobody has a baseline for, so a false positive reads as a discovery. Instances: my gate-log
+  fabrication detector flagged our own `rc=-` start sentinels, which are zero-duration by construction;
+  the sibling's fabrication filter, and then my correction of it, and then their correction of that, each
+  missed **the row that is legitimate by construction** (4 → 12 → 24 → 30). And §1b of `supervise.sh`
+  reported five stray writers on a checkout that had none, the first of them being the tick that ran it.
+  Corollary, and it is the same rule as `7686da5c`: **match command position, not mention.** §1b grepped
+  the joined `/proc/*/cmdline` for `agy` and flagged a `bash -c` whose command merely *named* agy — a
+  previous tick's own census one-liner, `… | grep agy`. A detector that reads whole command lines will
+  fire on its own documentation. Match `argv[0]`.
 - **A refusal message can drift from the pattern in the same file, and every behavioural test still
   passes** (2026-09-06). The anti-pipe hook's needle was widened to five tools while its deny text
   still named `php artisan test` — a command this repo does not run. Positive controls assert
@@ -208,10 +220,23 @@ each verdict block in `REVIEWS.md`.
   started by hand inside this checkout has no pidfile, no `coder-bin` guard,
   no brief and no review — it overwrote 170 files with `place-files.sh`,
   hand-marked four journeys green in seven minutes, and pushed `main`. Any
-  process with `cwd` here that `launch-coder.sh` did not start is a BLOCK:
-  `for p in /proc/[0-9]*; do readlink $p/cwd 2>/dev/null | grep -q 'grs-antig$' && ps -o pid=,cmd= -p ${p#/proc/}; done | grep agy`
-  must print nothing before any dispatch or gate. The supervisor may stop
-  such a process to protect `main`; it says so in REVIEWS the same minute.
+  process with `cwd` here that `launch-coder.sh` did not start is a BLOCK. It is
+  now **`bash bin/supervise.sh --census`** (§1b), which must print `none` before
+  any dispatch or gate — the hand one-liner needed `ps`, which this checkout's
+  `settings.json` does not allow the supervisor, so the check a tick could not
+  run was the one it most needed. `--census <name>` retargets it at any
+  `argv[0]`: `--census sleep` against a backgrounded `sleep` is the positive
+  control, conclusive when the detector fires and a harmless sleep when it is
+  dead. The supervisor may stop such a process to protect `main`; it says so in
+  REVIEWS the same minute.
+- **A pidfile reports an intention, not a state.** The tick's case (a) — "if
+  `coder.pid` is alive, print `coder running` and stop" — is satisfied forever by
+  a *hung* run: the pid exists, the lane reports healthy, and it idles every ten
+  minutes with its work unpushed (2026-09-06: sixty silent 182 minutes,
+  pricebook 77, both "running"). `supervise.sh` §1a therefore measures
+  **progress** — pid age, log name, byte count, minutes since the log last grew —
+  and prints `⚠ coder STALLED` past 30 minutes of silence. A stalled slot is
+  **not** a free slot: report it, never dispatch over it.
 
 ## Style
 

@@ -13,8 +13,26 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"; APP="$ROOT/app"
 PROD_DB="goaiez_antig"
-want_tests=0; want_doctor=0
-for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
+want_tests=0; want_doctor=0; census_only=0
+# --census [name] runs ONLY §1a/§1b and exits. `name` is the argv[0] basename the census
+# hunts for, default `agy`. It exists so the census has a POSITIVE CONTROL THAT IS SAFE
+# WHEN THE DETECTOR IS ABSENT (2026-09-06): proving it by starting a real `agy` in this
+# checkout would run an ungoverned coder to demonstrate that something notices — dangerous
+# in exactly the case the census exists for. `--census sleep` against a backgrounded
+# `sleep` proves the same mechanism (argv[0] basename × cwd) and is a harmless sleep if the
+# detector is dead.
+prev=""
+for a in "$@"; do
+  case "$a" in
+    --tests) want_tests=1;;
+    --full-doctor) want_doctor=1;;
+    --census) census_only=1;;
+    -*) ;;
+    *) [ "$prev" = "--census" ] && CENSUS_NAME="$a";;
+  esac
+  prev="$a"
+done
+CENSUS_NAME=${CENSUS_NAME:-agy}
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
 
@@ -94,6 +112,79 @@ echo "  $(git status --short | wc -l) uncommitted path(s)"
 git log --oneline -5 | sed 's/^/  /'
 git rev-list --left-right --count origin/main...HEAD 2>/dev/null \
   | awk '{print "  vs origin/main (local ref): behind " $1 ", ahead " $2 "  — refresh with: git fetch --no-write-fetch-head origin"}'
+
+# A PIDFILE REPORTS AN INTENTION, NOT A STATE (2026-09-06 17:3x, ruled in REVIEWS).
+# The tick's case (a) is "if coder.pid is alive, print `coder running` and stop" — and a
+# HUNG run satisfies that forever: the pid exists, the lane reports healthy, and it idles
+# every ten minutes with its work unpushed. Measured live that afternoon: sixty silent for
+# 182 minutes, pricebook for 77, both "running". Liveness therefore has to be measured as
+# PROGRESS (has the log grown) and not as existence, and the supervisor must be able to
+# measure it with a command its own settings.json allows — `ps` and `kill -0` are not on
+# that list, which is how a tick ends up reasoning about a pid instead of reading one.
+# §2e is also the one-writer census (2026-09-03 incident): any process with cwd here that
+# launch-coder.sh did not start is a BLOCK, and it must print before any dispatch or gate.
+bar "1a. coder process  (progress, not existence)"
+STALL_MIN=${STALL_MIN:-30}
+pidfile="$ROOT/.agents/supervisor/coder.pid"
+coder_pid=""
+[ -f "$pidfile" ] && coder_pid=$(tr -dc '0-9' < "$pidfile")
+if [ -z "$coder_pid" ]; then
+  echo "  no coder.pid — no dispatch has been recorded in this checkout"
+elif ! kill -0 "$coder_pid" 2>/dev/null; then
+  echo "  coder.pid $coder_pid is DEAD — the slot is free"
+else
+  log=$(ls -1t /home/goaiez/tmp/*"$(basename "$ROOT")"-run*.log 2>/dev/null | head -1)
+  now=$(date +%s)
+  pstart=$(stat -c %Y "/proc/$coder_pid" 2>/dev/null || echo "$now")
+  age=$(( (now - pstart) / 60 ))
+  if [ -n "$log" ]; then
+    lmt=$(stat -c %Y "$log"); silent=$(( (now - lmt) / 60 )); bytes=$(stat -c %s "$log")
+    echo "  coder.pid $coder_pid ALIVE ${age}m · log $(basename "$log") ${bytes}B · silent ${silent}m"
+    if [ "$silent" -ge "$STALL_MIN" ]; then
+      echo "  ⚠ coder STALLED — no log growth in ${silent}m (threshold ${STALL_MIN}m)."
+      echo "    The slot is NOT free: do not dispatch over it. Report pid/log/silence to the owner."
+      fail=1
+    fi
+  else
+    echo "  coder.pid $coder_pid ALIVE ${age}m · NO LOG FOUND for $(basename "$ROOT") — cannot measure progress"
+    fail=1
+  fi
+fi
+
+# MATCH `agy`, NOT `claude` — and this section's FIRST output is why the line is here.
+# Written as *agy*|*claude*, it flagged five "stray writers" on a checkout that had none:
+# the supervisor tick itself, its two snapshot shells and the owner's VS Code session. The
+# 2026-09-03 incident was an interactive `agy` started by hand with no pidfile, no brief
+# and no review; CLAUDE.md's own census one-liner therefore ends `| grep agy`, and widening
+# it turns a BLOCK signal into one that fires on every human who opens the checkout — a
+# gate that always fails is worth exactly as much as one that always passes. A `claude`
+# started as the CODER is caught by the pidfile in §1a, which is where it belongs.
+# (After building anything that measures, its first output is data you do not trust.)
+bar "1b. one-writer census  ($CENSUS_NAME with cwd here that launch-coder.sh did not start)"
+strays=0
+for p in /proc/[0-9]*; do
+  pn=${p#/proc/}
+  [ "$pn" = "$$" ] && continue
+  [ "$pn" = "$coder_pid" ] && continue
+  case "$(readlink "$p/cwd" 2>/dev/null)" in
+    "$ROOT")
+      # ARGV[0], never the whole cmdline — MATCH COMMAND POSITION, NOT MENTION (7686da5c,
+      # and this section earned the lesson a second time twenty minutes later). Grepping
+      # the joined cmdline for `agy` flagged a plain `bash -c` whose command merely NAMED
+      # agy — a previous tick's own census one-liner, `… | grep agy`. A detector that fires
+      # on any shell that talks about the thing it hunts will fire on its own documentation.
+      argv0=""; IFS= read -r -d '' argv0 < "$p/cmdline" 2>/dev/null
+      case "${argv0##*/}" in
+        "$CENSUS_NAME")
+          cmd=$(tr '\0' ' ' < "$p/cmdline" 2>/dev/null)
+          echo "  ✗ stray $CENSUS_NAME pid $pn: ${cmd:0:140}"; strays=$((strays+1));;
+      esac;;
+  esac
+done
+[ "$strays" -eq 0 ] && echo "  none" || { echo "  ⛔ $strays $CENSUS_NAME process(es) this checkout did not launch — BLOCK until resolved"; fail=1; }
+if [ $census_only -eq 1 ]; then
+  echo; echo "  (--census: sections 1a/1b only; exit $fail)"; exit $fail
+fi
 
 bar "2. forbidden paths touched  (uncommitted + last commit)"
 touched=$( { git diff --name-only HEAD~1 HEAD 2>/dev/null; } | sort -u)
