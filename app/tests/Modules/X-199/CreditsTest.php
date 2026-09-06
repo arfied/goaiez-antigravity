@@ -70,6 +70,23 @@ class CreditsTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-199.credits'))->assertOk();
+        Tenancy::set((int) $biz->id);
+        $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
+
+        CreditTerm::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'terms_type' => 'net_30',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 150000,
+            'updated_at' => now(),
+            'created_at' => now(),
+        ]);
+
+        $this->get(route('x-199.credits'))
+            ->assertOk()
+            ->assertSee('$5,000.00')
+            ->assertSee('$1,500.00 outstanding')
+            ->assertSee('Net 30');
     }
 }

@@ -74,6 +74,25 @@ class InvoicesTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-199.invoices'))->assertOk();
+        Tenancy::set((int) $biz->id);
+        $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
+
+        Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-INV-001',
+            'total_cents' => 35000,
+            'paid_cents' => 5000,
+            'status' => 'due',
+            'due_date' => now()->addDays(5)->toDateString(),
+            'updated_at' => now(),
+            'created_at' => now(),
+        ]);
+
+        $this->get(route('x-199.invoices'))
+            ->assertOk()
+            ->assertSee('1 invoices')
+            ->assertSee('$350.00')
+            ->assertSee('INV-INV-001');
     }
 }
