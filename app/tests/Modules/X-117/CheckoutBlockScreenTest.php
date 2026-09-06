@@ -54,7 +54,7 @@ class CheckoutBlockScreenTest extends TestCase
         $token = $screen->get('authToken');
 
         $screen->call('pay')
-            ->assertSee('Paid — order ORD-');
+            ->assertSee('Pending — order ORD-');
 
         $this->assertSame(0, $filter->fresh()->inventory_quantity);
         $this->assertSame(8, $boiler->fresh()->inventory_quantity);

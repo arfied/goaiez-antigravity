@@ -6,6 +6,7 @@ namespace Tests\Modules\X198;
 
 use App\Modules\X117\Actions\CartAddAction;
 use App\Modules\X117\Actions\CartPayAction;
+use App\Modules\X117\Models\Order;
 use App\Modules\X117\Models\Sellable;
 use App\Modules\X198\Domain\GatewayEngine;
 use App\Modules\X198\Models\Payment;
@@ -57,7 +58,35 @@ class CheckoutCaptureSeamTest extends TestCase
 
         $checkoutResult2 = app(CartPayAction::class)->handle($biz2->id, 'sess_2', 'tok_fresh_2');
 
-        $this->assertSame('paid', $checkoutResult2['status']);
+        $this->assertSame('pending_payment', $checkoutResult2['status']);
         $this->assertSame(0, Payment::where('business_id', $biz2->id)->count());
+    }
+
+    public function test_an_unconfirmed_checkout_leaves_the_order_pending(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        $sellable = Sellable::create([
+            'business_id' => $biz->id,
+            'name' => 'Boiler service',
+            'sku' => 'BOI-1',
+            'inventory_quantity' => 10,
+            'unit_price_cents' => 12000,
+            'fulfilment_type' => 'service',
+        ]);
+
+        app(GatewayEngine::class)->connect($biz->id, 'paypal', 'merch_123');
+
+        app(CartAddAction::class)->handle($biz->id, 'sess_1', $sellable->id, 2);
+
+        $checkoutResult = app(CartPayAction::class)->handle($biz->id, 'sess_1', 'tok_fresh');
+        $orderId = $checkoutResult['order_id'];
+
+        $this->assertSame('pending_payment', Order::whereKey($orderId)->first()->status);
+
+        $payment = Payment::where('business_id', $biz->id)->first();
+        $this->assertNotNull($payment);
+        $this->assertNull($payment->gateway_charge_id);
     }
 }

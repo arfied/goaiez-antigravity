@@ -80,7 +80,7 @@ final class CheckoutEngine
                 'business_id' => $businessId,
                 'customer_id' => $customerId,
                 'order_number' => 'ORD-'.strtoupper(Str::random(6)),
-                'status' => 'paid',
+                'status' => 'pending_payment',
                 'total_cents' => $totalCents,
                 'auth_token' => $freshAuthToken,
             ]);
@@ -110,7 +110,7 @@ final class CheckoutEngine
             ));
 
             return [
-                'status' => 'paid',
+                'status' => 'pending_payment',
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
                 'total_cents' => $totalCents,
@@ -206,7 +206,7 @@ final class CheckoutEngine
                 'business_id' => $businessId,
                 'customer_id' => $customerId,
                 'order_number' => 'ORD-'.strtoupper(Str::random(6)),
-                'status' => 'paid',
+                'status' => 'pending_payment',
                 'total_cents' => $totalCents,
                 'auth_token' => $freshAuthToken,
             ]);
@@ -245,7 +245,7 @@ final class CheckoutEngine
             $cart->delete();
 
             return [
-                'status' => 'paid',
+                'status' => 'pending_payment',
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
                 'total_cents' => $totalCents,

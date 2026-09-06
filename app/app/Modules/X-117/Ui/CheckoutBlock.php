@@ -61,8 +61,8 @@ class CheckoutBlock extends Component
 
         try {
             $r = $action->handle(Tenancy::idOrFail(), $this->sessionToken, $this->authToken);
-            if ($r['status'] === 'paid') {
-                $this->success = sprintf('Paid — order %s. Stock came off now, not at cart.', $r['order_number']);
+            if ($r['status'] === 'pending_payment') {
+                $this->success = sprintf('Pending — order %s. The order was placed, stock came off, and the charge is waiting on the gateway.', $r['order_number']);
             } else {
                 $this->error = $r['message'] ?? 'Payment failed.';
             }

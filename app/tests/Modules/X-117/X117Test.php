@@ -72,7 +72,7 @@ class X117Test extends TestCase
                 customerId: $customer->id
             );
 
-            if ($res['status'] === 'paid') {
+            if ($res['status'] === 'pending_payment') {
                 $paidCount++;
             } elseif ($res['status'] === 'sold_out') {
                 $soldOutCount++;
