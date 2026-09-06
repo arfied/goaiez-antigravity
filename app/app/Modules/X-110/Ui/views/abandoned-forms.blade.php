@@ -36,8 +36,8 @@
                                         <textarea 
                                             id="msg-{{ $a['id'] }}" 
                                             wire:model.defer="messages.{{ $a['id'] }}" 
-                                            class="w-full rounded bg-paper border border-rule text-ink p-3 min-h-11 text-sm focus:outline-2"
-                                            rows="2"
+                                            class="w-full rounded bg-paper border border-rule text-ink p-3 text-sm focus:outline-2"
+                                            rows="3"
                                         ></textarea>
                                     </div>
                                 @endif
