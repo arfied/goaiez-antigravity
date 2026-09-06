@@ -1779,3 +1779,48 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **nothing**, which is ruling 70's *"prose is the one thing in this lane no gate reads"* and is why
     that item must **add** a method rather than change an assertion. ⚠️ Every string dictated was
     checked against `N010Test`'s directory-wide `refund` scan (ruling 63) before the brief shipped.
+80. **A capability whose implementation exists but is in no schedule is worse than one that does not
+    exist, and the per-row copy is where MONEY-84's sweep stopped one line short (RULED by the lane
+    supervisor 2026-09-06 18:5x, briefed as MONEY-85 items 1 and 2).** MONEY-84 made X-201's two
+    **empty** states true; the same screen's **per-row** copy still makes two claims nothing performs.
+    (a) `dispute-card.blade.php:26` reads *"Deadline: waiting on the gateway's chargeback webhook;
+    inside 48 hours of it a person is raised whatever the state."* The second clause is
+    `capabilities.php:40`'s **N-011** stated as fact, and — unlike every prior instance in this lane —
+    **the machinery exists**: `app/app/Console/Commands/CheckDeadlinesCommand.php` implements it
+    correctly (48-hour threshold, one `raised_to_human` audit row per dispute, idempotent), and
+    `N011Test.php:35` drives it green through `Artisan::call`. What does not exist is a **caller**:
+    `grep -rn 'CheckDeadlines\|disputes:check' app/app app/routes app/bootstrap app/tests` returns the
+    command, its signature and that one test line — **`app/routes/console.php`'s platform schedule
+    never names it**, so on a real box the raise runs never. That is a **new shape** for this lane:
+    rulings 43/44/50 all removed strings whose referent was absent, and here the referent is present,
+    tested, and unreachable. ⚠️ It is also **doubly** blocked: nothing writes `deadline_at` outside
+    tests (`grep -rn deadline_at` = the migration, the cast, `DisputeDefenseEngine:87`'s guard,
+    `N011Test:27`, `X201Test:59,:88`), so even a scheduled run would find no row — the clock arrives
+    with the chargeback webhook ruling 79 recorded UNRESOLVED. ⛔ **The schedule entry is NOT this
+    lane's to add**: `app/routes/console.php` is outside `app/app/Modules/X-201/**` and outside ruling
+    17/20's `Ui/` override — it is a **TRACK 1 ACTION**, and adding it here would be ruling 59's
+    "never add the method to satisfy the caller" in the schedule file. (b) `:37` reads *"Submitted; the
+    bundle is sealed and the gateway's decision comes back through the queue."* Nothing brings a
+    decision back: `recordOutcome`'s only path is `DisputeOutcomeAction` ← `DisputeQueue::outcome()`,
+    the **Won/Lost buttons** an owner clicks. **RULED:** the deadline line renders the row's real
+    `deadline_at` when it carries one and names the dependency when it does not — which also satisfies
+    ruling 43's *"does it even vary?"*, since the column is nullable, real and cast — and neither line
+    claims an automatic act. ⚠️ **The existing assertion is CHANGED, never deleted**:
+    `DisputeCardScreenTest:44`'s `assertSee("waiting on the gateway's chargeback webhook")` already
+    covers the null branch's first clause and only its first clause, which is exactly why the false
+    second clause survived MONEY-84 (ruling 39's companion lesson, arriving as a **partial** cover
+    rather than an absent one — a substring assertion certifies the words it names and nothing else).
+81. **A docblock that says a method contacts an external system when no transport exists in the module
+    is ruling 43's fiction in a comment, and MONEY-83 fixed the engine's copy and not the action's
+    (RULED by the lane supervisor 2026-09-06 18:5x, briefed as MONEY-85 item 3).**
+    `X-173/Actions/AccountingSyncAction.php:25` reads *"Synchronizes transactions with external
+    accounting system."* Measured: `grep -rn 'Http::\|curl' app/app/Modules/X-173` is **empty**, the
+    method's `array $transactions` comes from its caller, and `syncTransactions` has no production
+    caller at all (nine test lines and its own definition) — the same measurement MONEY-82 wrote into
+    the journal for the engine. ⛔ **The two `(TEST ANCHOR …)` lines beneath it stay byte-identical** —
+    they are the CHECK, and `G1-03` is cited on one of them. ⚠️ **No mutation proof is possible and
+    none is asked for**: nothing reads a docblock, which is ruling 70's *"prose is the one thing in
+    this lane no gate reads"* and is precisely why this survived two waves that were looking for it.
+    ⚠️ Checked before briefing: `app/tests/Modules/X-173/` contains no `File::allFiles()` directory
+    scanner, so the memory hazard *"an instrument string in dictated prose inflates the count"* does
+    not apply here as it did to `N010Test` in ruling 63.
