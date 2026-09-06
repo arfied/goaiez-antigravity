@@ -130,13 +130,21 @@ if [ $want_tests -eq 1 ]; then
   # run actually used — the pin's name here once read as "we hit Track 1's DB".
   bar "7. test suite  (DB_DATABASE=goaiez_antig_reviews_test, over phpunit.xml's $xml_db pin)"
   # Two pests on ONE database truncate each other's tables mid-run and the loser
-  # reads as a code failure. Refuse the step while any OTHER checkout that pins
+  # reads as a code failure. Refuse the step while any checkout that pins
   # goaiez_antig_reviews_test has a pest live (Track 1 commit 9b65e1e5).
+  #
+  # THIS checkout counts too (REV-60, 2026-09-06). The old loop skipped $ROOT on
+  # the theory that a second run here is the caller's own business. It is not: a
+  # pest orphaned by a killed supervise.sh — the tick harness SIGTERMs a
+  # foreground call at 600s and leaves the pest running with no timeout parent —
+  # then fights the next run over the same tables. Three gates were lost that way
+  # in one tick, the third dying on the 1800s timeout with zero bytes. No pest of
+  # ours has started yet at this point in the script, so any pest whose cwd is
+  # under $ROOT is a stray and the run must not begin.
   busy=""
   for other in /home/goaiez/agents/*/app/phpunit.xml /home/goaiez/public_html/*/app/phpunit.xml; do
     [ -f "$other" ] || continue
     oroot=$(dirname "$(dirname "$other")")
-    [ "$oroot" = "$ROOT" ] && continue
     grep -q 'goaiez_antig_reviews_test' "$other" 2>/dev/null || continue
     for pid in $(pgrep -f 'vendor/bin/pest' 2>/dev/null); do
       cwd=$(readlink -f "/proc/$pid/cwd" 2>/dev/null) || continue
@@ -144,8 +152,10 @@ if [ $want_tests -eq 1 ]; then
     done
   done
   if [ -n "$busy" ]; then
-    echo "  ⛔ REFUSED — another checkout pinned on goaiez_antig_reviews_test has pest live:$busy"
+    echo "  ⛔ REFUSED — a checkout pinned on goaiez_antig_reviews_test has pest live:$busy"
     echo "     Wait for it to finish; a second run truncates the tables under both."
+    echo "     If the pid is under THIS checkout it is a stray from a killed gate:"
+    echo "     confirm with ls -l /proc/<pid>/cwd, then kill that ONE pid by number."
     fail=1
     bar "verdict"
     echo "  ⛔ a gate failed above."
