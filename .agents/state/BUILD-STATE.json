@@ -1588,6 +1588,14 @@
   {
    "at": "2026-09-06T04:50:20",
    "note": "X-121 create path for work_orders now exists (JobCreateAction); JourneyHarness completeJob line 645 calls it, so the C-Reviews completeJob dependency in the UNRESOLVED list is satisfied. The journey now stops on a missing authorize_net_public_client_key instead, which is an owner item."
+  },
+  {
+   "at": "2026-09-06T05:10:29",
+   "note": "X-193 quiet_hours_start exists \u2014 added by app/app/Modules/X-193/Database/migrations/2026_09_04_072838_add_quiet_hours_start_to_notification_classes_table.php:12 (with quiet_hours_end at :13) and read by NotificationClassifyAction.php:44; the standing tests UNRESOLVED naming it missing is out of date"
+  },
+  {
+   "at": "2026-09-06T05:10:29",
+   "note": "X-201 deadline_at exists \u2014 added by app/app/Modules/X-201/Database/migrations/2026_09_04_072843_add_deadline_at_to_disputes_table.php:12 and written by app/tests/Modules/X-201/N011Test.php:27; the standing tests UNRESOLVED naming it missing is out of date"
   }
  ]
 }
