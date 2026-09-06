@@ -160,4 +160,54 @@ class X199Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    public function test_invoice_overdue_reports_real_age(): void
+    {
+        \Carbon\Carbon::setTestNow(\Carbon\Carbon::parse('2026-09-06 12:00:00'));
+
+        $biz = TestCase::provisionTenant(['name' => 'Overdue Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create([
+            'business_id' => $biz->id,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'phone' => '+15551234567',
+        ]);
+
+        $invoice1 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-001',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(45)->toDateString(),
+        ]);
+
+        $invoice2 = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-002',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(3)->toDateString(),
+        ]);
+
+        Event::fake([\App\Modules\X199\Events\InvoiceOverdue::class]);
+
+        $this->engine->markOverdue($biz->id, $invoice1->id);
+        $this->engine->markOverdue($biz->id, $invoice2->id);
+
+        Event::assertDispatched(\App\Modules\X199\Events\InvoiceOverdue::class, function ($event) use ($invoice1) {
+            return $event->invoiceId === $invoice1->id && $event->daysOverdue === 45;
+        });
+
+        Event::assertDispatched(\App\Modules\X199\Events\InvoiceOverdue::class, function ($event) use ($invoice2) {
+            return $event->invoiceId === $invoice2->id && $event->daysOverdue === 3;
+        });
+
+        \Carbon\Carbon::setTestNow();
+    }
 }

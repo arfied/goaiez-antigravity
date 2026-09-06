@@ -221,7 +221,7 @@ final class InvoiceEngine
             $invoice->update(['status' => 'overdue']);
 
             // Calculate days overdue based on due_date (just 1 if it's forced by harness)
-            $daysOverdue = max(1, now()->diffInDays($invoice->due_date));
+            $daysOverdue = (int) max(1, $invoice->due_date->diffInDays(now()));
 
             Event::dispatch(new InvoiceOverdue(
                 businessId: $businessId,

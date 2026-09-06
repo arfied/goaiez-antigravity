@@ -1533,6 +1533,10 @@
   {
    "at": "2026-09-06T13:28:59",
    "note": "X-198 MONEY-75: payout reconciliation is UNRESOLVED - nothing imports a Payout row from the gateway (no /v1/payouts read exists in this lane), so payouts is written only by tests and both reconciliation screens are empty for every real tenant. Ruling 51."
+  },
+  {
+   "at": "2026-09-06T16:18:41",
+   "note": "dead invoice.overdue seam: per ruling 59, this lane already chose x211:detect-overdue -> ArOverdue -> ProcessOverdueReceivable over the InvoiceOverdue chain, so wiring a second overdue path would give X-211 two paths writing two stores."
   }
  ],
  "decisions": [
