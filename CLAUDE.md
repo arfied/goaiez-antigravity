@@ -179,15 +179,29 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | wave | scope | state |
 | :--- | :--- | :--- |
 | UI-43 | the six components still rendering the staff console — X-110 `Cooling`, `InstallVerify`, `Today`, `VisitorsLive`, `TagVersionPer`; X-138 `RoiDashboard` | closed, pushed `f5966661` |
-| **UI-44** | **the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>`** | **in flight** |
-| UI-45 | the copy pass (`cooling`'s raw `vis_N`, `VisitorsLiveTest:76–81`'s raw `v-123`/`google`/`page_view`) · `advanced-segments`, the fourteenth `moderate` screen · `OwnerNavTest`, which the account layout's comment names and which does not exist | next |
+| UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
+| **UI-45** | **the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen** | **in flight** |
+| UI-46 | `Architecture/OwnerNavTest`, which `OwnerNav.php:65`/`:102` and `layout.blade.php:15` all name and which does not exist | next |
 
-⚠️ **A Week 2 scoping question I owe an answer to, not a coder item.** Four of UI-43's
-six screens carry `<x-surface.sample-state>`'s *"Sample — this screen is planned in …
-and not built yet"*, and `x-110-tag-version-per` is a heading with **no query behind
-it at all**. Those are shells with no capability under them; opening them in the
-owner's shell was right, but "proven" for Week 2 has to mean more than a shell that
-renders.
+**UI-45 and UI-46 were one row until 2026-09-06 15:1x.** RULED at `REVIEWS.md`
+2026-09-06 15:1x: `OwnerNavTest` is an architecture test that fails the build, it
+shares no measurement with the copy pass, and the comments specify **two** assertions
+— a reachability half and a *"refuses a hand-written link from one owner screen to
+another"* half. Written literally, that second half reds `cooling.blade.php:14`,
+`abandoned-forms.blade.php:13` and `visitors-live.blade.php:14`, which all carry the
+house `<x-ui.empty-state action= href=>` pattern that UI-30 and UI-36 shipped. It
+needs its own wave and its own ruling. ⛔ The `OwnerNavTest` comments are **not to be
+softened** meanwhile — the gap is in the SYSTEM, not the CHECK.
+
+✅ **The Week 2 scoping question is answered** (RULED, `REVIEWS.md` 2026-09-06 15:1x).
+**"Proven" means:** renders in the *owner* shell (`assertSee('Your account')`,
+`assertDontSee('Internal Platform Console')`) · has a real `GET` asserting `assertOk()`
+plus its own `<h1 class="sr-only">` · measures `critical 0 · serious 0 · moderate 0`
+at both widths · **and either** renders real seeded data **or** renders the house
+`<x-ui.empty-state>` *and* carries an `UNRESOLVED` line naming the writer that does not
+exist. ⛔ **`<x-surface.sample-state>` is not proof of anything** — a screen still
+carrying that banner is an open item, and `x-110-tag-version-per`, which has no query
+at all, is `UNRESOLVED` rather than done.
 
 ⛔ **Taking `origin/main` is never a coder item on this track.** The coder guard
 refuses it by design — the merge stages `JourneyHarness.php`, a CHECK. The
