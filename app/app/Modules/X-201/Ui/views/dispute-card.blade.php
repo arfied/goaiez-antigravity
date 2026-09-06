@@ -1,7 +1,7 @@
 <div>
     <x-surface.sample-state module="receives `chargeback.received` from X-198 for **any gateway**" screen="dispute_card" />
 <h1>Disputes</h1>
-<p class="text-base text-ink-2">A chargeback on one of this account's invoices opens a dispute here. The bundle compiles itself; you add what only you know. There is no refund on this card: a dispute is defended, and a refund is the gateway account's.</p>
+<p class="text-base text-ink-2">A chargeback on one of this account's invoices opens a dispute here. The bundle compiles itself; you add what only you know. Money does not go back from this card: a dispute is defended, and giving money back is the gateway account's.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the disputes…" /></div>

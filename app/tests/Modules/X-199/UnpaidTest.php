@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\Unpaid;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Database\Factories\PersonFactory;
 use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -20,8 +21,8 @@ class UnpaidTest extends TestCase
 
     public function test_unpaid_data_and_tenant_isolation(): void
     {
-        $base = \Carbon\Carbon::now()->startOfWeek()->copy()->addDays(6);
-        \Carbon\Carbon::setTestNow($base);
+        $base = Carbon::now()->startOfWeek()->copy()->addDays(6);
+        Carbon::setTestNow($base);
 
         $biz = TestCase::provisionTenant(['name' => 'Unpaid Tenant 1']);
         Tenancy::set((int) $biz->id);
@@ -60,7 +61,7 @@ class UnpaidTest extends TestCase
 
         // 1. Data assertion + 3. Tenant isolation
         Livewire::actingAs($owner)->test(Unpaid::class, ['businessId' => $biz->id])
-            ->assertSee('1')
+            ->assertViewHas('unpaidCount', 1)
             ->assertSee('300.00')
             ->assertSee('INV-UNP-001')
             ->assertDontSee('INV-UNP-002-ISOLATED')
@@ -70,11 +71,11 @@ class UnpaidTest extends TestCase
         // 2. Empty state
         Invoice::where('business_id', $biz->id)->delete();
         Livewire::actingAs($owner)->test(Unpaid::class, ['businessId' => $biz->id])
-            ->assertSee('0')
+            ->assertViewHas('unpaidCount', 0)
             ->assertSee('0.00')
             ->assertSee('Nothing unpaid.');
 
-        \Carbon\Carbon::setTestNow();
+        Carbon::setTestNow();
     }
 
     public function test_home_renders_unpaid(): void

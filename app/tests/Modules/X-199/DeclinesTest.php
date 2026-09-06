@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Modules\X199;
 
 use App\Models\User;
+use App\Modules\X198\Models\Payment;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\OverflowCharge;
 use App\Modules\X199\Ui\Declines;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Database\Factories\PersonFactory;
 use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -21,8 +23,8 @@ class DeclinesTest extends TestCase
 
     public function test_declines_data_and_tenant_isolation(): void
     {
-        $base = \Carbon\Carbon::now()->startOfWeek()->copy()->addDays(6);
-        \Carbon\Carbon::setTestNow($base);
+        $base = Carbon::now()->startOfWeek()->copy()->addDays(6);
+        Carbon::setTestNow($base);
 
         $biz = TestCase::provisionTenant(['name' => 'Declines Tenant 1']);
         Tenancy::set((int) $biz->id);
@@ -52,14 +54,14 @@ class DeclinesTest extends TestCase
             'created_at' => $base,
         ]);
 
-        \App\Modules\X198\Models\Payment::create([
+        Payment::create([
             'business_id' => $biz->id,
             'amount_cents' => 88000,
             'currency' => 'USD',
             'payment_token' => 'tok_placeholder',
             'idempotency_key' => 'idemp1',
             'status' => 'failed',
-            'created_at' => \Carbon\Carbon::now()->startOfWeek(),
+            'created_at' => Carbon::now()->startOfWeek(),
         ]);
 
         $otherBiz = TestCase::provisionTenant(['name' => 'Declines Tenant 2']);
@@ -89,14 +91,14 @@ class DeclinesTest extends TestCase
                 'created_at' => $base,
             ]);
 
-            \App\Modules\X198\Models\Payment::create([
+            Payment::create([
                 'business_id' => $otherBiz->id,
                 'amount_cents' => 11000,
                 'currency' => 'USD',
                 'payment_token' => 'tok_placeholder2',
                 'idempotency_key' => 'idemp2',
                 'status' => 'failed',
-                'created_at' => \Carbon\Carbon::now()->startOfWeek(),
+                'created_at' => Carbon::now()->startOfWeek(),
             ]);
         });
 
@@ -105,17 +107,18 @@ class DeclinesTest extends TestCase
         $owner = User::findOrFail($biz->owner_user_id);
         // 1. Data assertion + 3. Tenant isolation
         Livewire::actingAs($owner)->test(Declines::class, ['businessId' => $biz->id])
-            ->assertSee('1')
+            ->assertViewHas('declinesCount', 1)
             ->assertSee('880.00')
-            ->assertDontSee('110.00');
+            ->assertDontSee('110.00')
+            ->assertDontSee('tok_placeholder');
 
         // 2. Empty state
-        \App\Modules\X198\Models\Payment::where('business_id', $biz->id)->delete();
+        Payment::where('business_id', $biz->id)->delete();
         Livewire::actingAs($owner)->test(Declines::class, ['businessId' => $biz->id])
-            ->assertSee('0')
+            ->assertViewHas('declinesCount', 0)
             ->assertSee('You have no declined payments to review.');
 
-        \Carbon\Carbon::setTestNow();
+        Carbon::setTestNow();
     }
 
     public function test_home_renders_declines(): void

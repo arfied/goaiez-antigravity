@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Database\Factories\PersonFactory;
 use Database\Seeders\UiReviewSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -20,8 +21,8 @@ class MoneyPaidTodayTest extends TestCase
 
     public function test_money_paid_today(): void
     {
-        $base = \Carbon\Carbon::now()->startOfWeek()->copy()->addDays(6);
-        \Carbon\Carbon::setTestNow($base);
+        $base = Carbon::now()->startOfWeek()->copy()->addDays(6);
+        Carbon::setTestNow($base);
 
         $biz = TestCase::provisionTenant(['name' => 'Money Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
@@ -53,7 +54,7 @@ class MoneyPaidTodayTest extends TestCase
             ->assertSee('0.00')
             ->assertSee('No paid invoices today.');
 
-        \Carbon\Carbon::setTestNow();
+        Carbon::setTestNow();
     }
 
     public function test_home_renders_money_paid(): void
