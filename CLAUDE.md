@@ -952,3 +952,60 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     covered. ⚠️ The dead `use App\Modules\X117\Models\Order;` the removal left in
     the listener is cleared in the same wave: `pint` and `phpstan` both pass
     over an unused import, so neither gate can see it.
+47. **A coder edits a source file directly, never through a generated patch
+    script, and no scratch file lives at the repo root (RULED by the lane
+    supervisor 2026-09-06 12:4x, on MONEY-72b's `1babbd43`).** Run 86's
+    `git status --short` carried seven untracked scratch files at the **repo
+    root** — `fix_hex.php`, `fix_slash.php`, `patch.php`, `patch2.php`,
+    `patch3.php`, `patch_checkout.php`, `patch_x198.php` — because the wave was
+    rewriting PHP with generated PHP instead of editing it. The cost is visible
+    in the log: `236cbd1b` added a whole new test with mangled indentation
+    (`        private GatewayEngine $engine;`), `725fb9d3` pint-fixed it, and
+    `1babbd43` — *"fix hex syntax issue and restore test count"* — deleted the
+    test again and put the one needed assertion in the existing anchor. **Three
+    commits and a pint pass to add one line.** So: edit directly; any scratch
+    file lives under `.agents/supervisor/` and is deleted before the report; the
+    run ends with `?? app/composer.phar` and nothing else (OWNER ACTION 19a).
+    ⚠️ **The tell is a commit message naming a *syntax* or *hex* problem in a file
+    the wave was only meant to add a line to** — a direct edit does not produce
+    those. ⚠️ A stray `patch.php` at this root is one `git add -A` from being
+    committed (which is why every brief says named paths, never `-a`/`-A`), it is
+    invisible to `pint`, `phpstan` and `php -l` alike, and this checkout's root is
+    a live web document root. ⚠️ Companion, from the same review: **an anchor test
+    is edited only for the reason the brief names.** `1babbd43` also swapped
+    `X198Test.php:66-67` from `$this->captureAction->handle(...)` to
+    `app(GatewayEngine::class)->capture(...)` inside a `TEST ANCHOR`. Not a BLOCK
+    — nothing was deleted, one assertion was added, `PaymentCaptureAction::handle`
+    is a pure one-line delegate with identical arguments, and the action keeps
+    eight other call sites in that file plus two in `DeclinesScreenTest` — but it
+    is churn a reviewer must re-derive, and one refactor away from being the
+    deletion the One Rule forbids.
+48. **The X-117 evidence artifact prints two unrelated facts as one flow, and
+    after ruling 45 one of them is unreachable (RULED by the lane supervisor
+    2026-09-06 12:4x, briefed as MONEY-73).**
+    `X-117/Console/EvidenceCheckoutCommand.php:50` captures **directly** against
+    `GatewayEngine` with Stripe's own `tok_visa` under `idem_x117_<time>` —
+    touching no cart and no order — `:52` separately runs `checkoutCart(…,
+    'auth_x117_<time>')` under a self-minted nonce, and `:55-56` writes
+    `gateway_charge_id` beside `order_status` in **one** JSON object as though the
+    checkout produced the charge. `capture()` dedupes on `idempotency_key` alone
+    (fact 20), so the two share no payment. The artifact on disk is dated
+    `2026-09-05T17:06` with `"order_status": "paid"`, and
+    `X117RuntimeProofTest.php:22` asserts `'paid'` — green **only** because that
+    stale untracked file is still there. After ruling 45 the checkout **cannot**
+    reach `paid`. So: **the artifact evidences the checkout and nothing else — the
+    direct capture and its `gateway_charge_id` key are removed, not relabelled**,
+    because a real charge id sitting beside an order it did not pay for is ruling
+    36's question answered wrongly at the artifact layer, and because X-198
+    already owns that proof (`EvidenceChargeCommand` → `evidence/j9/charge.json`,
+    asserted by `GatewayEngineTest.php:12-13` for `ch_` and `strlen === 27` —
+    verified before briefing, per ruling 39's companion lesson). Three
+    consequences: (1) the `connect()` **stays** — the interesting fact is the
+    *connected* case, where the listener runs and still makes no call, which is
+    ruling 45's substance; (2) ⛔ **`gateway_call_made: false` is never written as
+    a literal** — the artifact records `payments_written` as a real
+    `Payment::…->count()`, because a boolean that certifies itself is ruling 43's
+    fiction in miniature while a count moves if the code changes; (3) with no
+    Stripe call left in the command there is **no credential dependency and no
+    `UNRESOLVED` path** — but ruling 39's sequence still binds: run the command
+    FIRST, read the artifact, then write the assertions, all in ONE commit.
