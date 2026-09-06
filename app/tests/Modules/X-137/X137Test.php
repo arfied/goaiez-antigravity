@@ -179,7 +179,7 @@ class X137Test extends TestCase
 
     #[Test]
     #[Group('G13-24')]
-    public function static_number_per_offline_campaign(): void
+    public function test_static_number_per_offline_campaign(): void
     {
         $biz = TestCase::provisionTenant();
         DB::statement("SET app.business_id = '{$biz->id}'");
