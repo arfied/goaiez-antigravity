@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T01:02:06",
+ "updated": "2026-09-06T04:21:16",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -566,10 +566,17 @@
    "unresolved": []
   },
   "X-103": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-103",
+     "stage": "capability",
+     "why": "The \u2464 is 'the review widget on the site; the plugin path is X-104\\'s'. 'grep -rniE \"(plugin\\|wordpress\\|shortcode\\|embed\\|widget\\|snippet\\|marketplace)\" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module \u2014 no column, no action, no engine method.",
+     "at": "2026-09-06T04:21:16"
+    }
+   ]
   },
   "X-104": {
    "status": "DONE",
@@ -627,10 +634,17 @@
    ]
   },
   "X-109": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 26,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-109",
+     "stage": "capability",
+     "why": "ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.",
+     "at": "2026-09-06T04:21:16"
+    }
+   ]
   },
   "X-110": {
    "status": "DONE",
@@ -639,10 +653,17 @@
    "unresolved": []
   },
   "X-111": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 20,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-111",
+     "stage": "schema",
+     "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
+     "at": "2026-09-06T04:21:16"
+    }
+   ]
   },
   "X-112": {
    "status": "DONE",
@@ -952,10 +973,17 @@
    "unresolved": []
   },
   "X-158": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 28,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-158",
+     "stage": "capability",
+     "why": "Read the module's migration. The 'videos' table has columns (id, business_id, title, demo_number, video_url, caption_track_url, transcript, is_rendered, timestamps) and 'video_views' table. There is no live-vs-replay column.",
+     "at": "2026-09-06T04:21:16"
+    }
+   ]
   },
   "X-159": {
    "status": "DONE",
@@ -1024,10 +1052,17 @@
    "unresolved": []
   },
   "X-170": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 17,
    "intent": "RECOVER",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-170",
+     "stage": "capability",
+     "why": "The \u2464 is 'cleared commission into the payroll export'. 'grep -rniE \"(payroll|export)\" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.",
+     "at": "2026-09-06T04:21:16"
+    }
+   ]
   },
   "X-171": {
    "status": "DONE",
@@ -1078,10 +1113,17 @@
    "unresolved": []
   },
   "X-180": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 23,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-180",
+     "stage": "capability",
+     "why": "The \u2464 is 'ad PACKS as content are not fenced (P-128);  P-120 \u2014 every claim verifiable'. It states two separate laws over the single Action that exists (PackSeedAction.php), so asserting either half authors the other (P-210).",
+     "at": "2026-09-06T04:21:16"
+    }
+   ]
   },
   "X-181": {
    "status": "DONE",
@@ -1203,6 +1245,12 @@
      "stage": "capability",
      "why": "no action enrols a person into a campaign",
      "at": "2026-09-04T22:41:56"
+    },
+    {
+     "module": "X-186",
+     "stage": "capability",
+     "why": "The \u2464 is 'Q-012 \u2014 = G3-37; doorway pages'. 'grep -rniE \"(doorway|page|publish)\" app/app/Modules/X-186' only returns capabilities.php:31. X-186 is campaigns and cannot publish a page.",
+     "at": "2026-09-06T04:21:16"
     }
    ]
   },
@@ -1425,10 +1473,17 @@
    "unresolved": []
   },
   "X-210": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-210",
+     "stage": "capability",
+     "why": "The \u2464 is 'P-001 \u00b7 T468 \u2014 two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE \"(tier|package|padlock)\" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.",
+     "at": "2026-09-06T04:21:16"
+    }
+   ]
   },
   "X-211": {
    "status": "DONE",
@@ -1981,6 +2036,54 @@
    "stage": "capability",
    "why": "N-043 \u2014 CredentialFetchAction returns Crypt::decryptString, CredentialRevealAction returns 'secret' => $decrypted, and credential_reveals schema has no time-box column",
    "at": "2026-09-06T01:02:06"
+  },
+  {
+   "module": "X-109",
+   "stage": "capability",
+   "why": "ls app/app/Modules/X-109/Database/migrations shows only 2026_08_30_000095_create_x109_quota_tables.php. Reading it confirms the only table is 'captcha_quota' with columns (id, business_id, campaign_id, prospect_identifier, status, available_quota, used_quota, timestamps). No question / answer / disqualification / knockout column exists anywhere in the module.",
+   "at": "2026-09-06T04:21:16"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "why": "The \u2464 is 'Q-012 \u2014 = G3-37; doorway pages'. 'grep -rniE \"(doorway|page|publish)\" app/app/Modules/X-186' only returns capabilities.php:31. X-186 is campaigns and cannot publish a page.",
+   "at": "2026-09-06T04:21:16"
+  },
+  {
+   "module": "X-180",
+   "stage": "capability",
+   "why": "The \u2464 is 'ad PACKS as content are not fenced (P-128);  P-120 \u2014 every claim verifiable'. It states two separate laws over the single Action that exists (PackSeedAction.php), so asserting either half authors the other (P-210).",
+   "at": "2026-09-06T04:21:16"
+  },
+  {
+   "module": "X-170",
+   "stage": "capability",
+   "why": "The \u2464 is 'cleared commission into the payroll export'. 'grep -rniE \"(payroll|export)\" app/app/Modules/X-170' only returns capabilities.php:31. The claim is positive and nothing in the module measures it.",
+   "at": "2026-09-06T04:21:16"
+  },
+  {
+   "module": "X-158",
+   "stage": "capability",
+   "why": "Read the module's migration. The 'videos' table has columns (id, business_id, title, demo_number, video_url, caption_track_url, transcript, is_rendered, timestamps) and 'video_views' table. There is no live-vs-replay column.",
+   "at": "2026-09-06T04:21:16"
+  },
+  {
+   "module": "X-210",
+   "stage": "capability",
+   "why": "The \u2464 is 'P-001 \u00b7 T468 \u2014 two packages, and everything we ship, as we ship it, at the price you joined at. There is no locked tier to show a padlock for'. 'grep -rniE \"(tier|package|padlock)\" app/app/Modules/X-210/' only returns capabilities.php:25. The module is about promotions and contains no tier or padlock logic.",
+   "at": "2026-09-06T04:21:16"
+  },
+  {
+   "module": "X-103",
+   "stage": "capability",
+   "why": "The \u2464 is 'the review widget on the site; the plugin path is X-104\\'s'. 'grep -rniE \"(plugin\\|wordpress\\|shortcode\\|embed\\|widget\\|snippet\\|marketplace)\" app/app/Modules/X-103/' returns three lines: SiteEngine.php:28, capabilities.php:37, and capabilities.php:55. There is no review widget in the module \u2014 no column, no action, no engine method.",
+   "at": "2026-09-06T04:21:16"
+  },
+  {
+   "module": "X-111",
+   "stage": "schema",
+   "why": "2026_09_01_000001_reapply_platform_scope_rls_exemption.php intentionally takes tenant RLS off 11 tables (opt_outs, suppression_lifts, tenant_deletion_requests, support_queue_entries, data_requests, gbp_account_bindings, gbp_grant_revocation_attempts, gbp_profile_bindings, places_api_calls, voice_usage_events, zernio_account_days) because they are platform-wide. Line 141 of OperatorAlertBoard.php shows 'operator_alerts' is platform-scoped. SchemaStage has no platform-scope exemption list to handle this.",
+   "at": "2026-09-06T04:21:16"
   }
  ],
  "decisions": [
