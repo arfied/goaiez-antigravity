@@ -110,7 +110,9 @@ class DeclinesTest extends TestCase
             ->assertViewHas('declinesCount', 1)
             ->assertSee('880.00')
             ->assertDontSee('110.00')
-            ->assertDontSee('tok_placeholder');
+            ->assertDontSee('tok_placeholder')
+            ->assertDontSee('REF-DEC-001')
+            ->assertDontSee('REF-DEC-002-ISOLATED');
 
         // 2. Empty state
         Payment::where('business_id', $biz->id)->delete();

@@ -44,6 +44,7 @@ class MoneyPaidTodayTest extends TestCase
 
         $owner = User::findOrFail($biz->owner_user_id);
         Livewire::actingAs($owner)->test(MoneyPaidToday::class, ['businessId' => $biz->id])
+            ->assertViewHas('totalCents', 12500)
             ->assertSee('125.00')
             ->assertSee('INV-TEST-001');
 
@@ -51,6 +52,7 @@ class MoneyPaidTodayTest extends TestCase
 
         // empty state
         Livewire::actingAs($owner)->test(MoneyPaidToday::class, ['businessId' => $biz->id])
+            ->assertViewHas('totalCents', 0)
             ->assertSee('0.00')
             ->assertSee('No paid invoices today.');
 
