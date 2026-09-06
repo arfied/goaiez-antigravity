@@ -125,10 +125,26 @@ bar "6. style + static analysis"
 # SIGTERMed, because a killed process prints a bare `Terminated` that no signal-9
 # pattern matches. §7 below already reads rc for pest; §6 did not, and had the same
 # hole. rc >= 124 is timeout (124) or a signal (128+n: 137 = KILL, 143 = TERM).
+# SHARED GATE LOG (2026-09-06, shape agreed with the sibling project). One TSV line
+# per tool run, appended at exit, so a death correlates against what else was running
+# in that minute and the next kill is attributable instead of argued about.
+#   start_iso <TAB> end_iso <TAB> pid <TAB> rc <TAB> project <TAB> checkout <TAB> tool
+# rc is the RAW code and is the whole point: 128+N — 143 SIGTERM, 137 SIGKILL, 124 is
+# timeout(1)'s own. Never normalise it to 0/1. `pid` is the gate's pid, which is the
+# correlator; the tool is its child. No lock: appends under PIPE_BUF to an O_APPEND
+# file are atomic on Linux, and a flock here would interact with the pest lock for
+# nothing.
+GATE_LOG=/home/goaiez/tmp/gate-runs.tsv
+log_gate() {                     # log_gate <tool> <start_iso> <rc>
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$2" "$(date -Is)" "$$" "$3" "grs-antig" "$(basename "$ROOT")" "$1" >> "$GATE_LOG" 2>/dev/null || true
+}
 run_tool() {                     # run_tool <label> <cmd...>
   local label="$1"; shift
-  local out rc
+  local out rc started
+  started=$(date -Is)
   out=$("$@" 2>&1); rc=$?
+  log_gate "$label" "$started" "$rc"
   printf '%s\n' "$out" | tail -4 | sed 's/^/  /'
   if [ $rc -ne 0 ]; then
     if [ $rc -ge 124 ] || printf '%s' "$out" | grep -qiE 'terminated|killed|signaled|signal "?[0-9]+"?'; then
@@ -195,7 +211,9 @@ if [ $want_tests -eq 1 ]; then
 fi
 if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (ruling 2026-09-05 07:0x)
+  pest_started=$(date -Is)
   out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  log_gate pest "$pest_started" "$rc"
   [ "${lock_held:-0}" -eq 1 ] && flock -u 9 2>/dev/null
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
