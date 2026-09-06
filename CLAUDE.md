@@ -60,9 +60,21 @@ Green gates are necessary, not sufficient. For every commit in
 - **Did the count fall?** For each stage the report claims fixed, the `after`
   number must be lower and must match `JOURNAL.md`. A fix with the same count
   is a fix that did not land; the contract says record `UNRESOLVED`, not retry.
-- **Tests are real.** `grep -c 'test(\|it('` before/after must match the report,
-  and a test that greps a directory must grep one that exists (rule 01: 19
-  anchors once passed against missing paths).
+- **Tests are real.** The instrument is
+  `grep -c 'public function test\|test(\|it('` before/after, and it must match
+  the report. ⚠️ **Do not use the bare `grep -c 'test(\|it('` form** — `test(`
+  and `it(` are Pest calls, and roughly every module test here is a PHPUnit
+  class whose methods read `public function test_foo()`. The Pest-only form
+  reads **0** on those files before *and* after any change, so it can never show
+  a rise; run 54's report quoted "before 1 after 7" from a command that returns
+  0 both times (REV-59). A check that always returns the same number checks
+  nothing. Also: a test that greps a directory must grep one that exists
+  (rule 01: 19 anchors once passed against missing paths).
+- **State the expected *delta*, never a remembered absolute.** A raw count
+  measured before a merge is stale the moment the merge lands — REV-58's brief
+  said the capability stage read 208 when `fc8f0bab` had already taken it to
+  177, and the coder spent the run reconciling my number, not its own (REV-59).
+  Name the instrument, name the delta, ask for the number they actually get.
 - **Citations resolve.** Any new `R###`/`X-###`/`P-###` in code or comment:
   `php artisan why <id>` returns something. 64 unresolvable citations already
   exist; the 65th is a `BLOCK`.
