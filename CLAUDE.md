@@ -1048,3 +1048,67 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ruling 48 named `X117RuntimeProofTest` as the consumer and stopped — so per
     ruling 46's precedent this is a new item with its own two dispatches, not a
     charge against MONEY-73.
+50. **A screen's empty state and a test's name are strings with something at the
+    other end, and a wave that deletes an artifact's only reader owns the artifact
+    (RULED by the lane supervisor 2026-09-06 13:3x, on MONEY-74's `909acdfd`;
+    briefed as MONEY-75 items 1, 2 and 4).** Three instances, one shape — ruling
+    36's question (*what is actually at the other end of the string this screen
+    prints?*) asked of strings that are not values.
+    (a) **The empty state is the state every real tenant sees.**
+    `reconciliation-discrepancies.blade.php:8` reads *"Every payout reconciled to
+    the cent."* / *"Nightly reconciliation writes a row here the moment a payout
+    and its payments disagree"*, and `same-account.blade.php:9` promises *"every
+    payment and payout lands here the moment it does"*. **There is no nightly
+    reconciliation and nothing imports a payout** (ruling 51). So the sentence the
+    owner reads on an empty screen certifies a job they do not have, over money
+    that was never fetched — ruling 43's fiction planted where it is *guaranteed*
+    to be read, because a screen with no rows shows nothing else. An empty state
+    names what has not happened yet and what it waits on; it never describes
+    machinery that does not exist.
+    (b) **A test name is read far more often than its body.**
+    `X117RuntimeProofTest::test_checkout_reaches_a_real_charge_id` asserts
+    `pending_payment`, `payments_written === 0` and no charge id — it proves the
+    checkout reaches **no** charge id, under a name promising the opposite. A
+    reviewer scanning the suite's method list is told the lane proves the very
+    thing rulings 45 and 49 established it cannot.
+    (c) **A wave that deletes an artifact's last reader owns the artifact.**
+    MONEY-74 deleted the block that read `evidence/X-117/junit.xml`, leaving a
+    2026-09-05 file naming `test_checkout_reaches_a_real_charge_id` with
+    `failures=0 errors=0` and no reader anywhere. That is ruling 49's own class —
+    a derived artifact outliving its source — surviving the wave written about it,
+    because 49 named `runtime-proof.json` and stopped at the sibling. ⚠️ The
+    scoping miss is the **supervisor's**, twice running; ruling 49's grep gains a
+    second half: after removing a reader, `ls` the artifact directory and account
+    for every file left in it.
+51. **A table no production code writes is a screen that is empty forever, and a
+    figure compared against the gateway's must come from the row the gateway wrote
+    (RULED by the lane supervisor 2026-09-06 13:3x, briefed as MONEY-75 item 3).**
+    `grep -rn "Payout::create" app/app` returns **X-205's affiliate payouts and
+    nothing else** — X-198's `payouts` table has **no writer outside tests**, and
+    `PayoutReconcileAction` has **no caller outside tests**. Two screens
+    (`ReconciliationDiscrepancies`, `SameAccount`) read it, so for every real
+    tenant they are empty forever: decision 272's write-only table with the arrow
+    reversed, and the reason ruling 50(a)'s empty states had to lie. **The second
+    half is worse.** `GatewayEngine::reconcilePayout(…, $expectedCents,
+    $actualCents)` takes **both** sides of the subtraction from its caller, so the
+    "discrepancy" the screen reports — *"payout po_x stays $1.00 off; the run is
+    never corrected"* — is the difference between two numbers **this app supplied**,
+    never a comparison against the processor. The whole purpose of the screen is
+    that one side came from the gateway. `payouts.amount_cents` **is** the gateway's
+    word (it is what an ingest would write), so `$actualCents` is read from
+    `$payout->amount_cents` and the parameter goes — ruling 37's rule exactly ("the
+    row already knows; a caller-supplied value is a second place for the truth to
+    disagree"), one level up from currency. `$expectedCents` stays a parameter:
+    that side is genuinely ours, and no payout↔payment link exists in the schema to
+    derive it from — recorded, not guessed. ⛔ **Not resolved by building payout
+    ingestion in this wave**: a `/v1/payouts` read is a live vendor call under
+    ruling 13 (evidence run, artifact, ruling 39's sequence) and is its own wave.
+    The honest outcome now is `UNRESOLVED` naming payout ingestion as the missing
+    dependency, with the empty states saying so. ⚠️ **Ruling 46 binds this one
+    hard:** dropping the parameter touches five call sites — `X198Test.php:90`,
+    `ReconciliationDiscrepanciesScreenTest.php:27,:36,:39`,
+    `SameAccountScreenTest.php:39` — and the two short-payout fixtures must move
+    the shortfall onto the **payout row** (`amount_cents => 4900` with
+    `$expectedCents = 5000`), not delete the assertion. A fixture that keeps
+    `amount_cents => 5000` and drops the `4900` argument turns a discrepancy test
+    green as *balanced*, which is the assertion passing for the wrong reason.
