@@ -1462,3 +1462,41 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     them would be ruling 51's empty-forever screen. ⚠️ The generalisable half for every lane: a
     lane that relocates a class breaks receiving lanes' **tests** silently, weeks later; that is
     now TRACK 1 ACTION item 4's lesson, not just its instance.
+66. **A signature the brief dictates is still the coder's to lint, and the brief owns the
+    phpstan consequence of dictating one (RULED by the lane supervisor 2026-09-06 15:5x, on
+    MONEY-79's `9e7b7a75`).** MONEY-79 item 2.1 wrote `public function getExposure(int
+    $businessId): ?float` in terms, and ruling 43's fix — a body of `return null;` — makes
+    `float` an unused member of that union, so at phpstan level 5 the dictated type is an error
+    **the moment the ruling is obeyed** (`return.unusedType`, `DisputeDefenseEngine.php:37`).
+    phpstan went `0` → `1` on an otherwise perfect wave. The coder saw it, refused to deviate
+    from an explicit signature, and said so in its own log — **that refusal is correct and is
+    not charged**; the miss is the supervisor's, so per the ruling 46/49/50/62 precedent it is a
+    new item with its own two dispatches. **RULED: the return type becomes standalone `null`**
+    (`php: ^8.4` in `app/composer.json`, so it is valid here) — exact, phpstan-clean, and
+    *more* honest than `?float`, because the ledger has no figure and the signature should say
+    so rather than promise a float it can never produce. It also hardens the mutation guard:
+    restoring the fabrication becomes a `TypeError` at the boundary, not merely a failed
+    assertion. ⛔ Never `@phpstan-ignore`, a baseline entry, an inline `@var` or a cast —
+    phpstan's own instruction text forbids all four and each would hide the exact fact the
+    method exists to state. ⛔ The type widens back to `?float` only in the same commit that
+    computes a real figure. ⚠️ The generalisable half: **a brief that dictates a signature has
+    dictated a phpstan result**, so any brief naming an exact signature checks it against the
+    body it also dictates — and the unused parameter stays, because the capability id is
+    per-tenant and the signature records that.
+67. **`ZERO BYTES … rc=137` is a KILL, and a killed §7 is VOID — but §6 alone still refuses the
+    push (RULED by the lane supervisor 2026-09-06 15:5x, on the same gate).** Ruling 24's gate
+    hunks named rc 124 (`TIMEOUT`) and the zero-output case; **137 is `128+9`, SIGKILL**. On
+    this box that means the suite was reaped under memory pressure — `pgrep -a -f
+    "pest|phpunit"` that minute showed another checkout's `timeout 1800 ./vendor/bin/pest` live
+    plus four other lanes' coders — so it is the *memory* half of the zero-bytes trap arriving
+    from **outside this checkout**, and it says nothing whatever about the sha. So: (1) a §7
+    line carrying `rc=137` is recorded **VOID** and never compared against a baseline — a suite
+    that was killed did not fail; (2) it is **not** re-run in the same tick, because the
+    pressure that killed it is still there and a second kill teaches nothing; (3) ⚠️ **a void
+    §7 is not a licence to push** — §1–§6 stand on their own, and on `9e7b7a75` §6 was red
+    twice over, which is sufficient under ruling 34. The number is re-measured by the fix run's
+    own gate. ⚠️ **Distinguish from ruling 42's concurrency:** there the tell was `SQLSTATE[42P01]
+    … relation "users" does not exist` inside a run that *completed* on the same database; here
+    there is no output at all and the signal is the exit code. ⚠️ Distinguish from ruling 40's
+    kill too: that is a dead *coder* with a 0-byte run log, this is a dead *pest* inside a live
+    gate — neither spends a dispatch, but only 40 calls for a continuation brief.
