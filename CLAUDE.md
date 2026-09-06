@@ -456,6 +456,31 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
   wrote the *tests* for four of the same ids, in different files — Track 1 gets
   no textual conflict. The overlap is still worth the owner's eye, but it is not
   the two-branches-one-finding conflict 45 was opened as.
+
+  ⛔ **That de-escalation expired at 22:04** (tick 165). Between 21:02 and 22:19
+  on 2026-09-05 `track/sixty` moved from this track's *tests* to this track's
+  **code**: `2b7319c5` ("feat(X-137): static numbers per offline campaign")
+  writes `app/app/Modules/X-137/Actions/CallAttributeAction.php`,
+  `Domain/X137Engine.php` and a new module migration
+  `app/app/Modules/X-137/Database/migrations/2026_09_06_030238_add_is_static_to_call_tokens.php`;
+  `efe12cbf` writes the engine again. It also wrote X-102 tests (`fa209976`,
+  `a88e0109`, `88df5ad8`). X-137 and X-102 are Track 7's under ruling 5. OWNER
+  ACTION 45 is **re-escalated**, from "complementary tests" to another track
+  building in this track's column. Still **do not brief a parallel fix** — the
+  files are sixty's, and a duplicate cleanup hands Track 1 a conflict.
+
+  ⚠️ **The divergence Track 1 will merge is spec-vs-implementation, not text.**
+  Track 7's tracker rows (this track's only mergeable content, tick 162) add
+  assertions sixty's implementation does not carry: G3-11/G8-13 require
+  pool exhaustion → static fallback + `unattributed`, ⛔ never a reused token;
+  G13-24 requires that a number cannot be assigned to a second live campaign,
+  refused and asserted. Sixty's `X137Test.php` holds four tests
+  (`test_anchor_call_attribution_ttl_and_visit_join`, `test_short_link_and_qr`,
+  `test_static_number_per_offline_campaign`, `test_header_capabilities`); the
+  static one asserts only the happy path (`is_static`, null `expires_at`, two
+  calls attributed without `joined`), and nothing greps `exhaust`. So after a
+  merge `main` carries rows describing refusals no test proves — the
+  a-lint-that-matches-nothing shape, in prose.
 - **The root `error_log` is a deleted scratch script, not a writer** (tick 162).
   Its whole 485 bytes are one event, `2026-09-05 21:02:31 UTC` (16:02 local,
   matching its mtime): a `test2.php` at the checkout root run without
