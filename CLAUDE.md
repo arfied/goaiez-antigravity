@@ -317,6 +317,24 @@ Watch for: <the trap that applies, by name>
   line on the truncated ledger; it prints identically on a healthy 17-key one
   (measured 2026-09-05, tick 153). The truncation's real tell was §3 —
   `KeyError: 'stages'` and an `{"action": "BOOTSTRAP"}` answer.
+- ⚠️ **`--full-doctor` does NOT refresh `BUILD-STATE.json`'s stage counts, and §5 truncates
+  the per-stage lines — the only number a run of it yields is the `N violation(s).` total.**
+  This retires the claim this column wrote at tick 170 §5 and repeated in wave 79's brief
+  (*"`BUILD-STATE.json`, which only a full doctor run rewrites"*). Measured at tick 171: two
+  consecutive `bash bin/supervise.sh --full-doctor` runs left §3's `STAGES` reading
+  `capability 399` untouched, while §5's total moved `745 → 740`. §5's visible output starts
+  mid-stage — the earlier `ok`/`FAIL <stage> N violation(s)` lines are cut, so **no
+  per-stage count is obtainable by this column at all**; `php app/artisan doctor` is outside
+  the allow list, which is the signal it is the coder's command. **So `STAGES` in any
+  `REPORT.md` is a carry-over until proven otherwise, and the wave's real movement is the
+  delta between two `N violation(s).` totals.** Brief the total, name the baseline, and never
+  ask the coder to prove movement with a `STAGES` line.
+  ⚠️ **Worse, that brief also pre-authorised the wrong conclusion** — *"If `capability` does
+  not fall after item 2, report it in those words"* — and got those words back on a wave where
+  the count **had** fallen, in the coder's own `w79-doctor.log`, on a line neither of us read.
+  This is the wave-74 rule one turn sharper: **publishing the expected arithmetic gets the
+  arithmetic back; publishing an expected *finding* gets the finding back.** Name the baseline
+  and the command, never the sentence you expect to receive.
 - ⚠️ **`supervise.sh` §7 could not show a *failure* at all until tick 161 — and its summary
   line still hid the count.** Pest's order varies between runs, so two runs of an identical
   tree showed two different five-name windows (tick 158: the coder's window and this
@@ -424,6 +442,34 @@ Watch for: <the trap that applies, by name>
   `/home/goaiez/tmp/agy-<track>-run<N>.log` are all refused with *"may only … from
   the allowed working directories"* — but `Read` on the same absolute path returns
   it. A tick that concludes it cannot see why a coder died has used the wrong tool.
+- ⚠️ **A report that is silent about a brief item is not evidence the item was skipped —
+  `scratch/` mtimes are.** Wave 79's `REPORT.md` mentions mutation nowhere, exactly as wave
+  78's did, and the tick-170 block had made that silence the trigger for `OWNER ACTION`. But
+  three files newer than the 20:37 dispatch — `test-mut-x137.log` (20:39:40),
+  `test-mut-g1531.log` (20:39:57), `test-x137.log` (20:40:18, green after revert) — show the
+  mutations **ran**, and both red lines pass the declaration-line tell
+  (`X137Test.php:37`, `G1531Test.php:18`, both real `function` declarations). Refusing that
+  wave on the report's silence would have burned a dispatch on work already done. **Check the
+  artifact directory before grading an item unperformed** — the same `ls -la --time-style`
+  that proved wave 78's silence honest proves wave 79's silence merely undisclosed. The two
+  read identically in `REPORT.md` and are opposite verdicts.
+- ⚠️ **A *refusal* capability cannot be `UNRESOLVED` for want of an implementation, and this
+  is a shape, not a one-off.** X-102's `G21-01` reads *"the claim law. Scripted messages
+  posing as other attendees is manufactured social proof"* (`app/app/Modules/X-102/capabilities.php:40`).
+  Wave 79 recorded `UNRESOLVED: no scripted attendees logic in ChatStartAction.php` — but the
+  capability is satisfied by the logic's **absence**, asserted in a test, not by building it.
+  Rule 09 is the check: `UNRESOLVED` names a **missing dependency**, and nothing is missing
+  here. Read the capability's own text before crediting an `UNRESOLVED` against it — a
+  refusal id and a build id look identical in the doctor output that lists them.
+- ⚠️ **Mutation proves the assertions that existed when it ran, not the ones committed after
+  it.** Wave 79 mutated `CallAttributeAction` at 20:39:40: seven X-137 tests, **one** red —
+  the pre-existing anchor test — so all four new capability tests stayed green under a
+  mutation that broke attribution outright. That is the finding mutation exists to produce,
+  and the coder acted on it correctly (`7f097d45`, 20:40:14, moved the assertions from the
+  handed `visitor_session_token` to the derived `whisper_text`). **But the strengthened
+  assertions were then never mutated**, so nothing yet shows they are load-bearing. Read the
+  mutation log's timestamp against the commits around it: a mutation that predates the fix it
+  motivated is half a proof, and the second half is one command.
 
 ## Style
 
