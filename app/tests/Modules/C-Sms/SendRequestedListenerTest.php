@@ -190,7 +190,8 @@ final class SendRequestedListenerTest extends TestCase
         $capturedKeys = [];
         $sender->shouldReceive('send')->twice()->andReturnUsing(function ($message) use (&$capturedKeys) {
             $capturedKeys[] = $message->key->value;
-            return \App\Services\Messaging\Outbound\SendOutcome::accepted(
+
+            return SendOutcome::accepted(
                 key: $message->key,
                 providerMessageId: 'fake-id-'.count($capturedKeys)
             );
