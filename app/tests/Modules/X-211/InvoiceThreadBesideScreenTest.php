@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X211;
 
 use App\Models\User;
-use App\Modules\X121\Models\Conversation;
+use App\Models\Conversation;
 use App\Modules\X121\Models\Person;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Models\InvoiceLine;
@@ -29,6 +29,7 @@ class InvoiceThreadBesideScreenTest extends TestCase
         Tenancy::set($bizB->id);
         $personB = Person::create(['business_id' => $bizB->id, 'first_name' => 'B', 'last_name' => 'B']);
         $convB = Conversation::create(['business_id' => $bizB->id, 'person_id' => $personB->id, 'channel' => 'sms', 'status' => 'open']);
+        $this->assertSame((int) $bizB->id, (int) $convB->business_id);
         DB::table('messages')->insertGetId(['business_id' => $bizB->id, 'conversation_id' => $convB->id, 'sender_type' => 'person', 'body' => 'B says hello', 'direction' => 'inbound', 'created_at' => now()]);
         Invoice::create([
             'business_id' => $bizB->id,
@@ -46,6 +47,7 @@ class InvoiceThreadBesideScreenTest extends TestCase
 
         $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'John', 'last_name' => 'Doe']);
         $conv = Conversation::create(['business_id' => $biz->id, 'person_id' => $customer->id, 'channel' => 'sms', 'status' => 'open']);
+        $this->assertSame((int) $biz->id, (int) $conv->business_id);
         DB::table('messages')->insertGetId(['business_id' => $biz->id, 'conversation_id' => $conv->id, 'sender_type' => 'person', 'body' => 'The install left a scratch on the floor and nobody called back', 'direction' => 'inbound', 'created_at' => now()]);
         DB::table('messages')->insertGetId(['business_id' => $biz->id, 'conversation_id' => $conv->id, 'sender_type' => 'user', 'body' => 'Sorry about that, we will call today', 'direction' => 'outbound', 'created_at' => now()]);
 
