@@ -200,7 +200,8 @@ final class SchemaRenderAction
         if (($schema['@context'] ?? '') !== 'https://schema.org') {
             return false;
         }
-        if (empty($schema['@type']) || empty($schema['name']) || empty($schema['url'])) {
+        // @type keeps empty() because isset on an empty array is true and $validType computes 0 === 0 for it
+        if (empty($schema['@type']) || ! isset($schema['name']) || ! isset($schema['url'])) {
             return false;
         }
         $validType = is_string($schema['@type']) || (is_array($schema['@type']) && count(array_filter($schema['@type'], 'is_string')) === count($schema['@type']));

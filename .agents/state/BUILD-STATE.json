@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T15:24:42",
+ "updated": "2026-09-07T15:55:43",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2289,6 +2289,12 @@
    "module": "X-176",
    "chose": "A top-level schema name or url that is blank after trim now refuses the whole document, as the empty string already did. empty() returns false for a whitespace-only string, so a business whose name was whitespace published a LocalBusiness node carrying a blank name with the document intact and every gate green, while the empty-string case was refused and that refusal is asserted at X176Test line 290. The direction is deliberately opposite to the collection-member seam: a blank enrichment member is omitted and the document survives, but the top-level name is the subject of the whole schema, so the document is refused. The member predicates are unchanged, because two committed falsifiers depend on the validator accepting a whitespace member in order to show that member reaching the page with the page intact. Refused: a guard in EdgeDeployAction as well as or instead of this one, and a non-empty constraint on businesses.name, which is another lane column.",
    "at": "2026-09-07T15:24:42",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "--ruling R245 X-176 \u2014 The top-level required-string check no longer refuses a name or url of \"0\". SITE-156 gave the line below it a trim-based blank test that already refuses a missing key, null, a non-string and any blank-after-trim value, which left the older empty() check with exactly one live effect: refusing the non-blank string \"0\", a legitimate name that schema.org validates. G7-48 asks for a refusal only when the schema does not validate, so a business named 0 was serving six of the seven required elements. @type deliberately keeps empty(), because isset on an empty array is true and validType computes 0 === 0 for it, so a uniform rewrite would have admitted an empty @type array. Refused: any change to the member predicates, on which two committed falsifiers depend; to EdgeDeployAction completeness guard, whose blank-name gap is governed by G7-48 requiring the page to render without the schema; and to businesses.name, another lane column.",
+   "at": "2026-09-07T15:55:43",
    "ruling": "R245"
   }
  ],

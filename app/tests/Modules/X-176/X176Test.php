@@ -401,4 +401,38 @@ class X176Test extends TestCase
         $this->assertEquals('Tenant A', $res['title']);
         $this->assertEquals("https://seo-a.com/pages/{$pageB->id}", $res['canonical']);
     }
+
+    public function test_zero_name_publishes_document_but_whitespace_name_refuses(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'seo.com', true);
+
+        $deployValid = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: '0'
+        );
+        $htmlValid = Storage::disk('local')->get("sites/{$deployValid['deploy_hash']}.html");
+        $this->assertStringContainsString('application/ld+json', $htmlValid);
+        $this->assertStringContainsString('"name":"0"', $htmlValid);
+
+        $deployRefused = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c124',
+            businessName: '   '
+        );
+        $htmlRefused = Storage::disk('local')->get("sites/{$deployRefused['deploy_hash']}.html");
+        $this->assertStringNotContainsString('application/ld+json', $htmlRefused);
+    }
 }
