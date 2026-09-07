@@ -11,7 +11,7 @@ test('owner layout heading seam contract', function () {
 
     foreach (glob(base_path('app/Modules/*/Ui/*.php')) as $file) {
         $content = file_get_contents($file);
-        
+
         if (! str_contains($content, "#[Layout('components.account.layout'")) {
             continue;
         }
@@ -20,13 +20,13 @@ test('owner layout heading seam contract', function () {
 
         preg_match('/#\[Layout\([^\]]*\]/', $content, $layoutMatch);
         $layoutAttr = $layoutMatch[0] ?? '';
-        if (!$layoutAttr) {
+        if (! $layoutAttr) {
             preg_match('/#\[Layout\([^\)]*\)/', $content, $layoutMatch);
             $layoutAttr = $layoutMatch[0] ?? '';
         }
 
         $hasHeading = preg_match('/[\'"]heading[\'"]\s*=>/', $layoutAttr);
-        
+
         if ($hasHeading) {
             $seam++;
         } else {
@@ -38,12 +38,12 @@ test('owner layout heading seam contract', function () {
             if (View::exists($viewName)) {
                 $viewPath = View::make($viewName)->getPath();
                 $viewContent = file_get_contents($viewPath);
-                
+
                 if (preg_match('/<h([1-6])/', $viewContent, $hMatches)) {
                     $level = $hMatches[1];
                     if ($hasHeading && $level !== '2') {
                         $skips++;
-                    } elseif (!$hasHeading && $level !== '1') {
+                    } elseif (! $hasHeading && $level !== '1') {
                         $skips++;
                     }
                 }
