@@ -2255,3 +2255,59 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     the day acceptance exists. ⚠️ `assertSee('offered')` alone would pass for the wrong reason if the
     confirmation carried the word too, so the confirmation says *"recorded"* and the assertion is paired
     with `assertDontSee('accepted')` (ruling 61, ruling 90's shape).
+99. **"The gateway did not throw" is not "the gateway charged", and X-199 writes `charged` off the
+    absence of an exception (RULED by the lane supervisor 2026-09-06 23:5x, briefed as MONEY-96 item
+    1).** `X-198/Domain/GatewayEngine::capture():93-98` calls the Stripe client **only** when
+    `$connection->gateway_name === 'stripe'`; for any other connected gateway — the migration's own
+    comment at `2026_08_30_000030:18` lists `stripe, square, clover, plaid`, and this lane's tests
+    already create **`square`** connections (`SameAccountScreenTest:25,:32,:81`,
+    `ReconciliationDiscrepanciesScreenTest:25,:34`) — it makes **no external call**, writes a `Payment`
+    with `gateway_charge_id = null` and `status = 'awaiting_processor'`, and **returns normally**.
+    `X-199/Domain/InvoiceEngine.php:107-108` then reads that payment and sets `$status = 'charged'`
+    **unconditionally**, so the `OverflowCharge` row says `charged` with `reference_id` **null**, the
+    `OverflowCharged` event fires carrying a **null** `gatewayChargeId`, and `Ui/Credits.php:96` prints
+    ***"covered by the card on file; service never stopped"*** while `Unpaid.php:88` puts an overflow
+    pill on the invoice. Nothing was charged, and X-198's own row says so. **This is ruling 98's shape
+    at its sharpest — the app contradicting itself, one module's row against another's — and ruling
+    51's principle one level up: a status compared against the gateway's must come from the row the
+    gateway wrote.** **RULED: `$status = $gatewayChargeId !== null ? 'charged' : 'refused';`** — one
+    line, and it is correct for the idempotent early return at `GatewayEngine:83-84` too, which can
+    hand back a prior `awaiting_processor` payment. ⛔ **No third status is minted:** `refused` already
+    means *the card did not absorb it and the invoice still stands*, which is true of an unprocessed
+    overflow, and `InvoiceEngine:172-173`'s reversal query filters `status = 'charged'`, so a new
+    vocabulary would change the reversal path for no gain. ⛔ Not resolved by teaching `capture()` a
+    non-Stripe adapter: a processor adapter waits on a contract (ruling 20) and a live call is ruling
+    13's evidence run. ⚠️ **Why nine green tests cannot see it:** every X-199 overflow fixture seeds
+    `gateway_name => 'stripe'` **and** an `Http::fake` returning `ch_mock_123`
+    (`InvoiceEngineTest:46,:61`), so the charge id is always non-null and the two branches are
+    identical — ruling 45's fixture-omission trap, where the *fixture* excludes the interesting case
+    rather than stubbing it. The proof is therefore a **new** pest test seeding a **`square`**
+    connection, asserting `refused`, a null `reference_id` and `Event::assertNotDispatched`. ⚠️
+    `CreditsScreenTest:85` hand-forces `->update(['status' => 'charged'])` to reach the charged
+    wording, so the screen's positive assertion has never once been driven by the production path.
+100. **Three carried backlog items are measured and struck, and the `$error` sweep's headline candidate
+    is UNREACHABLE (measured 23:5x; ruling 64's discipline, ruling 95's precedent).** The `$error`
+    population is ~140 assignments across the lane's eight `Ui/` trees; all but a handful are the
+    tenancy `isn't in this account` line or an exception passthrough, and three named candidates do not
+    survive contact. (a) **`X-211/Ui/CollectionsPackagePreview.php:32`** — *"Sending an account to
+    collections is a human action — sign in as the owner first."* — names a **role** the guard does not
+    check (`auth()->id() === null` accepts any signed-in user), which is exactly the sweep's question
+    *is that actually why it refused?* — **but `render():51` is
+    `abort_unless(auth()->check() && Tenancy::check(), 403)`, so the branch can never render to
+    anyone**, and the generated route carries `auth` middleware besides. Ruling 96 governs: an
+    unreachable string is **recorded, never edited** — no test can render it and no mutation can redden
+    it, so the edit would be ungated churn. It is also asserted by nothing, and every existing mount in
+    `CollectionsPackagePreviewScreenTest` is `Livewire::actingAs($owner)`. (b) **C-Billing's
+    triple-copied ceiling refusal** (`Credits.php:57`, `Mrr.php:59`, `RevenueRecovery.php:39`) —
+    *"The ceiling resets tomorrow."* — is **TRUE**: `BillingLedgerEngine:94-97` compares
+    `last_topup_date` against `Carbon::today()` and zeroes `topups_today_cents` on a calendar-day
+    boundary. Measured clean. (c) **The `Actions/`/`Domain/` docblock sweep** ruling 81 left open
+    returns **two** hits across six modules' `Actions/` and `Domain/` trees, and both are the same
+    `(TEST ANCHOR & G1-03)` line, which is the CHECK and stays byte-identical. There is no wave in it.
+    ⚠️ The generalisable half is ruling 95's, restated because it keeps paying: **a sweep proposed by a
+    ruling is a claim, and a sweep that comes back empty is struck with its measurement written down**
+    — otherwise the next tick re-derives it under time pressure or briefs a wave with nothing in it.
+    ⚠️ Recorded and deliberately **not** briefed: `X-117/Ui/CheckoutBlock::authorise():46` calls a
+    self-minted nonce *"Authorised"*, which is ruling 45's known token and whose sentence already ends
+    *"waiting on a card-entry surface that is not connected yet"* — true-but-incomplete is ruling 76's
+    PASS-WITH-NOTES grade, not a wave.
