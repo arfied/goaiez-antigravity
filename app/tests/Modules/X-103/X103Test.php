@@ -64,7 +64,7 @@ class X103Test extends TestCase
         $this->assertEquals('tpl_hvac_pro_v3', $fork->forked_template_id);
         $this->assertNotNull($fork->fork_commit_hash);
 
-        // 2. A published page and its Facts' invalidation share one commit id (G9-04 site law)
+        // 2. A published page and its Facts' invalidation share one commit id (the site law's shared-commit half)
         $page = $this->pageAction->handle($biz->id, 'home', 'Homepage', false);
         $pubRes = $this->publishAction->handle($biz->id, $page->id, ['hero' => 'Top HVAC Services']);
 
@@ -142,7 +142,11 @@ class X103Test extends TestCase
         $this->assertTrue($version->pixel_installed);
     }
 
-    /** (R245) */
+    /**
+     * [G9-04] (R245) the full-stack site law — the pixel is on every site by construction:
+     * a version published with no blocks supplied carries all six required types and all
+     * four installed flags.
+     */
     public function test_g9_04_a_published_version_carries_the_three_site_law_flags(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Law Tenant']);
