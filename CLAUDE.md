@@ -267,7 +267,9 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-48a | the dead `$isSample` flag — nine sites in two modules — plus the `state.py decided` record UI-47 never got | closed, pushed `c9843271` |
 | UI-48b | the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. `tag-version-per` stays `UNRESOLVED` | closed, pushed `104dc9b9` |
 | UI-49 | X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling | closed, pushed `7b1b3a1a` — run 93 `PASS-WITH-NOTES`, run 94 `PASS-WITH-NOTES` + a finding that corrected me |
-| **UI-50** | **the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules — layout, banner, query, nav membership, candidate duplicate, embedder — committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it** | **in flight — run 95 `BLOCK` (three constant columns), run 96 live** |
+| UI-50 | the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules, committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it | closed, pushed `393aeae0` — run 95 `BLOCK` (three constant columns), run 96 `PASS-WITH-NOTES` |
+| **UI-51** | **the census's `dup_of` column, re-derived by MEASUREMENT — twelve pairs opened, subject and table compared, target kept only when both agree · `test_file` dropped to a `## Totals` line (true and constant) · `## Totals` states the column's own false-negative limit. ⛔ Same shape as UI-50: zero `app/**` diff, floor unmoved** | **in flight — run 97 live** |
+| UI-52 | `x-192.memberships-list` — owner layout, in the nav since 17:1x, real query, and **no shell assertion**. The one row in the `visible 17` / `test_shell 16` gap. The first `app/**` item since UI-49; dispatched when a suite can actually run | queued |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
@@ -308,12 +310,70 @@ to the standing rule: **a grep measures the string you typed, not the thing you 
 string in the claim, or the claim is about something you never ran. Same tick, same family: the 21:3x
 block's *"114 modules carry `tenant.role`"* re-measures as **113**.
 
+✅ **UI-50 closed and pushed 2026-09-07 00:1x** (`7b1b3a1a..393aeae0`). All three constant columns fire:
+`data` **304 `no` → 222 yes · 82 no** (`x-110.cooling` and `x-139.conversions-pushed-tile` both correct
+now, `x-110.tag-version-per` correctly still `no`); `embedded` **304 `no` → 289 `no` + 15 `file:line`**,
+including the three `livewire/advanced/reports.blade.php:17–19` that the 23:5x block found wrong;
+`test` split into `test_file` + `test_shell`. Every column shipped its histogram, which is the 23:5x
+ruling honoured literally. ⚠️ `STATUS: stopped: RUNTIME` and **no suite number** — a live pest held
+`pest.lock` through run 96 *and* through my gate. ⛔ **Zero `app/**` diff across the whole range**
+(`git diff --stat 7b1b3a1a..393aeae0 -- app/` is empty), so run 94's measured `1727 · 1720 · 3 · 4`
+still holds and the floor is met by construction. That is the only condition under which a `stopped`
+closes and pushes.
+
+⭐ **The `test` split earned its cost on its first run:** `visible` **17**, `test_shell` **16**, and the
+row in the gap is `x-192.memberships-list` — owner layout, in the nav since 17:1x, real query, and
+nothing asserting it renders in the owner shell. A door this lane opened and did not prove. That is
+UI-52.
+
+### ⛔⛔ RULED 2026-09-07 00:1x — a VARYING column can be uniformly wrong. `dup_of` is a name match, and the false claim was MINE
+
+The 23:5x block below wrote *"the other eight vary and are correct"* and *"the twelve named `dup_of`
+targets … cost real reading"*, and the brief and kickoff repeated it as an instruction **not to
+recompute**. **I measured those eight columns' distributions and none of their contents.** Tenth of
+the hand-derived-claim family, and the first one where the wrong claim was carried forward into a
+brief as a prohibition.
+
+`dup_of` is the one column the census was commissioned to produce — it answers *"does this module
+route open a second door to a subject the owner already reaches?"* — and its values came from a
+**substring of the class name**. MEASURED 00:1x by opening the pairs:
+
+| census row | its own heading | it claims | `account.plan` actually is |
+| :--- | :--- | :--- | :--- |
+| `x-158.content-plans-video` | `<h3>Video Content Production Plans</h3>` | `account.plan` | `<h1>Your plan</h1>` |
+| `x-211.paymentplan-builder` | `<h3>Payment Plan Builder</h3>` | `account.plan` | `<h1>Your plan</h1>` |
+| `x-165.plans` | `<h1>Membership Plans</h1>` | `account.plan` | `<h1>Your plan</h1>` |
+
+A synthetic-video production schedule, an instalment plan on an overdue invoice and a membership tier
+are three subjects, none of them the tenant's own subscription; the shared token is the four letters
+`plan`. ⚠️ `x-104.plugin-settings-page` → `account.settings` has the same smell — **I did not open it
+and do not assert it.**
+
+> **The rule: a histogram proves a detector FIRED, not that it fired on the right question. A value
+> derived from a NAME is a guess wearing a measurement's formatting.** The 23:5x rule caught the dead
+> detector; this one catches the live detector pointed at the wrong thing.
+
+⛔ Run 96 was told twice, in writing, not to touch `dup_of`. It obeyed a correct instruction resting on
+a false premise — **not a coder fault and not counted as one.**
+
+### ✅ RULED 2026-09-07 00:1x — a constant column has TWO causes, and only one is a defect
+
+`test_file` came back **`yes` × 304** and the 23:5x rule would make that a finding. I measured it:
+`find app/tests/Modules -path '*/Screens/*ScreenTest.php' | wc -l` = **298**, covering all **276**
+distinct classes in the census. It is **true**. So a constant column is either a **detector that never
+fired** (run 95's `data`, `embedded`) or a **population that really is uniform** — and the histogram
+cannot tell them apart; somebody has to open the files. ✅ A true constant separates nothing per row, so
+it **becomes a `## Totals` line and the column is dropped**: eleven columns, not twelve. ⛔ `test_shell`
+stays — it varies 288/16 and it is the half that scopes work.
+
 ### ⛔⛔ RULED 2026-09-06 23:5x — a table column CONSTANT across every row is a defect, and run 95 shipped three
 
 Run 95 delivered `docs/OWNER-ROUTE-CENSUS.md`, 304 rows, every gate green, the floor met exactly, zero
 `app/**` diff — and **three of its eleven columns are a single repeated value**, measured with
 `cut -d'|' -fN <file> | sort | uniq -c`: `data` `no` × 304, `embedded` `no` × 304, `test` `yes` × 304.
-The other eight vary and are correct.
+⚠️⚠️ **The next sentence used to read "the other eight vary and are correct." IT IS FALSE — see the
+00:1x ruling above.** I measured those eight columns' distributions and none of their contents;
+`dup_of` varies and is a class-name substring match. The other seven are re-affirmed as correct.
 
 ⚠️⚠️ **The defect is invisible at every individual row and that is its whole nature.** `data: no` is
 right for `x-110.tag-version-per`. `embedded: no` is right for most rows. Open any line and the table
