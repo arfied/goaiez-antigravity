@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T20:45:10",
+ "updated": "2026-09-06T20:58:58",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -378,6 +378,12 @@
      "stage": "ui",
      "why": "nothing in this app writes a usage meter \u2014 usage originates in the telephony, SMS and agent modules, which are another track's, so the credits meter panel stays empty until they meter it.",
      "at": "2026-09-06T20:45:03"
+    },
+    {
+     "module": "C-Billing",
+     "stage": "ui",
+     "why": "nothing in this checkout raises a debit or a grant on the module ledger - LedgerGrantAction and LedgerDebitAction have no caller outside the tests, so only the credits top-up writes a row and the mrr ledger list is otherwise empty for a real account.",
+     "at": "2026-09-06T20:58:58"
     }
    ]
   },
@@ -1320,6 +1326,12 @@
    "stage": "ui",
    "why": "nothing in this app writes a usage meter \u2014 usage originates in the telephony, SMS and agent modules, which are another track's, so the credits meter panel stays empty until they meter it.",
    "at": "2026-09-06T20:45:03"
+  },
+  {
+   "module": "C-Billing",
+   "stage": "ui",
+   "why": "nothing in this checkout raises a debit or a grant on the module ledger - LedgerGrantAction and LedgerDebitAction have no caller outside the tests, so only the credits top-up writes a row and the mrr ledger list is otherwise empty for a real account.",
+   "at": "2026-09-06T20:58:58"
   }
  ],
  "notes": [
@@ -2007,6 +2019,12 @@
    "module": "X-201",
    "chose": "R245: a screen names what has not happened yet and what it waits on, in the owner's words \u2014 never a module id, a rule id, or an automatic act no code performs; and a figure panel renders the rows that exist rather than a fixed list of labels.",
    "at": "2026-09-06T20:45:10",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "R245: an owner never reads the schema's own vocabulary - a screen names a meter type through a display map shared by every screen that prints one, and falls back to the raw type so an unmapped meter is never blank. R245",
+   "at": "2026-09-06T20:58:58",
    "ruling": "R245"
   }
  ]
