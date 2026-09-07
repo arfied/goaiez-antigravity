@@ -381,6 +381,20 @@ final class OwnerNav
             // real query and renders it on every GET, so it owes a nav entry.
             // A screen nobody can find would leave upload rejection rates hidden.
             OwnerNavItem::make('Uploads your ads rejected', 'x-139.rejection-rate', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('What is booked', 'x-108.calendar', OwnerNavItem::GROUP_MORE),
+
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET once mount() resolves the
+            // tenant, so it owes a nav entry.
+            OwnerNavItem::make('Automations that ran', 'x-125.runs', OwnerNavItem::GROUP_MORE),
         ];
     }
 

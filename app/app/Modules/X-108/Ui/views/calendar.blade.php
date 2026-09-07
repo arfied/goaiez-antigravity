@@ -1,7 +1,7 @@
 <div>
     <div class="p-4 space-y-6">
         <div class="flex items-center justify-between">
-            <h3 class="text-xl font-bold text-ink">Calendar</h3>
+            <h2 class="text-xl font-bold text-ink">Calendar</h2>
             
             <div class="flex gap-2">
                 <x-ui.button wire:click="setMode('day')" :variant="$mode === 'day' ? 'primary' : 'default'">Day</x-ui.button>

@@ -6,9 +6,12 @@ namespace App\Modules\X125\Ui;
 
 use App\Modules\X125\Actions\FlowRunAction;
 use App\Modules\X125\Models\FlowRun;
+use Illuminate\Support\Facades\Tenancy;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Automation Runs'])]
 class Runs extends Component
 {
     #[Locked]
@@ -17,6 +20,11 @@ class Runs extends Component
     public bool $ready = false;
 
     public ?string $errorMessage = null;
+
+    public function mount(int $businessId = 0)
+    {
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
+    }
 
     public function load()
     {
