@@ -49,10 +49,10 @@ final class FormCaptureAction
             return DB::transaction(function () use ($businessId, $formDefinitionId, $payload, $ipAddress, $userTimezone, $validation) {
                 $form = FormDefinition::where('business_id', $businessId)->findOrFail($formDefinitionId);
 
-                $person = Person::firstOrNew([
-                    'business_id' => $businessId,
-                    'phone' => $payload['phone'] ?? '+15550000000',
-                ]);
+                $spamPhone = $this->given($payload['phone'] ?? null);
+                $person = $spamPhone === null
+                    ? new Person(['business_id' => $businessId])
+                    : Person::firstOrNew(['business_id' => $businessId, 'phone' => $spamPhone]);
                 // A submission judged spam never rewrites a contact the business already has (R245, 2026-09-05).
                 if (! $person->exists) {
                     $person->fill([

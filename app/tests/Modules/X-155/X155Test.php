@@ -1019,6 +1019,64 @@ class X155Test extends TestCase
         $this->assertNull($visitor->email);
     }
 
+    public function test_two_phone_less_spam_submissions_get_their_own_contacts(): void
+    {
+        Event::fake([FormCaptured::class, FormSpamRejected::class]);
+        $biz = TestCase::provisionTenant(['name' => 'Spam Guard Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Guard Form',
+            'slug' => 'guard',
+            'steps' => [],
+            'schema' => [],
+            'honeypot_field' => 'website_url',
+        ]);
+
+        $sub1 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Alice',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $sub2 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Bob',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $sub3 = $this->captureAction->handle(
+            businessId: $biz->id,
+            formDefinitionId: $form->id,
+            payload: [
+                'first_name' => 'Charlie',
+                'phone' => '   ',
+                'website_url' => 'http://spam-link.ru',
+            ]
+        );
+
+        $this->assertNotSame($sub1['person_id'], $sub2['person_id'], 'two phone-less spam submissions were funnelled into one contact');
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '+15550000000')->count(), 'the reserved fallback number was written to a contact row');
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '')->count());
+        $this->assertSame(0, Person::where('business_id', $biz->id)->where('phone', '   ')->count());
+
+        foreach ([$sub1, $sub2, $sub3] as $sub) {
+            $this->assertSame('rejected', $sub['status']);
+            $dbSub = FormSubmission::where('business_id', $biz->id)->findOrFail($sub['submission_id']);
+            $this->assertTrue($dbSub->is_spam);
+            $this->assertNotNull($dbSub->person_id);
+        }
+
+        $this->assertSame(3, FormSubmission::where('business_id', $biz->id)->where('is_spam', true)->count());
+    }
+
     public function test_a_spam_submission_never_rewrites_a_known_contact(): void
     {
         Event::fake([FormCaptured::class, FormSpamRejected::class]);
