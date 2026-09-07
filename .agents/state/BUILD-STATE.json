@@ -5397,6 +5397,14 @@
   {
    "at": "2026-09-07T11:27:04",
    "note": "that bin/supervise.sh --tests runs doctor integrity-only and the eight stage counts require --full-doctor, so a report's stage figures cannot come from a --tests-only gate file"
+  },
+  {
+   "at": "2026-09-07T11:56:46",
+   "note": "NOT-WRITEABLE (constant writer at app/app/Modules/X-173/Domain/AccountingEngine.php:16)"
+  },
+  {
+   "at": "2026-09-07T11:56:46",
+   "note": "NOT-WRITEABLE (constant writer at app/app/Modules/X-200/Actions/QaScoreAction.php:32)"
   }
  ],
  "history": [

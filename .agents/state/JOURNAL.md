@@ -1263,3 +1263,5 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T10:38:17` note: Five journey evidence files carry manufactured artifact_ids (fake_decision_123, inv_123, 22, 2, 6a9ecb0d135f3), each suppressing a journey violation. Record only.
 - `2026-09-07T11:26:56` note: that [N-126-01] was already present at app/tests/Modules/X-126/X126Test.php:89 before S-166, so the second test closed no violation and capability fell by one and not two
 - `2026-09-07T11:27:04` note: that bin/supervise.sh --tests runs doctor integrity-only and the eight stage counts require --full-doctor, so a report's stage figures cannot come from a --tests-only gate file
+- `2026-09-07T11:56:46` note: NOT-WRITEABLE (constant writer at app/app/Modules/X-173/Domain/AccountingEngine.php:16)
+- `2026-09-07T11:56:46` note: NOT-WRITEABLE (constant writer at app/app/Modules/X-200/Actions/QaScoreAction.php:32)
