@@ -7388,3 +7388,154 @@ before characterising it (tick 250): the new member is ui's
 fourth half. ⚠️ One line of care: it is a **new architecture lint** in a shared directory and will
 arrive with a merge. This lane's modules render no sample-state banner, so no exposure is measured,
 but a new lint is the one kind of complement growth that is not inert.
+
+## ⛔ The FOURTH audit axis is the capability ID — and a row whose `why` OMITS the id is invisible to the grep that closes it (tick 263)
+
+Tick 262 wrote that the filing audit was "closed on three axes". A fourth exists, none of the three
+can reach it, and it holds a live false filing:
+
+| axis | tick | population | found |
+| :-- | :-- | :-- | :-- |
+| by **module** | 231 | X-176's ten rows filed `11:21:02` | 7 build-items-in-disguise |
+| by **shared `why`** | 261 | the scaffold sentence, `18:58:29` | 9 rows, all false |
+| by **shared `why`** | 262 | the anchor sentence, `19:19:40` | nothing — already corrected |
+| by **capability id** | **263** | every row naming one id | ⛔ **one unsuperseded false filing** |
+
+**G8-14 has TWO `UNRESOLVED capability X-176` rows.** `16:52:20` was superseded by SITE-135's note of
+`2026-09-07T05:52:12`, which names it **by timestamp**. `16:31:03` — *"no seam for product schema from
+the pricebook … `SchemaRenderAction.php:24` receives productOffers as an argument, lacking a read
+dependency on X-163 or X-119"* — got a **correction** at `16:51:57` (JOURNAL:844) and **never a
+supersession**, so it still reads as an open dependency for work that is built and credited
+(`EdgeDeployAction:16/129/269/305`; one G8-14 credit; no live violation).
+
+⛔ **The mechanism, and it is measured rather than argued: the `16:31:03` row's `why` contains no
+`G8-14` literal.** `grep 'G8-14'` over `state.py status` returns **one** row. Every audit that greps
+for the id is bounded by the id **text**, so the row that omits it is invisible to exactly the query
+written to close it. Its sibling `16:31:06` (G8-15, equally id-less) survived only because SITE-113
+happened to supersede it *by timestamp* at `18:00:55` — a near miss that proves the mechanism rather
+than an exception to it.
+
+This upgrades tick 253's finding. There, a `why` naming only the referent was recorded as **cosmetic**
+and worked around ("the next audit greps for the referent as well as the id"). ⛔ **An unfindable
+record is not cosmetic once anything greps for it** — and tick 259 already had to fix the X-103 half
+with an id-naming note (JOURNAL:880). The X-176 half was never enumerated, and SITE-138 closes it plus
+a findability note for G8-15.
+
+**Thirty-eighth statement of this section's law**, and the second turned on a query's *partition key*
+after tick 261 — from the opposite side. 261 concerns grouping a population by a field its members
+**share**; this concerns a population keyed on a field a member **lacks**. 163/178/180/183/185/187 the
+*pathspec*, 190 the *strip*, 191 *bounds moving*, 192/193 *unrecorded bounds*, 194 *configuration*, 196
+*width*, 207 *expected output*, 208 the *evidence request*, 209 *resolution context*, 210 the fault's
+*scope in time*, 215 the *cache key's identity*, 219 *provenance*, 220 the key's *update mechanism*,
+224 the *denominator's members*, 228 *evaluation time*, 247 a query that *did not run*, 253 *which tree
+a section measured*, 257 a query *never issued*, 259 *which column identifies the row*, 261 *which
+field the population is grouped by*. This concerns **a key the row does not carry** — the one dimension
+along which a correctly-written, correctly-scoped, correctly-run query silently returns a proper subset
+of its own population, with nothing in its output to say so.
+
+⚠️ **The brief writes NOTHING about the rest of that population.** SITE-138's item 3 enumerates every
+`capability` row for the seven owned ids whose `why` carries no `G##-##` literal and **reports the
+list**; it files nothing, because a sentence written about an unmeasured row cannot be withdrawn. The
+next tick gets a measured population and this one claims nothing about it. Same discipline as tick
+198's IndexNow reading and tick 199's cast question: **the supervisor's reading of one file is the
+brief, never the implementation.**
+
+## ✅ Doctor's SILENCE licenses no note — the credit was opened and read at its own line (tick 263)
+
+Tick 261 ruled that after tick 260's seventh false-credit shape a violation's *absence* means only
+*something matched the regex*, so a note saying a capability is BUILT is a claim about the **assertion**
+and must be written from the assertion's own line. Exercised before SITE-138's note text was composed:
+`grep -rho -E '\bG8-1[45]\b' app/tests/Modules/X-176/ | sort | uniq -c` → `1 G8-14 · 1 G8-15`, the
+G8-14 carrier being `ProductSchemaTest.php:17`, a **class-level** docblock — so the bodies beneath it
+are what must discharge the clause. `test_rendered_schema_contains_derived_offers_in_catalog` creates a
+real `PriceBookItem`, runs the real `EdgeDeployAction`, reads the **stored artifact** back off
+`Storage::disk('local')`, parses the JSON-LD out of the served document and asserts `OfferCatalog`, the
+offer name and the price. Nothing is handed to the action as its answer. Checked against all seven
+shapes and clear of every one.
+
+⛔ Keep the order: **read the assertion, then write the note.** `state.py` has no withdraw, so a note
+claiming BUILT over a false credit is unrepairable and reads as measured forever.
+
+## ⚠️ A carried backlog re-read AT ITS OWN LINE closed three items in one tick (tick 263)
+
+Sixth firing of the rule (241, 244, 249, 251, 254, 263), and the first where every item was already
+done — which is the outcome that most needs recording, because nothing else would ever say so:
+
+- **Tick 252's ambiguous-key refusal is BUILT.** `InternalLinkRenderAction:26-34` collects
+  `$collidingKeys` and `:53-59` tests every slug prefix against it, so exclusion is **prefix-closed
+  downward** exactly as ruled and `InternalLinkGraphTest:123`'s graph property survives by
+  construction. `test_f8_nav_collision_refuses_non_root`, `test_f9_nav_collision_refuses_root` and
+  `test_f10_collision_consistency` carry it — the last being tick 252's *"when two components render
+  one model, one test must assert they agree."*
+- **Tick 253's X-103 id-naming note landed** (JOURNAL:880, `05:33:13`, naming G6-17 and G6-20).
+- **G8-15's `16:31:06` row is superseded** (JOURNAL:849, `18:00:55`).
+
+Per tick 224, record **which** no-wave verdict fired: all three are **already done here**, not *cannot
+work here*. A future tick re-reading the queue needs to know whether the door is shut or the room is
+empty.
+
+## ✅ The tick-259 substitution went MOOT because the gate outlasted the wave — a queued §7 measures whatever tree exists when it wins the lock (tick 263)
+
+SITE-138 was briefed **without `--tests`** under tick 259, on the reasoning that this seat's §7 covers
+the coder's tree when the delta is provably an input pest does not read. It never had to be a borrow.
+Measured from `gate-runs.tsv` row **2820**: my gate's pest ran **06:50:59 → 06:54:30**, and the coder's
+commit `598ff159` landed at **06:50:09** — **50 seconds earlier**. §7 therefore measured the
+**post-wave tree directly**.
+
+⛔ **The general property is worth more than the coincidence: a gate's §7 measures the tree that exists
+when it WINS THE LOCK, not the tree that existed when it was launched.** Every other section runs
+immediately at launch, so §0–§6 and §7 of one gate can describe **two different trees** whenever a
+writer commits during the wait. Tick 253 ruled that §6 and §7 are the only two sections whose subject
+is the working tree rather than a commit; this is the sharper form — **they are the two sections that
+can disagree with each other**, and on this box the lock wait (10 m 28 s here) is long enough for that
+to be routine rather than exotic.
+
+Here it resolved favourably and by luck of ordering, not design: §0–§6 measured `844bad85` and §7
+measured `598ff159`. ⛔ **A block quoting one gate must say which tree each half measured** whenever a
+commit landed inside the wait. The cheap check is `gate-runs.tsv`'s `pest` row start time against
+`git log -1 --format=%ci`.
+
+⚠️ And the coupling tick 263 recorded earlier stands, narrowed: turning `--tests` off makes one gate
+load-bearing for two trees, and tick 259's three conditions do not require that gate to **exist**.
+Check the supervisor gate's liveness (tick 258's `readlink` on the `gate-start` pid) **before** writing
+a brief that turns `--tests` off, not only after.
+
+## ⛔ The timing nonce does NOT extend to an UNTIMED command — the reviewer's own run is the only verification (tick 263)
+
+Tick 249 ruled that when a pass condition is "no change" the evidence must be two demonstrably
+distinct runs, and that **a timed command's output carries its own nonce**; tick 251 narrowed it to the
+command's *verbatim output* after a digest arrived with no timings. SITE-138 satisfied it perfectly for
+doctor — its two blocks differ at `boundary 131/132`, `citation 1254/1260`, `schema 461/471`, so they
+are provably two runs (and per tick 250 the short stages repeating at `23/23` is not a defect; a 23 ms
+stage has few distinguishable values).
+
+⛔ **Evidence item 5 has no nonce and cannot be given one.** `grep -rho … | sort | uniq -c` is untimed
+and deterministic, so an honest before/after pair is **byte-identical by construction** — the report
+correctly pasted one block labelled "Before and After (counts are equal)", and that artefact is
+indistinguishable from a single run. No wording of the brief can fix this: the nonce is a property of
+the *command*, not of the request.
+
+✅ **So for an untimed before/after item the reviewer's own run is the verification, and there is no
+substitute.** This seat ran the identical census on the post-wave tree and got the same twelve rows
+byte-for-byte, which is why the pass condition genuinely held rather than merely appearing to.
+**Before making an untimed command a pass condition, decide that you will run it yourself** — otherwise
+the item is unfalsifiable and the brief has asked for a claim rather than a measurement. Same family as
+tick 249, read from the side the rule did not cover.
+
+## ✅ `supervise.sh` §2 already distinguishes an `ℹ` from a `⛔` — the supervisor's uncommitted notes are not a second path (tick 263)
+
+Tick 199 rules that supervisor notes stay uncommitted while a coder holds the checkout (a path-scoped
+commit races `.git/index.lock`). That leaves ` M CLAUDE.md` in the tree during the wave, and §2's
+standing reading is *one known path is noise, any second path is a real BLOCK* (tick 196/207). The two
+rules look like they collide. They do not — §2 prints
+
+```
+ℹ supervisor working notes (uncommitted — leave them alone): CLAUDE.md
+⛔ app/phpunit.xml
+```
+
+The `ℹ` is informational and the `⛔` count is still **one**. The affordance was already in the gate
+and this lane had never exercised it, because no prior tick had edited `CLAUDE.md` while a coder ran.
+✅ The coder read it correctly and left the file alone, committing two `.agents/state/` paths.
+⚠️ Read §2 by its **`⛔` lines**, not by its line count — recorded so a future tick meeting an `ℹ` line
+for the first time does not read it as tick 207's second path.
