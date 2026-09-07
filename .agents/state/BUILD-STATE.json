@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:01:44",
+ "updated": "2026-09-07T00:36:11",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -544,6 +544,12 @@
      "stage": "capability",
      "why": "G21-02 requires one Person and one Conversation after a fuzzy merge; neither noun exists in X-111 and it exposes no ticket-merge path",
      "at": "2026-09-06T15:51:29"
+    },
+    {
+     "module": "X-111",
+     "stage": "capability",
+     "why": "G21-02 \u2014 no ticket merge path exists",
+     "at": "2026-09-07T00:36:11"
     }
    ]
   },
@@ -2444,6 +2450,12 @@
    "stage": "capability",
    "why": "G2-28 \u2014 named in the header \u2014 SLA surface is absent",
    "at": "2026-09-07T00:01:44"
+  },
+  {
+   "module": "X-111",
+   "stage": "capability",
+   "why": "G21-02 \u2014 no ticket merge path exists",
+   "at": "2026-09-07T00:36:11"
   }
  ],
  "decisions": [

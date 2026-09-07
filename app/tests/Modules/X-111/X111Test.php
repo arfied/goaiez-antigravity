@@ -265,4 +265,39 @@ class X111Test extends TestCase
         $this->assertFalse(Schema::hasColumn('operator_alerts', 'pay'));
         $this->assertFalse(Schema::hasColumn('tenant_tickets', 'pay'));
     }
+    /** [G4-24] */
+    public function test_g4_24_throttle_refusal_and_no_dead_tiers(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Throttle Tenant', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $ip = '10.0.0.1';
+        $this->banAction->handle($biz->id, $ip, 'fraud', 24);
+
+        $engine = new \App\Modules\X111\Domain\OpsEngine();
+
+        try {
+            $engine->checkThrottle($biz->id, $ip);
+            $this->fail('Throttle did not refuse.');
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('THROTTLE REFUSED', $e->getMessage());
+        }
+
+        // Pass case
+        $engine->checkThrottle($biz->id, '10.0.0.2');
+        $this->assertTrue(true);
+        // Absence half: no $99 or $999
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(app_path('Modules/X-111')));
+        $found = false;
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php' && $file->getFilename() !== 'capabilities.php') {
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/(\$99\b|\$999\b)/', $content)) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "Dead tiers found in X-111");
+    }
 }
