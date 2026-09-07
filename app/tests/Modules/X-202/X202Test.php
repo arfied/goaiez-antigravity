@@ -262,6 +262,44 @@ class X202Test extends TestCase
     }
 
     /**
+     * [G12-04] approval granted → the publish action fires
+     */
+    public function test_g12_04_publish_authorization_floor(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Publish Auth Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // 1. A plain item approved terminally authorizes
+        $plainItem = $this->engine->enqueue($biz->id, 'creative', 'Plain item', ['a' => 1], 'L2', false);
+        $plainDec = $this->decideAction->handle($biz->id, $plainItem['approval_item_id'], 'approved');
+        $this->assertTrue($plainDec['publish_authorized']);
+
+        // 2. An is_l1_forever item approved terminally does not
+        $l1Item = $this->engine->enqueue($biz->id, 'creative', 'L1 item', ['a' => 1], 'L1', true);
+        $l1Dec = $this->decideAction->handle($biz->id, $l1Item['approval_item_id'], 'approved');
+        $this->assertFalse($l1Dec['publish_authorized']);
+
+        // 3. A chained item at step 1 of 3 does not
+        $chain = ApprovalChain::create([
+            'business_id' => $biz->id,
+            'name' => 'Three-desk sequential',
+            'steps_count' => 3,
+            'chain_config' => ['steps' => ['designer', 'manager', 'owner']],
+        ]);
+        $chained = $this->engine->enqueue($biz->id, 'creative', 'Chained item', ['a' => 1], 'L2', false);
+        ApprovalItem::where('id', $chained['approval_item_id'])->update(['approval_chain_id' => $chain->id]);
+
+        $chainedDec = $this->decideAction->handle($biz->id, $chained['approval_item_id'], 'approved');
+        $this->assertSame('pending', $chainedDec['status']);
+        $this->assertFalse($chainedDec['publish_authorized']);
+
+        // 4. A rejection never authorizes
+        $rejItem = $this->engine->enqueue($biz->id, 'creative', 'Reject item', ['a' => 1], 'L2', false);
+        $rejDec = $this->decideAction->handle($biz->id, $rejItem['approval_item_id'], 'rejected');
+        $this->assertFalse($rejDec['publish_authorized']);
+    }
+
+    /**
      * [G16-24] a comment at a timestamp IS a pending decision
      */
     public function test_g16_24_timestamp_comment(): void
