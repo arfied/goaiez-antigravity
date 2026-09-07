@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T07:22:19",
+ "updated": "2026-09-07T07:44:35",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1532,6 +1532,12 @@
    "module": "X-124",
    "chose": "a conditional that increments a counter in only one arm leaves the other arm counted nowhere, so every branch of a partitioning check gets a bucket even when the bucket is empty; and a blade with no heading at all is a defect only for a component the layout seam does not serve",
    "at": "2026-09-07T07:22:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a check that reads the first match of a repeating pattern has measured one element and not the sequence, so a heading contract is judged over every heading a view emits and not the first one; and a pin whose value moves is committed at the value it is observed to have before the fix that moves it",
+   "at": "2026-09-07T07:44:35",
    "ruling": "R245"
   }
  ],
