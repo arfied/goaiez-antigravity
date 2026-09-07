@@ -585,3 +585,58 @@ procedure is not harmless documentation, it is a second source of truth that out
 any reader who reaches it first* — and EOF is where readers land. When a section is revised in
 place, delete the original in the same commit; `grep -n '^## '` for duplicate headings is the check,
 and it is one command.
+
+⚠️ **A BORROWED MEASUREMENT MUST CARRY THE INSTRUMENT THAT TOOK IT; A NUMBER LAUNDERED THROUGH THE
+SUPERVISOR BECOMES A FALSE SECOND WITNESS (N111, 2026-09-07, found reviewing wave 127).** Wave 128's
+brief quoted, under item 6, *"The baseline, measured by **my own** gate on `8727aff4` this tick:
+`tests 1980 · FAILED 1 · errors 2`"*. That gate is `.gate-t128.txt` and it **ends at line 111** on
+`… another suite holds /home/goaiez/tmp/pest.lock — waiting up to 40 min` — it has **no §7 at all**.
+The only place those three numbers exist is the coder's own §7, quoted back to me in `REPORT.md`.
+The numbers were right; the attribution was not, and the attribution is the whole value. Standing
+order 4 tells the coder *"your measurement beats any number of mine"*, which means something only
+while mine is a **second instrument**; handing the coder its own number back under my label makes
+one measurement look like two and puts the disagreement that standing order 4 exists to surface
+permanently out of reach — the check cannot fire, by construction. This is the §2e / wrong-needle
+family in its third form: an instrument is only as honest as the **baseline** it is handed (§2e),
+the **needle** it is handed (wave 122), and now the **attribution** it is handed. Rule: **a baseline
+in a brief names the file it came from** — `.gate-tN.txt` §7, or `REPORT.md`'s §6 quote — and the
+phrase "my own gate" is permitted only after `grep -c "Tests:\|· FAILED" <that file>` is non-zero.
+A borrow is legitimate (the killed-gate precedent, run 123); a borrow *presented as independent* is
+not.
+
+⚠️ **A VERDICT ANNOUNCED IN A BRIEF THAT THE LEDGER DOES NOT CONTAIN IS N103 IN THE MAILBOX (N112,
+2026-09-07).** Tick 128 wrote *"**Wave 127 is a `PASS`**"* as the fourth line of `BRIEF.md` at 06:27,
+committed its notes at 06:30, and ended — appending **nothing** to `REVIEWS.md` and dispatching
+nothing. For the next forty minutes the mailbox held a brief asserting a verdict beside an
+append-only ledger that had never recorded one, and rule 10 sends the coder to *the last block of
+`REVIEWS.md`* at session start, which was still **wave 126's**. Two documents about one verdict and
+the authoritative one was empty. The push gate is the sharp edge: `push:` is set only after a PASS,
+so a brief carrying a PASS with no block behind it can open a push against a verdict no ledger
+records. Two rulings. (1) **Append the REVIEWS block BEFORE writing the brief that cites it** — the
+brief may quote the ledger, never precede it. That is N108's ordering (`commit → push → brief →
+dispatch`) extended one step earlier: `review → REVIEWS → commit → push → brief → dispatch`. (2) **A
+tick that wrote `BRIEF.md`/`KICKOFF.md` and stopped has left the mailbox AHEAD of the ledger, and
+the next tick must read that brief as a DRAFT, not as a dispatched directive.** The tell is exact
+and costs one `ls`: `REVIEWS.md` older than `BRIEF.md`, with `coder.pid` measured `DEAD` and no
+`LAUNCHED` line for it anywhere in `REVIEWS.md`. Adopt such a draft only after re-measuring every
+quantity it states — this tick adopted wave 128's and found N111 inside it.
+
+⚠️ **RULE 10'S OWN TEST NEEDLE IS A PEST NEEDLE, AND THIS REPO'S MERGES CARRY PHPUNIT METHOD-STYLE
+TESTS (N113, 2026-09-07).** Reviewing the wave-127 merge I ran the contract's own check —
+`grep -c 'test(\|it('` (`.agents/rules/10-supervisor.md`, and CLAUDE.md §"Reviewing a REPORT") —
+against the merge's test diff and got **0 added tests**, on a diff that adds **three**
+(`test_f8_nav_collision_refuses_non_root`, `test_f9_nav_collision_refuses_root`,
+`test_f10_collision_consistency`). `app/tests/Modules/X-176/InternalLinkGraphTest.php` is a PHPUnit
+class — `public function test_…`, not one `test(` closure in it. Had I ruled from that `0` I would
+have reported a merge that adds no tests while it adds three and moves the suite 1977 → 1980. The
+needles that work here are `^\+ *public function test_` (**4**) and `^- *public function test_`
+(**1**), net **+3** — and **the arithmetic is the check, not either count**, because a **rename**
+appears as one `+` and one `−` and nets to zero. Wave 127 contained exactly one: 
+`test_falsifier_cap_does_not_truncate_at_20_pages` → `test_a_two_deep_page_renders_when_everything_fits`,
+body byte-identical (a 7-line context hunk with a single `-`/`+` pair), `grep -c "^-.*assert"` = **0**,
+and a sibling falsifier `test_falsifier_cap_preserves_ancestor_closure_on_dom` still present — so the
+One Rule is satisfied and the rename is an over-claiming name corrected, not a check removed. Rulings:
+**derive the needle from the file, never from the contract** (wave 122's rule, now with the contract
+itself as the wrong source — the needle was right for Pest and this repo is mixed), and **a
+test-count check is sound only when added − deleted reconciles with the suite total**; either number
+alone cannot tell a rename from a deletion.
