@@ -196,9 +196,11 @@ final class EdgeDeployAction
                         }
 
                         $hierarchyPages = Page::where('business_id', $businessId)
-                            ->whereIn('slug', $paths)
+                            ->where('is_published', true)
                             ->get()
-                            ->keyBy('slug');
+                            ->keyBy(function ($p) {
+                                return trim((string) $p->slug, '/');
+                            });
 
                         $usable = true;
                         foreach ($paths as $path) {

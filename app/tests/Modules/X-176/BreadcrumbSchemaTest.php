@@ -25,8 +25,8 @@ final class BreadcrumbSchemaTest extends TestCase
         $biz = self::provisionTenant(['name' => 'Breadcrumb Tenant']);
         Tenancy::set((int) $biz->id);
 
-        Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services']);
-        $page = Page::create(['business_id' => $biz->id, 'title' => 'Plumbing', 'slug' => 'services/plumbing']);
+        Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services', 'is_published' => true]);
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Plumbing', 'slug' => 'services/plumbing', 'is_published' => true]);
 
         $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'crumb1.example.com', true);
 
@@ -71,7 +71,7 @@ final class BreadcrumbSchemaTest extends TestCase
         $biz = self::provisionTenant(['name' => 'Breadcrumb Tenant 2']);
         Tenancy::set((int) $biz->id);
 
-        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '']);
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '', 'is_published' => true]);
         $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'crumb2.example.com', true);
 
         $res = app(EdgeDeployAction::class)->handle(
@@ -100,7 +100,7 @@ final class BreadcrumbSchemaTest extends TestCase
         Tenancy::set((int) $biz->id);
 
         // Missing the 'services' page, so the hierarchy is unusable
-        $page = Page::create(['business_id' => $biz->id, 'title' => 'Plumbing', 'slug' => 'services/plumbing']);
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Plumbing', 'slug' => 'services/plumbing', 'is_published' => true]);
         $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'crumb3.example.com', true);
 
         $res = app(EdgeDeployAction::class)->handle(
@@ -118,6 +118,82 @@ final class BreadcrumbSchemaTest extends TestCase
 
         preg_match('/<script type="application\/ld\+json">\n(.*?)\n<\/script>/s', $html, $matches);
         $jsonLd = json_decode($matches[1], true);
+
+        $this->assertArrayNotHasKey('breadcrumb', $jsonLd);
+    }
+
+    public function test_falsifier_a_breadcrumb_resolves_when_slug_has_leading_slash(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Falsifier A Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => '/services', 'is_published' => true]);
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Repair', 'slug' => '/services/repair', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'crumb-a.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_a',
+            businessName: 'My Biz A'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        preg_match('/<script type="application\/ld\+json">\n(.*?)\n<\/script>/s', $html, $matches);
+        $this->assertNotEmpty($matches, 'JSON-LD script tag should be present');
+
+        $jsonLd = json_decode($matches[1], true);
+        $this->assertIsArray($jsonLd);
+
+        $this->assertArrayHasKey('breadcrumb', $jsonLd);
+        $this->assertEquals([
+            [
+                '@type' => 'ListItem',
+                'position' => 1,
+                'name' => 'Services',
+                'item' => 'https://crumb-a.example.com/services',
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 2,
+                'name' => 'Repair',
+                'item' => 'https://crumb-a.example.com/services/repair',
+            ],
+        ], $jsonLd['breadcrumb']['itemListElement']);
+    }
+
+    public function test_falsifier_b_breadcrumb_drops_when_ancestor_unpublished(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Falsifier B Tenant']);
+        Tenancy::set((int) $biz->id);
+
+        Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services', 'is_published' => false]);
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Repair', 'slug' => 'services/repair', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'crumb-b.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_b',
+            businessName: 'My Biz B'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        preg_match('/<script type="application\/ld\+json">\n(.*?)\n<\/script>/s', $html, $matches);
+        $this->assertNotEmpty($matches, 'JSON-LD script tag should be present');
+
+        $jsonLd = json_decode($matches[1], true);
+        $this->assertIsArray($jsonLd);
 
         $this->assertArrayNotHasKey('breadcrumb', $jsonLd);
     }
