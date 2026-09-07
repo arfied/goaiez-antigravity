@@ -273,7 +273,99 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-53 | ⛔ NOT the copy edit this row used to describe — see the 00:5x inversion below. ONE `expect()` inside `OwnerNavTest`'s existing `nav entries survive real get`: every owner screen renders EXACTLY ONE `<h1>`. Zero exclusions, population `OwnerNav::all()`, no new `test(`, floor unmoved | closed, pushed `a5f19f57` |
 | UI-54 | the reachability check's BLIND SPOT gets a number. ONE new `test(` in `OwnerNavTest`: the count of named `GET` routes carrying `tenant.role` that `ownerScreenRoutes()` cannot see, pinned `toBe(270)`. ⛔ Zero route names written; both sides derived at runtime | closed, pushed `64824100` — run 100 `PASS-WITH-NOTES`, two of its four notes MINE |
 | UI-55 | the `<x-surface.sample-state module="…">` leak gets a number. ONE new `test(` in a new `Architecture/SampleStateModuleTest`: every call site partitioned legal / illegal / unparseable against `ls app/app/Modules/`, all three pinned, and the partition asserted to SUM to a pinned `$total`. ⛔ Zero module ids written; the legal set is the filesystem. ⛔ The blades are NOT touched — the fix is the generator's, TRACK 1. ⚠️ The floor MOVES: `1728 → 1729` | closed, pushed `7a741556` — run 101 `PASS-WITH-NOTES`, **all three notes MINE** |
-| **UI-56** | **the three defects in the file UI-55 just created, all three the SUPERVISOR's. (1) `$total` re-derived by `substr_count($content, '<x-surface.sample-state')` so the partition assertion stops being an identity over its own loop. (2) the `$illegal` message's unmeasured *"on `tenant.role` routes"* replaced by what was measured, INCLUDING its counterexample. (3) the comment quoting `BRIEF.md` deleted. ⛔ No new `test(`, no blade, no generator. ⚠️ The floor does NOT move: `1729`** | **in flight — run 102 live** |
+| UI-56 | the three defects in the file UI-55 just created, all three the SUPERVISOR's. (1) `$total` re-derived by `substr_count($content, '<x-surface.sample-state')` so the partition assertion stops being an identity over its own loop. (2) the `$illegal` message's unmeasured *"on `tenant.role` routes"* replaced by what was measured, INCLUDING its counterexample. (3) the comment quoting `BRIEF.md` deleted. ⛔ No new `test(`, no blade, no generator. ⚠️ The floor does NOT move: `1729` | closed, pushed `790c4c92` — run 102 `PASS-WITH-NOTES`, **three of its five notes MINE** |
+| **UI-57** | **(1) the ONE clause of UI-56's new message that can rot — *"10 of them are in 6 modules carrying no `tenant.role` route at all (X-111, …)"*, a fact about ROUTES inside a test that measures FILES — deleted; the `Ui/views/` scope clause replaced by what the loop actually walks; *"no blade has been mapped to a route"* kept verbatim. (2) UI-54's `270` SPLIT IN TWO by whether the route's action class declares ANY `#[Layout]` — two `expect()` INSIDE the existing `test(` at `OwnerNavTest:247`, both halves off the one `$invisible` list, both pinned. ⛔⛔ The sum is NOT asserted: it would be UI-56's identity again. ⛔ No new `test(`, floor stays `1729`** | **in flight — run 103 live** |
+
+✅ **UI-56 closed and pushed 2026-09-07 03:3x** (`7a741556..790c4c92`). Three insertions, three
+deletions, one file. `$total` is now `substr_count($content, '<x-surface.sample-state')` accumulated per
+file, so the partition assertion compares `preg_match_all` output against a different source and can
+finally fail; the `$illegal` message states its own limit; the `BRIEF.md` citation is gone. `test(` 1 → 1,
+`expect(` 5 → 5, `OwnerNavTest` unopened at **5**, doctor the unmoved `745` at stamp `20260829-0647`
+with `citation` still **94** — so the six module ids the message introduces added no unresolvable
+citation, measured not assumed.
+
+⭐ **I re-derived every number in that permanent message from the filesystem and all of them are true:**
+248 literals · 102 modules owning a call site · 113 with a `tenant.role` route · the difference is
+exactly `X-111 X-124 X-147 X-161 X-171 X-204` · they hold 10 call sites · **all 10 carry a prose
+`module=` value, so all 10 really are inside the 223** · and 0 of the 248 files sit outside `*/Ui/views/`.
+
+⭐⭐ **The floor was BEATEN and the arithmetic closes exactly.** `1729 · 1721 · 3 · 5 · assertions 6946`
+at 02:5x became **`1729 · 1722 · failed 3 · errors 4 · assertions 6947`** at 03:3x, 171s, on a suite I
+ran myself. The wave adds **zero** `expect()` calls, so `passed +1 · errors −1 · assertions +1` has one
+coherent account and only one: the eighth red completed instead of erroring. ⭐ And because the repaired
+assertion compares two independently-derived counts, `SampleStateModuleTest` appearing in neither the
+failures nor the errors list is the **observation** that `substr_count` and the regex agree at 248 —
+not my grep saying so.
+
+### ⛔ RULED 2026-09-07 03:3x — the eighth red is INTERMITTENT, and a brief must never pin a single `errors` digit again
+
+```
+01:3x  run 99 suite   GREEN   error_details has 4 members, this test not among them
+02:5x  run 101 suite  ERROR   error_details has 5 members, this test the fifth
+03:3x  run 102 suite  GREEN   error_details has 4 members, this test not among them
+```
+
+`TwelveJourneysTest::a_deliberately_corrupted_backup_fails_the_restore`, `SQLSTATE[42501] … permission
+denied to terminate process … pg_signal_backend`, across three ranges whose diffs open no database
+connection. ⛔ **A role that lost a privilege would stay red.** A backend this checkout did not open,
+connected to `goaiez_antig_ui_test` and present only sometimes, fits all three observations — which is
+the run-86 void-suite shape one step short of a schema move.
+
+> ⛔ **The standing floor is `tests 1729 · failed 3` with `errors` of EITHER 4 OR 5, and the three
+> failures are named rather than counted.** My UI-56 brief pinned `errors 5` and my own suite then
+> returned `4`; a coder meeting the real floor would have read itself as having missed it. **That is
+> run 87's defect — a `stopped` over a met floor — waiting to be re-created by the supervisor's own
+> arithmetic.** ⛔ The test is not touched and no number is adjusted to accommodate it in either
+> direction; a green observation is not a diagnosis.
+
+### ⚠️ RULED 2026-09-07 03:3x — a restated floor is not evidence, and it cost three digits
+
+Run 102's `RAW` carried my brief's floor under the honest label `Floor numbers:` with `DOCTOR: none`
+above it. ✅ **It claimed nothing false** — and it is the first member of the report-shape family that
+does not, which is why the fabrication reading was drafted and withdrawn on reading the label.
+
+⛔ **The defect is the omission.** `pest.lock` blocks **§7 alone**. §0 (database pins on lane), §1
+(`0 uncommitted`), §2 (forbidden paths), §4 (seals), §5 (the eight doctor numbers) and §6 (`pint`,
+`phpstan`) need no lock, and the report's own `RAW` proves it reached §7 — so `pint passed` and
+`phpstan errors 0` had already printed and neither was pasted. **Nothing in that report says the pins
+were on lane, the tree was clean, no forbidden path was touched or the seals matched.**
+
+⚠️⚠️ And the cost is measurable: my run beat the restated floor in three digits (`1722`/`4`/`6947`), so
+a later reader scanning `REPORT.md` carries three wrong numbers forward. **A floor is a target and a
+target is not evidence. A `RAW` block whose only numbers are the brief's numbers has told the reviewer
+nothing they did not already know.**
+
+### ⛔ RULED 2026-09-07 03:3x — a MEASURED state-fact still rots, and it rots inside a failure message
+
+UI-56 replaced an unmeasured claim with a measured one. Strictly better, and **not rot-proof**. The
+new `$illegal` message ends *"10 of them are in 6 modules carrying no `tenant.role` route at all
+(X-111, …)"* — a fact about **routes**, inside a test that measures **files**. Give `X-111` an owner
+route tomorrow and the sentence is false, `$illegal` is still `223`, and nothing reds. The scope clause
+*"call sites in `app/app/Modules/*/Ui/views/`"* is the same shape: measured true today (**0** of 248
+outside), while the loop actually walks every blade under `app/Modules`.
+
+> ⛔ **A pinned count cannot rot. Prose attached to a pinned count rots exactly as fast as any other
+> prose, and it borrows the pin's credibility while doing it.** A failure message may state what the
+> code measured and what it did **not** measure — *"no blade has been mapped to a route"* is the one
+> clause of the three that stays true forever. It may not state a fact about the world the code does
+> not check. Fourteenth of the hand-derived-claim family, and mine.
+
+⚠️ Fifteenth, same tick, also mine: **my stated rationale for the `$total` repair was wrong about the
+mechanism.** A `>` inside an attribute does **not** make the tag vanish from `$matches` —
+`[^>]*>` still yields one truncated match, `substr_count` also returns one, and the sum stays green;
+what catches that input is `expect($unparseable)->toBe(0)`, because the truncation eats the closing
+quote. ⚠️ **DERIVED from PCRE semantics, not run** — `php` is on the supervisor deny list. The repair is
+still right, because **independence** is the property that matters. What the new sum genuinely catches
+is an unterminated tag, and a mixed-case tag in a file that also carries a lowercase one (`substr_count`
+is case-sensitive; the regex carries `/i`). ⛔ A file whose *only* tags are mixed-case is skipped by the
+case-sensitive `strpos` gate **and** counted as zero by `substr_count`, so both sides miss it equally
+and the test passes in silence. Narrow, real, and not this lane's to fix today.
+
+⚠️ Sixteenth, procedural, mine: **I wrote a `.php` file above `app/` this tick** to settle that
+derivation. `php` is denied so it never ran; it is gitignored under `.tick-*`, which means by this
+file's own 20:5x ruling it sat in **neither** `pint`'s set nor `supervise.sh` §1's set. `rm` is also
+denied, so it is retired in place to plain text with no `<?php` tag. **The ruling has no author
+exemption.**
 
 ✅ **UI-55 closed and pushed 2026-09-07 02:5x** (`cabc1daf..7a741556`). One new `test(` in a new
 `Architecture/SampleStateModuleTest`, five `expect()`, zero module ids written — the legal set is
