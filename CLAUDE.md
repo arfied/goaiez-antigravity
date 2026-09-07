@@ -272,7 +272,91 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-52 | `x-192.memberships-list` — the one row in the `visible 17` / `test_shell 16` gap. TWO assertions inside the existing `test_screen_renders_for_tenant`. ⛔ SHELL ONLY: no `heading` param, no blade edit | closed, pushed `72819042` |
 | UI-53 | ⛔ NOT the copy edit this row used to describe — see the 00:5x inversion below. ONE `expect()` inside `OwnerNavTest`'s existing `nav entries survive real get`: every owner screen renders EXACTLY ONE `<h1>`. Zero exclusions, population `OwnerNav::all()`, no new `test(`, floor unmoved | closed, pushed `a5f19f57` |
 | UI-54 | the reachability check's BLIND SPOT gets a number. ONE new `test(` in `OwnerNavTest`: the count of named `GET` routes carrying `tenant.role` that `ownerScreenRoutes()` cannot see, pinned `toBe(270)`. ⛔ Zero route names written; both sides derived at runtime | closed, pushed `64824100` — run 100 `PASS-WITH-NOTES`, two of its four notes MINE |
-| **UI-55** | **the `<x-surface.sample-state module="…">` leak gets a number. ONE new `test(` in a new `Architecture/SampleStateModuleTest`: every call site partitioned legal / illegal / unparseable against `ls app/app/Modules/`, all three pinned, and the partition asserted to SUM to a pinned `$total`. ⛔ Zero module ids written; the legal set is the filesystem. ⛔ The blades are NOT touched — the fix is the generator's, TRACK 1. ⚠️ The floor MOVES: `1728 → 1729`** | **in flight — run 101 live** |
+| UI-55 | the `<x-surface.sample-state module="…">` leak gets a number. ONE new `test(` in a new `Architecture/SampleStateModuleTest`: every call site partitioned legal / illegal / unparseable against `ls app/app/Modules/`, all three pinned, and the partition asserted to SUM to a pinned `$total`. ⛔ Zero module ids written; the legal set is the filesystem. ⛔ The blades are NOT touched — the fix is the generator's, TRACK 1. ⚠️ The floor MOVES: `1728 → 1729` | closed, pushed `7a741556` — run 101 `PASS-WITH-NOTES`, **all three notes MINE** |
+| **UI-56** | **the three defects in the file UI-55 just created, all three the SUPERVISOR's. (1) `$total` re-derived by `substr_count($content, '<x-surface.sample-state')` so the partition assertion stops being an identity over its own loop. (2) the `$illegal` message's unmeasured *"on `tenant.role` routes"* replaced by what was measured, INCLUDING its counterexample. (3) the comment quoting `BRIEF.md` deleted. ⛔ No new `test(`, no blade, no generator. ⚠️ The floor does NOT move: `1729`** | **in flight — run 102 live** |
+
+✅ **UI-55 closed and pushed 2026-09-07 02:5x** (`cabc1daf..7a741556`). One new `test(` in a new
+`Architecture/SampleStateModuleTest`, five `expect()`, zero module ids written — the legal set is
+`glob(base_path('app/Modules/*'), GLOB_ONLYDIR)`. **I measured all three numbers independently and they
+are right to the digit: 248 total · 25 legal · 223 illegal · 0 unparseable**, and all 248 call-site files
+are under `*/Ui/views/`, one tag each. Doctor the unmoved `745`, stamp `20260829-0647`; `pint passed`,
+`phpstan 0`, `OwnerNavTest` untouched at **5**.
+
+⭐⭐ **The floor moved `1728 → 1729` and `assertions 6942 → 6946` — and the `+4` is the proof.** The new
+test carries **five** `expect()` calls, so `+4` is only explicable as `+5` from it and `−1` from the
+eighth red below. ⛔ I published **no** assertion figure in the brief (the 01:3x rule, as scoped at
+02:0x), so `6946` is a digit neither of us predicted, and it is the difference between a test that
+exists and a test that ran.
+
+✅ **Rule 10's shape arrived complete for the first time** — all ten fields, `none` where empty, `STATUS:
+stopped: RUNTIME` in rule 10's own vocabulary, `COMMITS` the pasted `git log`. N1, N2 and N4 of run 100
+all closed. ⭐ **And N3's bracketed `pgrep -fa 'vendor/bin/[p]est'` worked on its first run**: two real
+foreign processes, no self-hit, and the report went further than I asked — `ps -o ppid` then
+`pwdx 4118582` → `/home/goaiez/agents/grs-antig-money/app`, **naming the lane that held the lock**. A
+lock wait proved rather than asserted.
+
+### ⛔⛔ MEASURED 2026-09-07 02:5x — AN EIGHTH RED. It is new, it is environmental, and it is not the coder's
+
+```
+✗ TwelveJourneysTest::a_deliberately_corrupted_backup_fails_the_restore  (:319)
+  SQLSTATE[42501]: permission denied to terminate process … or with privileges of "pg_signal_backend"
+```
+
+`1729 · 1721 · failed 3 · errors 5`. **MEASURED, not recalled:** the run 99 suite I ran myself at 01:3x
+has an `error_details` array of exactly **four** members and this test is not among them — it was green
+four hours ago.
+
+⛔ **It cannot be the diff**: the whole `app/**` change is one test that does a `glob`, a
+`RecursiveDirectoryIterator`, a `file_get_contents` and two regexes. It opens no connection. ⚠️ The
+journey terminates backends to clear a database and was refused for lack of ownership — i.e. **a
+connection it did not open was in the way** — and **three different pest holders occupied
+`/home/goaiez/tmp/pest.lock` during my one 40-minute wait** (`4188371` → `12247` → `82108`, under two
+different `timeout` invocations, so different lanes' gates). That is 19:2x's *"`pest.lock` is not
+serialising anything"* with a second symptom, one step short of run 86's void suite.
+
+⛔ **`UNRESOLVED` + TRACK 1 ask, and NOT diagnosed.** A foreign backend and a plain role-privilege change
+print the same message. **No test is touched over it and no number is adjusted to accommodate it** — a
+test that fails sometimes is not a flake to re-run. It did not hold the push: the floor moved by exactly
+the designed `+1` on a deliverable with zero behavioural diff.
+
+### ⛔⛔ RULED 2026-09-07 02:5x — a sum over counters incremented IN LOCKSTEP is `assertTrue(true)`. The specification was MINE.
+
+```php
+foreach ($matches[0] as $match) { $total++;  if (preg_match(…)) { $legal++ | $illegal++ } else { $unparseable++ } }
+expect($legal + $illegal + $unparseable)->toBe($total);
+```
+
+Exactly one of the three fires per iteration, alongside `$total++`. **The assertion is an identity over
+the loop three lines above it and cannot fail on any input, including an empty tree.** My brief called it
+*"the partition is complete"* and, in the very next bullet, warned that *"a partition that sums over a
+population of zero sums perfectly"* — then asked for the version that does exactly that. What actually
+guards the population is `expect($total)->toBe(248)`, and that one is real.
+
+> ⛔ **A total is load-bearing only when it is derived INDEPENDENTLY of the partition it checks.**
+
+✅ **Repair measured and free:** `grep -rho -F -e '<x-surface.sample-state' … | grep -c ''` → **248**,
+equal to the tag regex's 248. So `substr_count()` moves no number today and makes the assertion catch the
+one thing the regex can genuinely miss — a tag whose attribute value contains a `>`, which truncates the
+match. UI-56 item 1.
+
+### ⛔⛔ RULED 2026-09-07 02:5x — the `$illegal` message states a population fact I never measured, and it is FALSE for 10 of the 223
+
+The message says these render *"on `tenant.role` routes, reachable by URL."* **My brief dictated that
+sentence**, and my own 01:2x block says in writing *"I did **not** map each of the 248 blades to a
+route."* MEASURED 02:5x: **102** modules own the 248 call sites, **113** modules carry a `tenant.role`
+route, intersection **96** — so **six modules own call sites and carry no `tenant.role` route at all
+(`X-111`, `X-124`, `X-147`, `X-161`, `X-171`, `X-204`), holding 10 call sites, all 10 of them inside the
+223 the message describes.**
+
+> ⛔ **Thirteenth of the hand-derived-claim family. A written state-fact rots — and one placed inside a
+> permanent architecture test rots where it will be read for years and where `php artisan why` cannot
+> even see it.** That is 17:2x's ruling, and I wrote a violation of it into the brief myself.
+
+⚠️ Third, mildest, same origin: `SampleStateModuleTest.php:15` carries `// … as asked in the brief:
+"Verify that with an assertion, do not trust my path"`. **`BRIEF.md` is overwritten at every dispatch**,
+so a test file cites a document guaranteed to say something else tomorrow. The assertion is right and
+stays; the comment must say what it *proves* — that a wrong `base_path()` root would otherwise let the
+whole test measure an empty tree and pass. All three are UI-56, and **all three are mine**.
 
 ✅ **UI-53 closed and pushed 2026-09-07 01:3x** (`32df71b9..a5f19f57`). Three added lines and one
 whitespace character. `substr_count($response->getContent(), '<h1')` `->toBe(1)` inside the existing
