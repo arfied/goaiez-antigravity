@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T19:17:24",
+ "updated": "2026-09-06T19:40:23",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1940,6 +1940,12 @@
    "module": "X-201",
    "chose": "(R245) an assertion against static blade prose carries no apostrophe and no other e()-escaped character: the needle is escaped and the haystack is not, so the clause asserted is chosen to carry the load-bearing fact in characters that survive both sides (rulings 82, 76, 72)",
    "at": "2026-09-06T19:17:24",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "(R245) a connection flag that reports whether an external system is reachable is derived from the credential that would reach it, never written as a literal: is_active is accessToken !== null, so the active pill an owner reads and the mapAccount guard both tell the truth about a checkout with no ledger OAuth (rulings 84, 43, 73a, 74)",
+   "at": "2026-09-06T19:40:23",
    "ruling": "R245"
   }
  ]
