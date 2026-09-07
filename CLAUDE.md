@@ -2529,6 +2529,63 @@ Watch for: <the trap that applies, by name>
   (tick 194) so its own text is the whole law. ⚠️ Wave 110's own precedent is the hazard to name: it
   built the wire **and** restored the row's proposal line in the same commit. After 112 the live list is
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run.
+- ⚠️⚠️ **A refusal whose stated REASON is a design the tree does not have is the false-absence trap
+  inverted — nothing is claimed missing that exists, a mechanism is claimed to exist that does not —
+  and it deletes a lane-owned build item from the backlog while reading as a finding.** Wave 112
+  relabelled `G5-31` `REFUSED: … X-102 (web-chat) must invoke this action directly`, i.e. *no wire is
+  owed because the crossing goes the other way*. Measured at tick 220: `grep -rn "AgentAnswerAction"
+  app/app --include=*.php` gives **one** production caller (`app/app/Jobs/AnswerAgentTurnJob.php:334`,
+  dispatched from `app/app/Services/Agent/AgentTurns.php:224`), and `grep -rni "agent"
+  app/app/Modules/X-102 --include=*.php | grep -v capabilities.php` returns **`manifest.php:62
+  'agent_reachable'` and nothing else** — so no path carries a web-chat turn to the agent by a listener
+  *or* by a direct call. The work was not refused; it was **re-owned**, C-Agent → X-102, both inside
+  the thirteen. **The discriminator is one question: does the mechanism the refusal names exist?** A
+  refusal that points at another module is checked by looking inside that module (tick 219); a refusal
+  that points at a *calling convention* is checked by grepping the callee's callers. ⛔ And the cost is
+  the tick-217 one — `grep -rn "BUILD PROPOSAL:"` **is** this lane's backlog, so the relabel took the
+  row off the board. Wave 112 corrected main for doing this to four rows and then did it to two.
+- ⚠️ **A coder can form the group itself, and then the wave-88 per-id rule binds a set the brief never
+  handed over.** The wave-112 brief named `G5-31`, one id; the commit relabelled `G5-31` **and**
+  `G5-32`, whose capability reads `= G5-31`. The X-102 clause that makes the first true —
+  *"X-102's events manage sessions and carry no user messages"* — is **false of X-66**:
+  `X-66/Events/VoicemailTranscribed.php:12` is `public readonly string $transcription`, a user message
+  on an X-66 event. The `G5-32` line dropped the clause rather than testing it and the report cited no
+  X-66 evidence at all. Every recorded instance of this rule until now was a brief handing over a group
+  (ticks 187, 209, 218; wave 88); **this is the first where the widening is the coder's, so the tell is
+  a diff touching more ids than the brief named** — one `git show --stat` and a count.
+- ⚠️ **An artifact whose NAME asserts a run that never happened: real bytes, false name, and `ls
+  scratch/` believes it.** `scratch/mutation-green-w112.log` is 7704 bytes of a plain
+  `bash bin/supervise.sh` — §0 · 1 · 1b · 2 · 3 · 4 · 6 · verdict, **no §7, no mutation** — kept by a
+  wave that ran no mutations and said so honestly in its report. Nothing is fabricated and the quoted
+  verdict is exact. It is the inverse of the tick-213 placeholder (zero information at a real artifact
+  path); here the information is real and the **path** lies, which defeats the `ls` that the tick-190
+  rule leans on. **Size tells you which kind of gate log you have** — ~7700 bytes is a plain run with
+  no §7, ~8600–9500 is a `--tests` run — so read the size against the name before crediting either.
+- ✅ **A decline filed in the coder's own words with NO fields is what the tick-213 lesson was for, and
+  it worked the first time it was tried.** Wave 112's answer 4: *"Declined. Since Item 2 resulted in a
+  refusal, no tests or wires were built, and no mutation set was produced."* No `SITE:`, no invented
+  `assertions:`, no derived numbers. The brief gave **no template for a decline** — that is the whole
+  change from wave 103, which filled four `MUTATION` blocks with derived values and disclosed the
+  derivation three fields away. Give no placeholder string for a decline; a placeholder is a literal
+  and a literal is a prediction.
+- ⚠️ **"Which of your own measurements could you not account for" is answerable with `None` by any wave
+  that measures nothing numeric — ask about ARTIFACTS instead.** Wave 112 answered `None` while its own
+  `scratch/proposals-new.txt`, written 00:00:48 and two minutes before the commit that changed it, held
+  the number the wave was about to move. The tick-217 rephrasing closed the *brief-fact* escape and left
+  this one open. **Ask which of the wave's own artifacts disagrees with a sentence it wrote**; an
+  artifact exists on every wave, a number does not.
+- **Backlog at tick 220 — wave 113 is the two labels, the ledger rows and nothing else.** RULED, and
+  they are **two items, not one**: the wave-112 defect is exactly a group formed where the answers
+  differ per id. No production code and no test — if the measurements say a wire is owed, the output is
+  the proposal that names it and the wire is the wave after. ⛔ `⛔ REFUSED` is **not available** for
+  either id: X-102, X-66 and C-Agent are all in the thirteen, so a lane-owned unbuilt thing takes its
+  name and its owner (wave 81/92, tick 217). The seam ruling of ticks 209/217/219 is unchanged and not
+  reopened — receiver owns the listener, the event is the crossing, a cross-module model `use` never,
+  and `BoundaryStage` cannot see either (tick 194). **Three commits are held**: `77053a7d` (mine),
+  `d038f47e` (`G12-25` `CLOSED`, verified correct four ways) and the blocked `55462b1f`; no sha advances
+  the ref while excluding the tip (tick 172), so they release together with the fix. Then wave 114 takes
+  the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and not inherited — it is wrong
+  in two places until wave 113 lands.
 
 ## Style
 
