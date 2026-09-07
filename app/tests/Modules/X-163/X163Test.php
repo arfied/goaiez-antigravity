@@ -544,4 +544,77 @@ class X163Test extends TestCase
         $this->assertEquals('NO_FACT', $res['refusal_code']);
         $this->assertArrayNotHasKey('min_cents', $res);
     }
+
+    public function test_price_quote_returns_most_specific_match(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Specific Biz 1', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'oil change',
+            'price_cents' => 3951,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $row2 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'oil change synthetic',
+            'price_cents' => 6951,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $action = new PriceQuoteAction;
+        $res = $action->handle($biz->id, 'I need an oil change synthetic please');
+
+        $this->assertEquals($row2->price_cents, $res['amount']);
+    }
+
+    public function test_price_quote_returns_general_match_if_only_general_asked(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Specific Biz 2', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $row1 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'oil change',
+            'price_cents' => 3951,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'oil change synthetic',
+            'price_cents' => 6951,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $action = new PriceQuoteAction;
+        $res = $action->handle($biz->id, 'I need an oil change please');
+
+        $this->assertEquals($row1->price_cents, $res['amount']);
+    }
+
+    public function test_price_quote_hyphenated_shape_regression(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Regression Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 18551,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $action = new PriceQuoteAction;
+        $res = $action->handle($biz->id, 'How much to unblock a drain?');
+
+        $this->assertEquals($row->price_cents, $res['amount']);
+    }
 }

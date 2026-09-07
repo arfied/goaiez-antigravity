@@ -19,6 +19,7 @@ final class PriceQuoteAction
         $items = PriceBookItem::where('business_id', $businessId)
             ->where('is_confirmed', true)
             ->where('is_sample', false)
+            ->orderByRaw('LENGTH(service_name) DESC')
             ->get();
 
         foreach ($items as $item) {
