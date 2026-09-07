@@ -1914,3 +1914,27 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     a test that cannot see the defect is not the test that proves the fix). ⚠️ `assertSee('active')`
     is refused as the instrument — `inactive` contains it, so it passes on both branches, which is
     ruling 61's bare-digit defect in a word.
+85. **A red above the floor has a THIRD attribution class beside the sha and concurrency: a live
+    vendor refusal inside another lane's journey (RULED by the lane supervisor 2026-09-06 19:5x, on
+    MONEY-87's `a5e3dfbc`).** The gate landed `2054 · 2048 · FAILED 2 · errors 4` against a predicted
+    `2054 · 2049 · FAILED 2 · errors 3`, the extra member being
+    `cancel_is_one_tap_with_nothing_in_between` — `UNRESOLVED — Sandbox refused subscription:
+    Authorize.Net request failed: E00040`. Ruling 77 gave this lane a three-part test for
+    *concurrency* (`42501`, `relation … does not exist`); this is neither that shape nor the sha's,
+    and calling it either would be wrong in an expensive direction — read as the sha's it withholds a
+    correct tip under ruling 26, read as concurrency it invites a pointless re-run of a suite that
+    will refuse again while the vendor does. **The instrument is the same three legs, re-aimed:**
+    (a) **mechanism** — `JourneyHarness::walkCancelFlow():742` posts to
+    `https://apitest.authorize.net/xml/v1/request.api` and `:759` calls
+    `AuthorizeNetGateway::subscribe()`, throwing the vendor's own message, so the failure originates
+    outside this checkout; (b) **ownership** — Authorize.Net is Track 1's platform-billing gateway
+    (`app/app/Services/Billing/`), money's provider is Stripe (owner ruling 10), and no
+    `authorize_net_*` key or call exists in this lane's eight modules; (c) **reachability** — nil
+    from the wave's diff. Frequency corroborates without substituting: `E00040` appears in **1 of
+    115** gate files here. ⛔ **Not re-run in the same tick and never "fixed" here** — the harness
+    method is another journey's under owner ruling 1, and a lane that patches around another lane's
+    vendor outage is editing a CHECK. ⚠️ **Unlike ruling 67's kill, the run is not VOID**: the suite
+    completed and every other number in it is the sha's; only the one member is attributed away.
+    ⚠️ The Track 1 item this raises is whether a vendor-availability failure should present as an
+    `UNRESOLVED` skip rather than an error, since as written it reddens **every** lane's gate on a
+    third party's uptime.
