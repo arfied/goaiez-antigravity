@@ -435,6 +435,7 @@ class CAgentTest extends TestCase
 
         $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
         $this->assertNotNull($turn);
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
 
         $this->assertEquals(0, AiCall::where('business_id', $biz->id)->count());
     }
@@ -560,6 +561,7 @@ class CAgentTest extends TestCase
 
         $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
         $this->assertNotNull($turn);
-
+        $this->assertStringNotContainsString('999', $turn->agent_reply, 'Quoted the empty-slug fact for an unrelated service');
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
     }
 }
