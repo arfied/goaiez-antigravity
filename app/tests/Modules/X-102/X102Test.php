@@ -449,4 +449,51 @@ class X102Test extends TestCase
         $this->assertEquals('active', $session->status);
         $this->assertArrayNotHasKey('attendees', $session->toArray());
     }
+
+    public function test_a_blank_phone_is_refused_at_capture(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Blank Phone Refusal', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $session = $this->startAction->handle($biz->id, '192.168.1.1', false);
+
+        $refusedEmpty = false;
+        try {
+            $this->captureAction->handle(
+                businessId: $biz->id,
+                sessionId: $session->id,
+                name: 'Blank Phone',
+                phone: '',
+                email: 'blank@example.com',
+                message: 'Hello'
+            );
+        } catch (\DomainException $e) {
+            $this->assertEquals('NO_CONTACT_METHOD_ON_CAPTURE', $e->getMessage());
+            $refusedEmpty = true;
+        }
+        $this->assertTrue($refusedEmpty, 'An empty string phone must be refused');
+
+        $refusedWhitespace = false;
+        try {
+            $this->captureAction->handle(
+                businessId: $biz->id,
+                sessionId: $session->id,
+                name: 'Whitespace Phone',
+                phone: '   ',
+                email: 'space@example.com',
+                message: 'Hello'
+            );
+        } catch (\DomainException $e) {
+            $this->assertEquals('NO_CONTACT_METHOD_ON_CAPTURE', $e->getMessage());
+            $refusedWhitespace = true;
+        }
+        $this->assertTrue($refusedWhitespace, 'A whitespace-only phone must be refused');
+
+        $this->assertEquals(0, ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->count());
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '')->count());
+        $this->assertEquals(0, Person::where('business_id', $biz->id)->where('phone', '   ')->count());
+
+        $sessionFresh = ChatSession::where('business_id', $biz->id)->find($session->id);
+        $this->assertEquals('active', $sessionFresh->status);
+    }
 }
