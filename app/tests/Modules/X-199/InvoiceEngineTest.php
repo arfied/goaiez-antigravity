@@ -8,6 +8,7 @@ use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Domain\InvoiceReader;
+use App\Modules\X199\Events\InvoiceOverdue;
 use App\Modules\X199\Events\InvoicePaid;
 use App\Modules\X199\Events\LimitExceeded;
 use App\Modules\X199\Events\OverflowCharged;
@@ -419,5 +420,44 @@ test('a partial payment leaves the invoice unpaid, chased and unreversed', funct
             ->pluck('id')
             ->all();
         expect($openIds)->toContain($invoice->id);
+    });
+});
+
+test('a partial payment on an overdue invoice keeps it overdue', function () {
+    Event::fake([InvoicePaid::class, OverflowReversed::class, InvoiceOverdue::class]);
+
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        $engine = app(InvoiceEngine::class);
+
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => 40000]],
+            'net_30'
+        );
+        $invoice = $result['invoice'];
+
+        $invoice->update(['due_date' => now()->subDays(45)]);
+        $engine->markOverdue($business->id, $invoice->id);
+
+        $invoice->refresh();
+        expect($invoice->status)->toBe('overdue');
+
+        $res = $engine->recordPayment($business->id, $invoice->id, 10000);
+
+        expect($res['status'])->toBe('overdue');
+
+        $invoice->refresh();
+        expect($invoice->status)->toBe('overdue');
+        expect($invoice->paid_cents)->toBe(10000);
+        expect($invoice->paid_at)->toBeNull();
+
+        $overdueInvoices = app(InvoiceReader::class)->openOverdueForBusiness($business->id);
+        expect($overdueInvoices->contains('id', $invoice->id))->toBeTrue();
+
+        Event::assertNotDispatched(InvoicePaid::class);
     });
 });
