@@ -76,4 +76,17 @@ class InvoicesScreenTest extends TestCase
 
         $this->assertEquals('paid', Invoice::find($inv2->id)->status);
     }
+
+    public function test_invoices_screen_says_nothing_raises_or_sends_an_invoice_when_the_list_is_empty(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(Invoices::class)
+            ->assertSee('Nothing in this checkout raises one from a completed job')
+            ->assertDontSee('R235');
+    }
 }

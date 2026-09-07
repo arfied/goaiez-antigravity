@@ -17,7 +17,7 @@
             @if($invoices->isEmpty())
                 <div wire:loading.remove>
                     <x-ui.empty-state heading="No invoices yet." action="Reload list" target="$refresh">
-                        A completed job becomes an invoice and it sends (R235).
+                        No invoice has been raised for this account. Nothing in this checkout raises one from a completed job, and nothing sends an invoice once it exists, so this list fills when the job hand-off and a delivery are built.
                     </x-ui.empty-state>
                 </div>
             @else
