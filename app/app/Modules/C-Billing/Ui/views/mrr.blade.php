@@ -3,7 +3,7 @@
     <h1>MRR</h1>
 
     <x-ui.attention-card state="attention" heading="One account at a time">
-        MRR across every account is an operator roll-up. Every table it sums is behind row-level security keyed to this account and there is no operator read path yet — this waits on Track 1 (OWNER ACTION 15). What follows is the row this account contributes.
+        MRR across every account is an operator roll-up. Every table it sums is behind row-level security keyed to this account, and no cross-account read path is built in this checkout yet. What follows is the row this account contributes.
     </x-ui.attention-card>
 
     @if($error)
@@ -37,7 +37,7 @@
             </div>
             @if($monthly['cents'] === null)
                 <x-ui.attention-card state="attention" heading="No agreed price on this row">
-                    This account predates the agreed-price columns (3443); the registry figure is not quoted in its place. It waits on the price being written to the row.
+                    No agreed price is recorded on this subscription row, so no monthly figure is shown. It appears once the agreed price is written to the row.
                 </x-ui.attention-card>
             @else
                 <p class="mt-2 tabular-nums"><span class="font-semibold">{{ number_format($monthly['cents'] / 100, 2) }} a month</span> {{ $monthly['currency'] }}@if($monthly['yearly']) — billed yearly, shown as a twelfth @endif</p>

@@ -79,8 +79,9 @@ class CreditsScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertOk()
-            ->assertSee('49.0000') // AI balance
-            ->assertSeeInOrder(['AI Credits Balance', '49.0000', 'Ledger'])
+            ->assertSee('49.0000') // credit balance
+            ->assertSeeInOrder(['Credit balance', '49.0000', 'Ledger'])
+            ->assertDontSee('AI Credits')
             ->assertSee('-1.0000')
             ->assertSeeInOrder(['SMS Segments', '100', 'Cost: 5.0000'])
             ->assertDontSee('888.0000') // entry B
@@ -112,6 +113,20 @@ class CreditsScreenTest extends TestCase
         Livewire::actingAs($owner)->test(Credits::class)
             ->assertSee('Nothing in this checkout writes a usage meter')
             ->assertDontSee('SMS Segments');
+    }
+
+    public function test_the_credits_ledger_empty_state_names_what_it_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(Credits::class)
+            ->assertOk()
+            ->assertSee('Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.')
+            ->assertDontSee('A grant, a top-up or a debit writes a line here');
     }
 
     public function test_credits_topup_refuses_at_the_daily_ceiling(): void

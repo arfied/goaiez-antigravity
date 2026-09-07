@@ -53,6 +53,8 @@ class RevenueRecoveryScreenTest extends TestCase
         $screen = Livewire::actingAs($owner)->test(RevenueRecovery::class)
             ->assertOk()
             ->assertSee('One account at a time')
+            ->assertSee('no cross-account read path is built in this checkout yet')
+            ->assertDontSee('OWNER ACTION')
             ->assertSee('Day 8 of 21')
             ->assertSee('Ladder setting: phone answers')
             ->assertSee('not applied anywhere yet')
@@ -99,5 +101,21 @@ class RevenueRecoveryScreenTest extends TestCase
             ->assertSee('credit of 0.00 added since the ladder started')
             ->assertSee('no payment against the arrears is recorded')
             ->assertDontSee('Came back');
+    }
+
+    public function test_revenue_recovery_says_when_no_agreed_price_is_recorded(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        DunningState::create(['business_id' => $biz->id, 'day_in_cycle' => 8, 'status' => 'warning', 'ai_enabled' => true, 'phone_answering' => true, 'voicemail_only' => false]);
+
+        Livewire::actingAs($owner)->test(RevenueRecovery::class)
+            ->assertOk()
+            ->assertSee('no agreed price recorded on the row')
+            ->assertDontSee('3443');
     }
 }

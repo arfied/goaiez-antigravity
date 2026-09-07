@@ -51,6 +51,8 @@ class MrrScreenTest extends TestCase
         $screen = Livewire::actingAs($owner)->test(Mrr::class)
             ->assertOk()
             ->assertSee('One account at a time')
+            ->assertSee('no cross-account read path is built in this checkout yet')
+            ->assertDontSee('OWNER ACTION')
             ->assertSee('398.00 a month')
             ->assertSee('billed yearly, shown as a twelfth')
             ->assertSee('includes 1 extra location')
@@ -88,7 +90,9 @@ class MrrScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Nothing in this checkout writes a usage meter, so this list fills once the telephony, SMS and agent modules meter what they use.')
             ->assertSee('Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.')
-            ->assertDontSee('The five meters fill');
+            ->assertDontSee('The five meters fill')
+            ->assertSee('No agreed price is recorded on this subscription row')
+            ->assertDontSee('3443');
     }
 
     public function test_the_mrr_top_up_refuses_over_the_daily_ceiling(): void

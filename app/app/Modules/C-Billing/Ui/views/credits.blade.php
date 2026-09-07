@@ -21,7 +21,7 @@
         <div wire:loading.remove class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
             <div class="bg-card overflow-hidden shadow rounded-[--radius-card] border border-rule">
                 <div class="px-4 py-5 sm:p-6">
-                    <dt class="text-sm font-medium text-ink-2 truncate">AI Credits Balance</dt>
+                    <dt class="text-sm font-medium text-ink-2 truncate">Credit balance</dt>
                     <dd class="mt-1 text-3xl font-semibold text-ink tabular-nums">
                         {{ number_format($aiBalance / 10000, 4) }}
                     </dd>
@@ -52,7 +52,7 @@
         <div wire:loading.remove class="mt-8 flow-root">
             <h2 class="text-lg font-semibold leading-6 text-ink mb-4">Ledger</h2>
             @if($entries->isEmpty())
-                <x-ui.empty-state heading="No ledger entries yet." action="Top up" target="topup">A grant, a top-up or a debit writes a line here.</x-ui.empty-state>
+                <x-ui.empty-state heading="No ledger entries yet." action="Top up" target="topup">A top-up from this screen writes a row here. Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.</x-ui.empty-state>
             @else
                 <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
                     <table class="min-w-full divide-y divide-gray-300">

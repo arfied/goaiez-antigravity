@@ -3,7 +3,7 @@
     <h1>Revenue recovery</h1>
 
     <x-ui.attention-card state="attention" heading="One account at a time">
-        A cross-account roll-up is an operator view behind row-level security; it waits on an operator read path (OWNER ACTION 15). Below is this account's ladder.
+        A cross-account roll-up is an operator view behind row-level security, and no cross-account read path is built in this checkout yet. Below is this account's ladder.
     </x-ui.attention-card>
 
     @if($error)
@@ -33,7 +33,7 @@
                     <p class="text-sm text-ink-2 mt-1">Ladder setting: {{ $state->stays_on }} — recorded on this row and not applied anywhere yet; the phone and the AI are switched by other modules, which do not read it.</p>
                     <dl class="mt-2 grid grid-cols-2 gap-2 text-sm tabular-nums">
                         <dt class="text-ink-2">At risk</dt>
-                        <dd>@if($monthly['cents'] === null) no agreed price on the row (3443) @else {{ number_format($monthly['cents'] / 100, 2) }} a month @endif</dd>
+                        <dd>@if($monthly['cents'] === null) no agreed price recorded on the row @else {{ number_format($monthly['cents'] / 100, 2) }} a month @endif</dd>
                         <dt class="text-ink-2">Credit added</dt>
                         <dd>credit of {{ number_format($state->recovered_cents / 100, 2) }} added since the ladder started</dd>
                     </dl>
