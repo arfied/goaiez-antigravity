@@ -8235,3 +8235,97 @@ baseline is this checkout's own previous gate — so a future comparison against
 `errors 5` is the stale one. ⚠️ `test_g2_76_unified_inbox_header` lives in
 `app/tests/Modules/X-01/X01Test.php` and **X-01 is stages'** under ruling 5's catch-all (ticks
 190/194/216): unreachable from this lane's diff, no filing here.
+
+## ⛔ A ONE-SPEC plan row's ⑤ is discharged by the row COLLECTIVELY — grading id-by-id against it
+manufactures one CREDIT-ONLY per id and points them all at the same build (tick 271)
+
+`GOAIEZ-MASTER-PLAN.md:31352` heads **five** ids with **four** names and one `⛔ … asserted` column.
+SITE-144 graded `G6-11` and `G7-16` `CREDIT-ONLY` because *"the clause demands expiry on both the page
+and the asset URL and enforces the NO-URL rule, but the method only asserts device routing."* Every
+word true, verdict wrong. The ⑤'s two clauses were attributed at source this tick:
+
+| ⑤ clause | where it lives | this lane's? |
+| :-- | :-- | :-- |
+| expiry on the **page** | `X103Test.php:135` `test_g16_07…` — **a row-mate**, built by SITE-143 | ✅ done |
+| …and on the **asset URL** | the `Asset` row is **X-121's** (measured tick 268 via X-157's `G13-31`) | ⛔ Track 1's |
+| the **NO-URL rule** (§185A) | `shortLinkFor()` is declared at `app/app/Contracts/Links/LinkRegistry.php:114`, the base send driver (P-072); **zero hits under `app/app/Modules/X-103/`** | ⛔ the drivers' |
+
+Meanwhile the per-id subject is annotated in this lane's own migration —
+`2026_08_30_000036_create_x103_site_tables.php:46` `$table->jsonb('device_routing'); // G6-11` — and
+`test_short_linker_device_routing_and_caps:127-131` asserts **both branches** of exactly that column,
+falsifiably. **RULED: `G6-11`/`G7-16` are DISCHARGED-ON-PRODUCT, no wave** (tick 224's branch:
+*already done here*). ⛔ The build the wrong verdict produces is an expiry assertion under G6-11's
+carrier — **a second carrier for a clause `test_g16_07` already discharges** (tick 240), which also
+raises the id census, which is the stop.
+
+⛔ **The cause was TWO INDIVIDUALLY CORRECT INSTRUCTIONS IN ONE BRIEF.** *"The clause you audit
+against comes from the plan, never from the tracker's last cell"* and *"where a row heads several ids,
+the id→subject mapping comes from the tracker"* pull opposite ways exactly when the ⑤ is written for
+the spec and the subjects per id. The wave obeyed the first and could not have inferred the second was
+meant to bound it. Fifteenth instance of the imprecise-brief family (208, 227, 235, 236, 237, 238,
+244, 245, 247, 249, 250, 254, 262, 265) and the first where **neither sentence is wrong** — *a vague
+brief fails loudly; a precisely wrong one is obeyed; and two precisely right ones can compose into a
+wrong one, which nothing in either sentence can reveal.* The verdict set gains a sixth option,
+`DISCHARGED-BY-A-ROW-MATE`, and the fix is to attribute each ⑤ clause to an id and a construction site
+**before** asking which are this lane's.
+
+## ⛔ An APPROVED ruling is not a LANDED one — a filing is closed by the fix, never by the decision (tick 271)
+
+Track 1's 09:5x relay: rulings #4 (`ContractStage` multi-emitter exemption), #5 (`TestAnchorStage`
+scoped to modules declaring a vendor) and #6 are **APPROVED and NOT EXECUTABLE** — all three are
+sealed `app/app/Doctor/**`, the coder guard refuses them, both supervisor seats are denied `app/**`,
+and an edit leaves `seals.json` mismatched. *"A ruling with no executor is not a decision."* That is
+the disposition of **fourteen** of this lane's live violations: #5 alone would clear all **seven**
+`anchor` entries. ⛔ Nothing is superseded, nothing is dispatched, keep recording violations of that
+shape. Same law as tick 191's corollary (*an OWNER ACTION opened off half 1 is never closed off half 1
+going quiet*) one document over: **a record opened against a defect is never closed off a decision
+about that defect.**
+
+Applied the same tick, from the same relay: **#10 module annotations WIN over the plan, permanently**
+— which retires tick 268's open note that the plan disagrees with itself about `G9-04`'s owner, and is
+the ruling under which a `// G6-11` migration comment outranks a plan row's title list above.
+**#11** withdraws the 37 rows on X-221/X-222/X-223, confirming tick 211's reading of the three
+`contract` lines that name X-110 in their strings and are not ours. ✅ **`coder-bin/kill` now refuses a
+cross-checkout target** — closing this lane's TRACK 1 ACTION on the five cross-lane pest sweeps (ticks
+257/258); it **fails open** when a cwd cannot be read, so the standing brief line stays. ⚠️
+**`GOAIEZ_RESTORE_OK` exists in the shared guard and this lane's launcher does not set it**
+(`grep -c` → 0), so tick 267's revert-by-file-replacement item is **narrowed, not closed**: the ask is
+now three lines in one file.
+
+## ⛔ A record for a CREDITED id is a NOTE — an `unresolved` with no live violation can never line up (tick 271)
+
+`G6-27` and `G12-39` are both credited, both clean in a live doctor, and both **CREDIT-ONLY**:
+`grep -rniE 'pin|password|passcode' app/app/Modules/X-103/` returns **one** hit, the *generated*
+`capabilities.php` echoing the tracker note (tick 259's shape), and `G12-39`'s carrier asserts the
+**absence of a block type `SiteEngine::publish()` can never write** (tick 211's adopted X-176 `G8-15`
+defect). Neither gets an `unresolved`: a row with no violation behind it never lines up with a stage
+and `state.py` has no withdraw — the malformed-record shape of ticks 213 and 224. Both get a `note`,
+under tick 259's discriminator: *does a careful reader of the record alone reach the wrong
+conclusion?* Today it reads "Password Protection discharged in X-103", which is false.
+
+⚠️ **`G12-39`'s dependency is C-Reviews, NOT X-104**, and the report had it backwards. The tracker's
+Module column is **X-103** and *"the plugin path is X-104's"* names one of two delivery surfaces; the
+built-site surface is this lane's own `X-157/Actions/EdgeDeployAction.php`. What cannot be **minted**
+here is the ⑤'s subject — *"only real reviews, and 1–3★ never reaches it"* needs rated rows, and
+`rating` lives at `C-Reviews/Database/migrations/2026_08_30_000022_create_c_reviews_tables.php:19`,
+reviews' column. Tick 236's discriminator, and the same error shape as tick 227: **a reason measured
+on the wrong side of the seam.**
+
+## ⚠️ The complement is MONOTONE, so a shrink is the LEDGER's defect — fourth firing (tick 271)
+
+Tick 270 recorded the complement at 46 (19 non-scratch + 27 scratch); tick 271 measures **45** (18 +
+27) with `origin/main` unmoved, `origin/track/site` advanced only by our own commits, and every
+sibling tip advanced **forward** and proven fast-forward. A strict superset cannot yield a smaller
+name set (tick 252), and the reflog rules out a rewrite — 20 entries, all `update by push`, no
+repeated sha. ⇒ tick 270's 19 was an off-by-one, confirmed two ways (`grep -c .` → 45,
+`grep -c '^scratch/'` → 27, hand count of the printed list → 18). Fourth firing (242, 250/252, 271):
+**a query's scope is not its claim, and neither is the arithmetic used to summarise it** — and the
+record is the likelier defect than the world, every time.
+
+⛔ **And tick 270's closing tip re-read did not happen.** Its block recorded *"the newest arrival is
+`stages@{09:07:13}` … nothing has arrived since"* and was appended at **09:51:51**, while the reflog
+holds `stages@{09:43:08}` and `ui@{09:44:06}` — two arrivals seven minutes before it closed, on the
+two refs whose partitions halves 1 and 3 report. Sixth firing of tick 215's rule, second uncaught
+(tick 248 was the first). The enforcement is tick 257's and it is a **writing** rule: *draft the
+census section with the closing line left OPEN and fill it at the close.* A null closing read is
+common (224, 225, 256), which is exactly what makes it cheap to assume and expensive to assume wrongly.
