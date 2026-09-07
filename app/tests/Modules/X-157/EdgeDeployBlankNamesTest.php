@@ -123,6 +123,12 @@ class EdgeDeployBlankNamesTest extends TestCase
                     'contentUrl' => 'https://video.com',
                     'uploadDate' => '2026-09-07T00:00:00Z',
                 ],
+                [
+                    'type' => 'video_embed',
+                    'name' => 'Valid Video',
+                    'contentUrl' => 'https://video.com/valid',
+                    'uploadDate' => '2026-09-07T00:00:00Z',
+                ],
             ],
             'ssl_installed' => true,
         ]);
@@ -132,6 +138,13 @@ class EdgeDeployBlankNamesTest extends TestCase
 
         $html = Storage::disk('local')->get("sites/{$result['deploy_hash']}.html");
         $this->assertStringContainsString('application/ld+json', $html);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1], true);
+
+        $this->assertArrayHasKey('video', $json);
+        $this->assertCount(1, $json['video']);
+        $this->assertEquals('Valid Video', $json['video'][0]['name']);
     }
 
     public function test_faq_deploy_skips_blank_question()
@@ -152,6 +165,11 @@ class EdgeDeployBlankNamesTest extends TestCase
                     'question' => '  ',
                     'answer' => 'Answer text',
                 ],
+                [
+                    'type' => 'faq',
+                    'question' => 'Valid Question',
+                    'answer' => 'Valid Answer',
+                ],
             ],
             'ssl_installed' => true,
         ]);
@@ -161,5 +179,12 @@ class EdgeDeployBlankNamesTest extends TestCase
 
         $html = Storage::disk('local')->get("sites/{$result['deploy_hash']}.html");
         $this->assertStringContainsString('application/ld+json', $html);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1], true);
+
+        $this->assertArrayHasKey('mainEntity', $json);
+        $this->assertCount(1, $json['mainEntity']);
+        $this->assertEquals('Valid Question', $json['mainEntity'][0]['name']);
     }
 }

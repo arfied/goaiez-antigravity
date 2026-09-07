@@ -172,9 +172,9 @@ final class EdgeDeployAction
                             }
                             // VideoObject injected on publish (TEST ANCHOR, G16-25, ruling 41)
                             $videos[] = [
-                                'name' => $block['name'] ?? null,
-                                'contentUrl' => $block['contentUrl'] ?? null,
-                                'uploadDate' => $block['uploadDate'] ?? null,
+                                'name' => $block['name'],
+                                'contentUrl' => $block['contentUrl'],
+                                'uploadDate' => $block['uploadDate'],
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
@@ -183,8 +183,8 @@ final class EdgeDeployAction
                             }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
                             $faqs[] = [
-                                'question' => $block['question'] ?? null,
-                                'answer' => $block['answer'] ?? null,
+                                'question' => $block['question'],
+                                'answer' => $block['answer'],
                             ];
                         }
                     }

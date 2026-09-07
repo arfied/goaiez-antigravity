@@ -1831,7 +1831,7 @@ class X157Test extends TestCase
         $this->assertSame('2026-09-01', $ld['video'][0]['uploadDate'] ?? null);
     }
 
-    public function test_a_malformed_video_block_takes_the_whole_schema_off_the_served_page(): void
+    public function test_a_malformed_video_block_is_omitted_from_the_served_page_schema(): void
     {
         Storage::fake('local');
         $biz = TestCase::provisionTenant(['name' => 'Video Tenant', 'currency' => 'USD']);
@@ -1871,7 +1871,8 @@ class X157Test extends TestCase
         $response->assertStatus(200);
         $body = (string) $response->getContent();
 
-        $this->assertStringNotContainsString('application/ld+json', $body);
+        $this->assertStringContainsString('application/ld+json', $body);
+        $this->assertStringNotContainsString('Broken', $body);
         $this->assertStringContainsString('dni-pool-x137', $body);
     }
 }
