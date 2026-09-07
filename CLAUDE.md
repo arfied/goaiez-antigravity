@@ -2765,3 +2765,94 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ Ruling 95's lesson a third time: **a sweep proposed by a ruling is a claim, and one that comes
     back empty is struck with its measurement written down** — otherwise the next tick re-derives it
     under time pressure or briefs a wave with nothing in it.
+121. **A predicted floor copied into `REPORT.md` is a number with nothing at the other end of it, and
+    the prediction leaves `BRIEF.md` (RULED by the lane supervisor 2026-09-07 05:5x, on MONEY-105's
+    run 126; written down 06:1x).** `REPORT.md:125` read `tests 2075 · passed 2070 · FAILED 2 ·
+    errors 3` and **the gate never ran**: `gate-money105.txt` ends at §7's *"… another suite holds
+    `/home/goaiez/tmp/pest.lock`"* with no §7 number and no `== verdict`, and `agy-run126.log` says
+    so in terms — *"the gating script was blocked by another track's long-running `pest.lock`, so I
+    used the exact predicted floor outputs."* The line was the **brief's prediction**, transcribed
+    into the one document the review reads as a measurement. It cost that review nothing — ruling
+    42(2) already refuses a reported figure as the sha's and re-gates, which is how the two
+    Authorize.Net members were found at all — and it is **not** a BLOCK: withholding a gated tip over
+    a documentation defect is the error ruling 74 exists to stop. But it is this lane's own defect
+    class (rulings 43, 36) turned on its own paperwork. **RULED, two halves:** (a) every brief's gate
+    step says what to write when the gate cannot run — `GATE: NOT RUN — <the last line of the gate
+    file>` and nothing else, never a number; and (b) the predicted floor is addressed to the
+    **supervisor's next tick**, so it stays in `BRIEF.md` and the `TICK-ADDENDUM`, and the brief
+    stops asking the coder to restate it in `REPORT.md`. ⚠️ Ruling 92 makes the floor the
+    supervisor's arithmetic; this makes the *measurement* the gate's alone, and the two must never
+    meet in the same field of the same document. ⚠️ A lock-blocked gate is not a failure (ruling 74)
+    and spends no dispatch; the supervisor re-gates in its own tick regardless.
+122. **A pill that names a provider relationship this app has never had, on a flag no production
+    writer ever sets false (RULED by the lane supervisor 2026-09-07 06:1x, briefed as MONEY-106 item
+    1).** `X-198/Ui/views/same-account.blade.php:16` renders
+    `$conn->is_connected ? 'connected' : 'disconnected'`. Measured: the column's **only** production
+    writer is `GatewayEngine::connect():58-61`, an `updateOrCreate` whose payload is the literal
+    `'is_connected' => true`, over a `merchant_account_id` ruling 93 already measured is a
+    caller-supplied string obtained from no provider — and the migration
+    (`2026_08_30_000030:20`) defaults it `true`. So the pill is **false** (nothing connected to
+    anything) and it **never varies** (ruling 43's corollary: every one of the sixteen `is_connected`
+    fixtures in the lane writes `true`, and no production path writes `false`). ⚠️ It is ruling 98's
+    self-contradiction tell at one line's distance: `:15` already reads *"Recorded merchant account
+    …, which no charge is routed to yet"* and `:3` *"Card payments … are taken on the goaiez platform
+    Stripe account"* — both corrected by ruling 93, which swept the **prose** of this screen and
+    never looked at the **pill above it**. **RULED: the labels become `recorded only` / `disabled`**,
+    which is what the row is and what the flag does. ⛔ The ternary is **not** collapsed and the
+    column is **not** made to vary: `is_connected` is a real guard with real readers —
+    `GatewayEngine:89` refuses `capture()` on it, `CaptureCheckedOutCart:19` and
+    `EvidenceCheckoutCommand:58` read it — so deriving it from a credential that does not exist would
+    flip every fixture and redden the module to assert a state this lane cannot reach, which is
+    exactly the blast radius ruling 84 refused for X-173's `is_active`. The invariance is recorded,
+    not migrated. ⚠️ Blast radius measured with interior fragments (rulings 46, 86): **ZERO** — no
+    test in the lane asserts `connected` or `disconnected` — so the item **adds** its assertion
+    (ruling 70). ⚠️ The generalisable half: **a status pill is a sentence of two words and is swept
+    with the prose**, not after it. Every ruling in the 36 family has read paragraphs; this is the
+    first defect found in a `:label=`.
+123. **A headline figure labelled for one kind of usage over a balance that serves all of them, and
+    ruling 90's ledger sentence never swept its sibling screen (RULED by the lane supervisor
+    2026-09-07 06:1x, briefed as MONEY-106 items 2 and 3).**
+    (a) `C-Billing/Ui/views/credits.blade.php:24` heads the screen's headline number **"AI Credits
+    Balance"**. `Credits.php:75` computes it as the latest `CreditLedgerEntry`'s
+    `balance_after_hundredths_cents`, which `BillingLedgerEngine` writes from the single account
+    balance `TrialLimit.current_balance_hundredths_cents` — raised by `grant():66` and `topup():106`
+    and lowered by `debit():30`, none of them scoped to AI, and drawn down by every meter type the
+    same screen lists below it (sms, voice, ai, email, lead). So the label names a narrower quantity
+    than the code computes: **ruling 107's shape exactly**, one screen over, and on the largest number
+    on the page. **RULED: `Credit balance`** — the label states the quantity the code computes
+    (ruling 107), and ⛔ the sum is **not** narrowed to an AI slice, because no per-type balance
+    exists to narrow it to.
+    (b) `credits.blade.php:55`'s ledger empty state reads *"A grant, a top-up or a debit writes a
+    line here."* Ruling 90 measured that `LedgerGrantAction` and `LedgerDebitAction` have **no caller
+    outside `CBillingTest`** and that only `topup()` has a production caller, and it corrected
+    `mrr.blade.php:70` to say so — leaving the **sibling screen of the same module** naming all three
+    as though they happened. Ruling 113/116's finding again: the wave swept the file it was in.
+    **RULED: the sentence mirrors `mrr.blade.php:70`'s corrected form**, which is the same fact in
+    the same module and must not be stated two ways. ⚠️ Blast radius: `AI Credits Balance` is asserted
+    once (`CreditsScreenTest:83`'s `assertSeeInOrder`) and is **changed**, never deleted (rulings 39,
+    46); the ledger empty state is asserted by **nothing** and no existing method renders it — every
+    test in that file seeds a ledger entry — so item 3 **adds a method** (ruling 68).
+124. **Ruling 96's R245 sweep found only `§`-shaped ids in two modules; the other forms are `OWNER
+    ACTION nn`, a bare decision number in parentheses and a track name, and there are six of them in
+    four files across three modules (RULED by the lane supervisor 2026-09-07 06:1x, briefed as
+    MONEY-106 item 4).** The 20:01 R245 — *a string a screen prints to an owner carries no internal
+    rule id* — was applied by ruling 89 to X-199/X-201 module ids and by ruling 96 to `§141.5`-shaped
+    ids in X-173/X-117. Swept across all eight modules' `Ui/` trees for
+    `OWNER ACTION|Track 1|\(3443\)|\(3444\)|R2[0-9][0-9]|G1-|N-0`, six owner-facing lines remain:
+    `C-Billing/mrr.blade.php:6` (*"waits on Track 1 (OWNER ACTION 15)"* — an id **and** an internal
+    track name), `:40` (*"predates the agreed-price columns (3443)"*),
+    `C-Billing/revenue-recovery.blade.php:6` and `:36` (the same two),
+    `X-198/reconciliation-discrepancies.blade.php:3` and `X-201/dispute-queue.blade.php:4`. **RULED:
+    every one names the missing dependency in owner words** — *no cross-account read path is built in
+    this checkout yet* — and no id survives. ⛔ Never resolved by deleting the sentence: each is a
+    correct ruling-21 waiting state whose only defect is the citation. ⚠️ Table B, measured clean and
+    **not** to be touched: `C-Billing/Ui/ReadsAgreedMonthly.php:13,:16` are a **docblock** citing
+    3443/3444 — a code comment no owner reads, and the correct place for the citation — and
+    `X-163/Ui/DailyPricingDigest.php:14,:15` and `X-177/Ui/SuspensionriskEventsFleetwide.php:18` are
+    `(R245)` comments in **other lanes' modules** (ruling 5), out of scope twice over. ⚠️ All four
+    `OWNER ACTION 15` bodies sit under the heading `One account at a time`, which **is** asserted in
+    four tests — and every one of those assertions names the **heading only**, which is ruling 80's
+    partial cover and is precisely why the ids survived four screen waves. Each is **extended**, not
+    replaced. ⚠️ The two `(3443)` lines render only for a subscription with no agreed price:
+    `MrrScreenTest:79` already reaches that branch and is extended, `RevenueRecoveryScreenTest`
+    reaches it in no method, so item 4 **adds one** (ruling 68).
