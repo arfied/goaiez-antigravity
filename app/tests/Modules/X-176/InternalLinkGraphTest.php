@@ -391,7 +391,7 @@ final class InternalLinkGraphTest extends TestCase
         }
     }
 
-    public function test_falsifier_cap_does_not_truncate_at_20_pages(): void
+    public function test_a_two_deep_page_renders_when_everything_fits(): void
     {
         Storage::fake('local');
         $biz = self::provisionTenant(['name' => 'Internal Link Tenant 8']);
@@ -433,5 +433,128 @@ final class InternalLinkGraphTest extends TestCase
         // Assert that the child is STILL LINKED because the cap is on the emitted list, not the fetch.
         // We dump hrefs to see what is missing
         $this->assertContains('/foo/bar', $hrefs2);
+    }
+
+    public function test_f8_nav_collision_refuses_non_root(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant F8']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+
+        Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Services Slash', 'slug' => '/services', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Child', 'slug' => 'services/child', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Unrelated 1', 'slug' => 'unrelated-1', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Unrelated 2', 'slug' => 'unrelated-2', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'linksf8.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $rootPage->id,
+            commitId: 'commit_test_f8',
+            businessName: 'My Biz F8'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $hrefs = [];
+        foreach ($links as $link) {
+            $hrefs[] = $link->getAttribute('href');
+        }
+
+        $this->assertNotContains('/services', $hrefs, 'Expected colliding key /services to be absent');
+        $this->assertNotContains('/services/child', $hrefs, 'Expected descendant /services/child to be absent');
+        $this->assertContains('/unrelated-1', $hrefs, 'Expected unrelated-1 to be present');
+        $this->assertContains('/unrelated-2', $hrefs, 'Expected unrelated-2 to be present');
+    }
+
+    public function test_f9_nav_collision_refuses_root(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant F9']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage = Page::create(['business_id' => $biz->id, 'title' => 'Home Empty', 'slug' => '', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Home Slash', 'slug' => '/', 'is_published' => true]);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Unrelated 1', 'slug' => 'unrelated-1', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Unrelated 2', 'slug' => 'unrelated-2', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'linksf9.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_test_f9',
+            businessName: 'My Biz F9'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $hrefs = [];
+        foreach ($links as $link) {
+            $hrefs[] = $link->getAttribute('href');
+        }
+
+        $this->assertNotContains('/', $hrefs, 'Expected colliding root / to be absent');
+        $this->assertContains('/unrelated-1', $hrefs, 'Expected unrelated-1 to be present');
+        $this->assertContains('/unrelated-2', $hrefs, 'Expected unrelated-2 to be present');
+    }
+
+    public function test_f10_collision_consistency(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant F10']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+
+        Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Services Slash', 'slug' => '/services', 'is_published' => true]);
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Child', 'slug' => 'services/child', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Unrelated 1', 'slug' => 'unrelated-1', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Unrelated 2', 'slug' => 'unrelated-2', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'linksf10.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id, // Deploy a page so we can see breadcrumb. Breadcrumb requires pageId that has path.
+            commitId: 'commit_test_f10',
+            businessName: 'My Biz F10'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertStringNotContainsString('id="breadcrumb-x176"', $html);
+
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $hrefs = [];
+        foreach ($links as $link) {
+            $hrefs[] = $link->getAttribute('href');
+        }
+
+        $this->assertNotContains('/services', $hrefs);
+        $this->assertNotContains('/services/child', $hrefs);
     }
 }

@@ -22,16 +22,24 @@ final class InternalLinkRenderAction
             return '';
         }
 
-        $hierarchyPages = $pages->keyBy(function ($page) {
-            return trim((string) $page->slug, '/');
-        });
+        $hierarchyPages = [];
+        $collidingKeys = [];
+
+        foreach ($pages as $p) {
+            $norm = trim((string) $p->slug, '/');
+            if (isset($hierarchyPages[$norm])) {
+                $collidingKeys[$norm] = true;
+            }
+            $hierarchyPages[$norm] = $p;
+        }
+
         $usablePages = [];
 
         foreach ($pages as $page) {
             $slug = trim((string) $page->slug, '/');
 
             if ($slug === '') {
-                if (! empty($page->title)) {
+                if (! isset($collidingKeys['']) && ! empty($page->title)) {
                     $usablePages[] = $page;
                 }
 
@@ -44,7 +52,7 @@ final class InternalLinkRenderAction
 
             foreach ($parts as $part) {
                 $current = $current ? $current.'/'.$part : $part;
-                if (! isset($hierarchyPages[$current]) || empty($hierarchyPages[$current]->title)) {
+                if (isset($collidingKeys[$current]) || ! isset($hierarchyPages[$current]) || empty($hierarchyPages[$current]->title)) {
                     $usable = false;
                     break;
                 }
