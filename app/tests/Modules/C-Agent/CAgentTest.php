@@ -169,7 +169,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt (grep for Chat/X-102 is empty). Owner: C-Agent
+     * BUILD PROPOSAL: G5-31 — C-Agent can do nothing with the chat.started event as it stands. X-102 lacks a per-turn message store (it owns only chat_sessions and chat_leads) and chat.started carries no turn row ID. AgentAnswerAction requires a user message, and the law requires passing a row ID rather than words across queues. Thus, the delivery of the turn payload remains unaccounted for, and the declared consumption is unsatisfiable as declared. To become buildable, a turn store and a turn event carrying a row ID must exist. Owner: X-102 and Track 1 (manifest declaration)
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -178,7 +178,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
-     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt (grep for Voice/X-66 is empty). Owner: C-Agent
+     * BUILD PROPOSAL: G5-32 — C-Agent can do nothing with the call.answered event as it stands. Unlike X-102, X-66 does own a turn store (call_turns), but it emits no turn event. call.answered carries only a sessionId, and VoicemailTranscribed carries raw text (violating queue RLS law if routed). AgentAnswerAction requires a user message, so the declared consumption is unsatisfiable as declared. To become buildable, an event carrying a call_turns row ID must exist. Owner: X-66 and Track 1 (manifest declaration)
      */
     public function test_g5_32_voice_door(): void
     {
@@ -386,6 +386,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G12-25] negative-sentiment handoff; the takeover latch is X-01's (R21)
+     * CLOSED: G12-25 (second half) — the C-Agent side wire for the takeover latch was built in f7bd376b. The first half is closed by the test below asserting NEGATIVE_SENTIMENT_HANDOFF.
      */
     public function test_g12_25_negative_sentiment_handoff(): void
     {
