@@ -2804,6 +2804,76 @@ Watch for: <the trap that applies, by name>
   **the fix is never to edit the standing test.** The site is deliberately unnamed (tick 214). The
   live list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 224, membership
   unchanged since tick 221 — re-run and never inherited.
+- ⚠️⚠️ **`timeout -k 60 3h` bounds the CODER, not a grandchild it backgrounds — so a mid-wave death can
+  leave a tree that is still MOVING, and every shape rule above assumes a static one.** Run 103 died at
+  `AGY_EXIT=124` (`timeout(1)`'s own rc — **not quota**, so the `--coder claude` chain is not triggered,
+  and not agy's `--print-timeout`), and `scratch/run-mutations-w117.sh` was **still running twenty-five
+  minutes later**, pid `680068`, **`ppid 1`**, with live descendants `bash bin/supervise.sh --tests` →
+  `timeout 1800 ./vendor/bin/pest` → `php ./vendor/bin/pest`. The agy log said so in words the tick had
+  already read (*"I am running the mutations script in the background"*). Three consequences: **(i)**
+  `git diff` at tick open is a snapshot of a race — the run-65 tell fired positive (`1  1`, `'caller'` →
+  `'agent'`) and read exactly like the tick-206 stranded mutation this column has twice spent as free
+  evidence, but it was mutation **2 of 4 in flight**, and the script's own next lines reverted it and
+  moved on; **(ii)** it holds `pest.lock` and its pest trips §7's clash guard, refusing every gate the
+  lane runs; **(iii)** `kill` is outside this column's allow list, so stopping one is the coder's item 0,
+  by explicit pid. ⭐ **The tell is one command and it is cheap: `ps -p <pid> -o ppid,etime,cmd` on
+  anything under `scratch/`, and `ppid 1` on a `*.sh` is the whole of it.** Read `ps` before reading
+  `git diff` as stranded. ⭐ And the guard's `(checkouts pinning it: …)` named **only this checkout** for
+  the third time (ticks 203, 217, now) — that parenthesis is what separates this lane's own orphan from
+  another lane's kill, and it is the difference between an item 0 and a `TRACK 1 ACTION`.
+- ⚠️⚠️ **Before briefing "put a writer on a production path", check the MODULE has a production entry
+  point at all — otherwise the brief's two branches miss the only true one, and the wave builds the same
+  dead code one level down.** Wave 117 moved `call_turns`' write from `recordTurn()` into `coach()`, and
+  `coach()` is as unreachable as `recordTurn()` was: `grep -rn "VoiceCoachAction" app/app app/tests` is
+  its own declaration plus `X66Test.php`; `grep -rn "VoiceSessionEngine"` is the three Actions plus that
+  same test; `X-66/routes.generated.php` routes **four Livewire screens and no action**;
+  `ModuleServiceProvider::boot()` registers those four components and nothing else; and the real path a
+  call takes is `Http/Controllers/Voice/InfobipVoiceController:110` → `Jobs/Voice/IngestVoiceEventJob`,
+  on which `grep -n "X66\|CallTurn\|call_turns\|CallSession\|recordTurn"` is **empty** — it runs through
+  the root-level `App\Services\Voice\*` stack (fifteen classes) that never touches module X-66. This is
+  the tick-212 built-but-unwired shape, and the tick-204/205 radius rule is what hides it: *"radius 1 is
+  forced when only one test can reach the code"* and *"nothing else calls it"* are the **same
+  measurement**. ⛔ **Half the cause was mine** — item 2 offered *build a writer* or *a writer already
+  exists*, where the tree's true state was *no site in this module could be a production writer*. Fourth
+  recurrence of the tick-192 rule (*write the third branch yourself*), and the cheap check is one grep of
+  the module's own routes and provider **before** the brief, not after.
+- ⚠️ **A false PRESENCE claim in a test comment is the mirror of wave 95's false absences and is graded
+  the same way.** `X66Test.php:107` reads *"The production path for receiving spoken words (coach) must
+  record the caller's turn"* over a `coach()` nothing in production reaches. `REPORT.md` is overwritten
+  every wave and the test file is permanent, so a reader six weeks out meets a working production path
+  that does not exist. **A comment asserting that a method IS on a live path is a claim, and the grep for
+  its callers is the price of it** — the same one `⛔ REFUSED:` and `BUILD PROPOSAL:` lines already owe.
+- ✅✅ **A wave that wrote NO report at all was fully gradeable, and the mutation script on disk is the
+  entire reason — fourth time the tick-214 house form has paid.** Run 103 was killed before item 0,
+  before its ledger and before `REPORT.md`. `scratch/run-mutations-w117.sh` carried every `sed -i`, every
+  revert and the order; all four sites are in the module file and **not one is in a test body**, which
+  closes the tick-185 hazard on an artifact rather than on the coder's word. The set is the tick-218
+  target shape and consecutive: green derives to **8369** (`w117-pest-raw.log` reads `8365` at `01:51:14`,
+  **thirty seconds before** `add_test.patch` at `01:51:44`, so it is the pre-test-edit tree, plus four new
+  assertions), and M1 `8366` · M2 `8367` · M3 · M4 are `−3 · −2 · −1 · −0`, one assertion each on its own
+  terms with every earlier one still executing, `failed 2` throughout (the standing lint plus the target)
+  ⇒ radius 1. ⭐ **M2 was PREDICTED at `8367` from M1's subtraction before its artifact existed**, and the
+  orphan then produced it exactly, with `-'caller' +'agent'` at A3 and a `duration_ms` distinct from M1's.
+  Predicting the next subtraction costs nothing and cannot be argued into by a report.
+  ⚠️ Its honest caveat: M2 reddens `assertEquals('caller', …)` against a `'caller'` literal eight lines
+  away in the code under test, so it proves the module echoes its own literal. **A falsifiable assertion
+  is not automatically a load-bearing one — ask where the expected value came from even after a clean
+  mutation.** (`CallTurnFactory:17` is `'caller'` and the migration default is `'agent'`, so the choice is
+  at least real; and `turn_index` starting at 1 matches that migration's own `->default(1)`, so this is
+  **not** the wave-100 invented-vocabulary shape.)
+- **Backlog at tick 225 — wave 118 is the claim, the proposal and pint; no production code.** RULED:
+  `6b5d4c54`'s write **stays in `coach()`** — transactional like `handleRing()`/`handleAnswer()`,
+  `'caller'` right for a transcript the caller spoke, the index matching the column default, four
+  mutations proving the assertions — and what is owed is the **claim**, not the code. Wave 118 is item 0
+  pint (the sole push blocker: §6 names `X66Test.php` for `fully_qualified_strict_types` +
+  `ordered_imports` off the inline `\App\Modules\X66\Models\CallTurn::` FQN at `:108`, confirmed on a
+  **clean** tree at tick 225 so it is the sha and not working-tree noise — **seventh** pint-red wave), the
+  comment corrected, a `BUILD PROPOSAL` naming the missing wire with both halves derived by the coder,
+  a disposition for A3, and a `state.py decided (R245)` row. ⛔ **Wave 117's four mutations are spent —
+  never re-brief them** (tick 191). Then wave 119 takes the live list,
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 225 (`C-Mail G11-09`, `C-Agent
+  G5-31 · G5-32 · G5-43`), membership unchanged since tick 221 — re-run and never inherited. Stub
+  arithmetic re-confirmed: `C-Agent 7 · C-Mail 1 · X-194 1 · X-66 1`.
 
 ## Style
 
