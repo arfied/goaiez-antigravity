@@ -74,4 +74,19 @@ class MrrScreenTest extends TestCase
         $screen->call('explain', 999999)
             ->assertSee("isn't in this account");
     }
+
+    public function test_the_mrr_empty_states_name_what_they_wait_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(Mrr::class)
+            ->assertOk()
+            ->assertSee('Nothing in this checkout writes a usage meter, so this list fills once the telephony, SMS and agent modules meter what they use.')
+            ->assertSee('Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.')
+            ->assertDontSee('The five meters fill');
+    }
 }
