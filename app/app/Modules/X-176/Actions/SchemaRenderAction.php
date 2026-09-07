@@ -156,7 +156,7 @@ final class SchemaRenderAction
             }
             if (! empty($validFaqs)) {
                 $currentType = $jsonLd['@type'];
-                $jsonLd['@type'] = is_string($currentType) ? [$currentType] : (array) $currentType;
+                $jsonLd['@type'] = (array) $currentType;
                 $jsonLd['@type'][] = 'FAQPage';
                 $jsonLd['mainEntity'] = $validFaqs;
             }
