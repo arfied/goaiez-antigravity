@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T01:54:31",
+ "updated": "2026-09-07T02:40:11",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2247,6 +2247,12 @@
    "module": "X-176",
    "chose": "G8-16 FAQPage schema is read from an faq block in content_blocks on the same seam as G16-25, not using NLP. --ruling R245",
    "at": "2026-09-07T01:54:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "the internal-link nav refuses a normalised slug held by more than one published page, excluding that key and its descendants, matching the breadcrumb's refusal of an ambiguous ancestry --ruling R245",
+   "at": "2026-09-07T02:40:11",
    "ruling": "R245"
   }
  ],
