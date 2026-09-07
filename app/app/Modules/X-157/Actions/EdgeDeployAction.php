@@ -182,8 +182,8 @@ final class EdgeDeployAction
                 }
             }
 
+            $breadcrumbs = [];
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
-                $breadcrumbs = [];
                 $page = Page::find($pageId);
                 if ($page && ! empty($page->slug) && ! empty($page->title)) {
                     $parts = explode('/', trim($page->slug, '/'));
