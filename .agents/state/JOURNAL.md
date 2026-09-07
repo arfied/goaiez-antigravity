@@ -832,3 +832,4 @@
 - `2026-09-07T01:45:47` (R245) C-Agent — — a price fact whose key has an empty slug matches no question, and a question matches a price fact on whole words only (ruling 20)
 - `2026-09-07T02:17:22` (R245) C-Agent — a price question is answered from the X-163 pricebook when a confirmed non-sample item matches, and only falls back to the facts table when it does not; an unconfirmed pricebook row is never a quote (ruling 20)
 - `2026-09-07T02:51:43` (R245) C-Agent — a callout question is answered from X-163's callout fee verbatim, and refuses NO_FACT when no fee is set (ruling 20)
+- `2026-09-07T03:27:54` (R245) C-Agent — — a pricebook row in SAMPLE state or left unconfirmed refuses to the customer and never falls back to the facts table (ruling 20)
