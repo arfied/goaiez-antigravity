@@ -20,6 +20,24 @@ final class TemplateEngine
         return 'Welcome! We see you use '.$techStack.'.';
     }
 
+    public function detectPlatform(string $rawPage): ?string
+    {
+        if (stripos($rawPage, 'cdn.shopify.com') !== false || stripos($rawPage, 'Shopify.theme') !== false) {
+            return 'Shopify';
+        }
+        if (stripos($rawPage, 'wp-content/plugins/woocommerce') !== false || stripos($rawPage, 'woocommerce') !== false) {
+            return 'WooCommerce';
+        }
+        if (stripos($rawPage, 'mage/') !== false || stripos($rawPage, 'Magento') !== false) {
+            return 'Magento';
+        }
+        if (stripos($rawPage, 'bigcommerce.com') !== false) {
+            return 'BigCommerce';
+        }
+
+        return null;
+    }
+
     public function excludeBoilerplate(string $rawPage): string
     {
         $content = preg_replace('/<nav\b[^>]*>.*?<\/nav>/is', '', $rawPage);

@@ -22,14 +22,15 @@ final class ContentExtractAction
         ?string $techStack = null
     ): ExtractedContent {
         $engine = new TemplateEngine;
+        $detectedStack = $engine->detectPlatform($serviceDescription);
         $excludedDescription = $engine->excludeBoilerplate($serviceDescription);
 
         $content = ExtractedContent::create([
             'business_id' => $businessId,
             'prospect_id' => $prospectId,
             'source_type' => $sourceType,
-            'service_description' => $excludedDescription, // Verbatim source (TEST ANCHOR)
-            'tech_stack' => $techStack,
+            'service_description' => $excludedDescription, // boilerplate-excluded body; verbatim from here down (TEST ANCHOR)
+            'tech_stack' => $techStack ?? $detectedStack,
         ]);
 
         Event::dispatch(new ContentExtracted($businessId, $prospectId, $sourceType));
