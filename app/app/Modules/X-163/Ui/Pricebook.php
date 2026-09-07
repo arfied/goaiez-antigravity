@@ -91,7 +91,7 @@ class Pricebook extends Component
 
         $businessId = Tenancy::id();
 
-        if (PriceBookItem::where('business_id', $businessId)->where('service_name', $this->newServiceName)->whereNull('location_book_id')->exists()) {
+        if (PriceBookItem::where('business_id', $businessId)->where('service_key', PriceBookItem::serviceKey($this->newServiceName))->whereNull('location_book_id')->exists()) {
             // (R245) addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError
             $this->addError('newServiceName', 'A business-wide price for this service already exists.');
 

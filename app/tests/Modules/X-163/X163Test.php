@@ -921,4 +921,96 @@ class X163Test extends TestCase
         $row = PriceBookItem::where('business_id', $biz->id)->whereNull('location_book_id')->first();
         $this->assertEquals('Oil Change', $row->service_name);
     }
+    public function test_lookup_matches_a_service_name_that_differs_in_case_and_whitespace(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Lookup Fold Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'oil change',
+            'price_cents' => 4500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, "  Oil   Change ");
+
+        $this->assertEquals('quoted', $res['status']);
+        $this->assertEquals(4500, $res['price_cents']);
+    }
+
+    public function test_add_item_refuses_a_duplicate_that_differs_only_in_case(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Add Dup Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'oil change',
+            'price_cents' => 4500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $countBefore = PriceBookItem::where('business_id', $biz->id)->count();
+
+        $owner = User::factory()->create(['role' => UserRole::Owner]);
+        $this->actingAs($owner);
+
+        Livewire::test(Pricebook::class)
+            ->set('newServiceName', 'Oil Change')
+            ->set('newPriceDollars', 45.00)
+            ->call('addItem')
+            ->assertHasErrors(['newServiceName' => 'A business-wide price for this service already exists.']);
+
+        $countAfter = PriceBookItem::where('business_id', $biz->id)->count();
+        $this->assertEquals($countBefore, $countAfter);
+    }
+
+    public function test_two_business_wide_rows_differing_only_in_case_still_refuse_when_they_disagree(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Disagree Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Oil Change',
+            'price_cents' => 5000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'oil change',
+            'price_cents' => 9000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'oil change');
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+    }
+
+    public function test_service_name_keeps_its_display_case_while_the_key_is_folded(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Keep Case Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $item = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Oil Change',
+            'price_cents' => 5000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $this->assertEquals('Oil Change', $item->service_name);
+        $this->assertEquals('oil change', $item->service_key);
+    }
 }

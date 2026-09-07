@@ -27,13 +27,13 @@ final class PricebookEngine
     ): array {
         if ($locationBookId !== null) {
             $item = PriceBookItem::where('business_id', $businessId)
-                ->where('service_name', $serviceName)
+                ->where('service_key', PriceBookItem::serviceKey($serviceName))
                 ->where('location_book_id', $locationBookId)
                 ->first();
         } else {
             // (R245) a price lookup with no location refuses when two business-wide rows disagree on the amount, and still quotes when they agree
             $items = PriceBookItem::where('business_id', $businessId)
-                ->where('service_name', $serviceName)
+                ->where('service_key', PriceBookItem::serviceKey($serviceName))
                 ->get();
 
             $businessWideItems = $items->where('location_book_id', null);
