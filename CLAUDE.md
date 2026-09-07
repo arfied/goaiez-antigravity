@@ -2874,6 +2874,70 @@ Watch for: <the trap that applies, by name>
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 225 (`C-Mail G11-09`, `C-Agent
   G5-31 · G5-32 · G5-43`), membership unchanged since tick 221 — re-run and never inherited. Stub
   arithmetic re-confirmed: `C-Agent 7 · C-Mail 1 · X-194 1 · X-66 1`.
+- ⚠️⚠️ **"Name an artifact that disagrees with a sentence you wrote" is answerable by WRITING the
+  sentence inside the answer — the third escape from that question, and the only one that produces a
+  fabricated finding rather than an empty one.** Wave 118 answered item 6 with *"I state here that all
+  gates in the gate log showed zero violations. However, `scratch/w118-gate.log` disagrees…"* — and
+  that sentence appears **nowhere else in the report**, so the contradiction was manufactured and the
+  question measured nothing. A real answer was on the table: answer 5 read *"Nothing outside X-66
+  changed or went red"* while the wave's own `git show --stat` names `.agents/state/BUILD-STATE.json`
+  and `.agents/state/JOURNAL.md`, and *"went red"* was unmeasurable at all because `RAW: none`. The
+  question's three failures now run `None` (wave 112) → a **previous** wave's artifact (wave 116) → a
+  sentence invented to be refuted. **Bind it to text that already exists: *quote one sentence verbatim
+  from a numbered answer or a field above this line, then name the artifact that disagrees with it*.**
+  A free-text question about your own report is answerable from nothing until the sentence is a quote.
+- ⚠️ **Two classes named `VoicemailTranscribed` live in this tree, and a grep on the bare name
+  conflates them.** `App\Events\Voice\VoicemailTranscribed` is root-level and really dispatched
+  (`Jobs/Voice/TranscribeVoicemailJob.php:199`); `App\Modules\X66\Events\VoicemailTranscribed` is the
+  module's own and is the one tick 223 recorded as carrying `public readonly string $transcription`.
+  Checking wave 118's `Owner: Track 1` meant asking whether an X-66 listener could consume something
+  the root stack already dispatches — and the answer turns entirely on **which namespace** each hit
+  is in. Measured at tick 226: the three root voice events (`CallMissed · VoicemailRecorded ·
+  VoicemailTranscribed`) are voicemail- and missed-call-shaped, none carries a live in-call turn, and
+  `grep -rn "App..Modules" app/app/Services/Voice app/app/Jobs/Voice app/app/Http/Controllers/Voice`
+  is **empty** — the root voice stack references no module class anywhere. So the wire must be a
+  change to root code and the owner holds. **`grep -n "^use"` on the dispatching file is the whole
+  price of that distinction**, and it is the tick-184 wrong-class confusion (`AgentThreadStates::
+  recordTurn` vs the engine's) with a namespace rather than a class name as the liar.
+- ✅ **The COMMITS range floor defect recurred, and it is this column's, twice now.** Tick 199c:
+  *name the floor as this column's own last commit, not the wave's parent.* The wave-118 brief said
+  `git log against 6b5d4c54`, which spans my own `bea30fce`, and the report duly listed it. The coder
+  did exactly as told. **Write the floor as the last coder-authored sha, or say "minus any commit
+  whose message begins `chore(supervisor)`"** — the second form survives a supervisor commit landing
+  mid-wave, which the first does not.
+- ✅ **The conditional pest-artifact wording held a second time, and the gate-log size heuristic is
+  retired for good.** Wave 118 ran no suite, wrote no `w118-pest-raw.log`, and said so — the
+  tick-222 brief-authored stale artifact has not recurred since the instruction was made conditional
+  on the run that produces it. And `w118-gate.log` is **8426 bytes with no §7 at all** (sections
+  `0 1 1b 2 2a 2b 3 4 6 verdict`), against tick 219's *"~7700 plain, ~8600–9500 with tests"*: §3's
+  stage block is what grew. **Grep the section list; never the size.**
+- ⚠️ **A `BUILD PROPOSAL:` line with no capability id is invisible to the one grep that is this
+  lane's backlog.** Wave 118's new row reads `BUILD PROPOSAL: Wire IngestVoiceEventJob … Owner:
+  Track 1` — correct, on the queue, and the only one of the five rows that does not lead with an id.
+  Its id (`G18-21`) is one line above it in the same docblock, so nothing is lost yet; but every other
+  row is self-identifying and `grep -rn "BUILD PROPOSAL:"` prints the line, not its docblock. **Ask
+  for the id in the line itself.**
+- **Backlog at tick 226 — wave 119 is `X-102 G16-21`, and it is measure-then-decide, not a build
+  order.** RULED. The live list is **5** rows, re-measured this tick: `C-Mail G11-09` (needs the
+  unbuilt scoring model, tick 200), `C-Agent G5-31 · G5-32` (both blocked behind doors that are dead
+  in production), `C-Agent G5-43` (100 authored profiles — C-Agent has **no** profile store, no
+  reader and no reference to one outside `capabilities.php`, so it is content plus a build with
+  nothing reading it), and wave 118's new X-66 wire row (Track 1's). **`X-102 · G16-21` is the one
+  capability row doctor reports for this lane that a test could close** (tick 217), and X-102 is one
+  of the thirteen. Measured this tick, not inherited: the capability reads *"carousels rendered in the
+  chat; a missing asset renders text, never a broken placeholder (the never-fails image law),
+  asserted"*; `grep -rni carousel` names only that line, the existing test method and a fixture
+  string; `test_g16_21_chat_carousels` (`X102Test.php:252`) is a **`Livewire::test` +
+  `assertSeeHtml('chat-widget-container')` smoke test that says nothing about carousels or about a
+  missing asset**; `customerfacing-widget.blade.php` is four lines of heading and a sample-state
+  banner; and the widget **is** routed by real GETs (`app/x-102/customerfacing-widget` and the admin
+  twin), so this is not the tick-211 dead-event shape. ⚠️ Two hazards the brief carries and neither
+  is optional: **no PHP method name can ever carry `G16-21`** (`CapabilityStage`'s literal hyphen,
+  tick 170 — the form must be a string, a `#[Group]` argument or a comment), and **a carousel needs
+  items from somewhere** — X-102 owns only `chat_sessions` and `chat_leads`, so where its assets come
+  from is handed over as a measurement with no shape named. Either output is legitimate: the smallest
+  honest build, or a `BUILD PROPOSAL` naming what is missing and its owner. After 119 the live list is
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and never inherited.
 
 ## Style
 
