@@ -91,6 +91,13 @@ class Pricebook extends Component
 
         $businessId = Tenancy::id();
 
+        if (PriceBookItem::where('business_id', $businessId)->where('service_name', $this->newServiceName)->whereNull('location_book_id')->exists()) {
+            // (R245) addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError
+            $this->addError('newServiceName', 'A business-wide price for this service already exists.');
+
+            return;
+        }
+
         $min = $this->newMinPriceDollars ? (int) round((float) $this->newMinPriceDollars * 100) : null;
         $max = $this->newMaxPriceDollars ? (int) round((float) $this->newMaxPriceDollars * 100) : null;
 
