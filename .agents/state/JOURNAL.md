@@ -1227,3 +1227,5 @@ None of the 15 modules showed a SCAFFOLD-DEFECT.
 - `2026-09-07T04:38:03` note: This supersedes the 2026-09-07T04:09:25 correction antecedent date only. The grade being corrected is at 2026-09-07T02:51:20. The mail.delivered finding itself stands unchanged.
 - `2026-09-07T04:38:06` note: This supersedes the 2026-09-07T04:09:25 correction antecedent date only. The grade being corrected is at 2026-09-07T02:51:20. The mail.delivered finding itself (X-223 has no tree-side evidence, ungraded) stands unchanged.
 - `2026-09-07T04:39:38` note: 369 distinct defects are spread across 70 modules (57 carry none). The top 10 carry 174 of 369. The 242 is mostly a directory with real tests that simply never cite an id.
+- `2026-09-07T05:09:31` note: Deferred share is 79 of 369 distinct defects. Reachable remainder is 290. Capability cannot reach 0.
+- `2026-09-07T05:09:38` note: Per-class split: specced deferred 77 non-deferred 202, no tracker row deferred 27 non-deferred 66, no refusal deferred 7 non-deferred 70.
