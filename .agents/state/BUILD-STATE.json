@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T21:52:23",
+ "updated": "2026-09-06T22:24:35",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1598,6 +1598,10 @@
   {
    "at": "2026-09-06T20:25:15",
    "note": "the paid top-up is App\\Services\\Billing\\CreditTopUps, scheduled as credits:run-auto-top-ups, and wiring this button to it charges a real card \u2014 reserved to the owner and to Track 1, whose Domain/ returns the 'charged' key this lane cannot change."
+  },
+  {
+   "at": "2026-09-06T22:24:35",
+   "note": "X-198 UNRESOLVED - no charge is routed to a tenant merchant account: StripeGatewayClient::charge() posts with the platform secret and X-198 contains no Stripe-Account, stripe_account or on_behalf_of; sub-merchant routing waits on the processor contract and Stripe Connect onboarding, which needs the owner's credentials."
   }
  ],
  "decisions": [
@@ -2031,6 +2035,12 @@
    "module": "C-Billing",
    "chose": "R245: a refusal an owner reads is written in the owner's words and names what it waits on \u2014 never the schema's status vocabulary, never a checker token like REFUSAL:, and never an instruction to retry a door that cannot succeed.",
    "at": "2026-09-06T21:52:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "R245: a screen never tells an owner where their money lands unless the code routes it there - charges in this checkout are taken on the platform account, a recorded merchant account is named as recorded and nothing more, and an error heading names the act that failed rather than the screen it failed on.",
+   "at": "2026-09-06T22:24:35",
    "ruling": "R245"
   }
  ]
