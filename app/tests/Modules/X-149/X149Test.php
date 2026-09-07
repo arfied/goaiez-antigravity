@@ -7,6 +7,7 @@ namespace Tests\Modules\X149;
 use App\Modules\X149\Actions\EvalGateAction;
 use App\Modules\X149\Actions\EvalRunAction;
 use App\Modules\X149\Actions\TrackQualitySeriesAction;
+use App\Modules\X149\Domain\EvalEngine;
 use App\Modules\X149\Events\PromptChanged;
 use App\Modules\X149\Models\EvalRun;
 use App\Modules\X149\Models\EvalSet;
@@ -99,7 +100,16 @@ class X149Test extends TestCase
      */
     public function test_g5_03_persona_test(): void
     {
+        $engine = new EvalEngine;
+
+        // Valid: test
+        $engine->enforcePersonaSplitIsTest('test');
         $this->assertTrue(true);
+
+        // Invalid: permit_change
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Persona split must be a test, never a permit change');
+        $engine->enforcePersonaSplitIsTest('permit_change');
     }
 
     /**

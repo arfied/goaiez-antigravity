@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T12:43:57",
+ "updated": "2026-09-07T13:13:40",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5084,6 +5084,12 @@
    "module": "X-82",
    "chose": "RULING BJ: a query deciding if an id has another carrier must grep the bare id, not a bracketed or @group pattern, and classify a hit as a carrier only if its enclosing method holds a real assertion.",
    "at": "2026-09-07T12:43:57",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-194",
+   "chose": "RULING BK: A carrier must lie outside the docblock of every stub that names the id, and a REFUSED, BUILD PROPOSAL, or UNRESOLVED line is never a carrier in any location.",
+   "at": "2026-09-07T13:13:40",
    "ruling": "R245"
   }
  ],
