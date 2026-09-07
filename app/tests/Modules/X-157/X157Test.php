@@ -1527,7 +1527,7 @@ class X157Test extends TestCase
         $this->assertFalse($announced, 'DeployCompleted fired for a site published without its SEO half');
         $this->assertSame(1, Deployment::where('business_id', $biz->id)->count());
         $this->assertSame(
-            ["sites/{$good['deploy_hash']}.html"],
+            ["sites/{$good['deploy_hash']}.html", "sites/{$good['deploy_hash']}.llms.txt"],
             Storage::disk('local')->files('sites'),
             'a second artifact was written for a deploy carrying four of the seven elements'
         );
