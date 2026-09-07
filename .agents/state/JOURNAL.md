@@ -823,3 +823,4 @@
 - `2026-09-06T22:37:03` (R245) X-163 — a wave reports the gate's test line only after the gate has printed its verdict, and a killed or zero-byte pest is reported verbatim as UNRESOLVED rather than as a computed count
 - `2026-09-06T22:47:47` (R245) X-163 — a service name is matched on a folded service_key written by the model on save, while service_name keeps its display case, so the pricebook reader and the duplicate guard agree by construction
 - `2026-09-06T23:07:49` (R245) X-163 — The gap writer firstOrCreate match key becomes ['business_id', 'service_key', 'location_book_id'] and service_name moves to the create attributes. This prevents two refusals differing only in case from creating two business-wide gap rows under one service_key.
+- `2026-09-06T23:26:10` (R245) X-163 — Sort the daily pricing digest by highest refusal count first, using the most recent refusal time only to break ties.
