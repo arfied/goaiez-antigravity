@@ -23,7 +23,7 @@ class X180Test extends TestCase
 
         $this->assertTrue($engine->ensureAdPacksNotFenced(['fenced' => false]));
         $this->assertTrue($engine->ensureAdPacksNotFenced(['type' => 'ad_pack']));
-        
+
         $this->assertFalse($engine->ensureAdPacksNotFenced(['fenced' => true]));
 
         $this->assertTrue($engine->verifyClaim('claim text', 'Valid Source'));
