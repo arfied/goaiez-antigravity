@@ -1254,3 +1254,6 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T09:13:56` note: A per-id tracker row closes a citation violation as well as a capability one, because the tracker is in CitationStage's corpus and a capabilities.php declaration line is a message.
 - `2026-09-07T09:14:02` note: 15 rows written, capability 449 -> 386, citation 93 -> 30
 - `2026-09-07T09:14:09` note: Commit 713e8c6421b100646571a6e5a2b0bb8e7f4eb617's subject says the range rows were expanded and its two files are the ledger only; 0 rows were written in S-162.
+- `2026-09-07T09:54:27` note: 15 rows written, capability 386 → 356, citation 30 → 0
+- `2026-09-07T09:54:27` note: the journey count moved to 5 because the S-163 gate's own suite wrote nine files into app/storage/app/evidence/journeys/, and that no tracker row caused it.
+- `2026-09-07T09:54:27` note: cancel_is_one_tap_with_nothing_in_between and a_completed_job_asks_for_a_review_once_inside_the_cadence stopped erroring because a platform credential became configured outside this lane's diff, and it is unverified.
