@@ -7539,3 +7539,120 @@ and this lane had never exercised it, because no prior tick had edited `CLAUDE.m
 ✅ The coder read it correctly and left the file alone, committing two `.agents/state/` paths.
 ⚠️ Read §2 by its **`⛔` lines**, not by its line count — recorded so a future tick meeting an `ℹ` line
 for the first time does not read it as tick 207's second path.
+
+## ⛔ TWO Track 1 merges of `track/site` have delivered ZERO of this lane's state records — and the deletion trigger's own number is what nearly hid it (tick 264)
+
+`origin/main` moved `1d893f0e → 3b157077`, carrying `8727aff4` — *"merge: track/site — X-176 Internal
+Links"*, the second Track 1 merge of this lane. Tick 181's shared-state trigger fired at a size this
+ledger has never seen:
+
+```
+git diff --shortstat 6bb7a7e6 origin/main -- .agents/state/BUILD-STATE.json
+    1 file changed, 27 insertions(+), 912 deletions(-)
+```
+
+912 deletions is orders of magnitude outside the `1 + 2n` shape tick 188 already falsified, and read as
+a count it says *main has gutted the shared state*. It has not. The measurement that decides it is tick
+173's, and it is an **owned-id count against the branch's own bound**, never a diff against HEAD:
+
+| ref | `"X-157|X-110|X-102|X-155|X-137|X-176|X-103"` occurrences |
+| :-- | --: |
+| `HEAD` (`2ee971ec`) · merge parent `6bb7a7e6` | **151** |
+| `origin/main` `3b157077` — after the second merge | **14** |
+| `origin/main` `1c3f9b4e` — the FIRST merge of this lane | **14** |
+| `origin/main` `12447593` — before either merge | **14** |
+
+⛔ **Flat at 14 across three main tips and two merges of this lane.** Nothing was deleted; nothing was
+ever delivered. `.agents/state/**` is on the charter's never-merge per-track list and `.gitattributes`
+gives it `merge=ours`, so from main's seat "ours" is main and a merge of this lane resolves the file to
+main's copy in silence — no driver conflict, no line in the merge output. That is the arrangement
+working exactly as ruling 15 describes, and ruling 15 names the other half of it: **this lane's state
+records reach `main` by CHERRY-PICK, a separate mechanism from the merge.** The cherry-pick has never
+run. 137 occurrences — every supersession note this lane has spent ticks getting right, every filing's
+corrected `why`, the R245 decisions — exist on `track/site` alone.
+
+⚠️ **Why it matters rather than being bookkeeping:** `main`'s doctor reports this lane's `capability`,
+`contract` and `anchor` red with **no filed reason behind any of it**, because the reasons are the
+records that did not travel. A reader on `main` sees seven anchor violations and seven capability
+violations and nothing saying they are a vendor credential, a sealed-stage defect or another lane's
+construction site. Filed as a TRACK 1 ACTION with the count and the three tips.
+
+⛔ **The reading rule this adds, and it is the third form of tick 181's trigger** (181: read the diff on
+any deletion · 183: the benign DONE→UNRESOLVED signature · 188: the count is ambiguous between opposite
+edits): **a deletion count large enough to look catastrophic is the case most likely to be a WHOLE-FILE
+substitution rather than an edit**, and a substitution's diff is the two versions' difference, not
+anybody's act. Reach for the per-id count against the branch's own bound before reading a single hunk —
+one command, and it separates *lost* from *never sent* in a way no reading of the diff can.
+
+## ✅ The three GREPPABLE false-credit shapes are clean across all seven owned test directories (tick 264)
+
+The lane's violation surface is empty and its filings are audited on four axes, so tick 264 turned the
+seven-shape catalogue on **this lane's own tests**, as tick 260 said it must. Shapes 1, 3 and 4 reduce
+to one grep over the seven owned `app/tests/Modules/` directories:
+
+```
+grep -rn "assertTrue(true)\|assertArrayHasKey('G\|assertArrayHasKey(\"G\|is_dir(app_path" <the seven>
+    app/tests/Modules/X-176/X176Test.php:117:  $this->assertTrue(is_dir(app_path('Modules/X-108')));
+```
+
+**One hit in 76 id occurrences across 58 distinct ids.** And it is not a false credit: its method's
+docblock is `/** (R245) */` with **no id**, its body carries no `G##-##` literal, and its real
+assertions (`assertSame('published')`, `assertArrayNotHasKey('event', …)`) are honest — the second one
+load-bearing since SITE-113, because `SchemaRenderAction` *can* now write `event` and correctly does not
+when no appointment exists. So the `is_dir` line is tick 214's fourth shape as pure **noise**: deleting
+it can move no count, which is what makes the deletion's stop condition exact.
+
+⚠️ It arrived from **stages** via `7577a8b7` → main → tick 226. Tick 211's *"no site wave touches
+`X176Test.php`"* retired correctly when main merged that rewrite (tick 226), because it was recorded
+with its reason — do not deepen an unmerged conflict — and the reason expired.
+
+⛔ **Shapes 2, 5, 6 and 7 are NOT greppable and this grep says nothing about them.** 58 of the 76
+occurrences sit on comment lines, which is the lane's own sanctioned carrier (tick 207/208) and not by
+itself a defect; whether each docblock's method discharges its clause is a per-id reading. **Recording
+the clean grep as "the lane is clean" would be the exact substitution this ledger catches everywhere
+else — a query's scope is not its claim.**
+
+## ⛔ The FIFTH audit axis is the CREDIT, and it is the only axis that can find a BUILD item (tick 264)
+
+Four axes are closed: by module (231), by shared `why` twice (261, 262), by capability id (263). All
+four audit the **filings** — the record of what is *not* done. The fifth audits the **credits** — the
+record of what is claimed done — and it is the one that can return work rather than paperwork, because
+tick 231's per-module filing audit found seven build items in disguise by asking the converse question.
+
+The question, sharpened from tick 240's ④ finding (*an id that is CREDITED is not an id that is
+DISCHARGED*) into something falsifiable per id: **does any assertion crediting this id read the STORED
+ARTIFACT, or only the action's return array?** Measured this tick on two of X-176's twelve as a worked
+example rather than asserted — `test_g12_03_capabilities` (vertical → `HVACBusiness`/`LocalBusiness`,
+both directions) and `test_g16_25_capabilities` (video positive plus a `SCHEMA_INVALID` refusal) are
+honest and complete assertions **on `$res['json_ld']`**, the action's return value. The plan's clause at
+`GOAIEZ-MASTER-PLAN.md:32271` is *"every schema field is asserted present in the rendered DOM"*, and the
+DOM is the artifact `EdgeDeployAction` stores and `GET /sites/{business}/{deploy_hash}` serves.
+
+So the audit's three verdicts are DISCHARGED-ON-ARTIFACT · DISCHARGED-ON-RETURN-VALUE-ONLY · NOT
+DISCHARGED, and the middle one is a **real, buildable gap that no count, census or gate can report** —
+the same invisibility class as tick 240's four unshown schema claims, which took a reading of the
+served document to find and which this lane then built.
+
+⛔ **SITE-139 writes NOTHING** — no `state.py`, no new assertion, no re-credit. `state.py` has no
+withdraw and a `why` or a note written against a *predicted* verdict is unrepairable (tick 210, 225);
+and a wave that measures and builds in one breath makes any new red unattributable between the two
+(tick 215). Two consecutive measure-only waves is a deliberate choice and is recorded as one: tick 263's
+item 3 produced the finding that closed the fourth axis, and this is the fifth.
+
+⚠️ **The one edit it carries is the `is_dir` deletion above, and the two are separable by construction**
+— the audit writes nothing, so any count that moves was moved by the deletion, and the deletion's own
+stop is that the X-176 id census must be byte-identical either side of it.
+
+## ⚠️ The rc-143 gate death is now FIVE deaths across FOUR lanes, Track 1 included (tick 264)
+
+`gate-runs.tsv` row **2843**: `grs-antig` gate `1357643`, `07:02:11 → 07:09:26`, **rc 143**, seven
+minutes in, no `pest` row. Ticks 257/258 measured four deaths in three lanes and retired the reading in
+which this checkout was singled out; Track 1's own gate dying the same way retires any reading in which
+it is a *lane's* defect at all. ⛔ It is still a **hypothesis** — the terminator is not measured and is
+not in `kill-log.tsv`, whose last entry remains `2026-09-07T03:49:48`.
+
+✅ Tick 258's decidable rule fired again and tick 259's column rule was again load-bearing: rows 2846–48
+carry this tick's gate `1398692` with `gate-start`, `pint` and `phpstan` and **no terminal row**, and
+`readlink /proc/1398692/cwd` → `…/grs-antig-site/app`. Four `grs-antig` and two `grs-antig-ui` rows sit
+in the same 40-line window; **filter the tail by the pid `gate-start` handed you, never by the checkout
+column.**
