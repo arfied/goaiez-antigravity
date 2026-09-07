@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T07:44:35",
+ "updated": "2026-09-07T08:11:14",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1538,6 +1538,12 @@
    "module": "X-124",
    "chose": "a check that reads the first match of a repeating pattern has measured one element and not the sequence, so a heading contract is judged over every heading a view emits and not the first one; and a pin whose value moves is committed at the value it is observed to have before the fix that moves it",
    "at": "2026-09-07T07:44:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a check that flattens a branching document into one linear sequence has measured a document that is never rendered, so the check states that limit in its own failure message and the size of the population it could be wrong about is pinned as an upper bound rather than left unstated. --ruling R245",
+   "at": "2026-09-07T08:11:14",
    "ruling": "R245"
   }
  ],
