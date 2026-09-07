@@ -271,6 +271,14 @@ final class EdgeDeployAction
                 }
             }
 
+            if (! empty($breadcrumbs)) {
+                $html .= "<nav id=\"breadcrumb-x176\">\n";
+                foreach ($breadcrumbs as $crumb) {
+                    $html .= '  <a href="/'.e($crumb['slug']).'">'.e($crumb['name'])."</a>\n";
+                }
+                $html .= "</nav>\n";
+            }
+
             if (! empty($productOffers)) {
                 $html .= "<div id=\"offers-x176\">\n";
                 foreach ($productOffers as $offer) {
