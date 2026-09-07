@@ -7656,3 +7656,196 @@ carry this tick's gate `1398692` with `gate-start`, `pint` and `phpstan` and **n
 `readlink /proc/1398692/cwd` → `…/grs-antig-site/app`. Four `grs-antig` and two `grs-antig-ui` rows sit
 in the same 40-line window; **filter the tail by the pid `gate-start` handed you, never by the checkout
 column.**
+
+## ⛔ An enumerated VERDICT SET is a claim about the world's cardinality — and an incomplete one is a SILENT coercion (tick 265)
+
+SITE-139 audited all twelve of X-176's credited capability ids against one question — *does any
+crediting assertion read the **stored artifact**, or only the Action's **return array**?* — and my brief
+offered exactly three verdicts: `DISCHARGED-ON-ARTIFACT`, `DISCHARGED-ON-RETURN-VALUE-ONLY`,
+`NOT-DISCHARGED`. The wave answered correctly within the three and the audit is accurate: I re-read all
+twelve deciding assertions at source and every verdict held. **The world has four.**
+
+`DISCHARGED-ON-RETURN-VALUE-ONLY` is defined over an id's **covered methods**, and for two of the three
+ids it returned, the clause **is** discharged on the artifact — by an assertion carrying a different id,
+or no id at all. Measured at tick 265:
+
+- **G8-32** — `X176Test.php:233-248`, inside `test_g7_48_capabilities`. A valid deploy's stored artifact
+  contains `application/ld+json`; a deploy with `businessName: ''` drives `SchemaRenderAction` to
+  `refused`/`SCHEMA_INVALID`, so `EdgeDeployAction:277`'s `isset($schemaResult['json_ld'])` is false,
+  `:278` never runs, and the served artifact
+  `assertStringNotContainsString('application/ld+json', $htmlRefused)`. **Both directions, on the served
+  output.** Credited to **G7-48**.
+- **G16-25** — `SchemaVisibilityTest.php:121`, `test_video_corresponds`. Reads the artifact, parses the
+  JSON-LD out of it, extracts the visible `#videos-x176` block, and asserts
+  `assertEquals($schemaVideos, $visibleVideos)`. Carries **no `G16-25` literal**, so under
+  `CapabilityStage:281-287`'s `\b(G\d+-\d+|N-\d+)\b` scan it credits nothing.
+
+So the missing verdict is **`DISCHARGED-ON-ARTIFACT-BY-AN-UNCREDITED-TEST`**, and it is not a nicety: it
+separates *this lane owes an assertion* from *this lane's credit points at the wrong method*. The first
+is a wave; the second is bookkeeping with no defect behind it. A tick reading the table literally would
+have briefed three artifact legs where **one** is owed.
+
+⛔ **The defect is the BRIEF's and it is the thirteenth of its family** (208 the evidence request, 227
+the branch condition, 235 an unread mechanism, 236 a presumed direction, 237 an existence question about
+an output, 238 a filing sentence, 244 a consequence inside a measurement, 245 a falsifier's polarity,
+247 an output without its command, 249 a pass condition of "identical", 250 a ruling's reasoning, 254
+two selectors for one subject, 262 a one-directional stop). The family trait holds exactly — **a vague
+brief fails loudly; a precisely wrong one is obeyed** — but the surface is new: every prior instance was
+imprecision in a *question*, an *instruction* or a *ground value*, and this is imprecision in the
+**answer set**, which briefs treat as the safe part. It is the least detectable of the thirteen, because
+the wave must pick one of the offered labels and **nothing in its output can say the right label was
+missing.** A wrong ground value gets contradicted by a measurement; a missing verdict gets rounded to
+the nearest one that fits.
+
+✅ **RULED (tick 265): an enumerated verdict set carries the same both-directions stop as an enumerated
+ground value (tick 262) — every brief offering a fixed set of verdicts adds `OTHER — name it and say
+why none of the above fits` as the last option**, and says so again in KICKOFF. Per the standing rule a
+defect this seat's brief caused is a new item with its own two dispatches; SITE-139 spent none.
+
+Thirty-ninth statement of this section's law, and the first turned on an **answer set** rather than a
+query: 163/178/180/183/185/187 the *pathspec*, 190 the *strip*, 191 *bounds moving*, 192/193 *unrecorded
+bounds*, 194 *configuration*, 196 *width*, 207 *expected output*, 208 the *evidence request*, 209
+*resolution context*, 210 the fault's *scope in time*, 215 the *cache key's identity*, 219 *provenance*,
+220 the key's *update mechanism*, 224 the *denominator's members*, 228 *evaluation time*, 247 a query
+that *did not run*, 253 *which tree a section measured*, 257 a query *never issued*, 259 *which column
+identifies the row*, 261/263 the *partition key*. This concerns **the range the answer is drawn from** —
+the one input that constrains a correct measurement without appearing anywhere in it.
+
+## ✅ Exactly ONE genuine artifact gap of twelve, and the audit closed the fifth axis (tick 265)
+
+Tick 264 opened the credit axis as the only one of five that could return **work** rather than
+paperwork. It returned one item. Measured: `grep -rn 'HVACBusiness'` over the whole test tree returns
+**one** hit, `X176Test.php:178`, on `$res['json_ld']['@type']`, and **no artifact assertion in this lane
+reaches the top-level `@type` at all** — every `"@type":"…"` assertion made over `$html` is a *nested*
+node: `PostalAddress` (`LocalSchemaTest:89,119`), `GeoCoordinates` (`:197`), `BreadcrumbList`
+(`BreadcrumbSchemaTest:51`), `Event` (`EventSchemaTest:51,83`), `OfferCatalog`/`Offer`
+(`ProductSchemaTest:58,62`), `VideoObject` (`X157Test:1828`). The one field that is X-176's own subject
+stops at the return value, against `GOAIEZ-MASTER-PLAN.md:32271`'s *"every schema field is asserted
+present in the rendered DOM."*
+
+**RULED: SITE-140 builds G12-03's artifact leg and nothing else**, ⛔ **inside the already-credited
+`test_g12_03_capabilities`, never as a new test method** — because this tick's own finding is that
+G16-25's clause is discharged by a test carrying no id, so the credit and the discharge sit in two files
+and neither reader can see the other. Keeping the leg inside the credited method keeps them together,
+needs no new `G##-##` literal, and leaves the id census byte-identical, which is the wave's stop. ⛔
+**Nothing for G8-32 or G16-25** — per tick 224 record which no-wave verdict fires: **already done
+here**, not *cannot work here*.
+
+⚠️ Two hazards named in the brief with the instruction that would refute each (tick 244): the top-level
+`@type` can be an **array** (`['Plumber','FAQPage']` when an `faq` block exists — tick 252), so the
+assertion goes on the **parsed** JSON-LD and never on a raw `$html` substring; and **the vertical may
+not reach the deploy path at all** — `EdgeDeployAction:263`/`:278` say it should, but that is a reading
+of two lines and the wave measures it first. If the served artifact carries `LocalBusiness` for an
+`hvac` business the gap is in the **action**, the wave stops, and it edits neither the action nor a test
+to match.
+
+## ⛔ The gate tail has a FOURTH state, and it is byte-identical to the first (tick 265)
+
+Tick 258 gave `gate-runs.tsv` three readings — `gate-start` with no terminal row = ALIVE; `gate-signal`
+rc ≥128 = killed; `gate-end` = completed — and framed the `readlink` on the `gate-start` pid as
+answering *sooner* than the tail. It does more than that. Measured at tick 265: wave 139's own gate is
+row **2884**, `grs-antig-site`, `gate-start 07:26:33`, tool_pid **1485112**, with `pint` and `phpstan`
+rows and **no terminal row of any kind** — and `readlink /proc/1485112/cwd` → **exit 1, gone.**
+
+| tail state | pid | verdict |
+| :-- | :-- | :-- |
+| `gate-start`, no terminal row | **alive** | ALIVE — queued behind the box-wide lock |
+| `gate-start`, no terminal row | **gone** | ⛔ **DIED WITHOUT ITS TRAP** — no `gate-signal`, no row at all |
+| `gate-signal` rc ≥128 | — | killed, trap fired (ticks 257/258: five deaths, four lanes, Track 1 among them) |
+| `gate-end` rc 0/1 | — | completed |
+
+⛔ **The first two rows are indistinguishable in the TSV**, so the `readlink` is not an optimisation over
+reading the tail — **it is the only thing that can separate two of the four states**, because one of them
+writes nothing. This is also the measured, non-invented explanation for wave 139's missing §7: the gate
+was the run's last act, it queued, and the run ended and took it before the signal trap could fire —
+tick 257's teardown hypothesis in its **no-row** form, which is why `kill-log.tsv` still ends at
+`2026-09-07T03:49:48`.
+
+⚠️ **The practical consequence: a wave's own gate can never be relied on for §7.** The wave ends while
+the gate is still queued, and the queue on this box is routinely longer than the wait a run tolerates.
+**This seat's gate is the lane's §7** — wave 139 is the fourth consecutive wave for which that held.
+⛔ And tick 259's column rule earned itself a fifth time: rows **2884** and **2903** are both
+`grs-antig-site` gates four minutes apart and the older one is dead. Filtering the tail by the checkout
+column reads the coder's death as your own.
+
+## ⚠️ A WAIT PREDICATE is a subject-by-description, and it can be satisfied by another section of the same file (tick 265)
+
+Waiting on the gate I backgrounded `until grep -q 'tests ' .agents/supervisor/.gate265.txt; do sleep 20;
+done`, meaning to fire when §7's `tests 1969 · passed 1964` line appeared. It returned **immediately** —
+§3's UNRESOLVED list contains the column-aligned row `tests       X-193 — column quiet_hours_start is
+missing…`, and the predicate matched that.
+
+⛔ That is tick 246's **sixth false-credit shape** — *a subject identified by a PROPERTY can have that
+subject substituted* — on a **wait predicate** rather than a test, which is the cheapest demonstration
+that the shape is not about tests at all: any query that locates its subject by description is
+satisfiable by something else, and nothing in its output says which. ✅ The corrected wait is on the
+**gate pid** (`while readlink /proc/<pid>/cwd; do sleep 20; done`), which *names* its subject instead of
+describing it and cannot match a second thing — the same remedy tick 247 reached for on the test side
+(assert the description matches exactly one thing), taken one step further by removing the description.
+
+⚠️ Note the asymmetry that made it harmless: a false-positive **wait** returns early and is caught by the
+very next read of the file, whereas a false-positive **credit** or a false **census silence** is never
+re-read at all. It was safe only because the next thing I did was look.
+
+## ✅ Convergent derivation of tick 260's seventh false-credit shape, from the lane that wrote it (tick 265)
+
+`JOURNAL.md`, `2026-09-07T05:39:30`, sixty's own note: *"The G16-21 id in the X102Test docblock falsely
+satisfies the capability checker because testedIds scans file contents for the ID string without
+verifying if it is asserted in code."* That is this lane's tick-260 finding — prose bearing a bare
+`G##-##` under `tests/Modules/{id}` is a credit whatever the prose says — derived independently, by the
+author of the docblock, thirteen minutes before this lane's own supersession note went in. Tick 224
+recorded convergent derivation as the strongest confirmation this arrangement can produce; noting it
+when it happens is the whole of the practice. ⛔ It changes nothing operationally: half 1's sixty/X-102
+partition (now **4**, `706e889d` `03bdced6` `06708c6a` `fa21480b`, all `X102Test.php`) stays **advisory
+to Track 1** and ⛔ never a parallel fix — the file is sixty's, and two lanes editing one docblock hands
+Track 1 a conflict over a comment.
+
+## ⛔ A tick that DEFERS its block until a pending number never appends it — and the cause is measurable, not carelessness (tick 266)
+
+Tick 234 ruled *the REVIEWS block is the tick's product; the brief is its by-product*, and tick 242
+ruled *a tick blocked on an external resource appends its block with the blocked section named
+unmeasured; it never carries the block.* Tick 266 opened on the state both rules exist to prevent, for
+the **third** time (233, 241, 265), and the first where nothing else recorded the verdict:
+
+```
+REVIEWS.md  07:24:16   last block = TICK 264, which DISPATCHED SITE-139
+REPORT.md   07:27:54   SITE-139 closed
+BRIEF.md    07:38      SITE-140, complete, 281 lines — and NO block behind it
+```
+
+A tick reviewed the wave, wrote ~150 lines of findings into `CLAUDE.md`, wrote a full brief — and
+appended nothing and dispatched nothing. **The cause is in `gate-runs.tsv` and it is that tick's own
+finding one layer up:** its gate is row 2903 (`grs-antig-site`, pid `1504573`, `gate-start 07:30:35`)
+and row 2920 is `gate-signal 07:42:14 rc 143` — killed at 11 m 39 s while still queued on the box-wide
+lock. The block was not forgotten; it was **deferred until a number that never arrived**, and the tick
+ended first. `3387c407` then sat on the branch ungated and unpushed for half an hour.
+
+⛔ **The enforcement, stated so it cannot be deferred: the block is appended BEFORE the brief is
+written, with `§7 — did not run` in it if that is the truth.** A block naming an unmeasured section is a
+gated wave with a stated gap; a block never written is an ungated commit, which is the one thing the
+mailbox exists to prevent. ⚠️ And the converse held the same tick — the gate landed *while the block was
+still in the temp file*, so the hedge never had to stand and the correction was appended in sequence
+(231 + 242 composed, fourth favourable firing after 231, 245, 250).
+
+## ⛔ A wave's own gate can NEVER be relied on for §7 — this seat's gate is the lane's §7 (tick 266)
+
+Tick 265 catalogued the gate log's fourth state (`gate-start` with no terminal row **and** a dead pid —
+died without its trap, byte-identical in the TSV to a live queued gate). Tick 266 states its operative
+consequence, now true for **five consecutive waves**: a wave runs its gate as its last act, the gate
+queues behind five-to-seven sibling suites, and **the run ends while the gate is still queued**, taking
+it with it. SITE-139's §7 was therefore not merely missing but *unborrowable* — tick 255's substitution
+needs a borrowed section that names its sha, and a section that never ran names nothing.
+
+✅ So the supervisor's gate is not a cross-check on the coder's; it is **the lane's only §7**, and tick
+257's procedure is what pays for it — start the gate as the tick's FIRST act, do every other measurement
+while it waits, read §7 LAST. Tick 266 spent ~20 minutes on the census, the source verification, a live
+doctor and the whole verdict block, and was paid an independent §7 for it. **The variable that decides a
+§7 on this box is whether the TICK outlives the WAIT**, and that is a choice the tick makes.
+
+⚠️ **Tick 259's column rule earned itself a SIXTH time, and this time on a kill.** Rows 2903 and 2928 are
+both `grs-antig-site` gates twenty minutes apart and **the older one is the dead one**. Filtering the
+tail by the `checkout` column would have read tick 265's `gate-signal 143` as this tick's gate,
+concluded it was dead, and borrowed a §7 under tick 255 — while a live gate was queued and eight minutes
+from landing. **Filter by the pid `gate-start` handed you, never by the checkout column**, and settle
+alive-vs-dead with `readlink /proc/<gate_pid>/cwd`, which is the only thing that separates two of the
+four states.
