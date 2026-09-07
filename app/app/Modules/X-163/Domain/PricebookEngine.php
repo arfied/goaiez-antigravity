@@ -25,10 +25,33 @@ final class PricebookEngine
         string $channel = 'customer',
         ?int $locationBookId = null
     ): array {
-        $item = PriceBookItem::where('business_id', $businessId)
-            ->where('service_name', $serviceName)
-            ->when($locationBookId !== null, fn ($q) => $q->where('location_book_id', $locationBookId))
-            ->first();
+        if ($locationBookId !== null) {
+            $item = PriceBookItem::where('business_id', $businessId)
+                ->where('service_name', $serviceName)
+                ->where('location_book_id', $locationBookId)
+                ->first();
+        } else {
+            // (R245) a price lookup with no location prefers the business-wide row and refuses when two location books disagree
+            $items = PriceBookItem::where('business_id', $businessId)
+                ->where('service_name', $serviceName)
+                ->get();
+
+            $item = $items->firstWhere('location_book_id', null);
+
+            if ($item === null && $items->count() >= 2) {
+                Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'NO_FACT'));
+
+                return [
+                    'status' => 'refused',
+                    'refusal_code' => 'NO_FACT',
+                    'reason' => "No pricebook entry found for {$serviceName}",
+                ];
+            }
+
+            if ($item === null) {
+                $item = $items->first();
+            }
+        }
 
         if ($item === null) {
             Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'NO_FACT'));

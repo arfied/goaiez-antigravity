@@ -813,3 +813,4 @@
 - `2026-09-06T19:08:08` (R245) X-163 — a price range refuses on the same terms a price quote does
 - `2026-09-06T19:26:33` (R245) X-163 — a price quote names the most specific matching service, not the first row found
 - `2026-09-06T19:43:54` (R245) X-163 — a callout fee the owner never set is refused, never invented and never written
+- `2026-09-06T19:56:07` (R245) X-163 — (R245) a price lookup with no location prefers the business-wide row and refuses when two location books disagree

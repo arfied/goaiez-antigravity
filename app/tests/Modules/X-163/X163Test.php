@@ -656,4 +656,90 @@ class X163Test extends TestCase
         $expected = '$'.number_format($fee->callout_fee_cents / 100, 2);
         $this->assertEquals($expected, $res['formatted_fee']);
     }
+
+    public function test_lookup_prefers_the_business_wide_row_over_a_location_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Wide Row Pref Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $loc = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc->id,
+        ]);
+
+        $wideRow = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 8500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'boiler service');
+
+        $this->assertEquals($wideRow->price_cents, $res['price_cents']);
+    }
+
+    public function test_lookup_refuses_when_two_location_books_disagree(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Two Locs Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $loc1 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
+        $loc2 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'Leeds', 'version' => 1]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc1->id,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 10500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc2->id,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'boiler service');
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertArrayNotHasKey('price_cents', $res);
+        $this->assertArrayNotHasKey('amount', $res);
+    }
+
+    public function test_lookup_still_answers_for_a_single_location_book(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Single Loc Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $loc = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc->id,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'boiler service');
+
+        $this->assertEquals('quoted', $res['status']);
+        $this->assertEquals($row->price_cents, $res['price_cents']);
+    }
 }
