@@ -349,6 +349,103 @@ against the **merge base**; only then is *did the merge take it* measured agains
 base `3c60289d`, and the merge result still differs from the incoming side by that +3),
 silent on `8bccc2c6`, silent on any non-merge `HEAD`.
 
+⚠️ **`.gitattributes` `merge=ours` protects only the per-track files OUR side ALSO
+changed (2026-09-07, the `track/sixty` merge).** All eight per-track paths carry
+`merge=ours` and `merge.ours.driver=true` is configured — yet only **five** appeared
+in the index, and the three that did not (`CLAUDE.md`, `BUILD-STATE.json`,
+`JOURNAL.md`) are **exactly** the three `main` had changed since the merge base. A
+merge driver is consulted only for a **three-way content merge**; when only *their*
+side moved, git takes theirs outright and asks no driver anything. So the attribute
+is a guard that fires only while our side happens to be busy, and a per-track file is
+quiet precisely when nobody is editing it — **it fails open in its own base case.**
+That is run 115's shape a third time: *a guard clause written for a case is defeated
+by removing the case.* Two consequences. (1) The eight-path list is a **superset by
+construction**; the instruction is *"restore what `git diff --cached --name-only`
+actually lists"*, never *"run these eight commands"* — `git checkout HEAD -- <a path
+the merge did not stage>` is run 27's clobber one path at a time, and it will eat the
+supervisor's uncommitted notes. (2) Read the absence correctly: a future tick that
+sees `CLAUDE.md` missing from a merge index will conclude the lane did not touch it.
+`track/sixty` had rewritten 2352 lines of it.
+
+⚠️ **A merge can disarm the supervisor's own instruments, because the supervisor's
+permissions ARE a per-track file (2026-09-07).** `.claude/settings.json` and
+`bin/supervise.sh` both crossed in that merge and sat in the tree for forty minutes
+before a tick opened. Measured cost, in one session: `grep -n census bin/supervise.sh`
+→ no match (the sibling's checker has no `--census`, so the flag **silently meant
+nothing** and ran the whole gate instead of erroring); and `bash <HEAD's own copy>
+--census` was **refused** — the other lane's `settings.json` was already governing
+this seat. Worse, §0 read `app/phpunit.xml  DB_DATABASE=goaiez_antig_sixty_test`
+without exiting 2, correctly — it is not production, it is **another lane's live test
+database**, and `RefreshesTenantDatabase` runs `migrate:fresh`, which drops every
+table first. One `--tests` from here would have destroyed a sibling lane's test
+database from a checkout never briefed to touch it. That is run 112 with the blast
+radius written out: a merged `phpunit.xml` hands you a wrong *number*, and the same
+merge hands you a wrong *destructive target* plus a permission set that stops you
+noticing. **Restore `app/phpunit.xml`, `.claude/settings.json` and `bin/supervise.sh`
+first, in that order, before any other restore and before anything reads, gates or
+tests.** Standing order: nothing in this checkout runs a suite while
+`app/phpunit.xml` differs from `HEAD`'s, and `grep -n DB_DATABASE app/phpunit.xml`
+is the proof, not the intention to have restored it.
+
+⚠️ **A merge brief states the per-track list and DERIVES the product list — never the
+reverse (2026-09-07, wave 121).** My brief enumerated the lane's product as three
+files "measured this tick", from a `refs/remotes/*` this seat had never fetched; the
+tip had moved twice and the real merge carried **ten** product files, four of them
+new. The same brief's next item said *"a merge-readiness measurement is only valid at
+the tips you merge"* — two statements about one quantity on one page, only one of them
+qualified, which is the drifted-refusal-message shape. It also contradicted this file,
+which already said *"restore ONLY per-track paths the merge actually changed, measure
+from the index"*. **Self-check: a brief may not state as fixed any quantity a later
+item of the same brief re-measures.** The asymmetry is why it matters — a stale
+per-track list over-restores something already ours, a stale product list drops a
+lane's work silently, which is what run 115 paid for. And in the same brief I wrote
+that four referenced classes "already exist on `main`"; one of them,
+`CAgent\Models\TakeoverLatch`, was **new in the merge** — what exists on `main` is
+`X01\Models\TakeoverLatch`, a different class in a different namespace on a different
+table. **Matching a basename is not resolving a symbol**, and it is the day's rule
+again: I did check something, and what I checked was not what I claimed.
+
+⚠️ **A WRONG SYMBOL IN A NOTE BECOMES A WRONG NEEDLE IN AN INSTRUMENT, AND THE
+INSTRUMENT'S FALSE `0` STOPS A WAVE (2026-09-07, wave 122).** The note above is the
+first half; this is the second, and it cost a dispatch. Having written
+`CAgent\Models\TakeoverLatch` into a REVIEWS block, I wrote the same string into the
+next brief's verification step — `grep -c "CAgent.Models.TakeoverLatch"
+app/vendor/composer/autoload_classmap.php`, **expected `1`**, stop and report on `0`.
+It read `0`. The coder stopped, correctly, with the merge committed and ungated. The
+class was there the whole time, at line 827, dumped at 00:50:
+
+```
+'App\\Modules\\CAgent\\Models\\TakeoverLatch' => $baseDir . '/app/Modules/C-Agent/Models/TakeoverLatch.php',
+```
+
+**Two independent defects in one twelve-character needle**, and either alone gives a
+false `0`. (1) The FQN is `App\Modules\CAgent\Models\TakeoverLatch`; my note dropped
+the `App\Modules\` root and the brief inherited it. (2) `autoload_classmap.php` is
+generated PHP, so every separator is a **doubled** backslash — two characters — and
+`.` matches one. **A regex written against a namespace as a human says it cannot
+match a namespace as PHP writes it.** Consequences, all adopted:
+
+- **Never derive a grep needle from prose — derive it from the file.** The needle for
+  a generated classmap is the basename plus a class-name fragment that survives
+  escaping: `grep -n "TakeoverLatch" app/vendor/composer/autoload_classmap.php` and
+  read the line. A count is the wrong instrument here; the *line* carries the FQN,
+  the path, and the fact that a second same-basename class exists in another module.
+- **A verification step whose failure mode is "stop the wave" must have a positive
+  control.** `grep -c` on a class expected present is safe when the guard is dead and
+  conclusive when it fires — but only if the pattern is known to match *something*.
+  Mine had never matched anything, in any run. The check for that is one command:
+  grep the same needle for a class you already know is loaded.
+- **Read the classmap trap correctly.** Run 110's rule stands — a merged class is
+  unloadable until `composer dump-autoload` runs. But the proof is *this* grep, and
+  a `0` from it now has two causes: the dump did not run, or the needle is wrong.
+  **Distinguish them with the file's mtime before ruling.** Mine was 00:50, minutes
+  old, which said the dump had run and the needle was the suspect. That took one
+  `ls -l` and it should have been in the brief.
+- Symmetry with the day's other rule: an instrument is only as honest as the
+  **baseline** it is handed (§2e), and only as honest as the **needle** it is handed
+  (this). Both fail silently, both read as findings, and both are mine to check
+  before I hand them to a coder.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
