@@ -55,7 +55,6 @@ final class InternalLinkRenderAction
             }
         }
 
-
         if (count($usablePages) < 2) {
             return '';
         }
@@ -87,7 +86,7 @@ final class InternalLinkRenderAction
             if (empty($nodes) || $emittedCount >= 20) {
                 return '';
             }
-            
+
             $itemsHtml = '';
             foreach ($nodes as $node) {
                 if ($emittedCount >= 20) {
@@ -100,12 +99,12 @@ final class InternalLinkRenderAction
                 $itemsHtml .= $renderTree($node->children);
                 $itemsHtml .= '</li>';
             }
-            
+
             if ($itemsHtml === '') {
                 return '';
             }
-            
-            return '<ul>' . $itemsHtml . '</ul>';
+
+            return '<ul>'.$itemsHtml.'</ul>';
         };
 
         $html = '<nav id="internal-links-x176">';
