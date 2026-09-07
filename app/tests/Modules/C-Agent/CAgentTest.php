@@ -169,7 +169,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * REFUSED: G5-31 — C-Agent provides the registered AgentAnswerAction. X-102 (web-chat) must invoke this action directly. X-102's events manage sessions and carry no user messages, so no C-Agent listener wire is owed for the door.
+     * BUILD PROPOSAL: G5-31 — the web-chat door is unbuilt. C-Agent provides the registered AgentAnswerAction. X-102's events manage sessions and carry no user messages, so X-102 must invoke this action directly, meaning no C-Agent listener wire is owed. Owner: X-102
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -178,7 +178,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
-     * REFUSED: G5-32 — C-Agent provides the registered AgentAnswerAction. X-66 (voice) must invoke this action directly, so no C-Agent listener wire is owed for the door.
+     * BUILD PROPOSAL: G5-32 — the voice door is unbuilt. C-Agent provides the registered AgentAnswerAction. X-66's live call turns emit no events (only metadata like CallAnswered and async VoicemailTranscribed), so X-66 must invoke this action directly. Owner: X-66
      */
     public function test_g5_32_voice_door(): void
     {
