@@ -3462,6 +3462,106 @@ Watch for: <the trap that applies, by name>
   name it as their blocker (`X-102 G16-21` and `C-Agent G5-31`). Live list:
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 235, membership unchanged since
   tick 227. Re-run it; never inherit it.
+- ⚠️⚠️ **A long-running `pest` is NOT the lock holder, and `ps | grep pest` cannot answer the lock
+  question at all — the `flock` is on **fd 9 of the `supervise.sh` shell** (`bin/supervise.sh:290-296`),
+  so a pest orphaned by a dead gate shell holds nothing while looking exactly like a holder.** Proved by
+  timeline at tick 236, not by argument: `scratch/pest-raw-last.log` is this column's own tick-232 object,
+  mtime **07:57:13** with `duration_ms 174464` ⇒ it acquired and released the shared lock across
+  07:54:19–07:57:13, while `grs-antig-reviews`' pid **3849006** had been running since ~00:56 and is still
+  running now. A full 174-second suite from this checkout went straight through a lock that pid was
+  supposedly holding. ⛔ **The defect is this column's, twice**: tick 234 wrote *"the blocker was
+  `grs-antig-reviews`' pest, pid 3849006, 7h15m elapsed"*, and that diagnosis then became item 0 of the
+  wave-125 **and** wave-126 briefs as `ps -o pid,etime,cmd -e | grep "[p]est"` — so both waves declined
+  their suite on a command that finds pests rather than holders, and both answered the question exactly as
+  asked. The lock is **contended and intermittent**, not stuck: tick 234's `supervise.sh` really did print
+  `… another suite holds …`, transiently, and tick 232's really did get it. **The only probe is a
+  `--tests` run** — §7 prints `another suite holds … waiting up to 40 min` when `flock -n` fails and
+  `{"tool":"pest","result":"lock-timeout"}` when the 40 minutes expire (the tick-235 fourth geometry).
+  ⚠️ And `flock -n` is refused to this column by the harness (*"runs its argument as a command"*), so the
+  probe is the coder's every time. **Never infer a lock's state from a process list.**
+- ⚠️⚠️ **A hand-written unified-diff hunk header whose line COUNTS disagree with its body is rejected as
+  `error: corrupt patch at line <N>`, and `<N>` points at the END of the hunk rather than at the header
+  that is wrong.** All **seven** of wave 124's ruled-form patches were corrupt and had never been checked
+  against anything: `mut-4-orig.patch` claims `@@ -21,7 +21,7 @@` over a six-line body, and git reports
+  line 11. So the tick-232 ruling (*apply a mutation with `git apply` of a patch file, never shell-
+  interpolated program text*) closed the quoting hole and opened a counting one — **three consecutive
+  waves lost a mutation set to the harness, each to a different mechanism.** ⛔ RULED at tick 236: **a
+  patch file on this lane is generated (`diff -U2`, `git diff`), never typed**, and `git apply --check` on
+  each patch alone is the price of any set. ⭐ The tell that a set was never checked is free and this lane
+  now has it twice: a script whose patches have never been `--check`ed and whose call sites have never been
+  run is two independent defects in one file, and neither prints until the wave that needs the numbers.
+- ⚠️ **A mutation that ADDS a statement or an inline FQN turns its own gate run pint-red, so
+  `⛔ a gate failed above.` is the EXPECTED verdict on a mutation log and says nothing about the code.**
+  Measured across wave 126's seven: mutations 2, 3 (added `if` blocks →
+  `blank_line_before_statement`) and 5, 7 (inline `\App\Models\Business::` →
+  `fully_qualified_strict_types` + `ordered_imports`) are pint-`fail`; 1, 4 and 6 are `passed`. ⛔ **This
+  retires the tick-229 instruction to *"read §6 of your final mutation log"* for the sha's pint state** —
+  §6 reads the **mutated** tree (the tick-199 rule, one layer in), so the only log that answers the pint
+  question is the **baseline** or a clean post-commit gate. ⭐ Its accepting direction is worth as much:
+  pint naming `fully_qualified_strict_types` on exactly the two FQN-injecting mutations is a **site proof
+  from a tool the coder did not author**, the `if (false && …)`/`if.alwaysFalse` tell in a second dialect.
+- ✅✅ **The mutation harness is proven end-to-end with no suite at all, and §1 across the set is the whole
+  proof.** Wave 126: baseline `0 uncommitted path(s)`, then seven logs each reading exactly
+  `M app/app/Modules/X-102/Http/Controllers/ChatStartController.php` / `1 uncommitted path(s)`, then a
+  clean tree at tick open — and because the script exits 1 when `git status --porcelain` is non-empty after
+  `git restore`, **the existence of log N+1 is proof that revert N succeeded.** Apply, gate, revert, clean,
+  seven times, from the gate's own output rather than the coder's word. This is the tick-235 ruling
+  (*the lock sits inside `want_tests`, so everything except the numbers is measurable today*) paying in
+  full, and the proof variant differs from the real script by exactly the two `--tests` flags.
+- ✅✅ **Seven mutations for seven assertions across THREE tests is the complete form at file scale — and
+  the design is checkable before a single one runs.** `ChatDoorTest`'s three tests hold 3 + 2 + 2
+  assertions; wave 126's set reddens them one at a time and in positional order within each test (1·2·3 →
+  A1·A2·A3, 5·4 → B1·B2, 6·7 → C1·C2), so every assertion is reachable and reddened on its own terms with
+  every earlier one still executing — the wave-92 requirement and the wave-90 subtraction, satisfied for
+  three tests at once. ⚠️ **Its one real limit: every mutation is guarded on a fixture value
+  (`$business->name === 'Door Tenant'`), so radius 1 is forced by CONSTRUCTION and the set yields no
+  blast-radius information whatever.** That is a different thing from tick 204's forced radius (*only one
+  test can reach the code*) and from tick 185's red flag (*a radius of zero means the mutation was in the
+  test body*): here the site is provably in the module and the narrowness is deliberate. **Grade a
+  fixture-guarded set for assertion coverage only, and never quote its radius as evidence about the suite.**
+- ⚠️ **A capability of a test read backwards produces a proposal to BREAK a correct mutation, and the
+  file is one `sed -n` away.** Wave 126's account of Mut 7 reasons *"Test 3 asserts the session count for
+  `Business A` is 0 … leaving the test green"* and offers a replacement. `ChatDoorTest.php:73-74` is
+  `Tenancy::set($bizB->id)` then `assertEquals(0, ChatSession::where('business_id', $bizB->id)->count())`
+  — the assertion reads **B**, and Mut 7 writes the row **to B**, so it reddens on its own terms and needs
+  no change. Six of the seven accounts are exact; the seventh inverts the subject. **NOTE and not `BLOCK`
+  by the tick-222 discriminator** — the wave made no commit, so nothing false reached a durable record and
+  `REPORT.md` is overwritten. ⛔ But the proposed "fix" (*insert a dummy session for Business A*) would
+  replace a real tenancy-isolation proof with one that never crosses the tenancy boundary, so it must be
+  stopped in the brief. **A per-mutation account is a claim about an assertion's subject; the price is the
+  two lines the assertion is written on.**
+- ⚠️ **A file size measured mid-write is stale by the time the report is read, and both wrong numbers
+  pointed the same way.** Wave 126 reported `run-mutations-w126.sh (874 bytes)` and
+  `-proof.sh (850 bytes)` against a true **3574** and **3560** — the framework as it stood before the seven
+  `run_mutation N <<'EOF'` blocks were appended (the difference is the heredoc block, ~2700 bytes, in both).
+  All seven patch sizes in the same sentence are **exact**. Nothing was fabricated and the shape is the
+  wave-86 timeline defect with `wc -c` instead of a pest object: a real measurement of an earlier state of
+  the same file. **`ls -la` at review time is the whole check**, and a brief asking for sizes should ask
+  for them after the last edit.
+- ⚠️ **The artifact question's tenth outing passed, on a TRACKED path — record the discriminator or the
+  ninth escape comes back wearing it.** Wave 126 quoted its own *"no tracked paths changed that I did not
+  name in a commit"* against `w126-mut-1.log`'s `1 uncommitted path(s)` /
+  `M …/ChatStartController.php`, with the reconciliation (§1 caught the tree mid-mutation, before restore).
+  That is one field away from the tick-235 escape, which used the **same** §1 count against the wave's
+  untracked `scratch/` files and is true of every wave. **The discriminator is that the path is TRACKED
+  and this wave deliberately modified it**: a wave that ran no mutation cannot give this answer, so it is
+  a fact about this wave. Series: `None` (112) → a previous wave's artifact (116) → an invented sentence
+  (118) → a real answer (119) → a universal ground (120) → a licensed non-answer (121) → an artifact silent
+  on the subject (122) → an artifact that agrees (123) → clean (124) → a guaranteed disagreement (125) →
+  **clean, on a tracked path** (126). Keep every accumulated clause; do not simplify.
+- **Backlog at tick 236 — wave 127 is the mutation set, unconditionally attempted.** RULED, and it
+  reverses the tick-234/235 hold: the reason for that hold was *"a build wave cannot gate at all while the
+  lock is held"*, and the lock's state was never measured — it was inferred from a process list that cannot
+  see a `flock` (above). The harness is proven, the seven patches are generated and apply, the set is
+  designed complete, and the only thing missing is one `--tests` run. ⛔ Item 0 is the probe **and** the
+  work: `bash bin/supervise.sh --tests`, whose §7 says which of the three states holds — real numbers, the
+  `another suite holds` wait, or the `lock-timeout` stub. A decline is legitimate **only** on that
+  artifact, never on a `ps` line. ⚠️ The tip has **never** had a measured suite: `3906b575` (assertion
+  reorder) and `89a396cd` (comment) both landed after the tick-232 object, so wave 127's green is the
+  first number for this tree. **Wave 128 is the chat message store**, unblocked since wave 124 built the
+  door and sequenced only behind a measured tree. Live list:
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 236, membership unchanged since
+  tick 227. Re-run it; never inherit it.
 
 ## Style
 
