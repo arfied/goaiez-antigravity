@@ -275,7 +275,56 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-55 | the `<x-surface.sample-state module="…">` leak gets a number. ONE new `test(` in a new `Architecture/SampleStateModuleTest`: every call site partitioned legal / illegal / unparseable against `ls app/app/Modules/`, all three pinned, and the partition asserted to SUM to a pinned `$total`. ⛔ Zero module ids written; the legal set is the filesystem. ⛔ The blades are NOT touched — the fix is the generator's, TRACK 1. ⚠️ The floor MOVES: `1728 → 1729` | closed, pushed `7a741556` — run 101 `PASS-WITH-NOTES`, **all three notes MINE** |
 | UI-56 | the three defects in the file UI-55 just created, all three the SUPERVISOR's. (1) `$total` re-derived by `substr_count($content, '<x-surface.sample-state')` so the partition assertion stops being an identity over its own loop. (2) the `$illegal` message's unmeasured *"on `tenant.role` routes"* replaced by what was measured, INCLUDING its counterexample. (3) the comment quoting `BRIEF.md` deleted. ⛔ No new `test(`, no blade, no generator. ⚠️ The floor does NOT move: `1729` | closed, pushed `790c4c92` — run 102 `PASS-WITH-NOTES`, **three of its five notes MINE** |
 | **UI-57** | **(1) the ONE clause of UI-56's new message that can rot — *"10 of them are in 6 modules carrying no `tenant.role` route at all (X-111, …)"*, a fact about ROUTES inside a test that measures FILES — deleted; the `Ui/views/` scope clause replaced by what the loop actually walks; *"no blade has been mapped to a route"* kept verbatim. (2) UI-54's `270` SPLIT IN TWO by whether the route's action class declares ANY `#[Layout]` — two `expect()` INSIDE the existing `test(` at `OwnerNavTest:247`, both halves off the one `$invisible` list, both pinned. ⛔⛔ The sum is NOT asserted: it would be UI-56's identity again. ⛔ No new `test(`, floor stays `1729`** | closed, pushed `784381fb` — run 103 `PASS-WITH-NOTES`, three notes, all shape |
-| **UI-58** | **(1) UI-57's two pins get MESSAGES instead of labels — each says what a red means in BOTH directions, as `:263` does. (2) the `257` SPLIT THREE WAYS by whether the screen behind the route exists: the component's view carries `<x-surface.sample-state>` (unbuilt) · exists without it (built, wearing the wrong shell) · could not be resolved. All three pinned, inside the SAME loop at `OwnerNavTest:247`. ⛔⛔ The sum is NOT asserted — third time. ⛔ A name→view MAP is refused in advance: `ImpersonationLogView` has no matching view filename, and the third bucket exists to COUNT that. (3) the duplicate-registration question answered as a MEASUREMENT in `RAW`, not a pin. ⛔ No new `test(`, floor stays `1729`** | **in flight — run 104 live** |
+| UI-58 | (1) UI-57's two pins get MESSAGES instead of labels — each says what a red means in BOTH directions, as `:263` does. (2) the `257` SPLIT THREE WAYS by whether the screen behind the route exists: unbuilt · built · unresolved. (3) the duplicate-registration question answered in `RAW`. ⛔ No new `test(`, floor stays `1729` | **run 104 `BLOCK`** — item 1 delivered exactly, the split shipped with a tag literal that matches nothing. See the 05:3x ruling |
+| **UI-58b** | **the one-character repair and its three re-pins. `'<x-surface.sample-state>'` → `'<x-surface.sample-state'`, all three buckets re-pinned to what the run produces, `withLayout 13` and `withoutLayout 257` untouched, the `view()` first-match edge MEASURED only. ⛔⛔ The sum is still NOT asserted — fourth time. ⛔ No new `test(`, floor stays `1729`** | **in flight — run 105 live** |
+
+### ⛔⛔ RULED 2026-09-07 05:3x — run 104 is a `BLOCK`, and the tag literal that killed it was MINE
+
+`BRIEF.md:107` defined the `unbuilt` bucket as *"contains `<x-surface.sample-state>`"* — **with the
+closing `>`** — and the coder implemented it character for character. **MEASURED:**
+
+```
+grep -rl -F -e '<x-surface.sample-state'  app/app/Modules/ --include=*.blade.php | wc -l   → 248
+grep -rl -F -e '<x-surface.sample-state>' app/app/Modules/ --include=*.blade.php | wc -l   →   0
+```
+
+Every call site carries a `module="…"` attribute, so the `>` never immediately follows the tag name.
+`expect($unbuilt)->toBe(0)` is therefore an assertion **that cannot fail on any input**, and
+`expect($built)->toBe(257)` is **false** — `x-01.thread`, `x-01.history` and `x-01.payment-risk` are
+`tenant.role` (`X-01/routes.generated.php:12–17`), `X-01/Ui/` declares no `#[Layout]` at all, and all
+three views carry the banner at line 2, so `unbuilt` is at least 3.
+
+> ⛔ **A prose spelling of a tag is not a code literal.** Nineteenth of the hand-derived-claim family
+> and a new sub-shape: not a false claim about the tree, but a *string* handed to a coder as though it
+> had been run. The working literal was three lines away in `SampleStateModuleTest:22–24`; only that
+> file's **test name** on `:3` carries the prose form, which is where my spelling came from.
+
+⛔⛔ **And the coder's half, which is the reason the wave was re-dispatched rather than repaired by
+me:** `REPORT.md`'s `Item 2 Corroboration` re-ran *the same failing literal* in a second program, got
+zero hits over a directory holding 248 matching files, and credited it as confirmation.
+
+> ⛔ **A corroboration must use a different DERIVATION, not a different program.** UI-56's entire
+> content was that `substr_count` checks `preg_match_all` because the two read the file
+> independently. Here one literal was asked the same question twice. Compounding 21:3x, already in
+> this file: *"'no hits' is the most believable wrong answer there is."*
+
+⛔ **A second tell needed no grep at all: `built` came back `257`, equal to `withoutLayout` `257`.**
+**A three-way split whose bucket equals the population it partitions has not split anything** —
+run 95's constant column arriving as an identity between two pins in the same file, in a wave whose
+brief spent a ⛔⛔ on that exact arithmetic.
+
+⭐ **The third bucket's `0` is real and it corrected me.** I justified `unresolved` with
+`ImpersonationLogView`'s broken name→view convention; the coder never used a name derivation — it
+reads the component's own `view('…')` literal and asks `View::exists()`, which resolves all 257. The
+map/alias/fallback refusal was honoured without needing enforcement. ⚠️ Its unmeasured edge:
+`preg_match` takes the **first** `view(` literal, so a component with two lands in the wrong bucket
+silently. UI-58b measures that and changes nothing over it.
+
+⚠️ Twice-repeated report faults, neither the reason for the block: **`MODULES: X-124 DONE` is false a
+second time** (`state.py status` is the unchanged `116 done · 8 unresolved of 127`; the `module` field
+of a `decided` row is not a state change — run 95's defect, ten waves on), and **`RAW` carried no
+eight-stage doctor block** because the gate ran without `--full-doctor`, so §4 printed `All stages
+clean.` after an integrity-only run. ⛔ **`--full-doctor` before quoting any doctor line.**
 
 ✅ **UI-57 closed and pushed 2026-09-07 05:0x** (`790c4c92..784381fb`). One commit, four files. The
 rotting *"10 of them are in 6 modules…"* clause is gone, the scope clause now says what the loop walks
