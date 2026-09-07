@@ -280,7 +280,52 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-59** | **the FIRST conversion wave since UI-49, and the only two of the `33` in a lane the owner named: `x-108.calendar` (Customers) · `x-125.runs` (Marketing). `#[Layout('components.account.layout', ['heading' => …])]` · a `mount()` that resolves `businessId` from the tenant (`Invoices.php:22–25` is the shape) · the `<h3>` at `calendar.blade.php:4` promoted to `<h2>` · shell assertions INSIDE the two EXISTING `test_screen_renders_for_tenant` methods · two nav entries, `OwnerNav::all()` 36 → 38. ⛔ No new `test(`; `tests` stays `1729`. ⛔⛔ FOUR pins move together — `withoutLayout −2`, `built −2`, UI-54's `270` `−2`, `withLayout` and `unbuilt` UNMOVED. A different delta is a FINDING, never a re-pin** | closed, pushed `c3edec84` — run 106 `PASS-WITH-NOTES`, all four pins moved on command, and the one defect it shipped was MINE |
 | **UI-60** | **(1) `runs.blade.php:13` `<h3>` → `<h2>` — the heading-order defect UI-59 shipped into the nav, specified by me. (2) ONE new `test(` in a new `Architecture/HeadingSeamTest`: the 19 components declaring the owner layout partitioned by whether their `#[Layout]` carries a `heading`, and their views' FIRST heading level checked against that shape. FIVE pins, all derived — ⛔ zero component names, view paths or route names; the view is the component's own first `view('…')` literal + `View::exists()`. ⛔⛤ The sum is NOT asserted — fifth time. ⚠️ The floor MOVES: `1729 → 1730`** | closed, pushed `03608032` — run 107 `PASS-WITH-NOTES`, five notes, **two of them MINE** |
 | UI-61 | the SIXTH bucket. `HeadingSeamTest`'s `if (preg_match('/<h([1-6])/', …))` has no `else`, so a resolved view with NO heading at all is counted NOWHERE. ONE new `expect()` INSIDE the existing `test(`. ⛔⛤ The sum is NOT asserted — sixth wave. ⛔ No new `test(`, floor stays `1730`. Plus a measurement acted on in no way: how many of the 19 carry more than one `#[Layout(` | closed, pushed `16b601f8` — run 108 `PASS-WITH-NOTES`, five notes, **two of them ⭐ superset re-derivations of mine that agree** |
-| **UI-62** | **the SEVENTH bucket, and the FIRST that is NOT empty on arrival. `HeadingSeamTest:43` is `preg_match`, not `preg_match_all` — it reads the blade's FIRST heading and never looks at another, so `x-108/calendar`'s `<h4>` at `:40` and `:53` under an `<h2>` at `:4` renders `<h1>` → `<h2>` → `<h4>` and NOTHING sees it. (1) add `$levelSkips` over the FULL sequence, pin it `0`, `--filter`, paste the failure, re-pin to what the run produced, commit the test ALONE. (2) THEN `<h4>` → `<h3>` on both lines, re-pin to `0`, `--filter`, paste it passing, commit blade + re-pin. ⭐ The pin is OBSERVED moving `1 → 0`, which UI-60's could not be. ⛔⛤ The sum is NOT asserted — seventh wave; and `$levelSkips`/`$skips` are NOT asserted disjoint. ⛔ No new `test(`, floor stays `1730`** | **in flight — run 109 dispatched** |
+| **UI-62** | **the SEVENTH bucket, and the FIRST that is NOT empty on arrival. `HeadingSeamTest:43` is `preg_match`, not `preg_match_all` — it reads the blade's FIRST heading and never looks at another, so `x-108/calendar`'s `<h4>` at `:40` and `:53` under an `<h2>` at `:4` renders `<h1>` → `<h2>` → `<h4>` and NOTHING sees it. (1) add `$levelSkips` over the FULL sequence, pin it `0`, `--filter`, paste the failure, re-pin to what the run produced, commit the test ALONE. (2) THEN `<h4>` → `<h3>` on both lines, re-pin to `0`, `--filter`, paste it passing, commit blade + re-pin. ⭐ The pin is OBSERVED moving `1 → 0`, which UI-60's could not be. ⛔⛤ The sum is NOT asserted — seventh wave; and `$levelSkips`/`$skips` are NOT asserted disjoint. ⛔ No new `test(`, floor stays `1730`** | closed, pushed `15caddac` — run 109 `PASS-WITH-NOTES`, the pin **observed moving `1 → 0`** at both ends, and the one finding it produced was MINE |
+| **UI-63** | **the text-order blind spot in the check UI-62 just shipped gets an UPPER BOUND. `HeadingSeamTest:55` is `preg_match_all` over the blade's TEXT in document order, so mutually exclusive `@elseif` arms are concatenated into a sequence no page renders — and `calendar.blade.php:40`/`:53` are exactly that shape. (1) the `$levelSkips` message gains the limit it does not state, in BOTH directions — it can flag a skip that never renders and HIDE one that does. (2) ONE new `expect()` inside the existing `test(`: views with a `<h[1-6]` at `@if`/`@unless` depth ≥ 1, pinned. ⛔⛔ The message must contain the words "upper bound" and say why — it counts single-heading views and nested conditionals, neither of which is a blind spot. My reading is `8` of `19`; a different number is a FINDING. (3) the counted views listed in `RAW` ONLY. ⛔⛤ The sum is NOT asserted — eighth wave. ⛔ No new `test(`, no blade, floor stays `1730`** | **in flight — run 110 dispatched** |
+
+### ⛔⛔ RULED 2026-09-07 08:0x — the sequence is the blade's TEXT, and `calendar`'s two headings are in arms no page renders together
+
+`HeadingSeamTest:55` builds `$sequence` with `preg_match_all` over the view's **text**, in document
+order. Blade conditionals are invisible to it. **MEASURED:** `calendar.blade.php:40` sits under
+`@elseif ($mode === 'week')` and `:53` under `@elseif ($mode === 'resources')`, both inside the `@else`
+at `:26` — **mutually exclusive arms of one conditional. No rendered page has ever emitted both.** My
+own 07:3x table wrote the rendered page as `1 · 2 · 4 · 4`; the pages that render are `1 · 2 · 4`
+(week), `1 · 2 · 4` (resources), or `1 · 2`. **Twenty-third of the hand-derived-claim family.**
+
+✅ **UI-62 is still correct and the fix still stands** — the skip is real in *each* arm independently,
+so the defect, the red and the repair are all sound. What was wrong is the shape of the evidence, not
+its conclusion.
+
+> ⛔ **The false negative is structural: text `h2 · h3`(arm A)`· h4`(arm B) reads `1,2,3,4` — no skip —
+> while arm B renders `1,2,4`, which is one. The `h3` that clears the check lives in a branch that
+> never co-renders with the `h4` it is clearing.** A check whose blind spot is created by the same file
+> that motivated it.
+
+⭐ **Measured empty today**: only `calendar` has headings in different arms of one conditional, and
+both are now `h3`. `attribution-row`'s `h3` is **nested inside** the arm holding its `h2`, so they do
+co-render in that order; `memberships_list`'s `h2` is in the empty arm and its `h1` is outside every
+conditional. **Eighth member of the uncounted-state family.**
+
+⛔ **A branch-aware rewrite is REFUSED** — it needs a Blade parser inside an architecture test, and the
+obvious linear substitute (*flag level `L` unless some earlier heading is `L−1`*) misses the same case
+for the same reason: **"earlier" in the text is not "earlier" on the page.** So the blind spot gets a
+number instead, and ⛔⛔ **the number is an UPPER BOUND and its message must say the word** — it counts
+single-heading views, which cannot skip, and nested conditionals, whose headings do co-render. That is
+the `224` ruling turned on this lane's own wave: **a bucket named for a state it does not measure is an
+upper bound, and nobody may scope work off the noun.**
+
+### ⛔ RULED 2026-09-07 08:0x — three stated limits and a missing fourth is worse than none
+
+`$levelSkips`'s message names the component-emitted heading, the count-of-views unit and the `<h1>`
+prepend assumption. All three are right; all three are mine. It says nothing about document order
+across branches — the one limit that can make the pin read `0` on a real defect.
+
+> ⛔ **The 03:3x rule cuts both ways. A list of stated caveats is itself a reassurance: a reader who
+> meets three concludes the fourth was considered.** An unqualified pin invites a guess; a
+> *selectively* qualified pin invites a wrong conclusion, which is worse.
+
+⛔ And the clause added is a fact about **the code**, never about the tree — a fact about the world rots
+inside a permanent test at the same rate as any other prose while borrowing the pin's credibility.
 
 ### ⛔⛔ RULED 2026-09-07 07:3x — `$skips` reads the FIRST heading only, and the blind spot is NOT empty
 
