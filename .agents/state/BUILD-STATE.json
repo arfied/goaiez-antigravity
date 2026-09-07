@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T05:30:59",
+ "updated": "2026-09-07T07:35:01",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2191,6 +2191,24 @@
    "module": "X-120",
    "chose": "the card vault empty state says no card has ever been kept and names Stripe tokenisation as what it waits on, and the submit button says Check rather than Keep - card_tokens has no production writer anywhere in the app and CardScreen::present() keeps nothing, so the button contradicted its own result message one click apart",
    "at": "2026-09-07T05:30:59",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "the same-account pill says recorded only because is_connected is written true unconditionally by connect() and no production path writes false; the column and its capture guard are unchanged",
+   "at": "2026-09-07T07:35:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "the credits headline is labelled Credit balance because the figure is the single account balance every meter type draws down, not an AI slice; and the ledger empty state names top-up as the only writer this checkout has",
+   "at": "2026-09-07T07:35:01",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "owner copy on the dispute queue names the missing cross-account read path in owner words and carries no internal action id",
+   "at": "2026-09-07T07:35:01",
    "ruling": "R245"
   }
  ]
