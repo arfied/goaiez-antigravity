@@ -9266,3 +9266,149 @@ matches **50** lines across `X155Test.php` and `X198Test.php`, and **none is thi
 the only import of `App\Modules\X102\Actions\ChatCaptureAction` is `X102Test.php:12`. A
 property name is a description; the class is the name. Every brief touching this action says
 so.
+
+## ⛔ An assertion's failure MESSAGE is not its scope — the only line that writes the sentinel is in the branch the test cannot enter (tick 279)
+
+Tick 241's law run on SITE-152's **pattern** rather than its file. Two greps decide it:
+
+```
+ChatLead::create|updateOrCreate|firstOrCreate  app/app app/tests → ONE hit, ChatCaptureAction:44
+Person::create|updateOrCreate|firstOrNew|firstOrCreate  app/app  → 7 hits, TWO of them ours
+```
+
+✅ So SITE-151/152's invariant does **not** leak through a second `ChatLead` writer. ⛔ But this
+lane's other `Person` writer has the same defect in one of its two branches, and the file
+already contains its own fix fifty lines below:
+
+```php
+X-155/Actions/FormCaptureAction.php
+:159  private function given(mixed $value): mixed
+:161      return is_string($value) && trim($value) === '' ? null : $value;
+:91   $phone = $this->given($payload['phone'] ?? null);                  ← non-spam branch
+:93   // A submission that carries no phone gets its own contact, never a shared one (R245, 2026-09-05)
+:94   $person = $phone === null ? new Person(['business_id' => $businessId]) : Person::firstOrNew(…);
+:52   $person = Person::firstOrNew([ 'business_id' => …,                 ← SPAM branch
+:54       'phone' => $payload['phone'] ?? '+15550000000',   ]);
+```
+
+`??` fires on a **missing key**, never on a blank value. So the spam branch reproduces both
+defects its own file fixed: a `''`/`'   '` payload keys a `Person` on the empty string so two
+blank-phone spam submissions collapse onto one contact (SITE-152's second consequence, one
+module over), and a payload with no `phone` key writes **`+15550000000`** — a fabricated contact
+in the reserved fictional range, the value-nothing-can-falsify family refused at 146, 198, 213
+and 246.
+
+⛔ **And the assertion that exists to catch the sentinel cannot reach the branch that writes
+it.** `X155Test.php:1133` reads
+
+```php
+assertSame(0, Person::where('business_id',$biz->id)->where('phone','+15550000000')->count(),
+    'the reserved fallback number was written to a contact row');
+```
+
+— a message stating a whole-module property, over a fixture (`:1095-1128`) of four **valid**
+payloads that exercises the non-spam branch exclusively, where `:94-96` guarantees the sentinel
+cannot appear. `grep -rn '15550000000' app/app app/tests` returns exactly two lines: the writer
+and that assertion, in branches that never meet. **A reader greps the sentinel, finds the
+assertion, and concludes the hazard is closed.**
+
+The section's law (163, 178, 180, 183, 185, 187, 238, 240, 247) on a new surface: **an
+assertion's scope is not its claim, and its failure MESSAGE is not its scope either.** A message
+is written to describe the property the author had in mind; the fixture decides what is actually
+proven, and nothing reconciles the two. When a grep for a hazard finds an assertion, check the
+assertion's fixture reaches the writer.
+
+**RULED (tick 279): SITE-153 — the spam branch keys through `given()` and gives a phone-less
+spam submission its own contact**, because the decision is already recorded at `:93` for the same
+file and one branch was missed. ⛔ **The obvious move is the one that must not be made:** copying
+SITE-152's *refusal* would delete a discharged capability — `:38-39` records **G3-64 / G13-05**,
+*"a SPAM rejection is stored and flagged, never discarded"* (`GOAIEZ-MASTER-PLAN.md:31363`),
+asserted at `X155Test.php:481` and credited at `:304 :310 :360 :397`. The spam branch **must
+still write** both rows; only the keying changes. Tick 277's law verbatim — *before briefing "the
+test does not cover state X", ask what the code DOES in state X* — and here it must not refuse.
+
+## ✅ The falsifier's green total is derivable COLD — `grep -c 'assert'` on the file (tick 279)
+
+Ticks 251, 268, 270 and 278 each reconciled a quoted falsifier against a **previous gate's**
+assertion total, which requires this ledger to carry the number. Tick 279 measured a cheaper
+witness: `grep -c 'assert' app/tests/Modules/X-102/X102Test.php` = **86**, exactly tick 278's
+measured green 78 plus the new method's 8. The file's assert-line count tracks its runtime
+assertion count.
+
+That closes the four-way reconciliation of SITE-152's `79`: 86 green, the mutation throws
+nothing so **both `assertEquals`es inside the catch blocks never run** and the method halts at
+`assertTrue($refusedEmpty)`, its 1st *executed* assertion ⇒ 86 − 8 + 1 = 79 ✓, with `1 of 15
+failed` against `grep -c 'public function test_'` = 15 ✓.
+
+⭐ **Prefer it whenever the file is present**, because it makes the arithmetic checkable **cold** —
+the property ticks 192/193 spent two ticks establishing for the census bounds, now available for
+the one instrument that had none. ⚠️ It is a proxy (assert *lines*, not calls) and is corroboration,
+not proof; it earns its place by agreeing with an independently measured number.
+
+⚠️ **Unproven, not proven** (tick 270): the run halts at the first executed assertion, so the four
+assertions carrying the *"before any write"* clause never ran under the quoted mutation. Reachable
+and would redden — **reasoned, not measured**. And the `DB::transaction` would roll them back
+anyway, so the guard's position above it is belt-and-braces, not the load-bearing thing the clause
+names.
+
+## ✅ The FIFTH axis is closed on all seven modules, and the SIXTH exists and is CLEAN (tick 279)
+
+Two pre-emptive firings of tick 210 (*before briefing a wave that produces X, grep for X*) in one
+tick, after tick 262's first. Neither could have come from re-reading this ledger's coverage list.
+
+- **X-110's four apparently-unaudited ids are ONE plan row.** Its census is ten ids at one
+  occurrence each, and `G13-01 G13-28 G13-12 G6-09` are all `GOAIEZ-MASTER-PLAN.md:31157`,
+  audited clause-by-clause at tick 275 and corrected at 278. With `:31158` (G13-30 · G13-27 ·
+  G9-02, tick 277), the two KILLED ids (tick 275) and G13-32, that is 10 of 10 ⇒ the fifth axis
+  is closed on **all seven** — X-176 (265), X-157/X-103 (268), X-155/X-137 (273), X-102 (276/277),
+  X-110 (275/277/278).
+- **The sixth axis: a tracker id MISSING from a generated `capabilities.php` is invisible to
+  `CapabilityStage` in both directions** — `:269` builds its id list from that file, so such an id
+  raises no violation and needs no credit, forever. Measured by set difference both ways
+  (`grep -F -x -v -f`, never `comm`, which lies on unsorted input): **in tracker, not in caps →
+  EMPTY.** No capability of this lane's is unwatched. Per tick 224 the branch is a **third**
+  outcome — the axis *exists and returns nothing*, neither *already done here* nor *cannot work
+  here* — and saying so is what stops the next tick re-deriving it.
+
+⚠️ **The one apparent mismatch was MY OWN pattern.** Counts read tracker **63** vs caps **64**; the
+extra was `G7-48`, whose tracker cell is `**X-176 SchemaEngine**` rather than ` X-176 `, so a
+space-delimited pattern missed it. Sixth firing of *the record is the likelier defect than the
+world* (242, 250/252, 271, 277, 279), and tick 275's delimiter law on a new axis: **a pattern
+anchored on a formatting convention is silently scoped to the rows that follow it.**
+
+⚠️ `G7-48` appears **nowhere in `GOAIEZ-MASTER-PLAN.md`**, so the tracker's ⑤ is its only source —
+legitimately, the row itself recording *"transcribed from the plan 2026-08-27 · ⛔ register
+description STRIPPED (P-206)"*. **Tick 271's *the clause comes from the plan, never the tracker's
+last cell* has an exception, and the row announces it.**
+
+## ⚠️ Tick 270's `journey` exception makes a standing pass condition unsatisfiable (tick 279)
+
+Recorded again because it is briefed every wave: *"every doctor stage unchanged in both
+directions"* cannot hold for a wave that runs a gate between its two doctor readings, since
+`JourneyStage:40` reads `storage/app/evidence/journeys/*.json` — untracked artifacts every
+`--tests` gate rewrites. **Exclude `journey`, or take both readings on the same side of the gate.**
+Seven stages remain a pure function of the tracked tree and tick 217's cache holds for them.
+
+## §7 baseline and instrument notes (tick 279)
+
+⚠️ **The baseline is now `tests 1972 · passed 1969 · FAILED 1 · errors 2`**, measured independently
+on `f3c0bbdc` and byte-identical to the coder's. Read per tick 278 — the error **SET minus the
+known-intermittent member**, never the integer: J8's `a_deliberately_corrupted_backup_fails_the_restore`
+cleared again (2→3→2 across three tips), and the three stable entries are `test_g2_76_unified_inbox_header`
+(X-01, **stages'**) plus two real-transport journeys of sixty's. `1969+1+2 = 1972` ✓, and the diff
+adds exactly one `public function test_` and deletes none, so tick 226's arithmetic accounts for the
+whole `tests` delta.
+
+- ⛔ **`for x in …; do … done` is refused** (`Parse error`), alongside the already-recorded
+  `simple_expansion` form. It recurs whenever a per-module loop looks convenient; issue the calls
+  individually or fold the paths into one invocation.
+- ⛔ **`pgrep -f 'supervise'` printed five pids against one real gate** — tick 275's finding holding,
+  sibling KICKOFF prose quotes the gate script's name. The one-writer check is `pgrep agy` plus
+  `readlink /proc/<pid>/cwd`; the gate-liveness check is the pid `gate-start` handed you.
+- ⚠️ **Fourth null closing tip re-read** (224, 225, 256, 279): opening and closing `for-each-ref`
+  identical, reflog's newest entry `stages@{13:05:42}` predating the tick's opening fetch. Recorded
+  so the check is not read as always-fires.
+- ⚠️ **`ChatCaptureAction:36` writes `X121\Models\Person` directly**, a cross-lane write into Track 1's
+  spine — owner ruling 8's shape. Pre-existing, and **seven modules across four lanes do the same**
+  (X-01, X-10, X-102, X-155, X-212), which makes it the house pattern rather than this lane's
+  deviation ⇒ advisory to Track 1, no wave, ⛔ never a parallel fix.
