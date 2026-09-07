@@ -873,3 +873,4 @@
 - `2026-09-07T01:54:03` note: X-176 Superseded : `NLP or content parsing to extract questions and answers from page body (G8-16)`. G8-16 is BUILT from an faq block in content_blocks, on the same seam as G16-25, needing no NLP.
 - `2026-09-07T01:54:13` note: X-176 Superseded `why`: `NLP or content parsing to extract questions and answers from page body (G8-16)`. G8-16 is BUILT from an faq block in content_blocks, on the same seam as G16-25, needing no NLP.
 - `2026-09-07T01:54:31` (R245) X-176 — G8-16 FAQPage schema is read from an faq block in content_blocks on the same seam as G16-25, not using NLP. --ruling R245
+- `2026-09-07T01:59:28` note: X-176 Fixed pint and phpstan
