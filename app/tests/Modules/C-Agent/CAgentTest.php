@@ -18,6 +18,7 @@ use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentInstruction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
@@ -633,5 +634,67 @@ class CAgentTest extends TestCase
 
         $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
         $this->assertNull($turn->refusal_code);
+    }
+
+    public function test_callout_fee_answered(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Callout Answer', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        CalloutFee::create([
+            'business_id' => $biz->id,
+            'callout_fee_cents' => 8500,
+            'deducted_if_proceeding' => true,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to come out?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$85.00', $res['reply']);
+        $this->assertStringContainsString('deducted', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNull($turn->refusal_code);
+    }
+
+    public function test_callout_fee_refusal_path(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Callout Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        $res = $this->answer->handle($biz->id, 'how much to come out?');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertStringNotContainsString('$', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
+    }
+
+    public function test_callout_trigger_does_not_swallow_price_questions(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Callout Swallow', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        CalloutFee::create([
+            'business_id' => $biz->id,
+            'callout_fee_cents' => 8500,
+            'deducted_if_proceeding' => true,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$18,500.00', $res['reply']);
+        $this->assertStringNotContainsString('85.00', $res['reply']);
     }
 }
