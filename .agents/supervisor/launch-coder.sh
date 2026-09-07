@@ -56,9 +56,17 @@ if [ "$CODER" = claude ]; then
   # which denies app/**) out of the coder's permissions; the guard and the seal
   # are what bind it, not that file. Bounded by `timeout 8h` like agy's
   # --print-timeout.
-  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout 8h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/claude -p "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --setting-sources user --output-format text < /dev/null > '"$LOG"' 2>&1; echo "CLAUDE_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 else
-  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
+  # BOUND (2026-09-07, backlog item 1 of tick ~01:4x, taken deliberately rather than
+  # inherited from the sixty lane's copy by a merge). `--print-timeout 8h` is agy's OWN
+  # timer and is exactly the thing a hung agy stops honouring, so the enforcer is the
+  # outer `timeout`: 3h, then SIGKILL 60s later. Track 1 builds nothing — its longest
+  # honest wave is one gate plus a 40-minute pest-lock wait — so 3h bounds a hang and
+  # never a run. The inner 8h is left where it is precisely so there is ONE effective
+  # number and it is the outer one; `bound=3h` is printed in the LAUNCHED line so the
+  # value is read back rather than asserted (the drift shape, CLAUDE.md).
+  nohup bash -c 'export GOAIEZ_MERGE_OK='"$ALLOW_MERGE"'; export GOAIEZ_HARNESS_OK='"$ALLOW_HARNESS"'; export PATH=/home/goaiez/agents/coder-bin:$PATH; export BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh; timeout -k 60 3h /home/goaiez/.local/bin/agy --print "$(cat .agents/supervisor/KICKOFF.md)" --dangerously-skip-permissions --effort high --print-timeout 8h < /dev/null > '"$LOG"' 2>&1; echo "AGY_EXIT=$?" >> '"$LOG"'' > /dev/null 2>&1 &
 fi
 echo $! > "$PIDFILE"
 
@@ -67,7 +75,7 @@ if kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   # Both gates are printed. Until 2026-09-06 18:4x only merge-gate was, while a REVIEWS
   # block claimed "harness-gate in the LAUNCHED line" — the drift shape from CLAUDE.md:
   # two sources of truth in one file, only one of them read back.
-  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) log=$LOG"
+  echo "LAUNCHED run $n (pid $(cat "$PIDFILE")) coder=$CODER bound=3h merge-gate=$([ "$ALLOW_MERGE" = 1 ] && echo OPEN || echo closed) harness-gate=$([ "$ALLOW_HARNESS" = 1 ] && echo OPEN || echo closed) log=$LOG"
 else
   echo "LAUNCH FAILED — check $LOG"; exit 1
 fi

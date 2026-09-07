@@ -186,6 +186,34 @@ Watch for: <the trap that applies, by name>
   in a wait condition rather than a detector — a needle drawn from the tool's own vocabulary matches the
   tool describing itself. Anchor on the result line's own punctuation (`· FAILED`), and read the tail
   before believing any wait that returns.
+- **A KILLED GATE IS ATTRIBUTABLE IN ONE COMMAND, AND THE COLUMN TO JOIN ON IS THE VICTIM'S CWD, NOT
+  YOUR OWN PID (2026-09-07, wave 123).** Wave 123's `bash bin/supervise.sh --tests` printed zero bytes
+  with `rc=137` and the report correctly refused to call it a suite result. It was not memory, not the
+  merge, not a flake: `/home/goaiez/agents/coder-bin/kill` is an attribution shim (bash's `kill` is a
+  builtin, so it is only reached because `coder-bin/shell-init.sh` does `enable -n kill`) and it had
+  already written the answer to `/home/goaiez/tmp/kill-log.tsv`:
+
+  ```
+  2026-09-07T02:00:22-05:00	kill	4012713	4097202	/home/goaiez/agents/grs-antig-site	/home/goaiez/agents/grs-antig/app	timeout 1800 ./vendor/bin/pest
+  2026-09-07T02:00:22-05:00	kill	4012713	4097206	/home/goaiez/agents/grs-antig-site	/home/goaiez/agents/grs-antig/app	/opt/cpanel/ea-php84/root/usr/bin/php ./vendor/bin/pest
+  ```
+
+  Columns are `ts · kill · KILLER pid · TARGET pid · KILLER cwd · TARGET cwd · TARGET cmdline`
+  (`coder-bin/kill:23-24`). So the query for "who killed my suite" is **`grep '/home/goaiez/agents/grs-antig/app'
+  /home/goaiez/tmp/kill-log.tsv`** — the target-cwd column names the victim checkout, and the killer-cwd
+  column two fields left names the lane that did it. Joining on our own gate pid finds nothing, for the
+  reason already written down at `supervise.sh:48-50`: **an agent killing a suite kills the *tool*** —
+  `pest` is what looks stray in `ps`, not the wrapper — so the pid in the log is never one this seat holds.
+  Two corollaries, both measured on the same file:
+  - **The sweep has a signature: one timestamp, several checkouts, including the killer's own.** That same
+    second `4012713` also killed two pests under `grs-antig-site` itself (its own), which is what a
+    `ps aux | grep pest | awk '{print $2}' | xargs kill -9` looks like from the outside — a command another
+    lane is recorded running verbatim at `kill-log.tsv:428`. A *targeted* kill has one target cwd; a sweep
+    has several and does not spare its author. Read the neighbouring rows before attributing intent.
+  - **A killed gate costs a wave and is not the coder's defect, so it is never a `BLOCK` and never spends a
+    dispatch of the cap.** It is also not the "re-run until green" antipattern: that rule is about an
+    *assertion* that flickers, and here no assertion was ever read. Re-dispatch the identical gate, and put
+    the `grep` above in the brief so a second kill is diagnosed in the same run rather than in the next tick.
 - **A stale doctor.** `doctor`'s first line is `goaiez doctor · build <stamp>`.
   Three identical runs once came from files that were never copied into the
   tree. Compare the stamp before trusting any count.
