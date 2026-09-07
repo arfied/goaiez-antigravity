@@ -395,6 +395,41 @@ supervisor's uncommitted notes. (2) Read the absence correctly: a future tick th
 sees `CLAUDE.md` missing from a merge index will conclude the lane did not touch it.
 `track/sixty` had rewritten 2352 lines of it.
 
+⚠️ **"ABSENT FROM THE MERGE INDEX" HAS TWO CAUSES WITH OPPOSITE OPERATIONAL MEANINGS, AND
+`git diff --cached` CANNOT TELL THEM APART — ONLY THE SECOND PARENT VS THE MERGE BASE CAN
+(2026-09-07, wave 127).** The note above says the driver fails open; this says what a reader
+is entitled to conclude from the silence, because my own wave-127 brief concluded the wrong
+one **in writing**. Both merges so far staged **none** of the eight, and the two zeroes mean
+different things:
+
+- **Case A — the driver fired.** Both sides changed the file, git ran the three-way merge,
+  `merge=ours` returned our blob, and an index entry byte-identical to `HEAD` is invisible to
+  `git diff --cached --name-only`. **Nothing to restore, and correctly so.** Wave 127 is this
+  case, measured: the incoming side changed `CLAUDE.md`, `BUILD-STATE.json` and `JOURNAL.md`
+  (`git diff --name-only 4183baaf HEAD^2`), and `main` had changed all three as well
+  (`git diff --name-only 4183baaf HEAD^1 -- <the eight>`).
+- **Case B — only *their* side moved.** No driver is consulted, git takes theirs outright, the
+  index entry **differs** from `HEAD` and the path **is listed**. This is the case that needs a
+  restore, and it is the one that put five paths in `track/sixty`'s index.
+
+⛔ **My wave-127 brief told the coder the absence meant case B** — *"a per-track file that only
+their side changed is taken theirs outright without git consulting the `merge=ours` driver, and
+it never enters the index at all"* — which is case B's mechanism bolted onto case A's outcome,
+and it is backwards. It did not bite, because item 3 derives its commands from the index and item
+4 proves the result independently (`git diff HEAD~1 HEAD -- <the eight>` printed nothing). **A
+wrong reason under a right procedure is still a defect**: the next brief that reasons *from* the
+sentence rather than *from* the index inherits it. Same shape as the wrong-needle wave — a
+sentence of mine became an instrument's premise one wave later.
+
+Two rulings. (1) **The proof that no restore was needed is item 4, never item 3's silence** —
+`git diff HEAD~1 HEAD -- <the eight paths>` empty is a measurement of the merge *result*; an
+empty index listing is a measurement of the *mechanism*, and only one of those is the thing
+anyone cares about. Run item 4 even when item 3 restored nothing, and read it as the answer.
+(2) **A brief may state the procedure without stating the mechanism.** Every time this file has
+explained *why* a git behaviour produces a shape, the explanation has been the part that was
+wrong (§2e's one baseline, the harness "do not touch", this). The command list is what the coder
+executes; the mechanism is what I get wrong on the page next to it.
+
 ⚠️ **A merge can disarm the supervisor's own instruments, because the supervisor's
 permissions ARE a per-track file (2026-09-07).** `.claude/settings.json` and
 `bin/supervise.sh` both crossed in that merge and sat in the tree for forty minutes
