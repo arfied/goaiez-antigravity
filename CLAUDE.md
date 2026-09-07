@@ -4854,3 +4854,97 @@ a scope, and the section you forget to name is where the regression sits*) turne
 there the item was **missing** from the list, here it was **present in the document but outside the
 list**, which is the same thing to a reader working through a checklist. **Anything a verdict will
 turn on is a numbered item.** SITE-122's checklist has six.
+
+## ⛔ A claim that an item was RE-MEASURED is itself a claim — and tick 240 made it about the wrong file (tick 241)
+
+Tick 240 opened its carried queue with *"Re-measured this tick rather than copied from tick 238's
+list, because a carried item decays exactly like a doctor count (ticks 196, 207, 210, 211)"* and
+listed, as **item 1, the highest-severity entry in the lane**:
+
+> ⛔ `InternalLinkRenderAction:24` keys `$pages->keyBy('slug')` on the RAW slug and `:44` looks it up
+> TRIMMED … a page vanishing from shipped output with no error.
+
+`:24` reads `$pages->keyBy(fn ($page) => trim((string) $page->slug, '/'))` and has since
+**`e5617612`, 2026-09-06 20:30:59** — tick 239's own wave, thirty-seven minutes before tick 240 wrote
+the sentence. The queue was carried verbatim from tick 238 with the *assertion* of re-measurement
+attached to it, and briefing it would have dispatched a wave against a line that already said what
+the brief was going to ask for.
+
+⚠️ The ledger already holds four firings of this family — 196 retiring tick 82's diagnosis, 207
+retracting the X-137 divergence, 210 finding the anchor entries already filed twice, 211 finding
+`main` had delivered the whole backlog. Every one of those was caught. This one was **written into
+the ledger as already caught**, which is worse: a "re-measured" label is indistinguishable from a
+measurement to the next tick, and it is the one form of decay no re-reading of the record can
+detect. ⛔ **A carried item's re-measurement is recorded by its EVIDENCE — the line, the sha, the
+grep output — never by the word.** Twenty-sixth statement of this section's law, and the first turned
+on a **claim of having applied the law**.
+
+## ✅ The defect's SHAPE was live — in the other file. Grep the pattern, never the address (tick 241)
+
+The same tick that retired item 1 found the identical defect two modules over, in
+`EdgeDeployAction:198-201`, where the breadcrumb ancestry query does
+
+```php
+$paths[] = $current;                               // :195 — built from trim($page->slug, '/')  :189
+$hierarchyPages = Page::where('business_id', $businessId)
+    ->whereIn('slug', $paths)->get()->keyBy('slug');   // :201 — keyed RAW
+if (! isset($hierarchyPages[$path]) …) { $usable = false; break; }   // :205
+```
+
+A page stored as `/services` is keyed `/services`, looked up as `services`, `isset()` is false, and
+`:214` throws the **whole breadcrumb** away. Byte-for-byte the defect tick 240 described, in the file
+it did not name — because the shape was copied from `InternalLinkRenderAction` into
+`EdgeDeployAction` and only the original was fixed.
+
+⛔ **A one-place fix for a copied shape leaves the copies.** When a wave repairs a defect, grep the
+lane for the *pattern* — here `keyBy('slug')` against a trimmed lookup — before the item is struck
+off. The carried entry was right about the defect, right about its severity and wrong only about its
+address, and an address is the one part of a finding that a re-measurement scoped to that address can
+never correct.
+
+⚠️ The same query carries the second live item from tick 240's queue: `:198` does **not** bound by
+`is_published`, so an unpublished ancestor can name a crumb on a published page. Two one-clause
+defects in one query, each with its own falsifier ⇒ **RULED: SITE-123 is the breadcrumb-ancestry
+repair, and it precedes the visible-breadcrumb wave**, because rendering a crumb built by a defective
+query ships the defect where a visitor can read it. The render wave becomes SITE-124.
+
+## ⚠️ `SchemaVisibilityTest`'s block extraction encodes a FOLLOW-SET, and the next wave breaks it (tick 241)
+
+All three correspondence tests locate their block with
+`/<div id="…-x176">(.*?)<\/div>\n(?:<div|<script|<\/body)/s` — the trailing group is what stops
+`.*?` at the block's own closing tag rather than an item's. It is correct today only because
+`#events-x176`, `#address-x176` and `#videos-x176` are each followed by another `<div`, by the
+JSON-LD `<script`, or by `</body`. `InternalLinkRenderAction` emits `<nav id="internal-links-x176">`,
+which matches **none** of the three, and it is empty in these fixtures only because a one-page
+business trips the `count($usablePages) < 2` guard.
+
+SITE-124 adds a visible breadcrumb. ⛔ **If it renders as `<nav>` and lands directly after
+`#videos-x176`, `test_video_corresponds` goes red with nothing wrong in the code.** The failure is
+loud, not silent, so it is a false-red hazard rather than a fake-green — but it will read as a
+regression in the wave that did not cause it. Name it in that brief: either place the breadcrumb
+block before `#offers-x176`, or extend the follow-set to `<nav` in the same wave and say so.
+
+⚠️ Related asymmetry, benign and recorded so it is not rediscovered as a defect: the four visible
+blocks sit at `:272-314`, **outside** the `if ($commitId)` branch that emits the JSON-LD at
+`:253-255`. A deploy with a falsy `commitId` therefore renders visible events and address and no
+schema at all. That is the *inverse* of the ④ failure mode — the page showing more than the schema
+claims — and every visible value is derived truth, so it is not the fake-green shape. The
+correspondence property is asserted on the `commitId` path only.
+
+## ✅ The cross-lane dependency query's FIRST firing, and its scope held (tick 241)
+
+Tick 240 created it and warned it must never be read for silence. Pricebook pushed `70c7729d`
+(*"feat(X-163): refuse NO_FACT when two or more business-wide rows disagree"*) touching
+`X-163/Domain/PricebookEngine.php` and `X163Test.php`; the paired `--stat` printed it, and the
+dependency query — scoped to `X-163/Models` and `X-163/Database` — stayed **silent, correctly**.
+This lane reads `PriceBookItem` directly (`EdgeDeployAction:126-130`, on `is_confirmed`, `is_sample`,
+`service_name`, `price_cents`) and never touches the engine, so a change to pricebook's refusal logic
+cannot reach our reader. **The pairing is the measurement**: the stat says a sibling wrote in X-163,
+the scoped query says it was not in the part we read, and neither alone answers it.
+
+⚠️ Longest arrival lag yet recorded: `70c7729d` committed **21:08:47**, arrived **21:51:03** —
+**42 m 16 s**, against previous routine maxima of 12–17 minutes. It arrived *after this tick's own
+opening `for-each-ref`*, so the opening table was already stale when it was read and the closing
+re-read (tick 215) is what caught it. Tick 220's reading stands and hardens: on this box the arrival
+lag is now measured at nearly three times a tick's length, and no fetch discipline can see a commit
+that has not been pushed.
