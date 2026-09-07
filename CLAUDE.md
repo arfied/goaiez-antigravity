@@ -255,8 +255,54 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
 | UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
 | UI-46 | `Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column | closed, pushed `7f052348` |
-| **UI-47** | **`OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` (ruling below)** | **in flight — run 88 `BLOCK`, run 89 `PASS-WITH-NOTES` + a real finding, run 90 closes it** |
-| UI-48 | the **four** screens that still render `<x-surface.sample-state>` unconditionally — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again. **Plus the dead `$isSample` in X-199** — a `#[Locked] public bool = false` with no writer in `Invoices.php` and `Credits.php`, and the unreachable `@elseif($isSample)` at `invoices.blade.php:15` / `credits.blade.php:15`. It is SYSTEM, it is this lane's module, and it is what made the 17:2x six-screen list wrong | after UI-47 |
+| UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` | closed, pushed `3c8e0ef1` — run 88 `BLOCK`, run 89 `PASS-WITH-NOTES` + a real finding, run 90 `PASS` |
+| **UI-48a** | **the dead `$isSample` flag. ⛔ It is NINE sites in TWO modules, not two in one — see the ruling below. Plus the `state.py decided` record UI-47 never got** | **in flight — run 91** |
+| UI-48b | the four screens that still render `<x-surface.sample-state>` unconditionally at a root `<div>` — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav` and out of `sampleStateRoutes()`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again. ⚠️ `tag-version-per` has no query at all and stays `UNRESOLVED` under the Week-2 definition, so this is three screens closed and one filed | after UI-48a |
+
+✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
+nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
+when the three media endpoints moved to a derivation off the `__invoke` return type. Floor met
+exactly: `1727 · 1720 · 3 · 4`.
+
+### ⚠️⚠️ RULED 2026-09-06 20:3x — `$isSample` is NINE dead flags in TWO modules. SIXTH wrong hand-derived claim in this file.
+
+The UI-48 row used to say *"a `#[Locked] public bool = false` with no writer in `Invoices.php` and
+`Credits.php`"*. **MEASURED 20:3x with one `grep -rn "isSample" app/app/Modules/X-199/`:** ten lines,
+not one an assignment — `Invoices.php:20`, `Credits.php:20`, `Unpaid.php:20`, `Declines.php:20`,
+`MoneyPaidToday.php:24`, each `#[Locked]`, and five blades reading `@elseif($isSample)` at `:14`.
+**Five, not two.** The same shape sits in **X-110**: `Cooling.php:25`, `Today.php:21`,
+`VisitorsLive.php:21`, `InstallVerify.php:24`, with `today.blade.php:14` the only blade reader.
+
+⚠️ The 18:0x block got the **conclusion** right and the **extent** wrong — the same failure mode as
+16:1x's "ten call sites" and 19:5x's "never enters `ownerScreenRoutes()`". I measured the two call
+sites the question put in front of me, then wrote a sentence about the module. So the standing rule
+extends: ⛔ **a claim about HOW MANY of something there are is a MEASUREMENT, and naming the files is
+not the same as counting them.**
+
+⛔ Every other `isSample` in the tree is a **live** toggle with a real
+`$this->isSample = ! $this->isSample` writer — C-Reviews, X-136, X-150, X-151, X-156, X-16, X-177,
+X-181. None is this lane's and none is touched. ⛔ And the extent above is itself only as good as its
+grep: `mount()` binding and `@livewire(…, ['isSample' => …])` were **not** measured, so run 91
+measures the writer set first and deletes only what its own measurement shows dead.
+
+### ✅ RULED 2026-09-06 20:3x — the two `OwnerNav` comments about `$isSample` are UPDATED, not softened
+
+`OwnerNav.php:310–319` and `:321–330` justify the `x-199.invoices` and `x-199.credits` entries by
+describing the dead flag. Delete the flag and those comments describe something that no longer
+exists — a true sentence rotting into a false one. The standing "do not soften" rule bars
+**weakening** a comment, not keeping it true. Both are rewritten to state the outcome (the screen
+runs a real query and renders it on every `GET`, so it owes a nav entry), both versions pasted in
+`REPORT.md`, the `⚠️ THIS ENTRY IS NOT OPTIONAL POLISH` line and the `OwnerNavTest` sentence kept,
+and no nav entry moved.
+
+### ✅ RULED 2026-09-06 20:3x — `supervise.sh` §7 now prints `failed`
+
+`bin/supervise.sh:437` printed `tests · passed · errors · result` and **no `failed` field**, so a
+supervisor reading only that line could not see whether failures rose — half of every floor a brief
+states. Run 90's `failed 3` reached review only because I opened the JSON by hand. The line is now
+`tests · passed · failed · errors · result`. ⚠️ **Every floor from run 91 on quotes the five-field
+shape.** A report pasting the four-field shape is running an old `supervise.sh`, which is the same
+tell as a stale doctor stamp.
 
 ### ✅ RULED 2026-09-06 17:1x — the thirteen unreachable owner routes
 

@@ -430,11 +430,18 @@ if [ $want_tests -eq 1 ]; then
     echo "     manifest (npm run build), or the run was killed from outside."
   fi
 
+  # ⚠️ `failed` was ADDED to this line 2026-09-06 20:3x and the omission was four
+  # months old. Until then the summary read `tests · passed · errors · result`, so a
+  # supervisor reading only this line could not see whether FAILURES rose — half of
+  # every floor a brief states. Run 90's report pasted it verbatim and correctly, and
+  # its `failed 3` reached review only because I opened the JSON by hand. An assertion
+  # that did not hold is a failure, not an error; the two counts are independent and
+  # both belong here.
   if printf '%s' "$out" | tail -1 | grep -q '^{"tool":"pest"'; then
     printf '%s' "$out" | tail -1 | python3 -c '
 import json,sys
 d=json.loads(sys.stdin.read())
-print("  tests %s · passed %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("errors"),d.get("result")))
+print("  tests %s · passed %s · failed %s · errors %s · result %s" % (d.get("tests"),d.get("passed"),d.get("failed"),d.get("errors"),d.get("result")))
 for e in (d.get("error_details") or [])[:5]:
     print("   ✗ %s\n      %s" % (e.get("test","?").split("::")[-1], (e.get("message") or "")[:160]))
 n=len(d.get("error_details") or [])
