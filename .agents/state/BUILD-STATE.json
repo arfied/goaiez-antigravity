@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T08:11:14",
+ "updated": "2026-09-07T08:33:42",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1544,6 +1544,12 @@
    "module": "X-124",
    "chose": "a check that flattens a branching document into one linear sequence has measured a document that is never rendered, so the check states that limit in its own failure message and the size of the population it could be wrong about is pinned as an upper bound rather than left unstated. --ruling R245",
    "at": "2026-09-07T08:11:14",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a counter that ignores conditional keywords measures an upper bound only over the vocabulary it does track, so the population containing those uncounted keywords is pinned to detect drift, and its failure message states what a red means in both directions and that neither is by itself a defect",
+   "at": "2026-09-07T08:33:42",
    "ruling": "R245"
   }
  ],
