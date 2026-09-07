@@ -875,3 +875,4 @@
 - `2026-09-07T00:58:45` note: G5-31: C-Agent can do nothing with chat.started. The event carries only session metadata and no message row ID. AgentAnswerAction requires a message to operate, and the law requires passing a row ID rather than the words, which this event lacks. The declared consumption is unsatisfiable as declared.
 - `2026-09-07T01:21:15` note: G5-31: corrected owner to X-102 and Track 1; C-Agent can do nothing with chat.started since X-102 lacks a turn store and the event carries no row ID.
 - `2026-09-07T01:21:15` note: G5-32: corrected owner to X-66 and Track 1; C-Agent can do nothing with call.answered since it carries no turn row ID, and VoicemailTranscribed carries raw words.
+- `2026-09-07T04:54:27` (R245) X-66 — (R245) call_turns row is written by VoiceCoachAction, but nothing in production writes one today

@@ -11,6 +11,7 @@ use App\Modules\X66\Actions\VoiceVoicemailTranscribeAction;
 use App\Modules\X66\Domain\VoiceSessionEngine;
 use App\Modules\X66\Events\CallAnswered;
 use App\Modules\X66\Events\CallRinging;
+use App\Modules\X66\Models\CallTurn;
 use App\Modules\X66\Ui\Calls;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -93,6 +94,7 @@ class X66Test extends TestCase
 
     /**
      * [G18-21] real-time objection detection; retrieval is X-148's
+     * BUILD PROPOSAL: Wire IngestVoiceEventJob (or the real voice path) to call X-66 VoiceSessionEngine to record turns. Owner: Track 1
      */
     public function test_g18_21_objection_detection(): void
     {
@@ -104,8 +106,8 @@ class X66Test extends TestCase
 
         $this->assertEquals('negative', $autopsy->sentiment);
 
-        // The production path for receiving spoken words (coach) must record the caller's turn
-        $turns = \App\Modules\X66\Models\CallTurn::where('session_id', $session->id)->get();
+        // VoiceCoachAction correctly writes a call_turns row with speaker 'caller' when invoked
+        $turns = CallTurn::where('session_id', $session->id)->get();
         $this->assertCount(1, $turns);
         $this->assertEquals('caller', $turns->first()->speaker);
         $this->assertEquals('That is too expensive compared to competitor', $turns->first()->transcript);
