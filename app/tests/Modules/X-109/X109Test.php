@@ -107,4 +107,36 @@ class X109Test extends TestCase
     {
         $this->assertTrue(true);
     }
+    /** [G2-78] */
+    public function test_g2_78_no_knockout_or_disqualify_path_fenced(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Fenced Tenant', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // Normal successful submit beside it
+        CaptchaQuota::create([
+            'business_id' => $biz->id,
+            'campaign_id' => null,
+            'prospect_identifier' => null,
+            'status' => 'active',
+            'available_quota' => 10,
+            'used_quota' => 0,
+        ]);
+        
+        $result = $this->submitAction->submitForm(
+            businessId: $biz->id,
+            campaignId: 'fenced_campaign',
+            prospectIdentifier: 'prospect_fenced',
+            formData: ['name' => 'Test']
+        );
+        $this->assertEquals('submitted', $result['status']);
+
+        // Assert FormEngine/FormSubmitAction expose no knockout, disqualify or screen-out path
+        $actionClass = new \ReflectionClass(\App\Modules\X109\Actions\FormSubmitAction::class);
+        $engineClass = new \ReflectionClass(\App\Modules\X109\Domain\FormEngine::class);
+
+        $code = file_get_contents($actionClass->getFileName()) . file_get_contents($engineClass->getFileName());
+        
+        $this->assertDoesNotMatchRegularExpression('/(knockout|disqualify|screen_out|screen-out)/i', $code, 'Knockout paths are FENCED (G2-78)');
+    }
 }
