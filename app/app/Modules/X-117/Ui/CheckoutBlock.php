@@ -54,7 +54,7 @@ class CheckoutBlock extends Component
         $this->waiting = null;
 
         if ($this->authToken === null) {
-            $this->error = 'This charge needs a fresh authorisation: tap Authorise first. Nothing was charged.';
+            $this->error = 'This order needs a fresh authorisation: tap Authorise first. Nothing was placed, and nothing is charged here in any case: this checkout is waiting on a card-entry surface.';
 
             return;
         }

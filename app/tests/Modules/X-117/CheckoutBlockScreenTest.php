@@ -46,7 +46,8 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertSee('No orders yet');
 
         $screen->call('pay')
-            ->assertSee('needs a fresh authorisation');
+            ->assertSee('This order needs a fresh authorisation')
+            ->assertSee('nothing is charged here in any case: this checkout is waiting on a card-entry surface');
 
         $this->assertSame(1, $filter->fresh()->inventory_quantity);
 
