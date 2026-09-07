@@ -8124,3 +8124,114 @@ rather than against the ledger.
 ⚠️ Recorded and **not** a wave: the plan disagrees with itself about G9-04's owner — `:31351` assigns
 it to **X-110**, `:27800` and tracker `:493` to **X-103**. Both are this lane's under ruling 5, so
 nothing operational turns on it, and the frozen master plan text is reserved to the owner.
+
+## ⛔ `php artisan doctor` is NOT a pure function of the tree — `journey` reads UNTRACKED evidence that every gate rewrites (tick 270)
+
+Tick 217 ruled doctor's numbers cacheable on a provably unchanged tree, on the ground that *"doctor
+is a pure function of the tree it reads"*, and eleven ticks have cited it. It is false for one stage
+of eight, and the exception is the stage carrying this lane's own goal.
+
+Measured across **four** runs of one byte-identical tree at tick 270 — `git status --short` reading
+` M app/phpunit.xml` + `?? error_log` throughout — every stage held except one:
+
+| run | boundary · contract · citation · schema · capability · anchor | journey |
+| :-- | :-- | --: |
+| coder, before its wave | 6 · 87 · 93 · 15 · 455 · 137 | **5** |
+| coder, after its wave (still before its gate) | 6 · 87 · 93 · 15 · 455 · 137 | **5** |
+| this seat, after the coder's gate | 6 · 87 · 93 · 15 · 455 · 137 | **4** |
+| this seat, after its own gate | 6 · 87 · 93 · 15 · 455 · 137 | **4** |
+
+The cause is read at source, not inferred. `app/app/Doctor/Stages/JourneyStage.php:40` is
+
+```php
+$file = storage_path("app/evidence/journeys/{$slug}.json");
+```
+
+and `ls -la --time-style=+%H:%M:%S app/storage/app/evidence/journeys/` shows all ten files stamped
+inside the two minutes of the coder's §7 run. They are **untracked runtime artifacts that every
+`--tests` gate rewrites**, and the step falls exactly at the first gate. The mechanism is a source
+reading and the reproduction is a second, independent firing — not a rule fitted to one observation
+(ticks 188, 250).
+
+⛔ **`git status` is not a sufficient proof of doctor's input.** Seven stages — `integrity`,
+`boundary`, `contract`, `citation`, `schema`, `capability`, `anchor` — are a pure function of the
+tracked tree and tick 217's cache holds for them. `journey` is a function of the tree **plus** a
+directory `git status` is structurally blind to, so the cache never covered it and no amount of
+re-reading `git status` more carefully would have said so.
+
+⛔ **And it makes a standing pass condition unsatisfiable by construction.** *"Every doctor stage
+unchanged in both directions"* — this lane's condition for filing waves (tick 209) and audit waves
+since — cannot hold for any wave that runs a gate between its two doctor readings, because `journey`
+will legitimately move. That is a defect in **my** briefs, inherited by every wave since tick 209,
+and the remedy is one clause: **exclude `journey` from a doctor-unchanged pass condition, or take
+both readings on the same side of the gate.**
+
+⚠️ Direction still decides the verdict (the RULING AY family): a **rise** is a stop, a **fall** is a
+finding. This was a fall and it is benign — one more journey now has fresh evidence, and J11's
+`site-publish.json` is present and freshly stamped. ⛔ It changes nothing about tick 213: `journey`
+still never reports J11, and `bash bin/supervise.sh --tests` §7 is still the only surface in the
+programme that does.
+
+Fortieth statement of this section's law, on an axis none of the others used — 163/178/180/183/185/187
+the *pathspec*, 190 the *strip*, 191 *bounds moving*, 192/193 *unrecorded bounds*, 194
+*configuration*, 196 *width*, 207 *expected output*, 208 the *evidence request*, 209 *resolution
+context*, 210 the fault's *scope in time*, 215 the *cache key's identity*, 219 *provenance*, 220 the
+key's *update mechanism*, 224 the *denominator's members*, 228 *evaluation time*, 247 a query that
+*did not run*, 253 *which tree a section measured*, 257 a query *never issued*, 259 *which column
+identifies the row*, 261/263 the *partition key*, 265 the *answer set*. This concerns a query's
+**input set being wider than the input the reader checks**: the instrument used to prove doctor's
+input unchanged does not see all of doctor's input, and the gap appears in neither output.
+
+## ⛔ A re-anchor and a deleted assertion are the same `--stat` — read the method, not the diff (tick 270)
+
+SITE-143 moved `G16-07` and `G19-07` off a four-id docblock onto two new tests that assert the short
+linker's expiry and click cap. Its `--stat` is `+76 −1`, and the **−1** is a docblock line dropping
+two ids and the words *"Click Cap & Expiry"* from `test_short_linker_device_routing_and_caps`. In a
+stat that is indistinguishable from deleting a claim.
+
+What decides it is the method's body, and it had to be opened: `X103Test.php:111-132` provisions a
+funnel with `clickCap: 5` and `expiresAt: now()->addDays(7)` and then asserts **two `destination_url`
+values and nothing else** — it never resolves past the cap and never resolves an expired link. Both
+clauses were class-2 false credits (a comment over a body that asserts nothing about them), so the
+deletion *is* the re-anchor. Had the method actually asserted them, the identical stat would have been
+a BLOCK.
+
+✅ The independently re-run id census is what proves it net-zero: eleven ids at one occurrence each,
+before and after, so the credit moved and did not multiply — no second carrier now obscuring which
+method discharges the clause (tick 240). ⛔ **Never grade a docblock deletion from the stat or from
+the report's census. Open the method the docblock was attached to, and re-run the census yourself** —
+an untimed before/after has no nonce (tick 251), so the reviewer's own run is the only verification
+there is.
+
+## ✅ Assertion arithmetic settled two falsifiers the `line` field could not (tick 270)
+
+Tick 268 measured that pest's `line` field is the **method's declaration line**. SITE-143's two
+mutations happened to land in two different methods, so the field discriminated by luck; the evidence
+is tick 251's arithmetic, and it closed exactly. `test_g16_07` carries 4 assertions, `test_g19_07`
+carries 9, unmutated total **57**:
+
+- M1 (expiry branch deleted) → `test_g16_07` fails at A1 → 57 − 4 + 1 = **54**. Reported 54.
+- M2 (cap branch deleted) → `test_g19_07` fails at A7 → 57 − 9 + 7 = **55**. Reported 55.
+
+with the two messages running in **opposite** directions (`-'expired' +'routed'`, `-'capped'
++'routed'`) and each mutation leaving the other two methods green — tick 267's siting law satisfied.
+Three independent constraints agreeing is what separates a run from a plausible transcript.
+
+⚠️ Recorded as **unproven, not proven**: `test_g16_07`'s second clause (a *non*-expired link routes)
+is a presence assertion whose falsifier is making the expiry branch **unconditional**, not deleting
+it (tick 245's polarity) — M1 stops the run at A1, so A3/A4 were never independently falsified.
+
+## ⚠️ §7's error count has now taken THREE values on unchanged trees (tick 270)
+
+Tick 267 met `errors 5`, tick 268 met `errors 4` on the identical tip an hour later and ruled the
+entry intermittent, adding *"or BOTH on an unchanged tree"* as every two-way falsifier's third
+branch. Tick 270 reads **`errors 2`** — two independent gates, the coder's and this seat's, both
+`tests 1971 · passed 1968 · FAILED 1 · errors 2` byte-for-byte on `4ed6163c`, against a diff that is
+one X-103 test file. The three entries that cleared are other lanes' real-transport journeys,
+unreachable from this wave. ⛔ The cause is **not measured and no block names one**.
+
+**The §7 baseline is now `1971 · 1968 · FAILED 1 · errors 2`**, and per tick 216 the only sound
+baseline is this checkout's own previous gate — so a future comparison against `errors 4` or
+`errors 5` is the stale one. ⚠️ `test_g2_76_unified_inbox_header` lives in
+`app/tests/Modules/X-01/X01Test.php` and **X-01 is stages'** under ruling 5's catch-all (ticks
+190/194/216): unreachable from this lane's diff, no filing here.
