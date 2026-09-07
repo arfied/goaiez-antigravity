@@ -14,6 +14,8 @@ use Livewire\Component;
 
 class Credits extends Component
 {
+    use LabelsMeters;
+
     public ?int $explainedEntryId = null;
 
     public ?array $explanation = null;
@@ -70,13 +72,7 @@ class Credits extends Component
         $latestEntry = $entries->first();
         $aiBalance = $latestEntry ? $latestEntry->balance_after_hundredths_cents : 0;
 
-        $meterLabels = [
-            'sms' => 'SMS Segments',
-            'voice' => 'Voice Minutes',
-            'ai' => 'AI',
-            'email' => 'Email',
-            'lead' => 'Lead Credits',
-        ];
+        $meterLabels = $this->meterLabels();
 
         return view('c-billing::credits', [
             'meters' => $meters,

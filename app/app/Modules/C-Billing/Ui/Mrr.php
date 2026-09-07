@@ -15,6 +15,7 @@ use Livewire\Component;
 
 class Mrr extends Component
 {
+    use LabelsMeters;
     use ReadsAgreedMonthly;
 
     public ?int $explainedEntryId = null;
@@ -78,6 +79,7 @@ class Mrr extends Component
             'monthly' => $monthly,
             'meters' => $meters,
             'entries' => $entries,
+            'meterLabels' => $this->meterLabels(),
         ]);
     }
 }

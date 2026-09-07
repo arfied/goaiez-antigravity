@@ -57,7 +57,7 @@
             <ul class="space-y-2">
                 @foreach($meters as $meter)
                     <li class="flex items-center justify-between p-2 border rounded tabular-nums">
-                        <span>{{ $meter->meter_type }}</span>
+                        <span>{{ $meterLabels[$meter->meter_type] ?? $meter->meter_type }}</span>
                         <span>{{ number_format($meter->units_used) }} units</span>
                         <span>{{ number_format($meter->cost_hundredths_cents / 10000, 4) }}</span>
                     </li>
