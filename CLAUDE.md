@@ -7961,3 +7961,166 @@ withholding a gated commit over one more entry of that kind, in a column this la
 can fix, strands real work on an environment condition. ⛔ Not a licence to push through a red §6
 (tick 208) or through a failure this lane's own diff could have caused; **the discriminator is
 reachability from the diff, never the colour of the section.**
+
+## ⛔ A pest failure's `line` field is the METHOD'S DECLARATION line — an assertion inside a method is discriminated by the ASSERTION COUNT, never by the line (tick 268)
+
+SITE-141's two mutations each reported `"line":170`, and the report reasoned from it to name which
+assertion failed. Item 1's own grep says line 170 is
+`public function test_g12_03_capabilities(): void` — **the declaration**. The field is the same 170
+under every mutation of a four-assertion method, so it cannot discriminate A1 from A4 and the
+report's conclusion, though correct, did not rest on the evidence it cited.
+
+What does discriminate is tick 251's arithmetic, and here it closed three ways at once:
+
+| | `assertions` | first failure | message |
+| :--- | --: | :--- | :--- |
+| M1 `entityType: 'LocalBusiness'` | **3** | A1 ✓ A2 ✓ **A3 ✗** | `-'HVACBusiness' +'LocalBusiness'` |
+| M2 `entityType: 'HVACBusiness'` | **4** | A1 ✓ A2 ✓ A3 ✓ **A4 ✗** | `-'LocalBusiness' +'HVACBusiness'` |
+| unmutated | **4** | — | green |
+
+The count, the message's direction, and tick 248's rule that an ordered test reports only its first
+failure all agree, so the two artifact legs are independently falsifiable and neither direct call
+was reached — tick 267's law satisfied at the site it named.
+
+⛔ **A brief that asks for "the failure verbatim, with file and line" IMPLIES the line locates the
+assertion.** It locates the method. Ask for the **assertion count** and reconcile it against the
+test's structure: it is arithmetic, it is free, and it is the only field in pest's JSON that
+separates two assertions inside one method. Same family as tick 246's sixth false-credit shape — a
+subject identified by a field that does not uniquely name it — arriving on a *tool's output format*
+rather than on a test or a query.
+
+## ⛔ A falsifier stated as a TWO-WAY test over a nondeterministic system has no branch for the answer it will actually get (tick 268)
+
+Tick 267 met `errors 5` on a Postgres `pg_terminate_backend` privilege error in J8
+(`a_deliberately_corrupted_backup_fails_the_restore`, another lane's journey) and wrote the falsifier
+as: *"the next gate on the same tree with `errors 4` means it was transient, `errors 5` means it is a
+standing condition."* Two gates on the identical tip, one hour apart, **disagree** — the coder's
+`1969 · 1964 · FAILED 1 · errors 4` with J8 absent, this seat's `1969 · 1963 · FAILED 1 · errors 5`
+with J8 present. Both reconcile (`1964+1+4 = 1963+1+5 = 1969`, tick 226) and the other four errors
+and the one FAILURE are identical in both.
+
+So the answer is **neither branch**: the entry is **intermittent on an unchanged tree**, a state the
+falsifier could not express. ⛔ **Every falsifier stated as a two-way test now carries `— or BOTH, on
+an unchanged tree, which means intermittent` as its third branch.** This is tick 262's law (*a stop
+stated in one direction cannot falsify the brief that wrote it*) composed with tick 265's (*an
+enumerated verdict set is a claim about the world's cardinality*), arriving together on **a
+falsifier's own answer set** — and this seat wrote it. A two-outcome falsifier over a
+nondeterministic system always returns one of the two, and nothing in its output can say the third
+was missing.
+
+⚠️ **The cause is NOT measured and no block names one** (ticks 227/230/249; tick 209 is this seat
+committing that error itself). What is measured: unreachable from the wave's diff — the wave's entire
+diff is `.agents/state/`, J8 is another lane's journey, and the error text names a Postgres role
+privilege and no application code. ⚠️ **The §7 baseline is now `1969 · 1963 · FAILED 1 · errors 5`**
+(tick 216 — the only sound baseline is this checkout's own previous gate), so a future comparison
+against `errors 4` is the stale one.
+
+## ⛔ Half 1 shrank AND grew inside the SAME partition (tick 268)
+
+Tick 198 was the first tick where half 1 moved in opposite directions at once, and the two movements
+were in *different* partitions (ui merged, reviews violated). Tick 268 is the case that rule did not
+cover: sixty/X-102 went **7 → 5** and both movements are in that one partition.
+
+- **−4, a bound moving.** `main` gained `8e54bb3f` — `merge: track/sixty — X-66, C-Agent, X-102`,
+  second parent `17558aec` (06:17:03) — so sixty's four X-102 **docblock** commits (`fa21480b`
+  `06708c6a` `03bdced6` `706e889d`) fell out of `^origin/main`. They **merged** (tick 191).
+- **+2, new traffic.** `3906b575` (08:05) and `89a396cd` (08:21), both `ChatDoorTest.php`.
+
+7 − 4 + 2 = 5. ⛔ **A partition delta is not a partition reading** — a tick recording "sixty 7 → 5, a
+merge landed, nothing to do" would have missed two new commits *inside* the partition the merge was
+shrinking. Tick 189 partitioned half 1 because a count aggregates opposite verdicts; this is the same
+law one level in, on a **single partition's** own delta.
+
+⛔ **And a merge's SUBJECT is not its content.** `8e54bb3f` says "X-102" and the chat door is **not**
+in it: `git branch -r --contains e8e1396f` · `f9be69f9` · `50abba70` each return
+`origin/track/sixty` alone, and `git diff --stat 3b157077 origin/main` over the fourteen module paths
+prints `app/tests/Modules/X-102/X102Test.php | 5 +++++` and nothing else — sixty's BUILD PROPOSAL
+docblock, not the controller, route or rate limiter. All five feature commits remain unmerged, so the
+TRACK 1 ACTION is still preventable at the merge. Tick 222's law (*a commit's stated scope is not its
+diff's scope*) on a **merge**, where the gap is widest because a merge's subject names branches and
+its content is a resolution.
+
+⚠️ What *did* arrive is tick 260's seventh false-credit shape: `main` now carries the docblock
+crediting **G16-21** in this lane's X-102 off prose saying the capability cannot be built. This
+checkout's doctor still reports it red because the docblock is not here yet — **a capability's colour
+is a property of a tree** (tick 253) — and on merge this lane inherits the credit and reviews it as
+its own (tick 195). ⛔ No parallel fix; the file is sixty's.
+
+## ⛔ The fifth axis on X-157 and X-103 — G9-04's credit is anchored to an assertion that cannot discharge it (tick 268)
+
+Tick 264 opened the credit axis (*does any assertion crediting this id discharge the plan's ⑤, or
+only name the id?*) as the only one of five that returns **work**; tick 265 closed it for X-176. Run
+on the two publishing modules:
+
+**X-157 — three ids, all count-1 comment carriers, no wave.** Read at their own lines:
+
+- `G13-31` *"R2, zero egress; the Asset row is X-121's"* — **the model for the axis.**
+  `assertFalse(array_key_exists('r2', config('filesystems.disks')))`, `Http::assertNothingSent()`
+  **twice** (after the deploy and after a real `GET /sites/{biz}/{hash}`), and
+  `assertFalse(class_exists('App\Modules\X157\Models\Asset'))` beside `assertTrue(class_exists(Asset::class))`.
+  Three clauses, three falsifiable assertions, on the product.
+- `G6-06` *"named in the header"* — a **null ⑤**; nothing to discharge, so the body's real work (a
+  `pending_ssl` deploy refused `SSL_CERTIFICATE_REQUIRED` with zero `Deployment` rows, plus idempotent
+  re-provision) is a bonus. Not a defect.
+- `G6-33` — a **weak credit with no available strengthening**, and the reason matters more than the
+  verdict. Its plan row (`GOAIEZ-MASTER-PLAN.md:27684`) is a **refusal**: *"Vercel API Deployment …
+  ⚠️ Vercel is corpus vocabulary — the edge is Cloudflare (§33.1)"*, and
+  `test_g6_33_cloudflare_edge`'s whole body asserts `provider === 'cloudflare'` — a **literal** at
+  `EdgeProvisionAction:17`, in an action tick 213 ruled test-only and `EdgeProvisionRefusalTest.php`
+  proves has zero production callers. It asserts a property of a **fixture**: add a real Vercel
+  deployer tomorrow and it stays green.
+
+  ⛔ **RULED: no wave, branch = *cannot work here*, not *already done here*** (tick 224). Measured
+  before ruling: `vercel` appears in exactly two places in the tree, the generated
+  `X-157/capabilities.php` and that docblock, and **nowhere in production code**, so the clause is
+  true; and the only dischargeable product-side half — no outbound HTTP leaves the deploy path — is
+  **already carried by G13-31's two `Http::assertNothingSent()` calls**, so a second carrier would
+  only obscure which method discharges it (tick 240). Under ruling 16 the publishing target is the
+  platform itself and vendor edge delivery stays `UNRESOLVED — no CDN credential`, so *"the edge is
+  Cloudflare"* has **no product-side subject in this lane** (tick 237's second question).
+
+**X-103 — the finding, on the programme's ⭐⭐⭐ clause.** `grep -rn 'G9-04' app/tests/Modules/X-103/`
+returns **one** line:
+
+```
+X103Test.php:67   // 2. A published page and its Facts' invalidation share one commit id (G9-04 site law)
+X103Test.php:133  public function test_g9_04_every_built_page_version_carries_the_pixel()       ← no id
+X103Test.php:146  /** (R245) */                                                                 ← no id
+X103Test.php:147  public function test_g9_04_a_published_version_carries_the_three_site_law_flags()
+```
+
+The sole carrier is an inline comment attached to a **commit-id** assertion. The two methods named
+for the clause — which publish and assert `pixel_installed`, the other three flags, and
+`content_blocks` equal to the exact six required types — **credit nothing**. The clause is
+`GOAIEZ-MASTER-PLAN.md:31351`: *⭐⭐⭐ the full-stack site law · the pixel is on every site BY
+CONSTRUCTION · trigger: publish · ⛔ a site can be published without it and its attribution is
+silently gone forever · **a published site with no pixel FAILS the publish, asserted***.
+
+⛔ **So today you can delete BOTH tests of the full-stack site law and `capability` does not move.**
+That is the durability defect the axis exists to find: tick 265's G16-25 shape (credit and discharge
+in different places) made worse because the crediting assertion has nothing to do with the clause,
+and made trivially fixable because both sit in one file twenty lines apart.
+
+⚠️ **Two hypotheses of mine died at source before either reached a brief**, and both are recorded
+because the ledger otherwise only ever keeps the ones that survive:
+
+1. *"⑤ says FAILS the publish while the implementation appends, so the refusal half is
+   undischarged."* — `SiteEngine::publish():31-42` appends each of the six **only when absent** and
+   `:50-55` sets each flag from `in_array($type, $blockTypes, true)`, so a caller-supplied
+   `['type' => 'pixel_script']` satisfies `:34` and sets the flag. That looked like the plan's ⛔.
+   It is not: **the engine's own appended block is `['type' => $type]` and nothing else**, so a bare
+   caller block is *byte-identical* to the guarantee, and `EdgeDeployAction:106-181` gates every
+   marker on the type alone. **The type string is the whole contract on every path.** No gap.
+2. *"a caller supplying other blocks could displace the six."* — covered by `G6-15`/`G6-16` at
+   `X103Test.php:202`, which tick 255 measured as asserting the tenant's blocks survive verbatim and
+   in order with the six appended after.
+
+⛔ Sixth and seventh firings of *read the file before the brief names what is in it* (241, 244, 249,
+251, 254, and twice in this tick). Neither could have been refuted by re-reading the queue, the
+census or any count — only by opening `SiteEngine.php`. **A hypothesis that dies during brief-writing
+is the cheapest possible outcome**, and it is only reached by writing the brief against the source
+rather than against the ledger.
+
+⚠️ Recorded and **not** a wave: the plan disagrees with itself about G9-04's owner — `:31351` assigns
+it to **X-110**, `:27800` and tracker `:493` to **X-103**. Both are this lane's under ruling 5, so
+nothing operational turns on it, and the frozen master plan text is reserved to the owner.
