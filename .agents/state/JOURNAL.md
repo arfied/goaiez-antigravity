@@ -1247,3 +1247,5 @@ TestAnchorStage reads only the plan for test anchors, which is completely unrela
 Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T07:58:42` note: The partition of the 27: 27 DECLARED, 0 IN-PASSING.
 - `2026-09-07T07:58:45` note: The document side does require the id to lead, and the module side does not, so the two sides of the same check disagree.
+- `2026-09-07T08:19:04` note: 27 pairs, 15 distinct ids, 7 distinct texts
+- `2026-09-07T08:19:07` note: specText() is module-independent; one tracker row leading with an id closes the :68 violation for every module declaring it.
