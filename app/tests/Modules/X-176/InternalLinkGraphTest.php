@@ -588,7 +588,7 @@ final class InternalLinkGraphTest extends TestCase
         libxml_use_internal_errors(true);
         $domZero->loadHTML($htmlZero);
         $xpathZero = new \DOMXPath($domZero);
-        
+
         $navLinksZero = [];
         foreach ($xpathZero->query('//nav[@id="internal-links-x176"]//a') as $link) {
             $navLinksZero[] = trim($link->textContent);
@@ -615,7 +615,7 @@ final class InternalLinkGraphTest extends TestCase
         libxml_use_internal_errors(true);
         $domBlank->loadHTML($htmlBlank);
         $xpathBlank = new \DOMXPath($domBlank);
-        
+
         $navLinksBlank = [];
         foreach ($xpathBlank->query('//nav[@id="internal-links-x176"]//a') as $link) {
             $navLinksBlank[] = trim($link->textContent);
@@ -627,7 +627,7 @@ final class InternalLinkGraphTest extends TestCase
 
         $this->assertNotContains('   ', $navLinksBlank, 'Expected whitespace to be refused in nav');
         $this->assertNotContains('', $navLinksBlank, 'Expected empty to be refused in nav');
-        
+
         // Assert child is excluded too per the rule
         $navHrefsBlank = [];
         foreach ($xpathBlank->query('//nav[@id="internal-links-x176"]//a') as $link) {
@@ -638,4 +638,3 @@ final class InternalLinkGraphTest extends TestCase
         $this->assertStringNotContainsString('id="breadcrumb-x176"', $htmlBlank, 'Expected breadcrumb to be entirely absent due to excluded ancestor');
     }
 }
-

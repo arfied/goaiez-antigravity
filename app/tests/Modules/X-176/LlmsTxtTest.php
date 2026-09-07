@@ -154,7 +154,7 @@ final class LlmsTxtTest extends TestCase
 
         $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-f10.example.com', true);
 
-        $res = app(\App\Modules\X157\Actions\EdgeDeployAction::class)->handle(
+        $res = app(EdgeDeployAction::class)->handle(
             businessId: $biz->id,
             edgeZoneId: $zone->id,
             pageId: $page->id,
@@ -163,7 +163,7 @@ final class LlmsTxtTest extends TestCase
         );
 
         $this->assertEquals('deployed', $res['status']);
-        
+
         $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
 
         $this->assertStringContainsString('0', $txt, 'Expected 0 to be present in llms.txt');
