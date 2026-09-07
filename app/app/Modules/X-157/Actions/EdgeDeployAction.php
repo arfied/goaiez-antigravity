@@ -121,6 +121,19 @@ final class EdgeDeployAction
                 ];
             }
 
+            $productOffers = [];
+            $priceBookItems = \App\Modules\X163\Models\PriceBookItem::where('business_id', $businessId)
+                ->where('is_confirmed', true)
+                ->where('is_sample', false)
+                ->limit(20)
+                ->get();
+            foreach ($priceBookItems as $item) {
+                $productOffers[] = [
+                    'name' => $item->service_name,
+                    'price' => $item->price_cents !== null ? ($item->price_cents / 100) : null,
+                ];
+            }
+
             $html = '<html><head>';
             $html .= "<meta name=\"ssl\" content=\"valid\">\n";
             $html .= "</head><body>\n";
@@ -229,6 +242,7 @@ final class EdgeDeployAction
                     $businessName,
                     $commitId,
                     $zone->domain_name,
+                    productOffers: $productOffers ?: null,
                     videos: $videos ?: null,
                     events: $events ?: null,
                     address: $address ?: null,
@@ -252,6 +266,14 @@ final class EdgeDeployAction
                         Log::warning("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
                     }
                 }
+            }
+
+            if (! empty($productOffers)) {
+                $html .= "<div id=\"offers-x176\">\n";
+                foreach ($productOffers as $offer) {
+                    $html .= "  <div class=\"offer-item\" data-name=\"" . e($offer['name']) . "\">" . e($offer['name']) . " - $" . e((string)$offer['price']) . "</div>\n";
+                }
+                $html .= "</div>\n";
             }
 
             $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
