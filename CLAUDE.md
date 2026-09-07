@@ -2108,3 +2108,37 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     dictated line dictates a `pint` result, a dictated needle dictates a test result — and a dictated
     **floor** dictates the next tick's verdict. Everything a brief states as a number is the
     supervisor's to have measured.
+93. **A screen may not tell an owner where their money lands unless the code routes it there, and
+    this one denies the very property it has (RULED by the lane supervisor 2026-09-06 22:2x, briefed
+    as MONEY-92).** `X-198/Domain/StripeGatewayClient::charge():13-24` posts to
+    `https://api.stripe.com/v1/charges` with `config('credentials.stripe_secret')` — the **platform's**
+    key — and `grep -rn "Stripe-Account\|stripe_account\|on_behalf_of" app/app/Modules/X-198` returns
+    **nothing**, so every charge this lane takes lands in the platform account.
+    `merchant_account_id` is a caller-supplied string (`GatewayEngine::connect():60` `updateOrCreate`s
+    whatever it is handed — `'acct_tenant_stripe_123'` hardcoded at `EvidenceChargeCommand:51`,
+    `'merch_123'`/`'acct_stub'`/`'acct_test'` in the tests), it is obtained from no provider, and it is
+    read by **nothing except four sentences on two screens**: `same-account.blade.php:3`, `:15`,
+    `:33`'s `lands nowhere` pill, `SameAccount.php:33`, `GatewayEngine::attachPayment():224` and
+    `connect-card.blade.php:22`. ⚠️ **The headline inverts every prior finding in the ruling-36
+    family.** 43/44/50 removed strings whose referent was **absent**; `same-account.blade.php:3`
+    promises the money lands *"in this account's own merchant account — **never the platform's**"*,
+    which is a **denial of the property the code actually has**, on the screen whose entire name is
+    the claim. A fabrication that is merely absent is found by asking *what is at the other end of
+    this string*; a **negation** is found only by asking *is the opposite true*, and no sweep in this
+    lane had asked that. ⛔ Not resolved by adding `Stripe-Account` routing: a connected account comes
+    from Stripe Connect onboarding, `ConnectCard::connect():41` already measures that no
+    `services.stripe.client_id` exists here, and a live Connect call is ruling 13's evidence run with
+    the owner's credentials. The outcome is ruling 21's finished waiting state plus `UNRESOLVED`
+    naming the processor contract. **Two smaller findings on the same pair, both measured:**
+    `connect-card.blade.php:11`'s `heading="Could not connect"` now heads **four** messages, two of
+    them merchant-**application** refusals MONEY-91 had just made honest — an error heading names the
+    act that failed, never the screen it failed on; and `ConnectCard::connect():48`'s *"Stripe Connect
+    redirect lands in week 2."* is a **delivery date** in owner copy, false by ruling 20's calendar
+    (week 2 is 15–19 Sep) and not a dependency, above an empty state inviting the owner through a door
+    that cannot succeed under either branch (ruling 73a). ⚠️ Blast radius measured before briefing
+    (ruling 46) with interior fragments (ruling 86): exactly **three** assertions lane-wide
+    (`SameAccountScreenTest:48,:59,:63`), all **changed**; the headline, the pill, the heading, the
+    door and the empty state are asserted by **nothing**, which is ruling 70 again and is why those
+    items **add** methods. ⚠️ `N008Test`/`N010Test` were measured before dictating and scan
+    `app_path('Modules/X-201')` **only**, so naming Stripe in X-198 prose feeds no instrument
+    (ruling 63).
