@@ -103,6 +103,13 @@ class X66Test extends TestCase
         $autopsy = $this->coach->handle($biz->id, $session->id, 'That is too expensive compared to competitor');
 
         $this->assertEquals('negative', $autopsy->sentiment);
+
+        // The production path for receiving spoken words (coach) must record the caller's turn
+        $turns = \App\Modules\X66\Models\CallTurn::where('session_id', $session->id)->get();
+        $this->assertCount(1, $turns);
+        $this->assertEquals('caller', $turns->first()->speaker);
+        $this->assertEquals('That is too expensive compared to competitor', $turns->first()->transcript);
+        $this->assertEquals(1, $turns->first()->turn_index);
     }
 
     /**
