@@ -706,3 +706,30 @@ The corollary worth keeping: **`REPORT.md` newer than `coder.pid` is the one sig
 "finished and parked" from "waiting on the model"**, because rule 10 writes the report at wave close or
 stop. That is a fact about the contract, not another CPU heuristic — but it diagnoses, it does not free the
 slot, and only the bound frees the slot.
+
+⚠️ **A DIRECTION RULE IS FALSE FOR A PARTITIONED PIN; THE IDENTITY IS THE CHECK (N120, 2026-09-07).**
+Wave 131's brief said, globally, *"measured HIGHER than the pin → STOP, an upward pin is a regression
+papered over"*, and the same brief predicted *"`$built` should land on 35"*. Both mine, one page apart.
+The coder followed the rule over the prediction, refused the re-pin and filed `UNRESOLVED` with the
+measured number — **correct under the instruction it had.** The instruction was wrong: `$built` is one
+bucket of a partition, so `$unbuilt` falling 224→220 (four routes built out) *forces* `$built` 31→35.
+The assertion's own message already said so — *"If it went UP … or an unbuilt route was built out"*.
+**RULED: a partitioned pin is gated on the identity, never the direction** —
+`$unbuilt + $built + $unresolved == $withoutLayout` and
+`$withLayout + $withoutLayout == count($invisible)`. If the sums hold the pin follows; if they do not,
+no pin is safe to touch. A standalone pin with no identity behind it keeps the direction rule. The
+general form, after N118 named the wrong assertion and this named the wrong direction: **an arithmetic
+identity over the whole population cannot drift the way a remembered rule about one member can.**
+
+⚠️ **`grep -c '^-.*assert'` COUNTED 6 ON A RANGE THAT DELETES NO ASSERTION (N121, 2026-09-07).** The One
+Rule check over `8555a0b7..efe5ce04` reported six removed assertions. All six were the identical
+strengthening — `->assertOk();` on one line rewritten as a chain over four, gaining
+`assertSee('Your account')` and `assertDontSee('Internal Platform Console')`, which is the
+`Livewire::test()`-never-renders-the-layout trap being closed in six screen tests. **A reformat produces
+a `-` line indistinguishable from a deletion.** Ruling from the count would have blocked a merge that
+strengthens six tests. This is *the row that is legitimate by construction* inside the One Rule check —
+the last instrument where it had not yet appeared. **RULED: a `-.*assert` count is a POINTER, never a
+verdict** — the check is `added − removed` reconciled against the suite total, plus **reading every `-`
+line the grep names** (six took one command). Same relationship as `STAGES` to `doctor` (N115) and the
+`--census` needle to `argv[0]`: an instrument that can only over-report is safe as a trigger and unsafe
+as a finding.
