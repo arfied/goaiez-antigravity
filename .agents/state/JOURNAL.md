@@ -875,3 +875,4 @@
 - `2026-09-07T01:54:31` (R245) X-176 — G8-16 FAQPage schema is read from an faq block in content_blocks on the same seam as G16-25, not using NLP. --ruling R245
 - `2026-09-07T01:59:28` note: X-176 Fixed pint and phpstan
 - `2026-09-07T02:40:11` (R245) X-176 — the internal-link nav refuses a normalised slug held by more than one published page, excluding that key and its descendants, matching the breadcrumb's refusal of an ambiguous ancestry --ruling R245
+- `2026-09-07T03:11:13` note: X-102 The true dependency is X-102/Ui/ (Track 2 under ruling 5), so this lane cannot assert a rendering it may not build.

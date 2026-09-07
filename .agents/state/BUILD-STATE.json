@@ -2344,6 +2344,10 @@
   {
    "at": "2026-09-07T01:59:28",
    "note": "X-176 Fixed pint and phpstan"
+  },
+  {
+   "at": "2026-09-07T03:11:13",
+   "note": "X-102 The true dependency is X-102/Ui/ (Track 2 under ruling 5), so this lane cannot assert a rendering it may not build."
   }
  ]
 }
