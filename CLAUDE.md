@@ -2712,3 +2712,56 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     dictated floor the next tick's verdict, a dictated test the branch it renders, a dictated command
     invocation whether the run can record its own work — and a dictated **sweep** whether the run
     starts at all.
+119. **The card vault has no production writer, its empty state points the owner at a door that
+    cannot keep a card, and its submit button promises an act the same click refuses (RULED by the
+    lane supervisor 2026-09-07 05:3x, briefed as MONEY-105).**
+    `grep -rn "CardStoreAction\|CardToken::create\|new CardToken" app/app app/tests app/database`
+    returns `CardStoreAction` itself and **seven fixture lines in two test files** — nothing in
+    production ever writes a `card_token`, because the only door, `CardScreen::present()`, refuses by
+    design and returns ruling 70's honest waiting state (`CardScreen.php:66`, *"…is not stored until
+    Stripe returns a token; the number was not kept."*). So `card_tokens` is decision 272 / ruling
+    51's write-only table with the arrow reversed and **the card vault screen is empty forever for
+    every real tenant** — the fifth instance in this lane after `payouts` (51), `disputes` (79),
+    `meters` (88) and `sellables` (117). Two strings sit on top of it: (a)
+    `card-screen.blade.php:24`, the entire body of the empty state, is **"Please add a card."** — it
+    names nothing that has not happened and nothing it waits on (ruling 50(a)) and it directs the
+    owner at a door that cannot succeed (ruling 73a); (b) `:58` is
+    `<x-ui.submit target="present" busy="Checking…">**Keep this card**</x-ui.submit>`, and the click
+    it labels produces a message saying *the number was not kept*, so **the button and its own result
+    contradict each other one click apart** — ruling 98's self-contradiction tell at the shortest
+    distance this lane has found, and ruling 94's family (a door whose label is wrong for what it
+    does). ⛔ Not resolved by building tokenisation: browser-side Stripe Elements is X-120's
+    dependency, parked behind a contract by ruling 20 and recorded by rulings 45 and 70, and a live
+    call is ruling 13's evidence run. ⛔ Not by wiring `CardStoreAction` to the screen — it takes a
+    `gatewayPaymentMethodId` the screen cannot obtain, and minting one is ruling 36's fabrication
+    relocated into a **credential** column, which ruling 73b already refused once here. ⛔ Not by
+    removing the door (`action="Add Card" target="addCard"` is ruling 73a's accepted shape and the
+    form behind it refuses honestly) and ⛔ not by deleting the submit — an owner who fills a form is
+    owed a button. The outcome is ruling 21's finished waiting state on `:24` and a label on `:58`
+    naming the act the code performs. ⚠️ **Blast radius, measured with interior fragments (rulings
+    46, 86): ZERO** — no test in the lane asserts `No cards on file`, `Please add a card` or `Keep
+    this card`, which is ruling 70 again and is why both strings outlived MONEY-80's own pass over
+    this file — so **both items add assertions rather than change them**, and the empty-state item
+    adds a **method**, because no existing test mounts this screen without `addCard` called and a
+    test that cannot see the defect is not the test that proves the fix (ruling 68).
+    ⚠️ `CardScreen.php:51`'s number-never-stored sentence, `CardPresentAction`'s five refusal
+    messages and its docblock are all **measured true** and stay byte-identical.
+120. **The carried ruling-116 verb sweep is measured CLEAN across all eight modules and is STRUCK
+    (measured 2026-09-07 05:3x; rulings 64, 95, 100, 111, 114).** The carried item was *"ruling 116's
+    discipline turned on the other seven modules, fact by fact — approved, verified, confirmed,
+    cancelled, refunded, scheduled, queued, retried"*. Over all eight modules' `Ui/` trees:
+    `approved|verified|confirmed|cancelled|canceled|scheduled|queued|retried|automatically` returns
+    **one** line — `X-117/Ui/CheckoutBlock.php:87`, *"Order %d cancelled; its stock is back on the
+    shelf."* — and it is **TRUE**, because `CheckoutEngine::cancelOrder():131-138` increments
+    `inventory_quantity` back for every order line and dispatches `InventoryUpdated`; and
+    `refunded|settled|processed|synced|imported|posted|reconciled|suspended|escalated` returns
+    **thirteen**, every one a sentence this lane has already corrected (X-173's three empty states,
+    X-198's two, X-199's `invoices` empty state and `money-paid-today`'s ruling-107 label, X-201's
+    ruling-80 deadline line) plus four internal property names no owner reads. There is no wave in
+    it. ⛔ Not to be re-raised. The other four carried items stay recorded and **not** waves:
+    `DisputeLost`/`DisputeResolved` (owner-sourced, not fabricated), `InvoiceIssued`'s dead seam
+    (X-172 is Track 1's, ruling 69's precedent), `CheckoutBlock::authorise()`'s nonce (ruling 76's
+    PASS-WITH-NOTES grade, ruling 100), and X-199's `credit_limit_cents` default (varies once used).
+    ⚠️ Ruling 95's lesson a third time: **a sweep proposed by a ruling is a claim, and one that comes
+    back empty is struck with its measurement written down** — otherwise the next tick re-derives it
+    under time pressure or briefs a wave with nothing in it.
