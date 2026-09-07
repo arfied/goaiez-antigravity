@@ -27,6 +27,28 @@ while [ $# -gt 0 ]; do
 done
 case "$CODER" in agy|claude) ;; *) echo "REFUSED: --coder must be agy or claude"; exit 1;; esac
 
+# GATE/BRIEF AGREEMENT (2026-09-07, tick 125). Run 124 was dispatched on a KICKOFF that
+# opened the merge and harness gates in prose while the flags were absent, so the run got
+# GOAIEZ_MERGE_OK=0 / GOAIEZ_HARNESS_OK=0 and could not do the one thing it was briefed to
+# do. `kill` is denied to this seat, so the mistake was unrecallable — which is exactly the
+# class of error a launcher should refuse rather than a tick should remember.
+#
+# The needles are the supervisor's OWN deliberate phrasing in KICKOFF.md, not a generic word
+# like "merge": a kickoff that says "closed" cannot match, and a kickoff that says neither is
+# silent. Both matched KICKOFF.md when this was written (the positive control — a needle that
+# has never matched anything is not an instrument, wave 122). Fails OPEN by construction: if a
+# needle ever stops matching, the dispatch proceeds exactly as it did before this block.
+if grep -q 'Merge gate \*\*OPEN' .agents/supervisor/KICKOFF.md && [ "$ALLOW_MERGE" = 0 ]; then
+  echo "REFUSED: KICKOFF.md declares 'Merge gate **OPEN' but --allow-merge was not passed."
+  echo "         The run would export GOAIEZ_MERGE_OK=0 and the shared guard would refuse the merge."
+  exit 1
+fi
+if grep -q 'Harness gate \*\*OPEN' .agents/supervisor/KICKOFF.md && [ "$ALLOW_HARNESS" = 0 ]; then
+  echo "REFUSED: KICKOFF.md declares 'Harness gate **OPEN' but --allow-harness was not passed."
+  echo "         The run would export GOAIEZ_HARNESS_OK=0 and could not commit the merged harness."
+  exit 1
+fi
+
 PIDFILE=".agents/supervisor/coder.pid"
 if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   echo "REFUSED: this track's coder is already active (pid $(cat "$PIDFILE"))"
@@ -40,6 +62,10 @@ fi
 SNAP="/home/goaiez/tmp/sup-snap-$(basename "$PWD")-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$SNAP/.agents/supervisor" "$SNAP/.claude" "$SNAP/bin"
 cp .agents/supervisor/*.md "$SNAP/.agents/supervisor/" 2>/dev/null
+# N104 (2026-09-07, tick 125): the glob above is `*.md`, so the one supervisor file most
+# likely to be edited AT dispatch time — this script — was the one the dispatch-time
+# snapshot did not preserve. A protection whose scope was stated once and never read back.
+cp .agents/supervisor/*.sh "$SNAP/.agents/supervisor/" 2>/dev/null || true
 cp .claude/settings.json "$SNAP/.claude/"
 mkdir -p "$SNAP/.agents/state" && cp .agents/state/BUILD-STATE.json .agents/state/JOURNAL.md "$SNAP/.agents/state/" 2>/dev/null || true 2>/dev/null; cp CLAUDE.md "$SNAP/"; cp bin/supervise.sh "$SNAP/bin/"
 echo "snapshot: $SNAP"

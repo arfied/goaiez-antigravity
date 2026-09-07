@@ -474,6 +474,38 @@ match a namespace as PHP writes it.** Consequences, all adopted:
   (this). Both fail silently, both read as findings, and both are mine to check
   before I hand them to a coder.
 
+⚠️ **A GATE DECLARED IN PROSE AND PASSED BY FLAG IS TWO SOURCES OF TRUTH, AND THE `LAUNCHED`
+LINE IS THE ONE THAT IS TRUE (N103, 2026-09-07, run 124).** I wrote "Merge gate **OPEN**" into a
+`KICKOFF.md` and dispatched **without `--allow-merge`**, so the run exported `GOAIEZ_MERGE_OK=0`
+and the shared guard refused the one thing the wave existed to do. `kill` is denied to this seat,
+so the mistake was unrecallable for the length of the run. This is the drifted-refusal-message
+shape a third time — one file, one quantity, two statements, only one of them read back — and the
+fix is the same shape as every other one that held: **make the launcher refuse the disagreement.**
+`launch-coder.sh` now greps `KICKOFF.md` for my own deliberate phrasings (`Merge gate **OPEN`,
+`Harness gate **OPEN`) and refuses when the matching flag is absent, ahead of the pidfile check —
+it is a statement about the brief, not about the process. It **fails open by construction**: if a
+needle ever stops matching, the dispatch proceeds exactly as it did before. The needles were
+confirmed to match a real `KICKOFF.md` before the guard was written (wave 122: a needle that has
+never matched anything is not an instrument), and the refuse arm was exercised for real.
+Corollary, measured and easy to get backwards: **`--allow-harness` governs a coder EDITING the
+harness. A merge-carried harness needs no flag** — it is governed by `coder-bin/git:66-75`'s
+byte-identity clause, "take the incoming side whole".
+
+⚠️ **§2 FIRES ON EVERY MERGE THAT LEGALLY CARRIES A LANE'S HARNESS, AND §2e IS WHAT ADJUDICATES IT
+(2026-09-07, wave 125).** My own gate on `1c3f9b4e` printed `⛔ app/tests/Journeys/JourneyHarness.php`
+and exited 1, on a merge where the harness change was correct, gated by the lane, taken whole, and
+confirmed by §2e's `harness identical to the incoming side ✓`. §2 asks *was a forbidden path touched
+by the last commit*, which on a merge is **true by construction** for exactly the file the merge
+exists to carry — **the row that is legitimate by construction** again, now in the forbidden-path
+check. **Do not weaken §2 to make the verdict green**; that is loosening a check to get past a red,
+and §2 is right about every non-merge commit. The ruling instead: **on a merge commit, §2's harness
+line is not the verdict — §2e's line is.** Read them as a pair, in that order, and record both in
+REVIEWS. The two-baseline rule that §2e already encodes is what makes this safe: *did the incoming
+side change it* is measured against the **merge base**, *did the merge take it* against the **second
+parent**, and only a `⛔` from §2e is a `BLOCK`. Independent confirmation costs two commands and they
+belong in every merge review: `git diff HEAD HEAD^2 -- <harness>` must be empty, and
+`grep -c "^-.*assert" <the test diff>` must be `0`.
+
 ## Style
 
 Terse and factual. Cite rules and traps by name — "that is the One Rule",
