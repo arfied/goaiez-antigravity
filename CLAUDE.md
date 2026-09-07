@@ -2364,3 +2364,61 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     both at once with every gate green. Nine X-199 fixtures could not see 99 because all nine seeded
     `stripe`; the whole `PaymentCaptured` population is three lines, and the one assertion among them
     certifies the defect.
+103. **A payment closes an invoice only when it covers it, and the losing branch keeps the invoice's
+    OWN status (RULED by the lane supervisor 2026-09-07 00:3x, briefed as MONEY-98; shipped and gated
+    at `dfe1f266`).** `X-199/Domain/InvoiceEngine::recordPayment()` wrote `'status' => 'paid'` and
+    `'paid_at' => now()` **whatever amount was recorded**, with no comparison against `total_cents`
+    anywhere in the method — so a customer paying part of an invoice had it marked paid, every
+    `overflow_charged` row on it reversed for its **full** amount, and `InvoicePaid` announced. This
+    lane already did the arithmetic correctly one module over (`ArEngine:191`, same column of the same
+    table), which makes it ruling 98's shape: the app contradicting itself about what a payment does.
+    The consequence is J12's: every unpaid/overdue query in the lane filters
+    `whereNotIn('status', ['paid','draft'])` **before** its `paid_cents < total_cents` clause
+    (`InvoiceReader:48-50`, `:57-60`), so a part-paid invoice left the Unpaid screen, the ageing and
+    the overdue chase for good. **RULED: `$status = $newPaid >= $invoice->total_cents ? 'paid' :
+    $invoice->status;`, `paid_at` only on `paid`, and the reversal loop *and* the `InvoicePaid`
+    dispatch inside one `if ($status === 'paid')`.** ⛔ The losing branch keeps **`$invoice->status`**,
+    never `ArEngine:191`'s `'issued'` literal: downgrading an `overdue` invoice on a partial payment is
+    a second way to lose the reason it was being chased, which is J12's whole subject. ⛔ No second
+    event for the partial case — `invoice.paid` is a declared `@emits` harvested from the frozen plan
+    (rulings 29, 32, 69) — and ⛔ no proportional reversal, since `X199Test:114` asserts a reversal is
+    the exact amount of its charge. ⚠️ Nothing in the suite could see any of it: all six existing
+    `recordPayment` call sites pay in **full**.
+104. **A negative assertion cannot see the alternative a ruling refused, and the twin defect was one
+    module over all along (RULED by the lane supervisor 2026-09-07 00:5x, on MONEY-98's `dfe1f266`;
+    briefed as MONEY-99 items 1 and 3).** MONEY-98 shipped ruling 103 exactly as written and its new
+    test asserts `expect($res['status'])->not->toBe('paid')` on an invoice whose status is `issued`.
+    Mutate the committed line to the **refused** `? 'paid' : 'issued'` and **the test stays green** —
+    `'issued'` is not `'paid'`. So the one clause ruling 103 turned on is the one clause the wave did
+    not guard. **RULED: where a ruling chooses between two non-failing values, the test asserts the
+    chosen value POSITIVELY** — `toBe('overdue')` on an invoice made overdue first — because a negative
+    over a vocabulary of more than two members cannot distinguish the choice from its alternative. That
+    is ruling 61's bare-digit defect in a status string, and the miss is the supervisor's: the brief
+    dictated the fixture, so per the 46/49/50/62/66/75/82/86/94 precedent it carries its own two
+    dispatches. **The twin, measured with the `ReceivableState` check ruling 64 demanded:**
+    `X-211/ArEngine::logOfflinePayment():191` still writes the `'issued'` literal, and `:195-199` moves
+    `ReceivableState` to `current` **only** on `paid` — so a partial cheque against an **overdue**
+    invoice leaves the receivable saying the account is being chased while the invoice row says it is
+    merely issued. The chase is **not** carried elsewhere, so this is fixed, not recorded. Blast radius
+    measured with interior fragments (rulings 46, 86): four `logOfflinePayment` call sites, all in
+    `ArEngineTest.php`, and the only status assertion among them (`:100` `toBe('issued')`) is on a
+    **refused** payment that writes nothing — no existing test changes.
+105. **The dispute screen tells the owner commission was clawed back and nothing claws anything back
+    (RULED by the lane supervisor 2026-09-07 00:5x, briefed as MONEY-99 item 2).**
+    `X-201/Ui/DisputeQueue::outcome():75` appends *"Commission clawed back."* — past tense, a money
+    movement — to the confirmation an owner reads at the moment they learn what a lost chargeback cost
+    them. The entire mechanism is one boolean: `DisputeDefenseEngine::recordOutcome():120-122` sets
+    `$clawbackTriggered = true` and dispatches `DisputeLost`, and `grep -rn "DisputeLost" app/app
+    app/tests` returns the class declaration, that one dispatch and **nothing else** — no provider
+    registers a listener, and X-170's real `CommissionEngine::clawback()`, which does move a commission
+    row and dispatch `CommissionClawedBack`, is never reached from here. Ruling 87's shape on X-201.
+    **RULED: the sentence says the flag was written, says plainly that no commission has been taken
+    back, and names what it waits on** (ruling 21's finished waiting state). ⛔ **Not resolved by
+    registering or minting a listener** — X-170 is not this lane's module (ruling 5) and adding a
+    consumer to make a sentence true is ruling 59 inverted; ⛔ not by deleting the flag or the
+    confirmation, and ⛔ not by touching the `(TEST ANCHOR)` docblock at
+    `DisputeDefenseEngine:107-109`, which is the CHECK that names `commission.clawed_back` and stays
+    byte-identical. ⚠️ Blast radius is exactly one assertion lane-wide — `DisputeQueueScreenTest:69`,
+    **changed** and given the `assertDontSee` that stops the positive passing for the wrong reason
+    (rulings 39, 61). ⚠️ The anchor asserts a **boolean**, not a movement, which is why it has been
+    green over a sentence about money since the screen existed.
