@@ -766,3 +766,4 @@
 - `2026-09-05T10:55:53` (R245) C-Sms — C-Sms is the sole consumer of send.requested: X-204 decides, SmsSendAction sends, one outreach_messages row per grant (run 94, R245)
 - `2026-09-05T11:22:12` UNRESOLVED capability C-Sms - TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant
 - `2026-09-06T12:33:20` (R245) X-199 — (R245) X-199 — a full-page money route resolves its own tenant from Tenancy::id() and renders in components.account.layout; the businessId parameter stays authoritative for the tiles home embeds
+- `2026-09-06T19:29:30` (R245) X-199 — x-199.invoices and x-199.credits are real owner doors with a nav entry each, not sample states: the $isSample flag is a #[Locked] public bool = false that nothing in either module ever writes, so the @elseif($isSample) banner is unreachable and the screens render a real Invoice query on every GET (R245)
