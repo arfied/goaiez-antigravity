@@ -12,6 +12,8 @@ test('owner layout heading seam contract', function () {
     $levelSkips = 0;
     $conditionalHeadings = 0;
 
+    $untrackedConditionals = 0;
+
     foreach (glob(base_path('app/Modules/*/Ui/*.php')) as $file) {
         $content = file_get_contents($file);
 
@@ -55,6 +57,10 @@ test('owner layout heading seam contract', function () {
                 }
                 if ($viewHasConditionalHeading) {
                     $conditionalHeadings++;
+                }
+
+                if (preg_match('/@(isset|empty|switch|auth|can|guest|forelse)\b/', $viewContent)) {
+                    $untrackedConditionals++;
                 }
 
                 if (preg_match('/<h([1-6])/', $viewContent, $hMatches)) {
@@ -107,4 +113,5 @@ test('owner layout heading seam contract', function () {
     expect($noHeading)->toBe(0, 'If it went UP, a resolved view has no <h[1-6] tag at all. This reads the blade\'s text, so a heading emitted by a component (<x-ui.empty-state heading="…"> renders its own <h2>) is not seen, and a $seam member landing in this bucket is not a defect while an $own member is. If it went DOWN, a heading was added or the view was removed.');
     expect($levelSkips)->toBe(0, 'If it went UP, a view\'s heading sequence descends by more than one level. This reads the blade\'s text, so a heading emitted by a component is not in the sequence. It is a count of views, not of bad steps. The <h1> prepended for a $seam member is an ASSUMPTION this code makes about the layout, not something it measures. The sequence is the blade\'s text in document order, so headings in mutually exclusive @if/@elseif/@else arms are concatenated into a sequence no rendered page emits — which can both flag a skip that never renders and hide one that does. If it went DOWN, a view\'s heading sequence was fixed.');
     expect($conditionalHeadings)->toBe(8, 'This is a count of views, not headings (once per view), containing at least one <h[1-6] tag at an @if or @unless nesting depth >= 1 (it does not count @isset, @empty, @switch, @auth, or @can). Because it counts single-heading views, which cannot skip anything, and nested conditionals, whose headings do co-render in document order — so it is an upper bound on how many views the text-order assumption could be wrong about, not a count of views it is wrong about. If it went UP, a view gained a heading inside a conditional and the blind spot grew. If it went DOWN, a heading moved out of a conditional, or a view left the population. Neither is by itself a defect — it is the size of a known limit, and the response to a move is to re-read whether the arms it counts are mutually exclusive, not to edit a view.');
+    expect($untrackedConditionals)->toBe(0, 'This is a count of views (once per view) whose text contains any of the conditional openers the depth arithmetic does not track: @isset, @empty, @switch, @auth, @can, @guest, @forelse. If it went UP, a view added one of these untracked openers, increasing the blind spot of the heading depth counter. If it went DOWN, a view removed its untracked openers or left the population.');
 });
