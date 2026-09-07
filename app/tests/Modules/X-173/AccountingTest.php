@@ -2,6 +2,7 @@
 
 namespace Tests\Modules\X173;
 
+use App\Modules\X173\Domain\AccountingEngine;
 use App\Modules\X173\Domain\AccountingSyncEngine;
 use PHPUnit\Framework\TestCase;
 
@@ -46,7 +47,7 @@ class AccountingTest extends TestCase
      */
     public function test_n_063_sync_conflict_goes_unknown_not_stale(): void
     {
-        $engine = new \App\Modules\X173\Domain\AccountingEngine();
+        $engine = new AccountingEngine;
         $this->assertSame('UNKNOWN', $engine->handleConflict('some_state'));
     }
 }
