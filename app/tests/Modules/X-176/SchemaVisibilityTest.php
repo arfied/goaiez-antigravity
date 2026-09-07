@@ -397,20 +397,38 @@ final class SchemaVisibilityTest extends TestCase
         DB::disableQueryLog();
 
         $ancestryQuery = null;
+        $candidateCount = 0;
         foreach ($queries as $q) {
             if (str_contains($q['query'], 'from "pages" where "business_id" = ? and "is_published" = ?')) {
-                if (count($q['bindings']) > 2) {
-                    $ancestryQuery = $q;
-                    break;
+                $hasPaths = false;
+                $hasParent = false;
+                $hasChild = false;
+                foreach ($q['bindings'] as $binding) {
+                    if ($binding === 'parent' || $binding === '/parent') {
+                        $hasParent = true;
+                    }
+                    if ($binding === 'parent/child' || $binding === '/parent/child') {
+                        $hasChild = true;
+                    }
                 }
-                if ($ancestryQuery === null) {
+
+                if ($hasParent && $hasChild) {
                     $ancestryQuery = $q;
+                    $candidateCount++;
                 }
             }
         }
 
+        $this->assertEquals(1, $candidateCount, 'Expected exactly one ancestry query containing the ancestor paths');
         $this->assertNotNull($ancestryQuery);
-        $this->assertGreaterThan(2, count($ancestryQuery['bindings']), 'Query should be bounded by paths');
+
+        $hasUnrelated = false;
+        foreach ($ancestryQuery['bindings'] as $binding) {
+            if ($binding === 'unrelated' || $binding === '/unrelated') {
+                $hasUnrelated = true;
+            }
+        }
+        $this->assertFalse($hasUnrelated, 'Query should not contain unrelated in bindings');
     }
 
     public function test_f6_breadcrumb_collision_refuses_trail()
@@ -433,5 +451,31 @@ final class SchemaVisibilityTest extends TestCase
         $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
 
         $this->assertStringNotContainsString('id="breadcrumb-x176"', $html);
+    }
+
+    public function test_f7_breadcrumb_resolves_a_trailing_slash_ancestor()
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'F7 Biz']);
+        Tenancy::set((int) $biz->id);
+        $businessId = $biz->id;
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'f7.example.com', true);
+
+        Page::create(['business_id' => $businessId, 'title' => 'Services Slash Parent', 'slug' => '/services/', 'is_published' => true]);
+        $page = Page::create(['business_id' => $businessId, 'title' => 'Child', 'slug' => 'services/child', 'is_published' => true]);
+
+        $commitId = 'commit-f7';
+
+        $action = app(EdgeDeployAction::class);
+        $res = $action->handle($businessId, $zone->id, pageId: $page->id, commitId: $commitId, businessName: 'F7 Biz');
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $this->assertStringContainsString('id="breadcrumb-x176"', $html);
+        $this->assertStringContainsString('Services Slash Parent', $html);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1], true);
+        $this->assertArrayHasKey('breadcrumb', $json);
     }
 }

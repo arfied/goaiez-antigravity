@@ -195,15 +195,9 @@ final class EdgeDeployAction
                             $paths[] = $current;
                         }
 
-                        $searchPaths = [];
-                        foreach ($paths as $path) {
-                            $searchPaths[] = $path;
-                            $searchPaths[] = '/'.$path;
-                        }
-
                         $pages = Page::where('business_id', $businessId)
                             ->where('is_published', true)
-                            ->whereIn('slug', $searchPaths)
+                            ->whereIn(DB::raw("trim(both '/' from slug)"), $paths)
                             ->get();
 
                         $hierarchyPages = [];
