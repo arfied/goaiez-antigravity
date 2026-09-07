@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X176;
 
 use App\Modules\X103\Models\Page;
+use App\Modules\X103\Models\PageVersion;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Modules\X176\Actions\IndexRequestAction;
@@ -113,9 +114,6 @@ class X176Test extends TestCase
     /** (R245) */
     public function test_render_omits_event_key_when_no_calendar_source(): void
     {
-        // Delegates to X-108
-        $this->assertTrue(is_dir(app_path('Modules/X-108')));
-
         $biz = TestCase::provisionTenant(['name' => 'Calendar Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
@@ -186,6 +184,48 @@ class X176Test extends TestCase
             businessId: $biz->id, pageId: 101, businessName: 'SEO', commitId: 'c123', domainName: 'seo.com'
         );
         $this->assertEquals('LocalBusiness', $res2['json_ld']['@type'] ?? null);
+
+        Storage::fake('local');
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'seo.com', true);
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_v3',
+            'content_blocks' => [],
+        ]);
+
+        $biz->vertical = 'hvac';
+        $biz->save();
+        $deployHvac = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: 'commit_v3',
+            businessName: 'SEO'
+        );
+        $htmlHvac = Storage::disk('local')->get("sites/{$deployHvac['deploy_hash']}.html");
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $htmlHvac, $matchesHvac);
+        $jsonHvac = json_decode($matchesHvac[1], true);
+        $this->assertEquals('HVACBusiness', $jsonHvac['@type'] ?? null);
+
+        $biz->vertical = null;
+        $biz->save();
+        $deployLocal = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: $page->id,
+            commitId: 'commit_v4',
+            businessName: 'SEO'
+        );
+        $htmlLocal = Storage::disk('local')->get("sites/{$deployLocal['deploy_hash']}.html");
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $htmlLocal, $matchesLocal);
+        $jsonLocal = json_decode($matchesLocal[1], true);
+        $this->assertEquals('LocalBusiness', $jsonLocal['@type'] ?? null);
     }
 
     /**
