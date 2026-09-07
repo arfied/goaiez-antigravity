@@ -89,7 +89,7 @@ class X211Test extends TestCase
         $plan = $this->planAction->handle($biz->id, $invoice->id, 3, 'monthly');
         $this->assertEquals(3, $plan->installments_count);
         $this->assertEquals(20000, $plan->installment_amount_cents);
-        $this->assertEquals('accepted', $plan->status);
+        $this->assertEquals('offered', $plan->status);
         Event::assertDispatched(ArPlanAccepted::class);
 
         // 3. Log offline payment ($200 cash installment)

@@ -144,7 +144,7 @@ final class ArEngine
                 'installments_count' => $installmentsCount,
                 'installment_amount_cents' => $installmentAmount,
                 'frequency' => $frequency,
-                'status' => 'accepted',
+                'status' => 'offered',
             ]);
 
             $state = ReceivableState::firstOrCreate(

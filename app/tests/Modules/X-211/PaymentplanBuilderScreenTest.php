@@ -82,9 +82,11 @@ class PaymentplanBuilderScreenTest extends TestCase
         $screen->set('installments.'.$inv1->id, 3)
             ->set('frequency.'.$inv1->id, 'monthly')
             ->call('offerPlan', $inv1->id)
-            ->assertSee('Plan offered on INV-A1: 3 monthly payments of 300.00')
+            ->assertSee('Plan recorded on INV-A1: 3 monthly payments of 300.00')
+            ->assertSee('The customer has not been told: nothing in this module sends anything')
             ->assertSee('Plans in place')
-            ->assertSee('accepted');
+            ->assertSee('offered')
+            ->assertDontSee('accepted');
 
         $plan = PaymentPlan::where('business_id', $biz->id)->where('invoice_id', $inv1->id)->firstOrFail();
         $this->assertSame(30000, $plan->installment_amount_cents);

@@ -51,7 +51,7 @@ class PaymentplanBuilder extends Component
             $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
             $plan = $action->handle($businessId, $invoiceId, $count, $frequency);
             $this->success = sprintf(
-                'Plan offered on %s: %d %s payments of %s.',
+                'Plan recorded on %s: %d %s payments of %s. The customer has not been told: nothing in this module sends anything, so the offer waits on a way to reach them.',
                 $invoice->invoice_number,
                 $plan->installments_count,
                 $plan->frequency,
