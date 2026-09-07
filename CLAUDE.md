@@ -6283,3 +6283,102 @@ has no withdraw.
 ⚠️ The three `X-221` contract lines name X-110 in their *strings* and are not ours — the fix edits
 X-221's manifest prose, stages' under ruling 5. **The filing question is whose manifest the fix
 edits, never whose id appears in the string** (tick 211).
+
+## ✅ A verdict MAY rest on a measurement it did not take — if it names who measured which section on which tree, and the delta is an input the tool does not read (tick 255)
+
+Three consecutive ticks (253, 254, 255) failed to obtain an **independent** §7: the box-wide pest
+lock was held by a sibling suite each time, and tick 254 left five commits unpushed including a
+`state.py` commit Track 1 cherry-picks. A fourth tick of the same is not caution; it is an
+indefinite hold with no measurable benefit. **RULED and executed at tick 255**
+(`4183baaf..405464c2 -> track/site`):
+
+| | measured by | on which tree |
+| :-- | :-- | :-- |
+| §0 §1 §2 §2a §2b §2c §4 §6 | **this seat, this tick** | `405464c2` — the tip itself |
+| §7 | the coder, `REPORT.md` §1 | **`49bb1271`**, named in the report |
+
+The substitution is sound because `git log 49bb1271..405464c2` is **one** commit whose diffstat is
+`CLAUDE.md` alone, and **pest does not read `CLAUDE.md`** — tick 217's cache argument applied to an
+input the tool does not read, with `git show --stat` re-run rather than remembered. §7 read
+`tests 1969 · passed 1964 · FAILED 1 · errors 4`, `a_published_site_carries_all_seven` **absent**,
+and against tick 250's last independent gate (`1964 · 1959 · FAILED 1 · errors 4`) that is +5/+5
+with the failure and error **sets byte-identical**, so tick 226's arithmetic has no residue.
+
+⛔ **It is not a weakened check and the distinction is the whole point.** Nothing was skipped,
+relaxed or excluded; what changed is that the block states *who* measured *which section* on *which
+tree*. Tick 208's law is that a brief asks for the verdict and then the excerpts; read from the
+reviewer's side, the same discipline permits a verdict to rest on a borrowed measurement **provided
+it says so**. The three conditions, and all three were met before the push:
+
+- **The borrowed section names its sha.** A §7 with a sha is a different artefact from a §7 without
+  one — that is tick 253's own remedy (an evidence section measures a *tree*), applied by the coder
+  on the very next wave. ⛔ Never borrow a section that cannot say which tree it measured.
+- **The delta is provably an input the tool does not read.** Not "small", not "only notes" —
+  *provably not read*, measured with `--stat` in the same tick.
+- **The refuting condition is named in the ruling** (tick 244). Here: this seat's own §7 was running
+  against the identical tree, and disagreement with `1969 · 1964 · FAILED 1 · errors 4` would falsify
+  the substitution. ⚠️ It never landed, so the falsifier is **missing, not passed** — record that
+  difference; a ruling whose falsifier did not run is weaker than one whose did, and the block must
+  not read as though it fired.
+
+⚠️ The favourable history is context, never the argument: every time this seat's §7 has landed after
+a hedge it reproduced the coder's byte for byte (231, 245, 250 — three for three), and 253/254/255
+did not resolve at all. **Three favourable firings are not a guarantee**, which is why the ruling
+rests on the CLAUDE.md-delta measurement and not on the record.
+
+⚠️ Range notation, recorded because it will eventually be executed literally: tick 254 wrote the
+push range as `45132501..405464c2`, which in git's own notation **excludes** `45132501`. The set
+measured live by `git log origin/track/site..HEAD` was **five** commits including it. Same act, since
+a push carries ancestors — but write the range the way git reads it.
+
+## ⛔ A `why` naming a PRESENT module is not automatically tick 227's defect — the VIOLATION'S OWN MESSAGE decides which question is being asked (tick 255)
+
+Tick 230 gave the test — *`ls` the module a `why` names before accepting any `UNRESOLVED`* — after
+SITE-109 filed G8-14/G8-15 against X-163/X-119/X-108, all three fully built. Applied at tick 255 to
+this lane's last two unaudited filings, X-103's `X-194 funnel visualization renderer` and `X-195
+marketplace app engine`, the test fires: both modules exist, built, with `Actions Database Domain
+Events Models Ui manifest.php`. On its face, the same defect.
+
+**It is not, and four measurements say so rather than one.** The decisive one is free:
+
+- ⛔ **Read the violation's message first.** It is `specced but no test names this id` — the *credit*
+  half of `CapabilityStage` (`:281-287` scans `tests/Modules/{id}`), not the *refusal* half
+  (`:295-312` reads the generated file). So the question is **can this lane honestly credit the id**,
+  never **does the named module exist**. Tick 227's cases were the opposite half, which is why the
+  same `ls` gives opposite verdicts on the two.
+- **G6-20's plan clause** (`GOAIEZ-MASTER-PLAN.md:31355`): *"an install is a MANIFEST plus config
+  rows — never code, asserted by absence of an eval path"*, trigger **install**, subject **X-195's
+  manifest**. `grep -rniE 'iframe|marketplace|embed|eval\(' app/app/Modules/X-103/` returns only the
+  site-law `*_installed` boolean columns — X-103 has **no install path at all**. An eval-absence
+  assertion over a module with no install surface is the fourth false-credit class wearing a security
+  clause: what would have to change for it to go red is *another module's* behaviour.
+- **G6-17's** construction site is named in the tracker itself (*"rendered by X-194"*) and the plan
+  pairs it with G6-15 as one spec whose acceptance test is *"change it in admin, see it change, no
+  deploy"* — admin being a screen, Track 2's. Tick 237's second question answers **no**.
+- ✅ **The row-mate was checked, per tick 251.** G6-15's credit is **honest**:
+  `X103Test.php:201 test_g6_16_header_tenant_offer` publishes two tenant blocks and asserts they
+  survive verbatim and in order (`:216`) with the six required types appended after (`:217-224`) —
+  falsifiable by a real mutation to `publish()`. So the pair is not two ids in one row answered
+  opposite for no reason: G6-15's clause is the block tree, which X-103 owns; G6-17's is the render,
+  which it does not.
+
+⛔ **RULED: no wave, no re-filing.** Both filings are right in substance; their `why` text carries
+two cosmetic defects already recorded (it omits the capability id — tick 253 — and names the referent
+so it reads as a missing-module claim), and `state.py` has no withdraw, so a correcting row would
+compound rather than correct. Tick 253 decided this and it is re-affirmed on better evidence, not
+re-litigated. **Recorded so the next audit does not rediscover two present modules and read them as
+a finding** — which is exactly what a mechanical application of tick 230's test would produce.
+
+## ⛔ `pgrep -f supervise.sh` matches sibling KICKOFF prose — the one-writer check is on `cwd`, never on any command line (tick 255)
+
+`pgrep -f 'supervise.sh'` printed **seventeen** pids at tick 255 against six real `agy` processes.
+The extra matches are sibling lanes' coders whose command lines quote their own KICKOFF text, which
+names the gate script. Already recorded for `pgrep -a`; it recurs because `-f` on a script name
+looks like the precise form. ✅ The accepted check is unchanged: `pgrep agy` for pids, then
+`readlink /proc/<pid>/cwd` on each, and a pid is this lane's writer only if its **cwd** is this
+checkout.
+
+⚠️ Corollary for gate liveness: there is **no** accepted way from this seat to tell whether a
+previous tick's background gate is still waiting on the lock — `ls` on `/home/goaiez/tmp/*` is
+refused, and `pgrep -f` cannot distinguish a gate from a coder quoting one. Read the gate file's
+**tail** and its mtime; that is the whole available signal.
