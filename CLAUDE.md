@@ -7037,3 +7037,104 @@ it, a **second** doctor call drifted it again, and the next `grep` printed
 a repair, it is a **per-call** obligation: every `cd app && …` drifts, so every one of them is
 followed by its own reset call, including the second and third in the same tick. Tick 209's `pwd`-first
 rule protects the silent half; this is the loud half doing the same job for free.
+
+## ⛔ The SEVENTH false-credit shape: a comment whose SENTENCE says "not built" is still a CREDIT, because the checker reads the ID and not the sentence (tick 260)
+
+Six shapes were catalogued, and every one is a test **claiming more than it proves** — the
+`assertTrue(true)` body that credits ids; a comment-credit over a body that asserts nothing;
+`assertArrayHasKey('<id>', $caps)` on the *generated* file; `assertTrue(is_dir(app_path('Modules/
+X-194')))`; a property asserted over a relationship the artifact does not contain (tick 238); a
+subject identified by a **description** that something else can satisfy (tick 246). The seventh is
+the only one whose text is **semantically the opposite of a credit**. `track/sixty` added three
+lines to `app/tests/Modules/X-102/X102Test.php`:
+
+```php
++    /**
++     * BUILD PROPOSAL: G16-21 (R245) — Carousels require items and asset paths, but X-102 lacks a
++     * chat message store to provide them (it owns only chat_sessions and chat_leads).
++     * Owner: X-102 to build, Track 1 to declare (manifest)
++     */
+     public function test_g16_21_chat_carousels(): void
+     {   … Livewire::test(CustomerfacingWidget::class)->assertSeeHtml('chat-widget-container'); }
+```
+
+The docblock says, in words, *this cannot be built yet and here is why*. It **clears the
+`capability · X-102 · G16-21` violation**, because `CapabilityStage:281-287` scans
+`tests/Modules/{id}` for the bare literal `\b(G\d+-\d+|N-\d+)\b` — and the method **name**
+`test_g16_21_chat_carousels` does *not* match it (tick 207: the regex needs the hyphen; `g16_21` is
+invisible). So the disclaimer is the id's **only** carrier, and the body it credits asserts no
+carousel, no item, no asset and no fallback, against a plan clause
+(`GOAIEZ-MASTER-PLAN.md:29077`) of *"a missing asset renders text, never a broken placeholder"*.
+
+⛔ **The discriminator this lane has used for six shapes — *what would have to change for this line
+to go red?* — is not even reachable here, because there is no line.** The credit is a string match
+on a comment, and a checker that indexes identifiers cannot read a disclaimer. Stated for general
+use: **any prose containing a capability id, anywhere under `tests/Modules/{id}/`, is a credit** — a
+TODO, a build proposal, a filing quoted for context, or a note explaining why the id is blocked.
+
+⚠️ **This lane must audit ITSELF against it.** Quoting a filed `why` string into a test comment for
+context would clear the very violation the `why` was filed against, and every one of this lane's
+seven live capability ids has a `why` in `state.py` that reads naturally as a comment. ⛔ Never
+paste a filing's text into a file under `app/tests/Modules/`.
+
+⚠️ Sixty **disclosed** the mechanism — its own tip subject records *"the BUILD PROPOSAL docblock as
+the green-by-construction mechanism for CapabilityStage."* Per tick 197 disclosure keeps an act on
+the right side of the line (a tool defect worked around, not a check defeated), and it is still a
+mechanism that clears a violation without discharging a clause, in another lane's file. Advisory to
+Track 1; ⛔ never a parallel fix, and never adopted here to move this lane's own count.
+
+## ⛔ A RULING IS NOT A GUARD — a partition closed for sixty ticks can reopen (tick 260)
+
+Tick 195 recorded Track 1's answer to OWNER ACTION 45: X-137 and X-102 stay in this lane's column,
+sixty's existing commits stand and arrive with the merge, and **"sixty opens no further wave in
+either."** Half 1's sixty partition then emptied at tick 199 when `main` gained sixty — a bound
+moving (tick 191), correctly attributed at the time. At tick 260 it is **open again**, three commits,
+different content, different cause, and no ruling was withdrawn.
+
+⛔ **Nothing enforces a cross-lane ownership ruling.** `coder-bin/git` guards never-list paths and
+`launch-coder.sh` refuses a second coder; neither knows which lane owns which module id. The census
+is the ruling's **only** detector, and a partition's emptiness is therefore never evidence that a
+ruling is being honoured — only that nothing has been pushed yet.
+
+So half 1's partition readings gain a fifth case, alongside tick 186's three and tick 191's shrink:
+
+- **a partition reopens after a ruling closed it** → read it as new traffic on its merits, exactly
+  as if the ruling did not exist. ⛔ Do **not** discount it because a ruling forbids it; the ruling
+  is what makes it a finding, not what makes it impossible.
+
+Same family as tick 191's corollary (*an OWNER ACTION opened off half 1 is never closed off half 1
+going quiet*), stated for the other end of a ruling's life: **a ruling's answer changes how a
+surface READS, never what the surface can CONTAIN.**
+
+## ⛔ A finding RECORDED but never BRIEFED decays exactly like an unmeasured one (tick 260)
+
+Tick 238 measured, correctly and in writing: *"SITE-119 wrote a true note that was **not** a
+supersession, so `state.py status` still carries `G8-02` and `G8-25` as open dependencies for work
+that is built and credited."* Twenty-two ticks later it still did. The ledger held the right answer
+the whole time, and nothing converted it into a wave, because every tick since read the lane as
+`FINISHED` — which it was, on the *violation* surface the red list measures.
+
+Tick 231 ruled *a lane is only finished when its filings have been re-measured, not when they have
+been written.* Tick 260 adds the missing half: **a filing whose `why` a later wave falsified produces
+no violation, no count movement and no census output, so the ONLY thing that can surface it is a
+deliberate audit — and an audit written into the ledger is not an audit performed.** Measured this
+tick, three rows describe built and credited work:
+
+| filed `why` | falsified by | credit |
+| :-- | :-- | :-- |
+| `a site structure or content graph API to compute link associations (G8-02)` | SITE-119 | ×1 |
+| `page content relationship data to build the link graph (G8-25)` | SITE-119 | ×1 |
+| `… EdgeDeployAction.php:170 has nothing to pass as productOffers and SchemaRenderAction.php:53 stays dead in production` (G8-14) | SITE-121 | ×1 |
+
+`EdgeDeployAction:16` imports `X163\Models\PriceBookItem`, `:129` queries it, `:269` passes
+`productOffers:`, `:305` renders `#offers-x176` — so *"stays dead in production"* is false at source.
+
+⛔ **The operative rule: when a tick records that a record is stale, it either briefs the correction
+in that tick or the finding is lost.** There is no surface that will remind anyone. Same law as tick
+190's writing rule for the paired `--stat` (*anything only it can see is written down or lost*),
+moved from an observation to a **remedy**: the halves forgive a tick that skims them, and a stale
+filing forgives nothing, because it reads as measured.
+
+⚠️ And the correction is always a `note`, never a `resolve` or a re-file: `state.py` has no withdraw
+(tick 210), and `resolve` is module+stage-granular and would return the module to `BUILDING`
+(tick 26).
