@@ -181,4 +181,63 @@ class X210Test extends TestCase
         $this->assertNotNull($promo);
         $this->assertEquals('NOCANCELWALL', $promo->code);
     }
+    /**
+     * [G1-67]
+     */
+    public function test_g1_67_margin_guard_names_below_cost_services(): void
+    {
+        $engine = new \App\Modules\X210\Domain\X210Engine();
+        $services = [
+            ['name' => 'HVAC Install', 'cost' => 50000, 'price' => 45000], // below cost
+            ['name' => 'Plumbing Repair', 'cost' => 10000, 'price' => 12000],
+            ['name' => 'Electrical Inspection', 'cost' => 15000, 'price' => 14000], // below cost
+        ];
+
+        try {
+            $engine->checkMarginGuard($services);
+            $this->fail('Margin guard did not refuse.');
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('BELOW_COST', $e->getMessage());
+            $this->assertStringContainsString('HVAC Install', $e->getMessage());
+            $this->assertStringContainsString('Electrical Inspection', $e->getMessage());
+        }
+        
+        // Pass case
+        $servicesPass = [
+            ['name' => 'Plumbing Repair', 'cost' => 10000, 'price' => 12000],
+        ];
+        $result = $engine->checkMarginGuard($servicesPass);
+        $this->assertEquals('ok', $result['status']);
+    }
+
+    /**
+     * [G7-47]
+     */
+    public function test_g7_47_cohort_rate_never_changes_without_notified_action(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Cohort Tenant', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $limit = \App\Modules\CBilling\Models\TrialLimit::create([
+            'business_id' => $biz->id,
+            'rate_cents_per_min' => 7,
+        ]);
+
+        $engine = new \App\Modules\X210\Domain\X210Engine();
+
+        try {
+            $engine->changeRate($limit, 9, false); // Not notified
+            $this->fail('Rate change was not refused.');
+        } catch (\DomainException $e) {
+            $this->assertStringContainsString('NOTIFIED', $e->getMessage());
+        }
+
+        $limit->refresh();
+        $this->assertEquals(7, $limit->rate_cents_per_min);
+
+        // Pass case
+        $engine->changeRate($limit, 9, true); // Notified
+        $limit->refresh();
+        $this->assertEquals(9, $limit->rate_cents_per_min);
+    }
 }

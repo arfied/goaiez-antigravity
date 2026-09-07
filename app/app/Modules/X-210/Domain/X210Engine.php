@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\X210\Domain;
 
+use App\Modules\CBilling\Models\TrialLimit;
+
 final class X210Engine
 {
     public function savePromotion(bool $hasCap): array
@@ -23,6 +25,10 @@ final class X210Engine
                 $belowCost[] = $service['name'];
             }
         }
+        
+        if (!empty($belowCost)) {
+            throw new \DomainException('REFUSED BELOW_COST: ' . implode(', ', $belowCost));
+        }
 
         return ['status' => 'ok', 'named_below_cost' => $belowCost];
     }
@@ -36,11 +42,13 @@ final class X210Engine
         return ['status' => 'cancelled'];
     }
 
-    public function changeRate(bool $isNotified): array
+    public function changeRate(TrialLimit $limit, int $newRate, bool $isNotified): array
     {
         if (! $isNotified) {
-            return ['status' => 'refused', 'reason' => 'rate never changes without a notified action'];
+            throw new \DomainException('REFUSED: rate never changes without a NOTIFIED action');
         }
+
+        $limit->update(['rate_cents_per_min' => $newRate]);
 
         return ['status' => 'changed'];
     }
