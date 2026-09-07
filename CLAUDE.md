@@ -2641,6 +2641,66 @@ Watch for: <the trap that applies, by name>
   live list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 221 (`G5-31 ·
   G5-32 · G5-43 · G11-09`), re-run and not inherited. `TRACK 1 ACTION 2` (C-Agent declares five
   consumptions and implements none) is filed and is not a blocker.
+- ⚠️⚠️ **A report naming a delivery mechanism must be checked at the DISPATCH SITE'S ARGUMENTS, not
+  inside the callee — and on this tree that exact distinction is the law, written in a ⛔ block.**
+  Wave 114's item-3 answer read *"`AnswerAgentTurnJob::dispatch()` provides this by reading
+  `$message->body`"*. Measured at tick 222: `app/app/Services/Agent/AgentTurns.php:224-230` dispatches
+  `$message->messageId`, and `:215-222` is `⛔ **THE ROW ID, NEVER THE WORDS** (8720-8723)` — *"The
+  sentence a member of the public wrote used to ride this call into the job's constructor, which
+  serialises it whole into `jobs.payload` and — after three attempts — into `failed_jobs.payload`,
+  neither of which has row-level security and neither of which any erasure reaches."* The job re-reads
+  the body itself at `:620-624` (`Message::query()->whereKey($this->messageId)->value('body')`), so the
+  words exist inside the job and **not** on the wire — which is why the sentence reads plausibly and is
+  backwards at the one point that matters. ⭐ **NOTE and not `BLOCK`**: the wave shipped no code and its
+  two docblocks say only *"the delivery of the turn payload remains unaccounted for"*, which is true;
+  the error lives solely in a `REPORT.md` that the next wave overwrites (contrast tick 220, where a
+  wrong mechanism sentence reached the durable record and took a lane-owned row off the backlog).
+  ⛔ **Its consequence is a design constraint, not a correction**: `AgentAnswerAction::handle()` takes
+  `string $userMessage` **synchronously**, which the ⛔ block does not reach, but any door that hands a
+  turn to C-Agent **through a queue or an event payload** does. Hand the block over as a measurement;
+  do not write the lane a sentence about it.
+- ⚠️ **A per-wave artifact instruction must be CONDITIONAL on the run that produces it, or a wave with
+  no suite copies the previous wave's object under this wave's name.** The wave-114 brief's item 6 said
+  *"`scratch/w114-pest-raw.log` — a copy of `scratch/pest-raw-last.log`"* unconditionally, while item 0
+  asked only for a post-commit gate, which needs no `--tests`. The wave correctly ran a plain
+  `supervise.sh`, correctly reported `TESTS: none` and `RAW: none`, and then made the copy it was told
+  to: `pest-raw-last.log`'s mtime is **00:19:59**, wave **113**'s run, and `w114-pest-raw.log` at
+  00:42:59 is byte-identical to it. **Nothing the coder wrote is false; the artifact is, and the brief
+  authored it.** Newest member of the stale-artifact family and the first whose cause is an
+  instruction rather than a race — not too old (81), too early (99c), byte-identical by race (88b, 95),
+  too small (107c), overwritten by a copy (111), falsely named by the coder (112). ⭐ It also cost the
+  wave the artifact question: `None` (Q5) is wrong, and this file **is** the answer to it. Brief it as
+  *"if this wave runs the suite, keep `scratch/w<N>-pest-raw.log`; if it does not, keep nothing there
+  and say so"* — the second half of the tick-213 rule, which this brief printed and then contradicted
+  three lines later.
+- ⚠️ **The gate-log SIZE heuristic is retired — grep the section list.** Tick 219 recorded ~7700 bytes
+  as a plain run and ~8600–9500 as a `--tests` run. `scratch/w114-gate.log` is **8646 bytes with no §7
+  at all**: `grep -n "^.\[1m== " ` gives `0 · 1 · 1b · 2 · 2a · 2b · 3 · 4 · 6 · verdict`, and what grew
+  is §3's stage block (lines 28–91). The heuristic was one measurement of one shape; the section list
+  is the fact, and it is the same one command that answers the tick-190 question (*a `⛔ a gate failed`
+  quoted beside a log with no §7 came from a different run*).
+- ✅ **The double-row fix held on the first ask, and the form that worked is worth reusing.** Ticks 93
+  and 221 both recorded `state.py note`/`unresolved` running twice per id; the wave-114 brief said *"run
+  it once per id, paste the echo into the report"* and `e9f265c4` adds exactly **two** `JOURNAL.md`
+  lines and **two** `BUILD-STATE.json` rows, one per id, both state files in the same commit as the
+  docblocks they describe (the wave-86 orphan trap avoided without being mentioned). **Naming the count
+  in the brief is what fixed it**, not the echo — the report's answer to *"what did it echo"* was
+  `nothing`, which is true of `state.py note` and therefore useless as a control. Ask for the count and
+  check the diff.
+- **Backlog at tick 222 — wave 115 is C-Agent's `chat.started` listener, and it is a build.** RULED:
+  the seam is settled (ticks 209/217/219/221 — receiver owns the listener, the event is the crossing, a
+  cross-module model `use` never, wave 110's `TakeoverStarted` pair the built precedent in this lane's
+  own code), the two labels are correct and ledgered as of `e9f265c4`, and `G5-31` is the one of the
+  four live rows that is single-seam, in-lane on both ends and blocked on nothing. ⚠️ **The payload is
+  the wave's whole difficulty and it is handed over as measurements**: `ChatStarted` carries
+  `businessId · sessionId · sessionToken · isAiCapped` and no turn text, `AgentAnswerAction::handle()`
+  takes `string $userMessage`, and `AgentTurns.php:215-222`'s ⛔ block governs anything that crosses a
+  queue. Whether wave 115 is the listener plus an `UNRESOLVED`, the listener plus a second event X-102
+  owes, or a proposal naming what X-102 must add, is the coder's to establish and to say. `G5-32`
+  follows in its own wave — **never paired with `G5-31`**, for the fourth wave running (ticks 218/220/221).
+  `G5-43` is a fixture; `G11-09` needs the unbuilt scoring model (tick 200). The live list is
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows re-measured at tick 222, unchanged in
+  membership from tick 221, which is the tick-217 collapse hazard not firing.
 
 ## Style
 
