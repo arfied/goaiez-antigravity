@@ -66,8 +66,8 @@ class DailyPricingDigest extends Component
         $items = PriceBookItem::where('business_id', $businessId)
             ->whereNotNull('refusal_flagged_at')
             ->where('is_confirmed', false)
-            ->orderByDesc('refusal_flagged_at')
             ->orderByDesc('refusal_count')
+            ->orderByDesc('refusal_flagged_at')
             ->get();
 
         foreach ($items as $item) {
