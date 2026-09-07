@@ -1969,6 +1969,10 @@
   {
    "at": "2026-09-07T01:21:15",
    "note": "G5-32: corrected owner to X-66 and Track 1; C-Agent can do nothing with call.answered since it carries no turn row ID, and VoicemailTranscribed carries raw words."
+  },
+  {
+   "at": "2026-09-07T05:39:30",
+   "note": "capability: The G16-21 id in the X102Test docblock falsely satisfies the capability checker because testedIds scans file contents for the ID string without verifying if it is asserted in code."
   }
  ]
 }

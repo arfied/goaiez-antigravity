@@ -877,3 +877,4 @@
 - `2026-09-07T01:21:15` note: G5-32: corrected owner to X-66 and Track 1; C-Agent can do nothing with call.answered since it carries no turn row ID, and VoicemailTranscribed carries raw words.
 - `2026-09-07T04:54:27` (R245) X-66 — (R245) call_turns row is written by VoiceCoachAction, but nothing in production writes one today
 - `2026-09-07T05:18:09` (R245) X-102 — (R245) G16-21 requires carousels, which need a message store to read from, but X-102 owns only chat_sessions and chat_leads. Missing chat message store must be built first.
+- `2026-09-07T05:39:30` note: capability: The G16-21 id in the X102Test docblock falsely satisfies the capability checker because testedIds scans file contents for the ID string without verifying if it is asserted in code.
