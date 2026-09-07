@@ -3,8 +3,9 @@
         <div class="mb-8">
             <h1 class="font-display text-xl font-semibold leading-6 text-ink">Paid Today</h1>
             <div class="mt-4 bg-card px-4 py-5 shadow sm:rounded-[--radius-card] border border-rule">
-                <dt class="truncate text-sm font-medium text-ink-2">Total Received Today</dt>
+                <dt class="truncate text-sm font-medium text-ink-2">Total value of invoices settled today</dt>
                 <dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">{{ number_format($totalCents / 100, 2) }}</dd>
+                <p class="mt-2 text-sm text-ink-2">An invoice part-paid earlier counts here in full: this app records no date against an instalment, so the cash that arrived today is not a figure it can print.</p>
             </div>
         </div>
 

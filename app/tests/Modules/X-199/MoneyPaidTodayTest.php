@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X199;
 
 use App\Models\User;
+use App\Modules\X199\Domain\InvoiceEngine;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X199\Ui\MoneyPaidToday;
 use App\Support\Tenancy;
@@ -68,5 +69,39 @@ class MoneyPaidTodayTest extends TestCase
 
         $this->actingAs($owner)->get('/home')
             ->assertOk();
+    }
+
+    public function test_the_paid_today_total_is_the_invoice_value_not_the_cash_that_arrived(): void
+    {
+        $base = Carbon::now()->startOfDay()->copy()->addHours(9);
+        Carbon::setTestNow($base);
+
+        $biz = TestCase::provisionTenant(['name' => 'Instalment Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $customer = PersonFactory::new()->create(['business_id' => $biz->id]);
+
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-TEST-777',
+            'total_cents' => 40000,
+            'paid_cents' => 10000,
+            'status' => 'issued',
+            'due_date' => $base->copy()->toDateString(),
+            'created_at' => $base->copy()->subDays(3),
+            'updated_at' => $base->copy()->subDays(3),
+        ]);
+
+        app(InvoiceEngine::class)->recordPayment((int) $biz->id, (int) $invoice->id, 30000);
+
+        $owner = User::findOrFail($biz->owner_user_id);
+        Livewire::actingAs($owner)->test(MoneyPaidToday::class, ['businessId' => $biz->id])
+            ->assertViewHas('totalCents', 40000)
+            ->assertSee('Total value of invoices settled today')
+            ->assertSee('An invoice part-paid earlier counts here in full')
+            ->assertDontSee('Total Received Today');
+
+        Carbon::setTestNow();
     }
 }
