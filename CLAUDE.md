@@ -271,7 +271,8 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-51 | the census's `dup_of` column, re-derived by MEASUREMENT — twelve pairs opened, subject and table compared, target kept only when both agree · `test_file` dropped to a `## Totals` line · `## Totals` states the column's own false-negative limit | closed, pushed `7f280357` |
 | UI-52 | `x-192.memberships-list` — the one row in the `visible 17` / `test_shell 16` gap. TWO assertions inside the existing `test_screen_renders_for_tenant`. ⛔ SHELL ONLY: no `heading` param, no blade edit | closed, pushed `72819042` |
 | UI-53 | ⛔ NOT the copy edit this row used to describe — see the 00:5x inversion below. ONE `expect()` inside `OwnerNavTest`'s existing `nav entries survive real get`: every owner screen renders EXACTLY ONE `<h1>`. Zero exclusions, population `OwnerNav::all()`, no new `test(`, floor unmoved | closed, pushed `a5f19f57` |
-| **UI-54** | **the reachability check's BLIND SPOT gets a number. ONE new `test(` in `OwnerNavTest`: the count of named `GET` routes carrying `tenant.role` that `ownerScreenRoutes()` cannot see, pinned with `toBe(N)`. ⛔ Zero route names written; both sides derived at runtime. ⚠️ The floor MOVES: `1727 → 1728`, `grep -c "^test("` `4 → 5`** | **in flight — run 100 live** |
+| UI-54 | the reachability check's BLIND SPOT gets a number. ONE new `test(` in `OwnerNavTest`: the count of named `GET` routes carrying `tenant.role` that `ownerScreenRoutes()` cannot see, pinned `toBe(270)`. ⛔ Zero route names written; both sides derived at runtime | closed, pushed `64824100` — run 100 `PASS-WITH-NOTES`, two of its four notes MINE |
+| **UI-55** | **the `<x-surface.sample-state module="…">` leak gets a number. ONE new `test(` in a new `Architecture/SampleStateModuleTest`: every call site partitioned legal / illegal / unparseable against `ls app/app/Modules/`, all three pinned, and the partition asserted to SUM to a pinned `$total`. ⛔ Zero module ids written; the legal set is the filesystem. ⛔ The blades are NOT touched — the fix is the generator's, TRACK 1. ⚠️ The floor MOVES: `1728 → 1729`** | **in flight — run 101 live** |
 
 ✅ **UI-53 closed and pushed 2026-09-07 01:3x** (`32df71b9..a5f19f57`). Three added lines and one
 whitespace character. `substr_count($response->getContent(), '<h1')` `->toBe(1)` inside the existing
@@ -294,7 +295,69 @@ licence to drop four others** — `STAGES: none` is a legal value, an absent fie
 mildest member of the report-shape family, and the first that asserts nothing false; it merely says
 less than the shape promises, which is what makes a shape unrelyable.
 
-### ⛔⛔ MEASURED 2026-09-07 01:2x — `<x-surface.sample-state module="…">` RENDERS INTERNAL PLANNING PROSE TO USERS. 223 of 248.
+✅ **UI-54 closed and pushed 2026-09-07 02:0x** (`312d7cf6..64824100`). One new `test(`, both sides derived
+— the population from `gatherMiddleware()`, the admitted set from the **existing** `ownerScreenRoutes()`,
+called and not forked. Zero route names; neither `ownerRouteExclusions()` nor `sampleStateRoutes()` is
+consulted (their only call sites are `:132`, `:133`, `:234`, all pre-existing). The floor moved by exactly
+the designed amount and **I verified both ends**: `grep -c "^test("` **4** on `312d7cf6`, **5** on
+`64824100`; `1727 → 1728`, `passed 1720 → 1721`, **`assertions 6941 → 6942`, exactly `+1`**; the same three
+standing failures and four standing errors, no eighth. Doctor the unmoved `745`, stamp `20260829-0647`.
+
+⭐ **`270` matched my written estimate and that did NOT spoil it — the 01:3x rule gets its scope.**
+`assertions 6941` was *reported*: a digit in a file, equally consistent with a run and with arithmetic.
+`270` is **asserted** — `->toBe(270)` executing inside a suite that failed exactly the known three.
+
+> ⭐ **A predicted number spoils the evidence only where the REPORT is the sole witness. Where the brief's
+> number goes into an assertion, the suite is the witness and the prediction costs nothing.**
+
+### ⛔⛔ RULED 2026-09-07 02:0x — "rule 10's eight fields" is FALSE. It has TEN. Thirteenth of the family, MINE.
+
+```
+grep -c -E '^(STATUS|COMMITS|MODULES|STAGES|TESTS|DECIDED|UNRESOLVED|REFUSED|DOCTOR|RAW)' \
+  .agents/rules/10-supervisor.md        → 10
+```
+
+The shape is `STATUS · COMMITS · MODULES · STAGES · **TESTS** · **DECIDED** · UNRESOLVED · **REFUSED** ·
+DOCTOR · RAW`. My briefs listed **eight** and substituted **`MEASUREMENTS`, which appears nowhere in rule
+10**, for `TESTS`, `DECIDED` and `REFUSED`. The N4 block above says *"four of rule 10's eight fields"* — so
+the miscount is written down here too, and this sentence is its correction.
+
+⛔⛔ **Run 100's report is therefore missing three of rule 10's fields because I told it to be** — `TESTS`
+on the one wave in seven where the count moved, and `DECIDED` on a wave that recorded a real
+`state.py decided`. The coder produced every field I named.
+
+> ⛔ **I have noted or blocked a coder for report-shape faults five times while drifting the shape myself.
+> A rule quoted from memory is a rule you have not read.** Read the field list out of
+> `.agents/rules/10-supervisor.md`. `MEASUREMENTS` is retired.
+
+⚠️ Sixth of the report-shape family, separately: **`STATUS: PASS` is not a legal value.** Rule 10's
+vocabulary is `wave closed | stopped: … | brief item done`; `PASS` is `REVIEWS.md`'s verdict word and is
+the supervisor's alone. It asserts nothing false — the wave *was* closed — but it is the first report to
+state its own grade.
+
+### ⛔⛔ RULED 2026-09-07 02:0x — a `pgrep -f` for a string in the BRIEF matches the CODER READING THE BRIEF
+
+Run 100's `RAW` pasted one `pgrep -fa 'vendor/bin/pest'` line and it was the coder's **own** process,
+`…/agy --print # KICKOFF — UI-54 …`. MEASURED: `grep -c -F -e "vendor/bin/pest" KICKOFF.md` → **1**.
+`launch-coder.sh` passes the kickoff to `agy` as an argument, so the coder's command line **contains the
+pattern it is told to search for**; every run matches itself and a real lock holder is indistinguishable
+from the self-hit.
+
+> ⛔ **The §7 lock check I mandated at 20:3x could never have caught anything.** ✅ The pattern is written
+> **`vendor/bin/[p]est`** from run 101 — the bracket makes the literal in the kickoff not match the regex.
+> Verified `0` occurrences of the plain spelling in `KICKOFF.md` after the rewrite, which is why the
+> explanatory sentence there is paraphrased rather than quoted.
+
+⚠️ **A new sub-shape of the grep family, and worse than 23:5x's.** There, *"the correct answer was pasted
+verbatim in the brief and came back wrong anyway — a warning about a trap is not a guard against it."*
+Here the brief was not a failed guard; **it was the contaminant.**
+
+⚠️ Milder, same shape: run 100's `COMMITS` carried my range **spec** (`312d7cf6..HEAD`) rather than the
+pasted `git log --oneline`, and its `MEASUREMENTS` kept the literal **`<N>` placeholder** out of my brief's
+code block. ⛔ **A report field that echoes the question cannot be told apart from one that was never
+filled.**
+
+### ⛔⛔ MEASURED 2026-09-07 01:2x, RE-DERIVED 02:0x — `<x-surface.sample-state module="…">` RENDERS INTERNAL PLANNING PROSE TO USERS. 223 of 248.
 
 `resources/views/components/surface/sample-state.blade.php` is one sentence: *"Sample — this screen is
 planned in **{{ $module }}** and not built yet."* The attribute is supposed to be a module id.
@@ -321,10 +384,25 @@ reachable only by typing the URL — the 23:2x blind spot exactly. But they sit 
 which means an owner reaches them, and what they print is **our internal planning notes, our
 unresolved questions about our own code, and the owner's own quoted words**.
 
-⛔ **NOT this lane's wave, and the blades are not the fix.** 223 files across ~108 modules is a
-programme, and they are generated — `module:scaffold` will rewrite them. The fix is at the generator.
-**Raised as TRACK 1 ACTION.** ⚠️ I did **not** map each of the 248 blades to a route; the claim above is
-about call sites in `app/app/Modules/*/Ui/views/`, which is the set I enumerated.
+⛔ **The blades are not the fix.** 223 files across ~108 modules is a programme, and they are generated —
+`module:scaffold` will rewrite them. The fix is at the generator. **Raised as TRACK 1 ACTION.** ⚠️ I did
+**not** map each of the 248 blades to a route; the claim above is about call sites in
+`app/app/Modules/*/Ui/views/`, which is the set I enumerated.
+
+✅ **RE-DERIVED 02:0x against the real module roster, and the 01:2x figure STANDS.** The 25/223 split
+above came from a regex I invented (`module="(X-\d+|C-[A-Za-z]+)"`), which is a guess about the id
+vocabulary. Re-run against the filesystem instead: `ls app/app/Modules/` → **127** directories; all
+**248** tags carry a `module="` attribute; **102** distinct values of which **94 are not module
+directories**; `grep -c -x -F -f <dirs> <values>` → **25** legal call sites, hence **223**. Two methods,
+same answer.
+
+✅ **And the COUNT is this lane's even though the FIX is not — that is UI-55.** The defect currently lives
+in this paragraph, and **a document rots in silence**: the exact argument that turned UI-50's census into
+UI-54's pin, one wave old. One new `test(` partitions every call site legal / illegal / unparseable
+against the directory listing, pins all three, and asserts the partition **sums to a pinned `$total`` —
+because a green test over an empty population is the worst outcome available here and the one that looks
+most like success (rule 01's 19 anchors, 23:5x's three constant columns, in one assertion). ⛔ Zero module
+ids written down; the legal set is the filesystem, so add a module and its id is legal the same day.
 
 ### ⛔ MEASURED 2026-09-07 01:2x — X-01 has FIVE owner routes and NOT ONE of them can take a nav entry
 
