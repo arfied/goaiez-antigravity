@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T22:47:55",
+ "updated": "2026-09-06T23:14:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1606,6 +1606,10 @@
   {
    "at": "2026-09-06T22:47:58",
    "note": "X-198 UNRESOLVED - no payout has ever been imported: the payouts table has no writer outside tests and PayoutReconcileAction has no caller outside tests, so the same-account empty state names payout ingestion as the missing dependency rather than implying it is in flight. A /v1/payouts read is a live vendor call under ruling 13 and is its own evidence wave."
+  },
+  {
+   "at": "2026-09-06T23:14:42",
+   "note": "X-117 UNRESOLVED - the checkout cannot reach paid: CheckoutEngine::checkoutCart creates the order pending_payment and returns its refreshed status, and the only listener that could promote it makes no gateway call by ruling 45, so CheckoutBlock::pay's paid branch is unreachable until a browser-side card-entry surface exists. Recorded, not edited."
   }
  ],
  "decisions": [
@@ -2051,6 +2055,12 @@
    "module": "X-198",
    "chose": "R245: an owner-facing refusal renders in the branch the door that raises it lives in \u2014 a panel inside one arm of an @if is invisible to the empty state whose own button calls it; and a screen that cannot record a merchant account says so rather than promising that payments land or that a payout import is pending.",
    "at": "2026-09-06T22:47:55",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-173",
+   "chose": "R245: an owner-facing string carries no internal section id, and a screen header describes what the screen does rather than asserting machinery that has never run - the ledger sync has no production caller and the connect door refuses by design, so the header names the dependency instead of the flow.",
+   "at": "2026-09-06T23:14:38",
    "ruling": "R245"
   }
  ]
