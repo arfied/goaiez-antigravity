@@ -7,6 +7,8 @@ use App\Support\Account\OwnerNav;
 use App\Support\Admin\AdminAccess;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Layout;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * ⚠️ THESE FOUR SCREENS ARE SAMPLES — THEY RENDER `<x-surface.sample-state>`
@@ -32,10 +34,7 @@ function sampleStateRoutes(): array
 function ownerRouteExclusions(): array
 {
     return [
-        'account.data-export.download' => 'This is a file download route, not an interactive screen.',
-        'account.inbound-media.show' => 'This is a media endpoint returning images or audio, not a rendered HTML screen.',
         'account.suspended' => 'This is an interruption screen shown when the account is suspended, not a navigable screen in the normal state.',
-        'account.voicemail.recording' => 'This is a media endpoint returning an audio file, not an HTML screen.',
         'account.content-topics' => 'This is an internal sub-screen for content topics, not a standalone top-level screen.',
 
         'x-110.today' => 'This is embedded via @livewire in resources/views/livewire/account/home.blade.php:18.',
@@ -59,12 +58,44 @@ function ownerScreenRoutes(): array
 
         $isAccount = str_starts_with($name, 'account.');
         $rendersLayout = false;
+        $isStream = false;
 
         $action = $route->getAction();
         if (isset($action['controller']) && is_string($action['controller'])) {
             $controller = explode('@', $action['controller'])[0];
             if (class_exists($controller)) {
                 $reflection = new ReflectionClass($controller);
+
+                // A route is not an owner screen when its action class declares __invoke and every type
+                // in that return type is StreamedResponse or BinaryFileResponse. A written exclusion list
+                // of media endpoints rots silently, so we derive the fact directly from the class.
+                if ($reflection->hasMethod('__invoke')) {
+                    $returnType = $reflection->getMethod('__invoke')->getReturnType();
+                    if ($returnType) {
+                        $types = [];
+                        if ($returnType instanceof ReflectionUnionType) {
+                            $types = $returnType->getTypes();
+                        } elseif ($returnType instanceof ReflectionNamedType) {
+                            $types = [$returnType];
+                        }
+
+                        if (! empty($types)) {
+                            $allStreams = true;
+                            foreach ($types as $type) {
+                                $typeName = $type->getName();
+                                if (! is_a($typeName, StreamedResponse::class, true) &&
+                                    ! is_a($typeName, BinaryFileResponse::class, true)) {
+                                    $allStreams = false;
+                                    break;
+                                }
+                            }
+                            if ($allStreams) {
+                                $isStream = true;
+                            }
+                        }
+                    }
+                }
+
                 $attributes = $reflection->getAttributes(Layout::class);
                 foreach ($attributes as $attribute) {
                     if (($attribute->getArguments()[0] ?? '') === 'components.account.layout') {
@@ -78,6 +109,10 @@ function ownerScreenRoutes(): array
                     }
                 }
             }
+        }
+
+        if ($isStream) {
+            continue;
         }
 
         if ($isAccount || $rendersLayout) {
