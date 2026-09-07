@@ -2142,3 +2142,27 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     items **add** methods. ⚠️ `N008Test`/`N010Test` were measured before dictating and scan
     `app_path('Modules/X-201')` **only**, so naming Stripe in X-198 prose feeds no instrument
     (ruling 63).
+94. **A refusal that renders in one arm of an `@if` is a refusal nobody reads, and the door that
+    raises it lives in the other arm (RULED by the lane supervisor 2026-09-06 22:5x, on MONEY-92's
+    `99f3b424`; briefed as MONEY-93 item 1).** `connect-card.blade.php` is
+    `@if($connections->isEmpty()) <x-ui.empty-state action="Connect" target="connect"> @else
+    <x-ui.attention-card> … @if($error) <x-ui.error-panel> @endif … @endif`. `ConnectCard::connect()`
+    sets `$this->error` and returns, and an owner with **no** connections renders the `@if` arm, where
+    no panel exists — so the refusal is set and shown to **no one**. The empty state carries the only
+    door on the screen and it calls the one method whose answer that screen cannot display: an owner
+    presses **Connect** and the page says nothing at all. MONEY-91 and MONEY-92 spent two waves making
+    `connect()`'s two refusals honest (rulings 73a, 93) and both were unreachable by the owner they
+    were written for. **RULED: the error and success panels move above the `@if`**, matching
+    `same-account.blade.php:4-6`, which has had the correct shape all along and whose equivalent
+    assertions have therefore never hit this. ⛔ Not resolved by seeding a connection in the test — the
+    assertion is about what an owner with no gateway sees, which is the case the button lives in;
+    ⛔ not by dropping the `action`/`target` pair, which is ruling 73a's accepted shape.
+    ⚠️ **The generalisable half is a fifth member of the ruling 66/75/82/92 family.** A dictated
+    **signature** dictates a phpstan result, a dictated **line** a `pint` result, a dictated **needle**
+    an `assertSee` result, a dictated **floor** the next tick's verdict — and **a dictated test
+    dictates the BRANCH that test renders**. MONEY-92's brief quoted the empty-state block eleven lines
+    above the error panel in the same file and never asked which arm the assertion would land in. So:
+    a dictated screen assertion names the branch it renders, and the brief checks the element it
+    asserts on is inside that branch. ⚠️ The coder's `REFUSED` was correct and is upheld; per ruling
+    71's precedent it spends no dispatch, and per the 46/49/50/62/66/75/82/86 precedent the miss is the
+    supervisor's, so MONEY-93 carries its own two.
