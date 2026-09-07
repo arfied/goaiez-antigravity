@@ -204,7 +204,7 @@ final class SchemaRenderAction
             return false;
         }
         $validType = is_string($schema['@type']) || (is_array($schema['@type']) && count(array_filter($schema['@type'], 'is_string')) === count($schema['@type']));
-        if (! $validType || ! is_string($schema['name']) || ! is_string($schema['url'])) {
+        if (! $validType || ! is_string($schema['name']) || trim($schema['name']) === '' || ! is_string($schema['url']) || trim($schema['url']) === '') {
             return false;
         }
         if (isset($schema['hasOfferCatalog'])) {

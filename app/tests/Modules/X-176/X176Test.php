@@ -290,6 +290,39 @@ class X176Test extends TestCase
         $this->assertStringNotContainsString('application/ld+json', $htmlRefused);
     }
 
+    public function test_whitespace_name_refuses_document_but_valid_name_publishes(): void
+    {
+        Storage::fake('local');
+        $biz = TestCase::provisionTenant(['name' => 'SEO Tenant', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'seo.com', true);
+
+        $deployRefused = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c124',
+            businessName: '   '
+        );
+        $htmlRefused = Storage::disk('local')->get("sites/{$deployRefused['deploy_hash']}.html");
+        $this->assertStringNotContainsString('application/ld+json', $htmlRefused);
+
+        $deployValid = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            measuredTtfbMs: 120,
+            speedBudgetMs: 1500,
+            pageId: 101,
+            commitId: 'c123',
+            businessName: 'Valid Name'
+        );
+        $htmlValid = Storage::disk('local')->get("sites/{$deployValid['deploy_hash']}.html");
+        $this->assertStringContainsString('application/ld+json', $htmlValid);
+    }
+
     public function test_seo_block_present_and_absent(): void
     {
         Storage::fake('local');
