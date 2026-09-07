@@ -16,7 +16,7 @@ use Tests\TestCase;
 
 class RevenueRecoveryScreenTest extends TestCase
 {
-    public function test_revenue_recovery_counts_what_came_back_since_the_ladder_started(): void
+    public function test_revenue_recovery_counts_the_credit_added_since_the_ladder_started(): void
     {
         $biz = self::provisionTenant();
         $bizB = self::provisionTenant();
@@ -54,10 +54,11 @@ class RevenueRecoveryScreenTest extends TestCase
             ->assertOk()
             ->assertSee('One account at a time')
             ->assertSee('Day 8 of 21')
-            ->assertSee('phone answers')
+            ->assertSee('Ladder setting: phone answers')
+            ->assertSee('not applied anywhere yet')
             ->assertSee('AI on')
             ->assertSee('398.00 a month')
-            ->assertSee('recovered 25.00 since the ladder started')
+            ->assertSee('credit of 25.00 added since the ladder started')
             ->assertDontSee('35.00')
             ->assertDontSee('Day 15 of 21')
             ->assertSeeHtml('wire:click="topupNow('.$state->id.')"')
@@ -65,7 +66,7 @@ class RevenueRecoveryScreenTest extends TestCase
             ->call('topupNow', $state->id)
             ->assertSee('50.00 of credit added to your balance')
             ->assertSee('Nothing was charged: this button grants credit')
-            ->assertSee('recovered 75.00 since the ladder started')
+            ->assertSee('credit of 75.00 added since the ladder started')
             ->call('advance', $state->id)
             ->assertSee('Day 9 of 21');
 
@@ -75,5 +76,28 @@ class RevenueRecoveryScreenTest extends TestCase
 
         $screen->call('advance', 999999)
             ->assertSee("isn't in this account");
+    }
+
+    public function test_revenue_recovery_for_tenant_with_no_ledger_entries(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Subscription::where('business_id', $biz->id)->firstOrFail()->forceFill([
+            'plan' => 'base', 'term' => 'monthly',
+            'price_cents' => 34900, 'additional_location_cents' => 4900, 'additional_locations' => 1, 'price_currency' => 'USD',
+        ])->save();
+
+        DunningState::create(['business_id' => $biz->id, 'day_in_cycle' => 8, 'status' => 'warning', 'ai_enabled' => true, 'phone_answering' => true, 'voicemail_only' => false]);
+
+        Livewire::actingAs($owner)->test(RevenueRecovery::class)
+            ->assertOk()
+            ->assertSee('Credit added')
+            ->assertSee('credit of 0.00 added since the ladder started')
+            ->assertSee('no payment against the arrears is recorded')
+            ->assertDontSee('Came back');
     }
 }
