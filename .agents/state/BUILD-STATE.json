@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T22:08:35",
+ "updated": "2026-09-06T22:09:15",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -461,10 +461,17 @@
    "unresolved": []
   },
   "X-102": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 12,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-102",
+     "stage": "capability",
+     "why": "X-102 exposes no rich-media/carousel render path; chat renders text only",
+     "at": "2026-09-06T22:09:15"
+    }
+   ]
   },
   "X-103": {
    "status": "DONE",
@@ -2250,6 +2257,12 @@
    "stage": "capability",
    "why": "G9-34 names no refusal at all, just a flagship designation",
    "at": "2026-09-06T19:59:30"
+  },
+  {
+   "module": "X-102",
+   "stage": "capability",
+   "why": "X-102 exposes no rich-media/carousel render path; chat renders text only",
+   "at": "2026-09-06T22:09:15"
   }
  ],
  "decisions": [

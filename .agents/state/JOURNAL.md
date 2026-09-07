@@ -942,3 +942,4 @@
 - `2026-09-06T20:20:49` (R245) X-179 — (R245) where an id's assertion already exists in a passing test, the id closes only on a NEW test covering the branch the existing assertions miss — never by adding a [G##-##] docblock to the test that already passes, because CapabilityStage closes an id on a bare tag with zero assertions in the body (REV-98)
 - `2026-09-06T21:19:43` (R245) X-202 — ApprovalDeskEngine::decide return shape module contract per R245
 - `2026-09-06T22:08:35` (R245) X-184 — autoRefreshAllowed refuses when traffic is at or above floor
+- `2026-09-06T22:09:15` UNRESOLVED capability X-102 - X-102 exposes no rich-media/carousel render path; chat renders text only
