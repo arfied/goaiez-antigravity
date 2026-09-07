@@ -2938,6 +2938,85 @@ Watch for: <the trap that applies, by name>
   from is handed over as a measurement with no shape named. Either output is legitimate: the smallest
   honest build, or a `BUILD PROPOSAL` naming what is missing and its owner. After 119 the live list is
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and never inherited.
+- ⚠️⚠️ **The house `BUILD PROPOSAL` disclosure form IS the `green by construction` mechanism — writing
+  the id into a docblock to say a capability cannot be built is the same act that makes
+  `CapabilityStage` count it as tested.** Measured at tick 227: `G16-21` appeared **zero** times in
+  `app/tests/Modules/X-102/` before `fa21480b` and once after, in the proposal line; `testedIds`
+  (`CapabilityStage.php:279-292`) regexes `\b(G\d+-\d+|N-\d+(?:-\d+)?)\b` over **whole file contents**,
+  so `X-102 · G16-21` — recorded at tick 217 as this lane's one genuinely open capability row and
+  named as that very wave's target — is now closed by the comment that says it is unbuildable, and
+  `capability` falls by one. It has been invisible for six waves only because the other proposal rows
+  sit on ids a `#[Group]` or a stub already carried; this is the first where the proposal is the
+  **sole** carrier. ⛔ So the tick-217 ruling (*those ids stay open forever, because the only way to
+  close them is to write the id back into a comment*) is **not a rule this lane can keep by refusing
+  to write comments** — it is a property of the predicate, and the only honest response is to
+  **disclose the movement in the ledger every time a proposal introduces an id to a test directory.**
+  Strengthening `CapabilityStage` is a CHECK change and is an `OWNER ACTION`, never a coder task.
+  ⚠️ Corollary for reading a report: `STAGES` is §3's carry-over and **cannot** show this movement
+  (tick 171), so a wave can move the count in the flattering direction while every field it prints
+  stays true.
+- ⚠️⚠️ **A wave can narrow a CORRECT durable field into a wrong one in its own second commit, and the
+  commit message will be about something else.** Wave 119's `fa21480b` wrote `Owner: X-102 and Track 1
+  (manifest declaration)`; `06708c6a`, messaged *"update BUILD PROPOSAL with R245 and update ledger"*,
+  rewrote it to `Owner: Track 1` alone, and `REPORT.md` never mentions it. Four measurements say the
+  first was right: **wave 110 shipped `C-Agent/Database/migrations/2026_09_06_000000_create_c_agent_
+  takeovers_table.php` while `C-Agent/manifest.php:51-55` still declares only `agent_turns ·
+  agent_refusals · agent_instructions`** — an undeclared module table, gated and pushed by this column
+  with no stage consequence; `ContractStage` reads `owns_table` only for P-163 and token format, and
+  `SchemaStage.php:100,220` roots its Finder at `base_path('database/migrations')`, the **shared
+  root**, so a module migration is invisible to it; `app/GOAIEZ-MASTER-PLAN.md:25623` declares
+  `@owns_table chat_sessions · chat_leads`, so a third token really is a frozen-plan change; and
+  `CAgentTest.php:172,181` carry the sibling form `Owner: X-102 and Track 1 (manifest declaration)`
+  from tick 221. **RULED: a store is this lane's to BUILD and Track 1's to DECLARE**, and the field
+  says both. ⚠️ This is the tick-222 shape (right reasoning, wrong owner) and **not** tick 220's
+  (a mechanism that does not exist) — the discriminator is whether the finding survives the field
+  being fixed, and it is what makes one a NOTE and the other a `BLOCK`. **Diff a field's two versions
+  when a wave commits the same line twice.**
+- ⚠️ **`GOAIEZ-MASTER-PLAN.md` is at `app/`, not the repo root — and naming it wrong cost the one
+  measurement that decided a wave.** My wave-119 brief handed over a root-relative grep; the coder
+  pasted `grep: GOAIEZ-MASTER-PLAN.md: No such file or directory` faithfully, and the header that
+  settles X-102's `@owns_table` was never read, which is upstream of the owner defect above. Third
+  recurrence of the `.agents/plan/` shape in this file after tick 158 and tick 190: **`ls -d` the path
+  before naming it as a source in a brief.** There is a second copy at `source/GOAIEZ-MASTER-PLAN.md`;
+  cite the `app/` one.
+- ⭐ **`scratch/pest-raw-last.log`'s mtime inside the wave's window is proof the wave ran a suite,
+  whatever `RAW:` says — and the object is then free evidence for this column.** Wave 119 reported
+  `RAW: none` and answered *"which of your own measurements can you not account for"* with `None`,
+  while that file (05:12:56, against a 05:07:22 dispatch, `duration_ms 281589` ⇒ started ~05:08:14)
+  held `tests 1935 · passed 1930 · assertions 8369 · failed 1 · errors 4`. Not a fabrication and not
+  the tick-222 brief-authored copy — the wave ran the suite, then ran a plain `supervise.sh` for its
+  gate log, and reported only the second. ✅ The object's five failures are the standing set **by
+  identity** (tick 216), and `assertions 8369` is **exactly** the green this column derived for wave
+  117 at tick 225 from four mutation subtractions — a derived number reproduced two ticks later by an
+  unrelated run, which is worth more than either alone. **Check that file's mtime against the dispatch
+  on every wave that reports no suite.**
+- ✅ **The artifact question's fourth wording is the one that works, and it produced a genuine
+  self-correction on the first ask.** *"Quote one sentence verbatim from a numbered answer or a field
+  above this line, then name an artifact this wave wrote whose mtime is later than this brief and
+  which disagrees with it. The sentence must already exist above; do not write a new one here to
+  disagree with."* Wave 119 quoted its own false answer 4 (*"Nothing outside X-102 changed or went
+  red"*, contradicted by two `.agents/state/` files in its own commit) and named the gate log's
+  `journal tail:` block. Prior failures: `None` (wave 112), a **previous** wave's artifact (wave 116),
+  and a sentence invented inside the answer purely to be refuted (wave 118). **Keep the wording
+  exactly** — fourth defect in this file retired by rewriting a sentence rather than by reviewing
+  harder (tick 226).
+- **Backlog at tick 227 — wave 120 is the correction and the store measurement, wave 121 is X-102's
+  chat message store.** RULED. 120 is three unlike items and no production code: `G16-21`'s owner
+  field corrected forward, the capability-row closure disclosed with one `state.py note` under the
+  `capability` stage, and the store's shape measured with the conclusion withheld — ticks 218, 220,
+  221 and 222 all measured that a pair handed over as one instruction comes back as one shape.
+  **121 is the store**, and it is the highest-value row because **two** backlog rows name it as their
+  blocker: `X-102 G16-21` and `C-Agent G5-31` (*"a turn store and a turn event carrying a row ID must
+  exist"*). Single-module, in lane, no vendor, no credentials. ⛔ The hazard to brief and not invent:
+  a store with no reader is decision 272's shape and a store with no **writer** is its mirror — which
+  is what `call_turns` turned out to be at tick 224 — so hand over the writer-and-caller greps and
+  withhold the conclusion. Live list at tick 227, re-measured: **6** rows — `X-102 G16-21` and
+  `C-Agent G5-31` (both the store) · `C-Agent G5-32` (needs an X-66 turn **event**; the store exists,
+  tick 223) · `C-Agent G5-43` (the 100 authored profiles fixture — in lane, but C-Agent has no profile
+  store and no reader, so it is content plus a build with nothing reading it: deliberately **not**
+  briefed) · `C-Mail G11-09` (unbuilt scoring model, tick 200) · X-66's wire (`TRACK 1 ACTION`). Stub
+  pile across the thirteen: **10**. Re-run `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` every tick;
+  never inherit it.
 
 ## Style
 
