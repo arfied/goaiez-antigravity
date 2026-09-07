@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T04:03:23",
+ "updated": "2026-09-07T04:55:37",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1654,6 +1654,10 @@
   {
    "at": "2026-09-07T04:03:23",
    "note": "X-117: the docblock over checkoutCart described addToCart, so the one method in the lane that decrements inventory carried a comment saying it never does - the sentences were true of the method below it and false of the method above them"
+  },
+  {
+   "at": "2026-09-07T04:55:43",
+   "note": "X-117: nothing in production writes a Sellable - the only writer in the app is Console/EvidenceCheckoutCommand.php:40, an evidence command, so the catalogue is empty for every real tenant and the empty state now names that; an importer belongs to the pricebook track (rulings 5, 59, 117)"
   }
  ],
  "decisions": [
@@ -2171,6 +2175,12 @@
    "module": "X-199",
    "chose": "the declines tile and empty state name the window they are showing - the startOfWeek and deferral filters are both inside the showAll branch, so a tile headed this week counted every decline ever the moment the owner pressed Show all",
    "at": "2026-09-07T04:03:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "the storefront says the cart expires and holds nothing, and prices come from the catalogue rather than a pricebook this module never reads - addToCart never touches inventory_quantity so no cart holds stock, and X-117 imports no pricebook model at all",
+   "at": "2026-09-07T04:55:37",
    "ruling": "R245"
   }
  ]
