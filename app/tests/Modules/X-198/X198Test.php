@@ -21,6 +21,7 @@ use App\Modules\X198\Models\ReconciliationRun;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class X198Test extends TestCase
@@ -72,7 +73,7 @@ class X198Test extends TestCase
         // (R245) owner ruling 10 (2026-09-02)
         $this->assertNull($pay1->gateway_charge_id, 'Charge id is null unless the gateway returned one');
         $this->assertEquals('awaiting_processor', $pay1->status);
-        Event::assertDispatched(PaymentCaptured::class);
+        Event::assertNotDispatched(PaymentCaptured::class);
 
         // 2. Tenant payout isolation: tenant payment links only to tenant merchant connection
         $payout = Payout::create([
@@ -461,5 +462,28 @@ class X198Test extends TestCase
         $action->handle($biz->id, $payment->id, 'Testing link');
 
         $this->assertEquals('GBP', app(StripeGatewayClient::class)->seenCurrency);
+    }
+
+    public function test_a_stripe_capture_announces_the_charge_id_the_gateway_issued(): void
+    {
+        Event::fake([PaymentCaptured::class]);
+
+        $biz = TestCase::provisionTenant(['name' => 'Announce Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->connectAction->handle($biz->id, 'stripe', 'acct_tenant_stripe_123');
+
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_announced'], 200),
+        ]);
+
+        $payment = app(GatewayEngine::class)->capture($biz->id, 7500, 'tok_visa', 'idem_stripe_announce');
+
+        $this->assertSame('ch_mock_announced', $payment->gateway_charge_id);
+
+        Event::assertDispatched(PaymentCaptured::class, function (PaymentCaptured $event) use ($payment) {
+            return $event->paymentId === $payment->id
+                && $event->gatewayChargeId === 'ch_mock_announced';
+        });
     }
 }

@@ -108,12 +108,14 @@ final class GatewayEngine
                     'status' => $status,
                 ]);
 
-                Event::dispatch(new PaymentCaptured(
-                    businessId: $businessId,
-                    paymentId: $payment->id,
-                    gatewayChargeId: $payment->gateway_charge_id,
-                    amountCents: $amountCents
-                ));
+                if ($payment->gateway_charge_id !== null) {
+                    Event::dispatch(new PaymentCaptured(
+                        businessId: $businessId,
+                        paymentId: $payment->id,
+                        gatewayChargeId: $payment->gateway_charge_id,
+                        amountCents: $amountCents
+                    ));
+                }
 
                 return $payment;
             });
