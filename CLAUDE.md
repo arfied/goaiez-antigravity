@@ -2401,6 +2401,61 @@ Watch for: <the trap that applies, by name>
   reddens it is a finding, never a licence to edit it. `G5-37` is the relabelled row this wave closes.
   After 110 the live proposal list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and not
   inherited.
+- ⚠️⚠️ **A wave that CLOSES a backlog row and RESTORES that row's proposal line in the same commit puts
+  a false sentence in the durable record, and the ledger half of it can never be withdrawn.** Wave 110
+  built the C-Agent takeover wire and, in the very same commit (`f7bd376b`), wrote
+  `BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt` into
+  `CAgentTest.php:204`, eight lines above the test that proves it built — plus a `state.py note` row
+  timestamped **five minutes before** the build. `REPORT.md` is overwritten every wave; the docblock and
+  `JOURNAL.md` are permanent, and a standing `BUILD PROPOSAL` for finished work is precisely how a
+  future tick manufactures a wave (tick 191). ⚠️ **The brief was explicit** — *"one of the four is the
+  row this wave closes; when you close it, its line stops being a proposal"* — so this is not a leak and
+  not an underspecified item: **a set of four labels handed over as one instruction gets treated as one
+  shape, and the member that needs the opposite treatment is the one that will be restored by pattern.**
+  Split a "restore these, close that one" item into two items, or expect the closure to be swallowed by
+  the restore.
+- ⚠️⚠️ **A group substitution keeps the COUNT right and every arithmetic check in this file passes over
+  it — only the two id SETS, diffed, can see it.** Wave 110 was asked to restore four relabelled C-Agent
+  rows; pre-merge they were `G5-31 · G5-32 · G5-37 · G5-43`, and it restored
+  `G5-31 · G5-32 · G5-37 · G5-51`. `G5-51` had been `⛔ REFUSED: no test can close a documentation
+  claim` and was **promoted to a proposal it never was, owned by another module**; `G5-43`, the real
+  fourth, still carries main's relabelled `⛔ REFUSED`, so a lane-owned build item stays invisible to
+  `grep -rn "BUILD PROPOSAL:"`, which *is* this lane's backlog. Four in, four out: the tick-191 per-file
+  arithmetic (stubs ≤ verdict lines) is blind to it, and so is the proposal-count subtraction wave 109
+  was blocked for missing. **Third recurrence of the per-id rule** (tick 187, tick 209, now), and the
+  first where the population size was correct. `comm` the two id sets; it costs one command.
+- ⭐⭐ **A gate log whose §1 shows the mutated file `M` and whose §7 is arithmetically GREEN describes two
+  different trees, and the `pest.lock` wait is the window — read §1 and §7 against each other before
+  quoting either.** `scratch/mutation1.log` §1 read `M …/AgentAnswerAction.php` and its §7 read
+  `tests 1935 · passed 1930 · failed 1 · errors 4`, `assertions 8365`, with the target test **absent
+  from the failure list**. The script's `git restore` landed between the two. ⭐ **Its accepting
+  direction is worth more than the artifact it failed to be**: that object is a free **full-suite green
+  on the wave's code**, provable with no baseline run at all — the pre-wave count was `8362`, the wave
+  replaced one `assertTrue(true)` with four assertions, and `8362 − 1 + 4 = 8365` **exactly**, so every
+  one of the four executed and passed. It also answered the out-of-lane question by failure **identity**
+  (tick 216): the five names were byte-for-byte the standing set, so the `X163Test` caller of the shared
+  action did not redden. **A mislabelled artifact is still evidence of whatever it actually measured.**
+- ⚠️ **An `assertions` field measured on a FILTERED run reads exactly like a suite one, and the
+  magnitude is the free tell.** Wave 110's `MUTATION` block gave `Green: 56, Red: 53` — real numbers
+  from a real `--filter` run on `CAgentTest.php`, correct, and never declared as filtered. A two-digit
+  assertion count cannot be this suite's. This is the wave-93 `radius` rule moved onto the assertions
+  field: **a field whose prescribed artifact does not exist gets filled from the run that did happen**,
+  so require every number to name its run and say whether it was filtered. ⭐ The wave was right to use
+  a filter — another checkout held `pest.lock` and it **cancelled its own queued runs rather than kill
+  another checkout's pest** (the tick-215 ruling, honoured under cost for the first time). The defect is
+  the field, never the method; say so, or the next wave kills something.
+- **Backlog at tick 218 — wave 111 is the durable-record correction plus the mutation set owed, and no
+  production code.** Wave 110's build stands entire: the seam is as RULED (event imported, model never),
+  the receiver owns the listener, the state has a live writer and a live reader, RLS and a tenant policy
+  are on the new table, the refusal sits inside the existing transaction, and the test dispatches real
+  events through the registered provider with **both polarities** — the wave-86 negative assertion,
+  unprompted. What is owed: `G5-37`'s line rewritten as a closed row (**RULED**, the wire is
+  `f7bd376b`), `G5-51`/`G5-43` restored to the pre-merge membership and any further change derived **per
+  id**, four corrective `state.py note` rows (append-only: corrected forward, never rewritten), and a
+  mutation set covering assertions 2–4 — the fourth being the only one in the suite that speaks to the
+  **release** listener. ⚠️ Publish no numbers to it; a mutating wave produces its own green-then-red
+  pair. Then wave 112 takes the live proposal list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`,
+  re-run and not inherited — it is wrong in three places until wave 111 lands.
 
 ## Style
 
