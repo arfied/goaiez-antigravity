@@ -6502,3 +6502,97 @@ shared by seven trees (ticks 196, 219), **83 behind and never a brief target.**
 `git rev-list --count origin/main..HEAD` is **74**. Tick 218 made §1 the fresher of the two readings
 of the shared ref and tick 225 established that agreement means *the numbers reconcile* — "both moved,
 so they agree" is not the check. Do the subtraction; it is free and already on screen.
+
+## ⛔ Five ticks blamed the pest lock for a missing §7. The gates were KILLED — and the instrument that says so is one this lane WRITES and never reads (tick 257)
+
+Ticks 253–256 each recorded "the box-wide pest lock has blocked an independent §7", and tick 255
+built its borrowed-§7 ruling on that premise. The premise is false. `/home/goaiez/tmp/gate-runs.tsv`
+— readable with the **`Read` tool** on the absolute path (accepted at tick 217 for `coder-bin/git`;
+`grep` on the same path is still refused, tick 207) — carries this checkout's own rows:
+
+```
+2452  04:01:02 → 04:11:24   523123  -  143   grs-antig-site  gate-signal    ← tick 255's gate
+2491  04:20:55 → 04:28:36   655685  -  143   grs-antig-site  gate-signal    ← tick 256's gate
+```
+
+**143 = 128+15 = SIGTERM.** A lock timeout is not a signal — `supervise.sh:231` prints
+`✗ pest NOT RUN — held for 40 minutes` and exits 0. Neither gate reached it; both died 8–10 minutes
+into a 40-minute wait, leaving the file truncated on the `waiting up to 40 min` line, which is
+**byte-identical to a gate that is still waiting.**
+
+⛔ **The lock is working, and that is what makes this legible.** In the same window every sibling
+suite completed, each one starting exactly when the last ended — a clean FIFO handoff: ui
+`04:06:17→04:10:16`, Track 1 `04:06:57→04:12:13`, sixty `04:10:16→04:14:27`, money
+`04:12:13→04:18:44`, stages `04:14:27→04:18:44`, sixty `04:18:44→04:24:14`, pricebook
+`04:24:14→04:28:08`, all rc 2. **There is no `grs-antig-site … pest` row anywhere.** This lane never
+acquires the lock because **its waiter does not live long enough to reach the front of a queue 5–7
+lanes deep at 4–6 minutes each. The queue is longer than a tick.** A *deadline* problem recorded for
+five ticks as a *contention* problem.
+
+⚠️ **Measured vs inferred, kept apart** (ticks 227/230/249). Measured: rc 143 on both; neither is in
+`kill-log.tsv` (last entry 03:49:48); every sibling completed rc 2; each death lands within 2½
+minutes of its own tick's closing push (**04:28:02 push → 04:28:36 death, 34 seconds**); and ui's
+gate `669024` died identically at 04:31:46 — so it is specific to *supervisor-tick-scoped* gates,
+every completed suite having been driven by a long-lived coder run. Inferred and labelled: the
+terminator is the tick session's teardown of its backgrounded child. Its falsifier fires on its own —
+**if a tick's gate is ever seen to survive past that tick's close, the hypothesis is refuted.**
+
+**RULED (tick 257):**
+- **Read `gate-runs.tsv`'s tail every tick that runs a gate.** A killed gate and a waiting gate write
+  the same file; only the TSV separates them, and the gate already emits the row.
+- **Tick 255's borrowed-§7 procedure is this lane's STANDING method for §7**, conditions unchanged
+  (the borrowed section names its sha; the delta is provably an input the tool does not read; the
+  refuting condition is named). Not a concession — a tick-scoped gate provably cannot outlast this
+  box's pest queue, so it is the only §7 available to this seat while six lanes run.
+- ⛔ **No `supervise.sh` edit.** Shortening `flock -w 2400` would make this lane give up sooner on the
+  only surface that reports J11 (tick 213), to buy a `pest NOT RUN` line the TSV already gives free.
+  The defect is a reading discipline, and a gate rewritten to paper over an observation gap is a
+  check nobody can trust tomorrow (tick 212).
+
+Thirty-fourth statement of this section's law, and the first turned on an instrument this lane
+**writes and never reads**: 163/178/180/183/185/187 the *pathspec*, 190 the *strip*, 191 *bounds
+moving*, 192/193 *unrecorded bounds*, 194 *configuration*, 196 *width*, 207 *expected output*, 208
+the *evidence request*, 209 *resolution context*, 210 the fault's *scope in time*, 215 the *cache
+key's identity*, 219 *provenance*, 220 the key's *update mechanism*, 224 the *denominator's
+members*, 228 *evaluation time*, 247 a query that *did not run*, 253 *which tree a section measured*.
+This concerns a query **never issued at all** — the one gap no re-reading of any output can close,
+because there is no output to re-read.
+
+## ⛔ This checkout is one of the box's REAPERS — five cross-lane pest sweeps, four lanes, Track 1 among them (tick 257)
+
+`origin/main`'s tip (`48b6f9fe`) records Track 1 *"attribut[ing] wave 123's killed gate to a
+cross-lane pest sweep."* `/home/goaiez/tmp/kill-log.tsv` names this lane's checkout as a source.
+Columns are `ts | kill | killer_pid | victim_pid | killer_cwd | victim_cwd | victim_cmd`, and the
+semantics are proven by a row that caught a sweeper in the act in another lane — killer cwd
+`…grs-antig-pricebook`, victim cmd literally
+`bash -c ps aux | grep pest | awk '{print $2}' | xargs kill -9`. Every row below has
+`killer_cwd = /home/goaiez/agents/grs-antig-site`:
+
+```
+09-06 18:03:47 → …grs-antig-money/app     09-06 22:55:04 → …grs-antig-sixty/app
+09-07 00:47:18 → …grs-antig-ui/app        09-07 01:53:23 → …grs-antig-money/app
+09-07 02:00:22 → …grs-antig/app  ⛔ TRACK 1
+```
+
+plus **four sweeps of this lane's own pest** (17:34:05, 20:54:01, 00:06:42, 00:46:51). Four distinct
+killer pids — `1741636`, `3181316`, `3751268`, `4012713` — so it is not one stray process. ⚠️ The
+killers' *cwd* is measured; their *identity* is not observable from this seat. The times bracket this
+lane's coder runs closely (`4012713` at 01:53:23 and 02:00:22 around SITE-131's `bf2f19c9` at
+01:54:59), so a coder run from here is the leading reading and nothing stronger is asserted.
+
+⛔ **The lock did not stop it.** Every sweep is *after* this lane adopted `pest.lock` at tick 216.
+Track 1's rationale — *"two concurrent suites are what gives an agent a reason to reap a 'stray'
+pest"* — removed the **reason** and not the **capability**, and an agent that learned the habit keeps
+it. The remedy is a guard, not a lock; `coder-bin` is Track 1's file, so it is filed there.
+
+✅ **The self-inflicted half closes here.** Every brief from tick 257 carries the standing line:
+⛔ **never `pkill`, `killall`, or `ps … | xargs kill` over `pest`, `php` or any pattern you did not
+start — a "stray" pest is another lane's suite, and the lock is what serialises them.** Two of this
+lane's own §7s were destroyed by its own coders (00:06:42, 00:46:51), so this is not only good
+citizenship.
+
+⚠️ **The shape worth keeping:** this lane spent five ticks reasoning about why *it* could not get a
+measurement while its own coders were destroying four other lanes' measurements. **The census asks
+who writes in our column; nothing asked what our column does to everyone else's.** Same gap as tick
+240's cross-lane *read* surface, in the third direction — authorship, dependency, and now **side
+effect.**
