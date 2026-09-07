@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T09:23:43",
+ "updated": "2026-09-07T09:49:13",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1562,6 +1562,12 @@
    "module": "X-124",
    "chose": "derive the untracked block-opener vocabulary from the population instead of using a keyword literal, limiting the check to openers whose closer also appears in this population",
    "at": "2026-09-07T09:23:43",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a count pin is blind to a vocabulary swap so the set is pinned as a string instead, and a block construct emitting its body in document order cannot weaken the heading depth upper bound so its arrival is not by itself a defect",
+   "at": "2026-09-07T09:49:13",
    "ruling": "R245"
   }
  ],
