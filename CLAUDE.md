@@ -5418,3 +5418,102 @@ rather than the omission.
 `git restore`, and **disclosed it**. That is the acceptable side of tick 211's line —
 one permitted command swapped for another, reported — as distinct from setting a
 variable against the refusal itself.
+
+## ⛔ Never `2>/dev/null` a query whose SILENCE you intend to read as a finding (tick 247)
+
+Checking sibling shared-state deletions I ran, in one call,
+
+```
+git diff <a>..<b> <c>..<d> -- .agents/state/BUILD-STATE.json 2>/dev/null | grep '^-'
+```
+
+and got **nothing** — which reads exactly like *"no lines were deleted"*. Tick 213 already
+recorded that **`git diff` takes ONE range** and refuses two with its own `usage:` block (it
+is `git log` that accepts several). My `2>/dev/null` swallowed that refusal, converting **a
+command that never ran** into an empty result indistinguishable from a measurement. Re-run
+singly, each range deletes exactly one line and it is the top-level `"updated"` timestamp —
+the benign signature (tick 183/188), nothing of ours touched.
+
+Every prior statement of this section's law concerns a query that **ran** and whose pathspec,
+strip, bounds, expected output, evaluation time, configuration, width or resolution context
+misled a reader. This one concerns a query that **did not run at all**, with the evidence of
+its own failure discarded by hand. **stderr is the channel that distinguishes "no results"
+from "no query"** — suppress it and the two become the same empty string. Same family as tick
+209's drifted shell (a mis-scoped pathspec exits 0 silently), with the aggravation that here
+the tool *did* object and I hid the objection. Twenty-eighth statement, and the first where
+the silence was **self-inflicted**.
+
+⚠️ Corollary to tick 209's ruling: *a census surface that drops to zero is a TOOLING FAULT
+until proven otherwise* — and a redirect I typed myself is now a member of that fault class.
+
+## ⛔ An evidence item that names an OUTPUT without naming the COMMAND is the quiet third case (tick 247)
+
+SITE-126's report claimed *"the supervise script exits before §7 because doctor failed."*
+False at source: `want_tests` is set **only** by `--tests` (`bin/supervise.sh:23-24`), nothing
+between doctor and §7 exits, and the two places that clear it (`:213`, `:233`) each print a
+distinct line first (`✗ REFUSED: N other pest process(es)…`, `✗ pest NOT RUN — …held for 40
+minutes`). The report quoted neither and showed **no §7 bar at all**. The decisive refutation
+was free: **my own gate, on the same tree with the same red doctor, reached §7 and ran the
+suite.** Third firing of tick 227/230.
+
+⛔ **The hole was mine.** Evidence item 2 asked for *"§7 in full"*, and **no numbered item ever
+said to run `bash bin/supervise.sh --tests`.** A section cannot be quoted by a coder that did
+not run the flag producing it; asked for an output with the command left implicit, it filled
+the gap with an invented cause instead of saying "I did not pass `--tests`". The honest half
+was delivered exactly as demanded — *"the wave has not been gated on the lane's goal"* — which
+is compliance, not defect.
+
+Ninth instance of this seat naming something imprecisely and the wave faithfully inheriting it
+(208 the evidence request, 227 the branch condition, 235 an unread mechanism, 236 a presumed
+direction, 237 an existence question about an output, 238 a filing sentence, 244 a consequence
+inside a measurement, 245 a falsifier's polarity). Stated completely: **a vague brief fails
+loudly; a precisely wrong one is obeyed; and one that names an OUTPUT without its COMMAND gets
+the output invented.** Name the command as the numbered item — never the section as a thing to
+paste.
+
+## ✅ The sixth false-credit shape closed in the STRONG direction: assert the description's UNIQUENESS (tick 247)
+
+Tick 246 catalogued it — *a test that identifies its SUBJECT by a PROPERTY can have that
+subject substituted* — after F5 selected "any `pages` query with more than two bindings" while
+`InternalLinkRenderAction:16` is the same shape in the same deploy.
+
+The repair is better than re-describing the subject. `assertEquals(1, $candidateCount,
+'Expected exactly one ancestry query containing the ancestor paths')` makes the substitution
+case **loudly red** rather than quietly green: a second query carrying `parent` and
+`parent/child` makes the count 2 and fails. That converts the brief's instruction to the coder
+(*"if more than one candidate contains the ancestor paths, that is itself a finding"*) into a
+**property of the test**, which is the only form that survives the coder leaving.
+
+⚠️ The companion `assertFalse($hasUnrelated)` was checked rather than assumed, an assertion
+that cannot fail being what this ledger exists to catch: the fixture's `Unrelated` page can
+only enter the bindings if `$paths` widens to the business's whole page set — precisely the
+over-fetch direction a binding **count** is blind to. Under the unbounded mutation the test
+dies earlier (2 bindings ⇒ count 0 ⇒ the `assertEquals` fails), which is why the quoted
+mutation proof is sound. **Generalisation: when a test must locate its subject by description,
+assert that the description matches exactly one thing.**
+
+## ⛔ A containment assertion parsed document-wide is satisfied by any other writer of the string (tick 247)
+
+F7 asserts, in order, `id="breadcrumb-x176"` · **`'Services Slash Parent'`** · the JSON-LD
+`breadcrumb` key. The middle one is satisfied **document-wide by the internal-links nav**, and
+the wave's own quoted failure proves it without running anything: under the reverted query the
+served document contains
+`<nav id="internal-links-x176">…<a href="/services/">Services Slash Parent</a>…</nav>` while
+the breadcrumb is absent — so the title was present **in the broken tree** and that assertion
+would have passed. Only the first reddened.
+
+Same defect at `EventSchemaTest:51-52`, which reads `'"@type":"Event"'` and `'Drain Cleaning'`
+as two independent document-wide strings while the visible `#events-x176` block renders the
+same name (carried since tick 231, confirmed live at those lines). Neither is a BLOCK — the
+flanking assertions carry the clause — and both are tick 238/240's law arriving on a **new**
+test rather than an old one: **narrow the SUBJECT to the block the assertion is about**, the
+way `InternalLinkGraphTest` has scoped its href sweeps by XPath since tick 239.
+
+## Carried to SITE-128, measured at its own line at tick 247
+
+⛔ `EdgeDeployAction:114-116` — `Appointment::where('business_id', …)->where('start_time', '>=',
+now())->get()`, bounded by futurity and **nothing else**, so a busy business embeds every
+future appointment in the page head. Real, live, this lane's column, and a **production
+behaviour change needing a policy** (how many, in what order) — which is why it is not bundled
+with SITE-127's three assertion-scoping items: shipping them together makes any red
+unattributable between the two (tick 215's law, applied to a build rather than a merge).
