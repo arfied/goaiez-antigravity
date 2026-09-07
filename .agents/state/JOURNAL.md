@@ -1240,3 +1240,8 @@ scaffold-only modules: X-221 X-222 X-223
 - `2026-09-07T06:30:19` note: RULING AP holds, as across the five-and-five sample size neither the :68 nor the :97 class required any surface to exist in the module.
 - `2026-09-07T07:03:22` note: The :97 refusal text would have to go to app/GOAIEZ-MASTER-PLAN.md or app/GOAIEZ-TRACKER-CAPABILITIES.md, and both exist.
 - `2026-09-07T07:03:25` note: The :68 check reads app/GOAIEZ-TRACKER-CAPABILITIES.md and app/GOAIEZ-MASTER-PLAN.md.
+- `2026-09-07T07:32:02` note: app/GOAIEZ-TRACKER-CAPABILITIES.md is not covered by seals.json.
+app/GOAIEZ-MASTER-PLAN.md is not covered by seals.json.
+- `2026-09-07T07:32:06` note: Two §5 CHECK stages read the tracker or the plan: CapabilityStage and TestAnchorStage.
+TestAnchorStage reads only the plan for test anchors, which is completely unrelated to the tracker.
+Therefore, adding a row to the tracker could move only the capability count.

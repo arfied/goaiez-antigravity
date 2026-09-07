@@ -5317,6 +5317,14 @@
   {
    "at": "2026-09-07T07:03:25",
    "note": "The :68 check reads app/GOAIEZ-TRACKER-CAPABILITIES.md and app/GOAIEZ-MASTER-PLAN.md."
+  },
+  {
+   "at": "2026-09-07T07:32:02",
+   "note": "app/GOAIEZ-TRACKER-CAPABILITIES.md is not covered by seals.json.\napp/GOAIEZ-MASTER-PLAN.md is not covered by seals.json."
+  },
+  {
+   "at": "2026-09-07T07:32:06",
+   "note": "Two \u00a75 CHECK stages read the tracker or the plan: CapabilityStage and TestAnchorStage.\nTestAnchorStage reads only the plan for test anchors, which is completely unrelated to the tracker.\nTherefore, adding a row to the tracker could move only the capability count."
   }
  ],
  "history": [
