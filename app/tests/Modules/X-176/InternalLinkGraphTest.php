@@ -51,7 +51,7 @@ final class InternalLinkGraphTest extends TestCase
         $this->assertEqualsCanonicalizing([
             '/services',
             '/services/plumbing',
-            '/services/plumbing/emergency'
+            '/services/plumbing/emergency',
         ], $hrefs);
     }
 
@@ -96,7 +96,7 @@ final class InternalLinkGraphTest extends TestCase
             }
             $parts = explode('/', trim($node, '/'));
             array_pop($parts);
-            $parent = '/' . implode('/', $parts);
+            $parent = '/'.implode('/', $parts);
             if ($parent === '/') {
                 // edge case where parent is root, explode gives empty string but implode is empty
             }
@@ -105,7 +105,7 @@ final class InternalLinkGraphTest extends TestCase
 
         $parentsByChild = [];
         foreach ($edges as $edge) {
-            if (!isset($parentsByChild[$edge['to']])) {
+            if (! isset($parentsByChild[$edge['to']])) {
                 $parentsByChild[$edge['to']] = [];
             }
             $parentsByChild[$edge['to']][] = $edge['from'];
@@ -113,7 +113,7 @@ final class InternalLinkGraphTest extends TestCase
 
         foreach ($nodes as $node) {
             if ($node === '/') {
-                $this->assertArrayNotHasKey($node, $parentsByChild, "Root should have no parents");
+                $this->assertArrayNotHasKey($node, $parentsByChild, 'Root should have no parents');
             } else {
                 $this->assertCount(1, $parentsByChild[$node], "Node $node should have exactly one parent");
                 $this->assertContains($parentsByChild[$node][0], $nodes, "Parent of $node must be a valid node");
@@ -128,14 +128,14 @@ final class InternalLinkGraphTest extends TestCase
         Tenancy::set((int) $biz->id);
 
         $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
-        
+
         PageVersion::create([
             'business_id' => $biz->id,
             'page_id' => $page->id,
             'commit_id' => 'commit_links_1',
             'content_blocks' => [
                 ['type' => 'chat_widget'],
-                ['type' => 'pixel_script']
+                ['type' => 'pixel_script'],
             ],
         ]);
 

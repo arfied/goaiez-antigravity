@@ -26,21 +26,22 @@ final class InternalLinkRenderAction
 
         foreach ($pages as $page) {
             $slug = trim((string) $page->slug, '/');
-            
+
             if ($slug === '') {
-                if (!empty($page->title)) {
+                if (! empty($page->title)) {
                     $usablePages[] = $page;
                 }
+
                 continue;
             }
 
             $parts = explode('/', $slug);
             $usable = true;
             $current = '';
-            
+
             foreach ($parts as $part) {
-                $current = $current ? $current . '/' . $part : $part;
-                if (!isset($hierarchyPages[$current]) || empty($hierarchyPages[$current]->title)) {
+                $current = $current ? $current.'/'.$part : $part;
+                if (! isset($hierarchyPages[$current]) || empty($hierarchyPages[$current]->title)) {
                     $usable = false;
                     break;
                 }
@@ -57,11 +58,11 @@ final class InternalLinkRenderAction
 
         $html = '<nav id="internal-links-x176">';
         foreach ($usablePages as $page) {
-            $href = '/' . ltrim((string) $page->slug, '/');
-            $html .= '<a href="' . htmlspecialchars($href, ENT_QUOTES) . '">' . htmlspecialchars((string) $page->title, ENT_QUOTES) . '</a>';
+            $href = '/'.ltrim((string) $page->slug, '/');
+            $html .= '<a href="'.htmlspecialchars($href, ENT_QUOTES).'">'.htmlspecialchars((string) $page->title, ENT_QUOTES).'</a>';
         }
         $html .= '</nav>';
 
-        return $html . "\n";
+        return $html."\n";
     }
 }

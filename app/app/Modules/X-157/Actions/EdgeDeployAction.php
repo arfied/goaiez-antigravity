@@ -13,6 +13,7 @@ use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
@@ -253,11 +254,9 @@ final class EdgeDeployAction
                 }
             }
 
-            if ($businessId !== null) {
-                $internalLinksHtml = app(\App\Modules\X176\Actions\InternalLinkRenderAction::class)->handle($businessId);
-                if ($internalLinksHtml !== '') {
-                    $html .= $internalLinksHtml;
-                }
+            $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
+            if ($internalLinksHtml !== '') {
+                $html .= $internalLinksHtml;
             }
 
             $html .= '</body></html>';
