@@ -2205,3 +2205,53 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     string is recorded, never edited: no test can render it and no mutation can redden it, so the edit is
     ungated churn.** It is flagged for the wave that lands ruling 45's tokenisation dependency, when that
     sentence must also be re-checked against ruling 93 (a charge lands in the **platform** account).
+97. **A `$success` string that reports a transmission is measured against the module's transport, and
+    X-201 has none (RULED by the lane supervisor 2026-09-06 23:3x, briefed as MONEY-95 item 1).** The
+    lane's 24 `$this->success` / `$this->waiting` assignments were swept for **truth** rather than for
+    ids; 22 are honest and two are the same false sentence in two files.
+    `X-201/Ui/DisputeQueue.php:55` and `X-201/Ui/DisputeCard.php:55` both set
+    `sprintf('Submitted the defence for invoice #%d.', …)`, while `DisputeDefenseEngine::submit():78-103`
+    checks three guards and then does exactly one thing — `$dispute->update(['status' => 'submitted'])`.
+    **`grep -rn "Http::\|curl_" app/app/Modules/X-201` is empty**: the module has no transport of any
+    kind, nothing leaves this app, no gateway is told, and the owner who presses **Submit** is told their
+    defence was filed against a deadline that is the whole point of the screen. That is ruling 87's shape
+    on X-201. ⚠️ **The generalisable half: an audit scoped to a file type is not an audit of a screen.**
+    MONEY-84 and MONEY-85 both audited this screen and both read *blade prose* — the empty state, then
+    the per-row copy — so a sentence built in PHP survived two waves aimed at it and the same screen
+    tells the truth in its blade and a falsehood from its component, three rulings apart.
+    **RULED: the sentence says what happened and names the missing dependency** — sealed and recorded,
+    nothing sent, filing waits on the gateway chargeback contract ruling 79 already recorded
+    `UNRESOLVED`. ⛔ Not by minting a transport (a live vendor call under ruling 13; `StripeWebhooks.php`
+    is Track 1's platform clawback, not a tenant dispute); ⛔ not by deleting the confirmation — an owner
+    who presses a button is owed an answer, which is what ruling 94 has just finished guaranteeing they
+    can see. Blast radius measured with interior fragments (rulings 46, 86): exactly two assertions
+    lane-wide, both **changed**. Every dictated string checked against `N010Test`'s `refund` scan and
+    `N008Test`'s gateway-name scan, which read `app_path('Modules/X-201')` in full (ruling 63).
+98. **A plan nobody was offered is written `accepted`, and the screen and the row disagree about which
+    (RULED by the lane supervisor 2026-09-06 23:3x, briefed as MONEY-95 items 2–3).**
+    `X-211/Domain/ArEngine::offerPlan():141-147` creates the `PaymentPlan` with `'status' => 'accepted'`,
+    moves the invoice's `ReceivableState` to `payment_plan` and dispatches `ArPlanAccepted`, while
+    `X-211/Ui/PaymentplanBuilder.php:53` reports it as *"Plan **offered** on %s"*. Neither happened:
+    **`grep -rn "Mail::\|Notification::\|Http::\|->send(" app/app/Modules/X-211` is empty**, so the
+    module cannot put anything in front of a customer, and **`grep -rn "acceptPlan\|accept("` over the
+    module returns nothing** — there is no acceptance path, so `'accepted'` is a state this app can never
+    legitimately reach. The row is a recorded agreement with a customer who was never asked. Ruling 43's
+    fiction with two aggravations its `pdf_url` lacked: the fabricated value is a **consent**, and the
+    same click moves the receivable to `payment_plan` — *this one is handled, stop chasing it* — in the
+    lane that owns J12, *an overdue invoice is chased by reason*. ⚠️ **The screen already knew.**
+    *"offered"* in the component against `'accepted'` in the engine is the tell, and this is the first
+    finding in the lane where the app contradicts **itself** rather than the world — cheaper to find than
+    every ruling in the 36 family, and missed by all of them because both sweeps read strings and neither
+    read a string **against the column it describes**. **RULED: `offerPlan()` writes
+    `'status' => 'offered'` and the confirmation says the plan is recorded for the owner and that the
+    customer has not been told.** ⛔ The event is **not** renamed — `ArPlanAccepted` is a declared
+    `@emits` name harvested from the frozen plan (ruling 29); its dead seam (no consumer; the dispatch
+    plus four test lines) is recorded `UNRESOLVED` exactly as ruling 69 handled `invoice.overdue`.
+    ⛔ No customer-facing offer surface is built — no route, no transport, and building one to satisfy a
+    sentence is ruling 59. Blast radius measured: `X211Test.php:92` and
+    `PaymentplanBuilderScreenTest.php:87`, both **changed**, plus `paymentplan-builder.blade.php:33`'s
+    pill ternary, whose `'ok'` arm becomes unreachable and is **recorded, not edited** (ruling 96) —
+    it renders `attention` with the raw label `offered`, correct for an unsent offer and correct again
+    the day acceptance exists. ⚠️ `assertSee('offered')` alone would pass for the wrong reason if the
+    confirmation carried the word too, so the confirmation says *"recorded"* and the assertion is paired
+    with `assertDontSee('accepted')` (ruling 61, ruling 90's shape).
