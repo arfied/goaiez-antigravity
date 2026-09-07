@@ -5325,6 +5325,14 @@
   {
    "at": "2026-09-07T07:32:06",
    "note": "Two \u00a75 CHECK stages read the tracker or the plan: CapabilityStage and TestAnchorStage.\nTestAnchorStage reads only the plan for test anchors, which is completely unrelated to the tracker.\nTherefore, adding a row to the tracker could move only the capability count."
+  },
+  {
+   "at": "2026-09-07T07:58:42",
+   "note": "The partition of the 27: 27 DECLARED, 0 IN-PASSING."
+  },
+  {
+   "at": "2026-09-07T07:58:45",
+   "note": "The document side does require the id to lead, and the module side does not, so the two sides of the same check disagree."
   }
  ],
  "history": [

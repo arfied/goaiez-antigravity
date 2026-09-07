@@ -1245,3 +1245,5 @@ app/GOAIEZ-MASTER-PLAN.md is not covered by seals.json.
 - `2026-09-07T07:32:06` note: Two §5 CHECK stages read the tracker or the plan: CapabilityStage and TestAnchorStage.
 TestAnchorStage reads only the plan for test anchors, which is completely unrelated to the tracker.
 Therefore, adding a row to the tracker could move only the capability count.
+- `2026-09-07T07:58:42` note: The partition of the 27: 27 DECLARED, 0 IN-PASSING.
+- `2026-09-07T07:58:45` note: The document side does require the id to lead, and the module side does not, so the two sides of the same check disagree.
