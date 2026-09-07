@@ -925,3 +925,4 @@
 - `2026-09-06T18:40:22` UNRESOLVED capability X-200 - G18-15 - the AI answers first has no surface because DialNextAction takes an explicit seatId
 - `2026-09-06T18:40:48` (R245) X-200 — 2 ASSERT, 0 REFUSE, 8 UNRESOLVED of ten; an id whose ⑤ names a specific vendor as forbidden may be closed by an absence assertion over this module's tree naming that one vendor, and a two-halved ⑤ is closed on the local half only when that half can break alone (REV-93)
 - `2026-09-06T18:42:17` stage capability = 275
+- `2026-09-06T19:17:18` (R245) X-200 — (R245) JOURNAL.md is append-only and state.py is its only writer; a commit that removes a journal line is a BLOCK, and a wave's UNRESOLVED count is measured on that wave's commit diff, never on the whole cumulative journal (REV-94)

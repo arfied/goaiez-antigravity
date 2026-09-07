@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T18:40:48",
+ "updated": "2026-09-06T19:17:18",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -2587,6 +2587,12 @@
    "module": "X-200",
    "chose": "2 ASSERT, 0 REFUSE, 8 UNRESOLVED of ten; an id whose \u2464 names a specific vendor as forbidden may be closed by an absence assertion over this module's tree naming that one vendor, and a two-halved \u2464 is closed on the local half only when that half can break alone (REV-93)",
    "at": "2026-09-06T18:40:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-200",
+   "chose": "(R245) JOURNAL.md is append-only and state.py is its only writer; a commit that removes a journal line is a BLOCK, and a wave's UNRESOLVED count is measured on that wave's commit diff, never on the whole cumulative journal (REV-94)",
+   "at": "2026-09-06T19:17:18",
    "ruling": "R245"
   }
  ],
