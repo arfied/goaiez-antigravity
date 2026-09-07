@@ -55,7 +55,6 @@ final class InternalLinkRenderAction
             }
         }
 
-        $usablePages = array_slice($usablePages, 0, 20);
 
         if (count($usablePages) < 2) {
             return '';
@@ -83,21 +82,30 @@ final class InternalLinkRenderAction
             }
         }
 
-        $renderTree = function (array $nodes) use (&$renderTree): string {
-            if (empty($nodes)) {
+        $emittedCount = 0;
+        $renderTree = function (array $nodes) use (&$renderTree, &$emittedCount): string {
+            if (empty($nodes) || $emittedCount >= 20) {
                 return '';
             }
-            $html = '<ul>';
+            
+            $itemsHtml = '';
             foreach ($nodes as $node) {
+                if ($emittedCount >= 20) {
+                    break;
+                }
+                $emittedCount++;
                 $page = $node->page;
                 $href = '/'.ltrim((string) $page->slug, '/');
-                $html .= '<li><a href="'.htmlspecialchars($href, ENT_QUOTES).'">'.htmlspecialchars((string) $page->title, ENT_QUOTES).'</a>';
-                $html .= $renderTree($node->children);
-                $html .= '</li>';
+                $itemsHtml .= '<li><a href="'.htmlspecialchars($href, ENT_QUOTES).'">'.htmlspecialchars((string) $page->title, ENT_QUOTES).'</a>';
+                $itemsHtml .= $renderTree($node->children);
+                $itemsHtml .= '</li>';
             }
-            $html .= '</ul>';
-
-            return $html;
+            
+            if ($itemsHtml === '') {
+                return '';
+            }
+            
+            return '<ul>' . $itemsHtml . '</ul>';
         };
 
         $html = '<nav id="internal-links-x176">';
