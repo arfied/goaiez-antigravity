@@ -2682,3 +2682,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     opening clause survived two X-117 waves aimed at that very line; `:10` is asserted by nothing
     (ruling 70), so that item **adds** a method against a tenant with no catalogue row — the existing
     test seeds three `Sellable`s and can never render the branch (ruling 68).
+118. **A brief that dictates a SWEEP has dictated its own output, and a sweep for synonyms of a claim
+    always matches the sentences that honestly DENY it (RULED by the lane supervisor 2026-09-07 05:0x,
+    on MONEY-104's run 124 `REFUSED`).** Ruling 116 made a sweep's fragments synonyms of the **fact**
+    rather than the words of the sentence being fixed, and MONEY-104's brief applied it correctly:
+    `held|hold|reserve|set aside|keeps it for|pricebook` over X-117's module and test trees. It then
+    tabled *"the four lines this brief expects it to find"* — the four it meant to **change** — and
+    instructed the coder to stop and report `REFUSED` on any line the brief did not name. The sweep
+    prints **nine**. All five unnamed lines are correct: `cart-block.blade.php:42` and
+    `checkout-block.blade.php:38`, the two sentences MONEY-103 had just rewritten to say *"Nothing is
+    held for you"*; their two assertions at `CartBlockScreenTest:46` and `CheckoutBlockScreenTest:46`;
+    and the method name `test_cart_block_holds_the_catalogue_…`, where *holds* means displays. So run
+    124 stopped one command in, committed nothing, and the brief's own stop-clause fired on the
+    previous wave's success. **This is structural, not a wording accident:** ruling 116's fragments
+    name the claim, and the honest fix for a false claim is a sentence that **denies** it in the
+    claim's own vocabulary — so every ruling-116 sweep matches, by construction, every sentence this
+    lane has already corrected plus every assertion pinning it, and that set grows with each wave.
+    **RULED: a brief that stops on an unnamed sweep line enumerates the WHOLE expected output in two
+    tables — `to change` and `measured clean, expected` — giving the reason each clean line is clean,
+    and the stop-clause fires only on a line in neither.** ⛔ Never resolved by narrowing the fragments
+    back to the words of the sentence being fixed: that is ruling 116 reverted, and 116 exists because
+    it caught two live falsehoods ruling 113's own sweep had missed. ⛔ Never by dropping the
+    stop-clause, which is what stops a coder fixing unbriefed prose. ⚠️ The coder's refusal is
+    **correct** — it quoted both lines and cited the brief's own condition — and per the ruling
+    60(b)/71/94/106 precedent it spends no dispatch; item 0 (`rm -f .tmp_commits.txt`) ran, the tree is
+    clean and nothing was committed, so MONEY-104b is a straight re-dispatch with the table completed.
+    ⚠️ This is the ruling 66/75/82/92/94/106 family a **seventh** time: a dictated signature dictates a
+    phpstan result, a dictated line a `pint` result, a dictated needle an `assertSee` result, a
+    dictated floor the next tick's verdict, a dictated test the branch it renders, a dictated command
+    invocation whether the run can record its own work — and a dictated **sweep** whether the run
+    starts at all.
