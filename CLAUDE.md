@@ -10223,3 +10223,133 @@ supplied for verbatim transcription is mangled by the command line, not by the r
 because `state.py` has no withdraw and by tick 259's discriminator a careful reader of the record alone still
 reaches the right conclusion: the sentence is complete and correct after those five tokens, naming the
 predicate, the single live effect, why `@type` keeps `empty()`, and all three refusals.
+
+## ⛔ A STOP CONDITION scoped by a KEY NAME matches every array in the tree that uses that key — and a spurious stop costs the WHOLE WAVE (tick 286)
+
+SITE-158 stopped at item 2, made no edits, and reported three hits verbatim. It was right to; **the stop
+condition was mine and it was wrong.** My item 2 asserted *"I measured both as empty"* and asked for
+`grep -rn -E "'content' *=> *('' *|'0'|' +')" app/tests/`. The title half is genuinely empty — re-measured at
+tick 286 across **six** patterns (`''`, `' '`, `'0'`, `""`, `"0"`, bare `0`), all silent. The content half is
+not, and its three hits were read at source before any verdict:
+
+```
+actuation_helpers.php:351   new ChangeSet(url, type, T3, ['title'=>'Nothing here yet','content'=>''], [...])
+pixel_helpers.php:124       'utm' => [ … 'term' => '', 'content' => '' ]
+warehouse_helpers.php:166   'utm' => [ … 'content' => '' ]
+```
+
+Two are the **UTM `content` parameter**; one is a change-approval before/after payload in another lane's
+fixture. ⛔ **Not one carries a `type` key at all**, while `LlmsTxtRenderAction:22` reads
+`isset($block['type']) && $block['type'] === 'text' && ! empty($block['content'])` — so none can reach the
+guard the stop condition was about. Measured the other way as well: `grep -rn "'type' => 'text'" app/tests/`
+returns **six** hits, the only three with a `content` key are `LlmsTxtTest.php:39 :40 :118` and all three hold
+real prose; the other three use the key `text` and are Anthropic message payloads.
+
+The claim was *"a fixture depends on the current behaviour of `LlmsTxtRenderAction:22`"*, which requires the
+array to carry **both** `'type' => 'text'` **and** a blank `content`, **and** to reach that action. I searched
+for a **key name**. That is tick 246's sixth shape — *a subject identified by a DESCRIPTION can be
+substituted* — arriving on a **stop condition**, and tick 247's remedy transfers unchanged: **make the
+description match exactly one thing.** Search the **structure**, never the key.
+
+⚠️ **The asymmetry is what generalises, because nothing in the brief distinguished the two lines.** The
+identical grep shape was **right** for `title` and **wrong** for `content`: `title` is the column name and is
+the only thing the four title sites read, while `content` is a generic key used by UTM parameters, LLM message
+payloads and change diffs. ⛔ **Before scoping a search by a key name, ask whether that key name is unique to
+the structure you mean.** And note where this defect landed: a false credit costs a paragraph, a false
+*census silence* is never re-read, and a **false stop costs the entire wave** — so a stop condition is the
+most expensive place in a brief for a scope error, and the place it is least likely to be examined, because a
+stop that fires reads as the brief working.
+
+⚠️ Provenance of the false ground value: tick 285's block measured *"no fixture under `app/tests/` carries a
+blank, whitespace or `"0"` **title**"*. The brief restated it over **title or content**. Same family as tick
+273 — *a set retyped in a paraphrase loses what was not in it* — here a **measurement** restated over a wider
+domain than it covered. Twenty-first of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245,
+247, 249, 250, 254, 262, 265, 271, 274, 275, 276, 280, 283) and the first turned on a **stop condition's
+scope** rather than on a question, an answer set, a ground value, an instrument or a delimiter. Per the
+standing rule this is a NEW item with its own two dispatches; SITE-158 spent none, and SITE-159 re-issues it
+with item 2 corrected and nothing else changed.
+
+## ✅ Tick 262's both-directions stop WORKED — its first firing on a wrong ground value (tick 286)
+
+Tick 262 ruled that an asserted ground value must be an equality with **both** directions as stops, after an
+item-4 inequality could fire only on a fall and so could not contradict the brief. Item 2 was written the
+corrected way — *"I measured both as empty. **If either returns a hit, report it before editing**"* — and that
+clause is the **entire** reason a false ground value was reported instead of being silently worked around or
+edited past. The value was wrong; the mechanism held. ⛔ Record the healthy branch, or a rule that has only
+ever been stated reads as an unfired precaution (tick 221: *a hazard asserted and never measured is not a
+hazard*, in the direction that confirms one).
+
+## ✅ Tick 285's SUM check and tick 249's timing nonce — first fully clean firing, corroborated by a third run (tick 286)
+
+Three consecutive waves had a defective doctor block (275 an unreproducible attribution, 284 a byte-identical
+timed pair, 285 a `clean` line contradicting its own total). SITE-158's pair passes all three checks:
+
+| | boundary | contract | citation | schema | capability | anchor | journey | printed |
+| :-- | --: | --: | --: | --: | --: | --: | --: | --: |
+| report run 1 | 6 @129 | 87 @31 | 93 @1244 | 15 @465 | 455 @23 | 137 @248 | 4 @0 | **797** |
+| report run 2 | 6 @130 | 87 @32 | 93 @1253 | 15 @467 | 455 @23 | 137 @248 | 4 @0 | **797** |
+| **mine, this seat** | 6 @131 | 87 @33 | 93 @1252 | 15 @478 | 455 @23 | 137 @250 | 4 @0 | **797** |
+
+`0+6+87+93+15+455+137+4 = 797` in all three ⇒ each block is internally consistent. Four of seven timings
+differ between the report's two ⇒ provably two runs (and per tick 250 `capability 23/23` and `anchor 248/248`
+repeating is **not** a defect — the discriminator is the byte-identical *block*, and a 23 ms stage has few
+distinguishable values). Three runs, three distinct timing vectors, one stamp `20260829-0647` =
+`runtime_build`. ⚠️ Standing and unchanged: **this seat never accepts a doctor block from a report** — the
+verdict rests on my own run and the report's blocks are corroboration.
+
+⚠️ The evidence request has a **cost** side this tick exposed: asking for *"both blocks whole"* got two
+complete doctor outputs including every per-violation `fix:` line — a **3,312-line** `REPORT.md`. The three
+checks need the header, eight stage lines and the footer. Say so, or the honest reading of the request is the
+expensive one.
+
+## ⚠️ A measure-only wave's pass condition is an empty diff, and an empty diff proves itself (tick 286, third firing)
+
+SITE-158 wrote nothing: `git log origin/track/site..HEAD` empty, `git status --short` = ` M app/phpunit.xml`
+alone, HEAD `f573c2d5` = `origin/track/site` = tick 285's own notes commit. So **no stage count and no id
+census could have moved**, which is stronger evidence than a doctor run and needs none — and there was nothing
+to withdraw from a `state.py` that has no withdraw. Third firing of tick 273/275's write-nothing discipline,
+and the first where the wave stopped rather than measured.
+
+## §7, doctor and the census at tick 286
+
+§7 on the tip `f573c2d5`, measured **independently in this seat**: `tests 1979 · passed 1976 · FAILED 1 ·
+errors 2`, **byte-identical to the coder's**, ⭐ `a_published_site_carries_all_seven` **ABSENT — J11 green**.
+Reconciles 1976+1+2 = 1979 ✓. Stable set: `test_g2_76_unified_inbox_header` (X-01, **stages'**) plus sixty's
+two real-transport journey stubs. **J8's `a_deliberately_corrupted_backup_fails_the_restore` absent again** —
+now 5 · 4 · 2 · 3 · 2 · 3 · 2 · 2 · 2 on unchanged trees; read the SET minus that member, never the integer
+(tick 278). §2 exactly one `⛔` plus the `ℹ supervisor working notes` line, which is not a `⛔` (tick 263);
+§4 seals ✓; §6 pint and phpstan green.
+
+✅ **The pest-lock hedge landed again, and the hedge was resolved BEFORE the append.** The block was drafted
+with §7 named unmeasured (tick 242 — never wait, never carry) and **re-checked at the append** (tick 231 — a
+"could not measure" is a claim with an evaluation time); it had landed, so what is recorded is the
+measurement, not the hedge. Both halves load-bearing, as at 231, 245, 250 and 261.
+
+✅ **Tick 258's decidable rule, and tick 259's column rule an EIGHTH time.** `gate-runs.tsv` row 3596: my gate
+is **3668630**, `gate-start 16:30:23`, `pint` and `phpstan` written, **no terminal row** — ambiguous between
+queued and died-without-its-trap, and only `readlink /proc/3668630/cwd` → `…/grs-antig-site/app` separates
+them. ALIVE ⇒ wait ⇒ it landed. ⛔ Rows 3587–3590 and 3591–3595 are **also** `grs-antig-site` and are the
+**coder's** two gates (`3641651`, the no-`--tests` ground check, `gate-end` rc 1 with no pest row; `3646309`,
+whose pest ran 16:24:44 → 16:28:21 rc 2 and produced the report's §7). **Filter by the pid `gate-start` handed
+you, never by the checkout column.** ⚠️ `Read` on `/home/goaiez/tmp/gate-runs.tsv` needs **offset AND limit**
+(tick 262); the file is now 3,599 lines and a bare offset past 256 KB is refused.
+
+Census: `pwd` first (tick 209), and all three pathspec-carrying halves returned non-zero, so tick 285's drift
+signature is absent. Reflog's newest arrival across all eight refs is `origin/track/site@{16:20:36}
+f573c2d5` — **my own tick-285 push** — and the newest *sibling* arrival is `stages@{13:05:42} b79ae957`,
+predating tick 285's close, so **no ref moved**: a cache HIT measured from git (tick 220). Re-run in full
+regardless, because this ledger's own arithmetic has been the defect six times, and **byte-identical to ticks
+283, 284 and 285** — half 1 **7** (`sixty/X-102` **5**, the chat-door wave, still unmerged and still a TRACK 1
+ACTION; `reviews` 1 + `money` 1, both merges *of main*) · half 2 **10** · half 3 **5** · complement **14**.
+`origin/main` unmoved at `5ce8b4f7`.
+
+## Shell forms — refused at tick 286
+
+- ⛔ `grep -n -E '… violation\(s\)\.$ …'` — a pattern containing **escaped parentheses** *"requires
+  approval"*. `grep -n -E '^[0-9]+ violation'` is accepted. Same family as tick 277's em dash and tick 223's
+  quoted `|`: **never carry punctuation into a pattern; anchor on a substring you have seen in the output.**
+- ⛔ `grep -n '<pat>' /home/goaiez/tmp/gate-runs.tsv 2>&1` — refused as *"multiple operations"* (a path
+  outside the checkout). ✅ `Read` with **both** `offset` and `limit` is the only accepted route (ticks 257,
+  262).
+- ⚠️ `cd app && php artisan doctor` drifted the shell once and was reset in its own call. Per-call, not
+  per-tick (tick 285).
