@@ -277,6 +277,42 @@ final class EdgeDeployAction
                 $html .= "</div>\n";
             }
 
+            if (! empty($events)) {
+                $html .= "<div id=\"events-x176\">\n";
+                foreach ($events as $event) {
+                    $html .= '  <div class="event-item" data-name="'.e($event['name']).'">'.e($event['name']).' - '.e($event['startDate'])."</div>\n";
+                }
+                $html .= "</div>\n";
+            }
+
+            if (! empty($address)) {
+                $html .= "<div id=\"address-x176\">\n";
+                $html .= '  <div class="address-item"';
+                foreach (['line1', 'city', 'region', 'postal_code', 'country'] as $key) {
+                    if (isset($address[$key]) && is_string($address[$key]) && $address[$key] !== '') {
+                        $html .= ' data-'.str_replace('_', '-', $key).'="'.e($address[$key]).'"';
+                    }
+                }
+                $html .= '>';
+                $parts = [];
+                foreach (['line1', 'city', 'region', 'postal_code', 'country'] as $key) {
+                    if (isset($address[$key]) && is_string($address[$key]) && $address[$key] !== '') {
+                        $parts[] = e($address[$key]);
+                    }
+                }
+                $html .= implode(', ', $parts);
+                $html .= "</div>\n";
+                $html .= "</div>\n";
+            }
+
+            if (! empty($videos)) {
+                $html .= "<div id=\"videos-x176\">\n";
+                foreach ($videos as $video) {
+                    $html .= '  <div class="video-item" data-name="'.e($video['name']).'" data-url="'.e($video['contentUrl']).'">'.e($video['name'])."</div>\n";
+                }
+                $html .= "</div>\n";
+            }
+
             $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
             if ($internalLinksHtml !== '') {
                 $html .= $internalLinksHtml;
