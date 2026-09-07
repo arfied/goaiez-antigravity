@@ -8329,3 +8329,117 @@ two refs whose partitions halves 1 and 3 report. Sixth firing of tick 215's rule
 (tick 248 was the first). The enforcement is tick 257's and it is a **writing** rule: *draft the
 census section with the closing line left OPEN and fill it at the close.* A null closing read is
 common (224, 225, 256), which is exactly what makes it cheap to assume and expensive to assume wrongly.
+
+## ⛔ `CREDIT-ONLY` and `DISCHARGED-BY-A-ROW-MATE` are NOT exclusive — when a one-spec row's ⑤ is collectively discharged, a carrier's off-subjectness carries NO WORK (tick 272)
+
+Tick 271 found that a ONE-SPEC plan row's asserted clause is discharged by the row **collectively**,
+so grading id-by-id manufactures one `CREDIT-ONLY` per id and points them all at the same build; it
+ruled `G6-11` and `G7-16` `DISCHARGED-ON-PRODUCT` on that ground and added
+`DISCHARGED-BY-A-ROW-MATE` to the verdict set. **`G6-27` is in the same row, `:31352`**, and
+SITE-145's record labels it `CREDIT-ONLY`. Both readings are true, of different things:
+
+- the row's **⑤** — *"expiry asserted on both the page and the asset URL · ⛔ the NO-URL rule
+  (§185A)"* — is discharged by row-mates: `G16-07`'s page expiry (SITE-143), X-121's asset URL, and
+  the base send driver at `app/app/Contracts/Links/LinkRegistry.php:114`. **Nothing is owed.**
+- the **carrier** `test_g6_27_header_c_sms` (`X103Test.php:307`) asserts `Http::assertNothingSent()`
+  and `Event::assertNotDispatched(SendRequested::class)` — SMS suppression, real and falsifiable, and
+  neither the ⑤ nor the id's named feature. **The credit is off-subject.**
+
+⛔ **RULED: a carrier's off-subjectness is BOOKKEEPING, not a gap, whenever the row's ⑤ is already
+discharged.** Read the other way — `CREDIT-ONLY` as an outstanding obligation — the next tick briefs
+exactly the wave tick 271 caught one step earlier: a second carrier for a clause a row-mate already
+discharges (tick 240), which also raises the id census, which is the stop. ⚠️ Note the id's *named
+feature* (Password Protection) is genuinely unimplemented — `grep -rniE 'pin|password|passcode'
+app/app/Modules/X-103/` returns **one** hit, the **generated** `capabilities.php:40` echoing the
+tracker note — and that is not a gap either, because the ⛔ column never asked for it. "PIN gates"
+appears only in the row's **description** column.
+
+⛔ **No correcting note**, by tick 259's discriminator (*does a careful reader of the record alone
+reach the wrong conclusion?*): the note itself says **"No build"** and **"No filing"** with both
+reasons. `state.py` has no withdraw, so a third row about one fact compounds rather than corrects
+(tick 210). **The composition rule belongs where the next tick reads it — here — never in a file that
+cannot be amended.**
+
+## ⛔ `ls --time-style=+%H:%M:%S` DISCARDS THE DATE — a five-day-old file read as a write 22 minutes in the future (tick 272)
+
+Checking the checkout root for a misfiled report, my own format string printed `AGENTS.md 11:04:58`
+and `BUILD-PLAN.md 11:04:58` against a clock reading **10:42:13** — two tracked files apparently
+written *after now*, which is the signature of another writer in this checkout and one step from a
+one-writer BLOCK. Re-run with `--time-style=+%m-%d_%H:%M:%S`: both are **09-02_11:04:58**, and every
+root `*.patch` is 09-05. Nothing had moved.
+
+⛔ **The format string chose which fields to print, and the field it dropped is the one that
+disambiguates.** Same family as tick 268 (pest's `line` field is the method's *declaration* line, so
+it cannot discriminate two assertions in one method) and tick 227 (seven- versus eight-column gate
+rows, nothing in a row announcing its width): an output format that omits a key field yields rows
+that are individually consistent and collectively unreadable, and **no amount of re-reading the
+output recovers a field the format never emitted.**
+
+✅ **The free check is arithmetic and it is what caught this: a printed timestamp later than the clock
+is a FORMAT defect, never an event.** Never render a timestamp to a subset of its fields when the
+question is *when did this happen* — `+%m-%d_%H:%M:%S` costs nothing. And the first hypothesis for an
+impossible reading is the **instrument**, not the world (tick 209's ruling, tick 252's *the record is
+the likelier defect than the world*). Thirty-third-plus statement of the section's law, and the first
+turned on **a format string written in the same command whose output was then read** — the one input
+that is fully visible and still invisible, because it reads as part of the invocation rather than as
+part of the result.
+
+## ⚠️ Tick 197's two residues need a THIRD case: a report ABSENT, not misfiled (tick 272)
+
+Tick 197 ruled that a wave dying after its commit leaves two residues — uncommitted `.agents/state/`
+and a `REPORT.md` written to the checkout root — and to look for both. SITE-145 died leaving
+**neither**: it had already committed its own state (`git status --short` clean apart from the two
+standing paths), and an `ls` of the root shows **no `REPORT.md` at either path**. Three cases, three
+different handlings:
+
+| residue | handling |
+| :--- | :--- |
+| uncommitted `.agents/state/` | the next brief's step 0 |
+| `REPORT.md` at the checkout root | read it as evidence, record the misfiling |
+| **no report anywhere** | the verdict rests on the **artefact and this seat's own gate alone** |
+
+⛔ In the third case there is nothing to cross-check against, so tick 235's corollary is not advice
+but the only available method: **gate the wave yourself and treat any report as testimony.** Every
+number in tick 272's verdict was measured in this seat; had the block leaned on a report it would
+have had none to lean on. ⚠️ And the cause of a coder's death is **not measured** by any of this —
+name it as unmeasured (ticks 227, 230, 249).
+
+⛔ Case selection follows the artefact, not the mtime: `REPORT.md` (10:07) older than the last REVIEWS
+block (10:22:48) makes case (b)'s literal test fail, and case (e) would have written a brief off the
+backlog and **left a landed commit ungated**. `git log --oneline -3` against the last block's
+recorded tip is the check, and it is one command.
+
+## ⚠️ A guessed violation-line format is a FALSE SILENCE — anchor on a substring you have SEEN (tick 272)
+
+`php artisan doctor | grep -E '· (X-155|X-137) ·'` printed **nothing** — indistinguishable from
+"both modules are clean", which is what it was about to be recorded as. The looser
+`grep -E 'X-155|X-137'` prints three lines: the format is `· X-137: consumes 'message.sent' — …`, a
+**colon**, not a second `·`. Second instance of guessing this tool's line shape (tick 223 was the
+leading-space `^FAIL` anchor, which matched nothing for the same reason), and the rule that caught it
+is tick 209's — **a surface that drops to zero is a tooling fault until proven otherwise.**
+
+⛔ Anchor on a substring you have observed in the output; never on a separator inferred from one.
+⚠️ The real reading, since it is the fifth axis's population: **X-137** — `contract` (`message.sent`,
+filed) and `anchor` (filed); **X-155** — `anchor` (filed). **Zero capability violations in either**,
+so all 16 credited ids across the two modules are clean.
+
+## The fifth axis's question does not transfer verbatim to X-155 and X-137 — measure the precondition (tick 272)
+
+Ticks 264/265 built the credit axis around *does any crediting assertion read the **stored
+artifact**, or only the Action's **return array**?* That is a question about a served HTML document
+and is specific to X-176 and X-157. **X-155 is form capture and X-137 is call attribution; neither
+renders into the artifact**, so the phrasing would have returned `OTHER` sixteen times, or — worse,
+per tick 265 — been rounded to the nearest label that fits, with nothing in the wave's output able to
+say the right one was missing.
+
+✅ The general form, which is what the axis always meant: **does the crediting assertion discharge the
+plan's ⑤ against something the module PERSISTED, EMITTED, SERVED or REFUSED — or only against a value
+the test handed in?** Verdicts: `DISCHARGED-ON-PRODUCT` · `DISCHARGED-ON-RETURN-VALUE-ONLY` ·
+`CREDIT-ONLY` · `DISCHARGED-BY-A-ROW-MATE` · `NOT-DISCHARGED` · **`OTHER — name it and say why none
+of the above fits`** (tick 265, always last). Third firing of tick 223's law — *measure a technique's
+precondition before copying it* — and the first turned on **this lane's own technique** rather than a
+sibling's, which is the case proximity makes hardest to see (tick 235).
+
+**X-155 and X-137 are the last two of the seven owned modules never audited on this surface.** Ground
+values measured at tick 272 so they can be asserted with both directions as stops (tick 262):
+**X-155 = 10 distinct ids / 27 occurrences · X-137 = 6 / 8.**
