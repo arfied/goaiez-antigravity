@@ -2072,3 +2072,39 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     branch (ruling 68). ⚠️ Measured before dictating: `File::allFiles()` appears in `X136Test`,
     `N008Test` and `N010Test` only, each scoped to its own module, so **no directory-scanning lint
     reads C-Billing** and ruling 63's prose-inflates-the-instrument hazard does not apply here.
+91. **A gate started in the background does not outlive the tick that started it, and `rc=143` on the
+    `gate` row itself is the tick's own reaping — not another lane's kill (RULED by the lane
+    supervisor 2026-09-06 21:4x, measured from `/home/goaiez/tmp/gate-runs.tsv`).** Three consecutive
+    ticks gated `8b64b085` and none produced a verdict: money's gate pids `2758434` (21:10:27 →
+    21:17:35), `2797219` (21:20:59 → 21:23:32) and `2830885` (21:30:49 → 21:34:53) each logged
+    **`rc=143`** on their own `gate` row, each a few minutes after its tick's other work finished, and
+    each left an identical 7902-byte file ending at §7's `… another suite holds
+    /home/goaiez/tmp/pest.lock`. Nothing was wrong with the sha: `grs-antig-ui`'s pest held the lock
+    from 21:10:04 to **21:40:04**, where it died on `timeout 1800` (`rc=124`), so all three money gates
+    were parked in `flock -w 2400` when their tick ended and SIGTERM reached them. The cost was a full
+    hour of lane time, a PASS that was never appended, and a `BRIEF.md` (21:22) left newer than the
+    `REVIEWS.md` block that should have preceded it — the one mailbox state no case in the tick
+    contract describes. **So: a tick that starts a gate BLOCKS on it in the same tick** — poll the
+    output file with foreground calls, or arm an `until` waiter and keep working — and never ends its
+    turn with a gate still running. ⚠️ **Distinguish this rc from rulings 67 and 74**: those are a
+    *tool* row (`pest`, `pint`) killed by outside memory pressure, which makes that tool's verdict
+    VOID; this is the **`gate`** row, killed by the tick's own exit, and it means no verdict was ever
+    produced. The tell is the column — `$8` is `gate`, not a tool name — and the `-` in `tool_pid`.
+    ⚠️ §1–§6 in an abandoned file are still measured and still the sha's; only §7 is missing. **A
+    tick that cannot reach §7 before its own deadline records the §1–§6 result, holds the verdict, and
+    says in `REVIEWS.md` which lane held the lock** — it does not push on the coder's §7 (ruling 42)
+    and it does not start a fourth gate it will also abandon.
+92. **A brief's predicted floor is arithmetic the next tick gates against, so it is counted from the
+    items, not asserted (RULED by the lane supervisor 2026-09-06 21:4x, on MONEY-91's brief).** The
+    brief carried *"Predicted floor: `2061 · 2056` — this wave adds **three** methods"* while its own
+    items add **two** (1.3's `test_connect_card_refuses_a_connection_that_has_already_applied` and
+    3.3's `test_the_mrr_top_up_refuses_over_the_daily_ceiling`; item 2 changes two needles and adds
+    none). Corrected to `2060 · 2055 · FAILED 2 · errors 3` before dispatch. Uncaught, the next tick
+    would have measured a correct wave one test short of its floor and had to choose between reading
+    it as a deleted test and re-deriving the arithmetic under time pressure — and ruling 26 hangs the
+    push on exactly that comparison. **So every brief's floor is computed by listing the item numbers
+    that add a method**, and the floor line names them, as this one now does. ⚠️ This is the ruling
+    66/75/82 family a third time: a brief that dictates a signature dictates a phpstan result, a
+    dictated line dictates a `pint` result, a dictated needle dictates a test result — and a dictated
+    **floor** dictates the next tick's verdict. Everything a brief states as a number is the
+    supervisor's to have measured.
