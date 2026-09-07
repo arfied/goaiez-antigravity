@@ -21,7 +21,6 @@ class Cooling extends Component
     #[Locked]
     public int $businessId = 0;
 
-
     public array $dismissed = [];
 
     public array $openers = [];

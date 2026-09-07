@@ -16,7 +16,6 @@ class Credits extends Component
     #[Locked]
     public int $businessId = 0;
 
-
     #[Locked]
     public ?string $loadError = null;
 
