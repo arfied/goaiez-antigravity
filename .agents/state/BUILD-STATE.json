@@ -2348,6 +2348,14 @@
   {
    "at": "2026-09-07T03:11:13",
    "note": "X-102 The true dependency is X-102/Ui/ (Track 2 under ruling 5), so this lane cannot assert a rendering it may not build."
+  },
+  {
+   "at": "2026-09-07T05:33:13",
+   "note": "X-102 capability G16-21: the filed UNRESOLVED reason, CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39, is FALSE and is superseded by this note. The same sentence was filed in the same second for G13-15, which now carries three credits in app/tests/Modules/X-102/X102Test.php at lines 168, 188 and 203 and no doctor violation, so the scaffold command is not the obstacle for either id. The real missing dependency spans two other lanes. GOAIEZ-MASTER-PLAN.md:29077 gives G16-21 as carousels in the chat, trigger an answer with structured results, refusal a missing asset renders text and never a broken placeholder. The only producer of chat answers in the tree is app/app/Modules/C-Agent/Actions/AgentAnswerAction.php, which is track sixty under ruling 5, and the renderer is app/app/Modules/X-102/Ui/views/customerfacing-widget.blade.php, six lines carrying no message, image or card, which is Track 2 under ruling 5. X-102 Actions are ChatCapture, ChatContextRefresh, ChatEscalate and ChatStart and its models are ChatSession and ChatLead, so no answer, message or asset concept exists in this lane column at all."
+  },
+  {
+   "at": "2026-09-07T05:33:13",
+   "note": "X-103 capability filings dated 2026-09-06T13:28:40: the two UNRESOLVED rows whose why reads X-194 funnel visualization renderer and X-195 marketplace app engine are the capability ids G6-17 and G6-20 respectively. Both rows remain correctly filed and this note adds no row and withdraws none; it exists because each why names the referent and omits the id, so a grep for G6-17 or G6-20 over state.py status returns nothing and an audit reads the pair as unfiled. Recorded so the ids are findable."
   }
  ]
 }
