@@ -9899,3 +9899,140 @@ chat-door wave, still unmerged and still a TRACK 1 ACTION; `reviews` 1 + `money`
 re-run anyway because this ledger's arithmetic has been the defect six times. **Sixth null closing read** (224, 225,
 256, 279, 282, 283). ✅ **Pushed `b8692df5..ab61ffc9`** by explicit ref — tick 282 held the range because SITE-154's red
 was caused by the wave, and SITE-155 cleared it, so the whole range went as one exactly as that block said.
+
+## ⛔ A COMMENT stating a guard's PURPOSE is not a statement of its PREDICATE — and the purpose is the half that reads like a specification (tick 284)
+
+SITE-156's own falsifier output showed the served page still carrying
+`<title id="seo-meta-x176">   </title>` beside the JSON-LD its mutation had restored. Chased to the
+end, the chain is real and every link was measured: `businesses.name` is `$table->string('name')`
+with **no** non-empty validation anywhere; `X-157/ModuleServiceProvider.php:118` passes
+`Business::…->value('name')` straight through; and `EdgeDeployAction:62-69`'s completeness guard
+tests `$arg !== null`, which a whitespace string satisfies. So after SITE-156 a whitespace business
+name **deploys**, writes a `deployed` row, and serves **six** of J11's seven —
+`JourneyHarness.php:708` reads `'schema' => str_contains($html, 'application/ld+json')`, and that
+block is now absent.
+
+⛔ **That guard's own comment is dated `(R245, 2026-09-05)` and says, in as many words, that a
+partial set *"would publish four of the seven required elements under a `deployed` row … Refuse
+it."*** Its predicate is `!== null`; the failure mode is blankness. Byte-for-byte the gap SITE-156
+fixed one level down (`empty('   ')` is false) and the gap tick 278 named as **NOT NULL is not
+non-empty** — the same defect at three levels of one module. I was two steps from briefing a wave
+against it.
+
+✅ **RULED: no wave, and the thing that stopped it is the TRACKER ROW, not the code.** Tick 282's
+discriminator — compare the guard's predicate to the **spec** it derives from, never to the thing
+that looks wrong — sends the question to `GOAIEZ-TRACKER-CAPABILITIES.md:1143`, whose ⑤ for
+**G7-48** reads *"validates with ZERO errors **or does not render**"*. That clause **requires** the
+page to render without the schema, which is exactly what `X176Test.php:290` asserts and what credits
+G7-48 (tick 265). Making the completeness guard reject blank strings would refuse the deploy, delete
+the only state in which *"or does not render"* can be observed, and take a credited capability's
+asserted refusal with it. The two are **not** contradictory: they are two clauses from two different
+specs, both correctly implemented — the R245 guard covers an argument a caller **lost** (null),
+G7-48 covers one that is **blank**.
+
+Per tick 224, which branch fired: **cannot work here** — the door is shut, not the room empty. The
+only honest close is a non-empty constraint on `businesses.name`, core and another lane's column
+(tick 283 refused it and still does). ⚠️ Recorded so the next tick does not rediscover that R245
+comment and read it as an open defect: **it is narrower than its wording.**
+
+**The generalisation.** A comment naming the failure a guard prevents reads as a *specification of
+scope*, so it invites a reader to treat every instance of that failure as in scope; the predicate
+one line below is what actually decides. Seventh firing of *read the file before the brief names
+what is in it* (241, 244, 249, 251, 254, 268 twice, 284), and the second where opening the source
+reversed a conclusion this seat was about to carry.
+
+## ⛔ A byte-identical TIMED pair is one run pasted twice — and the rule finally has a CONTROL (tick 284)
+
+Tick 249 ruled a timed command's output carries its own nonce; tick 250 qualified it (a short stage
+has few distinguishable values — read the **block**, never a field); tick 251 narrowed it again
+after a digest arrived with no timings at all. None of the three ever ran a **control**, so the rule
+rested on argument. Tick 284 measured it, because SITE-156's two doctor blocks agreed to the
+millisecond at all six stages:
+
+| run | boundary | contract | citation | schema | capability | anchor |
+| :-- | --: | --: | --: | --: | --: | --: |
+| mine, run 2 | 132 | 32 | 1257 | 477 | 23 | 249 |
+| mine, run 3 | **134** | **34** | **1261** | **462** | **24** | **247** |
+| report ×2 | 632 | 349 | 107 | 1 | 298 | 402 |
+
+Two of my runs, back to back on an unchanged tree, differ at **all six** positions. My run 1 and run
+2 both read `boundary 132ms` — exactly tick 250's caveat, and exactly why the discriminator is the
+block. **The nonce is real on this box**, and tick 249's rule is now measured rather than asserted
+(tick 221: *a hazard asserted and never measured is not a hazard*, in the direction that confirms one).
+
+⛔ The cause is **not measured and no block names one** (227, 230, 249). ✅ PASS-WITH-NOTES on tick
+211's discriminator — nothing was let through: my live doctor reproduced all seven counts, and the
+*before* value needed no report at all, because **tick 283's block had measured the same seven in
+this seat on the pre-wave tree.** The verdict rested on two supervisor measurements and never on
+either of the report's blocks — tick 235's corollary, and the reason this cost a note rather than a
+dispatch. ⚠️ It is an escalation past tick 251: that brief asked for "the stage block" and got an
+honest untimed digest; this one asked for the **command, twice**, and said verbatim that a
+byte-identical pair is one run pasted twice.
+
+## ⛔ Fixing one predicate can STRAND the one above it — `:203`'s `empty()` now has exactly one live effect and it is a false refusal (tick 284)
+
+SITE-156 changed the arithmetic of the check above it and nothing re-read the older line:
+
+```php
+:203  if (empty($schema['@type']) || empty($schema['name']) || empty($schema['url'])) return false;
+:207  if (! $validType || ! is_string($schema['name']) || trim($schema['name']) === ''
+                       || ! is_string($schema['url'])  || trim($schema['url'])  === '') return false;
+```
+
+`:207` now refuses everything `:203` refuses — missing key, `null`, `0`, `false`, `[]` via
+`! is_string`; `''` and whitespace via `trim`. **The one value `:203` rejects that `:207` accepts is
+the string `"0"`**, and that rejection is wrong: `"0"` is a legitimate non-blank name, and G7-48's ⑤
+asks for a refusal only when the schema does not validate. A business named `0` serves six of J11's
+seven today. → **SITE-157.**
+
+⛔ **`@type` KEEPS its `empty()`, and the reason is a measurement, not a preference.** Under a naive
+uniform `isset()` rewrite, `@type = []` would begin to **pass**: `isset([])` is true, and `:206`'s
+`$validType` computes `is_array([]) && count(array_filter([], 'is_string')) === count([])`, i.e.
+`0 === 0`, i.e. **true**. Widening the line uniformly would silently admit an empty `@type` array —
+a weakening, in the wave that exists to remove a false refusal. The line reads inconsistently on
+purpose and the brief carries the reason, so it survives (tick 199: a decision recorded with its
+**defect** survives; one recorded as its **remedy** expires when the population changes).
+
+⚠️ **The polarity is the untested one.** SITE-156 fixed a false **accept** whose falsifier is an
+*absence* assertion; SITE-157 fixes a false **refusal**, so its falsifier is a *presence* assertion
+falsified by **restoring** `empty()` — the opposite of every falsifier this lane has run recently
+(tick 245's law in the direction it has not been exercised).
+
+⚠️ **One claim in that brief is the WAVE's to measure, not mine:** that `empty("0")` is `true` in
+PHP. `php -r` is **refused from this seat**, so it is a language semantic I could not establish in
+this tree, and item 1 asks the wave to establish it and stop if it does not hold rather than inherit
+my reading (198/199: the supervisor's reading of one file is the brief, never the implementation).
+✅ Blast radius measured: `validateSchema` has exactly **one** caller (`:165`), and no fixture under
+`app/tests/` passes a `'0'` name.
+
+## §7, doctor and the census at tick 284
+
+§7 on the tip `3a530b4c`, measured in this seat: `tests 1978 · passed 1975 · FAILED 1 · errors 2`,
+⭐ `a_published_site_carries_all_seven` **ABSENT — J11 green** on a wave that edits the schema
+validator on the serving path. Reconciles 1975+1+2 = 1978 ✓, and against tick 283's `1977 · 1974 ·
+FAILED 1 · errors 2` it is +1 test / +1 passed with the FAILED and error **sets** unchanged — the one
+new method, passing. The coder's own §7 read `1978 · 1974 · FAILED 1 · errors 3`; the **single**
+discriminating member is J8, now measured at **5 · 4 · 2 · 3 · 2 · 3 · 2** on unchanged trees. Read
+the SET minus that member, never the integer (tick 278). §2 exactly one `⛔`; §4 seals ✓; §6 green.
+
+✅ The cold witness fired on its **equality** branch for the first time since tick 280 qualified it:
+`grep -c 'foreach' X176Test.php` = **0** ⇒ loop-free ⇒ `grep -c 'assert'` = **50** = the green
+assertion total, and the diff adds exactly 2.
+
+Census: all four surfaces re-run in full, **byte-identical to tick 283** — half 1 **7** (`sixty/X-102`
+**5**, the chat-door wave, still a TRACK 1 ACTION and still unmerged; `reviews` 1 + `money` 1, both
+merges *of main*) · half 2 **10** · half 3 **5** · complement **14**. Cache HIT measured from the
+**reflog** (tick 220), not from a remembered table, and re-run regardless because this ledger's own
+arithmetic has been the defect six times. **Seventh null closing read** (224, 225, 256, 279, 282,
+283, 284) — run at the close and never drafted (tick 257).
+
+## Shell forms — refused at tick 284
+
+- ⛔ `php -r '<code>'` — *"requires approval"*, alone or in a compound. A PHP language semantic
+  cannot be measured from this seat; it goes into a brief as the wave's item, never as this seat's
+  assertion.
+- ⛔ `cd <dir> && git fetch …` — *"changes directory before running git, which can execute untrusted
+  hooks"*. The `cd` reset and the `git` call are two calls, always.
+- ⛔ `… | grep -v '^$'` — a second `grep -v` in a pipe still *"requires approval"* (tick 213).
+- ⚠️ `cd app && php artisan doctor` drifted the shell **three times** this tick and was reset in its
+  own call each time. It is structural, not occasional — it is the only accepted artisan form here.
