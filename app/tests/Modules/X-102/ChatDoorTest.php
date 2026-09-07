@@ -39,7 +39,7 @@ class ChatDoorTest extends TestCase
     {
         // Prove that an invalid key returns a 404 without crashing, and does not bypass tenancy to create a row.
         // RLS prevents reading the whole table to prove "no rows anywhere" with an empty tenant.
-        // Instead, we provision a tenant (which a bypass might fall back to) and assert as that tenant,
+        // Instead, we provision the only tenant (which Business::first() will deterministically fall back to) and assert as that tenant,
         // and we place this before the status check so a bypass fails here first.
         $biz = TestCase::provisionTenant(['name' => 'Bypass Target', 'currency' => 'USD']);
         Tenancy::forgetAll();
