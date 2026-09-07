@@ -1050,6 +1050,7 @@ class X163Test extends TestCase
         $this->assertEquals('Oil Change', $item->service_name);
         $this->assertEquals('oil change', $item->service_key);
     }
+
     public function test_lookup_quotes_when_two_location_books_agree(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Two Locs Agree Biz', 'currency' => 'USD']);
