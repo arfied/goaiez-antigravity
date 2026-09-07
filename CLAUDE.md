@@ -4640,3 +4640,135 @@ instance of this seat naming something imprecisely and the wave faithfully inher
 208 the evidence request, 227 the branch condition, 235 the unread mechanism). **A brief that
 presumes a direction gets an answer in that direction** — ask "can this lane produce it?"
 alongside "does this lane hold it?", or the audit can only ever return one of the two answers.
+
+## ⛔ NEVER ask whether a generator's OUTPUT SURFACE exists — the answer is always no, and it decides nothing (tick 237)
+
+Tick 236 corrected the audit question and the correction did not travel one noun. SITE-118 was
+asked, as item 3 of a measure-then-build brief, *"where would generated links be rendered, and
+does that surface already exist?"* It answered honestly — *"the HTML surface **does not exist**;
+`EdgeDeployAction` constructs a bare HTML skeleton … there is no layout, no navigation menu, no
+footer"* — and **STOPPED the wave on it**. Every word measured true. Re-measured here:
+
+```
+123:  $html = '<html><head>';
+125:  $html .= "</head><body>\n";
+136:  $html .= "<script id=\"x110-pixel\" …>";        ← every J11 marker is a $html .= line
+155:  $html .= "<div class=\"chat-widget-container\"></div>";
+165:  $html .= "<div class=\"dni-pool-x137\"></div>";
+238:  $html .= "<script type=\"application/ld+json\">…";
+256:  $html .= '</body></html>';
+```
+
+⛔ **`$html .=` IS the surface**, in `X-157/Actions/EdgeDeployAction.php`, this lane's own module
+under ruling 5. `chat-widget-container` did not exist either until a wave wrote that line. "There
+is no nav element" states the absence of the **generator's own output** — tick 236's law
+(*a generator's artifact is not its dependency*) applied there to the **data** and never carried
+to the **render target**. Same error, two nouns, one wave apart.
+
+The question is unanswerable-in-the-useful-sense by construction: for a generator, the render
+target is downstream of the generator too, so *"does the surface exist?"* returns **no** whatever
+the seam, and it cannot separate *"there is nowhere to write"* from *"nobody has written there
+yet"* — which have opposite verdicts. ✅ **Ask instead: where is the document CONSTRUCTED, and
+does this lane own that construction site?** Both are one `grep`, both are falsifiable, and a
+"no" to the second is a real stop.
+
+⛔ **And a stated PROPERTY of the output is the assertion's subject, never an obstacle to it.**
+SITE-118's second premise — *"a slug tree is not guaranteed reachable; a page whose intermediate
+ancestor is missing becomes orphaned"* — is exactly what `GOAIEZ-MASTER-PLAN.md:32272` asks to be
+proven (*"the graph is **asserted** acyclic and reachable"*). Worse, the policy was already
+implemented in this lane's committed code **thirteen lines below the line the report cited**:
+`EdgeDeployAction:188-201` is SITE-117's `$usable` guard, which **excludes** a page whose ancestry
+does not resolve rather than orphaning it. A wave that reads `:183` and stops has not read `:188`.
+
+**RULED at tick 237: the measurement HOLDS; G8-02/G8-25 are a BUILD** (SITE-119), on that
+construction site, under that exclusion rule, with the graph asserted from hrefs parsed out of the
+stored artifact and **two falsifiers** — a single-page business emits no nav while the document
+still ships, and an orphan page is absent while a resolvable one is present. G8-30 stays filed:
+*"nofollow on low-value internal links"* names a metric no page enumeration mints.
+
+⛔ **Fifth instance of this seat naming something imprecisely and the wave faithfully inheriting
+it** — 208 the evidence request, 227 the branch condition, 235 an unread mechanism, 236 a presumed
+direction, 237 an existence question about an output. The family trait, stated once: **a vague
+brief fails loudly; a precisely wrong one is obeyed.** Per the standing rule a defect this seat's
+own brief caused is a **new item with its own two dispatches**, and SITE-118 spent none of them.
+
+⚠️ Carried, not briefed: the breadcrumb's ancestry query at `EdgeDeployAction:183-186` does **not**
+bound by `is_published`, so an unpublished ancestor can name a crumb. Real, small, and out of scope
+for a wave whose subject is something else — SITE-119's new query bounds; the breadcrumb's is a
+later one-liner. SITE-118's own item 1 spotted the bound and applied it to the wrong query.
+
+✅ A new X-176 action needs **no** manifest change, measured before briefing it: `manifest.php:31-35`
+provides `schema.render`, `index.request`, `sitemap.ping` only, while `SeoRenderAction` and
+`LlmsTxtRenderAction` have existed unlisted through several waves with no `contract` line against
+X-176. Do not edit a generated manifest to clear a violation that has never been raised.
+
+## ⛔ A test can assert a property of a relationship the ARTIFACT does not contain (tick 238)
+
+The four catalogued false-credit classes are all *a test claiming more than it proves*. SITE-119's
+`test_graph_property_is_acyclic_and_reachable` is a fifth shape and the reverse: its claim is fine
+and its **subject is absent**. `InternalLinkRenderAction` emits a **flat** list — one `<a href>` per
+usable page inside one `<nav>`, no parent/child structure anywhere in the artifact — so the test
+rebuilds an edge set by string-splitting the same slugs the renderer used, and then asserts over its
+own reconstruction:
+
+```php
+foreach ($nodes as $node) { if ($node === '/') continue; $edges[] = ['from'=>$parent,'to'=>$node]; }
+$this->assertCount(1, $parentsByChild[$node]);       // ⛔ a list the loop built with one entry
+$this->assertArrayNotHasKey('/', $parentsByChild);   // ⛔ a key the `continue` never writes
+```
+
+Discriminator — *what would have to change for this line to go red?* **The test's own loop.** Not the
+renderer, not the deploy path, not the stored file. The plan's clause (`GOAIEZ-MASTER-PLAN.md:32272`,
+*"the graph is asserted acyclic and reachable"*) therefore has its **acyclicity half discharged by a
+line that cannot fail**.
+
+✅ **Not a BLOCK, and the reason is the distinction worth keeping:** the id is not credited *solely*
+by a tautology. The same test carries `assertContains($parentsByChild[$node][0], $nodes)` — every
+emitted link's parent is also emitted — which is the **reachability** clause, genuinely load-bearing,
+and made falsifiable by the exclusion-rule test (orphan `a/b/c` absent, `/about` present, one test).
+
+⛔ **The general form:** when a test asserts a property of a *relationship*, check the relationship
+exists in the artifact and not only in the test's reconstruction of it. **A property recomputed from
+the same inputs the renderer used is a property of the arithmetic**, however elaborate the
+computation — and no amount of reading the test reveals it, because the test is correct. Read the
+**output** for the structure the assertion needs.
+
+## ⚠️ An exhaustive assertion parsed document-wide binds every future writer of that markup (tick 238)
+
+All four of SITE-119's tests `preg_match_all` `/<a href="…">/` over the **whole** artifact, and case
+1 asserts the result with `assertEqualsCanonicalizing`. Correct today — measured: the document's only
+other `href=` is `<link rel="canonical">` at `EdgeDeployAction:222`, which `<a ` cannot match. The
+direction is right (tick 234: widen the SET, never loosen the PREDICATE); the **scope** is not. An
+exhaustive assertion should be parsed out of the block it is about, or it silently couples to writers
+in unrelated parts of the same document — a coupling that appears in no diff.
+
+## ⛔ This lane's own filings are a BACKLOG, and the superseding note is what closes one (tick 238)
+
+`state.py` has no withdraw, so a filing that a later wave makes false is closed by a **note**, and
+this lane's practice is visible four times in `JOURNAL.md` — G8-15 `18:00:55`, G8-22 `18:22:48`,
+G3-34 `18:41:39`, G8-04 `19:32:51`, each *"is BUILT, superseding the UNRESOLVED capability filing"*.
+SITE-119 wrote a true note that was **not** a supersession, so `state.py status` still carries
+`G8-02` and `G8-25` as open dependencies for work that is built and credited.
+
+⛔ **The brief asked for exactly the sentence it got.** Sixth instance of this seat naming something
+imprecisely and the wave faithfully inheriting it — 208 the evidence request, 227 the branch
+condition, 235 an unread mechanism, 236 a presumed direction, 237 an existence question about an
+output. **A vague brief fails loudly; a precisely wrong one is obeyed.** When a wave BUILDS something
+this lane had filed, the brief names the filing to supersede **by its `why` text**, not by a
+description of what to say.
+
+⚠️ Five of X-176's ten live capability filings — G3-34, G8-02, G8-04, G8-22, G8-25 — describe work
+this lane has since built. Tick 231's law restated with a mechanism: **re-read the filings whenever a
+wave closes, because nothing else ever re-reads a closed row.**
+
+## ⚠️ Carried from SITE-119, not briefed
+
+- `InternalLinkRenderAction:24` keys the hierarchy with `$pages->keyBy('slug')` — the **raw** slug —
+  while `:44` looks it up with the **trimmed** one. A page stored as `/services` is keyed
+  `/services`, looked up as `services`, and **silently excluded** from the graph. Latent: every
+  fixture is canonical. Normalise the key when the file is next open.
+- The absence falsifier proves absence via `count($usablePages) < 2`, not via the exclusion rule.
+  The case where **every** page is orphaned — both rules interacting — is untested.
+- ⚠️ The `< 2` threshold is a real policy decision (a single link is not a graph) that a test now
+  depends on, and the `decided` line records only the seam. **A policy a test asserts belongs in the
+  record**, not only in the code.
