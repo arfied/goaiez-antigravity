@@ -22,7 +22,7 @@ final class ProcessOverdueReceivable implements ShouldQueue
                 'invoice_id' => $event->invoiceId,
                 'action' => 'escalate_to_human',
             ], [
-                'reason' => 'R211: Overdue invoice requires human resolution attempt before any suspension.',
+                'reason' => 'Overdue and waiting on a person: nobody has recorded why this invoice is unpaid, and nothing is stopped until someone does.',
             ]);
 
             if ($action->wasRecentlyCreated) {

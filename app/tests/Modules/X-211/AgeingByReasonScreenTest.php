@@ -9,6 +9,8 @@ use App\Modules\X121\Models\Person;
 use App\Modules\X199\Models\Invoice;
 use App\Modules\X211\Events\ArFeeApplied;
 use App\Modules\X211\Events\ArLateFeeTermSet;
+use App\Modules\X211\Events\ArOverdue;
+use App\Modules\X211\Listeners\ProcessOverdueReceivable;
 use App\Modules\X211\Models\ArDunningAction;
 use App\Modules\X211\Models\ArPlanTerm;
 use App\Modules\X211\Models\OfflinePayment;
@@ -215,5 +217,34 @@ class AgeingByReasonScreenTest extends TestCase
         $this->assertSame(1000, $state->late_fee_cents);
         $this->assertSame('overdue', $state->status);
         Event::assertDispatchedTimes(ArFeeApplied::class, 1);
+    }
+
+    public function test_automatic_chase_heading_does_not_render_rule_id(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Auto', 'last_name' => 'Chase']);
+        $inv = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AC1',
+            'total_cents' => 10000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(5),
+        ]);
+
+        (new ProcessOverdueReceivable)->handle(new ArOverdue((int) $biz->id, (int) $inv->id, 5));
+
+        $action = ArDunningAction::where('business_id', $biz->id)->where('invoice_id', $inv->id)->first();
+        $this->assertSame('escalate_to_human', $action->action);
+
+        Livewire::actingAs($owner)->test(AgeingByReason::class)
+            ->assertOk()
+            ->assertSee('nobody has recorded why this invoice is unpaid')
+            ->assertDontSee('R211');
     }
 }

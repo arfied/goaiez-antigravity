@@ -46,7 +46,7 @@ final class ArOverdueQueueTest extends TestCase
             $actions = ArDunningAction::where('business_id', $business->id)->get();
             $this->assertCount(1, $actions);
             $this->assertEquals('escalate_to_human', $actions->first()->action);
-            $this->assertEquals('R211: Overdue invoice requires human resolution attempt before any suspension.', $actions->first()->reason);
+            $this->assertEquals('Overdue and waiting on a person: nobody has recorded why this invoice is unpaid, and nothing is stopped until someone does.', $actions->first()->reason);
         });
     }
 
