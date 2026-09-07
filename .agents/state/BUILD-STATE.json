@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T22:48:05",
+ "updated": "2026-09-06T23:19:20",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1144,6 +1144,48 @@
      "stage": "capability",
      "why": "G6-43 - missing kit decrement surface",
      "at": "2026-09-06T17:31:54"
+    },
+    {
+     "module": "X-167",
+     "stage": "G2-24 \u2014 SKU scan \u2014 no FSM bucket C4 or SKU scan surface in module Actions, Domain, Models, or Ui.",
+     "why": "",
+     "at": "2026-09-06T23:19:20"
+    },
+    {
+     "module": "X-167",
+     "stage": "G6-08 \u2014 barcode generation \u2014 no FSM bucket C4 or barcode generation code in module.",
+     "why": "",
+     "at": "2026-09-06T23:19:20"
+    },
+    {
+     "module": "X-167",
+     "stage": "G6-18 \u2014 multi-warehouse shipping \u2014 no shipping or multi-warehouse logic in module.",
+     "why": "",
+     "at": "2026-09-06T23:19:20"
+    },
+    {
+     "module": "X-167",
+     "stage": "G6-22 \u2014 Shopify/WooCommerce stock sync \u2014 no sync integration surfaces in module.",
+     "why": "",
+     "at": "2026-09-06T23:19:20"
+    },
+    {
+     "module": "X-167",
+     "stage": "G6-24 \u2014 retail stock across locations \u2014 no specific retail rule to assert, just a noun phrase, though locations exist in StockByVan.",
+     "why": "",
+     "at": "2026-09-06T23:19:20"
+    },
+    {
+     "module": "X-167",
+     "stage": "G17-15 \u2014 in-browser barcode scan \u2014 no browser scanner UI exists in module.",
+     "why": "",
+     "at": "2026-09-06T23:19:20"
+    },
+    {
+     "module": "X-167",
+     "stage": "G19-02 \u2014 parcel rates; a van and a storage unit... \u2014 parcel rates surface does not exist in the module.",
+     "why": "",
+     "at": "2026-09-06T23:19:20"
     }
    ]
   },
@@ -2288,6 +2330,48 @@
    "stage": "G7-47 \u2014 X-210 exposes no cohort-rate row; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision.",
    "why": "",
    "at": "2026-09-06T22:48:05"
+  },
+  {
+   "module": "X-167",
+   "stage": "G2-24 \u2014 SKU scan \u2014 no FSM bucket C4 or SKU scan surface in module Actions, Domain, Models, or Ui.",
+   "why": "",
+   "at": "2026-09-06T23:19:20"
+  },
+  {
+   "module": "X-167",
+   "stage": "G6-08 \u2014 barcode generation \u2014 no FSM bucket C4 or barcode generation code in module.",
+   "why": "",
+   "at": "2026-09-06T23:19:20"
+  },
+  {
+   "module": "X-167",
+   "stage": "G6-18 \u2014 multi-warehouse shipping \u2014 no shipping or multi-warehouse logic in module.",
+   "why": "",
+   "at": "2026-09-06T23:19:20"
+  },
+  {
+   "module": "X-167",
+   "stage": "G6-22 \u2014 Shopify/WooCommerce stock sync \u2014 no sync integration surfaces in module.",
+   "why": "",
+   "at": "2026-09-06T23:19:20"
+  },
+  {
+   "module": "X-167",
+   "stage": "G6-24 \u2014 retail stock across locations \u2014 no specific retail rule to assert, just a noun phrase, though locations exist in StockByVan.",
+   "why": "",
+   "at": "2026-09-06T23:19:20"
+  },
+  {
+   "module": "X-167",
+   "stage": "G17-15 \u2014 in-browser barcode scan \u2014 no browser scanner UI exists in module.",
+   "why": "",
+   "at": "2026-09-06T23:19:20"
+  },
+  {
+   "module": "X-167",
+   "stage": "G19-02 \u2014 parcel rates; a van and a storage unit... \u2014 parcel rates surface does not exist in the module.",
+   "why": "",
+   "at": "2026-09-06T23:19:20"
   }
  ],
  "decisions": [
@@ -2799,6 +2883,42 @@
    "module": "X-210",
    "chose": "a promotion with NO CAP cannot be saved \u2014 asserted R245",
    "at": "2026-09-06T22:47:28",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "a partial receipt leaves the PO OPEN with the remainder named; a silently closed PO is REFUSED R245",
+   "at": "2026-09-06T23:18:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "every received line reconciles to the PO; an unmatched receipt raises rather than posting R245",
+   "at": "2026-09-06T23:18:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "every level reconciles at job completion and is never trusted raw (\u00a7198) R245",
+   "at": "2026-09-06T23:18:48",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "selling a kit decrements every component atomically or the sale is REFUSED R245",
+   "at": "2026-09-06T23:18:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "a refund restocks exactly once; a replayed refund does not double-restock R245",
+   "at": "2026-09-06T23:18:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-167",
+   "chose": "a serialised item with no serial cannot be closed \u2014 asserted R245",
+   "at": "2026-09-06T23:18:49",
    "ruling": "R245"
   }
  ],

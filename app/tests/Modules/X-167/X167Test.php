@@ -284,4 +284,82 @@ class X167Test extends TestCase
             }
         }
     }
+
+    /** [G1-76] */
+    public function test_g1_76_a_partial_receipt_leaves_po_open_and_silent_close_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T1', 'currency' => 'USD']);
+        $po = PurchaseOrder::create(['business_id' => $biz->id, 'supplier_id' => null, 'po_number' => 'PO-123', 'items' => [['sku' => 'ITM1', 'qty' => 10]], 'total_cents' => 100, 'status' => 'proposed']);
+
+        $res = $this->engine->receivePurchaseOrder($biz->id, $po->id, [['sku' => 'ITM1', 'qty' => 5]]);
+        $this->assertEquals('OPEN', $res['status']);
+        $this->assertCount(1, $res['remainder']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('a silently closed PO is REFUSED');
+        $this->engine->receivePurchaseOrder($biz->id, $po->id, [['sku' => 'ITM1', 'qty' => 5]], true);
+    }
+
+    /** [G1-79] */
+    public function test_g1_79_unmatched_receipt_raises_rather_than_posting(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T2', 'currency' => 'USD']);
+        $po = PurchaseOrder::create(['business_id' => $biz->id, 'supplier_id' => null, 'po_number' => 'PO-124', 'items' => [['sku' => 'ITM1', 'qty' => 10]], 'total_cents' => 100, 'status' => 'proposed']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('an unmatched receipt raises rather than posting');
+        $this->engine->receivePurchaseOrder($biz->id, $po->id, [['sku' => 'ITM-GHOST', 'qty' => 5]]);
+    }
+
+    /** [G6-39] */
+    public function test_g6_39_every_level_reconciles_at_job_completion(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T3', 'currency' => 'USD']);
+        $res = $this->engine->completeJob($biz->id, 1, [['reconciled' => true]]);
+        $this->assertEquals('completed', $res['status']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('every level reconciles at job completion and is never trusted raw (§198)');
+        $this->engine->completeJob($biz->id, 1, [['reconciled' => false]]);
+    }
+
+    /** [G6-43] */
+    public function test_g6_43_selling_a_kit_decrements_every_component_atomically_or_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T4', 'currency' => 'USD']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'K1', 'barcode' => 'K1', 'name' => 'K1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+        $res = $this->engine->sellKit($biz->id, [['id' => $item->id, 'qty' => 2]]);
+        $this->assertEquals('sold', $res['status']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('selling a kit decrements every component atomically or the sale is REFUSED');
+        $this->engine->sellKit($biz->id, [['id' => $item->id, 'qty' => 20]]);
+    }
+
+    /** [G6-47] */
+    public function test_g6_47_a_refund_restocks_exactly_once(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T5', 'currency' => 'USD']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'R1', 'barcode' => 'R1', 'name' => 'R1', 'quantity' => 10.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+
+        $res1 = $this->engine->refundSale($biz->id, $item->id, 5.0, 'ref-123');
+        $this->assertEquals('restocked', $res1['status']);
+
+        $res2 = $this->engine->refundSale($biz->id, $item->id, 5.0, 'ref-123');
+        $this->assertEquals('ignored', $res2['status']);
+    }
+
+    /** [G6-49] */
+    public function test_g6_49_serialised_item_with_no_serial_cannot_be_closed(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'T6', 'currency' => 'USD']);
+        $item = StockItem::create(['business_id' => $biz->id, 'location_id' => 1, 'sku' => 'S1', 'barcode' => 'S1', 'name' => 'S1', 'quantity' => 1.0, 'unit' => 'ea', 'reorder_point' => 0.0]);
+
+        $res = $this->engine->closeItem($biz->id, $item->id, true, 'SN-123');
+        $this->assertEquals('closed', $res['status']);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('a serialised item with no serial cannot be closed — asserted');
+        $this->engine->closeItem($biz->id, $item->id, true, null);
+    }
 }

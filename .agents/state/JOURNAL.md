@@ -947,3 +947,16 @@
 - `2026-09-06T22:47:28` (R245) X-210 — a promotion with NO CAP cannot be saved — asserted R245
 - `2026-09-06T22:48:01` UNRESOLVED G1-67 — X-210 exposes no margin-guard surface; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision. X-210 - 
 - `2026-09-06T22:48:05` UNRESOLVED G7-47 — X-210 exposes no cohort-rate row; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision. X-210 - 
+- `2026-09-06T23:18:48` (R245) X-167 — a partial receipt leaves the PO OPEN with the remainder named; a silently closed PO is REFUSED R245
+- `2026-09-06T23:18:48` (R245) X-167 — every received line reconciles to the PO; an unmatched receipt raises rather than posting R245
+- `2026-09-06T23:18:48` (R245) X-167 — every level reconciles at job completion and is never trusted raw (§198) R245
+- `2026-09-06T23:18:49` (R245) X-167 — selling a kit decrements every component atomically or the sale is REFUSED R245
+- `2026-09-06T23:18:49` (R245) X-167 — a refund restocks exactly once; a replayed refund does not double-restock R245
+- `2026-09-06T23:18:49` (R245) X-167 — a serialised item with no serial cannot be closed — asserted R245
+- `2026-09-06T23:19:20` UNRESOLVED G2-24 — SKU scan — no FSM bucket C4 or SKU scan surface in module Actions, Domain, Models, or Ui. X-167 - 
+- `2026-09-06T23:19:20` UNRESOLVED G6-08 — barcode generation — no FSM bucket C4 or barcode generation code in module. X-167 - 
+- `2026-09-06T23:19:20` UNRESOLVED G6-18 — multi-warehouse shipping — no shipping or multi-warehouse logic in module. X-167 - 
+- `2026-09-06T23:19:20` UNRESOLVED G6-22 — Shopify/WooCommerce stock sync — no sync integration surfaces in module. X-167 - 
+- `2026-09-06T23:19:20` UNRESOLVED G6-24 — retail stock across locations — no specific retail rule to assert, just a noun phrase, though locations exist in StockByVan. X-167 - 
+- `2026-09-06T23:19:20` UNRESOLVED G17-15 — in-browser barcode scan — no browser scanner UI exists in module. X-167 - 
+- `2026-09-06T23:19:20` UNRESOLVED G19-02 — parcel rates; a van and a storage unit... — parcel rates surface does not exist in the module. X-167 - 
