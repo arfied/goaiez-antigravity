@@ -77,7 +77,9 @@ class ConnectionMappingScreenTest extends TestCase
 
         $screen->set('provider', 'xero')
             ->call('connect')
-            ->assertSee('Waiting on xero OAuth');
+            ->assertSee('Waiting on xero OAuth')
+            ->assertSee('The one-click connect lands when the owner grants them')
+            ->assertDontSee('§141.5');
 
         $this->assertSame(1, AccountingConnection::where('business_id', $bA)->count());
 
@@ -93,7 +95,9 @@ class ConnectionMappingScreenTest extends TestCase
 
         Livewire::test(ConnectionMappingView::class)
             ->assertOk()
-            ->assertSee('none exist in this checkout, so the Connect button below');
+            ->assertSee('none exist in this checkout, so the Connect button below')
+            ->assertSee('maps each category to one ledger account')
+            ->assertDontSee('§30.5');
     }
 
     public function test_a_ledger_connection_with_no_credential_is_not_active_and_refuses_a_mapping()

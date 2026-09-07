@@ -95,6 +95,8 @@ class ConflictsListScreenTest extends TestCase
 
         Livewire::test(ConflictsListView::class)
             ->assertOk()
-            ->assertSee('connecting waits on QuickBooks, Xero or Sage OAuth credentials that do not exist in this checkout');
+            ->assertSee('connecting waits on QuickBooks, Xero or Sage OAuth credentials that do not exist in this checkout')
+            ->assertSee('two systems disagreeing about money is a human decision')
+            ->assertDontSee('§141.5');
     }
 }

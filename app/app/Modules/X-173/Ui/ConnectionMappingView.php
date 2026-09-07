@@ -29,7 +29,7 @@ class ConnectionMappingView extends Component
     {
         $this->error = null;
         $this->success = null;
-        $this->waiting = sprintf('Waiting on %s OAuth: no %s credentials exist in this checkout, so nothing was connected. The one-click connect lands when the owner grants them (§141.5).', $this->provider, $this->provider);
+        $this->waiting = sprintf('Waiting on %s OAuth: no %s credentials exist in this checkout, so nothing was connected. The one-click connect lands when the owner grants them.', $this->provider, $this->provider);
     }
 
     public function mapAccount(int $connectionId, AccountingMapAction $action): void

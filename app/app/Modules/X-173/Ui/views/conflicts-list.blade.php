@@ -1,7 +1,7 @@
 <div>
     <x-surface.sample-state module="two-way sync to Xero / QuickBooks / Sage" screen="conflicts_list" />
     <h1>Sync conflicts</h1>
-    <p>A line the sync could not place with confidence waits here for a person. It is never closed by the sync (§141.5): two systems disagreeing about money is a human decision.</p>
+    <p>A line the sync could not place with confidence waits here for a person. It is never closed by the sync: two systems disagreeing about money is a human decision.</p>
 
     @if($error)
         <x-ui.error-panel heading="We couldn't resolve that">{{ $error }}</x-ui.error-panel>

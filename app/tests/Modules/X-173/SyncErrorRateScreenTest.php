@@ -103,6 +103,8 @@ class SyncErrorRateScreenTest extends TestCase
 
         Livewire::test(SyncErrorRateView::class)
             ->assertOk()
-            ->assertSee('Nothing syncs on a schedule: a run happens only when a connected ledger is synced');
+            ->assertSee('Nothing syncs on a schedule: a run happens only when a connected ledger is synced')
+            ->assertSee('a conflict, never a silent gap')
+            ->assertDontSee('§30.5');
     }
 }

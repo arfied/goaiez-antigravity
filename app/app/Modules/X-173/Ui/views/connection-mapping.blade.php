@@ -1,7 +1,7 @@
 <div>
     <x-surface.sample-state module="two-way sync to Xero / QuickBooks / Sage" screen="connection_mapping" />
     <h1>Ledger connection and mapping</h1>
-    <p>Invoices and payments flow out; the chart of accounts flows in (§30.5). A category maps to one account, reviewed once, then automatic.</p>
+    <p>This screen maps each category to one ledger account, reviewed once by a person. Nothing has synced: connecting a ledger waits on QuickBooks, Xero or Sage OAuth credentials, and none exist in this checkout.</p>
 
     @if($error)
         <x-ui.error-panel heading="We couldn't save that mapping">{{ $error }}</x-ui.error-panel>
