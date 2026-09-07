@@ -25,6 +25,7 @@ final class TemplateEngine
         $content = preg_replace('/<nav\b[^>]*>.*?<\/nav>/is', '', $rawPage);
         $content = preg_replace('/<footer\b[^>]*>.*?<\/footer>/is', '', $content ?? '');
         $content = preg_replace('/<cookie-banner\b[^>]*>.*?<\/cookie-banner>/is', '', $content ?? '');
+
         return trim($content ?? '');
     }
 }

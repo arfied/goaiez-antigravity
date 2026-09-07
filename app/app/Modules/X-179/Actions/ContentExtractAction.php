@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\X179\Actions;
 
+use App\Modules\X179\Domain\TemplateEngine;
 use App\Modules\X179\Events\ContentExtracted;
 use App\Modules\X179\Models\ExtractedContent;
 use Illuminate\Support\Facades\Event;
@@ -20,7 +21,7 @@ final class ContentExtractAction
         string $serviceDescription,
         ?string $techStack = null
     ): ExtractedContent {
-        $engine = new \App\Modules\X179\Domain\TemplateEngine();
+        $engine = new TemplateEngine;
         $excludedDescription = $engine->excludeBoilerplate($serviceDescription);
 
         $content = ExtractedContent::create([
