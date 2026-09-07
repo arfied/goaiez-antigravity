@@ -1,4 +1,12 @@
 <div>
+    @if($error)
+        <x-ui.error-panel :heading="$errorHeading ?? 'Could not connect'">
+            {{ $error }}
+        </x-ui.error-panel>
+    @endif
+
+    @if($success) <p class="text-base text-ink-2">{{ $success }}</p> @endif
+
     @if($connections->isEmpty())
         <x-ui.empty-state heading="No gateway connected yet" action="Connect" target="connect">
             No gateway has been connected on this account. Connecting one waits on the Stripe Connect redirect, which is not built in this checkout yet.
@@ -6,14 +14,6 @@
     @else
         <x-ui.attention-card heading="Connect Gateway">
             <p class="text-sm text-gray-600 mb-4">Manage your connections.</p>
-            
-            @if($error)
-                <x-ui.error-panel :heading="$errorHeading ?? 'Could not connect'">
-                    {{ $error }}
-                </x-ui.error-panel>
-            @endif
-
-            @if($success) <p class="text-base text-ink-2">{{ $success }}</p> @endif
 
             <ul class="space-y-2">
                 @foreach($connections as $conn)
