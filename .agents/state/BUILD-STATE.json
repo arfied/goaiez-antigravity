@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T21:01:41",
+ "updated": "2026-09-06T22:59:20",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -650,10 +650,17 @@
    "unresolved": []
   },
   "X-139": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 21,
    "intent": "INFORM",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-139",
+     "stage": "capability",
+     "why": "AdConnection model (ad_connections table) has no writer: nothing in the tree creates a row.",
+     "at": "2026-09-06T22:59:17"
+    }
+   ]
   },
   "X-140": {
    "status": "DONE",
@@ -1338,6 +1345,12 @@
    "stage": "capability",
    "why": "TrialEligibility: The journey tenant needs a confirmed Google listing for real credit grant",
    "at": "2026-09-05T11:22:12"
+  },
+  {
+   "module": "X-139",
+   "stage": "capability",
+   "why": "AdConnection model (ad_connections table) has no writer: nothing in the tree creates a row.",
+   "at": "2026-09-06T22:59:17"
   }
  ],
  "decisions": [
@@ -1423,6 +1436,18 @@
    "module": "X-110",
    "chose": "a screen leaves SAMPLE_STATE when it renders a real query or the house <x-ui.empty-state> on a real authenticated GET, and the same commit that deletes its banner adds its OwnerNav entry \u2014 the three assertions interlock so a screen can never be half-released (R245)",
    "at": "2026-09-06T21:01:41",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-139",
+   "chose": "(R245) added Layout, empty state, and nav entries",
+   "at": "2026-09-06T22:43:08",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-139",
+   "chose": "an empty state on a screen whose table has no writer carries no action and no href, and the module files an UNRESOLVED naming the missing writer",
+   "at": "2026-09-06T22:59:20",
    "ruling": "R245"
   }
  ],

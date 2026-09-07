@@ -769,3 +769,6 @@
 - `2026-09-06T19:29:30` (R245) X-199 — x-199.invoices and x-199.credits are real owner doors with a nav entry each, not sample states: the $isSample flag is a #[Locked] public bool = false that nothing in either module ever writes, so the @elseif($isSample) banner is unreachable and the screens render a real Invoice query on every GET (R245)
 - `2026-09-06T20:39:00` (R245) X-110 — a route is not an owner screen when its action class declares __invoke and every type in that return type is StreamedResponse or BinaryFileResponse; media endpoints leave the owner screen set by derivation, never by a written exclusion (R245)
 - `2026-09-06T21:01:41` (R245) X-110 — a screen leaves SAMPLE_STATE when it renders a real query or the house <x-ui.empty-state> on a real authenticated GET, and the same commit that deletes its banner adds its OwnerNav entry — the three assertions interlock so a screen can never be half-released (R245)
+- `2026-09-06T22:43:08` (R245) X-139 — (R245) added Layout, empty state, and nav entries
+- `2026-09-06T22:59:17` UNRESOLVED capability X-139 - AdConnection model (ad_connections table) has no writer: nothing in the tree creates a row.
+- `2026-09-06T22:59:20` (R245) X-139 — an empty state on a screen whose table has no writer carries no action and no href, and the module files an UNRESOLVED naming the missing writer
