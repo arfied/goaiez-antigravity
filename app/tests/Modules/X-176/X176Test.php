@@ -328,4 +328,25 @@ class X176Test extends TestCase
         $this->assertEquals('Tenant A', $res['title']);
         $this->assertEquals("https://seo-a.com/pages/{$pageB->id}", $res['canonical']);
     }
+
+    public function test_x176_capabilities(): void
+    {
+        $caps = require app_path('Modules/X-176/capabilities.php');
+        $this->assertArrayHasKey('G3-34', $caps);
+        $this->assertArrayHasKey('G8-02', $caps);
+        $this->assertArrayHasKey('G8-03', $caps);
+        $this->assertArrayHasKey('G8-04', $caps);
+        $this->assertArrayHasKey('G8-14', $caps);
+        $this->assertArrayHasKey('G8-15', $caps);
+        $this->assertArrayHasKey('G8-16', $caps);
+        $this->assertArrayHasKey('G8-22', $caps);
+        $this->assertArrayHasKey('G8-23', $caps);
+        $this->assertArrayHasKey('G8-25', $caps);
+        $this->assertArrayHasKey('G8-30', $caps);
+        $this->assertArrayHasKey('G8-32', $caps);
+        $this->assertArrayHasKey('G8-33', $caps);
+        $this->assertArrayHasKey('G12-03', $caps);
+        $this->assertArrayHasKey('G16-25', $caps);
+        $this->assertArrayHasKey('G7-48', $caps);
+    }
 }
