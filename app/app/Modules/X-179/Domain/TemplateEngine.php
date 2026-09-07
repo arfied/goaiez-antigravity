@@ -25,10 +25,10 @@ final class TemplateEngine
         if (stripos($rawPage, 'cdn.shopify.com') !== false || stripos($rawPage, 'Shopify.theme') !== false) {
             return 'Shopify';
         }
-        if (stripos($rawPage, 'wp-content/plugins/woocommerce') !== false || stripos($rawPage, 'woocommerce') !== false) {
+        if (stripos($rawPage, 'wp-content/plugins/woocommerce') !== false || stripos($rawPage, 'class="woocommerce') !== false) {
             return 'WooCommerce';
         }
-        if (stripos($rawPage, 'mage/') !== false || stripos($rawPage, 'Magento') !== false) {
+        if (stripos($rawPage, '/js/mage/') !== false || stripos($rawPage, 'mage/cookies.js') !== false) {
             return 'Magento';
         }
         if (stripos($rawPage, 'bigcommerce.com') !== false) {

@@ -82,9 +82,19 @@ HTML;
         $this->assertNull($content2->tech_stack);
 
         // 3. Explicit techStack survives despite markers
-        $rawPage3 = '<body>Content</body><footer>Powered by WooCommerce</footer>';
+        $rawPage3 = '<body>Content</body><footer><div class="woocommerce">Powered by WooCommerce</div></footer>';
         $content3 = $action->extractContent($biz->id, 3, 'site', $rawPage3, 'React');
 
         $this->assertEquals('React', $content3->tech_stack);
+
+        // 4. Prose does not trigger WooCommerce detection
+        $rawPage4 = '<body>We migrated off WooCommerce last year.</body>';
+        $content4 = $action->extractContent($biz->id, 4, 'site', $rawPage4);
+        $this->assertNull($content4->tech_stack);
+
+        // 5. Substring /image/ does not trigger Magento detection
+        $rawPage5 = '<body><img src="/image/hero.png"></body>';
+        $content5 = $action->extractContent($biz->id, 5, 'site', $rawPage5);
+        $this->assertNull($content5->tech_stack);
     }
 }
