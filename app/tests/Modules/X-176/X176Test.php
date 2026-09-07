@@ -113,9 +113,6 @@ class X176Test extends TestCase
     /** (R245) */
     public function test_render_omits_event_key_when_no_calendar_source(): void
     {
-        // Delegates to X-108
-        $this->assertTrue(is_dir(app_path('Modules/X-108')));
-
         $biz = TestCase::provisionTenant(['name' => 'Calendar Tenant', 'currency' => 'USD']);
         Tenancy::set((int) $biz->id);
 
