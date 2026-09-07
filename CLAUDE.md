@@ -1996,3 +1996,48 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     "Topped up" is **true** and is not touched. Measured clean in the same sweep and recorded rather
     than carried: `next_step_words` is computed per row at `DunningBoard.php:39` and `day_in_cycle`
     is written by `BillingLedgerEngine:137,:153`, so neither is decision 272's shape.
+88. **`meters` has no production writer, and `credits.blade.php`'s five-key label map is a
+    vocabulary nothing in this app writes (RULED by the lane supervisor 2026-09-06 20:3x, briefed as
+    MONEY-89 item 1).** `grep -rn "meter_type" app/app app/database app/tests` returns the migration,
+    two readers (`C-Billing/Ui/Credits.php:63`, `Mrr.php:70`) and **three fixture lines in two test
+    files** — no production code anywhere creates a `Meter`, which is decision 272 / ruling 51 with
+    two screens on the reading end. `credits.blade.php:31` then iterates the **literal** map
+    `['sms','voice','ai','email','lead']` and renders `{{ ($meters[$type]->units_used ?? 0) }}`, so
+    every real tenant sees five tiles of `0` / `0.0000` presented as measured usage — ruling 43's
+    *"does it even vary?"* on a panel that cannot. ⚠️ The three vocabularies **disagree**:
+    `CreditsScreenTest:28` seeds the blade's five keys, `MrrScreenTest:40` seeds `sms_segments`, and
+    the migration's own comment at `:44` says `ai_seconds, sms_segments, voice_minutes` — ruling 41
+    part 2 one level up, a fixture written to the blade rather than to a real thing's shape, which is
+    why four green assertions cannot see it. **RULED: the panel renders the rows that exist and says
+    so when there are none** — `@forelse` over `$meters`, a display-name map with a fallback to the
+    raw type, and an `<x-ui.empty-state>` `@empty` branch naming the real missing dependency.
+    ⛔ Not resolved by minting a meter writer here: usage originates in telephony, SMS and agent
+    traffic, which are track sixty's by ruling 5, so writing one from C-Billing to feed its own
+    screen is ruling 59's "never add the method to satisfy the caller". ⛔ Not by deleting the panel
+    — the tiles are correct the day metering exists. ⚠️ The proof is a **new** test method for a
+    tenant with no meter rows; the existing test seeds all five of the blade's own keys and cannot
+    see the defect (ruling 68). ⚠️ `mrr.blade.php:60` prints the raw `meter_type` and
+    `MrrScreenTest:57` asserts `'sms_segments'` — recorded, not changed: an internal vocabulary shown
+    as a data value is a smaller problem than a false figure, and moving it reddens an assertion for
+    no gain.
+89. **Three owner-facing empty states still carry an internal id, and one also claims a send no code
+    performs (RULED by the lane supervisor 2026-09-06 20:3x, briefed as MONEY-89 items 2–3).** The
+    20:01 R245 decision — *a string a screen prints to an owner carries no internal rule id* — was
+    applied to X-211 and X-120 and never swept the lane.
+    (a) `X-199/Ui/views/invoices.blade.php:20` reads *"A completed job becomes an invoice and it
+    sends (R235)."* — the rule id the decision forbids, **and** a false claim:
+    `grep -rn "Mail::\|Notification::\|send(" app/app/Modules/X-199` is empty and `InvoiceIssued` has
+    no registered listener anywhere (`grep -rn "InvoiceIssued::class" app/app` returns nothing; X-172
+    declares the consume in its manifest and ships no `Listeners/` directory), so the one sentence a
+    tenant with no invoices ever reads describes an automatic send that does not exist — ruling
+    50(a) on X-199's own screen. (b) `X-201/Ui/views/dispute-card.blade.php:9` and
+    `dispute-queue.blade.php:9` both name **`X-198`** as the actor; MONEY-84 made those states true
+    and left the module id in them. **RULED: the id goes, the claim becomes what actually happens,
+    and each existing assertion is extended to span the reworded clause** — both X-201 assertions
+    (`DisputeQueueScreenTest:72`, `DisputeCardScreenTest:89`) target only the *dependency* half, so a
+    reword of the opening clause alone would be prose no gate reads (ruling 70), while X-199's
+    sentence has **no** assertion at all and that item must add one. ⛔ The generated
+    `<x-surface.sample-state>` line at `:2` of each X-201 blade stays byte-identical. ⛔ Every
+    dictated string is checked against `N008Test`'s directory-wide gateway-name scan
+    (`stripe|authorize|braintree|square|paypal|adyen`) and `N010Test`'s `refund` scan (ruling 63),
+    and carries no apostrophe (ruling 82).
