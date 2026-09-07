@@ -487,9 +487,15 @@ it is a statement about the brief, not about the process. It **fails open by con
 needle ever stops matching, the dispatch proceeds exactly as it did before. The needles were
 confirmed to match a real `KICKOFF.md` before the guard was written (wave 122: a needle that has
 never matched anything is not an instrument), and the refuse arm was exercised for real.
-Corollary, measured and easy to get backwards: **`--allow-harness` governs a coder EDITING the
-harness. A merge-carried harness needs no flag** — it is governed by `coder-bin/git:66-75`'s
-byte-identity clause, "take the incoming side whole".
+Corollary, and I first wrote the WRONG MECHANISM here and caught it one command later, which is the
+day's rule about myself: **`--allow-harness` is a no-op in THIS checkout.** `coder-bin/git:53` clears
+the harness needle outright when the repo toplevel's basename is `grs-antig` —
+`git rev-parse --show-toplevel` says it is — so Track 1's coder may commit the harness with no flag
+at all, by *name*, not by the byte-identity clause. That clause (`:70-75`, and it does require
+`GOAIEZ_MERGE_OK=1`) is what governs the six **lane** checkouts, where the name exemption does not
+apply. The conclusion I wrote from prose was right and the reason was wrong; `--allow-merge`,
+meanwhile, is genuinely required for `git merge` (`:86`) and is the flag that actually gates a merge
+wave. **Read the guard, do not remember it** — it is on all seven lanes' PATH and it changes.
 
 ⚠️ **§2 FIRES ON EVERY MERGE THAT LEGALLY CARRIES A LANE'S HARNESS, AND §2e IS WHAT ADJUDICATES IT
 (2026-09-07, wave 125).** My own gate on `1c3f9b4e` printed `⛔ app/tests/Journeys/JourneyHarness.php`
@@ -506,20 +512,41 @@ parent**, and only a `⛔` from §2e is a `BLOCK`. Independent confirmation cost
 belong in every merge review: `git diff HEAD HEAD^2 -- <harness>` must be empty, and
 `grep -c "^-.*assert" <the test diff>` must be `0`.
 
-## Style
+⚠️ **A BRIEF MAY NOT ASSERT A STATE THE SAME TICK DELIBERATELY DECLINED TO CREATE (2026-09-07,
+wave 126).** Item 0 of wave 126's brief opened *"I committed my own notes this tick (`60cb9665`), so
+`CLAUDE.md` and `launch-coder.sh` are clean."* The same tick's own backlog, three pages later in
+`REVIEWS.md`, said in writing: *"⛔ **Deliberately not committed this tick** — run 125 is live and is
+about to `git merge --no-ff`."* Both sentences were mine, in one tick, about one file, and the
+deferral was **right** — moving `HEAD` under a live merge would have changed what it merged into.
+What was wrong was writing the deferral down in one document and its opposite in the other. The
+coder read ` M CLAUDE.md`, matched item 0's *"if anything **tracked** is dirty, stop and report"*,
+and stopped at item 0 with zero commits. **That is the correct behaviour and it is the only reason
+this cost one wave and nothing else.** Three rulings, and the first is the general one:
 
-Terse and factual. Cite rules and traps by name — "that is the One Rule",
-"that is the count-did-not-fall trap". Warn on dangerous git operations rather
-than assuming they are blocked: the deny rules are prefix matches and stop a
-habit, not a determined reordering.
+- **An item that gates on a state must MEASURE it, never recite it.** Item 0's *command* was already
+  right (`git status --short`, stop if tracked-dirty). What broke it was the prose above the command
+  predicting the answer. **A gate that carries its own expected answer is not a gate** — it is the
+  drifted-refusal-message shape (§ above) for the fourth time this week, and the fourth time it was
+  two statements about one quantity with only one of them measured.
+- **A deferred supervisor commit is a debt that falls due BEFORE the next dispatch, not after it.**
+  Deferring past a live run is correct; carrying the deferral past the *next* dispatch turns a
+  three-line note into a dirty tree that stops a merge wave. Order is: coder dead → commit → push →
+  brief → dispatch. Never brief first.
+- **A stop is not a `BLOCK` and does not spend a dispatch.** No assertion was read, no work was
+  attempted, no defect of the coder's exists. Re-issue the identical wave; the item is the
+  supervisor's, per the run-123 killed-gate ruling.
 
-## Merging a track branch into main (added 2026-09-02)
-
-Only Track 1 merges. Per-track files NEVER merge: `.agents/supervisor/**`,
-`CLAUDE.md`, `.claude/settings.json`, `bin/supervise.sh`,
-`.agents/rules/10-supervisor.md`, `app/phpunit.xml`, `.agents/state/**`.
-Procedure (the coder runs it, the supervisor reviews the merge commit):
-`git merge --no-ff --no-commit origin/track/ui`, then
-`git checkout main -- <each per-track path above>`, then commit
-`merge: track/ui — <scope>`; the gate must pass on the merge commit before it
-pushes. A merge that changes any per-track file is a BLOCK.
+⚠️ **THIS FILE ITSELF CARRIED TWO MERGE PROCEDURES, AND THE STALE ONE TOLD THE CODER TO RUN A
+COMMAND THE SHARED GUARD REFUSES (2026-09-07, found while committing the note above).** A duplicate
+`## Style` + `## Merging a track branch into main (added 2026-09-02)` stanza sat at EOF, superseded
+since 2026-09-03 by the revised section above and never deleted. It contradicted the live procedure
+on the two points this track has actually paid for: it said to restore *"`git checkout main -- <each
+per-track path above>`"* — the eight-path list run verbatim, which is run 27's clobber one path at a
+time and which the `.gitattributes` superset note forbids in as many words — and it named `main` as
+the treeish, which `coder-bin/git` refuses outright (only `git checkout HEAD -- <path>` is allowed,
+and only under `GOAIEZ_MERGE_OK=1`). A coder who scrolled to EOF for the procedure would have issued
+a refused command mid-merge, with a half-staged index. **Deleted.** The rule: *a superseded
+procedure is not harmless documentation, it is a second source of truth that outranks the first for
+any reader who reaches it first* — and EOF is where readers land. When a section is revised in
+place, delete the original in the same commit; `grep -n '^## '` for duplicate headings is the check,
+and it is one command.
