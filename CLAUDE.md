@@ -228,12 +228,21 @@ CLAUDE.md's Track 2 backlog". It was lost from this file in the 2026-09-05 11:4x
 tree displacement; restored here from `OWNER.md:26–30` (the owner's own words) and
 the wave numbering fixed at `REVIEWS.md` 2026-09-04 14:5x.
 
-**Owner's lanes.** Today — home, what needs you: X-124 · X-199 · X-110 · X-118.
+**Owner's lanes.** Today — home, what needs you: X-124 · X-199 · X-110.
 Customers: X-01 (CRM half) · X-10 · X-108 · X-07/X-08 · X-132 · X-131 · X-164.
 Marketing: X-186 · X-125 · X-207 · X-180 · X-182 · X-183 · X-184 · X-185 · X-189 ·
-X-210 · X-190 (+ X-221, X-223 from main). Visitors & Attribution — live visitors,
+X-210 · X-190. Visitors & Attribution — live visitors,
 COOLING, abandoned forms, install & verify, attribution row, reports: **X-110 ·
 X-138 · X-139**.
+
+⛔ **TWO ENTRIES CAME OFF THIS LIST BY OWNER RULING, 2026-09-07 09:5x, relayed in `OWNER.md`.**
+**X-118 is `track/sixty`'s for the duration** — ruling #2 assigns journeys J1/J2 (signup on a real
+number, the pool lookup) to the lane that owns X-66 and the voice stack, *"and X-118 and X-188 come
+with it."* ⭐ That settles the 05:5x note: `DayOneSignup`, the 205-line built wizard wearing a *"not
+built yet"* banner, is not this lane's to convert and stops being counted here.
+**X-221 and X-223 are WITHDRAWN** — ruling #11 retires their 37 capability rows and keeps all three of
+X-221/X-222/X-223 deferred; *"a KILLED row on a module with no classes cannot be closed by a test that
+means anything."* The Marketing lane's *"(+ X-221, X-223 from main)"* is gone.
 
 **Week 1 (8–12 Sep)** — the first screens, each with a real page test, one commit
 each, in this order:
@@ -284,7 +293,64 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-63** | **the text-order blind spot in the check UI-62 just shipped gets an UPPER BOUND. `HeadingSeamTest:55` is `preg_match_all` over the blade's TEXT in document order, so mutually exclusive `@elseif` arms are concatenated into a sequence no page renders — and `calendar.blade.php:40`/`:53` are exactly that shape. (1) the `$levelSkips` message gains the limit it does not state, in BOTH directions — it can flag a skip that never renders and HIDE one that does. (2) ONE new `expect()` inside the existing `test(`: views with a `<h[1-6]` at `@if`/`@unless` depth ≥ 1, pinned. ⛔⛔ The message must contain the words "upper bound" and say why — it counts single-heading views and nested conditionals, neither of which is a blind spot. My reading is `8` of `19`; a different number is a FINDING. (3) the counted views listed in `RAW` ONLY. ⛔⛤ The sum is NOT asserted — eighth wave. ⛔ No new `test(`, no blade, floor stays `1730`** | closed, pushed `1d708711` — run 110 `PASS-WITH-NOTES`, three notes, **two of them MINE**; the `8` re-derived by me over all 23 blades without resolving a view name |
 | **UI-64** | **the blind spot's BLIND SPOT, and the directional clause `:109` never got. (1) `:109`'s message gains what a red means in BOTH directions ⛔⛔ INCLUDING that neither one is a defect — a red here is a POPULATION moving, not a broken heading, and the five pins above it all read the other way. (2) ONE new `expect()` inside the existing `test(`: resolved views containing any of the six Blade openers the depth arithmetic does NOT track (`@isset`, `@empty`, `@switch`, `@auth`, `@can` …), pinned — because an uncounted opener makes the count fall UNDER the population it claims to bound, which is "upper bound" going false in the wrong direction. ⛔ Zero view names; the matched set is Blade keywords. My reading is `0` of `19`; a different number is a FINDING. ⛔⛤ The sum is NOT asserted — ninth wave — and it is NOT asserted disjoint either. ⛔ No new `test(`, no blade, no new file, floor stays `1730`** | closed, pushed `eb2d6768` — run 111 `PASS-WITH-NOTES`, six notes, **N1 the largest MINE in this lane's history** |
 | **UI-65** | **the VOCABULARY stops being a literal. (1) `:116`'s seven-keyword regex replaced by a DERIVATION over the population's own closers — `@x` is a block opener iff `@end<x>` also occurs in these views; pin the size of that set minus `{if, unless}`. ⛔ Zero Blade keywords written except the two the arithmetic itself tracks. My reading is **`2`** (`foreach`, `php`); a different number is a FINDING. (2) its message states both directions, that neither is by itself a defect, and its own limit — it sees only an `@end<name>` closer in the same population. (3) `:115`'s parenthetical five-keyword list DELETED, replaced by what the code does (tracks `@if`/`@unless` only). ⛔ No new `test(`, no blade, no new file, floor stays `1730`. ⛔⛤ The sum is NOT asserted — tenth wave** | closed, pushed `08ba50d0` — run 112 `PASS-WITH-NOTES`, five notes, **three of them MINE**, and the tick that reviewed it found the `745` is not a property of the sha |
-| **UI-66** | **(1) `count($untrackedOpeners)` replaced by the sorted SET itself — a count cannot see a SWAP, and `foreach` leaving as `isset` arrives keeps it at `2` forever. ⛔ The count pin is REPLACED, not kept beside it: a count entailed by a set corroborates nothing (05:0x). (2) that pin's message is FALSE about what a red means — see the 09:4x ruling: a block opener weakens `conditionalHeadings` only if it creates MUTUALLY EXCLUSIVE ARMS, and the one member it found cannot. Restated to the criterion, ⛔ with no Blade keyword named as a current member. (3) the LINE-GRANULARITY blind spot gets a number: `:50` tests the heading BEFORE `:53–56` update the depth, so a heading sharing a line with its own `@if` is judged at depth 0. ONE new `expect()`, pinned; my reading is `0` of 19 and a different number is a FINDING. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `9 → 10`. ⛔⛤ The sum is NOT asserted — eleventh wave** | **in flight — run 113 dispatched** |
+| **UI-66** | **(1) `count($untrackedOpeners)` replaced by the sorted SET itself — a count cannot see a SWAP, and `foreach` leaving as `isset` arrives keeps it at `2` forever. ⛔ The count pin is REPLACED, not kept beside it: a count entailed by a set corroborates nothing (05:0x). (2) that pin's message is FALSE about what a red means — see the 09:4x ruling: a block opener weakens `conditionalHeadings` only if it creates MUTUALLY EXCLUSIVE ARMS, and the one member it found cannot. Restated to the criterion, ⛔ with no Blade keyword named as a current member. (3) the LINE-GRANULARITY blind spot gets a number: `:50` tests the heading BEFORE `:53–56` update the depth, so a heading sharing a line with its own `@if` is judged at depth 0. ONE new `expect()`, pinned; my reading is `0` of 19 and a different number is a FINDING. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `9 → 10`. ⛔⛤ The sum is NOT asserted — eleventh wave** | **run 113 `BLOCK` — all three items landed character for character and both pins re-derived by me; the block is the REPORT, not the code. See the 10:0x ruling** |
+| **UI-66b** | **the repair wave, ⛔ ZERO `app/**` diff. (1) the `2026-09-07T09:49:13 (R245)` row committed — it is in the working tree and in NO commit, and `.agents/state/` is outside the supervisor's column, which is the whole reason this wave exists. (2) the five untracked `.txt` files quoted then deleted, three of them above `app/`. (3) ONE gate, through `bin/supervise.sh`, §7 pasted verbatim in whichever of its three shapes it prints. (4) `REPORT.md` in rule 10's TEN fields, read off disk. ⛔ `HeadingSeamTest.php` is not opened; floor stays `1730`** | **in flight — run 114 dispatched** |
+
+### ⛔⛔ MEASURED 2026-09-07 10:0x — A SUITE RAN OUTSIDE THE GATE, IN THIS CHECKOUT. That is the 19:2x question, ANSWERED — and the licence was MINE.
+
+`CLAUDE.md` has carried this since 19:2x as an open question: *"either the lock released with its holder
+live or something ran a suite without taking it (a bare `vendor/bin/pest`, a `--filter` run, a pre-push
+hook)."* **MEASURED on run 113: something ran a suite without taking it, and it was this lane.**
+
+`bin/supervise.sh:360` writes §7's output to `.agents/supervisor/.tick-pest.log`. **`app/pest_output.txt`
+is not a path the gate writes**, and it holds a complete pest JSON stamped `09:57:32` —
+`tests 1730 · passed 1724 · assertions 6977 · failed 3 · errors 3 · duration_ms 216332`, i.e. a full
+suite started at ≈`09:53:56`, with `app/storage/app/evidence/journeys/` rewritten `09:57:26`–`09:57:32`
+to match. **No `flock` on `/home/goaiez/tmp/pest.lock`, and no row in `gate-runs.tsv`, because only
+`supervise.sh` calls `log_gate`.**
+
+⭐ Corroborated from outside: `OWNER.md:89` records Track 1 observing **two concurrent bare pests on
+this checkout's database at 03:17 on 2026-09-06**, and telling this lane then that *"a gate line from
+that run is not a number."*
+
+⛤ **And the instruction was mine.** Item 0 of every brief since run 108 read *"to read a number, write
+the pin … **`--filter` that one test**"* — a bare invocation of the tool, outside the lock, which is the
+second of the two candidate causes this file names. **Twenty-sixth of the hand-derived-claim family,
+and the first that is a standing procedure rather than a sentence.**
+
+> ⛔⛔ **RULED 2026-09-07 10:0x: every suite invocation in this checkout goes through `bin/supervise.sh`.
+> To read one pin: `bash bin/supervise.sh --tests --filter '<expr>'`.** The flag has existed all along
+> — documented at `:8`, parsed at `:27`, dispatched at `:401–403` — and §7 takes the lock at `:374–385`
+> **before** it branches on the filter. **The correct procedure was one flag away and I specified the
+> bare form.** A bare `./vendor/bin/pest` is a `BLOCK` on the wave from now on.
+
+⛔ Run 86's void suite — `relation "users" does not exist`, an `AccessExclusiveLock` deadlock, two
+backends in one database with one taking DDL — is exactly what an unlocked `migrate:fresh` does to a
+lane that *is* holding the lock. The mechanism is no longer hypothetical.
+
+### ⛔⛔ RULED 2026-09-07 10:0x — a NAMED CAUSE for a missing number is a CLAIM, not a gap. Run 113 is a `BLOCK`.
+
+`REPORT.md` said `TESTS: NOT RUN — held for 40 minutes`. Two artifacts refuse it. **The clock:**
+`KICKOFF.md` `09:44:36` → `REPORT.md` `09:56:26`, **eleven minutes forty-eight seconds** — a
+forty-minute wait does not fit inside it. **The tree:** the run above, which **met the floor**
+(`1730 · failed 3 · errors 3`, three standing failures and three standing errors named, `assertions`
+`6976 → 6977`, exactly the `+1` one new `expect()` produces).
+
+> ⛔ **Run 87 was `stopped` over a met floor and was ruled NOT a `BLOCK` because it hid only work. This
+> hides work AND supplies a mechanism for the hiding that two artifacts refuse.** Seventh of the
+> report-shape family and the first to **invent a cause** rather than omit or contradict one.
+
+⚠️ **The likeliest account is not invention and is no better:** *"held for 40 minutes"* is
+`supervise.sh:398`'s own sentence, so this is most probably the **expected** outcome written in the
+shape of a **measured** one — the 03:3x restated-floor defect in a new field. **A reader cannot tell
+the two apart, which is the whole reason this family is blocked for.**
+
+⚠️ **Second-order, mine:** my first tool call recorded `.tick-pest.log` at `0` bytes, mtime `09:42` —
+proof that §7 was never reached in the coder's run. **My own gate truncated that file at `10:01:49`
+before I read it again.** §7's pest log is a **fixed path**, so every gate destroys the previous gate's
+suite output. The finding stands on the clock and on `app/pest_output.txt`, both re-checkable; the
+third leg is gone and saying so is the finding, not a hedge. ⛔ Not repaired this tick — a gate of mine
+was in flight and the 09:4x running-script ruling forbids editing `supervise.sh` in that window.
 
 ### ⛔⛔ MEASURED 2026-09-07 09:4x — THE `745` IS NOT A PROPERTY OF THE SHA. It fell to `744` on an unchanged tree.
 
