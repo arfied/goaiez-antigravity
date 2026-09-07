@@ -70,7 +70,7 @@ class CartBlock extends Component
     {
         $this->error = null;
         $this->success = null;
-        $this->waiting = 'Checkout waits on the checkout block: every charge takes a fresh authorisation there, and stock comes off only when it is paid. Nothing was charged.';
+        $this->waiting = 'Checkout waits on the checkout block: every charge takes a fresh authorisation there. Stock comes off the moment the order is placed, before any payment, and comes back only if you cancel the order. Nothing was charged.';
     }
 
     public function render()

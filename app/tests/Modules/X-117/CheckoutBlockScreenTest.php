@@ -18,7 +18,7 @@ use Tests\TestCase;
 
 class CheckoutBlockScreenTest extends TestCase
 {
-    public function test_checkout_block_takes_a_fresh_authorisation_once_moves_stock_at_paid_and_reverses_on_cancel()
+    public function test_checkout_block_takes_a_fresh_authorisation_once_moves_stock_when_the_order_is_placed_and_reverses_on_cancel()
     {
         $bizB = self::provisionTenant();
         Tenancy::set($bizB->id);

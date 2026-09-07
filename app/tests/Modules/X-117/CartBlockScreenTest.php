@@ -31,6 +31,7 @@ class CartBlockScreenTest extends TestCase
         $screen = Livewire::test(CartBlock::class, ['sessionToken' => 'sess_1'])
             ->assertOk()
             ->assertSee('Limited filter')
+            ->assertSee('stock comes off when the order is placed at checkout, not when it is paid')
             ->assertSee('45.00')
             ->assertSee('1 in stock')
             ->assertSee('Boiler service')
@@ -61,6 +62,8 @@ class CartBlockScreenTest extends TestCase
             ->assertSee($until)
             ->call('checkout')
             ->assertSee('waits on the checkout block')
+            ->assertSee('Stock comes off the moment the order is placed, before any payment')
+            ->assertSee('comes back only if you cancel the order')
             ->call('add', 999999)
             ->assertSee("isn't in this catalogue");
 

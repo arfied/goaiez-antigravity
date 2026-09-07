@@ -1,6 +1,6 @@
 <div>
 <h1>Cart</h1>
-<p class="text-base text-ink-2">Prices come from the pricebook; nothing is charged and no stock moves until checkout says paid.</p>
+<p class="text-base text-ink-2">Prices come from the pricebook; nothing is charged here, and stock comes off when the order is placed at checkout, not when it is paid.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on checkout">{{ $waiting }}</x-ui.attention-card> @endif
 @if($success) <p>{{ $success }}</p> @endif
