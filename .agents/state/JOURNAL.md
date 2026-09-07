@@ -854,3 +854,5 @@
 - `2026-09-06T19:32:37` (R245) X-176 — the seam SchemaRenderAction <- EdgeDeployAction where videos, events and address already occupy --ruling R245
 - `2026-09-06T19:32:41` (R245) X-157 — the required HTML artifact refuses a failed write and the optional llms.txt artifact never does, logging a warning instead --ruling R245
 - `2026-09-06T19:32:51` note: X-176 G8-04 is BUILT, superseding the UNRESOLVED capability filing — pages has id, business_id, slug, title, is_tenant_edited, is_published, current_version_id, timestamps and no parent column
+- `2026-09-06T20:11:32` (R245) X-176 — Injected InternalLinkRenderAction into EdgeDeployAction to construct the internal link graph navigation block. --ruling R245
+- `2026-09-06T20:11:32` note: X-176 G8-02/G8-25 measured app/app/Modules/X-157/Actions/EdgeDeployAction.php and found the HTML construction surface via $html .=

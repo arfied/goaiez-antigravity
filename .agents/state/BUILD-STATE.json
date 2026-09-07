@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T19:32:41",
+ "updated": "2026-09-06T20:11:32",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2170,6 +2170,12 @@
    "chose": "the required HTML artifact refuses a failed write and the optional llms.txt artifact never does, logging a warning instead --ruling R245",
    "at": "2026-09-06T19:32:41",
    "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "Injected InternalLinkRenderAction into EdgeDeployAction to construct the internal link graph navigation block. --ruling R245",
+   "at": "2026-09-06T20:11:32",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -2232,6 +2238,10 @@
   {
    "at": "2026-09-06T19:32:51",
    "note": "X-176 G8-04 is BUILT, superseding the UNRESOLVED capability filing \u2014 pages has id, business_id, slug, title, is_tenant_edited, is_published, current_version_id, timestamps and no parent column"
+  },
+  {
+   "at": "2026-09-06T20:11:32",
+   "note": "X-176 G8-02/G8-25 measured app/app/Modules/X-157/Actions/EdgeDeployAction.php and found the HTML construction surface via $html .="
   }
  ]
 }
