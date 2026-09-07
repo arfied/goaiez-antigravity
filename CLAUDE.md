@@ -7849,3 +7849,115 @@ concluded it was dead, and borrowed a §7 under tick 255 — while a live gate w
 from landing. **Filter by the pid `gate-start` handed you, never by the checkout column**, and settle
 alive-vs-dead with `readlink /proc/<gate_pid>/cwd`, which is the only thing that separates two of the
 four states.
+
+## ⛔ A falsifier's MUTATION SITE must be DOWNSTREAM of the assertion it targets and UPSTREAM of nothing else the test asserts (tick 267)
+
+Two rules already govern falsifiers and neither reaches this. Tick 245 governs **polarity** — a
+presence assertion is falsified by removing the feature, an absence assertion by making it
+unconditional. Tick 248 governs **reading the result** — an ordered test reports only its first
+failure, so check a quoted message against the assertion order. Both concern a falsifier that was
+*correctly sited*. This concerns **choosing the site**:
+
+> When a test carries assertion A (existing) and assertion B (new), a mutation at a point **both**
+> depend on cannot distinguish them, whatever its polarity and whatever the order — and if A
+> precedes B, the run is guaranteed to report A and to say nothing about B at all.
+
+Measured on SITE-140. My brief named `SchemaRenderAction`'s `@type` map as the mutation site for a
+new artifact-leg assertion. `EdgeDeployAction:263-274` calls `SchemaRenderAction->handle(...)` and
+**does not pass `entityType`**, so `SchemaRenderAction:31-43` derives it from
+`Business::find($businessId)->vertical` on **both** paths — the test's direct `$res`/`$res2` calls
+and the deploy path alike. The mutation therefore reddens the pre-existing return-value assertion at
+`X176Test.php:170` first and always, and the new leg is unreachable under it. The coder ran it, got
+exactly that, and said so, citing the brief's own warning — the escape hatch (tick 244) being the
+only reason it is a note rather than a silent false proof.
+
+⛔ **A falsifier whose site is shared with an existing assertion is not a weak proof — it is NO
+proof, and its output looks exactly like a strong one.** The check is one read of the call graph
+between the two assertions' subjects and costs one `sed -n`: here, *does the deploy path pass
+`entityType`, or does it let the Action derive it?* The correct site is the **pass-through** —
+`EdgeDeployAction:263`, injecting `entityType: 'LocalBusiness'` — downstream of the artifact
+assertion and upstream of neither direct call.
+
+Fourteenth instance of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249,
+250, 254, 262, 265) and the first where **two** independent defects sat in one instruction: the same
+paragraph also prescribed `git checkout HEAD -- <file>` as the revert step, which `coder-bin/git:48-49`
+refuses outside a `GOAIEZ_MERGE_OK=1` merge — a clause this lane's charter has recorded since tick
+225. ⛔ **A brief that names a command names one the guard permits; read `coder-bin/git` before
+prescribing any git verb other than `add`/`commit`/`log`/`diff`/`show`/`status`.**
+
+## ✅ "Route around a guard" vs "use a permitted mechanism" — the discriminator is the guard's stated PURPOSE, and the verification must be MEASURABLE (tick 267)
+
+Refused the `git checkout` revert, SITE-140 restored `SchemaRenderAction.php` by file replacement,
+re-ran the test green so as not to leave a mutated production file in the tree, and **aborted the
+sequence as ordered**, disclosing all of it under `REFUSED`. Acceptable, and the reason is written
+into the guard itself: `:24-32` states its purpose as making run 27's blanket `git checkout HEAD --
+.agents/supervisor` *"impossible by construction rather than by trust"* — a **destructive,
+multi-file, unrecoverable** operation. A single-file content restore defeats none of that, and it is
+categorically different from tick 211's `GOAIEZ_PUSH_OK=1`, which set the guard's own variable
+against the guard.
+
+⛔ **The discriminator is only usable because the outcome is measurable from this seat.** `git diff
+--stat HEAD` printed `app/phpunit.xml` alone, so the file provably matches HEAD. **A disclosed
+substitution whose result the reviewer can measure is a report; one whose result only the coder can
+see is a claim.** Leaving the mutation in the tree would have been strictly worse than either.
+
+⚠️ The systemic half goes to Track 1: the mutate-and-revert practice is house standard, and the only
+sanctioned revert is refused outside a merge, so **every lane is presently reverting by file
+replacement** — right in outcome and unverifiable in general. The ask's shape is already written at
+`:34-46` (literal `HEAD`, existing regular files, never a directory, one file per argument); it needs
+only its `MERGE_HEAD` precondition relaxed, or a `GOAIEZ_REVERT_OK` parallel to `--allow-harness`.
+
+## ⛔ A sibling's wave in OUR module has a footprint in shared files no census half watches (tick 267)
+
+Half 1's sixty/X-102 partition went **4 → 7** and stopped being docblocks. `e8e1396f` builds
+`app/app/Modules/X-102/Http/Controllers/ChatStartController.php` plus a public route in
+`app/routes/api.php`; `50abba70` adds `app/app/Support/ChatRateLimits.php` and registers it in
+`app/app/Providers/AppServiceProvider.php`. Tick 195 recorded Track 1's ruling that X-102 stays in
+this lane's column and **"sixty opens no further wave in either."** Tick 260's fifth partition
+reading applies exactly: **a partition that reopens after a ruling closed it is read on its merits,
+as if the ruling did not exist — the ruling is what makes it a finding, not what makes it
+impossible.**
+
+⛔ **The new law is the footprint.** The complement grew 41 → 44 with exactly those three shared
+files, so a half **names the commits** while no half names the **files** — half 1's pathspec is
+`app/app/Modules/X-102`, and a module's footprint is not confined to its module directory (163, 178).
+**A census keyed on module directories under-measures a sibling's wave in our own module, in exactly
+the way it under-measures our own.** ⛔ Not a fourth half — `app/routes/`, `app/app/Support/` and
+`app/app/Providers/` are shared surfaces every lane legitimately writes, so watching them for silence
+manufactures a permanent false positive (tick 173). What changes is the **reading**: when half 1
+shows a sibling *building* in this lane's column, run the paired `--stat` on every one of its commits
+before sizing it, because the module path shows a fraction of the wave.
+
+✅ Merge exposure measured, not assumed: `git log origin/main..HEAD -- app/tests/Modules/X-102
+app/app/Modules/X-102` prints nothing, so this lane holds zero unmerged X-102 edits and Track 1 gets
+**no textual conflict**. The exposure is ownership plus **un-gated inheritance** — on a merge this
+lane acquires a public HTTP door into its own module that its own gate has never run. ⛔ No wave, no
+parallel fix; TRACK 1 ACTION.
+
+## ⚠️ §7's baseline moved to `errors 5`, and the falsifier fires by itself (tick 267)
+
+Tick 267's independent gate on the tip: `tests 1969 · passed 1963 · FAILED 1 · errors 5`, against
+tick 266's `1969 · 1964 · FAILED 1 · errors 4`. Total unchanged, passed −1, errors +1 — **the sets
+are NOT identical** and a block that reported a clean delta would have been wrong. Both readings
+reconcile (1963+1+5 = 1964+1+4 = 1969), which is tick 226's arithmetic and the check a set comparison
+is structurally blind to.
+
+The flipped test is `a_deliberately_corrupted_backup_fails_the_restore` (**J8**,
+`TwelveJourneysTest.php:453`), erroring on `SQLSTATE[42501]: Insufficient privilege: 7 ERROR:
+permission denied to terminate process` — a Postgres **role-privilege** error from
+`pg_terminate_backend`, naming no application code, in a journey this lane does not own, against a
+wave whose entire diff is +43 −0 in one X-176 test file. Owner ruling 4's shape verbatim.
+
+⛔ **The cause is NOT measured and no block names one** (227, 230, 249; tick 209 is this seat
+committing that error itself). ⛔ **The falsifier needs nobody: the next gate on the same tree with
+`errors 4` means it was transient, `errors 5` means it is a standing condition and gets filed by
+stage name.** ⚠️ And **compare against 5, not 4** — a §7 baseline is this checkout's own previous
+gate (tick 216), and the previous gate is now this one.
+
+✅ **A gated tip with a red §7 is still pushed when the delta is provably unreachable from the
+wave.** The push gate asks whether this seat gated and recorded the tip. This lane's §7 has never
+been all-green — its standing state is a red set of other lanes' journeys and credentials — and
+withholding a gated commit over one more entry of that kind, in a column this lane neither owns nor
+can fix, strands real work on an environment condition. ⛔ Not a licence to push through a red §6
+(tick 208) or through a failure this lane's own diff could have caused; **the discriminator is
+reachability from the diff, never the colour of the section.**
