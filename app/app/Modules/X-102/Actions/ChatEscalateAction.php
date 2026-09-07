@@ -15,12 +15,12 @@ final class ChatEscalateAction
     {
         $session = ChatSession::where('business_id', $businessId)->findOrFail($sessionId);
 
-        if (!ChatLead::where('business_id', $businessId)->where('chat_session_id', $session->id)->exists()) {
+        if (! ChatLead::where('business_id', $businessId)->where('chat_session_id', $session->id)->exists()) {
             return [
-                'status'        => 'capture_required',
-                'refusal_code'  => 'NO_CONTACT_METHOD_ON_SESSION',
-                'session_id'    => $session->id,
-                'reason'        => $reason,
+                'status' => 'capture_required',
+                'refusal_code' => 'NO_CONTACT_METHOD_ON_SESSION',
+                'session_id' => $session->id,
+                'reason' => $reason,
             ];
         }
 

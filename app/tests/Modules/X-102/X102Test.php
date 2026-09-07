@@ -136,7 +136,7 @@ class X102Test extends TestCase
         $escalateBeforeCapture = $this->escalateAction->handle($biz->id, $session->id, 'test');
         $this->assertEquals('capture_required', $escalateBeforeCapture['status']);
         $this->assertEquals('NO_CONTACT_METHOD_ON_SESSION', $escalateBeforeCapture['refusal_code']);
-        
+
         $sessionBefore = ChatSession::where('business_id', $biz->id)->find($session->id);
         $this->assertEquals('active', $sessionBefore->status);
         Event::assertNotDispatched(ChatEscalated::class);
@@ -167,17 +167,17 @@ class X102Test extends TestCase
 
         $sessionFresh = ChatSession::where('business_id', $biz->id)->find($session->id);
         $this->assertEquals('lead_captured', $sessionFresh->status);
-        
+
         $leadQuery = ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->first();
         $this->assertNotNull($leadQuery);
         $this->assertNotEmpty($leadQuery->phone);
 
         $escalateAfterCapture = $this->escalateAction->handle($biz->id, $session->id, 'test');
         $this->assertEquals('escalated', $escalateAfterCapture['status']);
-        
+
         $sessionEscalated = ChatSession::where('business_id', $biz->id)->find($session->id);
         $this->assertEquals('escalated', $sessionEscalated->status);
-        
+
         $leadAfter = ChatLead::where('business_id', $biz->id)->where('chat_session_id', $session->id)->first();
         $this->assertNotNull($leadAfter);
         $this->assertNotEmpty($leadAfter->phone);
