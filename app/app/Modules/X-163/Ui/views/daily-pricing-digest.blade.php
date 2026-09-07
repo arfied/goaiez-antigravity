@@ -14,14 +14,14 @@
                 Every pricing question was answered.
             </x-ui.empty-state>
         @else
-            <p class="text-ink-2 mb-8">{{ $items->count() }} pricing questions we could not answer</p>
+            <p class="text-ink-2 mb-8">{{ $items->count() }} pricing {{ $items->count() === 1 ? 'question' : 'questions' }} we could not answer</p>
             <div class="space-y-4">
                 @foreach($items as $item)
                     <div class="bg-paper rounded-xl border border-rule p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" wire:key="item-{{ $item->id }}">
                         <div>
                             <h3 class="text-base font-medium text-ink flex items-center gap-2">
                                 {{ $item->service_name }}
-                                <x-ui.status-pill state="alert" label="{{ $item->refusal_count }} refusals" />
+                                <x-ui.status-pill state="alert" label="{{ $item->refusal_count }} {{ $item->refusal_count === 1 ? 'refusal' : 'refusals' }}" />
                                 @if(isset($refusals[$item->id]))
                                     <span class="text-sm text-alert font-medium bg-alert-bg px-2 py-0.5 rounded">Needs a price</span>
                                 @endif

@@ -270,4 +270,28 @@ class DailyPricingDigestTest extends TestCase
             ->test(DailyPricingDigest::class)
             ->assertSeeInOrder(['High Refusals Service', 'Recent Service']);
     }
+
+    public function test_it_renders_singular_text_when_only_one_refusal_exists(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Singular Service',
+            'price_cents' => 0,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 1,
+            'refusal_flagged_at' => now(),
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(DailyPricingDigest::class)
+            ->assertSee('1 pricing question we could not answer')
+            ->assertSee('1 refusal')
+            ->assertDontSee('1 refusals')
+            ->assertDontSee('1 pricing questions');
+    }
 }
