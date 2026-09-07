@@ -49,7 +49,7 @@ final class PricebookEngine
 
             $item = $items->firstWhere('location_book_id', null);
 
-            if ($item === null && $items->count() >= 2) {
+            if ($item === null && $items->count() >= 2 && $items->pluck('price_cents')->unique()->count() > 1) {
                 Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'NO_FACT'));
 
                 return [

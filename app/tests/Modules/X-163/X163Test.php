@@ -1050,4 +1050,77 @@ class X163Test extends TestCase
         $this->assertEquals('Oil Change', $item->service_name);
         $this->assertEquals('oil change', $item->service_key);
     }
+    public function test_lookup_quotes_when_two_location_books_agree(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Two Locs Agree Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $loc1 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
+        $loc2 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'Leeds', 'version' => 1]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc1->id,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc2->id,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'boiler service');
+
+        $this->assertEquals('quoted', $res['status']);
+        $this->assertEquals(9500, $res['price_cents']);
+    }
+
+    public function test_lookup_refuses_when_three_location_books_disagree(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Three Locs Disagree Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $loc1 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'London', 'version' => 1]);
+        $loc2 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'Leeds', 'version' => 1]);
+        $loc3 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'Manchester', 'version' => 1]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc1->id,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 9500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc2->id,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'boiler service',
+            'price_cents' => 10500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc3->id,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'boiler service');
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+    }
 }
