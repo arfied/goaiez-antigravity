@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T19:58:22",
+ "updated": "2026-09-06T19:59:30",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -811,6 +811,48 @@
      "stage": "capability",
      "why": "G17-24 - out of module; QR codes and short links are in X-137",
      "at": "2026-09-06T18:22:53"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-04 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+     "at": "2026-09-06T19:58:51"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-21 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+     "at": "2026-09-06T19:58:55"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-23 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+     "at": "2026-09-06T19:58:55"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G13-33 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+     "at": "2026-09-06T19:58:55"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G17-24 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+     "at": "2026-09-06T19:58:55"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G4-25 UTM hygiene surface is absent; X-138 has no UTM code",
+     "at": "2026-09-06T19:59:13"
+    },
+    {
+     "module": "X-138",
+     "stage": "capability",
+     "why": "G9-34 names no refusal at all, just a flagship designation",
+     "at": "2026-09-06T19:59:30"
     }
    ]
   },
@@ -2166,6 +2208,48 @@
    "stage": "capability",
    "why": "G8-39 - gap: ContentGateAction::evaluateGate does not call prePublishGate and ContentDraft lacks has_grounding, cannot assert refusal reason",
    "at": "2026-09-06T19:19:36"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-04 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+   "at": "2026-09-06T19:58:51"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-21 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+   "at": "2026-09-06T19:58:55"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-23 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+   "at": "2026-09-06T19:58:55"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G13-33 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+   "at": "2026-09-06T19:58:55"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G17-24 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink",
+   "at": "2026-09-06T19:58:55"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G4-25 UTM hygiene surface is absent; X-138 has no UTM code",
+   "at": "2026-09-06T19:59:13"
+  },
+  {
+   "module": "X-138",
+   "stage": "capability",
+   "why": "G9-34 names no refusal at all, just a flagship designation",
+   "at": "2026-09-06T19:59:30"
   }
  ],
  "decisions": [

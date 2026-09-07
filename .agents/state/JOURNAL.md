@@ -931,3 +931,10 @@
 - `2026-09-06T19:19:36` UNRESOLVED capability X-183 - G8-39 - gap: ContentGateAction::evaluateGate does not call prePublishGate and ContentDraft lacks has_grounding, cannot assert refusal reason
 - `2026-09-06T19:35:34` (R245) X-183 — (R245) G8-39's grounding half closes on GateEngine::prePublishGate at the unit level; evaluateGate does not call it and no migration or wiring is required to assert it, and the refusal-reason instrument is withdrawn because the method returns bool (REV-96)
 - `2026-09-06T19:58:22` (R245) X-138 — (R245) a capability specced on X-138 whose surface is owned entirely by another module is filed UNRESOLVED, not closed by a test that imports the owning module's classes into tests/Modules/X-138 — CapabilityStage::testedIds is module-scoped, so such a test closes the id while proving nothing about this module (REV-97)
+- `2026-09-06T19:58:51` UNRESOLVED capability X-138 - G13-04 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink
+- `2026-09-06T19:58:55` UNRESOLVED capability X-138 - G13-21 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink
+- `2026-09-06T19:58:55` UNRESOLVED capability X-138 - G13-23 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink
+- `2026-09-06T19:58:55` UNRESOLVED capability X-138 - G13-33 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink
+- `2026-09-06T19:58:55` UNRESOLVED capability X-138 - G17-24 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink
+- `2026-09-06T19:59:13` UNRESOLVED capability X-138 - G4-25 UTM hygiene surface is absent; X-138 has no UTM code
+- `2026-09-06T19:59:30` UNRESOLVED capability X-138 - G9-34 names no refusal at all, just a flagship designation
