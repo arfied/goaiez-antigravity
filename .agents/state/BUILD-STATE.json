@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T05:18:09",
+ "updated": "2026-09-07T06:00:56",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1806,6 +1806,12 @@
    "module": "X-102",
    "chose": "(R245) G16-21 requires carousels, which need a message store to read from, but X-102 owns only chat_sessions and chat_leads. Missing chat message store must be built first.",
    "at": "2026-09-07T05:18:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "The chat message store is sequenced behind the customer-facing door (the unauthenticated route and JS bundle), since without them the store has no production writer or reader.",
+   "at": "2026-09-07T06:00:56",
    "ruling": "R245"
   }
  ],
