@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\X157\Actions;
 
 use App\Models\Business;
+use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
 use App\Modules\X108\Models\Appointment;
 use App\Modules\X155\Models\FormDefinition;
@@ -12,10 +13,12 @@ use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
 use App\Modules\X176\Actions\SeoRenderAction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -200,17 +203,17 @@ final class EdgeDeployAction
                     $html .= "<script type=\"application/ld+json\">\n".json_encode($schemaResult['json_ld'], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)."\n</script>\n";
                 }
 
-                $page = \App\Modules\X103\Models\Page::find($pageId);
+                $page = Page::find($pageId);
                 if ($page) {
                     $contentBlocks = (isset($version) && $version && is_array($version->content_blocks)) ? $version->content_blocks : [];
-                    $llmsTxtContent = app(\App\Modules\X176\Actions\LlmsTxtRenderAction::class)->handle(
+                    $llmsTxtContent = app(LlmsTxtRenderAction::class)->handle(
                         $businessName,
                         $page->title,
                         $page->slug,
                         $contentBlocks
                     );
                     if (Storage::disk('local')->put("sites/{$deployHash}.llms.txt", $llmsTxtContent) === false) {
-                        throw new \RuntimeException("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
+                        Log::warning("the llms.txt artifact could not be written: sites/{$deployHash}.llms.txt");
                     }
                 }
             }
