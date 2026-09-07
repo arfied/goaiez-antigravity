@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T22:47:47",
+ "updated": "2026-09-06T23:07:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1682,6 +1682,12 @@
    "module": "X-163",
    "chose": "a service name is matched on a folded service_key written by the model on save, while service_name keeps its display case, so the pricebook reader and the duplicate guard agree by construction",
    "at": "2026-09-06T22:47:47",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "The gap writer firstOrCreate match key becomes ['business_id', 'service_key', 'location_book_id'] and service_name moves to the create attributes. This prevents two refusals differing only in case from creating two business-wide gap rows under one service_key.",
+   "at": "2026-09-06T23:07:49",
    "ruling": "R245"
   }
  ],
