@@ -10573,3 +10573,108 @@ the report's pair has the same digit width (131/130, 32/33, 1248/1246, 465/472, 
 (285) passes on both blocks and the **timing nonce** (249) separates them at five of seven positions. Second
 consecutive clean doctor evidence pair, and all three blocks — the report's two and this seat's live run —
 agree on every count.
+
+## ⛔ A BRIEF THAT NAMES A CAUSE NAMES A MEASURED ONE — the `--ruling R245` leak was mine, and the flag has never existed (tick 290)
+
+Three consecutive waves wrote `X-1NN — --ruling R245 <text>` into the shared `JOURNAL.md`. Tick 285 recorded
+it as cosmetic and attributed it, vaguely, to "the command's own flag being consumed into the positional
+argument and then supplied again". Measured at source at tick 290, `bin/state.py:204-206`:
+
+```python
+elif c == "decided":
+    mid, what = a[0], " ".join(a[1:])
+    …append({"module": mid, "chose": what, "at": now(), "ruling": "R245"})
+```
+
+⛔ **`decided` has no `--ruling` flag at all.** It takes `<id> <what you chose...>`, exactly as its own usage
+line says at `:11`, and hardcodes `"ruling": "R245"`. The two tokens are not parsed, not stripped, and simply
+joined onto the front of the recorded sentence. The flag belongs to `resolve` (`:10`, `--reason`), which is
+where the habit came from. **All four leaked entries are this lane's** — X-102, X-155, X-157, X-176 — and every
+one was produced by a command **my own brief supplied verbatim**.
+
+⛔ **The durable rule: `python3 bin/state.py decided <id> '<text>'`, no flag.** The wider one is the finding:
+SITE-162's brief carried *"Do not repeat the `--ruling` flag inside the text — the last two waves leaked it"*,
+which **blames the coder for transcribing a flag I put on the command line**. This ledger states *an invented
+mechanism is a claim, not a measurement* about **reports** at ticks 227, 230 and 249, and has now had to state
+it about **itself** twice (209 was the first). The distinguishing property is that half a measurement is more
+dangerous than none: tick 285 had the right observation and reached for the other half without opening the
+file, and one `sed -n '204,206p' bin/state.py` was available on each of the four occasions.
+
+⛔ Not re-filed — `state.py` has no withdraw (210), and by tick 259's discriminator a careful reader of the
+record alone still reaches the right conclusion: each sentence is complete and correct after those two tokens
+and the row's own `"ruling"` field is right regardless. It is the **mechanism** for the standing TRACK 1 ACTION
+on `bin/state.py` argument validation, which is a materially better ask than a complaint (tick 217).
+
+## ⛔ The cold witness's LOWER-BOUND branch has a SECOND cause, and it is invisible in the file's own text (tick 290)
+
+Tick 279 introduced `grep -c 'assert' <file>` as the cold witness for falsifier arithmetic; 280 qualified it
+(equality only for a loop-free file, otherwise a lower bound); 285 qualified it again (prose containing
+`assert` inflates the witness). Tick 290's brief predicted a pre-wave green total of **85** — 86 `assert`
+lines minus one prose line — and the measured figure is **86**. Decomposed in this seat, post-wave: **86**
+lines contain `assert`, of which **81** are `$this->assert`, **4** are `Event::assert` and **1** is a comment
+(81+4+1 = 86 ✓). So **85** assertion-producing lines yield **90** runtime assertions: a gap of **+5** with
+`foreach` = **0**.
+
+Four causes were **excluded by measurement**, and the exclusions are the durable part: loops
+(`grep -c 'foreach'` = 0); `expectException` (0 — PHPUnit counts a verified exception expectation as an
+assertion); two assertions on one line (`grep -c 'assert.*assert'` = 0); and assertions in a helper called
+many times (the file has **no** private or protected helper, only `setUp` and seventeen `test_` methods, and
+all four `assert` hits in `app/tests/TestCase.php` are prose, `provisionTenant` containing none).
+
+⭐ **One instance of the real mechanism IS measured**: `X102Test.php:357` is
+`$response->assertRedirect('/login')`, and Laravel's `assertRedirect` registers **two** PHPUnit assertions —
+the status check and `assertLocation`. One line, two assertions, no loop. ⛔ **The remaining +4 is UNMEASURED
+and no block names a cause for it** (227/230/249); isolating it needs a per-test run, and a second suite
+against `goaiez_antig_site_test` while the gate holds the lock is the one thing this lane's own clash guard
+exists to refuse.
+
+So the witness gains a **cause**, not a branch: **green > witness is produced by loops (280) OR by framework
+assertions that register more than one per call (290)**, and only the first is visible in the file's own text
+— which is what makes the second the dangerous one, because the witness is sold as a *cold* check and this
+cause cannot be seen cold. Recorded as **accounted IN KIND, not exactly** (tick 288's discipline).
+
+⚠️ And it retires the brief's premise: the prose line was identified by NUMBER (`440`) from a measurement
+taken before the file grew by 22 lines. **A witness qualified three times in eleven ticks is a proxy, and a
+proxy's prediction does not belong in a pass condition** — it belongs where SITE-162's brief correctly put it,
+in an item whose stated outcome is "report the disagreement and change nothing", which is exactly what the
+wave did.
+
+## ✅ The `empty()` class is CLOSED across all seven owned modules — 19 sites, one open question (tick 290)
+
+Five waves swept this class (SITE-154/155 the blank-name schema guards, 156/157 the top-level trim, 160 the
+five display-string sites, 161 the honeypot, 162 the grounding fact). **A clean sweep is a result that must be
+written down** (tick 280), so the whole class was re-swept in this seat —
+`grep -rn --include='*.php' 'empty(' <the seven module paths>` returns **19**:
+
+| population | verdict |
+| :-- | :-- |
+| **15 array tests** — `$breadcrumbs $productOffers $events $address $videos $faqs $validFaqs $availableNumbers $nodes` | ✅ correct; `empty()` over an array carries no `"0"` hazard |
+| `SchemaRenderAction:204` `empty($schema['@type'])` | ✅ **deliberate, reason in a comment on the line above** — `isset([])` is true and `$validType` computes `0 === 0` for it, so a uniform rewrite would silently admit an empty `@type` (284) |
+| `EdgeDeployAction:211` `! empty($page->slug)` | ✅ **dead for this defect** — a single-segment slug never satisfies `count($parts) > 1` (285, re-read at its own line, unchanged) |
+| ⛔ `FormCaptureAction:141` `! empty($payload[$key])` | the one unclassified scalar → **SITE-163** |
+
+⛔ **RULED: SITE-163 MEASURES `FormCaptureAction:141` and fixes it only if the measurement holds.**
+`isUnderEighteen` (`:133-152`) guards `Carbon::parse($payload[$key])` for `date_of_birth`/`dob`, and
+`handle():28` calls it first. Unlike `ChatEscalateAction` (zero production callers, 277) and
+`EdgeProvisionAction` (zero, 213), **`FormCaptureAction::handle` IS reached in production** —
+`X-157/ModuleServiceProvider.php:89`, this lane's own serving module, the same endpoint family as the pool
+allocation at `:68`. The clause is G5-07/G5-30's *"under-18 reject at ingest"*, discharged at
+`X155Test.php:541`, and the module's only DOB fixture is a real 15-year-old date at `:614` — so **the blank
+case has no fixture**, the shape tick 288 named for the honeypot.
+
+- `"0"` — `empty("0")` is true, the guard skips. Had it not, `Carbon::parse("0")` almost certainly throws into
+  the existing `catch` (*"unparseable value is not a signal"*). **Same outcome either way ⇒ inert.**
+- `"   "` — `empty("   ")` is **false**, the guard **fires**, and `Carbon::parse('   ')` decides everything.
+  Throws ⇒ the catch absorbs it and the site is inert in both directions. Returns **now()** ⇒ `diffInYears` is
+  0, `< 18` is true, and a **legitimate adult submission is rejected as under-18 on a live endpoint**, with no
+  fixture anywhere that would notice.
+
+⛔ **That Carbon behaviour is the WAVE's measurement, never this seat's assertion** — `php -r` is refused here
+(284) and the same discipline paid at SITE-157. So the brief is measure-then-fix with an explicit stop: if
+`Carbon::parse('   ')` throws there is **no live defect**, the wave edits nothing, and this classification
+becomes measured rather than argued. **A wave that correctly does nothing is a result.**
+
+⚠️ The remedy, if owed, is the **content-string** one — `trim((string) ($payload[$key] ?? '')) !== ''` — never
+the presence one. A DOB is a value to be parsed, so whitespace is not a value; a honeypot is a presence
+signal, so whitespace is a value. The mechanical sweep that applies one remedy to every site a grep returns is
+tick 288's error, and it would have been made here **in the opposite direction**.
