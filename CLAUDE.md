@@ -6768,3 +6768,118 @@ either gate death). The two logs agree, and the agreement is the result.
 ⚠️ **No new sweeps since tick 257.** The last entry is unchanged at `2026-09-07T03:49:48` (Track 1
 reaping its own coder). The standing brief line is written and **unexercised** — no coder has run in
 this lane since it was ruled — so per tick 193's law it is not yet a remedy, only a rule.
+
+## ✅ Tick 236's MISSING-not-CONFLICTING check RUN on a real Track 1 merge, and it PASSED (tick 258)
+
+`origin/main` moved to `1c3f9b4e` mid-tick — *"merge: track/site — X-176 schema, llms.txt and
+internal-link render, X-157 edge deploy bounds, and the lane's real-GET publish harness"*, parents
+`48b6f9fe` + `4183baaf`, **14 files, +2,432 −14**. Tick 236 wrote the law for exactly this moment
+after Track 1's *previous* merge of this lane dropped `publishSite()`'s provisioning hunk and
+`a9e6a25f` restored it within the hour by luck. Run this tick:
+
+```
+git diff --stat origin/main HEAD -- app/tests/Journeys        →  (nothing — byte-identical)
+```
+
+SITE-112's real-`GET /sites/{business}/{deploy_hash}` conversion is on `main` unaltered.
+
+⚠️ **Three readings that only work together**, and each was measured rather than inferred:
+
+- **The bound direction is the ACCEPTING one** (tick 217): `origin/main` on the left is legitimate
+  *because main now contains our merge*, so a difference is either our own later work or a
+  resolution loss. It is not tick 147's staleness trap. Which bound is right is decided by what the
+  branch has merged, never by a rule about which ref goes on the left.
+- **A residual delta is not automatically a loss.** The merge's second parent is `4183baaf`
+  (02:36:22), so `45132501` · `bdf8f57f` · `df2c508a` · `49bb1271` post-date it by minutes and are
+  **unmerged, not lost**. ⛔ Read the merge's *second parent* before calling anything missing — the
+  diff cannot tell "we committed after the merge" from "the merge dropped it".
+- **X-110 rows in the same diff are `main` being AHEAD**, via the ui merge, not us being behind on
+  our own work. One `git diff --stat` mixes both populations and labels neither.
+
+## ✅ Tick 256's re-measured merge footprint CONFIRMED by the merge itself — 14 for 14 (tick 258)
+
+Tick 256 retired tick 162's standing *"a Track 1 merge of `track/site` delivers ONE file"* and
+measured **fourteen**. The merge delivered **fourteen**. The cheapest possible confirmation of the
+re-measurement law — the world ran the experiment — and the clearest evidence for why a standing
+characterisation of what a lane's merge delivers decays like any other number: had tick 256 not
+re-measured, this lane would have described its own life's work as fourteen lines of a tracker.
+
+## ✅ TRACK 1 ACTION 3's J11 half is RETIRED — and the item is NARROWED, not deleted (tick 258)
+
+Ticks 256/257 recorded that `coder-bin/git:70-75`'s *"take `MERGE_HEAD`'s side whole"* is correct
+when Track 1 merges site and **silently wrong** in reverse, because main's `publishSite()` was still
+the merge-base's constants-reader — so a lane merge of `main` would revert J11 to six constants with
+no conflict, no diff line and no census surface able to report it.
+
+**That premise is now false, measured:** the clause fires only when the staged blob equals
+`MERGE_HEAD`'s, and `MERGE_HEAD`'s harness blob is byte-identical to ours (the empty `git diff`
+above). The clause is a no-op in this direction and J11 cannot be reverted by it.
+
+⛔ **The item is kept in its general form**, because tick 199's law cuts both ways: a prohibition
+recorded as its *remedy* ("do not let the harness come from main") expires silently when the
+population changes, and one recorded with its *defect* survives — **a merge resolution can drop the
+authoring side's line, and no census surface reports it** (half 2's `^origin/main` bound means a
+line deleted by main's own merge commit never prints). Still true, still unreported, and the check
+still belongs *in* the merge rather than after it.
+
+## ⛔ The merge of `main` stays DEFERRED — an ADDED never-list file has no route out of the index (tick 258)
+
+Tick 229 ruled it; re-measured at source this tick rather than carried (ticks 218, 241):
+
+```
+git diff --name-status 4183baaf origin/main -- .claude …
+  A  .claude/hooks/drive_hook.py        A  .claude/hooks/no-piped-gate-tool.py
+  M  .claude/settings.json   M bin/supervise.sh   M .agents/supervisor/launch-coder.sh   M CLAUDE.md
+```
+
+`coder-bin/git` read in full, unchanged in every relevant clause: `:76` refuses any staged
+`\.claude/` and **a merge commit stages the whole merge**; `:34-46`'s merge-restore requires the
+tree-ish to be literally `HEAD`, so it cannot remove a path **HEAD has never had**; `:22` refuses
+`git rm` on `.claude/*` by name. The **ours ❌ / main ✅** quadrant's two sub-cases (tick 229) are
+what decide it: a path main *modified* is silently taken **and restorable**; a path main *added* is
+silently taken and **irremovable**. `git diff --name-status … | read the A lines` is the whole test.
+
+⛔ **No wave is briefed for it** — dispatching one spends a dispatch on a guaranteed guard refusal.
+⚠️ But the deferral's cost is no longer zero: main's range now carries real `app/**` (ui's X-110
+screens, and this lane's own work returning), where tick 229 could say it carried none.
+
+## ✅ Ticks 247 and 209 COMPOSE — one keeps the evidence of failure, the other says what to do with a zero (tick 258)
+
+Re-running halves 2 and 3 after `main` moved, I wrote `--format='COMMIT'` with no placeholder. Git
+refused it — `fatal: invalid --pretty format: COMMIT` — and the `grep -c` reported **0** for both
+surfaces. Re-run with a valid format: **10** and **3**, unchanged.
+
+The catch depended on both laws at once, and neither is sufficient alone:
+
+- **Tick 247** — *never `2>/dev/null` a query whose silence you intend to read as a finding*, because
+  stderr is the channel that distinguishes "no results" from "no query". It was not suppressed, so
+  the `fatal:` sat next to the `0`.
+- **Tick 209** — *a census surface that drops to zero is a TOOLING FAULT until proven otherwise.*
+
+⚠️ Worth stating because the failure mode is the ledger's most-repeated one: had the redirect been
+there, a command that **never ran** would have been indistinguishable from a measurement of nothing,
+on the two surfaces whose expected output *is* a small number. Tick 247 called its own suppression
+"the first self-inflicted silence"; this is the near-miss that shows the rule pays on a surface it
+was not written for.
+
+## ✅ The pest-lock hedge is DECIDABLE, not statistical — and the four unresolved ticks were KILLED gates (tick 258)
+
+Ticks 231, 245, 250 and 258 hedged §7 on the lock and each time the gate landed inside the tick and
+reproduced the borrowed §7 **byte for byte**. Ticks 253–256 hedged and never resolved. Tick 250
+warned that three favourable firings are not a guarantee and was right to — but the split is not
+luck, and reading it as a success *rate* is the error:
+
+⛔ **All four unresolved gates were KILLED (rc 143), not out-queued** (tick 257, from
+`gate-runs.tsv`), and tick 258's gate was provably **alive** throughout
+(`readlink /proc/801778/cwd` at thirteen minutes) and landed on the tip with
+`tests 1969 · passed 1964 · FAILED 1 · errors 4`, `a_published_site_carries_all_seven` **absent**.
+
+So the question *"will waiting pay?"* is answerable **at the time**, not estimated from history:
+
+- **gate pid alive** → queued behind the box-wide lock; it will land. Wait, and read §7 last.
+- **gate pid gone / `gate-signal` rc ≥128** → killed; it never will. Borrow under tick 255.
+
+That converts tick 255's borrow from a standing fallback into the **killed-case** branch of a
+two-way decision, and it makes the falsifier fire rather than go missing: tick 258's borrowed §7 was
+**confirmed, not merely unrefuted** — the first time that distinction has resolved in the strong
+direction since tick 255 insisted on recording it.
