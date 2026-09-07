@@ -2392,6 +2392,10 @@
   {
    "at": "2026-09-07T06:49:10",
    "note": "X-176 capability: the UNRESOLVED row filed at 2026-09-06T16:31:06, whose why reads no seam for Event schema from X-108s calendar, is the capability id G8-15. It was already superseded by the note of 2026-09-06T18:00:55, which named it by timestamp. This note adds no row, withdraws none and changes no status; it exists because the why names the referent and omits the id, so a grep for G8-15 over state.py status returns nothing and an audit reads the row as unfiled. Recorded so the id is findable, in the same shape as the X-103 note of 2026-09-07T05:33:13 for G6-17 and G6-20."
+  },
+  {
+   "at": "2026-09-07T08:23:07",
+   "note": "X-176 G12-03's artifact leg is falsifier-proven: injecting entityType at EdgeDeployAction's SchemaRenderAction call site reddens the stored-artifact assertion in test_g12_03_capabilities in each direction independently, while the two direct-call assertions stay green. The mutation site is the deploy path's pass-through, which is downstream of the artifact assertion and upstream of neither direct call."
   }
  ]
 }
