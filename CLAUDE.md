@@ -3400,6 +3400,68 @@ Watch for: <the trap that applies, by name>
   a tenant through `PixelKeys`, and carries three real HTTP tests. It is **wave 126, on a measurable tree**,
   and it is not cancelled. Live list: `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick
   234, membership unchanged since tick 227. Re-run it; never inherit it.
+- ⭐ **Check a DECLINE in the accepting direction, by reading the declined item's own command — the
+  blocker either reaches it or it does not, and neither the decline nor the doubt is evidence.** Tick 232
+  records the inverse defect (a field declined under a blocker that did not reach it: `TESTS:` is a
+  `git show` and no `pest.lock` reaches a `git show`). Wave 125 declined the harness smoke run for the
+  lock, and the script settles it: `scratch/run-mutations-w124.sh:7` and `:18` are both
+  `bash bin/supervise.sh --tests`, and `bin/supervise.sh:279` opens `if [ $want_tests -eq 1 ]` with the
+  lock at `:288` **inside** it. A no-op smoke run as written takes the lock and blocks, so the decline is
+  exact. **One command grades a decline; spend it on the ones you would accept as well as the ones you
+  would refuse** (the wave-72 rule, applied to declines).
+- ⚠️⚠️ **The artifact question's ninth escape is an answer that is TRUE, SPECIFIC, correctly reconciled —
+  and STRUCTURALLY GUARANTEED, so it is reusable verbatim and stops measuring after one wave.** Waves 124
+  and 125 both quoted their own changed-paths answer against `w<N>-gate.log` §1's `1 uncommitted
+  path(s)`, with the identical number and the identical reconciliation (§1 counts the tracked tree;
+  `scratch/` is gitignored). Every clause of the tick-232 wording is satisfied. It is **not** wave 120's
+  universal ground (*"the artifact exists"*, true of anything) — it is checkable and it is right — and it
+  still says nothing about the wave that gave it. The series: `None` (112) → a previous wave's artifact
+  (116) → an invented sentence (118) → a real answer (119) → a universal ground (120) → a licensed
+  non-answer (121) → an artifact silent on the subject (122) → an artifact that agrees (123) → clean
+  (124) → **a guaranteed disagreement** (125). ⛔ **The clause for wave 126: the disagreement must be
+  about something this wave DECIDED or MEASURED — a gate log's accounting of untracked files is not it.**
+  Nine wordings, nine one-clause fixes; keep the accumulated clauses and do not simplify.
+- ⚠️ **`scratch/pest-raw-last.log` has a FOURTH geometry — a ~44-byte `{"tool":"pest","result":
+  "lock-timeout"}` written by `bin/supervise.sh:296-298` when the 40-minute wait expires.** It is honest
+  output and every tell in this file misreads it: not too old (81), too early (99c), byte-identical by
+  race (88b, 95, 105), too small in the SIGKILL sense (107c — that one is `rc=137`, this one has no `rc`
+  at all), a copy of another run (111) or falsely named (112). It did not fire at tick 235 only because
+  wave 124's script died before the wait elapsed, which is why that path still held this column's own
+  tick-232 object. **A lock-blocked lane will eventually find its shared object replaced by that stub;
+  read the wave's own gate log §7 for the `lock-timeout` line before grading it.**
+- ⛔ **RULED at tick 235: this lane does not edit, bypass or run outside the shared pest lock.**
+  `bin/supervise.sh:280-287` documents it as Track 1's, *"advisory and CROSS-PROJECT by design"*,
+  explicitly *"ORTHOGONAL to §7's shared-database refusal … both stay"*, with its own ⚠️ *"never kill the
+  holder to get the lock."* The file is in this column's five committable paths, which makes the
+  temptation real and the refusal deliberate: **a cross-lane scheduling guard is not this lane's to
+  narrow because it is inconvenient**, and running `./vendor/bin/pest` directly to dodge it is refused on
+  the same ground. Escalate it as a `TRACK 1 ACTION`; do not reason around it.
+- ⚠️ **A ruling kept for a reason that has EXPIRED is how a stale rule survives — re-derive the reason,
+  not just the ruling, on every tick that restates it.** Tick 234 held new production surface because
+  *"a first red would be unattributable between the wave and everything landed unmeasured."* Measured at
+  tick 235 that is weak: exactly **two** commits have landed since the last measured suite, both in one
+  test file, both read line by line here. The reason that actually holds is different — **a build wave
+  cannot gate at all while the lock is held**, so it would ship its own new assertions unproven, which is
+  the soil `green by construction` grows in. Same ruling, different reason; say which.
+- ⭐⭐ **A lock-blocked lane is not a stopped lane: the lock sits inside `want_tests`, so everything about
+  a mutation set EXCEPT its numbers is measurable today.** That the seven patches apply
+  (`git apply --check`), that a gate log lands per mutation, that `git restore` reverts, that the tree
+  ends clean — all of it runs under a plain `bash bin/supervise.sh`. Four consecutive waves lost their
+  set to the harness (122 `sed` eating backslashes, 123 a `'` inside `php -r`, 124 argument passing, 125
+  the lock), and **the harness is the one part of a mutation wave that nothing else in the gate
+  measures.** Prove it while the numbers are unavailable rather than holding the lane.
+- **Backlog at tick 235 — wave 126 is the mutation harness proven without the suite; no production
+  code.** RULED (above), and the two rulings that shape it are the lock refusal and the corrected hold.
+  Items: the `run_mutation` argument defect fixed (the **diagnosis** is spent — wave 125's is exact and
+  complete, and re-briefing it is the wave-87 shape), all seven patches `git apply --check`ed against
+  the committed `app/app/Modules/X-102/Http/Controllers/ChatStartController.php`, an end-to-end dry run
+  proving apply→gate→revert→clean, and a per-mutation account of what each would prove. ⚠️ Hand
+  `sed -n '279,302p' bin/supervise.sh` over as a measurement and withhold the conclusion (tick 214, now
+  3-for-3 on this lane). **Wave 127 is the chat message store** — unblocked since wave 124 built the
+  door, sequenced only behind a measurable tree, and it is the highest-value row because two backlog rows
+  name it as their blocker (`X-102 G16-21` and `C-Agent G5-31`). Live list:
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick 235, membership unchanged since
+  tick 227. Re-run it; never inherit it.
 
 ## Style
 
