@@ -31,10 +31,21 @@ final class PricebookEngine
                 ->where('location_book_id', $locationBookId)
                 ->first();
         } else {
-            // (R245) a price lookup with no location prefers the business-wide row and refuses when two location books disagree
+            // (R245) a price lookup with no location refuses when two business-wide rows disagree on the amount, and still quotes when they agree
             $items = PriceBookItem::where('business_id', $businessId)
                 ->where('service_name', $serviceName)
                 ->get();
+
+            $businessWideItems = $items->where('location_book_id', null);
+            if ($businessWideItems->count() >= 2 && $businessWideItems->pluck('price_cents')->unique()->count() > 1) {
+                Event::dispatch(new PriceRefusalFlagged($businessId, $serviceName, 'NO_FACT'));
+
+                return [
+                    'status' => 'refused',
+                    'refusal_code' => 'NO_FACT',
+                    'reason' => "No pricebook entry found for {$serviceName}",
+                ];
+            }
 
             $item = $items->firstWhere('location_book_id', null);
 

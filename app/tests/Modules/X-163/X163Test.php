@@ -742,4 +742,62 @@ class X163Test extends TestCase
         $this->assertEquals('quoted', $res['status']);
         $this->assertEquals($row->price_cents, $res['price_cents']);
     }
+
+    public function test_lookup_refuses_two_disagreeing_business_wide_rows(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Two Biz Wide Disagree', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'custom widget installation',
+            'price_cents' => 47500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'custom widget installation',
+            'price_cents' => 52500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'custom widget installation', 'customer');
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+    }
+
+    public function test_lookup_quotes_two_agreeing_business_wide_rows(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Two Biz Wide Agree', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $row1 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'custom gadget repair',
+            'price_cents' => 24800,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'custom gadget repair',
+            'price_cents' => 24800,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'custom gadget repair', 'customer');
+
+        $this->assertEquals('quoted', $res['status']);
+        $this->assertEquals($row1->price_cents, $res['price_cents']);
+    }
 }
