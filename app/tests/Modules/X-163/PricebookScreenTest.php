@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Modules\X163;
 
 use App\Models\User;
+use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X163\Ui\Pricebook;
 use App\Support\Tenancy;
@@ -88,5 +89,84 @@ class PricebookScreenTest extends TestCase
 
         $this->actingAs($owner);
         $this->get(route('x-163.pricebook'))->assertOk()->assertSee('942.25');
+    }
+
+    public function test_inline_edit_unconfirms_a_confirmed_row(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirm Test 1',
+            'price_cents' => 10000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('inlinePrices.'.$row->id, 200.00)
+            ->call('updatePrice', $row->id);
+
+        $reloaded = $row->fresh();
+        $this->assertFalse($reloaded->is_confirmed);
+        $this->assertNull($reloaded->confirmed_at);
+    }
+
+    public function test_inline_edit_with_the_same_amount_leaves_confirmation_alone(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirm Test 2',
+            'price_cents' => 30000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('inlinePrices.'.$row->id, 300.00)
+            ->call('updatePrice', $row->id);
+
+        $reloaded = $row->fresh();
+        $this->assertTrue($reloaded->is_confirmed);
+        $this->assertEquals($row->confirmed_at, $reloaded->confirmed_at);
+    }
+
+    public function test_an_edited_price_is_no_longer_quoted_to_a_customer(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Confirm Test 3',
+            'price_cents' => 40000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('inlinePrices.'.$row->id, 500.00)
+            ->call('updatePrice', $row->id);
+
+        $engine = app(PricebookEngine::class);
+        $result = $engine->lookup($biz->id, 'Confirm Test 3', 'customer');
+
+        $this->assertEquals('refused', $result['status']);
     }
 }

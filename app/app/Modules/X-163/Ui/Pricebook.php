@@ -120,9 +120,19 @@ class Pricebook extends Component
     {
         $businessId = Tenancy::id();
         if (isset($this->inlinePrices[$id])) {
-            PriceBookItem::where('business_id', $businessId)->where('id', $id)->update([
-                'price_cents' => (int) round((float) $this->inlinePrices[$id] * 100),
-            ]);
+            $newCents = (int) round((float) $this->inlinePrices[$id] * 100);
+            $query = PriceBookItem::where('business_id', $businessId)->where('id', $id);
+            $row = $query->first();
+
+            if ($row) {
+                $payload = ['price_cents' => $newCents];
+                if ($row->price_cents !== $newCents) {
+                    // (R245) an inline price edit that changes the amount clears the confirmation, and one that does not changes nothing
+                    $payload['is_confirmed'] = false;
+                    $payload['confirmed_at'] = null;
+                }
+                $query->update($payload);
+            }
         }
     }
 
