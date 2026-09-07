@@ -9,6 +9,7 @@ test('owner layout heading seam contract', function () {
     $unresolvedView = 0;
     $skips = 0;
     $noHeading = 0;
+    $levelSkips = 0;
 
     foreach (glob(base_path('app/Modules/*/Ui/*.php')) as $file) {
         $content = file_get_contents($file);
@@ -50,6 +51,30 @@ test('owner layout heading seam contract', function () {
                 } else {
                     $noHeading++;
                 }
+
+                if (preg_match_all('/<h([1-6])/', $viewContent, $allMatches)) {
+                    $sequence = [];
+                    if ($hasHeading) {
+                        $sequence[] = 1;
+                    }
+                    foreach ($allMatches[1] as $match) {
+                        $sequence[] = (int) $match;
+                    }
+
+                    $hasLevelSkip = false;
+                    for ($i = 1; $i < count($sequence); $i++) {
+                        $prev = $sequence[$i - 1];
+                        $next = $sequence[$i];
+                        if ($next > $prev + 1) {
+                            $hasLevelSkip = true;
+                            break;
+                        }
+                    }
+
+                    if ($hasLevelSkip) {
+                        $levelSkips++;
+                    }
+                }
             } else {
                 $unresolvedView++;
             }
@@ -64,4 +89,5 @@ test('owner layout heading seam contract', function () {
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
     expect($skips)->toBe(0, 'If it went UP, a blade\'s first <h[1-6] tag is the wrong level (not h2 for seam, not h1 for own). This reads the blade\'s text, not a response body, and never sees a heading emitted by a component such as <x-ui.empty-state heading="…">. If it went DOWN, a blade heading was fixed.');
     expect($noHeading)->toBe(0, 'If it went UP, a resolved view has no <h[1-6] tag at all. This reads the blade\'s text, so a heading emitted by a component (<x-ui.empty-state heading="…"> renders its own <h2>) is not seen, and a $seam member landing in this bucket is not a defect while an $own member is. If it went DOWN, a heading was added or the view was removed.');
+    expect($levelSkips)->toBe(1, 'If it went UP, a view\'s heading sequence descends by more than one level. This reads the blade\'s text, so a heading emitted by a component is not in the sequence. It is a count of views, not of bad steps. The <h1> prepended for a $seam member is an ASSUMPTION this code makes about the layout, not something it measures. If it went DOWN, a view\'s heading sequence was fixed.');
 });
