@@ -18,7 +18,11 @@ class DeclinesScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-199.declines'))->assertOk();
+        $this->get(route('x-199.declines'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console')
+            ->assertSee('<h1 class="sr-only">Payment Declines &amp; Exceptions</h1>', false);
 
         Livewire::test(Declines::class)->assertOk();
     }

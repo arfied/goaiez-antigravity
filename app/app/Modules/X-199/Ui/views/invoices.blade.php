@@ -1,15 +1,47 @@
 <div>
-    <x-surface.sample-state module="**generates EVERY invoice — ours and the tenant's; C-Billing is the subscription and metering LEDGER and hands data here (§139.1)**" screen="invoices" />
-    <div class="invoices-list p-4">
-        <h3 class="text-lg font-bold">Customer Invoices</h3>
-        @if($invoices->isEmpty())
-            <p class="text-gray-500">No invoices issued.</p>
-        @else
-            <ul>
-                @foreach($invoices as $inv)
-                    <li>#{{ $inv->invoice_number }} - ${{ number_format($inv->total_cents / 100, 2) }} [{{ $inv->status }}]</li>
-                @endforeach
-            </ul>
-        @endif
+    <div class="mb-6 sm:mb-8">
+        <h2 class="text-sm font-semibold text-ink-2 uppercase tracking-wider mb-3">Customer Invoices</h2>
+        
+        <div wire:loading>
+            <x-ui.skeleton label="Loading invoices..." />
+        </div>
+        
+        <div wire:loading.remove>
+            @if($loadError)
+                <x-ui.error-panel heading="Could not load invoices">
+                    {{ $loadError }}
+                </x-ui.error-panel>
+            @elseif($isSample)
+                <x-surface.sample-state module="generates EVERY invoice — ours and the tenant's; C-Billing is the subscription and metering LEDGER and hands data here (§139.1)" screen="invoices" />
+            @else
+                <div class="mb-4">
+                    <p class="text-3xl font-display font-bold text-ink">${{ number_format($totalCents / 100, 2) }}</p>
+                    <div class="flex items-center gap-1">
+                        <p class="text-xs text-ink-2">Total</p>
+                        <p class="text-xs text-ink-2">&middot;</p>
+                        <p class="text-xs text-ink-2">{{ $invoices->count() }} invoices</p>
+                    </div>
+                </div>
+                @if($invoices->isEmpty())
+                    <x-ui.empty-state icon="📄" heading="No customer invoices">
+                        No customer invoices have been generated yet.
+                    </x-ui.empty-state>
+                @else
+                    <x-ui.row-list>
+                        @foreach($invoices as $inv)
+                            <x-ui.row>
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <p class="text-sm font-medium text-ink truncate">Invoice {{ $inv->invoice_number }}</p>
+                                    <p class="text-xs text-ink-2 truncate">{{ ucfirst($inv->status) }} &middot; {{ \Carbon\Carbon::parse($inv->created_at)->format('M j, Y') }}</p>
+                                </div>
+                                <div class="text-sm font-semibold text-ink">
+                                    ${{ number_format($inv->total_cents / 100, 2) }}
+                                </div>
+                            </x-ui.row>
+                        @endforeach
+                    </x-ui.row-list>
+                @endif
+            @endif
+        </div>
     </div>
 </div>

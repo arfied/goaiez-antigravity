@@ -7,11 +7,15 @@ namespace App\Modules\X110\Ui;
 use App\Modules\X110\Models\PixelEvent;
 use App\Modules\X110\Models\Session;
 use App\Modules\X110\Models\Visit;
+use App\Support\Tenancy;
 use Carbon\CarbonInterface;
 use Exception;
+use Illuminate\Support\Str;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
+#[Layout('components.account.layout', ['heading' => 'Cooling Visitors'])]
 class Cooling extends Component
 {
     #[Locked]
@@ -26,7 +30,7 @@ class Cooling extends Component
 
     public function mount(int $businessId = 0)
     {
-        $this->businessId = $businessId;
+        $this->businessId = $businessId !== 0 ? $businessId : (Tenancy::id() ?? 0);
     }
 
     public function dismiss(string $visitorId): void
@@ -80,7 +84,7 @@ class Cooling extends Component
             }
 
             $heatScore = $visitCount;
-            $derivation = "{$visitCount} visits";
+            $derivation = $visitCount.' '.Str::plural('visit', $visitCount);
             $openerDerivation = 'visiting our site';
 
             $rageClicks = $visitorEvents->where('event_name', 'rage_click.detected')->count();
@@ -93,8 +97,13 @@ class Cooling extends Component
             $abandoned = $visitorEvents->where('event_name', 'form.abandoned')->first();
             if ($abandoned) {
                 $heatScore += 1;
-                $field = $abandoned->payload['abandoned_field'] ?? 'unknown field';
-                $form = $abandoned->payload['form_id'] ?? 'form';
+                $rawField = $abandoned->payload['abandoned_field'] ?? 'unknown field';
+                $rawForm = $abandoned->payload['form_id'] ?? 'form';
+
+                $field = ['abandoned_field' => 'unknown field'][$rawField]
+                    ?? str_replace('_', ' ', (string) $rawField);
+                $form = ['quote_form' => 'quote form', 'contact_form' => 'contact form'][$rawForm]
+                    ?? str_replace('_', ' ', (string) $rawForm);
                 $derivation .= ", quit the {$form} at '{$field}'";
                 $openerDerivation = "looking at our {$form} and the form didn't go through";
             }

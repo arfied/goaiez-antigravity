@@ -1,9 +1,14 @@
 <div>
     <x-surface.sample-state module="click- and keyword-level attribution" screen="roi_dashboard" />
     <div class="roi-dashboard-view p-4">
-        <h3 class="text-lg font-bold">Campaign ROI Dashboard</h3>
+        <h2 class="text-lg font-bold">Campaign ROI Dashboard</h2>
         @if($snapshots->isEmpty())
-            <p class="text-gray-500">No ROI records.</p>
+            <x-ui.empty-state
+                icon="🎯"
+                heading="No campaign results yet"
+                action="Install pixel"
+                href="{{ route('account.pixel-install') }}"
+            >We will show what each campaign earned once the tag is sending us clicks.</x-ui.empty-state>
         @else
             <ul>
                 @foreach($snapshots as $s)
