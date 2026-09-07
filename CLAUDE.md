@@ -279,7 +279,69 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-58b | the one-character repair and its three re-pins. `'<x-surface.sample-state>'` → `'<x-surface.sample-state'`, all three buckets re-pinned to what the run produces, `withLayout 13` and `withoutLayout 257` untouched, the `view()` first-match edge MEASURED only. ⛔⛔ The sum is still NOT asserted — fourth time. ⛔ No new `test(`, floor stays `1729` | closed, pushed `f4b04017` — run 105 `PASS-WITH-NOTES`, five notes, one of them a ⛔⛤ |
 | **UI-59** | **the FIRST conversion wave since UI-49, and the only two of the `33` in a lane the owner named: `x-108.calendar` (Customers) · `x-125.runs` (Marketing). `#[Layout('components.account.layout', ['heading' => …])]` · a `mount()` that resolves `businessId` from the tenant (`Invoices.php:22–25` is the shape) · the `<h3>` at `calendar.blade.php:4` promoted to `<h2>` · shell assertions INSIDE the two EXISTING `test_screen_renders_for_tenant` methods · two nav entries, `OwnerNav::all()` 36 → 38. ⛔ No new `test(`; `tests` stays `1729`. ⛔⛔ FOUR pins move together — `withoutLayout −2`, `built −2`, UI-54's `270` `−2`, `withLayout` and `unbuilt` UNMOVED. A different delta is a FINDING, never a re-pin** | closed, pushed `c3edec84` — run 106 `PASS-WITH-NOTES`, all four pins moved on command, and the one defect it shipped was MINE |
 | **UI-60** | **(1) `runs.blade.php:13` `<h3>` → `<h2>` — the heading-order defect UI-59 shipped into the nav, specified by me. (2) ONE new `test(` in a new `Architecture/HeadingSeamTest`: the 19 components declaring the owner layout partitioned by whether their `#[Layout]` carries a `heading`, and their views' FIRST heading level checked against that shape. FIVE pins, all derived — ⛔ zero component names, view paths or route names; the view is the component's own first `view('…')` literal + `View::exists()`. ⛔⛤ The sum is NOT asserted — fifth time. ⚠️ The floor MOVES: `1729 → 1730`** | closed, pushed `03608032` — run 107 `PASS-WITH-NOTES`, five notes, **two of them MINE** |
-| **UI-61** | **the SIXTH bucket. `HeadingSeamTest`'s `if (preg_match('/<h([1-6])/', …))` has no `else`, so a resolved view with NO heading at all is counted NOWHERE — not `$skips`, not `$unresolvedView`, and the three shape counters unmoved. Harmless for a `$seam` member (the layout supplies the `<h1>`); for an `$own` member it is a screen rendering no `<h1>` anywhere, which `ReviewRules` and `ReplyExamples` prove is real in this tree. ONE new `expect()` INSIDE the existing `test(`. ⛔⛤ The sum is NOT asserted — sixth wave. ⛔ No new `test(`, floor stays `1730`. Plus a measurement acted on in no way: how many of the 19 carry more than one `#[Layout(`** | **in flight — run 108 dispatched** |
+| UI-61 | the SIXTH bucket. `HeadingSeamTest`'s `if (preg_match('/<h([1-6])/', …))` has no `else`, so a resolved view with NO heading at all is counted NOWHERE. ONE new `expect()` INSIDE the existing `test(`. ⛔⛤ The sum is NOT asserted — sixth wave. ⛔ No new `test(`, floor stays `1730`. Plus a measurement acted on in no way: how many of the 19 carry more than one `#[Layout(` | closed, pushed `16b601f8` — run 108 `PASS-WITH-NOTES`, five notes, **two of them ⭐ superset re-derivations of mine that agree** |
+| **UI-62** | **the SEVENTH bucket, and the FIRST that is NOT empty on arrival. `HeadingSeamTest:43` is `preg_match`, not `preg_match_all` — it reads the blade's FIRST heading and never looks at another, so `x-108/calendar`'s `<h4>` at `:40` and `:53` under an `<h2>` at `:4` renders `<h1>` → `<h2>` → `<h4>` and NOTHING sees it. (1) add `$levelSkips` over the FULL sequence, pin it `0`, `--filter`, paste the failure, re-pin to what the run produced, commit the test ALONE. (2) THEN `<h4>` → `<h3>` on both lines, re-pin to `0`, `--filter`, paste it passing, commit blade + re-pin. ⭐ The pin is OBSERVED moving `1 → 0`, which UI-60's could not be. ⛔⛤ The sum is NOT asserted — seventh wave; and `$levelSkips`/`$skips` are NOT asserted disjoint. ⛔ No new `test(`, floor stays `1730`** | **in flight — run 109 dispatched** |
+
+### ⛔⛔ RULED 2026-09-07 07:3x — `$skips` reads the FIRST heading only, and the blind spot is NOT empty
+
+`HeadingSeamTest:43` is `preg_match('/<h([1-6])/', $viewContent, …)` — **`preg_match`, not
+`preg_match_all`**. It reads a blade's first heading and never looks at another. MEASURED 07:3x, the
+whole heading corpus of the seven modules that own the population, in document order
+(`grep -rno -E "<h[1-6]"`): **26 occurrences across 22 blades, three of them carrying more than one**,
+and the population closes exactly — 22 − 3 = 19, the three excluded (`x-125.flow-error-dashboard`,
+`x-125.canvas`, `x-108.waitlist`) declaring no account layout.
+
+| blade | bucket | own sequence | with the seam's `<h1>` | |
+| :--- | :--- | :--- | :--- | :--- |
+| `x-138/attribution-row` `:10,:64` | `$seam` | h2 · h3 | 1 · 2 · 3 | ✅ |
+| `x-192/memberships_list` `:4,:13` | `$own` | h1 · h2 | 1 · 2 | ✅ |
+| **`x-108/calendar` `:4,:40,:53`** | **`$seam`** | **h2 · h4 · h4** | **1 · 2 · 4 · 4** | ⛔ **skips h3** |
+
+`Calendar.php:17` carries `['heading' => 'Your Appointments']` and
+`components/account/layout.blade.php:50–52` emits the `<h1 class="sr-only">` behind `@if ($heading)`,
+so the rendered page is `<h1>` → `<h2>` → **`<h4>`**. ⛔ Verbatim the defect UI-44 fixed on three views
+and UI-60 fixed on `runs.blade.php:13`, one level deeper.
+
+⛔⛔ **And it is MINE, in the file I converted, past the line I stopped reading.** The 06:4x ruling
+opens *"I measured calendar's headings and never measured runs'."* **I measured `calendar.blade.php:4`.**
+Lines `40` and `53` were there the whole time. **Twenty-second of the hand-derived-claim family, and
+the second in `calendar.blade.php` in two waves** — *a claim about a file's headings is a claim about
+**all** of them.*
+
+⛔ **Both existing checks are blind, each for a reason already ruled.** `$skips` returns at the first
+match. UI-53's rendered `<h1>` pin misses it twice over — it counts `<h1` and these are `<h4`, and
+`:40`/`:53` sit inside `@elseif ($mode === 'week')` / `@elseif ($mode === 'resources')` under the
+`@else` non-empty arm, which `CalendarScreenTest` never renders because it seeds no `Appointment`.
+That is the 06:4x ruling with a real defect behind it instead of a hypothetical.
+
+⭐ **Seventh member of the uncounted-state family and the FIRST that is not empty on arrival** — run
+95's constant column, UI-56's identity, UI-58b's tag literal, UI-55's empty population, run 104's
+`built = 257`, UI-61's `$noHeading`. Every earlier member was ruled worth a number while measuring `0`;
+this one measures `1` before the wave is written.
+
+### ✅ RULED 2026-09-07 07:3x — UI-62's pin is OBSERVED MOVING `1 → 0`, not shipped green
+
+⛔ **The order is the deliverable.** UI-60 added a check and fixed the blade in one range, and my own
+run-107 block had to record that *"the fix was committed before the test, so it was never observed red
+— that is a measurement of the parent tree, not a mutation run."* UI-62 pins `$levelSkips` at what the
+run produces and commits the test **alone** first, then fixes the blade and re-pins to `0`. Both
+commits are green at their own tip, so the floor never moves under the coder, and the number is
+observed at both ends. ⭐ That is 07:1x's *"to read a number, write the pin"* used to read a number the
+supervisor already knows — the only way it can also serve as the proof.
+
+⛔⛤ The sum is NOT asserted — seventh wave. ⛔ And `$levelSkips` and `$skips` are **not** asserted
+disjoint or summing: `$skips` judges the first heading's level against the bucket, `$levelSkips` judges
+steps within the sequence, and one blade can increment both. ⛔ **The `<h1>` prepend for a `$seam`
+member is an ASSUMPTION about the layout, not a fact the test measures**, and the message must say so —
+the 03:3x rule.
+
+### ⚠️ RULED 2026-09-07 07:3x — `MODULES: X-124 DONE` is NOT false, and my run-95/run-104 blocks were wrong about it
+
+MEASURED: `.agents/state/BUILD-STATE.json:568–572` is `"X-124": {"status": "DONE", "wave": 18}`.
+**X-124 really is DONE.** The field asserts nothing false about the tree; what it misstates is that the
+*wave* did it — `state.py status` is the unchanged `116 done · 0 building · 3 not started · 8
+unresolved of 127`, and rule 10:40's shape is a list of **transitions**, so the correct value is `none`.
+⛔ Twice recorded here as *"false"*; that is a bigger charge than the fault, and this corrects it.
 
 ### ⛔⛔ RULED 2026-09-07 07:1x — `supervise.sh` §1a is a SNAPSHOT AT GATE TIME, not a history of the wave
 
