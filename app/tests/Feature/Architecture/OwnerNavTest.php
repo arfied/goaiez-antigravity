@@ -24,10 +24,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 function sampleStateRoutes(): array
 {
     return [
-        'x-110.cooling',
-        'x-110.visitors-live',
         'x-110.tag-version-per',
-        'x-138.roi-dashboard',
     ];
 }
 

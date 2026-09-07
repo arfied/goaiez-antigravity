@@ -326,6 +326,34 @@ final class OwnerNav
             // A screen nobody can find would leave every extended credit invisible
             // to the funder.
             OwnerNavItem::make("Credit you've extended", 'x-199.credits', OwnerNavItem::GROUP_MORE),
+
+            // People who went quiet (X-110). Under More because re-engaging cold leads
+            // is typically periodic, not a daily task.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave these cooling leads invisible.
+            OwnerNavItem::make('People who went quiet', 'x-110.cooling', OwnerNavItem::GROUP_MORE),
+
+            // Live visitors on the site (X-110). Under More because monitoring
+            // live traffic is typically done when checking campaigns rather than
+            // every single day.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave live visitor traffic hidden.
+            OwnerNavItem::make('Who is on your site now', 'x-110.visitors-live', OwnerNavItem::GROUP_MORE),
+
+            // Campaign ROI dashboard (X-138). Under More because campaign
+            // reporting is typically checked periodically, not every day.
+            // ⚠️ THIS ENTRY IS NOT OPTIONAL POLISH.
+            // Architecture/OwnerNavTest fails the build on an owner screen with
+            // neither a nav entry nor a written exclusion. This screen runs a
+            // real query and renders it on every GET, so it owes a nav entry.
+            // A screen nobody can find would leave campaign revenue numbers hidden.
+            OwnerNavItem::make('What your campaigns earned', 'x-138.roi-dashboard', OwnerNavItem::GROUP_MORE),
         ];
     }
 
