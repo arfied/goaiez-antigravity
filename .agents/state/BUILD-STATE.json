@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T23:40:38",
+ "updated": "2026-09-07T00:00:04",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1618,6 +1618,14 @@
   {
    "at": "2026-09-06T23:40:38",
    "note": "X-211 UNRESOLVED - ArPlanAccepted has no consumer and no acceptance path exists: offerPlan dispatches it and nothing handles it, and nothing in X-211 can put an offer in front of a customer. The event name is a declared emits harvested from the frozen plan, so it is neither renamed nor deleted (rulings 29, 69); the plan row is written offered."
+  },
+  {
+   "at": "2026-09-07T00:00:09",
+   "note": "X-198 UNRESOLVED - no processor adapter exists for a non-stripe connection: GatewayEngine::capture makes no external call when gateway_name is square, clover or plaid and writes the payment awaiting_processor. The adapter waits on a processor contract (ruling 20) and a live call is an evidence run (ruling 13); X-199 now records such an overflow refused rather than charged."
+  },
+  {
+   "at": "2026-09-07T00:00:14",
+   "note": "X-211 the collections human-action refusal is unreachable and is recorded, not edited: CollectionsPackagePreview::render aborts 403 unless auth()->check(), so the message naming the owner role can never render, and the generated route carries auth middleware besides."
   }
  ],
  "decisions": [
@@ -2075,6 +2083,12 @@
    "module": "X-201",
    "chose": "R245: a confirmation a screen shows an owner reports only what this app did - X-201 has no transport of any kind, so submitting a defence seals and records it here and says plainly that nothing was sent; and a payment plan is written offered, never accepted, because no acceptance path exists and nothing in X-211 can reach a customer.",
    "at": "2026-09-06T23:40:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "R245: an overflow is recorded charged only when the gateway issued a charge id - GatewayEngine::capture calls a processor only for a stripe connection and otherwise returns a payment awaiting_processor without throwing, so deriving charged from the absence of an exception told the owner the card on file had covered money that never moved.",
+   "at": "2026-09-07T00:00:04",
    "ruling": "R245"
   }
  ]
