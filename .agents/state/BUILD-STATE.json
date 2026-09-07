@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T12:35:09",
+ "updated": "2026-09-07T13:10:43",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2259,6 +2259,12 @@
    "module": "X-102",
    "chose": "G2-57's asserted clause requires every terminal state of chat_sessions.status to hold a contact method. Of the two terminal states, lead_captured holds one by construction (ChatCaptureAction creates a ChatLead with a NOT NULL phone before the status write) and escalated held none. ChatEscalateAction::handle now refuses a session with no ChatLead, returning capture_required with refusal_code NO_CONTACT_METHOD_ON_SESSION, leaving the session non-terminal and dispatching no ChatEscalated, per GOAIEZ-MASTER-PLAN.md:25618 (the thread never dead-ends). Refused: a contact_method column on chat_sessions (a derived column whose only writer exists to satisfy its reader), reusing offline_form (which means AI credits exhausted), and an exhaustive walk over the old behaviour (which would have asserted the plan's own forbidden outcome). --ruling R245",
    "at": "2026-09-07T12:35:09",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "ChatCaptureAction::handle now refuses a blank or whitespace-only phone before any write, throwing DomainException NO_CONTACT_METHOD_ON_CAPTURE, so neither the Person nor the ChatLead is created. This is the input half of SITE-151's terminal-state invariant: that guard is an existence check on ChatLead, and chat_leads.phone is NOT NULL but not non-empty, so a blank phone would have produced a lead the guard admits and a session reaching escalated with no way to reach anyone, which is GOAIEZ-MASTER-PLAN.md:29073's forbidden outcome. It also closes a second consequence of the same input: Person::updateOrCreate keys on business_id and phone, so two blank-phone captures for one business collapsed onto one Person. The predicate is trim() === '', matching the decision already recorded for the email field at ChatCaptureAction:29-30 (R245, 2026-09-05); email stays optional and becomes null, phone is required and is refused. Refused: making chat_leads.phone nullable, adding a non-empty clause to ChatEscalateAction's guard instead of or as well as this refusal (a reader compensating for a writer, and two writers of one invariant), and widening the refusal to email. --ruling R245",
+   "at": "2026-09-07T13:10:43",
    "ruling": "R245"
   }
  ],
