@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T23:14:38",
+ "updated": "2026-09-06T23:40:38",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1610,6 +1610,14 @@
   {
    "at": "2026-09-06T23:14:42",
    "note": "X-117 UNRESOLVED - the checkout cannot reach paid: CheckoutEngine::checkoutCart creates the order pending_payment and returns its refreshed status, and the only listener that could promote it makes no gateway call by ruling 45, so CheckoutBlock::pay's paid branch is unreachable until a browser-side card-entry surface exists. Recorded, not edited."
+  },
+  {
+   "at": "2026-09-06T23:40:38",
+   "note": "X-201 UNRESOLVED - a compiled defence cannot be filed with the gateway: the module contains no Http or curl call and no processor adapter, so filing waits on the chargeback contract recorded UNRESOLVED at ruling 79. The screens seal and record the bundle and say that nothing was sent."
+  },
+  {
+   "at": "2026-09-06T23:40:38",
+   "note": "X-211 UNRESOLVED - ArPlanAccepted has no consumer and no acceptance path exists: offerPlan dispatches it and nothing handles it, and nothing in X-211 can put an offer in front of a customer. The event name is a declared emits harvested from the frozen plan, so it is neither renamed nor deleted (rulings 29, 69); the plan row is written offered."
   }
  ],
  "decisions": [
@@ -2061,6 +2069,12 @@
    "module": "X-173",
    "chose": "R245: an owner-facing string carries no internal section id, and a screen header describes what the screen does rather than asserting machinery that has never run - the ledger sync has no production caller and the connect door refuses by design, so the header names the dependency instead of the flow.",
    "at": "2026-09-06T23:14:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "R245: a confirmation a screen shows an owner reports only what this app did - X-201 has no transport of any kind, so submitting a defence seals and records it here and says plainly that nothing was sent; and a payment plan is written offered, never accepted, because no acceptance path exists and nothing in X-211 can reach a customer.",
+   "at": "2026-09-06T23:40:38",
    "ruling": "R245"
   }
  ]
