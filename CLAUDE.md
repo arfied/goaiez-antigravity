@@ -7138,3 +7138,154 @@ filing forgives nothing, because it reads as measured.
 ⚠️ And the correction is always a `note`, never a `resolve` or a re-file: `state.py` has no withdraw
 (tick 210), and `resolve` is module+stage-granular and would return the module to `BUILDING`
 (tick 26).
+
+## ⛔ An audit partitioned by MODULE cannot see a defect whose population is a SHARED SENTENCE (tick 261)
+
+Tick 231 opened this lane's filing audit and ran it **per module** — ten X-176 rows, one at a time,
+each `ls`-ed against the thing its `why` named. That audit is now provably complete for X-176:
+thirteen filings, every one superseded or confirmed correct. It could never have found what tick 261
+found, and the reason is structural rather than an oversight.
+
+On **2026-09-05T18:58:29**, in one second, one sentence was filed as the `why` for **seven**
+capability ids across **four** modules, plus an eighth row carrying it with no id at all:
+
+```
+CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+```
+
+Measured on a live doctor at tick 261, **six of the seven violations have cleared**, and every credit
+was read at its own line before this file called it a credit:
+
+| id | module | live | credit |
+| :-- | :-- | :-- | :-- |
+| G16-21 | X-102 | ⛔ still red here | superseded at tick 260 |
+| G13-15 | X-102 | ✅ cleared | `X102Test.php` ×3 |
+| G13-09 | X-110 | ✅ cleared | `X110Test.php:290` — **KILLED** under §44 · P-128, no device-location source (tick 196: a killed capability's honest ⑤ *is* a refusal) |
+| G3-11 | X-137 | ✅ cleared | `X137Test.php:97` — two tokens, unknown caller → `unattributed` |
+| G8-13 | X-137 | ✅ cleared | `:115` — per-visitor token and source, both directions |
+| G18-17 | X-137 | ✅ cleared | `:160` — whisper names its source, and `assertStringNotContainsString` on the other |
+| G13-24 | X-137 | ✅ cleared | `:195 :214 :256`, plus `PoolExhaustionTest`'s refusal half (tick 207) |
+| G13-05 | X-155 | ✅ cleared | `X155Test.php:304 :310 :360 :397` |
+
+A sentence that is the stated obstacle for six credited, clean capabilities is not the obstacle —
+and tick 259 had already written the disproof as a general law (*a `why` shared verbatim by two
+filings is falsified the moment either one's violation clears*), applied it to **one** row, and
+ruled "two notes, and no more".
+
+⛔ **The two enumerations answer different questions and neither is a superset:**
+
+- **by module** → *is this module's record right?* Finds a wrong `why` unique to one row.
+- **by `why` text** → *is this SENTENCE right?* Finds a wrong `why` replicated across modules, which
+  is exactly what a batch filing produces and what no module-scoped pass can assemble — each row
+  reads, in isolation, as a plausible generator complaint.
+
+Thirty-sixth statement of this section's law, and the first turned on a query's **partition key**:
+163/178/180/183/185/187 the *pathspec*, 190 the *strip*, 191 *bounds moving*, 192/193 *unrecorded
+bounds*, 194 *configuration*, 196 *width*, 207 *expected output*, 208 the *evidence request*, 209
+*resolution context*, 210 the fault's *scope in time*, 215 the *cache key's identity*, 219
+*provenance*, 220 the key's *update mechanism*, 224 the *denominator's members*, 228 *evaluation
+time*, 247 a query that *did not run*, 253 *which tree a section measured*, 257 a query *never
+issued*, 259 *which column identifies the row*. This concerns **which field the population is grouped
+by** — invisible in every individual result, because each row is internally consistent and the defect
+exists only in the set.
+
+⚠️ **Third firing of tick 260's law in three ticks:** *a finding recorded but never briefed decays
+exactly like an unmeasured one.* Tick 259 wrote the grep-the-`why`-text rule; tick 261 ran it over
+the population. Had it not, the rule would have sat in the ledger being correct and doing nothing —
+which is what tick 238's G8-02/G8-25 observation did for twenty-two ticks. **RULED: SITE-136
+supersedes all eight rows, one `state.py note` per module** (never eight copies of one sentence —
+R240's `refuses: n/a` warning on the other surface).
+
+## ⛔ "Doctor is silent" and "the clause is discharged" are two claims, and only the second licenses the word BUILT (tick 261)
+
+Tick 260 catalogued the **seventh** false-credit shape — prose bearing a bare `G##-##` under
+`tests/Modules/{id}` clears a violation whatever the prose says, because `CapabilityStage:281-287`
+string-matches the literal and cannot read a sentence. That makes a violation's *absence* a strictly
+weaker fact than it was before: it now means *something matched the regex*, not *something asserts
+the clause*.
+
+So the six credits above were each opened and read before this file wrote "cleared". They are real
+assertions against `CallAttributeAction` and the release path — not `assertTrue(true)`, not a
+comment over an empty body, not `assertArrayHasKey` on the generated file, not a `is_dir` check, not
+a property recomputed from the test's own reconstruction, not a subject located by description, and
+not a BUILD PROPOSAL docblock. All seven shapes were checked against, and the reading cost one
+`Read` of ~145 lines.
+
+⛔ **A note that says a capability is BUILT is a claim about the assertion, not about the count.**
+Write it only from the assertion's own line. `state.py` has no withdraw, so a note claiming BUILT
+over a false credit is unrepairable and reads as measured forever.
+
+## ✅ Tick 258's decidable rule fired as a DECISION, and tick 257's procedure is what paid for it (tick 261)
+
+Tick 258 ruled the wait/borrow question answerable **at the time** rather than estimated from
+history: gate pid alive ⇒ queued ⇒ wait; `gate-signal` rc ≥128 or the pid gone ⇒ killed ⇒ borrow
+under tick 255. Tick 261 used it as a decision for the first time, and both branches were live in
+one log window:
+
+```
+2705  05:40:32 → 05:54:03  1031022  -  143  grs-antig-site  gate-signal   ← tick 260's gate, KILLED
+2711  06:00:09 →    -      1102402  -   -   grs-antig-site  gate-start    ← this tick's, no terminal row
+```
+
+`readlink /proc/1102402/cwd` → `…/grs-antig-site/app`, twice across the tick ⇒ ALIVE ⇒ wait. It
+landed: `tests 1969 · passed 1964 · FAILED 1 · errors 4`, **`a_published_site_carries_all_seven`
+absent — J11 green** — and byte-identical to tick 258's independent gate in all four numbers with the
+failure and error sets unchanged.
+
+⛔ **Tick 259's column rule was load-bearing, not pedantic.** Three `grs-antig-site` rows sit in that
+window and only one is this tick's: `1074486` is the *coder's* own no-`--tests` gate (`gate-end` rc 1
+at 05:52:43) and `1031022` is tick 260's kill. Filtering the tail by the **checkout** column instead
+of by the pid `gate-start` handed you would have read tick 260's kill as this tick's and borrowed a
+§7 while a live gate was eight minutes from landing.
+
+✅ **And the wait was affordable only because of tick 257's procedure**: the gate was this tick's
+**first act**, the census, the credit audit, the verdict block, the correction and the brief were all
+written while it queued, and §7 was read **last**. Ticks 253–256 each started a gate and finished in
+minutes, killing it every time. The variable that decides a §7 on this box is not queue depth — it is
+**whether the tick outlives the wait**, and that is a choice the tick makes.
+
+⚠️ Fifth hedge, fourth resolution (231, 245, 250, 261 landed; 253–256 did not, all four **killed**).
+The split is decidable, not statistical — and a rule that has fired favourably four times is still a
+rule and not a law, which is the error tick 188 caught in `1 + 2n` and tick 250 in "three favourable
+firings".
+
+## ⚠️ `rm -f` is refused to the SUPERVISOR seat and permitted to the CODER (tick 261)
+
+Tick 260 measured this seat's refusal (*"Permission to use Bash with command rm … has been denied"*,
+even on untracked scratch inside `.agents/supervisor/`) and had to hedge whether the coder guard
+would refuse it too, noting SITE-135's item 5 would degrade safely under the standing
+*a-guard-refusal-is-a-STOP* line. It did not fire: the coder ran `rm -f after_doctor.txt
+before_doctor.txt` clean and §1 fell to two paths.
+
+⚠️ Worth recording because it inverts this lane's standing assumption that `coder-bin/git` is the
+tighter of the two guards. It is tighter on **paths** (the never-list, `.claude/`, the harness) and
+looser on **commands**. ⛔ So a brief may ask the coder for a cleanup this seat cannot perform — and
+must still carry the STOP line, because which of the two guards binds is not predictable from either
+one alone.
+
+## ⚠️ sixty's `03bdced6` moves X-102 G16-21's Owner field toward this lane, contradicting this lane's measurement (tick 261)
+
+Half 1's sixty/X-102 partition grew to **3**. The new commit is `+1 −1` inside the BUILD PROPOSAL
+docblock tick 260 catalogued:
+
+```
+- Owner: Track 1 (manifest declaration)
++ Owner: X-102 to build, Track 1 to declare (manifest)
+```
+
+This lane's note of `05:33:13`, already in the shared `JOURNAL.md`, measured the opposite at source:
+the **only** producer of chat answers in the tree is `C-Agent/Actions/AgentAnswerAction.php`
+(sixty's under ruling 5), the renderer is `X-102/Ui/views/customerfacing-widget.blade.php` — six
+lines, no message, image or card (Track 2's) — and X-102's own Actions are `ChatCapture`,
+`ChatContextRefresh`, `ChatEscalate`, `ChatStart` with models `ChatSession` and `ChatLead`. Tick
+237's second question, *is the construction site this lane's?*, answers **no** on both halves.
+
+⛔ **Advisory only — no wave, no parallel fix.** The file is sixty's, and two lanes editing one
+docblock hands Track 1 a conflict over a comment (ticks 165, 182, 211). Both readings are in the
+shared JOURNAL; Track 1 sees both.
+
+⚠️ And the consequence for reading counts: `G16-21` is the one id of the seven still **red in this
+checkout**, precisely because sixty's docblock is on `origin/track/sixty` and not here. This lane's
+live doctor and sixty's therefore disagree on it until Track 1 merges. **A capability's colour is a
+property of a tree** (tick 253) — the count that governs this lane's brief is this checkout's, and
+citing sixty's would be a claim about someone else's tree.
