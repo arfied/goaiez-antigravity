@@ -9072,3 +9072,197 @@ the same assertion as `:257-258` in another method, naming no Shadow DOM. `grep 
 `capabilities.php:28` — the specification quoting itself (tick 276's corollary). **There is no Shadow
 DOM in the module at all**, and a reader of the record alone concludes otherwise (tick 259) ⇒ a
 `note`, never an `unresolved` (G8-36 is credited with no live violation — tick 271).
+
+## ⛔ RETRACTED at tick 278 — X-110's "≤14 KB" is OTHER, not NOT-DISCHARGED. Tick 273's law had never been applied to the verdict that PRODUCES a build
+
+Tick 273 ruled that a search step scoped to an id's carriers (`grep -rn '<id>'
+app/tests/Modules/<M>/`) can only feed labels about **carriers**, and that `CREDIT-ONLY` is
+unavailable until the whole directory has been searched for the clause's own code tokens.
+Tick 275 then split `GOAIEZ-MASTER-PLAN.md:31157`'s asserted column into four clauses and
+graded *"the payload is asserted **≤14 KB**"* **NOT-DISCHARGED**, on the stated ground that
+*"no size assertion exists in the directory"* — the directory being
+`app/tests/Modules/X-110/`. Same defect, one verdict over, and it is the **worse** one:
+`CREDIT-ONLY` produces bookkeeping, `NOT-DISCHARGED` produces a wave.
+
+Measured at tick 278 by following the artifact rather than the vocabulary (tick 277):
+
+```
+X-157/Actions/EdgeDeployAction.php:154   $pixelSrc = route('pixel.bundle.pointer', absolute: false);
+app/routes/web.php:2058                  Route::get('/p.js', [PixelBundleController::class, 'pointer'])
+app/app/Http/Controllers/Pixel/PixelBundleController.php
+app/app/Services/Pixel/PixelDelivery.php:67    public const int MAX_GZIP_BYTES = 14 * 1024;
+                                        :152   if ($gzipSize > self::MAX_GZIP_BYTES) { … throw }
+```
+
+**The 14 KB budget exists and is enforced in production code**, and it lives in
+`app/app/Services/Pixel/` — outside `app/app/Modules/` entirely, so under ruling 5, which
+assigns by **module id**, it is none of this lane's seven and falls to stages' catch-all.
+X-110 itself returns **zero** hits for `bundle|p\.js|14336|strlen|mb_strlen`: the module
+neither constructs the payload nor sizes it, and `PixelInstallAction:19` only mints a
+`<script src>` pointing at the tenant's own subdomain.
+
+⛔ **RULED: OTHER — the construction site is not this lane's. No wave**, and per tick 224 the
+branch is *cannot work here*, not *already done here*: the door is shut, the room is not
+empty. Briefed literally, tick 275's verdict would have had this lane build a size assertion
+for a bundle it does not produce, in another lane's column.
+
+⚠️ **Advisory to Track 1, and it is the substantive half:** `grep -rn 'MAX_GZIP_BYTES' app/app
+app/tests` returns **four** hits and **all four are in `PixelDelivery.php`**. A ⭐⭐⭐ budget
+that is implemented, throws when exceeded, and is asserted by **no test anywhere in the
+tree**. ⛔ Never a parallel fix — the file is not this lane's.
+
+**The generalisation.** Every prior statement of the section's law concerns a query returning
+too little or too much. This concerns **which verdict a scope error is allowed to reach**: a
+scope error under `CREDIT-ONLY` writes a note, and the same scope error under
+`NOT-DISCHARGED` dispatches a wave into someone else's column. ⛔ **`NOT-DISCHARGED` requires
+a whole-TREE search, not a whole-directory one** — `grep -rn <tokens> app/app app/tests`,
+because the question it answers is not *"is this module's carrier honest"* but *"does this
+clause have a construction site here at all"*, and only the second can be answered outside
+the module. Tick 273 fixed the search step for the label that costs a paragraph; this fixes it
+for the label that costs a dispatch.
+
+## ⛔ `coder-bin/git`'s checkout refusal is keyed on ARGUMENT COUNT — a two-token `git checkout <file>` passes, and always has (tick 278)
+
+Tick 267 measured that `coder-bin/git` refuses `git checkout` outside a `GOAIEZ_MERGE_OK=1`
+merge, ruled the mutate-and-revert practice unsupported, and sent Track 1 an ask on the
+ground that *"every lane is presently reverting by file replacement — right in outcome and
+unverifiable in general."* SITE-151 reverted its mutation with
+`git checkout app/app/Modules/X-102/Actions/ChatEscalateAction.php` and reported
+`REFUSED: none`. Read at source rather than assumed:
+
+```
+:78  for a in "$@"; do case "$a" in --|-p|--patch|--source=*|--staged|--worktree) REFUSED ;; esac; done
+:79  if [ "$sub" != "switch" ] && [ $# -gt 2 ]; then REFUSED "git checkout with paths is forbidden"; fi
+```
+
+`git checkout <one file>` is **two** tokens and carries no `--`, so both clauses miss and
+`:122` `exec`s it. The forms the guard was written against — `checkout HEAD -- <file>` (four
+tokens) and anything carrying `--` — are refused exactly as 267 measured. So the revert ran,
+was **permitted**, and its outcome is measurable from this seat: `git diff --stat HEAD`
+printed `app/phpunit.xml` alone.
+
+⛔ **The finding is that a destructive one-file working-tree reset is reachable with no
+gate**, in a guard whose `:16-17` refuses `reset` and `clean` outright for that exact reason.
+It is narrow — one file, no directory, no arbitrary tree-ish — which is why it has caused no
+harm, and it is still an opening nobody chose. TRACK 1 ACTION; ⛔ this seat does not edit
+`coder-bin/git` (shared, and this lane holds an `Edit` grant it has formally asked to have
+reverted — tick 213).
+
+✅ Tick 267's *"every lane is presently reverting by file replacement"* is **RETIRED**, and
+tick 267's own discriminator never had to be reached: nothing was substituted. **The
+generalisation is about how a refusal is measured.** 267 read the guard's *comment block* —
+which says, accurately, that everything outside the merge opening "is refused exactly as
+before" — and inferred the refusal's extent from it. The extent lives in `[ $# -gt 2 ]`, an
+arithmetic test the prose does not mention. ⛔ **A guard's stated scope is not its
+implemented scope; read the condition, not the comment that introduces it.** Same family as
+tick 217 (*a refusal recorded by its message is a complaint, by its mechanism an ask*) with
+the mechanism read one level too shallow.
+
+⚠️ Recorded so it is not rediscovered: **`--allow-restore` now exists** in the shared guard
+(`:62-76`, dated 2026-09-07, owner ruling item 3 option B, built in `--allow-merge`'s shape
+and refusing supervisor-owned paths even when open). This lane's launcher does **not** plumb
+it — `grep -c 'RESTORE_OK\|allow-restore' .agents/supervisor/launch-coder.sh` → **0**. ⛔ No
+wave and no launcher edit: the two-token form already gives a falsifier its revert, and adding
+a gate this lane does not need is scope nothing asked for.
+
+## ⚠️ Tick 268's third branch fires again — `errors 2` vs `errors 3` on ONE tip, and the varying member is now IDENTIFIED (tick 278)
+
+Two gates on `27c2563a`, ten minutes apart: the coder's (pid `2958955`, pest
+`12:41:36 → 12:46:43`) read `1971 · 1968 · FAILED 1 · errors 2`; this seat's (pid `2991524`)
+read `1971 · 1967 · FAILED 1 · errors 3`. Both reconcile — `1968+1+2 = 1967+1+3 = 1971`
+(tick 226) — and the **single** discriminating entry is J8's
+`a_deliberately_corrupted_backup_fails_the_restore`, `SQLSTATE[42501] permission denied to
+terminate process`, the same entry ticks 267 and 268 measured at `errors 5` and `errors 4`.
+
+Tick 268 added *"— or BOTH, on an unchanged tree, which means intermittent"* as every two-way
+falsifier's third branch, after writing one that had no room for the answer it got. This is
+its second firing, and it adds the half 268 could not: **the intermittent MEMBER is
+identifiable even when the count is not.** Across four gates the `errors` figure has taken 2,
+3, 4 and 5 — but within any one tip the spread is ±1 and J8 alone accounts for it. ⛔ So the
+sound comparison is never the `errors` integer: it is **the error SET, minus the members
+already known to be intermittent**, reconciled through `tests = passed + FAILED + errors`.
+
+⛔ The cause is not measured and no block names one (ticks 227/230/249; tick 209 is this seat
+committing that error itself). What *is* measured: unreachable from the wave's diff — J8 is
+another lane's journey, the wave's five paths are X-102 and shared state, and the error text
+names a Postgres role privilege and no application code.
+
+⚠️ **The §7 baseline is now `1971 · 1967 · FAILED 1 · errors 3`**, this checkout's own
+previous gate being the only sound one (tick 216) — and a brief quoting it must say the
+`errors` member is intermittent, or the wave reconciles against a number that was never
+stable.
+
+## ✅ The falsifier arithmetic and pest's `line` field, both confirmed a second time (tick 278)
+
+Reconstructed independently rather than read from the report. `test_g2_57_capture_first`
+carries **18** assertions; the mutation (guard deleted) fails **#1**; a failed assertion still
+counts, so the method contributes 1 instead of 18 and the suite goes 78 → **61**, exactly the
+reported figure. The message direction (`-'capture_required' +'escalated'`) and tick 248's
+first-failure rule agree independently, and `tests 14, passed 13, failed 1` shows the mutation
+reddened that method alone. **Three constraints agreeing is what separates a run from a
+plausible transcript** (tick 251).
+
+⚠️ Pest reported `"line":128` and `grep -n` puts `public function test_g2_57_capture_first` at
+exactly **128** — tick 268's property holding a second time. The field discriminated nothing
+and the arithmetic did all the work; a brief asking for *"the failure verbatim with file and
+line"* is asking for the method, not the assertion.
+
+⚠️ **Unproven, not proven** (tick 270): the run halts at #1, so the assertions that escalation
+*succeeds* once a lead exists were never independently falsified. Their falsifier is the
+opposite polarity — make the guard refuse unconditionally — and it was not run.
+
+## ⛔ NOT NULL is not non-empty — an EXISTENCE guard inherits its soundness from a column constraint, and the constraint is weaker than the guard reads (tick 278)
+
+SITE-151 closed G2-57's asserted clause by refusing to move a session to `escalated` unless a
+`ChatLead` **exists**. The guard is correct and its soundness is borrowed:
+`2026_08_30_000037_create_x102_chat_tables.php:34` is `$table->string('phone')` with no
+`->nullable()`, so a lead row carries a phone. **NOT NULL is not non-empty.**
+`ChatCaptureAction:20` takes `string $phone` with no validation and `:45` writes it through,
+so `''` or `'   '` creates a lead the guard admits — and the session then reaches the terminal
+state with no way to reach anyone, which is `GOAIEZ-MASTER-PLAN.md:29073`'s ⛔ column
+verbatim, the failure SITE-151 exists to close.
+
+**RULED (tick 278): SITE-152 — `ChatCaptureAction::handle` refuses `trim($phone) === ''` with
+`\DomainException('NO_CONTACT_METHOD_ON_CAPTURE')`, above the `DB::transaction` so nothing is
+written.** Three measurements make it a build rather than a note: the lane **already decided
+this for the sibling field one line above** (`:29-30`, *"A detail that is blank or whitespace
+was not given (R245, 2026-09-05)"*, applied to the *optional* `email` and never to the
+required `phone`); the same input produces a **second** consequence, since `:32-38` keys
+`Person::updateOrCreate` on `['business_id','phone']` so two blank-phone captures for one
+business collapse onto one `Person`; and the construction site is this lane's own
+`X-102/Actions/`, tick 237's second question answered by grepping for the thing (tick 277).
+
+⛔ Refused, each of which would pass every gate: making `chat_leads.phone` nullable (the
+column is right, the input is not); adding a `phone !== ''` clause to `ChatEscalateAction`'s
+guard **instead of** fixing capture (a reader compensating for a writer — the shape refused at
+146/198/246 — leaving the bad row and the merged `Person` written) **or as well as** it (two
+writers of one invariant, tick 240); and widening to `email`, which `:30` already decides in
+the opposite direction on purpose.
+
+**The general form, and it is the durable half:** an existence check is only as strong as the
+column constraint it leans on, and `NOT NULL`, a length, a foreign key and a default are each
+weaker than the property the reader assumes. ⛔ **When a guard tests for a row's existence,
+read the migration for the column the guard is really about — and then read the WRITER for
+whether anything enforces the gap between the constraint and the property.** Nothing in the
+guard, the test, the diff or any count shows it; the two files are three directories apart.
+
+## ⚠️ A TEST ANCHOR's subject can move with a fixture repair, and no diff says so (tick 278)
+
+SITE-151's new invariant made two existing fixtures unreachable, so the wave added a capture
+call to `test_anchor_ai_capped_form_person_creation_ungrounded_refusal_and_rageclick_escalation`
+and `test_g13_37_proactive_help`. Correct direction — widen the fixture, never the rule
+(ticks 234/242) — and necessary, because `recordRageClick:51` returns `$this->handle(...)`
+rather than writing the column itself, so the rage-click route binds on the same guard.
+
+⚠️ But the **anchor** used to prove *a fresh session escalates on four rage clicks* and now
+proves *a captured one does*. Nothing is lost (the old behaviour is now forbidden, and the
+refusal path is asserted in `test_g2_57_capture_first`), and **the anchor's subject moved with
+nothing in the diff saying so** — a `+8` fixture hunk reads identically whether it repairs a
+fixture or narrows an anchor. Record it when it happens; a later tick reading the anchor's
+name will otherwise believe it covers a state the code can no longer reach.
+
+⚠️ Second, and it is tick 246's sixth shape avoided rather than met: `captureAction->handle`
+matches **50** lines across `X155Test.php` and `X198Test.php`, and **none is this class** —
+the only import of `App\Modules\X102\Actions\ChatCaptureAction` is `X102Test.php:12`. A
+property name is a description; the class is the name. Every brief touching this action says
+so.
