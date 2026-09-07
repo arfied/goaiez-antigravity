@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Support\Account\OwnerNav;
 use App\Support\Admin\AdminAccess;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Livewire\Attributes\Layout;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -300,8 +301,8 @@ test('the reachability check states the size of its own blind spot', function ()
                 $content = file_get_contents($reflection->getFileName());
                 if (preg_match("/view\(\s*['\"]([^'\"]+)['\"]/", $content, $matches)) {
                     $viewName = $matches[1];
-                    if (\Illuminate\Support\Facades\View::exists($viewName)) {
-                        $viewPath = \Illuminate\Support\Facades\View::make($viewName)->getPath();
+                    if (View::exists($viewName)) {
+                        $viewPath = View::make($viewName)->getPath();
                     }
                 }
             }
