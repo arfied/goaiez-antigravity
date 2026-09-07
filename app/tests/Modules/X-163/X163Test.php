@@ -1124,4 +1124,86 @@ class X163Test extends TestCase
         $this->assertEquals('refused', $res['status']);
         $this->assertEquals('NO_FACT', $res['refusal_code']);
     }
+
+    public function test_disagreeing_business_wide_rows_returns_reason_naming_conflict(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Wide Row Disagree Reason', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflicting service',
+            'price_cents' => 1000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflicting service',
+            'price_cents' => 2000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+
+        $res = $this->engine->lookup($biz->id, 'conflicting service');
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertStringContainsString('Multiple conflicting pricebook entries found', $res['reason']);
+        $this->assertStringNotContainsString('No pricebook entry found for', $res['reason']);
+    }
+
+    public function test_refusal_reasons_always_contain_pricebook_for_gap_recorder(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Reason Guard', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        // Genuine no-entry
+        $res1 = $this->engine->lookup($biz->id, 'nonexistent service');
+        $this->assertStringContainsString('pricebook', strtolower($res1['reason']));
+
+        // Business-wide disagreement
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflicting wide',
+            'price_cents' => 1000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflicting wide',
+            'price_cents' => 2000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+        ]);
+        $res2 = $this->engine->lookup($biz->id, 'conflicting wide');
+        $this->assertStringContainsString('pricebook', strtolower($res2['reason']));
+
+        // Location-scoped disagreement
+        $loc1 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'L1', 'version' => 1]);
+        $loc2 = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'L2', 'version' => 1]);
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflicting loc',
+            'price_cents' => 3000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc1->id,
+        ]);
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflicting loc',
+            'price_cents' => 4000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc2->id,
+        ]);
+        $res3 = $this->engine->lookup($biz->id, 'conflicting loc');
+        $this->assertStringContainsString('pricebook', strtolower($res3['reason']));
+    }
 }
