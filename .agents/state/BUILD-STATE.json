@@ -1634,6 +1634,10 @@
   {
    "at": "2026-09-07T00:39:28",
    "note": "X-199 UNRESOLVED: a partial payment has no event. invoice.paid is a declared emits harvested from the frozen plan, so no second event is minted for the partial case (rulings 29, 32, 69); InvoicePaid now fires only when the invoice is actually covered, and a partial payment is visible only through paid_cents and the return status."
+  },
+  {
+   "at": "2026-09-07T00:59:42",
+   "note": "X-201 UNRESOLVED: nothing consumes DisputeLost \u2014 the commission clawback flag is written on the outcome row and no listener exists; X-170's CommissionEngine::clawback is another module's, so the seam is recorded and not built (rulings 5, 59)"
   }
  ],
  "decisions": [
