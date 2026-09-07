@@ -462,9 +462,6 @@ class X108Test extends TestCase
         $this->assertTrue($found, 'Failed to find any money column in affiliates for positive control');
     }
 
-    
-
-
     public function test_g2_06_availability_request_refuses_booked_time_p_093(): void
     {
         // ⑤ the agent calls availability.request; time is looked up or refused (P-093)
