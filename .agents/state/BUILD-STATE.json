@@ -2368,6 +2368,22 @@
   {
    "at": "2026-09-07T05:52:12",
    "note": "X-176 capability G8-14 is BUILT and credited, superseding the UNRESOLVED capability filing of 2026-09-06T16:52:20, whose why ends with the claim that EdgeDeployAction.php:170 has nothing to pass as productOffers and that SchemaRenderAction.php:53 stays dead in production. Both halves are false as of SITE-121: app/app/Modules/X-157/Actions/EdgeDeployAction.php line 16 imports the X163 PriceBookItem model, line 129 queries it for the business, line 269 passes productOffers to SchemaRenderAction, and line 305 renders the offers-x176 block into the served artifact. The live doctor reports no G8-14 violation and app/tests/Modules/X-176/ carries one G8-14 credit. This note adds no row and withdraws none."
+  },
+  {
+   "at": "2026-09-07T06:11:27",
+   "note": "X-102 capability: the why filed at 2026-09-05T18:58:29 for this module, CapabilitiesScaffoldCommand rewrites unconditionally and deletes other tracks hand-written lines per OWNER ACTION 39, is FALSE and is superseded by this note for the G13-15 row and for the id-less row filed at 18:58:21. The same sentence was filed in one second as the why for seven capability ids across four modules and six of those seven violations have since cleared, so the scaffold command was never the obstacle for any of them. G13-15 carries three credits in app/tests/Modules/X-102/X102Test.php and the live doctor reports no G13-15 violation. The G16-21 row is the one exception and was superseded separately on 2026-09-07T05:33:13 with its real dependency named. This note adds no row and withdraws none."
+  },
+  {
+   "at": "2026-09-07T06:11:29",
+   "note": "X-110 capability G13-09: the why filed at 2026-09-05T18:58:29, CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39, is FALSE and is superseded by this note. That sentence was filed in one second as the why for seven capability ids across four modules and six of the seven violations have since cleared, so the scaffold command was never the obstacle. G13-09 is credited at app/tests/Modules/X-110/X110Test.php line 290, where it is recorded as KILLED under section 44 and P-128 because there is no device-location source and X-139 uploads completed jobs rather than store visits; a killed capability's honest refusal is a refusal. The live doctor reports no G13-09 violation. This note adds no row and withdraws none."
+  },
+  {
+   "at": "2026-09-07T06:11:29",
+   "note": "X-137 capability G3-11, G8-13, G18-17 and G13-24: the why filed for all four at 2026-09-05T18:58:29, CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39, is FALSE and is superseded by this note. That sentence was filed in one second as the why for seven capability ids across four modules and six of the seven violations have since cleared, so the scaffold command was never the obstacle. All four are credited by real assertions in app/tests/Modules/X-137/X137Test.php: G3-11 at line 97 allocates two tokens and asserts an unknown caller returns unattributed, G8-13 at line 115 asserts the per-visitor token and campaign source in both directions, G18-17 at line 160 asserts the whisper names its own source and does not name the other, and G13-24 at lines 195, 214 and 256 covers offline reuse and cross-tenant refusal with PoolExhaustionTest carrying the refusal half. The live doctor reports no violation for any of the four. This note adds no row and withdraws none."
+  },
+  {
+   "at": "2026-09-07T06:11:29",
+   "note": "X-155 capability G13-05: two filings name a generator as the obstacle and both are FALSE and are superseded by this note - the why filed at 2026-09-05T18:22:23 blaming the scaffold reading the master plan line order, and the why filed at 2026-09-05T18:58:29 reading CapabilitiesScaffoldCommand rewrites unconditionally per OWNER ACTION 39. The second sentence was filed in one second as the why for seven capability ids across four modules and six of the seven violations have since cleared, so the scaffold command was never the obstacle. G13-05 carries four credits in app/tests/Modules/X-155/X155Test.php at lines 304, 310, 360 and 397, covering tenant release and the spam and bot filtering clause, and the live doctor reports no G13-05 violation. This note adds no row and withdraws none."
   }
  ]
 }
