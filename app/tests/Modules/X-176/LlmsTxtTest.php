@@ -166,7 +166,107 @@ final class LlmsTxtTest extends TestCase
 
         $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
 
-        $this->assertStringContainsString('0', $txt, 'Expected 0 to be present in llms.txt');
+        $this->assertContains('0', explode("\n", $txt), 'Expected 0 to be emitted as its own line');
         $this->assertStringNotContainsString('   ', $txt, 'Expected whitespace-only content to be refused');
+    }
+
+    public function test_item2_measure_clause_b(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant Item2',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_item2',
+            'content_blocks' => [
+                ['type' => 'text'],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-item2.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_item2',
+            businessName: 'Local Biz Item2'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+    }
+
+    public function test_clause_a_whitespace_text_block(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant A1',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_a1',
+            'content_blocks' => [
+                ['type' => 'offer', 'text' => '   '],
+                ['type' => 'text', 'content' => 'after'],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-a1.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_a1',
+            businessName: 'Local Biz A1'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+
+        $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
+        $this->assertStringNotContainsString('   ', $txt);
+    }
+
+    public function test_clause_a_zero_text_block(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant A Two',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Products', 'slug' => 'products']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_a2',
+            'content_blocks' => [
+                ['type' => 'offer', 'text' => '0'],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-a2.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_a2',
+            businessName: 'Local Biz A Two'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+
+        $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
+        $this->assertContains('0', explode("\n", $txt));
     }
 }
