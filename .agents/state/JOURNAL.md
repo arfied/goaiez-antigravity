@@ -856,3 +856,8 @@
 - `2026-09-06T22:48:24` note: X-01 REFUSED: G2-23 (no clause to assert, named in header), G2-25 (no clause to assert, console-only), G2-36 (no clause to assert, UTM is X-138 outside lane), G2-42 (no clause to assert, named in header), G9-10 (no clause to assert, moved from X-121), G11-22 (points to X-121 outside lane), G11-23 (no clause to assert), G11-40 (no clause to assert, header's first line)
 - `2026-09-06T22:48:27` note: C-Agent REFUSED: G5-19, G5-24, G5-41, G5-48 (no test can close a documentation claim)
 - `2026-09-06T22:48:30` note: G12-25 BUILD PROPOSAL: the C-Agent side wire for the takeover latch is unbuilt (HUMAN_TAKEOVER_LATCH is declared but unconsulted) (Owner: C-Agent)
+- `2026-09-06T23:13:52` note: * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt. Owner: C-Agent
+- `2026-09-06T23:13:52` note: * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt. Owner: C-Agent
+- `2026-09-06T23:13:52` note: * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt. Owner: C-Agent
+- `2026-09-06T23:13:52` note: * BUILD PROPOSAL: G5-51 — the minute-by-minute graph is an X-194 view. Owner: X-194
+- `2026-09-06T23:13:57` (R245) C-Agent — (R245) TakeoverStarted and TakeoverReleased cross from X-01 to C-Agent by Event dispatcher, C-Agent writes boolean latch in c_agent_takeovers table read by AgentAnswerAction

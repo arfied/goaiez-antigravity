@@ -167,7 +167,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * ⛔ REFUSED: the web-chat door is X-102's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
+     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt. Owner: C-Agent
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -176,7 +176,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
-     * ⛔ REFUSED: the voice door is X-66's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
+     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt. Owner: C-Agent
      */
     public function test_g5_32_voice_door(): void
     {
@@ -199,11 +199,23 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
-     * ⛔ REFUSED: the takeover latch is X-01's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
+     * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt. Owner: C-Agent
      */
     public function test_g5_37_takeover_latch(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Latch Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        \App\Modules\CAgent\Models\TakeoverLatch::create([
+            'business_id' => $biz->id,
+            'conversation_id' => 123,
+            'is_active' => true,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'Hello', 123);
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('HUMAN_TAKEOVER_LATCH', $res['refusal_code']);
+        $this->assertEquals('', $res['reply']);
     }
 
     /**
@@ -278,7 +290,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-51] named in the header; the minute-by-minute graph is an X-194 view
-     * ⛔ REFUSED: no test can close a documentation claim
+     * BUILD PROPOSAL: G5-51 — the minute-by-minute graph is an X-194 view. Owner: X-194
      */
     public function test_g5_51_minute_graph_view(): void
     {

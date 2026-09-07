@@ -20,6 +20,8 @@ final class ModuleServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Illuminate\Support\Facades\Event::listen(\App\Modules\X01\Events\TakeoverStarted::class, \App\Modules\CAgent\Listeners\TakeoverStartedListener::class);
+        \Illuminate\Support\Facades\Event::listen(\App\Modules\X01\Events\TakeoverReleased::class, \App\Modules\CAgent\Listeners\TakeoverReleasedListener::class);
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
