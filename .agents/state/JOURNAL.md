@@ -1257,3 +1257,7 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T09:54:27` note: 15 rows written, capability 386 → 356, citation 30 → 0
 - `2026-09-07T09:54:27` note: the journey count moved to 5 because the S-163 gate's own suite wrote nine files into app/storage/app/evidence/journeys/, and that no tracker row caused it.
 - `2026-09-07T09:54:27` note: cancel_is_one_tap_with_nothing_in_between and a_completed_job_asks_for_a_review_once_inside_the_cadence stopped erroring because a platform credential became configured outside this lane's diff, and it is unverified.
+- `2026-09-07T10:38:17` note: The partition: withdrawn (41) / deferred (84) / reachable (231), with your measured numbers.
+- `2026-09-07T10:38:17` note: CapabilityStage::testedIds() closes a violation on any occurrence of the id in any file under tests/Modules/<M>/, including a comment — so the count is not evidence that an assertion exists.
+- `2026-09-07T10:38:17` note: CapabilityStage::specsWithoutRefusal() reads the generated app/Modules/<M>/capabilities.php, not the tracker, and the two already agree — so the 77 cannot be closed by transcription.
+- `2026-09-07T10:38:17` note: Five journey evidence files carry manufactured artifact_ids (fake_decision_123, inv_123, 22, 2, 6a9ecb0d135f3), each suppressing a journey violation. Record only.
