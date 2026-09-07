@@ -826,3 +826,4 @@
 - `2026-09-06T23:26:10` (R245) X-163 — Sort the daily pricing digest by highest refusal count first, using the most recent refusal time only to break ties.
 - `2026-09-06T23:45:44` (R245) X-163 — a lookup with no location refuses only when the rows disagree on the amount, whether those rows are business-wide or location-scoped.
 - `2026-09-06T23:57:49` (R245) X-163 — a refusal caused by two pricebook entries disagreeing on the amount says so, and keeps the NO_FACT code and the word pricebook that the gap recorder matches on.
+- `2026-09-07T00:24:30` (R245) X-163 — a NO_FACT price refusal on any channel records the gap row, and a refusal caused by rows that already exist and disagree records nothing.
