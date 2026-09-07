@@ -6,7 +6,7 @@ namespace App\Modules\X125\Ui;
 
 use App\Modules\X125\Actions\FlowRunAction;
 use App\Modules\X125\Models\FlowRun;
-use Illuminate\Support\Facades\Tenancy;
+use App\Support\Tenancy;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
