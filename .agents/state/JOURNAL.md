@@ -1249,3 +1249,5 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T07:58:45` note: The document side does require the id to lead, and the module side does not, so the two sides of the same check disagree.
 - `2026-09-07T08:19:04` note: 27 pairs, 15 distinct ids, 7 distinct texts
 - `2026-09-07T08:19:07` note: specText() is module-independent; one tracker row leading with an id closes the :68 violation for every module declaring it.
+- `2026-09-07T08:43:24` note: A range row in the tracker registers only its first id, as established by the rule at :1084.
+- `2026-09-07T08:43:29` note: 0 rows written. capability 449 -> 449. The single row written for N-065 was reverted because it moved citation down to 92, which triggered a STOP.
