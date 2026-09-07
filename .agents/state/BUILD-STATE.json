@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T00:21:34",
+ "updated": "2026-09-07T00:39:25",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1630,6 +1630,10 @@
   {
    "at": "2026-09-07T00:21:40",
    "note": "X-199 UNRESOLVED: RecordPaymentOnCapture is registered by no provider and guarded on an invoiceId its only dispatcher never sets; the seam cannot be wired because X-198 has no invoice linkage \u2014 capture()'s signature is (businessId, amountCents, paymentToken, idempotencyKey, currency) and payments carries no invoice column \u2014 so it waits on a cross-module API change, not on a listener registration."
+  },
+  {
+   "at": "2026-09-07T00:39:28",
+   "note": "X-199 UNRESOLVED: a partial payment has no event. invoice.paid is a declared emits harvested from the frozen plan, so no second event is minted for the partial case (rulings 29, 32, 69); InvoicePaid now fires only when the invoice is actually covered, and a partial payment is visible only through paid_cents and the return status."
   }
  ],
  "decisions": [
@@ -2099,6 +2103,12 @@
    "module": "X-198",
    "chose": "a capture is announced only when the gateway issued a charge id \u2014 PaymentCaptured fires from GatewayEngine::capture() only on a non-null gateway_charge_id, because capture() makes no external call for a non-stripe connection and an event named for a capture that did not happen propagates to every future listener.",
    "at": "2026-09-07T00:21:34",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "a partial payment records the money and nothing else - recordPayment derives the invoice status from paid_cents against total_cents instead of writing paid unconditionally, because every unpaid and overdue query filters on status before the paid_cents clause, so a partially paid invoice left the Unpaid screen, the ageing and the overdue chase while the customer still owed the balance.",
+   "at": "2026-09-07T00:39:25",
    "ruling": "R245"
   }
  ]
