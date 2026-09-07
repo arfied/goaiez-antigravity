@@ -6382,3 +6382,123 @@ checkout.
 previous tick's background gate is still waiting on the lock — `ls` on `/home/goaiez/tmp/*` is
 refused, and `pgrep -f` cannot distinguish a gate from a coder quoting one. Read the gate file's
 **tail** and its mtime; that is the whole available signal.
+
+## ⛔ Two consecutive HOLDs fall through EVERY case the tick prompt enumerates — the fall-through IS the HOLD tick (tick 256)
+
+Case (e) is the only one of the five that reaches the backlog and it is keyed to a newest block of
+`PASS`/`PASS-WITH-NOTES`. A **HOLD** block satisfies (a) no coder, (b) no newer REPORT, (c) a REPORT
+exists, (d) no newer OWNER.md, and (e) not a PASS. So the second HOLD in a row has no case at all,
+and a tick reading the list literally stops with nothing measured — **including the census**, which
+is the one surface that tells this lane whether another lane has written in its column while it holds.
+
+**RULED: the fall-through is the HOLD tick, and its content is the charter's four re-openers** — an
+owner answer, a Track 1 merge of a sealed-file fix, a regeneration that moves a count, and the
+census — plus the gate on whatever tip is unpushed. Same family as tick 208 (*an enumerated evidence
+request is a scope, and the section you forget to name is where the regression sits*), turned on the
+tick's own **case list** rather than on a brief's evidence list: **an enumeration of the states worth
+acting in is not an enumeration of the states that occur.**
+
+## ⛔ This lane's mergeable footprint is FOURTEEN FILES, not tick 162's one — a standing characterisation decays like any other number (tick 256)
+
+Tick 162 measured a Track 1 merge of `track/site` as delivering **one** file (14 lines of
+`GOAIEZ-TRACKER-CAPABILITIES.md`), the other five changed files being on the never-merge per-track
+list, and correctly warned against escalating "twelve commits unmerged" as twelve commits of stranded
+product. Re-measured at tick 256 against the merge-base `a4253e00`: **74 commits, 17 files,
++4,891 / −15**, of which the mergeable content — excluding `CLAUDE.md` and `.agents/state/**`, which
+reach `main` by cherry-pick under ruling 15 — is **fourteen files**, and the tracker is **not among
+them**:
+
+```
+X-157/Actions/EdgeDeployAction.php  +183      X-176/Actions/InternalLinkRenderAction.php  NEW 124
+X-176/Actions/LlmsTxtRenderAction.php NEW 33  X-176/Actions/SchemaRenderAction.php        +181
+app/tests/Journeys/JourneyHarness.php  +33    tests/X-157/EdgeDeployBoundsTest.php        NEW  99
+tests/X-157/X157Test.php  +2                  tests/X-176/BreadcrumbSchemaTest.php        NEW 200
+tests/X-176/EventSchemaTest.php  NEW  85      tests/X-176/InternalLinkGraphTest.php       NEW 560
+tests/X-176/LlmsTxtTest.php      NEW 135      tests/X-176/LocalSchemaTest.php             NEW 199
+tests/X-176/ProductSchemaTest.php NEW 193     tests/X-176/SchemaVisibilityTest.php        NEW 550
+```
+
+⚠️ Measure it against the **merge-base**, never `HEAD origin/main` — the two-sided form reports this
+lane's own unmerged work as main's deletions, which is tick 147's staleness trap and reads
+alarmingly (2,595 "deletions" that nobody deleted).
+
+**Twelfth firing of the family** (196 retiring tick 82's diagnosis, 207, 210, 211, 241, 244, 249,
+251, 254 …): **re-measure a standing claim before building on it.** This one is the ledger's own
+summary of what the lane is *for*, so nothing would ever have prompted a re-read — the bounds moved
+underneath a sentence that had no reason to look stale.
+
+## ⛔ "Take `MERGE_HEAD`'s side whole" is the CORRECT harness resolution in one direction and the SILENTLY WRONG one in the other (tick 256)
+
+`coder-bin/git:70-75` permits a supervisor-gated merge commit to carry `JourneyHarness.php` **only**
+when the staged blob is byte-identical to `MERGE_HEAD`'s — *take the incoming side whole*, never an
+edit. It is the guard's only harness exemption and it is direction-blind.
+
+- **Track 1 merges site** → site is `MERGE_HEAD` → taking it whole is right.
+- **This lane merges main** → main is `MERGE_HEAD` → taking it whole **reverts J11 to constants.**
+
+Measured this tick: `git diff --stat a4253e00 origin/main -- app/tests/Journeys` prints **nothing**,
+so main's `publishSite()` is still the merge-base's — the version that read
+`PageVersion.content_blocks`. This lane's +33 is SITE-112's conversion to a real
+`GET /sites/{business}/{deploy_hash}` with the 200/404 SSL pair, i.e. owner ruling 16. Tick 229
+measured what that replaced: `SiteEngine::publish():30-42` appends all six required block types
+unconditionally, so **six of J11's seven elements could not fail** before the conversion. Reverting
+it does not redden J11 — it turns it **green on constants**, the exact defect this lane refused
+another lane's `'ssl_installed' => true` for at tick 198.
+
+⛔ **Three properties make it worse than an ordinary merge risk:**
+
+1. **It has already happened once.** Tick 236: Track 1's merge of `track/site` dropped this file's
+   three-line provisioning hunk and `a9e6a25f` restored it within the hour, by luck. The hunk is now
+   33 lines inside ~4,900.
+2. **No census surface can report it.** Half 2 watches `app/tests/Journeys`, but its bounds are
+   `^origin/main`, so a line deleted **by main's own merge commit** never prints. The only witness
+   last time was a sibling's commit *subject*.
+3. **The mechanically-sanctioned resolution is the wrong one**, so following the guard exactly is
+   what loses it — nothing in the guard, the diff, any gate or any count distinguishes the two
+   directions.
+
+✅ The check, and it belongs **in** the merge rather than after it (tick 236, read for what is
+MISSING, never for what conflicts):
+
+```
+git diff --stat origin/main HEAD -- app/tests/Journeys app/app/Modules/X-157 app/app/Modules/X-176 \
+    app/tests/Modules/X-157 app/tests/Modules/X-176
+```
+
+⚠️ Note the bound: `origin/main` on the **left** is legitimate only once main *contains* our merge
+(tick 217's accepting direction), or as here where the question is "what does our side have that the
+merged tree must keep". It is not tick 147's trap, and which bound is right is decided by what the
+branch has merged — never by a rule about which ref goes on the left.
+
+## ✅ A NULL closing tip re-read with LIVE WRITERS is lag, not calm (tick 256)
+
+Third null (224, 225, 256) against six firings, and the first worth a rule. The reflog's newest entry
+across all eight refs was **my own push closing the previous tick**, and `pgrep agy` printed **five**
+live sibling coders (`grs-antig`, `-stages`, `-pricebook`, `-reviews`, `-sixty`), every `cwd`
+readable, none here. Against the arrival lag this ledger has measured — 12 m (ui), 14 m (reviews),
+15 m (stages), 16 m (money), **42 m** (pricebook, tick 241) — five live writers and zero pushes in
+one tick is **work in progress**, and the next tick should expect a burst rather than infer a quiet
+board from this one. Recording the null is what keeps the check from reading as always-fires; reading
+it as calm is the error.
+
+## ✅ Doctor's cache and the census cache, both exercised on the same tick with the input PROVED (tick 256)
+
+Two independent cache arguments fired and both were made by measuring the input rather than by citing
+recency, which is the whole discipline (tick 217, tick 177):
+
+- **Doctor.** `git show --stat <tip>` is `CLAUDE.md` alone and `git status --short` is byte-identical
+  to the previous tick's, so the tree doctor reads is provably unchanged and the previous tick's
+  seven stage counts stand. ⛔ It licenses a HOLD and **never a brief** (tick 210).
+- **The census.** The HIT is measured from the **reflog** — no ref has gained an entry since the last
+  block — not from comparing two remembered tip tables (tick 193's third rule, tick 220). Half 1 was
+  re-run in full anyway and came back byte-identical at 5.
+
+⚠️ And §3 printed `capability 372` in the same run against a live 455: `BUILD-STATE.json`'s one slot
+shared by seven trees (ticks 196, 219), **83 behind and never a brief target.**
+
+## ✅ §1's cross-witness reconciled by ARITHMETIC, not by impression (tick 256)
+
+§1 read `behind 114, ahead 74`; `git rev-list --count HEAD..origin/main` is **114** and
+`git rev-list --count origin/main..HEAD` is **74**. Tick 218 made §1 the fresher of the two readings
+of the shared ref and tick 225 established that agreement means *the numbers reconcile* — "both moved,
+so they agree" is not the check. Do the subtraction; it is free and already on screen.
