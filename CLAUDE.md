@@ -1854,3 +1854,63 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     nothing, and the tell is exactly that, visible in the report without re-running anything.
     ⚠️ MONEY-84's assertions were all apostrophe-free and went green, so the discipline this ruling
     writes down was already the lane's practice; MONEY-85 departed from it only because a brief said to.
+83. **`--no-write-fetch-head` leaves `FETCH_HEAD` STALE, so a tick that reads it is reading an old
+    fetch — the remote tip is `origin/<branch>` (measured 19:4x).** Ruling 22 made
+    `git fetch --no-write-fetch-head` the lane's standing form, because the root-owned `FETCH_HEAD`
+    trap disables fetching in a checkout outright. The flag does exactly what it says: this tick ran
+    `git fetch --no-write-fetch-head origin track/money` and then `git rev-parse FETCH_HEAD`, and got
+    **`05f9b768`** — a `chore(supervisor)` on **`main`'s** lineage, left behind by some earlier fetch
+    and **not an ancestor of this branch at all**. The tell was `git log --oneline 05f9b768..HEAD`
+    printing the branch's entire history instead of the two expected commits. `git rev-parse
+    origin/track/money` returned **`f2a94e2d`**, which is what the addendum had recorded. **So: the
+    remote-tracking ref is the measurement, and `FETCH_HEAD` is never read in this lane.** The fetch
+    still updates `refs/remotes/origin/*`; only the `FETCH_HEAD` *file* is suppressed. ⚠️ The failure
+    mode is the dangerous direction: a stale `FETCH_HEAD` naming a sha this branch has never contained
+    makes an already-pushed range look unpushed, or an unpushed one look landed, and ruling 26 puts
+    the push decision on exactly that comparison. ⚠️ The same reading applies to any `--no-write-fetch-head`
+    fetch in a merge brief (rulings 22, 25, 52): measure against `refs/track1/main` or `origin/main`,
+    never `FETCH_HEAD`.
+84. **Two of the four carried backlog items are measured CLEAN and struck, and one is confirmed with
+    its blast radius exact (measured 19:4x; ruling 64's discipline applied to this lane's own
+    ledger).** Ruling 64 requires every inherited follow-up to be re-measured against the tree before
+    it becomes a brief item. The 19:2x addendum carried four; two do not survive contact.
+    **STRUCK — item 4, the lane-wide ruling-82 sweep.** `grep -rn "assertSee(\"[^\"]*'"` over the
+    lane's eight module test directories returns **21** apostrophe-carrying needles, and every one of
+    them targets a PHP-side `$this->error` string (20 × `"… isn't in this account …"` across
+    C-Billing, X-117, X-173, X-198, X-199, X-201, X-211, plus
+    `CollectionsPackagePreviewScreenTest:118`'s `"sent to O'Brien & Sons"`, a partner name off a
+    model row) — all rendered through `{{ }}`, which is ruling 82's *safe* case. `grep -rn "&#039;"`
+    over all eight modules' source returns **nothing**, so no assertion in the lane is green for the
+    `&#039;`-hardcoded-in-prose reason that made MONEY-85's replaced line pass. There is no wave here.
+    **STRUCK — item 3, X-201's `has_signature`.** It is not a *does it even vary?* candidate:
+    `DisputeQueue.php:98` derives it per row from that dispute's own evidence
+    (`$items->contains('evidence_type','signature')`), `DisputeDefenseEngine.php:75` derives it the
+    same way for the compile result, and **both branches are asserted** —
+    `DisputeQueueScreenTest:47` `assertSee('no signature yet')` on a 0-evidence dispute and
+    `X201Test:102` `assertTrue($compileRes['has_signature'])` on a bundle carrying a captured
+    signature. Recorded as measured-clean, not carried.
+    **CONFIRMED — item 1, `AccountingConnection::is_active` is always true; briefed as MONEY-87.**
+    `X-173/Actions/AccountingConnectAction.php:22` writes the literal `true` regardless of whether
+    `$accessToken` was passed, so a connection carrying **no credential** renders a green `active`
+    pill (`connection-mapping.blade.php:28`) and passes `AccountingSyncEngine.php:88`'s `mapAccount`
+    guard — ruling 43's fiction, on the one field whose entire job is to say whether the ledger is
+    reachable, in a module whose `connect()` door **cannot succeed** (ruling 73a). All **eight**
+    `connect()` fixture call sites pass three arguments, so today every connection in the suite is
+    `active` with a NULL `access_token` and the guard at `:88` has never once refused for the reason
+    it exists. **RULED: `'is_active' => $accessToken !== null`**, with a token provisioned at the
+    three fixtures whose connections are then mapped (`X173Test:46`,
+    `ConnectionMappingScreenTest:25` and `:32`) — ruling 74's "provisioning real state so a real code
+    path runs is a fix", never an assertion moved. **Blast radius, measured rather than assumed:**
+    `is_active` has exactly one reader in production (`:88`) and one other writer anywhere
+    (`ConnectionMappingScreenTest:70`'s explicit `update(['is_active' => false])`), and of the six
+    `mapAccount` paths in the module's tests, `:70`→`:73` is the one that *means* to be inactive and
+    **stays untouched** — it is the existing control for the refusal and the proof that the guard
+    still fires. ⛔ **The migration's `->default(true)`** (`2026_08_30_000092:21`) is the same fiction
+    one level down and is **recorded, not migrated**: ruling 41 part 3 forbids editing that file, and
+    after this wave the only writer passes the column explicitly, so **no code in the lane relies on
+    the default at all** — a new migration to change a default nothing reads is churn, and the honest
+    artifact is a `state.py note`. ⚠️ The proof is a **new** test method, not an edit to the two
+    existing ones: neither asserts the pill today, so neither can see the bug (ruling 68's lesson —
+    a test that cannot see the defect is not the test that proves the fix). ⚠️ `assertSee('active')`
+    is refused as the instrument — `inactive` contains it, so it passes on both branches, which is
+    ruling 61's bare-digit defect in a word.
