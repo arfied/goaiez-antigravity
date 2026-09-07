@@ -3255,6 +3255,85 @@ Watch for: <the trap that applies, by name>
   and a named limiter. ⛔ **`f9be69f9` is gated by `scratch/w122-gate.log` on a verifiably clean tree but
   NOT by this column** — a dirty `app/**` path makes my own gate a gate of a different tree (tick 199), so
   the push waits one wave. Live list: **6** rows at tick 230, membership unchanged since tick 227.
+- ⚠️⚠️ **§1 and §7 of ONE gate log can describe TWO trees, and the discriminator is a `Class "…" not
+  found` whose namespace belongs to the REFERENCING file rather than to the class.** `scratch/w123-mut-0.log`
+  §6 reads `pint passed · phpstan passed · errors 0` and, sixty lines below, §7 reads `tests 1938 · passed
+  10 · errors 1928`, every one of them `Class "App\Providers\ChatRateLimits" not found`. Both are real
+  output. §1 recorded HEAD `98862799` and `0 uncommitted` at ~07:23 when the run started; §7's pest then
+  queued on `pest.lock` for twenty minutes and ran **after** `50abba70` was mid-write, catching a transient
+  in which `AppServiceProvider` had `ChatRateLimits::register();` and not yet
+  `use App\Support\ChatRateLimits;` — so PHP resolved the short name against the file's own namespace. The
+  committed provider has both lines and phpstan reports 0. **A committed unqualified reference either
+  carries its `use` or fails `php -l`/phpstan, so that error shape is a mid-edit artifact by
+  construction** — it can never be a property of a sha. This is tick 199 (*a gate over a moving tree gates
+  nothing*) at its sharpest: the tree moved between two sections of a single file, and the tick-218
+  `pest.lock` window is the mechanism, with the **coder** as the writer rather than a background script.
+  ⭐ Free corroboration in the same wave: a named limiter that is not registered fails its route outright
+  with `Rate limiter [chat-start] is not defined`, and all three door tests passed under my own run.
+- ⚠️⚠️ **RULED: no mutation script on this lane builds program text out of shell variables — the rule is
+  not "no `sed` on backslashes", which is one hole in a wall.** Wave 122 lost its set to `sed` eating
+  `\App\Models\Business` on both the pattern and the replacement side (`sed -i` exits **0** on no match, so
+  `set -euo pipefail` never fired and mutation 3 compounded onto an unreverted mutation 2). Wave 123's
+  rewrite used `php -r "…str_replace('$search', '$replace', …)"` and died on the **first** mutation, because
+  every one of its strings contains a `'` (`['session_token' => …]`, `'Door Tenant'`) and the first one
+  closes the PHP string. Two consecutive sets lost to the shell's quoting rules, both silent in the tool's
+  own exit code. **Apply a mutation with `git apply` of a patch file, or with a PHP/Python script file
+  written using a quoted heredoc (`<<'EOF'`).** ⭐ The proof was `error_log` again (tick 199): its last line
+  was `PHP Parse error: syntax error, unexpected identifier "session_token" … in Command line code on line
+  1` at `12:44:13 UTC` = **07:44:13 local, the same second the baseline log closed** — which is also why the
+  tree was clean and why no `w123-mut-1.log` exists. **`head`/`tail` `error_log` on any wave that touched
+  PHP**; it is free evidence no gate reads, and it has now carried two failures hours before any other
+  artifact would have.
+- ⚠️ **A field is declinable only if the blocker actually reaches it — `TESTS:` is a `git show`, and no
+  `pest.lock` reaches a `git show`.** Wave 123 declined `TESTS:` alongside `RAW:` and `MUTATION:`, all four
+  under one lock. Its own prescribed command is
+  `git show <sha>~1:<file> | grep -c "public function test"`; measured here it is **3 before, 3 after**.
+  This is the wave-93 `radius` defect inverted — there a number was filled from the wrong run, here a
+  number was withheld though the right command was always available. **Decline the fields the blocker
+  touches and measure the rest**, and say in a brief which is which when a blocker is foreseeable.
+- ⚠️ **An assertion can be vacuous because of `FORCE ROW LEVEL SECURITY`, and the wave that correctly
+  diagnoses the comment can still stop one step short of the assertion.** Wave 123 was right that
+  `ChatSession::withoutGlobalScopes()->count()` bypasses nothing (`ChatSession` extends the bare `Model`
+  with no global scope, so the two expressions are identical in effect — **not** a weakened assertion) and
+  right to rewrite the false comment. But `2026_08_30_000037_create_x102_chat_tables.php:47` is
+  `ALTER TABLE … FORCE ROW LEVEL SECURITY` as well as `:51`'s policy, so RLS binds the table owner too, and
+  with `Tenancy::forgetAll()` the predicate is `business_id = NULL`: `ChatDoorTest.php:49`'s
+  `assertEquals(0, ChatSession::count())` is `0` for **every possible state of the door**, including one
+  that wrote a row for the wrong tenant. The wave's own answer reached *"it would have to run under a role
+  that bypasses RLS"* and did not take the step to *"therefore it cannot fail."* ⭐ **The cheap brief for
+  this shape is a mutation, never a sentence**: the bypass that assertion should catch is exactly wave
+  122's stranded `abort(404)` → `Business::first()`, so it goes into the set that is owed and the coder
+  finds the vacuity itself. **Ask what an assertion is scoped by at the moment it runs — a `FORCE` on the
+  table is what makes an owner-role count unfalsifiable.**
+- ⚠️ **The artifact question's EIGHTH escape is an artifact that AGREES with the claim, cited as
+  disagreement because the wave edited it.** Wave 123 quoted a real sentence from a real numbered answer
+  (*"the code does NOT do this; `withoutGlobalScopes()` only drops application-level Laravel scopes"*) and
+  named `ChatDoorTest.php` — the file it had just rewritten to make that claim true. A file that
+  **implements** a claim does not disagree with it, and the answer measured nothing. A real one sat one
+  field away: answer 2's *"the script is hung … waiting for `pest.lock`"* against
+  `scratch/w123-mut-0.log`, written 07:44:13 with a **completed** §7. Series: `None` (112) → a previous
+  wave's artifact (116) → an invented sentence (118) → a real answer (119) → a universal ground (120) → a
+  licensed non-answer (121) → an artifact silent on the subject (122) → **an artifact that agrees** (123).
+  **The clause added for wave 124: it may not be a file you wrote the claim into.** Seven of eight wordings
+  have failed and each fix has closed exactly one escape, which is the right direction; do not abandon the
+  question for its failure rate.
+- ⚠️ **`REPORT.md`'s mtime sat in the MIDDLE of the run for the fourth time, and a stated cause can be true
+  when written and false of the wave.** Wave 123's decline blamed `pest.lock`; by 07:44:13 the lock had
+  released, the baseline had completed and the script had died of its own parse error. Not a fabrication
+  and not gradeable against the coder — `ls -lat scratch/` against `REPORT.md`'s own mtime is the tell
+  (tick 205), and a `scratch/` artifact newer than the report means the report is not the wave's last word.
+  ⭐ Keep crediting the decline itself: no `SITE:`, no invented `assertions:`, no derived figure, second
+  consecutive wave — the tick-213 form holding.
+- **Backlog at tick 232 — wave 124 is the mutation set, the `:49` disposition, and two fields; no new
+  production surface.** RULED. `50abba70` is **pushed**, carrying the whole five-commit range
+  (`e8e1396f · cc675b5b · f9be69f9 · 98862799`) that had been held three ticks: my own clean-tree gate is
+  green (pint passed, phpstan 0, stamp `20260829-0647` = `runtime_build`) and my own suite is
+  `1938 · 1933 · failed 1 · errors 4 · assertions 8376 · duration_ms 174464`, the standing five by
+  **identity** and `assertions` exactly wave 122's green. The door, the limiter and the route paragraph are
+  built and verified and are **not** re-briefed. Live list: `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`
+  — **6** rows at tick 232, membership unchanged since tick 227 (`X-102 G16-21` · `C-Agent G5-31 · G5-32 ·
+  G5-43` · `C-Mail G11-09` · X-66's wire, a `TRACK 1 ACTION`); stub pile across the thirteen **10**.
+  Re-run both greps every tick; never inherit them.
 
 ## Style
 
