@@ -4253,3 +4253,333 @@ one command — read the `A` lines, not just the file list.
   asked for. The substantive protection is real and lives inside `SslDerivedTest`'s both-directions
   body — but **a regression check labelled a negative control is a claim about a stronger property
   than it measures**, and a later tick reading the report's heading would inherit the overclaim.
+
+## ✅ THE LANE'S GOAL IS MET — J11 asserts all seven on the served response, and the residual is stated not buried (tick 230)
+
+SITE-112 replaced `publishSite()`'s `content_blocks` reads with a real
+`GET /sites/{business}/{deploy_hash}`, per owner ruling 16. §7: `1924 · 1919 · FAILED 1 · errors 4`,
+byte-identical to tick 229, `a_published_site_carries_all_seven` **absent from the failure list**, and
+the diff adds and deletes zero test methods so the total could not move (tick 226's arithmetic).
+
+**The derivation is real, measured at source rather than from the report.** `EdgeDeployAction:106-181`
+gates four of the six markers on `in_array('<type>', $blockTypes, true)` and the other two on
+`$pageId !== null && $businessName !== null && $commitId !== null` plus `isset($schemaResult['json_ld'])`,
+with `SeoRenderAction`/`SchemaRenderAction` as live collaborators. The route
+(`ModuleServiceProvider:44-53`) additionally requires the `Deployment` row, `status === 'deployed'`, a
+non-null `edgeZone`, `has_valid_ssl`, and `Storage::disk('local')->get(…)` with `abort_if($html ===
+null, 404)`. Falsifiability of the served output is proven by this lane's own **ten**
+`assertStringNotContainsString` assertions on those exact markers (`X157Test.php:219-221 · 259 ·
+297-300 · 1874`) — something `content_blocks` could never produce.
+
+⚠️ **The residual, and it is not a victory to declare away.** `SiteEngine::publish():30-42` still
+appends all six required block types unconditionally, so **inside J11's fixture the INPUTS to those
+conditionals are constant and J11 still cannot go red because a block type is missing.** What changed
+is the number of seams between the writer and the reader: **zero before, four modules and a filesystem
+now.** J11 used to prove that `publish()` appends what `publish()` appends; it now proves the whole
+publish → listener → deploy → render → store → serve chain delivers all seven, and a break anywhere
+in it reddens the journey.
+
+⛔ **RULED: no wave against the residual.** Appending the six *is* G9-04's site law, so making J11's
+inputs falsifiable would mean deleting the law J11 exists to assert; the negative clause ("a site
+omitting a block type serves without its marker") is proven in `X157Test`, where it belongs.
+
+**The generalisation worth keeping.** Tick 229 found the fake-green and named the fix; tick 230 shipped
+it and the honest description of what shipped is *"the assertion grew four seams"*, not *"the
+fake-green is gone"*. A conversion that widens an assertion's dependency chain without making its
+inputs falsifiable is a real improvement and a partial one — **say which, or the next tick inherits the
+stronger claim.** Same discipline as tick 229's own "a regression check labelled a negative control
+claims a stronger property than it measures."
+
+## ⛔ Rule 09 applied to a FILING: a `why` that names a PRESENT module is a build item in disguise (tick 230)
+
+Tick 227 caught SITE-109 filing `G8-14`/`G8-15` with `why` strings naming X-163/X-119/X-108 as missing
+when all three are fully built, and ruled it my own brief's defect (a branch scoped to one module
+cannot decide a capability that names two). SITE-110 corrected both with notes and re-filed only
+**G8-14** properly. G8-15's live record is therefore a false filing plus a correction note and no
+corrected filing — and re-measuring it this tick shows it should never have been filed at all:
+
+```
+app/app/Modules/X-108/Models/   Appointment.php AvailabilityRule.php Resource.php SlotLock.php Waitlist.php
+SchemaRenderAction::handle(… ?string $entityType, ?array $productOffers, ?array $videos)   <- no events parameter
+tracker :458  | G8-15 | Event Auto-Sync | ENH | X-176 | SPECCED | `Event` schema from X-108's calendar |
+```
+
+X-108 is built. `SchemaRenderAction` already carries `?array $videos = null`, populated by
+`EdgeDeployAction:174-177` — **a working precedent for exactly this shape, one collaborator over** —
+and both writing modules are this lane's (X-176 ruling 17, X-157 ruling 5). So the gap is a **seam
+nobody has written**, which rule 09 calls an unmade decision, never a missing dependency.
+
+⛔ **The test to run before accepting any `UNRESOLVED`, this lane's own included: `ls` the module the
+`why` names.** A filing is a claim about the *referent*, and every query that measures only the reader
+answers a different question. **RULED: G8-15 is BUILT, not filed** (SITE-113), with the boundary
+question made the wave's own measurement rather than my prediction — `EdgeDeployAction` currently
+imports only X-103, X-155 and X-176, all ours, so this is the lane's first cross-lane reader and
+`boundary`/`contract` may refuse it. A rise in any stage but `capability` is the stop: revert the
+reader, file **by stage name**, never widen a check.
+
+⚠️ This is the third firing of the family (196 retiring tick 82's diagnosis, 207 retracting the X-137
+divergence, 210 finding the anchor entries already filed twice): **re-measure a standing record before
+building on it — or, here, before leaving it alone.** A wrong filing is quieter than a wrong build and
+outlives it, because `state.py` has no withdraw and nothing ever re-reads a closed row.
+
+## ⚠️ A report can contradict the SOURCE IT DESCRIBES, not merely invent a cause (tick 230)
+
+Tick 227 recorded *a report can invent a mechanism for an absence it observed correctly*. Second
+firing, one step worse. SITE-112 §4: *"the real file under `storage/app/sites/` is not written during
+the journey test … X157 handles it successfully without needing local storage to be mocked or faked."*
+
+The route refuses that reading in two lines — `Storage::disk('local')->get("sites/{$deployHash}.html")`
+then `abort_if($html === null, 404)`. **If the artifact were absent the GET would 404 and `ssl` would
+be false**, so J11 could not be green. The observation (nothing under that path afterwards) is almost
+certainly right; the mechanism is invented, and a faked or temp disk torn down at teardown explains
+both halves and was never measured.
+
+✅ Checked rather than assumed, because it is the shape one would fear here: it cannot be a
+stale-artifact fake-green either — `$deployHash = 'deploy_'.Str::random(16)` is minted per deploy, so
+no previous run's file is reachable by the hash this run serves.
+
+⛔ **Where tick 227's version said "do not explain an absence you did not measure", this one adds: an
+invented mechanism can contradict code the reviewer can read in one command.** The brief now asks for
+what was run and what was observed, and says a cause is a measurement like any other.
+
+## ⚠️ The `pgrep agy` set turned over WITHIN one tick — between the review and the dispatch (tick 230)
+
+Tick 196 ruled the one-writer check runs at the dispatch, not at the review, on a set that went 0 → 2.
+Tick 230 is the converse and finer: the review-time set was six pids (`411817` sixty, `1007997`
+pricebook, `1522585` money, `1585876` ui, `1692648` grs-antig, `1708996` reviews) and the dispatch-time
+set minutes later was **four** — ui and Track 1 had exited. Six readable cwds, all siblings, both
+times. The rule is unchanged and now has a firing in each direction: **the set is per-tick state at
+both ends of the tick, and neither end predicts the other.**
+
+## ⛔ This lane's OWN `UNRESOLVED` filings are a BACKLOG, not a boundary — audit the population, not the instance (tick 231)
+
+Tick 230 caught one filing (`G8-15`) whose `why` named a module that was fully built, and ruled the
+test: **`ls` the thing the `why` names before accepting any `UNRESOLVED`.** SITE-113 then built
+G8-15 on a real seam — `Appointment` rows → `EdgeDeployAction` → `SchemaRenderAction` → the stored
+artifact, both directions, `capability` 463 → 462 with no other stage rising.
+
+Tick 231 applied the same test to the **whole population** of ten remaining X-176 capability
+filings, and it is not a one-off. `app/app/Models/Business.php:124` casts `'address' => 'array'` —
+so `G8-22`'s filing, *"location or coordinates data for the business to build localized schema"*,
+names data sitting on the core model this lane already reads. A second build item wearing a
+dependency filing, found by one grep.
+
+⛔ **The generalisation, and it is the operative one for a lane that reads `FINISHED`.**
+`state.py next` returned `{"action": "FINISHED"}` at tick 212 and the lane has read its own red as
+*"filed, therefore closed"* ever since. A filing is a **claim about the world**, and it decays
+exactly like a doctor count, a census bound or a merge does — but nothing ever re-reads a closed
+row, so a wrong `why` is quieter than a wrong build and outlives it. **A lane is only finished when
+its filings have been re-measured, not when they have been written.**
+
+The live readings, so the next tick does not re-derive them:
+
+| id | filing names | verdict |
+| :-- | :-- | :-- |
+| G8-03 · G8-23 · G8-33 | ping credential · IndexNow/Google Indexing credential · NLP entity service | ✅ correctly filed — genuinely external (tick 198 measured IndexNow at source) |
+| G8-22 | "location or coordinates data" | ⛔ **PRESENT** — `Business.php:124`. SITE-114 builds it |
+| G3-34 | "a pipeline to produce an LLMs.txt file" | ⚠️ needs nothing external; likely a seam |
+| G8-02 · G8-04 · G8-25 · G8-30 | page hierarchy / content graph / link-value data | ⚠️ `X-103/Models/Page.php` casts only `is_tenant_edited`, `is_published` — read the **migration** before answering |
+| G8-16 | "NLP to extract Q&A" | ⚠️ depends whether `content_blocks` carries an `faq` type |
+
+⛔ **The audit files NOTHING.** `state.py` has no withdraw, so a second row about the same fact
+compounds rather than corrects; the remedy for a filing that turns out to be a build item is a
+`note` plus the build, exactly as SITE-113 did (tick 26). And ⛔ never brief the correction as six
+copies of one sentence — the per-id question is *which named thing exists*, answered with a path
+and a line, with an explicit instruction to confirm the genuinely-absent ones as correct. R240's
+`refuses: n/a` warning is this same law on the other surface.
+
+⚠️ Two notes on SITE-113's build worth carrying, neither a blocker: the deploy path's
+`Appointment::where(...)->get()` is **unbounded**, so a busy business embeds every future
+appointment in the page head; and the positive test asserts `"@type":"Event"` and the appointment's
+name as two *independent* `assertStringContainsString`s, which proves both strings are present, not
+that the value sits inside the node. Assert containment when the file is next open.
+
+## ⛔ A supervisor's caveat about what it COULD NOT measure is a claim, and it decays within the tick (tick 231)
+
+Tick 215 ruled *an evidence block a wave pastes is a CLAIM — re-run the census the verdict turns
+on*. Tick 231 is that law turned on **this seat's own hedging**. The verdict block was written
+while `bin/supervise.sh --tests` sat parked on `… another suite holds /home/goaiez/tmp/pest.lock`,
+so it recorded, honestly, *"my independent §7 did not run — §7's numbers here are the coder's."*
+The lock released minutes later, the suite completed, and it reproduced the wave's §7 byte for
+byte: `1926 · 1921 · FAILED 1 · errors 4`, same failure and error sets,
+`a_published_site_carries_all_seven` absent. **J11 is green on an independent run.**
+
+The hedge was true when written and false when read, and it understated the verdict's evidence.
+Same shape as tick 196's `Write`-refusal diagnosis (retracted at 197 once the shell was reset) and
+tick 192's asserted-but-never-fired fallback: **a negative recorded about the environment is a
+measurement with a timestamp, not a property.** Before letting a "could not measure" stand in a
+block, check whether it is still true at the moment the block is appended — it costs one `tail`.
+
+✅ And the distinction the lock forces is worth keeping: a lock **wait** that then completes is the
+box-wide serialisation working (tick 216's adoption); a lock **timeout** prints `pest NOT RUN` and
+is a non-measurement. Neither is a red suite, and only the second is a reason to withhold a number.
+
+## ⛔ The ungated §7 finally cost something — and a wave can be REFUSED BY ITS OWN pest (tick 234)
+
+Tick 232 wrote the law — *a wave whose §7 reads `pest NOT RUN` has not been gated on this lane's
+goal, whatever its other sections say* — on a wave that happened to be clean. Tick 234 is its
+second firing and the one with a body: SITE-115's §7 read
+
+```
+✗ REFUSED: 1 other pest process(es) on goaiez_antig_site_test
+   (checkouts pinning it:/home/goaiez/agents/grs-antig-site)
+```
+
+and that checkout is **this one**. The wave was refused by **its own leftover pest run**, not by a
+sibling — the shared-DB clash guard (`supervise.sh:127-149`) does not care whose process it is, and
+the parenthesis names the offender exactly. It then reported the absence honestly, and shipped a
+**red test in this lane's own module** that neither seat saw until this seat's own §7 ran:
+`1928 · FAILED 1` → `1933 · FAILED 2`, the new failure
+`test_a_deploy_missing_its_seo_half_is_not_announced` in `X157Test.php:1464`.
+
+⚠️ Every other section the wave quoted was green or explained, and its doctor arithmetic was
+correct and independently reproduced here (`capability` 461 → 460, no stage risen). **A wave can be
+right about everything it measured and wrong about the thing it could not.** So the brief's
+instruction is now two-part and both halves are load-bearing: *let your own pest finish first*, and
+*if §7 still reads REFUSED, say your wave has not been gated — do not claim it has.*
+
+## ⛔ A NEW ARTIFACT on an existing path breaks EXACT-SET assertions, and the repair must widen the SET, never loosen the PREDICATE (tick 234)
+
+The defect's mechanics are worth more than the instance. `X157Test.php:1529-1533` asserts
+
+```php
+$this->assertSame(["sites/{$good['deploy_hash']}.html"], Storage::disk('local')->files('sites'), …)
+```
+
+whose claim is *the refused deploy wrote no artifact* — a real refusal on J11's serving path. The
+`llms.txt` enrichment added a second legitimate file to the same directory, so the listing is two
+and the assertion demands one. **The assertion is honest and is not the defect**; it is collateral.
+
+⛔ The tempting repairs are all weakenings that would pass every gate: a count, `assertContains`, a
+filtered list that drops `.llms.txt`, a sort. Each keeps the test green and **deletes the claim** —
+after any of them a second deploy's artifact appears and nothing notices. Widening the expected set
+to `[…html, …llms.txt]` is the *same* strength. **RULED, and it generalises: when new legitimate
+output breaks an exhaustive assertion, extend the expectation to the new truth; never relax the
+predicate that made it exhaustive.** Same family as the false-credit catalogue, one surface over —
+there a test claims more than it proves, here a repair would quietly make it claim less.
+
+⚠️ And note where it was *not* visible: `git diff` shows an addition to a production action and five
+new green tests. Nothing in the diff touches `X157Test.php`. **An exhaustive assertion is coupled to
+every writer of the surface it enumerates, and the coupling appears in no diff** — grep for
+`files(`, `->all()`, `assertSame([` over the directory or collection whenever a wave adds an
+artifact to a shared path.
+
+## ⛔ A tick that writes a BRIEF without appending REVIEWS leaves a mailbox that lies (tick 234)
+
+Tick 233 ran a gate, read the REPORT, wrote `BRIEF.md` and `KICKOFF.md` — and appended **no REVIEWS
+block and dispatched nothing**. The next tick opens on a mailbox where `BRIEF.md` (18:55) is newer
+than both `REPORT.md` (18:43) and the last REVIEWS block (18:38), which reads like case (e)'s
+"BRIEF is newer than that block" and is not: no verdict was ever recorded, so the wave was
+**ungated**, and case (b) is what actually applies.
+
+Two rules out of it:
+
+- **The REVIEWS block is the tick's product; the brief is its by-product.** Append the block
+  *before* writing the brief, so an interrupted tick leaves a gated wave with no brief (recoverable)
+  rather than an ungated wave with a brief (a dispatch that would have run on an unreviewed tip).
+- ⛔ **A brief found in the mailbox with no REVIEWS block behind it is a DRAFT, not a decision.**
+  Tick 233's item 1 (the `llms.txt` throw) was re-measured at source here and confirmed; its item 3
+  (build G8-04) was **pulled**, because a run that fixes and builds makes any new red unattributable
+  between the two. Inheriting the draft wholesale would have dispatched a build wave on top of a red
+  suite it did not know about. Same law as tick 216's *an attribution inherited from upstream is a
+  citation, not a measurement*, turned on this seat's own previous tick.
+
+## ⛔ A POSITIONAL inference from a list whose cardinalities do not match is not a reading (tick 235)
+
+SITE-116's audit read **G8-25** as *"the entity graph of Schema.org markup (`@id` and
+`mainEntityOfPage` linking)"*. `app/GOAIEZ-TRACKER-CAPABILITIES.md:468` names it
+**"Internal Linking Graph"**. The mechanism is the finding: the plan row at
+`GOAIEZ-MASTER-PLAN.md:32271` heads **seven** ids — `G8-14 · G8-16 · G8-22 · G8-25 · G8-33 ·
+G16-25 · G8-04` — with **six** names, *"schema: product · FAQ · local · entity · video ·
+breadcrumb"*. Six cannot map onto seven, so position licenses nothing, and "G8-25 is the
+fourth name" is an inference the row does not support.
+
+⚠️ **The verdict survived and the subject did not** — BUILD, no vendor, in this lane's column
+were all still true, so nothing in the wave's own reasoning could catch it. A wave briefed off
+it would have built the wrong capability **with a green gate**, because a test crediting
+`G8-25` clears the violation whatever it asserts. ⛔ **Where a plan row heads several ids, the
+id→subject mapping comes from the TRACKER, never from the row's title list.** Count the ids
+against the names before reading either.
+
+The regrouping that falls out, and it is the operative half:
+
+| id | tracker name | seam |
+| :-- | :-- | :-- |
+| **G8-04** | Breadcrumb Generation | X-176 schema — `SchemaRenderAction` ← `EdgeDeployAction`, where G8-14/G8-15/G8-22 already live |
+| **G8-02** | Automated Internal Linking | one seam |
+| **G8-25** | Internal Linking **Graph** | with |
+| **G8-30** | PageRank Sculpting · *"nofollow on low-value internal links"* | each other |
+
+⛔ **And the assertion comes from the PLAN, never from the tracker's ⑤.** Three of those four
+tracker rows read *"named in the header"* — the false-credit class 2 shape (a credit over a
+body that asserts nothing) sitting in the **specification**. The real clauses are `:32271`
+*"every schema field is asserted present in the rendered DOM"* and `:32272` *"internal links
+only, and the graph is asserted acyclic and reachable"*. A wave that satisfies the tracker's ⑤
+literally writes a tautology and scores it as progress.
+
+✅ **Measured for the breadcrumb before briefing it** (tick 231's law — `ls` the thing the
+reason names): `pages` carries `id · business_id · slug · title · is_tenant_edited ·
+is_published · current_version_id · timestamps`
+(`X-103/Database/migrations/2026_08_30_000036_create_x103_site_tables.php:15-24`) and **no
+parent column**. So the hierarchy is derivable **from the slug**, which this lane already
+holds — a seam, not a dependency. ⛔ **Never add a `parent_id` column to make the crumb**: a
+column whose only writer exists to satisfy the thing that reads it is tick 146's
+`ssl_installed` exactly, and this lane refused another track's version of it twice.
+
+## ⛔ Before a brief names an EXISTING MECHANISM as a model to copy, read it (tick 235)
+
+The SITE-116 brief told the coder to record the non-fatal `llms.txt` failure using *"the
+mechanism already in this action for a non-fatal condition (the `$refusals[]` /
+`ttfb_exceeded_budget` shape at `:94-99`)"*. Read at source, `EdgeDeployAction:96-102` returns
+`['status' => 'rolled_back', … 'metric' => 'ttfb_exceeded_budget', …]` — a **rollback**, the
+opposite of a non-fatal record, and there is no `$refusals[]` structure in the action at all.
+Copying it would have aborted the deploy on a failed *optional* write, which is the exact
+defect the item existed to remove.
+
+✅ The coder read it, said so in `REPORT.md`, and took the brief's fallback (`Log::warning`).
+**The right outcome, reached by measuring rather than obeying** — and the brief's own escape
+hatch ("or a `Log::warning` if no such structure fits") is the only reason it had anywhere to
+go.
+
+⛔ Tick 223 ruled *measure a technique's PRECONDITION before copying another lane's*. This is
+that law turned on a mechanism **inside this lane's own file**, which is the case the rule did
+not cover, because proximity reads as familiarity. Third instance of this seat naming
+something it had not measured — tick 208's evidence request, tick 227's branch condition, now
+a named code shape. The family trait: all three were **specific**, and all three were wrong in
+a way the coder could not have inferred was optional. A vague brief fails loudly; a precisely
+wrong one is obeyed.
+
+## ⛔ A report without §7 has not shown the wave was gated on this lane's GOAL (tick 235)
+
+`REPORT.md` was 23 honest lines and quoted **neither §6 nor §7**, gave no doctor before/after
+and no `git show --stat HEAD` — four items the brief demanded unconditionally, one of them
+(§6/§7 in full) a standing rule this file wrote at tick 208 after an enumerated evidence
+request hid a red `pint`. The work passed on this seat's own gate, so it is a **reporting**
+defect, not a BLOCK.
+
+⛔ But it is the **second consecutive wave with no §7 in it** — SITE-115 because its run was
+refused by its own leftover pest (tick 234), SITE-116 because it simply was not pasted — and
+§7 is the only surface in the programme that reports J11 (tick 213). Tick 232's law, restated
+as a reporting rule: **a wave that does not quote §7 has not shown it was gated on the lane's
+goal, whatever else it shows.** Every brief now opens with the four evidence items as a
+numbered checklist and says the run is incomplete without them.
+
+⚠️ Corollary for the reviewer, and it is what saved this tick: **gate the wave yourself and
+read the report only as testimony.** Every number in tick 235's verdict came from this seat's
+own `supervise.sh --tests` and its own live `php artisan doctor`; had the block leaned on the
+report it would have had nothing to lean on.
+
+## ⚠️ A mock with no `->once()` proves the outcome, never that the path was TAKEN (tick 235)
+
+`test_failed_llms_txt_write_does_not_abort_deploy` drives a `Filesystem` double whose `put`
+returns `false` for `*.llms.txt`, and asserts the deploy still returns `'deployed'`. It is
+load-bearing for its clause — restore the `throw` and the uncaught `RuntimeException` reddens
+it — and it carries **no** `->once()` and nothing counting the call. If the `.llms.txt` branch
+ever stopped being reached (a changed guard, a null `$page`, a moved block) the test stays
+**green** while claiming to prove graceful degradation of a write that no longer happens.
+
+Correct today, because the fixture provisions page, version and `businessName`. The guarantee
+just lives **outside** the test that depends on it — same family as tick 189's
+conflict-vs-correctness split. ⛔ Whenever a test's whole point is that a *failure* was
+survived, the failing call needs an occurrence assertion; the outcome alone is satisfied by
+the failure never occurring.
