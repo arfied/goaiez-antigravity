@@ -6,10 +6,9 @@ namespace Tests\Modules\X176;
 
 use App\Modules\X103\Models\Page;
 use App\Modules\X103\Models\PageVersion;
+use App\Modules\X108\Models\Appointment;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
-use App\Modules\X108\Models\Appointment;
-use App\Models\Business;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Storage;
@@ -64,7 +63,7 @@ final class SchemaVisibilityTest extends TestCase
 
         preg_match('/<div id="events-x176">(.*?)<\/div>\n(?:<div|<script|<\/body)/s', $html, $blockMatches);
         $visibleEvents = [];
-        if (!empty($blockMatches)) {
+        if (! empty($blockMatches)) {
             preg_match_all('/<div class="event-item" data-name="([^"]+)">/', $blockMatches[1], $itemMatches);
             $visibleEvents = $itemMatches[1];
         }
@@ -84,7 +83,7 @@ final class SchemaVisibilityTest extends TestCase
                 'region' => 'TS',
                 'postal_code' => '12345',
                 'country' => 'US',
-            ]
+            ],
         ]);
         Tenancy::set((int) $biz->id);
 
@@ -137,7 +136,7 @@ final class SchemaVisibilityTest extends TestCase
                     'name' => 'My Test Video',
                     'contentUrl' => 'https://example.com/video.mp4',
                     'uploadDate' => '2026-01-01T00:00:00Z',
-                ]
+                ],
             ],
         ]);
 
@@ -164,7 +163,7 @@ final class SchemaVisibilityTest extends TestCase
 
         preg_match('/<div id="videos-x176">(.*?)<\/div>\n(?:<div|<script|<\/body)/s', $html, $blockMatches);
         $visibleVideos = [];
-        if (!empty($blockMatches)) {
+        if (! empty($blockMatches)) {
             preg_match_all('/<div class="video-item" data-name="([^"]+)"/', $blockMatches[1], $itemMatches);
             $visibleVideos = $itemMatches[1];
         }
