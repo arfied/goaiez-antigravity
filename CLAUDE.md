@@ -265,7 +265,8 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-46 | `Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column | closed, pushed `7f052348` |
 | UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` | closed, pushed `3c8e0ef1` — run 88 `BLOCK`, run 89 `PASS-WITH-NOTES` + a real finding, run 90 `PASS` |
 | UI-48a | the dead `$isSample` flag — nine sites in two modules — plus the `state.py decided` record UI-47 never got | closed, pushed `c9843271` |
-| **UI-48b** | **the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. ⛔ NOT a re-datafication — see the 20:5x ruling. `tag-version-per` stays `UNRESOLVED`** | **in flight — run 92** |
+| UI-48b | the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. `tag-version-per` stays `UNRESOLVED` | closed, pushed `104dc9b9` |
+| **UI-49** | **X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling** | **in flight — run 93** |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
@@ -277,6 +278,66 @@ declarations and their five unreachable `@elseif` arms are gone, both `OwnerNav`
 rewritten to state the outcome, and the UI-47 derivation is recorded at `JOURNAL 2026-09-06T20:39:00
 (R245)`. `OwnerNav::all()` **30**, `OwnerNavTest` untouched, doctor the unmoved `745`, floor met
 exactly. ⚠️ `PASS-WITH-NOTES`, on a dirty tree — see the repository-root scratch-file trap above.
+
+✅ **UI-48b closed and pushed 2026-09-06 21:3x** (`c9843271..104dc9b9`). Three banner deletions of one
+line each, `sampleStateRoutes()` **4 → 1**, `OwnerNav::all()` **30 → 33** with the three ruled labels
+verbatim. `OwnerNavTest`'s only diff is the three removed array entries — no assertion touched,
+`grep -c "^test("` still **4**, `ownerRouteExclusions()` still the 7 UI-47 left. Doctor the unmoved
+`745`. `x-110.tag-version-per` is the sole `<x-surface.sample-state>` left in either module and stays
+`UNRESOLVED`. Floor met **exactly**: `1727 · 1720 · 3 · 4`.
+
+⚠️ **The coder never saw a suite number and was right to report `stopped: RUNTIME`.** Three lanes were
+queued on `pest.lock` and ours was killed at 108s with `rc=143` and zero bytes. **I ran the suite
+myself once the lock was free** and it met the floor. A lock wait is not a suite verdict in either
+direction — do not read `stopped` here as a missed floor.
+
+### ⛔ RULED 2026-09-06 21:3x — a grep that EXITS NON-ZERO has not measured anything
+
+Deciding UI-49 I ran a `grep -rn "x-139"` over a view corpus and got three self-hits, which reads as
+*"nothing embeds these components"* — the fact that would have made them three plain new doors.
+**The command exited 2.** One of its paths (`app/resources/views/`) does not exist from the repo root;
+the entire owner-view corpus was never scanned. Corrected, all three ARE embedded, at
+`resources/views/livewire/advanced/reports.blade.php:17–19`.
+
+⚠️ Seventh near-miss of the hand-derived-claim family, and the first caught by an **exit code** rather
+than by a test. A bad path returns a short, plausible, wrong answer, and ⛔ **"no hits" is the most
+believable wrong answer there is** — it looks exactly like a clean measurement. Read the status of any
+grep whose emptiness you are about to build a ruling on.
+
+### ✅ RULED 2026-09-06 21:3x — UI-49 is X-139, and its three routes take NAV ENTRIES, not exclusions
+
+**MEASURED on `104dc9b9`. The population first**, because a claim about how many is a measurement:
+`grep -rl "tenant.role" app/Modules/*/routes.generated.php` → **114 modules** carry owner routes;
+`grep -rl "components.account.layout" app/Modules/*/Ui/*.php` → **14 components in 4 modules**
+(X-110, X-138, X-192, X-199). ⛔ So ~110 modules still render owner routes in the staff console. That
+is Week 2/Week 3 at large; **UI-49 does not attempt it** and is scoped to the one module that closes a
+lane the owner named.
+
+X-139 is three components, three `tenant.role` routes, three admin routes, three existing screen
+tests, and **no `#[Layout]` on any of them** — so `ownerScreenRoutes()` admits none and the
+reachability half is silent on all three. All three run a real query but carry
+`#[Locked] public int $businessId = 0` with **no `mount()`**, so a full-page GET skips every query:
+verbatim the X-199 problem settled at `JOURNAL 2026-09-06T12:33:20 (R245)`, and `Invoices.php:22–25`
+is the shape that fixed it. ⛔ There is no `<x-surface.sample-state>` in X-139 — this is not UI-48b again.
+
+**Why the home-tile exclusion does NOT transfer.** `x-110.today` and the three X-199 tiles are excused
+as *"a full-page duplicate of a tile `account.home` already renders"* — sound **because `account.home`
+is the owner's home**, so the content stays reachable from the nav. X-139's embedder is
+`advanced.reports`, and `routes/web.php:1368–1371` puts the whole `advanced.*` group behind
+`EnsureAdvancedDashboard` with no `account.` prefix and no account layout. It is a separate gated
+surface, in no `OwnerNav` entry, and the 20:1x measurement already recorded the eleven `advanced.*`
+targets as *"not in `$ownerRoutes` at all"*. ⛔ Excusing these three would leave X-139's
+conversion-upload data reachable from the owner nav by **no route whatsoever**.
+
+⛔ **The admin twins are safe, measured not assumed:** `ownerScreenRoutes()` (`OwnerNavTest.php:100–104`)
+skips any route carrying `'can:'.AdminAccess::GATE`, and `CoolingScreenTest::test_screen_renders_for_admin`
+— the UI-43 precedent on a shared class — asserts `assertOk()` only, never the console shell.
+
+**Labels, `GROUP_MORE`, `OwnerNav::all()` 33 → 36:** `x-139.adaccount-connect-card` *"Your ad
+accounts"* · `x-139.conversions-pushed-tile` *"Sales sent back to your ads"* · `x-139.rejection-rate`
+*"Uploads your ads rejected"* — the upload pipe, distinct from X-138's earnings cuts. **The floor does
+not move** (`1727 · 1720 · 3 · 4`): no test is added or deleted, the shell assertions go inside three
+methods that already drive a real `GET`.
 
 ### ✅ RULED 2026-09-06 20:5x — UI-48b is THREE lines, THREE nav entries and THREE removals. Not a re-datafication.
 
