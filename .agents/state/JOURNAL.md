@@ -1231,3 +1231,8 @@ None of the 15 modules showed a SCAFFOLD-DEFECT.
 - `2026-09-07T05:09:38` note: Per-class split: specced deferred 77 non-deferred 202, no tracker row deferred 27 non-deferred 66, no refusal deferred 7 non-deferred 70.
 - `2026-09-07T05:39:36` note: The two 27/66 partitions are different sets with equal marginals (deferred & :68-only = 0, deferred & also :54 = 27, non-deferred & :68-only = 27, non-deferred & also :54 = 39).
 - `2026-09-07T05:39:36` note: The single-action set is 242 of 290 rows, broken down by action: 154 close with a test (:54-only), 27 with a tracker/plan row (:68-only), and 61 with a refusal sentence (:97-only).
+- `2026-09-07T06:09:44` note: corrected single-action set: 209 of 290
+scaffold-only share removed from the :54-only 154: 33
+- `2026-09-07T06:09:48` note: discriminator result: absence of ModuleServiceProvider.php and absence of any subdirectory
+agree as sets: yes
+scaffold-only modules: X-221 X-222 X-223

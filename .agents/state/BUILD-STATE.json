@@ -5293,6 +5293,14 @@
   {
    "at": "2026-09-07T05:39:36",
    "note": "The single-action set is 242 of 290 rows, broken down by action: 154 close with a test (:54-only), 27 with a tracker/plan row (:68-only), and 61 with a refusal sentence (:97-only)."
+  },
+  {
+   "at": "2026-09-07T06:09:44",
+   "note": "corrected single-action set: 209 of 290\nscaffold-only share removed from the :54-only 154: 33"
+  },
+  {
+   "at": "2026-09-07T06:09:48",
+   "note": "discriminator result: absence of ModuleServiceProvider.php and absence of any subdirectory\nagree as sets: yes\nscaffold-only modules: X-221 X-222 X-223"
   }
  ],
  "history": [
