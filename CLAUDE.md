@@ -2472,3 +2472,58 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ Stated in the brief so the test is not "improved" into something weaker: after the covering
     payment `paid_cents` equals `total_cents` too, so **no assertion in this suite can pin
     cash-received** — which is exactly the fact the new sentence states.
+108. **Ruling 107's sweep of the lane's remaining money figures returns exactly ONE finding, and the
+    rest is struck with its measurement (measured 2026-09-07 02:0x; rulings 64, 95, 100).** Screen by
+    screen: **X-211 `AgeingByReason`** `:139` is `$inv->total_cents - $inv->paid_cents`, the same
+    arithmetic ruling 107 praised in `Unpaid.php`; **C-Billing `Mrr`** labels every figure to the
+    quantity it prints (`:43` *"a month"* beside the account's real `price_currency`, `:61`
+    *"units"*, `:62`/`:78`/`:79` the ledger amounts with *"after"*); **C-Billing `DunningBoard`**
+    carries no money figure at all; **X-198 `ReconciliationDiscrepancies`** prints
+    `Expected`/`Actual`/`Discrepancy`/`Reason`, and ruling 51 already moved `actual` onto the payout
+    row the gateway wrote. All clean. ⛔ Not to be re-raised.
+109. **The recovery row calls the credit this app GAVE AWAY "recovered", four lines below its own
+    confirmation saying nothing was charged (RULED by the lane supervisor 2026-09-07 02:0x, briefed
+    as MONEY-101).** `revenue-recovery.blade.php:37-38` renders `<dt>Came back</dt>` over
+    *"recovered {{ … }} since the ladder started"*, and `RevenueRecovery.php:72-76` computes it as a
+    sum of `CreditLedgerEntry` rows `whereIn('entry_type', ['topup', 'grant'])` since the ladder
+    opened. `entry_type` has exactly three writers, all in `BillingLedgerEngine` — `debit` `:39`,
+    `grant` `:71`, `topup` `:111` — so the figure sums **grants and top-ups only**, and neither is
+    money: `topup` is the button on this same screen, whose confirmation MONEY-88b already made
+    honest (`RevenueRecovery.php:32`, *"Nothing was charged: this button grants credit"*), and
+    `grant` comes from `LedgerGrantAction`, which ruling 90 measured has no caller outside
+    `CBillingTest`. So on a dunning ladder — the one screen in the lane whose entire subject is an
+    account that stopped paying — the row reports the credit the operator handed over and calls it
+    recovery. ⚠️ **Ruling 98's self-contradiction tell at its cheapest yet, and it is inside a single
+    assertion chain:** `RevenueRecoveryScreenTest.php:67-68` asserts *"Nothing was charged: this
+    button grants credit"* and, on the very next line, *"recovered 75.00 since the ladder started"* —
+    and the method they sit in is named
+    `test_revenue_recovery_counts_what_came_back_since_the_ladder_started`, which is ruling 50(b)
+    besides. ⛔ Not resolved by building a recovered figure: a payment against the arrears would have
+    to come through `App\Services\Billing\CreditTopUps`, Track 1's real charging path, which takes a
+    real card (TRACK 1 ACTION 11, ruling 87), and minting a reader for it here is ruling 59.
+    ⛔ Not by deleting the row — the tile is correct the day a real payment path exists. ⛔
+    `RevenueRecovery.php` is untouched: the arithmetic is right for what the words will now say, and
+    `recovered_cents` is an internal property name no owner reads. ⚠️ Blast radius measured with
+    interior fragments (rulings 46, 86): exactly **two** assertions lane-wide (`:60`, `:68`), both
+    **changed**, while the `<dt>` and the header at `:6` are asserted by nothing (ruling 70) — which
+    is why the wave **adds** a method, and adds it on the **zero** branch, the case every real
+    account is in and the one the existing grant-plus-top-up fixture can never render (ruling 68).
+110. **The dunning ladder prints a service state nothing in this app enforces (RULED by the lane
+    supervisor 2026-09-07 02:0x, briefed as MONEY-101 item 2).**
+    `revenue-recovery.blade.php:33` renders `{{ $state->stays_on }}`, built at
+    `RevenueRecovery.php:77-81` from `phone_answering`, `ai_enabled` and `voicemail_only`, so a row
+    reads *"phone answers · AI on"* as though it described the account's live service. The three
+    columns **are** written — `BillingLedgerEngine::advanceDunning():155-157`, reached from the
+    `Advance a day` buttons here and on `DunningBoard` — so they vary and ruling 43's corollary is
+    satisfied. What does not exist is a **reader**: a grep for the three names over `app/app` returns
+    only the casts at `DunningState.php:17-19`, that one write, and this screen's read. Nothing
+    switches a phone or an agent off when the ladder says so. Ruling 87's shape one notch softer —
+    the row genuinely records what the ladder decided — so the fix is to say *setting* rather than
+    *state* and to name that nothing applies it. ⛔ Not resolved by building the enforcement:
+    C-Telephony, C-Sms and C-Agent are track sixty's by ruling 5. ⚠️ `:57`'s existing
+    `assertSee('phone answers')` passes unchanged under the new wording, which would leave the prose
+    ungated (ruling 70), so it is **changed** to span the new prefix and one assertion is **added**
+    for the *not applied* clause. ⚠️ Recorded from the same measurement and deliberately not briefed:
+    `advanceDunning`'s only callers are two buttons — there is no scheduled dunning ladder in this
+    lane — and `RevenueRecovery::advance()` sets no `$success`, so the owner's feedback is the row
+    re-rendering at `Day N+1`; visible feedback, so not ruling 94's silent button.
