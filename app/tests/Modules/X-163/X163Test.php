@@ -1206,4 +1206,71 @@ class X163Test extends TestCase
         $res3 = $this->engine->lookup($biz->id, 'conflicting loc');
         $this->assertStringContainsString('pricebook', strtolower($res3['reason']));
     }
+
+    public function test_price_refusal_flagged_records_gap(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Biz A', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->lookup->handle($biz->id, 'sms channel gap', 'sms');
+        $this->assertEquals('refused', $res['status']);
+
+        $items = PriceBookItem::where('business_id', $biz->id)->get();
+        $this->assertCount(1, $items);
+        $this->assertEquals(0, $items[0]->price_cents);
+        $this->assertFalse($items[0]->is_confirmed);
+        $this->assertEquals(1, $items[0]->refusal_count);
+        $this->assertNotNull($items[0]->refusal_flagged_at);
+    }
+
+    public function test_price_refusal_flagged_records_gap_twice(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Biz B', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $event = new PriceRefusalFlagged($biz->id, 'dispatch gap twice', 'NO_FACT');
+        Event::dispatch($event);
+        Event::dispatch($event);
+
+        $items = PriceBookItem::where('business_id', $biz->id)->get();
+        $this->assertCount(1, $items);
+        $this->assertEquals(2, $items[0]->refusal_count);
+    }
+
+    public function test_price_refusal_flagged_guards_conflict(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Biz C', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $row1 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflict service',
+            'price_cents' => 1000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+            'refusal_count' => 0,
+        ]);
+        $row2 = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'conflict service',
+            'price_cents' => 2000,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => null,
+            'refusal_count' => 0,
+        ]);
+
+        $res = $this->lookup->handle($biz->id, 'conflict service', 'sms');
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+
+        $items = PriceBookItem::where('business_id', $biz->id)->where('service_name', 'conflict service')->get();
+        $this->assertCount(2, $items);
+
+        $row1->refresh();
+        $row2->refresh();
+        $this->assertEquals(0, $row1->refusal_count);
+        $this->assertEquals(0, $row2->refusal_count);
+    }
 }

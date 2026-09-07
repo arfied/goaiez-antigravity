@@ -27,6 +27,11 @@ final class ModuleServiceProvider extends ServiceProvider
             RecordPriceGap::class,
         );
 
+        Event::listen(
+            \App\Modules\X163\Events\PriceRefusalFlagged::class,
+            \App\Modules\X163\Listeners\RecordPriceGapFromRefusal::class,
+        );
+
         $this->loadRoutesFrom(__DIR__.'/routes.generated.php');
 
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
