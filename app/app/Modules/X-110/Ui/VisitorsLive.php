@@ -17,8 +17,6 @@ class VisitorsLive extends Component
     #[Locked]
     public int $businessId = 0;
 
-    #[Locked]
-    public bool $isSample = false;
 
     public function mount(int $businessId = 0)
     {

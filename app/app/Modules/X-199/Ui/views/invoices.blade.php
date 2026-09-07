@@ -11,8 +11,6 @@
                 <x-ui.error-panel heading="Could not load invoices">
                     {{ $loadError }}
                 </x-ui.error-panel>
-            @elseif($isSample)
-                <x-surface.sample-state module="generates EVERY invoice — ours and the tenant's; C-Billing is the subscription and metering LEDGER and hands data here (§139.1)" screen="invoices" />
             @else
                 <div class="mb-4">
                     <p class="text-3xl font-display font-bold text-ink">${{ number_format($totalCents / 100, 2) }}</p>

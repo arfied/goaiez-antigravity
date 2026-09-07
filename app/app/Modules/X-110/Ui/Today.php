@@ -17,8 +17,6 @@ class Today extends Component
     #[Locked]
     public int $businessId = 0;
 
-    #[Locked]
-    public bool $isSample = false;
 
     #[Locked]
     public ?string $loadError = null;
