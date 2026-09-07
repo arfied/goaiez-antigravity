@@ -4583,3 +4583,60 @@ just lives **outside** the test that depends on it — same family as tick 189's
 conflict-vs-correctness split. ⛔ Whenever a test's whole point is that a *failure* was
 survived, the failing call needs an occurrence assertion; the outcome alone is satisfied by
 the failure never occurring.
+
+## ⛔ A MERGE RESOLUTION can drop the authoring side's line, and NO census surface reports it (tick 236)
+
+Track 1 merged `track/site` at `c1849a75` (§1 went `behind 11, ahead 55` → `behind 14, ahead
+17`). Three minutes later, `a9e6a25f`:
+
+> **fix(J11): restore site's EdgeZone provisioning that the track/site merge reverted**
+> `app/tests/Journeys/JourneyHarness.php | 3 +++`
+
+SITE-111's three-line `EdgeProvisionAction` call in `publishSite()` — **this lane's entire J11
+green**, delivered at tick 229 — was dropped by the merge resolution and survived only because
+Track 1 caught it within the hour.
+
+⛔ **Every census surface is structurally blind to this.** Half 1 watches module paths and the
+harness is not one; half 2 watches `app/tests/Journeys` but its bounds are `^origin/main`, so a
+line **deleted by main's own merge commit** can never print. The complement strips nothing
+relevant and the halves' silence was correct throughout. The only witness was a sibling's commit
+*subject*.
+
+✅ **The check that does see it, and it is one command:** after any Track 1 merge of this lane,
+diff the owned paths against `main` and read for what is **MISSING**, not for what conflicts.
+
+```
+git diff --stat origin/main HEAD -- <the seven app/app and app/tests module paths>
+```
+
+Run at tick 236: 8 files, every one this lane's own unmerged work, **all additions** ⇒ nothing
+else of ours was lost. ⚠️ Note the direction — this is tick 217's accepting bound (`origin/main`
+on the left, legitimate once main *contains* our merge), not tick 147's staleness trap. Twenty-
+fourth statement of the section's law, and the first about a surface's blindness to a **deletion
+performed by a bound** rather than to anything a sibling did.
+
+## ⛔ "Where does X come from?" presumes a READER — a generator's artifact is not its dependency (tick 236)
+
+SITE-117's audit returned **CORRECTLY FILED** for G8-02, G8-25 and G8-30 on the ground that
+`ls app/app/Modules/X-103/Models` shows no link model and no traffic metric. Honest, measured,
+and wrong for two of the three — because **G8-02 is named "Automated Internal Linking."** A
+generator does not read a link set, it **produces** one, so "no link set exists" states the
+absence of its *output*, not of a dependency.
+
+The disconfirming evidence was in the same wave's own diff: `Page::where('business_id',
+$businessId)->whereIn('slug', $paths)` enumerates a business's page set, and the slug carries
+the hierarchy. The plan's clause (`:32272`, *"internal links only, and the graph is asserted
+acyclic and reachable"*) is a property of a **generated** tree — and a tree built from slug
+ancestry is acyclic by construction and reachable from its root.
+
+**G8-30 is the genuine one:** *"nofollow on low-value internal links"* names a **metric**
+(traffic, value) that exists nowhere in `pages` or `page_versions`, and no amount of page
+enumeration mints one. **The discriminator: can the capability MINT the thing it names, or must
+it RECEIVE it?** Only the second is rule 09's missing dependency.
+
+⚠️ **The brief caused it.** I asked *"where does the link set come from?"* — a question that
+presumes a reader, and the coder answered it accurately in the direction it pointed. Fourth
+instance of this seat naming something imprecisely and the wave faithfully inheriting it (tick
+208 the evidence request, 227 the branch condition, 235 the unread mechanism). **A brief that
+presumes a direction gets an answer in that direction** — ask "can this lane produce it?"
+alongside "does this lane hold it?", or the audit can only ever return one of the two answers.
