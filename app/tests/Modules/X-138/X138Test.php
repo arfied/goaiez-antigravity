@@ -221,4 +221,41 @@ class X138Test extends TestCase
 
         Event::assertDispatched(AttributionAmbiguous::class, fn ($e) => count($e->qualifyingTouches) === 2);
     }
+    /**
+     * [G13-06]
+     * X-122 owns the action log (action_invocations); queryJobAttribution accepts touches as a parameter, reading no log.
+     */
+    public function test_g13_06_attribution_is_a_pure_query_over_touches(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Query Action Log Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $twoTouches = [['source' => 'a'], ['source' => 'b']];
+        $oneTouch = [['source' => 'c']];
+        $zeroTouches = [];
+
+        $res2 = $this->queryAction->queryJobAttribution($biz->id, 9002, $twoTouches, 100);
+        $this->assertEquals('ambiguous', $res2['attribution_status']);
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $res2['query_id'],
+            'attribution_status' => 'ambiguous',
+            'touches' => json_encode($twoTouches),
+        ]);
+
+        $res1 = $this->queryAction->queryJobAttribution($biz->id, 9001, $oneTouch, 100);
+        $this->assertEquals('single', $res1['attribution_status']);
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $res1['query_id'],
+            'attribution_status' => 'single',
+            'touches' => json_encode($oneTouch),
+        ]);
+
+        $res0 = $this->queryAction->queryJobAttribution($biz->id, 9000, $zeroTouches, 100);
+        $this->assertEquals('none', $res0['attribution_status']);
+        $this->assertDatabaseHas('attribution_queries', [
+            'id' => $res0['query_id'],
+            'attribution_status' => 'none',
+            'touches' => json_encode($zeroTouches),
+        ]);
+    }
 }
