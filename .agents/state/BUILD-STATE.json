@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T02:21:16",
+ "updated": "2026-09-07T03:25:05",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1646,6 +1646,10 @@
   {
    "at": "2026-09-07T02:21:16",
    "note": "C-Billing UNRESOLVED: money recovered on a dunning ladder is not derivable - a payment against the arrears would have to come through App\\Services\\Billing\\CreditTopUps, which is Track 1's charging path and takes a real card, so the module ledger records only credit granted and the row says so (rulings 59, 87, TRACK 1 ACTION 11)"
+  },
+  {
+   "at": "2026-09-07T03:25:09",
+   "note": "X-117: stock taken by an order that can never be paid comes back only through the Cancel button on the checkout block - there is no reservation expiry and none is to be built here, because the missing dependency is the card-entry surface ruling 45 recorded and ruling 20 parks behind a contract"
   }
  ],
  "decisions": [
@@ -2145,6 +2149,12 @@
    "module": "C-Billing",
    "chose": "the dunning ladder prints its service settings as a recorded intent rather than a state - phone_answering, ai_enabled and voicemail_only are written by advanceDunning and read by no code that switches a phone or an agent, so the row says what the ladder set and not what the account is doing",
    "at": "2026-09-07T02:21:16",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "the storefront says stock comes off when the order is placed rather than when it is paid - checkoutCart decrements inventory_quantity in the same transaction that creates the order pending_payment, and ruling 45 leaves no path to paid, so the cart header and the checkout waiting state now say what the engine does and name cancel as the only way back",
+   "at": "2026-09-07T03:25:05",
    "ruling": "R245"
   }
  ]
