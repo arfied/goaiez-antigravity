@@ -2574,3 +2574,73 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `cart-block.blade.php:3` is asserted by **nothing** (ruling 70), so that item **adds** its
     assertion. ⚠️ Every dictated string is apostrophe-free (ruling 82) and no directory-scanning lint
     reads X-117 (ruling 63).
+113. **A sweep a brief performs on its own subject is measured with INTERIOR fragments, and MONEY-102's
+    was not — three more instances survived it, one a screen header and one a docblock on the wrong
+    method (RULED by the lane supervisor 2026-09-07 03:5x, on MONEY-102's `cf644d06`; briefed as
+    MONEY-103).** The brief opened *"three owner-facing strings say the opposite"* and named two
+    strings plus a test name. Re-run on the sentences' interior fragments — the discipline ruling 86
+    wrote down for exactly this and which the brief did not apply to itself —
+    `grep -rni "at paid\|when it is paid\|never in the cart\|comes off" app/app/Modules/X-117
+    app/tests/Modules/X-117` returns **six**, and three survive the wave.
+    (1) **`cart-block.blade.php:42`** — *"Stock comes off at paid, never in the cart."* — **in the file
+    the wave edited**, thirty-nine lines below the header it corrected, so one blade now states both
+    the fact and its negation: ruling 98's self-contradiction tell at the shortest distance yet in
+    this lane. (2) **`checkout-block.blade.php:3`** — *"…and stock moves only at paid."* — a
+    **header**, rendering in both arms of the branch and therefore the line a real owner reads most
+    (ruling 96), on the very screen whose `CheckoutBlock.php:67` says *"The order was placed, stock
+    came off"*, which is true. ⚠️ The rest of that sentence is a correct ruling-21 waiting state
+    (*"until those contracts land"*) and is not touched; only the last clause is a present-tense
+    falsehood. (3) **`CheckoutEngine.php:147-150`** — the docblock over **`checkoutCart()`**, the one
+    method in this lane that decrements inventory (`:218`), reads *"Adds to the session's cart. Stock
+    is decremented at PAID, never at CART."* ⚠️ **Every sentence in it is true of `addToCart()` at
+    `:256` and false of the method it sits above.** The block is on the wrong method, which is how the
+    falsehood was written without anyone lying — it was a correct description of the *other* function
+    — and it makes this a sharper member of ruling 81's docblock family, because the fix is a
+    re-attribution rather than a reword. Plus **`CartBlockScreenTest.php:70`**, whose `assertSame`
+    **message** repeats the falsehood while the assertion itself is right for a different reason
+    (`CartBlock::checkout()` only sets a waiting string, so no order is placed): ruling 50(b)'s family,
+    the message being what a reviewer reads when it fails. **Standing: a sweep a brief performs on its
+    own subject is measured with interior fragments, its raw output is pasted into the brief, and the
+    coder re-runs it as step 1.** ⚠️ Per the ruling 46/49/50/62/66/75/82/86/94/104 precedent the
+    scoping miss is the supervisor's, so MONEY-103 carries its own two dispatches and MONEY-102's cap
+    is untouched.
+114. **"Reserved until" promises a hold on stock that nothing takes, and the declines tile names a
+    window the owner's own button removes (RULED by the lane supervisor 2026-09-07 03:5x, briefed as
+    MONEY-103 items 1.1, 1.3, 2.1 and 2.2).** Ruling 36's question asked of the lane's **counts and
+    dates**, the last unmeasured group on the carried backlog. Two findings; the rest is struck.
+    **(a) X-117's `expires_at` is a cart lifetime, not a reservation.** `cart-block.blade.php:42` and
+    `checkout-block.blade.php:38` both print *"Reserved until HH:MM:SS"*. Measured: `addToCart()`
+    never touches `inventory_quantity`, and its sold-out guard at `CheckoutEngine.php:270` compares
+    stock against **this cart's** items only, so two sessions can each hold the last unit and **both**
+    read *"1 in stock"*. Nothing is reserved. What `expires_at` governs is the cart row —
+    `checkoutCart():173` refuses `CART_EXPIRED` past it and `addToCart():260` starts a fresh cart.
+    ⚠️ The neighbouring clause *"the clock is the row's, it does not restart on refresh"* is **true**
+    (`:291`, `:299` reuse `$cart->expires_at`) and stays: the finding is the word **Reserved**, not the
+    timestamp. ⛔ Not resolved by building a hold — that is new machinery to make a sentence true
+    (ruling 59), and the pessimistic lock at checkout is the CHECK that already prevents overselling.
+    **(b) X-199's headline tile is labelled `Declines this week` over a count that stops being weekly
+    the moment the owner presses the button beneath it.** `Declines.php:57`'s `startOfWeek()` filter
+    **and** the deferral filter are both inside `if (! $this->showAll)`, and `declines.blade.php:70-71`
+    toggles `$showAll`. One press leaves a tile headed *this week* counting every decline the account
+    has ever had — including the deferrals ruling 35 hid **because the owner had already dealt with
+    them**. The empty state at `:28` carries the same defect twice: it says *"No declines this week."*
+    in both states and offers **"Show all"** as its action while showing all, a door whose label is
+    wrong in the branch it renders (ruling 94's family). ⚠️ **Neither query changes** — both views are
+    useful and only the words are wrong. ⚠️ The `Recovered` tile is measured **clean** and untouched:
+    `:73-86` counts declines with a later `captured` payment on the same `payment_token`, the status
+    the gateway's own row carries (ruling 99), and its label names no window. **Measured CLEAN in the
+    same sweep and STRUCK — do not re-raise** (rulings 64, 95, 100, 108): `revenue-recovery.blade.php:30`'s
+    *"Day N of 21"*, the ladder being real and anchored (`BillingLedgerEngine:128,:143,:148,:150`,
+    `DunningBoard.php:52`); `AgeingByReason:137`, `CollectionsPackagePreview:62`,
+    `InvoiceThreadBeside:82` and `Unpaid:93`'s day counts, every one already measured by ruling 68 as
+    the positive receiver order; and `MoneyPaidToday`'s two `startOfDay()` filters, settled by ruling
+    107. **The counts-and-dates sweep is closed.**
+115. **`?? app/composer.phar` is retired as this lane's expected end-of-run tree state (measured
+    03:5x).** OWNER ACTION 19a made that one untracked path the expected output of `git status
+    --short`, and ruling 71(b) made printing it the run's last act. MONEY-102 reported under `REFUSED`
+    that it printed **nothing**; measured, `app/composer.phar` is on disk and
+    `git status --short --untracked-files=all` is empty, because `main`'s `.gitignore` now covers it —
+    the copy ruling 53 recorded as a strict superset, which arrived with the `12447593` merge. **The
+    correct output of that step in this lane is now empty**, and a brief that predicts the `??` line
+    manufactures a `REFUSED` for a clean tree. ⚠️ The coder was right to report the mismatch rather
+    than stay silent, and it spends no dispatch (rulings 60b, 71).
