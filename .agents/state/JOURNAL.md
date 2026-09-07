@@ -1224,3 +1224,6 @@ None of the 15 modules showed a SCAFFOLD-DEFECT.
 - `2026-09-07T03:31:05` note: message.received is Unplaceable, not Class B, because the plan explicitly names C-Sms as its emitter (GOAIEZ-MASTER-PLAN.md:20516).
 - `2026-09-07T04:09:25` note: Capability 449 census partition: 0 zero specced, 279 specced but no test, 93 no row in tracker or plan, 77 names no refusal. Distinct defect total is 369.
 - `2026-09-07T04:09:25` note: Correction to mail.delivered superseding grade from 2026-09-07T03:31:05: X-223 manifest has no tree-side evidence. Neither docblock nor reads_table exists for it. It is ungraded.
+- `2026-09-07T04:38:03` note: This supersedes the 2026-09-07T04:09:25 correction antecedent date only. The grade being corrected is at 2026-09-07T02:51:20. The mail.delivered finding itself stands unchanged.
+- `2026-09-07T04:38:06` note: This supersedes the 2026-09-07T04:09:25 correction antecedent date only. The grade being corrected is at 2026-09-07T02:51:20. The mail.delivered finding itself (X-223 has no tree-side evidence, ungraded) stands unchanged.
+- `2026-09-07T04:39:38` note: 369 distinct defects are spread across 70 modules (57 carry none). The top 10 carry 174 of 369. The 242 is mostly a directory with real tests that simply never cite an id.
