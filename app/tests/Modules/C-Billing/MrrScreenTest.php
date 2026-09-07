@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Modules\CBilling\Domain\BillingLedgerEngine;
 use App\Modules\CBilling\Models\CreditLedgerEntry;
 use App\Modules\CBilling\Models\Meter;
+use App\Modules\CBilling\Models\TrialLimit;
 use App\Modules\CBilling\Ui\Mrr;
 use App\Support\Tenancy;
 use Livewire\Livewire;
@@ -88,5 +89,26 @@ class MrrScreenTest extends TestCase
             ->assertSee('Nothing in this checkout writes a usage meter, so this list fills once the telephony, SMS and agent modules meter what they use.')
             ->assertSee('Nothing in this checkout raises a debit or a grant, so usage charges and plan credits appear once they are built.')
             ->assertDontSee('The five meters fill');
+    }
+
+    public function test_the_mrr_top_up_refuses_over_the_daily_ceiling(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        TrialLimit::create([
+            'business_id' => $biz->id,
+            'daily_topup_ceiling_cents' => 5000,
+            'topups_today_cents' => 0,
+            'current_balance_hundredths_cents' => 0,
+        ]);
+
+        Livewire::actingAs($owner)->test(Mrr::class)
+            ->call('topup')
+            ->call('topup')
+            ->assertSee('would pass the daily top-up ceiling on this account');
     }
 }

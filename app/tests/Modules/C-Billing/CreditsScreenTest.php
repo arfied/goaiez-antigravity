@@ -139,7 +139,7 @@ class CreditsScreenTest extends TestCase
         $lw->call('explain', $entry->id)
             ->assertSee('Automatic balance top-up')
             ->call('topup')
-            ->assertSee('Daily top-up ceiling')
+            ->assertSee('would pass the daily top-up ceiling on this account')
             ->assertDontSee('Nothing was charged: this button grants credit');
 
         $this->assertEquals(

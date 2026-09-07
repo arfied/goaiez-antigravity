@@ -55,6 +55,8 @@ class Mrr extends Component
             } else {
                 $this->error = $result['message'] ?? 'Top-up refused.';
             }
+        } catch (\DomainException) {
+            $this->error = 'That top-up would pass the daily top-up ceiling on this account, so nothing was added. The ceiling resets tomorrow.';
         } catch (\Throwable $e) {
             $this->error = 'We could not top up: '.$e->getMessage();
         }
