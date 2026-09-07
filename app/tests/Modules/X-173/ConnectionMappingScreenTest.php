@@ -23,13 +23,13 @@ class ConnectionMappingScreenTest extends TestCase
         $connectAction = app(AccountingConnectAction::class);
         $mapAction = app(AccountingMapAction::class);
 
-        $connB = $connectAction->connect($bizB->id, 'xero', 'realm_x_b');
+        $connB = $connectAction->connect($bizB->id, 'xero', 'realm_x_b', 'oauth_x_b_fixture');
         $mapAction->mapAccount($bizB->id, $connB->id, 'Parts', 'gl_5000', 'COGS');
 
         $bA = self::provisionTenant()->id;
         Tenancy::set($bA);
 
-        $connA = $connectAction->connect($bA, 'quickbooks', 'realm_qb_4412');
+        $connA = $connectAction->connect($bA, 'quickbooks', 'realm_qb_4412', 'oauth_qb_4412_fixture');
         $connId = $connA->id;
 
         Tenancy::forget();
@@ -94,5 +94,28 @@ class ConnectionMappingScreenTest extends TestCase
         Livewire::test(ConnectionMappingView::class)
             ->assertOk()
             ->assertSee('none exist in this checkout, so the Connect button below');
+    }
+
+    public function test_a_ledger_connection_with_no_credential_is_not_active_and_refuses_a_mapping()
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        $conn = app(AccountingConnectAction::class)->connect($biz->id, 'quickbooks', 'realm_qb_9001');
+
+        $this->assertNull($conn->fresh()->access_token);
+        $this->assertFalse($conn->fresh()->is_active, 'a connection with no credential is not active');
+
+        Livewire::test(ConnectionMappingView::class)
+            ->assertOk()
+            ->assertSee('realm_qb_9001')
+            ->assertSee('inactive')
+            ->set("map.{$conn->id}.category", 'Job Revenue')
+            ->set("map.{$conn->id}.glId", 'gl_4000')
+            ->set("map.{$conn->id}.glName", 'HVAC Service Income')
+            ->call('mapAccount', $conn->id)
+            ->assertSee('is not active');
+
+        $this->assertSame(0, AccountMapping::where('business_id', $biz->id)->count());
     }
 }

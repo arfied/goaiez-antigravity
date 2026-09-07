@@ -19,7 +19,7 @@ final class AccountingConnectAction
             'provider' => $provider,
             'realm_id' => $realmId,
             'access_token' => $accessToken,
-            'is_active' => true,
+            'is_active' => $accessToken !== null,
         ]);
     }
 }

@@ -43,7 +43,7 @@ class X173Test extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Accounting Sync Tenant', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $connection = $this->connectAction->connect($biz->id, 'quickbooks', 'realm_qb_4412');
+        $connection = $this->connectAction->connect($biz->id, 'quickbooks', 'realm_qb_4412', 'oauth_qb_4412_fixture');
         $this->mapAction->mapAccount($biz->id, $connection->id, 'Job Revenue', 'gl_4000', 'HVAC Service Income');
 
         $transactions = [
