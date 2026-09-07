@@ -874,4 +874,51 @@ class X163Test extends TestCase
             ->count();
         $this->assertEquals(1, $count);
     }
+
+    public function test_price_gap_normalises_whitespace_in_the_service_name(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Norm Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $event1 = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', 'oil change');
+        $event2 = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', 'oil change ');
+        $event3 = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', 'oil  change');
+
+        $listener = new RecordPriceGap;
+        $listener->handle($event1);
+        $listener->handle($event2);
+        $listener->handle($event3);
+
+        $count = PriceBookItem::where('business_id', $biz->id)->whereNull('location_book_id')->count();
+        $this->assertEquals(1, $count);
+
+        $row = PriceBookItem::where('business_id', $biz->id)->whereNull('location_book_id')->first();
+        $this->assertEquals('oil change', $row->service_name);
+        $this->assertEquals(3, $row->refusal_count);
+    }
+
+    public function test_price_gap_records_nothing_for_a_blank_service_name(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Blank Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $event = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', '   ');
+
+        (new RecordPriceGap)->handle($event);
+
+        $this->assertEquals(0, PriceBookItem::where('business_id', $biz->id)->count());
+    }
+
+    public function test_price_gap_preserves_the_case_of_the_service_name(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Case Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $event = new AgentRefused($biz->id, 'NO_FACT', 'no pricebook', 'Oil Change');
+
+        (new RecordPriceGap)->handle($event);
+
+        $row = PriceBookItem::where('business_id', $biz->id)->whereNull('location_book_id')->first();
+        $this->assertEquals('Oil Change', $row->service_name);
+    }
 }

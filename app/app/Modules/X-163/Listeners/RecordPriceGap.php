@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 /**
  * (R245) A NO_FACT agent refusal about pricebook creates a business-wide,
  * price_cents=0, is_confirmed=false row so the owner sees the gap in the daily digest.
+ * The service name is normalised for whitespace and a blank one records nothing.
  */
 final class RecordPriceGap
 {
@@ -24,7 +25,11 @@ final class RecordPriceGap
             return;
         }
 
-        $serviceName = substr($event->userInput, 0, 255);
+        $serviceName = substr(preg_replace('/\s+/', ' ', trim($event->userInput)), 0, 255);
+
+        if ($serviceName === '') {
+            return;
+        }
 
         $item = PriceBookItem::firstOrCreate(
             [
