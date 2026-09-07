@@ -327,6 +327,70 @@ final class InternalLinkGraphTest extends TestCase
         $this->assertCount(20, $links);
     }
 
+    public function test_falsifier_cap_preserves_ancestor_closure_on_dom(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant 9']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+
+        Page::create(['business_id' => $biz->id, 'title' => 'Foo Parent', 'slug' => 'foo', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Foo Child', 'slug' => '/foo/bar', 'is_published' => true]);
+
+        for ($i = 1; $i <= 20; $i++) {
+            $s = 'a-'.str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+            Page::create(['business_id' => $biz->id, 'title' => "Pad {$i}", 'slug' => $s, 'is_published' => true]);
+        }
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'links9.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $rootPage->id,
+            commitId: 'commit_test_9',
+            businessName: 'My Biz 9'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $nodes = [];
+        foreach ($links as $link) {
+            $nodes[] = $link->getAttribute('href');
+        }
+
+        $this->assertContains('/', $nodes);
+
+        $parentsByChild = [];
+        foreach ($links as $link) {
+            $childHref = $link->getAttribute('href');
+            if (! isset($parentsByChild[$childHref])) {
+                $parentsByChild[$childHref] = [];
+            }
+            $parentList = $xpath->query('../../../a', $link);
+            if ($parentList->length > 0) {
+                $parentHref = $parentList->item(0)->getAttribute('href');
+                $parentsByChild[$childHref][] = $parentHref;
+            }
+        }
+
+        foreach ($nodes as $node) {
+            if ($node === '/') {
+                $this->assertEmpty($parentsByChild[$node], 'Root should have no parents');
+            } else {
+                $this->assertCount(1, $parentsByChild[$node], "Node $node should have exactly one parent");
+                $this->assertContains($parentsByChild[$node][0], $nodes, "Parent of $node must be a valid node");
+            }
+        }
+    }
+
     public function test_falsifier_ancestor_index_is_built_from_full_published_set(): void
     {
         Storage::fake('local');
@@ -338,7 +402,7 @@ final class InternalLinkGraphTest extends TestCase
         Page::create(['business_id' => $biz->id, 'title' => 'Foo Parent', 'slug' => 'foo', 'is_published' => true]);
         Page::create(['business_id' => $biz->id, 'title' => 'Foo Child', 'slug' => '/foo/bar', 'is_published' => true]);
 
-        for ($i = 1; $i <= 18; $i++) {
+        for ($i = 1; $i <= 17; $i++) {
             $s = 'a-'.str_pad((string) $i, 2, '0', STR_PAD_LEFT);
             Page::create(['business_id' => $biz->id, 'title' => "Pad {$i}", 'slug' => $s, 'is_published' => true]);
         }
