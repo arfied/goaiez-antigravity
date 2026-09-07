@@ -2527,3 +2527,50 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     `advanceDunning`'s only callers are two buttons — there is no scheduled dunning ladder in this
     lane — and `RevenueRecovery::advance()` sets no `$success`, so the owner's feedback is the row
     re-rendering at `Day N+1`; visible feedback, so not ruling 94's silent button.
+111. **The `$success`-figure-provenance sweep is measured CLEAN lane-wide and STRUCK, and one of the
+    four is a positive result worth keeping (measured 2026-09-07 02:5x; rulings 64, 95, 100).** The
+    backlog carried ruling 36's question one level down — not *is the sentence true* (ruling 97 swept
+    that) but *does the figure inside it come from the row the action wrote?* All four candidates
+    survive. `AgeingByReason:55` reads `$terms->late_fee_percent`/`late_fee_cap_cents` off the model
+    `ArSetLateFeeTermAction` returned; `PaymentplanBuilder:53-58` reads `$plan->installments_count`,
+    `frequency` and `installment_amount_cents` off the persisted plan; `Credits:52` and `Mrr:54` print
+    `$result['charged_amount_cents']`, which `BillingLedgerEngine::topup():119` sets to `$amountCents`
+    — and the ceiling **throws** rather than clipping (`:99-101`), so the figure and the
+    `CreditLedgerEntry` row can never disagree. ⚠️ **`AgeingByReason:77` is the one to keep in mind as
+    the shape done right:** `ArEngine::applyLateFee():63-79` computes
+    `$finalFee = min($feeCents, $maxFee)` against the term's percent and cap, writes **that** to
+    `late_fee_cents`, and returns it as `applied_fee_cents` — so the confirmation prints the **capped**
+    fee, not the fee the owner typed. That is ruling 51's principle satisfied by construction, and it
+    is what the sweep was looking for everywhere else. There is no wave here. ⛔ Not to be re-raised.
+112. **X-117 tells the owner stock moves when the order is paid, and it moves when the order is
+    placed — three strings and a test's own name, in a module where no order can ever be paid (RULED
+    by the lane supervisor 2026-09-07 02:5x, briefed as MONEY-102).** `CheckoutEngine::checkoutCart()`
+    decrements `inventory_quantity` at `:218`, inside the same transaction that creates the order
+    `pending_payment`; ruling 45 emptied the only listener that could promote an order to `paid`, so
+    in this lane stock comes off at checkout and **never** comes back except through
+    `CheckoutEngine::cancelOrder():135`, reached from the `Cancel` button at
+    `checkout-block.blade.php:54`. Three owner-facing strings say the opposite: `CartBlock:73`'s
+    waiting state — *"stock comes off only when it is paid"* — and `cart-block.blade.php:3`'s
+    **header**, which renders in both arms of the branch and is therefore the line a real owner reads
+    most (ruling 96) — *"nothing is charged and no stock moves until checkout says paid"*. ⚠️ **The
+    module contradicts itself in one sentence's distance:** `CheckoutBlock:67` says *"The order was
+    placed, **stock came off**, and it is waiting on a card-entry surface"* — which is **true** — so
+    the two screens of one module disagree about the one fact a storefront owner needs. That is ruling
+    98's tell, and it is the cheapest kind to find. ⚠️ **The test's own name carries the falsehood
+    too:** `CheckoutBlockScreenTest.php:21` is
+    `test_checkout_block_takes_a_fresh_authorisation_once_moves_stock_at_paid_and_reverses_on_cancel`,
+    and its body asserts at `:62-63` that `inventory_quantity` fell to `0` and `8` **immediately after
+    the render says `Pending — order ORD-`** — it proves stock moves at *pending*, under a name saying
+    *at paid*. Ruling 50(b) with the disproof already committed eleven lines below the name. ⛔ **Not
+    resolved by moving the decrement to the paid transition**: no order in this lane reaches `paid`
+    (ruling 45), so deferring the decrement would let a sold-out item be ordered without limit, and
+    `:58`'s pessimistic lock over `inventory_quantity` is the CHECK that stops exactly that. ⛔ Not by
+    building reservation expiry or auto-cancel — new machinery to make a sentence true is ruling 59.
+    The resolution is the copy and the name: the strings say stock comes off when the order is placed
+    and comes back only if it is cancelled, and the method is renamed off *at paid*.
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86): `CartBlockScreenTest:63`'s
+    `assertSee('waits on the checkout block')` is a **partial** cover — it names the opening clause and
+    nothing else, which is precisely why the false clause survived (ruling 80) — and is **changed**;
+    `cart-block.blade.php:3` is asserted by **nothing** (ruling 70), so that item **adds** its
+    assertion. ⚠️ Every dictated string is apostrophe-free (ruling 82) and no directory-scanning lint
+    reads X-117 (ruling 63).
