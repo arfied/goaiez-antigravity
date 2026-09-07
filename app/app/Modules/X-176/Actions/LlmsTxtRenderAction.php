@@ -15,19 +15,19 @@ final class LlmsTxtRenderAction
             "# {$businessName}",
             "## {$title}",
             "Path: /{$slug}",
-            ""
+            '',
         ];
 
         foreach ($contentBlocks as $block) {
-            if (isset($block['type']) && $block['type'] === 'text' && !empty($block['content'])) {
+            if (isset($block['type']) && $block['type'] === 'text' && ! empty($block['content'])) {
                 $lines[] = $block['content'];
-                $lines[] = "";
+                $lines[] = '';
             } elseif (isset($block['text'])) {
                 $lines[] = $block['text'];
-                $lines[] = "";
+                $lines[] = '';
             }
         }
 
-        return trim(implode("\n", $lines)) . "\n";
+        return trim(implode("\n", $lines))."\n";
     }
 }

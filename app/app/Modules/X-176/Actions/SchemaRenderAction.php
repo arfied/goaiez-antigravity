@@ -93,7 +93,7 @@ final class SchemaRenderAction
             // LocalBusiness address schema (TEST ANCHOR, G8-22)
             $isAddressValid = true;
             foreach (['line1', 'city', 'region', 'postal_code', 'country'] as $key) {
-                if (!isset($address[$key]) || !is_string($address[$key]) || $address[$key] === '') {
+                if (! isset($address[$key]) || ! is_string($address[$key]) || $address[$key] === '') {
                     $isAddressValid = false;
                     break;
                 }
