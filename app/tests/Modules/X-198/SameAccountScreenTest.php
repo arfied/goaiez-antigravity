@@ -86,7 +86,9 @@ class SameAccountScreenTest extends TestCase
             ->assertSee('are taken on the goaiez platform Stripe account')
             ->assertSee('which no charge is routed to yet')
             ->assertSee('no account recorded')
-            ->assertDontSee('never the platform');
+            ->assertDontSee('never the platform')
+            ->assertSee('recorded only')
+            ->assertDontSee('connected');
     }
 
     public function test_the_same_account_empty_state_names_what_it_waits_on()

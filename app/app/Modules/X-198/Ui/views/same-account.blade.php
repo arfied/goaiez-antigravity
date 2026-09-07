@@ -13,7 +13,7 @@
 <li class="border rounded p-4 shadow bg-white">
 <span class="font-semibold">{{ $conn->gateway_name }}</span>
 <p class="text-sm text-ink-2">Recorded merchant account <span class="tabular-nums">{{ $conn->merchant_account_id }}</span>, which no charge is routed to yet</p>
-<x-ui.status-pill :state="$conn->is_connected ? 'ok' : 'attention'" :label="$conn->is_connected ? 'connected' : 'disconnected'" />
+<x-ui.status-pill :state="$conn->is_connected ? 'ok' : 'attention'" :label="$conn->is_connected ? 'recorded only' : 'disabled'" />
 <dl class="mt-2 grid grid-cols-2 gap-2 text-sm tabular-nums">
 <div><dt>Payments recorded</dt><dd>{{ $conn->payments_count }} payments · {{ number_format($conn->payments_cents / 100, 2) }}</dd></div>
 <div><dt>Payouts</dt><dd>{{ $conn->payouts_count }} payouts · {{ number_format($conn->payouts_cents / 100, 2) }}</dd></div>

@@ -1,6 +1,6 @@
 <div>
 <h1>Reconciliation discrepancies</h1>
-<x-ui.attention-card state="attention" heading="One account at a time">the cross-account roll-up is an operator read behind row-level security and waits on OWNER ACTION 15; what follows is this account's runs.</x-ui.attention-card>
+<x-ui.attention-card state="attention" heading="One account at a time">the cross-account roll-up is an operator read behind row-level security and no cross-account read path is built in this checkout yet; what follows is this account's runs.</x-ui.attention-card>
 @if($error) <x-ui.error-panel heading="We couldn't mark that run">{{ $error }}</x-ui.error-panel> @endif
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the runs…" /></div>

@@ -45,6 +45,8 @@ class ReconciliationDiscrepanciesScreenTest extends TestCase
         $screen = Livewire::actingAs($owner)->test(ReconciliationDiscrepancies::class)
             ->assertOk()
             ->assertSee('One account at a time')
+            ->assertSee('no cross-account read path is built in this checkout yet')
+            ->assertDontSee('OWNER ACTION')
             ->assertSee('po_short_1')
             ->assertSee('50.00')
             ->assertSee('49.00')
