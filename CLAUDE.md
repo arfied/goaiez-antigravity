@@ -138,6 +138,20 @@ Watch for: <the trap that applies, by name>
   `--tests`, paste the run's own `pest` rows from `/home/goaiez/tmp/gate-runs.tsv` after,
   and treat a recurrence as an `UNRESOLVED` naming the process — never a number, never a
   reason to touch a test.
+- **`STATUS` states what the raw output says, and the rule is SYMMETRIC.** Run 86 opened
+  `STATUS: wave closed` six lines above `errors 25 · result failed` — a summary hiding a
+  problem, and a `BLOCK`. Run 87 opened `STATUS: stopped` above numbers that hit the floor
+  **exactly** — the same defect with its sign flipped, hiding only work, and not a `BLOCK`.
+  Both are wrong. **Meeting the floor is a close; missing it is a stop.** A later reader
+  scans the summary instead of the 21 KB, in either direction.
+- ⚠️ **`pest.lock` is not serialising anything — MEASURED 2026-09-06 19:2x.** Run 87's own
+  `gate-runs.tsv` rows show `grs-antig-site` and `grs-antig-stages` running `pest`
+  concurrently for 109 seconds, and `grs-antig-ui` starting 15 seconds before `stages`
+  finished, **after `supervise.sh` §7 announced it was waiting on the lock**. Run 86's void
+  suite is what that produces when two of the overlapping lanes share a database. A run
+  whose row carries a real `tool_pid` and real elapsed time is still a run — ours was — but
+  ⛔ **treat every suite number from this checkout as one scheduling accident from void**
+  until Track 1 answers who takes and releases that lock.
 - **`JOURNEYS n/12 green` in `state.py status` is a hand mark**
   (`state.py journey Jn green`), not a test result. All twelve were marked
   green on 2026-08-29/30 before any harness that could pass existed, and the
@@ -240,8 +254,8 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-43 | the six components still rendering the staff console — X-110 `Cooling`, `InstallVerify`, `Today`, `VisitorsLive`, `TagVersionPer`; X-138 `RoiDashboard` | closed, pushed `f5966661` |
 | UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
 | UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
-| **UI-46** | **`Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column** | **in flight — run 86 landed the dispositions and `OwnerNav` 24→28, but shipped a VOID suite (concurrent DDL on `goaiez_antig_ui_test`) as `wave closed`; run 87 closes it** |
-| UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"* — and the ten-call-site exclusion list it needs | next |
+| UI-46 | `Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column | closed, pushed `7f052348` |
+| **UI-47** | **`OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` (ruling below)** | **in flight — run 88** |
 | UI-48 | the **four** screens that still render `<x-surface.sample-state>` unconditionally — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again. **Plus the dead `$isSample` in X-199** — a `#[Locked] public bool = false` with no writer in `Invoices.php` and `Credits.php`, and the unreachable `@elseif($isSample)` at `invoices.blade.php:15` / `credits.blade.php:15`. It is SYSTEM, it is this lane's module, and it is what made the 17:2x six-screen list wrong | after UI-47 |
 
 ### ✅ RULED 2026-09-06 17:1x — the thirteen unreachable owner routes
@@ -347,13 +361,48 @@ All three of those screens carry `<x-ui.empty-state action= href=>`, which is
 **verbatim the one shape the specification admits**. UI-30 and UI-36 shipped the
 admitted shape and were right to.
 
-**The half still gets its own wave, for a better reason (RULED 16:1x).** The corpus it
-must rule on is **ten** call sites, not three: `home.blade.php:101,106,111` (a
-three-tile row into inbox, customers and website), `customers.blade.php:35` (the import
-link the spec names as admitted), `customer-profile.blade.php:26` and `:167` (a
-breadcrumb and a merge-survivor link), `pixel-install.blade.php:137,143`. The tree
-writes an admission for **two** shapes and is silent on the rest, so writing the half
-blind means either a red build or an allowlist invented at the keyboard.
+**The half still gets its own wave, for a better reason (RULED 16:1x).** The tree writes
+an admission for **two** shapes and is silent on the rest, so writing the half blind
+means either a red build or an allowlist invented at the keyboard.
+
+### ✅ RULED 2026-09-06 19:2x — the admission is DERIVED from `OwnerNav::all()`. There is no allowlist.
+
+⚠️⚠️ **And the 16:1x "ten call sites" figure was WRONG — the fourth hand-derived list in
+this file to come out wrong, which is the whole reason this needed a ruling rather than a
+list.** Measured 19:2x with one
+`grep -rn "route('x-\|route('account\." app/app/Modules/*/Ui/views/ app/resources/views/`:
+the corpus is **33** call sites, and `home.blade.php` carries **five** tiles, not three —
+`:121` and `:126` point at `x-199.invoices` and `x-199.credits` and were never in the list.
+
+16:1x posed the wave as a choice between a red build and an invented allowlist. There is a
+third option and the corpus hands it over: **every admissible link in the tree points at a
+route that is already in `OwnerNav::all()`.** So the assertion is
+
+> an owner screen's `href` may target another owner screen **only if that route is in
+> `OwnerNav::all()`**, or in an entry's `alsoCurrentFor`
+
+and it needs **zero written exclusions**. It refuses exactly the shape worth refusing — a
+hand-written door to a screen the nav does *not* carry, which is how a screen becomes
+reachable only by knowing its URL and how `OwnerNav` quietly stops being the whole map. It
+cannot rot, because it states no fact about any screen's contents or state; it reads the nav
+at runtime. And it self-expires in the right direction: **drop a route from the nav and
+every hand-written link to it goes red, by name.**
+
+⚠️ **Two of `home.blade.php`'s five tiles would have reddened before run 87** — `x-199`
+entered the nav that hour. The rule catches the real thing, not a hypothetical.
+
+Structurally outside the assertion, by derivation rather than by name: `<form action=>`
+(`plan:768`, `settings:348`, `suspended:126`, `location-picker:35`), `<audio src=>`
+(`calls:274`), and any target that is not in the owner-screen route set the reachability
+half already derives (`calls:276` → `account.voicemail.recording`, a file download). Scope
+the assertion to **`href` on an anchor**. ⛔ The route set and the owner-ness derivation are
+**shared** with the reachability half — one helper, never a second copy. That is the
+`sampleStateRoutes()` lesson, one wave old.
+
+⛔ **Measurement says it is green on today's tree. If it reds anyway, that is a finding:
+report the raw failure and stop.** Do not add an exclusion, do not edit a blade, do not
+weaken the rule — an unexpected red means a screen is reachable only by URL, which is the
+exact bug the wave exists to find.
 
 ⛔ The `OwnerNavTest` comments are **not to be softened** meanwhile — in
 `OwnerNav.php`, `layout.blade.php`, `routes/web.php`, `texting.blade.php`,
