@@ -274,7 +274,84 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-54 | the reachability check's BLIND SPOT gets a number. ONE new `test(` in `OwnerNavTest`: the count of named `GET` routes carrying `tenant.role` that `ownerScreenRoutes()` cannot see, pinned `toBe(270)`. ⛔ Zero route names written; both sides derived at runtime | closed, pushed `64824100` — run 100 `PASS-WITH-NOTES`, two of its four notes MINE |
 | UI-55 | the `<x-surface.sample-state module="…">` leak gets a number. ONE new `test(` in a new `Architecture/SampleStateModuleTest`: every call site partitioned legal / illegal / unparseable against `ls app/app/Modules/`, all three pinned, and the partition asserted to SUM to a pinned `$total`. ⛔ Zero module ids written; the legal set is the filesystem. ⛔ The blades are NOT touched — the fix is the generator's, TRACK 1. ⚠️ The floor MOVES: `1728 → 1729` | closed, pushed `7a741556` — run 101 `PASS-WITH-NOTES`, **all three notes MINE** |
 | UI-56 | the three defects in the file UI-55 just created, all three the SUPERVISOR's. (1) `$total` re-derived by `substr_count($content, '<x-surface.sample-state')` so the partition assertion stops being an identity over its own loop. (2) the `$illegal` message's unmeasured *"on `tenant.role` routes"* replaced by what was measured, INCLUDING its counterexample. (3) the comment quoting `BRIEF.md` deleted. ⛔ No new `test(`, no blade, no generator. ⚠️ The floor does NOT move: `1729` | closed, pushed `790c4c92` — run 102 `PASS-WITH-NOTES`, **three of its five notes MINE** |
-| **UI-57** | **(1) the ONE clause of UI-56's new message that can rot — *"10 of them are in 6 modules carrying no `tenant.role` route at all (X-111, …)"*, a fact about ROUTES inside a test that measures FILES — deleted; the `Ui/views/` scope clause replaced by what the loop actually walks; *"no blade has been mapped to a route"* kept verbatim. (2) UI-54's `270` SPLIT IN TWO by whether the route's action class declares ANY `#[Layout]` — two `expect()` INSIDE the existing `test(` at `OwnerNavTest:247`, both halves off the one `$invisible` list, both pinned. ⛔⛔ The sum is NOT asserted: it would be UI-56's identity again. ⛔ No new `test(`, floor stays `1729`** | **in flight — run 103 live** |
+| **UI-57** | **(1) the ONE clause of UI-56's new message that can rot — *"10 of them are in 6 modules carrying no `tenant.role` route at all (X-111, …)"*, a fact about ROUTES inside a test that measures FILES — deleted; the `Ui/views/` scope clause replaced by what the loop actually walks; *"no blade has been mapped to a route"* kept verbatim. (2) UI-54's `270` SPLIT IN TWO by whether the route's action class declares ANY `#[Layout]` — two `expect()` INSIDE the existing `test(` at `OwnerNavTest:247`, both halves off the one `$invisible` list, both pinned. ⛔⛔ The sum is NOT asserted: it would be UI-56's identity again. ⛔ No new `test(`, floor stays `1729`** | closed, pushed `784381fb` — run 103 `PASS-WITH-NOTES`, three notes, all shape |
+| **UI-58** | **(1) UI-57's two pins get MESSAGES instead of labels — each says what a red means in BOTH directions, as `:263` does. (2) the `257` SPLIT THREE WAYS by whether the screen behind the route exists: the component's view carries `<x-surface.sample-state>` (unbuilt) · exists without it (built, wearing the wrong shell) · could not be resolved. All three pinned, inside the SAME loop at `OwnerNavTest:247`. ⛔⛔ The sum is NOT asserted — third time. ⛔ A name→view MAP is refused in advance: `ImpersonationLogView` has no matching view filename, and the third bucket exists to COUNT that. (3) the duplicate-registration question answered as a MEASUREMENT in `RAW`, not a pin. ⛔ No new `test(`, floor stays `1729`** | **in flight — run 104 live** |
+
+✅ **UI-57 closed and pushed 2026-09-07 05:0x** (`790c4c92..784381fb`). One commit, four files. The
+rotting *"10 of them are in 6 modules…"* clause is gone, the scope clause now says what the loop walks
+(`app/app/Modules/**/*.blade.php`, and the loop really does take every `.blade.php` under
+`base_path('app/Modules')`), and *"no blade has been mapped to a route"* survived verbatim. `test(` 1
+and 5 unmoved; `expect(` on `OwnerNavTest` **5 → 7**, both new calls outside every loop. Doctor the
+unmoved `745` at stamp `20260829-0647`, `citation` still **94**, `pint passed`, `phpstan 0` — all §0–§6
+run by me.
+
+⭐ **`13` reproduced against a source the test cannot see.**
+`grep -rhoP "#\[Layout\('[^']*'" app/app/Modules/` → **17** `components.account.layout` and **13**
+`components.layouts.agency`, the thirteen being `X-112` (4) · `X-118` (6) · `X-198` (3), each behind its
+module's single `tenant.role` group. The 17 all belong to the five converted modules, whose routes
+`ownerScreenRoutes()` admits, so the only `#[Layout]`-carrying invisible routes are the thirteen. Two
+methods, same answer: **the detector fired.**
+
+### ⛔ RULED 2026-09-07 05:0x — `257` is ENTAILED, not measured, and the record has to say which
+
+Every element of `$invisible` increments exactly one of the two counters, so
+`withoutLayout = 270 − withLayout` **by construction**. Pinning it is right — it is the number the rest
+of Week 2 is scoped against and it must red when it moves — but it is **not a second observation**.
+
+> ⛔ **A pin derived from two other pins corroborates nothing. The day somebody cites `257` as
+> confirmation of `270`, the arithmetic has been read as evidence.** That is UI-56's identity in a
+> milder form: not a vacuous assertion, but a true one carrying more credit than it earned.
+
+### ⛔ RULED 2026-09-07 05:0x — a pin's message must say what a RED MEANS, or the pin decays into an exclusion
+
+UI-57's brief said so with a ⛔ and the delivered messages are noun phrases:
+`'Invisible routes that declare a #[Layout] attribute (already in some other shell)'`. Compare `:263`,
+which spends three sentences on *up is a regression, down is progress, lower the number and record it*.
+
+> ⛔ **A reader who meets a red pin with no statement of what the red means guesses, and the guess a
+> tired reader makes is *lower the number*.** The 02:0x ruling says a pinned count excuses nothing and
+> an exclusion excuses a route; **the message is the whole of that difference.** Without it the pin is
+> a speed bump with a number on it. UI-58 item 1.
+
+### ⛔ RULED 2026-09-07 05:0x — a silent `none` cannot be told from never having looked
+
+UI-57's brief flagged the duplicate-registration question in writing and made a divergence a FINDING.
+`REPORT.md` answered `UNRESOLVED: none` and never mentioned it; `OwnerNavTest:272–287` `break`s on the
+first name match, so the code cannot answer it either. **Measured here instead:**
+`X-198/routes.generated.php` registers `/connect-card` → `ConnectCard::class` → `x-198.connect-card`
+**twice**, and `X-112` (4 names), `X-118` (6) and `X-166` (4) are the same shape. Both registrations
+resolve to one class, so the halves cannot diverge and there is **no finding** — which is exactly what
+the report should have said.
+
+⚠️ **And a correction, of the shape this file keeps producing: the thirteen are 13 of the 17 duplicated
+names, not all of them.** `X-166`'s four are duplicated and declare no `#[Layout]`, so they sit inside
+the `257`. **A subset is not an identity** — seventeenth of the hand-derived-claim family, caught
+inside a block written to correct one.
+
+### ✅ RULED 2026-09-07 05:0x — UI-58 splits the `257` by whether the screen EXISTS, and refuses a map in advance
+
+`257` stands in for the whole remaining conversion backlog and it mixes two jobs that are not the same
+job. A route whose view still renders `<x-surface.sample-state>` is **build** work and belongs to a
+module owner; a route whose view is built and merely lacks `#[Layout]` is the UI-43/UI-49 shape, which
+has cost this lane one wave per three screens. ⛔ **Until they are separated there is no way to tell a
+tail from a programme** — verbatim the scoping problem that produced the census at 23:2x.
+
+⛔ **The three buckets are NOT asserted to sum**: one fires per iteration of the same loop, UI-56's
+identity for the third time. ⛔ **And a name → view map is refused before it is written.** The
+kebab-of-the-basename derivation does miss somewhere — `X-112/Ui/ImpersonationLogView.php` sits beside
+`impersonation-log.blade.php` — and the third bucket exists to **count** the misses. A map, an alias
+table or a second-guess fallback turns a measured fact about the tree into a number that only records
+how hard somebody tried; it is an exclusion list wearing a different noun.
+
+⚠️ **And the example above is from the WRONG HALF — caught in the same tick that wrote it.**
+`ImpersonationLogView` declares `components.layouts.agency`, so it is one of the **thirteen** and not in
+the `257` the third bucket partitions. It shows the convention breaks in this tree; it says **nothing**
+about that population, and **nobody has measured how many of the `257` miss.** The brief says so in
+those words and hands the number to the coder. Eighteenth of the family, and the second inside one
+tick — ⛔ **a worked example is a claim about the population it is offered for, not about the tree.**
+
+⛔ `SampleStateModuleTest` is not touched: its *"no blade has been mapped to a route"* is a statement
+about what **that** test measured, and UI-58 doing the mapping elsewhere does not make it false.
 
 ✅ **UI-56 closed and pushed 2026-09-07 03:3x** (`7a741556..790c4c92`). Three insertions, three
 deletions, one file. `$total` is now `substr_count($content, '<x-surface.sample-state')` accumulated per
