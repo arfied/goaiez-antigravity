@@ -42,7 +42,9 @@ class CheckoutBlockScreenTest extends TestCase
             ->assertOk()
             ->assertSee('Limited filter')
             ->assertSee('285.00')
-            ->assertSee('Reserved until')
+            ->assertSee('This cart expires at')
+            ->assertSee('nothing is held for you until the order is placed')
+            ->assertSee('stock comes off the moment the order is placed, not when it is paid')
             ->assertSee('No orders yet');
 
         $screen->call('pay')

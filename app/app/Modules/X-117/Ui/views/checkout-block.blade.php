@@ -1,6 +1,6 @@
 <div>
     <h1>Checkout</h1>
-    <p>The card itself is tokenised by Stripe on the card screen and the money is captured by the gateway; until those contracts land, this block records the authorisation and the order, and stock moves only at paid.</p>
+    <p>The card itself is tokenised by Stripe on the card screen and the money is captured by the gateway; until those contracts land, this block records the authorisation and the order, and stock comes off the moment the order is placed, not when it is paid.</p>
 
     @if($error)
         <x-ui.error-panel heading="We couldn't take that payment">{{ $error }}</x-ui.error-panel>
@@ -35,7 +35,7 @@
             @endforeach
         </ul>
         <p class="tabular-nums">Total: {{ number_format($cart->total_cents / 100, 2) }}</p>
-        <p>Reserved until {{ $cart->expires_at->format('H:i:s') }}</p>
+        <p>This cart expires at {{ $cart->expires_at->format('H:i:s') }} — nothing is held for you until the order is placed.</p>
         <x-ui.button size="default" wire:click="authorise">Authorise this charge</x-ui.button>
         <x-ui.button size="default" wire:click="pay" :disabled="$authToken === null">Pay {{ number_format($cart->total_cents / 100, 2) }}</x-ui.button>
     @endif

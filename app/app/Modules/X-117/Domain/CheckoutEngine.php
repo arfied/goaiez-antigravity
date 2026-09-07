@@ -145,9 +145,10 @@ final class CheckoutEngine
     }
 
     /**
-     * Adds to the session's cart. Stock is decremented at PAID, never at CART
-     * (§147.2): this reads inventory and writes only the cart row. The clock
-     * on a live cart never moves (G16-05); an expired or absent cart starts a new one.
+     * Places the order for the session's cart. Stock is decremented HERE, in the
+     * same transaction that writes the order `pending_payment` (§147.2) — ruling 45
+     * leaves no path to `paid`, so `cancelOrder()` is the only way it comes back.
+     * Refuses a stale authorisation, an expired cart and an empty one.
      */
     public function checkoutCart(int $businessId, string $sessionToken, string $freshAuthToken, ?int $customerId = null): array
     {

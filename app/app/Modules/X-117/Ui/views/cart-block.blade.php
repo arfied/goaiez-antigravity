@@ -39,7 +39,7 @@
 @endforeach
 </ul>
 <p class="tabular-nums">Cart total: {{ number_format($cart->total_cents / 100, 2) }}</p>
-<p class="text-sm text-ink-2">Reserved until {{ $cart->expires_at->format('H:i:s') }} — the clock is the row's, it does not restart on refresh. Stock comes off at paid, never in the cart.</p>
+<p class="text-sm text-ink-2">This cart expires at {{ $cart->expires_at->format('H:i:s') }} — the clock is the row's, it does not restart on refresh. Nothing is held for you: stock comes off when the order is placed at checkout, and another cart can take the last one first.</p>
 <x-ui.button size="default" wire:click="checkout" wire:loading.attr="disabled" wire:target="checkout">Check out</x-ui.button>
 @endif
 </div>

@@ -42,7 +42,9 @@ class CartBlockScreenTest extends TestCase
             ->call('add', $filter->id)
             ->assertSee('Limited filter is in the cart')
             ->assertSee('Cart total: 45.00')
-            ->assertSee('Reserved until');
+            ->assertSee('This cart expires at')
+            ->assertSee('Nothing is held for you')
+            ->assertSee('another cart can take the last one first');
 
         $cart = Cart::where('business_id', $biz->id)->where('session_token', 'sess_1')->firstOrFail();
         $until = $cart->expires_at->format('H:i:s');
@@ -67,7 +69,7 @@ class CartBlockScreenTest extends TestCase
             ->call('add', 999999)
             ->assertSee("isn't in this catalogue");
 
-        $this->assertSame(1, $filter->fresh()->inventory_quantity, 'stock is decremented at paid, never at cart');
+        $this->assertSame(1, $filter->fresh()->inventory_quantity, 'the cart screen only sets a waiting state, so no order is placed and no stock moves');
         $this->assertSame(10, $visit->fresh()->inventory_quantity);
         $this->assertSame($until, $cart->fresh()->expires_at->format('H:i:s'), 'the clock never moved');
         $this->assertSame(12000, $cart->fresh()->total_cents);
