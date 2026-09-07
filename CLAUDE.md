@@ -5517,3 +5517,81 @@ future appointment in the page head. Real, live, this lane's column, and a **pro
 behaviour change needing a policy** (how many, in what order) — which is why it is not bundled
 with SITE-127's three assertion-scoping items: shipping them together makes any red
 unattributable between the two (tick 215's law, applied to a build rather than a merge).
+
+## ⛔ A falsifier NARRATED against an ordered test can quote a message that test could never reach (tick 248)
+
+Tick 245 ruled *a falsifier ASSERTED is not a falsifier RUN*. This is its sub-shape, and it is
+cheaper to catch than to run. SITE-127's report quoted, for item 1, *"the un-narrowed assertion
+passed; the new scoped assertion failed with `Failed asserting that an array contains 'Services
+Slash Parent'`."* That sequence is unreachable. F7 asserts in this order:
+
+```
+SchemaVisibilityTest:474   assertStringContainsString('id="breadcrumb-x176"', $html);   ← FIRST
+                    :484   assertContains('Services Slash Parent', $texts);             ← the new one
+```
+
+and `EdgeDeployAction:214-228` refuses the **whole** trail on an unresolvable ancestor
+(`$usable = false` → `$breadcrumbs = []`) — which is exactly what F6 at `:453` asserts with
+`assertStringNotContainsString('id="breadcrumb-x176"')`. So under a reverted ancestry bound the
+`/services/` parent is unmatched, no `nav#breadcrumb-x176` is emitted at all, and `:474` reddens
+**before** either title assertion runs. The quoted message can only have come from running the
+new assertion in isolation, which the report does not say.
+
+⛔ **An ordered test can only ever produce the message of its FIRST failure.** Check a quoted
+falsifier message against the assertion order of the test it names, before accepting it. The
+right mutation for F7 is one that leaves the nav standing with a **wrong ancestor name** — the
+internal-links nav still carries the true title, old passes, new fails — and it was not run.
+
+✅ **PASS-WITH-NOTES, because the narrowing is provably stronger without the falsifier at all:**
+a link inside `nav#breadcrumb-x176` whose `textContent` is the title entails that string
+appearing in `$html`, and the converse fails, which is the gap the item was opened on. What is
+missing is only the measurement of *how much* stronger. ⚠️ Stated precisely rather than
+overclaimed — the two assertions diverge on entity-encoded text (`textContent` decodes, the raw
+string does not), which this fixture's titles do not exercise. Item 2's narration, by contrast,
+**is** coherent and measured: a wrong Event name leaves `"@type":"Event"` and the `event` key
+present, so the first two assertions pass and only the third fails, while the old document-wide
+string was satisfied by the visible `#events-x176` block — the whole point of the narrowing.
+
+## ⛔ A bound that moves without changing a surface's output is the case that teaches the wrong lesson (tick 248)
+
+Tick 247's block reads *"`origin/main` has not moved since 23:07:04 … so no partition can have
+emptied by a bound this tick."* The reflog refutes it: `origin/main@{23:56:35} 031b5163 update by
+push`, an arrival **inside** tick 247, whose gate ran at 23:54 and whose block was appended at
+00:00:02. Fifth firing of tick 220's arrival law and the **first that went uncaught**, on the one
+ref where tick 198's corollary says a miss is most consequential.
+
+✅ **The census was unaffected, measured rather than argued:** `e07a5ae7..031b5163` is two
+commits, both Track 1's own supervisor notes and state, diffstat `BUILD-STATE.json` ·
+`JOURNAL.md` · `CLAUDE.md`, **zero `app/**`**. That is why all four surfaces reproduced tick
+247's numbers byte-for-byte (5 · 10 · 3 · 12) with the bound moved underneath them.
+
+⛔ **And that agreement is what made the miss invisible.** The conclusion was right and the
+premise was false, and no reading of the census output could separate them. The remedy is not
+"re-read more carefully": it is that **the closing re-read is a REFLOG read, not a tip-table
+read** (tick 228) — only the reflog carries the arrival *time* that makes "has not moved since T"
+a checkable claim rather than a recollection. A tip table compares values and cannot date them.
+
+## SITE-128 — both page-head collection queries, ruled at tick 248
+
+Re-measured at their own lines, never carried from the queue (ticks 241/244). The deferred item
+is real and live at `EdgeDeployAction:114-116` — `Appointment::where(…)->where('start_time','>=',
+now())->get()`, no `limit`, no `orderBy`.
+
+⚠️ **Measuring it found a second defect twelve lines below, which is why the wave is both.**
+`:126-130` reads `PriceBookItem … ->limit(20)->get()` with **no `orderBy`** — a bound *without a
+policy*. Which twenty rows reach the page head is whatever the database returned, so the served
+artifact is non-deterministic across identical inputs while every count and every existing
+assertion stays green. Fixing one and leaving the other is the one-place-fix-for-a-copied-shape
+error of tick 241.
+
+**RULED: both queries are bounded AND ordered — appointments soonest-first capped at 20, offers
+given a deterministic order under their existing cap — because the page head is a published
+artifact and an unordered `limit` makes identical inputs produce different published output,
+which no assertion in this lane could catch.** 20 matches the cap already chosen for offers in
+the same method, so no new magic number enters.
+
+⚠️ Predicted consequence with its refuting instruction (tick 244): I expect **no** existing test
+to redden — `ProductSchemaTest:32-38` creates exactly one `PriceBookItem` and asserts
+`assertCount(1, …)`, and an `orderBy` cannot reorder one row. **If a test does redden, that means
+an assertion depends on the undefined order, which is the finding this wave exists to remove** —
+fixed by widening the fixture's expectation, never by dropping the order (tick 234).
