@@ -243,3 +243,22 @@ test('every sample-state exclusion is still a sample', function () {
             ->toBeTrue($message);
     }
 });
+
+test('the reachability check states the size of its own blind spot', function () {
+    $admitted = ownerScreenRoutes();
+
+    $tenantRole = [];
+    foreach (Route::getRoutes()->getRoutesByMethod()['GET'] ?? [] as $route) {
+        $name = $route->getName();
+        if (! $name) {
+            continue;
+        }
+        if (in_array('tenant.role', $route->gatherMiddleware(), true)) {
+            $tenantRole[] = $name;
+        }
+    }
+
+    $invisible = array_values(array_diff(array_unique($tenantRole), $admitted));
+
+    expect(count($invisible))->toBe(270, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
+});

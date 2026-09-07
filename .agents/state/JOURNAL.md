@@ -779,3 +779,4 @@
 - `2026-09-07T00:26:35` note: dup_of: 1 target surviving, 11 discarded
 - `2026-09-07T00:45:15` (R245) X-192 — an owner screen whose own view carries a visible h1 does not opt into the layout's sr-only heading seam; the shell assertion is the proof obligation, the sr-only line is a check on the seam
 - `2026-09-07T01:02:28` (R245) X-192 — an owner screen gets its single h1 from its own view or from the layout's sr-only seam and never from both; the count is the invariant and the source of it is free
+- `2026-09-07T01:42:49` (R245) X-124 — the reachability check's population is the work already done, so the count of tenant.role routes it cannot see is pinned as a measurement that reds in both directions; a pinned count excuses no route and is not an exclusion

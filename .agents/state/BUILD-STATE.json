@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T01:02:28",
+ "updated": "2026-09-07T01:42:49",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1478,6 +1478,12 @@
    "module": "X-192",
    "chose": "an owner screen gets its single h1 from its own view or from the layout's sr-only seam and never from both; the count is the invariant and the source of it is free",
    "at": "2026-09-07T01:02:28",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "the reachability check's population is the work already done, so the count of tenant.role routes it cannot see is pinned as a measurement that reds in both directions; a pinned count excuses no route and is not an exclusion",
+   "at": "2026-09-07T01:42:49",
    "ruling": "R245"
   }
  ],
