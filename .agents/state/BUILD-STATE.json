@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T03:29:19",
+ "updated": "2026-09-07T05:08:34",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1502,6 +1502,12 @@
    "module": "X-124",
    "chose": "a pinned count cannot rot but prose attached to it rots as fast as any other prose while borrowing the pin's credibility; a failure message states what the code measured and what it did not measure, never a fact about the world the code does not check",
    "at": "2026-09-07T03:29:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a pinned count states what a red means in each direction or the next reader lowers it instead of fixing the code; and a backlog count is not scoped until it is split by whether the thing behind it exists",
+   "at": "2026-09-07T05:08:34",
    "ruling": "R245"
   }
  ],
