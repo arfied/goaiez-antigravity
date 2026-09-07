@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T06:24:17",
+ "updated": "2026-09-07T08:04:59",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1818,6 +1818,12 @@
    "module": "X-102",
    "chose": "The chat widget door is an unauthenticated HTTP route taking a PixelKey as a route parameter to resolve the tenant, matching T3InjectionController's pattern and ensuring chat capability respects pixel grounding without relying on ReviewWidget configurations.",
    "at": "2026-09-07T06:24:17",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "provision a tenant and test db before status code to verify RLS bypasses",
+   "at": "2026-09-07T08:04:59",
    "ruling": "R245"
   }
  ],

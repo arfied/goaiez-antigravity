@@ -880,3 +880,4 @@
 - `2026-09-07T05:39:30` note: capability: The G16-21 id in the X102Test docblock falsely satisfies the capability checker because testedIds scans file contents for the ID string without verifying if it is asserted in code.
 - `2026-09-07T06:00:56` (R245) X-102 — The chat message store is sequenced behind the customer-facing door (the unauthenticated route and JS bundle), since without them the store has no production writer or reader.
 - `2026-09-07T06:24:17` (R245) X-102 — The chat widget door is an unauthenticated HTTP route taking a PixelKey as a route parameter to resolve the tenant, matching T3InjectionController's pattern and ensuring chat capability respects pixel grounding without relying on ReviewWidget configurations.
+- `2026-09-07T08:04:59` (R245) X-102 — provision a tenant and test db before status code to verify RLS bypasses

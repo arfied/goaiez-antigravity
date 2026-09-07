@@ -38,15 +38,20 @@ class ChatDoorTest extends TestCase
     public function test_unknown_key_creates_nothing_and_does_not_500(): void
     {
         // Prove that an invalid key returns a 404 without crashing, and does not bypass tenancy to create a row.
+        // RLS prevents reading the whole table to prove "no rows anywhere" with an empty tenant.
+        // Instead, we provision a tenant (which a bypass might fall back to) and assert as that tenant,
+        // and we place this before the status check so a bypass fails here first.
+        $biz = TestCase::provisionTenant(['name' => 'Bypass Target', 'currency' => 'USD']);
         Tenancy::forgetAll();
 
         $unknownKey = Str::uuid()->toString();
         $response = $this->postJson("/api/chat/{$unknownKey}/start");
 
-        $response->assertStatus(404);
-
-        // Assert no rows returned for empty tenant (RLS enforces isolation; we cannot read the whole table)
+        // Assert the database first, so a bypass fails here rather than on the status code.
+        Tenancy::set((int) $biz->id);
         $this->assertEquals(0, ChatSession::count());
+
+        $response->assertStatus(404);
     }
 
     public function test_key_for_business_a_does_not_produce_row_readable_as_business_b(): void
