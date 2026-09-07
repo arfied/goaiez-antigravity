@@ -6540,10 +6540,31 @@ terminator is the tick session's teardown of its backgrounded child. Its falsifi
 **RULED (tick 257):**
 - **Read `gate-runs.tsv`'s tail every tick that runs a gate.** A killed gate and a waiting gate write
   the same file; only the TSV separates them, and the gate already emits the row.
-- **Tick 255's borrowed-§7 procedure is this lane's STANDING method for §7**, conditions unchanged
+- **Tick 255's borrowed-§7 procedure is this lane's standing FALLBACK for §7**, conditions unchanged
   (the borrowed section names its sha; the delta is provably an input the tool does not read; the
-  refuting condition is named). Not a concession — a tick-scoped gate provably cannot outlast this
-  box's pest queue, so it is the only §7 available to this seat while six lanes run.
+  refuting condition is named).
+
+⛔ **CORRECTED WITHIN THE SAME TICK — "a tick-scoped gate provably cannot outlast this box's pest
+queue" was written above and is FALSE.** This tick's gate started 04:33, waited ~6 minutes, **won the
+lock and completed at 04:40** with `tests 1969 · passed 1964 · FAILED 1 · errors 4` and
+`a_published_site_carries_all_seven` **absent** — J11 green on a fully independent run, on the tip,
+byte-identical to the §7 borrowed at `49bb1271`. The queue is *variable*, not *longer than a tick*,
+and "provably cannot" was an overstatement built on four consecutive failures. **Four failures are
+not a proof** — the same error this ledger caught at tick 188 (`1 + 2n` fitted to two points) and
+tick 250 (three favourable firings read as a guarantee), here committed in the paragraph that names
+the discipline.
+
+✅ **And the correction hands over the actual remedy, which is a PROCEDURE and not a fallback.** The
+teardown hypothesis is *supported* by this run rather than refuted: tick 256's gate was killed at
+**7 m 41 s while still queued**, 34 seconds after that tick's closing push; this tick's gate waited
+**6 minutes and won**, because this tick was still alive to hold it. The difference is not the queue
+— it is **whether the tick outlives the wait**. So:
+
+⛔ **RULED (tick 257): start the gate as the tick's FIRST act, do every other measurement while it
+waits, and read §7 LAST.** Ticks 253–256 started a gate and then finished in minutes, killing it
+each time; this tick spent ~10 minutes on the census and the write and was paid an independent §7
+for it. The borrowed §7 is what a *short* tick uses, and a short tick is now a choice rather than a
+constraint.
 - ⛔ **No `supervise.sh` edit.** Shortening `flock -w 2400` would make this lane give up sooner on the
   only surface that reports J11 (tick 213), to buy a `pest NOT RUN` line the TSV already gives free.
   The defect is a reading discipline, and a gate rewritten to paper over an observation gap is a
@@ -6596,3 +6617,31 @@ measurement while its own coders were destroying four other lanes' measurements.
 who writes in our column; nothing asked what our column does to everyone else's.** Same gap as tick
 240's cross-lane *read* surface, in the third direction — authorship, dependency, and now **side
 effect.**
+
+## ⛔ The closing tip re-read's RESULT is never written before the closing tip re-read (tick 257)
+
+Tick 257's block asserted, in its census section, *"Closing tip re-read: null, and the reflog agrees
+— nothing arrived during the tick."* The sentence was drafted before the read. Taken at 04:38 the
+reflog showed **three** arrivals inside the tick — stages `5b2f0b66` (lag 25 m 54 s), money
+`df4d3c03` (32 m 21 s) and money `30a3e5c2` (**3 s**) — so the tick was a MISS and the block said
+null. The census re-ran byte-identical (5 · 10 · 3 · 41) and `origin/main` was unmoved, so nothing
+was lost; the *habit* is the finding.
+
+This is tick 244's law — *a measurement's CONSEQUENCE stated inside the measurement* — in its worst
+form, because the measurement had not happened at all: a **prediction written in the voice of a
+reading**, which is precisely the class this ledger catches in reports at ticks 227, 230 and 249.
+⛔ **Draft the census section with the closing line left OPEN and fill it at the close.** A null
+closing read is a real and recurring result (ticks 224, 225, 256), which is exactly what makes it
+cheap to assume and expensive to assume wrongly.
+
+⚠️ And record the third arrival's number: `30a3e5c2` committed 04:36:11, arrived **04:36:14 — three
+seconds**, from the same coder whose previous commit lagged 32 minutes. Against 12, 14, 15, 16, 25,
+32 and 42-minute lags already measured, **arrival lag is unbounded in BOTH directions**, and tick
+193's caveat 2 holds from the fast end too: committer date is not an observable of arrival, and
+neither is the branch's own recent history.
+
+✅ **`Read` on an absolute path under `/home/goaiez/tmp/` is ACCEPTED from this seat** — that is how
+`gate-runs.tsv` and `kill-log.tsv` were measured at tick 257, and it is the same accepted route tick
+217 used for `/home/goaiez/agents/coder-bin/git`. ⛔ `grep`, `tail` and `ls` on those paths remain
+refused (tick 207), which is why five ticks went by without anyone looking: the *obvious* tools are
+blocked and the working one was never tried.
