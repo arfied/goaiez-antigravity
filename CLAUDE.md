@@ -283,7 +283,127 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-62** | **the SEVENTH bucket, and the FIRST that is NOT empty on arrival. `HeadingSeamTest:43` is `preg_match`, not `preg_match_all` — it reads the blade's FIRST heading and never looks at another, so `x-108/calendar`'s `<h4>` at `:40` and `:53` under an `<h2>` at `:4` renders `<h1>` → `<h2>` → `<h4>` and NOTHING sees it. (1) add `$levelSkips` over the FULL sequence, pin it `0`, `--filter`, paste the failure, re-pin to what the run produced, commit the test ALONE. (2) THEN `<h4>` → `<h3>` on both lines, re-pin to `0`, `--filter`, paste it passing, commit blade + re-pin. ⭐ The pin is OBSERVED moving `1 → 0`, which UI-60's could not be. ⛔⛤ The sum is NOT asserted — seventh wave; and `$levelSkips`/`$skips` are NOT asserted disjoint. ⛔ No new `test(`, floor stays `1730`** | closed, pushed `15caddac` — run 109 `PASS-WITH-NOTES`, the pin **observed moving `1 → 0`** at both ends, and the one finding it produced was MINE |
 | **UI-63** | **the text-order blind spot in the check UI-62 just shipped gets an UPPER BOUND. `HeadingSeamTest:55` is `preg_match_all` over the blade's TEXT in document order, so mutually exclusive `@elseif` arms are concatenated into a sequence no page renders — and `calendar.blade.php:40`/`:53` are exactly that shape. (1) the `$levelSkips` message gains the limit it does not state, in BOTH directions — it can flag a skip that never renders and HIDE one that does. (2) ONE new `expect()` inside the existing `test(`: views with a `<h[1-6]` at `@if`/`@unless` depth ≥ 1, pinned. ⛔⛔ The message must contain the words "upper bound" and say why — it counts single-heading views and nested conditionals, neither of which is a blind spot. My reading is `8` of `19`; a different number is a FINDING. (3) the counted views listed in `RAW` ONLY. ⛔⛤ The sum is NOT asserted — eighth wave. ⛔ No new `test(`, no blade, floor stays `1730`** | closed, pushed `1d708711` — run 110 `PASS-WITH-NOTES`, three notes, **two of them MINE**; the `8` re-derived by me over all 23 blades without resolving a view name |
 | **UI-64** | **the blind spot's BLIND SPOT, and the directional clause `:109` never got. (1) `:109`'s message gains what a red means in BOTH directions ⛔⛔ INCLUDING that neither one is a defect — a red here is a POPULATION moving, not a broken heading, and the five pins above it all read the other way. (2) ONE new `expect()` inside the existing `test(`: resolved views containing any of the six Blade openers the depth arithmetic does NOT track (`@isset`, `@empty`, `@switch`, `@auth`, `@can` …), pinned — because an uncounted opener makes the count fall UNDER the population it claims to bound, which is "upper bound" going false in the wrong direction. ⛔ Zero view names; the matched set is Blade keywords. My reading is `0` of `19`; a different number is a FINDING. ⛔⛤ The sum is NOT asserted — ninth wave — and it is NOT asserted disjoint either. ⛔ No new `test(`, no blade, no new file, floor stays `1730`** | closed, pushed `eb2d6768` — run 111 `PASS-WITH-NOTES`, six notes, **N1 the largest MINE in this lane's history** |
-| **UI-65** | **the VOCABULARY stops being a literal. (1) `:116`'s seven-keyword regex replaced by a DERIVATION over the population's own closers — `@x` is a block opener iff `@end<x>` also occurs in these views; pin the size of that set minus `{if, unless}`. ⛔ Zero Blade keywords written except the two the arithmetic itself tracks. My reading is **`2`** (`foreach`, `php`); a different number is a FINDING. (2) its message states both directions, that neither is by itself a defect, and its own limit — it sees only an `@end<name>` closer in the same population. (3) `:115`'s parenthetical five-keyword list DELETED, replaced by what the code does (tracks `@if`/`@unless` only). ⛔ No new `test(`, no blade, no new file, floor stays `1730`. ⛔⛤ The sum is NOT asserted — tenth wave** | **in flight — run 112 dispatched** |
+| **UI-65** | **the VOCABULARY stops being a literal. (1) `:116`'s seven-keyword regex replaced by a DERIVATION over the population's own closers — `@x` is a block opener iff `@end<x>` also occurs in these views; pin the size of that set minus `{if, unless}`. ⛔ Zero Blade keywords written except the two the arithmetic itself tracks. My reading is **`2`** (`foreach`, `php`); a different number is a FINDING. (2) its message states both directions, that neither is by itself a defect, and its own limit — it sees only an `@end<name>` closer in the same population. (3) `:115`'s parenthetical five-keyword list DELETED, replaced by what the code does (tracks `@if`/`@unless` only). ⛔ No new `test(`, no blade, no new file, floor stays `1730`. ⛔⛤ The sum is NOT asserted — tenth wave** | closed, pushed `08ba50d0` — run 112 `PASS-WITH-NOTES`, five notes, **three of them MINE**, and the tick that reviewed it found the `745` is not a property of the sha |
+| **UI-66** | **(1) `count($untrackedOpeners)` replaced by the sorted SET itself — a count cannot see a SWAP, and `foreach` leaving as `isset` arrives keeps it at `2` forever. ⛔ The count pin is REPLACED, not kept beside it: a count entailed by a set corroborates nothing (05:0x). (2) that pin's message is FALSE about what a red means — see the 09:4x ruling: a block opener weakens `conditionalHeadings` only if it creates MUTUALLY EXCLUSIVE ARMS, and the one member it found cannot. Restated to the criterion, ⛔ with no Blade keyword named as a current member. (3) the LINE-GRANULARITY blind spot gets a number: `:50` tests the heading BEFORE `:53–56` update the depth, so a heading sharing a line with its own `@if` is judged at depth 0. ONE new `expect()`, pinned; my reading is `0` of 19 and a different number is a FINDING. ⛔ No new `test(`, no blade, no new file, floor stays `1730`; `expect(` `9 → 10`. ⛔⛤ The sum is NOT asserted — eleventh wave** | **in flight — run 113 dispatched** |
+
+### ⛔⛔ MEASURED 2026-09-07 09:4x — THE `745` IS NOT A PROPERTY OF THE SHA. It fell to `744` on an unchanged tree.
+
+The baseline `0 · 6 · 87 · 94 · 15 · 399 · 138 · 6 = 745` is cited in every `REVIEWS.md` block since
+UI-42 as verification that a coder's range moved no stage. **This tick it read `744`, on
+`08ba50d0`, with no `app/**` diff that touches any stage.** Measured twice, on two separate clean gate
+runs of my own; `journey` is `5`, the other seven are unmoved to the digit.
+
+**The cause is on disk and it is not code.** `journey` counts the twelve journeys minus those with an
+evidence file, and the evidence lives in **`app/storage/app/evidence/journeys/`, which is gitignored
+and written by the pest suite itself**. All eight files are stamped `09:23` — inside run 112's suite.
+My run-111 gate log lists `cancel: not run — write evidence/journeys/cancel.json` as one of its six;
+`cancel.json` now exists, carrying `"artifact_id": "9907415"`, and the violation is gone.
+
+> ⛔⛔ **`journey` reports the outcome of the LAST SUITE THAT RAN IN THIS CHECKOUT, not the state of
+> the committed code.** Twenty-six gate logs read `745` because every one of them ran in a settled
+> state. The twenty-seventh caught the number mid-move.
+
+⛔⛤ **And inside a single `--tests` run, §5 executes BEFORE §7 — so the doctor block a report pastes
+is always evidence about the suite BEFORE this one.** Run 112's own `RAW` says `journey 6` six lines
+above a §7 that made it `5`. **The two halves of one gate come from different worlds by
+construction**, and neither half is wrong. That is the stale-doctor family's newest member and the
+first whose staleness is *designed in*.
+
+⭐ **One cause, five numbers.** `cancel` was one of the four standing `errors`; it now passes. That is
+`errors 4 → 3` · `passed 1723 → 1724` · `assertions 6971 → 6976` · `journey 6 → 5` · `total 745 →
+744`, all from one test completing. The coder saw the assertion jump, said honestly that it had not
+changed the test, and guessed *"another test suite"*; the account was in the evidence directory's
+mtimes.
+
+✅ **`bin/supervise.sh` §5a, added and observed firing this tick:** it lists
+`app/storage/app/evidence/journeys/` with `--time-style=long-iso` directly under the eight stage
+numbers. It fixes nothing — it makes the provenance visible, so the journey number is never again read
+as a fact about the tree without its timestamps beside it. ⛔ **The standing baseline is restated:
+seven stages `0 · 6 · 87 · 94 · 15 · 399 · 138`, and `journey` is 5 OR 6 depending on the last suite.**
+
+### ⛔⛔ RULED 2026-09-07 09:4x — the untracked-opener pin's message is FALSE about what a red means, and the framing was MINE
+
+`HeadingSeamTest:125` says a red means *"the population gained a block construct the heading-depth
+arithmetic cannot see, which is the upper bound on `conditionalHeadings` getting weaker."* **That is
+false for the one member the derivation actually found.**
+
+`$conditionalHeadings` is an upper bound on views where **text order** can be wrong, and text order is
+broken by **mutually exclusive arms** — `@if`/`@elseif`/`@else`, `@switch`/`@case`. A `@foreach`
+emits its body in document order, every time, so a heading inside a loop co-renders with everything
+around it in exactly the order the text implies. ⛔ **`@foreach` being untracked does not weaken the
+`8` by one view.** My own 08:5x block says as much in its `✅` bullet and then hands the opposite
+sentence to the brief.
+
+> ⛔ **A block construct and a branching construct are not the same set, and only the second one can
+> make the bound false. The derivation over closers finds the first.** The pin is still worth having —
+> it is the population's block vocabulary, and a `@switch` arriving would show up in it — but its
+> message must state the **criterion** a reader applies on a red, not assert a consequence that is
+> wrong for its current contents.
+
+⛔ And the criterion goes in, never the members: naming `@foreach` in a permanent failure message is
+the 03:3x rot with the pin's credibility borrowed. **Twenty-fifth of the hand-derived-claim family,
+mine**, and the second running where the coder delivered my sentence character for character.
+
+### ⛔ RULED 2026-09-07 09:4x — a pinned COUNT cannot see a SWAP; the pin is the SET
+
+`expect(count($untrackedOpeners))->toBe(2)` is green on `{foreach, php}` and equally green on
+`{isset, switch}`. The identity is computed and reaches a reader **only through the failure message**,
+which by construction never renders while the pin holds. ⛔ **A guard written to catch a vocabulary
+moving in silence is itself blind to the vocabulary moving in silence** — the UI-65 defect one level
+up, and the eleventh member of the uncounted-state family.
+
+✅ **The repair does not reopen the 08:5x keyword ban.** That ban is on a hand-written list used as the
+**question** — an allowlist wearing a measurement's clothes, which can only ever confirm itself.
+`expect(implode(', ', $untrackedOpeners))->toBe('foreach, php')` writes the derivation's **answer**:
+the sweep is still over the whole population, `@isset` is still discovered unbidden tomorrow — it just
+reds instead of passing. That is UI-54's ruling exactly — *"a pinned count is not an exclusion; it is a
+measurement pinned so it cannot move in silence"* — **and a pinned set is the same thing, strictly
+stronger.**
+
+⛔ The count pin is **replaced**, not kept alongside. A count entailed by a set is the 05:0x
+*"entailed, not measured"* defect and the day somebody reads the `2` as confirmation of the set, the
+arithmetic has been read as evidence. `sort()` already makes the string deterministic.
+
+### ⚠️ MEASURED 2026-09-07 09:4x — the depth is updated AFTER the heading is judged, so a one-line `@if` is judged at the wrong depth
+
+`HeadingSeamTest:50` tests `<h[1-6]` against `$depth`; `:53–56` update `$depth` from the same line
+*afterwards*. So `@if ($x) <h2>…</h2> @endif` on one line is read at depth **0** and
+`$conditionalHeadings` never counts it — **the upper bound going under the population it claims to
+bound**, which is the failure UI-64 was written for, arriving from line granularity instead of
+vocabulary. The mirror case (a heading sharing a line with `@endif`) over-counts, which is the safe
+direction.
+
+⭐ **Measured empty today, with its control run**: one grep for a heading sharing a line with any of
+`@if|@unless|@elseif|@else|@endif` across the seven modules' `Ui/views/` returns **zero**, and the
+control — the same paths, `<h[1-6]` alone — returns **26 occurrences across 22 blades**, which closes
+against the 07:3x census exactly. The query could speak and said nothing. **Twelfth member of the
+uncounted-state family**, empty on arrival. UI-66 gives it a number.
+
+### ⚠️ 2026-09-07 09:4x — run 112 wrote TWO `decided` rows and one is last wave's, re-dated
+
+`BUILD-STATE.json` and `JOURNAL.md` both carry `09:23:37` — byte-identical to run 111's `08:33:42`
+entry — immediately above this wave's real `09:23:43` row. **The record now says a decision was taken
+this wave that was taken last wave.** `REPORT.md`'s `DECIDED` field names only the second, so the
+report also understates what the wave wrote.
+
+⛔ **Not repairable and not to be repaired** — `state.py` owns the file, a hand edit is a `BLOCK`, and
+this lane's records are append-only. Written down so the next reader knows the `09:23:37` row is an
+artifact of a duplicate call. It is the 03:3x restated-floor defect in the permanent record: **a
+measurement re-recorded as a new one is a false measurement even when every word of it is true.**
+⛔ Check `JOURNAL.md`'s tail after every `decided` call — the standing rule, now with a second failure
+shape behind it.
+
+### ⚠️ 2026-09-07 09:4x — editing a running `bash` script shifts its byte offsets under the interpreter. MINE.
+
+I added §5a to `bin/supervise.sh` while my own `--tests` gate was parked in §7 on the pest lock. Bash
+reads a script lazily and resumes at a saved **byte** offset, so a 20-line insertion above the reader
+leaves the remainder of that run pointing into the middle of different text. §7's numbers would have
+been trustworthy — its compound command was already parsed — and everything after it would not.
+
+⛔ The run was stopped and re-run from a complete file rather than reasoned about. ✅ The clean re-run
+is what produced the `744` twice and what observed §5a firing on real input. **Never edit
+`supervise.sh` while a gate of your own is in flight**; a 40-minute lock wait is the whole window in
+which this is easy to do.
 
 ### ⛔ RULED 2026-09-07 08:2x — a pin whose MOVEMENT is not a defect needs the directional clause MORE, not less
 

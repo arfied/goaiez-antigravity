@@ -261,6 +261,28 @@ if [ $want_doctor -eq 1 ]; then
   doc=$(php artisan doctor 2>&1)
   printf '%s\n' "$doc" | grep -E '^\s*(ok|FAIL|WARN)\s+\w+' | sed 's/^/  /'
   printf '%s\n' "$doc" | grep -E '[0-9]+ violation\(s\)\.' | sed 's/^/  /'
+  # 5a. The `journey` stage is NOT a property of the sha.
+  #
+  # MEASURED 2026-09-07 09:3x: the total sat at 745 across 26 gate logs and fell
+  # to 744 on an unchanged tree, because the suite that ran at 09:23 wrote
+  # app/storage/app/evidence/journeys/cancel.json — a gitignored directory the
+  # pest run itself populates. `journey` counts the twelve journeys MINUS those
+  # with evidence on disk, so it reports the outcome of the LAST SUITE THAT RAN
+  # IN THIS CHECKOUT, not the state of the committed code.
+  #
+  # And inside one `--tests` run §5 executes BEFORE §7, so the doctor block a
+  # report pastes is always evidence about the suite BEFORE this one. The two
+  # halves of a single gate come from different worlds by construction.
+  #
+  # This line does not fix that — it makes it visible. Compare the timestamp
+  # with §7's run before reading the journey number as a fact about the tree.
+  echo "  journey evidence on disk (gitignored; written by the suite, not the sha):"
+  if [ -d "$ROOT/app/storage/app/evidence/journeys" ]; then
+    ls -l --time-style=long-iso "$ROOT/app/storage/app/evidence/journeys" \
+      | tail -n +2 | sed 's/^/    /'
+  else
+    echo "    (no evidence/journeys directory — every journey reads as 'not run')"
+  fi
   echo "  --- detail (last 30 lines) ---"
   printf '%s\n' "$doc" | tail -30 | sed 's/^/  /'
 fi
