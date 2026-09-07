@@ -118,10 +118,13 @@ final class EdgeDeployAction
                 ->limit(20)
                 ->get();
             foreach ($appointments as $apt) {
+                if (trim((string) $apt->service_name) === '' || $apt->start_time === null || $apt->end_time === null) {
+                    continue;
+                }
                 $events[] = [
-                    'name' => (string) ($apt->service_name ?? 'Appointment'),
-                    'startDate' => $apt->start_time?->toIso8601String(),
-                    'endDate' => $apt->end_time?->toIso8601String(),
+                    'name' => $apt->service_name,
+                    'startDate' => $apt->start_time->toIso8601String(),
+                    'endDate' => $apt->end_time->toIso8601String(),
                 ];
             }
 
@@ -133,9 +136,12 @@ final class EdgeDeployAction
                 ->limit(20)
                 ->get();
             foreach ($priceBookItems as $item) {
+                if (trim((string) $item->service_name) === '') {
+                    continue;
+                }
                 $productOffers[] = [
                     'name' => $item->service_name,
-                    'price' => $item->price_cents !== null ? ($item->price_cents / 100) : null,
+                    'price' => $item->price_cents / 100,
                 ];
             }
 
@@ -161,6 +167,9 @@ final class EdgeDeployAction
 
                     foreach ($version->content_blocks as $block) {
                         if (($block['type'] ?? '') === 'video_embed') {
+                            if (trim((string) ($block['name'] ?? '')) === '' || trim((string) ($block['contentUrl'] ?? '')) === '' || trim((string) ($block['uploadDate'] ?? '')) === '') {
+                                continue;
+                            }
                             // VideoObject injected on publish (TEST ANCHOR, G16-25, ruling 41)
                             $videos[] = [
                                 'name' => $block['name'] ?? null,
@@ -169,6 +178,9 @@ final class EdgeDeployAction
                             ];
                         }
                         if (($block['type'] ?? '') === 'faq') {
+                            if (trim((string) ($block['question'] ?? '')) === '' || trim((string) ($block['answer'] ?? '')) === '') {
+                                continue;
+                            }
                             // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
                             $faqs[] = [
                                 'question' => $block['question'] ?? null,
