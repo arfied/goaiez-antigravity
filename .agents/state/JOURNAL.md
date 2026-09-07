@@ -775,3 +775,5 @@
 - `2026-09-06T23:30:46` note: row count: 304, visible count: 17, in_nav count: 12, rows with a named dup_of: 12
 - `2026-09-06T23:30:49` (R245) X-124 — a screen is not asked for a nav entry unless it opts into the owner layout, so the reachability check's population is the work already done; the census is the number that check cannot produce.
 - `2026-09-07T00:01:35` (R245) X-124 — a table's column is not measured until its distribution is stated; a column constant across every row is a defect to report, not a result to ship
+- `2026-09-07T00:26:31` (R245) X-124 — a value derived from a name is a guess wearing a measurement's formatting; a column's histogram proves its detector fired, not that it fired on the right question
+- `2026-09-07T00:26:35` note: dup_of: 1 target surviving, 11 discarded

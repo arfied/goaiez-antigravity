@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:01:35",
+ "updated": "2026-09-07T00:26:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1461,6 +1461,12 @@
    "chose": "a table's column is not measured until its distribution is stated; a column constant across every row is a defect to report, not a result to ship",
    "at": "2026-09-07T00:01:35",
    "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a value derived from a name is a guess wearing a measurement's formatting; a column's histogram proves its detector fired, not that it fired on the right question",
+   "at": "2026-09-07T00:26:31",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -1471,6 +1477,10 @@
   {
    "at": "2026-09-06T23:30:46",
    "note": "row count: 304, visible count: 17, in_nav count: 12, rows with a named dup_of: 12"
+  },
+  {
+   "at": "2026-09-07T00:26:35",
+   "note": "dup_of: 1 target surviving, 11 discarded"
   }
  ]
 }
