@@ -282,7 +282,8 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-61 | the SIXTH bucket. `HeadingSeamTest`'s `if (preg_match('/<h([1-6])/', …))` has no `else`, so a resolved view with NO heading at all is counted NOWHERE. ONE new `expect()` INSIDE the existing `test(`. ⛔⛤ The sum is NOT asserted — sixth wave. ⛔ No new `test(`, floor stays `1730`. Plus a measurement acted on in no way: how many of the 19 carry more than one `#[Layout(` | closed, pushed `16b601f8` — run 108 `PASS-WITH-NOTES`, five notes, **two of them ⭐ superset re-derivations of mine that agree** |
 | **UI-62** | **the SEVENTH bucket, and the FIRST that is NOT empty on arrival. `HeadingSeamTest:43` is `preg_match`, not `preg_match_all` — it reads the blade's FIRST heading and never looks at another, so `x-108/calendar`'s `<h4>` at `:40` and `:53` under an `<h2>` at `:4` renders `<h1>` → `<h2>` → `<h4>` and NOTHING sees it. (1) add `$levelSkips` over the FULL sequence, pin it `0`, `--filter`, paste the failure, re-pin to what the run produced, commit the test ALONE. (2) THEN `<h4>` → `<h3>` on both lines, re-pin to `0`, `--filter`, paste it passing, commit blade + re-pin. ⭐ The pin is OBSERVED moving `1 → 0`, which UI-60's could not be. ⛔⛤ The sum is NOT asserted — seventh wave; and `$levelSkips`/`$skips` are NOT asserted disjoint. ⛔ No new `test(`, floor stays `1730`** | closed, pushed `15caddac` — run 109 `PASS-WITH-NOTES`, the pin **observed moving `1 → 0`** at both ends, and the one finding it produced was MINE |
 | **UI-63** | **the text-order blind spot in the check UI-62 just shipped gets an UPPER BOUND. `HeadingSeamTest:55` is `preg_match_all` over the blade's TEXT in document order, so mutually exclusive `@elseif` arms are concatenated into a sequence no page renders — and `calendar.blade.php:40`/`:53` are exactly that shape. (1) the `$levelSkips` message gains the limit it does not state, in BOTH directions — it can flag a skip that never renders and HIDE one that does. (2) ONE new `expect()` inside the existing `test(`: views with a `<h[1-6]` at `@if`/`@unless` depth ≥ 1, pinned. ⛔⛔ The message must contain the words "upper bound" and say why — it counts single-heading views and nested conditionals, neither of which is a blind spot. My reading is `8` of `19`; a different number is a FINDING. (3) the counted views listed in `RAW` ONLY. ⛔⛤ The sum is NOT asserted — eighth wave. ⛔ No new `test(`, no blade, floor stays `1730`** | closed, pushed `1d708711` — run 110 `PASS-WITH-NOTES`, three notes, **two of them MINE**; the `8` re-derived by me over all 23 blades without resolving a view name |
-| **UI-64** | **the blind spot's BLIND SPOT, and the directional clause `:109` never got. (1) `:109`'s message gains what a red means in BOTH directions ⛔⛔ INCLUDING that neither one is a defect — a red here is a POPULATION moving, not a broken heading, and the five pins above it all read the other way. (2) ONE new `expect()` inside the existing `test(`: resolved views containing any of the six Blade openers the depth arithmetic does NOT track (`@isset`, `@empty`, `@switch`, `@auth`, `@can` …), pinned — because an uncounted opener makes the count fall UNDER the population it claims to bound, which is "upper bound" going false in the wrong direction. ⛔ Zero view names; the matched set is Blade keywords. My reading is `0` of `19`; a different number is a FINDING. ⛔⛤ The sum is NOT asserted — ninth wave — and it is NOT asserted disjoint either. ⛔ No new `test(`, no blade, no new file, floor stays `1730`** | **in flight — run 111 dispatched** |
+| **UI-64** | **the blind spot's BLIND SPOT, and the directional clause `:109` never got. (1) `:109`'s message gains what a red means in BOTH directions ⛔⛔ INCLUDING that neither one is a defect — a red here is a POPULATION moving, not a broken heading, and the five pins above it all read the other way. (2) ONE new `expect()` inside the existing `test(`: resolved views containing any of the six Blade openers the depth arithmetic does NOT track (`@isset`, `@empty`, `@switch`, `@auth`, `@can` …), pinned — because an uncounted opener makes the count fall UNDER the population it claims to bound, which is "upper bound" going false in the wrong direction. ⛔ Zero view names; the matched set is Blade keywords. My reading is `0` of `19`; a different number is a FINDING. ⛔⛤ The sum is NOT asserted — ninth wave — and it is NOT asserted disjoint either. ⛔ No new `test(`, no blade, no new file, floor stays `1730`** | closed, pushed `eb2d6768` — run 111 `PASS-WITH-NOTES`, six notes, **N1 the largest MINE in this lane's history** |
+| **UI-65** | **the VOCABULARY stops being a literal. (1) `:116`'s seven-keyword regex replaced by a DERIVATION over the population's own closers — `@x` is a block opener iff `@end<x>` also occurs in these views; pin the size of that set minus `{if, unless}`. ⛔ Zero Blade keywords written except the two the arithmetic itself tracks. My reading is **`2`** (`foreach`, `php`); a different number is a FINDING. (2) its message states both directions, that neither is by itself a defect, and its own limit — it sees only an `@end<name>` closer in the same population. (3) `:115`'s parenthetical five-keyword list DELETED, replaced by what the code does (tracks `@if`/`@unless` only). ⛔ No new `test(`, no blade, no new file, floor stays `1730`. ⛔⛤ The sum is NOT asserted — tenth wave** | **in flight — run 112 dispatched** |
 
 ### ⛔ RULED 2026-09-07 08:2x — a pin whose MOVEMENT is not a defect needs the directional clause MORE, not less
 
@@ -299,7 +300,13 @@ ruling applies and my UI-63 brief specified the "upper bound" clause and forgot 
 > direction is by itself a defect, and that the response to a move is to re-read whether the arms it
 > counts are mutually exclusive — never to edit a blade.
 
-### ⭐⭐ MEASURED 2026-09-07 08:2x — `@if` is this population's ENTIRE conditional vocabulary, and nothing pins that
+### ⛔⛔ MEASURED 2026-09-07 08:2x — `@if` is this population's ENTIRE conditional vocabulary, and nothing pins that
+
+⚠️⚠️ **CORRECTED 2026-09-07 08:5x — THE HEADLINE OF THIS BLOCK IS FALSE. `@foreach` occurs 25 times
+across 18 of the 23 blades and is tracked by nothing.** See the 08:5x census ruling below. The two
+paragraphs that follow are each true of what they measured; the conclusion drawn from them is not, and
+the seven keywords it handed UI-64 are the wrong seven. Kept in place because the *mechanism* of the
+error is the finding.
 
 `:109`'s message honestly names six Blade openers the depth arithmetic does not track. I measured
 both halves of what that costs.
@@ -323,7 +330,78 @@ are forward-looking dead code.
 > is a bound inverting rather than a bucket standing empty. UI-64 gives it a number.
 
 ⚠️ The emptiness is a fact about the **tree** and it is written here, never in the test — the 03:3x
-rule. The test states only what it counts.
+rule. The test states only what it counts. ⛔ **And the emptiness is of the LIST, not of the tree** —
+08:5x.
+
+### ⛔⛔ RULED 2026-09-07 08:5x — an enumeration answered by TESTING A LIST is not a census, and its `0` is byte-identical to a real one
+
+The block above concluded that `@if` is the whole vocabulary from a grep for
+`@isset|@empty|@switch|@auth|@can|@guest|@forelse|@unless` returning zero. The grep is sound. **The
+question was wrong.** A list-test can only ever confirm the list; it cannot discover a member nobody
+thought of. **MEASURED 08:5x, as a census instead:**
+
+```
+$ grep -rho -E '@[a-zA-Z]+' app/app/Modules/{X-110,X-138,X-139,X-192,X-199,X-108,X-125}/Ui/views/ \
+    | sort | uniq -c | sort -rn
+     44 @if · 44 @endif · 32 @else · 25 @foreach · 25 @endforeach · 11 @elseif · 2 @php · 2 @include · 2 @endphp
+```
+
+⛔ **`@foreach` is the population's second most common block opener and it is in NEITHER counter** —
+not the `@if`/`@unless` depth arithmetic at `HeadingSeamTest:53–56`, not `:116`'s new
+`$untrackedConditionals`, in a tree where all eight keywords that counter *does* name occur **zero**
+times. ⛔⛔ **The list counts `@forelse` and omits `@foreach`** — the same loop with an empty arm. The
+inconsistency needed no measurement at all.
+
+- ✅ **The `8` is still a true upper bound.** Every heading in the nineteen is at line 3–4 above every
+  directive, or already under an open `@if`. **No heading sits inside a `@foreach` at `@if` depth 0.**
+  Latent.
+- ⛔ **The new `0` is not.** `$untrackedConditionals` exists to red when the vocabulary drifts; the
+  real count of views carrying an untracked opener is **18 of 19**, and it reads `0` forever. Move
+  `memberships_list:13`'s `<h2>` from its `@if` into the `@foreach` below and `$conditionalHeadings`
+  falls `8 → 7` reading as benign, the new pin stays `0`, and **the bound inverts in silence** — the
+  exact failure UI-64 was written to prevent. **Tenth of the uncounted-state family, second not empty
+  on arrival.**
+
+**Twenty-fourth of the hand-derived-claim family, mine.** ⛔ Not a coder fault: `:116`'s seven
+keywords are my 08:2x grep transcribed, and run 96's precedent governs.
+
+### ✅ RULED 2026-09-07 08:5x — UI-65 derives the vocabulary from the population's own CLOSERS
+
+A hand-written keyword list is an allowlist wearing a measurement's clothes — a fact about **Blade**
+inside a test that measures **files**, born incomplete, silent when it rots. 19:2x, applied to a
+vocabulary instead of to a nav:
+
+> **A directive `@x` is a block opener IN THIS POPULATION iff `@end<x>` also appears in it.** The
+> untracked set is those names minus the two the arithmetic tracks.
+
+Over the nineteen: present `{if, endif, else, elseif, foreach, endforeach, php, endphp, include}` →
+openers `{if, foreach, php}` → minus `{if, unless}` → **`{foreach, php}` = 2**. Arms fall out (no
+`@endelse`), `@include` falls out (no `@endinclude`), closers cannot self-count (no `@endendif`).
+⭐ **Zero Blade keywords written except `if` and `unless`, and those two are the code's own subject,
+not a vocabulary claim.** It finds `@foreach` today unbidden and `@isset` tomorrow with no edit.
+⛔ Its stated limit: it sees only a block whose closer is `@end<name>` **in the same population** — a
+`@section` closed by `@stop` is invisible.
+
+⛔ And `:115`'s parenthetical *"(it does not count `@isset`, `@empty`, `@switch`, `@auth`, or
+`@can`)"* comes out: it names five openers that do not occur and omits the one that does, which is
+**a stated caveat worse than none** (08:0x).
+
+### ⛔ RULED 2026-09-07 08:5x — litter above `app/` in a NEW medium, and the same litter is the best evidence in the report
+
+Run 111 left `failing_block.txt` and `passing_block.txt` untracked at the **repository root**.
+**`pint` scans `app/`; §1a globs `.php`; §1 is the only tell there is** — 20:5x arriving as a `.txt`.
+Opened before deciding anything else, per that ruling: one line of pest JSON each, no `<?php`, no
+kernel, no database. Harmless. ⛔ But the report wrote `STATUS: wave closed` over a gate whose §1
+printed **`2 uncommitted path(s)`**, and pasted neither the line nor the paths.
+
+⭐⭐ **And they close run 110's N3 with evidence no earlier tick could produce.** N3 ruled a `RAW` list
+with no command has provenance *"unmeasurable now"* because the producing file dies between two
+commits. Here the redirect targets **survived**, so the pasted `RAW` could be compared against the
+artifact on disk — they match byte for byte. **The first `RAW` block in this lane whose provenance is
+CHECKABLE rather than asserted**, by accident. ⚠️ Its edge: the named command
+`./vendor/bin/pest --filter 'HeadingSeamTest'` writes to stdout. Something redirected it two
+directories up and the redirect is not in the report. **Naming the command means naming the
+redirect.**
 
 ### ⚠️ 2026-09-07 08:2x — `state.py decided` swallowed its `--ruling` flag, and the record is append-only
 
