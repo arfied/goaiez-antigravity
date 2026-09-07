@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T18:02:19",
+ "updated": "2026-09-07T18:23:17",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2313,6 +2313,12 @@
    "module": "X-102",
    "chose": "--ruling R245 The grounding blank test in answerQuestion no longer uses empty(), which was wrong in both directions over a nullable content string. A grounding fact of the string 0 was treated as absent and refused, so the chat said it had no verified details for a question it could ground; and a whitespace grounding fact was treated as present and answered, returning a content-free answer presented as grounded, which is what G13-15 exists to prevent. The predicate is now null or blank after trim, which admits 0 and refuses whitespace. Refused deliberately: the presence predicate used for the X-155 honeypot, which is correct there because a honeypot is a presence signal and whitespace in it is something having been written, and wrong here because a content string that is only whitespace carries no fact; isset, which is always true for a non-null string and would make the guard dead while appearing fixed; and trimming the echoed answer, which is a separate cosmetic question. The remedy for a blank test is decided by what the value means and is not uniform across the sites one grep returns, and after this wave each of the two remedies is refused by a test in the module where it does not belong. The action has no production caller today; the invariant belongs in it because it is the action that answers, whoever calls it.",
    "at": "2026-09-07T18:02:19",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-155",
+   "chose": "The blank test guarding the date of birth parse in isUnderEighteen no longer uses empty(). A date of birth field holding only whitespace was treated as a value, reached Carbon::parse, and produced an age verdict that rejected a legitimate adult submission as under eighteen on the live form capture path, which X-157 ModuleServiceProvider line 89 reaches in production. The predicate is now blank after trim, so whitespace is not an age signal and a real date still is. Refused deliberately: the presence predicate used for the X-155 honeypot, which is correct there because a honeypot is a presence signal and whitespace in it is something having been written, and wrong here because a date of birth is a value to be parsed and whitespace is not a value; isset, which is true for any non-null value and would make the guard dead while appearing fixed; and catching the case inside the parser, because a value that is not a value should not reach the parser and a catch that absorbs a case is how the next reader concludes the hazard is closed. Two tests assert the two directions, the whitespace submission being captured and a genuine under eighteen date still being rejected, so the clause is not weakened by the fix.",
+   "at": "2026-09-07T18:23:17",
    "ruling": "R245"
   }
  ],

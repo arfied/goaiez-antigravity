@@ -626,6 +626,51 @@ class X155Test extends TestCase
         $this->assertEquals(1, Person::where('business_id', $biz->id)->where('phone', '+15550003333')->count());
     }
 
+    public function test_a_whitespace_date_of_birth_is_not_an_age_signal(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace DOB Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Whitespace DOB Form',
+            'slug' => 'whitespace-dob-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Adult',
+            'phone' => '+15550004444',
+            'date_of_birth' => '   ',
+        ]);
+
+        $this->assertEquals('captured', $res['status']);
+    }
+
+    public function test_a_real_under_eighteen_date_of_birth_is_still_rejected(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Minor DOB Tenant']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $form = FormDefinition::create([
+            'business_id' => $biz->id,
+            'form_name' => 'Minor DOB Form',
+            'slug' => 'minor-dob-form',
+            'steps' => [],
+            'schema' => [],
+        ]);
+
+        $res = $this->captureAction->handle($biz->id, $form->id, [
+            'first_name' => 'Kid',
+            'phone' => '+15550005555',
+            'date_of_birth' => now()->subYears(15)->toDateString(),
+        ]);
+
+        $this->assertEquals('rejected', $res['status']);
+        $this->assertEquals('under_18', $res['reason']);
+    }
+
     /**
      * [G5-30] adaptive questions
      */

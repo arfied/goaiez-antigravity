@@ -138,7 +138,7 @@ final class FormCaptureAction
         }
 
         foreach (['date_of_birth', 'dob'] as $key) {
-            if (! empty($payload[$key])) {
+            if (trim((string) ($payload[$key] ?? '')) !== '') {
                 try {
                     $dob = Carbon::parse($payload[$key]);
                     if ($dob->diffInYears(now()) < 18) {
