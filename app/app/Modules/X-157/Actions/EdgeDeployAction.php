@@ -349,11 +349,11 @@ final class EdgeDeployAction
                 try {
                     $html .= "<div id=\"faq-x176\">\n";
                     foreach ($faqs as $faq) {
-                        $html .= '  <div class="faq-item" data-question="'.e((string)($faq['question'] ?? '')).'">'.e((string)($faq['question'] ?? '')).' - '.e((string)($faq['answer'] ?? ''))."</div>\n";
+                        $html .= '  <div class="faq-item" data-question="'.e((string) ($faq['question'] ?? '')).'">'.e((string) ($faq['question'] ?? '')).' - '.e((string) ($faq['answer'] ?? ''))."</div>\n";
                     }
                     $html .= "</div>\n";
                 } catch (\Throwable $e) {
-                    Log::warning("the faq block could not be rendered: " . $e->getMessage());
+                    Log::warning('the faq block could not be rendered: '.$e->getMessage());
                 }
             }
 

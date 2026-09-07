@@ -155,7 +155,8 @@ final class SchemaRenderAction
                 }
             }
             if (! empty($validFaqs)) {
-                $jsonLd['@type'] = is_array($jsonLd['@type']) ? $jsonLd['@type'] : [$jsonLd['@type']];
+                $currentType = $jsonLd['@type'];
+                $jsonLd['@type'] = is_string($currentType) ? [$currentType] : (array) $currentType;
                 $jsonLd['@type'][] = 'FAQPage';
                 $jsonLd['mainEntity'] = $validFaqs;
             }
