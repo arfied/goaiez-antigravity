@@ -124,6 +124,14 @@ Watch for: <the trap that applies, by name>
   hit production. The tell is cheap: they also red `pint`, because they sit at `app/`'s
   root. To see one screen's HTML, write a throwaway test and `--filter` it — that loads the
   pin and rolls back.
+  ⚠️⚠️ **THAT TELL ONLY FIRES UNDER `app/`. MEASURED 2026-09-06 20:5x.** Run 91 left
+  `update_ownernav.php` at the **repository** root, above `app/`, so `pint` never scanned it
+  and `pint passed` with the file lying in the tree. It was harmless — `file_get_contents` →
+  two `str_replace` → `file_put_contents` on `OwnerNav.php`, a `sed` written in PHP, with no
+  `require bootstrap/app.php`, no kernel, no model, no database — but nothing about *where it
+  sat* said so. **Above `app/`, `supervise.sh` §1 is the only tell there is.** So `1
+  uncommitted path(s)` at a wave close is never tidiness: open the file and decide whether it
+  boots the framework before you decide anything else.
 - ⛔ **A suite whose schema moved underneath it is VOID, not red — and it reads like a
   catastrophic regression.** Run 86 came back `1726 · 1696 · failed 5 · errors 25` with
   `relation "users" does not exist`, `column "recovering_at" … does not exist`, on
@@ -256,13 +264,52 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
 | UI-46 | `Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column | closed, pushed `7f052348` |
 | UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` | closed, pushed `3c8e0ef1` — run 88 `BLOCK`, run 89 `PASS-WITH-NOTES` + a real finding, run 90 `PASS` |
-| **UI-48a** | **the dead `$isSample` flag. ⛔ It is NINE sites in TWO modules, not two in one — see the ruling below. Plus the `state.py decided` record UI-47 never got** | **in flight — run 91** |
-| UI-48b | the four screens that still render `<x-surface.sample-state>` unconditionally at a root `<div>` — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav` and out of `sampleStateRoutes()`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again. ⚠️ `tag-version-per` has no query at all and stays `UNRESOLVED` under the Week-2 definition, so this is three screens closed and one filed | after UI-48a |
+| UI-48a | the dead `$isSample` flag — nine sites in two modules — plus the `state.py decided` record UI-47 never got | closed, pushed `c9843271` |
+| **UI-48b** | **the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. ⛔ NOT a re-datafication — see the 20:5x ruling. `tag-version-per` stays `UNRESOLVED`** | **in flight — run 92** |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
 when the three media endpoints moved to a derivation off the `__invoke` return type. Floor met
 exactly: `1727 · 1720 · 3 · 4`.
+
+✅ **UI-48a closed and pushed 2026-09-06 20:5x** (`3c8e0ef1..c9843271`). All nine `$isSample`
+declarations and their five unreachable `@elseif` arms are gone, both `OwnerNav` comments were
+rewritten to state the outcome, and the UI-47 derivation is recorded at `JOURNAL 2026-09-06T20:39:00
+(R245)`. `OwnerNav::all()` **30**, `OwnerNavTest` untouched, doctor the unmoved `745`, floor met
+exactly. ⚠️ `PASS-WITH-NOTES`, on a dirty tree — see the repository-root scratch-file trap above.
+
+### ✅ RULED 2026-09-06 20:5x — UI-48b is THREE lines, THREE nav entries and THREE removals. Not a re-datafication.
+
+The UI-48b row used to say *"each to real seeded data or a house `<x-ui.empty-state>`"*, which reads
+like three screens to rebuild. **MEASURED 20:5x by opening all four call sites** — the standing rule
+that a claim about a screen's contents is a measurement, not a recollection:
+
+| screen | banner | what is already under it |
+| :--- | :--- | :--- |
+| `x-110.cooling` | `cooling.blade.php:2` | `Cooling.php:41–48` runs a real `Visit`/`Session`/`PixelEvent` query; blade `:14` is a house `<x-ui.empty-state action= href=>` |
+| `x-110.visitors-live` | `visitors-live.blade.php:2` | real session query; blade `:14` is a house `<x-ui.empty-state action= href=>` |
+| `x-138.roi-dashboard` | `roi-dashboard.blade.php:2` | real `$snapshots` query; blade `:6–11` is a house `<x-ui.empty-state action= href=>` |
+| `x-110.tag-version-per` | `tag-version-per.blade.php:2` | ⛔ **17 lines**; `render()` is `return view('x-110::tag-version-per');` — no data, no query |
+
+All four carry `#[Layout('components.account.layout', ['heading' => …])]` and all four already have a
+screen test driving a real authenticated `GET` with `assertOk()`, `assertSee('Your account')`,
+`assertDontSee('Internal Platform Console')` and the `<h1 class="sr-only">`. So three of the four are
+already *proven* by the Week-2 definition in every respect **except the banner and the nav entry**.
+⛔ `tag-version-per` really is query-less — measured, not recalled — so it stays `UNRESOLVED` and stays
+the sole member of `sampleStateRoutes()`.
+
+**The floor does not move** (`1727 · 1720 · 3 · 4`): no test is added or deleted. The three assertions
+interlock by design — delete the banner → `SAMPLE_STATE` reds by name → drop the route → reachability
+reds → add the nav entry → *"nav entries survive real get"* drives a real `GET` on it. MEASURED that
+nothing else reads the count: `grep -rn "OwnerNav::all()"` is eight sites, seven iterating inside
+`OwnerNavTest` and `OwnerNavBadges.php:65`, which `continue`s on `badge === null`; the three routes are
+parameterless `Route::get`. ⛔ If one of the three fails its new `GET`, that is a **finding** — report
+the raw failure and file `UNRESOLVED`, never leave the route out of the nav to keep the suite quiet.
+
+**Labels ruled, `GROUP_MORE`, `OwnerNav::all()` 30 → 33:** `x-110.cooling` *"People who went quiet"* ·
+`x-110.visitors-live` *"Who is on your site now"* · `x-138.roi-dashboard` *"What your campaigns
+earned"* — distinct from `x-138.attribution-row`'s *"What your pages earn"*, the per-page cut of the
+same module.
 
 ### ⚠️⚠️ RULED 2026-09-06 20:3x — `$isSample` is NINE dead flags in TWO modules. SIXTH wrong hand-derived claim in this file.
 
