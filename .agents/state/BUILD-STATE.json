@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:24:46",
+ "updated": "2026-09-07T00:53:20",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5043,6 +5043,12 @@
    "chose": "a token's origin is read off a line whose owning module has been identified, and the report states the rule used to identify it.",
    "at": "2026-09-07T00:24:46",
    "ruling": "R245"
+  },
+  {
+   "module": "X-221",
+   "chose": "The field value extraction in app/app/Doctor/DeclarationParser.php:75 stops at specific markers rather than a closing delimiter, which swallows prose on X-221, X-222, and X-223 because their plan text uniquely uses a dot and bold text without a marker, making it a PLAN-FROZEN defect in the plan house style.",
+   "at": "2026-09-07T00:53:20",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5177,6 +5183,14 @@
   {
    "at": "2026-09-07T00:24:36",
    "note": "Superseding \"S-143: 13 tokens graded. 7 MANIFEST-DRIFT, 4 MARKER-DROPPED, 2 PLAN-GAP.\" \u2014 AXIS owner attribution: 6 MANIFEST-DRIFT, 4 MARKER-DROPPED, 3 PLAN-GAP."
+  },
+  {
+   "at": "2026-09-07T00:52:53",
+   "note": "S-145 partition of the 87: 49 missing agent_reachable, 13 nothing emits it, 13 is not a token, 6 multiple emitters, 4 is prose, 2 GROW without capability.decided. The four is prose and four of the is not a token rows are a double count of the same four values from two loops over the same consumes arrays, so the 87 overstates the number of distinct defects."
+  },
+  {
+   "at": "2026-09-07T00:53:16",
+   "note": "Partition of the 87: 49 missing agent_reachable, 13 nothing emits it, 13 is not a token, 6 multiple emitters, 4 is prose, 2 GROW without capability.decided (sum: 87). The 4 is prose and 4 of the is not a token rows are a double count of the same four values checked twice against the consumes arrays."
   }
  ],
  "history": [
