@@ -85,10 +85,43 @@ class X210Test extends TestCase
     }
 
     /**
-     * [N-027], [N-028], [N-030], [N-032], [G1-66], [G1-67], [G1-69], [G6-38], [G7-47], [G15-21]
+     * [G18-05]
      */
-    public function test_promotion_capabilities(): void
+    public function test_g18_05_no_feature_gating(): void
     {
-        $this->assertTrue(true);
+        $dir = base_path('app/Modules/X-210');
+        $this->assertDirectoryExists($dir);
+
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php' && $file->getFilename() !== 'capabilities.php') {
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/(padlock|locked_tier|lockedTier|feature_gate|featureGate|upgrade_to_unlock)/i', $content)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "Locked tier path found in: $match");
+
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Tenant G18-05', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $promo = $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'FALL10',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: 1,
+            velocityThreshold: 1,
+            expiresAt: now()->addDays(7),
+            scopes: []
+        );
+
+        $redemption = $this->applyAction->applyPromotion($biz->id, 'FALL10', 8801, 'ORD-G1805', 10000);
+        $this->assertEquals(1000, $redemption->discount_applied_cents);
     }
 }
