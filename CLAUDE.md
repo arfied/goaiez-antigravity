@@ -3096,6 +3096,73 @@ Watch for: <the trap that applies, by name>
   · `C-Agent G5-43` (the profiles fixture, no store and no reader — deliberately **not** briefed) ·
   `C-Mail G11-09` (unbuilt scoring model) · X-66's wire (`TRACK 1 ACTION 2`). Re-run
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` every tick; never inherit it.
+- ⚠️⚠️ **When a mechanism has two halves, a report will answer with the half that fits the simpler
+  story, and its OWN pasted raw output is what refutes it — read a numbered answer against the block
+  above it before reading either against the tree.** Wave 121 was asked where `app.business_id` is
+  *given a value* and what it holds for a caller who is not logged in. It answered *"cleared
+  immediately on every request … an early return before a tenant is set"* — true of `ResolveTenant`
+  and of `/pixel/e`, **false of the widget route**, where `ResolveWidget.php:59` is
+  `Tenancy::set($plugin->business_id)` **on an unauthenticated request**; `Tenancy::set()` (`:63`)
+  reaches `applyToDatabase()` (`:240`) whose `:244` is `SELECT set_config(?, ?, false)`, the site the
+  question asked for and the report never named. The wave's own raw block, two lines above the answer,
+  says `ResolveWidget` shows that `Tenancy::set`. ⭐ **The measured fact is worth more than the
+  defect: an anonymous request CAN carry a tenant into an RLS table, through a middleware calling
+  `Tenancy::set()` and only that way** — which is what any customer-facing door on this tree must do.
+  **NOTE and not `BLOCK` by the tick-222 discriminator**: the docblock and ledger carried only the
+  verified claim (door and bundle absent), so nothing false reached a durable record. ⚠️ Its brief-side
+  half: *"say what it holds during a request from a caller who is not logged in"* has two true answers
+  on this tree and I asked it as though it had one — the tick-227 two-option rule, met in a question
+  that named no options at all.
+- ⚠️ **Third recurrence of the print-the-line rule, and twice running the wrong line was mine.** Wave
+  120's brief said `sed -n '25623p'` where the `@owns_table` header is `25622`; wave 121's said
+  `25620` where the assignment is **`25619`** — `**SWARM** owns app/Modules/Channels/WebChat/** +
+  public/goaiez-chat.js`, the one line that says whose the web-chat door is. Both waves pasted the
+  wrong line faithfully rather than hiding it. The cost this time was a wrong finding the wave could
+  not have avoided: answer 2's *"the route and controller live in root paths … (no module)"* against a
+  frozen plan that puts the door in a **module** path — and `app/composer.json` classmaps
+  `app/Modules/`, so a class there is unloadable until `composer dump-autoload` runs (tick 202).
+  **`sed -n` the line into the brief and read it there**; naming a line number is not reading it.
+- ⚠️ **The artifact question's sixth failure is a LICENSED non-answer, and the licence was a clause I
+  added.** Wave 121's brief kept *"if no artifact contradicts anything you wrote, say so plainly and
+  name the artifact you checked hardest"* and dropped wave 119's *"the sentence must already exist
+  above; do not write a new one here to disagree with"* — so the answer quoted a sentence it wrote
+  inside the answer and took the escape, while a real contradiction sat in its own item-1 output. The
+  series: `None` (112) → a **previous** wave's artifact (116) → a sentence invented to be refuted
+  (118) → a real answer (119) → a universal ground (120) → **a licensed non-answer** (121). Wave 119's
+  wording is the only one that has ever worked; **restore it verbatim and carry no escape clause** —
+  a brief that permits an outcome gets that outcome (the wave-99c rule), and the escape is the outcome
+  being permitted.
+- ⚠️ **The whole row must be on the LINE: `grep -rn "BUILD PROPOSAL:"` prints a line, not a docblock,
+  so a multi-line proposal loses everything below its first line.** Wave 121 split `G16-21` across
+  three comment lines; the backlog grep now shows the carousel sentence and **neither the blocker nor
+  `Owner:`**, while every other row on the board is one line carrying id, finding and owner together.
+  Wave 118's rule was *ask for the id in the line itself*; this is the same rule, and the id is only
+  the cheapest thing to lose.
+- ✅ **Three brief-side wordings held at once, and all three had failed at least twice before being
+  reworded.** `GATE:` asked for *pint's own object, whole and alone* came back without phpstan's
+  `errors:0` merged into it for the first time (wave 106's defect, and the tick-172 misread this
+  column made itself); the conditional pest-artifact instruction produced no `w121-pest-raw.log` and a
+  stated `RAW: none` (third wave, 116/118/121); and `state.py decided` ran **once**, one `JOURNAL.md`
+  line and one `BUILD-STATE.json` row in the same commit as the docblock (third wave, after ticks 93
+  and 221). **When a defect repeats, suspect the sentence before the coder** — now 7-for-7 on this lane.
+- **Backlog at tick 229 — wave 122 builds the door, and it is the door only.** RULED (this tick):
+  the measurement wave is spent and every finding in it verified by hand, so a third measurement wave
+  would be manufacturing one (tick 191). **The door is in lane** — `GOAIEZ-MASTER-PLAN.md:25619`
+  assigns `app/Modules/Channels/WebChat/**` and `public/goaiez-chat.js` to **X-102's swarm**, and
+  implementing an assignment the frozen plan already makes is a build, not a plan change. Scope is an
+  unauthenticated route that resolves a tenant and calls `ChatStartAction::handle()`, proved by a real
+  HTTP test — **not** the JS bundle, which carries no assertion this lane can make and which paired
+  with the door is the one-instruction-one-shape trap (ticks 218/220/221/222). ⛔
+  `X-102/routes.generated.php` is generated: the route goes in `app/routes/api.php` beside the two
+  doors that already work, and no manifest edit is the price of a build (tick 210). ⛔ `⛔ REFUSED` is
+  unavailable; X-102 is one of the thirteen. Hazards go over as measurements with the conclusion
+  withheld: the key source (`Plugin.embed_key` — a guarded 122-bit random UUID resolved by
+  `WidgetPlugins` — and `PixelKey` are the two the house has), and
+  ⚠️ `app/tests/Feature/Architecture/` holds **five** lints here (`NoRawSetBusinessIdTest ·
+  OwnerNavTest · PricesTest · SchedulingTest · TenancyTest`) — **`Architecture/PixelTest`, which
+  `api.php:178` cites as asserting the public route set, does not exist in this repo.** A documentary
+  hazard, not an enforced one, and not a licence. Live list: **6** rows at tick 229, membership
+  unchanged since tick 227 — re-run and never inherited.
 
 ## Style
 
