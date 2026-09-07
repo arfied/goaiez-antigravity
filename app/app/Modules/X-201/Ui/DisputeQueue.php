@@ -72,7 +72,7 @@ class DisputeQueue extends Component
             $result = $action->handle($businessId, $disputeId, $outcome);
             $this->success = sprintf('Recorded: invoice #%d %s.', $dispute->invoice_id, $outcome);
             if ($result['commission_clawback_triggered']) {
-                $this->success .= ' Commission clawed back.';
+                $this->success .= ' Commission clawback flagged: no commission has been taken back, because nothing acts on that flag yet.';
             }
         } catch (\DomainException $e) {
             $this->error = $e->getMessage();
