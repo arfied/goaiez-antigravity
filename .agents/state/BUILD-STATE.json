@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T20:12:47",
+ "updated": "2026-09-06T20:59:22",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5013,6 +5013,12 @@
    "chose": "(R245) a doctor-count delta is stated with its OPERATION as well as its unit. Removing the none sentinel, regenerating one manifest field and regenerating the whole manifest are three different edits with three different after-states, and their deltas do not sum. X-82 is the case that separates them - removing none alone leaves all three provided actions covered and costs 0, while module:scaffold also drops rate.set and costs 1 at ContractStage.php:429. Every delta row in this lane names its operation in the column header and in the note sentence (REV-483 RULING P).",
    "at": "2026-09-06T20:12:47",
    "ruling": "R245"
+  },
+  {
+   "module": "X-82",
+   "chose": "(R245) a correcting note names what it supersedes. In an append-only ledger the correction IS the record, so a note that does not quote the clause it replaces leaves the false clause live and unmarked for every future reader. Every correcting note in this lane opens CORRECTS the <timestamp> note, whose sentence <verbatim> is WRONG in its UNIT or OPERATION or MECHANISM, and the report quotes the resulting JOURNAL line back in full so the opening clause is visible. A true sentence filed without its antecedent leaves the artifact grown and the record unchanged (REV-485 RULING V).",
+   "at": "2026-09-06T20:59:22",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5103,6 +5109,10 @@
   {
    "at": "2026-09-06T20:37:23",
    "note": "MEASUREMENT not a filing. The tokens closure splits the input and filters out empty elements; when the input is empty it returns the string '[]'. A module whose plan omits the field regenerates to an empty allow list in the manifest rather than to the string 'none'. An empty allow list suppresses nothing, so every provided action fires a violation."
+  },
+  {
+   "at": "2026-09-06T20:59:29",
+   "note": "MEASUREMENT not a filing. CORRECTS the 2026-09-06T20:12:56 note, whose sentence \"Under regeneration X-175 loses field.ask and X-82 loses rate.set as well as none, per the 2026-09-06T18:50:21 and 2026-09-06T18:13:37 notes, and ModuleScaffoldCommand emits none only for a zero-grant module so neither regains the sentinel\" is WRONG in its MECHANISM in its final clause. ModuleScaffoldCommand.php:333 passes the harvested declaration to the tokens closure at :280-289, which splits on the two delimiters, trims, drops empties, and returns the literal two-character string for an empty array when nothing survives. There is no zero-grant condition anywhere near it. The conclusion that neither module regains the sentinel stands and the numbers of the corrected note are unchanged and stand: agent_reachable regeneration delta 12, blanket-regeneration total 25, remove-the-sentinel delta 10, coverage census total 386 skipped 0 decided 55 silenced 282 violating 49. S-137 census over the plan, in module ids: plan module headers 128 of which 127 are modules and 1 is the documentation line X-nnn at GOAIEZ-MASTER-PLAN.md:34907 which the anchor regex matches; built modules whose plan header declares agent_reachable exactly once 125; more than once 2, X-123 at :25299 and :25301 and X-204 at :28850 and :28852, both contradicting a none against a real grant; not at all 0; manifests with no plan header 0. The 140 raw at-module occurrences are 128 id-shaped plus 12 prose and the 132 at-agent-reachable occurrences are 129 module-attached, being 122 standalone lines plus 7 inline, plus 3 prose at :665 and :34705 and :37200. CONSEQUENCE: the empty-allow-list path of REV-484 RULING S has ZERO population among built modules and its regeneration cost is 0 violations across 0 modules. RULING S is true as a mechanism and reaches nothing. Dispositions unchanged, ceiling LEAVE agent_reachable LEAVE emits LEAVE, and no class moves the count downward."
   }
  ]
 }
