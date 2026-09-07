@@ -136,6 +136,13 @@ Route::post('/pixel/e', PixelIngestController::class)
     ->middleware('throttle:pixel-ingest')
     ->name('api.pixel.ingest');
 
+/*
+| WebChat door (X-102)
+*/
+Route::post('/chat/{key}/start', \App\Modules\X102\Http\Controllers\ChatStartController::class)
+    ->middleware('throttle:60,1')
+    ->name('api.chat.start');
+
 Route::middleware('auth:sanctum')->group(function (): void {
     /*
     | Everything a client needs before it can render anything: who you are, which
