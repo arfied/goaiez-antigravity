@@ -113,6 +113,8 @@ final class EdgeDeployAction
 
             $appointments = Appointment::where('business_id', $businessId)
                 ->where('start_time', '>=', now())
+                ->orderBy('start_time', 'asc')
+                ->limit(20)
                 ->get();
             foreach ($appointments as $apt) {
                 $events[] = [
@@ -126,6 +128,7 @@ final class EdgeDeployAction
             $priceBookItems = PriceBookItem::where('business_id', $businessId)
                 ->where('is_confirmed', true)
                 ->where('is_sample', false)
+                ->orderBy('id', 'asc')
                 ->limit(20)
                 ->get();
             foreach ($priceBookItems as $item) {
