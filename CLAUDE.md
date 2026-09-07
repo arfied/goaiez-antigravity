@@ -266,7 +266,7 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-47 | `OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` | closed, pushed `3c8e0ef1` — run 88 `BLOCK`, run 89 `PASS-WITH-NOTES` + a real finding, run 90 `PASS` |
 | UI-48a | the dead `$isSample` flag — nine sites in two modules — plus the `state.py decided` record UI-47 never got | closed, pushed `c9843271` |
 | UI-48b | the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. `tag-version-per` stays `UNRESOLVED` | closed, pushed `104dc9b9` |
-| **UI-49** | **X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling** | **in flight — run 93** |
+| **UI-49** | **X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling** | **in flight — run 93 `PASS-WITH-NOTES` unpushed, run 94 closes** |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
@@ -290,6 +290,45 @@ verbatim. `OwnerNavTest`'s only diff is the three removed array entries — no a
 queued on `pest.lock` and ours was killed at 108s with `rc=143` and zero bytes. **I ran the suite
 myself once the lock was free** and it met the floor. A lock wait is not a suite verdict in either
 direction — do not read `stopped` here as a missed floor.
+
+⚠️ **UI-49 is `PASS-WITH-NOTES` at `28cb7a07` and NOT pushed** (2026-09-06 22:5x). The wave landed —
+`#[Layout]` + `mount()` on all three, `OwnerNav::all()` **33 → 36** with the ruled labels verbatim,
+shell assertions inside the three existing methods, `OwnerNavTest` untouched at 4, doctor the unmoved
+`745`, floor met **exactly** `1727 · 1720 · 3 · 4`, and `passed` unchanged while the nav test went from
+33 GETs to 36. It is held back for one blade line: see the 22:5x ruling below. Run 94 closes it and the
+whole `104dc9b9..<head>` range pushes in one go.
+
+### ⛔ RULED 2026-09-06 22:5x — an empty state on a table with NO WRITER carries no `action` and no `href`
+
+Run 93 replaced `adaccount-connect-card`'s bare `<p>` with a house `<x-ui.empty-state>` — correct — and
+gave it `action="Connect an ad platform" href="{{ route('account.connections') }}"`. **MEASURED 22:5x:
+`account.connections` is the Google reviews screen** — `routes/web.php:1415` →
+`App\Livewire\Account\Connections`, `<h1>Google reviews</h1>`, Google Business Profile per location plus
+Google Search Console, `OwnerNav.php:109` label literally `'Google reviews'`. ⛔ Nothing on it connects
+an ad platform.
+
+⚠️ **This is the dead-action defect with its sign flipped, and BOTH existing guards are blind to it.**
+`components/ui/empty-state.blade.php:39–48` refuses to render an action with nowhere to go, and
+`ScreenStates::emptyStatesWithDeadAction()` fails the build on one — but both test whether an `href`
+**exists**, and here it exists and is wrong. ⛔ **A button that goes somewhere real which cannot do the
+thing it offers is worse than a button that goes nowhere**, because the component's own words —
+*"a lie somebody has to press to discover"* — apply and neither check can say so. The fix is in the
+SYSTEM; ⛔ do not widen either lint to chase it.
+
+**And there was no right href to write.** MEASURED: `grep -rn "AdConnection" app/app/ -l` returns
+**four** files — X-139's manifest, its migration, the model, and this screen's read. No action, route,
+listener, command or engine creates a row. `AdaccountConnectCard` can only ever render its empty state.
+⚠️ This is `AdConnection` alone: `ConversionUpload` **is** written at `ConversionUploadEngine.php:35`
+and `:56`, so `ConversionsPushedTile` and `RejectionRate` render a real count where zero is a real
+value and are correct as they stand.
+
+**So the tree's own rule applies**, `app/tests/Support/ScreenStates.php:376–378`: *"An empty state with
+no `action` at all is not a violation. Some screens genuinely have nothing to offer… saying so plainly
+beats a button that means 'wait'."* Twenty-plus action-less call sites already exist. The `action` and
+`href` come off, the `icon`/`heading`/sentence stay and the sentence carries the fact instead, and the
+module files the `UNRESOLVED` the Week-2 definition of *proven* owes for a house empty state.
+⛔ **The nav entry stays** — the screen is a real owner door whose honest answer today is "none yet",
+and hiding a screen to quiet a lint is the run-84 defect.
 
 ### ⛔ RULED 2026-09-06 21:3x — a grep that EXITS NON-ZERO has not measured anything
 
