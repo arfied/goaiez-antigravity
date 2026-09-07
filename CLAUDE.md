@@ -267,7 +267,7 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-48a | the dead `$isSample` flag — nine sites in two modules — plus the `state.py decided` record UI-47 never got | closed, pushed `c9843271` |
 | UI-48b | the THREE screens that still render `<x-surface.sample-state>` unconditionally at line 2 of their root `<div>` — X-110 `cooling` · `visitors-live`, X-138 `roi-dashboard`: delete the banner, drop the name from `sampleStateRoutes()`, add the nav entry. `tag-version-per` stays `UNRESOLVED` | closed, pushed `104dc9b9` |
 | UI-49 | X-139, the last module in the Visitors & Attribution lane and the first wave outside X-110/X-138/X-199. The THREE components still rendering the staff console — `AdaccountConnectCard`, `ConversionsPushedTile`, `RejectionRate`: `#[Layout]` + the `Invoices.php` `mount()`, the bare `<p>` onto `<x-ui.empty-state>`, shell assertions into the three EXISTING tenant tests, three nav entries. ⛔ NOT home-tile exclusions — see the 21:3x ruling | closed, pushed `7b1b3a1a` — run 93 `PASS-WITH-NOTES`, run 94 `PASS-WITH-NOTES` + a finding that corrected me |
-| **UI-50** | **the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules — layout, banner, query, nav membership, candidate duplicate, embedder — committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it** | **in flight — run 95** |
+| **UI-50** | **the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules — layout, banner, query, nav membership, candidate duplicate, embedder — committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it** | **in flight — run 95 `BLOCK` (three constant columns), run 96 live** |
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
@@ -307,6 +307,47 @@ correct record: the screen is proven under the second branch and the module name
 to the standing rule: **a grep measures the string you typed, not the thing you meant** — name the
 string in the claim, or the claim is about something you never ran. Same tick, same family: the 21:3x
 block's *"114 modules carry `tenant.role`"* re-measures as **113**.
+
+### ⛔⛔ RULED 2026-09-06 23:5x — a table column CONSTANT across every row is a defect, and run 95 shipped three
+
+Run 95 delivered `docs/OWNER-ROUTE-CENSUS.md`, 304 rows, every gate green, the floor met exactly, zero
+`app/**` diff — and **three of its eleven columns are a single repeated value**, measured with
+`cut -d'|' -fN <file> | sort | uniq -c`: `data` `no` × 304, `embedded` `no` × 304, `test` `yes` × 304.
+The other eight vary and are correct.
+
+⚠️⚠️ **The defect is invisible at every individual row and that is its whole nature.** `data: no` is
+right for `x-110.tag-version-per`. `embedded: no` is right for most rows. Open any line and the table
+looks measured. **Only the distribution shows the detector never fired** — the run-84 shape again, a
+right-looking cell over a population that was never scanned.
+
+Two of the three are **false**, and both falsehoods are already written down in this file:
+`Cooling.php:134` and `ConversionsPushedTile.php:34` both `return view('…', [ … ])` against `data: no`
+(`grep -rlE "return view\('[^']+', *\[|…compact" app/app/Modules/ --include=*.php` → **219 files** —
+⚠️ *files*, not rows, naming the string I typed); and x-139's three components are embedded at
+`resources/views/livewire/advanced/reports.blade.php:17–19` against `embedded: no`, with four more
+named in the tree itself at `OwnerNavTest.php:37–40`.
+
+⛔⛔ **And that second one is the deepest fact in this block: the correct answer was pasted VERBATIM in
+the brief the run was reading**, under a heading about grep traps, and came back wrong anyway.
+**A warning about a trap is not a guard against it.** Ninth of the hand-derived-claim family.
+
+> **The rule: `RAW` carries `cut -d'|' -fN <file> | sort | uniq -c` for EVERY column of any table
+> delivered. A single-valued column is a finding to report, never a result to ship.**
+
+✅ **RULED with it: `test` splits into `test_file` and `test_shell`** (`assertSee('Your account')` **and**
+`assertDontSee('Internal Platform Console')`, both) — one cell cannot carry a two-part question, and
+the half that was dropped is the half that scopes the next wave. ✅ **And the census is EDITED FORWARD**:
+`a4019449` is kept, the eight good columns are not recomputed, nothing is reverted.
+
+⚠️ Fourth field note in the report family: **`MODULES: X-124 DONE` was false** — nothing transitioned,
+`state.py status` is the unchanged `116 done · 8 unresolved of 127`, and `X-124` is the `module` field
+of the `decided` row read as a state change. Run 86's defect in a different field.
+
+⭐ **The census earned its cost anyway, on a question nobody asked it.** Its own rows measure **304
+registrations · 287 distinct routes · 17 registered TWICE** — X-112 (4) · X-118 (6) · X-166 (4) ·
+X-198 (3). X-118's six were known; **the eleven in X-112, X-166 and X-198 are new**, and X-192's
+duplicate registration is therefore not a special case but the fourth instance of one shape.
+`routes.generated.php` is generated output — all of it is Track 1's, none of it this lane's to fix.
 
 ### ✅ RULED 2026-09-06 23:2x — UI-50 is the owner-route CENSUS, and the conversion waves stop until it lands
 
