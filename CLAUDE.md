@@ -1938,3 +1938,61 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ The Track 1 item this raises is whether a vendor-availability failure should present as an
     `UNRESOLVED` skip rather than an error, since as written it reddens **every** lane's gate on a
     third party's uptime.
+86. **A reader-sweep greps the string's INTERIOR, and a pest-style file is invisible to this lane's
+    test census (RULED by the lane supervisor 2026-09-06 20:1x, on MONEY-88's `c6df93fb`).** Ruling
+    46 makes it routine that *a wave changing a value owns every test that asserts it*, and MONEY-88
+    still shipped with a third assertion red — `tests 2055 · passed 2049 · FAILED 3 · errors 3`
+    against a floor of 2, the extra member `dunning sequence escalates before suspend`. Two
+    mechanisms hid it, and both generalise.
+    **(a) A substring assertion matches from the MIDDLE.** The pre-brief sweep grepped the
+    sentence's opening words (`R211: Overdue invoice requires human resolution…`);
+    `X-211/ArEngineTest.php:35` asserts
+    `toContain('resolution attempt before any suspension')` — a fragment starting past every word
+    searched for. `toContain`, `assertStringContainsString`, `assertSee` and `assertDontSee` all
+    read this way. **So a sweep for a string's readers greps three or four distinctive fragments
+    from its INTERIOR and its tail, never its opening clause.**
+    **(b) A pest-style file has no `public function test_` to count.** `ArEngineTest.php` declares
+    five tests as `test('…', function () {…})` and returns **0** for this lane's habitual
+    `grep -c "public function test_"`. Every method-count instrument in these briefs — MONEY-88's
+    own "count 3 → 4" included — is blind to those files, as is any reviewer scanning a directory by
+    method name; the names surface only in §7 as `__pest_evaluable_<description>`, which is how this
+    one was found. **So a sweep over a module's tests greps `test(` and `it(` alongside
+    `public function test_`, and a brief quoting a method count says which shape it counted.**
+    **The fix is forward and the system sentence stands:** `:35`'s needle becomes
+    `'nothing is stopped until someone does'` — the clause of the new sentence carrying the fact the
+    old needle carried, since `:34` is the *escalates* half and `:35` the *before suspend* half
+    (ruling 76's discipline: the clause carrying the load-bearing fact, not merely one that
+    differs). ⛔ Never deleted (the One Rule), ⛔ never weakened past what the test's name promises.
+    ⚠️ **The file the sweep missed is the file the brief CITED as a worked example** — MONEY-88 item
+    1.3 pointed at `ArEngineTest:28` for the listener shape and never read seven lines further.
+    Reading a file for one purpose does not sweep it for another. ⚠️ Per the ruling
+    46/49/50/62/66/75/82 precedent the miss is the supervisor's, so MONEY-88b carries its own two
+    dispatches and MONEY-88's cap is untouched. ⚠️ Corroborating ruling 85 at no cost: the
+    Authorize.Net `E00040` member vanished from this gate with no code change touching it — a
+    vendor-availability red does clear itself, which is what attributing it off the sha predicted.
+87. **The C-Billing top-up tells the owner money was taken and none was (RULED by the lane
+    supervisor 2026-09-06 20:1x, briefed as MONEY-88b items 2–4).**
+    `grep -rln "StripeGatewayClient\|GatewayEngine" app/app/Modules/C-Billing/` returns **nothing** —
+    the module has no gateway client at all — yet
+    `Domain/BillingLedgerEngine::topup():83-124` returns `'status' => 'charged'` after doing three
+    things: a daily-ceiling check, a raise to `TrialLimit.current_balance_hundredths_cents`, and a
+    `CreditLedgerEntry` row. Three money-owned screens read that key and bill the owner in prose —
+    `Credits.php:50` with a **hardcoded `$` for every tenant** (ruling 37), `Mrr.php:53` and
+    `RevenueRecovery.php:32` with a bare figure and no currency, six lines below `mrr.blade.php:43`,
+    which renders that account's real `price_currency`; `mrr.blade.php:49`'s button reads the literal
+    `Top up 50.00`. **The app already has a real one:** `App\Services\Billing\CreditTopUps` charges
+    through Stripe Checkout or an Authorize.Net stored profile, `RunAutoTopUps` drives it and
+    `app/routes/console.php:161` schedules it as `credits:run-auto-top-ups` — two top-up paths, one
+    that takes money and one that says it did. ⛔ **Not resolved by wiring the button to
+    `CreditTopUps`**: that charges a real tenant's card (the reserved list) and the service is Track
+    1's. ⛔ Not by deleting the button (three screens and four assertions drive it), ⛔ not by
+    inventing a currency read. The outcome is ruling 21's finished waiting state — the sentence says
+    credit was added, says plainly that nothing was charged, and names the charging path it waits on
+    — with the engine's `'charged'` key raised as TRACK 1 ACTION 11, C-Billing `Domain/` being Track
+    1's by ruling 5. ⚠️ `credits.blade.php:18` already heads that very panel **"Top-up recorded"** —
+    the honest word, sitting in the tree above the sentence contradicting it, for as long as the
+    screen has existed. ⚠️ Blast radius measured before briefing (ruling 46): exactly four
+    assertions in three files, all **changed** and none deleted, plus `RunAutoTopUps.php:72`, where
+    "Topped up" is **true** and is not touched. Measured clean in the same sweep and recorded rather
+    than carried: `next_step_words` is computed per row at `DunningBoard.php:39` and `day_in_cycle`
+    is written by `BillingLedgerEngine:137,:153`, so neither is decision 272's shape.
