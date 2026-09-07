@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T01:42:49",
+ "updated": "2026-09-07T02:13:00",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1484,6 +1484,12 @@
    "module": "X-124",
    "chose": "the reachability check's population is the work already done, so the count of tenant.role routes it cannot see is pinned as a measurement that reds in both directions; a pinned count excuses no route and is not an exclusion",
    "at": "2026-09-07T01:42:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "the sample-state module attribute is generated from the master plan's prose and renders it to owners; the leak is the generator's to fix and this lane's to count, so its size is pinned as a measurement that reds when it grows and when it is repaired",
+   "at": "2026-09-07T02:13:00",
    "ruling": "R245"
   }
  ],
