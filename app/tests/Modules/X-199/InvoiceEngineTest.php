@@ -403,9 +403,9 @@ test('a partial payment leaves the invoice unpaid, chased and unreversed', funct
 
         $invoice->refresh();
 
-        expect($res['status'])->not->toBe('paid');
+        expect($res['status'])->toBe('issued');
         expect($invoice->paid_cents)->toBe(20000);
-        expect($invoice->status)->not->toBe('paid');
+        expect($invoice->status)->toBe('issued');
         expect($invoice->paid_at)->toBeNull();
 
         expect(OverflowCharge::where('invoice_id', $invoice->id)

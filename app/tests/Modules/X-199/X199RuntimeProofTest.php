@@ -21,7 +21,7 @@ class X199RuntimeProofTest extends TestCase
         $this->assertSame('paid', $data['invoice_status']);
         $this->assertNotNull($data['paid_at']);
         $this->assertSame('invoices_business_id_invoice_number_unique', $data['duplicate_refused_by']);
-        $this->assertNotSame('sync', $data['queue_driver']);
+        $this->assertSame('database', $data['queue_driver']);
         $this->assertFalse($data['running_unit_tests']);
     }
 }
