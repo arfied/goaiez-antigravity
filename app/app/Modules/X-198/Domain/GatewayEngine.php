@@ -30,11 +30,11 @@ final class GatewayEngine
         $connection = MerchantConnection::where('business_id', $businessId)->findOrFail($connectionId);
 
         if (($connection->merchant_status ?? 'external_gateway') !== 'external_gateway') {
-            return ['status' => 'refused', 'refusal_code' => 'MERCHANT_STATUS_NOT_EXTERNAL', 'message' => 'Status is not external'];
+            return ['status' => 'refused', 'refusal_code' => 'MERCHANT_STATUS_NOT_EXTERNAL', 'message' => 'Only a connection still on an outside gateway can start a merchant application; this one is already past that. Nothing was sent.'];
         }
 
         if (! app()->bound(ProcessorAdapter::class)) {
-            return ['status' => 'refused', 'refusal_code' => 'PROCESSOR_ADAPTER_ABSENT', 'message' => 'No adapter bound'];
+            return ['status' => 'refused', 'refusal_code' => 'PROCESSOR_ADAPTER_ABSENT', 'message' => 'Applying for a merchant account waits on the processor contract: no processor is bound in this checkout, so nothing was sent.'];
         }
 
         $adapter = app(ProcessorAdapter::class);

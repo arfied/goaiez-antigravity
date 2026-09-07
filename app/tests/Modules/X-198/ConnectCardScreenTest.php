@@ -79,6 +79,28 @@ class ConnectCardScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(ConnectCard::class)
             ->call('applyForMerchant', $connA->id)
-            ->assertSee('No adapter bound');
+            ->assertSee('waits on the processor contract');
+    }
+
+    public function test_connect_card_refuses_a_connection_that_has_already_applied(): void
+    {
+        $bizA = self::provisionTenant();
+
+        Tenancy::set($bizA->id);
+        $connA = MerchantConnection::create([
+            'business_id' => $bizA->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_A1',
+            'is_connected' => true,
+            'merchant_status' => 'pending_kyc',
+        ]);
+
+        $owner = User::findOrFail($bizA->owner_user_id);
+        Tenancy::set($bizA->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->call('applyForMerchant', $connA->id)
+            ->assertSee('already past that');
     }
 }
