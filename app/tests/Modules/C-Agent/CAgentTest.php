@@ -18,6 +18,7 @@ use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentInstruction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
 use App\Support\Tenancy;
@@ -563,5 +564,74 @@ class CAgentTest extends TestCase
         $this->assertNotNull($turn);
         $this->assertStringNotContainsString('999', $turn->agent_reply, 'Quoted the empty-slug fact for an unrelated service');
         $this->assertEquals('NO_FACT', $turn->refusal_code);
+    }
+
+    public function test_pricebook_answers(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Pricebook Answer', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$18,500.00', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNull($turn->refusal_code);
+    }
+
+    public function test_pricebook_refusal_path(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Pricebook Refusal', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => false,
+            'is_sample' => false,
+        ]);
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('handoff', $res['status']);
+        $this->assertStringNotContainsString('18,500', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertEquals('NO_FACT', $turn->refusal_code);
+    }
+
+    public function test_pricebook_precedence(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Pricebook Precedence', 'currency' => 'USD']);
+        Tenancy::set($biz->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'drain-unblock',
+            'price_cents' => 1850000,
+            'is_confirmed' => true,
+            'is_sample' => false,
+        ]);
+
+        $this->teach->handle($biz->id, 'price.drain-unblock', '999900');
+
+        $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertStringContainsString('$18,500.00', $res['reply']);
+        $this->assertStringNotContainsString('9,999', $res['reply']);
+
+        $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
+        $this->assertNull($turn->refusal_code);
     }
 }
