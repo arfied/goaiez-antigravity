@@ -11,7 +11,7 @@ test('every <x-surface.sample-state> names a real module', function () {
     $unparseable = 0;
 
     $viewsPath = base_path('app/Modules');
-    
+
     // Check if the path exists, as asked in the brief: "Verify that with an assertion, do not trust my path"
     expect(is_dir($viewsPath))->toBeTrue();
 
