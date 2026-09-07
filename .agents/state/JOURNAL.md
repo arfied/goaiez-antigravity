@@ -861,3 +861,8 @@
 - `2026-09-06T23:13:52` note: * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt. Owner: C-Agent
 - `2026-09-06T23:13:52` note: * BUILD PROPOSAL: G5-51 — the minute-by-minute graph is an X-194 view. Owner: X-194
 - `2026-09-06T23:13:57` (R245) C-Agent — (R245) TakeoverStarted and TakeoverReleased cross from X-01 to C-Agent by Event dispatcher, C-Agent writes boolean latch in c_agent_takeovers table read by AgentAnswerAction
+- `2026-09-06T23:42:17` note: G5-31: The earlier row dropped the evidence parenthetical '(grep for Chat/X-102 is empty)'. The pre-merge state is restored.
+- `2026-09-06T23:42:17` note: G5-32: The earlier row dropped the evidence parenthetical '(grep for Voice/X-66 is empty)'. The pre-merge state is restored.
+- `2026-09-06T23:42:17` note: G5-37: The earlier row recorded a proposal for work that was already built in f7bd376b. The docblock is now a CLOSED row.
+- `2026-09-06T23:42:17` note: G5-51: The earlier row wrongly promoted this to a BUILD PROPOSAL for X-194. It is restored to the pre-merge ⛔ REFUSED.
+- `2026-09-06T23:42:17` note: G5-43: The earlier wave failed to restore this row, leaving it carrying main's ⛔ REFUSED label. It is now restored as a BUILD PROPOSAL.

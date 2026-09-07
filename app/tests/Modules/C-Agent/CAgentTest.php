@@ -169,7 +169,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt. Owner: C-Agent
+     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt (grep for Chat/X-102 is empty). Owner: C-Agent
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -178,7 +178,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
-     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt. Owner: C-Agent
+     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt (grep for Voice/X-66 is empty). Owner: C-Agent
      */
     public function test_g5_32_voice_door(): void
     {
@@ -201,7 +201,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
-     * BUILD PROPOSAL: G5-37 — the C-Agent side wire for the takeover latch is unbuilt. Owner: C-Agent
+     * CLOSED: G5-37 — the C-Agent side wire for the takeover latch was built in f7bd376b.
      */
     public function test_g5_37_takeover_latch(): void
     {
@@ -270,7 +270,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-43] the 100 authored profiles are the fixture (P-126)
-     * ⛔ REFUSED: the 100 authored profiles are the fixture, surveyed Actions, Events, Models, Ui and found no C-Agent fixture.
+     * BUILD PROPOSAL: G5-43 — "the 100 authored profiles" fixture is unbuilt. Owner: C-Agent
      */
     public function test_g5_43_profile_fixtures(): void
     {
@@ -301,7 +301,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-51] named in the header; the minute-by-minute graph is an X-194 view
-     * BUILD PROPOSAL: G5-51 — the minute-by-minute graph is an X-194 view. Owner: X-194
+     * ⛔ REFUSED: no test can close a documentation claim
      */
     public function test_g5_51_minute_graph_view(): void
     {

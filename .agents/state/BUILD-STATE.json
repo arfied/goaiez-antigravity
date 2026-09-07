@@ -1901,6 +1901,26 @@
   {
    "at": "2026-09-06T23:13:52",
    "note": "* BUILD PROPOSAL: G5-51 \u2014 the minute-by-minute graph is an X-194 view. Owner: X-194"
+  },
+  {
+   "at": "2026-09-06T23:42:17",
+   "note": "G5-31: The earlier row dropped the evidence parenthetical '(grep for Chat/X-102 is empty)'. The pre-merge state is restored."
+  },
+  {
+   "at": "2026-09-06T23:42:17",
+   "note": "G5-32: The earlier row dropped the evidence parenthetical '(grep for Voice/X-66 is empty)'. The pre-merge state is restored."
+  },
+  {
+   "at": "2026-09-06T23:42:17",
+   "note": "G5-37: The earlier row recorded a proposal for work that was already built in f7bd376b. The docblock is now a CLOSED row."
+  },
+  {
+   "at": "2026-09-06T23:42:17",
+   "note": "G5-51: The earlier row wrongly promoted this to a BUILD PROPOSAL for X-194. It is restored to the pre-merge \u26d4 REFUSED."
+  },
+  {
+   "at": "2026-09-06T23:42:17",
+   "note": "G5-43: The earlier wave failed to restore this row, leaving it carrying main's \u26d4 REFUSED label. It is now restored as a BUILD PROPOSAL."
   }
  ]
 }
