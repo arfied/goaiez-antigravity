@@ -103,4 +103,30 @@ class X211Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /**
+     * [N-037]
+     */
+    public function test_n_037_fee_with_no_term_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
+
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-102',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('A fee with no matching TERM in the agreement is refused');
+
+        $this->engine->applyLateFee($biz->id, $invoice->id, 7500, false);
+    }
 }
