@@ -261,4 +261,37 @@ test('the reachability check states the size of its own blind spot', function ()
     $invisible = array_values(array_diff(array_unique($tenantRole), $admitted));
 
     expect(count($invisible))->toBe(270, 'If it went UP, a new module route ships behind tenant.role without opting into the owner layout, so it is reachable by URL and invisible to every check in this file. That is a regression. If it went DOWN, somebody converted a screen properly. Lower the number and record it.');
+
+    $withLayout = 0;
+    $withoutLayout = 0;
+
+    $allRoutes = Route::getRoutes()->getRoutesByMethod()['GET'] ?? [];
+
+    foreach ($invisible as $routeName) {
+        $hasLayout = false;
+        foreach ($allRoutes as $route) {
+            if ($route->getName() === $routeName) {
+                $action = $route->getAction();
+                if (isset($action['controller']) && is_string($action['controller'])) {
+                    $controller = explode('@', $action['controller'])[0];
+                    if (class_exists($controller)) {
+                        $reflection = new ReflectionClass($controller);
+                        $attributes = $reflection->getAttributes(Layout::class);
+                        if (! empty($attributes)) {
+                            $hasLayout = true;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        if ($hasLayout) {
+            $withLayout++;
+        } else {
+            $withoutLayout++;
+        }
+    }
+
+    expect($withLayout)->toBe(13, 'Invisible routes that declare a #[Layout] attribute (already in some other shell)');
+    expect($withoutLayout)->toBe(257, 'Invisible routes that do not declare a #[Layout] attribute (falling through to the staff console)');
 });
