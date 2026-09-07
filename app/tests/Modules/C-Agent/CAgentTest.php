@@ -606,9 +606,10 @@ class CAgentTest extends TestCase
 
         $this->assertEquals('handoff', $res['status']);
         $this->assertStringNotContainsString('18,500', $res['reply']);
+        $this->assertStringNotContainsString('$', $res['reply']);
 
         $turn = AgentTurn::where('business_id', $biz->id)->orderBy('id', 'desc')->first();
-        $this->assertEquals('NO_FACT', $turn->refusal_code);
+        $this->assertEquals('UNCONFIRMED', $turn->refusal_code);
     }
 
     public function test_pricebook_precedence(): void

@@ -161,7 +161,7 @@ class X163Test extends TestCase
         $action = new PriceQuoteAction;
         $res = $action->handle($biz->id, 'How much to unblock a drain sample?');
 
-        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertEquals('SAMPLE_STATE_REFUSED', $res['refusal_code']);
         $this->assertArrayNotHasKey('amount', $res);
 
         PriceBookItem::create([
@@ -175,7 +175,7 @@ class X163Test extends TestCase
 
         $res2 = $action->handle($biz->id, 'How much to unblock a drain unconfirmed?');
 
-        $this->assertEquals('NO_FACT', $res2['refusal_code']);
+        $this->assertEquals('UNCONFIRMED', $res2['refusal_code']);
         $this->assertArrayNotHasKey('amount', $res2);
     }
 
