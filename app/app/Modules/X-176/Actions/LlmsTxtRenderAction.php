@@ -19,7 +19,7 @@ final class LlmsTxtRenderAction
         ];
 
         foreach ($contentBlocks as $block) {
-            if (isset($block['type']) && $block['type'] === 'text' && ! empty($block['content'])) {
+            if (isset($block['type']) && $block['type'] === 'text' && trim((string) $block['content']) !== '') {
                 $lines[] = $block['content'];
                 $lines[] = '';
             } elseif (isset($block['text'])) {

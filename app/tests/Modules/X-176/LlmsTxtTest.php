@@ -132,4 +132,41 @@ final class LlmsTxtTest extends TestCase
         $this->assertEquals('deployed', $res['status']);
         $this->assertStringContainsString('application/ld+json', $htmlWritten);
     }
+
+    public function test_f10_text_block_content_blank_tests(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant([
+            'name' => 'Local Tenant F10',
+        ]);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => 'services']);
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_llms_f10',
+            'content_blocks' => [
+                ['type' => 'text', 'content' => '0'],
+                ['type' => 'text', 'content' => '   '],
+            ],
+        ]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'llms-f10.example.com', true);
+
+        $res = app(\App\Modules\X157\Actions\EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_llms_f10',
+            businessName: 'Local Biz F10'
+        );
+
+        $this->assertEquals('deployed', $res['status']);
+        
+        $txt = Storage::disk('local')->get("sites/{$res['deploy_hash']}.llms.txt");
+
+        $this->assertStringContainsString('0', $txt, 'Expected 0 to be present in llms.txt');
+        $this->assertStringNotContainsString('   ', $txt, 'Expected whitespace-only content to be refused');
+    }
 }

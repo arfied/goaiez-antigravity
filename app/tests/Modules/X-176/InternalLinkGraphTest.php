@@ -557,4 +557,85 @@ final class InternalLinkGraphTest extends TestCase
         $this->assertNotContains('/services', $hrefs);
         $this->assertNotContains('/services/child', $hrefs);
     }
+
+    public function test_f11_blank_title_consistency(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant F11']);
+        Tenancy::set((int) $biz->id);
+
+        Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+
+        Page::create(['business_id' => $biz->id, 'title' => '0', 'slug' => 'zero', 'is_published' => true]);
+        $pageZero = Page::create(['business_id' => $biz->id, 'title' => 'Zero Child', 'slug' => 'zero/child', 'is_published' => true]);
+
+        Page::create(['business_id' => $biz->id, 'title' => '   ', 'slug' => 'blank', 'is_published' => true]);
+        $pageBlank = Page::create(['business_id' => $biz->id, 'title' => 'Blank Child', 'slug' => 'blank/child', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'linksf11.example.com', true);
+
+        // Deploy zero child
+        $resZero = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $pageZero->id,
+            commitId: 'commit_test_f11_zero',
+            businessName: 'My Biz F11'
+        );
+        $htmlZero = Storage::disk('local')->get("sites/{$resZero['deploy_hash']}.html");
+
+        $domZero = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $domZero->loadHTML($htmlZero);
+        $xpathZero = new \DOMXPath($domZero);
+        
+        $navLinksZero = [];
+        foreach ($xpathZero->query('//nav[@id="internal-links-x176"]//a') as $link) {
+            $navLinksZero[] = trim($link->textContent);
+        }
+        $breadcrumbLinksZero = [];
+        foreach ($xpathZero->query('//nav[@id="breadcrumb-x176"]//a') as $link) {
+            $breadcrumbLinksZero[] = trim($link->textContent);
+        }
+
+        $this->assertContains('0', $navLinksZero, 'Expected 0 in nav');
+        $this->assertContains('0', $breadcrumbLinksZero, 'Expected 0 in breadcrumb');
+
+        // Deploy blank child
+        $resBlank = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $pageBlank->id,
+            commitId: 'commit_test_f11_blank',
+            businessName: 'My Biz F11'
+        );
+        $htmlBlank = Storage::disk('local')->get("sites/{$resBlank['deploy_hash']}.html");
+
+        $domBlank = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $domBlank->loadHTML($htmlBlank);
+        $xpathBlank = new \DOMXPath($domBlank);
+        
+        $navLinksBlank = [];
+        foreach ($xpathBlank->query('//nav[@id="internal-links-x176"]//a') as $link) {
+            $navLinksBlank[] = trim($link->textContent);
+        }
+        $breadcrumbLinksBlank = [];
+        foreach ($xpathBlank->query('//nav[@id="breadcrumb-x176"]//a') as $link) {
+            $breadcrumbLinksBlank[] = trim($link->textContent);
+        }
+
+        $this->assertNotContains('   ', $navLinksBlank, 'Expected whitespace to be refused in nav');
+        $this->assertNotContains('', $navLinksBlank, 'Expected empty to be refused in nav');
+        
+        // Assert child is excluded too per the rule
+        $navHrefsBlank = [];
+        foreach ($xpathBlank->query('//nav[@id="internal-links-x176"]//a') as $link) {
+            $navHrefsBlank[] = $link->getAttribute('href');
+        }
+        $this->assertNotContains('/blank/child', $navHrefsBlank, 'Descendant of blank should be excluded from nav');
+
+        $this->assertStringNotContainsString('id="breadcrumb-x176"', $htmlBlank, 'Expected breadcrumb to be entirely absent due to excluded ancestor');
+    }
 }
+

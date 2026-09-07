@@ -208,7 +208,7 @@ final class EdgeDeployAction
             $breadcrumbs = [];
             if ($pageId !== null && $businessName !== null && $commitId !== null) {
                 $page = Page::find($pageId);
-                if ($page && ! empty($page->slug) && ! empty($page->title)) {
+                if ($page && ! empty($page->slug) && trim((string) $page->title) !== '') {
                     $parts = explode('/', trim($page->slug, '/'));
                     if (count($parts) > 1) {
                         $paths = [];
@@ -236,7 +236,7 @@ final class EdgeDeployAction
 
                         if ($usable) {
                             foreach ($paths as $path) {
-                                if (! isset($hierarchyPages[$path]) || empty($hierarchyPages[$path]->title)) {
+                                if (! isset($hierarchyPages[$path]) || trim((string) $hierarchyPages[$path]->title) === '') {
                                     $usable = false;
                                     break;
                                 }
