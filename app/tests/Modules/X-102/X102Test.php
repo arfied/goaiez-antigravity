@@ -247,6 +247,28 @@ class X102Test extends TestCase
         $this->assertEquals(['79'], $matches[0]);
     }
 
+    public function test_a_grounding_fact_of_zero_is_answered(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Zero Fact', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->escalateAction->answerQuestion($biz->id, 'what is the cost?', '0');
+
+        $this->assertEquals('answered', $res['status']);
+        $this->assertTrue(str_contains($res['answer'], '0'));
+    }
+
+    public function test_a_whitespace_grounding_fact_is_refused(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Whitespace Fact', 'currency' => 'USD']);
+        Tenancy::set((int) $biz->id);
+
+        $res = $this->escalateAction->answerQuestion($biz->id, 'what is the cost?', '   ');
+
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('NO_GROUNDING_FACT', $res['refusal_code']);
+    }
+
     /**
      * [G13-37] the widget offers help instead of watching them fail
      */

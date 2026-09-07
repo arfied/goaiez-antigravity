@@ -62,7 +62,7 @@ final class ChatEscalateAction
      */
     public function answerQuestion(int $businessId, string $question, ?string $groundingFact = null): array
     {
-        if (empty($groundingFact)) {
+        if ($groundingFact === null || trim($groundingFact) === '') {
             return [
                 'status' => 'refused',
                 'refusal_code' => 'NO_GROUNDING_FACT',

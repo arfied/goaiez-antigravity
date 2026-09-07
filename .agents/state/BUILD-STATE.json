@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T17:33:27",
+ "updated": "2026-09-07T18:02:19",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2307,6 +2307,12 @@
    "module": "X-155",
    "chose": "--ruling R245 The honeypot presence check no longer uses empty(), which treated a bot writing the string 0 into the hidden field as having left it blank, so the guard did not fire, FormSpamRejected was never dispatched, and FormCaptureAction took the legitimate branch and stored the submission as a real Person and a real lead. G3-64 and G13-05 require that a spam rejection is stored and flagged, never discarded, so a submission that is not recognised as spam at all defeats the clause. The predicate is now present, not null, not the empty string and not an empty array, which is the same emptiness set the Laravel prohibited rule uses at StoreFeedbackRequest line 73, where a comment already records the intended semantics: a human never sees the field and a bot filling every input does. Refused deliberately: a trim based test, which is correct for a display string such as a page title but wrong here, because a honeypot is a presence signal and whitespace in it is something having been written, so trimming would let that bot through a case empty() already catches. The remedy for a blank test is decided by what the value means and is not uniform across the sites one grep returns. Two tests assert the two directions and each is reddened by a different mutation, so the wrong remedy is refused by the suite and not only by a note.",
    "at": "2026-09-07T17:33:27",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-102",
+   "chose": "--ruling R245 The grounding blank test in answerQuestion no longer uses empty(), which was wrong in both directions over a nullable content string. A grounding fact of the string 0 was treated as absent and refused, so the chat said it had no verified details for a question it could ground; and a whitespace grounding fact was treated as present and answered, returning a content-free answer presented as grounded, which is what G13-15 exists to prevent. The predicate is now null or blank after trim, which admits 0 and refuses whitespace. Refused deliberately: the presence predicate used for the X-155 honeypot, which is correct there because a honeypot is a presence signal and whitespace in it is something having been written, and wrong here because a content string that is only whitespace carries no fact; isset, which is always true for a non-null string and would make the guard dead while appearing fixed; and trimming the echoed answer, which is a separate cosmetic question. The remedy for a blank test is decided by what the value means and is not uniform across the sites one grep returns, and after this wave each of the two remedies is refused by a test in the module where it does not belong. The action has no production caller today; the invariant belongs in it because it is the action that answers, whoever calls it.",
+   "at": "2026-09-07T18:02:19",
    "ruling": "R245"
   }
  ],
