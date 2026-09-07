@@ -249,4 +249,125 @@ final class InternalLinkGraphTest extends TestCase
             '/services/plumbing',
         ], $hrefs);
     }
+
+    public function test_falsifier_order_internal_links_by_slug_ascending(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant 6']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+        // Insertion order out of alphabetical order
+        Page::create(['business_id' => $biz->id, 'title' => 'Zebra', 'slug' => 'zebra', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Apple', 'slug' => 'apple', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Banana', 'slug' => 'banana', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'links6.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $rootPage->id,
+            commitId: 'commit_test_6',
+            businessName: 'My Biz 6'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $hrefs = [];
+        foreach ($links as $link) {
+            $hrefs[] = $link->getAttribute('href');
+        }
+
+        $this->assertSame([
+            '/',
+            '/apple',
+            '/banana',
+            '/zebra',
+        ], $hrefs);
+    }
+
+    public function test_falsifier_cap_emitted_list_at_20(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant 7']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+
+        // 25 more pages
+        for ($i = 1; $i <= 25; $i++) {
+            $slug = 'page-'.str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+            Page::create(['business_id' => $biz->id, 'title' => "Page {$i}", 'slug' => $slug, 'is_published' => true]);
+        }
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'links7.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $rootPage->id,
+            commitId: 'commit_test_7',
+            businessName: 'My Biz 7'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+
+        $this->assertCount(20, $links);
+    }
+
+    public function test_falsifier_ancestor_index_is_built_from_full_published_set(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant 8']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage2 = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+
+        Page::create(['business_id' => $biz->id, 'title' => 'Foo Parent', 'slug' => 'foo', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Foo Child', 'slug' => '/foo/bar', 'is_published' => true]);
+
+        for ($i = 1; $i <= 18; $i++) {
+            $s = 'a-'.str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+            Page::create(['business_id' => $biz->id, 'title' => "Pad {$i}", 'slug' => $s, 'is_published' => true]);
+        }
+
+        $zone2 = app(EdgeProvisionAction::class)->handle($biz->id, 'links8.example.com', true);
+
+        $res2 = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone2->id,
+            pageId: $rootPage2->id,
+            commitId: 'commit_test_8',
+            businessName: 'My Biz 8'
+        );
+
+        $html2 = Storage::disk('local')->get("sites/{$res2['deploy_hash']}.html");
+
+        $dom2 = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom2->loadHTML($html2);
+        $xpath2 = new \DOMXPath($dom2);
+        $links2 = $xpath2->query('//nav[@id="internal-links-x176"]//a');
+
+        $hrefs2 = [];
+        foreach ($links2 as $link) {
+            $hrefs2[] = $link->getAttribute('href');
+        }
+
+        // Assert that the child is STILL LINKED because the cap is on the emitted list, not the fetch.
+        // We dump hrefs to see what is missing
+        $this->assertContains('/foo/bar', $hrefs2);
+    }
 }

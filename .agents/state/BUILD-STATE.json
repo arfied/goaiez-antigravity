@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:22:12",
+ "updated": "2026-09-07T00:46:25",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -2229,6 +2229,12 @@
    "module": "X-157",
    "chose": "Order price book items by id asc for deterministic page head deployment --ruling R245",
    "at": "2026-09-07T00:22:12",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-176",
+   "chose": "the internal-link query is ordered for a deterministic published nav, and that the cap is applied to the emitted list while the ancestor index is built from the full published set --ruling R245",
+   "at": "2026-09-07T00:46:25",
    "ruling": "R245"
   }
  ],

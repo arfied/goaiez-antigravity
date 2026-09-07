@@ -15,6 +15,7 @@ final class InternalLinkRenderAction
     {
         $pages = Page::where('business_id', $businessId)
             ->where('is_published', true)
+            ->orderBy('slug', 'asc')
             ->get();
 
         if ($pages->isEmpty()) {
@@ -53,6 +54,8 @@ final class InternalLinkRenderAction
                 $usablePages[] = $page;
             }
         }
+
+        $usablePages = array_slice($usablePages, 0, 20);
 
         if (count($usablePages) < 2) {
             return '';
