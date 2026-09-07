@@ -852,3 +852,7 @@
 - `2026-09-06T11:10:05` (R245) C-Agent — the takeover latch store is X-01's, but the consultation wire is C-Agent's
 - `2026-09-06T11:56:21` (R245) X-01 — throws TakeoverNotLatchedRefused to match replyWithTakeover and signify error
 - `2026-09-06T12:50:24` (R245) X-01 — Swallow Throwable and display as errorMessage because it allows surfacing domain refusals gracefully to the operator without crashing the Livewire component --ruling R245
+- `2026-09-06T22:48:14` note: G2-16 BUILD PROPOSAL: Rep A is typing presence on the shared thread is unbuilt (Owner: X-01)
+- `2026-09-06T22:48:24` note: X-01 REFUSED: G2-23 (no clause to assert, named in header), G2-25 (no clause to assert, console-only), G2-36 (no clause to assert, UTM is X-138 outside lane), G2-42 (no clause to assert, named in header), G9-10 (no clause to assert, moved from X-121), G11-22 (points to X-121 outside lane), G11-23 (no clause to assert), G11-40 (no clause to assert, header's first line)
+- `2026-09-06T22:48:27` note: C-Agent REFUSED: G5-19, G5-24, G5-41, G5-48 (no test can close a documentation claim)
+- `2026-09-06T22:48:30` note: G12-25 BUILD PROPOSAL: the C-Agent side wire for the takeover latch is unbuilt (HUMAN_TAKEOVER_LATCH is declared but unconsulted) (Owner: C-Agent)
