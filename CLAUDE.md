@@ -5705,3 +5705,99 @@ source: `:402` matches the SQL substring **and** `:406-413` requires bindings co
 `parent` and `parent/child`. That query binds only `business_id` and `is_published`; `orderBy` adds
 no binding and Laravel inlines `limit` as a literal. So `candidateCount` stays 1 and tick 247's
 uniqueness assertion is unaffected — **and if it does move, that is the finding, not a nuisance.**
+
+## ⛔ When a ruling rejects option A because it breaks property P, CHECK OPTION B AGAINST P TOO (tick 250)
+
+Tick 249 ruled the internal-link cap onto the **emitted** list rather than the fetch, and stated the
+reason precisely: bounding the fetch "would change which pages are **usable**, not only how many are
+linked: an ancestor outside the cap makes its descendants fail the `isset` test and vanish from the
+nav with no error." That half is right, and SITE-129 implemented it exactly — `$hierarchyPages` is
+still built from the full published set, so usability is untouched.
+
+⛔ **Emission closure is a different property from usability, and the ruling conflated them.**
+`array_slice($usablePages, 0, 20)` truncates a list ordered by the **raw `slug` column** while
+ancestry resolves on the **trimmed** key — two different functions — so the truncation can drop a
+**parent** whose **child** it keeps. That violates the property tick 238 identified as the
+load-bearing half of G8-25, asserted at `InternalLinkGraphTest:123`
+(`assertContains($parentsByChild[$node][0], $nodes)`).
+
+**Measured off the wave's own item-5 fixture, not hypothesised.**
+`test_falsifier_ancestor_index_is_built_from_full_published_set` creates exactly **21** usable pages
+(`/`, `foo`, `/foo/bar`, `a-01`…`a-18`), so the slice drops exactly one — the last in
+`orderBy('slug','asc')`. Only two orderings exist and they disagree about which:
+
+- **byte/C** — `/` · `/foo/bar`(0x2F) · `a-01`…`a-18`(0x61) · `foo`(0x66) ⇒ **`foo` dropped**
+- **punctuation-ignoring** — `''` · `a01`…`a18` · `foo` · `foobar` ⇒ **`/foo/bar` dropped**
+
+The test **passes**, which excludes the second ⇒ the parent is the page dropped, and `:78-82` finds
+`isset($nodes['foo'])` false and renders the child at `$tree[]` — a **top-level orphan in the
+published nav**. ⚠️ `test_graph_property_is_acyclic_and_reachable` cannot see it: it runs on a small
+fixture where no cap applies. So the module's own stated property is violated in a state the wave's
+own new test constructs, every assertion is green, and no count, census or gate moves. The
+fake-green family one level out — not *a value nothing can falsify*, but **a property nothing
+exercises at the size that breaks it**.
+
+✅ Blast radius stated rather than buried: in the **canonical** storage form a proper prefix always
+sorts before its extension, so truncation preserves closure. It breaks only where the stored form
+and the ancestry key diverge (`/foo/bar` under `foo`) — which tick 242 measured as a real storage
+shape and tick 246 had already fixed for the *breadcrumb* query by normalising in SQL. This query's
+`ORDER BY` was left on the raw column.
+
+⛔ **RULED (SITE-130): the cap moves onto a PRE-ORDER TRAVERSAL of the built tree, because a
+pre-order emits every parent before its children by construction, so truncation preserves
+reachability with no dependence on collation.** The one-line alternative (order by
+`trim(both '/' from slug)`) also works and is **rejected because its correctness is a collation
+property** — tick 249's own prohibition applies to the remedy as much as to the thing refused.
+⚠️ Predicted with its refuting instruction (tick 244): SITE-130 **reddens**
+`test_falsifier_ancestor_index_is_built_from_full_published_set`, because the pre-order reaches
+`/ · a-01…a-18 · foo` at 20 and `foo/bar` is 21st. Repair the **fixture**, never the rule; and if it
+does not redden, the traversal order is not what the ruling claims.
+
+**Eleventh instance of the imprecise-brief family** (208 the evidence request, 227 the branch
+condition, 235 an unread mechanism, 236 a presumed direction, 237 an existence question about an
+output, 238 a filing sentence, 244 a consequence inside a measurement, 245 a falsifier's polarity,
+247 an output without its command, 249 a pass condition of "identical") — and the first where the
+imprecision is not in the brief's *wording* but in the **ruling's reasoning**. A defect this seat's
+brief caused is a new item with its own two dispatches; SITE-129 spent none.
+
+## ⛔ The complement's FIFTH membership-delta cause: a file enters the list by being DELETED (tick 250)
+
+Ticks 182 and 244 gave the complement four readings — grew and a half names it, grew and no half
+names it, unchanged, and same-size-different-set. **All four presume a member arrives because a
+sibling WROTE it.** The complement jumped **13 → 41** at tick 250 and the 28 new members are all
+`scratch/*`, every one attributable to ui's `7f280357` *"chore: remove tracked scratch files"* — a
+pure deletion. `git log --name-only` lists a path whether the commit added, modified or **removed**
+it, so a sibling tidying up grows the list by 28 without a single new file existing anywhere.
+
+A tick reading that jump as "a sibling has started writing in 28 new places" would have opened a
+finding against a lane for cleaning up. ⛔ **Read `--name-status` or the paired stat before
+characterising complement growth: the query reports paths TOUCHED, and `touched` is not `written`.**
+Twenty-ninth statement of this section's law, on the one axis the complement's own output cannot
+carry — a name list has no room for a **verb**. (`scratch/` and `docs/` are *unwatched, not
+uncovered* under tick 183's second clause either way; no fourth half.)
+
+## ⚠️ The timing nonce is a property of the BLOCK, not of every field (tick 250)
+
+Tick 249's rule fired correctly on its first use — SITE-129's two doctor blocks differ at
+`citation 1261/1247`, `schema 474/469`, `anchor 250/244`, so the pair is two runs and not one pasted
+twice. ⚠️ But three short stages *did* repeat to the millisecond (`boundary 130/130`,
+`contract 32/32`, `capability 23/23`), and a tick reading the rule as "every field must differ"
+would have called a healthy report fabricated. **The discriminator is a byte-identical *block*; a
+23 ms stage has few distinguishable values.** Read the long stages. Same family as tick 188's
+`1 + 2n`: an arithmetic signature fitted to the convenient case is not a signature.
+
+## ✅ The pest-lock hedge is THREE FOR THREE — the composition is load-bearing on both halves (tick 250)
+
+Tick 250's block was appended saying §7 was not independently measured, the lock having been held for
+the whole tick; minutes later it released and this seat's own §7 read `tests 1964 · passed 1959 ·
+FAILED 1 · errors 4` — **byte-identical to the coder's**, sets unchanged,
+`a_published_site_carries_all_seven` absent. J11 green on an independent run, and the three new
+SITE-129 tests passing here is what closes the finding's central deduction.
+
+Every time this seat has hedged on the pest lock (231, 245, 250) the lock released within the tick
+and reproduced the coder's §7 exactly. **Neither half of the composition is optional:** append the
+block with the blocked section named unmeasured (242 — never wait, never carry), then **re-check at
+the append and append the CORRECTION** (231 — a "could not measure" is a claim with an evaluation
+time, and `REVIEWS.md` being append-only makes the correction *the* record). A hedge left standing
+understates the verdict's own evidence, which is the quieter failure mode and the one that survives
+into the next tick's reading.
