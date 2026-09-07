@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T19:17:18",
+ "updated": "2026-09-06T19:19:36",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1198,6 +1198,24 @@
      "stage": "capability",
      "why": "G16-28 \u2014 transcript conversion does not exist",
      "at": "2026-09-06T05:09:58"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G12-05 - gap: builder or plugin is absent; X-104 owns plugin",
+     "at": "2026-09-06T19:19:26"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G16-28 - gap: transcript is absent; X-111 owns full_transcript",
+     "at": "2026-09-06T19:19:31"
+    },
+    {
+     "module": "X-183",
+     "stage": "capability",
+     "why": "G8-39 - gap: ContentGateAction::evaluateGate does not call prePublishGate and ContentDraft lacks has_grounding, cannot assert refusal reason",
+     "at": "2026-09-06T19:19:36"
     }
    ]
   },
@@ -2130,6 +2148,24 @@
    "stage": "capability",
    "why": "G18-15 - the AI answers first has no surface because DialNextAction takes an explicit seatId",
    "at": "2026-09-06T18:40:22"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G12-05 - gap: builder or plugin is absent; X-104 owns plugin",
+   "at": "2026-09-06T19:19:26"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G16-28 - gap: transcript is absent; X-111 owns full_transcript",
+   "at": "2026-09-06T19:19:31"
+  },
+  {
+   "module": "X-183",
+   "stage": "capability",
+   "why": "G8-39 - gap: ContentGateAction::evaluateGate does not call prePublishGate and ContentDraft lacks has_grounding, cannot assert refusal reason",
+   "at": "2026-09-06T19:19:36"
   }
  ],
  "decisions": [
