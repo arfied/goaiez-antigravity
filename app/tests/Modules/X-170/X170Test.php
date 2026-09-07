@@ -114,4 +114,35 @@ class X170Test extends TestCase
     {
         $this->assertTrue(true);
     }
+    /** [G7-14] */
+    public function test_g7_14_commission_cleared_payroll_export(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Payroll Export Tenant', 'currency' => 'USD']);
+        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $comm1 = Commission::create([
+            'business_id' => $biz->id,
+            'invoice_id' => 101,
+            'staff_id' => 10,
+            'amount_cents' => 5000,
+            'status' => 'pending_cash_collection'
+        ]);
+        
+        $comm2 = Commission::create([
+            'business_id' => $biz->id,
+            'invoice_id' => 102,
+            'staff_id' => 10,
+            'amount_cents' => 6000,
+            'status' => 'released',
+            'payment_id' => 'pay_123'
+        ]);
+
+        $export = $this->engine->exportPayroll($biz->id);
+
+        $this->assertCount(1, $export);
+        $this->assertEquals($comm2->id, $export[0]['id'], 'Released commission present');
+        
+        $keys = array_keys($export[0]);
+        $this->assertNotContains('wage', $keys, 'Export must not emit a wage (G7-14)');
+    }
 }
