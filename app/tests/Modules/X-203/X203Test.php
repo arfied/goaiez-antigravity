@@ -150,4 +150,41 @@ class X203Test extends TestCase
         $runRes = $this->runbookAction->handle($biz->id, $runbook->id);
         $this->assertEquals('completed', $runRes->status);
     }
+
+    /**
+     * [G4-04]
+     */
+    public function test_g4_04_no_ad_budget_scaling(): void
+    {
+        $dir = base_path('app/Modules/X-203');
+        $this->assertDirectoryExists($dir);
+
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php' && $file->getFilename() !== 'capabilities.php') {
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/(ad_budget|adBudget|budget_scal|scale_ad)/i', $content)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "Ad budget scaling path found in: $match");
+
+        $biz = TestCase::provisionTenant(['name' => 'DR Tenant G4-04', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $runbook = Runbook::create([
+            'business_id' => $biz->id,
+            'title' => 'Test',
+            'trigger_event' => 'test',
+            'steps' => ['step'],
+        ]);
+        
+        $runRes = $this->runbookAction->handle($biz->id, $runbook->id);
+        $this->assertEquals('completed', $runRes->status);
+    }
 }
