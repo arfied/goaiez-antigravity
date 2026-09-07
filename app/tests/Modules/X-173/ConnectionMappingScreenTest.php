@@ -71,7 +71,7 @@ class ConnectionMappingScreenTest extends TestCase
 
         $screen->set("map.$connId.glId", 'gl_4200')
             ->call('mapAccount', $connId)
-            ->assertSee('is not active');
+            ->assertSee('A connection goes live only when the provider OAuth returns a credential');
 
         $this->assertSame(1, AccountMapping::where('business_id', $bA)->count());
 
@@ -114,7 +114,7 @@ class ConnectionMappingScreenTest extends TestCase
             ->set("map.{$conn->id}.glId", 'gl_4000')
             ->set("map.{$conn->id}.glName", 'HVAC Service Income')
             ->call('mapAccount', $conn->id)
-            ->assertSee('is not active');
+            ->assertSee('A connection goes live only when the provider OAuth returns a credential');
 
         $this->assertSame(0, AccountMapping::where('business_id', $biz->id)->count());
     }

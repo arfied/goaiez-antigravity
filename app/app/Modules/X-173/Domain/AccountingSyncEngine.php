@@ -88,7 +88,7 @@ final class AccountingSyncEngine
         if (! $connection->is_active) {
             return [
                 'status' => 'refused',
-                'message' => 'That ledger connection is not active; reconnect it before mapping. Nothing was saved.',
+                'message' => 'That ledger connection is not live, so nothing can be mapped through it. A connection goes live only when the provider OAuth returns a credential, and no ledger credentials exist in this checkout yet. Nothing was saved.',
             ];
         }
 
