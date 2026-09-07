@@ -40,6 +40,8 @@ class DisputeQueueScreenTest extends TestCase
         $screen = Livewire::actingAs($owner)->test(DisputeQueue::class)
             ->assertOk()
             ->assertSee('One account at a time')
+            ->assertSee('no cross-account read path is built in this checkout yet')
+            ->assertDontSee('OWNER ACTION')
             ->assertSee('Invoice #902')
             ->assertSee('850.00')
             ->assertSee('unrecognized_transaction')

@@ -1,7 +1,7 @@
 <div>
     <x-surface.sample-state module="receives `chargeback.received` from X-198 for **any gateway**" screen="dispute_queue" />
 <h1>Dispute queue</h1>
-<x-ui.attention-card state="attention" heading="One account at a time">the operator queue across accounts waits on OWNER ACTION 15; below is this account's open disputes.</x-ui.attention-card>
+<x-ui.attention-card state="attention" heading="One account at a time">the operator queue across accounts is behind row-level security and no cross-account read path is built in this checkout yet; below is this account's open disputes.</x-ui.attention-card>
 @if($error) <x-ui.error-panel heading="We couldn't act on that dispute">{{ $error }}</x-ui.error-panel> @endif
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the disputes…" /></div>
