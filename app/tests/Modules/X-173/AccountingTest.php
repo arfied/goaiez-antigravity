@@ -40,4 +40,13 @@ class AccountingTest extends TestCase
         $this->assertTrue($boundaryResult['is_low_confidence']);
         $this->assertSame(0.8499, $boundaryResult['confidence_score']);
     }
+
+    /**
+     * [N-063]
+     */
+    public function test_n_063_sync_conflict_goes_unknown_not_stale(): void
+    {
+        $engine = new \App\Modules\X173\Domain\AccountingEngine();
+        $this->assertSame('UNKNOWN', $engine->handleConflict('some_state'));
+    }
 }

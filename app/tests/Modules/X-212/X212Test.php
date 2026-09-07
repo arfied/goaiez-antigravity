@@ -92,4 +92,19 @@ class X212Test extends TestCase
     {
         $this->assertTrue(true);
     }
+
+    /**
+     * [N-042]
+     */
+    public function test_n_042_weak_identifier_rejected(): void
+    {
+        $engine = new \App\Modules\X212\Domain\X212Engine();
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('REFUSES: weak identifier rejected');
+
+        $engine->validateImport([
+            ['first_name' => 'Alice', 'phone' => '', 'email' => ''],
+        ]);
+    }
 }
