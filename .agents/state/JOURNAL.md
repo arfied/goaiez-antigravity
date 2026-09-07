@@ -970,3 +970,4 @@
 - `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G15-04 — an account-class notification (P-062) — account notification event is absent
 - `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G2-28 — named in the header — SLA surface is absent
 - `2026-09-07T00:36:11` UNRESOLVED capability X-111 - G21-02 — no ticket merge path exists
+- `2026-09-07T00:57:37` UNRESOLVED capability X-186 - G3-55 — no message-body rendering surface exists in X-186: CampaignEngine has no methods and no body column exists on CampaignStep or its migrations

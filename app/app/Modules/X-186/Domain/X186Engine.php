@@ -35,8 +35,4 @@ final class X186Engine
         }
     }
 
-    public function processBody(string $body): string
-    {
-        return $body;
-    }
 }

@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:36:11",
+ "updated": "2026-09-07T00:57:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1374,6 +1374,12 @@
      "stage": "contract",
      "why": "send.requested correctly emitted by multiple modules per R231, but sealed ContractStage.php lacks a uniqueness exemption and unconditionally fails.",
      "at": "2026-09-03T13:47:25"
+    },
+    {
+     "module": "X-186",
+     "stage": "capability",
+     "why": "G3-55 \u2014 no message-body rendering surface exists in X-186: CampaignEngine has no methods and no body column exists on CampaignStep or its migrations",
+     "at": "2026-09-07T00:57:37"
     }
    ]
   },
@@ -2456,6 +2462,12 @@
    "stage": "capability",
    "why": "G21-02 \u2014 no ticket merge path exists",
    "at": "2026-09-07T00:36:11"
+  },
+  {
+   "module": "X-186",
+   "stage": "capability",
+   "why": "G3-55 \u2014 no message-body rendering surface exists in X-186: CampaignEngine has no methods and no body column exists on CampaignStep or its migrations",
+   "at": "2026-09-07T00:57:37"
   }
  ],
  "decisions": [
