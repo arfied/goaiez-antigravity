@@ -778,3 +778,4 @@
 - `2026-09-07T00:26:31` (R245) X-124 — a value derived from a name is a guess wearing a measurement's formatting; a column's histogram proves its detector fired, not that it fired on the right question
 - `2026-09-07T00:26:35` note: dup_of: 1 target surviving, 11 discarded
 - `2026-09-07T00:45:15` (R245) X-192 — an owner screen whose own view carries a visible h1 does not opt into the layout's sr-only heading seam; the shell assertion is the proof obligation, the sr-only line is a check on the seam
+- `2026-09-07T01:02:28` (R245) X-192 — an owner screen gets its single h1 from its own view or from the layout's sr-only seam and never from both; the count is the invariant and the source of it is free
