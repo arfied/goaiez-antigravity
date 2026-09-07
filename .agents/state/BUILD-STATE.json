@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T05:30:35",
+ "updated": "2026-09-07T05:59:39",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1514,6 +1514,12 @@
    "module": "X-124",
    "chose": "a corroboration must use a different derivation and not the same literal run in a second program; a partition whose largest bucket equals the population it partitions has not partitioned anything",
    "at": "2026-09-07T05:30:35",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-124",
+   "chose": "a component's mount() existing is not the same as it resolving the tenant, so a census column that records the method is true and cannot scope the work; and a bucket named for a state it does not measure is an upper bound on that state, never a count of it",
+   "at": "2026-09-07T05:59:39",
    "ruling": "R245"
   }
  ],
