@@ -2464,6 +2464,71 @@ Watch for: <the trap that applies, by name>
   `REVIEWS.md` survive, and the shared filename is overwritten by the next run that finishes.
   **Quote the four headline numbers plus `assertions` and `duration_ms` into the block itself**; that
   is the whole durable record of a supervisor run, and `duration_ms` is what proves it was not a copy.
+- ⚠️⚠️ **Size the pre-merge population with the grep, in the brief — a set retyped from this file's own
+  notes is a set already filtered, and tick 218 recorded the population size as the one thing that had
+  gone right.** My wave-111 brief handed over four C-Agent ids; `git grep -n "BUILD PROPOSAL:"
+  362b3b31^1 -- app/tests/Modules/` returns **seven**, of which **five** are C-Agent — the fifth being
+  `G12-25 (second half)`, whose text names the **identical** takeover wire as `G5-37` and whose
+  capability (`capabilities.php:85`) carries the same trailing clause `the takeover latch is X-01's
+  (R21)`. So `f7bd376b` closed both halves of it, wave 111 closed only its twin, and its docblock
+  (`CAgentTest.php:387-389`) now carries **no verdict line at all** — main deleted the proposal, neither
+  wave restored it, and a fully-closed capability reads as unremarked. Fourth recurrence of the per-id
+  rule after ticks 187, 209 and 218. ⭐ The subtraction that finds it is the tick-217 one and it is
+  cheap: pre-merge **7** minus live **4** is three, of which `G5-37` is closed and `G2-16` is ledgered —
+  **the residue of one is the finding.** Run both greps, subtract, and account for every id in the
+  difference by name.
+- ✅✅ **Four mutations returning assertion counts 1·2·3·4 on a four-assertion test are the complete form
+  AND their own coverage report, and the green run is then derivable rather than needed.** Wave 111:
+  M1→1, M2→2, M3→3, M4→4, i.e. −3 · −2 · −1 · −0, each reddening one assertion on its own terms with
+  every earlier one still executing (the wave-92 requirement and the wave-90 subtraction, four times).
+  Because M4's count **equals** the test's assertion total with its last assertion failing, green is
+  forced to 4 — so the largest subtraction is −3 on a four-assertion test and, by the tick-214 coverage
+  rule, the first covered assertion is A1 and **nothing was forgotten**. ⭐ That derivation is what
+  rescued this wave, whose green artifact was destroyed (below): **when the final mutation reddens the
+  final assertion, no green run is required at all.**
+- ⚠️ **A copy can DESTROY the artifact it is named for — the stale-artifact family's first destructive
+  member, and its tell is SIZE against the run that should have produced it.** Wave 111's script wrote
+  `scratch/mutation-green-w111.log` as a `--filter` green at ~23:43:42; at 23:44:14 it was overwritten
+  with a **byte-identical copy of `scratch/pest-raw-last.log`** (`cmp` silent), whose mtime is
+  **23:40:52 — two seconds after the dispatch**, i.e. this column's own tick-218 object. A filtered
+  object is ~400 bytes (the wave's four mutation logs are 383–413); this one is **2436**, the full-suite
+  size. Not too old (wave 81), too early (99c), byte-identical by race (88b, 95, 105) or too small
+  (107c): **overwritten by a copy of a different run.** It cost nothing — the wave's diff was comments
+  and ledger, so no pest field could move (the tick-215 accepting rule) — but the artifact it replaced
+  was the one the subtraction is named for. **Ask what a filtered artifact's size should be before
+  reading one.**
+- ⚠️ **A `sed -i s/…/…/g` mutation has as many sites as the pattern matches, so `SITE: <file>:<line>` is
+  unanswerable for it — and a field that cannot be answered gets invented.** Wave 111 reported
+  `AgentAnswerAction.php:30 · :31 · :32`, three consecutive numbers matching no mutated line:
+  `'status' => 'refused'` sits at **50 and 56**, `'HUMAN_TAKEOVER_LATCH'` at **34, 40, 51 and 57**,
+  `'reply' => ''` at **58**, and no uniform offset relates them (−20, −3, −26), so the tick-188 offset
+  tell does not rescue it. M4's genuinely single-site `TakeoverReleasedListener.php:16` was **exact**.
+  `NOTE` and not `BLOCK` under the tick-206 rule — the wave's kept `run-mutations-w111.sh` carries every
+  `sed` expression verbatim and every site is in a module or listener file, so the proof survives whole,
+  which is the tick-214 house-form ruling paying for itself a second time. ⚠️ **The defect is the
+  field's, and the field is mine**: I asked for one line from a global substitution. Brief it as
+  **`SITE: the sed expression, and every line it matches in the committed file`**, and measured here all
+  eight matches sit inside the one takeover branch (`:27-60`), which is why the wider blast changed no
+  subtraction.
+- ⚠️ **A `bash bin/supervise.sh` with no `--tests` is a complete post-commit gate for pint and phpstan
+  and produces NO suite number — and the size tells you which you have before you read a line.** Wave
+  111's `mutation-green-w111-supervise.log` is **7708** bytes with §6 `{"tool":"pint","result":
+  "passed"}` on a clean tree at the tip; a `--tests` run is ~8600–9500 (compare `w99c-gate.log`'s 7605,
+  recorded as *"no §7 at all"*). The wave's `RAW: none` was honest and correct for a comments-and-ledger
+  diff. **The tick-197/210 corollary still binds: the suite number is then this column's**, and the
+  tick-214 pint item is discharged by the gate log the wave already wrote.
+- **Backlog at tick 219 — wave 112 is `G12-25`'s closure line, then `G5-31`'s web-chat seam.** RULED,
+  and the two are **separate items** because tick 218 measured that a set handed over as one instruction
+  gets treated as one shape and the member needing the opposite treatment is the one lost by pattern —
+  here a *correction* and a *build* in one file. The live list, re-measured this tick and not inherited,
+  is four rows: `C-Agent G5-31 · G5-32 · G5-43` and `C-Mail G11-09`. `G11-09` still needs the unbuilt
+  scoring model (tick 200); `G5-43` is a fixture; **`G5-31` is the direct analogue of the wire wave 110
+  just built** — X-102 owns `ChatStartAction · ChatCaptureAction · ChatEscalateAction`, both modules are
+  in the thirteen, and the seam is already RULED at tick 209/217: **the receiver owns the listener, the
+  event is the sanctioned crossing, the model import never**, and `BoundaryStage` cannot see either
+  (tick 194) so its own text is the whole law. ⚠️ Wave 110's own precedent is the hazard to name: it
+  built the wire **and** restored the row's proposal line in the same commit. After 112 the live list is
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run.
 
 ## Style
 
