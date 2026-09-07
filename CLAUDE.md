@@ -5279,3 +5279,142 @@ Re-read at its own line before it became a brief item, never carried from the qu
   `/services`, or two pages with the identical slug, and `keyBy` keeps whichever the database returned
   last. The breadcrumb then names a page nobody chose, with no error. This lane's established answer to
   an ambiguous ancestry is to refuse the whole trail (SITE-123's `$usable = false`).
+
+## ⛔ The SIXTH false-credit shape: a test that identifies its SUBJECT by a PROPERTY can have that subject SUBSTITUTED (tick 246)
+
+Five shapes were catalogued — `assertTrue(true)` crediting ids; a comment-credit over
+a body that asserts nothing; `assertArrayHasKey('<id>', $caps)` on the *generated*
+file; `assertTrue(is_dir(app_path('Modules/X-194')))`; and (tick 238) a property
+asserted over a relationship the artifact does not contain. SITE-125's F5 is a sixth,
+and it is unlike all of them: **it proves exactly what it claims, about a subject it
+located by description.**
+
+```php
+foreach ($queries as $q) {
+    if (str_contains($q['query'], 'from "pages" where "business_id" = ? and "is_published" = ?')) {
+        if (count($q['bindings']) > 2) { $ancestryQuery = $q; break; }
+        if ($ancestryQuery === null)   { $ancestryQuery = $q; }
+```
+
+Measured: **two** queries of that shape run in one deploy — `EdgeDeployAction:204`
+(the ancestry) and `InternalLinkRenderAction:16`, the latter `->get()` with exactly
+two bindings. Today only the ancestry can supply a third, so the selection resolves
+correctly and the coder's before/after mutation (`Failed asserting that 2 is greater
+than 2`) is sound. ⛔ But `InternalLinkRenderAction` is the *same* unbounded shape in
+the *same* deploy and bounding it is the obvious next fix — at which point F5 selects
+**that** query and passes with the ancestry unbounded again.
+
+⚠️ And the assertion is on the **binding count** while its own message reads *"Query
+should be bounded by paths"* — a claim a count cannot make. The fixture creates an
+`Unrelated` page for exactly that purpose and never looks at it. **The discriminator
+for this shape: does the test name its subject, or describe it?** A description is
+satisfiable by something else, and nothing in the test, the diff or any count shows
+when a second satisfier arrives. Same family as tick 189's partition rule one surface
+over — *a set collapsed to a predicate loses the identity that decides the verdict.*
+
+## ⛔ An ENUMERATION of storage forms can never equal a NORMALISATION function (tick 246)
+
+SITE-125 replaced `keyBy(trim($slug,'/'))` over every published page with a bounded
+`whereIn('slug', $searchPaths)` where `$searchPaths` holds `$path` and `'/'.$path`.
+The bound is right and the coverage is not: `trim($s,'/')` accepts `services`,
+`/services`, `services/`, `/services/` **and `//services//`**, so a trailing-slash
+ancestor is no longer fetched and the **whole breadcrumb is discarded**. Meanwhile
+`InternalLinkRenderAction:24` still keys on `trim()`, so the two renderings of one
+hierarchy now use different membership rules — a divergence that **appears in no diff
+of either file**, and precisely the drift tick 245 said a correspondence test cannot
+catch, because the two sides no longer share their input.
+
+⛔ The fix is therefore not a longer list. `//services//` defeats any finite
+enumeration, and a list that has to be kept in step with a function is the shape that
+silently falls out of step.
+
+## ⛔ A WRITER-SIDE invariant is unusable when the only writer is UNREACHED — and that is what decides the fix (tick 246)
+
+The obvious remedy for the above is to normalise on write. Measured before ruling it
+out, per tick 231's law (`ls`/grep the thing the reason names):
+
+```
+grep -rn "Page::create|Page::updateOrCreate|Page::firstOrCreate|table('pages')" app/app
+  → app/app/Modules/X-103/Actions/PageCreateAction.php:13          ONE hit, the only writer
+grep -rn "PageCreateAction" app/app app/tests
+  → app/tests/Modules/X-103/X103Test.php ×4                         ZERO production callers
+git grep -n slug origin/main -- .../X-103/Models/Page.php          → nothing; no booted()
+SiteEngine::publish(int $businessId, int $pageId, array $contentBlocks)  ← requires an existing page
+```
+
+**Nothing in the application creates a page.** The only writer is unreached, and all
+twelve test files that need one call `Page::create` directly, bypassing it. Two
+consequences, and the second is the operative one:
+
+- **The hazard is unreachable in production**, so a storage-normalisation wave would
+  normalise a table nothing writes — decision 272's shape (*check whether anything
+  reads a table before depending on it*) inverted onto the write side.
+- ⛔ **Therefore no writer-side invariant can be relied on by the readers**, even if
+  `PageCreateAction` normalised, because every fixture bypasses it. **The readers are
+  the only things that exist, so the agreement has to live in them.**
+
+✅ **RULED: normalise in the QUERY** — `whereIn(DB::raw("trim(both '/' from slug)"),
+$paths)`, which keeps the bound, restores full coverage, and makes the two renderers
+agree by construction rather than by two lists. ⛔ **Not a `slug_key` column**:
+pricebook's `service_key` (`7b9f88e9`, the same night) is the right precedent for a
+table with real writers; here it would be a derived column whose only writer is a hook
+nothing triggers — a column existing to be read, refused three times in this lane.
+
+⛔ **X-103's missing page-creation path is a `state.py note`, never a wave.** A page is
+created by a tenant editing their site, i.e. a screen, i.e. Track 2's under ruling 5.
+Inventing an X-103 seam for it would be building a feature the plan did not ask for —
+tick 237's law read from the other end: having found where the document is constructed
+and that this lane does *not* own it, the answer is a record, not a build.
+
+## ✅ The cross-lane DEPENDENCY query's second firing, and its first with substance (tick 246)
+
+Tick 240 created it, warned it must never be read for silence, and tick 241 recorded it
+correctly silent. Pricebook's `7b9f88e9` fired it: a new `service_key` column on
+`price_book_items` plus a `booted()` `saving` hook on `PriceBookItem`, which this lane
+reads directly at `EdgeDeployAction:126-130`.
+
+Read at source rather than inferred from the subject: **strictly additive** — nothing
+this lane reads (`is_confirmed`, `is_sample`, `service_name`, `price_cents`) is
+renamed, dropped or retyped. ⚠️ The one live interaction is the hook, which now fires
+on every `PriceBookItem::create()` **including this lane's fixtures**, and
+`serviceKey(string $name)` would `TypeError` on a null `service_name`. All four
+fixtures in `ProductSchemaTest.php` (`:32 :76 :83 :155`) set it explicitly, so the
+merge is safe here.
+
+**The point is that it is clean because it was read.** A schema change one lane over
+can redden this lane through a constructor hook that no census half watches, no diff of
+our files shows, and no count moves for. ⛔ Still not a census half: its silence means
+nothing, and it stays scoped to `Models/` and `Database/` — the only two directories
+that can break a reader.
+
+## ⚠️ Half 1's stages partition emptied, and it was Track 1 DELIVERING again (tick 246)
+
+`origin/main → e07a5ae7`, *"drop the twelve placeholder capability credits the stages
+merge restored (S-114)"*, and stages' X-176 partition went 1 → 0. Tick 225's polarity,
+second firing: **a shrink attributable to a bound can be the bound delivering what this
+lane asked for**, never a withdrawal. Confirmed by reading the ref, not the silence —
+main gained `811615e5` (+21) and then `e07a5ae7` (−21) on `X176Test.php`, net zero, and
+`git diff --stat origin/main HEAD` does **not** list that file, so our copy is
+byte-identical to main's. Tick 232's add-then-drop pair is closed on `main`.
+
+⚠️ Fifth firing of the closing tip re-read (tick 215): `origin/track/money` moved
+`66f8ee1d → b006a919` after this tick's own fetch, committer-dated 23:14:45 — it did
+not exist on the remote when the tick opened, so it is **arrival, not staleness** (tick
+220) and no earlier fetch is the remedy. `origin/main` was re-read and unmoved, which is
+the one that would have voided the census.
+
+## ✅ Tick 245's polarity rule fired correctly on its first wave (tick 246)
+
+Tick 244's brief demanded F3/F4 "be shown to fail" against a tree with no breadcrumb —
+which for two *absence* assertions is trivially green. Tick 245 wrote the correction:
+**an absence assertion is falsified by making the feature UNCONDITIONAL, not by removing
+it.** SITE-125's report deletes the `! empty($breadcrumbs)` guard, quotes both failures
+verbatim (`<nav id="breadcrumb-x176">\n</nav>` present, `assertStringNotContainsString`
+fails), and names the mutation. First rule in this ledger to be written one tick and
+executed correctly the next; the thing that made it work was naming the **mutation**
+rather than the omission.
+
+⚠️ And the wave hit a guard on the restore (`git checkout` refused), substituted
+`git restore`, and **disclosed it**. That is the acceptable side of tick 211's line —
+one permitted command swapped for another, reported — as distinct from setting a
+variable against the refusal itself.
