@@ -5160,3 +5160,122 @@ fix.
   branch that emits the JSON-LD**, so the correspondence property is asserted on that path alone. The
   inverse (page showing more than the schema claims) is structurally impossible here. Recorded so it is
   not rediscovered as a defect.
+
+## ⛔ Read a falsifier's POLARITY before demanding it fail — an ABSENCE assertion is falsified by an UNCONDITIONAL render, never by the feature's absence (tick 245)
+
+Tick 242's brief predicted "all three existing tests go red" when two of the three asserted the
+*absence* of a breadcrumb; tick 244's report corrected it and this file wrote the lesson up as *a
+measurement's CONSEQUENCE stated inside the measurement*. Tick 244's brief — **the same brief that
+recorded the lesson** — then said *"Each of F2/F3/F4 must be shown to fail against the code without
+item 2 applied."* F3 and F4 assert `assertArrayNotHasKey('breadcrumb', $json)` and
+`assertStringNotContainsString('id="breadcrumb-x176"')`. Against a tree with no breadcrumb render they
+are trivially green, and the coder ran them, got PASS, and said so.
+
+⛔ Third consecutive firing, and the first where the ledger had **already written the rule down one
+tick earlier**. So the remedy is not "remember tick 244" — it is a check with a name:
+
+- **What polarity does the assertion have?** A *presence* assertion is falsified by removing the
+  feature. An *absence* assertion is not: it is falsified by making the feature **unconditional**.
+- **Name the mutation, not the omission.** F3/F4's real falsifier is deleting the
+  `! empty($breadcrumbs)` guard at `EdgeDeployAction:274`, which makes F3's one-page fixture emit
+  `<nav id="breadcrumb-x176">\n</nav>` with an empty list and reddens both.
+
+⚠️ That mutation was **not run**, so F3/F4's load-bearingness is reasoned in the tick-245 block and
+not measured — the gap tick 206 named (*a mutation proof shows an assertion is REACHABLE*). Eighth
+instance of this seat naming something imprecisely and the wave faithfully inheriting it (208 the
+evidence request, 227 the branch condition, 235 an unread mechanism, 236 a presumed direction, 237 an
+existence question about an output, 238 a filing sentence, 244 a consequence inside a measurement).
+**A vague brief fails loudly; a precisely wrong one is obeyed.**
+
+## ⚠️ A correspondence test between two renderings of ONE array catches DRIFT, never a WRONG TRAIL (tick 245)
+
+SITE-124's F2 extracts **both** surfaces from the stored artifact — the JSON-LD out of the `<script>`,
+the visible trail out of `nav#breadcrumb-x176` — and compares name+path pairs with an ordered
+`assertEquals`, resolving the absolute/relative mismatch with `parse_url($item['item'],
+PHP_URL_PATH)`. Genuinely **not** tick 238's fifth false-credit shape: neither side is recomputed from
+the test's own reconstruction.
+
+⛔ But both are rendered from one `$breadcrumbs` array — ruled that way deliberately, because two
+independent derivations of one trail is the defect being fixed — so **a trail naming the wrong
+ancestors satisfies F2 perfectly.** Its correctness is asserted by SITE-123's ancestry tests and
+nowhere else. Tick 230's law: say which, or the next tick inherits the stronger claim.
+
+✅ The same structure is why the leading-slash hazard had to be measured rather than tested for.
+`'/'.$crumb['slug']` would emit a protocol-relative `//services` — an href pointing at a *host* named
+`services` — if the slug carried its own leading slash, and tick 242 established `/services` is a real
+storage shape (`InternalLinkGraphTest.php:220-222`). It cannot arrive, because `:213` sets
+`'slug' => $path` and every `$path` comes from `explode('/', trim($page->slug, '/'))` at `:189-195`.
+⚠️ **F2 could not have caught it if it did** — the JSON-LD `item` is built from the same array, so both
+surfaces would carry `//services` and the `assertEquals` would be green. A correspondence test's blind
+spot is exactly the input its two sides share.
+
+## ⚠️ The state record has been orphaned three waves running, and step 0 is the wrong fix (tick 245)
+
+SITE-122, SITE-123 and SITE-124 each ran `state.py decided` as the last brief item, **after** the
+named-path commit of the app files, leaving `.agents/state/` dirty for the next wave's step 0 to
+sweep. Three sweeps is the brief's own ordering, not an accident. **RULED: the state commit is the
+LAST numbered step of the wave that makes the decision, with its own command**, so step 0 stops being
+a standing item.
+
+## ✅ The follow-set widening, and what a completeness grep is for (tick 245)
+
+`(?:<div|<script|<\/body)` → `(?:<div|<nav|<script|<\/body)` at four sites — a strict **set
+extension**, tick 234's rule applied correctly. The brief named three; `grep -rn 'script|<\\/body'
+app/tests/` found **four and only four**, all in `SchemaVisibilityTest.php`, so the copied-shape hazard
+that bit tick 241 has no second address here. **Grep the PATTERN, not the addresses the brief named.**
+
+⚠️ Which of the four the widening is *load-bearing* for is worth recording, because three were
+defensive. Block order in the constructed document is `[JSON-LD script] → breadcrumb nav → offers →
+events → address → videos → internal-links nav → </body>`. Only `#videos-x176` is ever followed by a
+`<nav`, so `:221` (F1's two-published-page fixture, which clears
+`InternalLinkRenderAction`'s `count($usablePages) < 2` refusal) is the one that fires. ⛔ And **no
+existing block's terminator changed because of the breadcrumb** — its predecessor is the JSON-LD
+`</script>`, which terminates nothing.
+
+⚠️ `$breadcrumbs` is declared at `:186` **inside** `if ($pageId && $businessName && $commitId)` and
+read at `:274` **outside** it. On a falsy-commitId deploy it is undefined, and the render is silent
+only because `empty()` is one of the constructs PHP exempts from the undefined-variable warning —
+correct by a language nicety rather than by design. Initialise it before the branch when the file is
+next open. It also means breadcrumb is the one visible block effectively gated on `commitId` after
+all, unlike N2's three.
+
+## ✅ The pest-lock hedge is TWO FOR TWO — compose tick 242 with tick 231, do not choose between them (tick 245)
+
+Tick 245's verdict block was appended saying *"§7 was NOT independently run this tick"* — correct under
+tick 242 (**a tick blocked on an external resource appends its block with the blocked section named
+unmeasured; it never carries the block**), because the box-wide lock had held for the whole tick. Eight
+minutes later the lock released, my gate completed, and §7 read `tests 1956 · passed 1951 · FAILED 1 ·
+errors 4` — **byte-identical to the coder's**, sets unchanged, `a_published_site_carries_all_seven`
+absent. J11 green on an independent run.
+
+⚠️ **Second measured firing of tick 231, now two for two**: both times this seat hedged on the pest
+lock, the lock released within the tick and reproduced the coder's §7 exactly. Neither standing rule
+gets both halves alone, so state the composition once:
+
+- **Append the block** with the blocked section named unmeasured — never wait, never carry (242).
+- **Re-check at the append, and if the gate lands later in the same tick, append the CORRECTION** —
+  a "could not measure" is a claim with an evaluation time (231).
+
+`REVIEWS.md` is append-only, so the correction *is* the record; a hedge left standing understates the
+verdict's own evidence, which is the quieter of the two failure modes and the one that survives into
+the next tick's reading. ⚠️ And keep the distinction the lock forces: a **wait** that completes is the
+tick-216 serialisation working; only a **timeout** (`pest NOT RUN`) is a non-measurement.
+
+## SITE-125 — the ancestry query's two remaining bounds (ruled at tick 245)
+
+Re-read at its own line before it became a brief item, never carried from the queue (tick 241/244):
+
+```php
+:198   Page::where('business_id', $businessId)->where('is_published', true)
+:200       ->get()                                              ⛔ UNBOUNDED
+:201       ->keyBy(fn ($p) => trim((string) $p->slug, '/'));    ⛔ COLLAPSES
+```
+
+- **(a) Unbounded.** SITE-123 correctly replaced `whereIn('slug', $paths)` to fix the raw-vs-trimmed
+  key mismatch and dropped the bound doing it. Restorable without losing the fix: match `$paths`
+  against **both** stored forms.
+- **(b) Collapses.** `2026_08_30_000036_create_x103_site_tables.php:18` declares
+  `$table->string('slug')->index()` — **not unique** — so one business may hold `services` *and*
+  `/services`, or two pages with the identical slug, and `keyBy` keeps whichever the database returned
+  last. The breadcrumb then names a page nobody chose, with no error. This lane's established answer to
+  an ambiguous ancestry is to refuse the whole trail (SITE-123's `$usable = false`).
