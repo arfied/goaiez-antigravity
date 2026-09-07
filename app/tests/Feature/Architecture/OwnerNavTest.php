@@ -264,18 +264,22 @@ test('the reachability check states the size of its own blind spot', function ()
 
     $withLayout = 0;
     $withoutLayout = 0;
+    $unbuilt = 0;
+    $built = 0;
+    $unresolved = 0;
 
     $allRoutes = Route::getRoutes()->getRoutesByMethod()['GET'] ?? [];
 
     foreach ($invisible as $routeName) {
         $hasLayout = false;
+        $controllerClass = null;
         foreach ($allRoutes as $route) {
             if ($route->getName() === $routeName) {
                 $action = $route->getAction();
                 if (isset($action['controller']) && is_string($action['controller'])) {
-                    $controller = explode('@', $action['controller'])[0];
-                    if (class_exists($controller)) {
-                        $reflection = new ReflectionClass($controller);
+                    $controllerClass = explode('@', $action['controller'])[0];
+                    if (class_exists($controllerClass)) {
+                        $reflection = new ReflectionClass($controllerClass);
                         $attributes = $reflection->getAttributes(Layout::class);
                         if (! empty($attributes)) {
                             $hasLayout = true;
@@ -285,13 +289,39 @@ test('the reachability check states the size of its own blind spot', function ()
                 break;
             }
         }
+
         if ($hasLayout) {
             $withLayout++;
         } else {
             $withoutLayout++;
+            $viewPath = null;
+            if ($controllerClass && class_exists($controllerClass)) {
+                $reflection = new ReflectionClass($controllerClass);
+                $content = file_get_contents($reflection->getFileName());
+                if (preg_match("/view\(\s*['\"]([^'\"]+)['\"]/", $content, $matches)) {
+                    $viewName = $matches[1];
+                    if (\Illuminate\Support\Facades\View::exists($viewName)) {
+                        $viewPath = \Illuminate\Support\Facades\View::make($viewName)->getPath();
+                    }
+                }
+            }
+
+            if ($viewPath && file_exists($viewPath)) {
+                $viewContent = file_get_contents($viewPath);
+                if (str_contains($viewContent, '<x-surface.sample-state>')) {
+                    $unbuilt++;
+                } else {
+                    $built++;
+                }
+            } else {
+                $unresolved++;
+            }
         }
     }
 
-    expect($withLayout)->toBe(13, 'Invisible routes that declare a #[Layout] attribute (already in some other shell)');
-    expect($withoutLayout)->toBe(257, 'Invisible routes that do not declare a #[Layout] attribute (falling through to the staff console)');
+    expect($withLayout)->toBe(13, 'If it went UP, a new module route shipped wearing some other shell behind tenant.role. If it went DOWN, one of those was converted onto the owner layout, or lost its route.');
+    expect($withoutLayout)->toBe(257, 'If it went UP, a new module route shipped with no #[Layout] at all, falling through to the staff console. If it went DOWN, one was converted, or built out.');
+    expect($unbuilt)->toBe(0, 'If it went UP, a new unbuilt route shipped falling through to the staff console. If it went DOWN, an unbuilt route was built out, converted, or lost its route.');
+    expect($built)->toBe(257, 'If it went UP, a new built route shipped falling through to the staff console. If it went DOWN, a built route was converted onto the owner layout, or lost its route.');
+    expect($unresolved)->toBe(0, 'If it went UP, a new route falling through to the staff console could not resolve its view. If it went DOWN, an unresolved route was fixed or converted.');
 });
