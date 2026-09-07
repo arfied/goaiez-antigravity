@@ -7289,3 +7289,102 @@ checkout**, precisely because sixty's docblock is on `origin/track/sixty` and no
 live doctor and sixty's therefore disagree on it until Track 1 merges. **A capability's colour is a
 property of a tree** (tick 253) — the count that governs this lane's brief is this checkout's, and
 citing sixty's would be a claim about someone else's tree.
+
+## ⛔ A stop condition stated in ONE DIRECTION cannot falsify the brief that wrote it (tick 262)
+
+SITE-136's brief asserted its own ground value — *"the shared sentence appears **8** times in
+`state.py status`"* — and gave item 4 the stop *"⛔ If this number **falls**, something removed a
+row."* The ground block returned **9**, measured independently here as 9 both before and after the
+wave. Enumerated live:
+
+| filed | rows |
+| :-- | --: |
+| `18:58:29` — G13-15 · G16-21 (X-102) · G13-09 (X-110) · G3-11 · G8-13 · G18-17 · G13-24 (X-137) · G13-05 (X-155) | **8 ids, one second** |
+| `18:58:21` — X-102, no id | **1** |
+
+So the population is **eight ids plus one id-less row = nine**, not tick 261's "seven ids plus an
+eighth". ⛔ **The error is in that tick's PROSE, not its table** — the table listed all eight ids and
+the sentence summarising it said seven. Third time this ledger's own arithmetic has been the defect
+(tick 242's half-2 miscount, tick 250/252's complement off-by-one), and tick 252 already stated the
+law: *a query's scope is not its claim, and neither is the arithmetic used to summarise it.*
+
+⛔ **The operative half is the DIRECTION.** Item 4 could fire only on a fall. A **rise** is equally
+diagnostic — it means the population is larger than the brief's model of it, i.e. the brief's own
+ground value is wrong — and nothing in the wave could catch it. The coder reported `9` faithfully in
+**both** the ground block and item 4 and did not flag it, correctly: no stop condition covered a rise
+and the enumerated STOP list named only the doctor reading, a moving stage count, a stray tracked
+file and a guard refusal. **A ground-truth item whose comparison is an inequality cannot contradict
+the brief.** State every asserted ground value as an **equality with both directions as stops**.
+
+Thirty-seventh statement of this section's law, and the first turned on **which way a comparison can
+fail** — the one dimension along which a correct measurement, correctly reported, still cannot
+refute the brief. Twelfth instance of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244,
+245, 247, 249, 250, 254).
+
+✅ **PASS-WITH-NOTES, not BLOCK, because coverage was exhaustive while only the narrative miscounted.**
+All nine rows are superseded: X-102's note names G13-15 **and** the id-less row and points at
+G16-21's separate supersession (`05:33:13`); X-110 → G13-09; X-137 → four ids; X-155 → G13-05 **and**
+the earlier `18:22:23` filing. 3+1+4+2 = 9. The miscount sits *inside* each note's supporting
+argument and **understates** it, so the record is weaker than the facts, never stronger. ⛔ **RULED:
+no fifth correcting note** — `state.py` has no withdraw, and tick 259's discriminator decides it: a
+careful reader of the record alone reaches the *right* conclusion. Cosmetic, like tick 213's and
+224's malformed rows.
+
+## ✅ Tick 210's grep-for-the-record rule fired BEFORE the wave — its first pre-emptive firing (tick 262)
+
+This tick shaped SITE-137 as the **third axis** of the filing audit: seven anchor rows filed at
+`2026-09-05T19:19:40` share one sentence — *"no vendor credential for a real-transport anchor run"* —
+across all seven owned ids, the same batch shape SITE-136 had just closed. Six carry a later, richer
+row (set B, `09-06 05:15:50`–`05:28:31`); **X-157 carries none**, and under ruling 16 X-157 has no
+vendor *by design*, so its row reads as a pending owner request for a credential that cannot exist.
+That was the headline. One grep first:
+
+```
+JOURNAL.md:795  `2026-09-05T19:34:11` note: X-157 anchor: the missing dependency is not a vendor
+credential — owner ruling 16 makes the platform itself the publishing target … TestAnchorStage:88-95
+accepts none that is self-minted (OWNER ACTION 42)
+```
+
+**Already filed, fourteen minutes after the row it corrects.** Every prior firing of that law (196,
+207, 210, 211, 241, 244, 249, 251, 254, 256) caught a duplication *after* a wave produced it; this is
+the first time it ran early enough to stop one being briefed. ⛔ **RULED: no anchor wave**, and per
+tick 224 record **which** failure mode fired — **already done here**, not *cannot work here*. The
+door is not shut; the room is empty.
+
+**The filing audit is now closed on three axes**, the third finding nothing: per **module** (tick 231,
+seven X-176 build-items-in-disguise), per **shared `why`** (tick 261's scaffold sentence, nine rows,
+all superseded), per **shared `why`** (this tick's anchor sentence, seven rows, **no defect**).
+⚠️ Two residuals deliberately left, same discriminator: X-103's two contract rows say one true thing
+twice, and tick 213's/224's malformed rows are *visibly* malformed and mislead nobody.
+
+## ⚠️ TOOLING — an accepted access route can expire by the ARTEFACT GROWING (tick 262)
+
+Ticks 257/258 made `Read` on `/home/goaiez/tmp/gate-runs.tsv` the **only** accepted route to the gate
+log (`grep`, `tail`, `ls` all refused there) after five ticks of blindness misattributed four killed
+gates to lock contention. It has now partly closed, with no permission change:
+
+```
+Read(offset: 2740)             → File content (285KB) exceeds maximum allowed size (256KB)
+Read(offset: 2740, limit: 30)  → ✅ 30 rows
+```
+
+Fired rather than asserted (tick 193): the `offset`+`limit` form was tested in the same tick and
+works, so the instrument is **narrowed, not lost**. ⛔ Always pass **both** — a future tick reaching
+for the bare-offset form reads a refusal that looks like a permissions change and is not.
+
+✅ The tail immediately re-earned **tick 259's column rule**: rows 2740–2743 are the *coder's* gate
+(`1144714`, `gate-end` rc 1, 06:12:20) and row 2754 is *this seat's* (`1179399`, `gate-start`
+06:20:30) — two `grs-antig-site` gates minutes apart again. Filter by the pid `gate-start` gave you,
+never by the checkout column.
+
+⚠️ **Arrival lag, one branch, two extremes in one window** (tick 257 confirmed): sixty's `706e889d`
+committed `06:01:00`, arrived `06:16:12` — **15 m 12 s**; its own tip `17558aec` committed `06:17:03`,
+arrived `06:17:06` — **3 s**. A branch's own recent history predicts nothing.
+
+⚠️ Complement **40 → 41**, read as a membership delta and not a size (tick 244), with `--name-status`
+before characterising it (tick 250): the new member is ui's
+`app/tests/Feature/Architecture/SampleStateModuleTest.php`. Arithmetic closes exactly (14 non-scratch
++ 27 scratch). *Unwatched, not uncovered* under tick 183's second clause — Track 2's column, ⛔ no
+fourth half. ⚠️ One line of care: it is a **new architecture lint** in a shared directory and will
+arrive with a merge. This lane's modules render no sample-state banner, so no exposure is measured,
+but a new lint is the one kind of complement growth that is not inert.
