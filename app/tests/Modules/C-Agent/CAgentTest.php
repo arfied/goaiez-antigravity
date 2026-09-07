@@ -386,6 +386,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G12-25] negative-sentiment handoff; the takeover latch is X-01's (R21)
+     * CLOSED: G12-25 (second half) — the C-Agent side wire for the takeover latch was built in f7bd376b. The first half is closed by the test below asserting NEGATIVE_SENTIMENT_HANDOFF.
      */
     public function test_g12_25_negative_sentiment_handoff(): void
     {
