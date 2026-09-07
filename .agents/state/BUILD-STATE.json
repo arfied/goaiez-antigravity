@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T01:59:33",
+ "updated": "2026-09-07T02:19:41",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5067,6 +5067,18 @@
    "chose": "X-222 X-223 The PLAN-CONTRADICTION class is renamed per RULING AK, because the checker correctly read a manifest holding no none value, proving the plan contradicts itself. The four duplicate consumes entries occur because ContractStage.php iterates the field in two separate loops: once at line 111 checking the event token shape and once at line 342 checking the same regex, emitting two distinct violation messages for the exact same prose value.",
    "at": "2026-09-07T01:59:33",
    "ruling": "R245"
+  },
+  {
+   "module": "X-123",
+   "chose": "this module was recorded CHECK-DEFECT at 2026-09-07T01:39:37; per RULING AK that class is renamed PLAN-CONTRADICTION because the checker read a manifest carrying no none value and was correct to flag the remainder, so the contradiction is in the plan and not in the check. Counts are unchanged.",
+   "at": "2026-09-07T02:19:28",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-204",
+   "chose": "this module was recorded CHECK-DEFECT at 2026-09-07T01:39:37; per RULING AK that class is renamed PLAN-CONTRADICTION because the checker read a manifest carrying no none value and was correct to flag the remainder, so the contradiction is in the plan and not in the check. Counts are unchanged.",
+   "at": "2026-09-07T02:19:41",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5225,6 +5237,10 @@
   {
    "at": "2026-09-07T01:59:15",
    "note": "The 87 contract violations partition into 55 rows with an @ token (49 provides, 4 consumes, 2 intent) and 32 rows without (13 shape defects, 13 missing emitters, 6 multiple emitters); among these, there are 4 duplicates where the same prose consumes value is flagged twice by separate loops, yielding 83 distinct defects."
+  },
+  {
+   "at": "2026-09-07T02:20:01",
+   "note": "the decision recorded at 2026-09-07T01:59:33 under X-221 is misfiled: its first sentence is the RULING AK rename and belongs to X-123 and X-204, refiled above; its second sentence, the double-count mechanism, is the part that belongs to X-221 and stands."
   }
  ],
  "history": [
