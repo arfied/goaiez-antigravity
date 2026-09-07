@@ -278,7 +278,61 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-58 | (1) UI-57's two pins get MESSAGES instead of labels — each says what a red means in BOTH directions, as `:263` does. (2) the `257` SPLIT THREE WAYS by whether the screen behind the route exists: unbuilt · built · unresolved. (3) the duplicate-registration question answered in `RAW`. ⛔ No new `test(`, floor stays `1729` | **run 104 `BLOCK`** — item 1 delivered exactly, the split shipped with a tag literal that matches nothing. See the 05:3x ruling |
 | UI-58b | the one-character repair and its three re-pins. `'<x-surface.sample-state>'` → `'<x-surface.sample-state'`, all three buckets re-pinned to what the run produces, `withLayout 13` and `withoutLayout 257` untouched, the `view()` first-match edge MEASURED only. ⛔⛔ The sum is still NOT asserted — fourth time. ⛔ No new `test(`, floor stays `1729` | closed, pushed `f4b04017` — run 105 `PASS-WITH-NOTES`, five notes, one of them a ⛔⛤ |
 | **UI-59** | **the FIRST conversion wave since UI-49, and the only two of the `33` in a lane the owner named: `x-108.calendar` (Customers) · `x-125.runs` (Marketing). `#[Layout('components.account.layout', ['heading' => …])]` · a `mount()` that resolves `businessId` from the tenant (`Invoices.php:22–25` is the shape) · the `<h3>` at `calendar.blade.php:4` promoted to `<h2>` · shell assertions INSIDE the two EXISTING `test_screen_renders_for_tenant` methods · two nav entries, `OwnerNav::all()` 36 → 38. ⛔ No new `test(`; `tests` stays `1729`. ⛔⛔ FOUR pins move together — `withoutLayout −2`, `built −2`, UI-54's `270` `−2`, `withLayout` and `unbuilt` UNMOVED. A different delta is a FINDING, never a re-pin** | closed, pushed `c3edec84` — run 106 `PASS-WITH-NOTES`, all four pins moved on command, and the one defect it shipped was MINE |
-| **UI-60** | **(1) `runs.blade.php:13` `<h3>` → `<h2>` — the heading-order defect UI-59 shipped into the nav, specified by me. (2) ONE new `test(` in a new `Architecture/HeadingSeamTest`: the 19 components declaring the owner layout partitioned by whether their `#[Layout]` carries a `heading`, and their views' FIRST heading level checked against that shape. FIVE pins, all derived — ⛔ zero component names, view paths or route names; the view is the component's own first `view('…')` literal + `View::exists()`. ⛔⛤ The sum is NOT asserted — fifth time. ⚠️ The floor MOVES: `1729 → 1730`** | **in flight — run 107 dispatched** |
+| **UI-60** | **(1) `runs.blade.php:13` `<h3>` → `<h2>` — the heading-order defect UI-59 shipped into the nav, specified by me. (2) ONE new `test(` in a new `Architecture/HeadingSeamTest`: the 19 components declaring the owner layout partitioned by whether their `#[Layout]` carries a `heading`, and their views' FIRST heading level checked against that shape. FIVE pins, all derived — ⛔ zero component names, view paths or route names; the view is the component's own first `view('…')` literal + `View::exists()`. ⛔⛤ The sum is NOT asserted — fifth time. ⚠️ The floor MOVES: `1729 → 1730`** | closed, pushed `03608032` — run 107 `PASS-WITH-NOTES`, five notes, **two of them MINE** |
+| **UI-61** | **the SIXTH bucket. `HeadingSeamTest`'s `if (preg_match('/<h([1-6])/', …))` has no `else`, so a resolved view with NO heading at all is counted NOWHERE — not `$skips`, not `$unresolvedView`, and the three shape counters unmoved. Harmless for a `$seam` member (the layout supplies the `<h1>`); for an `$own` member it is a screen rendering no `<h1>` anywhere, which `ReviewRules` and `ReplyExamples` prove is real in this tree. ONE new `expect()` INSIDE the existing `test(`. ⛔⛤ The sum is NOT asserted — sixth wave. ⛔ No new `test(`, floor stays `1730`. Plus a measurement acted on in no way: how many of the 19 carry more than one `#[Layout(`** | **in flight — run 108 dispatched** |
+
+### ⛔⛔ RULED 2026-09-07 07:1x — `supervise.sh` §1a is a SNAPSHOT AT GATE TIME, not a history of the wave
+
+Run 107's `REPORT.md:52` reads `$ php scratch.php` and gives the five pins as its output. §1a — the
+framework-boot scan added at 05:5x for exactly this — printed **`none`, truthfully**, because the file
+was already gone when the gate ran at 07:04.
+
+> ⛔ **§1 counts what is uncommitted *now*. §1a scans what is uncommitted *now*. `pint` scans `app/`.
+> A file that exists only between two commits is in none of those sets.** The 00:3x ruling found the
+> *tracked*-file hole; this is the **transient**-file hole, and it is the larger of the two, because a
+> scratch script is transient by nature.
+
+⛔ **It is NOT asserted to have booted the framework.** The file is deleted and the coder's own log is
+outside a supervisor session's read scope, so its contents are **unmeasurable now** — and saying so is
+the finding, not a hedge. `$unresolvedView` requires resolving a view name, which the framework does;
+whether that script did so or reimplemented it over `file_exists` cannot be recovered. **A guard whose
+subject can be destroyed before the guard runs proves nothing in either direction.** ⭐ And it is known
+at all only because the coder disclosed it in `RAW`, as run 105's was — that is the right behaviour.
+
+✅ **The replacement is a procedure, not a lecture, and every brief carries it from run 108:**
+*to read a number, do not write a program — write the pin.* Put the estimate in `expect(…)->toBe(N)`,
+`--filter` that one test, read the actual off the failure message, re-pin. That path loads
+`phpunit.xml`, so it carries the §0 database pin, rolls back, and leaves nothing in the tree. ⛔ No
+`.php` file is created anywhere in this checkout to read a value. **The hole itself is TRACK 1's**: it
+can only be closed where the script *runs*, never where the gate runs.
+
+⚠️ **Second-order, caught while writing the run-108 kickoff:** the fix's own command contains the
+literal `vendor/bin/pest`, and the kickoff becomes the coder's `agy --print` argument — so spelling it
+there would make `pgrep -fa 'vendor/bin/[p]est'` match the coder and every lock check find itself.
+**That is run 100's self-hit, arriving through a paragraph written to fix something else.** Verified
+`0` occurrences in `KICKOFF.md`; the command lives in `BRIEF.md`, which is read from disk.
+
+### ⚠️ RULED 2026-09-07 07:1x — a conditional that increments in only ONE arm leaves the other arm counted nowhere
+
+`HeadingSeamTest`'s `if (preg_match('/<h([1-6])/', $viewContent, …))` has no `else`. A resolved view
+with **no `<h[1-6]` at all** increments nothing — not `$skips`, not `$unresolvedView` — and
+`$total`/`$seam`/`$own` are unmoved, so it falls out of the partition in silence. ⭐ **Measured empty
+today**: all 19 resolved blades have a first heading, which is why run 107's five pins are right.
+
+⛔ For a `$seam` member the state is harmless — `layout.blade.php:51–52` supplies the `<h1>`. **For an
+`$own` member it is a screen that renders no `<h1>` anywhere**, invisible in a screen reader's heading
+list, and real in this tree: `ReviewRules` and `ReplyExamples` under `livewire/account/` carry zero
+`<h1>` today (00:5x measured them). **Sixth member of the uncounted-state family** — run 95's constant
+column, UI-56's identity, UI-58b's tag literal, UI-55's empty population, run 104's `built = 257`.
+UI-61 gives it a number and asserts no sum.
+
+### ⚠️ 2026-09-07 07:1x — `OwnerNavTest` has FIVE `test(`, not four. Twenty-first of the family, MINE.
+
+My UI-60 brief and kickoff both said its `grep -c "^test("` *"stays 4"*. It is **5** and has been since
+UI-54, which the run-100 head in `TICK-ADDENDUM.md` records in writing. The coder reported the true
+number and the harm was bounded — but the shape is run 104's `BLOCK` exactly: **a brief hands a coder
+a literal as though it had been run.** A count already measured and written down is still a
+measurement; quoting it from memory is still guessing.
 
 ### ⛔⛔ RULED 2026-09-07 06:4x — UI-59 shipped a heading-order defect into the nav, and the falsehood was MINE
 
