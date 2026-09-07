@@ -9,6 +9,7 @@ use App\Modules\X102\Models\ChatSession;
 use App\Services\Pixel\PixelKeys;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ChatDoorTest extends TestCase
@@ -25,7 +26,7 @@ class ChatDoorTest extends TestCase
         Tenancy::forgetAll();
 
         $response = $this->postJson("/api/chat/{$key}/start");
-        
+
         $response->assertStatus(201);
         $response->assertJsonStructure(['session_token']);
 
@@ -38,12 +39,12 @@ class ChatDoorTest extends TestCase
     {
         // Prove that an invalid key returns a 404 without crashing, and does not bypass tenancy to create a row.
         Tenancy::forgetAll();
-        
-        $unknownKey = \Illuminate\Support\Str::uuid()->toString();
+
+        $unknownKey = Str::uuid()->toString();
         $response = $this->postJson("/api/chat/{$unknownKey}/start");
-        
+
         $response->assertStatus(404);
-        
+
         // Assert no rows anywhere (bypassing tenancy to check whole table)
         $this->assertEquals(0, ChatSession::withoutGlobalScopes()->count());
     }
@@ -54,15 +55,15 @@ class ChatDoorTest extends TestCase
         $bizA = TestCase::provisionTenant(['name' => 'Business A', 'currency' => 'USD']);
         Tenancy::set((int) $bizA->id);
         $keyA = app(PixelKeys::class)->ensureFor($bizA);
-        
+
         $bizB = TestCase::provisionTenant(['name' => 'Business B', 'currency' => 'USD']);
-        
+
         Tenancy::forgetAll();
 
         // Hit the door with A's key
         $response = $this->postJson("/api/chat/{$keyA}/start");
         $response->assertStatus(201);
-        
+
         // Read as B
         Tenancy::set((int) $bizB->id);
         $this->assertEquals(0, ChatSession::where('business_id', $bizB->id)->count());

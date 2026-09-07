@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PlaceSuggestionController;
 use App\Http\Controllers\Api\PublicAuditController;
 use App\Http\Controllers\Api\WidgetReviewController;
 use App\Http\Middleware\ResolveWidget;
+use App\Modules\X102\Http\Controllers\ChatStartController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -139,7 +140,7 @@ Route::post('/pixel/e', PixelIngestController::class)
 /*
 | WebChat door (X-102)
 */
-Route::post('/chat/{key}/start', \App\Modules\X102\Http\Controllers\ChatStartController::class)
+Route::post('/chat/{key}/start', ChatStartController::class)
     ->middleware('throttle:60,1')
     ->name('api.chat.start');
 
