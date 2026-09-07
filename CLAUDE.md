@@ -4948,3 +4948,215 @@ opening `for-each-ref`*, so the opening table was already stale when it was read
 re-read (tick 215) is what caught it. Tick 220's reading stands and hardens: on this box the arrival
 lag is now measured at nearly three times a tick's length, and no fetch discipline can see a commit
 that has not been pushed.
+
+## ⛔ A tick blocked on an external resource APPENDS its block with the blocked section named unmeasured — it never carries the block (tick 242)
+
+Tick 241 reviewed SITE-122 completely and correctly, committed its CLAUDE.md notes (`d5633c6e`),
+wrote `BRIEF.md` and `KICKOFF.md` — and **appended no REVIEWS block and dispatched nothing**. That is
+the exact state tick 234 named and forbade seven ticks earlier: *the REVIEWS block is the tick's
+product; the brief is its by-product.* The tick that wrote the law broke it.
+
+**The cause is measurable and it is not carelessness.** The draft survives at `.tmp241.md`, complete
+but for two placeholders — `__SEVEN__` and `__DISPATCH__` — and both gate files that tick produced
+end on the same line:
+
+```
+.gate241.txt 21:52   == 7. test suite …
+.gate242.txt 22:11   … another suite holds /home/goaiez/tmp/pest.lock — waiting up to 40 min
+```
+
+§7 never returned, so the one number the block could not be written without never arrived.
+⛔ **The block should have been appended with §7 reading, verbatim, "did not run — the box-wide pest
+lock was held for the whole tick."** Tick 231 already ruled the shape — *a lock **wait** that
+completes is the serialisation working; a lock **timeout** is a non-measurement* — and a
+non-measurement is something a block **states**, never something it waits for. A block saying "§7 did
+not run" is a gated wave with a named gap; a block never written is an **ungated commit on the
+branch**, which is strictly worse and is the one thing the mailbox exists to prevent.
+
+⚠️ The second-order cost is what makes it a rule rather than a note: the tick also had to decide,
+without §7, whether to dispatch, and correctly did not — so one held lock cost a full tick of
+throughput **and** left `BRIEF.md` in the mailbox as a decision no verdict stood behind (tick 234:
+*a brief with no block behind it is a DRAFT*). Twenty-seventh statement of this section's law and the
+first turned on a **block that was never written**: every prior statement concerns a query whose
+scope, bounds, strip, output or evaluation time misled a reader; this concerns a measurement that was
+correct, complete and **unpublished**, which no amount of re-reading the record recovers — the record
+does not contain it.
+
+## ⛔ A new RULE breaking an old FIXTURE is tick 234's law from the other side — widen the fixture, never relax the rule (tick 242)
+
+Sizing SITE-123's `is_published` bound before briefing it: the X-103 migration
+(`2026_08_30_000036_create_x103_site_tables.php:21`) declares
+`$table->boolean('is_published')->default(false)`, and `app/tests/Modules/X-176/BreadcrumbSchemaTest.php`
+**never sets it** in any of its three cases. So **every breadcrumb this lane currently asserts is built
+from unpublished ancestors, and its three green tests are the proof.** Adding the bound reddens all
+three.
+
+Tick 234 ruled the converse — *when new legitimate OUTPUT breaks an exhaustive assertion, extend the
+expectation; never relax the predicate.* Here a new **rule** breaks an old **fixture**, and the
+tempting repair is to drop the rule, which would pass every gate and delete the claim. ⛔ **A brief
+that introduces a bound must name the tests it will redden and say the repair is to the fixture.**
+Unstated, three reds inside a wave whose pass condition is "the failure set is unchanged" invite
+exactly the weakening.
+
+✅ And the storage form the other half of that fix is *for* is already exercised here:
+`InternalLinkGraphTest.php:220-222` creates `'/services'` and `'/services/plumbing'` with leading
+slashes. The raw form is real, it is in a sibling test today, and only the graph handles it —
+`EdgeDeployAction:198-201` still compares trimmed paths to the raw column.
+
+## ⚠️ `SchemaVisibilityTest`'s follow-set is already wrong for the document this action can produce (tick 242)
+
+Tick 241 recorded the block-extraction regex `/<div id="…-x176">(.*?)<\/div>\n(?:<div|<script|<\/body)/s`
+as a hazard *the next wave* breaks. Measured this tick, it is wrong **today**:
+`InternalLinkRenderAction:100` emits `'<nav id="internal-links-x176">'` and `EdgeDeployAction:315-317`
+appends it **directly after `#videos-x176`**. It does not fire only because the four fixtures each
+create **one** page and never set `is_published` — so `InternalLinkRenderAction:16-18` filters
+everything out and `:57`'s `count($usablePages) < 2` would refuse anyway. **Two independent reasons,
+both fixture properties, neither an invariant of the code.**
+
+⛔ **RULED: the widening belongs to SITE-124**, the wave that renders a `<nav>`-adjacent block —
+because the test is correct for the output the tree produces today, and the wave that changes the
+output is the wave that carries the change (tick 238). Recorded so the next tick does not read
+"latent" as "safe": the distance between latent and live here is one `is_published` in a fixture.
+
+## ⚠️ This lane writes THREE sentinel tool names where the shared gate log's vocabulary has one (tick 242)
+
+Read from sixty's `0efbffad` (*"apply Track 1's shared gate log, pest lock, kill attribution and
+--allow-harness"*) under tick 215's law. Every mechanism in it this lane already holds — `run_tool`
+with the `pgrep -P` descent (`bin/supervise.sh:53-66`), the sentinel defined at the top with
+`trap - EXIT` inside the signal traps (`:73-77`), the eight-column row (`:42-46`), the box-wide
+`flock`. **One divergence, and it is ours.** Track 1 fixes the `tool` column to five values —
+`gate | pint | phpstan | pest | doctor` — with *"a consumer distinguishes the sentinels by rc, not by
+inventing two tool names."* This lane writes `gate-start`, `gate-end`, `gate-signal`.
+
+No information is lost — our `rc` column already carries `-` for a start, `0`/`1` for an end, `≥128`
+for a signal — but a cross-lane `group by tool` puts this lane in three buckets nobody else has and
+leaves our rows out of the `gate` bucket entirely. That is tick 227's seven-vs-eight-column finding
+one column over: **a schema divergence in a shared artefact where nothing in a row announces which
+convention it follows.** `bin/supervise.sh` is this seat's own file, so the rename is this seat's
+work, not the coder's; not done mid-tick with a dispatch pending.
+
+## ⚠️ Half 3's second real firing, and it lands one row from ours (tick 242)
+
+`b083868d` (reviews, 21:22:21) rewrites `GOAIEZ-TRACKER-CAPABILITIES.md`'s **G12-04** row, +1 −1 —
+the row **directly below this lane's `G12-03 | Auto-Detection | ENH | X-176`**. No conflict today
+(this lane's tracker edits sit in G3/G7/G8/G13/G16/G18 and G12-03 is untouched in our unmerged range),
+but a future X-176 edit to G12-03 lands inside git's three-line context of reviews' change. The
+complement grew **11 → 12** with exactly that file, so both methods named it in the same tick — tick
+182's first reading, confirmed a second time.
+
+⚠️ Two things its subject claims that its diff does not: *"and regenerate capabilities"* while the
+diff is the tracker row **alone** (so X-202's generated file still lacks the refusal — tick 196's
+*refusal that never made the last hop*, one lane over), and X-202 is **not reviews'** under ruling 5,
+nor is `X-179/Domain/TemplateEngine.php` in the same push. Advisory to Track 1, ⛔ never a parallel
+fix. Second firing of tick 222's law in one tick, here with the diff **narrower** than the message.
+
+⚠️ **Half 2 read 10 this tick and tick 241 recorded 11.** `origin/main` was unmoved and money moved
+only forward, and a forward move cannot remove a commit from a set bounded by `^origin/main
+^origin/track/site` — so the 11 was a miscount, not a shrink. Recorded because *a recorded number is
+a recording* (tick 196) applies to this seat's own numbers first.
+
+## ⛔ A measurement's CONSEQUENCE stated inside the measurement (tick 244)
+
+Tick 242 measured two facts — `grep -n is_published app/tests/Modules/X-176/BreadcrumbSchemaTest.php`
+returns nothing, and the X-103 migration declares `->default(false)` — and wrote them into `CLAUDE.md`
+and into SITE-123's brief under the heading **"Measured by the supervisor at tick 242, so it is not a
+surprise mid-wave"**, together with the sentence *"The moment you add the bound, all three go red."*
+
+**One of the three went red.** The other two assert the **absence** of a breadcrumb (one has no
+hierarchy at all, `slug => ''`; the other has a missing parent), and a bound that makes ancestry
+*harder* to resolve cannot redden an assertion that ancestry does **not** resolve. The grep was a
+measurement; "therefore all three go red" was an inference, and putting them in one block carried the
+grep's authority onto the inference.
+
+⛔ This is tick 241's law (*a claim that an item was RE-MEASURED is itself a claim*) in the sub-shape
+that survives it: not a stale measurement, a **live and correct measurement with a consequence bolted
+on**. No re-running of the grep would have caught it, because the grep was right.
+
+✅ **It cost nothing only because the brief carried its own falsifying instruction** — *"If any of the
+three did not go red, say so and say why; that would mean the bound is not doing what this brief
+claims"* — and the coder used it exactly as written, naming which case reddened and why the other two
+could not. **Every predicted consequence in a brief carries the instruction that would refute it.**
+Seventh instance of this seat's imprecision family (208 the evidence request, 227 the branch condition,
+235 an unread mechanism, 236 a presumed direction, 237 an existence question, 238 a filing sentence),
+and the first one the brief itself caught.
+
+## ⛔ RETRACTED at tick 244 — `InternalLinkGraphTest` does NOT sweep hrefs document-wide
+
+Ticks 240, 241 and 242 all carried: *"all four of SITE-119's tests `preg_match_all` `/<a href="…">/`
+over the **whole** artifact, and case 1 asserts the result with `assertEqualsCanonicalizing`"*, and
+tick 240 RULED the narrowing its own wave because a visible breadcrumb's links would redden two correct
+assertions. Read at source while writing the brief:
+
+```
+InternalLinkGraphTest.php:52 :97 :204 :240   $xpath->query('//nav[@id="internal-links-x176"]//a');
+                        :58 :246             assertEqualsCanonicalizing over THAT result
+```
+
+Every extraction is **XPath scoped by element id** — moved there by tick 239's own wave — so an `<a
+href>` anywhere outside `nav#internal-links-x176`, including a breadcrumb in a second `<nav>` with its
+own id, is invisible to it. **The narrowing was already done**, and the wave would have edited four
+correct assertions for nothing.
+
+Second firing in five ticks: tick 241 retired a carried item fixed 37 minutes before it was written;
+this one was fixed at tick 239 and carried live through three ticks. ⛔ The enforcement that would have
+caught both, and the one this seat now owes: **a carried item is re-read AT ITS OWN LINE before it
+becomes a brief item, never when the queue is copied forward.** Both retractions came from opening the
+file to write the brief; neither could have come from re-reading the queue, however carefully.
+
+## ✅ The follow-set hazard is LIVE, and a breadcrumb fixture is what fires it (tick 244)
+
+```
+EdgeDeployAction:310-316   <div id="videos-x176">…</div>\n
+                    :318   $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);
+                    :320   $html .= $internalLinksHtml;     // '<nav id="internal-links-x176">'
+SchemaVisibilityTest:164   /<div id="videos-x176">(.*?)<\/div>\n(?:<div|<script|<\/body)/s
+```
+
+The nav is appended **directly after** `#videos-x176` and matches none of the three terminators.
+`test_video_corresponds` passes today for two **fixture** properties and no invariant: each case creates
+one page, and `InternalLinkRenderAction` refuses a usable set of `< 2`. ⚠️ **A breadcrumb requires a
+hierarchy, i.e. ≥ 2 published pages — precisely the condition that renders the nav for the first
+time.** So the render wave meets this whether or not it goes looking, which is why tick 244 amends tick
+242 and ships the widening WITH the render, each with its own falsifier. Tick 242 deferred it as
+*correct for today's output*; it is in fact wrong for a document the action already constructs.
+
+⚠️ Note the alternation reads correctly on the nested address block — `</div>` cannot match the `<div`
+alternative (`<`,`d` vs `<`,`/`), so `#address-x176`'s inner close does not terminate the match. Widen
+the set, never loosen the predicate (tick 234).
+
+## ⚠️ ui deleted a property this lane's tests could have named — grep for the THING, not the file list (tick 244)
+
+Half 1's ui/X-110 partition grew to 3 and `143418ec` *"remove the dead isSample flag from X-199 and
+X-110"* deletes a property from four Livewire classes this lane's hand-written and generated tests
+execute. Tick 189's rule says file-disjointness is a **conflict** test, not a **correctness** one, and
+the correctness half is one grep: `grep -rn 'isSample\|SAMPLE_STATE\|sample-state'
+app/tests/Modules/X-110/` returns **nothing**. Clean — and the point is the shape of the check.
+Comparing file lists would have said "disjoint" and proved nothing about a deleted property.
+
+## ⚠️ Complement membership moved in BOTH directions in one tick (tick 244)
+
+The three migrations left the list with no sibling withdrawing anything — `main` gained them, a bound
+moving (tick 191) — while `OwnerNav.php`, `OwnerNavTest.php` and `REPORT.md` arrived. A tick reading
+only the **count** would have seen 12 → 12 and recorded nothing at all. ⛔ Read the complement as a
+**membership** delta against the recorded list, never as a size; tick 182 said "grew / unchanged /
+grew-and-unnamed" and this is the fourth case: **same size, different set.**
+
+All three new files are *unwatched, not uncovered* (tick 183's second clause): `OwnerNav*` is ui's, in
+`app/app/Support/Account/` and the shared architecture-test directory — ⚠️ one subject reads *"remove
+exclusion clause from cross-link admission"*, which on its face is a lint getting **stricter**, the
+opposite of the One Rule's `notPath()` shape, and is ui's own file either way. `REPORT.md` is reviews'
+`ec68b1b3` "Add REPORT.md" followed by `918f4e46` "Remove REPORT.md from root" — tick 197's
+misfiled-report residue one lane over, already self-corrected. Advisory to Track 1, ⛔ never a parallel
+fix.
+
+## Carried from SITE-123, re-read at its own line before it is ever briefed
+
+- **N1 — the ancestry query is unbounded.** `whereIn('slug', $paths)` is gone, so
+  `EdgeDeployAction:198` loads **every published page** of the business to resolve a handful of
+  ancestors. Same shape as SITE-113's `Appointment::where(...)->get()`. Additionally two slugs of one
+  business that normalise to one key (`services` and `/services/`) collapse in `keyBy`, last writer
+  winning, silently. Neither is a defect in the wave's claim; both are bounds a later wave should add.
+- **N2 — `#events-x176`, `#address-x176` and `#videos-x176` render only inside the `if ($commitId)`
+  branch that emits the JSON-LD**, so the correspondence property is asserted on that path alone. The
+  inverse (page showing more than the schema claims) is structurally impossible here. Recorded so it is
+  not rediscovered as a defect.
