@@ -2149,6 +2149,124 @@ Watch for: <the trap that applies, by name>
   (`->orderBy('created_at','desc')->first()`), so a customer with two latched conversations presses the
   button and it stays. Which way to reconcile is the coder's. After 108 the live proposal list is
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
+- ✅✅ **A mutation set whose subtractions are CONSECUTIVE INTEGERS proves every assertion in positional
+  order — and the largest subtraction names, for free, the one assertion the set does NOT cover.** Waves
+  107c+107d built the most complete set this lane has produced: six assertions in
+  `test_thread_screen_release_takeover`, green `assertions 7889`, and five mutations returning `7885 ·
+  7886 · 7887 · 7888 · 7889` — `−4 · −3 · −2 · −1 · −0`, each reddening exactly one assertion on its own
+  terms and each leaving every earlier one executable (the wave-92 requirement and the wave-90
+  subtraction, five times over; wave 106's four was the previous best). ⭐ **The arithmetic is also a
+  coverage report.** The largest subtraction is −4 on a six-assertion test, so the first *covered*
+  assertion is the second — **A0 (`assertSet('hasActiveTakeover', true)` after `sendReply`) is proved by
+  nothing**, and it is the setup line everything else rests on. Read the largest delta against the
+  assertion count before calling a set complete; it costs one subtraction and it is the only cheap way to
+  find the assertion a set forgot.
+- ⭐ **The SAME site mutated in both directions proves two different assertions, and it is the cheapest
+  way to complete a set on a flag.** `@if($hasActiveTakeover)` → `@if(false)` (wave 107c Mut 5) reddens
+  the positive `assertSee`; → `@if(true)` (wave 107d Mut 7) reddens the negative `assertDontSee`. Two
+  mutations, one line, two assertions. **This is the direct answer to the tick-213 finding** that an
+  `assertSee` on a blade-only literal cannot distinguish a conditional render from an unconditional one:
+  with the pair it can, from both sides, and neither half needs a second site.
+- ⚠️ **A mutation that DELETES A NULL-GUARD reddens an `expectException` by substituting a different
+  exception — that proves the guard is present and reached, not that the refusal is the right one.**
+  Wave 107d's Mut 8 (`if ($latch === null)` → `if (false)`) failed A5 with `exception of type
+  "ErrorException" … Message was: "Attempt to read property "operator_name" on null"`. It is **not** the
+  wave-81 shape — the subtraction was **−0**, so all six assertions executed and the expectException
+  genuinely failed on its own terms — but the code crashed downstream rather than returning normally, so
+  the class named in the assertion is untested. **The mutation that proves a refusal's identity is a
+  class substitution, not a guard removal.** Ask which of the two a mutation is before crediting an
+  `expectException` as proved.
+- ✅✅ **A bare `if (false)` self-pins through phpstan exactly as `if (false && …)` does — and it reports
+  EVERY line `sed -i` hit, from a tool the coder did not author.** Wave 107d's Mut 8 gate log §6:
+  `{"tool":"phpstan","result":"failed","errors":2,…"line":141,"identifier":"if.alwaysFalse"…"line":173,
+  "if.alwaysFalse"}`. The brief had handed over `grep -n "latch === null"` as a measurement with no
+  conclusion and asked the coder to work out whether two matches mattered; phpstan answered the same
+  question independently. **Prefer an `if (false…)` form whenever a mutation's site must be provable**,
+  and read §6 on a mutation run as evidence rather than as a gate — with §1's `M <path>` line (tick 209)
+  and the mutation script on disk (tick 214), that is three independent site proofs and the tick-185
+  `SITE:` field becomes the fourth.
+- ⭐ **Handing over a measurement with the conclusion withheld is now 2-for-2, and it is what produced
+  this lane's last two unprompted disclosures.** Tick 188 (`orderBy` lines, *"which of those, if any"*)
+  and wave 107d (`grep -n "latch === null"` returns two lines, *"whether that matters to the assertion it
+  is assigned to is for you to work out and to say"*). Both came back as findings the brief had not
+  named. Contrast the eight recorded recurrences of the leak, every one of which was a brief that printed
+  the answer's shape. **Give the command and the raw output; never the sentence.**
+- ⚠️ **`REPORT.md`'s mtime can be HOURS older than the pid's death without the wave being a death of any
+  of the four shapes.** Run 93 finished its report at 14:03:56, its agy log stopped at 13:53, and the pid
+  stayed alive until agy's own `--print-timeout 8h` freed it at ~21:47 — **seven and a half hours of an
+  idle lane on a wave that was complete.** Case (a) of the tick prompt (*pid alive ⇒ print "coder running"
+  and stop*) is satisfied forever by that state, which is Track 1's *the pidfile reports an intention, not
+  a state* (`OWNER.md` 17:0x). **RULED at tick 215: the answer is the wall-clock bound, not a detector.**
+  `launch-coder.sh` now wraps **both** coder branches in `timeout -k 60 3h` and prints `bound=3h` on the
+  `LAUNCHED` line. The reason is measured: the longest genuinely productive run this lane has had is about
+  forty minutes, and every run past ninety minutes has been a hang or a death. ⛔ **Do not build a progress
+  detector** — Track 1 measured that every local liveness signal (log growth, cpu > 0, cpu rate) produced
+  a false positive within minutes on some lane, and a detector that kills live work is strictly worse than
+  a lane that idles.
+- ⭐ **`bin/supervise.sh` now writes the shared eight-column gate log and takes the shared pest lock
+  (Track 1, 2026-09-06; applied tick 215).** Three things to know when reading it.
+  (i) **The row shape is `start_iso end_iso gate_pid tool_pid rc project checkout tool`, eight columns**,
+  and the file still holds mostly seven-column rows from before the correction — **a consumer must branch
+  on `NF`**, because `$4` is `rc` in a seven-column row and `tool_pid` in an eight.
+  (ii) **`tool` is a fixed vocabulary of five** — `gate | pint | phpstan | pest | doctor` — and `gate`
+  covers both sentinels, distinguished by `rc` (`-` on the start row) and never by inventing
+  `gate-start`/`gate-end`. `rc` is **raw**: 143 SIGTERM, 137 SIGKILL, 124 `timeout(1)`'s own.
+  (iii) **`GATE_LOG` is overridable and must stay so.** The sibling project's gate test executed the real
+  hook with no-op stubs and began appending rows for tools that never ran — twelve rows satisfying every
+  property the schema has, with *a `pest` row whose start and end are the same second* as the only tell.
+  ⚠️ **A diagnostic log that records its own harness is worse than no log, because the fabrications have
+  exactly the shape of the evidence.** No test in this lane touches the gate; keep it that way.
+  ⛔ Also filter Track 1's flagged fabrications when reading the file: `goaiez-review-system`/`wt10`, gate
+  pids `1411718 1411764 1425556 1425618 1468140 1468184`, 16:49–17:00 on 2026-09-06.
+- ⚠️ **§6 could not tell a KILLED tool from a style red, and neither could this column — fixed in the
+  script rather than in the reading.** The old §6 was `pint --test | tail -3 | sed … || fail=1`: under
+  `pipefail` a SIGTERM (`rc 143`) and a genuine style failure set `fail=1` identically, so a killed pint
+  reported as *"pint failed"*. `run_tool()` now captures the raw rc and prints
+  `⛔ <tool> was KILLED or timed out (rc=<n>) — this is NOT a verdict, no test or file was judged` for any
+  rc ≥ 128. The §6 output shape is unchanged, so every standing rule about reading **pint's own object,
+  whole and alone, before the first `}`** (tick 172) still applies — that field is now *also* the thing to
+  read on a mutation run, since a mutation run is a full post-commit gate.
+- ✅ **`--allow-harness` exists on this lane's launcher as of tick 215 and has never been passed.**
+  `ALLOW_HARNESS=0` by default; the flag exports `GOAIEZ_HARNESS_OK=1` for one run in both coder branches
+  and the `LAUNCHED` line reports `harness-gate=OPEN|closed`. ⛔ **It opens the ability to COMMIT
+  `tests/Journeys/JourneyHarness.php`, never permission to weaken it.** Provisioning real state so a real
+  code path runs is a fix; deleting an assertion, stubbing a transport or making a journey pass on a
+  constant is a `BLOCK`, **and the supervisor that opened the gate wears it**. The supervisor that passes
+  it quotes the harness diff in its own `REVIEWS.md` block — a run that used the flag with no quoted diff
+  is not reviewable. Open it for the run that needs it and never as a standing flag; this lane owns no
+  journey that has needed it yet.
+- ⚠️ **`kill` is a bash builtin, so a `PATH` shim never sees it — `BASH_ENV` is what makes a coder's kills
+  attributable, and it was added at tick 215.** `launch-coder.sh` now exports
+  `BASH_ENV=/home/goaiez/agents/coder-bin/shell-init.sh` in both branches; that file is six lines and does
+  `enable -n kill`, after which `kill` resolves through `coder-bin/kill`, which **logs and then performs**
+  the kill to `/home/goaiez/tmp/kill-log.tsv` (`tool_pid` in the gate log is the join key). It refuses
+  nothing. Honest limits, from the sibling project: it does not catch `os.kill()`, a `kill(2)` from a
+  non-shell process, or a shell that never sourced it. **RULED at tick 215: killing an orphaned `pest`
+  whose `/proc/<pid>/cwd` is THIS checkout is legitimate** — it is this lane's own process and §7's clash
+  guard would otherwise refuse the whole wave over it — **and killing anything whose cwd is another
+  checkout is refused, full stop.** `coder-bin/killall` and `coder-bin/pkill` now refuse for everyone,
+  and their message names `kill <pid>` as the legitimate alternative; wave 107d took exactly that route
+  and disclosed it unprompted.
+- **Backlog at tick 215 — wave 108 is the merge of `origin/main`, and it is the whole wave.** RULED, and
+  it stands from tick 214 with Track 1's invitation (`OWNER.md` 14:0x) and their gate on it
+  (`tests 1952 · passed 1948 · FAILED 2 · errors 2`, pint PASS, phpstan 0). This lane is **278 behind and
+  11 ahead**; a merge only gets worse behind every build wave deferred in front of it. Five things the
+  brief carries and none of them is optional: **(i)** `composer dump-autoload` **before the first gate**,
+  with `grep -a -c` on the classmap as the check — a merge adding a class under `app/Modules/` leaves it
+  unloadable, presenting as `Class "App\Modules\…" not found` *inside another module's test*, and *"that
+  lane is red too"* is **not** evidence of ownership because every checkout carries its own stale map;
+  **(ii)** `app/phpunit.xml`'s `goaiez_antig_sixty_test` pin restored **explicitly**, because ours is
+  byte-identical to the merge base and main's differs, so a three-way merge takes theirs silently and the
+  file appears in **no** conflict list (tick 195); **(iii)** the per-track restores
+  (`git show HEAD:<path> > <path> && git add <path>`) for every never-merge file, proved by
+  `git diff HEAD -- <path>` printing nothing — *"merged clean"* is git's exit status, not the outcome the
+  rule requires (tick 199); **(iv)** `git status --porcelain` immediately after the merge commit, empty of
+  `M` lines on paths the wave touched, because **a merge commit commits the INDEX and an unstaged fix does
+  not ride into it** (wave 99b shipped a tip that did not parse); **(v)** `--allow-harness` is **not**
+  passed — a merge is the least reviewable place for a harness change. Then wave 109 is C-Agent's
+  `TakeoverStarted`/`TakeoverReleased` listener and gate, ruled at tick 209 and unblocked since wave 107c
+  gave a human a way to release. The live proposal list stays
+  `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`.
 
 ## Style
 

@@ -19,6 +19,67 @@ want_tests=0; want_doctor=0
 for a in "$@"; do case "$a" in --tests) want_tests=1;; --full-doctor) want_doctor=1;; esac; done
 bar() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 fail=0
+LAST_RC=0
+
+# ── shared gate log ────────────────────────────────────────────────────────────
+# Track 1, 2026-09-06 16:0x + 16:5x + 17:1x. Eight columns, FINAL shape:
+#   start_iso  end_iso  gate_pid  tool_pid  rc  project  checkout  tool
+# `rc` is RAW (128+N: 143 SIGTERM, 137 SIGKILL, 124 timeout(1)) — never 0/1, the
+# signal is the whole point. `tool` is a FIXED vocabulary of five and nothing
+# else: gate | pint | phpstan | pest | doctor. `gate` covers both sentinels; a
+# consumer distinguishes them by rc, not by inventing two tool names.
+# `project` is the project, not the directory. No lock: appends under PIPE_BUF to
+# an O_APPEND file are atomic on Linux.
+# ⚠️ GATE_LOG is OVERRIDABLE by design — the sibling project's gate test executed
+# the real hook and began appending rows for tools that never ran, twelve rows
+# with every schema property satisfied. A test that exercises this gate points
+# GATE_LOG at a throwaway path. A diagnostic log that records its own harness is
+# worse than no log, because the fabrications have the shape of the evidence.
+GATE_LOG=${GATE_LOG:-/home/goaiez/tmp/gate-runs.tsv}
+GATE_PROJECT=goaiez-antigravity
+GATE_CHECKOUT=$(basename "$ROOT")
+log_gate() {  # start_iso end_iso tool_pid rc tool
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+    "$1" "$2" "$$" "$3" "$4" "$GATE_PROJECT" "$GATE_CHECKOUT" "$5" >> "$GATE_LOG" 2>/dev/null || true
+}
+# The sentinel is defined HERE, at the top, and not where the tools run: Track 1's
+# own copy sat lower and recorded nothing at all for a gate killed two seconds in.
+# `trap - EXIT` INSIDE each signal trap is the second half — without it the EXIT
+# trap fires afterwards and writes a clean rc 0 row that hides the honest 143.
+GATE_START_ISO=$(date -Is)
+log_gate "$GATE_START_ISO" "-" "-" "-" gate
+_gate_end() { log_gate "$GATE_START_ISO" "$(date -Is)" "-" "$1" gate; }
+trap '_gate_end $?' EXIT
+trap 'trap - EXIT; _gate_end 143; exit 143' TERM
+trap 'trap - EXIT; _gate_end 130; exit 130' INT
+
+# ── one tool run ───────────────────────────────────────────────────────────────
+# §6 used to pipe each tool straight into `tail`, which with `pipefail` catches a
+# style red and a SIGTERM identically: a KILLED pint prints a bare `Terminated`
+# and was about to be recorded as "pint failed" (Track 1, 16:0x). A killed tool is
+# NOT a verdict, and this says so out loud.
+# ⚠️ `out=$(cmd)` gives you no pid, so the run is backgrounded — and the `pgrep -P`
+# descent is not optional: `timeout 1800 pest` makes `timeout` the job and php the
+# process a killer sees in `ps`, so logging the wrapper's pid fails the join with
+# kill-log.tsv in exactly the case the log exists for, silently.
+run_tool() {  # tool tail_n cmd...
+  local tool=$1 n=$2; shift 2
+  local s tmp jobpid tpid child
+  s=$(date -Is); tmp=$(mktemp "${TMPDIR:-/tmp}/gate-XXXXXX")
+  "$@" > "$tmp" 2>&1 &
+  jobpid=$!; tpid=$jobpid
+  for _ in 1 2 3 4 5; do
+    child=$(pgrep -P "$jobpid" 2>/dev/null | head -1)
+    [ -n "$child" ] && { tpid=$child; break; }
+    sleep 0.2
+  done
+  wait "$jobpid"; LAST_RC=$?
+  log_gate "$s" "$(date -Is)" "$tpid" "$LAST_RC" "$tool"
+  tail -n "$n" "$tmp" | sed 's/^/  /'
+  rm -f "$tmp"
+  [ "$LAST_RC" -ge 128 ] && echo "  ⛔ $tool was KILLED or timed out (rc=$LAST_RC) — this is NOT a verdict, no test or file was judged"
+  return "$LAST_RC"
+}
 
 bar "0. database guard  (production is $PROD_DB — see NEXT-SESSION.md, 2026-08-31)"
 env_db=$(grep -E '^DB_DATABASE=' "$APP/.env" 2>/dev/null | head -1 | cut -d= -f2- | tr -d "\"' ")
@@ -181,18 +242,18 @@ cd "$APP" || exit 1
 [ -d /home/goaiez/tmp ] && export TMPDIR=/home/goaiez/tmp
 
 bar "4. checker soundness + seal"
-php artisan doctor:selftest 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
-php artisan doctor --stage=integrity 2>&1 | tail -4 | sed 's/^/  /' || { fail=1; echo "  ⛔ SEAL/integrity red"; }
+run_tool doctor 4 php artisan doctor:selftest || { fail=1; echo "  ⛔ RUNTIME — the checker, not the code"; }
+run_tool doctor 4 php artisan doctor --stage=integrity || { fail=1; echo "  ⛔ SEAL/integrity red"; }
 echo "  runtime_build in BUILD-STATE: $(python3 -c "import json;print(json.load(open('$ROOT/.agents/state/BUILD-STATE.json'))['runtime_build'])" 2>/dev/null) — compare with the doctor build stamp above"
 
 if [ $want_doctor -eq 1 ]; then
   bar "5. all eight stages  (non-zero exit on any red stage is by design)"
-  php artisan doctor 2>&1 | tail -30 | sed 's/^/  /'
+  run_tool doctor 30 php artisan doctor
 fi
 
 bar "6. style + static analysis"
-./vendor/bin/pint --test 2>&1 | tail -3 | sed 's/^/  /' || fail=1
-./vendor/bin/phpstan analyse --memory-limit=1G --no-progress 2>&1 | tail -4 | sed 's/^/  /' || fail=1
+run_tool pint 3 ./vendor/bin/pint --test || fail=1
+run_tool phpstan 4 ./vendor/bin/phpstan analyse --memory-limit=1G --no-progress || fail=1
 
 if [ $want_tests -eq 1 ]; then
   bar "7. test suite  (phpunit.xml → $xml_db)"
@@ -216,9 +277,46 @@ if [ $want_tests -eq 1 ]; then
   fi
 fi
 if [ $want_tests -eq 1 ]; then
+  # ── the shared suite lock (Track 1, 2026-09-06 14:1x) ────────────────────────
+  # Two suites at once on this box is not just slow: it is what gives an agent a
+  # reason to reap a "stray" pest. Advisory and CROSS-PROJECT by design — anything
+  # on this box wrapping its suite in the same flock serialises with us.
+  # It is ORTHOGONAL to §7's shared-database refusal above: that is a correctness
+  # guard, this is a scheduling one, and both stay.
+  # ⚠️ A lock-timeout is NOT a red suite. It means no test ran. Never take a number
+  # from a run that did not happen, and never kill the holder to get the lock.
+  PEST_LOCK=/home/goaiez/tmp/pest.lock
+  lock_held=0
+  if command -v flock >/dev/null 2>&1; then
+    exec 9>>"$PEST_LOCK" 2>/dev/null && {
+      if ! flock -n 9; then
+        echo "  … another suite holds $PEST_LOCK — waiting up to 40 min (never killing it)"
+      fi
+      flock -w 2400 9 && lock_held=1
+    }
+    if [ $lock_held -eq 0 ]; then
+      echo "  ✗ pest NOT RUN — $PEST_LOCK held for 40 minutes. Not a red suite: no test ran."
+      echo '{"tool":"pest","result":"lock-timeout"}' > "$ROOT/scratch/pest-raw-last.log"
+      fail=1; want_tests=0
+    fi
+  fi
+fi
+if [ $want_tests -eq 1 ]; then
   # timeout: a hung suite is a red line, never a 26-minute wait (owner ruling
   # relayed 2026-09-05 08:0x).
-  out=$(timeout 1800 ./vendor/bin/pest 2>&1); rc=$?
+  pest_tmp=$(mktemp "${TMPDIR:-/tmp}/gate-pest-XXXXXX")
+  pest_start=$(date -Is)
+  timeout 1800 ./vendor/bin/pest > "$pest_tmp" 2>&1 &
+  pest_job=$!; pest_pid=$pest_job
+  for _ in 1 2 3 4 5; do
+    pest_child=$(pgrep -P "$pest_job" 2>/dev/null | head -1)
+    [ -n "$pest_child" ] && { pest_pid=$pest_child; break; }
+    sleep 0.2
+  done
+  wait "$pest_job"; rc=$?
+  [ "${lock_held:-0}" -eq 1 ] && flock -u 9
+  log_gate "$pest_start" "$(date -Is)" "$pest_pid" "$rc" pest
+  out=$(cat "$pest_tmp"); rm -f "$pest_tmp"
   if [ $rc -eq 124 ]; then
     echo "  ✗ pest TIMEOUT after 1800s — the suite hung (a lock wait or a prompt); treat as red"
     out="$out"$'\n''{"tool":"pest","result":"timeout"}'
