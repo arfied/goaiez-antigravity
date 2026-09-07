@@ -10,6 +10,7 @@ test('owner layout heading seam contract', function () {
     $skips = 0;
     $noHeading = 0;
     $levelSkips = 0;
+    $conditionalHeadings = 0;
 
     foreach (glob(base_path('app/Modules/*/Ui/*.php')) as $file) {
         $content = file_get_contents($file);
@@ -40,6 +41,21 @@ test('owner layout heading seam contract', function () {
             if (View::exists($viewName)) {
                 $viewPath = View::make($viewName)->getPath();
                 $viewContent = file_get_contents($viewPath);
+
+                $depth = 0;
+                $viewHasConditionalHeading = false;
+                foreach (explode("\n", $viewContent) as $line) {
+                    if (preg_match('/<h[1-6]/', $line) && $depth >= 1) {
+                        $viewHasConditionalHeading = true;
+                    }
+                    $depth += substr_count($line, '@if');
+                    $depth += substr_count($line, '@unless');
+                    $depth -= substr_count($line, '@endif');
+                    $depth -= substr_count($line, '@endunless');
+                }
+                if ($viewHasConditionalHeading) {
+                    $conditionalHeadings++;
+                }
 
                 if (preg_match('/<h([1-6])/', $viewContent, $hMatches)) {
                     $level = $hMatches[1];
@@ -89,5 +105,6 @@ test('owner layout heading seam contract', function () {
     expect($unresolvedView)->toBe(0, 'If it went UP, a component uses a first view literal that cannot be resolved. Its known edge: a component with two view( literals lands on the first. If it went DOWN, an unresolved view literal was fixed.');
     expect($skips)->toBe(0, 'If it went UP, a blade\'s first <h[1-6] tag is the wrong level (not h2 for seam, not h1 for own). This reads the blade\'s text, not a response body, and never sees a heading emitted by a component such as <x-ui.empty-state heading="…">. If it went DOWN, a blade heading was fixed.');
     expect($noHeading)->toBe(0, 'If it went UP, a resolved view has no <h[1-6] tag at all. This reads the blade\'s text, so a heading emitted by a component (<x-ui.empty-state heading="…"> renders its own <h2>) is not seen, and a $seam member landing in this bucket is not a defect while an $own member is. If it went DOWN, a heading was added or the view was removed.');
-    expect($levelSkips)->toBe(0, 'If it went UP, a view\'s heading sequence descends by more than one level. This reads the blade\'s text, so a heading emitted by a component is not in the sequence. It is a count of views, not of bad steps. The <h1> prepended for a $seam member is an ASSUMPTION this code makes about the layout, not something it measures. If it went DOWN, a view\'s heading sequence was fixed.');
+    expect($levelSkips)->toBe(0, 'If it went UP, a view\'s heading sequence descends by more than one level. This reads the blade\'s text, so a heading emitted by a component is not in the sequence. It is a count of views, not of bad steps. The <h1> prepended for a $seam member is an ASSUMPTION this code makes about the layout, not something it measures. The sequence is the blade\'s text in document order, so headings in mutually exclusive @if/@elseif/@else arms are concatenated into a sequence no rendered page emits — which can both flag a skip that never renders and hide one that does. If it went DOWN, a view\'s heading sequence was fixed.');
+    expect($conditionalHeadings)->toBe(8, 'This is a count of views, not headings (once per view), containing at least one <h[1-6] tag at an @if or @unless nesting depth >= 1 (it does not count @isset, @empty, @switch, @auth, or @can). Because it counts single-heading views, which cannot skip anything, and nested conditionals, whose headings do co-render in document order — so it is an upper bound on how many views the text-order assumption could be wrong about, not a count of views it is wrong about.');
 });
