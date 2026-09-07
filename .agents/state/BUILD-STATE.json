@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T01:40:56",
+ "updated": "2026-09-07T02:21:16",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1642,6 +1642,10 @@
   {
    "at": "2026-09-07T01:40:56",
    "note": "X-199 UNRESOLVED: cash received today is not derivable - recordPayment writes no payment row, X-198 payments carries no invoice column (ruling 102), and X-211 offline_payments is a separate store, so the receipt date of an instalment exists nowhere; the paid-today tile reports the value of invoices settled today instead"
+  },
+  {
+   "at": "2026-09-07T02:21:16",
+   "note": "C-Billing UNRESOLVED: money recovered on a dunning ladder is not derivable - a payment against the arrears would have to come through App\\Services\\Billing\\CreditTopUps, which is Track 1's charging path and takes a real card, so the module ledger records only credit granted and the row says so (rulings 59, 87, TRACK 1 ACTION 11)"
   }
  ],
  "decisions": [
@@ -2129,6 +2133,18 @@
    "module": "X-199",
    "chose": "the paid-today tile names the invoice value it sums rather than cash received - the screen totals total_cents over invoices that became paid today, and no per-instalment receipt date is stored anywhere in this lane, so the label states what is computed and the screen names the missing dependency",
    "at": "2026-09-07T01:40:56",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "the revenue-recovery row names the credit it sums rather than money recovered - the figure sums topup and grant ledger entries, the top-up button on the same row grants credit and takes no card, and LedgerGrantAction has no caller outside the tests, so nothing on this ladder is money that came back",
+   "at": "2026-09-07T02:21:16",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Billing",
+   "chose": "the dunning ladder prints its service settings as a recorded intent rather than a state - phone_answering, ai_enabled and voicemail_only are written by advanceDunning and read by no code that switches a phone or an agent, so the row says what the ladder set and not what the account is doing",
+   "at": "2026-09-07T02:21:16",
    "ruling": "R245"
   }
  ]
