@@ -218,7 +218,7 @@ test('nav entries survive real get', function () {
         $url = route($item->route);
         $response = $this->actingAs($user)->get($url);
         $response->assertOk();
-        
+
         $count = substr_count($response->getContent(), '<h1');
         expect($count)->toBe(1, "Route {$item->route} has {$count} <h1 tags");
     }
