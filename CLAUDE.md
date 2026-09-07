@@ -8443,3 +8443,389 @@ sibling's, which is the case proximity makes hardest to see (tick 235).
 **X-155 and X-137 are the last two of the seven owned modules never audited on this surface.** Ground
 values measured at tick 272 so they can be asserted with both directions as stops (tick 262):
 **X-155 = 10 distinct ids / 27 occurrences · X-137 = 6 / 8.**
+
+## ⛔ An ANSWER SET can REGRESS — tick 265's own fix was dropped at 272 by RETYPING the set instead of citing it (tick 273)
+
+Tick 265 measured that an enumerated verdict set is a claim about the world's cardinality, that an
+incomplete one is a **silent coercion**, and added a fourth verdict —
+**`DISCHARGED-BY-AN-UNCREDITED-TEST`** — after finding X-176's `G16-25` discharged on the stored
+artifact by a test carrying no id, and `G8-32` discharged inside a *different* id's carrier. Tick 272
+restated the set for X-155/X-137 as six options and **the new one was not among them.** SITE-146 then
+graded **12 of 16** ids `CREDIT-ONLY` and proposed eleven assertions to build, four of which already
+exist.
+
+⛔ **The cause is the restatement itself.** Tick 272 correctly ruled that the fifth axis's
+artifact-vs-return-array phrasing does not transfer to modules that render into no artifact, and
+rewrote the question in its general form — *persisted, emitted, served or refused*. Rewriting the
+**question** meant retyping the **verdict list**, and a list retyped from memory loses whatever was
+added to it late. Tick 265's ruling was in this file, four sections above the one that dropped it.
+
+- **A verdict set is a durable artefact, not brief prose.** Cite it (*"the seven verdicts of tick
+  273"*) or copy it mechanically; never re-derive it while rephrasing the question it serves.
+- ⚠️ This is the first defect in this ledger that is a **regression of a recorded fix** rather than a
+  new error. Every other firing of the imprecise-brief family was something never yet learned; this
+  was learned, written down, and then lost in a paraphrase — which no amount of re-reading the
+  *finding* prevents, because the finding was correct and unread.
+
+## ⛔ The VERDICT SET and the SEARCH STEP must have the same scope — a `grep '<id>'` step can only feed labels about CARRIERS (tick 273)
+
+The set was short by one option and the method pointed the same way, and it is the pairing that made
+the wave unrecoverable. `BRIEF.md:105` step 1 was `grep -rn '<id>' app/tests/Modules/<module>/` —
+*"find every carrier"* — and steps 2-3 then read only what step 1 returned. **A discharging test that
+carries no id is invisible to that grep by construction.** So the search was scoped to *credited
+carriers* while the question — *is this clause discharged?* — is about the whole directory.
+
+⛔ **And the labels it produced are TRUE.** `CREDIT-ONLY` was defined as *"the carrier names the id
+but its assertions are about a different clause"* — a true statement about the **carrier** that says
+nothing about whether the clause is discharged elsewhere. The twelve verdicts are correct; the §4
+built on them is false. That is tick 271's shape sharpened: there, two correct instructions composed
+into a wrong one; here **one correct definition plus one under-scoped search step produce a true
+label whose obvious consequence is wrong**, and nothing in the wave's output can reveal it — the
+wave cannot report a label it was not offered, and cannot find a file its first step excluded.
+
+✅ The fix is one step, and it is now in every audit brief: after finding the carriers, **search the
+whole directory for the clause's own vocabulary** — the table, the event, the status value, the
+refusal message — independently of the id. And `CREDIT-ONLY` may only be returned *after* that search
+comes back empty, with the search terms stated.
+
+Forty-first statement of this section's law, and the first where the under-scoped query and the short
+answer set were **the same defect wearing two faces**: 163/178/180/183/185/187 the *pathspec*, 190 the
+*strip*, 191 *bounds moving*, 192/193 *unrecorded bounds*, 194 *configuration*, 196 *width*, 207
+*expected output*, 208 the *evidence request*, 209 *resolution context*, 210 the fault's *scope in
+time*, 215 the *cache key's identity*, 219 *provenance*, 220 the key's *update mechanism*, 224 the
+*denominator's members*, 228 *evaluation time*, 247 a query that *did not run*, 253 *which tree a
+section measured*, 257 a query *never issued*, 259 *which column identifies the row*, 261/263 the
+*partition key*, 265 the *answer set*, 270 the *input set*.
+
+## ✅ `PoolExhaustionTest.php` — six methods, ZERO ids, discharging on the SERVED path (tick 273)
+
+The uncredited carrier the audit could not see, and the strongest instance of the shape yet measured.
+It does not appear in either census — which is why both censuses were nonetheless **correct**, and
+reproduced byte-identically in this seat.
+
+| clause | where |
+| :--- | :--- |
+| pool exhausted → static fallback **and** `unattributed` | `:22-45` — two-number pool, **three** allocations, `assertEquals('unattributed', $t3->status)` **and** `assertEquals('+15559999999', $t3->allocated_number)` |
+| ⛔ never a reused token | `:47-65` — `assertNotEquals($t1->allocated_number, $t2->allocated_number)` |
+| a number cannot be assigned to a second live campaign, refused | `:87-97` — `expectExceptionMessage('NUMBER_ALREADY_ASSIGNED_TO_DIFFERENT_CAMPAIGN')` |
+
+✅ **And it is a seam, not a fixture** — measured per tick 213's `EdgeProvisionAction` lesson, where a
+method with no production caller turned out to be test-only. `grep -rn 'allocateFromPool' app/app
+--include=*.php` returns **two** hits: the declaration at `CallAttributeAction.php:19`, and
+**`app/app/Modules/X-157/ModuleServiceProvider.php:68`** — this lane's own serving module, inside an
+endpoint guarded by the same `status === 'deployed'` + `has_valid_ssl` checks as
+`GET /sites/{business}/{deploy_hash}`, returning `['number' => …, 'status' => …]` as JSON. So the
+plan's *"the page renders the static fallback number and the session is marked `unattributed`"* is
+asserted against the exact method that serves it.
+
+⛔ **Always run the caller grep before calling an uncredited test a discharge.** A test that exercises
+a method nothing calls proves the method, not the clause — and the two are indistinguishable from
+inside the test file.
+
+## X-137's six, ruled at tick 273 — zero builds owed
+
+Carriers opened at their own lines; tracker rows at `GOAIEZ-TRACKER-CAPABILITIES.md:173, 456, 693,
+698, 868, 875`; plan row at `GOAIEZ-MASTER-PLAN.md:29181`.
+
+| id | verdict |
+| :--- | :--- |
+| **G3-11** | DISCHARGED-BY-AN-UNCREDITED-TEST — `PoolExhaustionTest:22`+`:47`. Its own carrier `X137Test.php:97` asserts an *unallocated* number, never exhaustion. |
+| **G8-13** | DISCHARGED-BY-AN-UNCREDITED-TEST **+** BY-A-ROW-MATE — its ⑤ is **textually identical** to G3-11's. Carrier `:115` asserts per-visitor token→session and campaign source, both directions. |
+| **G13-19** | DISCHARGED-ON-PRODUCT — `:135`, two visitors, two distinct tokens, the right one `joined` with `joined_call_id` 201, asserted on **refetched** `CallToken` rows. |
+| **G13-24** | DISCHARGED-ON-PRODUCT — static-number clause `:195`, refusal clause `PoolExhaustionTest:87` (uncredited). |
+| **G18-17** | ⚠️ **NOT discharged, and unreachable here** — see below. |
+| **G18-24** | DISCHARGED-BY-A-ROW-MATE — `:29181` says *"= Telephony Call Whisper; one spec"*. Carrier `:176` additionally asserts the **emitted** `CallAttributed` carries the whisper text, plus `Http::assertNothingSent()`. |
+
+⛔ **G18-17 is the case that turns on WHICH COLUMN a phrase sits in.** `:29181`'s ⭐ column reads
+*"the whisper names the SOURCE"*; its **asserted** column reads only *"the whisper audio is asserted
+present on the agent leg and **absent on the caller leg**, in one test on a real bridge."*
+`test_g18_17_whisper_names_the_source` (`:160`) discharges the **description**, in both directions —
+and touches the asserted clause not at all. That clause needs `C-Telephony` (**sixty's** under ruling
+5) on a **real Infobip bridge** this lane has no credential for, which the module's own `anchor`
+filing of `2026-09-05T19:19:40` already names. Per tick 224: **already done here** for five,
+**cannot work here** for the sixth.
+
+**A capability's headline description is not its asserted clause**, and a test discharging the first
+has not touched the second. Read the column, not the row.
+
+## ⛔ A bare `file:line` is not self-verifying — pair it with the enclosing METHOD NAME (tick 273)
+
+SITE-146 cited `G3-11` at `:145` and `G8-13` at `:155`. The true carriers are `:95`/`:97` and
+`:113`/`:115`; lines 145 and 155 both sit inside `test_g13_19_number_pool_token` (`:135-155`), and
+`:155` is that method's **closing brace**. Transcription rather than reasoning — both rationales
+describe the right methods — and it was invited by my item 5, which asked for *"`file:line` for the
+deciding assertion"* and never asked for the method name.
+
+⛔ **Nothing about `:145` announces which method contains it**, so the citation cannot be checked
+without opening the file — and my own step 2, which required method *names* to be confirmed to
+resolve, could not bind because the report was asked for lines. Same property tick 268 measured in
+pest's `line` field (the method's *declaration* line, so it cannot discriminate two assertions in one
+method): **a line is a weaker identifier than a name, and pairing them costs nothing.**
+
+## ✅ The write-nothing audit discipline PAID, for the first time (tick 273)
+
+Tick 264 ruled that an audit wave writes **nothing** — no `state.py`, no re-credit, no assertion —
+because `state.py` has no withdraw and a `why` written against a *predicted* verdict is unrepairable.
+Every firing until now was precautionary. SITE-146's §4 is wrong, and because the wave wrote nothing
+there is **nothing to withdraw**: had it filed against its own conclusions, eleven false `why` strings
+would now be permanent in a file all seven lanes share and Track 1 cherry-picks.
+
+⚠️ It also makes the verdict cheap and exact. `git status --short` clean but for the two standing
+paths, `git diff --stat HEAD -- .agents/state/` **empty**, HEAD unmoved ⇒ **no stage count can have
+moved**, which is stronger evidence than a doctor run and needs none. A measure-only wave's pass
+condition is an empty diff, and an empty diff proves itself.
+
+⚠️ Recorded so it is not read as a finding: the report's header claimed `MODULES: X-155 DONE · X-137
+DONE` and `STATUS: wave closed` against zero commits and clean state — boilerplate, no `state.py
+done` ran, and this seat would have blocked one. **A field in a report is a claim; the tree is the
+measurement** (ticks 249, 251).
+
+## ⛔ A ground condition stated with the WRONG INSTRUMENT fires on a state this lane's own rules GUARANTEE (tick 274)
+
+SITE-147 stopped with a ⛔ on *"a third path (`M CLAUDE.md`) appeared … it must read **exactly**
+` M app/phpunit.xml` and `?? error_log`."* The third path is **the supervisor's own uncommitted
+notes**, which tick 199 *requires* to stay uncommitted while a coder holds the checkout. So my
+brief's condition fires on **every** wave dispatched by a tick that wrote notes — which is nearly
+every tick — and the coder was right to stop, on the instruction as written.
+
+⛔ **And the gate already answers the question `git status` cannot.** §2 prints
+
+```
+ℹ supervisor working notes (uncommitted — leave them alone): CLAUDE.md
+⛔ app/phpunit.xml
+```
+
+one `ℹ` and one `⛔` (tick 263). `git status --short` has no such column and returns three
+indistinguishable lines. **RULED: a wave's working-tree ground condition is stated as §2's `⛔`
+LINES — "exactly one `⛔`, and it is `app/phpunit.xml`" — never as `git status --short`'s line
+count.**
+
+Sixteenth of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254,
+262, 265, 271) and the first where the defect is neither the question, the answer set, nor a ground
+*value*, but the **choice of instrument for a condition the right instrument already answers**. The
+family trait holds — *a vague brief fails loudly; a precisely wrong one is obeyed* — and this one
+was obeyed **correctly**, producing a true report of a false stop.
+
+⚠️ Consequent to it the wave also called the §7 substitution void. It is not: tick 255's condition is
+that *the delta is provably an input the tool does not read*, and the delta is the **coder's diff**
+(`.agents/state/` only, from `git show --stat`), not the working tree. The wave conflated *my diff*
+with *the tree*. ⛔ **A substitution's delta is the WAVE's diff; another writer's uncommitted file is
+not part of it.**
+
+## ⛔ An audit whose unit is the ID grades ONE CLAUSE of a TWO-CLAUSE ⑤ and reports the other nowhere (tick 274)
+
+Tick 271 established that a ONE-SPEC row's ⑤ is discharged **collectively**; tick 273 fixed the
+verdict *set*. Neither fixed the **unit of the question**. Every one-spec ⑤ in X-155's population is
+split on `·` and carries **two** clauses, and one verdict per id silently returns one clause per row:
+
+| plan row | clause (a) | clause (b) |
+| :-- | :-- | :-- |
+| `:31363` G13-05·G3-64·G17-12 | rejected submission STORED and flagged ✅ `:481` | tenant can see and release ✅ `:348` |
+| `:31361` G2-20·G2-39·G2-17 | `doctor` asserts NO staging table (P-163) ✅ `test_g13_35_no_staging:669-672` | Person **and Conversation** in one transaction ⛔ |
+| `:31362` G5-07·G5-30 | the claim lint applies to **labels** too ⛔ | under-18 reject at ingest ✅ `:541` |
+| `:31364` G11-01·G13-35 | SIGNAL, **never a send** (P-068), by absence ⛔ | — |
+
+⛔ `:31361`'s clause (a) is discharged by **a different plan row's carrier** — exactly tick 273's new
+`DISCHARGED-BY-AN-UNCREDITED-TEST`, offered in the brief and still unreported, because the wave never
+reached the clause. **A verdict set fixed at tick 273 does not help when the unit of the question is
+wrong.** RULED: split the ⑤ on `·` and write the clauses out **before** opening any test; one verdict
+line per clause. Same family as tick 271's two-correct-instructions, one level out.
+
+## ⛔ Owner ruling 8 already refused the build I was one measurement from briefing (tick 274)
+
+`FormCaptureAction.php:49`/`:87` wrap `Person::firstOrNew` in `DB::transaction` and **never touch
+`Conversation`**, so `:31361`'s clause (b) is a **product** gap and no assertion could discharge it.
+`CREDIT-ONLY` was right about the carriers; the report's *"an assertion must check that both a Person
+and a Conversation are created"* named the right subject at the wrong layer.
+
+⛔ Then the build died at source. Owner ruling 8: *"X-121 is the spine and belongs to Track 1.
+Pricebook: `bookFromQuote()` records `UNRESOLVED — X-121 exposes no create path` (option b); **the raw
+insert is not accepted**."* Re-measured for the same entity family:
+`EntityWriteAction::handle(string $table, **int $id**, …)` → `EntityService::write(string $table,
+**int $id**, …)` — both take an existing id, an **update** path; and `X-121/Models` holds no
+`Conversation`. **RULED: a NOTE (all three ids are credited and X-155 has zero capability violations,
+so an `unresolved` could never line up with a stage — tick 271), and the raw insert is refused.**
+
+⚠️ Two hazards measured so the next tick does not reopen it: `App\Models\Conversation` is the
+**legacy support thread** (DATA-MODEL §5.9) keyed on `customer_id`, whose docblock makes
+`consent_logged_at` a CIPA gate that is *"build-failing"*, with an `agent_*` single-writer chokepoint
+(`Architecture/AgentTest`); and X-121's noun migration `:49-53` **adopts** that pre-existing table
+and bolts `person_id` on. One table, two generations of key, a consent column in the middle.
+
+**The generalisation:** tick 251 ruled *check how a filing's row-mates were answered*. This is its
+stronger form — **before briefing a BUILD, check how the identical seam was answered in another
+lane.** Ruling 8 had refused this exact insert, in those words, for the same entity family.
+
+## ⛔ A negative existence result scoped to a GUESSED parent is a false absence (tick 274)
+
+`ls app/app/Modules/X-121/Models` → `Asset Fact Job LedgerEntry Number Person Site`, **no
+Conversation** — and I was one step from ruling the clause blocked on a nonexistent noun. It exists
+one directory up at `app/app/Models/Conversation.php`, with a live `conversations` table. Caught only
+by widening to `grep -rln 'class Conversation' app/app`.
+
+⛔ **List the parent before believing the absence.** My own near-miss, recorded because the ledger
+otherwise keeps only the hypotheses that survive — and it is the third time in one tick that opening
+a file reversed a conclusion the ledger was about to carry.
+
+## ⛔ A proposal that names a class and a POLARITY, neither measured (tick 274)
+
+SITE-147's §3 proposed `Event::assertDispatched(SignalRaised::class)` for G11-01/G13-35.
+`grep -rln 'SignalRaised' app/app` → **zero hits**, and `:31364`'s **asserted** column reads
+*"abandonment raises a SIGNAL, **never a send** (P-068), asserted by absence"* — the proposal targets
+the **positive** half. Tick 245's polarity plus tick 273's *read the column, not the row*.
+
+**RULED `OTHER`, no build**, on three measurements: P-068 (`:559`) forbids minting a **`SendPermit`**;
+`SendPermit` is **X-204's** (sixty's) and X-155 imports none; and `FormCaptured` has **zero consumers**
+outside X-155 — so a per-module absence assertion asserts the absence of something nothing here or
+downstream can write, the defect refused for X-176 `G8-15` (tick 211) and X-103 `G12-39` (tick 271).
+The plan's own stated discharge is `:422`'s *"P-068 asserted as ONE squad-wide grep"*, a shared
+architecture lint, not this lane's module tests. Per tick 224: **cannot work here** — the door is
+shut, not the room empty.
+
+⚠️ Half 1 unchanged at 10 (sixty/X-102 5 · ui/X-110 3 · two main-merges). Paired `--stat` on the one
+moved tip: stages' `31666cc2` writes `X-126` (pricebook's) and `X-211` (money's) tests — OWNER ACTION
+45's shape two lanes over, advisory to Track 1, ⛔ never a parallel fix, and only this surface will
+ever print it (tick 190).
+
+## ⛔ "The search came back empty" is a CLAIM, and an untimed command has no nonce — demand the OUTPUT, never the word (tick 275)
+
+Tick 263 established that an untimed before/after has no self-verification, so **the reviewer's own run
+is the only verification there is**. Tick 275 is the same law on a *negative* result, which is the case
+that bites, because a claim of emptiness has no artefact at all. SITE-148's `CREDIT-ONLY` verdicts each
+carried the brief's required evidence — *"(Search terms: … - empty)"* — and three of them are false:
+
+```
+"'third-party' - empty"        →  grep -rn -i 'third.party' app/tests/Modules/X-110/   6 lines
+                                  X110Test.php:70-71  assertTrue(first_party) · assertTrue(third_party_cookies_disabled)
+"'count' - empty"              →  grep -rn -iE 'count\(' app/tests/Modules/X-110/      4 lines
+"'fixture','normal' - empty"   →  grep -rn -iE 'rage|detector' app/tests/Modules/X-102/  12 lines
+                                  X102Test.php:51 the uncredited anchor test, :102-104 three recordRageClick calls
+```
+
+⛔ **The cause is not measured and no block names one** (227, 230, 249; 209 is this seat committing that
+error itself). What is measured is that one grep refutes each. **The structural point is that a positive
+result carries its own evidence and a negative one carries none** — a test method quoted with a
+`file:line` can be opened; "the search was empty" can only be re-run. So the brief must demand the
+**command and its output pasted verbatim**, and `CREDIT-ONLY` is unavailable without it.
+
+Same family as tick 249 (a pass condition of "identical" makes fabrication and success one artefact) and
+tick 251 (a digest of a timed command has no nonce), reaching the one shape neither covered: **a
+measurement whose correct output is nothing.**
+
+## ⛔ Check for a `⛔ KILLED` marker BEFORE grading any id — a refusal test is INDISTINGUISHABLE from CREDIT-ONLY from inside the module (tick 275)
+
+`GOAIEZ-MASTER-PLAN.md:28374` heads G13-09 · G13-13 · G16-26 · G17-14 · G17-22 under *"§44 · P-128 — ad
+management is fenced"*, and `:28095` marks G13-13 `⛔ **KILLED**`. Both of this lane's carriers say so in
+their own docblocks and in their own names — `test_g13_09_no_geo_fenced_ad_serving` (`X110Test.php:292`),
+`test_g13_13_no_ad_delivery_filter` (`:324`). The correct verdict is **`OTHER` — a killed capability,
+whose honest ⑤ *is* a refusal** (tick 196's precedent, applied by this lane to **this same id** at tick
+261). SITE-148 graded both `CREDIT-ONLY`.
+
+⚠️ **Why the heuristic cannot catch it:** a killed id's carrier is *supposed* to assert something other
+than the feature — that is what a refusal test looks like — so "the carrier names the id and its
+assertions are about a different clause" is **simultaneously** the definition of `CREDIT-ONLY` and the
+signature of a correct kill. Nothing inside the module separates them; the discriminator lives in the
+tracker row. ⛔ One `grep -n '<id>' app/GOAIEZ-TRACKER-CAPABILITIES.md` before any verdict.
+
+## ⛔ A brief that names a LITERAL DELIMITER has scoped itself to the rows that happen to use it (tick 275)
+
+Tick 274 ruled the audit's unit is the **clause**, not the id, and SITE-148's brief carried it: *"Split
+the ⑤ column on `·` and give one verdict line per clause."* Row `GOAIEZ-MASTER-PLAN.md:31157`'s asserted
+column — *"the payload is asserted ≤14 KB, first-party, and `grep` finds no third-party tag; no session
+recording"* — contains **no `·` at all**; its four clauses are separated by commas and a semicolon. The
+instruction did not reach the row it was written for, and the wave returned one verdict for four clauses,
+which is exactly the defect tick 274 had just closed.
+
+Seventeenth of the imprecise-brief family (208, 227, 235, 236, 237, 238, 244, 245, 247, 249, 250, 254,
+262, 265, 271, 274) and the first turned on a **separator**. *A vague brief fails loudly; a precisely
+wrong one is obeyed; and one that names a delimiter is silently scoped to the subset that uses it.*
+⛔ Split on **any** of `·`, `;`, `,` — and where a clause list uses none of them, say so and split on
+sense.
+
+The four clauses, measured, so the next tick does not re-derive them: **≤14 KB** `NOT-DISCHARGED` (no
+size assertion exists in the directory) · **first-party** `DISCHARGED-ON-PRODUCT` (`:152` asserts the
+installer's tenant-subdomain `script_tag`; `:70-71` asserts it again, uncredited) · **`grep` finds no
+third-party tag** `OTHER`, a squad-wide lint with no home here · **no session recording**
+`DISCHARGED-BY-AN-UNCREDITED-TEST` (`:360`, carrying G13-32).
+
+## ⛔ `app/tests/Feature/Architecture/` holds FOUR files here, not sixteen — main's list is not this checkout's (tick 275)
+
+`CLAUDE.md`'s inherited Track 1 section above the divider names sixteen domain files including
+`PixelTest`. Measured: `NoRawSetBusinessIdTest.php · PricesTest.php · SchedulingTest.php ·
+TenancyTest.php`. So **every clause whose stated discharge is "a squad-wide grep" has no construction
+site in this tree** — the shape tick 274 ruled for P-068 (`GOAIEZ-MASTER-PLAN.md:422`) and tick 275 for
+the third-party-tag clause. ⛔ Before grading a lint-shaped clause `NOT-DISCHARGED`, `ls` that directory:
+the answer is `OTHER`, and the reason is that the file the clause names does not exist here.
+
+⚠️ Generalisation, and it is the fourth firing of *re-measure a standing claim before building on it*
+against **inherited** text rather than this lane's own: the sections above the divider describe Track 1's
+seat. Anything read from them is a citation, never a measurement (tick 216).
+
+## ⛔ A doctor block quoted WITHOUT its build stamp and its TOTAL line is unverifiable — and the totals were EQUAL (tick 275)
+
+SITE-148's item-7 before/after blocks are provably two distinct runs (timings differ at every stage —
+tick 249's nonce) and neither is this tree's doctor:
+
+```
+report  PASS boundary 0 · contract 0 · citation 0 · FAIL schema 5 · capability 5 · anchor 783
+mine    FAIL boundary 6 · contract 87 · citation 93 ·      schema 15 · capability 455 · anchor 137
+                                                    (+ integrity clean, journey 4 — both omitted)
+```
+
+⭐ **0+0+0+5+5+783 = 793 and 6+87+93+15+455+137 = 793**, and `793 + journey 4` is my run's printed
+`797 violation(s).` The same population under a stage attribution this seat cannot reproduce. ⛔ The
+cause is **not measured and is not named**.
+
+The evidence rule is what generalises: my item asked for **stage lines**, so stage lines came back, and
+a stage line carries neither the `goaiez doctor · build <stamp>` header (the stale-doctor trap this file
+has always named) nor the `N violation(s).` footer — **and the footer is what caught this, in one
+addition.** Every doctor evidence item from here demands **stamp + stages + total**, and a block missing
+either is unusable however honest.
+
+✅ It changed no verdict, because this seat never accepts a doctor block from a report (§3 is recorded
+not measured, tick 196; the red list is re-measured live before any brief, tick 210). Had the verdict
+leaned on the report it would have leaned on nothing — tick 235's corollary, third firing.
+
+## ⚠️ The gate log's MAJORITY convention is `gate` + rc; this lane's three sentinel names stay (tick 275)
+
+`/home/goaiez/tmp/gate-runs.tsv` rows 3320–3399: `grs-antig` (Track 1), `grs-antig-stages`,
+`grs-antig-sixty` **and `wt10` — a different project, `goaiez-review-system`, sharing this box's pest
+lock** — all write the single tool name `gate` for both the start and the end row, discriminated by `rc`
+(`-` vs `0`/`1`). This lane writes `gate-start` / `gate-end` / `gate-signal` (tick 242).
+
+⛔ **RULED: keep the three names.** Tick 258's four-state table — `gate-start` + **live** pid = queued ·
+`gate-start` + **dead** pid = *died without its trap* · `gate-signal` rc ≥128 = killed · `gate-end` =
+completed — is this lane's only instrument for separating a queued gate from a reaped one, and the
+gate-death hypothesis is still open. Collapsing the two sentinels onto `rc` buys a cross-lane `group by
+tool` and costs this lane its sharpest reading. A consumer must accept both conventions.
+
+⚠️ Not this lane's, recorded as advisory: `grs-antig` writes **its own gate pid in the `tool_pid`
+column** (rows 3381–3387, `2646290 2646290`) — tick 227's defect exactly, which breaks the join against
+`kill-log.tsv` in precisely the case the log exists for.
+
+✅ **Tick 259's column rule, seventh firing.** Two `grs-antig-site` gates five minutes apart: `2712438`
+(`gate-start 11:35:45 → gate-end 11:35:51`, rc 1, **no pest row**) is the *coder's* no-`--tests` gate,
+and `2726464` (`gate-start 11:40:18`, no terminal row, `readlink` → alive, later landed) is this seat's.
+Filter by the pid `gate-start` handed you, never by the checkout column.
+
+## ✅ The write-nothing audit discipline paid a SECOND time, and this is the firing that justifies it (tick 275)
+
+Tick 273 recorded the first payment: SITE-146's §4 was wrong and there was nothing to withdraw. Tick 275
+is stronger, because the wave's *evidence* was false rather than only its reasoning — three
+"search — empty" claims and three wrong verdicts, any of which filed as a `why` would now be permanent
+in a file all seven lanes share and Track 1 cherry-picks (`state.py` has no withdraw). The wave wrote
+**nothing**, `git diff --stat HEAD -- .agents/state/` is empty, and the entire cost is one re-run.
+
+⚠️ And the verdict was cheap for the same reason: an empty state diff plus an unmoved HEAD **proves** no
+stage moved, which is stronger evidence than a doctor run and needs none. **A measure-only wave's pass
+condition is an empty diff, and an empty diff proves itself.**
+
+## ⚠️ `launch-coder.sh`'s uncommitted `timeout -k 60 3h`, provenance measured (tick 275)
+
+`git diff` shows `timeout -k 60 3h` added to the **agy** launch line; the `claude` branch already had
+`timeout 8h`. mtime **11:21:53**, *before* `coder.pid` (11:32:27) and before `BRIEF.md` (11:31:48), so
+the coder cannot have made it — it is this seat's own tick-274 edit, absent from that tick's block.
+✅ Kept and committed this tick: a hung `agy` otherwise runs to the 8 h `--print-timeout` and blocks the
+lane, the file is this seat's column, and no writer held the checkout. ⛔ An uncommitted change to the
+launcher is one blanket checkout away from vanishing (tick 207's shape) — **commit a supervisor-file
+edit in the tick that makes it, or record why not.**
