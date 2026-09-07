@@ -828,3 +828,5 @@
 - `2026-09-06T23:57:49` (R245) X-163 — a refusal caused by two pricebook entries disagreeing on the amount says so, and keeps the NO_FACT code and the word pricebook that the gap recorder matches on.
 - `2026-09-07T00:24:30` (R245) X-163 — a NO_FACT price refusal on any channel records the gap row, and a refusal caused by rows that already exist and disagree records nothing.
 - `2026-09-07T00:49:40` (R245) X-163 — a question matches a pricebook service on whole words only, and a service name with no word matches nothing
+- `2026-09-07T01:07:33` (R245) X-163 — pint runs over the touched paths before every commit, so the committed sha is formatted, not only the working tree
+- `2026-09-07T01:45:47` (R245) C-Agent — — a price fact whose key has an empty slug matches no question, and a question matches a price fact on whole words only (ruling 20)

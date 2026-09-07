@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:49:40",
+ "updated": "2026-09-07T01:45:47",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1718,6 +1718,18 @@
    "module": "X-163",
    "chose": "a question matches a pricebook service on whole words only, and a service name with no word matches nothing",
    "at": "2026-09-07T00:49:40",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-163",
+   "chose": "pint runs over the touched paths before every commit, so the committed sha is formatted, not only the working tree",
+   "at": "2026-09-07T01:07:33",
+   "ruling": "R245"
+  },
+  {
+   "module": "C-Agent",
+   "chose": "\u2014 a price fact whose key has an empty slug matches no question, and a question matches a price fact on whole words only (ruling 20)",
+   "at": "2026-09-07T01:45:47",
    "ruling": "R245"
   }
  ],
