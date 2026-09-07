@@ -10678,3 +10678,137 @@ becomes measured rather than argued. **A wave that correctly does nothing is a r
 the presence one. A DOB is a value to be parsed, so whitespace is not a value; a honeypot is a presence
 signal, so whitespace is a value. The mechanical sweep that applies one remedy to every site a grep returns is
 tick 288's error, and it would have been made here **in the opposite direction**.
+
+## ⛔ THE FALSIFIER'S ASSERTION-COUNT DELTA HAS A CLOSED FORM, AND **ZERO** IS THE CORRECT VALUE WHEN THE FAILING ASSERTION IS THE LAST ONE (tick 291)
+
+Every recorded firing of this instrument (251, 268, 270, 278, 279, 288) had the count **fall**, and
+this ledger has treated a *changing* assertion total as what separates a run from a plausible
+transcript. SITE-163's four-state matrix reads `243 · 243 · 243 · 243` — red and green **identical**,
+which under a mechanical reading is tick 249's nonce shape and looks like one run pasted twice. It is
+arithmetically **required**, and the general form reconciles every prior firing:
+
+> **green − red = (assertions in the failing method) − (index of the failing assertion)**
+
+because PHPUnit's `Assert::assertThat()` increments the counter *before* evaluating the constraint, so
+the failing assertion **counts** and every later one in that method does not.
+
+| tick | failing method | assertions | fails at | Δ | measured |
+| :-- | :-- | --: | --: | --: | :-- |
+| 270 M1 | `test_g16_07` | 4 | #1 | 3 | 57 → 54 ✓ |
+| 270 M2 | `test_g19_07` | 9 | #7 | 2 | 57 → 55 ✓ |
+| 279 | (X-102) | 8 | #1 | 7 | 86 → 79 ✓ |
+| 288 | `test_f11_blank_title_consistency` | 6 | #1 | 5 | 99 → 94 ✓ |
+| **291** | `test_a_whitespace_date_of_birth_is_not_an_age_signal` | **1** | #1 | **0** | 243 → 243 ✓ |
+
+⭐ **The instrument is upgraded, not merely qualified: the formula is a TWO-WAY check.** A quoted
+delta that does not match the failing method's structure is caught, and a zero on a single-assertion
+test is *confirmed* rather than tolerated. ⛔ And the old reading is unsafe in one direction:
+**"the count did not move" is NOT evidence of a fabricated falsifier** — it is the expected result
+whenever the falsified assertion is the last or only one in its method. Same family as tick 288's
+*states 1 and 3 being IDENTICAL is the correct result*, one level in: there the **tree** identity was
+correct, here the **count** identity is, and both read as carelessness.
+
+⚠️ The cold witness fired on its lower-bound branch as expected (280, 290): witness **204** = the
+ground 201 + the diff's 3, `foreach` 2, green 243, gap +39 — accounted **in kind, not exactly**.
+
+## ⭐ WHEN A BRIEF DELEGATES A MEASUREMENT THIS SEAT CANNOT TAKE, NAME THE SECOND INSTRUMENT THAT CONSTRAINS THE SAME FACT (tick 291)
+
+`php -r` is refused here (284), which is why tick 290 delegated `Carbon::parse('   ')` to the wave
+rather than asserting it. A transcript is **testimony** on its own. It was not on its own: State 1 of
+the falsifier fails with `-'captured' +'rejected'`, and **only** a parse producing an under-18 verdict
+can make the pre-fix tree reject a whitespace date of birth. Two instruments — one of them the
+falsifier that was going to run anyway — constrain the same fact and agree, and **the agreement is the
+result** (tick 180's pairing law).
+
+It costs nothing and nobody had said to look for it. Third consecutive wave where `php -r` carried a
+decision (SITE-157's `empty("0")`, SITE-162's grounding probe, SITE-163's Carbon); first where the
+corroboration was free and available. ⛔ A lone `php -r` transcript is a claim; a transcript plus a
+behavioural red is a measurement.
+
+⚠️ **The `"0"` direction changed CODE PATH without changing OUTCOME, and it is measured, not
+asserted.** Before, `empty("0")` skipped the parse entirely; after, `trim("0") !== ''` enters the try,
+`Carbon::parse("0")` throws (the probe), and the existing catch absorbs it. **No test asserts it**
+(tick 230 — say which). ⛔ Not briefed, and for a second measurement rather than a size judgement:
+even if a future Carbon parsed `"0"` it could only read ~1970, `diffInYears` ≫ 18, outcome unchanged —
+two independent mechanisms produce it, and a test would credit no id. Per tick 224: **the door is open
+and the room is empty.**
+
+## ✅ Tick 290's `--ruling` correction fired on the very next wave (tick 291)
+
+Four consecutive JOURNAL entries carried a leaked `--ruling R245` prefix; tick 290 read
+`bin/state.py:204-206`, found **no such flag**, and named the mechanism. The `2026-09-07T18:23:17`
+entry is **clean**. A refusal recorded by its mechanism is an ask, by its message a complaint (tick
+217) — and here the ask was to *my own brief's command line*, which is why three earlier corrective
+instructions had no effect: they told the coder to stop transcribing a flag I kept supplying.
+
+## ✅ The `empty()` class is CLOSED; the sibling `isset()` sweep returns exactly ONE defect (tick 291)
+
+Five waves classified **19** `empty()` sites across all seven owned modules (SITE-154/155/156/157/160/
+161/162/163). **A clean sweep is a result that must be written down** (tick 280) or it is re-run as
+backlog three ticks later. This tick swept the sibling predicate:
+`grep -rn --include='*.php' 'isset(' <the seven>` returns **51** hits —
+
+| population | verdict |
+| :-- | :-- |
+| array-key existence tests over caller-supplied arrays | ✅ `isset` is the right predicate for "does this key exist" |
+| 18 compound guards `isset($x) && is_string($x) && $x !== ''` in `SchemaRenderAction` | ✅ the blank test is already in the conjunction |
+| `X-110/Ui/**` + four blade views | ✅ **Track 2's** under ruling 5 |
+| `SchemaRenderAction:204`'s `empty($schema['@type'])` | ✅ deliberate — `isset([])` is true and `$validType` computes `0 === 0` (tick 284) |
+| `FormCaptureAction:136` | ✅ `is_numeric('')`/`is_numeric('   ')` false, `is_numeric('0')` true and `0 < 18` correct |
+| ⛔ `X-176/LlmsTxtRenderAction:25` | **the one defect** → SITE-164 |
+
+⚠️ Recorded, not briefed: `:204`'s `! isset($schema['name']) || ! isset($schema['url'])` is now
+**redundant** with `:207`'s `! is_string(…) || trim(…) === ''`. Redundancy is not a defect and
+removing it would edit a validator to no observable effect.
+
+## ⛔ SITE-164 — TWO BRANCHES OF ONE METHOD DISAGREE ABOUT WHETHER WHITESPACE IS CONTENT (tick 291)
+
+`LlmsTxtRenderAction` renders the published `llms.txt` (`EdgeDeployAction:301`). SITE-160 put the
+blank test on `:22`'s `content` branch and **left `:25`'s `text` branch**, three lines below, in the
+same method, writing the same artifact — which is why no census, count or diff of either renderer
+could show it. Tick 241's law with the copy inside one method.
+
+✅ **Reachable, and measured before it was briefed:** `X103Test.php:289` and `:331` both write
+`['type' => 'offer', 'text' => '20% off']`, so the `text`-key page-content-block shape is real.
+**RULED: the CONTENT-STRING remedy** — `trim((string) ($block['text'] ?? '')) !== ''` — because
+`$block['text']` is prose emitted into a published text file. ⛔ Not the presence predicate; that one
+is the honeypot's, and applying one grep's remedy uniformly is tick 288's error, here in the opposite
+direction.
+
+⛔ **Second clause, and it is the WAVE's measurement:** `:22` reads `$block['content']` with no `??`,
+so a `['type' => 'text']` block carrying no `content` key reaches an undefined array key. I cannot
+establish what PHP/Laravel does — `php -r` is refused here — and the brief therefore measures it
+**through the real deploy path** rather than with a language probe, because what matters is what the
+*application* does including its error handler. What **is** measured is the blast radius:
+`grep -n 'try {\|} catch' EdgeDeployAction.php` returns exactly **one** pair, `:361-367`, **downstream**
+of the `handle()` call at `:296` — so an exception inside the renderer escapes the deploy and takes all
+seven of J11's elements. Tick 281's family.
+
+⛔ Refused: **wrapping the call in try/catch** (converts one defect into a silent class of swallowed
+ones; SITE-131's `Log::warning` guards an *expected* failure mode, not an arbitrary exception, and the
+fix belongs at the construction site); **normalising in `SiteEngine::publish()`** (tick 230 measured
+that publish transforms a provided block not at all, and G6-15/G6-16 assert at `X103Test.php:202` that
+tenant blocks survive verbatim and in order — normalising there deletes a credited, asserted refusal);
+**relaxing any test that reddens** (234, 242).
+
+## ⛔ `LlmsTxtTest.php:169`'s POSITIVE containment is satisfied by the FIXTURE'S OWN BUSINESS NAME (tick 291)
+
+SITE-160's own test asserts `assertStringContainsString('0', $txt, 'Expected 0 to be present in
+llms.txt')` against a fixture whose `businessName` is `'Local Biz F10'` — and **`F10` contains a `0`**,
+emitted on line 1 of the artifact as `# Local Biz F10`. So the clause *"a content of `0` IS emitted"*
+**cannot fail**, while its sibling `assertStringNotContainsString('   ', $txt)` at `:170` is genuinely
+strong because three spaces appear nowhere else.
+
+⭐ **This is tick 283's polarity finding turned around and confirmed on a live case:** a *negative*
+document-wide containment is a superset claim and is the **stronger** form; a *positive* one is
+satisfiable by any other writer of the document and is the **weaker**. The two sit on adjacent lines
+of one method, written in one wave, and only one of them is load-bearing.
+
+✅ And the repair carries its own proof, which is the thing tick 248 said SITE-127's narrowing lacked:
+restore the pre-SITE-160 `empty()` at `:22` and the **old** assertion stays green while the **new**
+line-exact one goes red — one mutation, two assertions, opposite outcomes. That pair *is* the claim
+that the narrowing was load-bearing, and it is why the brief orders C before A: `git checkout <file>`
+reverts to HEAD, so a restore run after a later item has edited the same file takes that edit with it.
+
+⚠️ The fixture half matters too and the brief carries it: the new `'0'` test must pick a
+`businessName`, `title` and `slug` containing **no `0`**, or the narrowing is undone by the fixture.
