@@ -32,7 +32,7 @@ test('dunning sequence escalates before suspend', function () {
 
     expect($action)->not->toBeNull();
     expect($action->action)->toBe('escalate_to_human');
-    expect($action->reason)->toContain('resolution attempt before any suspension');
+    expect($action->reason)->toContain('nothing is stopped until someone does');
 });
 
 /**
