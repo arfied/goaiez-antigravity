@@ -816,3 +816,4 @@
 - `2026-09-06T19:56:07` (R245) X-163 — (R245) a price lookup with no location prefers the business-wide row and refuses when two location books disagree
 - `2026-09-06T20:06:25` (R245) X-163 — an inline price edit that changes the amount clears the confirmation, and one that does not changes nothing
 - `2026-09-06T20:25:38` (R245) X-163 — addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError
+- `2026-09-06T20:44:23` (R245) X-163 — the field refusal renders inline beneath its own input rather than in the page-level panel

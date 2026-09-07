@@ -248,4 +248,52 @@ class PricebookScreenTest extends TestCase
 
         $this->assertEquals($existing->fresh()->price_cents, $result['price_cents']);
     }
+
+    public function test_duplicate_service_refusal_is_rendered_on_the_screen(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Clean',
+            'price_cents' => 12500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Drain Clean')
+            ->set('newPriceDollars', 999.00)
+            ->call('addItem')
+            ->assertSee('A business-wide price for this service already exists.');
+    }
+
+    public function test_add_item_success_does_not_render_refusal_message(): void
+    {
+        $owner = User::factory()->create();
+        $biz = TestCase::provisionTenant(['owner_user_id' => $owner->id]);
+        Tenancy::setUser($owner->id);
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'Drain Clean',
+            'price_cents' => 12500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'confirmed_at' => now()->subDay(),
+            'tax_rate_pct' => 0.0,
+        ]);
+
+        Livewire::actingAs($owner)
+            ->test(Pricebook::class)
+            ->set('newServiceName', 'Another Service')
+            ->set('newPriceDollars', 999.00)
+            ->call('addItem')
+            ->assertDontSee('A business-wide price for this service already exists.');
+    }
 }
