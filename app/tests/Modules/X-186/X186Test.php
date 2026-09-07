@@ -89,4 +89,23 @@ class X186Test extends TestCase
     {
         $this->assertTrue(true);
     }
+    /** [G3-55] */
+    public function test_g3_55_spintax_killed_comes_out_unchanged(): void
+    {
+        $engine = new \App\Modules\X186\Domain\X186Engine();
+        $body = 'This is a {spin|spun|spintax} test body.';
+        
+        $result = $engine->processBody($body);
+        
+        $this->assertEquals($body, $result, 'A body containing spintax syntax must come out unchanged');
+        
+        $allNames = array_map(fn ($p) => $p->getName(), (new \ReflectionMethod(\App\Modules\X186\Domain\X186Engine::class, 'processBody'))->getParameters());
+        
+        foreach ($allNames as $name) {
+            $this->assertDoesNotMatchRegularExpression(
+                '/(doorway|spun|spintax|city|cities|locality|localities|geo_page|near_me|programmatic|page_template|template_page)/i',
+                $name
+            );
+        }
+    }
 }
