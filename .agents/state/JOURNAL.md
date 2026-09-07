@@ -820,3 +820,4 @@
 - `2026-09-06T21:06:52` (R245) X-163 — a price lookup with no location refuses when two business-wide rows disagree on the amount, and still quotes when they agree
 - `2026-09-06T21:54:35` (R245) X-163 — a NO_FACT pricebook refusal records a business-wide gap row and never mutates a location-scoped row
 - `2026-09-06T22:15:37` (R245) X-163 — a price gap is keyed by the service name trimmed and whitespace-collapsed, case preserved, and a blank name records nothing
+- `2026-09-06T22:37:03` (R245) X-163 — a wave reports the gate's test line only after the gate has printed its verdict, and a killed or zero-byte pest is reported verbatim as UNRESOLVED rather than as a computed count
