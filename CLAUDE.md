@@ -171,6 +171,14 @@ Watch for: <the trap that applies, by name>
   measured and stands: **two gates, one tree, no commits between, disagreeing ⇒ the cause is not code**,
   and the shared host is the first place to look, not the diff. Never spend a dispatch of a BLOCK's two on
   an environment.
+  **Wave 120 measured it and it did NOT reproduce** (`errors 2`, the same two real-transport stubs, no
+  42501). The `psql` half stayed `UNRESOLVED` — the maintenance connection prompted for a password and the
+  brief said not to hunt for one — so *why* it fired once is still unknown, and the pid-collision mechanism
+  remains a hypothesis, now with one non-reproduction against it. **Record that distinction rather than
+  closing the item:** "did not reproduce" is evidence about frequency, not about cause, and an intermittent
+  shared-host fault that is quiet on the second look is exactly the one that gets written down as fixed.
+  The rule that earned its keep is the ruling, not the mechanism: a single non-reproducing red on a tree
+  whose gates disagree is data, and it cost this track one measurement wave instead of two dispatches.
 - **A gate-log needle can match the gate log's own vocabulary (2026-09-06, wave 119).** I armed
   `until grep -q "tests \|lock-timeout\|FAILED" .gate13.txt` to wait for §7 and it fired instantly: §3's
   `UNRESOLVED` block prints the literal `tests       X-193`. Had I read the rc instead of the tail I would
