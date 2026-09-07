@@ -800,4 +800,77 @@ class X163Test extends TestCase
         $this->assertEquals('quoted', $res['status']);
         $this->assertEquals($row1->price_cents, $res['price_cents']);
     }
+
+    public function test_price_gap_does_not_touch_a_location_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Loc Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $loc = LocationBook::create(['business_id' => $biz->id, 'location_name' => 'GapLocation', 'version' => 1]);
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'gap service name',
+            'price_cents' => 9999,
+            'is_sample' => false,
+            'is_confirmed' => true,
+            'location_book_id' => $loc->id,
+        ]);
+
+        $event = new AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a gap service',
+            'gap service name'
+        );
+
+        (new \App\Modules\X163\Listeners\RecordPriceGap)->handle($event);
+
+        $row->refresh();
+        $this->assertEquals(0, $row->refusal_count);
+        $this->assertNull($row->refusal_flagged_at);
+
+        $wideRow = PriceBookItem::where('business_id', $biz->id)
+            ->whereNull('location_book_id')
+            ->where('service_name', 'gap service name')
+            ->first();
+
+        $this->assertNotNull($wideRow);
+        $this->assertEquals(0, $wideRow->price_cents);
+        $this->assertFalse((bool)$wideRow->is_confirmed);
+        $this->assertEquals(1, $wideRow->refusal_count);
+    }
+
+    public function test_price_gap_increments_an_existing_business_wide_gap_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Gap Inc Test Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $row = PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'gap service increment',
+            'price_cents' => 0,
+            'is_sample' => false,
+            'is_confirmed' => false,
+            'refusal_count' => 1,
+            'location_book_id' => null,
+        ]);
+
+        $event = new AgentRefused(
+            $biz->id,
+            'NO_FACT',
+            'I do not know the pricebook rate for a gap service',
+            'gap service increment'
+        );
+
+        (new \App\Modules\X163\Listeners\RecordPriceGap)->handle($event);
+
+        $row->refresh();
+        $expectedCount = 1 + 1;
+        $this->assertEquals($expectedCount, $row->refusal_count);
+
+        $count = PriceBookItem::where('business_id', $biz->id)
+            ->where('service_name', 'gap service increment')
+            ->count();
+        $this->assertEquals(1, $count);
+    }
 }

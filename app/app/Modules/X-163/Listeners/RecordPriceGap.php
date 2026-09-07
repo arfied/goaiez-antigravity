@@ -9,8 +9,8 @@ use App\Modules\X163\Models\PriceBookItem;
 use Illuminate\Support\Str;
 
 /**
- * (R245) A NO_FACT agent refusal about pricebook creates a price_cents=0,
- * is_confirmed=false row so the owner sees the gap in the daily digest.
+ * (R245) A NO_FACT agent refusal about pricebook creates a business-wide,
+ * price_cents=0, is_confirmed=false row so the owner sees the gap in the daily digest.
  */
 final class RecordPriceGap
 {
@@ -30,12 +30,14 @@ final class RecordPriceGap
             [
                 'business_id' => $event->businessId,
                 'service_name' => $serviceName,
+                'location_book_id' => null,
             ],
             [
                 'price_cents' => 0,
                 'is_confirmed' => false,
                 'is_sample' => false,
                 'refusal_count' => 0,
+                'location_book_id' => null,
             ]
         );
 

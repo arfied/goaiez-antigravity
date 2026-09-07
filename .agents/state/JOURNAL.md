@@ -818,3 +818,4 @@
 - `2026-09-06T20:25:38` (R245) X-163 — addItem() refuses a second business-wide row with the same service_name for the same business, and says so through addError
 - `2026-09-06T20:44:23` (R245) X-163 — the field refusal renders inline beneath its own input rather than in the page-level panel
 - `2026-09-06T21:06:52` (R245) X-163 — a price lookup with no location refuses when two business-wide rows disagree on the amount, and still quotes when they agree
+- `2026-09-06T21:54:35` (R245) X-163 — a NO_FACT pricebook refusal records a business-wide gap row and never mutates a location-scoped row
