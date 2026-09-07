@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Modules\X176;
 
 use App\Modules\X103\Models\Page;
-use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Storage;
@@ -57,7 +57,7 @@ final class ProductSchemaTest extends TestCase
         $catalog = $json['hasOfferCatalog'];
         $this->assertEquals('OfferCatalog', $catalog['@type']);
         $this->assertCount(1, $catalog['itemListElement']);
-        
+
         $offer = $catalog['itemListElement'][0];
         $this->assertEquals('Offer', $offer['@type']);
         $this->assertEquals('Acme Service', $offer['itemOffered']['name']);
@@ -100,7 +100,7 @@ final class ProductSchemaTest extends TestCase
 
         preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
         $json = json_decode($matches[1], true);
-        
+
         $schemaOffers = [];
         foreach ($json['hasOfferCatalog']['itemListElement'] as $item) {
             $schemaOffers[] = $item['itemOffered']['name'];
@@ -137,7 +137,7 @@ final class ProductSchemaTest extends TestCase
 
         preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
         $this->assertNotEmpty($matches, 'JSON-LD script tag should still be present');
-        
+
         $json = json_decode($matches[1], true);
         $this->assertArrayNotHasKey('hasOfferCatalog', $json);
         $this->assertStringNotContainsString('id="offers-x176"', $html);
@@ -184,7 +184,7 @@ final class ProductSchemaTest extends TestCase
         );
 
         $html2 = Storage::disk('local')->get("sites/{$res2['deploy_hash']}.html");
-        
+
         preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html2, $matches);
         $json = json_decode($matches[1], true);
         $this->assertArrayNotHasKey('hasOfferCatalog', $json);

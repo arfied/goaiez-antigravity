@@ -13,6 +13,7 @@ use App\Modules\X157\Events\DeployCompleted;
 use App\Modules\X157\Events\DeployRolledBack;
 use App\Modules\X157\Models\Deployment;
 use App\Modules\X157\Models\EdgeZone;
+use App\Modules\X163\Models\PriceBookItem;
 use App\Modules\X176\Actions\InternalLinkRenderAction;
 use App\Modules\X176\Actions\LlmsTxtRenderAction;
 use App\Modules\X176\Actions\SchemaRenderAction;
@@ -122,7 +123,7 @@ final class EdgeDeployAction
             }
 
             $productOffers = [];
-            $priceBookItems = \App\Modules\X163\Models\PriceBookItem::where('business_id', $businessId)
+            $priceBookItems = PriceBookItem::where('business_id', $businessId)
                 ->where('is_confirmed', true)
                 ->where('is_sample', false)
                 ->limit(20)
@@ -271,7 +272,7 @@ final class EdgeDeployAction
             if (! empty($productOffers)) {
                 $html .= "<div id=\"offers-x176\">\n";
                 foreach ($productOffers as $offer) {
-                    $html .= "  <div class=\"offer-item\" data-name=\"" . e($offer['name']) . "\">" . e($offer['name']) . " - $" . e((string)$offer['price']) . "</div>\n";
+                    $html .= '  <div class="offer-item" data-name="'.e($offer['name']).'">'.e($offer['name']).' - $'.e((string) $offer['price'])."</div>\n";
                 }
                 $html .= "</div>\n";
             }
