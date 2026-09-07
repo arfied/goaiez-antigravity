@@ -18,6 +18,8 @@ use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentInstruction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\X01\Events\TakeoverReleased;
+use App\Modules\X01\Events\TakeoverStarted;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
 use App\Support\Tenancy;
@@ -167,7 +169,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * ⛔ REFUSED: the web-chat door is X-102's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
+     * BUILD PROPOSAL: G5-31 — the C-Agent side wire for the web-chat door is unbuilt (grep for Chat/X-102 is empty). Owner: C-Agent
      */
     public function test_g5_31_web_chat_door(): void
     {
@@ -176,7 +178,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-32] the voice door is X-66's; = G5-31
-     * ⛔ REFUSED: the voice door is X-66's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
+     * BUILD PROPOSAL: G5-32 — the C-Agent side wire for the voice door is unbuilt (grep for Voice/X-66 is empty). Owner: C-Agent
      */
     public function test_g5_32_voice_door(): void
     {
@@ -199,11 +201,32 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-37] the takeover latch is X-01's (R21)
-     * ⛔ REFUSED: the takeover latch is X-01's, surveyed Actions, Events, Models, Ui and found no C-Agent side wire.
+     * CLOSED: G5-37 — the C-Agent side wire for the takeover latch was built in f7bd376b.
      */
     public function test_g5_37_takeover_latch(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'Latch Biz', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        Event::dispatch(new TakeoverStarted(
+            businessId: $biz->id,
+            conversationId: 123,
+            operatorId: 1,
+            operatorName: 'Test Op'
+        ));
+
+        $res = $this->answer->handle($biz->id, 'Hello', 123);
+        $this->assertEquals('refused', $res['status']);
+        $this->assertEquals('HUMAN_TAKEOVER_LATCH', $res['refusal_code']);
+        $this->assertEquals('', $res['reply']);
+
+        Event::dispatch(new TakeoverReleased(
+            businessId: $biz->id,
+            conversationId: 123
+        ));
+
+        $res2 = $this->answer->handle($biz->id, 'Hello again', 123);
+        $this->assertEquals('answered', $res2['status']);
     }
 
     /**
@@ -247,7 +270,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-43] the 100 authored profiles are the fixture (P-126)
-     * ⛔ REFUSED: the 100 authored profiles are the fixture, surveyed Actions, Events, Models, Ui and found no C-Agent fixture.
+     * BUILD PROPOSAL: G5-43 — "the 100 authored profiles" fixture is unbuilt. Owner: C-Agent
      */
     public function test_g5_43_profile_fixtures(): void
     {
