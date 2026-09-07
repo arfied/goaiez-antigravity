@@ -266,4 +266,22 @@ class X183Test extends TestCase
             });
         });
     }
+
+    /**
+     * [G8-39]
+     * Grounding half of a two-halved capability: the gate passes only when grounding
+     * and citation are both present.
+     * Note: No module under app/app/Modules/ owns the "structure from the top-ranking analysis" surface,
+     * so this test closes the grounding half only.
+     */
+    public function test_g8_39_pre_publish_gate_passes_only_when_grounded_and_cited()
+    {
+        $engine = new GateEngine;
+
+        $this->assertTrue($engine->prePublishGate(true, true));
+
+        $this->assertFalse($engine->prePublishGate(false, true));
+        $this->assertFalse($engine->prePublishGate(true, false));
+        $this->assertFalse($engine->prePublishGate(false, false));
+    }
 }
