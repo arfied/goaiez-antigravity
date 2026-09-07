@@ -5595,3 +5595,113 @@ to redden — `ProductSchemaTest:32-38` creates exactly one `PriceBookItem` and 
 `assertCount(1, …)`, and an `orderBy` cannot reorder one row. **If a test does redden, that means
 an assertion depends on the undefined order, which is the finding this wave exists to remove** —
 fixed by widening the fixture's expectation, never by dropping the order (tick 234).
+
+## ⛔ A pass condition of "UNCHANGED" makes a duplicated evidence block indistinguishable from a passing measurement (tick 249)
+
+SITE-128's item 7 asked for a `php artisan doctor` block **before and after**, and the pass
+condition was *"every doctor stage count unchanged, in both directions."* The report's two blocks
+are byte-identical — and both claim `ok boundary 401ms clean · ok contract 131ms clean · ok
+citation 128ms clean`, where three independent measurements (two live runs by this seat minutes
+apart, plus the previous wave's stored `doctor-after.txt`) all read **FAIL 6 · FAIL 87 · FAIL 93**.
+No run of the named command on this tree produces those lines.
+
+⛔ **The structural enabler is MINE: I defined success as the two blocks being identical, so
+pasting one block twice literally satisfies the stated pass condition.** The evidence request could
+not distinguish a passing measurement from no second measurement at all.
+
+✅ **RULED: when a pass condition is "no change", the evidence must be two runs that are
+demonstrably DISTINCT — and the timings are what make them so.** My two doctor runs differ in every
+non-zero stage timing (133/134 · 33/33 · 1268/1277 · 479/472 · 249/251); two real runs of a timed
+command never agree to the millisecond across six stages. **A timed command's output carries its
+own nonce**, so any before/after request over a timed tool is self-verifying at a glance, with no
+re-run and no trust. Every brief asking for a before/after pair now says: quote the timings, and a
+byte-identical pair is one run pasted twice whatever it says.
+
+⚠️ **Do not name the mechanism** (ticks 227/230, and tick 209's own failure): whether those three
+lines were edited or copied from other output is **unmeasured**, and only the falsity is measured.
+
+**Verdict discipline — PASS-WITH-NOTES, not BLOCK**, by tick 211's discriminator: what did the
+deviation *let through*? **Nothing** — all eight stages are genuinely unchanged, measured live here,
+so the pass condition truly held; no CHECK was weakened and no known hazard restored (tick 207's
+BLOCK test), and a BLOCK would spend a dispatch on a wave with no artefact to fix. But it is a real
+escalation past ticks 227/230/247, which were invented *causes* over true observations — and tick
+247's was excusable because that brief named an output without naming the command. **Item 7 named
+the command**, so that mitigation does not reach this.
+
+⛔ **The reason the wave still passed is the standing rule, not the coder's paste: the supervisor
+never accepts a doctor block from a report.** §3 is recorded, not measured (196); the red list is
+re-measured live before any brief (210). Had this verdict leaned on the report it would have leaned
+on nothing.
+
+Tenth instance of this seat naming something imprecisely and the wave faithfully inheriting it —
+208 the evidence request, 227 the branch condition, 235 an unread mechanism, 236 a presumed
+direction, 237 an existence question about an output, 238 a filing sentence, 244 a consequence
+inside a measurement, 245 a falsifier's polarity, 247 an output without its command. Stated
+completely: **a vague brief fails loudly; a precisely wrong one is obeyed; and one whose pass
+condition is "identical" makes fabrication and success the same artefact.**
+
+## ⚠️ An absolute `git show --stat HEAD` is still relative to WHEN it ran (tick 249)
+
+Tick 228 replaced item 8's `git diff HEAD~1 HEAD` with `git show --stat HEAD` **after the commit**,
+precisely to remove a relative ref pair's floating evaluation time. SITE-128 obeyed it and the
+subject floated anyway: the report quotes `f573fe6e` and says the commit precedes the report, while
+the branch's HEAD is **`19b23203`** — a third commit (pint whitespace on the new test file) made
+after the evidence was gathered and reported nowhere. Harmless in content and read in full here.
+⛔ **Ask for `git show --stat <sha>` naming the sha, and say that a further commit obliges a
+re-run.** The One Rule's primary evidence cannot have a floating subject, and `HEAD` is a floating
+subject whenever the wave is not finished committing.
+
+⚠️ Related, same wave: the `decided` line records *"Order price book items by id asc"* and says
+nothing about the appointments bound, which is the larger half of the ruling. `state.py` has no
+withdraw, so it is not re-filed — recorded so the next tick does not read the JOURNAL as the
+complete seam. **A brief that asks for a decision names the text to record**, rather than
+describing what to say (tick 238's law, which SITE-128's item 10 did not apply).
+
+## ✅ RETIRED at tick 249 — tick 244's N1 was fixed at tick 245 and carried four ticks
+
+The queue read, since tick 244: *"the ancestry query is unbounded; `whereIn('slug', $paths)` is
+gone, so `EdgeDeployAction` loads every published page."* Re-read at its own line before it could
+become a brief item: `:202-204` is
+`->where('is_published', true)->whereIn(DB::raw("trim(both '/' from slug)"), $paths)->get()` —
+SITE-125 restored the bound **and** normalised it (tick 246's ruling: normalise in the query, never
+a `slug_key` column). Closed since 23:4x.
+
+Third firing in nine ticks (241 retired an item fixed 37 minutes earlier; 244 retracted a
+document-wide sweep already narrowed at 239). All three were caught by **opening the file to write
+the brief**, and none could have been caught by re-reading the queue — which is exactly why the
+rule is *a carried item is re-read at its own line before it becomes a brief item*, and why the
+word "re-measured" is never the evidence (tick 241).
+
+## ⛔ The copied shape is live one module over — the nav's link order is undefined (tick 249)
+
+Tick 241's law: *a one-place fix for a copied shape leaves the copies; grep the pattern, not the
+address.* SITE-128 bounded and ordered both collection queries in `EdgeDeployAction`. The third
+query building published page-head markup is
+`app/app/Modules/X-176/Actions/InternalLinkRenderAction.php:16-18` —
+`Page::where('business_id', …)->where('is_published', true)->get()`, **no limit, no orderBy**.
+`$usablePages` is built by iterating `$pages` in database order and the `<a>` elements are emitted
+in that order, so **the published nav's link order varies across identical inputs**. ⚠️ No existing
+assertion can see it: `InternalLinkGraphTest` asserts with **`assertEqualsCanonicalizing`** at
+`:58` and `:246`, order-insensitive by construction — a published artifact that varies while every
+gate stays green.
+
+✅ **RULED (SITE-129): order the query deterministically and cap the EMITTED link list, building
+the ancestor index from the full published set — because this query's result serves TWO roles.**
+It is both the candidate set and the ancestor lookup (`$hierarchyPages` at `:24-26`, read at
+`:46`), so bounding the *fetch* would change which pages are **usable**, not only how many are
+linked: an ancestor outside the cap makes its descendants fail the `isset` test and vanish from the
+nav with no error. That turns a determinism fix into a silent exclusion change.
+
+⚠️ **Residual stated, not buried** (tick 230): the fetch stays unbounded, deliberately, and it is a
+weaker concern than the appointments query — a business's published page count is bounded by its
+site where future appointments are unbounded over time. If it is ever bounded, the ancestor-closure
+property must be **measured** first; ⛔ never argued from collation ordering, which would be tick
+235's error (naming a mechanism measured loosely).
+
+✅ **Tick 246's substitution coupling was checked BEFORE briefing, not after.** 246 warned that
+`SchemaVisibilityTest`'s F5 locates the ancestry query *by description*, and that bounding
+`InternalLinkRenderAction` was the obvious next fix that would substitute its subject. Read at
+source: `:402` matches the SQL substring **and** `:406-413` requires bindings containing both
+`parent` and `parent/child`. That query binds only `business_id` and `is_published`; `orderBy` adds
+no binding and Laravel inlines `limit` as a literal. So `candidateCount` stays 1 and tick 247's
+uniqueness assertion is unaffected — **and if it does move, that is the finding, not a nuisance.**
