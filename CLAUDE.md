@@ -2701,6 +2701,62 @@ Watch for: <the trap that applies, by name>
   `G5-43` is a fixture; `G11-09` needs the unbuilt scoring model (tick 200). The live list is
   `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows re-measured at tick 222, unchanged in
   membership from tick 221, which is the tick-217 collapse hazard not firing.
+- ⚠️⚠️ **A `BUILD PROPOSAL` whose text says the module can do nothing and whose `Owner:` field names that
+  same module is a contradiction in the durable record, and the OWNER field is the half a future wave
+  acts on.** Wave 115 correctly established that C-Agent can do nothing with `chat.started` as declared,
+  kept the row on the backlog (the tick-217/220 collapse hazard not firing, and the first wave on this
+  lane to conclude *unbuildable* without relabelling), and ended the line `Owner: C-Agent`. The finding
+  is true; the field points the next build at the module the same sentence says cannot act.
+  **`REPORT.md` is overwritten every wave and the docblock is not**, so grade the `Owner:` of every
+  proposal separately from its reasoning — they are two claims and this lane has now got each of them
+  wrong while the other was right (wave 95's false absences had the right label and the wrong owner;
+  this has the right reasoning and the wrong owner).
+- ⚠️ **The tick-190 field drift moved one field over: `STAGES:` degraded into §4's integrity line.**
+  Wave 96 filed `ok integrity 0ms clean` as `DOCTOR:`; wave 115 filed the identical line as `STAGES:`,
+  with `DOCTOR:` correct. That line is §4's `doctor:selftest` summary of an integrity-only run and
+  prints identically on a tree with hundreds of open violations (tick 152/153); §3 carries the eight.
+  **Name a field by its content — `the line carrying build <stamp>`, `the line carrying all eight stage
+  names` — never by its position**, because two adjacent lines of one output will keep swapping into
+  each other's fields.
+- ⚠️ **An artifact a report names can be a garbled recollection of a real one, and `ls` is still the
+  whole price.** Wave 115's answer to *"which of your artifacts disagrees with a sentence you wrote"*
+  named `scratch/w115-pest-raw.log`, which has never existed; the real artifact is
+  `w114-pest-raw.log`, and my own brief had already told that coder the defect was **mine**. Nothing was
+  fabricated in substance — this is the wave-86 shape (a missing file that is not evidence of
+  fabrication) inverted into a **present** file under a **wrong** name. ⭐ The fix is in the question:
+  **ask for an artifact by a path that exists and say `ls` it first**, because a free-text
+  "which of yours disagrees" is answerable from memory and a path is not.
+- ⚠️⚠️ **`G5-32` is NOT `G5-31`'s twin, and `capabilities.php` is what makes the mistake attractive —
+  it writes `G5-32` as literally `= G5-31`.** Measured at tick 223, the two modules are asymmetric
+  exactly where the answer lives: **X-102 `owns_table` is `chat_sessions · chat_leads` and has no
+  message or turn store at all**, while **X-66 owns `call_sessions · call_turns · voicemails ·
+  call_autopsies`** — a per-turn store with no X-102 counterpart; and `VoicemailTranscribed` carries
+  `public readonly string $transcription`, **the words themselves**, which is the ⛔ `ROW ID, NEVER THE
+  WORDS` shape rather than the empty-payload shape. A wave that answers `G5-32` by copying `G5-31`'s
+  conclusion will be wrong for reasons one `grep` of the two manifests shows. Sixth wave running these
+  two are briefed apart.
+- ⭐ **The X-102 web-chat door is unwired on X-102's own side — the tick-184 dead-class shape at MODULE
+  scale, and the measurement that made wave 115's conclusion firmer than the wave found it.**
+  `grep -rn "ChatStartAction\|ChatCaptureAction\|ChatEscalateAction" app/app app/tests` names their
+  three declarations, `X102Test.php` and `X110Test.php` — **nothing else, not even
+  `Ui/CustomerfacingWidget.php`**. One chat event *is* row-id shaped —
+  `ChatLeadCaptured(businessId, leadId, personId, name, phone)`, dispatched live from
+  `ChatCaptureAction.php:53`, with the visitor's words in `chat_leads.message` — and
+  `X-102/manifest.php` emits `chat.lead_captured` while `C-Agent/manifest.php` does **not** consume it.
+  **The pairing the frozen plan declares is the one that cannot work and the one that could is
+  undeclared.** ⚠️ And `message.received` is declared under `consumes` by four modules (`C-Agent ·
+  C-Whatsapp · X-153 · X-185`) and under `emits` by **none** — a consumed token nobody emits. All of it
+  is `TRACK 1 ACTION` territory (the manifest is generated from the frozen plan header) and none of it
+  is red, because no checker binds these tokens to code (tick 194).
+- **Backlog at tick 223 — wave 116 is `G5-31`'s owner-field correction and `G5-32`'s own determination,
+  as TWO items.** RULED. `G5-31`'s **finding stands and is not reopened**; what is corrected is the
+  `Owner:` field and what the line does not say, and the measurements go over as commands with the
+  conclusion withheld (tick 214, 2-for-2 on this lane). `G5-32` gets the same three outcomes with no
+  shape named and an explicit warning that its answer may differ from `G5-31`'s — see the asymmetry
+  above. Neither id may be answered `⛔ REFUSED`: X-102, X-66 and C-Agent are all in the thirteen.
+  After 116, `G5-43` is a fixture and `G11-09` needs the unbuilt scoring model (tick 200); the live
+  list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 223, membership
+  unchanged since tick 221 — re-run and never inherited.
 
 ## Style
 
