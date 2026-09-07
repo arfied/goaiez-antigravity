@@ -1,14 +1,14 @@
 <div>
     @if($connections->isEmpty())
-        <x-ui.empty-state heading="No connections" action="Connect" target="connect">
-            Connect your gateway to receive payments.
+        <x-ui.empty-state heading="No gateway connected yet" action="Connect" target="connect">
+            No gateway has been connected on this account. Connecting one waits on the Stripe Connect redirect, which is not built in this checkout yet.
         </x-ui.empty-state>
     @else
         <x-ui.attention-card heading="Connect Gateway">
             <p class="text-sm text-gray-600 mb-4">Manage your connections.</p>
             
             @if($error)
-                <x-ui.error-panel heading="Could not connect">
+                <x-ui.error-panel :heading="$errorHeading ?? 'Could not connect'">
                     {{ $error }}
                 </x-ui.error-panel>
             @endif
@@ -19,7 +19,7 @@
                 @foreach($connections as $conn)
                     <li class="flex items-center justify-between p-2 border rounded">
                         <span>{{ $conn->gateway_name }}</span>
-                        <p class="text-sm text-ink-2">Money lands in <span class="tabular-nums">{{ $conn->merchant_account_id }}</span></p>
+                        <p class="text-sm text-ink-2">Recorded merchant account <span class="tabular-nums">{{ $conn->merchant_account_id }}</span>, which no charge is routed to yet</p>
                         <x-ui.status-pill :state="$conn->merchant_status === 'pending_kyc' ? 'attention' : 'ok'" :label="str_replace('_', ' ', $conn->merchant_status ?? 'external_gateway')" />
                         
                         @if(($conn->merchant_status ?? 'external_gateway') === 'external_gateway')

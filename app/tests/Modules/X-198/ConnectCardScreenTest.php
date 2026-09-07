@@ -103,4 +103,40 @@ class ConnectCardScreenTest extends TestCase
             ->call('applyForMerchant', $connA->id)
             ->assertSee('already past that');
     }
+
+    public function test_connect_card_heads_an_application_refusal_as_an_application()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        $connA = MerchantConnection::create(['business_id' => $biz->id, 'gateway_name' => 'stripe', 'merchant_account_id' => 'acct_A1', 'merchant_status' => 'external_gateway', 'is_connected' => true]);
+
+        Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->call('applyForMerchant', $connA->id)
+            ->assertSee('Could not send the application')
+            ->assertDontSee('Could not connect');
+    }
+
+    public function test_the_connect_door_names_what_it_waits_on_and_never_a_delivery_date()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->assertSee('No gateway has been connected on this account')
+            ->call('connect')
+            ->assertSee('no client id is configured in this checkout yet')
+            ->assertDontSee('week 2');
+
+        config(['services.stripe.client_id' => 'ca_test_money92']);
+
+        Livewire::actingAs($owner)->test(ConnectCard::class)
+            ->call('connect')
+            ->assertSee('The Stripe Connect redirect is not built in this checkout yet')
+            ->assertDontSee('week 2');
+    }
 }
