@@ -97,11 +97,57 @@ class X211Test extends TestCase
     }
 
     /**
-     * [N-033], [G1-61], [G1-65], [G1-70], [G1-71], [G1-74] no refusal declared
+     * [G1-65]
      */
-    public function test_capability_assertions(): void
+    public function test_g1_65_collections_transmission_is_human_action(): void
     {
-        $this->assertTrue(true);
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-103',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        $res = $this->engine->packageForCollections($biz->id, $invoice->id, true);
+        $this->assertSame('packaged_collections', $res['status']);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Collections transmission is a human action only');
+        $this->engine->packageForCollections($biz->id, $invoice->id, false);
+    }
+
+    /**
+     * [G1-74]
+     */
+    public function test_g1_74_offline_payment_needs_reference_or_photo(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'AR Tenant', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $customer = Person::create(['business_id' => $biz->id, 'first_name' => 'Overdue', 'last_name' => 'Client']);
+        $invoice = Invoice::create([
+            'business_id' => $biz->id,
+            'customer_id' => $customer->id,
+            'invoice_number' => 'INV-AR-104',
+            'total_cents' => 60000,
+            'paid_cents' => 0,
+            'status' => 'issued',
+            'due_date' => now()->subDays(15)->toDateString(),
+        ]);
+
+        $pay = $this->engine->logOfflinePayment($biz->id, $invoice->id, 10000, 'check', 'REF-001');
+        $this->assertEquals(10000, $pay->amount_cents);
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Offline payment needs a reference or a photo');
+        $this->engine->logOfflinePayment($biz->id, $invoice->id, 10000, 'check', null, null);
     }
 
     /**
