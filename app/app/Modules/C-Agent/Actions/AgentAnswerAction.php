@@ -106,15 +106,26 @@ final class AgentAnswerAction
                     if ($slug !== null) {
                         $slugWords = explode('-', $slug);
                         $matchesAll = true;
+                        $hasNonEmptyWord = false;
                         foreach ($slugWords as $word) {
-                            if (! str_contains($lower, $word)) {
+                            if ($word === '') {
+                                continue;
+                            }
+                            $hasNonEmptyWord = true;
+                            if (preg_match('/\b'.preg_quote($word, '/').'\b/', $lower) !== 1) {
                                 $matchesAll = false;
                                 break;
                             }
                         }
-                        if (str_contains($lower, str_replace('-', ' ', $slug)) || $matchesAll) {
-                            $fact = $f;
-                            break;
+
+                        if ($hasNonEmptyWord) {
+                            $slugPhrase = str_replace('-', ' ', $slug);
+                            $skuMatches = preg_match('/\b'.preg_quote($slugPhrase, '/').'\b/', $lower) === 1;
+
+                            if ($skuMatches || $matchesAll) {
+                                $fact = $f;
+                                break;
+                            }
                         }
                     }
                 }
