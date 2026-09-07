@@ -2422,3 +2422,53 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     **changed** and given the `assertDontSee` that stops the positive passing for the wrong reason
     (rulings 39, 61). ⚠️ The anchor asserts a **boolean**, not a movement, which is why it has been
     green over a sentence about money since the screen existed.
+106. **A brief that dictates a COMMAND has dictated its outcome (RULED by the lane supervisor
+    2026-09-07 01:2x, on MONEY-99's single `REFUSED`).** The brief wrote
+    `python3 bin/state.py decided R245 X-211 "<what>" "<why>"` in terms. Measured: `bin/state.py:205`
+    is `mid, what = a[0], " ".join(a[1:])` — **`decided` takes the module id first and joins
+    everything after it into ONE string, and the tool adds `R245` itself** (`:209`, `:211`). So
+    `R245` was read as the module id and the call died `R245 is not on the roster`. The coder refused
+    to repair a command the brief had dictated, logged the measurement and reported it under
+    `REFUSED` exactly as rule 10 asks — **that refusal is correct and spends no dispatch** (rulings
+    60b, 71, 94). The consequence: **X-211 has no `(R245)` journal line** for the partial-payment
+    decision. Nothing dangles, because no `(R245)` citation was added to any module header, so the
+    "decisions are recorded, not just made" check has nothing unmatched to find; the journal is one
+    line short of the ledger it should carry, and the corrected lines are MONEY-100 item 3.
+    ⚠️ This is the ruling 66/75/82/92/94 family a **sixth** time: a dictated **signature** dictates a
+    phpstan result, a dictated **line** a `pint` result, a dictated **needle** an `assertSee` result,
+    a dictated **floor** the next tick's verdict, a dictated **test** the branch it renders — and a
+    dictated **command invocation** dictates whether the run can record its own work. **RULED: a
+    brief that writes out a call to one of this repo's own scripts reads that script's argument
+    parsing first and quotes the line it read.** Two of `state.py`'s subcommands take a bare module id
+    and two do not; the difference is four lines of Python and was never checked. Per the standing
+    precedent a supervisor-caused defect is a new item with its own two dispatches.
+107. **A ruling that makes a previously impossible state reachable owns the screens that were correct
+    only because it was impossible — and the paid-today tile says "Received" over a figure that is
+    not cash received (RULED by the lane supervisor 2026-09-07 01:2x, briefed as MONEY-100 item 1).**
+    `X-199/Ui/views/money-paid-today.blade.php:6` labels the headline figure **"Total Received
+    Today"**; `MoneyPaidToday.php:45-51` computes `$invoices->sum('total_cents')` over invoices with
+    `status = 'paid'` and `paid_at >= now()->startOfDay()` — **the full value of every invoice that
+    became paid today**, not the money that arrived. An invoice part-paid on Monday and completed on
+    Friday reports its whole value as Friday's takings. **Before ruling 103 this could not happen:**
+    `recordPayment` closed an invoice whatever the amount, so "settled today" and "received today"
+    were the same number by construction. Ruling 103 made partial payments real and this screen was
+    never re-measured against them. ⚠️ **That is the generalisable half.** Rulings 46, 49 and 50
+    taught this lane to sweep for readers of a value being *changed*; nothing until now said to sweep
+    for readers whose correctness depended on a state that **could not arise**. Every wave that
+    widens a state space re-measures the screens that read it. **RULED: the label states the quantity
+    the code computes and the screen names the missing dependency.** There is no honest cash-received
+    figure and none is to be built — `recordPayment` writes no payment row, X-198's `payments`
+    carries no invoice column (ruling 102), X-211's `offline_payments` is a separate store, so **the
+    receipt date of an instalment is recorded nowhere in this lane**. ⛔ Not by minting a payments
+    table to feed a tile (ruling 59); ⛔ not by changing the sum, which is correct for what the words
+    will now claim; ⛔ not by touching the `<h1>` or the empty state, which are true and one of which
+    `MoneyPaidTodayTest:57` asserts. ⚠️ The corroboration is what makes it a finding rather than a
+    quibble — **every other X-199 money figure gets this right**: `Unpaid.php:76` sums
+    `total_cents - paid_cents`, `:96` sets `outstanding_cents` the same way,
+    `unpaid.blade.php:90-91` prints Total and Paid separately, `invoices.blade.php:50,:53` gives them
+    separate columns. Ruling 98's self-contradiction tell. ⚠️ The proof is a **new** method: the
+    existing fixture seeds `paid_cents === total_cents` and cannot see the defect (ruling 68), and it
+    freezes the clock through the render against `render()`'s own `startOfDay()` (ruling 33).
+    ⚠️ Stated in the brief so the test is not "improved" into something weaker: after the covering
+    payment `paid_cents` equals `total_cents` too, so **no assertion in this suite can pin
+    cash-received** — which is exactly the fact the new sentence states.
