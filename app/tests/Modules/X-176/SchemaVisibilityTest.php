@@ -11,6 +11,7 @@ use App\Modules\X157\Actions\EdgeDeployAction;
 use App\Modules\X157\Actions\EdgeProvisionAction;
 use App\Support\Tenancy;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -369,6 +370,68 @@ final class SchemaVisibilityTest extends TestCase
         $json = json_decode($matches[1], true);
 
         $this->assertArrayNotHasKey('breadcrumb', $json);
+        $this->assertStringNotContainsString('id="breadcrumb-x176"', $html);
+    }
+
+    public function test_f5_breadcrumb_ancestry_query_bounded()
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'F5 Biz']);
+        Tenancy::set((int) $biz->id);
+        $businessId = $biz->id;
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'f5.example.com', true);
+
+        Page::create(['business_id' => $businessId, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+        Page::create(['business_id' => $businessId, 'title' => 'Parent', 'slug' => '/parent', 'is_published' => true]);
+        $page = Page::create(['business_id' => $businessId, 'title' => 'Child', 'slug' => 'parent/child', 'is_published' => true]);
+        Page::create(['business_id' => $businessId, 'title' => 'Unrelated', 'slug' => 'unrelated', 'is_published' => true]);
+
+        $commitId = 'commit-f5';
+
+        DB::enableQueryLog();
+
+        $action = app(EdgeDeployAction::class);
+        $action->handle($businessId, $zone->id, pageId: $page->id, commitId: $commitId, businessName: 'F5 Biz');
+
+        $queries = DB::getQueryLog();
+        DB::disableQueryLog();
+
+        $ancestryQuery = null;
+        foreach ($queries as $q) {
+            if (str_contains($q['query'], 'from "pages" where "business_id" = ? and "is_published" = ?')) {
+                if (count($q['bindings']) > 2) {
+                    $ancestryQuery = $q;
+                    break;
+                }
+                if ($ancestryQuery === null) {
+                    $ancestryQuery = $q;
+                }
+            }
+        }
+
+        $this->assertNotNull($ancestryQuery);
+        $this->assertGreaterThan(2, count($ancestryQuery['bindings']), 'Query should be bounded by paths');
+    }
+
+    public function test_f6_breadcrumb_collision_refuses_trail()
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'F6 Biz']);
+        Tenancy::set((int) $biz->id);
+        $businessId = $biz->id;
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'f6.example.com', true);
+
+        Page::create(['business_id' => $businessId, 'title' => 'Services', 'slug' => 'services', 'is_published' => true]);
+        Page::create(['business_id' => $businessId, 'title' => 'Services Slash', 'slug' => '/services', 'is_published' => true]);
+        $page = Page::create(['business_id' => $businessId, 'title' => 'Child', 'slug' => 'services/child', 'is_published' => true]);
+
+        $commitId = 'commit-f6';
+
+        $action = app(EdgeDeployAction::class);
+        $res = $action->handle($businessId, $zone->id, pageId: $page->id, commitId: $commitId, businessName: 'F6 Biz');
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
         $this->assertStringNotContainsString('id="breadcrumb-x176"', $html);
     }
 }

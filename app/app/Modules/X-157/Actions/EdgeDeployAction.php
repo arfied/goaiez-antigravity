@@ -195,23 +195,39 @@ final class EdgeDeployAction
                             $paths[] = $current;
                         }
 
-                        $hierarchyPages = Page::where('business_id', $businessId)
-                            ->where('is_published', true)
-                            ->get()
-                            ->keyBy(function ($p) {
-                                return trim((string) $p->slug, '/');
-                            });
-
-                        $usable = true;
+                        $searchPaths = [];
                         foreach ($paths as $path) {
-                            if (! isset($hierarchyPages[$path]) || empty($hierarchyPages[$path]->title)) {
+                            $searchPaths[] = $path;
+                            $searchPaths[] = '/'.$path;
+                        }
+
+                        $pages = Page::where('business_id', $businessId)
+                            ->where('is_published', true)
+                            ->whereIn('slug', $searchPaths)
+                            ->get();
+
+                        $hierarchyPages = [];
+                        $usable = true;
+                        foreach ($pages as $p) {
+                            $norm = trim((string) $p->slug, '/');
+                            if (isset($hierarchyPages[$norm])) {
                                 $usable = false;
                                 break;
                             }
-                            $breadcrumbs[] = [
-                                'name' => $hierarchyPages[$path]->title,
-                                'slug' => $path,
-                            ];
+                            $hierarchyPages[$norm] = $p;
+                        }
+
+                        if ($usable) {
+                            foreach ($paths as $path) {
+                                if (! isset($hierarchyPages[$path]) || empty($hierarchyPages[$path]->title)) {
+                                    $usable = false;
+                                    break;
+                                }
+                                $breadcrumbs[] = [
+                                    'name' => $hierarchyPages[$path]->title,
+                                    'slug' => $path,
+                                ];
+                            }
                         }
                         if (! $usable) {
                             $breadcrumbs = [];
