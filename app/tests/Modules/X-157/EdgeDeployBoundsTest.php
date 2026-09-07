@@ -18,6 +18,7 @@ class EdgeDeployBoundsTest extends TestCase
     use RefreshesTenantDatabase;
 
     private EdgeProvisionAction $provisionAction;
+
     private EdgeDeployAction $deployAction;
 
     protected function setUp(): void
@@ -43,21 +44,21 @@ class EdgeDeployBoundsTest extends TestCase
 
         $result = $this->deployAction->handle($biz->id, $zone->id, 100, 1500);
         $this->assertEquals('deployed', $result['status']);
-        
+
         $html = Storage::disk('local')->get("sites/{$result['deploy_hash']}.html");
-        
+
         $count = substr_count($html, 'class="event-item"');
         $this->assertEquals(20, $count);
-        
+
         for ($i = 1; $i <= 20; $i++) {
             $this->assertStringContainsString("Appointment {$i}", $html);
         }
-        
+
         for ($i = 21; $i <= 25; $i++) {
             $this->assertStringNotContainsString("Appointment {$i}", $html);
         }
     }
-    
+
     public function test_price_book_items_are_ordered_by_id_asc()
     {
         $biz = Business::factory()->create();
@@ -72,7 +73,7 @@ class EdgeDeployBoundsTest extends TestCase
                 'is_sample' => false,
             ]);
         }
-        
+
         // Update the first 10 items to move them to the end of the heap, ensuring insertion order != natural DB order.
         $items = PriceBookItem::where('business_id', $biz->id)->orderBy('id', 'asc')->limit(10)->get();
         foreach ($items as $item) {
@@ -81,16 +82,16 @@ class EdgeDeployBoundsTest extends TestCase
 
         $result = $this->deployAction->handle($biz->id, $zone->id, 100, 1500);
         $this->assertEquals('deployed', $result['status']);
-        
+
         $html = Storage::disk('local')->get("sites/{$result['deploy_hash']}.html");
-        
+
         $count = substr_count($html, 'class="offer-item"');
         $this->assertEquals(20, $count);
-        
+
         for ($i = 1; $i <= 20; $i++) {
             $this->assertStringContainsString("Service {$i}", $html);
         }
-        
+
         for ($i = 21; $i <= 25; $i++) {
             $this->assertStringNotContainsString("Service {$i}", $html);
         }
