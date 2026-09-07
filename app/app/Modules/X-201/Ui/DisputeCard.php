@@ -52,7 +52,7 @@ class DisputeCard extends Component
             $businessId = Tenancy::idOrFail();
             $dispute = Dispute::where('business_id', $businessId)->findOrFail($disputeId);
             $action->handle($businessId, $disputeId);
-            $this->success = sprintf('Submitted the defence for invoice #%d.', $dispute->invoice_id);
+            $this->success = sprintf('Defence for invoice #%d is sealed and recorded here. Nothing was sent: filing it waits on the gateway chargeback contract.', $dispute->invoice_id);
         } catch (DisputeNotCompiledException $e) {
             $this->error = $e->getMessage();
         } catch (ModelNotFoundException) {
