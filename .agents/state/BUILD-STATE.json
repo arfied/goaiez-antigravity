@@ -1945,6 +1945,10 @@
   {
    "at": "2026-09-07T00:42:24",
    "note": "G5-32 \u2014 the voice door listener is unbuilt. C-Agent provides the registered AgentAnswerAction. X-66's live call turns emit no events (only metadata like CallAnswered and async VoicemailTranscribed). A listener for call.answered is owed by C-Agent to handle the event, while the delivery of the live voice payload remains unaccounted for. Owner: C-Agent"
+  },
+  {
+   "at": "2026-09-07T00:58:45",
+   "note": "G5-31: C-Agent can do nothing with chat.started. The event carries only session metadata and no message row ID. AgentAnswerAction requires a message to operate, and the law requires passing a row ID rather than the words, which this event lacks. The declared consumption is unsatisfiable as declared."
   }
  ]
 }

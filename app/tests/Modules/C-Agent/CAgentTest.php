@@ -169,7 +169,7 @@ class CAgentTest extends TestCase
 
     /**
      * [G5-31] the web-chat door is X-102's
-     * BUILD PROPOSAL: G5-31 — the web-chat door listener is unbuilt. C-Agent provides the registered AgentAnswerAction. X-102's events manage sessions and carry no user messages. A listener for chat.started is owed by C-Agent to handle the event, while the delivery of the turn payload remains unaccounted for. Owner: C-Agent
+     * BUILD PROPOSAL: G5-31 — C-Agent can do nothing with the chat.started event as it stands. The event carries only session metadata (businessId, sessionId, etc.) and no message row ID. AgentAnswerAction requires a user message to operate, and the law requires passing a row ID rather than the words, which this event lacks. The declared consumption is unsatisfiable as declared. Owner: C-Agent
      */
     public function test_g5_31_web_chat_door(): void
     {
