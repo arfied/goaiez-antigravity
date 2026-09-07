@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T01:11:07",
+ "updated": "2026-09-07T01:39:37",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5055,6 +5055,12 @@
    "chose": "Supersedes the finding beginning with \"The field value extraction in\". The thirteen rows are split into two distinct causes based on a discriminator I measured in the plan: whether the prose falls inside or outside the fields closing backtick. The nine owns_table rows (e.g., plan lines 39281, 39295, 39309) close the backtick correctly before the prose begins, but the checker reads past it, making them a CHECK-DEFECT. The four consumes rows (e.g., plan lines 39284, 39298, 39312) contain prose inside the closing backtick (like `(X-110)` or `(C-Mail)`), meaning the document itself is malformed here, making them PLAN-FROZEN.",
    "at": "2026-09-07T01:11:07",
    "ruling": "R245"
+  },
+  {
+   "module": "X-123",
+   "chose": "The stage iterates through each action in `$m->provides` for a given module and checks if it exists in the `$m->agentReachable` array; if it is missing and the array does not contain the literal string 'none', the action is flagged as a violation.\n\nOf the 15 modules measured, 13 were graded as PLAN-GAP (36 rows), meaning the plan declares a partial @agent_reachable and the manifest faithfully carries that silence.\n\nThe remaining 2 modules (X-123 and X-204) were graded as CHECK-DEFECT (6 rows). For these modules, the plan's DECLARATIONS block explicitly states `@agent_reachable none`, but a subsequent backfill declaration (like `@agent_reachable webhook.test`) overwrites this in the generated manifest. Because the manifest does not carry the string 'none', the :426 guard fails to fire and the remaining provided actions are flagged anyway.\n\nNone of the 15 modules showed a SCAFFOLD-DEFECT.",
+   "at": "2026-09-07T01:39:37",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5201,6 +5207,10 @@
   {
    "at": "2026-09-07T01:11:21",
    "note": "Supersedes the S-145 reports claim that \"none of the three is built\". All three modules (X-221, X-222, X-223) exist at app/app/Modules/ with generated manifests. The flagged values are materialised in the manifest (e.g., in X-223/manifest.php, consumes array contains mail.bounced (C-Mail) and owns_table contains warmup_days. Must not touch X-186 campaigns), not merely in the plan."
+  },
+  {
+   "at": "2026-09-07T01:39:45",
+   "note": "Population: 49 rows across 18 modules. With the 3 deferred modules (X-221, X-222, X-223) excluded, 42 rows remain open across 15 modules. The grade split across the 15 modules is 13 PLAN-GAP modules covering 36 rows, 2 CHECK-DEFECT modules covering 6 rows, and 0 SCAFFOLD-DEFECT modules covering 0 rows."
   }
  ],
  "history": [
