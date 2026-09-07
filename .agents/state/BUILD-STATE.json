@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T03:25:05",
+ "updated": "2026-09-07T04:03:23",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1650,6 +1650,10 @@
   {
    "at": "2026-09-07T03:25:09",
    "note": "X-117: stock taken by an order that can never be paid comes back only through the Cancel button on the checkout block - there is no reservation expiry and none is to be built here, because the missing dependency is the card-entry surface ruling 45 recorded and ruling 20 parks behind a contract"
+  },
+  {
+   "at": "2026-09-07T04:03:23",
+   "note": "X-117: the docblock over checkoutCart described addToCart, so the one method in the lane that decrements inventory carried a comment saying it never does - the sentences were true of the method below it and false of the method above them"
   }
  ],
  "decisions": [
@@ -2155,6 +2159,18 @@
    "module": "X-117",
    "chose": "the storefront says stock comes off when the order is placed rather than when it is paid - checkoutCart decrements inventory_quantity in the same transaction that creates the order pending_payment, and ruling 45 leaves no path to paid, so the cart header and the checkout waiting state now say what the engine does and name cancel as the only way back",
    "at": "2026-09-07T03:25:05",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-117",
+   "chose": "the cart line says the cart expires rather than that stock is reserved - addToCart never touches inventory_quantity and its sold-out guard counts only this cart, so two sessions can each hold the last unit, and the only thing expires_at governs is the cart row itself",
+   "at": "2026-09-07T04:03:23",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-199",
+   "chose": "the declines tile and empty state name the window they are showing - the startOfWeek and deferral filters are both inside the showAll branch, so a tile headed this week counted every decline ever the moment the owner pressed Show all",
+   "at": "2026-09-07T04:03:23",
    "ruling": "R245"
   }
  ]
