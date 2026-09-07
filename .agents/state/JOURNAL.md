@@ -1238,3 +1238,5 @@ agree as sets: yes
 scaffold-only modules: X-221 X-222 X-223
 - `2026-09-07T06:30:14` note: 114 of 121 rows in the :54-only built set do not appear anywhere in their module outside the generated files. This census is an upper bound on how many lack a surface.
 - `2026-09-07T06:30:19` note: RULING AP holds, as across the five-and-five sample size neither the :68 nor the :97 class required any surface to exist in the module.
+- `2026-09-07T07:03:22` note: The :97 refusal text would have to go to app/GOAIEZ-MASTER-PLAN.md or app/GOAIEZ-TRACKER-CAPABILITIES.md, and both exist.
+- `2026-09-07T07:03:25` note: The :68 check reads app/GOAIEZ-TRACKER-CAPABILITIES.md and app/GOAIEZ-MASTER-PLAN.md.
