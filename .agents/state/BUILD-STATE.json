@@ -2356,6 +2356,18 @@
   {
    "at": "2026-09-07T05:33:13",
    "note": "X-103 capability filings dated 2026-09-06T13:28:40: the two UNRESOLVED rows whose why reads X-194 funnel visualization renderer and X-195 marketplace app engine are the capability ids G6-17 and G6-20 respectively. Both rows remain correctly filed and this note adds no row and withdraws none; it exists because each why names the referent and omits the id, so a grep for G6-17 or G6-20 over state.py status returns nothing and an audit reads the pair as unfiled. Recorded so the ids are findable."
+  },
+  {
+   "at": "2026-09-07T05:52:12",
+   "note": "X-176 capability G8-02 is BUILT and credited, superseding the UNRESOLVED capability filing of 2026-09-06T11:21:02 whose why reads: a site structure or content graph API to compute link associations (G8-02). SITE-119 built the internal linking generator at app/app/Modules/X-176/Actions/InternalLinkRenderAction.php, which enumerates the published page set and emits the nav, so the named site structure API is this module own output and was never a dependency. The live doctor reports no G8-02 violation and app/tests/Modules/X-176/ carries one G8-02 credit. This note adds no row and withdraws none."
+  },
+  {
+   "at": "2026-09-07T05:52:12",
+   "note": "X-176 capability G8-25 is BUILT and credited, superseding the UNRESOLVED capability filing of 2026-09-06T11:21:02 whose why reads: page content relationship data to build the link graph (G8-25). SITE-119 derives the relationship from slug ancestry in app/app/Modules/X-176/Actions/InternalLinkRenderAction.php and asserts reachability against the stored artifact DOM, so the named relationship data is this module own output and was never a dependency. The live doctor reports no G8-25 violation and app/tests/Modules/X-176/ carries one G8-25 credit. This note adds no row and withdraws none."
+  },
+  {
+   "at": "2026-09-07T05:52:12",
+   "note": "X-176 capability G8-14 is BUILT and credited, superseding the UNRESOLVED capability filing of 2026-09-06T16:52:20, whose why ends with the claim that EdgeDeployAction.php:170 has nothing to pass as productOffers and that SchemaRenderAction.php:53 stays dead in production. Both halves are false as of SITE-121: app/app/Modules/X-157/Actions/EdgeDeployAction.php line 16 imports the X163 PriceBookItem model, line 129 queries it for the business, line 269 passes productOffers to SchemaRenderAction, and line 305 renders the offers-x176 block into the served artifact. The live doctor reports no G8-14 violation and app/tests/Modules/X-176/ carries one G8-14 credit. This note adds no row and withdraws none."
   }
  ]
 }
