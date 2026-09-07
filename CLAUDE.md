@@ -160,6 +160,24 @@ Watch for: <the trap that applies, by name>
   code: two gates on the identical tree, zero commits between them, disagreeing (`errors 10` then
   `errors 8`). Rebuild the classmap **before** the first gate after any merge, and never attribute a
   class-not-found to a lane until `grep -c <Class> app/vendor/composer/autoload_classmap.php` says 1.
+- **The identical-tree tell has a second instance, and it is not always the classmap (2026-09-06, wave
+  119).** The coder's gate read `errors 2` and mine read `errors 3` on `e07a5ae7` with zero commits
+  between them; the extra one was J8, `SQLSTATE[42501] permission denied to terminate process`.
+  `JourneyHarness.php:814` names its scratch database **by process id** — `goaiez_antig_drill_{$pid}` —
+  and `:908`'s `finally` force-drops it, and `DROP DATABASE … WITH (FORCE)` raises exactly 42501 when a
+  backend on that database belongs to **another role**. Sixty checkouts share this box and pids recur, so
+  a stranger's leftover `goaiez_antig_drill_<pid>` makes `CREATE` fail and the `finally` then try to
+  force-drop **their** database. Unverified — `psql` is denied to this seat — but the general rule is
+  measured and stands: **two gates, one tree, no commits between, disagreeing ⇒ the cause is not code**,
+  and the shared host is the first place to look, not the diff. Never spend a dispatch of a BLOCK's two on
+  an environment.
+- **A gate-log needle can match the gate log's own vocabulary (2026-09-06, wave 119).** I armed
+  `until grep -q "tests \|lock-timeout\|FAILED" .gate13.txt` to wait for §7 and it fired instantly: §3's
+  `UNRESOLVED` block prints the literal `tests       X-193`. Had I read the rc instead of the tail I would
+  have reported a suite that never ran. This is **the row that is legitimate by construction** again, now
+  in a wait condition rather than a detector — a needle drawn from the tool's own vocabulary matches the
+  tool describing itself. Anchor on the result line's own punctuation (`· FAILED`), and read the tail
+  before believing any wait that returns.
 - **A stale doctor.** `doctor`'s first line is `goaiez doctor · build <stamp>`.
   Three identical runs once came from files that were never copied into the
   tree. Compare the stamp before trusting any count.
