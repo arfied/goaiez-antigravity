@@ -7,6 +7,8 @@ use App\Modules\X198\Domain\StripeGatewayClient;
 use App\Modules\X198\Models\MerchantConnection;
 use App\Modules\X198\Models\Payment;
 use App\Modules\X199\Domain\InvoiceEngine;
+use App\Modules\X199\Domain\InvoiceReader;
+use App\Modules\X199\Events\InvoicePaid;
 use App\Modules\X199\Events\LimitExceeded;
 use App\Modules\X199\Events\OverflowCharged;
 use App\Modules\X199\Events\OverflowReversed;
@@ -337,5 +339,85 @@ test('an overflow on a non-Stripe connection is refused, not charged', function 
         expect($payment)->not->toBeNull();
         expect($payment->status)->toBe('awaiting_processor');
         expect($payment->gateway_charge_id)->toBeNull();
+    });
+});
+
+test('a partial payment leaves the invoice unpaid, chased and unreversed', function () {
+    Event::fake([LimitExceeded::class, OverflowCharged::class, OverflowReversed::class, InvoicePaid::class]);
+
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    Tenancy::actingAs((int) $business->id, function () use ($business, $customer) {
+        MerchantConnection::create([
+            'business_id' => $business->id,
+            'gateway_name' => 'stripe',
+            'merchant_account_id' => 'acct_test',
+            'is_connected' => true,
+        ]);
+
+        // Setup terms with $5,000 limit, currently at $4,000 outstanding
+        $terms = CreditTerm::create([
+            'business_id' => $business->id,
+            'customer_id' => $customer->id,
+            'terms_type' => 'net_30',
+            'credit_limit_cents' => 500000,
+            'current_outstanding_cents' => 400000,
+            'card_on_file_token' => 'tok_visa',
+        ]);
+
+        // Fake the gateway at HTTP client because StripeGatewayClient and GatewayEngine are marked final
+        Http::fake([
+            'api.stripe.com/*' => Http::response(['id' => 'ch_mock_123'], 200),
+        ]);
+
+        $engine = app(InvoiceEngine::class);
+
+        // Issue $1,500 invoice -> outstanding becomes $5,500, overflow is $500.
+        $result = $engine->issueInvoice(
+            $business->id,
+            $customer->id,
+            [['description' => 'Big Service', 'quantity' => 1, 'unit_price_cents' => 150000]],
+            'net_30'
+        );
+
+        $invoice = $result['invoice'];
+
+        expect($result['is_over_limit'])->toBeTrue();
+
+        Event::assertDispatched(LimitExceeded::class, function ($e) use ($business) {
+            return $e->businessId === $business->id && $e->outstandingCents === 550000;
+        });
+
+        Event::assertDispatched(OverflowCharged::class, function ($e) use ($invoice) {
+            return $e->invoiceId === $invoice->id && $e->amountCents === 50000;
+        });
+
+        $charge = OverflowCharge::where('invoice_id', $invoice->id)->where('charge_type', 'overflow_charged')->first();
+        expect($charge)->not->toBeNull();
+        expect($charge->amount_cents)->toBe(50000);
+        expect($charge->reference_id)->toBe('ch_mock_123');
+
+        $res = $engine->recordPayment($business->id, $invoice->id, 20000);
+
+        $invoice->refresh();
+
+        expect($res['status'])->not->toBe('paid');
+        expect($invoice->paid_cents)->toBe(20000);
+        expect($invoice->status)->not->toBe('paid');
+        expect($invoice->paid_at)->toBeNull();
+
+        expect(OverflowCharge::where('invoice_id', $invoice->id)
+            ->where('charge_type', 'overflow_reversed')
+            ->count())->toBe(0);
+
+        Event::assertNotDispatched(OverflowReversed::class);
+        Event::assertNotDispatched(InvoicePaid::class);
+
+        $openIds = app(InvoiceReader::class)
+            ->openUnpaidForBusiness($business->id)
+            ->pluck('id')
+            ->all();
+        expect($openIds)->toContain($invoice->id);
     });
 });

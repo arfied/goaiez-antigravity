@@ -160,49 +160,55 @@ final class InvoiceEngine
             $invoice = Invoice::where('business_id', $businessId)->findOrFail($invoiceId);
             $payAmount = $amountCents ?? $invoice->total_cents;
 
+            $newPaid = $invoice->paid_cents + $payAmount;
+            $status = $newPaid >= $invoice->total_cents ? 'paid' : $invoice->status;
+
             $invoice->update([
-                'paid_cents' => $invoice->paid_cents + $payAmount,
-                'status' => 'paid',
-                'paid_at' => now(),
+                'paid_cents' => $newPaid,
+                'status' => $status,
+                'paid_at' => $status === 'paid' ? now() : null,
             ]);
 
-            // If there were overflow charges for this invoice, reverse them (TEST ANCHOR)
-            $charges = OverflowCharge::where('business_id', $businessId)
-                ->where('invoice_id', $invoice->id)
-                ->where('charge_type', 'overflow_charged')
-                ->where('status', 'charged')
-                ->get();
-
             $reversedCharges = [];
-            foreach ($charges as $c) {
-                $reversed = OverflowCharge::create([
-                    'business_id' => $businessId,
-                    'customer_id' => $invoice->customer_id,
-                    'invoice_id' => $invoice->id,
-                    'charge_type' => 'overflow_reversed',
-                    'amount_cents' => $c->amount_cents,
-                    'card_token' => $c->card_token,
-                    'reference_id' => null,
-                ]);
-                $reversedCharges[] = $reversed;
 
-                Event::dispatch(new OverflowReversed(
+            if ($status === 'paid') {
+                // If there were overflow charges for this invoice, reverse them (TEST ANCHOR)
+                $charges = OverflowCharge::where('business_id', $businessId)
+                    ->where('invoice_id', $invoice->id)
+                    ->where('charge_type', 'overflow_charged')
+                    ->where('status', 'charged')
+                    ->get();
+
+                foreach ($charges as $c) {
+                    $reversed = OverflowCharge::create([
+                        'business_id' => $businessId,
+                        'customer_id' => $invoice->customer_id,
+                        'invoice_id' => $invoice->id,
+                        'charge_type' => 'overflow_reversed',
+                        'amount_cents' => $c->amount_cents,
+                        'card_token' => $c->card_token,
+                        'reference_id' => null,
+                    ]);
+                    $reversedCharges[] = $reversed;
+
+                    Event::dispatch(new OverflowReversed(
+                        businessId: $businessId,
+                        customerId: $invoice->customer_id,
+                        invoiceId: $invoice->id,
+                        amountCents: $c->amount_cents
+                    ));
+                }
+
+                Event::dispatch(new InvoicePaid(
                     businessId: $businessId,
-                    customerId: $invoice->customer_id,
                     invoiceId: $invoice->id,
-                    amountCents: $c->amount_cents
+                    amountPaidCents: $payAmount
                 ));
             }
 
-            Event::dispatch(new InvoicePaid(
-                businessId: $businessId,
-                invoiceId: $invoice->id,
-                amountPaidCents: $payAmount
-            ));
-
             return [
                 'invoice_id' => $invoice->id,
-                'status' => 'paid',
+                'status' => $status,
                 'paid_cents' => $invoice->paid_cents,
                 'reversed_overflow_charges' => $reversedCharges,
             ];
