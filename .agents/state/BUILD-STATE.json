@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T22:27:10",
+ "updated": "2026-09-06T22:48:05",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1569,10 +1569,23 @@
    "unresolved": []
   },
   "X-210": {
-   "status": "DONE",
+   "status": "UNRESOLVED",
    "wave": 31,
    "intent": "GROW",
-   "unresolved": []
+   "unresolved": [
+    {
+     "module": "X-210",
+     "stage": "G1-67 \u2014 X-210 exposes no margin-guard surface; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision.",
+     "why": "",
+     "at": "2026-09-06T22:48:01"
+    },
+    {
+     "module": "X-210",
+     "stage": "G7-47 \u2014 X-210 exposes no cohort-rate row; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision.",
+     "why": "",
+     "at": "2026-09-06T22:48:05"
+    }
+   ]
   },
   "X-211": {
    "status": "DONE",
@@ -2263,6 +2276,18 @@
    "stage": "capability",
    "why": "X-102 exposes no rich-media/carousel render path; chat renders text only",
    "at": "2026-09-06T22:09:15"
+  },
+  {
+   "module": "X-210",
+   "stage": "G1-67 \u2014 X-210 exposes no margin-guard surface; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision.",
+   "why": "",
+   "at": "2026-09-06T22:48:01"
+  },
+  {
+   "module": "X-210",
+   "stage": "G7-47 \u2014 X-210 exposes no cohort-rate row; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision.",
+   "why": "",
+   "at": "2026-09-06T22:48:05"
   }
  ],
  "decisions": [
@@ -2768,6 +2793,12 @@
    "module": "X-161",
    "chose": "timeTravelAllowed(bool $isSandbox): bool and destructionDue(bool $isUntouched, int $ageInDays, bool $warned): bool - rules pure domain methods with 14 days and warning required",
    "at": "2026-09-06T22:27:10",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-210",
+   "chose": "a promotion with NO CAP cannot be saved \u2014 asserted R245",
+   "at": "2026-09-06T22:47:28",
    "ruling": "R245"
   }
  ],

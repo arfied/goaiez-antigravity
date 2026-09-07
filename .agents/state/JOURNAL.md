@@ -944,3 +944,6 @@
 - `2026-09-06T22:08:35` (R245) X-184 — autoRefreshAllowed refuses when traffic is at or above floor
 - `2026-09-06T22:09:15` UNRESOLVED capability X-102 - X-102 exposes no rich-media/carousel render path; chat renders text only
 - `2026-09-06T22:27:10` (R245) X-161 — timeTravelAllowed(bool $isSandbox): bool and destructionDue(bool $isUntouched, int $ageInDays, bool $warned): bool - rules pure domain methods with 14 days and warning required
+- `2026-09-06T22:47:28` (R245) X-210 — a promotion with NO CAP cannot be saved — asserted R245
+- `2026-09-06T22:48:01` UNRESOLVED G1-67 — X-210 exposes no margin-guard surface; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision. X-210 - 
+- `2026-09-06T22:48:05` UNRESOLVED G7-47 — X-210 exposes no cohort-rate row; Domain/ is PromotionEngine and X210Engine, Ui/ is five panels. That is an absent dependency under rule 09, not an unmade decision. X-210 - 

@@ -124,4 +124,61 @@ class X210Test extends TestCase
         $redemption = $this->applyAction->applyPromotion($biz->id, 'FALL10', 8801, 'ORD-G1805', 10000);
         $this->assertEquals(1000, $redemption->discount_applied_cents);
     }
+
+    /**
+     * [G1-66]
+     */
+    public function test_g1_66_promotion_with_no_cap_cannot_be_saved(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Tenant G1-66', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('A promotion with no cap cannot be saved.');
+
+        $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'NOCAP',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: null
+        );
+    }
+
+    /**
+     * [G1-69], [G6-38], [G15-21]
+     */
+    public function test_g1_69_g6_38_g15_21_no_interstitial_on_cancel(): void
+    {
+        $dir = base_path('app/Modules/X-210/Ui');
+        $this->assertDirectoryExists($dir);
+
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = false;
+        $match = '';
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php') {
+                $content = file_get_contents($file->getPathname());
+                if (preg_match('/(interstitial|cancel_confirm|are_you_sure_cancel|save_offer_modal|prevent_cancel)/i', $content)) {
+                    $found = true;
+                    $match = $file->getPathname();
+                    break;
+                }
+            }
+        }
+        $this->assertFalse($found, "Interstitial or cancel wall found in: $match");
+
+        $biz = TestCase::provisionTenant(['name' => 'Promotion Tenant Interstitial Test', 'currency' => 'USD']);
+        DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $promo = $this->createAction->createPromotion(
+            businessId: $biz->id,
+            code: 'NOCANCELWALL',
+            discountValue: 10,
+            discountType: 'percentage',
+            maxRedemptions: 5
+        );
+        $this->assertNotNull($promo);
+        $this->assertEquals('NOCANCELWALL', $promo->code);
+    }
 }
