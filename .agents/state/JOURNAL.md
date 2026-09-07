@@ -1261,3 +1261,5 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T10:38:17` note: CapabilityStage::testedIds() closes a violation on any occurrence of the id in any file under tests/Modules/<M>/, including a comment — so the count is not evidence that an assertion exists.
 - `2026-09-07T10:38:17` note: CapabilityStage::specsWithoutRefusal() reads the generated app/Modules/<M>/capabilities.php, not the tracker, and the two already agree — so the 77 cannot be closed by transcription.
 - `2026-09-07T10:38:17` note: Five journey evidence files carry manufactured artifact_ids (fake_decision_123, inv_123, 22, 2, 6a9ecb0d135f3), each suppressing a journey violation. Record only.
+- `2026-09-07T11:26:56` note: that [N-126-01] was already present at app/tests/Modules/X-126/X126Test.php:89 before S-166, so the second test closed no violation and capability fell by one and not two
+- `2026-09-07T11:27:04` note: that bin/supervise.sh --tests runs doctor integrity-only and the eight stage counts require --full-doctor, so a report's stage figures cannot come from a --tests-only gate file
