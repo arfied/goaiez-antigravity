@@ -21,7 +21,9 @@ final class InternalLinkRenderAction
             return '';
         }
 
-        $hierarchyPages = $pages->keyBy('slug');
+        $hierarchyPages = $pages->keyBy(function ($page) {
+            return trim((string) $page->slug, '/');
+        });
         $usablePages = [];
 
         foreach ($pages as $page) {
@@ -56,11 +58,47 @@ final class InternalLinkRenderAction
             return '';
         }
 
-        $html = '<nav id="internal-links-x176">';
+        $nodes = [];
         foreach ($usablePages as $page) {
-            $href = '/'.ltrim((string) $page->slug, '/');
-            $html .= '<a href="'.htmlspecialchars($href, ENT_QUOTES).'">'.htmlspecialchars((string) $page->title, ENT_QUOTES).'</a>';
+            $slug = trim((string) $page->slug, '/');
+            $nodes[$slug] = (object) ['page' => $page, 'children' => []];
         }
+
+        $tree = [];
+        foreach ($nodes as $slug => $node) {
+            if ($slug === '') {
+                $tree[] = $node;
+            } else {
+                $parts = explode('/', $slug);
+                array_pop($parts);
+                $parentSlug = implode('/', $parts);
+                if (isset($nodes[$parentSlug])) {
+                    $nodes[$parentSlug]->children[] = $node;
+                } else {
+                    $tree[] = $node;
+                }
+            }
+        }
+
+        $renderTree = function (array $nodes) use (&$renderTree): string {
+            if (empty($nodes)) {
+                return '';
+            }
+            $html = '<ul>';
+            foreach ($nodes as $node) {
+                $page = $node->page;
+                $href = '/'.ltrim((string) $page->slug, '/');
+                $html .= '<li><a href="'.htmlspecialchars($href, ENT_QUOTES).'">'.htmlspecialchars((string) $page->title, ENT_QUOTES).'</a>';
+                $html .= $renderTree($node->children);
+                $html .= '</li>';
+            }
+            $html .= '</ul>';
+
+            return $html;
+        };
+
+        $html = '<nav id="internal-links-x176">';
+        $html .= $renderTree($tree);
         $html .= '</nav>';
 
         return $html."\n";

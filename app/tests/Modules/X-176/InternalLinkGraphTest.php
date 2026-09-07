@@ -45,8 +45,15 @@ final class InternalLinkGraphTest extends TestCase
 
         $this->assertStringContainsString('<nav id="internal-links-x176">', $html);
 
-        preg_match_all('/<a href="([^"]+)">([^<]+)<\/a>/', $html, $matches);
-        $hrefs = $matches[1];
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $hrefs = [];
+        foreach ($links as $link) {
+            $hrefs[] = $link->getAttribute('href');
+        }
 
         $this->assertEqualsCanonicalizing([
             '/services',
@@ -82,42 +89,50 @@ final class InternalLinkGraphTest extends TestCase
 
         $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
 
-        preg_match_all('/<a href="([^"]+)">([^<]+)<\/a>/', $html, $matches);
-        $hrefs = $matches[1];
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
 
-        $this->assertContains('/', $hrefs);
-
-        $edges = [];
-        $nodes = $hrefs;
-
-        foreach ($nodes as $node) {
-            if ($node === '/') {
-                continue;
-            }
-            $parts = explode('/', trim($node, '/'));
-            array_pop($parts);
-            $parent = '/'.implode('/', $parts);
-            if ($parent === '/') {
-                // edge case where parent is root, explode gives empty string but implode is empty
-            }
-            $edges[] = ['from' => $parent, 'to' => $node];
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $nodes = [];
+        foreach ($links as $link) {
+            $nodes[] = $link->getAttribute('href');
         }
+
+        $this->assertContains('/', $nodes);
 
         $parentsByChild = [];
-        foreach ($edges as $edge) {
-            if (! isset($parentsByChild[$edge['to']])) {
-                $parentsByChild[$edge['to']] = [];
+        foreach ($links as $link) {
+            $childHref = $link->getAttribute('href');
+            if (! isset($parentsByChild[$childHref])) {
+                $parentsByChild[$childHref] = [];
             }
-            $parentsByChild[$edge['to']][] = $edge['from'];
+            $parentList = $xpath->query('../../../a', $link);
+            if ($parentList->length > 0) {
+                $parentHref = $parentList->item(0)->getAttribute('href');
+                $parentsByChild[$childHref][] = $parentHref;
+            }
         }
 
         foreach ($nodes as $node) {
             if ($node === '/') {
-                $this->assertArrayNotHasKey($node, $parentsByChild, 'Root should have no parents');
+                $this->assertEmpty($parentsByChild[$node], 'Root should have no parents');
             } else {
                 $this->assertCount(1, $parentsByChild[$node], "Node $node should have exactly one parent");
                 $this->assertContains($parentsByChild[$node][0], $nodes, "Parent of $node must be a valid node");
             }
+        }
+
+        foreach ($nodes as $node) {
+            $current = $node;
+            $steps = 0;
+            while ($current !== '/') {
+                $this->assertLessThanOrEqual(count($nodes), $steps, "Graph has a cycle starting from $node");
+                $current = $parentsByChild[$current][0];
+                $steps++;
+            }
+            $this->assertEquals('/', $current);
         }
     }
 
@@ -182,10 +197,56 @@ final class InternalLinkGraphTest extends TestCase
 
         $this->assertStringContainsString('<nav id="internal-links-x176">', $html);
 
-        preg_match_all('/<a href="([^"]+)">([^<]+)<\/a>/', $html, $matches);
-        $hrefs = $matches[1];
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $hrefs = [];
+        foreach ($links as $link) {
+            $hrefs[] = $link->getAttribute('href');
+        }
 
         $this->assertContains('/about', $hrefs);
         $this->assertNotContains('/a/b/c', $hrefs);
+    }
+
+    public function test_normalises_leading_slashes_in_slugs(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Internal Link Tenant 5']);
+        Tenancy::set((int) $biz->id);
+
+        $rootPage = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => '/', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Services', 'slug' => '/services', 'is_published' => true]);
+        Page::create(['business_id' => $biz->id, 'title' => 'Plumbing', 'slug' => '/services/plumbing', 'is_published' => true]);
+
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'links5.example.com', true);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $rootPage->id,
+            commitId: 'commit_test_5',
+            businessName: 'My Biz 5'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        $dom = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        $xpath = new \DOMXPath($dom);
+        $links = $xpath->query('//nav[@id="internal-links-x176"]//a');
+        $hrefs = [];
+        foreach ($links as $link) {
+            $hrefs[] = $link->getAttribute('href');
+        }
+
+        $this->assertEqualsCanonicalizing([
+            '/',
+            '/services',
+            '/services/plumbing',
+        ], $hrefs);
     }
 }
