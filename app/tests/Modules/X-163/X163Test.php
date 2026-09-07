@@ -17,6 +17,7 @@ use App\Modules\X163\Actions\PriceRangeAction;
 use App\Modules\X163\Domain\PricebookEngine;
 use App\Modules\X163\Events\PriceRefusalFlagged;
 use App\Modules\X163\Events\VersionBumped;
+use App\Modules\X163\Listeners\RecordPriceGap;
 use App\Modules\X163\Models\CalloutFee;
 use App\Modules\X163\Models\LocationBook;
 use App\Modules\X163\Models\PriceBookItem;
@@ -823,7 +824,7 @@ class X163Test extends TestCase
             'gap service name'
         );
 
-        (new \App\Modules\X163\Listeners\RecordPriceGap)->handle($event);
+        (new RecordPriceGap)->handle($event);
 
         $row->refresh();
         $this->assertEquals(0, $row->refusal_count);
@@ -836,7 +837,7 @@ class X163Test extends TestCase
 
         $this->assertNotNull($wideRow);
         $this->assertEquals(0, $wideRow->price_cents);
-        $this->assertFalse((bool)$wideRow->is_confirmed);
+        $this->assertFalse((bool) $wideRow->is_confirmed);
         $this->assertEquals(1, $wideRow->refusal_count);
     }
 
@@ -862,7 +863,7 @@ class X163Test extends TestCase
             'gap service increment'
         );
 
-        (new \App\Modules\X163\Listeners\RecordPriceGap)->handle($event);
+        (new RecordPriceGap)->handle($event);
 
         $row->refresh();
         $expectedCount = 1 + 1;
