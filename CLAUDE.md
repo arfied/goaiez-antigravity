@@ -10353,3 +10353,223 @@ ACTION; `reviews` 1 + `money` 1, both merges *of main*) · half 2 **10** · half
   262).
 - ⚠️ `cd app && php artisan doctor` drifted the shell once and was reset in its own call. Per-call, not
   per-tick (tick 285).
+
+## ⛔ THE ID CENSUS IS A PROXY SCOPED WIDER THAN THE CHECKER IT STANDS IN FOR — add `--include='*.php'` (tick 287)
+
+This lane has used `grep -rho -E '<ids>' app/tests/Modules/<M>/ | sort | uniq -c` as a pass condition since
+tick 208 and as the **fifth audit axis's** primary instrument (264–279, the axis that decides whether work is
+owed). It greps **every file**. `CapabilityStage` does not:
+
+```
+CapabilityStage.php:286   foreach (Finder::create()->files()->in($dir)->name('*.php') as $f)
+```
+
+Measured at tick 287, both scopings on one directory: an untracked `LlmsTxtTest.php.orig` left inside
+`app/tests/Modules/X-176/` carries `[G3-34]` on line 18, so the census read **`2 G3-34`** where the checker
+reads **`1`** — and `capability` stayed at 455, because the checker cannot see a `.orig`. Every other id was
+1 under both scopings.
+
+⛔ **Both directions matter and only one is loud.**
+
+- **False stop** — the census rises on a file the checker cannot see and a brief's ⛔ fires on a wave that
+  changed no credit. Tick 286: *a false stop costs the WHOLE WAVE.*
+- ⛔ **False credit, the quiet one** — the census shows an id carried that `CapabilityStage` has no carrier
+  for, so an audit concludes a capability is discharged when the checker will never credit it. Nothing
+  re-reads that conclusion.
+
+✅ **RULED: every id census in this lane carries `--include='*.php'`, because a proxy scoped wider than its
+principal is not a measurement of it.** ⚠️ Ticks 285 and 286 took their censuses before the `.orig` existed,
+so no prior audit conclusion is retracted.
+
+Statement of the section's law on the one dimension left: 163/178/180/183/185/187 the *pathspec*, 190 the
+*strip*, 191 *bounds moving*, 192/193 *unrecorded bounds*, 194 *configuration*, 196 *width*, 207 *expected
+output*, 208 the *evidence request*, 209 *resolution context*, 210 the fault's *scope in time*, 215 the
+*cache key's identity*, 219 *provenance*, 220 the key's *update mechanism*, 224 the *denominator's members*,
+228 *evaluation time*, 247 a query that *did not run*, 253 *which tree a section measured*, 257 a query
+*never issued*, 259 *which column identifies the row*, 261/263 the *partition key*, 265 the *answer set*,
+270 the *input set*, 283 the *compared dimension*. This concerns a **proxy's file-type filter** — the one
+dimension in which a proxy and its principal can differ while every value either returns is individually
+correct, so no reading of either output reveals the gap.
+
+## ⛔ A FALSIFIER WHOSE MUTATION RESTORES A PRIOR STATE PROVES NOTHING — and its revert can take the fix with it (tick 287)
+
+Three rules already govern falsifiers: tick 245 the **polarity** (an absence assertion is falsified by making
+the feature unconditional, never by removing it), tick 267 the **siting** (a mutation at a point two
+assertions share cannot distinguish them), tick 248 **reading the result** (an ordered test reports only its
+first failure). SITE-159 supplies the fourth, and it is the cheapest of the four to check.
+
+The brief's falsifier was *"restore `empty()` at the two `InternalLinkRenderAction` sites"*. Those sites had
+never been changed — the file is **absent from the commit**, `git diff` on it is empty, and both predicates
+still read `empty()`. So the report's quoted message, `Failed asserting that an array contains '0'`, is
+**exactly what the unmutated committed tree produces**, which §7 then confirmed by failing
+`test_f11_blank_title_consistency` at that same first assertion.
+
+⛔ **A quoted falsifier message that the unmutated tree also produces distinguishes nothing.** Ask, before
+accepting one: *would the tree produce this message with no mutation at all?* When the mutation **restores a
+prior state** — which every "revert my fix" falsifier does by construction — the answer is routinely yes, and
+the falsifier's entire evidentiary value is gone. The sound form is the **four-state sequence**: red before
+the fix, green after it, red under the mutation, green again when restored, with an assertion count for each.
+
+⚠️ **And the revert is where the fix is lost.** `coder-bin/git:79` refuses `git checkout` with paths only
+when the command carries more than two tokens, so the two-token `git checkout <file>` **is permitted** (tick
+278) and restores the file to **HEAD** — which, for a fix that was never committed, is the state *before* the
+fix. The mutation is reverted and the fix goes with it, the tests are not re-run, and the wave commits three
+of five sites. ⛔ **Every brief prescribing a mutate-and-revert now requires `git diff -- <the file>` pasted
+after the restore**, proving the fix and not the mutation is what survived. Same family as tick 207's blanket
+checkout, one scope narrower and therefore quieter: there a directory took collateral, here a single named
+file took the only thing that mattered.
+
+## ⛔ A missing §7 has a THIRD cause: the gate LANDED and the report was written first (tick 287)
+
+Tick 265 catalogued the gate log's fourth state — `gate-start` with no terminal row **and** a dead pid, a
+gate that died without its trap — and tick 266 generalised it to *the run ends while the gate is still
+queued*. Both are the gate failing to survive. Tick 287 is neither. `/home/goaiez/tmp/gate-runs.tsv` row
+3608: the coder's gate (pid `3715239`) ran pest **16:45:28 → 16:50:37, rc 2**, and `REPORT.md`'s mtime is
+**16:46:50** — the gate **completed**, with failures, and the report had already been written.
+
+⛔ So tick 266's *"a wave's own gate can never be relied on for §7"* holds for a new reason: **not only can
+the gate fail to outlive the run, the run does not wait for the gate.** The remedy is an ordering item, not a
+liveness check — commit, record the sha, run the gate, **wait for it to return**, then write the report — and
+it is a numbered item in every brief, because a demand in prose beside a checklist is outranked by the
+checklist (tick 240).
+
+⚠️ This seat's gate remains the lane's §7, and tick 257's procedure is what pays for it: start the gate as
+the tick's **first** act, do every other measurement while it queues, read §7 **last**. Tick 287 spent the
+wait on the census, the source verification, two live doctor runs and the whole verdict block, and was paid
+an independent §7 that measured a red the wave never saw.
+
+## ⚠️ A ground value naming this lane's own HEAD is falsified by the supervisor's own notes commit (tick 287)
+
+SITE-159's item 1 asserted HEAD `f573c2d5`; this seat then committed tick 286's notes as `7e3e0a37` **after
+writing the brief**, so the ground condition was false before the coder read it. The coder reported the
+departure and proceeded, which is the right call and the second firing of tick 262's both-directions stop.
+
+⛔ **State a HEAD ground value as a range, not a point**: *"HEAD is `<sha>`, or a `chore(supervisor):` notes
+commit on top of it"*. The alternative — taking the value after committing — is unavailable, because the
+notes commit is written at the end of the tick and the brief in the middle of it. Same family as tick 249's
+*a doctor number copied into this ledger decays*, with the decay caused by the writer of the brief rather
+than by time.
+
+## ⚠️ An evidence request for "the whole block" costs 3,312 lines (tick 287)
+
+Tick 275 ruled that a doctor block must carry **stamp + stages + total**, because a stage line alone carries
+neither the build stamp (the stale-doctor trap) nor the footer (tick 285's SUM check). Asking for *"both
+blocks whole"* then returned two complete doctor outputs including every per-violation `fix:` line. The three
+checks need the header, eight stage lines and the footer and nothing else. ⛔ **Say which lines**, or the
+honest reading of the request is the expensive one.
+
+## ⛔ GREP THE PATTERN — BUT THE PATTERN'S REMEDY IS NOT UNIFORM. One `empty()` defect, three sites, TWO opposite correct fixes (tick 288)
+
+Tick 241 ruled *a one-place fix for a copied shape leaves the copies; grep the PATTERN, not the address*, and
+ticks 285–288 spent four waves applying it: `empty()` as a blank test, fixed at five publish-path sites with
+`trim((string) $x) !== ''`. Tick 285 also recorded two members measured and deliberately not briefed. Both
+were **re-read at their own lines** before becoming a brief item (241, 244, 249, 251, 254, 263), and the
+re-reading inverted the remedy for one of them.
+
+**`X-155/Actions/FormValidateAction.php:24` — `if (! empty($payload[$honeypot]))`.** A bot writing `"0"`
+into the honeypot: `empty("0")` is **true**, the guard does not fire, `FormSpamRejected` is never
+dispatched, `is_valid` stays true, and `FormCaptureAction:39-46` takes the **legitimate** branch — so the
+submission becomes a real `Person` and a real lead. G3-64 / G13-05's ⑤ is *"a SPAM rejection is stored and
+flagged, never discarded"* (`GOAIEZ-MASTER-PLAN.md:31363`), asserted at `X155Test.php:411-433`. The bot's
+submission is not mis-stored; it is **not recognised as spam at all**. ⭐ And it is **reachable**:
+`grep -rn 'FormValidateAction' app/app` returns one production caller, `FormCaptureAction:17`,
+constructor-injected — unlike `EdgeProvisionAction` (tick 213) and `ChatEscalateAction` (tick 277), which
+have none.
+
+⛔ **The remedy is NOT `trim()`, and that is the finding.** A honeypot's semantics are *did anything write to
+this field*, not *is there a usable display string*. `trim((string) $x) !== ''` would treat a honeypot filled
+with `"   "` as **unfilled** and let that bot through — a case `! empty()` catches today. **A mechanical
+sweep applying the wave's own correct fix to every site the grep found would have introduced a regression in
+a refusal clause while appearing to close a defect.**
+
+✅ **The correct predicate already exists in this tree, with its semantics stated in a comment.**
+`app/app/Http/Requests/StoreFeedbackRequest.php:73-76` — *"The honeypot. `prohibited` fails when the field is
+present and not empty, which is exactly the shape wanted: a human never sees it, a bot filling every input
+does."* Laravel's `prohibited` counts only null, `''`, an empty array and a pathless upload as empty, so it
+**rejects `"0"`**, which is exactly what X-155 fails to do. This is tick 215's law (*read a sibling's answer
+before recording a problem as unsolved*) turned **inward**: the answer was in this tree, in another module,
+already commented.
+
+**The rule, and it is the half tick 241 did not have:**
+
+| the value is | correct remedy | why |
+| :-- | :-- | :-- |
+| a **display string** (`pages.title`, `content_blocks.content`) | `trim(…) !== ''` | whitespace is not a usable title — SITE-160's five sites |
+| a **presence signal** (a honeypot) | `!== ''`, **no trim** | whitespace IS something having been written |
+| a **content string** (`$groundingFact`) | `trim(…) === ''` | display semantics again |
+
+⛔ **The uniform application of a correct fix is itself a hazard.** A sweep is safe only once each member's
+*meaning* has been read; the predicate a site currently uses says nothing about which remedy it wants. Same
+family as tick 224's *measure a technique's PRECONDITION before copying it*, turned on a **remedy** rather
+than a technique — and note the direction of the danger: the sweep would have passed every gate, because
+the whitespace-honeypot case has no fixture and no assertion.
+
+⚠️ **`X-102/ChatEscalateAction:65` is DEFERRED for exactly this reason**, not for size: its remedy is the
+*display* one while the honeypot's is the *presence* one, and shipping two opposite remedies for one grep's
+output in one wave is how the uniform-remedy error gets made. Low severity besides — `answerQuestion`'s
+enclosing action had zero production callers at tick 277. Per tick 224: **the door is open and the room
+holds one low-severity item.**
+
+## ✅ Tick 287's FOUR-STATE falsifier rule, first firing — and states 1 and 3 being IDENTICAL is the correct result (tick 288)
+
+Tick 287 ruled that a falsifier whose mutation **restores a prior state** proves nothing, because the message
+it quotes is what the unmutated tree already produces, and required the four-state sequence instead. Its
+first firing:
+
+| | tests | passed | assertions | |
+| :-- | --: | --: | --: | :-- |
+| 1. red before the fix | 13 | 12 | **94** | `Expected 0 in nav` |
+| 2. green after it | 13 | 13 | **99** | |
+| 3. red under the mutation | 13 | 12 | **94** | `Expected 0 in nav` |
+| 4. green restored | 13 | 13 | **99** | |
+
+⭐ **1 and 3 are the same tree, and that is exactly why the two-state form was refused** — the evidence is the
+pair of *transitions*, 1→2 and 3→4, never a single red. A tick reading the duplicate numbers as a
+copy-paste defect would refuse a correct falsifier.
+
+**Reconstructed here rather than read** (tick 251): `test_f11_blank_title_consistency` has **6** assertions,
+failing at #1 ⇒ **99 − 6 + 1 = 94** ✓, agreeing independently with tick 248's first-failure rule and with the
+quoted message, which is assertion #1's own. Three constraints, one answer.
+
+⚠️ **The cold witness fired on its LOWER-BOUND branch** (tick 280): `grep -c 'assert'` = **40** against green
+**99**, `grep -c 'foreach'` = **20**, so the equality branch does not apply and the gap is accounted for by
+asserts inside loops — located at `:122-123` and `:388-389`, `assertCount(1, $parentsByChild[$node])` inside
+per-node `foreach`es over 20+ page fixtures. ⛔ Recorded as **accounted in kind, not exactly**: an exact
+reconciliation was not attempted, so it is not claimed. The witness's *equality* branch needs a loop-free
+file (280) **and** no `assert` in prose (285); this file has neither property.
+
+## ⚠️ A falsifier can prove one site of a two-site fix and the block must say which (tick 288)
+
+`test_f11` falsifies `InternalLinkRenderAction:55` — its `zero` page is single-segment and resolves through
+the `foreach ($parts)` branch — and does **not** independently falsify `:42`, the root-page branch, because
+no fixture gives the root page a blank or `"0"` title. `:42` is changed by the **divergence argument** (both
+sites, identical predicate, or the nav and the breadcrumb diverge again), which is sound and is not a
+falsifier. Tick 270's *unproven, not proven*, applied to a fix whose two halves have different evidence —
+the sort of asymmetry a green suite and a four-state falsifier both hide.
+
+## ✅ Tick 287's `--include='*.php'` census rule and its refuting instruction, both fired (tick 288)
+
+The `.orig` scratch was removed by exact name; `git status --porcelain --untracked-files=all | grep orig`
+returns nothing and the census re-run **in this seat** with the filter reads `1 G3-34`. Tick 287 had written
+the refuting instruction — *"if `G3-34` still reads 2 after item 2, say so; that would mean a third carrier
+exists and my reading is wrong"* — and it was available to be used. It held. ⚠️ The reviewer's own run is
+still the only verification an **untimed** before/after has (tick 263): the report's identical pair is
+byte-identical **by construction** and proves nothing on its own.
+
+## ⚠️ Third firing of tick 253 — §6 described a tree that no longer exists, and the wave left scratch (tick 288)
+
+The report's `git status --short` reads ` M app/phpunit.xml` while `gate-final.txt` (17:15:01) predates the
+report (17:15:40) — the output was taken at item 2's time and pasted as evidence item 6. Honest, stale, and
+tick 253's law verbatim: **§6 and §7 are the only sections whose subject is the working tree, so they are the
+only ones that can silently describe a tree nobody will ever see.**
+
+⚠️ Three untracked scratch files remain — `app/doctor-before.txt`, `app/doctor-after.txt`, `gate-final.txt`
+(the last prescribed) — so §1 reads **5 uncommitted path(s)**. ⛔ **Not a census hazard**: none sits inside a
+module test directory, which is the only place a stray file becomes a false credit (tick 287). It is a
+legibility cost on §1 and §2, the two sections whose entire signal is *one known path*.
+
+⚠️ **Two doctor files of identical byte size is NOT evidence against two runs** — every differing timing in
+the report's pair has the same digit width (131/130, 32/33, 1248/1246, 465/472, 245/244). The **SUM check**
+(285) passes on both blocks and the **timing nonce** (249) separates them at five of seven positions. Second
+consecutive clean doctor evidence pair, and all three blocks — the report's two and this seat's live run —
+agree on every count.
