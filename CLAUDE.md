@@ -270,7 +270,128 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-50 | the owner-route CENSUS. ⛔ Pure measurement: no `app/**` diff, no new test, no nav entry, no exclusion, floor unmoved. One row per `tenant.role` route across all 113 modules, committed as one `state.py note`. See the 23:2x ruling: I could not scope a conversion wave without it | closed, pushed `393aeae0` — run 95 `BLOCK` (three constant columns), run 96 `PASS-WITH-NOTES` |
 | UI-51 | the census's `dup_of` column, re-derived by MEASUREMENT — twelve pairs opened, subject and table compared, target kept only when both agree · `test_file` dropped to a `## Totals` line · `## Totals` states the column's own false-negative limit | closed, pushed `7f280357` |
 | UI-52 | `x-192.memberships-list` — the one row in the `visible 17` / `test_shell 16` gap. TWO assertions inside the existing `test_screen_renders_for_tenant`. ⛔ SHELL ONLY: no `heading` param, no blade edit | closed, pushed `72819042` |
-| **UI-53** | **⛔ NOT the copy edit this row used to describe — see the 00:5x inversion below. ONE `expect()` inside `OwnerNavTest`'s existing `nav entries survive real get`: every owner screen renders EXACTLY ONE `<h1>`. Zero exclusions, population `OwnerNav::all()`, no new `test(`, floor unmoved** | **in flight — run 99 live** |
+| UI-53 | ⛔ NOT the copy edit this row used to describe — see the 00:5x inversion below. ONE `expect()` inside `OwnerNavTest`'s existing `nav entries survive real get`: every owner screen renders EXACTLY ONE `<h1>`. Zero exclusions, population `OwnerNav::all()`, no new `test(`, floor unmoved | closed, pushed `a5f19f57` |
+| **UI-54** | **the reachability check's BLIND SPOT gets a number. ONE new `test(` in `OwnerNavTest`: the count of named `GET` routes carrying `tenant.role` that `ownerScreenRoutes()` cannot see, pinned with `toBe(N)`. ⛔ Zero route names written; both sides derived at runtime. ⚠️ The floor MOVES: `1727 → 1728`, `grep -c "^test("` `4 → 5`** | **in flight — run 100 live** |
+
+✅ **UI-53 closed and pushed 2026-09-07 01:3x** (`32df71b9..a5f19f57`). Three added lines and one
+whitespace character. `substr_count($response->getContent(), '<h1')` `->toBe(1)` inside the existing
+`nav entries survive real get`, zero exclusions and none by reference, `grep -c "^test("` **4** before
+and after, no helper, no new `GET`, no route name written anywhere — the population is
+`OwnerNav::all()`, derived, for a third wave running. Doctor the unmoved `745`. Floor met **exactly**
+on a suite **I ran myself**: `1727 · 1720 · 3 · 4`, 210s, **`assertions 6941`**.
+
+⭐⭐ **`6941` is `6905` + exactly 36, and `OwnerNav::all()` is 36 — one assertion per nav entry,
+observed executing and passing.** ⛔ **And running it myself was not ceremony.** My brief predicted
+*"expect ~6941"* in writing, so the report's number was equally consistent with a real run and with
+copied arithmetic — the run-84 shape. The five-field line cannot separate those; only an independent
+run can. **RULE: never state the floor's exact expected value in a brief.** State the shape and the
+direction — *"the delta should equal `OwnerNav::all()`"* — and let the coder produce the digits, or the
+evidence is spent before it is gathered.
+
+⚠️ `PASS-WITH-NOTES` on one report-shape fault: `COMMITS`, `MODULES`, `STAGES` and `DOCTOR` were all
+absent, four of rule 10's eight fields, on the wave that fixed the silent §7. **Fixing one field is not
+licence to drop four others** — `STAGES: none` is a legal value, an absent field is not. Fifth and
+mildest member of the report-shape family, and the first that asserts nothing false; it merely says
+less than the shape promises, which is what makes a shape unrelyable.
+
+### ⛔⛔ MEASURED 2026-09-07 01:2x — `<x-surface.sample-state module="…">` RENDERS INTERNAL PLANNING PROSE TO USERS. 223 of 248.
+
+`resources/views/components/surface/sample-state.blade.php` is one sentence: *"Sample — this screen is
+planned in **{{ $module }}** and not built yet."* The attribute is supposed to be a module id.
+**MEASURED 01:2x, naming the strings:**
+
+```
+grep -rl  -e 'x-surface.sample-state' app/app/Modules/ --include=*.blade.php | wc -l   → 248 call sites
+grep -rhoP -e 'module="(X-\d+|C-[A-Za-z]+)"' app/app/Modules/ --include=*.blade.php    →  25 bare ids
+```
+
+**So 223 pass something that is not a module id** — and what they pass is the master plan's *prose
+description of the module*, truncated by the scaffold generator at the first quote or comma. It
+renders. Live examples, all at `:2` of the root `<div>`:
+
+- `x-118/day-one-signup` (and five siblings): *"planned in ⭐⭐⭐ **IT IS THE WIZARD, and it asks for two
+  things: a business name and a phone number. The AI FINDS GBP and not built yet"*
+- `x-01/thread`, `history`, `payment-risk`: a 700-character paragraph ending *"**P18:
+  `app/Livewire/Account/Inbox.php` exists but its scope was never verified — if it is a mail reader
+  wearing the name, this is a build, not a wiring job, and it is replaced.**"*
+- `x-120/card-screen`: *"planned in ⭐⭐⭐ **[AMENDED T677 and not built yet"*
+
+⚠️ **Blast radius today is small and the defect is not:** none of the 223 is in `OwnerNav`, so they are
+reachable only by typing the URL — the 23:2x blind spot exactly. But they sit on `tenant.role` routes,
+which means an owner reaches them, and what they print is **our internal planning notes, our
+unresolved questions about our own code, and the owner's own quoted words**.
+
+⛔ **NOT this lane's wave, and the blades are not the fix.** 223 files across ~108 modules is a
+programme, and they are generated — `module:scaffold` will rewrite them. The fix is at the generator.
+**Raised as TRACK 1 ACTION.** ⚠️ I did **not** map each of the 248 blades to a route; the claim above is
+about call sites in `app/app/Modules/*/Ui/views/`, which is the set I enumerated.
+
+### ⛔ MEASURED 2026-09-07 01:2x — X-01 has FIVE owner routes and NOT ONE of them can take a nav entry
+
+Scoping UI-54 I went to the owner's Customers lane, opened all five `x-01.*` `tenant.role` routes
+(`X-01/routes.generated.php:13–17`), and every one is disqualified — **each for a different reason**,
+which is why this is a ruling and not a list:
+
+| route | built? | why it cannot take a nav entry |
+| :--- | :--- | :--- |
+| `x-01.customers-list` | yes, real paginated query | ⛔ **the census's ONE surviving `dup_of`** — `account.customers` (`App\Livewire\Account\Customers`, `web.php:1355`, `OwnerNav.php:92`) is the same subject and is already in the nav |
+| `x-01.person` | yes, six real queries | ⛔ **the route takes NO PARAMETER.** `Route::get('/person', …)` against `#[Locked] public int $personId = 0` — on a full-page `GET` nothing resolves it, so it renders an empty detail screen forever |
+| `x-01.thread` · `history` · `payment-risk` | no | `<x-surface.sample-state>` at line 2 |
+
+⛔⛔ **`x-01.person` is a NEW shape and the sharpest thing in this tick.** X-139's three components had
+the same census signature — `layout none · data yes · mount no` — and the fix there was a `mount()`
+resolving `businessId` from the tenant. **There is no equivalent here**, because there is no "the
+current person": a detail screen needs an id its route does not carry. ⛔ So `mount: no` in the census
+has **two causes**, only one of them fixable, and the column cannot tell them apart — the `test_file`
+lesson from 00:1x arriving in a second column.
+
+✅ **And converting `customers-list` would be the exact error the census was commissioned to prevent.**
+Giving it `components.account.layout` puts it into `ownerScreenRoutes()`, which then demands a nav
+entry — **a second customers door in the owner's nav.** ⛔ Never brief that.
+
+⭐ Measured in passing, and it is UI-48a's tenth: `CustomersList.php:23` is `public bool $isSample =
+false` with one reader (`customers-list.blade.php:5`) and **no writer anywhere in `app/`** — I grepped
+`isSample` across `app/app/Modules/`, `app/resources/` and `app/app/Livewire/`, and every apparent
+pass-in hit was PHPStan's result cache under `app/storage/`, not source. Dead, like the nine UI-48a
+deleted. ⛔ Not folded into a wave here: X-01 is not this lane's module and silent scope widening is
+its own defect.
+
+### ✅ MEASURED 2026-09-07 01:2x — `x-110.tag-version-per` stays `UNRESOLVED`, now by measurement
+
+UI-48b left it the sole member of `sampleStateRoutes()` because `render()` is
+`return view('x-110::tag-version-per');` with no query — an argument from the component's *shape*.
+**Now from the data:** `grep -rln -e "tag_version" -e "tagVersion" app/app/ app/database/` returns
+**two** files, the blade's own `screen="tag_version_per"` and `X-110/manifest.php`. **No column, no
+model, no writer, anywhere.** The screen cannot be built and the `UNRESOLVED` is correct as it stands.
+
+### ✅ RULED 2026-09-07 01:2x — UI-54 pins the blind spot's size, and a PINNED COUNT IS NOT AN EXCLUSION
+
+The 23:2x ruling names the deepest open item in this file: `ownerScreenRoutes()` derives owner-ness
+from `#[Layout('components.account.layout')]` or an `account.*` name, **so a screen escapes the
+reachability check by never opting into the owner layout**, the check's population is only the work
+already done, *"no number anywhere states how many"*, and nothing reds as it moves. UI-50 produced
+that number as a **document**, and a document rots in silence.
+
+UI-54 makes it a runtime measurement: one new `test(` in `OwnerNavTest` counting named `GET` routes
+whose `gatherMiddleware()` contains `'tenant.role'`, minus the **existing** `ownerScreenRoutes()`,
+pinned with `toBe(N)`. ⛔ Zero route names written down; both sides derived. ⛔ It does not consult
+`ownerRouteExclusions()` or `sampleStateRoutes()` — an exclusion is a decision about a route the check
+*can* see, and reaching for one here is run 88's `BLOCK`.
+
+> ⛔ **A careless reader will call the bare `N` the written state-fact the 16:5x ruling bans. It is
+> not, and the distinction is the whole design: an exclusion EXCUSES a route and rots because the
+> excuse outlives the fact. This number excuses nothing — it is a MEASUREMENT PINNED SO IT CANNOT MOVE
+> IN SILENCE, and going red when it moves is its entire purpose.** That is `sampleStateRoutes()`'s
+> 17:2x argument with no exclusion left in it.
+
+⛔ Corollary: never widen it to a range, a `toBeLessThan()`, or a comment saying "approximately". A
+number that tolerates drift is a number nobody has to restate — which is the document this replaces.
+
+⚠️ **The floor MOVES for the first time in seven waves**: `1727 → 1728`, `grep -c "^test("` `4 → 5`.
+⛔ **`N` is the coder's to measure, not mine.** My source-side estimate is ~270 (287 distinct non-admin
+module route *names*, 17 module *components* on the account layout) — ⚠️ **different units, and it
+ignores the `account.*` routes the helper also admits, so it is scaffolding and not a result.** The
+brief hands over the commands that kill it and says the coder's number wins.
 
 ✅ **UI-47 closed and pushed 2026-09-06 20:3x** (`7f052348..3c8e0ef1`). The cross-link half admits by
 nav membership only and carries **zero written exclusions**; `ownerRouteExclusions()` went 10 → 7
