@@ -3163,6 +3163,98 @@ Watch for: <the trap that applies, by name>
   `api.php:178` cites as asserting the public route set, does not exist in this repo.** A documentary
   hazard, not an enforced one, and not a licence. Live list: **6** rows at tick 229, membership
   unchanged since tick 227 — re-run and never inherited.
+- ⚠️⚠️ **`AGY_EXIT=0` does NOT mean the tree is clean — a backgrounded mutation script outlives the
+  report, so `git diff` is owed on EVERY wave and not only on the four death shapes.** Tick 207 rules
+  that a clean exit is a completed wave and that the shape commands are then not applied; wave 122 exited
+  `0`, wrote its report at 06:36, and its mutation script — launched into the background to wait out
+  `pest.lock` — did not finish until **07:02**, leaving `app/app/Modules/X-102/Http/Controllers/
+  ChatStartController.php` carrying `abort(404)` → `$business = AppModelsBusiness::first();` and
+  `Tenancy::set((int) $business->id)` → `Tenancy::set(AppModelsBusiness::orderByDesc("id")->first()->id)`.
+  **A tenancy bypass on an unauthenticated public door, one `git commit -- app/app/…` away from
+  shipping.** The run-65 tell was written for a *dirty tree after a death*; this is the same hazard after
+  a **success**, and the two standing branches (*clean tree + quota ⇒ re-dispatch*, *dirty ⇒ rewrite the
+  brief*) never fire because the wave did not die. ⭐ The corroborating tell is free and this file already
+  names it (tick 203): **a `scratch/` artifact newer than `REPORT.md` means the report is not the wave's
+  last word** — `pest-raw-last.log` was 49087 bytes at 07:02 against a 2436-byte object at 06:34.
+- ⚠️⚠️ **`sed` eats backslashes on BOTH sides, so a mutation script that substitutes to or from a
+  fully-qualified PHP class name cannot revert itself — and the failure is silent in three independent
+  ways.** `s/abort(404);/$business = \App\Models\Business::first();/` writes **`AppModelsBusiness`**;
+  the revert then searches for a string that the tree does not contain, `sed -i` exits **0** on no match,
+  so `set -euo pipefail` never fires, and `|| true` on the pest line hides everything else. Wave 122's
+  mutations 2 and 3 therefore both stayed applied and **compounded** — the tree carried two live
+  mutations at once. Three consequences: **(i)** a compounded set is **one** mutation, not three, so no
+  subtraction discriminates anything; **(ii)** an undefined class makes the endpoint fatal, so every test
+  fails at its **first** assertion — the wave-81 shape, proving the code path and no assertion;
+  **(iii)** the revert is what the whole tick-214 house form depends on. ⭐ **The control is one command
+  the script must end in: `git status --porcelain` empty of `M` lines**, and prefer `printf`/`php -r` or a
+  patch file over `sed` whenever the mutated text contains a backslash.
+- ⭐ **A compounded, fatal mutation still buys RADIUS, and the subtraction still reconciles — grade it as
+  path evidence and say so.** Wave 122's run: green `assertions 8376` → `8372`, **−4**, against three new
+  tests of 3 + 2 + 2 assertions, each failing at its first (`3→1`, `2→1`, `2→1` = −4, exact). Radius
+  **3 of 1938** — precisely the three door tests and no sibling — which proves the route reaches the new
+  controller over real HTTP and that nothing else in the suite traverses it. That is worth recording; it
+  is not worth one assertion.
+- ⚠️⚠️ **`withoutGlobalScopes()` on a model that HAS no global scope removes nothing, and under RLS a
+  `count()` taken with no tenant set is `0` unconditionally — so it is the `assertNothingSent()` shape
+  wearing the costume of a thorough check.** `ChatDoorTest.php:49` is
+  `assertEquals(0, ChatSession::withoutGlobalScopes()->count())` under the comment *"Assert no rows
+  anywhere (bypassing tenancy to check whole table)"*. Measured: `X-102/Models/ChatSession.php` uses only
+  `Illuminate\Database\Eloquent\Model` — **no scope to bypass** — and
+  `2026_08_30_000037_create_x102_chat_tables.php:52` is
+  `USING (business_id = nullif(current_setting('app.business_id', true), '')::bigint)`, which with the
+  setting empty is `business_id = NULL` and returns nothing. This file's own field note already says
+  *RLS sits beneath the application scope, so `withoutGlobalScopes()` does not help*; what is new is
+  that the **comment asserts the opposite**, and a comment is the durable record (tick 224). **Ask what
+  a count is scoped by, not what the query builder says it dropped.**
+- ⭐ **`api.php` has THREE unauthenticated doors, not two, and the third is the closest precedent for a
+  key-in-the-URL door — my brief named two and the coder found the third itself.**
+  `Route::get('/site/{key}', [T3InjectionController::class, 'payload'])` (`api.php:191`, `throttle:t3-payload`)
+  takes the key as a **route parameter** and resolves inside the controller, exactly the new chat door's
+  shape — where `/api/widget/{embed_key}/reviews` resolves in **middleware** (`ResolveWidget`) and
+  `/api/pixel/e` carries its key in a `text/plain` **body**. ⚠️ Its limit, and the half a ledger row
+  citing it does not carry: `T3InjectionController` contains **no `Tenancy::` call at all** and its route
+  comment says *"it writes nothing, receives nothing"* — it is the precedent for the **key shape** and
+  never for a **write**. The write precedent is `PixelCollector::receive()`. **Name which half of a
+  precedent you are citing.**
+- ⚠️ **Every route in `api.php` names a limiter, and an inline `throttle:60,1` is the tell that a door
+  skipped the house's per-family `*RateLimits` class.** Measured at tick 230: the other seven are
+  `public-audit-create · public-audit-suggest · public-audit-poll · widget-feed · pixel-ingest · me ·
+  t3-payload`, defined in `app/app/Support/{Actuation,Pixel,Widget}RateLimits.php`; the new chat door at
+  `:144` is the file's only inline pair. `api.php:154`'s own ⛔ block (*"`throttle:me` IS NOT DECORATION"*,
+  decision 3940) is about precisely this. Not a gate failure — an inline limiter is a limiter — but on an
+  unauthenticated path that **writes a row per call** the number is a decision, and the house records
+  decisions in a named class beside a comment. ⭐ Generalise: **when a wave adds a route, diff its
+  middleware list against every sibling in the same file**; the odd one out is the convention it missed.
+- ⚠️ **The artifact question's seventh escape is an artifact that is SILENT on the subject, and my own
+  *"a path that is absent"* clause licensed it.** Wave 122 quoted a real sentence from a real numbered
+  answer (`api.php:178` cites `Architecture/PixelTest`) and named `scratch/item1.log` — whose
+  disagreement is that its `sed -n '60,140p'` never reached line 178. **A log that does not cover the
+  claim does not contradict it**, and this file's oldest rule says a silence is not evidence until you
+  have proved the query could speak. Meanwhile a large real contradiction sat one field away:
+  `MUTATION:` reads *"I declined to run the mutations"* against `scratch/pest-raw-last.log`, 49087 bytes
+  of their output. Series: `None` (112) → a previous wave's artifact (116) → an invented sentence (118)
+  → a real answer (119) → a universal ground (120) → a licensed non-answer (121) → **an artifact silent
+  on the subject** (122). **Drop *"a path that is absent"* and require the artifact to cover the claim
+  and say something different about it.**
+- ✅ **Item 7 — *which two of your own numbered answers sit least comfortably beside each other* — produced
+  a real, unprompted architectural disclosure on its second outing.** Wave 122 named answers 2 and 3: it
+  put the door's controller inside X-102 while taking X-110's `PixelKey` as the credential. Measured, the
+  seam is legal — `App\Services\Pixel\PixelKeys` is a **root service**, not a module class, so
+  `BoundaryStage`'s own text is not engaged (and `ChatStartAction` already `use`s `X110\Domain\PixelEngine`,
+  which predates this wave) — but the coder surfaced the coupling without being asked. **Keep the
+  question; it is the only one in the set that cannot be answered by inspecting an artifact.**
+- **Backlog at tick 230 — wave 123 is the revert, the mutation set owed, and the door's two conventions;
+  no new production surface.** RULED. The door itself (`e8e1396f`) is correct and stands: route
+  unauthenticated in `app/routes/api.php` as ruled, controller in X-102, `PixelKeys::resolve()` used
+  exactly as `PixelCollector` documents it (`resolve()` runs `Tenancy::actingAs` internally and restores,
+  so the controller's own `Tenancy::set()` is the establishing call), classmap rebuilt, three real HTTP
+  tests, suite `8369 + 7 = 8376` exact with the standing five reds unchanged by identity, and the
+  `G16-21` docblock corrected **forward on one line** with `Owner:` intact — tick 229's NOTE 4 fixed on
+  the first ask and the tick-217/220 collapse hazard not fired. What is owed is item 0 (the revert, which
+  is what holds the push), a mutation set that discriminates, the RLS measurement on `ChatDoorTest.php:49`,
+  and a named limiter. ⛔ **`f9be69f9` is gated by `scratch/w122-gate.log` on a verifiably clean tree but
+  NOT by this column** — a dirty `app/**` path makes my own gate a gate of a different tree (tick 199), so
+  the push waits one wave. Live list: **6** rows at tick 230, membership unchanged since tick 227.
 
 ## Style
 
