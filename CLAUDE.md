@@ -3334,6 +3334,72 @@ Watch for: <the trap that applies, by name>
   — **6** rows at tick 232, membership unchanged since tick 227 (`X-102 G16-21` · `C-Agent G5-31 · G5-32 ·
   G5-43` · `C-Mail G11-09` · X-66's wire, a `TRACK 1 ACTION`); stub pile across the thirteen **10**.
   Re-run both greps every tick; never inherit them.
+- ⚠️⚠️ **`git show <sha>:<path> | grep -c "…"` prints a clean `0` when the PATH does not exist at that sha —
+  the newest member of the silence family, with a pipe as the liar.** Wave 124's `TESTS: 0 -> 3` reads as
+  *this wave added three tests*; measured here the prescribed command gives **3 → 3** on both sides, because
+  `ChatDoorTest.php` was created two commits earlier by `e8e1396f`. Verified the mechanism against a made-up
+  path: `git show 3906b575:…/X-102/NoSuchFile.php | grep -c "public function test"` → **`0`**. The `fatal:`
+  goes to stderr, the pipe carries nothing, and `grep -c` answers `0` for *"the file has no such lines"* and
+  for *"there was no file"* **identically** — so the field's own command has an unmarked failure mode that
+  points in the flattering direction (a wave that added nothing reads as a wave that added everything).
+  ⭐ The check is one command and it is the same one this file already prescribes for `.agents/plan/` and for
+  the binary classmap: **prove the left-hand side spoke** — `git show <sha>:<path> | head -1` before you pipe
+  it to a counter. `NOTE` and not `BLOCK` by the tick-222 discriminator: `REPORT.md` is overwritten and the
+  commit carries the truth.
+- ⚠️⚠️ **Three consecutive waves have lost their mutation set to the HARNESS, and both rules I wrote cover the
+  program text while none covered ARGUMENT PASSING.** Wave 122 lost it to `sed` eating `\App\Models\Business`
+  on both sides (`sed -i` exits 0 on no match, so `set -e` never fired and mutation 3 compounded onto an
+  unreverted 2); wave 123 to `php -r "…'$search'…"` where every mutated string contains a `'`; wave 124's
+  script is in the **ruled form** — `git apply` of a patch file from a quoted heredoc, `git restore` to
+  revert, every run through `bin/supervise.sh`, ending in `git status --porcelain` — and still cannot run,
+  because `run_mutation()` reads `local patch_content="$1"` after a `shift` while all seven call sites deliver
+  the patch on **stdin**. Under `set -u` there is no `$1`. **The tell that it never ran is the absence of the
+  artifacts it would have written** (`scratch/mut-*.patch`, `scratch/w124-mut-*.log`), not anything in the log
+  it did write. ⭐ **The control is a smoke run: execute the script once against a no-op patch before the real
+  set**, which costs one gate and catches a harness defect in the one place where the gate cannot — the
+  harness is the only thing in a mutation wave that nothing else measures.
+- ⚠️ **`/home/goaiez/tmp/pest.lock` is BOX-WIDE and cross-project; §7's `(checkouts pinning it: …)`
+  parenthesis is PER-DATABASE and belongs to a different guard — so the message that blocks you names no
+  holder, and `ps` is the only way to learn who.** `supervise.sh:288-295` takes the lock around every suite,
+  `:275`'s clash refusal enumerates checkouts pinning **this lane's** `xml_db`. At tick 234 the blocker was
+  `grs-antig-reviews`' pest, pid `3849006`, **7h15m elapsed and not under a `timeout` wrapper**; §7 printed
+  only `… another suite holds /home/goaiez/tmp/pest.lock — waiting up to 40 min` and the clash guard never
+  fired, because no second pest pinned `goaiez_antig_sixty_test`. Tick 203's rule (*read the parenthesis
+  before blaming another track*) still holds and this is its complement: **an absent parenthesis means the
+  clash guard is silent, never that the lock is free.** The lane may not kill it (tick 215), so a lock held
+  by another checkout is a genuine, unfixable-here blocker: **decline the suite fields with no numbers, say
+  which pid holds it, and file it as a `TRACK 1 ACTION`.**
+- ⭐ **A tenant-scoped absence assertion is falsifiable only if the tenant it reads as is the one a bypass
+  would FALL BACK TO — so the check is the size of the population, not the shape of the query.** Wave 124
+  correctly retired the `FORCE ROW LEVEL SECURITY` vacuity (`ChatSession::count()` under
+  `Tenancy::forgetAll()` is `0` for every possible state of the door) by provisioning a tenant, setting it
+  before the count, and moving the count **above** `assertStatus(404)` so a bypass fails there first — the
+  wave-90 positional rule applied in prospect. What makes it work is one fact nobody stated:
+  `TenantProvisioner.php:159` is a single `Business::provision([...])`, `RefreshDatabase` seeds nothing and
+  `User::factory()` creates no business, so **exactly one `businesses` row exists** at the assertion and
+  `Business::first()` is deterministically it. **Ask how many rows the fallback could choose between**; at
+  two the assertion is a coin flip and at one it is a proof, and the query reads identically either way.
+  ⚠️ And the comment is the durable record — *"a tenant which a bypass might fall back to"* is a hope where
+  the population count is a fact.
+- ✅ **The artifact question passed clean for the first time since wave 119, on the wave-119 wording plus the
+  tick-232 clause — eight escapes, eight one-clause fixes, and the ninth attempt held.** Wave 124 quoted a
+  sentence that already existed in a numbered answer, named a gate log written after the brief which it had
+  not authored the claim into, and gave a **number that differs** on the same subject (`1 uncommitted
+  path(s)` against its own list of four) with the reconciliation. The series: `None` (112) → a previous
+  wave's artifact (116) → an invented sentence (118) → a real answer (119) → a universal ground (120) → a
+  licensed non-answer (121) → an artifact silent on the subject (122) → an artifact that agrees (123) →
+  **clean** (124). **Do not simplify the wording**; every clause in it is a closed escape.
+- **Backlog at tick 234 — RULED: wave 125 writes no new production surface while an external checkout holds
+  the pest lock.** Same reasoning as tick 216: a first red would be unattributable between the wave and
+  everything landed unmeasured since `1938 · 1933 · 8376`. Wave 125 is the mutation set **conditionally**
+  (item 0 checks the lock, and the `run_mutation` defect is handed over as a measurement), the `TESTS` field
+  and its silent-zero mechanism, and the `:52` comment made true of the population fact that makes it
+  falsifiable. ⭐ **The chat message store is UNBLOCKED as of wave 124** — tick 227 sequenced it behind the
+  customer-facing door and tick 228 refused it because X-102 had no production entry point at all; the door
+  now exists (`app/routes/api.php` → `ChatStartController` → `ChatStartAction`), is unauthenticated, resolves
+  a tenant through `PixelKeys`, and carries three real HTTP tests. It is **wave 126, on a measurable tree**,
+  and it is not cancelled. Live list: `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **6** rows at tick
+  234, membership unchanged since tick 227. Re-run it; never inherit it.
 
 ## Style
 
