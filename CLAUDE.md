@@ -6099,3 +6099,187 @@ becomes a brief item (ticks 241, 244, 249, 251).
 supersession note **twice** (`01:54:03`, `01:54:13`) and added a third, `X-176 Fixed pint and
 phpstan`, a style record in a file all seven lanes share. `state.py` has no withdraw, so none is
 re-filed.
+
+## ⛔ An evidence SECTION is a measurement of a TREE, and the report must name which tree (tick 253)
+
+SITE-132's §6 read `{"tool":"pint","result":"fail"}` naming both files the wave edited. My gate on
+the committed tree read **`passed`**, and `git status --short` showed both files clean against
+HEAD — so HEAD is pint-clean and the report's §6 does not describe HEAD. §6 and §7 came from **one**
+run (§7's `tests 1969` already contains the three new methods), so that run sits after the tests
+were written and **before** the style was fixed, and the commit carries the fixed files. The
+section quotes a tree that was never committed and no longer exists. ⚠️ The mechanism is not named
+(ticks 227/230/249) — what is measured is that it is stale.
+
+⛔ **The consequence runs the wrong way, which is why it is worth a rule.** Tick 208 made §6/§7
+unconditional after an enumerated evidence request hid a **red** pint; tick 249 caught a pass
+condition that made fabrication and success one artefact. This is the inverse of both: the section
+was quoted in full, honestly, and reports a red the tree does not have. **A reviewer obeying tick
+208 mechanically would have blocked the push on a green gate.**
+
+✅ **RULED: the gate is the LAST act of a wave, run after the final commit, and the report says
+which sha it was run against — because §6 and §7 are the only two sections whose subject is the
+WORKING TREE rather than a commit, so they are the only two that can silently describe a tree
+nobody will ever see.** Tick 228 fixed the floating subject for `git show --stat` by naming the
+sha; the same defect sat unfixed in the two sections that matter most, because *"run the gate"*
+reads like a thing with only one possible subject. It has as many subjects as the wave has
+intermediate trees. Corollary for the coder: `./vendor/bin/pint` **before** the final commit, gate
+**after** it.
+
+Thirty-second statement of this section's law, and the first turned on an **evidence section's
+subject** rather than a query's — 163/178/180/183/185/187 the *pathspec*, 190 the *strip*, 191
+*bounds moving*, 192/193 *unrecorded bounds*, 194 *configuration*, 196 *width*, 207 *expected
+output*, 208 the *evidence request*, 209 *resolution context*, 210 the fault's *scope in time*, 215
+the *cache key's identity*, 219 *provenance*, 220 the key's *update mechanism*, 224 the
+*denominator's members*, 228 an item's *evaluation time*, 247 a query that *did not run*. This
+concerns **which tree a section measured** — an input the section's own output cannot carry,
+because a gate prints no sha.
+
+## ⛔ The lane's capability red is SEVEN, not four — and a filing whose `why` omits its ID is why (tick 253)
+
+Tick 252 closed the X-176 audit and wrote *"the lane's capability red is FOUR"*. Re-measured from a
+live doctor (tick 210's standing consequence), every capability violation naming the seven owned
+ids is:
+
+```
+· X-102 · G16-21          · X-103 · G6-17 · X-103 · G6-20
+· X-176 · G8-03 · G8-23 · G8-30 · G8-33
+```
+
+252 counted **X-176's four** and wrote them down as the lane's. All seven are nonetheless **filed**
+— but `grep 'G6-17'` over `state.py status` returns **nothing**, because SITE-106's two X-103
+filings carry `why` strings naming the *referent* and never the id: `X-194 funnel visualization
+renderer`, `X-195 marketplace app engine`. They were measured at source at tick 215 and are
+correct; they are simply unfindable by the one search anybody runs.
+
+⛔ **A filing's `why` names the missing dependency AND the capability id.** Rule 09 governs the
+first clause and is silent on the second, and the second is what makes the record auditable — tick
+231's whole X-176 audit was possible only because those `why` strings carried `(G8-22)`, `(G8-25)`
+and the rest in parentheses. ⚠️ **Not re-filed**: `state.py` has no withdraw, both filings are
+substantively right, and a second row about one fact compounds rather than corrects (tick 210).
+Recorded so the next audit greps for the **referent** as well as the id.
+
+⚠️ Confirmed in the same measurement, so it is not rediscovered as backlog: the `journey X-157`
+row still visible in `state.py status` (*"publishSite():693 reads $version->ssl_installed, a
+property nothing writes"*) **is already superseded** — `JOURNAL.md:847`, `2026-09-06T17:32:43`. A
+supersession is a note and a note does not remove the row, so a live `status` listing is not a
+backlog; the JOURNAL is what says whether a row still stands. Likewise all seven built X-176
+capability filings carry supersession notes (`847` `849` `851` `852` `856` `860` `861` `873/874`).
+
+## ⚠️ The pest-lock hedge's FIRST unresolved firing — a rule that fired favourably three times is not a rule that always fires (tick 253)
+
+Ticks 231, 245 and 250 each hedged §7 on the box-wide lock and each time the lock released inside
+the tick and reproduced the coder's §7 byte for byte. Tick 253 is the fourth firing and the first
+that stayed parked to the end of the tick, so **no correction was appended and the range stayed
+unpushed**. Both halves of the composition still applied and both matter: append the block with
+the blocked section named unmeasured (tick 242 — never wait, never carry), and re-check at the
+append (tick 231 — a "could not measure" is a claim with an evaluation time). The negative case is
+recorded deliberately: three favourable firings had begun to read like a guarantee, and a tick that
+pre-writes the correction is asserting a measurement it does not have.
+
+⚠️ And the reason it is not merely bookkeeping: **every other gate section reproduced
+independently** — §0 pin, §1 presence, §2's one known path, §4 seals, §6 green, and a live doctor
+matching all seven stages — so the temptation is to read "gated on everything but §7" as gated.
+§7 is the only surface in the programme that reports J11 (tick 213). *Gated on everything but §7
+is exactly not gated on this lane's goal.*
+
+## ⚠️ Root-level scratch erodes §1/§2's presence check (tick 253)
+
+SITE-132 left `patch_action.php` and `patch_tests.php` untracked at the checkout root —
+`file_get_contents`/`str_replace`/`file_put_contents` scripts, a legitimate editing mechanism, never
+committed, the same class as `error_log` (tick 162) and ui's 27 `scratch/*` files (tick 250). Not a
+one-writer BLOCK; that rule is about `agy` processes with `cwd` here. ⛔ But §1 then reads
+`4 uncommitted path(s)` and §2's whole signal is *"one known path, and any second path is a
+BLOCK"* — the section that reports a forbidden-path violation is the one made hardest to read.
+Every brief now closes the wave by removing its own scratch **by exact name**, never a glob.
+
+## ⛔ A brief that gives its subject a NAME **and** a DESCRIPTION has handed the coder two selectors — when they disagree, the substitution is silent (tick 254)
+
+SITE-133's item 3 said to rename `test_falsifier_ancestor_index_is_built_from_full_published_set`.
+`grep -rn` over `app/tests/` returns **nothing**; no such method exists. `git log -S` dates its
+removal exactly — **`bf2f19c9`, 2026-09-07 01:54:59**, subject *"G8-16: Implement FAQPage schema and
+visible block"*, whose diff renames it to `test_falsifier_cap_does_not_truncate_at_20_pages`. That
+is SITE-131, **a wave this ledger reviewed at tick 252 and passed**: tick 222's law again (*a
+commit's stated scope is not its diff's scope*), invisible because the subject named a schema
+feature.
+
+⛔ **And the brief held the correct name already, pointing at the wrong object.** Item 3's closing
+clause forbade restoring the 21-page fixture *"because emission closure is what
+`test_falsifier_cap_does_not_truncate_at_20_pages` already carries"* — the very method item 3 was
+asking to rename, cited as the **other** test whose coverage must not be duplicated. One method,
+asserted in one paragraph to be both stale and the good carrier. Nothing in the brief could detect
+it, because the two claims were phrased against two identifiers for one object.
+
+✅ The coder resolved by **description**, got the right test, and named it from the brief's own
+sentence. ⛔ It did not report the discrepancy — and that is the gap, not the work. **This is tick
+246's sixth false-credit shape one level up** (*a subject identified by a PROPERTY can be
+substituted*), moved from a test onto a brief, and **tick 247's remedy transfers unchanged: assert
+the description matches exactly one thing.** Every brief naming a test method now adds *"confirm the
+name resolves before editing; if it does not, say so and stop"* — one `grep`, and a silent
+substitution becomes a finding.
+
+⚠️ No property was lost, by luck rather than design: closure is genuinely carried by a **third**
+test I did not name, `test_falsifier_cap_preserves_ancestor_closure_on_dom` (`:330`, 23 pages so the
+cap does truncate, `$parentsByChild` built by XPath `../../../a` on the artifact's DOM nesting
+rather than recomputed from slugs — the corrected form of tick 238's fifth false-credit shape).
+
+Fifth firing of the carried-item family (241, 244, 249, 251, 254), and **the first where the rule's
+own remedy was available and skipped**: item 3 was carried from tick 251's queue by its
+*description*, and tick 244's rule — *a carried item is re-read AT ITS OWN LINE, never when the
+queue is copied forward* — needed exactly one `grep` for the name it was carried under.
+Thirty-third statement of the section's law, and the first about **which of two selectors names the
+subject** — the one input recoverable from neither selector alone, because each is internally
+consistent.
+
+## ⛔ A census surface reading ZERO is re-run BEFORE it is written down — tick 209's rule is a step, not a caution (tick 254)
+
+Tick 253 recorded half 1 = **0**. It reads **5** at tick 254 with `origin/main` last moved at
+`031b5163@{2026-09-06 23:56:35}` (before tick 253) and `origin/track/site` still `4183baaf` — **both
+bounds unmoved**, and all five commits dated 2026-09-06 14:12–21:01, older than the tick that missed
+them. Reconstructed cold from the reflog with tick 253's own bounds and its own ui tip
+(`780176bc@{02:53:57}`):
+
+```
+git log --format='COMMIT %h %S %s' --name-only ^031b5163 ^4183baaf 780176bc \
+  -- app/app/Modules/X-110 app/tests/Modules/X-110      → 29192d3d · c9843271 · 143418ec
+```
+
+`git merge-base --is-ancestor 29192d3d 780176bc` confirms reachability, so tick 253's 0 **could not
+have been right**. Tick 193's law working: the bound lived in `refs/remotes` and nothing was lost.
+
+⛔ **Tick 209 RULED this exact condition and the rule did not fire.** Its words: *"a census surface
+that drops to zero with both bounds unmoved is a TOOLING FAULT until `pwd` says otherwise."* Tick
+253 met the antecedent precisely and recorded the zero as a reading. **A rule that names its own
+trigger is worth nothing if the tick does not check the trigger** — and the check here was two
+`for-each-ref` values already written down in the same block.
+
+⚠️ **The cause is NOT measured and must not be named** (ticks 227/230/249 — an invented mechanism can
+contradict evidence the next reader checks in one command). One hypothesis is *excluded* by
+measurement: a uniform shell drift into `app/` cannot explain it, because tick 253's half 2
+(`-- app/database/migrations app/tests/Journeys`) printed **10** in the same tick and a drifted cwd
+would have silenced that pathspec identically. That exclusion is also why tick 210's law (*a
+common-mode fault voids its whole window*) is **not** invoked: common-mode is what half 2's survival
+rules out. Void is the half 1 line alone, superseded by tick 254's full re-run.
+
+## ✅ RETRACTION of tick 196 CONFIRMED a second time — a `Write` refusal is the shell's cwd (tick 254)
+
+`Write` to `.agents/supervisor/.tmp254.md` was refused; `cd /home/goaiez/agents/grs-antig-site &&
+pwd` in its own call, and the identical `Write` succeeded. The shell had drifted in `cd app && php
+artisan doctor`, which is still the only accepted artisan form from this seat, so the drift is
+structural and recurs every tick that runs doctor. Tick 197's diagnosis (the allow patterns are
+relative and resolve against the shell's cwd) is now measured twice. ⛔ Reset in its own call after
+**every** `cd app && …`, not when a refusal appears.
+
+## The lane is FINISHED and the backlog is EMPTY — measured live, not read from a table (tick 254)
+
+`python3 bin/state.py next` → `{"action": "FINISHED"}`. Per tick 210 the red list was re-measured
+from a live doctor rather than cited: `contract` ×5 (X-110 `pixel.install`/`pixel.events`/
+`page.loaded`, X-137 `message.sent`, X-103 `approval.requested`) · `capability` ×7 (X-102 `G16-21`,
+X-103 `G6-17`/`G6-20`, X-176 `G8-03`/`G8-23`/`G8-30`/`G8-33`) · `anchor` ×7 · `journey` **J11
+absent**. Every one is a sealed-`ContractStage` defect, a vendor credential, or another lane's
+column; every one is already filed. ⛔ **RULED: HOLD — no wave.** Manufacturing one is the failure
+refused at ticks 210, 211, 223 and 224, and a dispatch with no subject writes to a `state.py` that
+has no withdraw.
+
+⚠️ The three `X-221` contract lines name X-110 in their *strings* and are not ours — the fix edits
+X-221's manifest prose, stages' under ruling 5. **The filing question is whose manifest the fix
+edits, never whose id appears in the string** (tick 211).
