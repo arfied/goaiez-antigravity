@@ -255,7 +255,7 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | UI-44 | the `<h1>` seam in `components/account/layout.blade.php` (opt-in `heading` prop, `sr-only`, thirteen module pages opt in via `#[Layout]` params) · the ROI empty state onto `<x-ui.empty-state>` · the three `h3`-first views promoted to `h2` | closed, pushed `3881aa9b` |
 | UI-45 | the copy pass (`cooling`'s raw `vis_N`/`contact_form`/`1 visits`, `visitors-live`'s raw `page_view`, and their two tests) · `advanced-segments`, the fourteenth `moderate` screen | closed, pushed `880a52b7` |
 | UI-46 | `Architecture/OwnerNavTest`, REACHABILITY HALF ONLY — every owner route has an `OwnerNav` entry, a written exclusion or a MEASURED `SAMPLE_STATE` place · the two unguarded `->diffForHumans()` calls on a nullable column | closed, pushed `7f052348` |
-| **UI-47** | **`OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` (ruling below)** | **in flight — run 88 `BLOCK`, run 89 is fix 1 of 2** |
+| **UI-47** | **`OwnerNavTest`'s second half — *"refuses a hand-written link from one owner screen to another"*. ⛔ NO exclusion list: the admission is DERIVED from `OwnerNav::all()` (ruling below)** | **in flight — run 88 `BLOCK`, run 89 `PASS-WITH-NOTES` + a real finding, run 90 closes it** |
 | UI-48 | the **four** screens that still render `<x-surface.sample-state>` unconditionally — X-110 `cooling` · `visitors-live` · `tag-version-per`, X-138 `roi-dashboard` — each to real seeded data or a house `<x-ui.empty-state>`, then into `OwnerNav`. Closing each one reds `SAMPLE_STATE`, by design, and the nav entry is what makes it green again. **Plus the dead `$isSample` in X-199** — a `#[Locked] public bool = false` with no writer in `Invoices.php` and `Credits.php`, and the unreachable `@elseif($isSample)` at `invoices.blade.php:15` / `credits.blade.php:15`. It is SYSTEM, it is this lane's module, and it is what made the 17:2x six-screen list wrong | after UI-47 |
 
 ### ✅ RULED 2026-09-06 17:1x — the thirteen unreachable owner routes
@@ -441,6 +441,40 @@ corpus rather than exempt from it; `href`/`:href` attribute scoping, so `<form a
 `<audio src=>` are out structurally; an honest eight-line doctor block; and `STATUS: wave
 closed` over a `result failed` suite, which is **correct** — the floor was met exactly, and
 meeting the floor is a close.
+
+### ⛔⛔ RULED 2026-09-06 20:1x — the derived rule RED on its first honest run, and the falsehood was MINE
+
+Run 89 deleted the clause exactly as briefed and the cross-link half **reddened on one link**:
+`calls.blade.php:276` → `account.voicemail.recording`. ⚠️ **The 19:5x block above states, twice, that
+that route "never enters `ownerScreenRoutes()`". THAT IS FALSE.** `ownerScreenRoutes()` admits any
+route named `account.*` (`OwnerNavTest.php:60,83`), so it is in `$ownerRoutes`, and the reachability
+half is green on it **only because `ownerRouteExclusions():38` names it**. `:274` is an `<audio src>`
+and is structurally out; `:276` is an `<a href>` and is not.
+
+⚠️ **Fifth hand-derived claim in this file to come out wrong, second one the test caught before I
+did.** The pattern is settled: **a claim of the form "X is already handled by the derivation" is a
+MEASUREMENT.** Never write one without running it.
+
+✅ **The fix is at the derivation, as 19:5x ruled — and the return type is where the fact already
+lives.** MEASURED 20:1x: `VoicemailRecordingController:61`, `InboundMediaController:59` and
+`TenantExportDownloadController:141` all declare `__invoke(): StreamedResponse`, while
+`SuspendedAccountController:62` — a real HTML interruption screen — declares `: View|RedirectResponse`.
+
+> A route is **not** an owner screen when its action class declares `__invoke` and **every** type in
+> that return type is `StreamedResponse` or `BinaryFileResponse`.
+
+Fail-closed by construction: no `__invoke` (every Livewire screen), no declared return type,
+`Response`, or any union containing `View` all keep the route **in** the set. It cannot rot — make the
+controller return a `View` and the route re-enters and must take a nav entry or an exclusion. ⛔ Three
+written exclusions go with it (`account.data-export.download`, `account.inbound-media.show`,
+`account.voicemail.recording`); `ownerRouteExclusions()` goes **10 → 7**. `account.suspended` and
+`account.content-topics` stay — both render HTML.
+
+✅ **MEASURED 20:1x that this is the WHOLE fix**, because the assertion prints a message and not the
+array: one `grep -rhoP` for `href`/`:href` + `route('…')` over the four scanned dirs returns **25
+distinct targets** — eight nav `account.*`, `x-199.invoices`/`credits` (the `home.blade.php` tiles),
+eleven `advanced.*` plus `billing.index` and `gsc.connect.redirect` (not in `$ownerRoutes` at all),
+and `account.voicemail.recording`. **One entry in `$fails`.**
 
 ⚠️ **Run 88 is the first suite from this checkout I can call non-void**: its own
 `gate-runs.tsv` rows put `grs-antig-ui` at `19:39:19–19:40:56` with `site` ended `19:37:26`
