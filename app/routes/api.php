@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PlaceSuggestionController;
 use App\Http\Controllers\Api\PublicAuditController;
 use App\Http\Controllers\Api\WidgetReviewController;
 use App\Http\Middleware\ResolveWidget;
+use App\Modules\X102\Http\Controllers\ChatStartController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -135,6 +136,24 @@ Route::get('/widget/{embed_key}/reviews', WidgetReviewController::class)
 Route::post('/pixel/e', PixelIngestController::class)
     ->middleware('throttle:pixel-ingest')
     ->name('api.pixel.ingest');
+
+/*
+| WebChat door (X-102). Unauthenticated because visitors to a tenant's website
+| starting a chat have no account on this platform.
+|
+| The key is the PixelKey, an unguessable UUID assigned per business and stored
+| in the businesses table. Since it is a public identifier embedded in the
+| tenant's page source, it is carried as a route parameter — governed by the
+| T3InjectionController precedent.
+|
+| Unlike T3InjectionController (which writes nothing), this route creates a
+| ChatSession row. For the write half, the controller explicitly resolves the
+| tenant from the key via PixelKeys::resolve() and calls Tenancy::set() to
+| enforce isolation before calling the action, keeping the write safe.
+*/
+Route::post('/chat/{key}/start', ChatStartController::class)
+    ->middleware('throttle:chat-start')
+    ->name('api.chat.start');
 
 Route::middleware('auth:sanctum')->group(function (): void {
     /*
