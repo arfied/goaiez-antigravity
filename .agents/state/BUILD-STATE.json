@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-07T00:26:31",
+ "updated": "2026-09-07T00:45:15",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -1466,6 +1466,12 @@
    "module": "X-124",
    "chose": "a value derived from a name is a guess wearing a measurement's formatting; a column's histogram proves its detector fired, not that it fired on the right question",
    "at": "2026-09-07T00:26:31",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-192",
+   "chose": "an owner screen whose own view carries a visible h1 does not opt into the layout's sr-only heading seam; the shell assertion is the proof obligation, the sr-only line is a check on the seam",
+   "at": "2026-09-07T00:45:15",
    "ruling": "R245"
   }
  ],

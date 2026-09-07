@@ -18,7 +18,10 @@ class MembershipsListScreenTest extends TestCase
         $biz = $this->provisionTenant(['owner_user_id' => $owner->id]);
         $this->actingAs($owner);
 
-        $this->get(route('x-192.memberships-list'))->assertOk();
+        $this->get(route('x-192.memberships-list'))
+            ->assertOk()
+            ->assertSee('Your account')
+            ->assertDontSee('Internal Platform Console');
 
         Livewire::test(MembershipsList::class)->assertOk();
     }

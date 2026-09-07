@@ -219,7 +219,7 @@
 | x-190.slot-board | SlotBoard | none | line 2, unconditional | no | yes | no | no | none | no | no |
 | x-191.links-earned | LinksEarned | none | line 2, unconditional | no | yes | no | no | none | no | no |
 | x-191.pitchacquire-ratio | PitchacquireRatio | none | line 2, unconditional | no | yes | no | no | none | no | no |
-| x-192.memberships-list | MembershipsList | components.account.layout | none | yes | yes | yes | yes | none | no | no |
+| x-192.memberships-list | MembershipsList | components.account.layout | none | yes | yes | yes | yes | none | yes | no |
 | x-193.quiethour-holds | QuiethourHolds | none | line 2, unconditional | no | no | no | no | none | no | no |
 | x-193.sendsbyclass | Sendsbyclass | none | line 2, unconditional | no | yes | no | no | none | no | no |
 | x-194.any-view-it | AnyViewIt | none | none | no | yes | no | no | none | no | no |

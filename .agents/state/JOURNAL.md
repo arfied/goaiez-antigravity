@@ -777,3 +777,4 @@
 - `2026-09-07T00:01:35` (R245) X-124 — a table's column is not measured until its distribution is stated; a column constant across every row is a defect to report, not a result to ship
 - `2026-09-07T00:26:31` (R245) X-124 — a value derived from a name is a guess wearing a measurement's formatting; a column's histogram proves its detector fired, not that it fired on the right question
 - `2026-09-07T00:26:35` note: dup_of: 1 target surviving, 11 discarded
+- `2026-09-07T00:45:15` (R245) X-192 — an owner screen whose own view carries a visible h1 does not opt into the layout's sr-only heading seam; the shell assertion is the proof obligation, the sr-only line is a check on the seam
