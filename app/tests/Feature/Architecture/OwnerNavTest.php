@@ -92,7 +92,6 @@ function ownerScreenRoutes(): array
  * @see \App\Modules\X110\Ui\views\pixel-install.blade.php
  * @see \App\Modules\X110\Ui\views\widget-install.blade.php
  *
- * ⛔ OWED TO UI-47: The cross-link half.
  * "AN INVITATION OUT OF AN EMPTY STATE, WHICH IS THE ONE SHAPE
  * Architecture/OwnerNavTest ADMITS"
  * (Quoted from pixel-install.blade.php:128–131 and widget-install.blade.php:88–91)
@@ -152,8 +151,6 @@ test('owner screens only cross-link to routes in the nav', function () {
     $navRoutes = array_unique($navRoutes);
 
     $ownerRoutes = ownerScreenRoutes();
-    $exclusions = ownerRouteExclusions();
-    $sampleState = sampleStateRoutes();
 
     $fails = [];
 
@@ -165,10 +162,6 @@ test('owner screens only cross-link to routes in the nav', function () {
                 if (preg_match_all('/route\s*\(\s*[\'"]([^\'"]+)[\'"]/', $hrefContent, $routeMatches)) {
                     foreach ($routeMatches[1] as $routeTarget) {
                         if (in_array($routeTarget, $ownerRoutes, true)) {
-                            if (array_key_exists($routeTarget, $exclusions) || in_array($routeTarget, $sampleState, true)) {
-                                continue;
-                            }
-
                             if (! in_array($routeTarget, $navRoutes, true)) {
                                 $fails[] = basename($file)." links to {$routeTarget}";
                             }
