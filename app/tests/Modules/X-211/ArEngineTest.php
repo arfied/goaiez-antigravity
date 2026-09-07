@@ -145,3 +145,33 @@ test('existing accepted path still works', function () {
     $freshInvoice = app(InvoiceReader::class)->forBusiness($business->id, $invoice->id);
     expect($freshInvoice->paid_cents)->toBe(10000);
 });
+
+test('a partial offline payment keeps the reason the invoice was being chased', function () {
+    $business = Business::factory()->create();
+    $customer = Person::create(['business_id' => $business->id]);
+
+    $engine = app(InvoiceEngine::class);
+    $result = $engine->issueInvoice(
+        $business->id,
+        $customer->id,
+        [['description' => 'Test', 'quantity' => 1, 'unit_price_cents' => 40000]],
+        'net_30'
+    );
+    $invoice = $result['invoice'];
+
+    $invoice->update(['due_date' => now()->subDays(45)]);
+    $engine->markOverdue($business->id, $invoice->id);
+
+    $freshInvoice = app(InvoiceReader::class)->forBusiness($business->id, $invoice->id);
+    expect($freshInvoice->status)->toBe('overdue');
+
+    $arEngine = app(ArEngine::class);
+    $arEngine->logOfflinePayment($business->id, $invoice->id, 10000, 'check', 'REF123');
+
+    $paidInvoice = app(InvoiceReader::class)->forBusiness($business->id, $invoice->id);
+    expect($paidInvoice->paid_cents)->toBe(10000);
+    expect($paidInvoice->status)->toBe('overdue');
+
+    $overdueInvoices = app(InvoiceReader::class)->openOverdueForBusiness($business->id);
+    expect($overdueInvoices->contains('id', $invoice->id))->toBeTrue();
+});

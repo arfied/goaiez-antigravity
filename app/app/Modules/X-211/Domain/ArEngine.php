@@ -189,7 +189,7 @@ final class ArEngine
 
             $invoice = app(InvoiceReader::class)->forBusiness($businessId, $invoiceId);
             $newPaid = $invoice->paid_cents + $amountCents;
-            $status = ($newPaid >= $invoice->total_cents) ? 'paid' : 'issued';
+            $status = ($newPaid >= $invoice->total_cents) ? 'paid' : $invoice->status;
             $invoice->update(['paid_cents' => $newPaid, 'status' => $status]);
 
             if ($status === 'paid') {
