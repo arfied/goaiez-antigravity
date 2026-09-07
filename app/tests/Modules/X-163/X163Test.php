@@ -473,4 +473,75 @@ class X163Test extends TestCase
         $bItem->refresh();
         $this->assertFalse($bItem->is_confirmed);
     }
+
+    public function test_price_range_returns_min_max_for_confirmed_non_sample_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Range Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'range-service',
+            'price_cents' => 10000,
+            'price_min_cents' => 4500,
+            'price_max_cents' => 16500,
+            'is_sample' => false,
+            'is_confirmed' => true,
+        ]);
+
+        $res = $this->range->handle($biz->id, 'range-service');
+        $this->assertEquals(4500, $res['min_cents']);
+        $this->assertEquals(16500, $res['max_cents']);
+        $this->assertEquals('range-service', $res['service_name']);
+    }
+
+    public function test_price_range_refuses_unknown_service_with_no_fact(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unknown Range Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        $res = $this->range->handle($biz->id, 'unknown-service');
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertArrayNotHasKey('min_cents', $res);
+    }
+
+    public function test_price_range_refuses_unconfirmed_gap_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Unconfirmed Range Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'gap-service',
+            'price_cents' => 0,
+            'price_min_cents' => 5000,
+            'price_max_cents' => 15000,
+            'is_sample' => false,
+            'is_confirmed' => false,
+        ]);
+
+        $res = $this->range->handle($biz->id, 'gap-service');
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertArrayNotHasKey('min_cents', $res);
+    }
+
+    public function test_price_range_refuses_sample_row(): void
+    {
+        $biz = TestCase::provisionTenant(['name' => 'Sample Range Biz', 'currency' => 'USD']);
+        \DB::statement("SET app.business_id = '{$biz->id}'");
+
+        PriceBookItem::create([
+            'business_id' => $biz->id,
+            'service_name' => 'sample-service',
+            'price_cents' => 10000,
+            'price_min_cents' => 5000,
+            'price_max_cents' => 15000,
+            'is_sample' => true,
+            'is_confirmed' => true,
+        ]);
+
+        $res = $this->range->handle($biz->id, 'sample-service');
+        $this->assertEquals('NO_FACT', $res['refusal_code']);
+        $this->assertArrayNotHasKey('min_cents', $res);
+    }
 }

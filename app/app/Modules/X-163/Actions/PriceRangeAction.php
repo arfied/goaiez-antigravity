@@ -10,12 +10,23 @@ final class PriceRangeAction
 {
     public function handle(int $businessId, string $serviceName): array
     {
-        $item = PriceBookItem::where('business_id', $businessId)->where('service_name', $serviceName)->first();
+        $item = PriceBookItem::where('business_id', $businessId)
+            ->where('service_name', $serviceName)
+            ->where('is_confirmed', true)
+            ->where('is_sample', false)
+            ->first();
+
+        if (! $item) {
+            return [
+                'refusal_code' => 'NO_FACT',
+                'reason' => 'No price quote available for the given intent',
+            ];
+        }
 
         return [
             'service_name' => $serviceName,
-            'min_cents' => $item ? $item->price_min_cents : 5000,
-            'max_cents' => $item ? $item->price_max_cents : 15000,
+            'min_cents' => $item->price_min_cents,
+            'max_cents' => $item->price_max_cents,
         ];
     }
 }
