@@ -39,7 +39,7 @@ final class InternalLinkRenderAction
             $slug = trim((string) $page->slug, '/');
 
             if ($slug === '') {
-                if (! isset($collidingKeys['']) && ! empty($page->title)) {
+                if (! isset($collidingKeys['']) && trim((string) $page->title) !== '') {
                     $usablePages[] = $page;
                 }
 
@@ -52,7 +52,7 @@ final class InternalLinkRenderAction
 
             foreach ($parts as $part) {
                 $current = $current ? $current.'/'.$part : $part;
-                if (isset($collidingKeys[$current]) || ! isset($hierarchyPages[$current]) || empty($hierarchyPages[$current]->title)) {
+                if (isset($collidingKeys[$current]) || ! isset($hierarchyPages[$current]) || trim((string) $hierarchyPages[$current]->title) === '') {
                     $usable = false;
                     break;
                 }
