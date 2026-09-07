@@ -5133,6 +5133,18 @@
   {
    "at": "2026-09-06T23:02:39",
    "note": "Partition of contract stage 87 violations: does not declare whether the agent may reach it (49, PLAN-FROZEN, reads manifest.php), is not a token (13, PLAN-FROZEN, reads manifest.php), consumes an event with no emitter (13, PLAN-FROZEN, reads manifest.php), has multiple emitters (6, CHECK-DEFECT, reads manifest.php), is prose not a token (4, PLAN-FROZEN, reads manifest.php), acts toward customer without capability.decided (2, PLAN-FROZEN, reads manifest.php). Sum 87."
+  },
+  {
+   "at": "2026-09-06T23:30:01",
+   "note": "the contract detail lines are not printed by supervise.sh full-doctor. MEASURED from contract-detail.txt that php artisan doctor --stage=contract prints them."
+  },
+  {
+   "at": "2026-09-06T23:30:07",
+   "note": "consumes an event with no emitter (13, PLAN-FROZEN, reads manifest.php) is superseded. MECHANISM axis: the exemption for ingress and scheduled events at line 552 is dead code because the manifest array has no annotations. The 13 splits into 6 ingress-shaped (CHECK-DEFECT) and 7 genuinely missing an emitter (PLAN-FROZEN)."
+  },
+  {
+   "at": "2026-09-06T23:30:12",
+   "note": "src regexes in ContractStage.php: ingress, scheduled, agent_reachable, forbidden states, and opt-in prose are DEAD because compiled manifests lack docblocks. capability.decided is LIVE because it is an array value in C-Agent. consumes is LIVE as an array key."
   }
  ],
  "history": [
