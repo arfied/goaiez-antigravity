@@ -4772,3 +4772,85 @@ wave closes, because nothing else ever re-reads a closed row.**
 - ⚠️ The `< 2` threshold is a real policy decision (a single link is not a graph) that a test now
   depends on, and the `decided` line records only the seam. **A policy a test asserts belongs in the
   record**, not only in the code.
+
+## ⛔ A cross-lane READ creates a surface no census half watches — authorship and dependency are different questions (tick 240)
+
+Two waves have taken cross-lane reads out of this lane's column: SITE-113 reads
+`X-108\Models\Appointment`, SITE-121 reads `X163\Models\PriceBookItem` (filtering `is_confirmed` and
+`is_sample`, reading `service_name` and `price_cents`). **Half 1's fourteen paths watch neither.** A
+pricebook wave that renames `is_confirmed` or changes `price_cents` reddens `ProductSchemaTest` and
+the J11 serving path, and every census surface stays silent — **correctly**, because pricebook would
+be writing in its own column under ruling 5.
+
+This is **not** tick 183's case and must not be answered with a fourth half. 183 ruled a sibling's
+module *unwatched, not uncovered*, and that widening the census into it bolts a half onto someone
+else's column. That reasoning is about **authorship** — *is a sibling writing where we write* — and
+it is still right. What is new is a **dependency**: a question about what we *read*. Different query,
+different verdict; conflating them either blinds the lane to a breaking change or turns every
+pricebook commit into a finding.
+
+✅ The dependency query, run at tick 240 and **clean** (money's merge of main and nothing else):
+
+```
+git log --format='COMMIT %h %S %s' --name-only ^origin/main ^origin/track/site <the six tips> \
+  -- app/app/Modules/X-163/Models app/app/Modules/X-163/Database \
+     app/app/Modules/X-108/Models app/app/Modules/X-108/Database
+```
+
+⛔ **It is NOT a standing census half and must never be read for silence.** It answers *"has the
+schema I depend on moved?"* immediately before briefing a wave that reads across a lane boundary, and
+immediately after any Track 1 merge. It is **expected to print** — pricebook's two commits this tick
+(`807da9ea`, `e03b93db`) are `Ui/` and tests, exactly the traffic that should print and mean nothing
+here. Read the **subject**: `Models/` and `Database/` are the only two directories that can break a
+reader. ⚠️ It is scoped to those two directories, not to the module, deliberately — a census over all
+of X-163 would print constantly and teach the next tick to skim it, which is the failure mode tick
+173 named for `.agents/state/`.
+
+Twenty-fifth statement of the section's law, and the first about a surface the census was never
+**designed** to cover rather than one it covers badly: every half asks who wrote in our column, and
+no half asks what our column reads. The lane's architecture moved and the instrument did not.
+
+## ⛔ Four schema claims the page does not show — ④ was fixed for ONE of five (tick 240)
+
+Measured at tick 240, the served document's entire visible body is `x110-pixel`,
+`chat-widget-container`, `form-capture-x155`, `dni-pool-x137`, the JSON-LD script, the new
+`#offers-x176` block and the internal-link `<nav>`. The JSON-LD at `EdgeDeployAction:254` carries
+**five** derived top-level claims and **four are shown nowhere**: `event` (`:114-123` ←
+`Appointment`), `address` (`:112` ← `Business.address`), `video` (`:158-167` ← `content_blocks`
+`video_embed`), `breadcrumb` (`:186-217` ← slug ancestry). `video` is the sharpest — a `video_embed`
+block is read **only** to mint a `VideoObject`, and the page contains no video, embed or link.
+
+⛔ **The reading is about this lane's own standard.** All four ids — `G8-15` `G8-22` `G16-25` `G8-04`
+— are **already credited** by passing tests, so `capability` will not move when this is fixed and no
+count, census or gate will ever raise it. It is visible only by reading
+`GOAIEZ-MASTER-PLAN.md:32271`'s ④ against the artifact. **A capability that is credited is not a
+capability that is discharged.** And it is the standard this lane holds others to: tick 198 refused
+reviews' `'ssl_installed' => true` because nothing could falsify it; a JSON-LD claim with no page
+content is that defect in the output rather than in a column.
+
+**RULED: SITE-122 renders event, address and video** with per-type correspondence assertions read out
+of the stored artifact. Pass condition is **zero movement in every stage and a byte-identical id
+census** (tick 209), a fall being as much a stop as a rise, and **no new `G##-##` literal** — a second
+carrier for an already-credited id only obscures which file discharges it.
+
+⚠️ **SITE-123 takes the breadcrumb, and the split is a measurement, not tidiness.** A visible
+breadcrumb is a trail of **links**, and `InternalLinkGraphTest` extracts hrefs **document-wide** at
+four sites, two asserting with `assertEqualsCanonicalizing` (`:58`, `:246`). The first `<a href>` a
+breadcrumb emits reddens two exhaustive assertions that are correct — tick 234's shape exactly, whose
+remedy is tick 238's: **narrow the SUBJECT to the block the assertion is about, never loosen the
+predicate.** That is a change to a load-bearing assertion and therefore its own wave; shipping it
+beside three new blocks makes any red unattributable between the two (tick 215).
+
+## ⛔ A demand in prose next to a checklist is a demand the checklist outranks (tick 240)
+
+Tick 239 ruled that a brief demanding a falsifier's outcome must get it, and wrote the demand into
+SITE-121's brief — **in prose, immediately below a numbered five-item evidence checklist.** The report
+supplied all five numbered items verbatim and said nothing about either falsifier, for the **second**
+consecutive wave, and this seat re-derived it from source both times.
+
+The coder is not ignoring instructions; it is reading the structure. An enumerated list is a contract
+and the paragraph beside it is commentary. Same family as tick 208 (*an enumerated evidence request is
+a scope, and the section you forget to name is where the regression sits*) turned one notch further:
+there the item was **missing** from the list, here it was **present in the document but outside the
+list**, which is the same thing to a reader working through a checklist. **Anything a verdict will
+turn on is a numbered item.** SITE-122's checklist has six.
