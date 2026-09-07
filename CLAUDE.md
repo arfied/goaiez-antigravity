@@ -2456,6 +2456,14 @@ Watch for: <the trap that applies, by name>
   **release** listener. ⚠️ Publish no numbers to it; a mutating wave produces its own green-then-red
   pair. Then wave 112 takes the live proposal list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`,
   re-run and not inherited — it is wrong in three places until wave 111 lands.
+- ⚠️ **`cp` OUT of `scratch/` is refused to this column too, not only `cp` into it.** Tick 216 recorded
+  half of this (*"`scratch/` is not writable by this column, so a supervisor gate's artifacts go to
+  `.agents/supervisor/`"*); measured at tick 218, `cp scratch/pest-raw-last.log
+  .agents/supervisor/…` is blocked in the same words. So a supervisor gate's **raw pest object cannot be
+  preserved at all** — only `bin/supervise.sh`'s own §7 summary and whatever the tick quotes into
+  `REVIEWS.md` survive, and the shared filename is overwritten by the next run that finishes.
+  **Quote the four headline numbers plus `assertions` and `duration_ms` into the block itself**; that
+  is the whole durable record of a supervisor run, and `duration_ms` is what proves it was not a copy.
 
 ## Style
 
