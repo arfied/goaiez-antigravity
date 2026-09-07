@@ -938,3 +938,5 @@
 - `2026-09-06T19:58:55` UNRESOLVED capability X-138 - G17-24 X-138 exposes no short-link/QR/UTM surface; X-137 owns LinkShortAction, LinkQrAction, ShortLink
 - `2026-09-06T19:59:13` UNRESOLVED capability X-138 - G4-25 UTM hygiene surface is absent; X-138 has no UTM code
 - `2026-09-06T19:59:30` UNRESOLVED capability X-138 - G9-34 names no refusal at all, just a flagship designation
+- `2026-09-06T20:20:49` (R245) X-179 — (R245) before filing UNRESOLVED, grep .agents/state/BUILD-STATE.json for an existing record naming that id on that module and skip it, reporting 'already filed at <timestamp>' — state.py resolve targets a stage not an id and refuses when a stage carries more than one record, so every duplicate filing permanently removes that stage's only withdrawal path (REV-98)
+- `2026-09-06T20:20:49` (R245) X-179 — (R245) where an id's assertion already exists in a passing test, the id closes only on a NEW test covering the branch the existing assertions miss — never by adding a [G##-##] docblock to the test that already passes, because CapabilityStage closes an id on a bare tag with zero assertions in the body (REV-98)
