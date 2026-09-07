@@ -4,7 +4,7 @@
             <h1 class="text-xl font-semibold leading-6 text-ink">Payment Declines & Exceptions</h1>
             <div class="mt-4 grid grid-cols-2 gap-4">
                 <div class="bg-card px-4 py-5 shadow sm:rounded-[--radius-card] border border-rule">
-                    <dt class="truncate text-sm font-medium text-ink-2">Declines this week</dt>
+                    <dt class="truncate text-sm font-medium text-ink-2">{{ $showAll ? 'All declines' : 'Declines this week' }}</dt>
                     <dd class="mt-1 text-3xl font-semibold tracking-tight text-ink tabular-nums">{{ $declinesCount }}</dd>
                 </div>
                 <div class="bg-card px-4 py-5 shadow sm:rounded-[--radius-card] border border-rule">
@@ -25,7 +25,7 @@
             
             @if($declines->isEmpty())
                 <div wire:loading.remove>
-                    <x-ui.empty-state heading="No declines this week." action="Show all" target="toggleShowAll">
+                    <x-ui.empty-state :heading="$showAll ? 'No declines at all.' : 'No declines this week.'" :action="$showAll ? 'Show this week only' : 'Show all'" target="toggleShowAll">
                         You have no declined payments to review.
                     </x-ui.empty-state>
                 </div>

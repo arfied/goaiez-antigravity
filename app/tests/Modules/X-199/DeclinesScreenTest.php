@@ -194,10 +194,34 @@ class DeclinesScreenTest extends TestCase
         ]);
 
         Livewire::actingAs($owner)->test(Declines::class)
+            ->assertSee('Declines this week')
             ->assertDontSee('200.00')
             ->call('toggleShowAll')
+            ->assertSee('All declines')
+            ->assertDontSee('Declines this week')
             ->assertSee('200.00')
             ->assertSee('Deferred');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_the_empty_declines_screen_names_the_window_it_is_showing(): void
+    {
+        $base = now()->startOfWeek()->addDays(3)->setTime(10, 0);
+        Carbon::setTestNow($base);
+
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(Declines::class)
+            ->assertSee('No declines this week.')
+            ->assertSee('Show all')
+            ->call('toggleShowAll')
+            ->assertSee('No declines at all.')
+            ->assertSee('Show this week only')
+            ->assertDontSee('No declines this week.');
 
         Carbon::setTestNow();
     }
