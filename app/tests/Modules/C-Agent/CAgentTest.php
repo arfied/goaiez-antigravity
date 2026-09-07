@@ -758,6 +758,6 @@ class CAgentTest extends TestCase
         $res = $this->answer->handle($biz->id, 'how much to unblock a drain?');
 
         $this->assertEquals('answered', $res['status']);
-        $this->assertStringContainsString('$99.99', $res['reply']);
+        $this->assertStringContainsString('$9,999.00', $res['reply']);
     }
 }
