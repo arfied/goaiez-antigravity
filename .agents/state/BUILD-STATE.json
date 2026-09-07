@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-07T00:00:04",
+ "updated": "2026-09-07T00:21:34",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1626,6 +1626,10 @@
   {
    "at": "2026-09-07T00:00:14",
    "note": "X-211 the collections human-action refusal is unreachable and is recorded, not edited: CollectionsPackagePreview::render aborts 403 unless auth()->check(), so the message naming the owner role can never render, and the generated route carries auth middleware besides."
+  },
+  {
+   "at": "2026-09-07T00:21:40",
+   "note": "X-199 UNRESOLVED: RecordPaymentOnCapture is registered by no provider and guarded on an invoiceId its only dispatcher never sets; the seam cannot be wired because X-198 has no invoice linkage \u2014 capture()'s signature is (businessId, amountCents, paymentToken, idempotencyKey, currency) and payments carries no invoice column \u2014 so it waits on a cross-module API change, not on a listener registration."
   }
  ],
  "decisions": [
@@ -2089,6 +2093,12 @@
    "module": "X-199",
    "chose": "R245: an overflow is recorded charged only when the gateway issued a charge id - GatewayEngine::capture calls a processor only for a stripe connection and otherwise returns a payment awaiting_processor without throwing, so deriving charged from the absence of an exception told the owner the card on file had covered money that never moved.",
    "at": "2026-09-07T00:00:04",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-198",
+   "chose": "a capture is announced only when the gateway issued a charge id \u2014 PaymentCaptured fires from GatewayEngine::capture() only on a non-null gateway_charge_id, because capture() makes no external call for a non-stripe connection and an event named for a capture that did not happen propagates to every future listener.",
+   "at": "2026-09-07T00:21:34",
    "ruling": "R245"
   }
  ]
