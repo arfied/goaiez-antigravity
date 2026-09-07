@@ -221,6 +221,7 @@ class X138Test extends TestCase
 
         Event::assertDispatched(AttributionAmbiguous::class, fn ($e) => count($e->qualifyingTouches) === 2);
     }
+
     /**
      * [G13-06]
      * X-122 owns the action log (action_invocations); queryJobAttribution accepts touches as a parameter, reading no log.
