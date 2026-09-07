@@ -1251,3 +1251,6 @@ Therefore, adding a row to the tracker could move only the capability count.
 - `2026-09-07T08:19:07` note: specText() is module-independent; one tracker row leading with an id closes the :68 violation for every module declaring it.
 - `2026-09-07T08:43:24` note: A range row in the tracker registers only its first id, as established by the rule at :1084.
 - `2026-09-07T08:43:29` note: 0 rows written. capability 449 -> 449. The single row written for N-065 was reverted because it moved citation down to 92, which triggered a STOP.
+- `2026-09-07T09:13:56` note: A per-id tracker row closes a citation violation as well as a capability one, because the tracker is in CitationStage's corpus and a capabilities.php declaration line is a message.
+- `2026-09-07T09:14:02` note: 15 rows written, capability 449 -> 386, citation 93 -> 30
+- `2026-09-07T09:14:09` note: Commit 713e8c6421b100646571a6e5a2b0bb8e7f4eb617's subject says the range rows were expanded and its two files are the ledger only; 0 rows were written in S-162.
