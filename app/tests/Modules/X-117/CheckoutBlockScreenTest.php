@@ -132,4 +132,16 @@ class CheckoutBlockScreenTest extends TestCase
         $this->assertNotNull($order);
         $this->assertSame('pending_payment', $order->status);
     }
+
+    public function test_the_empty_checkout_says_nothing_is_held(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Livewire::test(CheckoutBlock::class, ['sessionToken' => 'sess_none'])
+            ->assertOk()
+            ->assertSee('Nothing to pay for yet.')
+            ->assertSee('nothing is held for you until the order is placed here')
+            ->assertDontSee('it is held for 15 minutes');
+    }
 }

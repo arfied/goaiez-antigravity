@@ -31,6 +31,7 @@ class CartBlockScreenTest extends TestCase
         $screen = Livewire::test(CartBlock::class, ['sessionToken' => 'sess_1'])
             ->assertOk()
             ->assertSee('Limited filter')
+            ->assertSee('Prices come from this catalogue and are set here')
             ->assertSee('stock comes off when the order is placed at checkout, not when it is paid')
             ->assertSee('45.00')
             ->assertSee('1 in stock')
@@ -38,6 +39,7 @@ class CartBlockScreenTest extends TestCase
             ->assertSee('120.00')
             ->assertDontSee('Gutter clean')
             ->assertSee('Nothing in the cart yet')
+            ->assertSee('nothing is held for you until the order is placed at checkout')
             ->assertSeeHtml('wire:click="add('.$filter->id.')"')
             ->call('add', $filter->id)
             ->assertSee('Limited filter is in the cart')
@@ -76,5 +78,18 @@ class CartBlockScreenTest extends TestCase
         Tenancy::set($bizB->id);
         $this->assertSame(0, Cart::where('business_id', $bizB->id)->count());
         $this->assertSame(1, Sellable::where('business_id', $bizB->id)->count());
+    }
+
+    public function test_the_empty_catalogue_says_what_it_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        Tenancy::set($biz->id);
+
+        Livewire::test(CartBlock::class, ['sessionToken' => 'sess_empty'])
+            ->assertOk()
+            ->assertSee('Nothing on offer yet.')
+            ->assertSee('No product or service has been put on this catalogue')
+            ->assertSee('Bringing prices across from the pricebook is not built here')
+            ->assertDontSee('The catalogue builds itself from the pricebook');
     }
 }

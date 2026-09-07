@@ -24,7 +24,7 @@
     @if($expired)
         <x-ui.attention-card state="attention" heading="This cart expired">Nothing was charged and no stock moved.</x-ui.attention-card>
     @elseif(count($lines) === 0)
-        <x-ui.empty-state heading="Nothing to pay for yet.">Add something in the cart block; it is held for 15 minutes.</x-ui.empty-state>
+        <x-ui.empty-state heading="Nothing to pay for yet.">Add something in the cart block. The cart itself lasts 15 minutes; nothing is held for you until the order is placed here.</x-ui.empty-state>
     @else
         <ul>
             @foreach($lines as $line)

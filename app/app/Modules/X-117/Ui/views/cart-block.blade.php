@@ -1,13 +1,13 @@
 <div>
 <h1>Cart</h1>
-<p class="text-base text-ink-2">Prices come from the pricebook; nothing is charged here, and stock comes off when the order is placed at checkout, not when it is paid.</p>
+<p class="text-base text-ink-2">Prices come from this catalogue and are set here; nothing is charged on this screen, and stock comes off when the order is placed at checkout, not when it is paid.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on checkout">{{ $waiting }}</x-ui.attention-card> @endif
 @if($success) <p>{{ $success }}</p> @endif
 <div wire:loading><x-ui.skeleton label="Reading the cart…" /></div>
 <h2>What's on offer</h2>
 @if($sellables->isEmpty())
-<x-ui.empty-state heading="Nothing on offer yet.">The catalogue builds itself from the pricebook the moment a price is confirmed.</x-ui.empty-state>
+<x-ui.empty-state heading="Nothing on offer yet.">No product or service has been put on this catalogue. Bringing prices across from the pricebook is not built here, so the list fills only once a catalogue row exists.</x-ui.empty-state>
 @else
 <ul class="space-y-2">
 @foreach($sellables as $s)
@@ -27,7 +27,7 @@
 @if($expired)
 <x-ui.attention-card state="attention" heading="This cart expired">The 15 minutes ran out; add again to start a new one. Nothing was charged and no stock moved.</x-ui.attention-card>
 @elseif(empty($lines))
-<x-ui.empty-state heading="Nothing in the cart yet.">Add a service or a product from the list above; it is held for 15 minutes.</x-ui.empty-state>
+<x-ui.empty-state heading="Nothing in the cart yet.">Add a service or a product from the list above. The cart itself lasts 15 minutes; nothing is held for you until the order is placed at checkout.</x-ui.empty-state>
 @else
 <ul class="space-y-2">
 @foreach($lines as $line)
