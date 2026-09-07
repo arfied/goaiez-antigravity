@@ -2311,3 +2311,56 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     self-minted nonce *"Authorised"*, which is ruling 45's known token and whose sentence already ends
     *"waiting on a card-entry surface that is not connected yet"* — true-but-incomplete is ruling 76's
     PASS-WITH-NOTES grade, not a wave.
+101. **`PaymentCaptured` is announced for a payment that was never captured, and the fix belongs at
+    the dispatch, not at each reader (RULED by the lane supervisor 2026-09-07 00:1x, briefed as
+    MONEY-97 item 1).** Ruling 99 stopped X-199 *deriving* `charged` from the absence of an
+    exception; the announcement it was deriving from is still false.
+    `X-198/Domain/GatewayEngine::capture():111` dispatches `PaymentCaptured` **unconditionally**,
+    directly after the `Payment::create` whose `status` is `awaiting_processor` whenever
+    `gateway_name !== 'stripe'` (`:93-98`), with `gateway_charge_id` null — so for a `square`,
+    `clover` or `plaid` connection this app publishes an event named *Captured*, carrying
+    `gatewayChargeId: null`, for money that never moved. **RULED: the dispatch is guarded on
+    `$payment->gateway_charge_id !== null`**, because ruling 44's reasoning applies to the dispatch
+    itself and not merely to a field — an event that fires for a non-event propagates the fiction to
+    every listener that ever registers, and today there is none, which is the one moment removing it
+    costs nothing. Fixing it in each reader instead would put the same `!== null` test in every
+    future consumer and leave the seam lying. ⛔ The event is neither renamed nor deleted and no
+    second event is minted: `payment.captured` is a declared `@emits` in `X-198/manifest.php:38`
+    harvested from the frozen plan (rulings 29, 32), and the stripe path keeps dispatching it, so the
+    declaration keeps its dispatcher. ⛔ Not resolved by a non-Stripe adapter (ruling 20's contract,
+    ruling 13's evidence run). ⚠️ **Ruling 46's blast radius is the interesting half:**
+    `grep -rn PaymentCaptured app/tests` is **three lines in one file**, and the assertion sits in a
+    **TEST ANCHOR** — `X198Test.php:75`'s `Event::assertDispatched(...)`, whose fixture connects
+    **`square`** (`:63`) and which asserts eleven lines above that `gateway_charge_id` is null and the
+    status `awaiting_processor` (`:73-74`). The anchor asserts in one breath that nothing was charged
+    *and* that a capture was announced. It is **inverted and kept**, the docblock byte-identical
+    (rulings 47, 81). ⚠️ **And the positive branch is covered by nothing** — those three lines are the
+    whole population — so inverting `:75` alone would leave the dispatch unasserted and a future
+    deletion of it green. That is ruling 39's companion lesson arriving as an *absent* cover rather
+    than a partial one, so the wave **adds** a stripe test asserting the event IS dispatched with a
+    non-null charge id. **Inverting an assertion without replacing its positive is how a check
+    quietly stops checking.**
+102. **`RecordPaymentOnCapture` is registered by nothing, guarded on a field its only dispatcher never
+    sets, and it would mark an invoice paid — recorded `UNRESOLVED`, never registered (RULED by the
+    lane supervisor 2026-09-07 00:1x, briefed as MONEY-97 item 2).**
+    `grep -rn RecordPaymentOnCapture app/app app/tests app/bootstrap` returns **only the class's own
+    declaration**. This lane's convention is an explicit `Event::listen` in the module provider
+    (`X-198/ModuleServiceProvider.php:30`, `X-211/ModuleServiceProvider.php:35-37`); X-199's provider
+    has none, while `X-199/manifest.php:48` declares `consumes payment.captured` — ruling 69's
+    `invoice.overdue` shape, dead at **both** ends. It is dead twice over: `handle():19-21` returns
+    when `$event->invoiceId === null` and the only dispatcher (`GatewayEngine:111`) passes no
+    `invoiceId`, so the body is unreachable even if registered. ⛔ **Not registered** — registering a
+    consumer to satisfy a declaration is ruling 59 inverted, and it is worse than inert: the body
+    calls `InvoiceEngine::recordPayment()`, which writes `status => 'paid'` and `paid_at => now()`
+    (`InvoiceEngine.php:163-167`), so wiring this seam means **marking an invoice paid off an event**
+    — and before ruling 101's guard that event fires with no charge id at all. ⛔ **Not deleted** — it
+    is the only class that could ever satisfy the declared `consumes` (ruling 69). The real missing
+    dependency is named rather than guessed: **X-198 has no invoice linkage**, `capture()`'s signature
+    being `(businessId, amountCents, paymentToken, idempotencyKey, currency)` over a `payments` table
+    with no invoice column, so the seam waits on a cross-module API change and not on a listener
+    registration. ⚠️ The generalisable half, and why the pair was found together: **ruling 99's
+    question — does this figure come from the row the gateway wrote? — has a twin at the event layer,
+    *does this event fire only when the thing it is named for happened?*** — and a module can fail
+    both at once with every gate green. Nine X-199 fixtures could not see 99 because all nine seeded
+    `stripe`; the whole `PaymentCaptured` population is three lines, and the one assertion among them
+    certifies the defect.
