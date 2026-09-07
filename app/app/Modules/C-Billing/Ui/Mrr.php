@@ -50,7 +50,7 @@ class Mrr extends Component
         try {
             $result = $action->handle(Tenancy::idOrFail(), 5000);
             if (($result['status'] ?? null) === 'charged') {
-                $this->success = 'Topped up '.number_format($result['charged_amount_cents'] / 100, 2).'.';
+                $this->success = number_format($result['charged_amount_cents'] / 100, 2).' of credit added to your balance. Nothing was charged: this button grants credit, and the paid top-up that takes a card is not wired to it yet.';
             } else {
                 $this->error = $result['message'] ?? 'Top-up refused.';
             }

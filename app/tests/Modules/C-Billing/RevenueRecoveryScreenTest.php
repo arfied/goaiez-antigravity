@@ -63,7 +63,8 @@ class RevenueRecoveryScreenTest extends TestCase
             ->assertSeeHtml('wire:click="topupNow('.$state->id.')"')
             ->assertSeeHtml('wire:click="advance('.$state->id.')"')
             ->call('topupNow', $state->id)
-            ->assertSee('Topped up 50.00.')
+            ->assertSee('50.00 of credit added to your balance')
+            ->assertSee('Nothing was charged: this button grants credit')
             ->assertSee('recovered 75.00 since the ladder started')
             ->call('advance', $state->id)
             ->assertSee('Day 9 of 21');

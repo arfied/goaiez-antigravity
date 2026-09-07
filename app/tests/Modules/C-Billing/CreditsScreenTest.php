@@ -110,7 +110,7 @@ class CreditsScreenTest extends TestCase
 
         $lw = Livewire::actingAs($owner)->test(Credits::class)
             ->call('topup')
-            ->assertSee('Topped up');
+            ->assertSee('Nothing was charged: this button grants credit');
 
         $entry = CreditLedgerEntry::where('business_id', $biz->id)
             ->where('entry_type', 'topup')->first();
@@ -119,7 +119,7 @@ class CreditsScreenTest extends TestCase
             ->assertSee('Automatic balance top-up')
             ->call('topup')
             ->assertSee('Daily top-up ceiling')
-            ->assertDontSee('Topped up');
+            ->assertDontSee('Nothing was charged: this button grants credit');
 
         $this->assertEquals(
             1,

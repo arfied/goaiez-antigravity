@@ -62,8 +62,10 @@ class MrrScreenTest extends TestCase
             ->call('explain', $grant->id)
             ->assertSet('explainedEntryId', $grant->id)
             ->assertSee('ref grant_welcome')
+            ->assertSee('Add 50.00 credit')
             ->call('topup')
-            ->assertSee('Topped up 50.00.');
+            ->assertSee('50.00 of credit added to your balance')
+            ->assertSee('Nothing was charged: this button grants credit');
 
         $this->assertSame(1, CreditLedgerEntry::where('business_id', $biz->id)->where('entry_type', 'topup')->count());
         $this->assertSame(0, CreditLedgerEntry::where('business_id', $bizB->id)->count());

@@ -46,7 +46,7 @@
                 @endif
             @endif
             <div class="mt-3">
-                <x-ui.button size="default" wire:click="topup" wire:loading.attr="disabled" wire:target="topup">Top up 50.00</x-ui.button>
+                <x-ui.button size="default" wire:click="topup" wire:loading.attr="disabled" wire:target="topup">Add 50.00 credit</x-ui.button>
             </div>
         </div>
 
