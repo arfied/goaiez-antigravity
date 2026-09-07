@@ -107,6 +107,7 @@ final class EdgeDeployAction
             // Compile HTML artifact to local storage
             $videos = [];
             $events = [];
+            $faqs = [];
 
             $business = Business::find($businessId);
             $address = is_array($business?->address) ? $business->address : null;
@@ -165,6 +166,13 @@ final class EdgeDeployAction
                                 'name' => $block['name'] ?? null,
                                 'contentUrl' => $block['contentUrl'] ?? null,
                                 'uploadDate' => $block['uploadDate'] ?? null,
+                            ];
+                        }
+                        if (($block['type'] ?? '') === 'faq') {
+                            // FAQPage schema injected on publish (TEST ANCHOR, G8-16, ruling 41)
+                            $faqs[] = [
+                                'question' => $block['question'] ?? null,
+                                'answer' => $block['answer'] ?? null,
                             ];
                         }
                     }
@@ -262,7 +270,8 @@ final class EdgeDeployAction
                     videos: $videos ?: null,
                     events: $events ?: null,
                     address: $address ?: null,
-                    breadcrumbs: $breadcrumbs ?: null
+                    breadcrumbs: $breadcrumbs ?: null,
+                    faqs: $faqs ?: null
                 );
 
                 if (isset($schemaResult['json_ld'])) {
@@ -334,6 +343,18 @@ final class EdgeDeployAction
                     $html .= '  <div class="video-item" data-name="'.e($video['name']).'" data-url="'.e($video['contentUrl']).'">'.e($video['name'])."</div>\n";
                 }
                 $html .= "</div>\n";
+            }
+
+            if (! empty($faqs)) {
+                try {
+                    $html .= "<div id=\"faq-x176\">\n";
+                    foreach ($faqs as $faq) {
+                        $html .= '  <div class="faq-item" data-question="'.e((string)($faq['question'] ?? '')).'">'.e((string)($faq['question'] ?? '')).' - '.e((string)($faq['answer'] ?? ''))."</div>\n";
+                    }
+                    $html .= "</div>\n";
+                } catch (\Throwable $e) {
+                    Log::warning("the faq block could not be rendered: " . $e->getMessage());
+                }
             }
 
             $internalLinksHtml = app(InternalLinkRenderAction::class)->handle($businessId);

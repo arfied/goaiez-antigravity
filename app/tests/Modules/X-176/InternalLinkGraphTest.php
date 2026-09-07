@@ -391,7 +391,7 @@ final class InternalLinkGraphTest extends TestCase
         }
     }
 
-    public function test_falsifier_ancestor_index_is_built_from_full_published_set(): void
+    public function test_falsifier_cap_does_not_truncate_at_20_pages(): void
     {
         Storage::fake('local');
         $biz = self::provisionTenant(['name' => 'Internal Link Tenant 8']);

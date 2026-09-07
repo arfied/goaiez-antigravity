@@ -25,7 +25,8 @@ final class SchemaRenderAction
         ?array $videos = null,
         ?array $events = null,
         ?array $address = null,
-        ?array $breadcrumbs = null
+        ?array $breadcrumbs = null,
+        ?array $faqs = null
     ): array {
         if ($entityType === null) {
             $vertical = strtolower(trim((string) (Business::find($businessId)->vertical ?? '')));
@@ -138,6 +139,28 @@ final class SchemaRenderAction
             ];
         }
 
+        if (! empty($faqs)) {
+            // FAQPage schema from faq block (TEST ANCHOR, G8-16)
+            $validFaqs = [];
+            foreach ($faqs as $f) {
+                if (isset($f['question'], $f['answer']) && is_string($f['question']) && is_string($f['answer']) && $f['question'] !== '' && $f['answer'] !== '') {
+                    $validFaqs[] = [
+                        '@type' => 'Question',
+                        'name' => $f['question'],
+                        'acceptedAnswer' => [
+                            '@type' => 'Answer',
+                            'text' => $f['answer'],
+                        ],
+                    ];
+                }
+            }
+            if (! empty($validFaqs)) {
+                $jsonLd['@type'] = is_array($jsonLd['@type']) ? $jsonLd['@type'] : [$jsonLd['@type']];
+                $jsonLd['@type'][] = 'FAQPage';
+                $jsonLd['mainEntity'] = $validFaqs;
+            }
+        }
+
         $isValid = $this->validateSchema($jsonLd);
         if (! $isValid) {
             return [
@@ -179,7 +202,8 @@ final class SchemaRenderAction
         if (empty($schema['@type']) || empty($schema['name']) || empty($schema['url'])) {
             return false;
         }
-        if (! is_string($schema['@type']) || ! is_string($schema['name']) || ! is_string($schema['url'])) {
+        $validType = is_string($schema['@type']) || (is_array($schema['@type']) && count(array_filter($schema['@type'], 'is_string')) === count($schema['@type']));
+        if (! $validType || ! is_string($schema['name']) || ! is_string($schema['url'])) {
             return false;
         }
         if (isset($schema['hasOfferCatalog'])) {
@@ -281,6 +305,27 @@ final class SchemaRenderAction
                     return false;
                 }
                 if (! isset($item['item']) || ! is_string($item['item']) || $item['item'] === '') {
+                    return false;
+                }
+            }
+        }
+
+        if (isset($schema['mainEntity'])) {
+            $me = $schema['mainEntity'];
+            if (! is_array($me)) {
+                return false;
+            }
+            foreach ($me as $item) {
+                if (($item['@type'] ?? '') !== 'Question') {
+                    return false;
+                }
+                if (! isset($item['name']) || ! is_string($item['name']) || $item['name'] === '') {
+                    return false;
+                }
+                if (! isset($item['acceptedAnswer']) || ! is_array($item['acceptedAnswer']) || ($item['acceptedAnswer']['@type'] ?? '') !== 'Answer') {
+                    return false;
+                }
+                if (! isset($item['acceptedAnswer']['text']) || ! is_string($item['acceptedAnswer']['text']) || $item['acceptedAnswer']['text'] === '') {
                     return false;
                 }
             }

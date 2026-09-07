@@ -173,6 +173,64 @@ final class SchemaVisibilityTest extends TestCase
         $this->assertEquals($schemaVideos, $visibleVideos);
     }
 
+    /**
+     * [G8-16]
+     */
+    public function test_faq_corresponds(): void
+    {
+        Storage::fake('local');
+        $biz = self::provisionTenant(['name' => 'Visibility Tenant FAQ']);
+        Tenancy::set((int) $biz->id);
+
+        $page = Page::create(['business_id' => $biz->id, 'title' => 'Home', 'slug' => 'home']);
+        $zone = app(EdgeProvisionAction::class)->handle($biz->id, 'visibility-faq.example.com', true);
+
+        PageVersion::create([
+            'business_id' => $biz->id,
+            'page_id' => $page->id,
+            'commit_id' => 'commit_faq',
+            'content_blocks' => [
+                [
+                    'type' => 'faq',
+                    'question' => 'What is this?',
+                    'answer' => 'It is a test.',
+                ],
+            ],
+        ]);
+
+        $res = app(EdgeDeployAction::class)->handle(
+            businessId: $biz->id,
+            edgeZoneId: $zone->id,
+            pageId: $page->id,
+            commitId: 'commit_faq',
+            businessName: 'Visibility Biz FAQ'
+        );
+
+        $html = Storage::disk('local')->get("sites/{$res['deploy_hash']}.html");
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $html, $matches);
+        $json = json_decode($matches[1], true);
+
+        $schemaFaqs = [];
+        if (isset($json['mainEntity'])) {
+            foreach ($json['mainEntity'] as $q) {
+                if (($q['@type'] ?? '') === 'Question') {
+                    $schemaFaqs[] = $q['name'];
+                }
+            }
+        }
+
+        preg_match('/<div id="faq-x176">(.*?)<\/div>\n(?:<div|<nav|<script|<\/body)/s', $html, $blockMatches);
+        $visibleFaqs = [];
+        if (! empty($blockMatches)) {
+            preg_match_all('/<div class="faq-item" data-question="([^"]+)"/', $blockMatches[1], $itemMatches);
+            $visibleFaqs = $itemMatches[1];
+        }
+
+        $this->assertCount(1, $schemaFaqs);
+        $this->assertEquals($schemaFaqs, $visibleFaqs);
+    }
+
     public function test_f1_video_corresponds_with_hierarchy(): void
     {
         Storage::fake('local');
@@ -265,10 +323,12 @@ final class SchemaVisibilityTest extends TestCase
         $this->assertArrayNotHasKey('event', $json);
         $this->assertArrayNotHasKey('address', $json);
         $this->assertArrayNotHasKey('video', $json);
+        $this->assertArrayNotHasKey('mainEntity', $json);
 
         $this->assertStringNotContainsString('id="events-x176"', $html);
         $this->assertStringNotContainsString('id="address-x176"', $html);
         $this->assertStringNotContainsString('id="videos-x176"', $html);
+        $this->assertStringNotContainsString('id="faq-x176"', $html);
     }
 
     public function test_f2_breadcrumb_corresponds(): void
