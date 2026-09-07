@@ -6883,3 +6883,157 @@ That converts tick 255's borrow from a standing fallback into the **killed-case*
 two-way decision, and it makes the falsifier fire rather than go missing: tick 258's borrowed §7 was
 **confirmed, not merely unrefuted** — the first time that distinction has resolved in the strong
 direction since tick 255 insisted on recording it.
+
+## ⛔ TWO gates from this checkout in ten minutes, one dead and one alive — the tail's most recent row for your CHECKOUT is not your gate (tick 259)
+
+Tick 258 ruled the gate log answers *"is my gate alive?"* by its terminal row and qualified it *"for
+your own `tool_pid`"*. Tick 259 is why that qualifier is load-bearing rather than pedantic. Read at
+`/home/goaiez/tmp/gate-runs.tsv` this tick:
+
+```
+2613  05:10:14 → 05:19:27   894935   -        143  grs-antig-site  gate-signal   ⛔ NOT this tick's
+2614  05:20:22 →     -      932323   -        -    grs-antig-site  gate-start    ← this tick's
+2615  05:20:26 → 05:20:26   932323   932832   0    grs-antig-site  pint
+2616  05:20:26 → 05:20:27   932323   932862   0    grs-antig-site  phpstan
+```
+
+`readlink /proc/894935/cwd` → **exit 1, gone**; `readlink /proc/932323/cwd` →
+`/home/goaiez/agents/grs-antig-site/app`, **alive**. Both rows carry this lane's checkout name, ten
+minutes apart, and **the most recent one at the moment of reading was the dead one**. A tick that
+filtered the tail by `checkout` rather than by its own `tool_pid` would have read `gate-signal 143`,
+concluded its gate was killed, borrowed a §7 under tick 255 — and been wrong, with a live gate that
+landed minutes later. ⛔ **Filter the tail by the pid `gate-start` gave you, never by the checkout
+column.**
+
+⚠️ **Whose was 894935 is UNMEASURED and must not be named** (ticks 227/230/249 — an invented
+mechanism can contradict evidence the next reader checks in one command). What *is* measured: it
+started at 05:10:14, after tick 258's closing push at 05:03:36; it wrote **no** `.agents/supervisor/
+.gateNNN.txt` (`.gate259.txt`'s mtime is 05:20:28, this tick's); `pgrep agy` printed three pids and
+all three were siblings, so no coder had `cwd` here. The leading reading is **an overlapping
+supervisor tick in this checkout that did not survive its own gate** — which is precisely the rc-143
+teardown shape ticks 257/258 measured across three lanes — and it is a reading, not a finding.
+
+⛔ **The consequence that is NOT a reading: two supervisor ticks can be live in this checkout at
+once.** `launch-coder.sh` refuses a second concurrent *coder*; nothing refuses a second concurrent
+*supervisor*, and `REVIEWS.md`/`BRIEF.md`/`CLAUDE.md` have no lock. A gate file is scratch and its
+loss costs nothing — this tick almost certainly overwrote the other tick's `.gate259.txt` — but an
+append to `REVIEWS.md` racing another append is the run-27 clobber's shape on an **untracked** ledger
+with no snapshot backstop while no coder runs (tick 175). ⚠️ Nothing was lost here, measured: the
+other tick wrote no block (`REVIEWS.md` mtime 05:02:37 = tick 258's close, unchanged when this tick
+opened). Filed as a TRACK 1 ACTION; this seat cannot fix a scheduler.
+
+Thirty-fifth statement of this section's law, and the first turned on an instrument's **key column**:
+163/178/180/183/185/187 the *pathspec*, 190 the *strip*, 191 *bounds moving*, 192/193 *unrecorded
+bounds*, 194 *configuration*, 196 *width*, 207 *expected output*, 208 the *evidence request*, 209
+*resolution context*, 210 the fault's *scope in time*, 215 the *cache key's identity*, 219
+*provenance*, 220 the key's *update mechanism*, 224 the *denominator's members*, 228 *evaluation
+time*, 247 a query that *did not run*, 253 *which tree a section measured*, 257 a query *never
+issued*. This concerns **which column identifies the row you want** — a query whose pathspec, bounds
+and output were all correct, filtered on a field that is not unique.
+
+## ⛔ X-102 `G16-21`'s filing is disproved BY ITS OWN ROW-MATE, and the true dependency spans TWO other lanes (tick 259)
+
+The lane's last unaudited filing, carried unbriefed since tick 252 and re-read **at its own line**
+this tick (ticks 241/244/249/251/254). Live `state.py status`:
+
+```
+capability X-102 — G16-21: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)
+capability X-102 — G13-15: CapabilitiesScaffoldCommand rewrites unconditionally (OWNER ACTION 39)   ← identical why
+```
+
+**`G13-15` has three credits and no violation** (`X102Test.php:168 :188 :203`, and the live doctor
+reports no `G13-15` line), so the scaffold command is demonstrably **not** the obstacle for either.
+The filed reason is false, and it is the only reason the record carries.
+
+The real one, measured this tick rather than reasoned. Plan `:29077` gives G16-21's clause as
+*"carousels in the chat · **trigger:** an answer with structured results | action results | ⑤ a
+missing asset renders text, never a broken placeholder (the never-fails image law), asserted."*
+Both surfaces that clause constrains are other lanes':
+
+- **The producer.** `grep -rln AgentAnswerAction app/app/Modules/` returns **one** file,
+  `C-Agent/Actions/AgentAnswerAction.php` — and C-Agent is **sixty's** under ruling 5. X-102's own
+  four actions are `ChatCapture`, `ChatContextRefresh`, `ChatEscalate`, `ChatStart`; its models are
+  `ChatSession` and `ChatLead`. There is no answer, no message, no asset concept in this lane's half
+  of the module at all.
+- **The renderer.** `X-102/Ui/views/customerfacing-widget.blade.php` is **six lines** and renders no
+  message, image or card. `Ui/` and views are **Track 2's** under ruling 5.
+- ⛔ `grep -rni 'carousel|rich_media|asset' app/app/Modules/X-102/` returns exactly **one** hit and it
+  is the generated `capabilities.php` echoing the tracker row — i.e. the specification quoting
+  itself, never an implementation.
+
+So ⑤ is a **rendering** property over data this lane does not produce, on a surface this lane may not
+build: tick 237's second question (*is the construction site this lane's?*) answers **no** on both
+halves. That is a real rule-09 dependency and a materially better `why` than the one filed.
+
+⚠️ **The lane already holds the right answer, in a row that satisfies nothing.** One of tick 213's
+two malformed X-102 records is `{"stage": "the renderer is X-102/Ui/, Track 2's under ruling 5; this
+lane cannot assert a rendering it may not build", "why": ""}` — the reason in the **stage** field, the
+`why` empty. It is correct, unfindable and unusable. ⛔ Not re-filed (tick 210: `state.py` has no
+withdraw and a second row about one fact compounds rather than corrects); the remedy is a **note**,
+which is what SITE-134 writes.
+
+**The generalisation, and it is tick 251's law reaching its strongest form.** Tick 251 ruled *before
+accepting a filing, check how its row-mates were answered* — there, two ids in one **plan row**
+answered opposite. Here the disconfirming evidence is cheaper still: two filings written **in the same
+second, with the same sentence**, one of which the live doctor has since cleared. ⛔ **A `why` shared
+verbatim by two filings is falsified the moment either one's violation clears** — and nothing
+re-reads a closed row, so it can only ever be caught by an audit that greps the `why` text rather
+than the id.
+
+## ⚠️ The second half of the same audit: a `why` that omits its id is right and unfindable (tick 259)
+
+Tick 253 found X-103's two capability filings carry `why` strings naming only the **referent** —
+`X-194 funnel visualization renderer`, `X-195 marketplace app engine` — so `grep 'G6-17'` over
+`state.py status` returns nothing though both are correctly filed and were measured at source at tick
+255. Tick 253 ruled *not re-filed* and worked around it (*"the next audit greps for the referent as
+well as the id"*). ⛔ A workaround that lives only in this untracked ledger is one tick away from
+being lost; **a `note` naming the ids fixes it at zero risk**, because a note appends to `JOURNAL.md`
+without adding an `unresolved` row. That is the difference tick 253 did not draw, and it is why
+SITE-134 carries both halves.
+
+⛔ **Two notes, and no more.** The malformed rows themselves (tick 213's X-102 pair, tick 224's
+X-155 `events`) stay untouched: they are *visibly* malformed and mislead nobody, where these two
+defects make the record read as **measured and wrong** (a false reason) and **absent** (an
+unfindable id). The discriminator for whether a record defect earns a note: **does a careful reader
+of the record alone reach the wrong conclusion?** Cosmetic noise does not; a false `why` does.
+
+## ✅ Tick 255's §7 borrow runs in BOTH directions — the supervisor's §7 can cover the coder's tree (tick 259)
+
+Tick 255 ruled a verdict may rest on a **borrowed** §7 provided three conditions hold: the borrowed
+section **names its sha**, the delta is **provably an input the tool does not read** (never merely
+"small"), and the **refuting condition is named**. It was written for the killed-gate case, coder →
+supervisor. It is symmetric, and tick 259 is the first firing in reverse.
+
+SITE-134's entire permitted diff is `.agents/state/JOURNAL.md` and `BUILD-STATE.json`; nothing under
+`.agents/` is loaded by the test suite. So this seat's §7 on `84df2b66` — landed, independent,
+`tests 1969 · passed 1964 · FAILED 1 · errors 4`, `a_published_site_carries_all_seven` **absent** —
+measures the coder's tree as well, and the wave is briefed **without `--tests`**. ⛔ The falsifier is
+a stop written into the brief: **one path outside `.agents/state/` and the substitution is void.**
+
+⚠️ Two reasons this is a ruling rather than a convenience, and the second is the one that generalises:
+
+- **A concurrent §7 would have been REFUSED by this seat's own gate.** `supervise.sh:127-149` refuses
+  a run while another process drives `goaiez_antig_site_test` **whatever checkout owns it** — tick 234
+  measured that refusal naming *this* checkout. A supervisor gate and a coder gate in the same lane are
+  not two queued suites; they are a refusal, and the wave wears it.
+- ⚠️ **That trigger EXPIRED inside the tick and the block says so.** By the time the ruling was
+  written the gate had won the lock and finished, so a coder gating now would queue rather than be
+  refused. **The provably-unread delta is what carries the ruling; the concurrency only made it
+  visible.** Leaving the expired half standing as the reason would be tick 231's
+  hedge-that-outlived-its-truth pointed the other way — an environment claim is a claim with an
+  evaluation time in *both* directions, and re-checking it at the append costs one `tail`.
+
+⛔ Tick 235's rule — *a wave that does not quote §7 has not shown it was gated on the lane's goal* —
+is **satisfied by the substitution, never waived by it.** A brief that simply drops `--tests` without
+naming the sha, the unread delta and the falsifier has not made this ruling; it has skipped a section.
+
+## ⚠️ The loud drift detector fired TWICE in one tick, the second time seconds after a reset (tick 259)
+
+Tick 251 recorded that `grep` **warns** on a missing path where `git log -- <missing pathspec>` exits
+0 in silence, and called the loud half worth reaching for deliberately. It fired twice this tick:
+`cd app && php artisan doctor` drifted the shell, `cd /home/goaiez/agents/grs-antig-site && pwd` reset
+it, a **second** doctor call drifted it again, and the next `grep` printed
+`ugrep: warning: app/GOAIEZ-TRACKER-CAPABILITIES.md: No such file or directory`. ⛔ The reset is not
+a repair, it is a **per-call** obligation: every `cd app && …` drifts, so every one of them is
+followed by its own reset call, including the second and third in the same tick. Tick 209's `pwd`-first
+rule protects the silent half; this is the loud half doing the same job for free.
