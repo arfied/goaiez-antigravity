@@ -277,7 +277,67 @@ merge. Week 2 is scoped **one wave at a time**; it is not a single wave.
 | **UI-57** | **(1) the ONE clause of UI-56's new message that can rot — *"10 of them are in 6 modules carrying no `tenant.role` route at all (X-111, …)"*, a fact about ROUTES inside a test that measures FILES — deleted; the `Ui/views/` scope clause replaced by what the loop actually walks; *"no blade has been mapped to a route"* kept verbatim. (2) UI-54's `270` SPLIT IN TWO by whether the route's action class declares ANY `#[Layout]` — two `expect()` INSIDE the existing `test(` at `OwnerNavTest:247`, both halves off the one `$invisible` list, both pinned. ⛔⛔ The sum is NOT asserted: it would be UI-56's identity again. ⛔ No new `test(`, floor stays `1729`** | closed, pushed `784381fb` — run 103 `PASS-WITH-NOTES`, three notes, all shape |
 | UI-58 | (1) UI-57's two pins get MESSAGES instead of labels — each says what a red means in BOTH directions, as `:263` does. (2) the `257` SPLIT THREE WAYS by whether the screen behind the route exists: unbuilt · built · unresolved. (3) the duplicate-registration question answered in `RAW`. ⛔ No new `test(`, floor stays `1729` | **run 104 `BLOCK`** — item 1 delivered exactly, the split shipped with a tag literal that matches nothing. See the 05:3x ruling |
 | UI-58b | the one-character repair and its three re-pins. `'<x-surface.sample-state>'` → `'<x-surface.sample-state'`, all three buckets re-pinned to what the run produces, `withLayout 13` and `withoutLayout 257` untouched, the `view()` first-match edge MEASURED only. ⛔⛔ The sum is still NOT asserted — fourth time. ⛔ No new `test(`, floor stays `1729` | closed, pushed `f4b04017` — run 105 `PASS-WITH-NOTES`, five notes, one of them a ⛔⛤ |
-| **UI-59** | **the FIRST conversion wave since UI-49, and the only two of the `33` in a lane the owner named: `x-108.calendar` (Customers) · `x-125.runs` (Marketing). `#[Layout('components.account.layout', ['heading' => …])]` · a `mount()` that resolves `businessId` from the tenant (`Invoices.php:22–25` is the shape) · the `<h3>` at `calendar.blade.php:4` promoted to `<h2>` · shell assertions INSIDE the two EXISTING `test_screen_renders_for_tenant` methods · two nav entries, `OwnerNav::all()` 36 → 38. ⛔ No new `test(`; `tests` stays `1729`. ⛔⛔ FOUR pins move together — `withoutLayout −2`, `built −2`, UI-54's `270` `−2`, `withLayout` and `unbuilt` UNMOVED. A different delta is a FINDING, never a re-pin** | **in flight — run 106 live** |
+| **UI-59** | **the FIRST conversion wave since UI-49, and the only two of the `33` in a lane the owner named: `x-108.calendar` (Customers) · `x-125.runs` (Marketing). `#[Layout('components.account.layout', ['heading' => …])]` · a `mount()` that resolves `businessId` from the tenant (`Invoices.php:22–25` is the shape) · the `<h3>` at `calendar.blade.php:4` promoted to `<h2>` · shell assertions INSIDE the two EXISTING `test_screen_renders_for_tenant` methods · two nav entries, `OwnerNav::all()` 36 → 38. ⛔ No new `test(`; `tests` stays `1729`. ⛔⛔ FOUR pins move together — `withoutLayout −2`, `built −2`, UI-54's `270` `−2`, `withLayout` and `unbuilt` UNMOVED. A different delta is a FINDING, never a re-pin** | closed, pushed `c3edec84` — run 106 `PASS-WITH-NOTES`, all four pins moved on command, and the one defect it shipped was MINE |
+| **UI-60** | **(1) `runs.blade.php:13` `<h3>` → `<h2>` — the heading-order defect UI-59 shipped into the nav, specified by me. (2) ONE new `test(` in a new `Architecture/HeadingSeamTest`: the 19 components declaring the owner layout partitioned by whether their `#[Layout]` carries a `heading`, and their views' FIRST heading level checked against that shape. FIVE pins, all derived — ⛔ zero component names, view paths or route names; the view is the component's own first `view('…')` literal + `View::exists()`. ⛔⛤ The sum is NOT asserted — fifth time. ⚠️ The floor MOVES: `1729 → 1730`** | **in flight — run 107 dispatched** |
+
+### ⛔⛔ RULED 2026-09-07 06:4x — UI-59 shipped a heading-order defect into the nav, and the falsehood was MINE
+
+**`X-125/Ui/views/runs.blade.php:13` is an `<h3>`.** The `heading` param UI-59 added means
+`components/account/layout.blade.php:51–52` now emits an `<h1>` above it, so the screen renders
+**`<h1>` → `<h3>` with no `<h2>`** — verbatim the defect UI-44 fixed on three views, and verbatim the
+reason my own brief gave for promoting `calendar.blade.php:4`. **I measured calendar's headings and
+never measured runs'.** Twentieth of the hand-derived-claim family; same mechanism as 00:5x and
+20:3x — open the file the question puts in front of you, then write a sentence about the wave.
+
+⚠️⚠️ **No test in this lane can see it.** The `<h3>` sits in the `@else` arm at `:12`; `RunsScreenTest`
+seeds no `FlowRun`, so the GET renders the `wire:init` skeleton, and `CalendarScreenTest` seeds no
+`Appointment`, so its GET renders the empty state. **Both screens were proven, correctly, against a
+branch that is not the one with the defect in it.** UI-53's one-`<h1>` pin reads rendered HTML and is
+green here for the same reason.
+
+> ⛔ **A check over a response body cannot see a branch no test renders.** What a `test_shell`
+> assertion proves is that the *empty* state renders in the owner shell. Worth having; not what
+> "proven" has been taken to mean.
+
+⚠️ **How general that is has NOT been measured** — I opened the two screen tests this wave touched.
+⛔ **That is a claim about two files, not sixteen**, and by the rule above it does not get written as
+a population fact. It is why UI-60 reads the blade's text; sizing it is a later wave.
+
+### ✅ RULED 2026-09-07 06:4x — UI-60 pins the seam's heading contract, and the 00:5x exception falls out as a bucket
+
+**MEASURED 06:4x:** 19 components declare `#[Layout('components.account.layout'`; **18 carry a
+`heading`** and seventeen of their views start at `<h2>` (`runs.blade.php:13` is the sole `<h3>`); the
+**one** without a `heading` is `X-192/Ui/MembershipsList.php`, whose view holds the only `<h1>` among
+the nineteen. ⭐ **So the 00:5x majority-shape ruling — the one that cost a `⛔⛔` when I got it wrong
+by opening three files — is derivable, and becomes the `$own` bucket with no exception written
+anywhere.** Five pins, view resolved by the component's own first `view('…')` literal + `View::exists()`
+(UI-58b's derivation, no name convention, no alias table, no fallback). ⛔⛤ The sum is NOT asserted —
+fifth wave running.
+
+⛔ **And there is no conversion wave left in the owner's lanes.** MEASURED: X-108's remaining
+`tenant.role` route (`waitlist`) and X-125's two (`canvas`, `flow-error-dashboard`) all carry
+`<x-surface.sample-state>`, so all three are in the `224` and none is in the `31`. UI-59 took the last
+two the owner's lane list names.
+
+### ⭐⭐ MEASURED 2026-09-07 06:4x — a structural `assertions` prediction of `+10`, confirmed to the digit
+
+| | tests | passed | failed | errors | assertions |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| run 105 `f4b04017` | 1729 | 1722 | 3 | 4 | **6952** |
+| run 106 `c3edec84` (coder) | 1729 | 1721 | 3 | **5** | **6961** |
+| run 106 `c3edec84` (**mine**) | 1729 | 1722 | 3 | **4** | **6962** |
+
+Same sha, same `errors 4` baseline as run 105, so the wave's delta is **`+10`** — and `+10` is what
+the diff predicts, counted off the diff before the run: `+4` two `assertSee`/`assertDontSee` pairs,
+`+2` from `OwnerNavTest:145` (one `expect()` per owner screen route, two routes newly admitted), `+4`
+from `:221`/`:224` at two assertions per new `OwnerNav` entry.
+
+⭐ **DERIVED from the one-assertion gap between the two runs: the intermittent eighth red throws in
+the SECOND `restoreAndVerify()`**, after the good backup has been taken and verified — the method's
+three assertions are two above `corruptBackup()` and one below it. ⚠️ **Derived, not measured**: it
+assumes the method contributes exactly three when green and that nothing else differed between two
+runs of one sha. **Fourth and fifth observations, alternating** — red 02:5x · green 03:3x · red 06:10
+· green 06:4x. A lost privilege would not alternate. TRACK 1, and no test is touched.
 
 ### ✅ RULED 2026-09-07 05:5x — `supervise.sh` §1a: the framework-boot scan, and its control FAILED FIRST
 
