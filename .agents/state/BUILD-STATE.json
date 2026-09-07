@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T22:34:44",
+ "updated": "2026-09-06T23:53:31",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 127,
  "runtime_build": "20260829-0647",
@@ -5031,6 +5031,12 @@
    "chose": "RULING AA - a correcting note has a fourth axis, the REFERENT. A sentence is wrong in its REFERENT when a term in it names two different objects and the sentence does not say which. In this lane the word plan names either the set of declarations in GOAIEZ-MASTER-PLAN.md or the single cleaned value that field() returns, and a set relation stated between a manifest and plan is unreadable until one is chosen. Every set relation this lane publishes names its two operands by construction, not by noun, and a disposition of BROKEN or HELD against a prediction is graded under the reading the prediction used.",
    "at": "2026-09-06T22:34:44",
    "ruling": "R245"
+  },
+  {
+   "module": "C-Sms",
+   "chose": "a grade that assigns an owner is read off the artifact that owner controls, so a row is not filed against the frozen plan until the plan has been grepped whole for the token and the count pasted.",
+   "at": "2026-09-06T23:53:31",
+   "ruling": "R245"
   }
  ],
  "notes": [
@@ -5145,6 +5151,18 @@
   {
    "at": "2026-09-06T23:30:12",
    "note": "src regexes in ContractStage.php: ingress, scheduled, agent_reachable, forbidden states, and opt-in prose are DEAD because compiled manifests lack docblocks. capability.decided is LIVE because it is an array value in C-Agent. consumes is LIVE as an array key."
+  },
+  {
+   "at": "2026-09-06T23:53:08",
+   "note": "S-143: 13 tokens graded. 7 MANIFEST-DRIFT, 4 MARKER-DROPPED, 2 PLAN-GAP."
+  },
+  {
+   "at": "2026-09-06T23:53:08",
+   "note": "Superseding S-142: \"The 13 splits into 6 ingress-shaped (CHECK-DEFECT) and 7 genuinely missing an emitter (PLAN-FROZEN)\" \u2014 TAXONOMY was incomplete. The set of buckets on offer was incomplete, so rows with no correct bucket were absorbed into a plausible wrong one."
+  },
+  {
+   "at": "2026-09-06T23:53:37",
+   "note": "Supersedes \"The 13 splits into 6 ingress-shaped (CHECK-DEFECT) and 7 genuinely missing an emitter (PLAN-FROZEN)\" \u2014 TAXONOMY: the count was right, the operation was right, the mechanism was right, the referent was right \u2014 the set of buckets on offer was incomplete, so rows with no correct bucket were absorbed into a plausible wrong one."
   }
  ],
  "history": [
