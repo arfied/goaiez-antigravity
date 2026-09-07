@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -17,9 +18,9 @@ return new class extends Migration
         });
 
         // Backfill existing rows
-        foreach (\Illuminate\Support\Facades\DB::table('price_book_items')->cursor() as $row) {
+        foreach (DB::table('price_book_items')->cursor() as $row) {
             $key = substr(mb_strtolower(preg_replace('/\s+/', ' ', trim($row->service_name))), 0, 255);
-            \Illuminate\Support\Facades\DB::table('price_book_items')
+            DB::table('price_book_items')
                 ->where('id', $row->id)
                 ->update(['service_key' => $key]);
         }

@@ -921,6 +921,7 @@ class X163Test extends TestCase
         $row = PriceBookItem::where('business_id', $biz->id)->whereNull('location_book_id')->first();
         $this->assertEquals('Oil Change', $row->service_name);
     }
+
     public function test_lookup_matches_a_service_name_that_differs_in_case_and_whitespace(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Lookup Fold Biz', 'currency' => 'USD']);
@@ -934,7 +935,7 @@ class X163Test extends TestCase
             'is_confirmed' => true,
         ]);
 
-        $res = $this->engine->lookup($biz->id, "  Oil   Change ");
+        $res = $this->engine->lookup($biz->id, '  Oil   Change ');
 
         $this->assertEquals('quoted', $res['status']);
         $this->assertEquals(4500, $res['price_cents']);
