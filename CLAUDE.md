@@ -2586,6 +2586,61 @@ Watch for: <the trap that applies, by name>
   the ref while excluding the tip (tick 172), so they release together with the fix. Then wave 114 takes
   the live list, `grep -rn "BUILD PROPOSAL:" app/tests/Modules/`, re-run and not inherited — it is wrong
   in two places until wave 113 lands.
+- ⚠️⚠️ **Before crediting any sentence that says a module owes NOTHING, read that module's own
+  `manifest.php` `consumes` array — it is the one place in this tree where an unbuilt obligation is
+  written down and no checker will ever mention it.** Wave 113's two lines close with *"meaning no
+  C-Agent listener wire is owed"* against a `C-Agent/manifest.php:42-47` reading
+  `'consumes' => ['message.received', 'call.answered', 'chat.started', …]` — the frozen plan naming
+  C-Agent as the consumer of **both doors**. Four measurements at tick 221: `X-102/manifest.php:36`
+  emits `chat.started` and `X-66/manifest.php:37` emits `call.answered`; both events are dispatched
+  from live paths (`ChatStartAction.php:42`, `VoiceSessionEngine.php:65`); `C-Agent`'s provider
+  registers only wave 110's takeover pair; and `grep -rn "chat.started\|call.answered" app/app
+  --include=*.php` **outside the manifests is empty**, so the tokens are purely declarative and
+  nothing binds them to code — `ContractStage` cross-references token arrays and never inspects a
+  listener class, `BoundaryStage` never fires (tick 194). ⚠️ **This is NOT the tick-220 rule.** There
+  the refusal's named mechanism did not exist and the check was to grep the callee's callers; here
+  the named mechanism (a registered action, sanctioned by `BoundaryStage`'s own text) genuinely
+  exists and what is wrong is that **the contract already declares a different one**. ⛔ **The error
+  was mine**: the wave-113 brief opened *"your X-102 measurement is right, is yours, and stays"* —
+  endorsing wave 112's mechanism sentence while blocking only its label — and handed over five
+  `grep`s, not one of them `manifest.php`. The tick-206 shape (*"I checked both by hand"*, having
+  checked only the half I predicted), with *read the law behind the claim* (tick 177, tick 220) as
+  the skipped check for the third time in three weeks.
+- ⚠️ **I named the gate log and forgot the pest object, in the same file that records the rule.**
+  Tick 190: *"ask for the gate log by name in the brief alongside the pest object; the two have
+  always travelled together and only one of them was ever named."* The wave-113 brief named
+  `w113-gate.log` and nothing else, so that wave's object survives only in the shared
+  `scratch/pest-raw-last.log`, which the next run overwrites. It cost nothing — `cmp` against the
+  previous object gave `differ: byte 96` on equal 2436-byte files, the `duration_ms` offset alone,
+  which is the whole proof for a comments-only wave (tick 202) — but **name both artifacts, every
+  wave**, and remember `cp` in and out of `scratch/` is refused to this column (tick 216/218), so a
+  supervisor run's numbers are durable only where the `REVIEWS.md` block quotes them.
+- ⚠️ **Third occurrence of the wave-93 double-row: `state.py note` ran twice per id.** Wave 113 wrote
+  four ledger rows for two corrections — `00:16:41` unprefixed and `00:16:56`/`:57` prefixed
+  `wave 113:`, same text under two stage names — and the ledger is append-only, so all four stand.
+  The brief said *"name the stage explicitly, read `state.py`'s echo before running it again"* and
+  the echo was read **after**. Brief it as *run it once per id, paste the echo into the report*;
+  nothing else stops a second row.
+- ✅ **Asking which of the wave's own ARTIFACTS disagrees with a sentence it wrote worked first
+  time.** The tick-220 rephrasing closed wave 112's `None` escape: wave 113 volunteered
+  `scratch/mutation-green-w112.log`'s false name, unprompted. Keep the artifact form of that
+  question — an artifact exists on every wave, a number does not.
+- **Backlog at tick 221 — wave 114 is the two lines corrected forward plus the payload measurement,
+  and still no production code.** **RULED** (block above): `G5-31` and `G5-32` are **C-Agent's
+  listener wire**, the *"no C-Agent listener wire is owed"* clause comes out of both lines, and the
+  owner on both is **C-Agent** — because the manifest declares the consumptions, both tokens are
+  declared emitted by the modules the capabilities point at, both events fire on live paths, and
+  the receiver owns the listener (tick 209/217/219, wave 110 the built precedent). Direct invocation
+  of a registered action is legal in general and is **not** the choice here: it would make two
+  declared consumptions permanently dead, and a declaration this lane declines to implement is a
+  `TRACK 1 ACTION` (tick 210), never a docblock reversal. ⚠️ **Two items, not one** — a correction
+  and a measurement, and tick 218/220 both measured that a pair handed over as one instruction comes
+  back as one shape. The payload gap (`ChatStarted`/`CallAnswered` carry no turn text, and a C-Agent
+  listener may not `use` X-102's or X-66's models) is **handed over with commands and no sentence**;
+  whose it is is a measurement. Then wave 115 builds whichever wire the measurement sizes first. The
+  live list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 221 (`G5-31 ·
+  G5-32 · G5-43 · G11-09`), re-run and not inherited. `TRACK 1 ACTION 2` (C-Agent declares five
+  consumptions and implements none) is filed and is not a blocker.
 
 ## Style
 
