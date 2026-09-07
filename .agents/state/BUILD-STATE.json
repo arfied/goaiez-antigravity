@@ -5257,6 +5257,14 @@
   {
    "at": "2026-09-07T03:31:05",
    "note": "message.received is Unplaceable, not Class B, because the plan explicitly names C-Sms as its emitter (GOAIEZ-MASTER-PLAN.md:20516)."
+  },
+  {
+   "at": "2026-09-07T04:09:25",
+   "note": "Capability 449 census partition: 0 zero specced, 279 specced but no test, 93 no row in tracker or plan, 77 names no refusal. Distinct defect total is 369."
+  },
+  {
+   "at": "2026-09-07T04:09:25",
+   "note": "Correction to mail.delivered superseding grade from 2026-09-07T03:31:05: X-223 manifest has no tree-side evidence. Neither docblock nor reads_table exists for it. It is ungraded."
   }
  ],
  "history": [

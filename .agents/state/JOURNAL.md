@@ -1222,3 +1222,5 @@ None of the 15 modules showed a SCAFFOLD-DEFECT.
 - `2026-09-07T02:51:20` note: source() at app/app/Doctor/ManifestReader.php:245 reads only the module manifest.php file on disk. Therefore an @ingress written in an Action or Service docblock can never reach $ingress. The B class has a declaration site that is narrower than where people would naturally write it.
 - `2026-09-07T03:31:05` note: help.human_requested is Class B, not Class C, because it is prescribed as @ingress in the plan (GOAIEZ-MASTER-PLAN.md:27191). The previous C grade was due to missing the second clause check.
 - `2026-09-07T03:31:05` note: message.received is Unplaceable, not Class B, because the plan explicitly names C-Sms as its emitter (GOAIEZ-MASTER-PLAN.md:20516).
+- `2026-09-07T04:09:25` note: Capability 449 census partition: 0 zero specced, 279 specced but no test, 93 no row in tracker or plan, 77 names no refusal. Distinct defect total is 369.
+- `2026-09-07T04:09:25` note: Correction to mail.delivered superseding grade from 2026-09-07T03:31:05: X-223 manifest has no tree-side evidence. Neither docblock nor reads_table exists for it. It is ungraded.
