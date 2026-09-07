@@ -8829,3 +8829,246 @@ the coder cannot have made it — it is this seat's own tick-274 edit, absent fr
 lane, the file is this seat's column, and no writer held the checkout. ⛔ An uncommitted change to the
 launcher is one blanket checkout away from vanishing (tick 207's shape) — **commit a supervisor-file
 edit in the tick that makes it, or record why not.**
+
+## ⛔ An ENUMERATION and its own SUMMARISING CLAUSE can point in opposite directions — and the summary is what gets obeyed (tick 276)
+
+Tick 273 fixed the audit's **verdict set** and tick 274 its **unit**. Neither fixed its **search
+vocabulary**. My SITE-149 brief's step 4 read:
+
+> ⛔ **Then search the WHOLE directory for a discharging assertion, INDEPENDENTLY of the id** — the
+> table, the column, the event class, the status value, the refusal message, **the vocabulary the
+> clause itself uses.**
+
+The list names five things that live **in code**; the closing phrase generalises it back to **the
+clause's own prose**. The coder took the literal reading and grepped the plan's adjectives —
+`aggregate`, `terminal`, `exhaustive`, `hostile`, `stylesheet`, `visual`, `fixture`, `fast`. Every
+one of those searches returned nothing, every one is **honest** (I re-ran all of them, with a
+positive control first per tick 209), and every one is **unfalsifiable**: a PHP test asserting that
+a widget's terminal states each hold a contact method will never contain the word *"terminal"*.
+
+⛔ So the seven `CREDIT-ONLY` verdicts were not wrong — they were **unestablished**, which is worse,
+because a verdict reads as measured. And **one was measurably false**: G13-37's ⑤ (*"the detector is
+asserted against both a rage fixture and a fast-but-normal fixture; only the first fires"*) is
+discharged in the id's own carrier, `X102Test.php:222-249 test_g13_37_proactive_help` — three
+sub-threshold `recordRageClick` calls each asserting `rage_click_recorded` and count 1|2|3, then
+`assertNotEquals('escalated', $sessionFresh->status)` at `:243` on a **refetched** row (the
+fast-but-normal fixture, and *"only the first fires"*), then the fourth asserting `escalated` /
+`four_rage_clicks_detected` and `Event::assertDispatched(ChatEscalated::class)`. Both clauses, both
+directions, on a persisted row and an emitted event. The real tokens are `recordRageClick`,
+`rage_click_recorded`, `escalated` — and tick 275 had already run that exact grep and recorded its
+twelve lines.
+
+✅ **RULED: a search step names its vocabulary as CODE TOKENS, and the SUPERVISOR supplies them.**
+The phrase *"the vocabulary the clause uses"* is retired. Derive the candidates from the module's
+own `Models/`, `Actions/`, `Events/` and `Ui/` directories, write them into the brief per clause,
+and let the wave add to them and say what it added. ⛔ **`CREDIT-ONLY` is unavailable for a clause
+whose search terms are all English adjectives: at least one term must be an identifier that exists
+under `app/app/Modules/<id>/`, and the wave pastes the `grep` that proves it exists.**
+
+Eighteenth of the imprecise-brief family (208 the *evidence request*, 227 the *branch condition*,
+235 an *unread mechanism*, 236 a *presumed direction*, 237 an *existence question about an output*,
+238 a *filing sentence*, 244 a *consequence inside a measurement*, 245 a *falsifier's polarity*, 247
+an *output without its command*, 249 a *pass condition of "identical"*, 250 a *ruling's reasoning*,
+254 *two selectors for one subject*, 262 a *one-directional stop*, 265 an *incomplete answer set*,
+271 *two correct instructions composing wrong*, 274 the *wrong instrument*, 275 a *named delimiter*)
+and the first turned on **an enumeration disagreeing with its own summary**. It is the most obeyable
+kind: the summary is the last thing on the line and reads as the general statement the list was an
+example of. *A vague brief fails loudly; a precisely wrong one is obeyed; and a list whose closing
+phrase widens it is obeyed at the closing phrase.*
+
+## ⛔ Two corollaries the same wave produced, both cheap and both now standing
+
+- **A lone hit in the generated `capabilities.php` is NOT a carrier.** The file is generated from
+  the tracker, so a hit there is the specification quoting itself. Measured at tick 276:
+  `grep -rn -iE 'shadow|:host|all: initial' app/app/Modules/X-102/` → **one** hit,
+  `capabilities.php:28`; `grep -rn -iE 'clickhouse|DB::connection|scroll|heatmap'
+  app/app/Modules/X-110/` → **two**, both `capabilities.php`. This lane has already ruled the same
+  shape twice (G16-21 at tick 259, G6-27 at tick 271) and it kept being rediscovered because it was
+  never stated as a search rule. **A token whose only hit is the generated file is absent from the
+  module.**
+- **A trailing verb is not a clause.** Tick 275 widened the split to `·`, `;` and `,`; SITE-149 then
+  split *"aggregates computed in our own database, asserted"* into two clauses and graded the second
+  by `grep -i 'asserted'`. ⛔ **After splitting, READ the pieces** — a fragment that is only a verb
+  belongs to the clause before it. The delimiter rule tells you where to cut; it does not tell you
+  what is a clause.
+
+## ✅ A hypothesis of mine died at source — `-E` with `\|` was NOT the false silence here (tick 276)
+
+SITE-149 quoted `grep -rn -iE 'kb\|size\|bytes'`. In `-E` mode `\|` is a **literal** pipe, so that
+searched for the one string `kb|size|bytes` — the exact shape of a false silence, and the coder
+wrote it because a bare `|` inside a quoted pattern is parsed as a shell pipe and refused here (tick
+223). Both forms were run at tick 276 and **both return nothing**, with a positive control
+(`grep -rn -c 'function test'` → 12 files) proving the pathspec resolved. The `NOT-DISCHARGED` on
+*"the payload is asserted ≤14 KB"* stands.
+
+⚠️ Recorded because the ledger otherwise keeps only the hypotheses that survive, and because the
+escape is a real hazard that will eventually bite: ⛔ **in `grep -E`, `\|` is a literal.** The
+accepted route in this shell is `-e a -e b`.
+
+## ⚠️ Test CONTAINMENT on the commits a partition held, never on the branch TIP (tick 276)
+
+Half 1's ui/X-110 partition went **3 → 0** and `git branch -r --contains 08ba50d0` (ui's tip)
+returned `origin/track/ui` **alone** — which reads as *"ui did not merge, so the partition was
+withdrawn"*, a finding against a lane that did nothing. It is nothing: `08ba50d0` is a
+`chore(state)` commit ui made **after** the merge. The measurement that settles it is scoped to the
+partition's own paths:
+
+```
+git log ^origin/main origin/track/ui -- app/app/Modules/X-110 app/tests/Modules/X-110   → nothing
+git log origin/main -1 -- app/app/Modules/X-110/Ui                                      → 29192d3d
+```
+
+`main` **gained** ui's X-110 work — a bound moving (ticks 191, 225), not a withdrawal. ⛔ A branch
+tip is a moving target that outruns the merge; the partition's commits are not. Same family as tick
+259 (*which column identifies the row you want*), here on **which commit identifies the merge you
+are testing for**.
+
+⚠️ Same tick, the complement fell **45 → 14** and the whole −31 is ui's 27 `scratch/*` names plus
+four others leaving as `main` gained ui. Tick 250's finding (a file enters the list by being
+**deleted**) running in reverse: they leave by being **merged**. Neither is a sibling acting.
+
+## ⛔ A clause's CONSTRUCTION SITE is decided by grepping for the thing it names, never by which lane owns the NOUN it uses to name it (tick 277)
+
+Tick 237 gave the question — *where is the document CONSTRUCTED, and does this lane own that
+construction site?* — and it is answerable two ways, only one of which is a measurement. SITE-150
+graded `GOAIEZ-MASTER-PLAN.md:29073`'s ⑤, *"every terminal state in the **widget's** state machine
+holds a contact method"*, as `OTHER — the construction site is Track 2's`, citing
+`app/app/Modules/X-102/Ui/`. It reached for the word **widget** and mapped it to `Ui/`. Measured, the
+state machine is the `chat_sessions.status` column and **all three of its writers are this lane's**:
+
+```
+Database/migrations/2026_08_30_000037_create_x102_chat_tables.php:20
+        $table->string('status')->default('active'); // active, lead_captured, offline_form, escalated
+Actions/ChatStartAction.php:35     'status' => $capped ? 'offline_form' : 'active',
+Actions/ChatCaptureAction.php:51   $session->update(['status' => 'lead_captured']);
+Actions/ChatEscalateAction.php:16  $session->update(['status' => 'escalated']);
+```
+
+Ruling 5 grants Track 2 **`Ui/`, views and Livewire** — a *path* grant. A clause about a thing that
+lives in `Actions/` is this lane's however the plan's prose names it. ⛔ One grep for the **column,
+event or status value** the clause constrains; never a lane lookup on the clause's vocabulary. Same
+error shape as tick 271's `G12-39` — a reason measured on the wrong side of the seam — and it is the
+*expensive* direction, because "another lane owns it" ends the audit with no artefact.
+
+## ⛔ Two fields sharing one NAME: `status` is both the persisted machine and a verb's return value (tick 277)
+
+The same wave concluded *"the module can reach 5 states … 2 != 5, so exhaustiveness is not met."*
+There is no set of five. It unioned two different fields that happen to share a key:
+
+| field | values | writer |
+| :-- | :-- | :-- |
+| `chat_sessions.status` — the machine | `active` · `offline_form` · `lead_captured` · `escalated` | the three Actions above |
+| the return array's `status` — an outcome | `escalated` · `rage_click_recorded` · `refused` · `answered` | `ChatEscalateAction:24 :44 :56 :63` |
+
+**Four** states, **two terminal**. The verdict survived and its arithmetic did not. ⛔ **When a clause
+names a state machine, enumerate it from the COLUMN'S OWN WRITERS** — here the migration comment at
+`:20` names all four and costs one grep. Same family as tick 268 (pest's `line` field is the method's
+declaration line) and tick 259 (the gate log's `checkout` column): **one name over two fields, and
+nothing in either value says which it came from.**
+
+## ⛔ An "add the missing assertion" remedy can be an instruction to ASSERT THE ⛔ (tick 277)
+
+The gap SITE-150 found is real and its remedy was inverted. `ChatEscalateAction.php:13-28` sets
+`escalated` and dispatches `ChatEscalated(businessId, sessionId, reason)` — **no phone, no email, no
+`person_id`, no `ChatLead` consulted** — and it is reachable on a contact-less session in this lane's
+own committed test (`X102Test.php:100-114` starts a fresh session, rage-clicks it four times, asserts
+`escalated`). `:29073`'s ⛔ column is *"the chat ends with no way to reach them — the failure the whole
+widget exists to prevent."* That is this path.
+
+So `NOT-DISCHARGED` was right and the report's remedy — *"assert over all the states"* — written today
+**asserts the ⛔**: a green test proving the chat can end unreachable, in the lane whose plan calls
+that the failure the module exists to prevent. ⛔ **Before briefing "the test does not cover state X",
+ask what the code DOES in state X.** A coverage gap and a product gap look identical from the test
+file, and only the first is closed by writing a test. Same law as tick 227 (*"no read path" is a fact
+about the reader, never about the referent*), on the other side of the same seam.
+
+⚠️ The other terminal state is safe **by construction**, which is what makes the asymmetry legible:
+`ChatCaptureAction:41-51` creates a `ChatLead` — `phone` NOT NULL, `chat_session_id` a constrained FK
+(`…000037…:31,34`) — before writing `lead_captured`.
+
+## ⚠️ …and NEITHER action has a production caller, which NARROWS the build without cancelling it (tick 277)
+
+```
+grep -rn 'ChatEscalateAction' app/app --include=*.php  →  Actions/ChatEscalateAction.php:11
+grep -rn 'ChatCaptureAction'  app/app --include=*.php  →  Actions/ChatCaptureAction.php:14
+```
+
+Two hits, both their own class declarations; `Ui/CustomerfacingWidget.php` calls neither. The whole
+X-102 state machine is **test-driven** — tick 213's `EdgeProvisionAction` precedent, and tick 273's
+rule that a test exercising a method nothing calls proves the **method**, not the clause.
+
+⛔ It does not cancel the build, and the reason generalises: **the invariant belongs in the action
+BECAUSE the action writes the terminal state, whoever calls it.** Build it now and it is in force the
+day Track 2's widget or sixty's `ChatStartController` wires the machine. What changes is the *claim*:
+SITE-151 delivers the invariant on the action, not a proof that production honours it, and the block
+says so (tick 230 — say which, or the next tick inherits the stronger claim).
+
+**RULED (tick 277): a session with no `ChatLead` cannot be moved to `escalated`** — the action refuses
+with `NO_CONTACT_METHOD_ON_SESSION`, leaves the session non-terminal and dispatches no event, per the
+plan's own remedy at `:25618` (*"captures the lead before the chat … the thread never dead-ends"*).
+Four alternatives refused, each of which would pass every gate: the exhaustive walk (asserts the ⛔);
+escalating to `offline_form` (that state means *AI credits exhausted* at `ChatStartAction:35` — one
+state, two meanings); a `contact_method` column on `chat_sessions` (a derived column whose only writer
+exists to satisfy its reader — the `ssl_installed` shape refused at 146, 198, 246); and relaxing the
+two assertions that redden (tick 234/242 — widen the fixture, never the rule).
+
+## ⛔ `cd <dir> && <cmd>` fails SILENTLY on a drifted shell — the THIRD drift mode, and the quietest (tick 277)
+
+`cd app && php artisan doctor 2>&1 | grep 'violation(s) —'` returned **no output and no error**. The
+shell had drifted into `app/` from the previous doctor call, so `cd app` resolved to `app/app`, which
+does not exist, and **the `&&` swallowed the entire pipeline**. One `pwd` ended it (tick 209 firing as
+written).
+
+Three drift modes are now catalogued and they differ in legibility, not in cause:
+- **mis-scoped pathspec** — `git log -- <nonexistent>` exits 0, silent (tick 209);
+- **missing file** — `grep` prints a **warning** (tick 251, the loud counterpart worth reaching for);
+- **failed `cd`** — the `&&` suppresses the error *and* the command, so the output is empty and the
+  command's own text is correct (tick 277).
+
+`cd app && php artisan …` is the only accepted artisan form from this seat, so it is **structurally
+followed by `cd /home/goaiez/agents/grs-antig-site && pwd` in its own call — every time**, not when a
+refusal appears. Done four times this tick.
+
+⚠️ Second instrument note the same tick: `grep 'violation(s) —'` matched nothing against a line that
+visibly contains that string — the em dash. Re-anchored on `violation(s)`, seen in `head -12`'s own
+output, and all eight lines printed. **Never carry a punctuation mark into a pattern**; tick 272's
+format-field lesson on the input side.
+
+## ⛔ Fifth firing: the ledger's own arithmetic, on half 3 this time (tick 277)
+
+Half 3 read **5** with `origin/main` frozen at `5ce8b4f7@{11:51:18}` (tick 276's own closing read
+recorded it) and `origin/track/site` frozen at `c2544d67`; tick 276 recorded **3**. The two extra
+commits — stages' `c772ce46` (09:54:34) and `1dce20b1` (09:14:14) — are **older than tick 276's
+census** and provably reachable from the stages tip it measured against
+(`git merge-base --is-ancestor <each> 31666cc2` → ancestor, twice). A surface bounded by
+`^origin/main ^origin/track/site` plus forward-moving tips is **monotone** (tick 252), so with both
+bounds frozen it cannot grow by commits that already existed ⇒ **the record is the defect.**
+
+Fifth firing (242 half 2, 250/252 the complement, 271 the complement, 277 half 3): *a query's scope is
+not its claim, and neither is the arithmetic used to summarise it* — and the record is the likelier
+defect than the world, every time. ✅ No exposure:
+`git diff --stat origin/main..origin/track/stages -- app/GOAIEZ-TRACKER-CAPABILITIES.md` is
+`30 insertions(+)`, **zero deletions**, and filtering the added rows for this lane's seven module ids
+returns nothing — stages is adding per-id rows for the `N-043…N-086` ranges. This lane's only
+mergeable content (ticks 162, 170) is intact.
+
+## ⚠️ A splitting instruction outran its own qualifier for the SECOND tick running (tick 277)
+
+Tick 275 widened the ⑤ split to `·`, `;` and `,`; tick 276's corollary — **after splitting, READ the
+pieces; a fragment that is only a verb belongs to the clause before it** — did not travel into the
+next brief. `:29074`'s ⑤ is *"rendered inside a hostile stylesheet fixture, the widget is unchanged,
+asserted visually"*: **one** assertion, being a setup, a property and a method. SITE-150 split it into
+three clauses and graded each.
+
+The verdict survived (`OTHER` on two independent grounds — this tree has no visual harness, and the
+widget shell is Track 2's blade), so it cost nothing this time. ⛔ The rule is that **a delimiter rule
+tells you where to cut and never what is a clause**, and it belongs in the brief beside the split
+instruction, not one tick behind it.
+
+⚠️ And the carrier is **CREDIT-ONLY**: `test_g8_36_shadow_dom:158-165` is
+`Livewire::test(CustomerfacingWidget::class)->assertSeeHtml('chat-widget-container')` — byte-for-byte
+the same assertion as `:257-258` in another method, naming no Shadow DOM. `grep -rn -iE
+'shadow|:host|all: initial' app/app/Modules/X-102/` returns **one** hit, the *generated*
+`capabilities.php:28` — the specification quoting itself (tick 276's corollary). **There is no Shadow
+DOM in the module at all**, and a reader of the record alone concludes otherwise (tick 259) ⇒ a
+`note`, never an `unresolved` (G8-36 is credited with no live violation — tick 271).
