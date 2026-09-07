@@ -4,9 +4,9 @@
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on the gateway">{{ $waiting }}</x-ui.attention-card> @endif
 @if($success) <p>{{ $success }}</p> @endif
-<div wire:loading><x-ui.skeleton label="Reading where money lands…" /></div>
+<div wire:loading><x-ui.skeleton label="Reading payments and payouts…" /></div>
 @if($connections->isEmpty())
-<x-ui.empty-state heading="No merchant account connected yet.">Connect a gateway on the connect card; payments land now, payouts wait on the same import.</x-ui.empty-state>
+<x-ui.empty-state heading="No merchant account recorded yet.">No merchant account has been recorded on this account. Recording one waits on the Stripe Connect redirect, which is not built in this checkout yet. Card payments are taken on the goaiez platform Stripe account, and no payout has ever been imported.</x-ui.empty-state>
 @else
 <ul class="space-y-4">
 @foreach($connections as $conn)
@@ -15,7 +15,7 @@
 <p class="text-sm text-ink-2">Recorded merchant account <span class="tabular-nums">{{ $conn->merchant_account_id }}</span>, which no charge is routed to yet</p>
 <x-ui.status-pill :state="$conn->is_connected ? 'ok' : 'attention'" :label="$conn->is_connected ? 'connected' : 'disconnected'" />
 <dl class="mt-2 grid grid-cols-2 gap-2 text-sm tabular-nums">
-<div><dt>Payments landed</dt><dd>{{ $conn->payments_count }} payments · {{ number_format($conn->payments_cents / 100, 2) }}</dd></div>
+<div><dt>Payments recorded</dt><dd>{{ $conn->payments_count }} payments · {{ number_format($conn->payments_cents / 100, 2) }}</dd></div>
 <div><dt>Payouts</dt><dd>{{ $conn->payouts_count }} payouts · {{ number_format($conn->payouts_cents / 100, 2) }}</dd></div>
 <div><dt>Last reconciliation</dt><dd>{{ $conn->last_reconciliation }}</dd></div>
 </dl>

@@ -88,4 +88,18 @@ class SameAccountScreenTest extends TestCase
             ->assertSee('no account recorded')
             ->assertDontSee('never the platform');
     }
+
+    public function test_the_same_account_empty_state_names_what_it_waits_on()
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(SameAccount::class)
+            ->assertOk()
+            ->assertSee('Recording one waits on the Stripe Connect redirect')
+            ->assertSee('no payout has ever been imported')
+            ->assertDontSee('payouts wait on the same import');
+    }
 }
