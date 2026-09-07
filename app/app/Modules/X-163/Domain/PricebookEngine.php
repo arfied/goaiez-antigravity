@@ -43,7 +43,7 @@ final class PricebookEngine
                 return [
                     'status' => 'refused',
                     'refusal_code' => 'NO_FACT',
-                    'reason' => "No pricebook entry found for {$serviceName}",
+                    'reason' => "Multiple conflicting pricebook entries found for {$serviceName}. Please reconcile them.",
                 ];
             }
 
@@ -55,7 +55,7 @@ final class PricebookEngine
                 return [
                     'status' => 'refused',
                     'refusal_code' => 'NO_FACT',
-                    'reason' => "No pricebook entry found for {$serviceName}",
+                    'reason' => "Multiple conflicting pricebook entries found for {$serviceName}. Please reconcile them.",
                 ];
             }
 
