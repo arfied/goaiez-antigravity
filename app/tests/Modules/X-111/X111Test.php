@@ -265,16 +265,17 @@ class X111Test extends TestCase
         $this->assertFalse(Schema::hasColumn('operator_alerts', 'pay'));
         $this->assertFalse(Schema::hasColumn('tenant_tickets', 'pay'));
     }
+
     /** [G4-24] */
     public function test_g4_24_throttle_refusal_and_no_dead_tiers(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Throttle Tenant', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
         $ip = '10.0.0.1';
         $this->banAction->handle($biz->id, $ip, 'fraud', 24);
 
-        $engine = new \App\Modules\X111\Domain\OpsEngine();
+        $engine = new OpsEngine;
 
         try {
             $engine->checkThrottle($biz->id, $ip);
@@ -298,6 +299,6 @@ class X111Test extends TestCase
                 }
             }
         }
-        $this->assertFalse($found, "Dead tiers found in X-111");
+        $this->assertFalse($found, 'Dead tiers found in X-111');
     }
 }

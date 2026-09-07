@@ -25,9 +25,9 @@ final class X210Engine
                 $belowCost[] = $service['name'];
             }
         }
-        
-        if (!empty($belowCost)) {
-            throw new \DomainException('REFUSED BELOW_COST: ' . implode(', ', $belowCost));
+
+        if (! empty($belowCost)) {
+            throw new \DomainException('REFUSED BELOW_COST: '.implode(', ', $belowCost));
         }
 
         return ['status' => 'ok', 'named_below_cost' => $belowCost];

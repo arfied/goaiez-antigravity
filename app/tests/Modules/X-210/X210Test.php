@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Modules\X210;
 
+use App\Modules\CBilling\Models\TrialLimit;
 use App\Modules\X210\Actions\PromotionApplyAction;
 use App\Modules\X210\Actions\PromotionCreateAction;
 use App\Modules\X210\Actions\PromotionProposeTargetsAction;
 use App\Modules\X210\Actions\PromotionValidateAction;
+use App\Modules\X210\Domain\X210Engine;
 use App\Modules\X210\Events\PromotionCapReached;
 use App\Modules\X210\Events\PromotionCreated;
 use App\Modules\X210\Events\PromotionRedeemed;
@@ -181,12 +183,13 @@ class X210Test extends TestCase
         $this->assertNotNull($promo);
         $this->assertEquals('NOCANCELWALL', $promo->code);
     }
+
     /**
      * [G1-67]
      */
     public function test_g1_67_margin_guard_names_below_cost_services(): void
     {
-        $engine = new \App\Modules\X210\Domain\X210Engine();
+        $engine = new X210Engine;
         $services = [
             ['name' => 'HVAC Install', 'cost' => 50000, 'price' => 45000], // below cost
             ['name' => 'Plumbing Repair', 'cost' => 10000, 'price' => 12000],
@@ -201,7 +204,7 @@ class X210Test extends TestCase
             $this->assertStringContainsString('HVAC Install', $e->getMessage());
             $this->assertStringContainsString('Electrical Inspection', $e->getMessage());
         }
-        
+
         // Pass case
         $servicesPass = [
             ['name' => 'Plumbing Repair', 'cost' => 10000, 'price' => 12000],
@@ -216,14 +219,14 @@ class X210Test extends TestCase
     public function test_g7_47_cohort_rate_never_changes_without_notified_action(): void
     {
         $biz = TestCase::provisionTenant(['name' => 'Cohort Tenant', 'currency' => 'USD']);
-        \Illuminate\Support\Facades\DB::statement("SET app.business_id = '{$biz->id}'");
+        DB::statement("SET app.business_id = '{$biz->id}'");
 
-        $limit = \App\Modules\CBilling\Models\TrialLimit::create([
+        $limit = TrialLimit::create([
             'business_id' => $biz->id,
             'rate_cents_per_min' => 7,
         ]);
 
-        $engine = new \App\Modules\X210\Domain\X210Engine();
+        $engine = new X210Engine;
 
         try {
             $engine->changeRate($limit, 9, false); // Not notified

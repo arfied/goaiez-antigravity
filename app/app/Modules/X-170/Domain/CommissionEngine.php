@@ -116,12 +116,13 @@ final class CommissionEngine
             'reason' => $reason,
         ];
     }
+
     public function exportPayroll(int $businessId): array
     {
-        $commissions = \App\Modules\X170\Models\Commission::where('business_id', $businessId)
+        $commissions = Commission::where('business_id', $businessId)
             ->where('status', 'released')
             ->get();
-            
+
         return $commissions->toArray();
     }
 }

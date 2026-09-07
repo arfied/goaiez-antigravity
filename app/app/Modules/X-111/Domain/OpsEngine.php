@@ -73,7 +73,7 @@ final class OpsEngine
             ->where('ip_address', $ipAddress)
             ->where(function ($query) {
                 $query->whereNull('expires_at')
-                      ->orWhere('expires_at', '>', Carbon::now());
+                    ->orWhere('expires_at', '>', Carbon::now());
             })->first();
 
         if ($ban) {
