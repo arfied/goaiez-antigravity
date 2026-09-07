@@ -960,3 +960,12 @@
 - `2026-09-06T23:19:20` UNRESOLVED G6-24 — retail stock across locations — no specific retail rule to assert, just a noun phrase, though locations exist in StockByVan. X-167 - 
 - `2026-09-06T23:19:20` UNRESOLVED G17-15 — in-browser barcode scan — no browser scanner UI exists in module. X-167 - 
 - `2026-09-06T23:19:20` UNRESOLVED G19-02 — parcel rates; a van and a storage unit... — parcel rates surface does not exist in the module. X-167 - 
+- `2026-09-07T00:01:38` (R245) X-113 — G15-05 coaching framing is a positive reminder, not a ranking
+- `2026-09-07T00:01:38` (R245) X-113 — G20-02 performance reviews are not customer reviews
+- `2026-09-07T00:01:38` (R245) X-113 — G21-08 /pto is the time-off workflow, not a platform decision
+- `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G2-15 — overlapping time-off requests — time-off request model is absent
+- `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G17-03 — hardware tied to a staff Person — asset/hardware model is absent
+- `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G2-44 — a wellbeing alert to a manager — wellbeing alert event is absent
+- `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G10-11 — mandatory-training reminders — training reminders event is absent
+- `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G15-04 — an account-class notification (P-062) — account notification event is absent
+- `2026-09-07T00:01:44` UNRESOLVED capability X-113 - G2-28 — named in the header — SLA surface is absent

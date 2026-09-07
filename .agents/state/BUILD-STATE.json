@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-09-03T09:33:12",
- "updated": "2026-09-06T23:19:20",
+ "updated": "2026-09-07T00:01:44",
  "plan_sha256": "02649b287d9b15521e2aeb41d996eed314b7d841407d34183c9c2f57ee77449a",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -617,6 +617,42 @@
      "stage": "capability",
      "why": "G21-08 - missing time-off workflow surface",
      "at": "2026-09-06T18:21:04"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-15 \u2014 overlapping time-off requests \u2014 time-off request model is absent",
+     "at": "2026-09-07T00:01:44"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G17-03 \u2014 hardware tied to a staff Person \u2014 asset/hardware model is absent",
+     "at": "2026-09-07T00:01:44"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-44 \u2014 a wellbeing alert to a manager \u2014 wellbeing alert event is absent",
+     "at": "2026-09-07T00:01:44"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G10-11 \u2014 mandatory-training reminders \u2014 training reminders event is absent",
+     "at": "2026-09-07T00:01:44"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G15-04 \u2014 an account-class notification (P-062) \u2014 account notification event is absent",
+     "at": "2026-09-07T00:01:44"
+    },
+    {
+     "module": "X-113",
+     "stage": "capability",
+     "why": "G2-28 \u2014 named in the header \u2014 SLA surface is absent",
+     "at": "2026-09-07T00:01:44"
     }
    ]
   },
@@ -2372,6 +2408,42 @@
    "stage": "G19-02 \u2014 parcel rates; a van and a storage unit... \u2014 parcel rates surface does not exist in the module.",
    "why": "",
    "at": "2026-09-06T23:19:20"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-15 \u2014 overlapping time-off requests \u2014 time-off request model is absent",
+   "at": "2026-09-07T00:01:44"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G17-03 \u2014 hardware tied to a staff Person \u2014 asset/hardware model is absent",
+   "at": "2026-09-07T00:01:44"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-44 \u2014 a wellbeing alert to a manager \u2014 wellbeing alert event is absent",
+   "at": "2026-09-07T00:01:44"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G10-11 \u2014 mandatory-training reminders \u2014 training reminders event is absent",
+   "at": "2026-09-07T00:01:44"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G15-04 \u2014 an account-class notification (P-062) \u2014 account notification event is absent",
+   "at": "2026-09-07T00:01:44"
+  },
+  {
+   "module": "X-113",
+   "stage": "capability",
+   "why": "G2-28 \u2014 named in the header \u2014 SLA surface is absent",
+   "at": "2026-09-07T00:01:44"
   }
  ],
  "decisions": [
@@ -2919,6 +2991,24 @@
    "module": "X-167",
    "chose": "a serialised item with no serial cannot be closed \u2014 asserted R245",
    "at": "2026-09-06T23:18:49",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-113",
+   "chose": "G15-05 coaching framing is a positive reminder, not a ranking",
+   "at": "2026-09-07T00:01:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-113",
+   "chose": "G20-02 performance reviews are not customer reviews",
+   "at": "2026-09-07T00:01:38",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-113",
+   "chose": "G21-08 /pto is the time-off workflow, not a platform decision",
+   "at": "2026-09-07T00:01:38",
    "ruling": "R245"
   }
  ],
