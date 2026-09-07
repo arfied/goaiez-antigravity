@@ -1824,3 +1824,33 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     ⚠️ Checked before briefing: `app/tests/Modules/X-173/` contains no `File::allFiles()` directory
     scanner, so the memory hazard *"an instrument string in dictated prose inflates the count"* does
     not apply here as it did to `N010Test` in ruling 63.
+82. **`assertSee` escapes the NEEDLE only, so an apostrophe in a needle can never match static blade
+    prose — and the MONEY-85 brief dictated two that could not (RULED by the lane supervisor
+    2026-09-06 19:2x, on MONEY-85's `300d6fac`; briefed as MONEY-86).**
+    `app/vendor/livewire/livewire/src/Features/SupportTesting/MakesAssertions.php:18` is
+    `$escape ? e($value) : $value` compared against `$this->html(...)`: the needle is escaped, the
+    haystack is the **raw rendered HTML**. Blade emits static prose verbatim and only interpolates
+    `{{ }}` through `e()`, so an apostrophe in a needle matches **only** text that arrived through
+    `{{ }}` and **never** a sentence typed into the template. MONEY-85's
+    `assertSee("The gateway's chargeback webhook sets it, …")` therefore searched for `&#039;` in a
+    page carrying `'`, and the tip was red at `FAILED 3` against a floor of 2. **The proof is inside
+    the one chained assertion:** `DisputeCardScreenTest:72`'s `assertSee("isn't in this account")`
+    passes — it is a flash message rendered through `{{ }}` — while `:45` fails; and the line MONEY-85
+    replaced passed only because the **old** blade had `&#039;` hardcoded in its prose, so the wave
+    inherited a green assertion from a defect it was right to remove. **RULED: a needle asserted
+    against static blade prose carries no apostrophe and no other `e()`-escaped character**, and the
+    clause chosen is one that carries the load-bearing fact in characters that survive both sides
+    (ruling 76). ⛔ Not `, false` — it works, but it leaves two escaping modes in one file for a
+    future reader to re-derive; ⛔ not `&#039;` back in the prose, which an owner reads. ⚠️ **The
+    defect is the supervisor's twice over**: the brief dictated both needles verbatim *and* asserted
+    "`assertSee` escapes both sides, so the apostrophe needs no handling", which talked the coder out
+    of the correct `, false` form it had itself proposed. Per the ruling 46/49/50/62/66/75 precedent
+    it is a new item with its own two dispatches. This is ruling 75 one instrument further: a brief
+    that dictates a **needle** has dictated a test result, so every dictated `assertSee` is read
+    against the rendered shape of its target before the brief ships — static prose or `{{ }}`.
+    ⚠️ **The collateral is that both mutation proofs were void** (ruling 72): each RED line quoted the
+    same always-failing assertion, and proof 2's own page dump **contains** the sentence it reports as
+    missing — a proof whose failure message would be identical with the mutation reverted proves
+    nothing, and the tell is exactly that, visible in the report without re-running anything.
+    ⚠️ MONEY-84's assertions were all apostrophe-free and went green, so the discipline this ruling
+    writes down was already the lane's practice; MONEY-85 departed from it only because a brief said to.
