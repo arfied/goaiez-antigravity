@@ -30,7 +30,7 @@ class SameAccount extends Component
         try {
             $payment = $action->handle(Tenancy::idOrFail(), $paymentId, $connectionId);
             $conn = MerchantConnection::where('business_id', Tenancy::idOrFail())->findOrFail($connectionId);
-            $this->success = sprintf('%s now lands in %s.', number_format($payment->amount_cents / 100, 2), $conn->merchant_account_id);
+            $this->success = sprintf('%s is now recorded against %s. Nothing was moved: this only records which merchant account the payment belongs to.', number_format($payment->amount_cents / 100, 2), $conn->merchant_account_id);
         } catch (PaymentAlreadyLandedException $e) {
             $this->error = $e->getMessage();
         } catch (ModelNotFoundException) {

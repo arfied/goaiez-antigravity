@@ -1,6 +1,6 @@
 <div>
 <h1>Same account</h1>
-<p class="text-base text-ink-2">Money from this account's invoices lands in this account's own merchant account — never the platform's, never another tenant's.</p>
+<p class="text-base text-ink-2">Card payments in this checkout are taken on the goaiez platform Stripe account, not on the merchant account recorded below. Routing a charge to a tenant merchant account waits on the processor contract, so nothing is routed to it yet.</p>
 @if($error) <x-ui.error-panel heading="We couldn't do that">{{ $error }}</x-ui.error-panel> @endif
 @if($waiting) <x-ui.attention-card state="attention" heading="Waiting on the gateway">{{ $waiting }}</x-ui.attention-card> @endif
 @if($success) <p>{{ $success }}</p> @endif
@@ -12,7 +12,7 @@
 @foreach($connections as $conn)
 <li class="border rounded p-4 shadow bg-white">
 <span class="font-semibold">{{ $conn->gateway_name }}</span>
-<p class="text-sm text-ink-2">Money lands in <span class="tabular-nums">{{ $conn->merchant_account_id }}</span></p>
+<p class="text-sm text-ink-2">Recorded merchant account <span class="tabular-nums">{{ $conn->merchant_account_id }}</span>, which no charge is routed to yet</p>
 <x-ui.status-pill :state="$conn->is_connected ? 'ok' : 'attention'" :label="$conn->is_connected ? 'connected' : 'disconnected'" />
 <dl class="mt-2 grid grid-cols-2 gap-2 text-sm tabular-nums">
 <div><dt>Payments landed</dt><dd>{{ $conn->payments_count }} payments · {{ number_format($conn->payments_cents / 100, 2) }}</dd></div>
@@ -31,7 +31,7 @@
 <li class="border rounded p-4 shadow bg-white">
 <span class="font-semibold tabular-nums">{{ number_format($p->amount_cents / 100, 2) }} {{ $p->currency }}</span>
 <span class="text-sm text-ink-2">{{ $p->gateway_charge_id ?? $p->idempotency_key }}</span>
-<x-ui.status-pill state="attention" label="lands nowhere" />
+<x-ui.status-pill state="attention" label="no account recorded" />
 @foreach($connections as $conn)
 <x-ui.button size="default" wire:click="attach({{ $p->id }}, {{ $conn->id }})" wire:loading.attr="disabled" wire:target="attach({{ $p->id }}, {{ $conn->id }})">Attach to {{ $conn->merchant_account_id }}</x-ui.button>
 @endforeach

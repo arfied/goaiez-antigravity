@@ -222,7 +222,7 @@ final class GatewayEngine
             if ($payment->merchant_connection_id !== null) {
                 $current = MerchantConnection::where('business_id', $businessId)->find($payment->merchant_connection_id);
                 throw new PaymentAlreadyLandedException(sprintf(
-                    'That payment already lands in %s; a payment is never moved.',
+                    'That payment is already recorded against %s; a payment is never moved to a different merchant account.',
                     $current->merchant_account_id ?? 'connection #'.$payment->merchant_connection_id
                 ));
             }
