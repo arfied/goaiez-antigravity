@@ -863,3 +863,4 @@
 - `2026-09-06T21:14:58` (R245) X-176 — the three schema claims are now rendered visibly at the X-157 deploy construction site and asserted to correspond to the JSON-LD --ruling R245
 - `2026-09-06T22:33:07` (R245) X-176 — an unresolvable or unpublished breadcrumb ancestor drops the whole breadcrumb; ancestor slugs are matched on the normalised form --ruling R245
 - `2026-09-06T22:53:10` (R245) X-176 — the breadcrumb renders as nav#breadcrumb-x176 before the offers block, from the same derived trail as the JSON-LD; an unresolvable hierarchy emits neither surface --ruling R245
+- `2026-09-06T23:23:45` (R245) X-176 — the breadcrumb ancestry query is bounded to the ancestor paths across both stored slug forms, and a normalisation collision between two pages refuses the whole trail --ruling R245
