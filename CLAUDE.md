@@ -302,10 +302,26 @@ Every forbidden-path check here measures the last commit against *our* `HEAD`, s
 merge that reverts a lane's change to a CHECK diffs to nothing and reads clean —
 `supervise.sh` §2 printed `none` on the run-115 merge, correctly, against the wrong
 baseline. **For a merge, a forbidden path's baseline is the SECOND PARENT.** That is
-now §2e (`git diff HEAD HEAD^2 -- <harness>`), which fires on `c1849a75` and is
-silent on any non-merge `HEAD`. The general rule, and it is the day's rule again in a
+now §2e. The general rule, and it is the day's rule again in a
 new place: an instrument is only as honest as the baseline it is handed — I had been
 reading a real measurement against a baseline that could not contain the defect.
+
+⚠️ **§2e needs TWO baselines, and its first firing proved it (run 117, 2026-09-06).**
+As first written it was `git diff HEAD HEAD^2 -- <harness>` alone, and on `8bccc2c6`
+(the `track/ui` merge) it reported `⛔ the merge did NOT take the incoming harness —
+16 insertions, 64 deletions`. It had not. `track/ui` never touched the harness
+(`git diff <merge-base> HEAD^2` is empty); `main` was ahead of the base by exactly
+that 64/16 — `a9e6a25f`, site's J11 EdgeZone fix — and the merge correctly kept ours
+(`git diff HEAD^1 HEAD` on the harness is empty). §2e was reading `main`'s own
+legitimate ahead-ness as a dropped incoming change: **the row that is legitimate by
+construction**, missed by the correction as it was by the original, exactly as the
+fabrication-filter trap says. The clause it enforces ("take the incoming side whole",
+`coder-bin/git:66-75`) has a **precondition** — it only means anything when the
+incoming side changed the file. So: *did the incoming side change it* is measured
+against the **merge base**; only then is *did the merge take it* measured against the
+**second parent**. Arms re-measured on both commits: fires on `c1849a75` (site +3 vs
+base `3c60289d`, and the merge result still differs from the incoming side by that +3),
+silent on `8bccc2c6`, silent on any non-merge `HEAD`.
 
 ## Style
 

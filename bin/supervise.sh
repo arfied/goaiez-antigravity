@@ -270,18 +270,33 @@ bar "2e. a merge that REVERTED a lane's check  (harness vs the incoming side)"
 # The shared guard already encodes the intent (coder-bin/git:66-75: a gated merge may carry
 # the harness ONLY when the staged blob is byte-identical to MERGE_HEAD's — "take the
 # incoming side whole"), so this section only reports what that clause is there to enforce.
-# Arms: it FIRES on c1849a75 (the known-bad merge) and is SILENT on any non-merge HEAD.
+# ⚠️ The clause has a PRECONDITION and the first version of this check omitted it (run 117,
+# 2026-09-06, its first firing on a real merge): "take the incoming side whole" only has
+# meaning when the incoming side CHANGED the harness. On 8bccc2c6 track/ui never touched it
+# while main was 64/-16 ahead of the merge base (a9e6a25f, site's J11 fix), so HEAD^2 alone
+# read main's own legitimate ahead-ness as a dropped incoming change — the row that is
+# legitimate by construction, again. The baseline for "did the incoming side change it" is
+# the MERGE BASE; the baseline for "did the merge take it" is the second parent.
+# Arms: FIRES on c1849a75 (site changed it +3 vs base 3c60289d, and the merge result still
+# differs from the incoming side by that +3); SILENT on 8bccc2c6 (incoming vs base is empty);
+# SILENT on any non-merge HEAD.
 p2=$(git rev-parse -q --verify 'HEAD^2' 2>/dev/null || true)
 if [ -z "$p2" ]; then
   echo "  HEAD is not a merge — nothing to compare"
 else
-  drop=$(git diff --name-only HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
-  if [ -n "$drop" ]; then
-    echo "  ⛔ the merge did NOT take the incoming harness — $(git diff --shortstat HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php)"
-    echo "     inspect: git diff HEAD $p2 -- app/tests/Journeys/JourneyHarness.php"
-    fail=1
+  mb=$(git merge-base HEAD^1 "$p2" 2>/dev/null || true)
+  inc=$(git diff --name-only "$mb" "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
+  if [ -z "$inc" ]; then
+    echo "  incoming side never touched the harness (vs merge base $(git rev-parse --short "$mb")) — nothing to take ✓"
   else
-    echo "  harness identical to the incoming side ✓"
+    drop=$(git diff --name-only HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php 2>/dev/null)
+    if [ -n "$drop" ]; then
+      echo "  ⛔ the merge did NOT take the incoming harness — $(git diff --shortstat HEAD "$p2" -- app/tests/Journeys/JourneyHarness.php)"
+      echo "     inspect: git diff HEAD $p2 -- app/tests/Journeys/JourneyHarness.php"
+      fail=1
+    else
+      echo "  harness identical to the incoming side ✓"
+    fi
   fi
 fi
 
