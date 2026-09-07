@@ -84,6 +84,8 @@ class CardScreenTest extends TestCase
         Livewire::actingAs($owner)->test(CardScreen::class)
             ->call('addCard')
             ->assertSeeHtml('autocomplete="cc-number"')
+            ->assertSee('Check this card')
+            ->assertDontSee('Keep this card')
             ->assertDontSee('Waiting on Stripe tokenisation:');
     }
 
@@ -207,5 +209,20 @@ class CardScreenTest extends TestCase
                 && ! $cards->contains(fn ($c) => $c->id === $farCard->id));
 
         Carbon::setTestNow();
+    }
+
+    public function test_the_empty_card_vault_says_what_it_waits_on(): void
+    {
+        $biz = self::provisionTenant();
+        $owner = User::findOrFail($biz->owner_user_id);
+        Tenancy::set($biz->id);
+        Tenancy::setUser($owner->id);
+
+        Livewire::actingAs($owner)->test(CardScreen::class)
+            ->assertOk()
+            ->assertSee('No cards on file')
+            ->assertSee('No card has ever been kept on this account')
+            ->assertSee('Keeping one waits on Stripe tokenisation')
+            ->assertDontSee('Please add a card');
     }
 }

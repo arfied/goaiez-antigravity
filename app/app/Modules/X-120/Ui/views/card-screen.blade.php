@@ -21,7 +21,7 @@
     <div class="mt-4">
         @if($cards->isEmpty())
             <x-ui.empty-state heading="No cards on file" action="Add Card" target="addCard">
-                Please add a card.
+                No card has ever been kept on this account. Keeping one waits on Stripe tokenisation, which is not built in this checkout: the form below checks a number, the expiry and the name, and keeps none of them.
             </x-ui.empty-state>
         @else
             <ul class="space-y-2">
@@ -55,7 +55,7 @@
                     <input type="text" wire:model="expYear" inputmode="numeric" autocomplete="cc-exp-year" placeholder="YYYY" class="border rounded px-2 py-1 w-24">
                 </div>
                 <input type="text" wire:model="name" autocomplete="cc-name" placeholder="Name on the card" class="border rounded px-2 py-1">
-                <x-ui.submit target="present" busy="Checking…">Keep this card</x-ui.submit>
+                <x-ui.submit target="present" busy="Checking…">Check this card</x-ui.submit>
             </form>
         @else
             <x-ui.button wire:click="addCard">Add a card</x-ui.button>
