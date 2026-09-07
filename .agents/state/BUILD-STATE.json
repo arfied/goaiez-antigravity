@@ -1,7 +1,7 @@
 {
  "_what": "The live build state. bin/state.py owns this file - do not hand-edit.",
  "started": "2026-08-30T02:05:15",
- "updated": "2026-09-06T19:02:34",
+ "updated": "2026-09-06T19:17:24",
  "plan_sha256": "8bae92b4b07d6a4e866108718eaeb31f98ab8e4c5f6713776a999db0031dbcea",
  "roster": 124,
  "runtime_build": "20260829-0647",
@@ -1553,6 +1553,10 @@
   {
    "at": "2026-09-06T19:02:31",
    "note": "X-201 MONEY-85: capabilities.php:40's N-011 raise is real and unreachable. app/app/Console/Commands/CheckDeadlinesCommand.php implements the 48-hour raise correctly and N011Test:35 drives it green through Artisan::call, but grep over app/app, app/routes, app/bootstrap and app/tests for CheckDeadlines and disputes:check returns only the command, its signature and that one test line \u2014 app/routes/console.php's platform schedule never names it, so on a real box it runs never. It is doubly blocked: deadline_at is written by no production code either, so even a scheduled run would find no row. The schedule entry is outside this lane's paths and is a TRACK 1 ACTION; the missing dependency underneath both is the gateway chargeback webhook of MONEY-84's UNRESOLVED. UNRESOLVED."
+  },
+  {
+   "at": "2026-09-06T19:17:07",
+   "note": "X-201 MONEY-86: Livewire's assertSee escapes the needle only (MakesAssertions.php:18, $escape ? e($value) : $value against the raw rendered html), so an apostrophe in a needle matches only text that reached the page through {{ }} and never static blade prose. MONEY-85's two dictated needles carried an apostrophe against static prose and could never pass, which is what made the tip red at FAILED 3; the old line passed only because the previous blade had &#039; hardcoded in its prose, and :72's assertSee(\"isn't in this account\") passes in the same chain because that string is a flash message rendered through {{ }}. Both MONEY-85 mutation proofs quoted that always-failing assertion and proved nothing; both are re-run here."
   }
  ],
  "decisions": [
@@ -1926,6 +1930,12 @@
    "module": "X-201",
    "chose": "(R245) X-201's per-row copy stops stating an automatic act: the deadline line said a person is raised inside 48 hours whatever the state, which is N-011 stated as fact while the command implementing it sits in no schedule, and the submitted line said the gateway's decision comes back through the queue, when the only writer of an outcome is the Won/Lost button an owner clicks. The line now renders the row's real deadline_at when it carries one and names the webhook dependency when it does not, and the submitted line names the owner as the one who records the decision (rulings 80, 50(a), 43, 59)",
    "at": "2026-09-06T19:02:34",
+   "ruling": "R245"
+  },
+  {
+   "module": "X-201",
+   "chose": "(R245) an assertion against static blade prose carries no apostrophe and no other e()-escaped character: the needle is escaped and the haystack is not, so the clause asserted is chosen to carry the load-bearing fact in characters that survive both sides (rulings 82, 76, 72)",
+   "at": "2026-09-06T19:17:24",
    "ruling": "R245"
   }
  ]
