@@ -830,3 +830,4 @@
 - `2026-09-07T00:49:40` (R245) X-163 — a question matches a pricebook service on whole words only, and a service name with no word matches nothing
 - `2026-09-07T01:07:33` (R245) X-163 — pint runs over the touched paths before every commit, so the committed sha is formatted, not only the working tree
 - `2026-09-07T01:45:47` (R245) C-Agent — — a price fact whose key has an empty slug matches no question, and a question matches a price fact on whole words only (ruling 20)
+- `2026-09-07T02:17:22` (R245) C-Agent — a price question is answered from the X-163 pricebook when a confirmed non-sample item matches, and only falls back to the facts table when it does not; an unconfirmed pricebook row is never a quote (ruling 20)
