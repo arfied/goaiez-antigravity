@@ -2757,6 +2757,53 @@ Watch for: <the trap that applies, by name>
   After 116, `G5-43` is a fixture and `G11-09` needs the unbuilt scoring model (tick 200); the live
   list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 223, membership
   unchanged since tick 221 — re-run and never inherited.
+- ⚠️⚠️ **A `BUILD PROPOSAL` that names what must exist "to become buildable" is a claim about a
+  DEPENDENCY CHAIN, and the rule that catches a missing link is the writerless-value grep run at
+  TABLE scale — a store with a live reader and no production writer.** Wave 116's `G5-32` line closes
+  *"To become buildable, an event carrying a `call_turns` row ID must exist"* — true, verified per id
+  against all six X-66 event constructors, and the **second** of two missing halves. Measured at tick
+  224: `VoiceSessionEngine::recordTurn()` is the only writer of `call_turns` and its callers are
+  `X66Test.php:69` and `:151` and **nothing else**; none of X-66's three Actions reaches it
+  (`VoiceAnswerAction:15` → `handleAnswer`, `VoiceCoachAction:16` → `coach`,
+  `VoiceVoicemailTranscribeAction:16` → `handleVoicemail`), while `Ui/Calls.php:52,71` **reads** the
+  table to render a transcript panel that is therefore permanently empty in production. So an event
+  carrying that row id would announce rows no live path creates — decision 272's write-only shape
+  inverted, and the tick-212 built-but-unwired defect in prospect rather than in review. ⚠️ The
+  ~15 other `recordTurn` hits are `AgentThreadStates::recordTurn`, a different class: the tick-184
+  confusion, and `grep` alone will hand it to you as a caller list. **Before crediting a proposal's
+  "to become buildable" clause, grep the WRITERS of every store it names and then those writers' own
+  callers** (the tick-205 rule, one level out): a suite that provisions its own rows with a factory —
+  here `CallsScreenTest.php:78,83` — makes the whole chain look wired from inside the tests.
+- ⚠️ **"Which of your own artifacts disagrees with a sentence you wrote" is answerable with a PREVIOUS
+  wave's artifact, and an old finding re-volunteered reads exactly like a new one.** The tick-220
+  rephrasing closed wave 112's `None` escape; wave 116 answered it with
+  `scratch/mutation-green-w112.log`, wave 112's falsely-named gate log — real, still on disk, and
+  already filed at tick 221 when wave 113 volunteered it unprompted. **Bind the question to this
+  wave's own files by mtime**: *an artifact this wave wrote*. Otherwise the question has a standing
+  correct answer and stops measuring anything.
+- ✅ **Three brief-side fixes held at once, and all three were fixes to WORDING rather than to
+  process.** (i) `DOCTOR:` carried the build stamp after two waves of drifting into §4's integrity
+  line — fixed by naming the field by its **content** (`the line carrying build <stamp>`) instead of
+  its position. (ii) No `w116-pest-raw.log` was written at all, because the artifact instruction was
+  made **conditional on the run that produces it** — the tick-222 brief-authored stale artifact did
+  not recur. (iii) `state.py note` ran exactly twice, once per id, for the second consecutive wave,
+  because the brief named the **count**. Each of the three had recurred at least twice before the
+  wording changed; none has recurred since. **When a defect repeats, suspect the sentence before the
+  coder.**
+- **Backlog at tick 224 — wave 117 is X-66's live turn record, the production writer for
+  `call_turns`.** RULED: it is the prerequisite wave 116's own measurements exposed, it is
+  single-module, in lane (X-66 is one of the thirteen), needs no vendor and no credentials, and it
+  crosses no module boundary — so the seam ruling of ticks 209/217/219/221 is untouched and is **not
+  reopened**. Under the wave-81 rule the missing thing being X-66's makes this a **build**, not a
+  block: `G5-32`'s own `Owner: X-66` names this lane. ⚠️ `G5-32` is **not** this wave's target and
+  stays a `BUILD PROPOSAL`; `G5-31` sequences behind it, because X-102 needs a turn **store** as well
+  as an event and neither id should be attempted before a turn row exists on a live path anywhere.
+  ⚠️ The wave-97/tick-200 hazard applies — a new write on a shared path can redden standing callers —
+  so the brief hands over `X66Test.php:103` (the standing `coach()` caller, asserting on the returned
+  `CallAutopsy`) and `CallsScreenTest.php:78,83` (factory-provisioned turns), with the standing ⛔:
+  **the fix is never to edit the standing test.** The site is deliberately unnamed (tick 214). The
+  live list is `grep -rn "BUILD PROPOSAL:" app/tests/Modules/` — **4** rows at tick 224, membership
+  unchanged since tick 221 — re-run and never inherited.
 
 ## Style
 
