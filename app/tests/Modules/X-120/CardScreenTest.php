@@ -74,7 +74,7 @@ class CardScreenTest extends TestCase
             ->assertSee('Try again');
     }
 
-    public function test_add_card_shows_waiting_state(): void
+    public function test_add_card_opens_the_form_and_shows_no_waiting_state_yet(): void
     {
         $biz = self::provisionTenant();
         $owner = User::findOrFail($biz->owner_user_id);
@@ -83,7 +83,8 @@ class CardScreenTest extends TestCase
 
         Livewire::actingAs($owner)->test(CardScreen::class)
             ->call('addCard')
-            ->assertSee('waiting on Stripe tokenisation');
+            ->assertSeeHtml('autocomplete="cc-number"')
+            ->assertDontSee('Waiting on Stripe tokenisation:');
     }
 
     /**
@@ -110,7 +111,7 @@ class CardScreenTest extends TestCase
 
         $screen = Livewire::actingAs($owner)->test(CardScreen::class)
             ->call('addCard')
-            ->assertSee('waiting on Stripe tokenisation')
+            ->assertDontSee('Waiting on Stripe tokenisation:')
             ->assertSeeHtml('autocomplete="cc-number"')
             ->assertSeeHtml('autocomplete="cc-exp-month"')
             ->assertSeeHtml('autocomplete="cc-name"')
