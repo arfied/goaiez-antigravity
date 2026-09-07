@@ -2644,3 +2644,41 @@ on `main`) is the ONLY track that merges to `main`. This track pushes to
     correct output of that step in this lane is now empty**, and a brief that predicts the `??` line
     manufactures a `REFUSED` for a clean tree. ⚠️ The coder was right to report the mismatch rather
     than stay silent, and it spends no dispatch (rulings 60b, 71).
+116. **A sweep's interior fragments come from the FACT, not from the phrasing of the sentence being
+    fixed (RULED by the lane supervisor 2026-09-07 04:5x, on MONEY-103's `df4d3c03`; briefed as
+    MONEY-104).** Ruling 113 made interior fragments mandatory and MONEY-103 ran them faithfully —
+    `reserved|held for you|at paid|when it is paid|never in the cart|comes off` — which are the words
+    of the two sentences it was correcting. Re-swept for the **fact** (*is anything held?*), X-117
+    returns **two** more instances the wave did not see, and one is in the file the wave edited:
+    `cart-block.blade.php:30` — *"Add a service or a product from the list above; it is **held for 15
+    minutes**."* — twelve lines above the `:42` the wave rewrote precisely to stop saying that, in the
+    sibling branch of the same `@if`; and `checkout-block.blade.php:27` — *"Add something in the cart
+    block; it is **held for 15 minutes**."* — in the other file the wave edited, four lines above the
+    `:38` it corrected. Both are ruling 98's self-contradiction inside one file, and both are ruling
+    113's own finding recurring in the wave written about it. **The fragments must be synonyms of the
+    claim** — `held`, `hold`, `reserve`, `set aside`, `keeps it for you` — because the sentence being
+    replaced is the one string in the module guaranteed to be gone when the sweep is next run.
+    ⚠️ Blast radius measured with interior fragments (rulings 46, 86): `CartBlockScreenTest.php:40`
+    asserts only `Nothing in the cart yet`, the **heading**, so the false body clause is a ruling-80
+    partial cover; `checkout-block.blade.php:27` is asserted by **nothing** (ruling 70). ⚠️ Per the
+    46/49/50/62/66/75/82/86/94/104/106/113 precedent the scoping miss is the supervisor's, so MONEY-104
+    carries its own two dispatches and MONEY-103's cap is untouched.
+117. **X-117 credits a pricebook it does not read, and `sellables` has no production writer (RULED by
+    the lane supervisor 2026-09-07 04:5x, briefed as MONEY-104 items 1.1 and 1.2).**
+    `grep -rn "pricebook" app/app/Modules/X-117` returns exactly two lines, both owner copy:
+    `cart-block.blade.php:3` *"Prices come from the pricebook"* and `:10` *"The catalogue builds itself
+    from the pricebook the moment a price is confirmed."* The module imports, reads and references no
+    pricebook model of any kind — every price on that screen is `sellables.unit_price_cents`, read by
+    `CartBlock::render()`. And `grep -rn "Sellable::create\|Sellable::firstOrCreate\|Sellable::updateOrCreate\|new Sellable"
+    app/app app/database` returns **one** line — `X-117/Console/EvidenceCheckoutCommand.php:40`, an
+    evidence command — so nothing in production writes a catalogue row, the storefront is empty forever
+    for every real tenant, and `:10` is the only sentence any of them ever reads on it. That is ruling
+    50(a) sitting on top of decision 272 / ruling 51, on the **first** screen of the storefront.
+    ⛔ Not resolved by building a pricebook importer: X-163/X-119/X-126 are track pricebook's by ruling
+    5, and minting an importer so a sentence comes true is ruling 59. ⛔ Not by deleting the empty state
+    — the catalogue is correct the day something writes it. The outcome is ruling 21's finished waiting
+    state naming what has not happened and what it waits on. ⚠️ `:3` is a ruling-80 **partial** cover:
+    `CartBlockScreenTest.php:34` asserts the sentence's tail clause only, which is exactly why the false
+    opening clause survived two X-117 waves aimed at that very line; `:10` is asserted by nothing
+    (ruling 70), so that item **adds** a method against a tenant with no catalogue row — the existing
+    test seeds three `Sellable`s and can never render the branch (ruling 68).
