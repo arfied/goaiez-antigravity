@@ -5249,6 +5249,14 @@
   {
    "at": "2026-09-07T02:51:20",
    "note": "source() at app/app/Doctor/ManifestReader.php:245 reads only the module manifest.php file on disk. Therefore an @ingress written in an Action or Service docblock can never reach $ingress. The B class has a declaration site that is narrower than where people would naturally write it."
+  },
+  {
+   "at": "2026-09-07T03:31:05",
+   "note": "help.human_requested is Class B, not Class C, because it is prescribed as @ingress in the plan (GOAIEZ-MASTER-PLAN.md:27191). The previous C grade was due to missing the second clause check."
+  },
+  {
+   "at": "2026-09-07T03:31:05",
+   "note": "message.received is Unplaceable, not Class B, because the plan explicitly names C-Sms as its emitter (GOAIEZ-MASTER-PLAN.md:20516)."
   }
  ],
  "history": [
