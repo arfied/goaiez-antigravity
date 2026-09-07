@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\CAgent\Listeners;
 
-use App\Modules\X01\Events\TakeoverReleased;
 use App\Modules\CAgent\Models\TakeoverLatch;
+use App\Modules\X01\Events\TakeoverReleased;
 
 final class TakeoverReleasedListener
 {

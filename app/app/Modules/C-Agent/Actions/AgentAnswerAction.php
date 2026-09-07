@@ -8,6 +8,7 @@ use App\Modules\CAgent\Events\AgentRefused;
 use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\CAgent\Models\TakeoverLatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
@@ -24,7 +25,7 @@ final class AgentAnswerAction
     ): array {
         return DB::transaction(function () use ($businessId, $userMessage, $conversationId, $turnNumber) {
             if ($conversationId !== null) {
-                $latch = \App\Modules\CAgent\Models\TakeoverLatch::where('business_id', $businessId)
+                $latch = TakeoverLatch::where('business_id', $businessId)
                     ->where('conversation_id', $conversationId)
                     ->first();
                 if ($latch && $latch->is_active) {
@@ -49,6 +50,7 @@ final class AgentAnswerAction
                         'status' => 'refused',
                         'refusal_code' => 'HUMAN_TAKEOVER_LATCH',
                     ]);
+
                     return [
                         'turn_id' => $turn->id,
                         'status' => 'refused',

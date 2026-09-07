@@ -18,6 +18,8 @@ use App\Modules\CAgent\Events\AgentTurnAnswer;
 use App\Modules\CAgent\Models\AgentInstruction;
 use App\Modules\CAgent\Models\AgentRefusal;
 use App\Modules\CAgent\Models\AgentTurn;
+use App\Modules\X01\Events\TakeoverReleased;
+use App\Modules\X01\Events\TakeoverStarted;
 use App\Services\Agent\AgentComposer;
 use App\Services\Agent\AgentSkills;
 use App\Support\Tenancy;
@@ -206,7 +208,7 @@ class CAgentTest extends TestCase
         $biz = TestCase::provisionTenant(['name' => 'Latch Biz', 'currency' => 'USD']);
         DB::statement("SET app.business_id = '{$biz->id}'");
 
-        \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\X01\Events\TakeoverStarted(
+        Event::dispatch(new TakeoverStarted(
             businessId: $biz->id,
             conversationId: 123,
             operatorId: 1,
@@ -218,11 +220,11 @@ class CAgentTest extends TestCase
         $this->assertEquals('HUMAN_TAKEOVER_LATCH', $res['refusal_code']);
         $this->assertEquals('', $res['reply']);
 
-        \Illuminate\Support\Facades\Event::dispatch(new \App\Modules\X01\Events\TakeoverReleased(
+        Event::dispatch(new TakeoverReleased(
             businessId: $biz->id,
             conversationId: 123
         ));
-        
+
         $res2 = $this->answer->handle($biz->id, 'Hello again', 123);
         $this->assertEquals('answered', $res2['status']);
     }

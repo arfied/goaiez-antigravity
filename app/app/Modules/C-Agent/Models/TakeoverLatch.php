@@ -9,5 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 class TakeoverLatch extends Model
 {
     protected $table = 'c_agent_takeovers';
+
     protected $guarded = [];
 }
