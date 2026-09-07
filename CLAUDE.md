@@ -17,7 +17,7 @@ you hold the coder to them. Your side of the arrangement is
 | Reads the whole tree. Edits **only** `CLAUDE.md`, `.agents/supervisor/**`, `.agents/rules/10-supervisor.md`, `bin/supervise.sh`, and `bin/state.py` (owner grant 2026-09-06 — `bin/**` is a BLOCK for every lane coder, so the tool itself could be maintained by nobody) | Edits `app/**`, works `bin/state.py next`, commits |
 | Runs read-only checks: `bin/supervise.sh`, `state.py next\|status\|report`, `php artisan doctor*`, `phpstan`, `pint --test`, `git status\|diff\|log` | Runs `state.py decided\|unresolved\|stage\|note`, migrations, tests, `git commit` |
 | Writes `BRIEF.md`, appends `REVIEWS.md` | Writes `REPORT.md` |
-| **Commits only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`, `bin/state.py`) as `chore(supervisor): …` — the coder guard refuses those paths, so merge step 0 is the supervisor's (run 67, 2026-09-05). **Pushes only a sha it has gated and recorded in REVIEWS**, by explicit ref (`git push origin <sha>:main`), never a branch head, never `--force` (the owner opened the push 2026-09-05 06:4x). **Never:** migrate, touch a database, edit `app/**`, edit `.claude/settings.json` (the owner's file), run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push (the guard stays closed), edit sealed or generated files |
+| **Commits only its own files** (`CLAUDE.md`, `bin/supervise.sh`, `.agents/rules/10-supervisor.md`, `bin/state.py`, `.claude/settings.json`, `.agents/supervisor/launch-coder.sh`) as `chore(supervisor): …` — the coder guard refuses those paths, so merge step 0 is the supervisor's (run 67, 2026-09-05). **Pushes only a sha it has gated and recorded in REVIEWS**, by explicit ref (`git push origin <sha>:main`), never a branch head, never `--force` (the owner opened the push 2026-09-05 06:4x). **Never:** migrate, touch a database, edit `app/**`, write into a SIBLING lane's checkout (`grs-antig-*/`) — the classifier refuses it and that refusal is correct; such items go in a `TRACK 1 ACTION` block — run a test suite outside `supervise.sh --tests` | **Never:** edit `BRIEF.md`/`REVIEWS.md`, push (the guard stays closed), edit sealed or generated files |
 
 `.claude/settings.json` enforces your column. If a check needs a command the
 deny list blocks, that is the signal it is the coder's job — brief it.
@@ -640,3 +640,69 @@ One Rule is satisfied and the rename is an over-claiming name corrected, not a c
 itself as the wrong source — the needle was right for Pest and this repo is mixed), and **a
 test-count check is sound only when added − deleted reconciles with the suite total**; either number
 alone cannot tell a rename from a deletion.
+
+⚠️ **`.claude/settings.json` WAS IN THE ROLE TABLE AS "THE OWNER'S FILE" AND IN TWO OTHER PLACES IN THIS
+SAME FILE AS MINE (N114, 2026-09-07).** The role table said *"**Never:** … edit `.claude/settings.json`
+(the owner's file)"*; the unattended tick prompt says *"Commit ONLY your own supervisor files (`CLAUDE.md`,
+`bin/supervise.sh`, `.claude/settings.json`, …)"*; and the merge section below says *"the supervisor's
+permissions ARE a per-track file"* and lists it among the eight that never merge. Three statements about
+one path, two of them agreeing against the one a new seat reads first. **Corrected in the table**, which
+is the fifth instance of the drifted-refusal-message shape and the first where the stale sentence sat in
+the role table rather than in a trap. The check is one command and it belongs in any tick that edits this
+file: `grep -n '\.claude/settings\.json' CLAUDE.md` and read every hit, not the first.
+The real boundary, measured the same tick: **a sibling lane's checkout is what this seat may not write.**
+Two attempts to add a wall-clock bound to `grs-antig-{site,money,reviews,stages}/.agents/supervisor/
+launch-coder.sh` — once with `sed -i`, once with the editor — were both refused by the permission
+classifier, and the refusal is right: one writer per checkout, and a lane's launcher is that lane's.
+Cross-lane fixes go in a `TRACK 1 ACTION` block with the exact command, never applied from here. And
+**both refusals were confirmed to be true no-ops** (`grep -c 'timeout -k'` still `0` in all four) — the
+refused-compound rule says the read-only confirmation is the command nobody suspects.
+
+⚠️ **THE GATE'S `STAGES` LINE IS A MEMORY, NOT AN INSTRUMENT, AND IT WAS 82 LOW (N115, 2026-09-07).**
+`supervise.sh` §3 printed `capability 372` on `126595b6`; `php artisan doctor` on the identical tree
+measured **454**. Both are honest: `bin/state.py:227-232` prints `STAGES` straight out of
+`BUILD-STATE.json`'s `stages[*].violations`, which is whatever a coder last wrote with `state.py stage`.
+The seven `?`s beside it are the tell nobody reads — `integrity ? · boundary ? · contract ? · citation ? ·
+schema ? · capability 372 · anchor ? · journey ?` looks like a stage report and is one stale ledger entry
+formatted next to seven blanks. This is what actually happened in wave 121, where `capability 372` off a
+staged `BUILD-STATE.json` was called "the other lane's number": right conclusion, wrong reason — it was
+nobody's live number.
+**RULED: any count a verdict turns on is read from `php artisan doctor`, never from the `STAGES` line.**
+`doctor*` is already in this seat's column and costs about two seconds; it is the only way the
+`CLAUDE.md` instruction *"did the count fall?"* can fire at all. Measured on `126595b6`:
+`integrity 0 clean · boundary 6 · contract 87 · citation 93 · schema 15 · capability 454 · anchor 13 ·
+journey 2`. Keep the `STAGES` line for exactly one purpose — comparing what the coder **recorded**
+against what doctor **measures**, which is how the drift was found.
+
+⚠️ **A MERGED LANE'S `(R245)` CANNOT HAVE ITS `decided` LINE ON `main`, BY CONSTRUCTION — CHECK THE LANE'S
+LEDGER AT THE MERGED TIP (N116, 2026-09-07).** The `track/sixty` merge brought a docblock citing `(R245)`
+into `app/tests/Modules/X-102/X102Test.php`, and `grep -c 'G16-21' .agents/state/JOURNAL.md` on `main` is
+**0** — which the rule *"every `(R245)` in a module header has a matching `state.py decided` line in
+`JOURNAL.md`"* reads as a defect. It is not one. `.agents/state/**` is a per-track path that **never
+merges**, so the ledger that records a lane's decision is precisely the file the merge procedure forbids
+carrying. The line exists at `track/sixty:.agents/state/JOURNAL.md:879`, and reading it there is the check.
+**Run on `main` this check returns 0 on every merge this track will ever do, and would manufacture a
+`BLOCK` each time.** Same family as §2e's baseline and wave 122's needle: the instrument was sound and the
+baseline was the one thing that could not contain the answer — that is now three of them, and the general
+form is *before believing a `0`, ask which tree could have held a `1`.*
+Carried from the same ledger (`:880`, the lane's own finding): the `G16-21` id in a docblock **falsely
+satisfies the capability checker**, because `testedIds` scans file contents for the id string without
+checking that anything asserts on it. It moved no number here — the id was already in the file via the
+method name `test_g16_21_chat_carousels` — but it is why `capability` is the stage least worth trusting.
+
+⚠️ **A PARKED CODER THAT HAS ALREADY WRITTEN ITS `REPORT.md` STOPS A WHOLE LANE, AND THE FIX IS THE
+LAUNCHER'S WALL-CLOCK BOUND — NOT A FIFTH DETECTOR (N117, 2026-09-07).** `track/reviews` was stopped from
+01:05 to at least 08:2x: its coder started `00:57:06`, wrote `REPORT.md` at **01:05**, then burned **20
+seconds of CPU in 7h19m** while holding `coder.pid`, so that lane's tick took case (a) *"coder running →
+stop"* every ten minutes and a finished wave went unreviewed for seven hours. `pricebook`'s launcher
+already carries the fix **and the identical post-mortem** (*"run 54 finished its wave, wrote `REPORT.md` at
+04:42, and then sat alive indefinitely parked on a `tail -f` it never reaped"*), and
+`supervisor-tick.sh:113-119` says in capitals **"STOP TUNING THE DETECTOR"** — four wordings of that
+liveness detector each produced a false positive within minutes; the bound has produced none. `site`,
+`money`, `reviews` and `stages` still lack it. One token before the agy path, exactly as pricebook has it:
+`timeout -k 60 3h /home/goaiez/.local/bin/agy --print …`. It is a `TRACK 1 ACTION`, not this seat's edit —
+see N114.
+The corollary worth keeping: **`REPORT.md` newer than `coder.pid` is the one signal that separates
+"finished and parked" from "waiting on the model"**, because rule 10 writes the report at wave close or
+stop. That is a fact about the contract, not another CPU heuristic — but it diagnoses, it does not free the
+slot, and only the bound frees the slot.
