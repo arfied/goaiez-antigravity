@@ -5129,6 +5129,10 @@
   {
    "at": "2026-09-06T22:34:44",
    "note": "This corrects the 2026-09-06T21:35:00 clause: \"X-123 and X-204 are reproducible (manifest == plan) because ModuleScaffoldCommands field() takes only the longest regex hit, discarding the shorter none string.\" The sentence is wrong in its REFERENT. Under plan = the declarations, X-123 and X-204 are manifest \u228a plan. X-123 declares GOAIEZ-MASTER-PLAN.md:25299 \"none\" and :25301 \"webhook.test\". X-204 declares GOAIEZ-MASTER-PLAN.md:28850 \"none\" and :28852 \"register.check\". Under plan = the value field() returns, they are manifest == plan, which is the reading that decides regenerability. On the reading my prediction used, the prediction held on all nine rows, and the disposition BROKEN recorded in the S-139 report is withdrawn. The seven remain manifest \u228b plan under both readings."
+  },
+  {
+   "at": "2026-09-06T23:02:39",
+   "note": "Partition of contract stage 87 violations: does not declare whether the agent may reach it (49, PLAN-FROZEN, reads manifest.php), is not a token (13, PLAN-FROZEN, reads manifest.php), consumes an event with no emitter (13, PLAN-FROZEN, reads manifest.php), has multiple emitters (6, CHECK-DEFECT, reads manifest.php), is prose not a token (4, PLAN-FROZEN, reads manifest.php), acts toward customer without capability.decided (2, PLAN-FROZEN, reads manifest.php). Sum 87."
   }
  ],
  "history": [
